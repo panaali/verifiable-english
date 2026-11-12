@@ -13,7 +13,7 @@ HERE = Path(__file__).resolve().parent
 CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["cases"]}
 SETS = {"RS1": ("cond", "uncond", "ov"), "RS2": ("F", "Ds"),
         "RS3o": ("suff", "iff"), "RS3i": ("suff", "iff"),
-        "RS3c": ("third", "result"), "RS4": ("scope", "rel"),
+        "RS4": ("scope", "rel"),
         "RS7": ("exec", "final"), "RS11": ("at", "trigger"),
         "RS12strive": ("default", "intent")}
 ALIASES = {"cond": ("RS1", "cond"), "uncond": ("RS1", "uncond"),
@@ -40,9 +40,9 @@ def case_answer(item):
                  id_.startswith("B-AUT") and facts.get("OT22") is True)
         return (), lambda c: scope
     if id_.startswith("C"):
-        if id_ in ("C1", "C7", "C-doc"):
-            return ("RS4",), lambda c: c["RS4"] == "rel"
-        return (), lambda c: False
+        # F26's "need not" releases only its own scenario's delay, so no C item conflicts (PLAN 12: C1, C7 and C-doc
+        # are NONE; the frozen key's SOME(rel) is reported, never rewritten).
+        return ("RS4",), lambda c: False
     if id_ == "G4":
         return ("RS11",), lambda c: c["RS11"] == "trigger"
     if id_ == "G8":

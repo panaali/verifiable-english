@@ -41,7 +41,7 @@ unit ids and short quotations only.
 | File | Contents |
 |---|---|
 | [rules.d1.ve](rules.d1.ve) | 76 VE rules: one per commitment and per reading of it, each with the sentence it translates |
-| [facts.d1.ve](facts.d1.ve) | 11 premise blocks (15 premises): the four thresholds, the "highly capable" definition, and T4's definitions under RS3o, RS3i and RS3c |
+| [facts.d1.ve](facts.d1.ve) | 9 premise blocks (12 premises): the four thresholds, the "highly capable" definition, and T4's definitions under RS3o and RS3i (RS3c = result is excluded: PLAN 12) |
 | [rsp_vocabulary.py](rsp_vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary, with 64 regulated predicates (Lean's limit); each predicate's description is its legend, and each open term names its decider |
 | [rsp_translation.py](rsp_translation.py) | loads and parses the rules and premises with VE's one-reading check |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | the cases and the 126 answers of PLAN sections 5 and 6, transcribed after the freeze |
@@ -78,17 +78,19 @@ answers. These counts are not audit-validated until `uc-audit` reviews the trans
 |---|---:|---:|
 | A thresholds | 40 / 40 | 0 |
 | B scope | 12 / 12 | 0 |
-| K process | 21 / 27 | 6 |
-| T automated R&D | 9 / 9 | 0 |
-| C conflicts in the translation | 8 / 8 | 0 |
+| K process | 24 / 27 | 2 |
+| T automated R&D | 8 / 9 | 0 |
+| C conflicts in the translation | 5 / 8 | 0 |
 | G gaps | 5 / 8 | 3 |
 | N never applies | 3 / 5 | 2 |
 | S severity | 7 / 8 | 1 |
 | D dates | 6 / 9 | 3 |
-| **Total** | **111 / 126** | **15** |
+| **Total** | **110 / 126** | **11** |
 
-All 15 undecided rows name a translation or VE feature limit in `comparison[].cause`; none is counted as a wrong
-verdict. W1 conflict answers identify conflicts in the translated rules. Their status as source-policy conflicts
+All 11 undecided rows name a translation or VE feature limit in `comparison[].cause`; none is counted as a wrong
+verdict. The 5 other rows that differ from the frozen key (K18, T7, C1, C7, C-doc) are key findings: each answers as
+the DRI ruled in PLAN section 12, item 21, which `comparison[].cause` cites, so 115 of 126 match the key as
+corrected there. W1 conflict answers identify conflicts in the translated rules. Their status as source-policy conflicts
 awaits the independent source check required by DRI ruling R14.
 
 ## Span accounting (2026-10-28)
@@ -152,12 +154,12 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 
 ## Remaining limits
 
-The 15 faithful undecided rows in `results.json` name the missing AP, SC, ET, QT and WG representations. The
+The 11 faithful undecided rows in `results.json` name the missing AP, SC, ET, QT and WG representations. The
 translation's conflicts remain candidates until the independent source check under R14. The answer counts remain
 unvalidated until `uc-audit` has checked the source units and the item dependencies.
 
-`results.json` also records three unscored section 9 comparisons. Removing N1 changes 54 answer cells, including
-all 20 PROT cells and T1, T2b, T3, T4b and T7; removing N2 changes G1 and N5; removing N3 changes K13. These variants rerun the VE routes with
+`results.json` also records three unscored section 9 comparisons. Removing N1 changes 53 answer cells, including
+all 20 PROT cells and T1, T2b, T3 and T4b; removing N2 changes G1 and N5; removing N3 changes K13. These variants rerun the VE routes with
 each narrowing removed alone. W1 conflict-free rows now have replayed proof certificates, and a failed W1 or D3
 proof stays undecided. M6 audits the rules and threshold facts built by the m2 and m4 mutants, rather than names
 inferred from their presets.

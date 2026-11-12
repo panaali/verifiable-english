@@ -603,6 +603,44 @@ From `anthropic-rsp-fidelity-fix` (2026-11-11), the T fixes of the use-case audi
     Regulated predicates: 64 of 64; every new guard is a classification or open term. 111/126 still match the key;
     only C-doc's SOME condition is restated over the wider cone (still exactly RS4 = rel). The six mutants change
     exactly their named results. Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix/REPORT.md`.
+From `anthropic-rsp-fidelity-fix-2` (2026-11-12), the T fixes of the 11-11 re-audit that both seats still judged
+UNFAITHFUL, and the DRI's rulings on the builder's three questions (in manage-agents' `reviews/`:
+`dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md` and its `-k18.md`). Section 6 and `answer-key.json` are
+unchanged.
+
+20. **Source-fidelity fixes.** Each changed block's header quotes its whole source sentence; where an act cannot hold
+    a qualifier within 80 characters, its legend does. (a) Appendix A: F25 and F26 are guarded by their evidence alone
+    (`competitors_evidence`, `mitigation_evidence`, OT8); the added fact guards `competitors_strong_measures` and
+    `competitor_better_mitigation` are gone from the rules and the vocabulary, and the cases K20 and K21 set only the
+    evidence PLAN 5 stipulates (a scenario is a label in `run.py`, not an atom). (b) K15a and K17 are answered from
+    the selected `f20-notify-board` and `f23-publish`; the hard-coded "prompt notice or effective-date order is not
+    encoded" limit is deleted. (c) F10's head "When a Risk Report describes risk mitigations we have in place (or
+    plan to implement shortly)" is its own guard (`mitigation_in_place_or_planned`). (d) F19's act says "final
+    unredacted Risk Reports". (e) F14's LTBT-requested review is "subject to the outlined procedures", those of 3.6.1
+    and 3.6.2 (the legends of `ltbt_review` and `external_review_process`). (f) F15's Board consultation and LTBT
+    approval are one act with no order ("as well as"; no "after"). (g) F16's act asks the reviewers to publish
+    written findings, 3.6.3's public written report, within thirty days of receipt. (h) "continuing to work with them"
+    (`candidate_revenue_dependent`), the four means of section 1's "strive to advance" (`advance_recommendations`),
+    "at that link" (`past_roadmaps_kept`) and 4.2's open "including" list (`ltbt_briefed`) are restored. (i) Under
+    RS4 = rel, F26's "need not" releases only its own scenario's delay: F24's and F25's delay take precedence over it
+    (`rsp_translation.PRECEDENCE`), as the preamble's "do not preclude us from taking cautionary action" and S:17's
+    "in this scenario" say. m1 removes only step 5's precedence; m3 now changes N2 alone, because C1, C7 and C-doc are
+    NONE without it. (j) RS3c is no longer a reading set: "result" is excluded (S:10's "such that continuation of the
+    trend in AI progress seems likely to lead to even greater acceleration" is always a third condition of scenario
+    (2), as the v3.4 changelog on S:20 says), so `s2-suff-result` and `s2-only-if-result` are removed and
+    `t4-continuation` is a condition of `s2-suff-third`. Regulated predicates: 64 of 64. Report:
+    `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-2/REPORT.md`.
+21. **Key deviations.** Five frozen key cells rest on a reading the source excludes. Each answer below is the DRI's
+    ruling. `run.py` reads this table and records each row's cause as a key finding. The frozen key text is not
+    edited.
+
+    | Key deviation | Frozen key | Answer | Source sentence | Ruling |
+    |---|---|---|---|---|
+    | K18 | ALL | NONE | S:12 "When a Risk Report describes risk mitigations we have in place (or plan to implement shortly), we will keep our future practices in line with this description or track and report noteworthy changes and deviations (generally via subsequent Risk Reports)." K18's case leaves the in-place-or-planned status open. | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2-k18.md item 1 |
+    | T7 | SOME(result) | NONE | S:20 "We would not: in this case there could be a strong argument for expecting the trend to continue rather than accelerate" (RS3c = result is excluded). | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 2 |
+    | C1 | SOME(rel) | NONE | S:17 "We will make a significant effort to meet or exceed that performance standard. However, we will not necessarily delay AI development and deployment in this scenario." | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1 |
+    | C7 | SOME(rel) | NONE | S:17, the same sentences. | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1 |
+    | C-doc | SOME(rel) | NONE | S:17, the same sentences: every choice is CONFLICT-FREE. | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1 |
 
 ## 13. Files for the implementation and run rounds
 

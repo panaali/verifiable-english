@@ -1,5 +1,5 @@
 {
- "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject … = .ok answer` with the answer used, or `subject … = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject \u2026 = .ok answer` with the answer used, or `subject \u2026 = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
  "verdict_tokens": [
   "CHECKED",
   "CONFLICT-FREE",
@@ -211,7 +211,8 @@
    ],
    "theorems": [
     "VE.SoftNorms.Run.soft_wire_acceptance",
-    "VE.SoftNorms.Run.runAdmission_sound"
+    "VE.SoftNorms.Run.runAdmission_sound",
+    "VE.SoftNorms.Run.soft_wire_elaborate"
    ],
    "delegates": [
     "VE.Norms.Run.runCaseReported"
@@ -237,13 +238,13 @@
       "soft-certificate",
       "soft-conflict"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); the listed theorems cover admission only (KB-3)"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, and soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3)"
     }
    ]
   },
   {
    "name": "metered",
-   "tier": "candidate",
+   "tier": "kernel",
    "modes": [
     "metered"
    ],
@@ -251,21 +252,35 @@
     "VE.Route.MeteredRun.runCaseReported"
    ],
    "subject": [
-    "VE.Route.Metered.evaluate",
-    "VE.Route.Metered.scan",
-    "VE.Route.Metered.scanState"
+    "VE.Route.MeteredRun.runWith"
    ],
    "theorems": [
-    "VE.Route.MeteredProofs.fol_sound",
-    "VE.Route.MeteredProofs.order_sound",
-    "VE.Route.MeteredProofs.closure_sound",
-    "VE.Route.MeteredProofs.core_sound",
-    "VE.Route.Metered.scan_sound",
-    "VE.Route.Metered.scanState_sound",
-    "VE.Route.Metered.scan_exhausted_unknown"
+    "VE.Route.MeteredRun.runWith_sound",
+    "VE.Route.MeteredRun.metered_wire_sound"
    ],
    "delegates": [],
-   "nonverdict": []
+   "nonverdict": [
+    {
+     "name": "VE.Route.MeteredTrace.document",
+     "why": "builds the optional `explanation` trace of an evaluation; runWith_sound leaves that field unconstrained and no verdict is read from it"
+    }
+   ],
+   "uncovered": [
+    {
+     "name": "VE.Route.NonVacuity.check",
+     "kinds": [
+      "non-vacuity"
+     ],
+     "why": "answers `suitable` for a candidate formula; no listed theorem states what a non-vacuity answer means (KB-7 covers evaluate-budgeted only)"
+    },
+    {
+     "name": "VE.Route.MeteredRun.nonVacuityResult",
+     "kinds": [
+      "non-vacuity"
+     ],
+     "why": "encodes the non-vacuity answer; same kind, no theorem"
+    }
+   ]
   },
   {
    "name": "quantity",

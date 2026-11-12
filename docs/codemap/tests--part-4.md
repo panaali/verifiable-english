@@ -1,7 +1,18 @@
+- `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
+- `tests/test_jt3_english.py` — JT-3's authoring refusal through the service (docs/spec/judgment-terms.md 9.5; DRI 2026-11-02, jt-3 items 1, 3 and 4).
+- `tests/test_jt_2c_delta.py` — jt-2c's saved delta (docs/judgment-terms/jt-2c/evidence, DELTA row 3, standing ruling R1): read from the saved records, never from a live service.
+- `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
+- `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
+- `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
+- `tests/test_jt_e1s.py` — JT-E1s frame, revision and scoring checks.
+- `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
+- `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
+- `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
 - `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
 - `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
 - `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
+- `tests/test_kernel_closure.py` — The kernel boundary's measuring tool (docs/spec/kernel-boundary.md, sections 2 and 6).
 - `tests/test_keyed_answers_authority.py` — keyed-wording F1: docs say who computes the keyed answers of a soft-rule norm document, and that is true.
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
 - `tests/test_lean_audit_record.py` — The committed axiom audit record `lean/axioms.txt` names every theorem, and the audit refuses a stale one.
@@ -70,15 +81,4 @@
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
-- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
-- `tests/test_norm_defaults_soft_kinds.py` — RD-9 SC-6: the soft branch's `admission` and `norm-defaults-certificate` under norm-defaults@0 (docs/spec/rd-9-soft-chain.md 1.13, 4.5, 6.10 and 8.3's SC-6 row…
-- `tests/test_norm_defaults_switch.py` — Batch 10b: Lean answers that the Python document and admission paths consume.
-- `tests/test_norm_defaults_three_way.py` — norm-defaults@0: Python, Lean and Rust agree on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
-- `tests/test_norm_english.py` — (no module docstring)
-- `tests/test_norms.py` — Hand-written W1 counterexamples from norms spec 10.1.
-- `tests/test_norms_contract.py` — The `norms@0` wire table in shadow (wire-contract-s5.md 2.3, 2.5, 8.1): the legacy validator still owns the verdict; the Python engine names the first check of…
-- `tests/test_norms_three_way.py` — Committed W1 wire gate: regenerated Python/Lean formulas and Rust evaluation.
-- `tests/test_numbers_phrases.py` — The existing English reader consumes the Lean-generated comparison rows.
-- `tests/test_numeral_conversion.py` — Decimal text from input never reaches a bare `int(` (english-lean looprecheck1, finding 1).
-- `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
-- `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
+- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2) and norm-defaults-cfr-1b: the norm-defaults mode's answers are bound to their request.

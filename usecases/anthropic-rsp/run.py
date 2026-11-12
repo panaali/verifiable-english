@@ -43,9 +43,12 @@ OT = {"OT2": "more_capable_than_analyzed", "OT3a": "exceeds_prior_report",
       "OT28": "continuation_accelerates"}
 # OT7 ("as needed") and OT8 (the evidence) are found per Appendix A scenario: each scenario has its own predicate.
 # Only m3's query-only vocabulary declares an "as needed" for General upleveling (the source states none).
-SCENARIO_TERMS = {"in_the_lead": {"OT8": "lead_evidence", "OT7": "lead_delay_needed"},
-                  "competitors_strong_measures": {"OT8": "competitors_evidence", "OT7": "posture_delay_needed"},
-                  "competitor_better_mitigation": {"OT8": "mitigation_evidence", "OT7": "upleveling_delay_needed"}}
+# A scenario is a label, not an atom: PLAN 5 stipulates the evidence (OT8), never the fact the evidence is about, so a
+# case names its scenarios (SCENARIOS, or a witness's "scenarios") and only the stipulated findings become atoms.
+SCENARIO_TERMS = {"lead": {"OT8": "lead_evidence", "OT7": "lead_delay_needed"},
+                  "competitors": {"OT8": "competitors_evidence", "OT7": "posture_delay_needed"},
+                  "upleveling": {"OT8": "mitigation_evidence", "OT7": "upleveling_delay_needed"}}
+SCENARIOS = {"K19a": ("lead",), "K19b": ("lead",), "K20": ("competitors",), "K21": ("upleveling",)}
 COMPETITORS = ["c"]
 SITUATIONS = {
     "B-PUB": ("publicly_deployed",), "B-INT": ("internally_deployed",),
@@ -59,7 +62,6 @@ SITUATIONS = {
     "K16": ("concerns_rso",), "K17": ("rsp_updated",),
     "K18": ("describes_mitigation_and_deviates",),
     "K19a": ("in_the_lead",), "K19b": ("in_the_lead",),
-    "K20": ("competitors_strong_measures",), "K21": ("competitor_better_mitigation",),
     "K22": ("roadmap_goal_missed",), "G4": ("off_cycle_public_deployment",),
     "G7": ("noncompliance_report_received", "substantiated"),
     "G8": ("goal_revised_less_ambitious",),
@@ -112,15 +114,16 @@ def document(names, default, include=None):
         if include is None or "f26-need-not-delay" in include:
             from ve.norm_english import parse_english
             text = ("Rule 1. Every situation must delay AI development as well as deployment, "
-                    "if all of the following hold: (a) that situation is classified as "
-                    "\"competitor_better_mitigation\"; (b) both that situation is classified as "
-                    "\"mitigation_evidence\" and that situation is classified as \"upleveling_delay_needed\".")
+                    "if both that situation is classified as \"mitigation_evidence\" and that situation is "
+                    "classified as \"upleveling_delay_needed\".")
             added = parse_english(SoftEnvironment(vocabulary()), text).rules[0].to_dict()["norm"]
             added["name"] = "m3-f26-delay"
             rules.append(added)
     included = {r["name"] for r in rules}
     for rule in rules:
-        rule["over"] = [n for n in ({} if MUTANT == "m1" else T.PRECEDENCE).get(rule["name"], ()) if n in included]
+        m1_removed = MUTANT == "m1" and rule["name"] == "f12-board-approval"
+        precedence = () if m1_removed else T.PRECEDENCE.get(rule["name"], ())
+        rule["over"] = [n for n in precedence if n in included]
     return SoftNormDocument(SoftEnvironment(vocabulary(default)), [{"norm": r} for r in rules])
 
 
@@ -130,12 +133,13 @@ def atoms(case):
     found.update((name, "s") for name in SITUATIONS.get(case["id"], ()))
     found.update(CASE_ATOMS.get(case["id"], ()))
     found.update(atom if type(atom) is tuple else (atom, "s") for atom in case.get("extra", ()))
+    scenarios = SCENARIOS.get(case["id"], ()) + tuple(case.get("scenarios", ()))
     for term, value in case["findings"].items():
         if value and term in OT:
             found.add((OT[term], "s"))
-        for scenario, terms in SCENARIO_TERMS.items():
-            if value and term in terms and (scenario, "s") in found:
-                found.add((terms[term], "s"))
+        for scenario in scenarios:
+            if value and term in SCENARIO_TERMS[scenario]:
+                found.add((SCENARIO_TERMS[scenario][term], "s"))
     if "T4" in case["thresholds"]:
         found.add(("highly_capable", "s"))  # a model witness of the stated 3.6 definition
     if case["findings"].get("OT5"):
@@ -184,7 +188,7 @@ def selected_facts(choice):
 
 def check_premises(doc, case, choice):
     from ve.evaluate import evaluate
-    key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i", "RS3c")),
+    key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i")),
            WITHOUT_NARROWING == "N1")
     if key in _PREMISES_CHECKED:
         return
@@ -336,12 +340,12 @@ CLUSTERS = {
 
 
 def witness(id_):
-    extra = {"C1": ("in_the_lead", "competitor_better_mitigation"),
+    extra = {"C1": ("in_the_lead",),
              "C2": ("marginal_major_role",),
-             "C7": ("competitors_strong_measures", "competitor_better_mitigation",
-                    ("develops_highly_capable", "c"))}
+             "C7": (("develops_highly_capable", "c"),)}
+    scenarios = {"C1": ("lead", "upleveling"), "C7": ("competitors", "upleveling")}
     return {"id": "W", "thresholds": [], "findings": {"OT5": True, "OT8": True, "OT7": True},
-            "extra": extra.get(id_, ())}
+            "extra": extra.get(id_, ()), "scenarios": scenarios.get(id_, ())}
 
 
 @lru_cache(maxsize=None)
@@ -495,7 +499,7 @@ def threshold_answer(id_, case):
             return {"route": "D3 ve-units@1", "undecided": "resource limit: factor proof and counterproof absent"}
         if measured != case["findings"]["OT15"]:
             raise AssertionError("OT15 case finding disagrees with VE's factor certificate")
-    sets = ("RS3o", "RS3i", "RS3c")
+    sets = ("RS3o", "RS3i")
     negative = id_ in ("T2b", "T4b")
     rows = []
     for assignment in choices(sets):
@@ -649,13 +653,13 @@ def never_answer(id_):
 def lead_without_competitors():
     """N3: the lead scenario (K19b, delay needed in both scenarios) with no competitor that has developed or will
     soon develop a highly capable model.  RS5 is the case's premise (build_document READINGS): under import F25's
-    scenario fails, so its facts are absent; under noimport "all competitors ... are able" holds vacuously, so its
-    facts and evidence are found.  The item holds when no F25 rule selects on either of its acts."""
+    scenario fails, so its evidence is absent; under noimport "all competitors ... are able" holds vacuously, so its
+    evidence is found.  The item holds when no F25 rule selects on either of its acts."""
     rows = []
     for assignment in choices(("RS5",)):
-        scenario = ("in_the_lead",) + (("competitors_strong_measures",) if assignment["RS5"] == "noimport" else ())
+        scenarios = ("lead",) + (("competitors",) if assignment["RS5"] == "noimport" else ())
         case = {"id": "N3", "thresholds": [], "findings": {"OT5": True, "OT7": True, "OT8": True},
-                "extra": scenario}
+                "extra": ("in_the_lead",), "scenarios": scenarios}
         choice = {**BASE, **assignment}
         docs = [document(tuple(sorted(choice.items())), default) for default in ("deny", "allow")]
         check_premises(docs[0], case, choice)
@@ -665,6 +669,12 @@ def lead_without_competitors():
                      "rules": names, "reason": "no F25 rule selects on posture_matched or delay"})
     return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation",
             "cone": ["RS5"], "choices": rows}
+
+
+# The K items whose selected rules cannot answer them, with the reason (one table: a limit that hides an answer the
+# selected rules give is a translation error, tests/test_rsp_fidelity_fix.py).
+K_LIMITS = {item: "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
+            for item in ("K9", "K10")}
 
 
 def answer(item):
@@ -691,12 +701,8 @@ def answer(item):
         predicate = PREDICATES.get(part)
         if predicate is None:
             return {"route": "D1", "undecided": "translation limit: no predicate for this question"}
-        if id_ in ("K12a", "K12b"):
-            return {"route": "D1", "undecided": "translation limit (SC): Board consultation and LTBT approval share one act"}
-        if id_ in ("K15a", "K17"):
-            return {"route": "D1/D3", "undecided": "VE limit (ET): prompt notice or effective-date order is not encoded"}
-        if id_ in ("K9", "K10"):
-            return {"route": "D1", "undecided": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"}
+        if id_ in K_LIMITS:
+            return {"route": "D1", "undecided": K_LIMITS[id_]}
         return query(case, predicate, not kind.startswith("FORBIDS:"), requirement=kind.startswith("REQUIRED:"))
     if id_ == "G7":
         return {"route": "D1", "parts": {
@@ -730,6 +736,7 @@ def verdict(result):
     return "SOME(" + " | ".join("&".join(f"{s}={v}" for s, v in c.items()) for c in yes) + ")"
 
 
+# "result" names RS3c = result, which PLAN 12 excludes: only the frozen key (T7) still uses it, and no choice has it.
 ALIASES = {"cond": ("RS1", "cond"), "uncond": ("RS1", "uncond"),
            "Ds": ("RS2", "Ds"), "iffo": ("RS3o", "iff"), "iffi": ("RS3i", "iff"),
            "result": ("RS3c", "result"), "rel": ("RS4", "rel"),
@@ -761,8 +768,25 @@ def same_set(key, result):
                                    for d in desired) for row in result["choices"])
 
 
+def key_deviations(plan=None):
+    """PLAN section 12's "Key deviation" table: item -> its frozen key, the DRI's answer and the ruling (one owner)."""
+    text = (HERE / "PLAN.md").read_text() if plan is None else plan
+    section = text.split("\n## 12.", 1)[1].split("\n## 13.", 1)[0]
+    rows, inside = {}, False
+    for line in (raw.strip() for raw in section.split("\n")):
+        if line.startswith("| Key deviation |"):
+            inside = True
+        elif inside and line.startswith("| ") and not line.startswith("|---"):
+            cols = [c.strip() for c in line.strip("|").split("|")]
+            rows[cols[0]] = {"key": cols[1], "answer": cols[2], "ruling": cols[4]}
+        elif inside and not line.startswith("|---"):
+            inside = False
+    return rows
+
+
 def compare(items):
     key = json.loads((HERE / "answer-key.json").read_text())["items"]
+    deviations = key_deviations()
     rows = []
     for entry in key:
         result = items[entry["id"]]
@@ -775,6 +799,11 @@ def compare(items):
             cause = {"kind": "translation limit" if reason.startswith("translation limit") else
                      "resource limit" if reason.startswith("resource limit") else "VE limit",
                      "feature_family": family, "reason": reason}
+        elif not agrees and entry["id"] in deviations and deviations[entry["id"]]["key"] == entry["key"] and \
+                same_set(deviations[entry["id"]]["answer"], result):
+            row = deviations[entry["id"]]
+            cause = {"kind": "key finding", "feature_family": "PLAN 12",
+                     "reason": f"key deviation: {row['answer']} (frozen key {row['key']}); {row['ruling']}"}
         elif not agrees:
             cause = {"kind": "VE bug or key finding", "feature_family": "pending source audit",
                      "reason": "requires a minimal repro before classification"}
@@ -814,8 +843,10 @@ def without_narrowings(baseline):
     return out
 
 
+# m1 removes only step 5's precedence over step 3. m3's C1, C7 and C-doc "become NONE" (PLAN 11) is now their answer
+# without the mutant, since F24's and F25's delay prevail over F26's release (PLAN 12), so m3 changes N2 alone.
 EXPECTED_MUTANTS = {"m1": ["C2", "C-doc"], "m2": ["G1"],
-                    "m3": ["C1", "C7", "C-doc", "N2"], "m4": ["G3"],
+                    "m3": ["N2"], "m4": ["G3"],
                     "m5": ["T1", "T2b", "T5"], "m6": ["D4"]}
 
 
