@@ -406,6 +406,7 @@ def test_a_rule_added_under_a_will_feature_is_a_will_rule_and_an_unclassified_fe
 
 
 def test_every_will_quote_is_the_pinned_source_text():
+    """The quotes are the pinned source's own words, which the gate runner does not store (tools/gate-optional.json)."""
     if not build_document.DEFAULT_SOURCE.exists():
         pytest.skip("the pinned source is not stored on this machine")
     text = build_document.DEFAULT_SOURCE.read_text()
