@@ -1,0 +1,7 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Compose/Dispatch.lean:957 VE.Compose.TableAdmits (S, trusted) and-or: ∧ -> ∨ (lean/VE/Compose/Examples.lean:287: Tactic `decide` proved that the proposition)
+trust_mutants: 8 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 2611 s
+trust_mutants: D[V], trusted: 2 KILLED, 15 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 21 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 1 UNKNOWN, 27 OTHER SHARD
+trust_mutants: steps: wall plan 20.2 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.4 s, mutants 2580.3 s, cleanup 3.9 s, reads 0.1 s; lake control_build 0.4 s (1), probe_install 1.4 s (1), control_probes 115.8 s (9), mutant_builds 187.4 s (13), mutant_checks 3530.3 s (11), stage_controls 1945.8 s (7), mutant_probes 119.5 s (9)
