@@ -4,6 +4,7 @@
 - **HEAD:** the final local commit on `feature/usecase-pf-keyfix` (code commits eeae9c6a84, 3d332d8262, f77f515f4c, 2127658328; this REPORT follows).
 - **What changed:** the six B-*/MREP cells of `usecases/openai-preparedness/answer-key.json` now read `SOME(N ∧ unscoped)` with no `soft`, as PLAN 6.2 does. A new test re-parses section 6 of every frozen-key use case and checks each transcribed cell. The rerun gives 236/239 (was 230/239); only the six MREP rows changed.
 - **Open items:** none. anthropic-rsp's key has no transcription mismatch, so nothing went to the DRI.
+- **Review fix (F1, dd334f26fc):** the transcriber compared a labelled key (RSP G7) by its values in insertion order, so it accepted G7's two verdicts swapped between labels and rejected the right key with its members reordered. It now compares label by label. See "Review fix F1" below.
 
 Item: reviews/dri-decisions-20261030-usecase-pf-run.md item 1 (SIGNED), backlog `usecase-pf-keyfix`; queue order
 reviews/dri-decisions-20261112-order-codex-phases.md section 1 item 1.
@@ -94,10 +95,33 @@ parser is gone. `uv run python tools/gate_collection.py --check --prebuilt` prin
 | S4 | data, and selection | `usecases/anthropic-rsp/answer-key.json` | A-T1/ARG1's `soft` dropped | `select_tests.py --paths usecases/anthropic-rsp/answer-key.json` selects `tests/test_usecase_key_transcription.py` and `tests/test_safetyfw_usecases.py`; `test_answer_key_transcribes_section_6[anthropic-rsp]` fails (`('A-T1/ARG1', 'soft', None, 'only under the default force')`) |
 
 Python is the only language whose product code changed (`run.py`). No Lean or Rust file changed. The transcriber also
-has 19 permanent scratch-copy mutants (`test_one_changed_cell_is_caught`, both use cases), each caught at that cell and
+has 23 permanent scratch-copy mutants (`test_one_changed_cell_is_caught`, both use cases), each caught at that cell and
 nowhere else: a key retyped, cut or given the wrong connective; a soft marker added, dropped or moved to another
-reading; a labelled key (RSP G7) changed; a harm word changed; a note section 6 lacks; an item moved to another
+reading; a labelled key (RSP G7) changed, its verdicts swapped between labels, a label renamed or dropped, or flattened; a harm word changed; a note section 6 lacks; an item moved to another
 subsection, added, dropped or given an extra field.
+
+## Review fix F1 (usecase-pf-keyfix-review.final.md)
+
+Class: a labelled (dictionary) key compared by member order instead of by label. G7 is the only dictionary key in
+either frozen use case. `usecases/anthropic-rsp/run.py` (`same_set`) and `reference.py` (`matches`) already look up each
+part by its label. The one order-based comparison was this test's `keyed`, which is now removed. The section-6 parser
+now reads a multi-verdict cell as {label phrase: verdict}: one `;` clause each, every verdict accounted for.
+`key_mismatch` needs each transcribed label to name exactly one section-6 phrase by its content words, with function
+words dropped. Every phrase must be named once, and each verdict is compared under its own label.
+
+- PROBE F1, before the fix (on ed353ac0f3): `AssertionError: wrong labelled verdicts accepted`, mismatches `[]`.
+  After the fix: G7 reported as `key: wrong verdict under ['COVERED:QUARTERLY_UPDATE', 'REQUIRED:PROMPT_BOARD_NOTICE']`.
+- Regression tests: `test_one_changed_cell_is_caught[anthropic-rsp:G7#1]` (the probe's swap), `[…:G7#2]` (a label that is
+  not in section 6), `[…:G7#3]` (a dropped label), `[…:G7#4]` (flattened to one verdict);
+  `test_labelled_keys_compare_by_label_not_member_order[both cases]` (reordered members accepted);
+  `test_section_6_labels_g7_verdicts` (the parsed labels, plus a too-short label refused). The original
+  `[anthropic-rsp:G7]` id is unchanged.
+- Seeded bug S5 (Python, test code): `key_mismatch` set back to compare values in member order. `3 failed, 28 passed`:
+  `test_labelled_keys_compare_by_label_not_member_order[anthropic-rsp]`, `test_one_changed_cell_is_caught[anthropic-rsp:G7#1]`,
+  `[anthropic-rsp:G7#2]`. Restored.
+- Selected tests on dd334f26fc: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` exited 0 (GitHub
+  Actions run usecase-pf-keyfix-dd334f26-t471144; shards 13/13, 14/14, 12/12). `lake build`: success (1424 jobs).
+  `python3 lean/audit.py`: PASS.
 
 ## Tests and checks run
 
@@ -139,7 +163,7 @@ subsection, added, dropped or given an extra field.
 2. Deliverables built, no rule broken: PASS. The deliverables table above lists each step with its commit and test.
    One owner: the duplicate section-6 parser in `tests/test_pf_fidelity_fix.py` was removed. No permanent report test
    was added.
-3. Tests can fail: PASS. Seeded bugs S1-S4, and `test_one_changed_cell_is_caught` (19 mutants).
+3. Tests can fail: PASS. Seeded bugs S1-S5, and `test_one_changed_cell_is_caught` (23 mutants).
 4. Python, Lean and Rust agree: N.A. No engine changed. The use-case answers moved only on the six rows whose key
    changed (results.json diff, step 5).
 5. R8 binding: N.A. No relayed field. The transcription's own binding (no item, field or note outside section 6) is
@@ -162,6 +186,6 @@ subsection, added, dropped or given an extra field.
     (`test_answer_key_transcribes_section_6`, both cases) and each changed cell is refused
     (`test_one_changed_cell_is_caught`). Every count above names its command. The spec re-read section is above.
 15. No overclaim / no silent cut / every check can fail / limits charged: PASS for the first three (all five steps are
-    delivered; S1-S4 and the 19 scratch mutants). Limits: N.A. "Every frozen-key use case" is pinned by
+    delivered; S1-S5 and the 23 scratch mutants). Limits: N.A. "Every frozen-key use case" is pinned by
     `test_every_frozen_key_use_case_is_checked` and the glob. "Byte-identical" is pinned by
     `test_section_6_is_the_frozen_key` and the recompute quoted above.
