@@ -376,3 +376,19 @@ def test_key_deviations_are_plan_section_12s_and_the_saved_causes_cite_them():
 def test_regulated_predicates_stay_64_after_fix_2():
     regulated = [n for n, e in rsp_vocabulary.environment()["vocabulary"]["predicates"].items() if "regulated" in e]
     assert len(regulated) == 64 and "mitigation_in_place_or_planned" not in regulated
+
+
+def test_probe_f1_fix_2_deliverables_are_present():
+    """Review fix round 1, PROBE F1: the item's text deliverables exist on the branch."""
+    rules = (RSP / "rules.d1.ve").read_text()
+    harness = (RSP / "run.py").read_text()
+
+    def body(block_id):
+        return rules.split(f"\n## {block_id} ")[1].split("\n## ")[0].split("\n", 1)[1]
+
+    report = base.REPO / "docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-2/REPORT.md"
+    assert report.exists()
+    assert "competitors_strong_measures" not in body("f25-meet") + body("f25-delay")
+    assert "competitor_better_mitigation" not in body("f26-effort") + body("f26-need-not-delay")
+    assert "effective-date order is not encoded" not in harness
+    assert "final" in body("f19-unredacted") and "after consulting" not in body("f15-select-approval")
