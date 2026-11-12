@@ -2301,7 +2301,7 @@
           "stoppedFields",
           "statementRow"
         ],
-        "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively; en-e3a-cutback: the sentences and the grammar are computed once in `answerWith` and handed to the reader, `outcomeFields` and the tags (re-pinned whole)"
+        "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; registered in `lean/VE/Service/Registry.lean` and relayed by `ve/norm_english.py` (en-e3b); the full file is pinned conservatively; en-e3a-cutback: the sentences and the grammar are computed once in `answerWith` and handed to the reader, `outcomeFields` and the tags (re-pinned whole)"
       }
     ],
     "other_json": {
