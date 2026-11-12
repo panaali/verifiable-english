@@ -11861,8 +11861,21 @@
         "VE.Time.Wire.numbers2",
         "VE.Time.Wire.reservedDay",
         "VE.Time.Wire.reservedElapsed",
-        "VE.Time.Wire.runCase",
-        "VE.Time.Wire.runCaseReported",
+        {
+          "name": "VE.Time.Wire.runCase",
+          "tied": [
+            "VE.Time.Wire.quantity_admission_wire_sound",
+            "VE.Time.Wire.quantity_countermodel_wire_sound",
+            "VE.Time.Wire.quantity_certificate_wire_sound",
+            "VE.Time.Wire.quantity_document_wire_sound"
+          ]
+        },
+        {
+          "name": "VE.Time.Wire.runCaseReported",
+          "tied": [
+            "VE.Time.Wire.runCaseReported_ok"
+          ]
+        },
         "VE.Time.Wire.runConversion",
         "VE.Time.Wire.runCount",
         "VE.Time.Wire.schema",
