@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-nightly-e78b6d94-t453260-lean",
+ "head": "7b61bcbdac4455560d74d1886755edf52a0d4724",
+ "argv": [
+  "x86sh-nightly-e78b6d94-t453260-lean",
+  "7b61bcbdac4455560d74d1886755edf52a0d4724",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
