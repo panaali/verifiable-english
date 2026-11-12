@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-fidelity-fix-6b3ca280-t482157-s2",
+ "head": "b24fbae0e1ee12751e3827f401234cc90283701b",
+ "argv": [
+  "armsh-cand-fsf-fidelity-fix-6b3ca280-t482157-s2",
+  "b24fbae0e1ee12751e3827f401234cc90283701b",
+  "96d41b90247661ba2c6e6068e8054760a30235ad",
+  "-",
+  "-",
+  "4",
+  "2/4"
+ ]
+}
