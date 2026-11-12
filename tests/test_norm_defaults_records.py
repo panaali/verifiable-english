@@ -106,7 +106,7 @@ CONTRAST = re.compile(r"\b(?:is|are|was|be)\s+(?:not|never)\s+`todayGate`|\bnot\
                       r"\bdisagrees?\s+with\s+`todayGate`")
 CHECK = re.compile(r'(?:if|else if) (.+?) then\s*\.error \(unsupported "([^"]+)"\)')
 ATOM = re.compile(r'(!?)ps\.contains "([^"]+)"')
-SHARED = re.compile(r"`\[([^\]]+)\]`[^.]*?\bboth\b[^.]*?`UnsupportedProfile: ([^`]+)`")
+SHARED = re.compile(r"`\[([^\]]+)\]`[^.\[]*?\bboth\b[^.\[]*?`UnsupportedProfile: ([^`]+)`")
 
 
 def wrapper_contrast_faults(text: str) -> list[str]:
@@ -196,6 +196,8 @@ def test_wrapper_scans_refuse_and_accept() -> None:
                         ("They differ.", "names no shared-refusal")):
         found = shared_refusal_faults(text, source)
         assert any(fault in f for f in found), (text, found)
+    paired = "They differ on `[readings@1, relational-fol@0]` and share a refusal on " + shared  # names the right list
+    assert shared_refusal_faults(paired, source) == []
 
 
 # 2. ndc2-F3 ---------------------------------------------------------------------------------------------------------
