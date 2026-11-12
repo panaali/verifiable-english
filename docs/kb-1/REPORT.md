@@ -1,9 +1,9 @@
 # KB-1 build report
 
-DRI signature needed: trust budget K +34 (DELTA row 2; R16 does not cover K growth), asked in manage-agents/inbox/dri/20261112T131749Z-kb-1-1064078.md.
+Trust budget K +34 (DELTA row 2; R16 does not cover K growth): SIGNED by the DRI 2026-11-12 (reviews/dri-decisions-20261112-kb-1.md item 1), allowance recorded in `docs/trust-baseline.json` (3350e57cdf).
 Status: deliverables (0) to (8) built and committed on `infra/kb-1`; trust_mutants exit 0; selected run: 2 failures (this branch's), fixed, rerun green.
 What changed: `lean/VE/Kernel/Carry.lean` (verbatim), the kernel check in the gate and in regen, `--check` also ratchets verdict writers outside the kernel, `--out` refuses a total above the signed one, the per-kind table, the experimental import boundary, the CHECKED wording, AGENTS.md's exception.
-Open: the DRI's K signature (stops the item until signed); 14 untied kinds for the architect (listed below); `usecases/openai-preparedness/run.py --check` already fails on main (stale `results.json`, not this branch).
+Open: 14 untied kinds for the architect (listed below); `usecases/openai-preparedness/run.py --check` already fails on main (stale `results.json`, not this branch).
 Kernel: 9,504 lines (= baseline), verdict writers outside the kernel 56 (= baseline).
 
 SIZE: 291 product, 338 tests, 211 other hand-written lines (`git diff --numstat 35a9ba135f...HEAD`, generated files left out; tests include `lean/VE/Kernel/CarryChecks.lean`).
@@ -155,7 +155,7 @@ Kernel check: `regen_generated.py --check --only kernel-closure`: kernel 9,504 <
 4. N.A.: no Python/Lean/Rust answer path changed.
 5. N.A.: no new field read from a Lean answer.
 6. PASS (pending the chain): selected run on the committed HEAD, its 2 failures fixed and rerun (Tests run); the chain gates the final HEAD.
-7. PASS: DELTA row 1 cites R1 with its test; row 2's K growth is listed as needing the DRI in this report's first line.
+7. PASS: DELTA row 1 cites R1 with its test; row 2's K growth cites the DRI's signature (reviews/dri-decisions-20261112-kb-1.md item 1), as this report's first line does.
 8. PASS: DELTA.md lists the help text and the trust delta; no service answer changes (no runner touched).
 9. PASS: `uv run python tools/select_tests.py --base $(git merge-base HEAD main)` selects `tests/test_kernel_closure.py`, `tests/test_lean_experimental_boundary.py`, `tests/test_gate_trust.py`.
 10. PASS: seeded bug k breaks `shell_provenance`; Carry.lean's statements are the architect's, verbatim.
