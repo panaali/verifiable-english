@@ -1,0 +1,12 @@
+{
+ "job": "testmap-8a47faa0-t446518-s7",
+ "head": "b15402667652a04619b664787ea8381349e5fd1d",
+ "argv": [
+  "testmap-8a47faa0-t446518-s7",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-831c388f821b.tar.zst",
+  "b4359a3c3cd9df0ac79cf6507b8602f8b5cc2472f11f4b89078898c5131d0797",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s7.json.gz\" tests/test_wire_gate_corpus.py tests/test_keyed_answers_authority.py tests/test_route_row_schemas.py tests/test_acts_tree_mutants.py tests/test_scope_authoring.py tests/test_speech_acts_conformance.py tests/test_natural.py tests/test_gate_quarantine.py tests/test_readings_defaults_statements.py tests/test_rd9_statements.py tests/test_defaults_zone_ties.py tests/test_rust_reproducible.py tests/test_calc_units.py tests/test_answer_cutoff.py tests/test_wire_contract_faults.py tests/test_document_lean_switch.py tests/test_judgments_answer.py tests/test_lean_import_reader.py tests/test_lake_outputs.py tests/test_b16f_document.py tests/test_norm_defaults_contract.py tests/test_discourse.py tests/test_code_map.py tests/test_arith_uncharged_costs.py tests/test_acts_elaborate_relay.py tests/test_gate_trust.py tests/test_p0_three_way.py tests/test_calc_dimensions.py tests/test_lean_limits.py tests/test_profile_table.py tests/test_numbers_phrases.py tests/test_batch_scope.py tests/test_lean_budget_types.py tests/test_rights_open_act_is_open.py tests/test_readings_defaults_rd3_report.py tests/test_eff_tests_report.py tests/test_defaults_uniform.py tests/test_readings_defaults_rd6a_report.py tests/test_lean_first_b10a_report.py tests/test_merge_tooling_evidence.py tests/test_b16c_evidence.py tests/test_lean_first_b3b_report.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
