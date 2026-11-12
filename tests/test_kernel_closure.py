@@ -571,8 +571,8 @@ def test_the_kind_table_problems_are_found_before_any_lean_runs():
 
 
 def writers(*outside, inside=()):
-    return {"verdict_writers": [{"name": n, "in_kernel": False} for n in outside]
-            + [{"name": n, "in_kernel": True} for n in inside]}
+    return {"verdict_writers": [{"name": n, "module": "M", "in_kernel": False} for n in outside]
+            + [{"name": n, "module": "M", "in_kernel": True} for n in inside]}
 
 
 def test_the_check_fails_when_verdict_writers_outside_the_kernel_rise():

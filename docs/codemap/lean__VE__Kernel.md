@@ -1,0 +1,1 @@
+- `lean/VE/Kernel/Carry.lean` — The carry rule (docs/spec/kernel-boundary.md, section 3): a shell mode states no verdict of its own.

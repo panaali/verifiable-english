@@ -688,7 +688,7 @@
   },
   {
    "axioms": [],
-   "lines": 6463,
+   "lines": 6465,
    "modes": [
     "normDefaults"
    ],
@@ -790,7 +790,7 @@
    },
    "theorems": 7,
    "tier": "candidate",
-   "wrap_lines": 5533,
+   "wrap_lines": 5535,
    "wrap_modules": {
     "VE.Acts.Decode": 63,
     "VE.Acts.Elaborate": 137,
@@ -817,6 +817,7 @@
     "VE.Defaults.Route": 2,
     "VE.Definitions.Elaborate": 52,
     "VE.Definitions.Layer": 42,
+    "VE.Events.Anchor": 2,
     "VE.Events.Chain": 37,
     "VE.Events.Decl": 81,
     "VE.Events.Premises": 48,
@@ -1213,7 +1214,7 @@
   },
   {
    "axioms": [],
-   "lines": 24135,
+   "lines": 24137,
    "modes": [
     "readingsRoute"
    ],
@@ -1339,7 +1340,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20443,
+   "wrap_lines": 20445,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1396,6 +1397,7 @@
     "VE.Definitions.Elaborate": 52,
     "VE.Definitions.Layer": 45,
     "VE.Discourse.Loader": 105,
+    "VE.Events.Anchor": 2,
     "VE.Events.Chain": 37,
     "VE.Events.Decl": 81,
     "VE.Events.Premises": 48,
@@ -1520,12 +1522,12 @@
   },
   {
    "axioms": [],
-   "lines": 35937,
+   "lines": 36079,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 35931,
+   "spec_lines": 36073,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1634,9 +1636,10 @@
     "VE.EnglishGrammar.Read": 72,
     "VE.EnglishGrammar.Rules": 312,
     "VE.EnglishGrammar.Run": 454,
-    "VE.EnglishGrammar.SourceWords": 80,
+    "VE.EnglishGrammar.SourceWords": 141,
     "VE.EnglishGrammar.Syntax": 75,
     "VE.EnglishGrammar.Token": 56,
+    "VE.Events.Anchor": 14,
     "VE.Events.Chain": 37,
     "VE.Events.Decl": 81,
     "VE.Events.Premises": 48,
@@ -1765,7 +1768,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1779,
+    "VE.Service.Document": 1846,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.Standalone": 841,
     "VE.Service.TypingDiagnostic": 201,
@@ -1870,12 +1873,12 @@
   },
   {
    "axioms": [],
-   "lines": 35436,
+   "lines": 35581,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 34608,
+   "spec_lines": 34753,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1974,9 +1977,10 @@
     "VE.EnglishGrammar.Read": 72,
     "VE.EnglishGrammar.Rules": 312,
     "VE.EnglishGrammar.Run": 454,
-    "VE.EnglishGrammar.SourceWords": 80,
+    "VE.EnglishGrammar.SourceWords": 141,
     "VE.EnglishGrammar.Syntax": 75,
     "VE.EnglishGrammar.Token": 56,
+    "VE.Events.Anchor": 14,
     "VE.Events.Chain": 37,
     "VE.Events.Decl": 81,
     "VE.Events.Premises": 48,
@@ -2110,7 +2114,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 2042,
+    "VE.Service.Document": 2112,
     "VE.Service.DocumentView": 75,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
@@ -2152,7 +2156,7 @@
    },
    "theorems": 7,
    "tier": "candidate",
-   "wrap_lines": 12409,
+   "wrap_lines": 12818,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -2197,6 +2201,10 @@
     "VE.Discourse.Loader": 185,
     "VE.Discourse.Manifest": 14,
     "VE.Discourse.Wire": 31,
+    "VE.Events.Anchor": 2,
+    "VE.Events.Decl": 81,
+    "VE.Events.Premises": 47,
+    "VE.Events.Wire": 195,
     "VE.Finite": 33,
     "VE.Grammar.Basic": 19,
     "VE.Grammar.Derives": 47,
@@ -2205,6 +2213,7 @@
     "VE.Layout.Anchors": 56,
     "VE.Layout.List": 92,
     "VE.Limits": 24,
+    "VE.NormDefaults.Packs": 5,
     "VE.NormDefaults.Tree": 46,
     "VE.NormDefaults.Wire": 77,
     "VE.Norms.Basic": 35,
@@ -2250,7 +2259,7 @@
     "VE.Scope.Readings": 96,
     "VE.Scope.Wire": 94,
     "VE.Semantics": 14,
-    "VE.Service.Document": 888,
+    "VE.Service.Document": 918,
     "VE.Service.ParseDiagnostic": 337,
     "VE.Service.Standalone": 1136,
     "VE.Service.TypingDiagnostic": 201,
@@ -2264,6 +2273,7 @@
     "VE.Surface": 247,
     "VE.Syntax": 49,
     "VE.Time.Budget": 21,
+    "VE.Time.Calendar": 49,
     "VE.Time.Syntax": 14,
     "VE.Time.Wire": 227
    }

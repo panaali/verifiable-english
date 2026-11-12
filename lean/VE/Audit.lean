@@ -229,6 +229,7 @@ import VE.Judgments.Examples
 import VE.Judgments.Scan
 import VE.Judgments.Status
 import VE.Judgments.Undeclared
+import VE.Kernel.Carry
 import VE.Kit.Except
 import VE.Layout.Anchors
 import VE.Layout.Discourse
@@ -3900,6 +3901,10 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.usageMap_sound
 #print axioms VE.Judgments.usageMap_unused
 #print axioms VE.Judgments.viewOf_legacy
+#print axioms VE.Kernel.Path.sound
+#print axioms VE.Kernel.ran_meaning
+#print axioms VE.Kernel.shell_provenance
+#print axioms VE.Kernel.shell_sound
 #print axioms VE.Kit.Except.bind_ok
 #print axioms VE.Layout.anchorReach_iff
 #print axioms VE.Layout.continues_iff

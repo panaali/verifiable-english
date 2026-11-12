@@ -38,6 +38,7 @@ lean/axioms.txt merge=ve-generated
 lean/VE/Route/frozen-sources.sha256 merge=ve-generated
 tools/trust-classes.json merge=ve-generated
 docs/trust-baseline.json merge=ve-generated
+docs/kernel/closure-baseline.json merge=ve-generated
 lean/checkers.lock merge=ve-generated
 ve/backends/lean_service_schema/*.json merge=ve-generated
 docs/test-architecture/binding-census.json merge=ve-generated

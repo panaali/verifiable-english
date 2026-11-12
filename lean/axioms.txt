@@ -3374,6 +3374,10 @@
 'VE.Judgments.usageMap_sound' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.usageMap_unused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.viewOf_legacy' does not depend on any axioms
+'VE.Kernel.Path.sound' does not depend on any axioms
+'VE.Kernel.ran_meaning' does not depend on any axioms
+'VE.Kernel.shell_provenance' depends on axioms: [propext, Quot.sound]
+'VE.Kernel.shell_sound' depends on axioms: [propext, Quot.sound]
 'VE.Kit.Except.bind_ok' does not depend on any axioms
 'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
