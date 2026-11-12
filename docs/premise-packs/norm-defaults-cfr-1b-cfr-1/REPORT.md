@@ -120,7 +120,12 @@ tests/test_readings_route_norm_defaults_binding.py`, then restored (`git diff --
 
 ## Selected tests
 
-PENDING (filled in after the final selected run on the committed tree).
+`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD
+main) --run` on the committed, clean HEAD 6dfe0667c (tree d2b37fc493). It ran on the VM (`MAC_LAST_RESORT`):
+`recorded 430 units for tree d2b37fc493; ... 0 failed` and `exit=0; 8300s`. Units that bear on this item, all
+`exit 0`: `tests/test_readings_route_norm_defaults_binding.py`, `tests/test_readings_route_relay.py`,
+`tests/test_readings_route_fuzz.py`, `tests/test_relay_binding_inventory.py`, `tests/test_relay_mutation_gate.py` and
+`tests/test_norm_defaults_response_binding.py`. No test of main-known-red.txt was involved (none failed).
 
 ## DELTA
 
