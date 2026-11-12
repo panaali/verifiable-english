@@ -65,6 +65,20 @@
    "bug": "cl-levels moved back into facts.d1.ve (the FACTS collection)",
    "test": "tests/test_pf_fidelity_fix.py::test_facts_hold_exactly_their_stated_inventory",
    "result": "FAILED: facts.d1.ve's block list differs"
+  },
+  {
+   "id": "j",
+   "file": "usecases/openai-preparedness/run.py",
+   "bug": "premise_units ignores the goal's predicates (names = set()), so no route names a premise unit outside FACTS (review F1)",
+   "test": "tests/test_pf_fidelity_fix.py::test_premise_units_follow_the_goal",
+   "result": "FAILED: premise_units(indicator_for goal) == [] != ['fn5-indicator']"
+  },
+  {
+   "id": "k",
+   "file": "usecases/openai-preparedness/results.json",
+   "bug": "G7's rows drop their \"rules\": [\"fn5-indicator\"] tie (review F1, the state before the fix)",
+   "test": "tests/test_pf_fidelity_fix.py::test_facts_hold_exactly_their_stated_inventory, tests/test_pf_fidelity_fix.py::test_every_premise_unit_outside_facts_is_named_by_an_item",
+   "result": "FAILED: both; premise units no item names: ['fn5-indicator']"
   }
  ]
 }
