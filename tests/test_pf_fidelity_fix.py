@@ -438,6 +438,36 @@ def test_facts_hold_exactly_their_stated_inventory(pf):
     assert not {"cl-levels", "fn5-indicator"} & {b.id for b in T.rule_blocks()}
     saved = json.loads((PF / "results.json").read_text())
     assert saved["items"]["N4"]["choices"][0]["rules"] == ["cl-levels"]
+    # Review F1: G7 rests on footnote 5's indicator premise, so every G7 row names fn5-indicator.
+    assert [row["rules"] for row in saved["items"]["G7"]["choices"]] == [["fn5-indicator"]] * 2
+
+
+def test_every_premise_unit_outside_facts_is_named_by_an_item():
+    """Review F1 as a class: uc-audit ties an item to the units its results.json record names, plus FACTS. A fact
+    block of rules.d1.ve is no part of FACTS, so some item's rows must name it, or an UNFAITHFUL re-read of it
+    would fail no item."""
+    saved = json.loads((PF / "results.json").read_text())
+    named = {unit for item in saved["items"].values() for row in item.get("choices", ())
+             for unit in row.get("rules", ())}
+    units = {b.id for b in T.rule_fact_blocks()}
+    assert units == {b.id for b in T.read_blocks("rules.d1.ve") if not T.is_rule(b)}
+    assert units <= named, f"premise units no item names: {sorted(units - named)}"
+
+
+def test_premise_units_follow_the_goal(pf):
+    """Review F1: a route's premise units are derived from its goal's predicates (run.premise_units), not listed by
+    hand: G7's goal (indicator_for) rests on fn5-indicator, N4's (low, medium) on cl-levels, and a goal naming
+    neither rests on no unit outside FACTS."""
+    from ve import ast as A
+    env = T.base_environment()
+    level = lambda p: ["exists", "level", ["unary", p, ["var", 0]]]  # noqa: E731
+    indicator = ["exists", "evaluation", ["exists", "level", ["binary", "indicator_for", ["var", 1], ["var", 0]]]]
+    assert R.premise_units(A.formula_from_data(env, indicator)) == ["fn5-indicator"]
+    assert R.premise_units(A.formula_from_data(env, ["or", level("low"), level("medium")])) == ["cl-levels"]
+    assert R.premise_units(A.formula_from_data(env, ["and", indicator, level("low")])) == [
+        "cl-levels", "fn5-indicator"]
+    assert R.premise_units(A.formula_from_data(env, level("high"))) == []
+    assert R.low_medium_never()["choices"][0]["rules"] == ["cl-levels"]
 
 
 def test_regulated_predicates_stay_within_64():

@@ -82,9 +82,16 @@ def rule_blocks():
 
 
 @lru_cache(maxsize=None)
+def rule_fact_blocks():
+    """The fact blocks of rules.d1.ve: premise units outside FACTS, each tied to an item only by its name in that
+    item's rows (run.premise_units)."""
+    return tuple(b for b in read_blocks("rules.d1.ve") if not is_rule(b))
+
+
+@lru_cache(maxsize=None)
 def fact_blocks():
     """facts.d1.ve's blocks, then the fact blocks of rules.d1.ve."""
-    return read_blocks("facts.d1.ve") + tuple(b for b in read_blocks("rules.d1.ve") if not is_rule(b))
+    return read_blocks("facts.d1.ve") + rule_fact_blocks()
 
 
 @lru_cache(maxsize=None)

@@ -500,15 +500,37 @@ def silence(case, predicates, *, baseline=None, route="silence"):
             "cone": list(sets), "choices": rows}
 
 
+def predicates_of(formula):
+    """Every predicate name a formula (a tree of dataclasses) mentions."""
+    import dataclasses
+    if isinstance(formula, (tuple, list)):
+        return set().union(*(predicates_of(part) for part in formula)) if formula else set()
+    if not dataclasses.is_dataclass(formula):
+        return set()
+    names = {formula.predicate} if isinstance(getattr(formula, "predicate", None), str) else set()
+    return names.union(*(predicates_of(getattr(formula, f.name)) for f in dataclasses.fields(formula)))
+
+
+def premise_units(goal):
+    """The premise units outside FACTS (the fact blocks of rules.d1.ve, each read as its own unit) that a route on
+    `goal` rests on: those whose premises mention a predicate of the goal. A route names them in its rows' "rules",
+    so uc-audit ties the item to each unit (a FACTS block is tied to every D1 item already)."""
+    names = predicates_of(goal)
+    units = {b.id for b in T.rule_fact_blocks()}
+    return sorted(b.id for b, formulas in T.facts() if b.id in units and names & predicates_of(formulas))
+
+
 def indicator_silence(case):
     """G7: the Framework is silent on a chemical evaluation indicating a High or Critical level when two models of
     every selected premise (fn5-indicator among them) differ on it: one where the case's chemical evaluation "e"
-    indicates such a level and one where it indicates none. Neither the claim nor its negation is then entailed."""
+    indicates such a level and one where it indicates none. Neither the claim nor its negation is then entailed.
+    Each row names the premise units the claim rests on (fn5-indicator)."""
     from ve.evaluate import evaluate
     env = T.base_environment()
     goal = A.formula_from_data(env, ["exists", "evaluation", ["and", ["unary", "chemical", ["var", 0]], [
         "exists", "level", ["and", ["binary", "indicator_for", ["var", 1], ["var", 0]],
                             ["or", ["unary", "high", ["var", 0]], ["unary", "critical", ["var", 0]]]]]]])
+    units = premise_units(goal)
     rows = []
     for assignment in choices(("RS2",)):
         choice = {**BASE, **assignment}
@@ -519,7 +541,7 @@ def indicator_silence(case):
             check_premises(doc, frozenset(found), choice)
             values.append(evaluate(doc.elaborated.base_environment(), goal, model(doc, frozenset(found)),
                                    trace=False).value)
-        rows.append({"choice": assignment, "holds": values == [False, True],
+        rows.append({"choice": assignment, "holds": values == [False, True], "rules": units,
                      "reason": "two models of the selected premises differ on the claim" if values == [False, True]
                      else f"the premises decide the claim: {values}"})
     return {"route": "D1 relational-fol@0: two finite models of the selected premises", "cone": ["RS2"],
@@ -717,14 +739,15 @@ def low_medium_never():
     """N4: a rule's level guard needs a reached level; from the change log's premise (cl-levels: no level is low or
     medium) no situation reaches a "low" or "medium" level, on every reading (the premise is "always")."""
     env = T.base_environment()
-    premises = tuple(f for b, fs in T.facts() if b.id == "cl-levels" for f in fs)
     goal = A.formula_from_data(env, ["forall", "situation", ["not", ["exists", "level", ["and", [
         "binary", "reached", ["var", 1], ["var", 0]], ["or", ["unary", "low", ["var", 0]],
                                                       ["unary", "medium", ["var", 0]]]]]]])
+    units = premise_units(goal)
+    premises = tuple(f for b, fs in T.facts() if b.id in units for f in fs)
     holds = entailed(premises, goal)
-    result = {"route": "D1 relational-fol@0 entailment certificate (cl-levels)", "cone": [],
+    result = {"route": f"D1 relational-fol@0 entailment certificate ({', '.join(units)})", "cone": [],
               "choices": [{"choice": {}, "holds": True if holds else None,
-                           "reason": holds or "UNKNOWN", "rules": ["cl-levels"]}]}
+                           "reason": holds or "UNKNOWN", "rules": units}]}
     if not holds:
         result["undecided"] = "resource limit: no entailment certificate"
     return result

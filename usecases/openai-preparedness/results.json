@@ -20851,14 +20851,20 @@
       "RS2": "nest"
      },
      "holds": true,
-     "reason": "two models of the selected premises differ on the claim"
+     "reason": "two models of the selected premises differ on the claim",
+     "rules": [
+      "fn5-indicator"
+     ]
     },
     {
      "choice": {
       "RS2": "sep"
      },
      "holds": true,
-     "reason": "two models of the selected premises differ on the claim"
+     "reason": "two models of the selected premises differ on the claim",
+     "rules": [
+      "fn5-indicator"
+     ]
     }
    ],
    "cone": [
