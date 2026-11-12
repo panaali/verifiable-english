@@ -1,6 +1,6 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "48",
+ "actions_version": "47",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "c006b1d40d125153f1329daa092278ec2bd2ec8423d20f7c2923da61e25e1389",
   "lean/VE/EnglishGrammar/Advice.lean": "cf3610add55379a34a61cbeaf1f023dc857e18ad201fc90adf311ab4ebedd1cd",
@@ -19,16 +19,16 @@
   "lean/VE/EnglishGrammar/Lexicon.lean": "fc9641fc6cefdf9ac33ae5443eeaded5ddfe582ce21c5b649b95f57abf6a2e49",
   "lean/VE/EnglishGrammar/Norm/Elab.lean": "cd1cc7419508696013df155fe503d9d81ff87f05e2736832a2cdae62acd37449",
   "lean/VE/EnglishGrammar/Norm/Owners.lean": "de1098a71b5e81270fb68886a7c1be64b5951b4870577494674b67dcb76657ab",
-  "lean/VE/EnglishGrammar/Norm/Read.lean": "445e833167ecac65662117c1db566064aa64ae22b5a570e01ddd0b207519296d",
-  "lean/VE/EnglishGrammar/Norm/Rules.lean": "c3958930918aec6ed2692e6b54277366a04f7632ab0758a6523c3d6a931988a0",
-  "lean/VE/EnglishGrammar/Norm/Run.lean": "e6b2e54e1f1899adbd49f62e0c3784067fb3635befe8102e69222c87d6e416c6",
+  "lean/VE/EnglishGrammar/Norm/Read.lean": "9a7f187efba43ea5d555a19b66ea61db46d9c0b257b03ef2941c3ecd89422cc2",
+  "lean/VE/EnglishGrammar/Norm/Rules.lean": "7cd657e7e8337c7bbc0ff67de2e344a3a3107084ced7596b167bba59f4744e84",
+  "lean/VE/EnglishGrammar/Norm/Run.lean": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
   "lean/VE/EnglishGrammar/Norm/Value.lean": "b956579652a01c8d82004b929fc76dd1613abfedfdd4d7616567bbc6381c6b12",
   "lean/VE/EnglishGrammar/Policy.lean": "8053398c790011e867c874295b99b6ad8f5465457abe1a95f7c4d292e270c2fb",
   "lean/VE/EnglishGrammar/Read.lean": "ed29bf0a5c8e3fc49bd8af86b885206dc905ba0e2e55c9670303b9eec4db73df",
   "lean/VE/EnglishGrammar/Rules.lean": "87aeab4e98c32ef462b90f036808de81c88cdb3967febcd13d3806bc277fe85b",
   "lean/VE/EnglishGrammar/Run.lean": "bcc1f80385cff70400435cc4e7ff18732341ecd27c380c1a338a5741c1f6da70",
   "lean/VE/EnglishGrammar/SensesRequest.lean": "46f8f486350fe97d4ac5942d8a3afb6e8e864aac64efe93dea2246eac21c6599",
-  "lean/VE/EnglishGrammar/SourceWords.lean": "f89315d9473d59e3e0d3f9a31e2a211c7dd90f2a3468faa85cd76d1ee9d3b341",
+  "lean/VE/EnglishGrammar/SourceWords.lean": "3320d4623d5ec13928414e104bd9a069beeb58eefbc6c66b9e4cd988bb235149",
   "lean/VE/EnglishGrammar/Syntax.lean": "1341142dfe73d9ad1bfeefd7ff7de4cfbdfcfd5342f12a24d692de944265bc53",
   "lean/VE/EnglishGrammar/Token.lean": "98861a1a8696810186d9f9fc934678fae257b464356c5beaf6aec07e9c7f57ac",
   "lean/VE/Grammar/Basic.lean": "74adf159cfee0b28003a2945b98ec7e7ae2fab29017a210352601c873ee044db",
@@ -40,6 +40,6 @@
   "ve/english_grammar/norms@0.json": "0e872dc5477a110e2a0e461caa6fecd1d1cd49caef3199ce04ee96bf987b2c7b",
   "ve/english_grammar/order@0.json": "ad9a8467f94c6807cb313423cca836117e107f41baf784d49afcb00173723495",
   "ve/english_grammar/relational-fol@0.json": "de8bc6f7a338611879e5b7826f6f0f48c9b59e1defb549eac406602c13a032f7",
-  "ve/english_grammar/source_words.json": "e5ef1a3ab076c5a52fc34a890ae5d6b43e5893670fd4b4fc1a07f79a6d697465"
+  "ve/english_grammar/source_words.json": "9ff91e692cf46ddc94afb3ba02878af9cfbec850bcbf8dc9d4781026a2d7226b"
  }
 }

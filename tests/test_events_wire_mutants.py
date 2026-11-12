@@ -70,7 +70,7 @@ HOOK = {
     "view-keeps-the-profile": ('.filter (· != "events@0")', ""),
     "view-no-dates": ("(constants ++ dated)", "constants"),
     "view-drops-the-constants": ("(constants ++ dated)", "dated"),
-    "view-anchor-as-iso": ('if d.V.anchor == some D then "the date of this document" else D.iso', "D.iso"),
+    "view-anchor-as-iso": ('if d.V.anchor == some D then anchorWording else D.iso', "D.iso"),
     "charge-states-once": ("2 * states.length", "states.length"),
     "charge-no-links": ("+ raw.length > VE.Limits.maxPredicates", "> VE.Limits.maxPredicates"),
     "charge-off-by-one": ("raw.length > VE.Limits.maxPredicates", "raw.length ≥ VE.Limits.maxPredicates"),

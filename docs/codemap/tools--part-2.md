@@ -1,3 +1,6 @@
+- `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
+- `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
+- `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
 - `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.

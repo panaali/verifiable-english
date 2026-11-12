@@ -53,9 +53,10 @@ def unavailable (what : String) : String := "CheckerUnavailable: " ++ what
 
 /-- The profiles whose document semantics this mode owns: the FOL family with the statement layers whose
 `load_document` steps and coverage lines are the plain wrapper's. A document listing any other profile is
-`CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). -/
+`CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). `events@0`
+is read on the soft chain's layered route only (`eventsView`, et-5b). -/
 def ownedProfiles : List String :=
-  ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
+  ["alternatives@0", "data@0", "definitions@0", "documents@1", "events@0", "judgments@0", "norm-defaults@0", "norms@0",
    "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
@@ -799,6 +800,13 @@ structure Env where
   cardinality : Option VE.Cardinality.CardEnv := none
   /-- Under `judgments@0`, the bound names each authored fence is read with (spec 9.5), encoded once. -/
   boundNames : Option Json := none
+  /-- An `events@0` document's environment as written and its hook, its block decoded once (`eventsView`, et-5b);
+  `json` is then the hook's view, and `profiles` and `envId` are the written environment's. -/
+  events : Option (Json × VE.Events.EventsHook) := none
+
+/-- The environment an `events@0` document's mode read (`eventsView`, et-5b): the hook's view, which the answer
+carries (`Checked.eventsView`); `none` for every other document. -/
+def Env.eventsView (E : Env) : Option Json := E.events.map (·.2.view)
 
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
 def Env.version (E : Env) : String :=
@@ -1004,7 +1012,7 @@ def decodedEnvironment (written : Json) (block : Block) : Except String Env := d
   let profiles ← VE.Route.Gate.profilesOf written
   if profiles.any VE.Compose.documentLayers.contains then
     let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
-  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none, none, none⟩
+  pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none, none, none, none⟩
 
 /-- A `MIXED` unit's parts as Python's `_parts` generator yields them from `cursor`: each part that starts at the
 cursor (`Loader.partOk`), until the first that does not; with the cursor after the last part when every part was
@@ -1104,7 +1112,7 @@ def cardinalityEnv (written : Json) : Except String Env := do
   let empty := Json.mkObj [("sorts", Json.mkObj []), ("predicates", Json.mkObj []), ("constants", Json.mkObj [])]
   let checked ← Standalone.validated (w.w6.target.setObjVal! "vocabulary" empty)
   pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, "cardinality@0" :: w.w6.profiles,
-    w.environmentId, .none, false, none, some w, none⟩
+    w.environmentId, .none, false, none, some w, none, none⟩
 
 /-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by
 `UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
@@ -1142,11 +1150,29 @@ def exceptionConditioned (units : Json) : Bool :=
     | .arr ps => ps.toList
     | _ => []).any fun u => (unitRules u).any ruleExceptionConditioned
 
+/-- An `events@0` document's environment (et-5b; events 2.9 items 1 to 7): `Events.eventsHook` over the document's
+open terms, the layered decoders' own reading (the composition gate's row, the block in spec 4's order with
+`LinkNotOpen`, decoded once), and the environment the rest of the mode reads, its view (`Events.routeView`: no block,
+no `events@0`, one constant of the day sort per named date). `terms` is `none` on a path that reads no document's open
+terms (the scope block's): there, as off the soft chain (no `soft-norms@0`, or `rights@0`, `readings@1` or senses),
+the base's refusal stands, word for word. -/
+def eventsView (environment : Json) (senses : Bool) (terms : Option Json) :
+    Except String (Json × Option (Json × VE.Events.EventsHook)) := do
+  let listed := listedProfiles environment
+  unless listed.contains "events@0" do return (environment, none)
+  let refusal := undecided environment "document checks under events@0 need its Lean profile route"
+  let some terms := terms | throw refusal
+  if senses || !listed.contains "soft-norms@0" || listed.any (["rights@0", "readings@1"].contains ·) then throw refusal
+  match ← VE.Events.eventsHook environment terms with
+  | some H => pure (H.view, some (environment, H))
+  | none => throw refusal
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
 envelope is read only under `senses` (`frozenEnv`, batch 16f). -/
-def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) : Except String Env := do
+def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) (terms : Option Json := none) :
+    Except String Env := do
   match environment.getObjValD "profiles" with
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
@@ -1159,8 +1185,12 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
       throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
     return ← frozenEnv environment
   let listed := listedProfiles environment
-  if let some p := listed.find? fun p => !ownedProfiles.contains p then
-    throw (undecided environment s!"document checks under {p} need its Lean profile route")
+  -- `events@0` is named first where it stands first, as when no list with it was owned (et-5b).
+  if listed.any (!ownedProfiles.contains ·) then
+    if let some p := listed.find? fun p => p == "events@0" || !ownedProfiles.contains p then
+      throw (undecided environment s!"document checks under {p} need its Lean profile route")
+  let (environment, events) ← eventsView environment senses terms
+  let listed := listedProfiles environment
   if listed.contains "judgments@0" then
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed judgmentsApart
@@ -1190,7 +1220,11 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some k := keys.find? (!(envelopeKeys block).contains ·) then
     throw (undecided environment s!"the environment block {k} needs its Lean route's decoder")
   match decodedEnvironment environment block with
-  | .ok E => pure E
+  | .ok E => match events with
+    | none => pure E
+    | some (written, H) => do
+      let ps := listedProfiles written
+      pure { E with profiles := ps, envId := ← Standalone.environmentIdOf ps written, events := some (written, H) }
   | .error m => throw (if m.startsWith "CheckerUnavailable" then m else (vocabularyFault environment).getD m)
 
 /-- The `check` mode's typed decoder of one formula (`Standalone.decodeTyped`: `Route.Typed.check` on the first-order
@@ -2282,8 +2316,9 @@ open VE.Service.Document
 
 /-- The `norm-defaults` mode's case that a document's soft units make: environment `E.lower` and the free norms (each
 unit of kind `norm` with soft content, under no reading set: Python's `_free_norms`, whose attached units PC-2b
-adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. Another route, or `events@0`
-(refused by `ownedProfiles`), makes no case (`null`): the rights document is PC-2c's. -/
+adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. Another route, or an
+environment listing `events@0`, makes no case (`null`): the rights document is PC-2c's. An `events@0` document's `Env`
+reads the route's view, which lists no `events@0`; `check` reads it through `eventsLayeredOf` (`chainLayeredOf`), never `layeredOf`. -/
 def requestOf (E : Env) (front : Json) (units : List SourceUnit) : Json :=
   let environment := wireJson 257 E.lower
   if VE.NormDefaults.Wire.layeredRoute environment != some "soft-norms@0" || (VE.Compose.listedProfiles environment).contains "events@0" then .null else
@@ -2301,6 +2336,39 @@ def requestOf (E : Env) (front : Json) (units : List SourceUnit) : Json :=
 def layeredOf (E : Env) (front : Json) (units : List SourceUnit) :
     Except String VE.NormDefaults.Wire.LayeredU :=
   VE.NormDefaults.Wire.decodeLayered (requestOf E front units)
+
+/-- Events 2.9 item 8 on the document route (spec 4), after the block's checks: a declared `date_of_this_document` is
+open (`AnchorNotOpen: date_of_this_document`), and then no reading of a reading set names a candidate that turns on it
+(`AnchorOpen: <candidate>`): the refused candidate of a no-anchor row of the catalogue, read by the reading's `id`, in
+the front matter's order. -/
+def eventsAnchorChecks (environment : Json) (d : Option VE.Events.EventsDecoded) (front : Json) :
+    Except String Unit := do
+  if (← VE.Events.openAnchor environment (d.map (·.V))).isNone then return
+  let candidates := VE.EnglishGrammar.sourceWords.filterMap fun r => match r.kind with
+    | .refuse c _ _ => if r.frame == "source no anchor" then some c else none
+    | _ => none
+  for set in (Loader.optionalList front "reading_sets").getArr?.toOption.getD #[] do
+    for r in (set.getObjValD "readings").getArr?.toOption.getD #[] do
+      if let .str c := r.getObjValD "id" then
+        if candidates.contains c then throw s!"AnchorOpen: {c}"
+
+/-- An `events@0` document's layered document (et-5b): `eventsAnchorChecks`, then the soft branch of `decodeLayered`
+(`decodeSoftU`) on `requestOf`'s norms and the environment as `requestOf` sends it, read through the hook `environmentOf`
+built (`H`: the block decoded once, `LinkNotOpen` included), never a second decoding. `layeredOf` stays the soft
+branch alone, the route its theorems (`DocumentChain.layeredOf_soft`) describe. -/
+def eventsLayeredOf (E : Env) (front : Json) (units : List SourceUnit) (written : Json) (H : VE.Events.EventsHook) :
+    Except String VE.NormDefaults.Wire.LayeredU := do
+  let environment := wireJson 257 { E with json := written }.lower
+  eventsAnchorChecks environment H.decoded front
+  VE.NormDefaults.Wire.decodeSoftU environment ((requestOf E front units).getObjValD "norms")
+    (some ⟨← VE.Events.routeView environment H.decoded, H.decoded⟩)
+
+/-- The soft branch of `check`: `eventsLayeredOf` when the `Env` carries an `events@0` hook, else `layeredOf`. -/
+def chainLayeredOf (E : Env) (front : Json) (units : List SourceUnit) :
+    Except String VE.NormDefaults.Wire.LayeredU :=
+  match E.events with
+  | some (written, H) => eventsLayeredOf E front units written H
+  | none => layeredOf E front units
 
 end VE.Service.DocumentChain
 
@@ -2451,6 +2519,9 @@ structure Checked where
   composed : Option Json := none
   /-- The active reading sets, the value the status fold read (`Loader.activeOf`); the checked view's candidates. -/
   active : List (FrontSet × List Bool) := []
+  /-- Under `events@0` (et-5b), the environment the mode read (`eventsView`: the hook's `Events.routeView`), so a
+  client builds the document over Lean's view, never its own; its identities stay the written environment's. -/
+  eventsView : Option Json := none
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
@@ -2479,6 +2550,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless environment matches .obj _ do throw "document needs an embedded environment"
   let senses := (front.getObjVal? "senses").isOk
   let E ← environmentOf environment (front.getObjValD "units") senses
+    (if front == doc.front then some (Loader.optionalList front "open_terms") else none)
   -- The chain list: this row reads its counting units, and the chain reads the rest on its own request (`chainText`).
   let chainList := E.cardinality.any (·.profiles == VE.Cardinality.Wire.chainProfiles)
   let whole := front
@@ -2548,7 +2620,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     throw "unit status contradicts content, meaning, or active reading set"
   if E.soft && E.profiles.contains "norm-defaults@0" then
     -- The soft branch (spec 3.2): the layered route's own decoding, then its `completions` check on `L.U`.
-    let L ← VE.Service.DocumentChain.layeredOf E front units
+    let L ← VE.Service.DocumentChain.chainLayeredOf E front units
     let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
     let _ ← VE.NormDefaults.Wire.validateCompletions L.U block unitIds
   else if E.profiles.contains "norm-defaults@0" then
@@ -2575,18 +2647,21 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
     (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
     if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
-    ← if chainList then some <$> composedJson text whole front else pure none, active⟩
+    ← if chainList then some <$> composedJson text whole front else pure none, active, E.eventsView⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
-    match c.judgments, c.cardinality, c.composed with
+    (match c.judgments, c.cardinality, c.composed with
     | some m, _, _ => [("judgments", usageJson m), ("judgment_lines", linesJson c.lines.1 c.lines.2),
         ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
     | none, some r, _ => [("cardinality", r)]
     | none, none, some j => [("composed", j)]
-    | none, none, none => [])
+    | none, none, none => []) ++
+    match c.eventsView with
+    | some v => [("events_view", v)]
+    | none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
