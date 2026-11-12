@@ -1,5 +1,11 @@
 # fsf-fidelity-fix: the DeepMind FSF translation repaired where both uc-auditors found it unfaithful
 
+**Review fix (fsf-fidelity-fix-review.final.md):** F1 and F2 fixed as classes (section "Review fix" below). The "will"
+rules are derived from each rule's source feature (f17-hri, and f8, added; without_N1 is NONE everywhere again). Each
+rule and premise unit's open terms are derived from its content, and the builder refuses a CHECKED unit that uses an open
+predicate (s22-insider-not-required, g-external, g-high-risk are OPEN; CHECKED 4,558 -> 4,043 bytes). No DRI signature
+is reserved; no DELTA row; no ve/, lean/ or rust/ file changed.
+
 No DRI signature is reserved and no DELTA row exists: no product code (ve/, lean/, rust/) changed, and the task puts the
 answer changes in this report (old -> new, below). The gate is the DRI's signed decision,
 `reviews/dri-decisions-20261029-uc-audit2.md` item 1, (a)-(d) and its condition.
@@ -43,10 +49,14 @@ replayed). Other measured changes: M7 conflicted cells 3 -> 0 (B-L2/3/4 RECSEC w
 mutant m6's C3 SOME -> NONE (PLAN 11 expected exactly this; item 15's "moved" conflict needed RS9 = same); prover calls
 2,054 -> 1,732; premises 43 -> 37.
 
-Coverage (coverage.json): master CHECKED 4,595 -> 4,558 bytes, OPEN 7,356 -> 7,439, LABELLED 35,557 -> 35,511;
-s131-four-domains CHECKED -> LABELLED (the bridge is not stated), s22-insider-not-required OPEN -> CHECKED (f15-diff, one
-reading left), s321-internal LABELLED -> OPEN (f17-hri). readings/results.json: 16 placed sets, 5 with content (was 18
-and 7).
+Coverage (coverage.json, after the review fix): master CHECKED 4,595 -> 4,043 bytes (main document 3,487 -> 2,935),
+OPEN 7,356 -> 7,954, LABELLED 35,557 -> 35,511; s131-four-domains CHECKED -> LABELLED (the bridge is not stated),
+s321-internal LABELLED -> OPEN (f17-hri), g-external and g-high-risk CHECKED -> OPEN (their premises are about the open
+terms OT8 and OT7; review F2's class). s22-insider-not-required stays OPEN, now with OT1 (`reached`), not through RS6.
+readings/results.json: 16 placed sets, 5 with content (was 18 and 7).
+
+Variant without N1 (not keyed; PLAN 6.1 says every item is NONE): all eight items NONE, as on main. Before the review
+fix, B-L5/PRA was ALL on this branch (f17-hri was no "will" rule).
 
 ## Fixes by failure class (prompts/translation-fidelity-checklist.md)
 
@@ -87,6 +97,13 @@ Each was planted, run against one test, seen to fail, and restored (`git checkou
 | S5 | usecases/safety-framework/rules.d1.ve | f11-rel releases only further development | test_rerun_equals_committed_results ("results.json is out of date") |
 | S6 | usecases/safety-framework/reference.py | bullet 3/4 release narrowed to further development | test_reference_reading_agrees_with_the_key_and_with_ve |
 | S7 | usecases/safety-framework/rules.d1.ve | OT16 restored as an f16 exception | test_a_possible_adjustment_is_no_exception_to_the_recommended_level |
+| S8 | usecases/safety-framework/translation.py | review F1: `will_rules()` skips f17-hri | test_every_rule_takes_its_rs0_status_from_its_source_feature |
+| S9 | usecases/safety-framework/translation.py | review F1: feature F17 left unclassified | test_every_rule_takes_its_rs0_status_from_its_source_feature |
+| S10 | usecases/safety-framework/results.json | review F1: without_N1 B-L5/PRA NONE -> ALL | test_metrics |
+| S11 | usecases/safety-framework/build_document.py | review F2: `derived_meaning` keeps only the listed terms | test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_term |
+| S12 | usecases/safety-framework/build_document.py | review F2: `checked_but_open` looks at OPEN units | test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate |
+| S13 | usecases/safety-framework/build_document.py | review F2: `build()` skips the derivation for premise units | test_span_accounting_is_complete (`build_document.py --check` refuses: g-external, g-high-risk CHECKED) |
+| S14 | usecases/safety-framework/vocabulary.py | review F2: `_open` drops the term OT8 | test_the_open_predicates_are_the_environment_legend_s_open_terms |
 
 No Lean, Rust or `ve/` code changed, so no seeded bug is owed in those languages.
 
@@ -157,12 +174,13 @@ merge). Its C1, C3 and C-doc rows should agree with PLAN section 12 item 23 (NON
 1. Lean answers typed and contained: N.A., no relay, schema or route changed (no ve/, lean/ or rust/ file in the diff).
 2. Every deliverable built: PASS, Deliverables table above ((a)-(d) each with its test; the audit re-run is the next
    item by the task's own words).
-3. Tests can fail: PASS, seeded bugs S1-S7 (mutants.json), each with its failing test.
+3. Tests can fail: PASS, seeded bugs S1-S14 (mutants.json), each with its failing test.
 4. Python, Lean, Rust agree: PASS for the changed inputs, `test_lean_reads_each_pinned_block_as_python` (Lean reads all
    44 recaptured FSF blocks as Python).
 5. R8 binding: N.A., no Lean answer is read by new code.
-6. Gate evidence matches HEAD: PASS, main has not moved (`git rev-list --count HEAD..main` = 0); the chain gates the
-   final HEAD.
+6. Gate evidence matches HEAD: when this report was first written, main had not moved (`git rev-list --count
+   HEAD..main` = 0). At the review fix main is 81 commits ahead; the branch is not merged with it here, and the chain
+   gates the merge candidate.
 7. No unsigned item: PASS, no DELTA row, no trust growth (`trust_map.py --check` +0).
 8. Every user-visible change in DELTA: N.A. by the task (answer changes are in this report, "Answer changes").
 9. Test selection finds the tests: PASS, the selected run picked tests/test_english_lean_lexicon.py, which caught the
@@ -176,4 +194,36 @@ merge). Its C1, C3 and C-doc rows should agree with PLAN section 12 item 23 (NON
     side (ALL with both levels mitigated, NONE with one; RECSEC required with OT16, not with OT4); the excluded-reading
     test checks refusal and the one-reading sets; spec re-read above.
 15. No overclaim / no silent cut / every new check can fail / limits: PASS, "Pilot bytes" claims nothing before the
-    audit; no deliverable cut; S1-S7; no limit-bearing code.
+    audit; no deliverable cut; S1-S14; no limit-bearing code.
+
+## Review fix (manage-agents/fsf-fidelity-fix-review.final.md, F1 B and F2 A)
+
+Each finding is fixed as a class: the hand-kept list it came from is now derived from the one owner of the fact.
+Both probes failed before the fix and pass after it; each probe is a regression test.
+
+| Finding | Class | Fix | Regression tests |
+|---|---|---|---|
+| F1 (B) f17-hri missing from `WILL_RULES`, so without_N1 B-L5/PRA was ALL | a hand-kept per-rule list drifts from rules.d1.ve | `translation.WILL_FEATURES` / `NOT_WILL_FEATURES` classify every feature rules.d1.ve names (the "will" as the pinned source says it, or the reason it is none); `will_rules()` takes each rule's status from its header's `F<n>` and refuses an unclassified feature. Adds f17-hri, and f8 ("will be deemed", the same form as F9-F11, which were in); f8 moves no answer. results.json regenerated: only without_N1 B-L5/PRA, ALL -> NONE. | `test_metrics` (every without_N1 answer NONE; probe F1), `test_every_rule_takes_its_rs0_status_from_its_source_feature`, `test_a_rule_added_under_a_will_feature_is_a_will_rule_and_an_unclassified_feature_is_refused`, `test_every_will_quote_is_the_pinned_source_text` |
+| F2 (A) s22-insider-not-required (f15-diff) CHECKED although it uses `reached` (OT1) | a unit's open terms were hand-listed (and `facts()` could not mark a unit open) | `vocabulary.OPEN_PREDICATES` (the `_open` marker, kept out of environment.d1.json) is the owner; `build_document.derived_meaning` gives every rule and premise unit its listed terms plus the term of each open predicate its content uses; `checked_but_open` makes the builder refuse a document in which VE marks a unit CHECKED whose content or reading content uses an open predicate. The guard found two more units of the class, already CHECKED on main: g-external (`low_risk`, OT8) and g-high-risk (`high_risk`, OT7). spans.json and coverage.json regenerated: master CHECKED 4,558 -> 4,043 (92 bytes for s22, 423 for the two Glossary units), main document 3,450 -> 2,935; README.md (F15 row, totals, M3 7.4%) updated. | `test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_term` (probe F2), `test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate`, `test_the_open_predicates_are_the_environment_legend_s_open_terms`, `test_span_accounting_is_complete` (`build_document.py --check`) |
+
+DELTA: none. No ve/, lean/ or rust/ file changed, no verdict of VE changed; the changes are use-case accounting
+(three unit statuses) and one unkeyed variant row, both recorded above.
+
+Not changed, for the record: the reading-set units' hand-listed open terms (for example s135-bullet2-only lists none,
+while f9-rel uses `reached`). They are OPEN through their pending or content reading sets whatever they list, and the
+guard above checks that; completing those lists changes readings_r1's part documents and fsf-r1's saved evidence.
+Left to fsf-fidelity-audit. fsf-r1's `units.json` was already stale at 85973b137 (`measure_r1.py --check`): it is that
+batch's dated evidence, read as saved (R11/D4), and is not regenerated here.
+
+Seeded bugs S8-S14 (table above). Size of the review fix (`git diff --numstat 85973b137`): 240 hand-written lines
+added and 22 removed in usecases/ and tests/, 27 generated lines changed (results.json, spans.json, coverage.json), plus this report
+and mutants.json.
+
+Tests, on the review-fix tree: selected run (`mac-pytest.sh --select -- --base e78b6d949 --run`; ran on ve-cloud-2,
+58 units, 6,130 s): 1 failed, every other unit passed. The failure,
+`tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor`, came from this fix: its static
+path folder calls `str.removeprefix` on a bytes argument, and `checked_but_open` used `bytes.removeprefix`. The code now
+slices instead; the failed test and the builder tests reran and passed. The folder's lack of a bytes case is a
+follow-up for that test's owner. `lake build` (no Lean change; up to date) and `python3 lean/audit.py` (PASS, 860
+files) pass; `regen_generated.py --check` and `gate_collection.py --check --prebuilt` (10 added, 1 removed by a
+trailer) pass. The full gate was not run (the merge train runs it).

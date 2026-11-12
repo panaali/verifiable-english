@@ -737,7 +737,10 @@ def checked_but_open(document, statuses):
     """The units VE marked CHECKED whose content (a rule, a premise or a reading's rule) uses an open predicate,
     with those predicates. CHECKED requires no open term (build checklist line 8; fsf-fidelity-fix F2), whatever
     kind of unit carries it, so the builder refuses such a document instead of counting its bytes CHECKED."""
-    front = json.loads(document.split(b"\n---\n", 1)[0].removeprefix(b"---\n"))
+    head = document.partition(b"\n---\n")[0]
+    if head[:4] != b"---\n":
+        raise SystemExit("the built document has no front matter")
+    front = json.loads(head[4:])
     content = {u["id"]: [u.get("content")] for u in front["units"]}
     for reading_set in front["reading_sets"]:
         content[reading_set["unit"]] += [r.get("content") for r in reading_set["readings"]]
