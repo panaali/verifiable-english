@@ -1,0 +1,8 @@
+trust_mutants: 91 definitions, 92 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Presupposition/Couple.lean:119 VE.Presupposition.PickedWF (S, trusted) eq-ne: = -> ≠ (lean/VE/Presupposition/CoupleExamples.lean:132: Expression (VE.Presupposition.instDecidablePicked...)
+SURVIVOR lean/VE/RightClauses/Wire.lean:89 VE.RightClauses.NoReadingSets (S, trusted) eq-ne: = -> ≠
+trust_mutants: 9 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 81 OTHER SHARD in 407 s
+trust_mutants: D[V], trusted: 3 KILLED, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 32 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 SURVIVOR, 1 UNKNOWN, 29 OTHER SHARD
+trust_mutants: steps: wall plan 10.6 s, scratch 6.9 s, control_build 0.1 s, probe_install 0.9 s, mutants 383.2 s, cleanup 5.6 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 61.7 s (10), mutant_builds 51.6 s (15), mutant_checks 737.7 s (18), stage_controls 133.5 s (6), mutant_probes 91.9 s (10)
