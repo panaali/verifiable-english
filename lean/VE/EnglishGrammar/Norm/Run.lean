@@ -56,25 +56,26 @@ def sentenceBytes (sent : Array Spanned) : Option (Nat × Nat) := do
   let last ← sent.back?
   pure (first.2.1, last.2.2 + 1)
 
-/-- The byte span of each statement of the text, in text order, from the sentence positions `lexSpans` gives
-(`lex`, which `readNorm` reads, is `lexSpans` with the positions erased): a statement runs from the first byte of
+/-- The byte span of each statement of the text, in text order, from its sentences' positions (`lexSpans`, which
+`answerWith` computes once; the reader reads them with the positions erased): a statement runs from the first byte of
 a sentence that opens one to the period of the last sentence before the next. No line split is involved. -/
-def statementSpans (source : String) : List (Nat × Nat) :=
-  match lexSpans source with
-  | .error _ => []
-  | .ok sents => sents.toList.foldl (fun acc sent => match sentenceBytes sent with
-      | none => acc
-      | some (a, b) =>
-        if opensStatement sent then acc ++ [(a, b)]
-        else match acc.getLast? with
-          | some (a0, _) => acc.dropLast ++ [(a0, b)]
-          | none => acc) []
+def statementSpans (sents : Array (Array Spanned)) : List (Nat × Nat) :=
+  sents.toList.foldl (fun acc sent => match sentenceBytes sent with
+    | none => acc
+    | some (a, b) =>
+      if opensStatement sent then acc ++ [(a, b)]
+      else match acc.getLast? with
+        | some (a0, _) => acc.dropLast ++ [(a0, b)]
+        | none => acc) []
 
-/-- The spans of a `one` answer's rows: one per statement, and no translation-mode statement (`readNorm` writes
-none, `readNorm_authoring`; kept total without that premise). -/
-def oneSpans (source : String) (rs : List NormStatement) : Option (List (Nat × Nat)) :=
-  let sps := statementSpans source
+/-- The spans of a `one` answer's rows, from the lexed text (none for a lexical refusal): one per statement, and no
+translation-mode statement (`readNorm` writes none, `readNorm_authoring`; kept total without that premise). -/
+def oneSpansOf (lexed : Except Reject (Array (Array Spanned))) (rs : List NormStatement) : Option (List (Nat × Nat)) :=
+  let sps := statementSpans (lexed.toOption.getD #[])
   if rs.any (fun | .source _ => true | _ => false) || sps.length != rs.length then none else some sps
+
+/-- `oneSpansOf` on the text's sentences, as `answer_one_iff` and `answer_one_rows` state it. -/
+def oneSpans (source : String) (rs : List NormStatement) : Option (List (Nat × Nat)) := oneSpansOf (lexSpans source) rs
 
 def rowsInternalText : String :=
   "The reader returned statements that are not the text's rule blocks and precedence lines."
@@ -112,9 +113,10 @@ def stoppedFields (tags : Thunk (Array String)) (i : Nat) : VE.Grammar.Outcome T
   | .budget => budgetFields i
 
 /-- The result fields of one reader outcome; `tags` is forced only for `many` (DRI 2026-11-09, item 2). -/
-def outcomeFields (c : Case) (tags : Thunk (Array String)) (source : String) : NormOutcome → List (String × Json)
+def outcomeFields (c : Case) (tags : Thunk (Array String)) (source : String)
+    (lexed : Except Reject (Array (Array Spanned))) : NormOutcome → List (String × Json)
   | .ok rs => match toNodesChecked rs with
-    | .ok _ => match oneSpans source rs with
+    | .ok _ => match oneSpansOf lexed rs with
       | some sps => status "one" ++
           [("statements", Json.arr ((rs.zip sps).map fun (r, sp) => statementRow rs sp r).toArray)]
       | none => status "rejected" ++ coded "Internal" rowsInternalText
@@ -137,18 +139,25 @@ def statementRequest (j : Json) : Except String (String × Case × String) := do
   let source ← VE.Bridge.stringField j "source"
   pure (id, c, source)
 
+/-- A reader: the outcome of a text from the grammar and the sentences `answerWith` built and lexed once, and that
+grammar's rule tags (forced only for `many`). -/
 structure Reader where
-  read : Env → Overlay → Lexicon → Nat → String → NormOutcome
-  tags : Env → Lexicon → Array String
+  read : Env → Overlay → Lexicon → VE.Grammar.Grammar Terminal → Except Reject (Array (Array Spanned)) → NormOutcome
+  tags : VE.Grammar.Grammar Terminal → Unit → Array String
 
 def answerWith (R : Reader) (id : String) (c : Case) (source : String) : Json :=
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 source.toUTF8))] ++ c.identities)
   let fields := match c.overlayFailure with
     | some f => invalidOverlayFields "english.statement" f
-    | none => outcomeFields c (Thunk.mk fun _ => R.tags c.E c.L) source (R.read c.E c.O c.L workBudget source)
+    | none =>
+      let G := normGrammar c.E c.L
+      let lexed := lexSpans source
+      outcomeFields c (Thunk.mk (R.tags G)) source lexed (R.read c.E c.O c.L G lexed)
   VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))]
 
-def leanReader : Reader := ⟨readNorm, normTags⟩
+/-- `readNorm`'s steps at `workBudget`, and the grammar's rule tags by rule index (a witness tree's tags, en-e3-norm
+OPEN-2). -/
+def leanReader : Reader := ⟨(readNormOn · · · workBudget), fun G _ => G.rules.map (·.tag)⟩
 
 def answer (id : String) (c : Case) (source : String) : Json := answerWith leanReader id c source
 
@@ -224,7 +233,7 @@ theorem Run.statementFields_statuses :
 
 /-- The answer's fields, read as `outcomeFields` writes them. -/
 local macro "answer_simp" : tactic => `(tactic| simp_all [getD_mkObj, lookup_append, List.lookup_cons, lookup_none,
-  Run.outcomeFields, Run.stoppedFields, Run.stopNamesSentence, coded, status, budgetFields, invalidFields,
+  Run.outcomeFields, Run.stoppedFields, Run.oneSpans, Run.stopNamesSentence, coded, status, budgetFields, invalidFields,
   invalidOverlayFields, failureJson, BlockFault.sentence?])
 
 theorem Run.answer_misplaced : ∀ (id : String) (c : Case) (s : String) (f : BlockFault),
@@ -232,7 +241,7 @@ theorem Run.answer_misplaced : ∀ (id : String) (c : Case) (s : String) (f : Bl
     (Run.resultOf (Run.answer id c s)).getObjValD "code" = .str f.code ∧
     (Run.resultOf (Run.answer id c s)).getObjValD "status" = .str "rejected" := by
   intro id c s f hc hr
-  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, VE.Route.Wire.ok, hc, hr]
+  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, ← readNorm_on, VE.Route.Wire.ok, hc, hr]
   cases f <;> answer_simp
 
 theorem Run.answer_stopped : ∀ (id : String) (c : Case) (s : String) (i : Nat)
@@ -242,7 +251,7 @@ theorem Run.answer_stopped : ∀ (id : String) (c : Case) (s : String) (i : Nat)
     (Run.resultOf (Run.answer id c s)).getObjValD "sentence" =
       (if Run.stopNamesSentence o then toJson i else Json.null) := by
   intro id c s i o hc hr
-  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, VE.Route.Wire.ok, hc, hr]
+  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, ← readNorm_on, VE.Route.Wire.ok, hc, hr]
   cases o with
   | rejected r => cases h : statementUnsentenced.contains r.code <;> answer_simp
   | _ => answer_simp
@@ -252,14 +261,14 @@ theorem Run.answer_one_iff : ∀ (id : String) (c : Case) (s : String),
     c.overlayFailure = none ∧ ∃ rs nds sps, readNorm c.E c.O c.L workBudget s = .ok rs ∧
       toNodesChecked rs = .ok nds ∧ Run.oneSpans s rs = some sps := by
   intro id c s
-  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, VE.Route.Wire.ok]
+  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, ← readNorm_on, VE.Route.Wire.ok]
   cases hc : c.overlayFailure with
   | some f => answer_simp
   | none =>
     cases hr : readNorm c.E c.O c.L workBudget s with
     | ok rs =>
       cases hn : toNodesChecked rs with
-      | ok nds => cases hs : Run.oneSpans s rs <;> answer_simp
+      | ok nds => cases hs : Run.oneSpansOf (lexSpans s) rs <;> answer_simp
       | error t => by_cases he : spansOf rs = [] <;> answer_simp
     | invalidGrammar g => cases g <;> answer_simp <;> split <;> answer_simp
     | stopped i o => cases o <;> answer_simp <;> split <;> answer_simp
@@ -277,7 +286,7 @@ theorem Run.answer_one_rows : ∀ (id : String) (c : Case) (s : String) (rs : Li
       cl.toNode (ruleName h.number) ((overOf rs h.number).map ruleName) := by
   intro id c s rs nds sps hc hr hn hs
   refine ⟨?_, fun _ _ _ => rfl⟩
-  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, VE.Route.Wire.ok]
+  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, ← readNorm_on, VE.Route.Wire.ok]
   answer_simp
 
 theorem Run.answer_partial_no_node : ∀ (id : String) (c : Case) (s : String),
@@ -286,14 +295,14 @@ theorem Run.answer_partial_no_node : ∀ (id : String) (c : Case) (s : String),
     ∃ rs, readNorm c.E c.O c.L workBudget s = .ok rs ∧ spansOf rs ≠ [] ∧
       (Run.resultOf (Run.answer id c s)).getObjValD "spans" = Json.arr ((spansOf rs).map Run.spanRow).toArray := by
   intro id c s
-  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, VE.Route.Wire.ok]
+  simp only [Run.resultOf, Run.answer, Run.answerWith, Run.leanReader, ← readNorm_on, VE.Route.Wire.ok]
   cases hc : c.overlayFailure with
   | some f => answer_simp
   | none =>
     cases hr : readNorm c.E c.O c.L workBudget s with
     | ok rs =>
       cases hn : toNodesChecked rs with
-      | ok nds => cases hs : Run.oneSpans s rs <;> answer_simp
+      | ok nds => cases hs : Run.oneSpansOf (lexSpans s) rs <;> answer_simp
       | error t => by_cases he : spansOf rs = [] <;> answer_simp
     | invalidGrammar g => cases g <;> answer_simp <;> split <;> answer_simp
     | stopped i o => cases o <;> answer_simp <;> split <;> answer_simp
