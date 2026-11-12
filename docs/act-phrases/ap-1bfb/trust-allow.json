@@ -34,6 +34,26 @@
    "definition": "VE.WireContract.Tables.Acts.table",
    "operator": "list-drop-last",
    "reason": "not equivalent, and never built unnoticed: with the included name checks' location [\"norm\", \"name\"] cut, the module's build aborts (Lean exits 134 while the node-budget #guard runs the mutated table), which the tool records as UNKNOWN for want of a located error (M147, M221, M274)"
+  },
+  {
+   "definition": "VE.WireContract.Diagnose.units",
+   "operator": "list-first",
+   "reason": "does not elaborate: wrapped in a list function, the unit list's anonymous constructors lose their expected type (Invalid `⟨...⟩` notation); the list's entries are named by the #guard on `units.map (·.1)`"
+  },
+  {
+   "definition": "VE.WireContract.Diagnose.units",
+   "operator": "list-last",
+   "reason": "does not elaborate: wrapped in a list function, the unit list's anonymous constructors lose their expected type (Invalid `⟨...⟩` notation); the list's entries are named by the #guard on `units.map (·.1)`"
+  },
+  {
+   "definition": "VE.WireContract.Diagnose.units",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: wrapped in a list function, the unit list's anonymous constructors lose their expected type (Invalid `⟨...⟩` notation); the list's entries are named by the #guard on `units.map (·.1)`"
+  },
+  {
+   "definition": "VE.WireContract.Diagnose.units",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: wrapped in a list function, the unit list's anonymous constructors lose their expected type (Invalid `⟨...⟩` notation); the list's entries are named by the #guard on `units.map (·.1)`"
   }
  ]
 }

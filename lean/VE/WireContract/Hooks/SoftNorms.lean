@@ -170,14 +170,14 @@ def semanticMember (D : SoftDoc) (m : String) : ClassifierResult :=
   -- rule 13: any other message names no member (revision 3) and shows as a residual, as rule 3a
   else .ok
 
-/-- The classifiers; 5.7 and 5.8 read the environment's declarations from `declaredOf` of the root (`declared`,
-    unless one run's hooks give them decoded once: `hooksFor`). -/
+/-- The classifiers; 5.7 and 5.8 read the environment's declarations from the parameter `declared` of the root (the
+    function `declared`, unless one run's hooks give them decoded once: `hooksFor`). -/
 def classifier (name : String) (root : Json) (items : List Pointer)
-    (declaredOf : Json → Option (Norms.Wire.NormsEnvironment × SoftEnv) := declared) : ClassifierResult :=
+    (declared : Json → Option (Norms.Wire.NormsEnvironment × SoftEnv) := declared) : ClassifierResult :=
   match name, root, items with
   -- 5.7 and 5.8 for one rule: `Phases.ruleReferences` on the rule without its exception, then on the rule
   | "rule_typing", root, items =>
-    match declaredOf root, itemValue root items 0 with
+    match declared root, itemValue root items 0 with
     | some (ne, soft), some rule => match Phases.ruleFields soft.exceptionDecider rule with
       | .ok N => match Phases.ruleReferences ne soft { N with exception := none } with
         | .error f => .fail "5.7" (message f.message)

@@ -30164,7 +30164,7 @@ module VE.WireContract.Hooks.Purposes cf82528ff122a5ab2c07171d5462ccf2382c579a9a
 106:0-106:80 def VE.WireContract.Hooks.Purposes.block@VE.WireContract.Hooks.Purposes
 107:0-107:69 def VE.WireContract.Hooks.Purposes.links@VE.WireContract.Hooks.Purposes
 135:0-140:17 def VE.WireContract.Hooks.Purposes.idsAgree@VE.WireContract.Hooks.Purposes
-module VE.WireContract.Hooks.SoftNorms 2caf518614b83180aace6fbc51e11797ecb949f6f22f24ef88c3d1fc082b3cb5
+module VE.WireContract.Hooks.SoftNorms df4073ab77d669d080fb13e903b8a00e28563a5674efaa29cf3ac10714c29a3d
 26:0-26:71 def VE.WireContract.Hooks.SoftNorms.environmentOf@VE.WireContract.Hooks.SoftNorms
 27:0-27:59 def VE.WireContract.Hooks.SoftNorms.normsOf@VE.WireContract.Hooks.SoftNorms
 29:0-31:38 def VE.WireContract.Hooks.SoftNorms.itemValue@VE.WireContract.Hooks.SoftNorms
