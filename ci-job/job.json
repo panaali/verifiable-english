@@ -1,0 +1,13 @@
+{
+ "job": "armsh-watch-fa722640-fa722640-t475041-s3",
+ "head": "eabe5de3363ae2df871dae663eb8d46498b4478d",
+ "argv": [
+  "armsh-watch-fa722640-fa722640-t475041-s3",
+  "eabe5de3363ae2df871dae663eb8d46498b4478d",
+  "94f1aea3632c9c7763b8cb818073f4c7f314d33a",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
