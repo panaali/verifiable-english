@@ -1,0 +1,27 @@
+{
+ "job": "ap-1bfb.s3of11-b5689537",
+ "head": "3c1939f55a5849e6df2a0fbf960fe97d53bc8236",
+ "argv": [
+  "ap-1bfb.s3of11-b5689537",
+  "3c1939f55a5849e6df2a0fbf960fe97d53bc8236",
+  "5b7293287f6eed2c64325896a0b9cadd1fd602b6",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1887a7420de0.tar.zst",
+  "4ce7177af75af93171fbadc71a9ad70b032b008a2d4b0e17dfe777974e56718d",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/WireContract/Hooks/Acts.lean",
+  "--test",
+  "lean/VE/WireContract/Diagnose.lean",
+  "--test",
+  "lean/VE/WireContract/Hooks/SoftNorms.lean",
+  "--allow",
+  "docs/act-phrases/ap-1bfb/trust-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/11",
+  "--jobs",
+  "4"
+ ]
+}
