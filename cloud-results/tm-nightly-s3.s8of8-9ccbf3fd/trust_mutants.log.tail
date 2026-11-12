@@ -1,0 +1,8 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Presupposition/Couple.lean:125 VE.Presupposition.SameModels (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Presupposition/Couple/Fixtures.lean:104, lean/VE/Presupposition/Cou...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) and-or: && -> || (lean/VE/Acts/ReadingsExamples.lean:184: Expression (Lean could not elaborate it in the probe))
+trust_mutants: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 2915 s
+trust_mutants: D[V], trusted: 2 KILLED, 15 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 UNKNOWN, 23 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 1 SURVIVOR, 25 OTHER SHARD
+trust_mutants: steps: wall plan 19.6 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.4 s, mutants 2884.5 s, cleanup 4.2 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 66.7 s (8), mutant_builds 197.5 s (11), mutant_checks 4279.7 s (17), stage_controls 2069.6 s (5), mutant_probes 91.3 s (9)
