@@ -84,13 +84,13 @@ def read_blocks(name):
         m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (.+)", header)
         if m is None or text.startswith("## "):
             raise SystemExit(f"{name}: malformed header {header!r}")
-        item = re.fullmatch(r"item ([A-Z0-9-]+)", m[2].strip())
-        if item and name == "facts.d1.ve":
+        item = re.fullmatch(r"item ([A-Z0-9-]+)", m[2].strip()) if name == "facts.d1.ve" else None
+        if item:
             when = (("item", item[1]),)  # a premise of that item only (checklist class 7)
         else:
             when = () if m[2].strip() == "always" else tuple(
                 tuple(part.strip().split("=")) for part in m[2].split("&"))
-        for set_id, choice in when if not item else ():
+        for set_id, choice in () if item else when:
             if (set_id, choice) in EXCLUDED_READINGS:
                 raise SystemExit(f"{name}: {m[1]} needs the excluded reading {set_id}={choice}")
             if choice not in READING_SETS.get(set_id, ()):
@@ -165,12 +165,12 @@ def document(choice, *, default="deny", drop=(), extra=(), precedence=None):
 @lru_cache(maxsize=None)
 def facts(item=None):
     """The fixed premises, as (block id, source, formulas). A block headed `item <id>` is that item's own premise
-    (a bridge only it needs): included only for `item=<id>`, and for `item="all"` (the document's units)."""
+    (a bridge only it needs), included only for `item=<id>`."""
     base = base_environment()
     result = []
     for block in read_blocks("facts.d1.ve"):
         owner = dict(block.when).get("item")
-        if owner is not None and item not in (owner, "all"):
+        if owner is not None and item != owner:
             continue
         result.append((block.id, block.source, tuple(parse_sentences(base, block.text).formulas)))
     return tuple(result)
