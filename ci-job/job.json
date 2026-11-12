@@ -1,0 +1,18 @@
+{
+ "job": "x86sh-nightly-e78b6d94-t453260-s2",
+ "head": "7b61bcbdac4455560d74d1886755edf52a0d4724",
+ "argv": [
+  "x86sh-nightly-e78b6d94-t453260-s2",
+  "7b61bcbdac4455560d74d1886755edf52a0d4724",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "-",
+  "-",
+  "4",
+  "2/3",
+  "authority"
+ ],
+ "lean_from": {
+  "run_id": "43146879056",
+  "sha256": "e9a3bd8adfa82df6963202389684b7b518f8091b937af0704edb0360048325ec"
+ }
+}
