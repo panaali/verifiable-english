@@ -84,9 +84,6 @@ def normGrammar (E : Env) (L : Lexicon) : VE.Grammar.Grammar Terminal :=
     start := n
     rank := (grammar E L).rank ++ normRanks }
 
-/-- The rule tags of `normGrammar E L`, by rule index: a witness tree's tags (en-e3-norm OPEN-2). -/
-def normTags (E : Env) (L : Lexicon) : Array String := (normGrammar E L).rules.map (·.tag)
-
 /-- Whether a polarity is one that the role's consequence rows generate (spec 2.5). Moved from `Norm/Examples.lean`
 (DRI decision 20261102-en-s6b item 4) now that a theorem states it: en-e3-norm's `opOf_agrees`. -/
 def Polarity.fits : Polarity → VE.Norms.Role → Bool

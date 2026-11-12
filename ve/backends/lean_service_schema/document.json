@@ -25,6 +25,40 @@
           "composed_readings": {"$ref": "#/$defs/composed_readings"},
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},
+          "events_view": {
+            "additionalProperties": false,
+            "properties": {
+              "language": {"type": "string"},
+              "profiles": {"$ref": "common.json#/$defs/strings"},
+              "spec_revision": {"type": "string"},
+              "vocabulary": {
+                "additionalProperties": false,
+                "properties": {
+                  "acts": true,
+                  "constants": {
+                    "additionalProperties": {
+                      "additionalProperties": false,
+                      "properties": {"description": {"type": "string"}, "sort": {"type": "string"}, "verbalisation": true},
+                      "required": ["sort", "description"],
+                      "type": "object"
+                    },
+                    "type": "object"
+                  },
+                  "predicates": {
+                    "additionalProperties": {"$ref": "common.json#/$defs/environment_predicate"},
+                    "type": "object"
+                  },
+                  "rights": true,
+                  "soft": true,
+                  "sorts": {"additionalProperties": true, "type": "object"}
+                },
+                "required": ["sorts", "predicates", "constants"],
+                "type": "object"
+              }
+            },
+            "required": ["language", "profiles", "spec_revision", "vocabulary"],
+            "type": "object"
+          },
           "id": {"type": "string", "x-equals": "/id"},
           "judgment_lines": {"$ref": "#/$defs/judgment_lines"},
           "judgments": {"$ref": "#/$defs/judgments"},
