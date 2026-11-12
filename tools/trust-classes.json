@@ -895,6 +895,7 @@
         "ResponseShape.Schemas.SoftNorms.row",
         "ResponseShape.Schemas.SoftNorms.rule",
         "ResponseShape.Schemas.SoftNorms.rules",
+        "ResponseShape.Schemas.SoftNorms.selected",
         "ResponseShape.Schemas.SoftNorms.soft_field",
         "ResponseShape.Schemas.SoftNorms.soft_path",
         "ResponseShape.Schemas.SoftNorms.witness",
@@ -21964,6 +21965,78 @@
         "VE.Service.EventsDocumentExamples.rowOf",
         "VE.Service.EventsDocumentExamples.viewOf",
         "VE.Service.EventsDocumentExamples.datedView"
+      ]
+    },
+    "VE/SoftNorms/Selected.lean": {
+      "S": [
+        "VE.SoftNorms.Run.SelectedQuery",
+        "VE.SoftNorms.Run.fullOver",
+        "VE.SoftNorms.Run.outcomeAt",
+        "VE.SoftNorms.Run.selectedAt"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.SoftNorms.Run.decodeQueries",
+          "tied": [
+            "VE.SoftNorms.Run.decodeQueries_ok"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.decodeSelectedQuery",
+          "tied": [
+            "VE.SoftNorms.Run.decodeSelectedQuery_ok"
+          ]
+        }
+      ],
+      "G[V]": [
+        {
+          "name": "VE.SoftNorms.Run.expList",
+          "tied": [
+            "VE.SoftNorms.Run.expanded_circ"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.expanded",
+          "tied": [
+            "VE.SoftNorms.Run.selectedRow_eq"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.listTable",
+          "tied": [
+            "VE.SoftNorms.Run.expanded_circ"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.runSelected",
+          "tied": [
+            "VE.SoftNorms.Run.runSelected_answer"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.selectedRow",
+          "tied": [
+            "VE.SoftNorms.Run.selectedRow_eq"
+          ]
+        }
+      ]
+    },
+    "VE/SoftNorms/SelectedSound.lean": {
+      "S": [
+        "VE.SoftNorms.Run.QueryDecoded",
+        "VE.SoftNorms.Run.SelectedAnswer"
+      ]
+    },
+    "VE/SoftNorms/SelectedExamples.lean": {
+      "T": [
+        "VE.SoftNorms.SelectedExamples.answerOf",
+        "VE.SoftNorms.SelectedExamples.environmentText",
+        "VE.SoftNorms.SelectedExamples.modelText",
+        "VE.SoftNorms.SelectedExamples.normsText",
+        "VE.SoftNorms.SelectedExamples.parsed",
+        "VE.SoftNorms.SelectedExamples.queriesText",
+        "VE.SoftNorms.SelectedExamples.resultsText",
+        "VE.SoftNorms.SelectedExamples.selectedCase"
       ]
     }
   }

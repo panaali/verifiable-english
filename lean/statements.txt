@@ -64738,6 +64738,21 @@ theorem VE.SoftNorms.Run.runAdmission_sound
       VE.SoftNorms.Run.SoftAdmissionAnswer id environment document answer
   -- uses VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runAdmission@VE.SoftNorms.Run
   -- expr 4089353554
+theorem VE.SoftNorms.Run.runSelected_answer
+  ∀ (id : String) (j answer : Lean.Json),
+    VE.SoftNorms.Run.runSelected id j = Except.ok answer →
+      ∃ environment src M hM raws qs,
+        j.getObjVal? "environment" = Except.ok environment ∧
+          VE.SoftNorms.Wire.decodeSoftSource environment (j.getObjValD "norms") = Except.ok src ∧
+            VE.SoftNorms.Wire.decodeModel src j = Except.ok ⟨M, hM⟩ ∧
+              j.getObjValD "queries" = Lean.Json.arr raws ∧
+                raws.toList ≠ [] ∧
+                  qs.length = raws.size ∧
+                    (∀ (x : Lean.Json × VE.SoftNorms.Run.SelectedQuery),
+                        x ∈ raws.toList.zip qs → VE.SoftNorms.Run.QueryDecoded src.D M x.fst x.snd) ∧
+                      VE.SoftNorms.Run.SelectedAnswer id src.D M qs answer
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound VE.SoftNorms.Run.SelectedQuery@VE.SoftNorms.Selected VE.SoftNorms.Run.runSelected@VE.SoftNorms.Selected VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeModel@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1792304624
 theorem VE.SoftNorms.Run.selectedRow_eq
   ∀ (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (q : VE.SoftNorms.Run.SelectedQuery),
     q.pred ∈ List.map (fun x => x.name) D.T.regulated →

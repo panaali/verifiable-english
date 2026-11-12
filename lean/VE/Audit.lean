@@ -9049,6 +9049,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.outcomeAt_iff
 #print axioms VE.SoftNorms.Run.regeneratedCore_fields
 #print axioms VE.SoftNorms.Run.runAdmission_sound
+#print axioms VE.SoftNorms.Run.runSelected_answer
 #print axioms VE.SoftNorms.Run.selectedRow_eq
 #print axioms VE.SoftNorms.Run.selected_semantics
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
