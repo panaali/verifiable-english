@@ -1,0 +1,9 @@
+job=armsh-cand-usecase-pf-keyfix-17581425-t480807-s3r1 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-12T11:47:48Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 11:47:48 up 4 min,  0 user,  load average: 1.26, 0.50, 0.20
+pilot/codex branches: 98
+ve-cache: lean-build exact key a8500b42912b asset lean-build-a8500b42912b-linux-aarch64.tar.zst sha256 6771ac6fd6f4 ok, seal ok, from download, 11.5 s
+seed: mode=seed match=exact asset=lean-build-a8500b42912b-linux-aarch64.tar.zst pruned=0 base=33a6b8640f6b
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
