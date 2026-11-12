@@ -28,6 +28,9 @@
       },
       "evaluation": {
         "description": "a capability evaluation (footnote 5)"
+      },
+      "framework": {
+        "description": "the Preparedness Framework (version 2, last updated 15 April 2025), the one member of this sort: Appendix B's yearly review is of it"
       }
     },
     "predicates": {
@@ -344,12 +347,6 @@
         ],
         "description": "{0} is a reported or otherwise identified potential instance of noncompliance with the Framework (5.1)"
       },
-      "conservative_upper_bound_used": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "a conservative upper bound of the model's non-sandbagged evaluation results is used at {0} (Table 2)"
-      },
       "persuasion_risk": {
         "arguments": [
           "situation"
@@ -475,6 +472,17 @@
           "role": "permission",
           "default": "allow",
           "act": "{0} have a revised course of action mandated by the Board"
+        }
+      },
+      "annual_review": {
+        "arguments": [
+          "framework"
+        ],
+        "description": "Appendix B: “We will review and potentially update the Preparedness Framework for continued sufficiency at least once a year.”: {0} is reviewed at least once a year, as to its continued sufficiency; the update is optional (“potentially”) and no part of the duty",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be reviewed at least once a year as to its continued sufficiency"
         }
       },
       "adjustment_permission": {
@@ -807,17 +815,6 @@
           "act": "{0} have Leadership informed by SAG"
         }
       },
-      "annual_review": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "Appendix B: at least once a year",
-        "regulated": {
-          "role": "obligation",
-          "default": "deny",
-          "act": "{0} have an annual review"
-        }
-      },
       "misalignment_risk_minimized": {
         "arguments": [
           "situation"
@@ -917,15 +914,15 @@
           "act": "{0} have a misalignment safeguards report"
         }
       },
-      "sandbagging_bound": {
+      "sandbagging_response": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Sandbagging response; the alternative, a conservative upper bound, is the rule's carve-out",
+        "description": "Table 2, Sandbagging: “Adopt elicitation approach that overcomes sandbagging, or use a conservative upper bound of the model’s non-sandbagged evaluation results”: the one duty is met by either alternative, an elicitation approach that overcomes sandbagging or a conservative upper bound of the model's non-sandbagged evaluation results",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} adopt an elicitation approach that overcomes sandbagging"
+          "act": "{0} have sandbagging handled"
         }
       },
       "ara_tracking": {
@@ -943,11 +940,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Undermining Safeguards: robust to the discovered capability and/or propensity",
+        "description": "Table 2, Undermining Safeguards: “If a model has High or Critical capabilities in any of the Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or propensity”: what was discovered is the capability, the propensity, or both",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a safeguards case robust to discovered capability as well as propensity"
+          "act": "{0} have a safeguards case robust to what was discovered"
         }
       },
       "nuclear_safeguards": {

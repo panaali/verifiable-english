@@ -102,8 +102,6 @@ BASE = {
                                                    "sensitive information (5.1)"),
     "potential_noncompliance": base(["situation"], "{0} is a reported or otherwise identified potential instance of "
                                                    "noncompliance with the Framework (5.1)"),
-    "conservative_upper_bound_used": base(["situation"], "a conservative upper bound of the model's non-sandbagged "
-                                                         "evaluation results is used at {0} (Table 2)"),
     "persuasion_risk": base(["situation"], "{0} concerns risks related to persuasion"),
     "leadership_decision": base(["situation"], "{0} is a final decision of OpenAI Leadership"),
     "board_finds_necessary": base(["situation"], "the Board finds it necessary at {0} to act on the decision (Appendix B)"),
@@ -131,6 +129,14 @@ BASE = {
                                     "Appendix B: the Board may reverse a decision of OpenAI Leadership"),
     "revised_course_mandated": permission("{0} have a revised course of action mandated by the Board",
                                           "Appendix B: the Board may mandate a revised course of action"),
+    # Appendix B's yearly review is of the Framework itself, once, not of each situation: its sort is the Framework.
+    "annual_review": {"arguments": ["framework"],
+                      "description": "Appendix B: \u201cWe will review and potentially update the Preparedness Framework "
+                                     "for continued sufficiency at least once a year.\u201d: {0} is reviewed at least once "
+                                     "a year, as to its continued sufficiency; the update is optional "
+                                     "(\u201cpotentially\u201d) and no part of the duty",
+                      "regulated": {"role": "obligation", "default": "deny",
+                                    "act": "{0} be reviewed at least once a year as to its continued sufficiency"}},
     "adjustment_permission": {"arguments": ["situation"], "description": "{0} may have its required safeguards in that capability area adjusted (4.3)",
                               "regulated": {"role": "permission", "default": "allow",
                                             "act": "{0} have its required safeguards in that capability area adjusted"}},
@@ -202,7 +208,6 @@ ACTS = {
                            "as rationale, provided to OpenAI Leadership"),
     "ssc_visibility": ("{0} give SSC visibility into processes", "Appendix B: SSC is the Safety and Security Committee of the OpenAI Board of Directors"),
     "recommendation_informed": ("{0} have Leadership informed by SAG", "Appendix B: SAG recommendation"),
-    "annual_review": ("{0} have an annual review", "Appendix B: at least once a year"),
     "misalignment_risk_minimized": ("{0} have safeguards that sufficiently minimize misaligned-model severe-harm risk",
                                     "C.2: the risk of a misaligned model circumventing human control and oversight "
                                     "and executing severe harms"),
@@ -215,12 +220,16 @@ ACTS = {
     "more_protective": ("{0} keep safeguards more protective than the other developer's", "4.3: adjustment condition"),
     "validation_shared": ("{0} have validation information shared", "4.3: adjustment condition"),
     "misalignment_report": ("{0} have a misalignment safeguards report", "Table 2: Long-range Autonomy response"),
-    "sandbagging_bound": ("{0} adopt an elicitation approach that overcomes sandbagging",
-                          "Table 2: Sandbagging response; the alternative, a conservative upper bound, is the "
-                          "rule's carve-out"),
+    "sandbagging_response": ("{0} have sandbagging handled",
+                             "Table 2, Sandbagging: \u201cAdopt elicitation approach that overcomes sandbagging, or use "
+                             "a conservative upper bound of the model\u2019s non-sandbagged evaluation results\u201d: the "
+                             "one duty is met by either alternative, an elicitation approach that overcomes sandbagging "
+                             "or a conservative upper bound of the model's non-sandbagged evaluation results"),
     "ara_tracking": ("{0} have the research category tracked", "Table 2: ARA response"),
-    "robust_case": ("{0} have a safeguards case robust to discovered capability as well as propensity",
-                    "Table 2: Undermining Safeguards: robust to the discovered capability and/or propensity"),
+    "robust_case": ("{0} have a safeguards case robust to what was discovered",
+                    "Table 2, Undermining Safeguards: \u201cIf a model has High or Critical capabilities in any of the "
+                    "Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or "
+                    "propensity\u201d: what was discovered is the capability, the propensity, or both"),
     "nuclear_safeguards": ("{0} heighten safeguards consulting appropriate US government actors",
                            "Table 2: Nuclear and Radiological: heighten safeguards (and consider further actions) in "
                            "consultation with appropriate US government actors, accounting for the complexity of "
@@ -259,6 +268,8 @@ def environment():
                 "requirement": "a stated safeguard requirement",
                 "capability": "a frontier capability considered for a Tracked Category",
                 "evaluation": "a capability evaluation (footnote 5)",
+                "framework": "the Preparedness Framework (version 2, last updated 15 April 2025), the one member of "
+                             "this sort: Appendix B's yearly review is of it",
             }.items()},
                 "predicates": {**BASE, **{name: duty(*pair) for name, pair in ACTS.items()}},
                 "constants": {**{k: {"sort": "level", "description": f"Table 1: {c}, {g}"}

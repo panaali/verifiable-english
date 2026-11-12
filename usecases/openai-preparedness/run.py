@@ -79,9 +79,6 @@ SITUATIONS = {
 }
 # Atoms a case's situation states as false ("not already implemented", "no highly sensitive information").
 STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("beyond_sensitive_limits",)}
-# A disjunctive duty "A, or B" is written "A unless B" ('or' is reserved in acts): its item asks what is required
-# before either alternative is taken, so B is false by the question itself, not by a case fact (K10).
-ALTERNATIVES = {"sandbagging_bound": ("conservative_upper_bound_used",)}
 # K9's model has High capability "in a Tracked Category" without naming it: every High level is tried.
 SOME_HIGH_LEVEL = {"K9"}
 
@@ -100,7 +97,7 @@ K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFE
            "PUBLICLY_ACKNOWLEDGE_ADJUSTMENT": ("adjustment_acknowledged",),
            "SHARE_INFORMATION_TO_VALIDATE": ("validation_shared",),
            "SAFEGUARDS_DURING_DEVELOPMENT": ("safeguards_during_development",), "HALT": ("halt_development",),
-           "ROBUST_SAFEGUARDS_CASE": ("robust_case",), "ELICITATION_OR_CONSERVATIVE_BOUND": ("sandbagging_bound",),
+           "ROBUST_SAFEGUARDS_CASE": ("robust_case",), "ELICITATION_OR_CONSERVATIVE_BOUND": ("sandbagging_response",),
            "SAG_FINAL_DETERMINATION": ("coverage_decided",), "ANNUAL_REVIEW": ("annual_review",),
            "CHAIR_COORDINATES_WITH_LEADERSHIP": ("chair_coordination",),
            "THIRD_PARTY_EVALUATION": ("third_party_evaluation",),
@@ -344,7 +341,7 @@ def model(doc, found):
         _MODELS[key] = FiniteModel.from_dict(env, {"complete": True,
             "domains": {"situation": ["s"], "level": list(V.LEVELS), "category": sorted({c for c, _ in V.LEVELS.values()}),
                         "proposal": ["p"], "requirement": ["r"], "capability": ["k"],
-                        "evaluation": ["biological_capability_evaluations", "e"]},
+                        "evaluation": ["biological_capability_evaluations", "e"], "framework": ["f"]},
             "constants": {c: c for c in env.constants},
             "relations": {p: sorted(v) for p, v in relations.items()}})
     return _MODELS[key]
@@ -370,16 +367,26 @@ def regulated(predicate):
     return vocabulary()["vocabulary"]["predicates"][predicate]["regulated"]
 
 
+# The one element of each sort an act is asked of: the case's situation, a capability, the Framework (f16-year).
+SUBJECT = {"situation": "s", "capability": "k", "framework": "f"}
+
+
+def subject(predicate):
+    sort = vocabulary()["vocabulary"]["predicates"][predicate]["arguments"][0]
+    return sort, SUBJECT[sort]
+
+
 def selected(doc, found, predicate, sign):
-    return sorted(r.name for r in pick(doc, found, predicate, ("s",)) if r.sign == sign)
+    return sorted(r.name for r in pick(doc, found, predicate, (subject(predicate)[1],)) if r.sign == sign)
 
 
 def completed(doc, found, predicate):
     from ve.evaluate import _Evaluator
     env = doc.elaborated.base_environment()
     formula = doc.elaborated.outcome(predicate, base=True)
-    A._Checker(env).formula(formula, ("situation",))
-    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, (("situation", "s"),))[0]
+    sort, element = subject(predicate)
+    A._Checker(env).formula(formula, (sort,))
+    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, ((sort, element),))[0]
 
 
 @lru_cache(maxsize=None)
@@ -409,7 +416,6 @@ def unset_negations(case, predicates):
     """A negated open term the case leaves unset would be read as false by the complete case model."""
     stated = {OT[t] for t in case.get("findings", {}) if t in OT} | set(STATED_FALSE.get(case["id"], ()))
     stated |= set(SITUATIONS.get(case["id"], ())) | {"critical_standard_unspecified"}
-    stated |= {b for p in predicates for b in ALTERNATIVES.get(p, ())}
     return sorted(negated(predicates) - stated)
 
 
@@ -773,8 +779,7 @@ def witness_for(block):
              for c in sorted({c for c, _ in V.LEVELS.values()})}
     choice = {**BASE, **dict(block.when)}
     names_ = tuple(sorted(choice.items()))
-    sort = vocabulary()["vocabulary"]["predicates"][rule["predicate"]]["arguments"][0]
-    arg = {"situation": "s", "capability": "k"}[sort]
+    arg = subject(rule["predicate"])[1]
     for positive in (names[False] - blocked, (situation | capability) - blocked):
         found = set(atoms({"id": block.id, "levels": list(LEVEL_IDS), "activity": None, "findings": {}}, choice))
         found = {a for a in found if a[0] not in situation or a[0] in positive}
