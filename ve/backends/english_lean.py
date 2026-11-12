@@ -585,8 +585,10 @@ def _reading_problem(reading: dict, case: dict) -> str | None:
 def command_problem(row: dict, case: dict) -> str | None:
     """Why `row`, a schema-checked `english.command` row, is not the answer to `case` (R8): the echoed id, unit and
     wording; one legend line for the task, one for an addressee and one per definite of the request's scope, none
-    repeated; each reading bound (`_reading_problem`), 2 to 64 distinct ones for `many`; a refusal's class one
-    Python raises. The legend's lines, the guard, the paraphrase and a refusal's code and text are Lean's."""
+    repeated; each reading bound (`_reading_problem`), 2 to 64 distinct ones for `many`, each its own alternative; a
+    refusal's class one Python raises. CI-3's `steps` and a `many` of sequences are not bound here until ci-3c, so they
+    are refused. The legend's lines, the guard, the paraphrase, `after_previous`, an alternative's shape and a
+    refusal's code and text are Lean's."""
     result = row["result"]
     if row["id"] != case["id"] or result["unit"] != case["unit"] or result["wording"] != case["wording"]:
         return "the answer does not echo the request's id, unit and wording"
@@ -595,7 +597,13 @@ def command_problem(row: dict, case: dict) -> str | None:
     if len(legend) != 1 + ("addressee" in scope) + len(scope.get("definites", {})) or len(set(legend)) != len(legend):
         return "the legend is not one line per scope sentence"
     outcome = result["outcome"]
+    if outcome not in ("one", "many", "refused", "limit"):
+        # CI-3's `steps` and CI-7b's `mixed` are typed by the schema but bound to the request only from ci-3c.
+        return f"the {outcome} outcome is not bound to the request by this relay"
     readings = [result["reading"]] if outcome == "one" else result["readings"] if outcome == "many" else []
+    if outcome == "many" and [alt["readings"] for alt in result["alternatives"]] != [[i] for i in range(len(readings))]:
+        # A `many` of sequences (CI-3) is bound to the request only from ci-3c.
+        return "the many outcome's alternatives are not one reading each at its own position"
     if outcome == "many" and (not 2 <= len(readings) <= 64 or
                               len({json.dumps(r, sort_keys=True) for r in readings}) != len(readings)):
         return "many has a repeated reading, or fewer than two or more than 64"
