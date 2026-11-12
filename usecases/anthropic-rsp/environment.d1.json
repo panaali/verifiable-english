@@ -212,7 +212,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will consider this threshold to be met if we determine that either (1) ... or (2) there is 'dramatic acceleration' of the pace of AI progress for reasons that likely relate to the automation of AI R&D.\"). Open term OT1, decided by the company (\"we\") (\"if we determine\")"
+        "description": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will consider this threshold to be met if we determine that either (1) our models would be able to fully substitute for our entire set of Research Scientists and Research Engineers, at competitive costs (i.e., within a factor of 5); or (2) there is 'dramatic acceleration' of the pace of AI progress for reasons that likely relate to the automation of AI R&D.\"). Open term OT1, decided by the company (\"we\") (\"if we determine\")"
       },
       "highly_capable": {
         "arguments": [
