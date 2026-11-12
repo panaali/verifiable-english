@@ -28,7 +28,8 @@ of case `i` as sent (`case_digests`) and the identity fields the runners echo fr
 case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
 Every field must also be well formed (`lean_service_schema/`, compiled by
 `service_schema.py`). A binding no schema keyword can state is its mode's `MODE_BINDINGS` entry
-(`bind_answers`; norm-defaults: a status row's rules and a certificate row's premise count).
+(`bind_answers`; norm-defaults, and readings-route on those kinds: a status row's rules and a certificate
+row's premise count).
 Content that preserves binding, such as the targets inside one norms result, is the service's
 responsibility and is not checked here.
 
@@ -437,8 +438,17 @@ def _bind_norm_defaults(row: dict, case: dict) -> None:
             raise Invalid("norm-defaults-certificate premises is not the count its certificate is bound to")
 
 
+def _bind_readings_route(row: dict, case: dict) -> None:
+    """The readings route answers a case of no readings kind on the lower route (`Readings.Run.runLower`), so its row
+    for a `norm-defaults-status` or `norm-defaults-certificate` case is the norm-defaults runner's
+    (`readings-route.json`'s `norm-defaults.json#/row`; no other runner answers those kinds `ok`): bound as under that
+    mode (`_bind_norm_defaults`, which binds those two kinds only). Every other readings-route row has no binding
+    beyond its schema."""
+    _bind_norm_defaults(row, case)
+
+
 # The bindings of a mode's `ok` rows that its response schema does not state, by mode.
-MODE_BINDINGS = {"norm-defaults": _bind_norm_defaults}
+MODE_BINDINGS = {"norm-defaults": _bind_norm_defaults, "readings-route": _bind_readings_route}
 
 
 def bind_answers(mode: str, response: object, request: dict) -> None:
