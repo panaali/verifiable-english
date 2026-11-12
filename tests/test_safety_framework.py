@@ -336,3 +336,19 @@ def test_excluded_readings_and_their_rules_are_never_offered_again(tmp_path, mon
     rows = {r["id"]: r for r in RESULTS["comparison"]}
     assert {i: (rows[i]["ve"], rows[i]["deviation"]["answer"]) for i in ("C1", "C3", "C-doc")} == {
         i: ("NONE", "NONE") for i in ("C1", "C3", "C-doc")}
+
+
+@pytest.mark.parametrize("levels, activity, adequate", [
+    (("cbrn_uplift_level_1", "cyber_uplift_level_1"), "EXT", ["applies", "p", "security_level_2_plus"]),
+    (("ml_rd_acceleration_level_1", "ml_rd_automation_level_1"), "HRI", ["security_assessed_adequate", "p"])])
+def test_one_mitigated_level_does_not_discharge_another_reached_level(levels, activity, adequate):
+    """f9-acc, f10-acc: "for the T/CCLs the model has reached" (2.1.2, 3.1.2 step 2). A model at two levels of one
+    bullet, with security adequate for both, is deemed acceptable when the deployment mitigations cover both levels,
+    and not when they cover only one (the existential reading let one mitigated level discharge the other)."""
+    def acceptable(mitigated):
+        case = {"id": "fsf-fix:" + "+".join(mitigated), "family": "R", "levels": list(levels), "activity": activity,
+                "findings": [["mitigates", "p", level] for level in mitigated] + [adequate]}
+        assert run.premise_status(run.case_atoms(case))[0] == "model"
+        return run.describe(run.item_result("ACCEPTABLE", case))
+    assert acceptable(levels) == "ALL"
+    assert acceptable(levels[:1]) == "NONE"
