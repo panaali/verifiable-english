@@ -14,6 +14,7 @@ from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from conformance import softnorms_legacy as soft
 from conformance.wire_contract_engine import Registry, load, overlay, run
+from ve.wire_contract.registry import once
 
 
 @lru_cache(maxsize=1)
@@ -261,7 +262,8 @@ def extended_vocabulary_fits(root, items):
 
 
 def rule_typing(root, items):
-    context = soft._declarations(_environment(root), False)
+    """5.7 and 5.8 for one rule, over the environment's declarations, decoded once per run (`registry.once`)."""
+    context = once("declarations", root, lambda r: soft._declarations(_environment(r), False))
     index = int(items[0][-1])
     rule = soft._rule_fields(root["norms"][index], context.exception_decider)
     stripped = replace(rule, conditions={"sufficient": (), "necessary": ()})

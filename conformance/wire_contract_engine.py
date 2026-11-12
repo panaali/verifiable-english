@@ -36,7 +36,7 @@ class Deferred:
 CLEAN = Clean()
 
 
-from ve.wire_contract.registry import Registry
+from ve.wire_contract.registry import Registry, one_run
 
 
 def load(unit: str, *, directory: Path = ROOT) -> dict:
@@ -366,7 +366,13 @@ def _fails(entry, root, items, earlier, names, limits):
 
 
 def run(contract, root, *, registry=None, contracts=None, limits=None, names=None):
-    """Return the first fault, a deferred id, or clean; never decide acceptance."""
+    """Return the first fault, a deferred id, or clean; never decide acceptance. The hooks evaluate each value of the
+    input once per run (`registry.once`)."""
+    with one_run():
+        return _run(contract, root, registry=registry, contracts=contracts, limits=limits, names=names)
+
+
+def _run(contract, root, *, registry, contracts, limits, names):
     if not _domain(root):
         return CLEAN
     registry = registry or Registry()

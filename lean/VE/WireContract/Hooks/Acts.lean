@@ -9,11 +9,13 @@ edit 2 of plan synthesis round 2): it reports and refuses nothing.
 `Hooks.Norms.w1Environment` and `typingEnvironment` decode without `acts := true`, so they refuse every `acts@0`
 environment; this module's 1.1 decodes with it, as `Norms.Wire.decodeSource` does. When the decoder refuses, the
 member is the limit of `VE.Acts.Lexical` whose own function gives exactly the decoder's text: `decodeFixed` on the
-declared phrases (1.1a), `phraseToks` on one of them (1.1b) or `check` on one act (1.1c); a refusal that
-`Acts.Wire.decodeVocab` gives on the `acts` block's frames and adverbs (D-31, `Acts.Syntax.checkVocab`; ap-1bfb) is
-1.1e at its limit (31a) and 1.1f otherwise; any other refusal is 1.1d. The limits and texts are Lexical's and D-31's,
-read here and never copied. After a refusal the classifier reads each declared phrase, the frames and adverbs, and
-each act once more, so its work is linear in the environment (D-31's pairwise checks run on at most 31a's frames).
+declared phrases (1.1a), `phraseToks` on one of them (1.1b) or `check` on one act (1.1c); a refusal of the `acts`
+block's frames and adverbs (D-31, `Acts.Syntax.checkVocab`; ap-1bfb) is 1.1e at its limit (31a) and 1.1f otherwise,
+when the decoder reaches them: it refuses the block alone in the vocabulary with the same text and accepts it without
+its frames and adverbs (`framesRefusal`), so a text the frames share with an earlier check, such as "String
+expected", is that check's; any other refusal is 1.1d. The limits and texts are Lexical's and D-31's, read here and
+never copied. After a refusal the classifier reads each declared phrase and each act once more, and decodes the
+block twice. The rule phases (4.7) type each rule once per run over one decode of the environment (`hooksFor`).
 Diagnostic only: no verdict depends on this module. -/
 
 namespace VE.WireContract.Hooks.Acts
@@ -26,13 +28,20 @@ open VE.WireContract.Hooks.Norms (environmentOf message)
 `Service.Standalone.validatedLayerEnvironment`), so that without `norms@0` the row's own refusal is the text (ap-1bf
 review F1); then the norms route's environment decoder reading `acts@0`, then `decodeSource`'s `definitions@0`
 check; a joined act is read by the act check, as the environment row reads it (ap-3dc). -/
-def decoded (environment : Json) : Except String Unit := do
+def decodeOf (environment : Json) : Except String VE.Norms.Wire.NormsEnvironment :=
+  VE.Norms.Wire.decodeNormsEnvironment environment (acts := true) (joined := true)
+
+/-- `decoded`, with the norms route's decoder's result `ne` read only after the profile row holds. -/
+def decodedBy (environment : Json) (ne : Unit → Except String VE.Norms.Wire.NormsEnvironment) :
+    Except String Unit := do
   let listed := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if listed.contains "acts@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows listed
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment environment (acts := true) (joined := true)
+  let ne ← ne ()
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
+
+def decoded (environment : Json) : Except String Unit := decodedBy environment fun _ => decodeOf environment
 
 def refusedWith {α : Type} (e : String) : Except String α → Bool
   | .error e' => e' == e
@@ -54,11 +63,31 @@ def actsOf (environment : Json) : List (String × Nat × Json) :=
 /-- The `acts` block of the environment's vocabulary, whose frames and adverbs `Acts.Wire.decodeVocab` reads. -/
 def blockOf (environment : Json) : Json := (environment.getObjValD "vocabulary").getObjValD "acts"
 
+/-- The environment with the `acts` block alone in its vocabulary, with its `frames` and `adverbs` (`frames`) or
+    without them; `none` when the block is not an object. Every check the decoder makes before the frames reads the
+    same members of both as of the environment, and every check after them holds on both (no sort, predicate or
+    constant is declared). -/
+def alone (environment : Json) (frames : Bool) : Option Json :=
+  match blockOf environment with
+  | .obj kvs => some (environment.setObjVal! "vocabulary" (Json.mkObj [("sorts", Json.mkObj []),
+      ("predicates", Json.mkObj []), ("constants", Json.mkObj []),
+      ("acts", if frames then .obj kvs else .obj ((kvs.erase "frames").erase "adverbs"))]))
+  | _ => none
+
+/-- Whether `e` is the refusal of the `acts` block's frames and adverbs (D-31): the decoder refuses the block alone
+    with `e`, and accepts it without its frames and adverbs, so no check before them refuses the environment (ap-1bfb
+    review F1: a text such as "String expected" that the frames share with an earlier check is that check's). Python's
+    `acts_contract.vocabulary_refusal` asks Lean's decoder the same two questions. -/
+def framesRefusal (environment : Json) (e : String) : Bool :=
+  match alone environment true, alone environment false with
+  | some j, some k => refusedWith e (decoded j) && (decoded k).isOk
+  | _, _ => false
+
 /-- The member of the decoder's refusal `e`. `check` runs without the phrases: its limit refusal comes before it
     reads them. -/
 def member (environment : Json) (e : String) : ClassifierResult :=
   let fx := fixedOf environment
-  if refusedWith e (VE.Acts.Wire.decodeVocab (blockOf environment)) then
+  if framesRefusal environment e then
     .fail (if e.startsWith "ResourceLimit:" then "1.1e" else "1.1f") (message e)
   else if !e.startsWith "ResourceLimit:" then .fail "1.1d" (message e)
   else if fx.length > maxPhrases then .fail (if refusedWith e (decodeFixed fx) then "1.1a" else "1.1d") (message e)
@@ -71,39 +100,35 @@ def member (environment : Json) (e : String) : ClassifierResult :=
 `acts@0.json` includes `norms@0`'s phases from `profiles` to `semantic`; their hooks are `Hooks.Norms`', except 4.7,
 whose `Hooks.Norms.typingEnvironment` decodes without `acts` and so is `none` on every `acts@0` source. -/
 
-/-- The environment 4.7 reads: the norms route's, decoded reading `acts@0` as 1.1 decodes it; `none` before 1.1
-    holds. -/
-def typingEnvironment (root : Json) : Option VE.Environment := do
-  let ne ← (VE.Norms.Wire.decodeNormsEnvironment (environmentOf root) (acts := true) (joined := true)).toOption
-  pure ne.rv.environment
+/-- The environment 4.7 reads: the norms route's, decoded reading `acts@0` as 1.1 decodes it (`ne`); `none` before
+    1.1 holds. -/
+def typingEnvironment (ne : Except String VE.Norms.Wire.NormsEnvironment) : Option VE.Environment :=
+  ne.toOption.map (·.rv.environment)
 
-/-- 4.7 at the `i`-th rule: `Hooks.Norms.ruleTyping`'s walk, one running total over the earlier rules (each well
-    typed, by rule 2) and then this one, over `typingEnvironment`. -/
-def ruleTyping (root : Json) (i : Nat) : ClassifierResult :=
-  match typingEnvironment root with
-  | none => .ok
-  | some E =>
-    let data := (Hooks.Norms.profiles root).contains "data@0"
-    let rec go : Nat → Nat → List Json → ClassifierResult
-      | _, _, [] => .ok
-      | 0, n, rule :: _ => match Hooks.Norms.typeRule E data rule n with
-        | some (.error e) => Hooks.Norms.typingMember e
-        | _ => .ok
-      | j + 1, n, rule :: rest => match Hooks.Norms.typeRule E data rule n with
-        | some (.ok next) => go j next rest
-        | _ => .ok
-    go i 0 (Hooks.Norms.rulesOf root)
+/-- 1.1 over the decoder's result `ne` on the environment. -/
+def environmentBy (environment : Json) (ne : Unit → Except String VE.Norms.Wire.NormsEnvironment) :
+    ClassifierResult :=
+  match decodedBy environment ne with
+  | .ok () => .ok
+  | .error e => member environment e
 
 def classifier : String → Json → List Pointer → ClassifierResult
-  | "acts_environment", root, _ => match decoded (environmentOf root) with
-    | .ok () => .ok
-    | .error e => member (environmentOf root) e
-  | "rule_typing", root, items => match Hooks.Norms.itemIndex items 0 with
-    | some i => ruleTyping root i
-    | none => .ok
+  | "acts_environment", root, _ => environmentBy (environmentOf root) fun _ => decodeOf (environmentOf root)
+  | "rule_typing", root, items =>
+    Hooks.Norms.tableAt (Hooks.Norms.typingTableOver root (typingEnvironment (decodeOf (environmentOf root)))) items
   | name, root, items => Hooks.Norms.classifier name root items
 
 def hooks : Hooks := ⟨Hooks.Norms.predicate, classifier, Hooks.Norms.view⟩
+
+/-- The hooks of one run on the input `j` (ap-1bfb review F2): the environment is decoded once, for 1.1 and 4.7,
+    and 4.7's table is built once; each rule is typed once. -/
+def hooksFor (j : Json) : Hooks :=
+  let ne := Thunk.mk fun _ => decodeOf (environmentOf j)
+  let table := Thunk.mk fun _ => Hooks.Norms.typingTableOver j (typingEnvironment ne.get)
+  ⟨Hooks.Norms.predicate, Hooks.Norms.onInput j (fun
+    | "acts_environment" => some fun _ => environmentBy (environmentOf j) fun _ => ne.get
+    | "rule_typing" => some (Hooks.Norms.tableAt table.get)
+    | _ => none) classifier, Hooks.Norms.view⟩
 
 /-- `acts@0` listed, and the source without it in `norms@0`'s domain: no `norm-defaults@0`, no statement layer. -/
 def inDomain (environment norms : Json) : Bool :=
@@ -213,6 +238,21 @@ def framesLimit : Nat :=
     (framed [frameOf "Give"], "1.1f", "ACTS_INVALID_FRAMES", "InvalidInput")].all fun (j, c, k, l) =>
   recordOf j == some (["acts@0", c, k, l, "/environment", "environment"].map Json.str ++ [(recordOf j).get!.getD 6 .null,
     toJson true])
+-- a text the frames share with an earlier check is that check's, and with a later check the frames' (ap-1bfb review
+-- F1): a number where a string is expected, in the envelope, in `fixed`, in a predicate, and in a frame or an adverb
+def withBlock (block : List (String × Json)) (e : Json := framed []) : Json :=
+  e.setObjVal! "vocabulary" ((e.getObjValD "vocabulary").setObjVal! "acts" (Json.mkObj block))
+def numberHead : Json := Json.mkObj [("head", (5 : Nat)), ("markers", Json.arr #[]), ("split", Json.arr #[]),
+  ("modifiers", Json.arr #[])]
+#guard memberOf ((framed [numberHead]).setObjVal! "language" (5 : Nat)) == some "1.1d"
+#guard memberOf (withBlock [("fixed", toJson [(5 : Nat)]), ("adverbs", toJson [(5 : Nat)])]) == some "1.1d"
+#guard memberOf (withBlock [("frames", toJson [frameOf "Give"])]) == some "1.1d"
+#guard memberOf (framed [numberHead]) == some "1.1f" && memberOf (withBlock [("fixed", Json.arr #[]),
+  ("adverbs", toJson [(5 : Nat)])]) == some "1.1f"
+#guard let e := withBlock [("fixed", Json.arr #[]), ("adverbs", toJson [(5 : Nat)])]
+  let v := e.getObjValD "vocabulary"
+  memberOf (e.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "w"
+    (Json.mkObj [("arguments", toJson ["person"]), ("description", (5 : Nat))])))) == some "1.1f"
 -- the rule phases (ap-1bfb): `norms@0`'s members, under the include `norms`, typed over `acts@0`'s environment
 def ruleOf (name pred : String) (guard : Json) : Json := Json.mkObj [("norm", Json.mkObj [("name", name),
   ("predicate", pred), ("sign", true), ("guard", guard), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
@@ -220,8 +260,7 @@ def unaryOn (p : String) : Json := toJson [toJson "unary", toJson p, toJson [toJ
 def checkOf (norms : List Json) (environment : Json := envOf [] (actOf 20)) : Option String :=
   (run Tables.Acts.table hooks (Json.mkObj [("environment", environment), ("norms", toJson norms)])).map fun f =>
     ((record Tables.Acts.table f).getObjValD "check").getStr?.toOption.getD ""
-#guard checkOf [ruleOf "r0" "paid" (unaryOn "w")] == none && (typingEnvironment (Json.mkObj
-  [("environment", envOf [] (actOf 20))])).isSome
+#guard checkOf [ruleOf "r0" "paid" (unaryOn "w")] == none && (typingEnvironment (decodeOf (envOf [] (actOf 20)))).isSome
 #guard checkOf [ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r1" "paid" (unaryOn "nope")] == some "norms/4.7b"
 #guard checkOf [ruleOf "r0" "paid" (toJson [toJson "unary", toJson "w", toJson [toJson "const", toJson "k"]])] ==
   some "norms/4.7b"
@@ -258,6 +297,29 @@ def faultOf (norms : List Json) : Option (String × String) :=
 #guard let half := balancedOn 32 ((VE.Limits.maxNodes / 2 + 1) / 3)
   faultOf [ruleOf "r0" "paid" half, ruleOf "r1" "paid" half, ruleOf "r2" "paid" (toJson [toJson "top"])] ==
     some ("norms/4.7d", "/norms/2")
+-- one run's hooks (`hooksFor`) give the record `hooks` gives, the environment decoded once (ap-1bfb review F2); on
+-- another root they are `hooks`
+def bothOf (environment : Json) (norms : List Json) : Bool :=
+  let j := Json.mkObj [("environment", environment), ("norms", toJson norms)]
+  (run Tables.Acts.table (hooksFor j) j).map (record Tables.Acts.table) ==
+    (run Tables.Acts.table hooks j).map (record Tables.Acts.table)
+def resultOf : ClassifierResult → Option String
+  | .ok => none
+  | .fail m _ => some m
+#guard let half := balancedOn 32 ((VE.Limits.maxNodes / 2 + 1) / 3)
+  [([ruleOf "r0" "paid" (unaryOn "w")], envOf [] (actOf 20)),
+   ([ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r1" "paid" (unaryOn "nope")], envOf [] (actOf 20)),
+   ([ruleOf "r0" "paid" half, ruleOf "r1" "paid" half, ruleOf "r2" "paid" (toJson [toJson "top"])], envOf [] (actOf 20)),
+   ([ruleOf "r0" "paid" (unaryOn "nope")], joinedEnv), ([ruleOf "r0" "paid" (unaryOn "nope")], envOf [] (actOf (maxActBytes + 1))),
+   ([], framed [frameOf "Give"]), ([], framed (framesOf (framesLimit + 1))),
+   ([ruleOf "r0" "paid" stringBinder], envOf [] (actOf 20) ["acts@0", "data@0", "norms@0", "relational-fol@0"])].all
+    fun (norms, environment) => bothOf environment norms
+#guard let other := Json.mkObj [("environment", envOf [] (actOf 20)), ("norms", toJson [ruleOf "r0" "paid" (unaryOn "nope")])]
+  let j := Json.mkObj [("environment", envOf [] (actOf 20)), ("norms", toJson [ruleOf "r0" "paid" (unaryOn "w")])]
+  resultOf (hooks.classifier "rule_typing" other [["norms", "0"]]) == some "4.7b" &&
+  [("rule_typing", [["norms", "0"]]), ("acts_environment", [])].all fun (n, items) =>
+    resultOf ((hooksFor j).classifier n other items) == resultOf (hooks.classifier n other items) &&
+      resultOf ((hooksFor j).classifier n j items) == resultOf (hooks.classifier n j items)
 -- the profile row before the decoder, on any list that names `acts@0`: an unsorted one with an unknown field
 #guard (match decoded ((envOf [] (actOf 20) ["norms@0", "relational-fol@0", "acts@0"]).setObjVal! "x" 1) with
   | .error e => e | .ok () => "") == "UnsupportedProfile: profiles must be sorted and unique"

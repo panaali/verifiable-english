@@ -262,21 +262,24 @@ def typingMember (e : String) : ClassifierResult :=
   else if e.startsWith "UnsupportedProfile:" then .fail "4.7e" (message e)
   else .ok
 
-/-- 4.7 at the `i`-th rule: one running total over the earlier rules (each well typed, by rule 2), then this one. -/
-def ruleTyping (root : Json) (i : Nat) : ClassifierResult :=
-  match typingEnvironment root with
-  | none => .ok
-  | some E =>
-    let data := (profiles root).contains "data@0"
-    let rec go : Nat → Nat → List Json → ClassifierResult
-      | _, _, [] => .ok
-      | 0, n, rule :: _ => match typeRule E data rule n with
-        | some (.error e) => typingMember e
-        | _ => .ok
-      | j + 1, n, rule :: rest => match typeRule E data rule n with
-        | some (.ok next) => go j next rest
-        | _ => .ok
-    go i 0 (rulesOf root)
+/-- 4.7 at every rule, in order, in one pass (ap-1bfb review F2): one running node total over the rules, each typed
+    once; the list stops at the first rule that is not well typed, and a rule past its end holds (rule 2: the run
+    stopped before it). -/
+def typingList (E : VE.Environment) (data : Bool) : Nat → List Json → List ClassifierResult
+  | _, [] => []
+  | n, rule :: rest => match typeRule E data rule n with
+    | some (.ok next) => .ok :: typingList E data next rest
+    | some (.error e) => [typingMember e]
+    | none => [.ok]
+
+/-- 4.7 at every rule of `root` over `E`, as an array. -/
+def typingTableOver (root : Json) : Option VE.Environment → Array ClassifierResult
+  | none => #[]
+  | some E => (typingList E ((profiles root).contains "data@0") 0 (rulesOf root)).toArray
+
+/-- 4.7 at the rule an item names, from the table of every rule's result. -/
+def tableAt (table : Array ClassifierResult) (items : List Pointer) : ClassifierResult :=
+  ((itemIndex items 0).bind (table[·]?)).getD .ok
 
 /-! ## 6.1 to 6.3: the document graphs -/
 
@@ -370,15 +373,27 @@ def classifier : String → Json → List Pointer → ClassifierResult
     | some rule, some k => carveOutSyntax rule k
     | _, _ => .ok
   -- 4.7
-  | "rule_typing", root, items => match itemIndex items 0 with
-    | some i => ruleTyping root i
-    | none => .ok
+  | "rule_typing", root, items => tableAt (typingTableOver root (typingEnvironment root)) items
   | _, _, _ => .ok
 
 def view : String → Json → Json
   | _, v => v
 
 def hooks : Hooks := ⟨predicate, classifier, view⟩
+
+/-- The classifier `c` of one run on the input `j`: the classifiers `cached` names read `j`'s values, each built once
+    when first read (ap-1bfb review F2: 4.7 decoded the environment and walked every earlier rule at each rule);
+    any other name or root is `c`'s. -/
+def onInput (j : Json) (cached : String → Option (List Pointer → ClassifierResult))
+    (c : String → Json → List Pointer → ClassifierResult) : String → Json → List Pointer → ClassifierResult :=
+  fun name root items => match if root == j then cached name else none with
+    | some f => f items
+    | none => c name root items
+
+/-- The hooks of one run on the input `j`: 4.7's table of `j` is built once. -/
+def hooksFor (j : Json) : Hooks :=
+  let table := Thunk.mk fun _ => typingTableOver j (typingEnvironment j)
+  ⟨predicate, onInput j (fun n => if n == "rule_typing" then some (tableAt table.get) else none) classifier, view⟩
 
 /-! ## The adapter -/
 

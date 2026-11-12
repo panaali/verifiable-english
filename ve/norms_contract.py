@@ -11,7 +11,7 @@ from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
 from ve.norms import NormDocument, _used_predicates, dependency_order
-from ve.wire_contract.registry import Registry
+from ve.wire_contract.registry import Registry, once
 
 
 # The profiles of the unit's domain (2.2): checker profiles are refused by both routes before the validator
@@ -92,9 +92,14 @@ def _failure(call):
     return None
 
 
+def decoded_environment(root):
+    """`Environment(root["environment"])`, decoded once per run (`registry.once`)."""
+    return once("environment", root, lambda r: Environment(r["environment"]))
+
+
 def w1_environment(root, items):
     """1.1, inherited: the environment decoder accepts the environment."""
-    return _failure(lambda: Environment(root["environment"]))
+    return _failure(lambda: decoded_environment(root))
 
 
 # 2.5, the syntax walk: the first-order tags of the P0 wire form with their number of members, by
@@ -191,27 +196,52 @@ TYPING_MEMBERS = {"TypeMismatch": "a", "UnknownSymbol": "b", "UnboundVariable": 
                   "UnsupportedProfile": "e"}
 
 
-def typing_failure(env, rules, prefix):
-    """One `_Checker` over `env` types the decoded guard and carve-outs of `rules` in order, each over the
-    sorts of its rule's predicate; the first exception's class names the member of `prefix`."""
-    checker = _Checker(env)
-    try:
-        for rule in rules:
-            context = tuple(reversed(env.predicates[rule.predicate].arguments))
-            for formula in (rule.guard, *rule.unless):
-                checker.formula(formula, context)
-    except VEError as exc:
-        member = TYPING_MEMBERS.get(exc.code)
-        return None if member is None else (prefix + member, {"message": str(exc)})
-    return None
+class _Rules:
+    """The rules of one run's input, each decoded once (`NormDocument._decode`), in order, when first read."""
+
+    def __init__(self, root):
+        self.units, self.rules = root["norms"], []
+
+    def upto(self, index):
+        """The decoded rules, at least up to `index`: they are decoded in order, as `NormDocument._decode` refuses."""
+        while len(self.rules) <= index:
+            self.rules.append(NormDocument._decode(self.units[len(self.rules)]))
+        return self.rules
+
+
+def decoded_rules(root):
+    return once("rules", root, _Rules)
+
+
+class _Typing:
+    """4.7 over a run's rules, in order, under one `_Checker` over the environment: each rule's guard and carve-outs
+    over the sorts of its predicate; the first exception's class names the member. Each rule is typed once per run,
+    and not once per later rule (ap-1bfb review F2)."""
+
+    def __init__(self, root):
+        self.root, self.env = root, decoded_environment(root)
+        self.checker, self.typed, self.failure = _Checker(self.env), 0, None
+
+    def at(self, index):
+        """The member at the rule `index`: the rules up to it are decoded first, then typed in order up to it; after
+        the first failure every later rule gives that rule's answer."""
+        rules = decoded_rules(self.root).upto(index)
+        while self.failure is None and self.typed <= index:
+            rule = rules[self.typed]
+            try:
+                context = tuple(reversed(self.env.predicates[rule.predicate].arguments))
+                for formula in (rule.guard, *rule.unless):
+                    self.checker.formula(formula, context)
+            except VEError as exc:
+                member = TYPING_MEMBERS.get(exc.code)
+                self.failure = (None if member is None else ("4.7" + member, {"message": str(exc)}),)
+            self.typed += 1
+        return self.failure[0] if self.failure else None
 
 
 def rule_typing(root, items):
     """4.7: the guards and carve-outs of the earlier rules, then the item's, under one `_Checker`."""
-    index = int(items[0][-1])
-    env = Environment(root["environment"])
-    rules = [NormDocument._decode(unit) for unit in root["norms"][:index + 1]]
-    return typing_failure(env, rules, "4.7")
+    return once("rule_typing", root, _Typing).at(int(items[0][-1]))
 
 
 def over_same_predicate(root, items):
@@ -260,10 +290,9 @@ def precedence_depth_fits(root, items):
 def layers_acyclic(root, items):
     """6.3: the graph over the regulated predicates, with an edge from a rule's predicate to each regulated
     predicate its guard or carve-outs mention, is acyclic."""
-    env = Environment(root["environment"])
+    env = decoded_environment(root)
     dependencies = {p: set() for p, d in env.predicates.items() if d.regulated is not None}
-    for unit in root["norms"]:
-        rule = NormDocument._decode(unit)
+    for rule in decoded_rules(root).upto(len(root["norms"]) - 1):
         dependencies[rule.predicate].update(
             q for f in (rule.guard, *rule.unless) for q in _used_predicates(f) if q in dependencies)
     return _cycle(dependencies)

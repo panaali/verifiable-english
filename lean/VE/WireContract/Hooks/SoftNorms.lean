@@ -1,6 +1,7 @@
 import VE.SoftNorms.Wire
 import VE.Norms.Admission
 import VE.WireContract.Engine
+import VE.WireContract.Hooks.Norms
 import VE.WireContract.Tables.SoftNorms
 
 /-! The hand-written hooks, classifiers and adapter of the pilot contract `soft-norms@0`
@@ -169,21 +170,25 @@ def semanticMember (D : SoftDoc) (m : String) : ClassifierResult :=
   -- rule 13: any other message names no member (revision 3) and shows as a residual, as rule 3a
   else .ok
 
+/-- 5.7 and 5.8 for the rule an item names, over `d`, the environment's declarations (`declared`). -/
+def ruleTypingBy (d : Option (Norms.Wire.NormsEnvironment × SoftEnv)) (root : Json) (items : List Pointer) :
+    ClassifierResult :=
+  match d, itemValue root items 0 with
+  | some (ne, soft), some rule => match Phases.ruleFields soft.exceptionDecider rule with
+    | .ok N => match Phases.ruleReferences ne soft { N with exception := none } with
+      | .error f => .fail "5.7" (message f.message)
+      | .ok () => match Phases.ruleReferences ne soft N with
+        | .error f =>
+          if f.code == "SOFT_INVALID_EXCEPTION_CONDITION" then
+            .fail "5.8b" [("detail", .str (after "InvalidInput: exception condition of rule " f.message))]
+          else .fail "5.8a" (message f.message)
+        | .ok () => .ok
+    | .error _ => .ok
+  | _, _ => .ok
+
 def classifier : String → Json → List Pointer → ClassifierResult
   -- 5.7 and 5.8 for one rule: `Phases.ruleReferences` on the rule without its exception, then on the rule
-  | "rule_typing", root, items =>
-    match declared root, itemValue root items 0 with
-    | some (ne, soft), some rule => match Phases.ruleFields soft.exceptionDecider rule with
-      | .ok N => match Phases.ruleReferences ne soft { N with exception := none } with
-        | .error f => .fail "5.7" (message f.message)
-        | .ok () => match Phases.ruleReferences ne soft N with
-          | .error f =>
-            if f.code == "SOFT_INVALID_EXCEPTION_CONDITION" then
-              .fail "5.8b" [("detail", .str (after "InvalidInput: exception condition of rule " f.message))]
-            else .fail "5.8a" (message f.message)
-          | .ok () => .ok
-      | .error _ => .ok
-    | _, _ => .ok
+  | "rule_typing", root, items => ruleTypingBy (declared root) root items
   -- 6.5 to 6.15: `validateSoft` on the document that `Wire.decodeSoftSource` builds
   | "soft_semantic", root, _ => match checked root with
     | some (_, D) => match validateSoft D with
@@ -196,6 +201,13 @@ def view : String → Json → Json
   | _, v => v
 
 def hooks : Hooks := ⟨predicate, classifier, view⟩
+
+/-- The hooks of one run on the input `j`: the declarations 5.7 and 5.8 read are decoded once, not once per rule
+    (ap-1bfb review F2). -/
+def hooksFor (j : Json) : Hooks :=
+  let d := Thunk.mk fun _ => declared j
+  ⟨predicate, Hooks.Norms.onInput j (fun n => if n == "rule_typing" then some (ruleTypingBy d.get j) else none)
+    classifier, view⟩
 
 /-- The adapter `soft_source` (section 6): the root `{environment, norms}` of a `soft-*` case, and for an
     `admission` case the active norm units that `VE.Norms.Admission.splitDocument` returns, as

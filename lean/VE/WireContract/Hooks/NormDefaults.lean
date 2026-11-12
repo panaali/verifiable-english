@@ -89,6 +89,9 @@ def predicate (name : String) (root : Json) (items : List Pointer) : HookResult 
 
 def hooks : Hooks := ⟨predicate, Hooks.Norms.classifier, Hooks.Norms.view⟩
 
+/-- The hooks of one run on the input `j`: 4.7's table built once (`Hooks.Norms.hooksFor`). -/
+def hooksFor (j : Json) : Hooks := ⟨predicate, (Hooks.Norms.hooksFor j).classifier, Hooks.Norms.view⟩
+
 /-- The adapter `norm_defaults_source` (spec 2.2): the kinds beginning `norm-defaults-` and `admission`, with
     manifest bindings "norm-defaults-elaborate", "norm-defaults-conflict" and "norm-defaults-certificate".
     `norm-defaults@0` listed. -/

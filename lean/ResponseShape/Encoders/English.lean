@@ -173,8 +173,8 @@ theorem lookup_mem {l : List (String × α)} {k : String} {v : α} (h : l.lookup
     · exact List.mem_cons_of_mem _ (ih h)
 
 /-- The class of a registered unit's finding is a public rejection code. -/
-theorem unit_class {unit : String} {u : VE.WireContract.Diagnose.Registered} {root : Json} {f : Finding}
-    (hu : VE.WireContract.Diagnose.units.lookup unit = some u) (hrun : run u.table u.hooks root = some f) :
+theorem unit_class {unit : String} {u : VE.WireContract.Diagnose.Registered} {h : Hooks} {root : Json} {f : Finding}
+    (hu : VE.WireContract.Diagnose.units.lookup unit = some u) (hrun : run u.table h root = some f) :
     f.cls ∈ VE.Service.rejectionCodes := by
   obtain ⟨⟨k, u'⟩, hm, rfl⟩ := List.mem_map.mp (lookup_mem hu)
   have hall := List.all_eq_true.mp units_classes _ hm
