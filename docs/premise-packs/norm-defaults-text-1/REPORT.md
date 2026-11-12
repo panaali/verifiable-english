@@ -1,7 +1,7 @@
 # norm-defaults-text-1: record corrections and review fixes (REPORT)
 
 Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3, recheck F3 in f3f360c1c3 and recheck F4 in
-F4COMMIT; each listed probe failed before and passes after. Selected tests passed (35 units, 0 failures); `lake build` and `lean/audit.py` passed.
+321a3aba02; each listed probe failed before and passes after. Selected tests passed (35 units, 0 failures); `lake build` and `lean/audit.py` passed.
 The merge train owns the full gate.
 No product behavior changed, no DELTA row is needed under the item's no-DELTA ruling, and no signature is reserved.
 
@@ -74,7 +74,12 @@ three `main-known-red.txt` tests are pre-existing, not edited and not selected.
   - `::test_wrapper_scans_refuse_and_accept`: the scans refuse the withdrawn sentence verbatim and F4's three
     counterexamples stated as shared refusals, and accept the spec's two sentences.
 
-PROBE F4 exited 1 on 006b99ae3e and exits 0 after the fix; PROBE F3 still exits 0. Docs and tests only: no Lean,
+PROBE F4 exited 1 on 006b99ae3e and exits 0 after the fix; PROBEs F1, F2 and F3 still exit 0. With the spec put
+back as it was at 006b99ae3e the file fails `::test_f4_probe_no_general_shared_refusal_condition` and
+`::test_wrapper_records_state_no_agreement_condition` (`2 failed, 13 passed`); after the fix it passes 15. The
+selected run (VM fallback) passed 35 units with 0 failures and deferred `tests/test_repo_map.py` and
+`tests/test_select_tests.py` to the chain gate. `lake build` completed 1429 jobs; `python3 lean/audit.py` passed (864
+source files, 9911 theorem declarations). Docs and tests only: no Lean,
 Python or Rust product change, so no seeded product bug applies; trust +0; no DELTA row (item-specific no-DELTA
 ruling, item 1 of that decision file); no signature reserved. The three `main-known-red.txt` tests are pre-existing, not edited.
 
