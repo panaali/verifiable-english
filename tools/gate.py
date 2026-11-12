@@ -857,6 +857,10 @@ def main() -> int:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
                          str(trust_file)], env=env, stage=TRUST_STAGE)
                 result["trust"] = read_trust(trust_file)
+                # docs/spec/kernel-boundary.md section 6: the kernel total and the verdict writers outside the kernel
+                # against the saved measurement; the tool builds the registry's `imports` (VE.Route.MeteredProofs) first.
+                command(["uv", "run", "--frozen", "--no-sync", "python", "tools/kernel_closure.py", "--check",
+                         "docs/kernel/closure-baseline.json"], env=env, stage="Kernel check")
 
             if selection is None and (shard is None or shard[0] == 1):
                 audit_command = ["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"]

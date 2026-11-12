@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import date
 import json
 import os
 from pathlib import Path
@@ -51,6 +52,72 @@ def diagnostic_only_violation(importer: str, imported: str) -> str | None:
         return None
     return (f"{importer} -> {imported}: {DIAGNOSTIC_ONLY}.* is diagnostic only and may be imported by "
             f"{DIAGNOSTIC_ONLY}.*, VE.Service.Diagnose and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
+
+
+# docs/spec/kernel-boundary.md section 5: an experimental module is unreachable from the service. No module that
+# the service's roots import, directly or transitively, may import one; each carries an expiry date in its first
+# docstring, and an expired one fails until it is promoted or deleted.
+EXPERIMENTAL = "VE.Experimental"
+SERVICE_ROOTS = ("VE.Service.Protocol", "Serve")
+EXPIRES = re.compile(r"Expires: (\d{4}-\d{2}-\d{2})")
+
+
+def is_experimental(module: str) -> bool:
+    return module == EXPERIMENTAL or module.startswith(EXPERIMENTAL + ".")
+
+
+def lean_modules(root: Path) -> dict[str, Path]:
+    """Every Lean module of the tree under `root`, by name."""
+    return {".".join(path.relative_to(root / "lean").with_suffix("").parts): path
+            for path in (root / "lean").rglob("*.lean") if ".lake" not in path.parts}
+
+
+def experimental_imports(read: dict[str, list[str]], roots=SERVICE_ROOTS) -> list[str]:
+    """The imports of an experimental module by a module the service's roots reach (a root included). A missing
+    root is a problem too: the rule cannot be checked without it."""
+    problems = [f"service root {root} is not in the tree" for root in roots if root not in read]
+    reached, todo = set(), [root for root in roots if root in read]
+    while todo:
+        module = todo.pop()
+        if module in reached:
+            continue
+        reached.add(module)
+        for imported in read.get(module, []):
+            if is_experimental(imported):
+                problems.append(f"{module} -> {imported}: the service ({', '.join(roots)}) reaches {module}, "
+                                f"which imports the experimental {imported} (docs/spec/kernel-boundary.md section 5)")
+            todo.append(imported)
+    return sorted(problems)
+
+
+def first_docstring(source: str) -> str | None:
+    """The text of the first `/--` or `/-!` comment, up to its first `-/`; None when there is none."""
+    start = min((i for i in (source.find("/--"), source.find("/-!")) if i >= 0), default=-1)
+    if start < 0:
+        return None
+    end = source.find("-/", start + 3)
+    return None if end < 0 else source[start + 3:end]
+
+
+def expiry_problems(paths: dict[str, Path], today: date) -> list[str]:
+    """Each experimental module's first docstring holds a line `Expires: YYYY-MM-DD`, a date not yet passed."""
+    problems = []
+    for module, path in sorted(paths.items()):
+        if not is_experimental(module):
+            continue
+        text = first_docstring(path.read_text())
+        found = [m[1] for line in (text or "").split("\n") if (m := EXPIRES.fullmatch(line.strip()))]
+        if len(found) != 1:
+            problems.append(f"{module}: an experimental module's first docstring needs one line `Expires: YYYY-MM-DD`")
+            continue
+        try:
+            expires = date.fromisoformat(found[0])
+        except ValueError:
+            problems.append(f"{module}: Expires: {found[0]} is not a date")
+            continue
+        if expires < today:
+            problems.append(f"{module}: expired on {expires.isoformat()}; promote it to the shell or delete it")
+    return problems
 
 
 # et-7 review F2: a module no default target imports is never compiled by `lake build` (the gate's build), so its
@@ -268,8 +335,7 @@ def lean_disagreements(lean: list[str], files: dict[str, tuple[Path, list[str]]]
 
 
 def main() -> int:
-    paths = {".".join(path.relative_to(ROOT / "lean").with_suffix("").parts): path
-             for path in (ROOT / "lean").rglob("*.lean") if ".lake" not in path.parts}
+    paths = lean_modules(ROOT)
     # Each module's layer, read once: its own first-line declaration, else tools/layer_policy.py's rules.
     layers = {}
     declarations = {}  # module -> why its declaration is refused
@@ -298,6 +364,7 @@ def main() -> int:
                        for importer, message in sorted(wrong.items()))
     diagnostic = sorted(message for importer, found in read.items() for imported in found
                         if (message := diagnostic_only_violation(importer, imported)) is not None)
+    experimental = experimental_imports(read) + expiry_problems(paths, date.today())
     for importer, found in read.items():
         for imported in found:
             if imported not in paths:
@@ -326,6 +393,8 @@ def main() -> int:
         print(message, file=sys.stderr)
     for message in diagnostic:
         print(f"diagnostic-only Lean import: {message}", file=sys.stderr)
+    for message in experimental:
+        print(f"experimental Lean module: {message}", file=sys.stderr)
     for edge in sorted(edges - expected.keys()):
         importer, imported = edge.split(" -> ")
         print(f"new outward Lean import: {edge} (layer {layers[importer]} -> {layers[imported]}); import inward, "
@@ -333,7 +402,8 @@ def main() -> int:
               file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or declarations or headers or unknown or diagnostic or unbuilt or edges != expected.keys():
+    if (unmapped or declarations or headers or unknown or diagnostic or experimental or unbuilt
+            or edges != expected.keys()):
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0
