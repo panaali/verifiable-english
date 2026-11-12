@@ -158,3 +158,54 @@ Lowering `maxSdAdmitWork` cannot close this gap. `admitS2` is over R4 before the
 already refuse the named NSDbig 6 (44,992). The fix is a rule-count bound or a cheaper chain check in S1's and S2a's
 admission and `choiceChainText`. That is outside this item's files. It is reported to the DRI in REPORT.md
 ("Notes for the DRI").
+
+## Keyed corpora and soft-default documents at the final limit (DRI amendment 2026-11-11)
+
+The DRI's amendment (reviews/dri-decisions-20261111-adv1118.md item 2) asks for the answers on main and on HEAD at the
+final `maxSdAdmitWork` (131,072), with every change listed. Script: `run_corpora.sh` with `corpora_answers.py`. Output:
+`output-corpora.txt`.
+
+- Main is 020623f8d7. HEAD is this branch with that main merged, so `lean/` differs from main only in this item's files.
+  Main's side ran on `git archive main` with main's shared `ve_service` build (`~/code/ve-share-main`, pinned in main's
+  `lean/checkers.lock`). The Rust sources are identical on both sides.
+- The machine is the VM (AMD EPYC 7B12, 32 vCPU). The load was 6-12 at 00:18-00:40Z, 2026-11-12, and all eight runs
+  were concurrent.
+- What ran:
+  - Each keyed corpus: `usecases/<corpus>/run.py`'s own `main`, the full result it writes (answers, mutants, metrics,
+    without-narrowing variants), written outside the tree.
+  - Each soft-default readings document: its load (admission) and `ve document check`.
+- Which documents are soft-default: those whose environment lists `readings@1`, `soft-norms@0` and `norm-defaults@0`.
+  Under data/ and usecases/ that is one document, the constitution pilot's SC-9 probe
+  (`usecases/claude-constitution-pilot/run-20261104T0716Z/probe-translation.probe.md`). data/ holds no document.
+  `tests/data/rd9-docroute.ve.md` was also run.
+- The keyed corpora's own environments (`environment.d1.json` and the others) list `soft-norms@0` without `readings@1`
+  or `norm-defaults@0`, so none of their documents is under the soft completion (`underSoftCompletion`,
+  SoftWire.lean:26), and `admitSD` never runs for them.
+
+| Corpus or document | Main | HEAD | Answers that change |
+| --- | --- | --- | --- |
+| anthropic-rsp (`run.py`, 273-275 s) | 0 refusals | 0 refusals | none (identical result, sha256 in the output) |
+| openai-preparedness (1,260-1,266 s) | 0 refusals | 0 refusals | none |
+| safety-framework (173-174 s) | 0 refusals | 0 refusals | none |
+| SC-9 probe: load and `document check` | admitted, `enumerated`, 16 choices | the same | none |
+| `tests/data/rd9-docroute.ve.md` | admitted | the same | none |
+
+The table counts `ResourceLimit: the per-reading checks` in each result. No answer changes, and no document or keyed
+answer other than the DELTA row's (NSDheavy, heavyIn) is refused by the charge.
+
+The probe is the one soft-default document whose admission reads the charge (16 choices, at most 64). Its
+`sdAdmitWork` is between 51,201 and 53,248 units, so the limit is at least 2.46 times its work. It was bracketed by
+rebuilding `ve_service` with other limits: refused at 51,200, admitted at 53,248. SoftWire.lean was then restored and
+rebuilt (`output-corpora.txt`). A limit of 32,768 or 49,152 would refuse it.
+
+Gate test: `tests/test_rd9_admit_charge_corpora.py`, 4 cases, 188 s with 4 workers:
+- It runs each keyed corpus's base answers live. Each answer must equal the committed `results.json` answer, and no
+  answer may carry the refusal.
+- It admits every soft-default document under data/ and usecases/, which must include the probe at `enumerated`,
+  16 choices.
+
+The full `run.py` (mutants and variants included) takes about 28 CPU minutes, so the gate runs the base answers only.
+The full runs above are the main-vs-HEAD evidence.
+
+Pre-existing on main, not this item: main's committed `usecases/openai-preparedness/results.json` differs from what
+main computes in four M3 byte metrics. No keyed answer differs, and HEAD computes the same as main.

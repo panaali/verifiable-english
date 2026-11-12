@@ -1,0 +1,57 @@
+# sc-admit-cpu: keyed corpora and soft-default documents, main 020623f8d7 vs HEAD (merge of main into feature/sc-admit-cpu; lean/ differs from main only in this item's files)
+# run_corpora.sh log (HEAD documents ran first, separately, at 00:18Z: same answers as in documents.json below)
+start 2026-11-12T00:18:51Z load 6.24 11.47 19.11
+machine: AMD EPYC 7B12, 32 vCPU
+main documents rc=0
+head safety-framework rc=0 head safety-framework 173.05 s wall 165.56 s user 111316 KB
+main safety-framework rc=0 main safety-framework 174.21 s wall 167.91 s user 142792 KB
+main anthropic-rsp rc=0 main anthropic-rsp 272.81 s wall 264.76 s user 175848 KB
+head anthropic-rsp rc=0 head anthropic-rsp 274.72 s wall 264.91 s user 175824 KB
+main openai-preparedness rc=0 main openai-preparedness 1259.83 s wall 1211.60 s user 338028 KB
+head openai-preparedness rc=0 head openai-preparedness 1266.35 s wall 1215.66 s user 337424 KB
+end 2026-11-12T00:39:57Z load 12.10 11.12 13.47
+anthropic-rsp.results.json: main 'ResourceLimit: the per-reading checks' x0, HEAD x0; 0 changed answers
+openai-preparedness.results.json: main 'ResourceLimit: the per-reading checks' x0, HEAD x0; 0 changed answers
+safety-framework.results.json: main 'ResourceLimit: the per-reading checks' x0, HEAD x0; 0 changed answers
+documents.json: main 'ResourceLimit: the per-reading checks' x0, HEAD x0; 0 changed answers
+compare rc=0
+
+# sha256 of each side's computed result
+065ba476b08257afba49d11de7f1664f7d61f04ed50187d6d66dbe1652783026  main/anthropic-rsp.results.json
+890f8b3332ecd7d61b7cd79dec0bbf9d62b335a26c197050ff3018f99d5c9fd6  main/documents.json
+4da8e26a35ac0e8b522cb4ee254c7e41a1f87da17b2ce27609b03fd73a099265  main/openai-preparedness.results.json
+1b6d9a66f8947897d291c86a2d594b05b332a0560583fb7c52def19537b818bd  main/safety-framework.results.json
+065ba476b08257afba49d11de7f1664f7d61f04ed50187d6d66dbe1652783026  head/anthropic-rsp.results.json
+890f8b3332ecd7d61b7cd79dec0bbf9d62b335a26c197050ff3018f99d5c9fd6  head/documents.json
+4da8e26a35ac0e8b522cb4ee254c7e41a1f87da17b2ce27609b03fd73a099265  head/openai-preparedness.results.json
+1b6d9a66f8947897d291c86a2d594b05b332a0560583fb7c52def19537b818bd  head/safety-framework.results.json
+
+# documents.json (HEAD), per document and step: returncode, refusals, first 160 bytes
+tests/data/rd9-docroute.ve.md check 0 0 {   "format": "ve-document@1",   "source_id": "2d7b398f7c836b420465057475d0e7c9d2b323a76a2dbafa0abf2bc52e8a8cf8",   "document_id": "f8515204cde66313315490e4af33
+tests/data/rd9-docroute.ve.md load 0 0 {"admitted": true, "choices": 0, "finding": null, "route": null} 
+usecases/claude-constitution-pilot/run-20261104T0716Z/probe-translation.probe.md check 0 0 {   "format": "ve-document@1",   "source_id": "b1d8c5af150a19a3c8c73551cd04deea59de18e481b3d43ec3e4f998074d2e1c",   "document_id": "e41ecbb4122dde58f9bd67d6dd1c
+usecases/claude-constitution-pilot/run-20261104T0716Z/probe-translation.probe.md load 0 0 {"admitted": true, "choices": 16, "finding": {"cause": "the unspecified completion", "text": "ReadingsNotSuperposable: force-u0036-s05, force-u0125-s04-p2, forc
+
+# The probe's sdAdmitWork, bracketed (2026-11-12, HEAD with maxSdAdmitWork set to each value, `lake build ve_service`,
+# the probe loaded with corpora_answers.LOAD; then SoftWire.lean restored and rebuilt: ve_service e618cce8017b, pinned)
+limit 64: ResourceLimit: the per-reading checks of 16 readings exceed 64 units
+limit 1024: ResourceLimit: the per-reading checks of 16 readings exceed 1024 units
+limit 8192: ResourceLimit: the per-reading checks of 16 readings exceed 8192 units
+limit 16384: ResourceLimit: the per-reading checks of 16 readings exceed 16384 units
+limit 32768: ResourceLimit: the per-reading checks of 16 readings exceed 32768 units
+limit 49152: ResourceLimit: the per-reading checks of 16 readings exceed 49152 units
+limit 51200: ResourceLimit: the per-reading checks of 16 readings exceed 51200 units
+limit 53248: admitted, 16 choices, route enumerated
+limit 57344: admitted, 16 choices, route enumerated
+limit 65536: admitted, 16 choices, route enumerated
+probe sdAdmitWork in (51200, 53248]; maxSdAdmitWork 131072 (at least 2.46 x the probe's work)
+
+# Base run() of each corpus alone (the gate test's work), HEAD, load 6-12, three concurrent processes
+anthropic-rsp 55.71 s wall 53.74 s user
+openai-preparedness 128.49 s wall 123.76 s user
+safety-framework 135.58 s wall 129.57 s user
+# uv run pytest -q -n 4 tests/test_rd9_admit_charge_corpora.py: 4 passed in 187.66s
+
+# Pre-existing on main, not this item: main's committed usecases/openai-preparedness/results.json differs from main's
+# computed result in 4 metric fields only ($.metrics.M3.bytes_by_kind.{asserted,unformalised},
+# $.metrics.M3.bytes_by_status.{CHECKED,UNFORMALISED}); no keyed answer differs. HEAD computes the same as main.
