@@ -123,8 +123,10 @@ BASE = {
     # (1) is (OT15); it is OT1's T4 determination, met through scenario (2).
     "scenario_2": _open(["situation"], "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI "
                         "progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will "
-                        "consider this threshold to be met if we determine that either (1) ... or (2) there is "
-                        "'dramatic acceleration' of the pace of AI progress for reasons that likely relate to the "
+                        "consider this threshold to be met if we determine that either (1) our models would be able "
+                        "to fully substitute for our entire set of Research Scientists and Research Engineers, at "
+                        "competitive costs (i.e., within a factor of 5); or (2) there is 'dramatic acceleration' of "
+                        "the pace of AI progress for reasons that likely relate to the "
                         "automation of AI R&D.\")", WE + " (\"if we determine\")", "OT1"),
     # Open terms (PLAN 3.2): the decider is the text's own.
     "highly_capable": _open(["situation"], "the model of {0} is highly capable (3.6: it crosses the threshold for "
