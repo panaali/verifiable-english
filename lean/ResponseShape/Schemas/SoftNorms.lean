@@ -76,7 +76,8 @@ def kind : Def :=
     ("soft-elaborate", kindIs "soft-elaborate"),
     ("soft-pairs", kindIs "soft-pairs"),
     ("soft-certificate", kindIs "soft-certificate"),
-    ("soft-conflict", kindIs "soft-conflict")]
+    ("soft-conflict", kindIs "soft-conflict"),
+    ("soft-selected", kindIs "soft-selected")]
 
 def error : Shape :=
   c
@@ -328,6 +329,25 @@ def packages : Shape :=
         ("detail", ref "common.json#/$defs/text")],
       .ite (props [("verdict", constS "UNKNOWN")]) (.required ["detail"]) (.not (.required ["detail"]))]
 
+def selected : Shape :=
+  c
+    "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt)."
+    [
+      obj,
+      .required ["id", "status", "background", "results"],
+      closed [
+        ("id", ref "common.json#/$defs/id_ok"),
+        ("status", constS "ok"),
+        ("background", .type ["boolean"]),
+        ("results", n [arr, .minItems 1, .zip "/queries" (n [
+          obj,
+          .required ["predicate", "tuple", "selected", "outcome"],
+          closed [
+            ("predicate", n [str, .equals "/predicate"]),
+            ("tuple", n [arr, .items str, .equals "/tuple"]),
+            ("selected", n [arr, .items str]),
+            ("outcome", .type ["boolean"])]])])]]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/soft_path", .anyOf [
@@ -340,6 +360,7 @@ def «row» : Shape :=
         (ref "#/$defs/kind/soft-elaborate", ref "#/$defs/elaborate"),
         (ref "#/$defs/kind/soft-pairs", ref "#/$defs/pairs"),
         (ref "#/$defs/kind/soft-certificate", ref "#/$defs/certificate"),
+        (ref "#/$defs/kind/soft-selected", ref "#/$defs/selected"),
         (.allOf [ref "#/$defs/kind/soft-conflict", .required ["witness"]], ref "#/$defs/witness"),
         (ref "#/$defs/kind/soft-conflict", ref "#/$defs/packages")]]),
     ((.bool true), ref "norms.json#/row")]
@@ -372,6 +393,7 @@ def file : File where
     ("pairs", .schema pairs),
     ("certificate", .schema certificate),
     ("witness", .schema witness),
-    ("packages", .schema packages)]
+    ("packages", .schema packages),
+    ("selected", .schema selected)]
 
 end ResponseShape.Schemas.SoftNorms
