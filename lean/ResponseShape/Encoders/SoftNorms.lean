@@ -118,6 +118,21 @@ theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : repl
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
+/-- A `soft-selected` answer: the background flag and one typed row per decoded query. -/
+theorem selected_fits (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
+    (qs : List SelectedQuery) :
+    Fits req (skel% "soft-norms.json#/$defs/selected") (VE.Route.Wire.ok id
+      [("background", .bool (classificationBackgroundValid D M)),
+        ("results", Json.arr (qs.map (selectedRow D M)).toArray)]) := by
+  unfold VE.Route.Wire.ok selectedRow
+  fits
+
+theorem runSelected_fits (id : String) (j : Json) :
+    OkP (Fits req (skel% "soft-norms.json#/$defs/selected")) (runSelected id j) := by
+  unfold runSelected
+  okfits
+  all_goals fits_from selected_fits _ _ _ _
+
 set_option maxHeartbeats 1000000 in
 theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
     (hp : usesSoftPath j = true) (hK : KindRead "evaluate" j kind) :
@@ -131,6 +146,7 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
   all_goals first
     | fits_from elaborate_fits _ _ _ _ _ _
     | fits_from pairs_fits _ _ _ _ _ _ ‹_›
+    | (intro v hv; fits_from runSelected_fits _ _ _ hv)
     | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals

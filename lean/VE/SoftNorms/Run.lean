@@ -1,4 +1,5 @@
 import VE.SoftNorms.Admission
+import VE.SoftNorms.Selected
 import VE.Norms.Run
 import VE.Norms.WitnessKind
 
@@ -17,6 +18,9 @@ enable `norms@0`.
   `CONFLICT-FREE` with `conditional_on`, or `UNKNOWN`
   (`Wire.soft_wire_conflict_sound`); or `witness` → `CONFLICT` classified as a
   strict collision or a pair conflict (`Wire.soft_wire_conflict_witness_sound`).
+* `soft-selected`: `norms`, a base `model` and `queries` (predicate, tuple) → `background`
+  and per query the rules selected and the completed outcome (`Selected.lean`,
+  `SelectedSound.soft_wire_selected`).
 * `soft-certificate`: `premises`, `conclusion`, `certificate` bound to
   `background′ ++ layer premises ++ premises` over `E′` → `valid`
   (`Wire.soft_wire_acceptance`).
@@ -307,6 +311,7 @@ def documentIdentityEnvironment (source request : Json) : Except String (Json ×
     pure (original, profiles)
 
 def runSoftKind (id kind : String) (j : Json) : Except String Json := do
+  if kind == "soft-selected" then return ← runSelected id j
   if kind == "soft-rule" then
     let environment ← j.getObjVal? "environment"
     let src ← decodeSoftSource environment (toJson ([] : List Json))

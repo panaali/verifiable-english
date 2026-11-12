@@ -156,10 +156,12 @@ theorem soft_wire_elaborate (j answer : Json) (h : runCase j = .ok answer)
   simp only [hn, show ("soft-elaborate" == "admission") = false from by decide, Bool.false_and,
     Bool.not_true, Bool.false_eq_true, ↓reduceIte] at h
   unfold runSoftKind at h
-  simp only [show ("soft-elaborate" == "soft-rule") = false from by decide,
+  simp only [show ("soft-elaborate" == "soft-selected") = false from by decide,
+    show ("soft-elaborate" == "soft-rule") = false from by decide,
     show ("soft-elaborate" == "soft-rules") = false from by decide,
     show ("soft-elaborate" == "soft-elaborate") = true from by decide,
     Bool.false_eq_true, ↓reduceIte] at h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
