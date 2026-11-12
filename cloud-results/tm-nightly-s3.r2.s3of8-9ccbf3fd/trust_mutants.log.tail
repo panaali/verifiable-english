@@ -1,0 +1,8 @@
+trust_mutants: 41 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/RightClauses/Wire.lean:85 VE.RightClauses.NoClauseKeys (S, trusted) or-and: ∨ -> ∧ (the proofs it breaks: lean/VE/RightClauses/WireTheorems.lean:869)
+UNKNOWN lean/VE/Presupposition/Couple.lean:99 VE.Presupposition.PickFits (S, trusted) eq-le: = -> ≤ (lean/VE/Presupposition/CoupleExamples.lean:85: Expression (VE.Presupposition.instDecidablePickFit...)
+trust_mutants: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 984 s
+trust_mutants: D[V], trusted: 2 KILLED, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 27 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 14 OTHER SHARD
+trust_mutants: steps: wall plan 19.8 s, scratch 5 s, control_build 0.4 s, probe_install 1.4 s, mutants 953.5 s, cleanup 4 s, reads 0.1 s; lake control_build 0.4 s (1), probe_install 1.4 s (1), control_probes 76.8 s (9), mutant_builds 88.3 s (11), mutant_checks 2057.7 s (15), stage_controls 958.7 s (5), mutant_probes 120.2 s (9)
