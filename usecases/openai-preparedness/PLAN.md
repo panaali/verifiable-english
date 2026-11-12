@@ -509,13 +509,13 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
     selected safeguard rules are exactly C.3's access rule. N2 asks a query-only persuasion-safeguard act on the full
     D1 (the RSP G1 probe pattern). N3's witness for each F1 to F17 rule is a validated case model on which VE selected
     it. W1 conflicts use D1's declared completion defaults; every selection query runs under both.
-15. **Key finding: six transcribed cells are truncated.** `answer-key.json` holds `"key": "SOME(N"` and
-    `"soft": "RS1=default"` for B-*L*/MREP (*L* ∈ BIO-H, BIO-C, CYB-H, CYB-C, AIS-H, AIS-C), where section 6.2 says
-    `SOME(N ∧ unscoped)` and no "soft". Source: Table 2, Long-range Autonomy, "If a model has High or Critical
-    capabilities in any of the Tracked Categories, require a "misalignment" safeguards report (see Section 4.2)."
-    VE's answer and `reference.py` both equal the section 6.2 cell. The transcription is pinned
-    (`test_transcription_is_pinned`) and was not edited: the six rows are scored as disagreements with cause
-    "key finding".
+15. **Transcription error, repaired by reviews/dri-decisions-20261030-usecase-pf-run.md.** `answer-key.json`
+    held `"key": "SOME(N"` and `"soft": "RS1=default"` for B-*L*/MREP (*L* ∈ BIO-H, BIO-C, CYB-H, CYB-C, AIS-H,
+    AIS-C), where section 6.2 says `SOME(N ∧ unscoped)` and no "soft". Source: Table 2, Long-range Autonomy, "If a
+    model has High or Critical capabilities in any of the Tracked Categories, require a "misalignment" safeguards
+    report (see Section 4.2)." Section 6 was right and is unchanged; the copy now says `SOME(N ∧ unscoped)` with no
+    "soft" (`usecase-pf-keyfix`), `tests/test_usecase_key_transcription.py` checks every transcribed cell against
+    section 6, and the six rows agree. VE's answer and `reference.py` both equal the section 6.2 cell.
 16. **Two items stay undecided.** G7: footnote 5 ("these will be used as indicators for High and Critical
     capabilities for the category") relates evaluations to capabilities, and D1 has no such relation (SC). N4: D1
     has no closure premise that Table 1's six levels are all the levels there are, so a "low" or "medium" level is
