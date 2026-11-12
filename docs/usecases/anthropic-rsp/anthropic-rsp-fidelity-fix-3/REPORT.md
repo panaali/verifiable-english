@@ -96,6 +96,7 @@ No Lean or Rust changed.
 | g | the pointer legend "3.6.2 at {0}" put back on `shared_with_reviewers` | rsp_vocabulary.py | test_f16_legend_keeps_one_or_more_and_the_act_picks_no_quantifier: 1 failed |
 | h | 4.1's designation and responsibility dropped from `rso_maintained`'s legend | rsp_vocabulary.py | test_f6_f10_f18_legends_carry_the_dropped_qualifiers: 1 failed |
 | i | "we determine that" dropped from `scenario_2`'s legend | rsp_vocabulary.py | test_t4_both_branches_are_the_companys_determination: 1 failed |
+| j | `scenario_2`'s legend quotes T4 with "(1) ..." again | rsp_vocabulary.py | test_fix_3_headers_quote_the_full_source_sentence: 1 failed |
 
 Each test is also exercised in the opposite direction:
 
@@ -130,13 +131,27 @@ There is no `anthropic-rsp-fidelity-fix-3-loop.log` in manage-agents. The only r
 - Test-removed: `tests/test_safetyfw_usecases.py::test_rsp_n1_prediction_removes_inherited_commitments[K22-goal_miss_addressed]`.
   Its parameter is renamed, and the same case runs as `[K22-roadmap_review_addressed]`. The trailer is on the
   REPORT commit, and `tools/gate_collection.py --check --prebuilt` names exactly this ID.
-- SIZE: 59 product (rsp_vocabulary.py, rules.d1.ve, facts.d1.ve, run.py), 151 tests, 26 other hand-written lines
-  (PLAN 19, accounting.d1.txt 7), plus this REPORT and answers.json. Generated files are excluded (`git diff --numstat
-  $(git merge-base HEAD main)`).
+- SIZE: 61 product (rsp_vocabulary.py, rules.d1.ve, facts.d1.ve, run.py), 155 tests, 26 other hand-written lines
+  (PLAN 19, accounting.d1.txt 7), plus this REPORT and answers.json. Generated and captured files are excluded:
+  environment, results, coverage, accounting.json, lexicon-report.json, rsp.jsonl and route-cases.jsonl
+  (`git diff --numstat $(git merge-base HEAD main)`).
 
 ## Selected tests
 
-See "Selected-test run" below: the final run on committed code.
+The selected tests ran twice, each with `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 9be13b93de --run` on
+committed code:
+
+1. The fast stage failed `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`
+   (1 failed, 506 passed). The fix was to regenerate the lexicon report; the failed ID then passed on the runner
+   (`mac-pytest.sh -- <id>`: 1 passed).
+2. The second run, on tree cd021c8b7e, used 3 Actions shards. Shards 0 and 3/3 passed (11 units, 11 passed).
+   Shard 2/3 failed `tests/test_english_statement_blocks.py` (4 failed: the pinned RSP blocks and route fixtures
+   held the old rule text). The fix was to recapture them (Notes below). The four failed IDs, plus
+   `test_each_route_fixture_through_the_service`, then passed on the runner (`mac-pytest.sh -- <5 ids>`: 5 passed
+   in 268 s).
+
+Neither run was a full exit-0 run on the final tree, so the chain gate runs the gate. No test in
+main-known-red.txt was hit.
 
 ## Next item
 
@@ -154,16 +169,22 @@ After merge, the DRI decider launches two audits; the builder runs neither:
   situation.
 - `scenario_2` uses OT1 rather than a new OT number. PLAN 3.2 lists OT1 to OT28 and sections 1-11 are not edited.
   OT1 is the company's T4 crossing determination ("if we determine"), which is what branch (2) needed.
-- The recorded fixtures `tests/data/norm-blocks/rsp.jsonl`, `route-cases.jsonl` and `relay-gate-cases.jsonl`
-  still hold the old predicate names. They are snapshots pinned to the commit they were read at, so they were left
-  unchanged.
+- Three captured files read the changed rules, and each was recaptured by its own script, as cycles 1-2 did:
+  - `tests/data/norm-blocks/rsp.jsonl` by `docs/english-lean/en-s6/capture_blocks.py` (rsp.jsonl only; fsf.jsonl
+    restored);
+  - the seven `english.statement` cases of `tests/data/route-cases.jsonl` by
+    `docs/en-e3-norm/en-2b/route_fixtures.py --write`;
+  - `conformance/english-lean/lexicon-report.json` by `python -m conformance.english_lean_lexicon` (report only,
+    since `LexiconFixtures.lean` does not read the corpus environments; there is no lean/ change).
+- `tests/data/relay-gate-cases.jsonl` still names `goal_miss_addressed` once, as a recorded relay case. No selected
+  test compares it with the RSP vocabulary: the selected run's other shards passed.
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained Lean answers: N.A. No relay or schema changed; use-case files only.
 2. Every deliverable built: PASS. All 7 deliverables (10 units) are in the table above. Tests:
    test_fix_3_headers_quote_the_full_source_sentence and the eight fix-3 tests.
-3. Tests can fail: PASS. Seeded bugs a-i above each fail a named test.
+3. Tests can fail: PASS. Seeded bugs a-j above each fail a named test.
 4. Python, Lean and Rust agree: N.A. No product code in any of them changed. `run.py` (110/126) and
    `stage0.py --source` were regenerated; stage0.json is unchanged.
 5. R8 binding: N.A. No relay changed.
@@ -177,8 +198,8 @@ After merge, the DRI decider launches two audits; the builder runs neither:
 12. CPU/memory: N.A. `run.py` took 292 s, the same run as before (a printed time, not pinned).
 13. Test-removed trailer: PASS. `gate_collection.py --check --prebuilt` gives 0 refused after the trailer (see the
     selected-run section).
-14. Both directions, cited evidence, spec re-read: PASS. Each test checks the restored text, and seeds a-i show the
+14. Both directions, cited evidence, spec re-read: PASS. Each test checks the restored text, and seeds a-j show the
     old text fails. Spec re-read: each header quote against rsp-3.4.txt: S:9 (t4), S:11 (f6, f7), S:12 (f10), S:13
     (f11, f12), S:14 (f13), S:15 (f16), S:16 (f18), S:17 (f23). All are anchored: "0 of 96 quotes unanchored".
 15. No overclaim / no silent cut / every check can fail / limits: PASS. No deliverable was cut. "No answer moves"
-    is answers.json `moved: []`. The new checks fail under seeds a-i. Limits: N.A.
+    is answers.json `moved: []`. The new checks fail under seeds a-j. Limits: N.A.
