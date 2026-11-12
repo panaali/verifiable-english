@@ -103,7 +103,7 @@ harm-count thresholds remain QT gaps. P5 and P6
 confirm the 67,418-byte partition. P7 finds no packed identifier and M6 finds no untraced authored block. P8
 refuses D1 with `judgments@0` plus `soft-norms@0`: the composed Lean route is unavailable.
 
-## Answers to the frozen key (2026-11-11)
+## Answers to the frozen key (2026-11-12)
 
 **How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
 
@@ -118,7 +118,7 @@ answers figure is `comparison[].agree` (`metrics.useful_answers`). These counts 
 | Family | Correct / key | Undecided (named VE or translation limit) | Disagree |
 |---|---:|---:|---:|
 | A per level and activity | 140 / 140 | 0 | 0 |
-| B per level | 36 / 42 | 0 | 6 (key finding: truncated cells) |
+| B per level | 42 / 42 | 0 | 0 |
 | K process triggers | 22 / 22 | 0 | 0 |
 | T AIS-C indicator | 2 / 2 | 0 | 0 |
 | C conflicts | 5 / 7 | 0 | 2 (key finding: C6, C-doc) |
@@ -126,14 +126,15 @@ answers figure is `comparison[].agree` (`metrics.useful_answers`). These counts 
 | N never applies | 4 / 4 | 0 | 0 |
 | S severity | 8 / 8 | 0 | 0 |
 | D dates | 4 / 4 | 0 | 0 |
-| **Total** | **230 / 239** | **0** | **9** |
+| **Total** | **236 / 239** | **0** | **3** |
 
-The six disagreements are B-*L*/MREP: `answer-key.json` holds the cell `SOME(N` (and a stray `soft: RS1=default`)
-where PLAN 6.2 says `SOME(N ∧ unscoped)`; VE's answer equals the PLAN cell, and `reference.py` reports the same six.
-The key is not edited (PLAN 12, REPORT "Key findings"). The other three disagreements are the K findings of PLAN 12
-items 19 and 20 (openai-preparedness-fidelity-fix): C6 and C-doc are NONE, because RS11 = final ("no other body may
-change them") is excluded by the Board sentence, and G9 is SOME(P ∨ scoped), because Table 2's nuclear row states no
-condition. Against PLAN 6.2's cells and those entries the count would be 239 / 239. G7 (footnote 5's indicator
+The six B-*L*/MREP cells, once truncated in `answer-key.json` (`SOME(N` and a stray `soft: RS1=default` where PLAN
+6.2 says `SOME(N ∧ unscoped)`), were a transcription error, repaired by
+reviews/dri-decisions-20261030-usecase-pf-run.md (`usecase-pf-keyfix`, PLAN 12 item 15); section 6 is unchanged and
+`tests/test_usecase_key_transcription.py` checks every transcribed cell against it. The three disagreements are the
+K findings of PLAN 12 items 19 and 20 (openai-preparedness-fidelity-fix): C6 and C-doc are NONE, because RS11 = final
+("no other body may change them") is excluded by the Board sentence, and G9 is SOME(P ∨ scoped), because Table 2's
+nuclear row states no condition. Against those entries the count would be 239 / 239. G7 (footnote 5's indicator
 relation, `fn5-indicator`) and N4 (change log item 2, `cl-levels`) are answered (PLAN 12 item 21).
 
 All six PLAN 11 mutants change exactly their named results (M9 6/6); the m2 rule is flagged by the invention audit.

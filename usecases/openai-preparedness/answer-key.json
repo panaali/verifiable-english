@@ -1050,9 +1050,8 @@
    "id": "B-BIO-H/MREP",
    "case": "B-BIO-H",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-BIO-H/DISC",
@@ -1093,9 +1092,8 @@
    "id": "B-BIO-C/MREP",
    "case": "B-BIO-C",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-BIO-C/DISC",
@@ -1137,9 +1135,8 @@
    "id": "B-CYB-H/MREP",
    "case": "B-CYB-H",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-CYB-H/DISC",
@@ -1181,9 +1178,8 @@
    "id": "B-CYB-C/MREP",
    "case": "B-CYB-C",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-CYB-C/DISC",
@@ -1225,9 +1221,8 @@
    "id": "B-AIS-H/MREP",
    "case": "B-AIS-H",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-AIS-H/DISC",
@@ -1268,9 +1263,8 @@
    "id": "B-AIS-C/MREP",
    "case": "B-AIS-C",
    "item": "MREP",
-   "key": "SOME(N",
-   "plan": "6.2",
-   "soft": "RS1=default"
+   "key": "SOME(N ∧ unscoped)",
+   "plan": "6.2"
   },
   {
    "id": "B-AIS-C/DISC",

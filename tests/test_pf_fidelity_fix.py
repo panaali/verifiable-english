@@ -3,7 +3,7 @@
 Each test pins one behaviour the fix claims, read from the case's own modules and saved results: the safeguard acts
 carry Table 1's standard and F2/F3's sufficiency, CAPREP asks 3.3's compilation sentence, F11's exception precedes
 every F2 rule, RS11 = final stays excluded, every header quotes whole source sentences, and answer-key.json equals
-PLAN section 6 cell by cell except the six transcription findings PLAN 12 item 15 records.
+PLAN section 6 cell by cell (the six B-*/MREP cells PLAN 12 item 15 records are repaired).
 """
 import hashlib
 import json
@@ -11,6 +11,8 @@ import re
 from pathlib import Path
 
 import pytest
+
+import tests.test_usecase_key_transcription as transcription
 
 REPO = Path(__file__).resolve().parents[1]
 PF = REPO / "usecases" / "openai-preparedness"
@@ -56,110 +58,26 @@ def blocks_for(predicate):
 
 
 # --- PLAN section 6 against answer-key.json, cell by cell ------------------------------------------------------
-
-def section_6(plan_text):
-    lines = plan_text.split("\n")
-    start = next(i for i, line in enumerate(lines) if line.startswith("## 6. "))
-    stop = next(i for i, line in enumerate(lines) if line.startswith("## 7. "))
-    return "\n".join(lines[start:stop])
-
-
-def tables(text):
-    """Section 6's tables: subsection number -> (header cells, rows of cells)."""
-    out = {}
-    for number, body in re.findall(r"### (6\.\d) [^\n]*\n(.*?)(?=\n### |\Z)", text, re.S):
-        rows = [[c.strip() for c in line.strip().strip("|").split("|")] for line in body.split("\n")
-                if line.startswith("|") and not line.startswith("|---")]
-        out[number] = (rows[0], rows[1:])
-    return out
-
-
-def verdict(cell):
-    """The first ALL, NONE or SOME(...) of a cell, in answer-key.json's ASCII notation."""
-    match = re.search(r"ALL|NONE|SOME\(", cell)
-    if match.group() != "SOME(":
-        return match.group()
-    depth, i = 0, match.start() + 4
-    while True:
-        depth += {"(": 1, ")": -1}.get(cell[i], 0)
-        if depth == 0:
-            break
-        i += 1
-    return cell[match.start():i + 1].replace("∧", "&").replace("∨", "|")
-
-
-def soft(cell):
-    found = re.search(r"soft(?: under (RS\d+) = (\w+))?", cell)
-    if not found:
-        return None
-    return f"{found[1]}={found[2]}" if found[1] else "RS1=default"
-
-
-def family_a(header, rows):
-    activities = re.search(r"\((.*)\)", header[1]).group(1).split(", ")
-    atoms = [h.split()[0] for h in header[1:6]]
-    by_level = {row[0]: row for row in rows}
-
-    def expand(level, column):
-        cell = by_level[level][column]
-        if cell.startswith("as "):
-            return expand(cell[3:], column)
-        if cell.endswith(" ×4"):
-            return dict.fromkeys(activities, cell[:-3])
-        out = {}
-        for clause in cell.split("; "):
-            names, value = ((activities, clause[5:]) if clause.startswith("else ")
-                            else (clause.split(": ", 1)[0].split(", "), clause.split(": ", 1)[1]))
-            for name in names:
-                out.setdefault(name, value)
-        assert set(out) == set(activities), (level, column, cell)
-        return out
-
-    return {f"A-{level}-{activity}/{atom}": value for level in by_level for column, atom in enumerate(atoms, 1)
-            for activity, value in expand(level, column).items()}
-
-
-def section_6_cells(plan_text):
-    """id -> (key, soft) as section 6 states them."""
-    found = tables(section_6(plan_text))
-    cells = family_a(*found["6.1"])
-    header, rows = found["6.2"]
-    cells.update({f"B-{row[0]}/{h.split()[0]}": row[i] for row in rows for i, h in enumerate(header) if i})
-    key_column = {"6.3": 3, "6.4": 3, "6.5": 2, "6.6": 2, "6.7": 2, "6.8": 2, "6.9": 2}
-    for number, column in key_column.items():
-        cells.update({row[0]: row[column] for row in found[number][1]})
-    return {id_: (verdict(cell), soft(cell)) for id_, cell in cells.items()}
-
-
-# PLAN 12 item 15: the six B-*/MREP cells truncated in the transcription ("SOME(N" and a stray "soft"). Fixed list.
-TRANSCRIPTION_FINDINGS = tuple(f"B-{level}/MREP" for level in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C"))
-
-
-def mismatches(key_items, plan_text):
-    plan = section_6_cells(plan_text)
-    assert set(plan) == {k["id"] for k in key_items}
-    return sorted(k["id"] for k in key_items if plan[k["id"]] != (k["key"], k.get("soft")))
-
+# The section-6 transcriber is tests/test_usecase_key_transcription.py (one parser for every frozen-key use case).
+# PLAN 12 item 15's six B-*/MREP cells, once truncated in the transcription, were repaired by
+# reviews/dri-decisions-20261030-usecase-pf-run.md item 1 (usecase-pf-keyfix): no cell is an exception any more.
 
 def test_answer_key_equals_section_6_cell_by_cell():
-    """Every answer-key.json cell is its section 6 cell, except exactly the six recorded transcription findings."""
-    key = json.loads((PF / "answer-key.json").read_text())["items"]
-    assert len(TRANSCRIPTION_FINDINGS) == 6
-    assert mismatches(key, (PF / "PLAN.md").read_text(encoding="utf-8")) == sorted(TRANSCRIPTION_FINDINGS)
+    """Every answer-key.json cell is its section 6 cell, the six repaired B-*/MREP cells included."""
+    assert transcription.mismatches("openai-preparedness") == []
 
 
 @pytest.mark.parametrize("id_, field, value", [("A-BIO-C-INT/SUF", "key", "SOME(nest)"), ("K13", "soft", None),
                                                ("G9", "key", "SOME(P | scoped)"), ("C6", "key", "NONE")])
 def test_the_cell_comparison_catches_one_changed_cell(id_, field, value):
-    """A scratch copy with one other cell changed (even to a K entry's answer) is caught."""
-    key = json.loads((PF / "answer-key.json").read_text())["items"]
+    """A scratch copy with one cell changed (even to a K entry's answer) is caught at that cell alone."""
+    key = json.loads((PF / "answer-key.json").read_text(encoding="utf-8"))["items"]
     for item in key:
         if item["id"] == id_:
             item[field] = value
             if value is None:
                 item.pop(field)
-    found = mismatches(key, (PF / "PLAN.md").read_text(encoding="utf-8"))
-    assert found == sorted(TRANSCRIPTION_FINDINGS + (id_,))
+    assert {m[0] for m in transcription.mismatches("openai-preparedness", key)} == {id_}
 
 
 # --- The corrected acts and the questions that ask them ---------------------------------------------------------
