@@ -62,7 +62,7 @@ f16-board-reverse | omits: "and/or mandate a revised course of action" rule f16-
 f16-board-mandate | omits: "reverse a decision" rule f16-board-reverse
 f16-chair-strict | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
 f16-chair-default | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
-f16-year | omits: "and potentially update" exposition ; "the Preparedness Framework for continued sufficiency" loss 1
+f16-year | omits: "and potentially update" exposition
 f5-ambiguous | omits: "In cases of ambiguity about whether a model is covered by the Preparedness Framework, the SAG is responsible for making the final determination" restates
 f5-checkpoint | omits: "Preparedness Framework" restates
 f6-rel | omits: "models that we distill, fine-tune, or quantize from a model that was previously determined not to cross a High capability threshold" restates ; "barring" restates
