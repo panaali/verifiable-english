@@ -1,0 +1,7 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:95 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100, lean/VE/EnglishGrammar/Norm/Ow...)
+trust_mutants: 8 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 479 s
+trust_mutants: D[V], trusted: 3 KILLED, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 23 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 SURVIVOR, 26 OTHER SHARD
+trust_mutants: steps: wall plan 19.9 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.5 s, mutants 448.1 s, cleanup 4 s, reads 0.2 s; lake control_build 0.4 s (1), probe_install 1.5 s (1), control_probes 81.9 s (8), mutant_builds 66 s (12), mutant_checks 773.3 s (11), stage_controls 127.4 s (4), mutant_probes 105 s (8)
