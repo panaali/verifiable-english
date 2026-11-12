@@ -1,0 +1,9 @@
+trust_mutants: 91 definitions, 92 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:25 VE.Events.EventsDecoded (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+SURVIVOR lean/VE/RightClauses/Wire.lean:228 VE.RightClauses.PlainOnWire (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/RightClauses/WireTheorems.lean:192, lean/VE/RightClauses/WireTheore...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 8 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 81 OTHER SHARD in 2009 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 32 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 SURVIVOR, 1 UNKNOWN, 29 OTHER SHARD
+trust_mutants: steps: wall plan 11.2 s, scratch 3.2 s, control_build 0.2 s, probe_install 0.9 s, mutants 1986.7 s, cleanup 6.7 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 79.9 s (9), mutant_builds 87.1 s (14), mutant_checks 2932.3 s (15), stage_controls 745.5 s (7), mutant_probes 117.6 s (9)
