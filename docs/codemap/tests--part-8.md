@@ -1,3 +1,20 @@
+- `tests/test_trust_mutants_max_errors.py` — tools/trust_mutants.py never settles on a list Lean capped at `maxErrors` (tm-nightly-unknown-disposition-2; the nightly's M186 and M417: `lean/VE/Presuppositi…
+- `tests/test_trust_mutants_probe_scope.py` — tools/trust_mutants.py's scoped probe (eff-tm-probe-scope, design reviews/eff-tm-probe-scope-design-20261031.md section 8): a mutant's probe walks only the che…
+- `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
+- `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
+- `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
+- `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
+- `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
+- `tests/test_vacuity.py` — (no module docstring)
+- `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
+- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
+- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
+- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
+- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
+- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
+- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
 - `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
 - `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
 - `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
