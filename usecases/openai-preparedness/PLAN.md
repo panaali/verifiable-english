@@ -572,6 +572,31 @@ reviews/dri-decisions-20261111-ucfix-cycle.md item 2). Section 6 and `answer-key
     sentence. Regulated predicates: 59 of 64 (58 before: +1 the compilation act,
     +1 the Board's mandate, -1 the removed `process_change`).
 
+**`openai-preparedness-fidelity-fix-2` (2026-11-12): the union-rule fix, round A.**
+
+23. **Translation fixes for the 12 units the whole-document pass failed on 175814252d (translation-fidelity
+    checklist classes 1, 2, 3, 4, 5, 7, 8, 11; DRI audit-stability addendum 8 items 51-57).** F3 under RS18 =
+    inuse: the heading's internal use ("Increasing safeguards before internal use and further development") has
+    its own act, "additional safety as well as security controls before internal use" (`f3-inuse`,
+    `f3-inuse-forecast`); `f3-develop-inuse` and `f3-develop-inuse-forecast` keep the body's development branch,
+    and both legends quote 4.4's "additional safeguards (safety and security controls)". F11's exception
+    (`f11-exception`, `f11-exception-deploy`) releases F2's duty and section 1's prohibition only "in that
+    capability area": a reached level must be in an area whose confirmed scenario the situation adjusts
+    (`adjustment_area`), unless another reached level is in no such area. F6's guard names footnote 6's three
+    methods (`distilled_finetuned_or_quantized_from_below_high`). F14's permission covers "a summary of the
+    testing results and SAG recommendation on capability levels and safeguards" and the request itself (no
+    `employee_request` guard). Table 2's undermining act is "robust to what was discovered", its legend keeping
+    "and/or". **Amends item 22 (not rewritten):** K10's duty is one act, "have sandbagging handled", whose legend
+    states both alternatives of "Adopt elicitation approach that overcomes sandbagging, or use a conservative
+    upper bound of the model’s non-sandbagged evaluation results"; the "unless a conservative upper bound is used"
+    carve-out, its open term and the harness's bound-is-false assumption are gone, and K10 stays SOME(N). F16's
+    yearly review is a duty of the Framework itself, once (a one-member `framework` sort): "Every framework must
+    be reviewed at least once a year as to its continued sufficiency". **Amends item 21 (not rewritten):**
+    `cl-levels` and `fn5-indicator` are headed blocks of `rules.d1.ve`, each its own audit unit; `facts.d1.ve`
+    holds exactly 4.1's six levels, `rs2-nest` and `no-critical-models`; N4 rests on `cl-levels`. No answer
+    changed (236 of 239 agree, as before). Regulated predicates: 60 of 64 (59 before: +1 the internal-use act).
+    The situation sort's legend still says "of a covered model" (sess-3 C7): a shared change put to the DRI.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
