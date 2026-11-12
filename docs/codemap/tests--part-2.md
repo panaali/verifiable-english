@@ -1,3 +1,5 @@
+- `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
+- `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
 - `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
 - `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
@@ -45,6 +47,7 @@
 - `tests/test_command_relay.py` — ci-2b (commands-imperatives CI-2 deliverables (4) and (5)): `read_command` relays Lean's `english.command` answer verbatim and binds it to the request; the spe…
 - `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's route claims: each comment names only bindings that are delivered (the relay's binding and the source wrapper's call la…
 - `tests/test_commands_ci3b_review.py` — Regression checks for the CI-3b review: StepsProofs' comments claim no more than its theorems prove.
+- `tests/test_commands_steps.py` — CI-3 (commands-imperatives section 7) through `english.command`: steps, `Then` steps and conditions written first, and the saved A/B's b1 rows pinned to their …
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -81,11 +84,5 @@
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
+- `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
-- `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
-- `tests/test_e1_core.py` — (no module docstring)
-- `tests/test_e1_prompts.py` — (no module docstring)
-- `tests/test_eff_tests_report.py` — docs/eff-tests/REPORT.md: every number regenerated from the saved evidence in docs/eff-tests/evidence/.
-- `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
-- `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).
-- `tests/test_english.py` — Writable English boundaries, scoped references and independent ambiguity checks.

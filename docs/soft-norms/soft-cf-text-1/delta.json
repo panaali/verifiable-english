@@ -1,0 +1,103 @@
+{
+ "item": "soft-cf-text-1",
+ "route": "soft-conflict (ve_soft_norms_route), CONFLICT-FREE",
+ "base": "main b81b82ef9 (lean/VE/SoftNorms/Run.lean conflictFreeText), measured before any edit (evidence/step1-output.txt)",
+ "rulings": {
+  "no-search situation text": "R1"
+ },
+ "unchanged_fields": [
+  "verdict",
+  "coherent_exhibit",
+  "budget",
+  "targets",
+  "conditional_on"
+ ],
+ "records": [
+  {
+   "fixture": "delta, no model",
+   "model": false,
+   "budget": 10000,
+   "base_source": "evidence/step1-output.txt (tests/test_soft_norms_lean.py::test_delta_conflict_free_conditional_on_coherence, no model)",
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: UNKNOWN (budget 10000)",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: none supplied (not searched; budget 10000 unused)",
+   "fields": {
+    "verdict": "CONFLICT-FREE",
+    "coherent_exhibit": false,
+    "budget": 10000,
+    "targets": [
+     "x_permitted",
+     "x_required",
+     "x_required->x_permitted"
+    ],
+    "conditional_on": [
+     "soft:coherence:a,b"
+    ]
+   }
+  },
+  {
+   "fixture": "delta, no model, budget 7",
+   "model": false,
+   "budget": 7,
+   "base_source": "evidence/step1-output.txt (tests/test_relay_binding_inventory.py::test_every_bound_field_mutant_is_unavailable[document-soft-defaults], the same open pair, budget 7)",
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: UNKNOWN (budget 7)",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: none supplied (not searched; budget 7 unused)",
+   "fields": {
+    "verdict": "CONFLICT-FREE",
+    "coherent_exhibit": false,
+    "budget": 7,
+    "targets": [
+     "x_permitted",
+     "x_required",
+     "x_required->x_permitted"
+    ],
+    "conditional_on": [
+     "soft:coherence:a,b"
+    ]
+   }
+  },
+  {
+   "fixture": "delta, coherent model",
+   "model": true,
+   "budget": 10000,
+   "base_source": "evidence/step1-output.txt (test_delta_conflict_free_conditional_on_coherence, coherent_model)",
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: yes",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 1 weighing points open; coherent situation exhibited: yes",
+   "fields": {
+    "verdict": "CONFLICT-FREE",
+    "coherent_exhibit": true,
+    "budget": 10000,
+    "targets": [
+     "x_permitted",
+     "x_required",
+     "x_required->x_permitted"
+    ],
+    "conditional_on": [
+     "soft:coherence:a,b"
+    ]
+   }
+  },
+  {
+   "fixture": "bottom guard, certificates without Coh, no model",
+   "model": false,
+   "budget": 10000,
+   "base_source": "evidence/step1-output.txt (constructed case)",
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises; 1 weighing points open; coherent situation exhibited: UNKNOWN (budget 10000)",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises; 1 weighing points open; coherent situation exhibited: none supplied (not searched; budget 10000 unused)",
+   "fields": {
+    "verdict": "CONFLICT-FREE",
+    "coherent_exhibit": false,
+    "budget": 10000,
+    "targets": [
+     "x_permitted",
+     "x_required",
+     "x_required->x_permitted"
+    ],
+    "conditional_on": []
+   }
+  }
+ ]
+}

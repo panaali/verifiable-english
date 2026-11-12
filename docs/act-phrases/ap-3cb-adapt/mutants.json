@@ -1,0 +1,135 @@
+{
+  "restored": "SURVIVOR",
+  "restored_accepted": {
+    "e1": true,
+    "e4": true
+  },
+  "bugs": [
+    {
+      "id": "parts-from-index-0",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "partsOf",
+      "claim": "splitMap_exact: every part's index is at least 1 (the `1 ≤ i` conjuncts)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (_, M) => M.preds.all (1 ≤ ·.2.2)",
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).toOption.all fun (_, M) => M.preds.all (1 ≤ ·.2`",
+        "proof mem_partsOf",
+        "proof splitMap_exact"
+      ],
+      "accepted": {
+        "e1": true,
+        "e4": true
+      }
+    },
+    {
+      "id": "split-node-over-unmapped",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitNode",
+      "claim": "elaborate_parts: a part rule's `over` is mapped to part i (the rule half)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e4).toOption.all fun (U, M) => M.rules.all fun (n, m, i) =>\n  (U.D.T.nodes.find? (·.name == n)).all fun K => e4.U.D.T.nodes.any fun N => N.name == m && K.over == N.over.map (partRule · i)",
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e4).isOk`",
+        "proof mem_splitNode"
+      ],
+      "accepted": {
+        "e1": true,
+        "e4": false
+      }
+    },
+    {
+      "id": "part-keeps-source-name",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitMap",
+      "claim": "splitMap_exact: a part has its own name, distinct from its source's and from the other parts' (`q = partPred p i` and the Nodup conjuncts)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (U, M) => (M.preds.map (·.1)).Nodup &&\n  M.preds.all fun (q, p, i) => q == partPred p i && !(U.D.T.regulated.any (·.name == p))",
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).isOk`",
+        "guard `#guard (elaborateMap e4).isOk`",
+        "proof mem_preds"
+      ],
+      "accepted": {
+        "e1": false,
+        "e4": false
+      }
+    },
+    {
+      "id": "part-declaration-keeps-source-name",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitReg",
+      "claim": "splitMap_exact and elaborate_parts: a part is declared under its own name, and the source is gone",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (U, M) => (M.preds.map (·.1)).Nodup &&\n  M.preds.all fun (q, p, i) => q == partPred p i && !(U.D.T.regulated.any (·.name == p))",
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).isOk`",
+        "guard `#guard (elaborateMap e4).isOk`",
+        "proof mem_splitReg"
+      ],
+      "accepted": {
+        "e1": false,
+        "e4": false
+      }
+    },
+    {
+      "id": "atoms-reversed",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "atomsOf",
+      "claim": "the E1 and E4 examples' split pin: part 1 is torture (the theorems hold of any order; the pin catches it)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard splitAtoms e1 \"p027\" == some [torture, cruel] && splitAtoms e4 \"p027\" == some [torture, cruel]",
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard splitAtoms e1 \"p027\" == some [torture, cruel] && splitAtoms e4 \"p`"
+      ],
+      "accepted": {
+        "e1": true,
+        "e4": true
+      }
+    },
+    {
+      "id": "statement-index-from-2",
+      "file": "lean/VE/Acts/ElaborateProofs.lean",
+      "definition": "splitMap_exact",
+      "claim": "the statement as 6.6 gives it is the one proved (a stronger, false clause fails the proof)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).isOk",
+        "#guard (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "proof splitMap_exact"
+      ],
+      "accepted": {
+        "e1": true,
+        "e4": true
+      }
+    }
+  ]
+}
