@@ -1,0 +1,10 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/SplitOnLemmas.lean:21 VE.Commands.SplitOn.splitOnL (G[V], trusted) and-or: ∧ -> ∨ (lean/VE/Commands/SplitOnLemmas.lean:26: Invalid projection: Expected a value whose type is a stru...)
+UNKNOWN lean/VE/Presupposition/Couple.lean:98 VE.Presupposition.PickFits (S, trusted) and-or: ∧ -> ∨ (lean/VE/Presupposition/CoupleExamples.lean:81: Expression (VE.Presupposition.instDecidablePickFit...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:957 VE.Compose.TableAdmits (S, trusted) or-and: ∨ -> ∧ (lean/VE/Compose/Examples.lean:287: Tactic `decide` proved that the proposition)
+trust_mutants: 5 KILLED, 0 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 1624 s
+trust_mutants: D[V], trusted: 2 KILLED, 15 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 UNKNOWN, 23 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 3 UNKNOWN, 25 OTHER SHARD
+trust_mutants: steps: wall plan 15.5 s, scratch 3.7 s, control_build 0.2 s, probe_install 1.1 s, mutants 1597.1 s, cleanup 5.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 135.5 s (7), mutant_builds 100.1 s (11), mutant_checks 1175.9 s (10), stage_controls 776 s (3), mutant_probes 220.7 s (7)
