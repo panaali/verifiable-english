@@ -14304,6 +14304,11 @@ module VE.Kernel.Carry e029878490327a3766e70f8b3edc1cdb00ddd58ed046f4221e10513cf
 52:0-55:32 theorem VE.Kernel.ran_meaning@VE.Kernel.Carry
 57:0-64:72 theorem VE.Kernel.shell_sound@VE.Kernel.Carry
 66:0-73:55 def VE.Kernel.carry@VE.Kernel.Carry
+module VE.Kernel.CarryChecks 8ea1d66e344bef1058093e51f59e0ca6eadfac6f17fe8292b933bf4ee0b84bd6
+9:0-13:37 def VE.Kernel.CarryChecks.toyRun@VE.Kernel.CarryChecks
+15:0-16:87 def VE.Kernel.CarryChecks.toy@VE.Kernel.CarryChecks
+18:0-22:35 def VE.Kernel.CarryChecks.cases@VE.Kernel.CarryChecks
+24:0-27:29 def VE.Kernel.CarryChecks.text@VE.Kernel.CarryChecks
 module VE.Kit.Except 191eaa7c5f51a708ed94eca4c2d0b5f4180d8dc619318a9d1de35cbdc399c101
 4:0-9:29 theorem VE.Kit.Except.bind_ok@VE.Kit.Except
 module VE.Layout.Anchors 510feb53d134208d46e12f1910b41e49c554ff63124b771113e61c2d669f138c
@@ -30867,4 +30872,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE c9182b95aa5feb728ac72f2daa95476eb1cad7473b5b94c139079dc194430878
+module VE 28dd005fe8fedf614978b6d934a4e586a7f8a09dca865cab102d7a87f6c113d8

@@ -1,3 +1,4 @@
+- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
@@ -79,4 +80,3 @@
 - `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
 - `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
-- `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
