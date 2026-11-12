@@ -73,6 +73,9 @@ BASE = {
     "adjustment_confirmed": base(["situation"], "it is rigorously confirmed at {0} that another frontier AI developer "
                                      "developed or released a system with High or Critical capability in a Tracked Category without "
                                      "comparable safeguards"),
+    "adjustment_area": base(["situation", "category"], "4.3's adjustment at {0} is to the level of safeguards OpenAI "
+                            "requires in capability area {1} (“that capability area”): the Tracked Category in "
+                            "which the scenario rigorously confirmed at {0} occurred", "{0} adjusts {1}"),
     "adjustment_made": base(["situation"], "OpenAI makes 4.3's marginal-risk adjustment at {0}: it adjusts the level "
                                 "of safeguards it requires in that capability area"),
     "lra_found": base(["situation"], "Long-range Autonomy is found at {0}"),

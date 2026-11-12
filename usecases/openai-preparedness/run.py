@@ -325,6 +325,7 @@ def atoms(case, choice, level=None):
             found.add((OT[term], "s"))
     found.update((name, "s") for name in SITUATIONS.get(case["id"], ()))
     found.update((name, "s") for name in case.get("extra", ()))
+    found.update(tuple(atom) for atom in case.get("relations", ()))
     return frozenset(found)
 
 
@@ -561,12 +562,15 @@ WITNESS = {
     "m2": ("external_deployment", "misuse_standard_met"),
 }
 WITNESS_LEVELS = {"C1": ("BIO-H",), "C3": ("BIO-C",), "C5": ("AIS-H",), "m2": ("BIO-H",)}
+# F11's adjustment is in "that capability area": C1's confirmed scenario is in the witness level's category.
+WITNESS_RELATIONS = {"C1": (("adjustment_area", "s", "biological_and_chemical"),)}
 
 
 def witness(names):
     extra = sorted({a for n in names for a in WITNESS[n]})
     return {"id": "W", "levels": sorted({lv for n in names for lv in WITNESS_LEVELS.get(n, ())}),
-            "activity": None, "findings": {}, "extra": extra}
+            "activity": None, "findings": {}, "extra": extra,
+            "relations": sorted({r for n in names for r in WITNESS_RELATIONS.get(n, ())})}
 
 
 def w1(choice, include, case):
@@ -762,6 +766,11 @@ def witness_for(block):
                  if "regulated" not in d and d["arguments"] == ["situation"]}
     capability = {n for n, d in vocabulary()["vocabulary"]["predicates"].items()
                   if "regulated" not in d and d["arguments"] == ["capability"]}
+    # A situation-category relation the guard names positively (F11's area) holds for every category, so it
+    # agrees with every level reached.
+    areas = {(n, "s", c) for n, d in vocabulary()["vocabulary"]["predicates"].items()
+             if "regulated" not in d and d["arguments"] == ["situation", "category"] and n in names[False]
+             for c in sorted({c for c, _ in V.LEVELS.values()})}
     choice = {**BASE, **dict(block.when)}
     names_ = tuple(sorted(choice.items()))
     sort = vocabulary()["vocabulary"]["predicates"][rule["predicate"]]["arguments"][0]
@@ -769,7 +778,7 @@ def witness_for(block):
     for positive in (names[False] - blocked, (situation | capability) - blocked):
         found = set(atoms({"id": block.id, "levels": list(LEVEL_IDS), "activity": None, "findings": {}}, choice))
         found = {a for a in found if a[0] not in situation or a[0] in positive}
-        found |= {(n, "s") for n in positive & situation} | {(n, "k") for n in positive & capability}
+        found |= {(n, "s") for n in positive & situation} | {(n, "k") for n in positive & capability} | areas
         found = frozenset(found)
         ok = True
         for default in ("deny", "allow"):
