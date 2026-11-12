@@ -1,3 +1,10 @@
+- `tests/test_norms_three_way.py` — Committed W1 wire gate: regenerated Python/Lean formulas and Rust evaluation.
+- `tests/test_numbers_phrases.py` — The existing English reader consumes the Lean-generated comparison rows.
+- `tests/test_numeral_conversion.py` — Decimal text from input never reaches a bare `int(` (english-lean looprecheck1, finding 1).
+- `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
+- `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
+- `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
+- `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
 - `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
@@ -22,12 +29,14 @@
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
+- `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
 - `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
+- `tests/test_presupposition_rule_ob.py` — ps-2ab-rule-firstob: `admit`'s rule check names the rule's first obligation, else none (ps-2ac review F2).
 - `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
 - `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
 - `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
@@ -48,6 +57,7 @@
 - `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
 - `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
 - `tests/test_rd9_admit_charge.py` — sc-admit-cpu: admission's per-reading charge on the wire (DRI 2026-11-11 sc-admit-cpu item 3; spec rd-9 4.1 step 5, 14.11).
+- `tests/test_rd9_admit_charge_corpora.py` — sc-admit-cpu, DRI amendment 2026-11-11 (reviews/dri-decisions-20261111-adv1118.md item 2): admission's per-reading charge (`sdAdmitWork N ≤ maxSdAdmitWork`, So…
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
@@ -72,12 +82,3 @@
 - `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
 - `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
 - `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
-- `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.
-- `tests/test_readings_defaults_rd6b_report.py` — RD-6b report checks against committed evidence, independent of the current git graph.
-- `tests/test_readings_defaults_rd8_report.py` — The RD-8 report states the saved evidence (docs/readings-defaults/rd8/evidence.json) and nothing else.
-- `tests/test_readings_defaults_statements.py` — The RD-1 declarations against the approved text of docs/spec/readings-defaults.md 6.2.
-- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
-- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
-- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
-- `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
-- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).

@@ -1232,6 +1232,17 @@
    ]
   },
   {
+   "test": "tests/test_rd9_admit_charge_corpora.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status"
+   ]
+  },
+  {
    "test": "tests/test_rd9_chain_relay.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [

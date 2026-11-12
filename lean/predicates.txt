@@ -109,6 +109,7 @@ module VE.Acts.DecodeExamples
 module VE.Acts.DecodeTwins
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.ElaborateProofs
 module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
@@ -601,6 +602,8 @@ module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftSup
 module VE.Readings.SoftSupExamples
 module VE.Readings.SoftSupLabels
+module VE.Readings.SoftSupRun
+module VE.Readings.SoftSupRunExamples
 module VE.Readings.SoftSupWire
 module VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts
@@ -636,6 +639,7 @@ module VE.Readings.Verdicts
 module VE.Readings.VerdictsExamples
 module VE.Readings.VerdictsWire
 module VE.Readings.Wire
+module VE.RightClauses.ElidedBytes
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
 module VE.RightClauses.PlainWellFormed.Clauses
