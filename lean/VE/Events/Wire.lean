@@ -1,4 +1,5 @@
 import VE.Events.Premises
+import VE.Events.Anchor
 import VE.NormDefaults.Packs
 import VE.Compose.Dispatch
 import Std.Data.HashSet
@@ -263,7 +264,7 @@ def routeView (environment : Json) (d : Option EventsDecoded) : Except String Js
   let vocab ← environment.getObjVal? "vocabulary"
   let constants ← fields (← vocab.getObjVal? "constants")
   let dated := (d.map fun d => d.V.dates.map fun D => (dateName D, Json.mkObj [("sort", .str d.V.day),
-    ("description", .str (if d.V.anchor == some D then "the date of this document" else D.iso))])).getD []
+    ("description", .str (if d.V.anchor == some D then anchorWording else D.iso))])).getD []
   let profiles := (VE.Compose.listedProfiles environment).filter (· != "events@0")
   let bare := Json.mkObj ((← fields environment).filter (·.1 != "events"))
   pure ((bare.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
