@@ -899,6 +899,7 @@ def test_pf_independent_reference_and_comparator_catch_wrong_answers(pf_clean):
     assert pf_reference.matches("SOME(N ∧ unscoped)", *pf_reference.case_answer(item))
     assert not pf_reference.matches("SOME(N)", *pf_reference.case_answer(item))
     assert pf_run.key_terms("SOME(N") is None
+    assert pf_run.key_terms(item["key"]) == pf_run.key_terms("SOME(N & unscoped)") == [{"RS4": "N", "RS4s": "unscoped"}]
     assert pf_run.key_terms("SOME(inuse | (nest & any))") == [{"RS18": "inuse"}, {"RS2": "nest", "RS3": "any"}]
     assert not pf_reference.matches("ALL", ("RS2",), lambda c: c["RS2"] == "nest")
     one = lambda holds, choice=None: {"route": "test", "cone": list(choice or ()),
