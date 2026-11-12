@@ -45,7 +45,7 @@ def _base(args, description, verbalisation=None):
 def _open(args, description, decider, verbalisation=None, term=None):
     """An open-term predicate: VE never decides it; the case stipulates the decider's finding."""
     text = f"{description}. Open term {term}, decided by {decider}" if term else f"{description}. Decided by {decider}"
-    return _base(args, text, verbalisation)
+    return {**_base(args, text, verbalisation), "_open": term}
 
 
 BASE = {
@@ -130,6 +130,10 @@ BASE = {
     "circumvention_evidence": _base(["proposal"], "post-market monitoring of {0} shows that safeguards are being "
                                     "circumvented (a stipulated situation for gap G8; no rule mentions it)"),
 }
+# The open predicates (`_open`) and their open term ("OT1" ...; None: open, decided by someone, with no OT id).
+# The one owner of "this predicate is open": build_document makes a unit whose rule uses one OPEN with its term
+# (fsf-fidelity-fix F2). The marker is taken out of BASE, so environment.d1.json does not carry it.
+OPEN_PREDICATES = {name: entry.pop("_open") for name, entry in BASE.items() if "_open" in entry}
 
 
 def _obligation(args, act, description):
@@ -143,6 +147,9 @@ REGULATED = {
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
+    "further_need_checked": _obligation(
+        ["proposal"], "{0} be preceded by a determination of any further capability assessment needed",
+        "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2)"),
     "further_assessed": _obligation(["proposal"], "{0} be preceded by a further critical capability assessment",
                                     "a further CCA takes place before {0} (1.3.2)"),
     "change_assessed": _obligation(
@@ -160,6 +167,10 @@ REGULATED = {
     "periodic_assessed": _obligation(
         ["proposal"], "{0} be subject to periodic residual risk assessments of misalignment risk",
         "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)"),
+    "periodic_covers_internal": _obligation(
+        ["proposal"], "{0} have its periodic assessments cover high-risk internal deployments",
+        "the periodic residual risk assessments for {0} also account for the safety implications of high-risk "
+        "internal deployments (3.2.1)"),
     "safeguards_added": _obligation(["proposal"], "{0} have the additional safeguards applied",
                                     "the additional safeguards the risk assessment calls for are applied to {0} "
                                     "(3.2.1)"),
@@ -200,8 +211,9 @@ REGULATED = {
         ["proposal"], "{0} share relevant information with appropriate government authorities",
         "relevant information about the model of {0} is shared with appropriate government authorities (5.2)"),
     "holistic": _obligation(
-        ["proposal"], "{0} have its mitigations assessed holistically in proportion to expected impact",
-        "the mitigation for {0} and its effects are assessed holistically and proportionately (1.3.5 Note)"),
+        ["proposal"], "{0} have holistically assessed mitigations proportionate with expected impact",
+        "the mitigation for {0} and its effects are assessed holistically, and the mitigation is proportionate with "
+        "the expected impact of the model's risk (1.3.5 Note)"),
     "within_levels": _obligation(
         ["proposal"], "{0} have its residual risk brought within the acceptable levels",
         "the residual risk of {0} is brought within the acceptable levels (Glossary, Residual Risk Assessments)"),
