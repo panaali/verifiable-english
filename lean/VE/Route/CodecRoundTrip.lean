@@ -16,8 +16,9 @@ back, for every closed formula the decoders' own gates admit:
   `nodeLimit` both make) are at most `VE.Limits.maxNodes`; for a list, all of them together;
 * `hData`: on a data-stage route (`data = true`) no quantifier ranges over `$string`.
 
-No hypothesis is dropped: each one is a gate of the decoder that refuses a formula outside it. The
-encoder and the decoders are unchanged; these are statements only. -/
+Each hypothesis is a gate of the decoder: the end of this file refuses, for each one, a formula (or a
+list) that breaks it and only it (`decodeClosed_refuses_depth`, `decodeFormulas_refuses_depth` and
+the `#guard`s). The encoder and the decoders are unchanged; this file holds statements only. -/
 namespace VE.Route.Wire
 open Lean
 open VE.Route.AstLimit (walk Halt)
@@ -367,5 +368,37 @@ theorem decodeFormulas_refuses_depth (E : VE.Environment) (data : Bool) :
     decodeFormulas E (Json.arr #[encodeFormula (Nat.repeat .not VE.Limits.maxDepth .top)]) data =
       .error AstLimit.depthLimit :=
   rfl
+
+/-! ### The other hypotheses are the decoder's gates too
+
+Each `#guard` below is a formula (or list) that breaks exactly one hypothesis of
+`decodeClosed_encodeFormula` or `decodeFormulas_encode` and is refused with that gate's diagnostic. -/
+
+-- hNodes: a balanced conjunction of 16,383 nodes (depth 13) is refused by the node limit.
+#guard (match decodeClosed ⟨[], fun _ => none, fun _ => none⟩
+    (encodeFormula (Nat.repeat (fun a => .and a a) 13 .top)) false with
+  | .error e => e == AstLimit.nodeLimit
+  | .ok _ => false)
+-- hNodes for a list: two formulas of 8,191 nodes, each within the limit, are refused together.
+#guard VE.Bridge.formulaNodes (Nat.repeat (fun a => VE.Formula.and a a) 12 .top) ≤ VE.Limits.maxNodes
+#guard (match decodeFormulas ⟨[], fun _ => none, fun _ => none⟩
+    (Json.arr #[encodeFormula (Nat.repeat (fun a => .and a a) 12 .top),
+      encodeFormula (Nat.repeat (fun a => .and a a) 12 .top)]) false with
+  | .error e => e == AstLimit.nodeLimit
+  | .ok _ => false)
+-- hCheck: an unbound variable is refused by the typing gate.
+#guard (match decodeClosed ⟨[], fun _ => none, fun _ => none⟩ (encodeFormula (.eq (.var 0) (.var 0))) false with
+  | .error e => e == "ill-typed or unbound conclusion"
+  | .ok _ => false)
+-- hData: a `$string` binder, typed in an environment that declares the sort, is refused on a data
+-- route and read back on any other.
+#guard (match decodeClosed ⟨[Background.stringSort], fun _ => none, fun _ => none⟩
+    (encodeFormula (.all Background.stringSort .top)) true with
+  | .error e => e == "UnsupportedProfile: $string quantification requires data stage 2"
+  | .ok _ => false)
+#guard (match decodeClosed ⟨[Background.stringSort], fun _ => none, fun _ => none⟩
+    (encodeFormula (.all Background.stringSort .top)) false with
+  | .ok φ => φ == .all Background.stringSort .top
+  | .error _ => false)
 
 end VE.Route.Wire
