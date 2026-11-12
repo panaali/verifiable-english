@@ -83,6 +83,28 @@
   "caught": true
  },
  {
+  "behaviour": "review F1: the delta's suite is only the units the map records calling parse_english (none it cannot rule out)",
+  "file": "docs/en-e3-norm/en-2/w1_delta.py",
+  "test": [
+   "tests/test_w1_delta_suite.py::test_the_delta_suite_is_every_unit_the_coverage_map_cannot_rule_out"
+  ],
+  "failed": [
+   "tests/test_w1_delta_suite.py::test_the_delta_suite_is_every_unit_the_coverage_map_cannot_rule_out"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "review F1: the suite's tagging plugin tags every record (a test's own record and log changed)",
+  "file": "docs/en-e3-norm/en-2/w1_delta.py",
+  "test": [
+   "tests/test_w1_delta_suite.py::test_the_plugin_tags_only_the_records_of_its_own_log"
+  ],
+  "failed": [
+   "tests/test_w1_delta_suite.py::test_the_plugin_tags_only_the_records_of_its_own_log"
+  ],
+  "caught": true
+ },
+ {
   "behaviour": "the gate reads english.statement without its reader",
   "file": "tools/relay_mutation_gate.py",
   "test": [

@@ -88,15 +88,24 @@ def install() -> None:
     """Tag every shadow record with `TAG`, and in a test run with its corpus (by the environment) and test."""
     from ve import norm_english
     record, shadow = norm_english.statement_record, norm_english._shadow
+    ours, writing = os.environ.get("VE_SHADOW_LOG"), []  # this run's log; whether `_shadow` is writing to it
 
     def tagged_shadow(log, env, source, python):
+        """Only a record written to this run's log is tagged: a test's own log (a `VE_SHADOW_LOG` it sets) and a
+        test's own `statement_record` call see the records they would see without this plugin."""
+        if str(log) != ours:
+            return shadow(log, env, source, python)
         if os.environ.get("PYTEST_CURRENT_TEST"):
             TAG.update(corpus="soft-rights" if "soft-norms@0" in env.profiles else "suite",
                        id=os.environ["PYTEST_CURRENT_TEST"].rsplit(" ", 1)[0])
-        return shadow(log, env, source, python)
+        writing.append(True)
+        try:
+            return shadow(log, env, source, python)
+        finally:
+            writing.pop()
 
     def tagged_record(source, python, lean):
-        return {**record(source, python, lean), **TAG}
+        return {**record(source, python, lean), **TAG} if writing else record(source, python, lean)
     norm_english._shadow, norm_english.statement_record = tagged_shadow, tagged_record
 
 

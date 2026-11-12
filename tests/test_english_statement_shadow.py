@@ -180,43 +180,6 @@ def check_suite(delta: dict) -> None:
     assert tested <= set(suite["files"]), tested - set(suite["files"])
 
 
-def w1_delta():
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("w1_delta_under_test", DELTA / "w1_delta.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def test_the_delta_suite_is_every_unit_the_coverage_map_cannot_rule_out(monkeypatch):
-    """F1: the suite corpus is derived from coverage, never listed by hand. A unit the map records running
-    `parse_english` (or a function nested in it) is in; so is one the map has not recorded, one it recorded failing or
-    opaque, and one whose run may have changed since the map; a unit that only imported the module is out."""
-    monkeypatch.syspath_prepend(str(DELTA.parents[2] / "tools"))
-    import select_tests
-    units = ["tests/test_calls.py", "tests/test_nested.py", "tests/test_imports.py", "tests/test_opaque.py",
-             "tests/test_failed.py", "tests/test_drifted.py", "tests/test_new.py", "tests/test_other.py",
-             "tools/test_extra.py"]
-    recorded = units[:6] + ["tests/test_other.py", "tools/test_extra.py"]
-    status = {u: {"exit": 1 if u == "tests/test_failed.py" else 0, "seconds": 1.0,
-                  "opaque": ["child left no record"] if u == "tests/test_opaque.py" else []} for u in recorded}
-    tests = sorted(recorded)
-    index = {u: i for i, u in enumerate(tests)}
-    data = {"version": 7, "commit": "c" * 40, "tests": tests, "status": status, "reads": {}, "dirs": {},
-            "programs": {}, "operations": {}, "presence": {}, "modes": {},
-            "functions": {"ve/norm_english.py": {
-                "parse_english": [index["tests/test_calls.py"]],
-                "parse_english.<locals>.<genexpr>": [index["tests/test_nested.py"]],
-                "<module>": [index[u] for u in tests],
-                "render_english": [index["tests/test_imports.py"], index["tests/test_other.py"]]}}}
-    plan = w1_delta().derive_suite(select_tests.Coverage(data), set(units), {"tests/test_drifted.py"})
-    assert plan["reached"] == ["tests/test_calls.py", "tests/test_nested.py"]
-    assert plan["unknown"] == ["tests/test_drifted.py", "tests/test_failed.py", "tests/test_new.py",
-                               "tests/test_opaque.py"]
-    assert plan["files"] == sorted(plan["reached"] + plan["unknown"]) and plan["map"] == "c" * 40
-    assert w1_delta().short("tests/test_rights.py") == "rights" and w1_delta().short(units[-1]) == units[-1]
-
-
 def test_the_suite_check_fails_on_a_hand_kept_or_incomplete_suite():
     """The other direction: the saved suite with a file review F1 found dropped, a record from a test outside it, a
     `files` that is not its derivation, or no pytest summary each fail `check_suite`."""
@@ -263,12 +226,12 @@ def check_report(report: str, delta: dict) -> None:
         lean = r["lean"]
         cause = lean["message"] if lean["status"] == "unavailable" else lean.get("code") or lean["status"]
         causes.setdefault((r["corpus"], r["class"]), []).append(cause)
-    stated = set()
+    stated: dict = {}
     for m in re.finditer(r"^- `([a-z-]+)` `([a-z-]+)` \((\d+)\): `([^`]+)`", report, re.M):
         corpus, cls, n, lean = m[1], m[2], int(m[3]), m[4]
         assert sum(c.startswith(lean) for c in causes.get((corpus, cls), ())) == n, m[0]
-        stated.add((corpus, cls))
-    assert stated == set(causes), set(causes) ^ stated
+        stated[(corpus, cls)] = stated.get((corpus, cls), 0) + n
+    assert stated == {group: len(found) for group, found in causes.items()}, (stated, causes.keys())
     for corpus in sizes:
         for m in re.finditer(rf"every {re.escape(corpus)}\b[^.]*?`([a-z-]+)`", report):
             assert m[1] in counts[corpus] and counts[corpus][m[1]] == sizes[corpus], m[0]
