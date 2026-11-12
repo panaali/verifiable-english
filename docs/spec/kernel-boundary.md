@@ -114,9 +114,13 @@ Reading the table:
   wire code under no theorem (first measurement). Its `non-vacuity` kind has no theorem and is
   listed as uncovered.
 - `softNorms` lists `VE.SoftNorms.Run.soft_wire_elaborate` since KB-7: the `background` and
-  `premises` fields of a `soft-elaborate` answer are, entry for entry, the encodings of
+  `premises` fields of a `soft-elaborate` answer, read by key, are entry for entry the encodings of
   `background' D` and `elaborate (soften D).T`, the lists the soft route's acceptance theorems are
-  about. The keys' "yes" answers replay certificates over exactly these fields.
+  about. No theorem yet ties what the keys' certificates replay to these fields: the Python client
+  reads only the labels of `premises` (`ve/softnorms.py`, `bind_soft_elaboration`), takes the
+  coherence premises from `colliding_pairs` (`SoftNormDocument._init_soft`), which no theorem
+  covers, and the norms route accepts
+  `soft_premises` as the case carries them (`VE.Norms.Plain.softPremises`): that step is open.
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
@@ -143,8 +147,10 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 So the keyed answers do not depend on the wrapper modes at all. What still separates them from a
 fully proved path is the wire code around the `quantity` evaluator (KB-8), the risk route and the
 three validators. In every harness the Python side holds the premises between `soft-elaborate` and
-`route certificate`: the harnesses already work by the carry rule of section 3, and since KB-7 a
-theorem states that those premises are the document's (`soft_wire_elaborate`).
+`route certificate`: the harnesses already work by the carry rule of section 3. Since KB-7 a
+theorem states the `background` and `premises` fields of the `soft-elaborate` answer
+(`soft_wire_elaborate`); none yet states that the premises the harness carries to the certificate
+case are those fields (section 1.2).
 
 ## 2. The measure
 

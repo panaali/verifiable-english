@@ -64626,10 +64626,43 @@ theorem VE.SoftNorms.RanksValid.order
     VE.SoftNorms.RanksValid env → ∃ o, VE.Route.dependencyOrder (VE.SoftNorms.rankNodes env) = Except.ok o
   -- uses VE.Route.dependencyOrder@VE.Route.Route VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree VE.SoftNorms.rankNodes@VE.SoftNorms.Tree
   -- expr 1425841079
+theorem VE.SoftNorms.Run.elaborationAnswer_ok
+  ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (prime decisions derived order background premises : Lean.Json)
+    (tail : List (String × Lean.Json)),
+    (∀ (k : String), k ∈ ["id", "status", "background", "premises"] → ¬k ∈ List.map (fun x => x.fst) tail) →
+      VE.SoftNorms.Run.BackgroundField D background →
+        VE.SoftNorms.Run.PremisesField D premises →
+          VE.SoftNorms.Run.ElaborationAnswer id D
+            (VE.Route.Wire.ok id
+              ([("environment_prime", prime), ("decisions", decisions), ("derived", derived), ("order", order),
+                  ("background", background), ("premises", premises)] ++
+                tail))
+  -- uses VE.Route.Wire.ok@VE.Route.Wire VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 148320765
+theorem VE.SoftNorms.Run.elaborationAnswer_reads
+  ∀ {id : String} {D : VE.SoftNorms.SoftDoc} {answer : Lean.Json},
+    VE.SoftNorms.Run.ElaborationAnswer id D answer →
+      answer.getObjValD "id" = Lean.Json.str id ∧
+        answer.getObjValD "status" = Lean.Json.str "ok" ∧
+          VE.SoftNorms.Run.BackgroundField D (answer.getObjValD "background") ∧
+            VE.SoftNorms.Run.PremisesField D (answer.getObjValD "premises")
+  -- uses VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2580229401
 theorem VE.SoftNorms.Run.excLabels_length
   ∀ (D : VE.SoftNorms.SoftDoc), (VE.SoftNorms.Wire.excLabels D).length = (VE.SoftNorms.excPremises D).length
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire VE.SoftNorms.excPremises@VE.SoftNorms.Soften
   -- expr 3163521560
+theorem VE.SoftNorms.Run.mkObj_get_append
+  ∀ {pre rest : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) pre).Nodup →
+      (k, v) ∈ pre → ¬k ∈ List.map (fun x => x.fst) rest → (Lean.Json.mkObj (pre ++ rest)).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 3129764167
+theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
+  ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (answer : Lean.Json),
+    answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
+  -- uses VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1875777254
 theorem VE.SoftNorms.Run.regeneratedCore_fields
   ∀ (D : VE.SoftNorms.SoftDoc) (environment : Lean.Json),
     ∃ prime decisions derived order background premises rest,
@@ -64637,9 +64670,11 @@ theorem VE.SoftNorms.Run.regeneratedCore_fields
           [("environment_prime", prime), ("decisions", decisions), ("derived", derived), ("order", order),
               ("background", background), ("premises", premises)] ++
             rest ∧
-        VE.SoftNorms.Run.BackgroundField D background ∧ VE.SoftNorms.Run.PremisesField D premises
+        List.map (fun x => x.fst) rest =
+            ["colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"] ∧
+          VE.SoftNorms.Run.BackgroundField D background ∧ VE.SoftNorms.Run.PremisesField D premises
   -- uses VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.regeneratedCore@VE.SoftNorms.Wire
-  -- expr 1167382796
+  -- expr 3237638150
 theorem VE.SoftNorms.Run.runAdmission_sound
   ∀ (id : String) (environment document answer : Lean.Json),
     VE.SoftNorms.Run.runAdmission id environment document = Except.ok answer →

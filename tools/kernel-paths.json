@@ -238,7 +238,7 @@
       "soft-certificate",
       "soft-conflict"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); the listed theorems cover admission only (KB-3)"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, and soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3)"
     }
    ]
   },
