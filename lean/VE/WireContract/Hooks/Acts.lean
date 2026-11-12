@@ -112,23 +112,27 @@ def environmentBy (environment : Json) (ne : Unit → Except String VE.Norms.Wir
   | .ok () => .ok
   | .error e => member environment e
 
-def classifier : String → Json → List Pointer → ClassifierResult
-  | "acts_environment", root, _ => environmentBy (environmentOf root) fun _ => decodeOf (environmentOf root)
-  | "rule_typing", root, items =>
-    Hooks.Norms.tableAt (Hooks.Norms.typingTableOver root (typingEnvironment (decodeOf (environmentOf root)))) items
-  | name, root, items => Hooks.Norms.classifier name root items
+/-- The classifiers; 1.1 reads the decoder's result `ne` on the root's environment, and 4.7 each rule's result from
+    `typing` (both built from the root, unless one run's hooks give them built once: `hooksFor`). -/
+def classifier (name : String) (root : Json) (items : List Pointer)
+    (ne : Json → Except String VE.Norms.Wire.NormsEnvironment := fun r => decodeOf (environmentOf r))
+    (typing : Json → Array ClassifierResult := fun r => Hooks.Norms.typingTableOver r (typingEnvironment (ne r))) :
+    ClassifierResult :=
+  match name with
+  | "acts_environment" => environmentBy (environmentOf root) fun _ => ne root
+  | "rule_typing" => Hooks.Norms.tableAt (typing root) items
+  | _ => Hooks.Norms.classifier name root items
 
 def hooks : Hooks := ⟨Hooks.Norms.predicate, classifier, Hooks.Norms.view⟩
 
 /-- The hooks of one run on the input `j` (ap-1bfb review F2): the environment is decoded once, for 1.1 and 4.7,
     and 4.7's table is built once; each rule is typed once. -/
 def hooksFor (j : Json) : Hooks :=
-  let ne := Thunk.mk fun _ => decodeOf (environmentOf j)
-  let table := Thunk.mk fun _ => Hooks.Norms.typingTableOver j (typingEnvironment ne.get)
-  ⟨Hooks.Norms.predicate, Hooks.Norms.onInput j (fun
-    | "acts_environment" => some fun _ => environmentBy (environmentOf j) fun _ => ne.get
-    | "rule_typing" => some (Hooks.Norms.tableAt table.get)
-    | _ => none) classifier, Hooks.Norms.view⟩
+  let decode := fun r => decodeOf (environmentOf r)
+  let ne := Thunk.mk fun _ => decode j
+  let typing := fun r => Hooks.Norms.typingTableOver r (typingEnvironment (Hooks.Norms.atInput j ne decode r))
+  ⟨Hooks.Norms.predicate, fun n r i => classifier n r i (Hooks.Norms.atInput j ne decode)
+    (Hooks.Norms.atInput j (Thunk.mk fun _ => typing j) typing), Hooks.Norms.view⟩
 
 /-- `acts@0` listed, and the source without it in `norms@0`'s domain: no `norm-defaults@0`, no statement layer. -/
 def inDomain (environment norms : Json) : Bool :=
@@ -253,6 +257,9 @@ def numberHead : Json := Json.mkObj [("head", (5 : Nat)), ("markers", Json.arr #
   let v := e.getObjValD "vocabulary"
   memberOf (e.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "w"
     (Json.mkObj [("arguments", toJson ["person"]), ("description", (5 : Nat))])))) == some "1.1f"
+-- a block that is not an object is never the frames'
+#guard let e := framed []
+  memberOf (e.setObjVal! "vocabulary" ((e.getObjValD "vocabulary").setObjVal! "acts" (5 : Nat))) == some "1.1d"
 -- the rule phases (ap-1bfb): `norms@0`'s members, under the include `norms`, typed over `acts@0`'s environment
 def ruleOf (name pred : String) (guard : Json) : Json := Json.mkObj [("norm", Json.mkObj [("name", name),
   ("predicate", pred), ("sign", true), ("guard", guard), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
@@ -320,6 +327,26 @@ def resultOf : ClassifierResult → Option String
   [("rule_typing", [["norms", "0"]]), ("acts_environment", [])].all fun (n, items) =>
     resultOf ((hooksFor j).classifier n other items) == resultOf (hooks.classifier n other items) &&
       resultOf ((hooksFor j).classifier n j items) == resultOf (hooks.classifier n j items)
+-- `norms@0`'s own run, with and without `data@0`: one run's hooks (`Hooks.Norms.hooksFor`) give `Hooks.Norms.hooks`'
+-- record, and 4.7, 3.8 and the node total are found
+def normsEnv (profiles : List String := ["norms@0", "relational-fol@0"]) : Json :=
+  let e := envOf [] (actOf 20) profiles
+  let v := match e.getObjValD "vocabulary" with | .obj kvs => Json.obj (kvs.erase "acts") | v => v
+  e.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "paid" (Json.mkObj
+    [("arguments", toJson ["person"]), ("description", "d"), ("regulated", Json.mkObj [("role", "permission"),
+      ("default", "allow"), ("act", "{0} seek protection")])])))
+def normsCheckOf (h : Hooks) (environment : Json) (norms : List Json) : Option String :=
+  let j := Json.mkObj [("environment", environment), ("norms", toJson norms)]
+  (run Tables.Norms.table h j).map fun f => ((record Tables.Norms.table f).getObjValD "check").getStr?.toOption.getD ""
+#guard let half := balancedOn 32 ((VE.Limits.maxNodes / 2 + 1) / 3)
+  [([ruleOf "r0" "paid" (unaryOn "w")], normsEnv, none),
+   ([ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r1" "paid" (unaryOn "nope")], normsEnv, some "4.7b"),
+   ([ruleOf "r0" "paid" (toJson [toJson "nope"])], normsEnv, some "3.8b"),
+   ([ruleOf "r0" "paid" half, ruleOf "r1" "paid" half, ruleOf "r2" "paid" (toJson [toJson "top"])], normsEnv, some "4.7d"),
+   ([ruleOf "r0" "paid" stringBinder], normsEnv ["data@0", "norms@0", "relational-fol@0"], some "4.7e"),
+   ([ruleOf "r0" "paid" stringBinder], normsEnv, some "4.7b")].all fun (norms, environment, check) =>
+    let j := Json.mkObj [("environment", environment), ("norms", toJson norms)]
+    normsCheckOf (Hooks.Norms.hooksFor j) environment norms == check && normsCheckOf Hooks.Norms.hooks environment norms == check
 -- the profile row before the decoder, on any list that names `acts@0`: an unsorted one with an unknown field
 #guard (match decoded ((envOf [] (actOf 20) ["norms@0", "relational-fol@0", "acts@0"]).setObjVal! "x" 1) with
   | .error e => e | .ok () => "") == "UnsupportedProfile: profiles must be sorted and unique"

@@ -2591,8 +2591,8 @@
   },
   {
    "class": "V",
-   "lines": 90,
-   "reason": "ap-1bfb: VE/WireContract/Hooks/Acts.lean +59 (typingEnvironment, blockOf, alone, framesRefusal, decodeOf, decodedBy, environmentBy, hooksFor; decoded's profile row; member's frames members; the classifier and hooks of the included rule phases), VE/WireContract/Hooks/Norms.lean +15 (typingList, typingTableOver, tableAt, onInput, hooksFor), VE/WireContract/Hooks/SoftNorms.lean +11 (ruleTypingBy, hooksFor), VE/WireContract/Hooks/NormDefaults.lean +3 (hooksFor), VE/WireContract/Diagnose.lean +2 (Registered.hooks per input): review F1 (the frames members only when the frames are the first refusal) and F2 (4.7 typed once per run)",
+   "lines": 96,
+   "reason": "ap-1bfb: VE/WireContract/Hooks/Acts.lean +63 (typingEnvironment, blockOf, alone, framesRefusal, decodeOf, decodedBy, environmentBy, hooksFor; decoded's profile row; member's frames members; the classifier with its decode and typing parameters, and the hooks of the included rule phases), VE/WireContract/Hooks/Norms.lean +16 (typingList, typingTableOver, typingTable, tableAt, atInput, hooksFor; the classifier's typing parameter), VE/WireContract/Hooks/SoftNorms.lean +9 (hooksFor; the classifier's declarations parameter), VE/WireContract/Diagnose.lean +5 (Registered.hooks per input, the local Coe of a unit's fixed hooks), VE/WireContract/Hooks/NormDefaults.lean +3 (hooksFor): review F1 (the frames members only when the frames are the first refusal) and F2 (4.7 typed once per run)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bfb, 2026-11-11",
    "commit": "8eda0371fd7fd2a6a016b0ad0d7a8f50689181ba"
   }

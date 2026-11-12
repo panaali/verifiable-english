@@ -53,11 +53,9 @@ MUTANTS = [
      LEAN),
     # review F2: one decode and one typing pass per run
     ("lean-hooks-per-rule", HOOK, "hooksFor", "the run's hooks decode and type at every rule (F2 again)",
-     '  ⟨Hooks.Norms.predicate, Hooks.Norms.onInput j (fun\n'
-     '    | "acts_environment" => some fun _ => environmentBy (environmentOf j) fun _ => ne.get\n'
-     '    | "rule_typing" => some (Hooks.Norms.tableAt table.get)\n'
-     '    | _ => none) classifier, Hooks.Norms.view⟩',
-     '  let _ := (ne, table)\n  hooks',
+     '  ⟨Hooks.Norms.predicate, fun n r i => classifier n r i (Hooks.Norms.atInput j ne decode)\n'
+     '    (Hooks.Norms.atInput j (Thunk.mk fun _ => typing j) typing), Hooks.Norms.view⟩',
+     '  let _ := (ne, typing)\n  hooks',
      SERVICE + f"{ONCE}::test_rule_typing_reads_the_environment_and_each_rule_once_per_run"),
     ("py-once-not-kept", REGISTRY, "once", "every read evaluated again (F2 again)",
      "    if memo is None:\n        return compute(root)", "    if True:\n        return compute(root)", ONCE),
@@ -81,9 +79,7 @@ MUTANTS = [
      '''.fail (if e.startsWith "ResourceLimit:" then "1.1e" else "1.1f") (message e)''',
      '''.fail (if e.startsWith "ResourceLimit:" then "1.1f" else "1.1e") (message e)''', LEAN),
     ("lean-classifier-norms-typing", HOOK, "classifier", "4.7 left to `Hooks.Norms`' typing environment",
-     '  | "rule_typing", root, items =>\n'
-     '    Hooks.Norms.tableAt (Hooks.Norms.typingTableOver root (typingEnvironment (decodeOf (environmentOf root)))) items\n',
-     "", LEAN),
+     '  | "rule_typing" => Hooks.Norms.tableAt (typing root) items\n', "", LEAN),
     ("lean-hooks-no-predicates", HOOK, "hooks", "the included hooks hold everywhere",
      "def hooks : Hooks := ⟨Hooks.Norms.predicate, classifier, Hooks.Norms.view⟩",
      "def hooks : Hooks := ⟨fun _ _ _ => .ok, classifier, Hooks.Norms.view⟩", LEAN),

@@ -263,19 +263,22 @@ def typingMember (e : String) : ClassifierResult :=
   else .ok
 
 /-- 4.7 at every rule, in order, in one pass (ap-1bfb review F2): one running node total over the rules, each typed
-    once; the list stops at the first rule that is not well typed, and a rule past its end holds (rule 2: the run
-    stopped before it). -/
+    once; the list stops at the first rule that is not well typed or not read, and a rule past its end holds (rule 2:
+    the run stopped before it). -/
 def typingList (E : VE.Environment) (data : Bool) : Nat → List Json → List ClassifierResult
   | _, [] => []
   | n, rule :: rest => match typeRule E data rule n with
     | some (.ok next) => .ok :: typingList E data next rest
     | some (.error e) => [typingMember e]
-    | none => [.ok]
+    | none => []
 
 /-- 4.7 at every rule of `root` over `E`, as an array. -/
 def typingTableOver (root : Json) : Option VE.Environment → Array ClassifierResult
   | none => #[]
   | some E => (typingList E ((profiles root).contains "data@0") 0 (rulesOf root)).toArray
+
+/-- 4.7 at every rule of `root`. -/
+def typingTable (root : Json) : Array ClassifierResult := typingTableOver root (typingEnvironment root)
 
 /-- 4.7 at the rule an item names, from the table of every rule's result. -/
 def tableAt (table : Array ClassifierResult) (items : List Pointer) : ClassifierResult :=
@@ -361,7 +364,11 @@ def predicate : String → Json → List Pointer → HookResult
     | none => .ok
   | _, _, _ => .ok
 
-def classifier : String → Json → List Pointer → ClassifierResult
+/-- The classifiers; 4.7 reads each rule's result from `typing` of the root (`typingTable`, unless one run's hooks
+    give it built once: `hooksFor`). -/
+def classifier (name : String) (root : Json) (items : List Pointer) (typing : Json → Array ClassifierResult :=
+    typingTable) : ClassifierResult :=
+  match name, root, items with
   -- 3.8: the guard with the rule's fresh count
   | "guard_syntax", root, items => match itemValue root items 0 with
     | some rule => match synFormula VE.Limits.maxDepth 0 (ruleField rule "guard") with
@@ -373,7 +380,7 @@ def classifier : String → Json → List Pointer → ClassifierResult
     | some rule, some k => carveOutSyntax rule k
     | _, _ => .ok
   -- 4.7
-  | "rule_typing", root, items => tableAt (typingTableOver root (typingEnvironment root)) items
+  | "rule_typing", root, items => tableAt (typing root) items
   | _, _, _ => .ok
 
 def view : String → Json → Json
@@ -381,19 +388,13 @@ def view : String → Json → Json
 
 def hooks : Hooks := ⟨predicate, classifier, view⟩
 
-/-- The classifier `c` of one run on the input `j`: the classifiers `cached` names read `j`'s values, each built once
-    when first read (ap-1bfb review F2: 4.7 decoded the environment and walked every earlier rule at each rule);
-    any other name or root is `c`'s. -/
-def onInput (j : Json) (cached : String → Option (List Pointer → ClassifierResult))
-    (c : String → Json → List Pointer → ClassifierResult) : String → Json → List Pointer → ClassifierResult :=
-  fun name root items => match if root == j then cached name else none with
-    | some f => f items
-    | none => c name root items
+/-- `f r`, read from `v`, which holds `f j` built once, when `r` is the run's input `j` (ap-1bfb review F2: 4.7
+    decoded the environment and typed every earlier rule at each rule). -/
+def atInput {α : Type} (j : Json) (v : Thunk α) (f : Json → α) (r : Json) : α := if r == j then v.get else f r
 
 /-- The hooks of one run on the input `j`: 4.7's table of `j` is built once. -/
 def hooksFor (j : Json) : Hooks :=
-  let table := Thunk.mk fun _ => typingTableOver j (typingEnvironment j)
-  ⟨predicate, onInput j (fun n => if n == "rule_typing" then some (tableAt table.get) else none) classifier, view⟩
+  ⟨predicate, fun n r i => classifier n r i (atInput j (Thunk.mk fun _ => typingTable j) typingTable), view⟩
 
 /-! ## The adapter -/
 

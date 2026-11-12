@@ -11660,6 +11660,7 @@
       "G[V]": [
         "VE.WireContract.Diagnose.Registered",
         "VE.WireContract.Diagnose.caseRoot",
+        "VE.WireContract.Diagnose.instCoeHooksForallJson",
         "VE.WireContract.Diagnose.units"
       ],
       "G[R]": [
@@ -11756,6 +11757,7 @@
         "VE.WireContract.Hooks.Norms.activeNorms",
         "VE.WireContract.Hooks.Norms.adapter",
         "VE.WireContract.Hooks.Norms.after",
+        "VE.WireContract.Hooks.Norms.atInput",
         "VE.WireContract.Hooks.Norms.carveOutSyntax",
         "VE.WireContract.Hooks.Norms.classifier",
         "VE.WireContract.Hooks.Norms.cycle",
@@ -11771,7 +11773,6 @@
         "VE.WireContract.Hooks.Norms.nameOf",
         "VE.WireContract.Hooks.Norms.normsOf",
         "VE.WireContract.Hooks.Norms.num",
-        "VE.WireContract.Hooks.Norms.onInput",
         "VE.WireContract.Hooks.Norms.outsideDomain",
         "VE.WireContract.Hooks.Norms.predicate",
         "VE.WireContract.Hooks.Norms.profiles",
@@ -11795,6 +11796,7 @@
         "VE.WireContract.Hooks.Norms.typingEnvironment",
         "VE.WireContract.Hooks.Norms.typingList",
         "VE.WireContract.Hooks.Norms.typingMember",
+        "VE.WireContract.Hooks.Norms.typingTable",
         "VE.WireContract.Hooks.Norms.typingTableOver",
         "VE.WireContract.Hooks.Norms.view",
         "VE.WireContract.Hooks.Norms.w1Environment"
@@ -11819,7 +11821,6 @@
         "VE.WireContract.Hooks.SoftNorms.predicate",
         "VE.WireContract.Hooks.SoftNorms.registered",
         "VE.WireContract.Hooks.SoftNorms.ruleField",
-        "VE.WireContract.Hooks.SoftNorms.ruleTypingBy",
         "VE.WireContract.Hooks.SoftNorms.semanticMember",
         "VE.WireContract.Hooks.SoftNorms.view",
         "VE.WireContract.Hooks.SoftNorms.w1RuleFields"
@@ -17203,6 +17204,8 @@
         "VE.WireContract.Hooks.Acts.instBEqValue",
         "VE.WireContract.Hooks.Acts.joinedEnv",
         "VE.WireContract.Hooks.Acts.memberOf",
+        "VE.WireContract.Hooks.Acts.normsCheckOf",
+        "VE.WireContract.Hooks.Acts.normsEnv",
         "VE.WireContract.Hooks.Acts.numberHead",
         "VE.WireContract.Hooks.Acts.phraseOf",
         "VE.WireContract.Hooks.Acts.phrasesOf",

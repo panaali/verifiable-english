@@ -26,7 +26,7 @@ open VE.WireContract
 
 /-- One registered contract: its table, the hooks of one run on an input, and its input adapter. A unit whose
     hooks read a value of the whole input per item (4.7's environment, at every rule) builds it once per run there
-    (ap-1bfb review F2); on the input they are the unit's `hooks` (each `Hooks.*.hooksFor_input`). -/
+    (ap-1bfb review F2); they give what the unit's `hooks` give (the `#guard`s of `Hooks.Acts`). -/
 structure Registered where
   table : Table
   hooks : Json → Hooks
@@ -37,17 +37,20 @@ structure Registered where
 def caseRoot (input : List String) (case : Json) : Except String Json :=
   .ok (Json.mkObj (input.map fun name => (name, case.getObjValD name)))
 
+/-- A unit's hooks that read no value of the whole input per item: the same on every input. -/
+local instance : Coe Hooks (Json → Hooks) := ⟨fun h _ => h⟩
+
 def units : List (String × Registered) :=
-  [("inner@0", ⟨Tables.Corpus.Inner.table, fun _ => Hooks.Corpus.hooks, caseRoot ["x", "ys"]⟩),
-   ("demo@0", ⟨Tables.Corpus.Demo.table, fun _ => Hooks.Corpus.hooks, caseRoot ["doc"]⟩),
-   ("defer@0", ⟨Tables.Corpus.Defer.table, fun _ => Hooks.Corpus.hooks, caseRoot ["v", "w", "note"]⟩),
-   ("mid@0", ⟨Tables.Corpus.Mid.table, fun _ => Hooks.Corpus.hooks, caseRoot ["tag", "part"]⟩),
-   ("forms@0", ⟨Tables.Corpus.Forms.table, fun _ => Hooks.Corpus.hooks, caseRoot ["doc", "nothing"]⟩),
+  [("inner@0", ⟨Tables.Corpus.Inner.table, Hooks.Corpus.hooks, caseRoot ["x", "ys"]⟩),
+   ("demo@0", ⟨Tables.Corpus.Demo.table, Hooks.Corpus.hooks, caseRoot ["doc"]⟩),
+   ("defer@0", ⟨Tables.Corpus.Defer.table, Hooks.Corpus.hooks, caseRoot ["v", "w", "note"]⟩),
+   ("mid@0", ⟨Tables.Corpus.Mid.table, Hooks.Corpus.hooks, caseRoot ["tag", "part"]⟩),
+   ("forms@0", ⟨Tables.Corpus.Forms.table, Hooks.Corpus.hooks, caseRoot ["doc", "nothing"]⟩),
    ("soft-norms@0", ⟨Tables.SoftNorms.table, Hooks.SoftNorms.hooksFor, Hooks.SoftNorms.adapter⟩)]
   ++ [("norms@0", ⟨Tables.Norms.table, Hooks.Norms.hooksFor, Hooks.Norms.adapter⟩),
       ("norm-defaults@0", ⟨Tables.NormDefaults.table, Hooks.NormDefaults.hooksFor, Hooks.NormDefaults.adapter⟩),
       ("acts@0", ⟨Tables.Acts.table, Hooks.Acts.hooksFor, Hooks.Acts.adapter⟩),
-      ("purposes@0", ⟨Tables.Purposes.table, fun _ => Hooks.Purposes.hooks, Hooks.Purposes.adapter⟩)]
+      ("purposes@0", ⟨Tables.Purposes.table, Hooks.Purposes.hooks, Hooks.Purposes.adapter⟩)]
 
 -- every unit once, in order; `acts@0`'s and `purposes@0`'s rows read their own table, hooks and adapter
 #guard units.map (·.1) == ["inner@0", "demo@0", "defer@0", "mid@0", "forms@0", "soft-norms@0", "norms@0",
