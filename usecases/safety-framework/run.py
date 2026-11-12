@@ -65,7 +65,7 @@ SEC = ("secured", "adequately_secured")
 # Item kind -> (predicates, sign): "pos" means a rule requires, permits or affirms.
 SELECTION_ITEMS = {
     "DM": (DM, True), "SEC": (SEC, True), "CCA": (("assessed",), True),
-    "RRA": (("residual_assessed",), True), "SC": (("safety_case",), True), "PRA": (("periodic_assessed",), True),
+    "RRA": (("residual_assessed",), True), "SC": (("safety_case",), True), "PRA": (("periodic_assessed", "periodic_covers_internal"), True),
     "RECSEC": (("applied",), True), "DISC": (("shared",), True), "PROXIMITY": (("proximity_assessed",), True),
     "FURTHER_CCA": (("further_assessed",), True), "SUBMISSION": (("case_submitted",), True),
     "YEARLY_REVIEW": (("yearly_review",), True), "ADD": (("safeguards_added",), True),
@@ -611,9 +611,9 @@ def rules_on(*predicates):
 
 
 CONFLICT_CLUSTERS = {
-    "CONFLICT:f15:f16": ("f15-same", "f15-diff", "f16-ds", "f16-ds-strict"),
+    "CONFLICT:f15:f16": ("f15-diff", "f16-ds", "f16-ds-strict"),
     "CONFLICT:f2:f3": ("f2", "f3"),
-    "CONFLICT:f9:f10": ("f9-dm", "f9-rel", "f10-dm-same", "f10-dm-diff", "f10-rel-same", "f10-rel-diff"),
+    "CONFLICT:f9:f10": ("f9-dm", "f9-rel", "f10-dm-diff", "f10-rel-diff"),
     "CONFLICT:f16:sec": ("f16-ds", "f16-ds-strict", "f9-sec", "f10-sec"),
     "CONFLICT:f8:f12f13": ("f8", "f12-p", "f12-u", "f13-p", "f13-u"),
 }
@@ -664,17 +664,19 @@ def family_n(evaluations):
     env = T.base_environment()
     premises = tuple(f for _, _, formulas in T.facts() for f in formulas)
     out = {}
-    # N1: no TCL concerns cyber or harmful manipulation.
+    # N1: no TCL concerns cyber or harmful manipulation, from the premises and N1's own bridge (facts.d1.ve
+    # `item N1`), which no other item uses.
+    n1_premises = tuple(f for _, _, formulas in T.facts("N1") for f in formulas)
     goals = {}
     for domain in ("cyber", "harmful_manipulation"):
         goal = A.Not(A.Exists("level", A.And(A.Unary("tracked", A.Var(0)),
                                                A.Binary("concerns", A.Var(0), A.Const(domain)))))
-        certificate = refute(premises, [], goal)
+        certificate = refute(n1_premises, [], goal)
         goals[domain] = {"certificate_replayed": certificate is not None,
                          "certificate_sha256": hashlib.sha256(json.dumps(certificate, sort_keys=True)
                                                               .encode()).hexdigest() if certificate else None}
     out["N1"] = {"verdict": "ALL" if all(g["certificate_replayed"] for g in goals.values()) else "UNKNOWN",
-                 "goals": goals}
+                 "goals": goals, "own_premises": [b for b, _, _ in T.facts("N1") if b not in {i for i, _, _ in T.facts()}]}
     # N2: whether some security level is recommended for the CBRN TCL. Two checked models.
     goal = A.Exists("measure", A.Binary("recommends", A.Const("cbrn_uplift_tcl"), A.Var(0)))
     base = _model(env, frozenset(a for a in fact_atoms() if a[0] in env.predicates))
@@ -728,7 +730,7 @@ def relevant_predicates(kind, case, choice):
             return ("adequately_secured",) if tracked_ml else ("secured",)
         if tracked_ml:
             return ("significant_harm_mitigated",)
-        if misuse or choice["RS9"] == "same":
+        if misuse:
             return ("harm_mitigated",)
         return ("severe_harm_mitigated",)
     return item_predicates(kind)
@@ -854,9 +856,10 @@ MUTANTS = {
            ("add", ("m6-f9-dm", "Rule 1. Every proposal must have mitigations make the residual risk of harm "
                     "acceptable, if there is a level such that both that proposal has reached that level and that "
                     "level is misuse.", (("RS1", "G"),))),
-           ("add", ("m6-f9-acc", "Rule 1. Every proposal is acceptable, if there is a level such that all of the "
-                    "following hold: (a) both that proposal has reached that level and that level is misuse; (b) all "
-                    "of the following hold: (i) that proposal mitigates that level; (ii) at least one of the following "
+           ("add", ("m6-f9-acc", "Rule 1. Every proposal is acceptable, if all of the following hold: (a) there is a "
+                    "level such that both that proposal has reached that level and that level is misuse; (b) for every "
+                    "level that is misuse and that that proposal has reached, all of the following hold: (i) that "
+                    "proposal mitigates that level; (ii) at least one of the following "
                     "holds: (a) there is a measure such that both that level recommends that measure and that proposal "
                     "applies that measure; (b) either that proposal is classified as \"security_assessed_adequate\" or "
                     "that proposal is classified as \"open_release_benefits_outweigh_risks\", or both."))),
@@ -874,7 +877,7 @@ def variants():
         "B-L2/RECSEC": item_result("RECSEC", CASES["B-L2"], variant=narrowed),
     }
     # Without N1: every rule from a "will" sentence is a prediction, not a norm.
-    prediction = (("drop", tuple(sorted(T.WILL_RULES))),)
+    prediction = (("drop", tuple(sorted(T.will_rules()))),)
     changed = []
     for item_id, case_id, kind in (("A-L2-EXT/DM", "A-L2-EXT", "DM"), ("A-L2-EXT/SEC", "A-L2-EXT", "SEC"),
                                    ("B-L2/RRA", "B-L2", "RRA"), ("B-L2/SC", "B-L2", "SC"),
@@ -901,8 +904,8 @@ def variants():
 
 
 def mutant_cyber_tcl():
-    """m4: an invented cyber TCL (a level that is tracked and concerns cyber)."""
-    premises = tuple(f for _, _, formulas in T.facts() for f in formulas)
+    """m4: an invented cyber TCL (a level that is tracked and concerns cyber), against N1's premises."""
+    premises = tuple(f for _, _, formulas in T.facts("N1") for f in formulas)
     invented = A.Exists("level", A.And(A.Unary("tracked", A.Var(0)), A.Binary("concerns", A.Var(0), A.Const("cyber"))))
     return {"fact": "there is a level that is tracked and concerns cyber", "traced_to_source": False,
             "premises_inconsistent": refute(premises, [invented]) is not None}
@@ -953,6 +956,9 @@ def compare(results):
         ve = describe(got)
         agree = same_set(item["key"], got)
         row = {"id": item["id"], "key": item["key"], "ve": ve, "agree": agree}
+        if item["id"] in DEVIATIONS:
+            entry, answer = DEVIATIONS[item["id"]]
+            row["deviation"] = {"plan_12": entry, "answer": answer, "agree": same_set(answer, got)}
         if got.get("premises") not in (None, "model"):
             row["premises"] = got["premises"]
             row["agree"] = False
@@ -966,7 +972,17 @@ def compare(results):
     return rows
 
 
+# PLAN section 12, item 23: the key cells both auditors found wrong (uc-audit 2026-10-29; DRI decision 2026-10-29
+# uc-audit2 item 1). The key is frozen: each row compares VE with the key and, beside it, with the entry's answer.
+DEVIATIONS = {"C1": (23, "NONE"), "C3": (23, "NONE"), "C-doc": (23, "NONE")}
+
+
 def same_set(verdict, result):
+    """A key condition that names an excluded reading (translation.EXCLUDED_READINGS) matches no result: it
+    describes choices the translation no longer offers, so it is a disagreement, never a vacuous NONE."""
+    if verdict.startswith("SOME(") and any((m[1], m[2]) in T.EXCLUDED_READINGS
+                                           for m in LITERAL.finditer(condition_vars(verdict)[0])):
+        return False
     if verdict in ("ALL", "NONE") or verdict.startswith("SOME("):
         variables = sorted(set(result["cone"]) | set(condition_vars(verdict)[1] if verdict.startswith("SOME(") else []))
         return verdict_set(verdict, variables) == result_set(result, variables)
