@@ -156,6 +156,144 @@ def check_delta(delta: dict, markdown: str, pinned: list[str]) -> None:
             - delta["counts"][corpus["name"]]["both-refuse"], corpus
     assert sorted(delta["pinned"]) == sorted(pinned)
     assert all(found == "agree" or ("pinned", ident, found) in table for ident, found in delta["pinned"].items())
+    assert "| lean-unavailable | unavailable |" not in markdown  # each refused request's cause is named (F2)
+    check_suite(delta)
+
+
+# The 10 test files review F1 (en-e3bb-review.final.md) found calling `parse_english` outside the hand-kept list.
+REVIEW_F1 = ("agent_policy_rerun", "agent_policy_unspecified", "et8_completion", "natural", "pf_fidelity_fix",
+             "question_fixture_sources", "rsp_fidelity_fix", "safety_framework", "safetyfw_usecases",
+             "wire_gate_corpus")
+
+
+def check_suite(delta: dict) -> None:
+    """The suite corpus is its derivation (`w1_delta.derive_suite`): the units a map records calling
+    `parse_english`, then the units it cannot rule out, disjoint and in order; the 10 files review F1 found are among
+    them, and every suite and soft-rights record comes from one of them (a record's id is its test)."""
+    suite = delta["suite"]
+    assert suite["function"] == "ve/norm_english.py:parse_english" and suite["map"]
+    assert suite["files"] == sorted(suite["reached"] + suite["unknown"]) and not set(suite["reached"]) & set(
+        suite["unknown"]), suite
+    assert {f"tests/test_{name}.py" for name in REVIEW_F1} <= set(suite["files"])
+    assert re.fullmatch(r"\d+ passed(, \d+ [a-z]+)*", suite["result"]), suite["result"]
+    tested = {r["id"].split("::")[0] for r in delta["rows"] if r["corpus"] in ("suite", "soft-rights")}
+    assert tested <= set(suite["files"]), tested - set(suite["files"])
+
+
+def w1_delta():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("w1_delta_under_test", DELTA / "w1_delta.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_the_delta_suite_is_every_unit_the_coverage_map_cannot_rule_out(monkeypatch):
+    """F1: the suite corpus is derived from coverage, never listed by hand. A unit the map records running
+    `parse_english` (or a function nested in it) is in; so is one the map has not recorded, one it recorded failing or
+    opaque, and one whose run may have changed since the map; a unit that only imported the module is out."""
+    monkeypatch.syspath_prepend(str(DELTA.parents[2] / "tools"))
+    import select_tests
+    units = ["tests/test_calls.py", "tests/test_nested.py", "tests/test_imports.py", "tests/test_opaque.py",
+             "tests/test_failed.py", "tests/test_drifted.py", "tests/test_new.py", "tests/test_other.py",
+             "tools/test_extra.py"]
+    recorded = units[:6] + ["tests/test_other.py", "tools/test_extra.py"]
+    status = {u: {"exit": 1 if u == "tests/test_failed.py" else 0, "seconds": 1.0,
+                  "opaque": ["child left no record"] if u == "tests/test_opaque.py" else []} for u in recorded}
+    tests = sorted(recorded)
+    index = {u: i for i, u in enumerate(tests)}
+    data = {"version": 7, "commit": "c" * 40, "tests": tests, "status": status, "reads": {}, "dirs": {},
+            "programs": {}, "operations": {}, "presence": {}, "modes": {},
+            "functions": {"ve/norm_english.py": {
+                "parse_english": [index["tests/test_calls.py"]],
+                "parse_english.<locals>.<genexpr>": [index["tests/test_nested.py"]],
+                "<module>": [index[u] for u in tests],
+                "render_english": [index["tests/test_imports.py"], index["tests/test_other.py"]]}}}
+    plan = w1_delta().derive_suite(select_tests.Coverage(data), set(units), {"tests/test_drifted.py"})
+    assert plan["reached"] == ["tests/test_calls.py", "tests/test_nested.py"]
+    assert plan["unknown"] == ["tests/test_drifted.py", "tests/test_failed.py", "tests/test_new.py",
+                               "tests/test_opaque.py"]
+    assert plan["files"] == sorted(plan["reached"] + plan["unknown"]) and plan["map"] == "c" * 40
+    assert w1_delta().short("tests/test_rights.py") == "rights" and w1_delta().short(units[-1]) == units[-1]
+
+
+def test_the_suite_check_fails_on_a_hand_kept_or_incomplete_suite():
+    """The other direction: the saved suite with a file review F1 found dropped, a record from a test outside it, a
+    `files` that is not its derivation, or no pytest summary each fail `check_suite`."""
+    delta = json.loads((DELTA / "delta.json").read_text())
+    suite = delta["suite"]
+    dropped = [f for f in suite["files"] if f != "tests/test_safety_framework.py"]
+    row = next(r for r in delta["rows"] if r["corpus"] == "suite")
+    for broken in ({**delta, "suite": {**suite, "files": dropped,
+                                        "unknown": [f for f in suite["unknown"] if f in dropped],
+                                        "reached": [f for f in suite["reached"] if f in dropped]}},
+                   {**delta, "rows": [{**row, "id": "tests/test_elsewhere.py::test_x"}, *delta["rows"]]},
+                   {**delta, "suite": {**suite, "files": suite["files"][1:]}},
+                   {**delta, "suite": {**suite, "result": "no pytest summary (exit 2)"}}):
+        with pytest.raises(AssertionError):
+            check_suite(broken)
+
+
+REPORT = DELTA.parent / "en-2c/REPORT.md"
+
+
+def check_report(report: str, delta: dict) -> None:
+    """F2: every number and cause the REPORT gives for the delta is the saved evidence's. Its corpus table gives each
+    corpus's records and per-class counts (a class it leaves out is 0) and the suite's unit count; each cause line
+    (`` - `corpus` `class` (n): `Lean's answer` ``) is that many rows of `delta.json` with Lean's answer beginning so,
+    and every corpus and class with rows has its line; and no sentence says every record of a corpus has a class that
+    only some of its records have."""
+    counts, sizes = delta["counts"], {c["name"]: c["size"] for c in delta["corpora"]}
+    header = next(line for line in report.splitlines() if line.startswith("| corpus | records |"))
+    columns = [cell.strip() for cell in header.strip("|").split("|")][2:]
+    seen = set()
+    for line in report.splitlines():
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        name = cells[0].split(" ")[0] if line.startswith("| ") else None
+        if name in sizes and len(cells) == len(columns) + 2:
+            seen.add(name)
+            assert int(cells[1]) == sizes[name], line
+            assert all(int(n) == counts[name][k] for k, n in zip(columns, cells[2:])), line
+            assert all(counts[name][k] == 0 for k in counts[name] if k not in columns), line
+            if name == "suite":
+                assert f"({len(delta['suite']['files'])} test units" in cells[0], line
+    assert seen == set(sizes), seen
+    causes = {}
+    for r in delta["rows"]:
+        lean = r["lean"]
+        cause = lean["message"] if lean["status"] == "unavailable" else lean.get("code") or lean["status"]
+        causes.setdefault((r["corpus"], r["class"]), []).append(cause)
+    stated = set()
+    for m in re.finditer(r"^- `([a-z-]+)` `([a-z-]+)` \((\d+)\): `([^`]+)`", report, re.M):
+        corpus, cls, n, lean = m[1], m[2], int(m[3]), m[4]
+        assert sum(c.startswith(lean) for c in causes.get((corpus, cls), ())) == n, m[0]
+        stated.add((corpus, cls))
+    assert stated == set(causes), set(causes) ^ stated
+    for corpus in sizes:
+        for m in re.finditer(rf"every {re.escape(corpus)}\b[^.]*?`([a-z-]+)`", report):
+            assert m[1] in counts[corpus] and counts[corpus][m[1]] == sizes[corpus], m[0]
+
+
+def test_the_report_s_delta_numbers_and_causes_are_the_saved_evidence():
+    """F2 (en-e3bb-review.final.md): the REPORT said every soft-rights W1 call is `lean-unavailable`, though 23 of
+    them are answered. It reads the saved `delta.json` and the REPORT only."""
+    check_report(REPORT.read_text(), json.loads((DELTA / "delta.json").read_text()))
+
+
+def test_the_report_check_fails_on_review_f2_s_overclaim_and_on_a_wrong_number():
+    """The other direction: review F2's sentence, a corpus count off by one, a cause line with a wrong count or a
+    wrong cause, and a missing cause line each fail `check_report`."""
+    report, delta = REPORT.read_text(), json.loads((DELTA / "delta.json").read_text())
+    overclaim = report + "\nSo every soft-rights W1 call and every constitution unit is `lean-unavailable`.\n"
+    line = next(m for m in re.finditer(r"^- `[a-z-]+` `[a-z-]+` \((\d+)\): `([^`]+)`.*$", report, re.M))
+    pinned = next(m for m in re.finditer(r"^\| pinned [^|]*\| (\d+) \|", report, re.M))
+    for broken in (overclaim,
+                   report.replace(pinned[0], pinned[0].replace(f"| {pinned[1]} |", f"| {int(pinned[1]) + 1} |")),
+                   report.replace(line[0], line[0].replace(f"({line[1]})", f"({int(line[1]) + 1})")),
+                   report.replace(line[0], line[0].replace(f"`{line[2]}`", "`NodeLimit`")),
+                   report.replace(line[0] + "\n", "")):
+        with pytest.raises(AssertionError):
+            check_report(broken, delta)
 
 
 def pinned_ids() -> list[str]:
