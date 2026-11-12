@@ -80,7 +80,7 @@ OPEN_TERMS = {
 # Reading sets (PLAN 3.1): set id -> (harness set, readings -> rules of that reading).
 READINGS = {
     "rs1_bullet2": ("RS1", {"s": ["f9-acc"], "g": ["f9-acc", "f9-dm", "f9-sec"]}),
-    "rs1_bullet3": ("RS1", {"s": ["f10-acc"], "g": ["f10-acc", "f10-dm-same or f10-dm-diff", "f10-sec"]}),
+    "rs1_bullet3": ("RS1", {"s": ["f10-acc"], "g": ["f10-acc", "f10-dm-diff", "f10-sec"]}),
     "rs1_bullet4": ("RS1", {"s": ["f11-acc"], "g": ["f11-acc", "f11-dm", "f11-sec"]}),
     "rs2_misuse": ("RS2", {"p": ["f12-p"], "u": ["f12-u"]}),
     "rs2_ml_rd": ("RS2", {"p": ["f13-p"], "u": ["f13-u"]}),
@@ -91,13 +91,11 @@ READINGS = {
     "rs4_within": ("RS4within", {"strict": ["f20-within-strict"], "default": ["f20-within-default"]}),
     "rs4_elicitation": ("RS4elicitation", {"strict": ["f20-elicitation-strict"],
                                            "default": ["f20-elicitation-default"]}),
-    "rs5_subsequent": ("RS5", {"d": ["f4-check-d"], "r": ["f4-check-r", "f4-further-r"]}),
-    "rs6_insider": ("RS6", {"same": ["f15-same"], "different": ["f15-diff"]}),
+    "rs5_subsequent": ("RS5", {"d": ["f4-check-d", "f4-need-d"], "r": ["f4-check-r", "f4-need-r", "f4-further-r"]}),
     "rs7_footnote4": ("RS7", {"e": ["f3"], "m": []}),
     "rs8_bullet2": ("RS8", {"scope": [], "rel": ["f9-rel"]}),
-    "rs8_bullet3": ("RS8", {"scope": [], "rel": ["f10-rel-same or f10-rel-diff"]}),
+    "rs8_bullet3": ("RS8", {"scope": [], "rel": ["f10-rel-diff"]}),
     "rs8_bullet4": ("RS8", {"scope": [], "rel": ["f11-rel"]}),
-    "rs9_bullet3": ("RS9", {"same": ["f10-dm-same"], "different": ["f10-dm-diff"]}),
 }
 
 # Unit specifications. Status follows ve.document's inference: content with a specified
@@ -214,8 +212,8 @@ UNITS = [
     ("We consider a wide range of risks", "s131-consider", label()),
     ("As explained above, we have identified risk domains", "s131-domains", label()),
     ("As part of our broader research", "s131-continue", unformalised("as_appropriate")),
-    ("For each of the four identified domains", "s131-four-domains",
-     facts("bridge-one-domain", support="assumption")),
+    # Not a closure: the text never states that the domains exclude each other (N1's own bridge, facts.d1.ve).
+    ("For each of the four identified domains", "s131-four-domains", label()),
     ("1.3.2 Inherent Risk Assessment", "s132-heading", meta()),
     ("To understand whether a model may, without appropriate mitigations", "s132-purpose", label()),
     ("We conduct a critical capability assessment prior to", "s132-cca",
@@ -282,7 +280,7 @@ UNITS = [
     ("● A model for which the inherent risk assessment indicates a ML R&D CCL", "s135-bullet3",
      readings("rs1_bullet3", "ot1_level_reached")),
     ("○ We assess that the deployment mitigations have brought the residual risk of severe", "s135-bullet3-dm",
-     readings("rs9_bullet3", "ot2_residual_risk_acceptable")),
+     condition("ot2_residual_risk_acceptable")),
     ("This is required only for external deployment and high-risk", "s135-bullet3-only",
      readings("rs8_bullet3", "ot7_high_risk_internal")),
     ("○ Security mitigations have been applied", "s135-bullet3-sec",
@@ -341,7 +339,7 @@ UNITS = [
     # Page 11: 2.2 and 2.2.1
     ("Frontier Safety Framework While we monitor", "p11-header", meta()),
     ("While we monitor for potential future risks", "s22-insider-assessment", believes()),
-    ("At this stage, additional mitigations beyond", "s22-insider-not-required", readings("rs6_insider")),
+    ("At this stage, additional mitigations beyond", "s22-insider-not-required", rule("f15-diff")),
     ("2.2 Misuse Capability Levels", "s22-heading", meta()),
     ("We set out below a set of CBRN", "s22-set-out", label()),
     ("We expect these to evolve over time.", "s22-expect", believes("expects")),
@@ -411,7 +409,8 @@ UNITS = [
     ("When a model has reached this TCL, we will carry out periodic", "s321-periodic",
      rule("f17-pra", "ot1_level_reached", "ot12_periodic")),
     ("This assessment may take into account", "s321-may", label("example")),
-    ("Since misalignment risks can manifest", "s321-internal", label("explanation")),
+    ("Since misalignment risks can manifest", "s321-internal",
+     rule("f17-hri", "ot1_level_reached", "ot7_high_risk_internal")),
     ("If the risk assessment deems the residual risk from internal deployment", "s321-safeguards",
      rule("f17-add", "ot1_level_reached")),
     ("3.2.2 ML R&D Critical Capability Levels", "s322-heading", meta()),
@@ -514,8 +513,8 @@ EXTRA_PREMISE_UNITS = {"activities-development": "s135-bullet2"}
 # A distinguishing situation per reading set: a case of cases.json at which the readings
 # give different answers in results.json.
 DISTINGUISHING = {"RS1": "A-L2-EXT", "RS2": "A-L0-EXT", "RS3 and RS3force": "B-L2", "RS4aim": "K9-L2", "RS4holistic": "K6",
-                  "RS4within": "B-L2", "RS4elicitation": "K6", "RS5": "K3", "RS6": "B-L2", "RS7": "A-L0-LRX",
-                  "RS8": "A-L2-INT", "RS9": "A-L6-HRI"}
+                  "RS4within": "B-L2", "RS4elicitation": "K6", "RS5": "K3", "RS7": "A-L0-LRX",
+                  "RS8": "A-L2-INT"}
 
 
 def spans(source):

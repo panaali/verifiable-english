@@ -44,18 +44,27 @@ READING_SETS = {
     "RS4within": ("strict", "default"),
     "RS4elicitation": ("strict", "default"),
     "RS5": ("D", "R"),
-    "RS6": ("same", "different"),
+    # RS6 and RS9 keep one reading each: "same" is excluded (EXCLUDED_READINGS).
+    "RS6": ("different",),
     "RS7": ("E", "M"),
     "RS8": ("scope", "rel"),
-    "RS9": ("same", "different"),
+    "RS9": ("different",),
+}
+# Readings the source text excludes (PLAN 12, "Excluded readings"; DRI decision 2026-10-29 uc-audit2 item 1,
+# fsf-fidelity-fix). A rule block that names one is refused, and the key's conditions that name one hold at no choice.
+EXCLUDED_READINGS = {
+    ("RS6", "same"): "2.2 releases additional mitigations against insider misuse, not SL2+'s insider-threat measures "
+                     "for the weights (2.1.1); the merge is the artefact of DRI-RULINGS R14",
+    ("RS9", "same"): "footnote 5 (p.7): deployment mitigations for the ML R&D CCLs \"are different than those for the "
+                     "misuse CCLs\"; bullet 3 names \"severe harm\" (DRI-RULINGS R14)",
 }
 # The exception headers of the translation: rule -> the rules it takes precedence over.
 PRECEDENCE = {"f3": ("f2",)}
 # Rules from a "will" sentence about the developer's own process (RS0): under the
 # prediction reading, without N1, none of them is a norm.
-WILL_RULES = {"f6", "f7-rra", "f7-sc", "f9-acc", "f9-dm", "f9-sec", "f9-rel", "f10-acc", "f10-dm-same",
-              "f10-dm-diff", "f10-sec", "f10-rel-same", "f10-rel-diff", "f11-acc", "f11-dm", "f11-sec",
-              "f11-rel", "f14", "f17-pra", "f17-add", "f18-yearly", "f18-frequent"}
+WILL_RULES = {"f6", "f7-rra", "f7-sc", "f9-acc", "f9-dm", "f9-sec", "f9-rel", "f10-acc", "f10-dm-diff", "f10-sec",
+              "f10-rel-diff", "f11-acc", "f11-dm", "f11-sec", "f11-rel", "f14", "f17-pra", "f17-add", "f18-yearly",
+              "f18-frequent"}
 
 
 @dataclass(frozen=True)
@@ -75,9 +84,15 @@ def read_blocks(name):
         m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (.+)", header)
         if m is None or text.startswith("## "):
             raise SystemExit(f"{name}: malformed header {header!r}")
-        when = () if m[2].strip() == "always" else tuple(
-            tuple(part.strip().split("=")) for part in m[2].split("&"))
-        for set_id, choice in when:
+        item = re.fullmatch(r"item ([A-Z0-9-]+)", m[2].strip())
+        if item and name == "facts.d1.ve":
+            when = (("item", item[1]),)  # a premise of that item only (checklist class 7)
+        else:
+            when = () if m[2].strip() == "always" else tuple(
+                tuple(part.strip().split("=")) for part in m[2].split("&"))
+        for set_id, choice in when if not item else ():
+            if (set_id, choice) in EXCLUDED_READINGS:
+                raise SystemExit(f"{name}: {m[1]} needs the excluded reading {set_id}={choice}")
             if choice not in READING_SETS.get(set_id, ()):
                 raise SystemExit(f"{name}: unknown reading {set_id}={choice}")
         blocks.append(Block(m[1], when, m[3], text))
@@ -148,11 +163,15 @@ def document(choice, *, default="deny", drop=(), extra=(), precedence=None):
 
 
 @lru_cache(maxsize=None)
-def facts():
-    """The fixed premises, as (block id, source, formulas)."""
+def facts(item=None):
+    """The fixed premises, as (block id, source, formulas). A block headed `item <id>` is that item's own premise
+    (a bridge only it needs): included only for `item=<id>`, and for `item="all"` (the document's units)."""
     base = base_environment()
     result = []
     for block in read_blocks("facts.d1.ve"):
+        owner = dict(block.when).get("item")
+        if owner is not None and item not in (owner, "all"):
+            continue
         result.append((block.id, block.source, tuple(parse_sentences(base, block.text).formulas)))
     return tuple(result)
 
