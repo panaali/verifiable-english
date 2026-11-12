@@ -1,0 +1,166 @@
+shard 1/5: 25 units; commands: ['uv run --frozen --group dev python tools/check_python_layers.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ uv run --frozen --group dev python tools/check_python_layers.py
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 191 files, 1090 dependencies.
+--------------------------------------
+
+VE inward-only imports (reviewed legacy edges) KEPT (9 ignored imports)
+
+Contracts: 1 kept, 0 broken.
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded serde v1.0.229
+  Downloaded version_check v0.9.5
+  Downloaded proc-macro2 v1.0.107
+  Downloaded digest v0.10.7
+  Downloaded sha2 v0.10.9
+  Downloaded num-bigint v0.4.8
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded zmij v1.0.23
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 11.46s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.39s
+order: failed last time []; changed ['tests/test_relay_binding_inventory.py', 'tests/test_english_e2_ledger_sites.py', 'tests/test_english_statement_answer.py', 'tests/test_w1_delta_suite.py']; then the rest; --maxfail 5
+recording 25 units with 4 jobs in /tmp/ve-select-run-vztgzwvd
+  tests/test_w1_delta_suite.py: exit 0 in 2.2 s, 529 functions
+  tests/test_english_e2_ledger_sites.py: exit 0 in 2.7 s, 180 functions
+  tests/test_english_statement_answer.py: exit 0 in 4.2 s, 639 functions
+  tests/test_relay_binding_inventory.py: exit 0 in 56.5 s, 921 functions
+  tests/test_p1_amendment13.py: exit 0 in 70.9 s, 809 functions
+  tests/test_agent_policy_unspecified.py: exit 0 in 45.0 s, 747 functions
+  tests/test_p1_amendment9.py: exit 0 in 41.0 s, 797 functions
+  tests/test_inventory_path.py: exit 0 in 75.3 s, 296 functions
+  tests/test_hang_guards.py: exit 0 in 50.2 s, 997 functions
+  tests/test_identity_lint.py: exit 0 in 63.9 s, 247 functions
+  tests/test_lean_dump_cache.py: exit 0 in 226.6 s, 309 functions
+  tests/test_platform_contract.py: exit 0 in 29.9 s, 397 functions
+  tests/test_readings_verdicts_split.py: exit 0 in 6.2 s, 203 functions
+  tests/test_rights_licence_relay.py: exit 0 in 10.4 s, 565 functions
+  tests/test_assurance_manifest.py: exit 0 in 35.6 s, 1719 functions
+  tests/test_document_split.py: exit 0 in 6.9 s, 281 functions
+  tests/test_softnorms_contract.py: exit 0 in 4.8 s, 814 functions
+  tests/test_norm_english.py: exit 0 in 1.3 s, 545 functions
+  tests/test_lean_first_b13b.py: exit 0 in 3.6 s, 665 functions
+  tests/test_rights_meaning_id.py: exit 0 in 2.7 s, 972 functions
+  tests/test_risk_english.py: exit 0 in 2.1 s, 732 functions
+  tests/test_soft_decision_keys.py: exit 0 in 1.8 s, 656 functions
+  tests/test_run_order.py: exit 0 in 9.3 s, 553 functions, OPAQUE
+  tests/test_stage2_graph.py: exit 0 in 2.6 s, 816 functions
+  tests/test_english_statement_blocks.py: exit 0 in 395.1 s, 615 functions
+recorded 25 units for tree 55f096a7c4; 0 others left to the static graph until they run; 0 failed
+UNITLOG tests__test_agent_policy_unspecified.py.log: 9 passed in 44.07s
+UNITLOG tests__test_assurance_manifest.py.log: 152 passed in 34.55s
+UNITLOG tests__test_document_split.py.log: 47 passed in 6.42s
+UNITLOG tests__test_english_e2_ledger_sites.py.log: 2 passed in 0.94s
+UNITLOG tests__test_english_statement_answer.py.log: 12 passed in 2.20s
+UNITLOG tests__test_english_statement_blocks.py.log: 9 passed in 394.55s (0:06:34)
+UNITLOG tests__test_hang_guards.py.log: 69 passed in 48.34s
+UNITLOG tests__test_identity_lint.py.log: 108 passed in 62.40s (0:01:02)
+UNITLOG tests__test_inventory_path.py.log: 92 passed in 64.09s (0:01:04)
+UNITLOG tests__test_lean_dump_cache.py.log: 60 passed in 225.09s (0:03:45)
+UNITLOG tests__test_lean_first_b13b.py.log: 45 passed in 3.10s
+UNITLOG tests__test_norm_english.py.log: 11 passed in 0.54s
+UNITLOG tests__test_p1_amendment13.py.log: 5 passed in 70.18s (0:01:10)
+UNITLOG tests__test_p1_amendment9.py.log: 9 passed, 1 warning in 39.05s
+UNITLOG tests__test_platform_contract.py.log: 59 passed in 29.06s
+UNITLOG tests__test_readings_verdicts_split.py.log: 37 passed in 5.75s
+UNITLOG tests__test_relay_binding_inventory.py.log: 45 passed in 54.60s
+UNITLOG tests__test_rights_licence_relay.py.log: 153 passed in 9.86s
+UNITLOG tests__test_rights_meaning_id.py.log: 33 passed in 2.04s
+UNITLOG tests__test_risk_english.py.log: 49 passed in 1.59s
+UNITLOG tests__test_run_order.py.log: 33 passed in 8.67s
+UNITLOG tests__test_soft_decision_keys.py.log: 178 passed in 1.24s
+UNITLOG tests__test_softnorms_contract.py.log: 28 passed in 4.21s
+UNITLOG tests__test_stage2_graph.py.log: 25 passed in 2.20s
+UNITLOG tests__test_w1_delta_suite.py.log: 3 passed in 0.42s
