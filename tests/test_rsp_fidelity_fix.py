@@ -293,12 +293,12 @@ def test_no_k_limit_hides_an_answer_the_selected_rules_give(rsp_modules):
 def test_f10_in_line_guard_is_live_both_ways(rsp_modules):
     """K18 as PLAN 5 states it leaves the mitigation's status open: NONE (PLAN 12, item 21); with the mitigation in
     place or planned shortly, F10 requires the deviation report."""
-    assert {"describes_mitigation_and_deviates", "mitigation_in_place_or_planned", "noteworthy"} == _unaries(
-        _rule("f10-in-line")["guard"])
     assert rsp_run.verdict(_answer("K18")) == "NONE"
     stated = {**rsp_run.CASES["K18"], "extra": ("mitigation_in_place_or_planned",)}
     result = rsp_run.query(stated, "deviation_reported")
     assert rsp_run.verdict(result) == "ALL" and _rules(result) == ["f10-in-line"]
+    assert {"describes_mitigation_and_deviates", "mitigation_in_place_or_planned", "noteworthy"} == _unaries(
+        _rule("f10-in-line")["guard"])
 
 
 def test_acts_and_legends_carry_the_restored_qualifiers():
@@ -321,14 +321,14 @@ def test_acts_and_legends_carry_the_restored_qualifiers():
 def test_f26_release_yields_to_f24_and_f25(rsp_modules):
     """DRI ruling: under RS4 = rel F26 releases only its own scenario's delay; on the joint C1 and C7 witnesses no
     conflict is selected, and N2 stays ALL."""
-    assert {"f24-delay", "f25-delay"} == {r for r, over in rsp_translation.PRECEDENCE.items()
-                                         if "f26-need-not-delay" in over}
     for id_ in ("C1", "C7"):
         result = rsp_run.conflict(id_)
         assert [row["choice"]["RS4"] for row in result["choices"]] == ["scope", "rel"], id_
         assert [row["holds"] for row in result["choices"]] == [False, False], id_
     assert {i: rsp_run.verdict(_answer(i)) for i in ("C1", "C7", "C-doc", "N2")} == {
         "C1": "NONE", "C7": "NONE", "C-doc": "NONE", "N2": "ALL"}
+    assert {"f24-delay", "f25-delay"} == {r for r, over in rsp_translation.PRECEDENCE.items()
+                                         if "f26-need-not-delay" in over}
 
 
 def offers_rs3c_result(reading_sets, blocks, readings):
