@@ -31,6 +31,7 @@
 - `tests/reports_fault_corpus.py` — Malformed reports documents for the public `check_document` path (build checklist 2 and 5).
 - `tests/route_case_recorder.py` — A pytest plugin that records every case the tests send to a statement-layer route mode.
 - `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
+- `tests/soft_selected_diff.py` — kb-10a differential (test-only script, not collected): Python's retained answers against `soft-selected`.
 - `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
 - `tests/test_acts_contract.py` — The `acts@0` wire table in shadow (ap-1bf): the legacy validator still owns the verdict; the engines name the member of 1.1 at and around each limit of `VE.Act…
 - `tests/test_acts_elaborate_relay.py` — ap-3dc: the `acts-elaborate` relay (act-phrases 6.7) and the norms route under `acts@0` on Lean's elaborated document.
@@ -87,4 +88,3 @@
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
 - `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
-- `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.
