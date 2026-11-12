@@ -1,0 +1,10 @@
+job=armsh-cand-tm-nightly-unknown-disposition-2-e78b6d94-t444771-s1 shard=1/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-12T00:54:14Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   42G  103G  29% /
+ 00:54:14 up 4 min,  0 user,  load average: 1.02, 0.34, 0.11
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key 03897d1ce729 asset lean-build-831c388f821b-linux-aarch64.tar.zst sha256 160c9d5fc727 ok, seal ok, from download, 14.6 s
+seed: mode=seed match=seed-ancestor asset=lean-build-831c388f821b-linux-aarch64.tar.zst pruned=0 base=b15402667652
+seed: 6 modules rebuilt over the seed (traces), none stale
+seed: lake 69.7 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
