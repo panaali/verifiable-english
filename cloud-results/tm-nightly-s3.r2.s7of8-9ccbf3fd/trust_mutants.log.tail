@@ -1,0 +1,8 @@
+trust_mutants: 41 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:94 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-le: = -> ≤ (lean/VE/EnglishGrammar/Norm/Owners.lean:94: failed to synthesize)
+UNKNOWN lean/VE/RightClauses/Wire.lean:89 VE.RightClauses.NoReadingSets (S, trusted) eq-le: = -> ≤ (lean/VE/RightClauses/Wire.lean:89: failed to synthesize)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 240 s
+trust_mutants: D[V], trusted: 4 KILLED, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 29 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 2 UNKNOWN, 14 OTHER SHARD
+trust_mutants: steps: wall plan 19.6 s, scratch 5 s, control_build 0.4 s, probe_install 1.4 s, mutants 209.6 s, cleanup 3.6 s, reads 0.1 s; lake control_build 0.4 s (1), probe_install 1.4 s (1), control_probes 25.1 s (7), mutant_builds 56.3 s (12), mutant_checks 233.2 s (8), stage_controls 66.4 s (5), mutant_probes 28 s (7)
