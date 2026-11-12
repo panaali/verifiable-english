@@ -1,0 +1,7 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/NormDefaults/Layered.lean:580 VE.NormDefaults.Wire.layeredCase (G[V], trusted) and-or: && -> ||
+trust_mutants: 8 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 311 s
+trust_mutants: D[V], trusted: 3 KILLED, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 23 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 26 OTHER SHARD
+trust_mutants: steps: wall plan 11.9 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.1 s, mutants 287.9 s, cleanup 6.4 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 64.1 s (8), mutant_builds 73.9 s (13), mutant_checks 571.1 s (10), stage_controls 93.5 s (5), mutant_probes 76.2 s (8)
