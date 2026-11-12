@@ -1,6 +1,6 @@
 {
  "item": "et-5b",
- "note": "each planted alone in the source tree after the self-review fixes, its module rebuilt, the fixture files run with `lake env lean`, then restored. L1-L28: no Python, tools or Rust product file changed then, so every seeded bug was Lean. The review fix (et-5b-review.final.md F1) changed Lean and Python product code: L29 is planted the same way; P1-P9 each alone in the Python source, the named test file run with pytest, then restored (no Rust file changed).",
+ "note": "each planted alone in the source tree after the self-review fixes, its module rebuilt, the fixture files run with `lake env lean`, then restored. L1-L28: no Python, tools or Rust product file changed then, so every seeded bug was Lean. The review fix (et-5b-review.final.md F1) changed Lean and Python product code: L29 is planted the same way; P1-P9 each alone in the Python source, the named test file run with pytest, then restored (no Rust file changed). L30-L31 (the review fix's trust sweep): each planted alone in Document.lean, `lake build VE.Service.EventsDocumentExamples` fails at the named guard, then restored.",
  "mutants": [
   {
    "id": "L1",
@@ -44,7 +44,7 @@
    "file": "lean/VE/Service/Document.lean",
    "definition": "VE.Service.DocumentChain.eventsAnchorChecks (the check)",
    "mutant": "if candidates.contains c then throw s!\"AnchorOpen: {c}\" -> if candidates.contains c && false then throw s!\"AnchorOpen: {c}\"",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:152",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:209",
    "killed": true
   },
   {
@@ -53,7 +53,7 @@
    "file": "lean/VE/Service/Document.lean",
    "definition": "VE.Service.DocumentChain.eventsAnchorChecks (the candidates)",
    "mutant": "| .refuse c _ _ => if r.frame == \"source no anchor\" then some c else none -> | .refuse c _ _ => if r.frame == \"authored\" then some c else none",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:152",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:209",
    "killed": true
   },
   {
@@ -62,7 +62,7 @@
    "file": "lean/VE/Service/Document.lean",
    "definition": "VE.Service.DocumentChain.eventsLayeredOf",
    "mutant": "eventsAnchorChecks environment H.decoded front -> (deleted)",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:148",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
    "killed": true
   },
   {
@@ -71,7 +71,7 @@
    "file": "lean/VE/Service/Document.lean",
    "definition": "VE.Service.DocumentChain.chainLayeredOf (check's events branch, moved out of check at the main merge)",
    "mutant": "| some (written, H) => eventsLayeredOf E front units written H -> | some _ => layeredOf E front units",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:169",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
    "killed": true
   },
   {
@@ -98,7 +98,7 @@
    "file": "lean/VE/Events/Anchor.lean",
    "definition": "VE.Events.openAnchor",
    "mutant": "c.getObjValD \"description\" == .str anchorWording && V.anchor.isNone then -> c.getObjValD \"description\" == .str anchorWording then",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:150",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:207",
    "killed": true
   },
   {
@@ -107,7 +107,7 @@
    "file": "lean/VE/Events/Anchor.lean",
    "definition": "VE.Events.legend",
    "mutant": "(if isOpen then [s! -> (if !isOpen then [s!",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:179",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:236",
    "killed": true
   },
   {
@@ -116,7 +116,7 @@
    "file": "lean/VE/Events/Anchor.lean",
    "definition": "VE.Events.anchorConstant",
    "mutant": "def anchorConstant : String := \"date_of_this_document\" -> def anchorConstant : String := \"date_of_this_doc\"",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:148",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
    "killed": true
   },
   {
@@ -125,7 +125,7 @@
    "file": "lean/VE/Events/Anchor.lean",
    "definition": "VE.Events.anchorWording",
    "mutant": "def anchorWording : String := \"the date of this document\" -> def anchorWording : String := \"the date of the document\"",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:147",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:204",
    "killed": true
   },
   {
@@ -143,7 +143,7 @@
    "file": "lean/VE/EnglishGrammar/SourceWords.lean",
    "definition": "VE.EnglishGrammar.eventuallyReadings",
    "mutant": "\"There is a day such that that day is after the date of this document and <clause> on that day.\"] -> \"There is a day such that that day is on or after the date of this document and <clause> on that day",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:234",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:291",
    "killed": true
   },
   {
@@ -260,7 +260,25 @@
    "file": "lean/VE/Service/Document.lean",
    "definition": "VE.Service.Document.Env.eventsView",
    "mutant": "the view dropped: `(E.events.map (·.2.view)).bind fun _ => none`",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:273, :275, :279",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:309, :311, :315",
+   "killed": true
+  },
+  {
+   "id": "L30",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.environmentOf (the profile named)",
+   "mutant": "listed.find? fun p => p == \"events@0\" || !ownedProfiles.contains p -> listed.find? fun p => p == \"events@0\" || !(ownedProfiles.drop 1).contains p (trust sweep M268, its survivor)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:131",
+   "killed": true
+  },
+  {
+   "id": "L31",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView (events@0 read wherever it stands)",
+   "mutant": "unless listed.contains \"events@0\" -> unless listed.dropLast.contains \"events@0\" (trust sweep M112, allowed before as equivalent)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:151",
    "killed": true
   },
   {

@@ -1,7 +1,7 @@
 {
  "base": "0295df174375667a79dec7c1dd214f9128fe4909",
- "head": "18e5ccb252b79bee4a140411a230c601da6a10ba",
- "tree": "f9a7a124243c92410f9e451a3c80a57c608fe71e",
+ "head": "77e10e7a71d923c027ceb6a37f858be58f20cf4d",
+ "tree": "2e34130c36eca4f196812ad6c30022afa8e21b2c",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -10,47 +10,47 @@
   "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
   "lean/VE/Service/EventsDocumentExamples.lean"
  ],
- "seconds": 3664,
+ "seconds": 2621,
  "steps": {
   "wall": {
-   "plan": 34.1,
-   "scratch": 37.6,
-   "control_build": 0.8,
-   "probe_install": 4.4,
+   "plan": 18.5,
+   "scratch": 28.2,
+   "control_build": 0.4,
+   "probe_install": 2.5,
    "control_probes": 0.0,
-   "mutants": 3580.5,
-   "cleanup": 6.1,
-   "reads": 0.0
+   "mutants": 2563.6,
+   "cleanup": 7.6,
+   "reads": 0.4
   },
   "lake": {
-   "control_build": 0.7,
-   "probe_install": 4.3,
-   "control_probes": 1213.2,
-   "mutant_builds": 2696.4,
-   "mutant_checks": 11723.4,
+   "control_build": 0.4,
+   "probe_install": 2.4,
+   "control_probes": 574.8,
+   "mutant_builds": 1291.9,
+   "mutant_checks": 7552.4,
    "outside_checks": 0.0,
-   "stage_controls": 1720.6,
-   "mutant_probes": 6628.1,
+   "stage_controls": 2115.2,
+   "mutant_probes": 4411.3,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 12,
-   "mutant_builds": 46,
-   "mutant_checks": 50,
+   "control_probes": 6,
+   "mutant_builds": 20,
+   "mutant_checks": 26,
    "outside_checks": 0,
-   "stage_controls": 6,
-   "mutant_probes": 58,
+   "stage_controls": 8,
+   "mutant_probes": 34,
    "other": 0
   }
  },
  "counts": {
   "KILLED": 286,
   "SURVIVOR": 0,
-  "UNKNOWN": 4,
+  "UNKNOWN": 0,
   "INVALID": 14,
-  "ALLOWED": 18,
+  "ALLOWED": 22,
   "NOT RUN": 0
  },
  "classes": [
@@ -59,9 +59,8 @@
  "class_counts": {
   "D[V], trusted": {
    "KILLED": 54,
-   "UNKNOWN": 4,
    "INVALID": 8,
-   "ALLOWED": 18
+   "ALLOWED": 22
   },
   "G[V], trusted": {
    "KILLED": 203,
@@ -988,18 +987,11 @@
  },
  "rescore": {
   "file": "docs/events-time-causation/et-5b/trust-mutants.json",
-  "head": "8836d0215db81b26dfc71c502824813be5473e76",
-  "mode": "checks",
-  "changed": [
-   "lean/VE/Service/EventsDocumentExamples.lean",
-   "lean/declarations.txt",
-   "tools/trust-classes.json"
-  ],
-  "reused": 276,
-  "rerun": 46,
-  "plan_only": [
-   "tools/trust-classes.json"
-  ]
+  "head": "18e5ccb252b79bee4a140411a230c601da6a10ba",
+  "mode": "identical",
+  "changed": [],
+  "reused": 302,
+  "rerun": 20
  },
  "definitions": [
   "lean/ResponseShape/Schemas/Document.lean: ResponseShape.Schemas.Document.row",
@@ -1037,9 +1029,10 @@
    ],
    "before": "!",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
+   "status": "ALLOWED",
+   "detail": "not equivalent: planted by hand (M001, `!listed.contains \"soft-norms@0\"` -> `listed.contains`: every soft list refused, every other hooked), EventsDocumentExamples:145, :156 and :160 refute it; UNKNOWN only because this runner's probe could not elaborate RouteExamples:417, which the mutant fails (KILLED there in the sweep at 8836d0215, on another runner), so EventsDocumentExamples, which imports it, is not built",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1077,8 +1070,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:108: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "df9e2d349591a619f32b55a15723d15a209a6c0dd61e377da226f95545398f54",
    "killed_at": [
     108,
@@ -1102,8 +1094,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -1127,8 +1118,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -1152,8 +1142,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:104: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3ef9e0d78ea307eba70baf1a50144bc0e9608f3ec0c9d2018fba01747398cc61",
    "killed_at": [
     104,
@@ -1177,8 +1166,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:90: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "544eda3b90873938a9afb4bfcf60d60c13eae939ba536bdf9196f60f9fae4c63",
    "killed_at": [
     90,
@@ -1202,8 +1190,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -1227,8 +1214,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -1252,8 +1238,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -1277,8 +1262,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/CardinalityExamples.lean:204: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e821dd846b5dca7772834d6731978f645555718c5606f439e028e0ea25fcea46",
    "killed_at": [
     204,
@@ -1302,8 +1286,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/CardinalityExamples.lean:28: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "986c6df9951f93c3058908f31b6e8e48dd2160f360976b6ffa181f68e5c860c8",
    "killed_at": [
     28,
@@ -1347,6 +1330,7 @@
    "detail": "equivalent: front matter is at most 256 deep (`frontDepth`, maxJsonDepth), so the environment is at most 255 deep and `wireJson 258` reads it as `wireJson 257` does (requestOf's bound)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1366,6 +1350,7 @@
    "detail": "equivalent: the environment is at most 255 deep inside front matter of depth 256 at most, so `wireJson 256` reads it as `wireJson 257` does",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1384,8 +1369,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -1409,8 +1393,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "13bb358b3cb7d38ec63f4d5043e8da6bbc93cb2a7c3024abf896e130d315e2be",
    "killed_at": [
     212,
@@ -1434,8 +1417,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "30a459edaa799ae355b538467185160c0d18c598b99fe82459af134932703659",
    "killed_at": [
     212,
@@ -1459,8 +1441,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "77327ccf17e55f535f765f04a0d998787fcb5b1941a413a61b7957c5f53ef577",
    "killed_at": [
     212,
@@ -1484,8 +1465,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "7c3ab6b1ccb6b4f23c79fe0782d7944f871dc1586f09fc222ed4217f774af283",
    "killed_at": [
     212,
@@ -1509,8 +1489,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "481ae4285f646d0b17c9d5a9017edca55d9704ee72ba5553454162844f5cbf46",
    "killed_at": [
     212,
@@ -1534,8 +1513,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1bff8cd9e7a030a1054adbd524544ba8fd641ac8a4783234b666f348617c2d93",
    "killed_at": [
     212,
@@ -1559,8 +1537,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -1584,8 +1561,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -1609,8 +1585,7 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "46d5cf5ff07c9017add00439c6dda9dbd70e9ceab45a77620c51e6c16dba324e",
    "trust_class": "G[V]",
    "trusted": true
@@ -1630,8 +1605,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -1655,8 +1629,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -1697,7 +1670,7 @@
    "before": "E.events",
    "after": "[]",
    "status": "ALLOWED",
-   "detail": "no program, so nothing to kill: `[]` in place of the Option `E.events` or `E.events.map (\u00b7.2.view)` does not elaborate (Lean: Type mismatch at Document.lean:814, the mutated line); UNKNOWN, not INVALID, only because Lean places the error outside the edited text. The kept text is killed by hand (mutants.json L29: EventsDocumentExamples:273, :275, :279)",
+   "detail": "no program, so nothing to kill: `[]` in place of the Option `E.events` or `E.events.map (\u00b7.2.view)` does not elaborate (Lean: Type mismatch at Document.lean:814, the mutated line); UNKNOWN, not INVALID, only because Lean places the error outside the edited text. The kept text is killed by hand (mutants.json L29: EventsDocumentExamples:309, :311, :315)",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Service/Document.lean:814: Type mismatch",
    "trust_class": "D[V]",
@@ -1737,8 +1710,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -1762,6 +1734,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:309: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ccd32a3712c6565593f83193c0e99eb01afb502fc9a8bfbff01aa2e6a9c06f3",
    "killed_at": [
     309,
@@ -1785,8 +1758,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -1810,8 +1782,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a85a36b8cd0db8084635528cbf26cb271e939749fa94c1f45aa1063079069306",
    "killed_at": [
     131,
@@ -1835,8 +1806,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -1860,8 +1830,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -1885,8 +1854,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -1910,8 +1878,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -1935,8 +1902,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -1960,8 +1926,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -1985,8 +1950,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -2010,8 +1974,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -2035,8 +1998,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -2060,8 +2022,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -2083,7 +2044,7 @@
    "before": "E.events.map (\u00b7.2.view)",
    "after": "[]",
    "status": "ALLOWED",
-   "detail": "no program, so nothing to kill: `[]` in place of the Option `E.events` or `E.events.map (\u00b7.2.view)` does not elaborate (Lean: Type mismatch at Document.lean:814, the mutated line); UNKNOWN, not INVALID, only because Lean places the error outside the edited text. The kept text is killed by hand (mutants.json L29: EventsDocumentExamples:273, :275, :279)",
+   "detail": "no program, so nothing to kill: `[]` in place of the Option `E.events` or `E.events.map (\u00b7.2.view)` does not elaborate (Lean: Type mismatch at Document.lean:814, the mutated line); UNKNOWN, not INVALID, only because Lean places the error outside the edited text. The kept text is killed by hand (mutants.json L29: EventsDocumentExamples:309, :311, :315)",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Service/Document.lean:814: Type mismatch",
    "trust_class": "D[V]",
@@ -2142,8 +2103,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -2167,8 +2127,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a85a36b8cd0db8084635528cbf26cb271e939749fa94c1f45aa1063079069306",
    "killed_at": [
     131,
@@ -2192,8 +2151,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2217,8 +2175,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2242,8 +2199,7 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "02374515d38592647fcf8d51f1d0be316309f3e6b6d423c1d5921a4ff5d7d3a6",
    "trust_class": "G[V]",
    "trusted": true
@@ -2263,8 +2219,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -2288,8 +2243,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a85a36b8cd0db8084635528cbf26cb271e939749fa94c1f45aa1063079069306",
    "killed_at": [
     131,
@@ -2313,8 +2267,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -2338,8 +2291,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -2363,8 +2315,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83e39243f1d45b299f500c27fcb0f0990d625f02c474d5da514c8ef4f8550d5c",
    "killed_at": [
     179,
@@ -2388,8 +2339,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -2413,8 +2363,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2438,8 +2387,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2463,8 +2411,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -2488,8 +2435,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -2513,8 +2459,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -2538,6 +2483,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:119: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "03e7cd6ad713d39b98d74c09efa9b2e3277d4266d213f7405c1314986beaa208",
    "killed_at": [
     119,
@@ -2561,8 +2507,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2586,8 +2531,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2611,8 +2555,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -2636,8 +2579,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83e39243f1d45b299f500c27fcb0f0990d625f02c474d5da514c8ef4f8550d5c",
    "killed_at": [
     179,
@@ -2661,8 +2603,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2686,8 +2627,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -2711,8 +2651,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2736,8 +2675,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2761,8 +2699,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2786,8 +2723,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2811,8 +2747,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2836,8 +2771,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2861,8 +2795,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2886,8 +2819,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2911,8 +2843,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2936,8 +2867,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2961,8 +2891,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -2986,8 +2915,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -3011,8 +2939,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "13bb358b3cb7d38ec63f4d5043e8da6bbc93cb2a7c3024abf896e130d315e2be",
    "killed_at": [
     212,
@@ -3036,8 +2963,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "30a459edaa799ae355b538467185160c0d18c598b99fe82459af134932703659",
    "killed_at": [
     212,
@@ -3061,8 +2987,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "77327ccf17e55f535f765f04a0d998787fcb5b1941a413a61b7957c5f53ef577",
    "killed_at": [
     212,
@@ -3086,8 +3011,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "7c3ab6b1ccb6b4f23c79fe0782d7944f871dc1586f09fc222ed4217f774af283",
    "killed_at": [
     212,
@@ -3111,8 +3035,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "481ae4285f646d0b17c9d5a9017edca55d9704ee72ba5553454162844f5cbf46",
    "killed_at": [
     212,
@@ -3136,8 +3059,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1bff8cd9e7a030a1054adbd524544ba8fd641ac8a4783234b666f348617c2d93",
    "killed_at": [
     212,
@@ -3161,8 +3083,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -3186,8 +3107,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -3211,8 +3131,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -3236,8 +3155,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -3261,8 +3179,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -3305,8 +3222,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -3326,6 +3242,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -3349,6 +3266,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:119: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "03e7cd6ad713d39b98d74c09efa9b2e3277d4266d213f7405c1314986beaa208",
    "killed_at": [
     119,
@@ -3372,8 +3290,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -3397,8 +3314,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "13bb358b3cb7d38ec63f4d5043e8da6bbc93cb2a7c3024abf896e130d315e2be",
    "killed_at": [
     212,
@@ -3422,8 +3338,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "30a459edaa799ae355b538467185160c0d18c598b99fe82459af134932703659",
    "killed_at": [
     212,
@@ -3447,8 +3362,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "fa8999384d9d7f22142db239bf4769a0e7f6cd16d858cd53049678eda637062e",
    "killed_at": [
     234,
@@ -3472,8 +3386,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "7c3ab6b1ccb6b4f23c79fe0782d7944f871dc1586f09fc222ed4217f774af283",
    "killed_at": [
     212,
@@ -3497,8 +3410,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "481ae4285f646d0b17c9d5a9017edca55d9704ee72ba5553454162844f5cbf46",
    "killed_at": [
     212,
@@ -3522,8 +3434,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1bff8cd9e7a030a1054adbd524544ba8fd641ac8a4783234b666f348617c2d93",
    "killed_at": [
     212,
@@ -3547,8 +3458,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -3572,8 +3482,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1b8f7bb40bec7f207af891c9adfecd7efb4d2f80a0f9a6b05d04a57bf3bbfd20",
    "killed_at": [
     282,
@@ -3597,8 +3506,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -3622,8 +3530,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83e39243f1d45b299f500c27fcb0f0990d625f02c474d5da514c8ef4f8550d5c",
    "killed_at": [
     179,
@@ -3647,8 +3554,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -3672,8 +3578,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/DocumentChainChecks.lean:31: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "091d604d8684db8f1712641ea27d66cf4dc39df2c027fd14cdcec0e6c2dba9f1",
    "killed_at": [
     31,
@@ -3697,8 +3602,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -3718,6 +3622,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -3741,6 +3646,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:131: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "cbbf503bbbe1d5cc971d4756e07b312cc5305a5afcd44f2332819c284b48665f",
    "killed_at": [
     131,
@@ -3764,6 +3670,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:309: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ccd32a3712c6565593f83193c0e99eb01afb502fc9a8bfbff01aa2e6a9c06f3",
    "killed_at": [
     309,
@@ -3787,8 +3694,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -3812,8 +3718,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -3837,8 +3742,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -3862,8 +3766,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -3887,8 +3790,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -3912,8 +3814,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -3930,9 +3831,10 @@
    ],
    "before": "listed",
    "after": "(listed.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
+   "status": "ALLOWED",
+   "detail": "not equivalent: planted by hand (M121, `!(listed.take 1).contains \"soft-norms@0\"`: every sorted soft list refused), EventsDocumentExamples:145 and :156 refute it (M096, M135, M146 KILLED); UNKNOWN only because this runner's probe could not elaborate RouteExamples:417, which the mutant fails (KILLED there in the sweep at 8836d0215, on another runner), so EventsDocumentExamples, which imports it, is not built",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -3970,8 +3872,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -3995,8 +3896,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -4020,8 +3920,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -4045,8 +3944,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -4070,8 +3968,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -4095,8 +3992,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -4113,9 +4009,10 @@
    ],
    "before": "listed",
    "after": "(listed.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
+   "status": "ALLOWED",
+   "detail": "not equivalent: planted by hand (M129, `!listed.dropLast.contains \"soft-norms@0\"`: a list ending in soft-norms@0 refused), EventsDocumentExamples:145 and :156 refute it (M112 and M141 KILLED at :151); UNKNOWN only because this runner's probe could not elaborate RouteExamples:417, which the mutant fails (KILLED there in the sweep at 8836d0215, on another runner), so EventsDocumentExamples, which imports it, is not built",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -4134,6 +4031,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:174: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "9c59f8a8f5034faf934b2ecd37bec969de759cdf73723030d7b64f6cb22e863b",
    "killed_at": [
     174,
@@ -4157,8 +4055,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4182,8 +4079,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "02374515d38592647fcf8d51f1d0be316309f3e6b6d423c1d5921a4ff5d7d3a6",
    "trust_class": "G[V]",
    "trusted": true
@@ -4203,8 +4099,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -4228,8 +4123,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a85a36b8cd0db8084635528cbf26cb271e939749fa94c1f45aa1063079069306",
    "killed_at": [
     131,
@@ -4253,8 +4147,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -4278,6 +4171,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:119: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "03e7cd6ad713d39b98d74c09efa9b2e3277d4266d213f7405c1314986beaa208",
    "killed_at": [
     119,
@@ -4301,8 +4195,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4326,8 +4219,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "02374515d38592647fcf8d51f1d0be316309f3e6b6d423c1d5921a4ff5d7d3a6",
    "trust_class": "G[V]",
    "trusted": true
@@ -4347,8 +4239,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1b8f7bb40bec7f207af891c9adfecd7efb4d2f80a0f9a6b05d04a57bf3bbfd20",
    "killed_at": [
     282,
@@ -4372,8 +4263,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1dcf5272b22269394885f8aecd2f13feae5f14113e783191285d7f3d686cffc5",
    "killed_at": [
     282,
@@ -4397,6 +4287,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -4420,6 +4311,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:131: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "cbbf503bbbe1d5cc971d4756e07b312cc5305a5afcd44f2332819c284b48665f",
    "killed_at": [
     131,
@@ -4443,8 +4335,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4468,8 +4359,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -4493,8 +4383,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -4518,6 +4407,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -4541,6 +4431,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:119: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "03e7cd6ad713d39b98d74c09efa9b2e3277d4266d213f7405c1314986beaa208",
    "killed_at": [
     119,
@@ -4564,8 +4455,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4589,8 +4479,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -4614,8 +4503,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -4639,6 +4527,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -4662,6 +4551,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:131: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "cbbf503bbbe1d5cc971d4756e07b312cc5305a5afcd44f2332819c284b48665f",
    "killed_at": [
     131,
@@ -4685,8 +4575,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4710,8 +4599,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -4735,8 +4623,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4760,8 +4647,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -4785,8 +4671,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83e39243f1d45b299f500c27fcb0f0990d625f02c474d5da514c8ef4f8550d5c",
    "killed_at": [
     179,
@@ -4810,8 +4695,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4835,8 +4719,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -4860,8 +4743,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4885,8 +4767,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -4910,8 +4791,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4935,8 +4815,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4960,8 +4839,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -4985,8 +4863,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5010,8 +4887,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5035,8 +4911,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5060,8 +4935,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5085,8 +4959,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5110,8 +4983,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5135,8 +5007,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5160,8 +5031,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5185,8 +5055,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5210,8 +5079,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5235,8 +5103,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5260,8 +5127,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5285,8 +5151,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5310,8 +5175,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5335,8 +5199,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5360,8 +5223,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5385,8 +5247,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5410,8 +5271,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5435,8 +5295,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5460,8 +5319,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5485,8 +5343,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "13bb358b3cb7d38ec63f4d5043e8da6bbc93cb2a7c3024abf896e130d315e2be",
    "killed_at": [
     212,
@@ -5510,8 +5367,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "30a459edaa799ae355b538467185160c0d18c598b99fe82459af134932703659",
    "killed_at": [
     212,
@@ -5535,8 +5391,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "77327ccf17e55f535f765f04a0d998787fcb5b1941a413a61b7957c5f53ef577",
    "killed_at": [
     212,
@@ -5560,8 +5415,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "7c3ab6b1ccb6b4f23c79fe0782d7944f871dc1586f09fc222ed4217f774af283",
    "killed_at": [
     212,
@@ -5585,8 +5439,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "481ae4285f646d0b17c9d5a9017edca55d9704ee72ba5553454162844f5cbf46",
    "killed_at": [
     212,
@@ -5610,8 +5463,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1bff8cd9e7a030a1054adbd524544ba8fd641ac8a4783234b666f348617c2d93",
    "killed_at": [
     212,
@@ -5635,8 +5487,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -5660,8 +5511,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -5685,8 +5535,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -5710,8 +5559,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -5735,8 +5583,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -5779,8 +5626,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -5819,8 +5665,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -5844,8 +5689,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -5869,8 +5713,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "13bb358b3cb7d38ec63f4d5043e8da6bbc93cb2a7c3024abf896e130d315e2be",
    "killed_at": [
     212,
@@ -5894,8 +5737,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "30a459edaa799ae355b538467185160c0d18c598b99fe82459af134932703659",
    "killed_at": [
     212,
@@ -5919,8 +5761,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "fa8999384d9d7f22142db239bf4769a0e7f6cd16d858cd53049678eda637062e",
    "killed_at": [
     234,
@@ -5944,8 +5785,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "7c3ab6b1ccb6b4f23c79fe0782d7944f871dc1586f09fc222ed4217f774af283",
    "killed_at": [
     212,
@@ -5969,8 +5809,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "481ae4285f646d0b17c9d5a9017edca55d9704ee72ba5553454162844f5cbf46",
    "killed_at": [
     212,
@@ -5994,8 +5833,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1bff8cd9e7a030a1054adbd524544ba8fd641ac8a4783234b666f348617c2d93",
    "killed_at": [
     212,
@@ -6019,8 +5857,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -6044,8 +5881,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:213: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d989f338e4169285f65ebb5404cbf12d2ff8b57cd15662c50b89462ff51af22b",
    "killed_at": [
     213,
@@ -6069,8 +5905,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -6094,8 +5929,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -6119,8 +5953,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Events/WireExamples.lean:412: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c4eb4270026ad281294268e6790de5d482a2d425428f723df7af42ae5d5027a0",
    "killed_at": [
     412,
@@ -6144,6 +5977,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:131: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "0bb056d113368381827341e41216e17e26bda652caf5597c4c9921636aeac0e9",
    "killed_at": [
     131,
@@ -6167,8 +6001,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -6207,8 +6040,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -6232,6 +6064,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:309: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ccd32a3712c6565593f83193c0e99eb01afb502fc9a8bfbff01aa2e6a9c06f3",
    "killed_at": [
     309,
@@ -6255,8 +6088,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -6280,8 +6112,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "fa8999384d9d7f22142db239bf4769a0e7f6cd16d858cd53049678eda637062e",
    "killed_at": [
     234,
@@ -6305,8 +6136,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -6330,8 +6160,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:217: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d6259b5f4f7cae74ef0e8e565c906b1c276e81dd7c62ec7b2184c675b7a703f3",
    "killed_at": [
     217,
@@ -6355,6 +6184,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:126: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "4bf1e4e7aaac6cff34675603b71623af7018df55f0b2d9885a04e2bc7234e949",
    "killed_at": [
     126,
@@ -6378,8 +6208,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -6403,8 +6232,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -6428,8 +6256,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -6453,8 +6280,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -6478,8 +6304,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -6503,8 +6328,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -6524,6 +6348,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:156: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e4b0acb0c6c857c71267fadf8cabbb732d48980291645e3e11a6e227acb3bd44",
    "killed_at": [
     156,
@@ -6544,9 +6369,10 @@
    ],
    "before": "ownedProfiles",
    "after": "(ownedProfiles.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
+   "status": "ALLOWED",
+   "detail": "not equivalent: planted by hand (M229, `ownedProfiles.reverse.take 1` in the profile check: every list but [time@0] enters it, events@0 refused by name), EventsDocumentExamples:145 and :156 refute it (M199, M248, M263 KILLED); UNKNOWN only because this runner's probe could not elaborate RouteExamples:417, which the mutant fails (KILLED there in the sweep at 8836d0215, on another runner), so EventsDocumentExamples, which imports it, is not built",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe)",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -6565,8 +6391,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -6590,8 +6415,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -6615,8 +6439,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:213: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d989f338e4169285f65ebb5404cbf12d2ff8b57cd15662c50b89462ff51af22b",
    "killed_at": [
     213,
@@ -6640,8 +6463,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1fee05c8b19c720e48d25ad42574e93d9cd1d2c339943842f0145bf7869705da",
    "killed_at": [
     212,
@@ -6665,8 +6487,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:107: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e67b377d6c95e08effe8e21857eb4b33daa795f946e37e7874892f6d5f421b42",
    "killed_at": [
     107,
@@ -6690,8 +6511,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "09048b5876fb191bad123e2ee8d846061f8fbb96525ee6c3f91e581af092a50f",
    "trust_class": "D[V]",
    "trusted": true
@@ -6711,6 +6531,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:156: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e4b0acb0c6c857c71267fadf8cabbb732d48980291645e3e11a6e227acb3bd44",
    "killed_at": [
     156,
@@ -6734,6 +6555,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:162: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8a9358b34ff541da4c2a09bb7f870156f90ab7569d6886ecff002ac4f90cadd0",
    "killed_at": [
     162,
@@ -6757,8 +6579,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -6782,8 +6603,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "fa8999384d9d7f22142db239bf4769a0e7f6cd16d858cd53049678eda637062e",
    "killed_at": [
     234,
@@ -6807,8 +6627,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -6832,8 +6651,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -6857,8 +6675,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/UndeclaredExamples.lean:49: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "6483c6ad75f36ff556380bf5342c3ba5e9f448df7faf5c283ee743bff435e964",
    "killed_at": [
     49,
@@ -6882,8 +6699,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -6907,8 +6723,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "02374515d38592647fcf8d51f1d0be316309f3e6b6d423c1d5921a4ff5d7d3a6",
    "trust_class": "G[V]",
    "trusted": true
@@ -6928,8 +6743,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -6953,8 +6767,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a85a36b8cd0db8084635528cbf26cb271e939749fa94c1f45aa1063079069306",
    "killed_at": [
     131,
@@ -6978,8 +6791,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -7003,8 +6815,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:118: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "22ac18d40f2086b20664e9d83356532fb7431bf6682d2003cfc945e50c5692ba",
    "killed_at": [
     118,
@@ -7028,8 +6839,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7053,8 +6863,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "02374515d38592647fcf8d51f1d0be316309f3e6b6d423c1d5921a4ff5d7d3a6",
    "trust_class": "G[V]",
    "trusted": true
@@ -7074,8 +6883,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -7099,8 +6907,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:213: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "aed922ba4e12a5fc0352f7113823d326057a600728eef850b6a32720e2290ae6",
    "killed_at": [
     213,
@@ -7124,6 +6931,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:151: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1d0d670cd3065de089a762ba3e46d23839bfb71fd874eebf3ae65d9181499120",
    "killed_at": [
     151,
@@ -7147,8 +6955,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:104: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3ef9e0d78ea307eba70baf1a50144bc0e9608f3ec0c9d2018fba01747398cc61",
    "killed_at": [
     104,
@@ -7172,8 +6979,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7197,8 +7003,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -7222,8 +7027,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:192: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a8a022466530cbd83f98e1f801c12c40fdf20e1cd7d2fadc8a04fa204a2a1801",
    "killed_at": [
     192,
@@ -7247,8 +7051,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/DocumentChainExamples.lean:98: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "1353d362ab78b5f56636b443fd7912a6e3fc27de7cd3c6cb1188c8381d8bfe16",
    "killed_at": [
     98,
@@ -7272,8 +7075,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7297,8 +7099,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -7322,8 +7123,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -7347,8 +7147,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -7372,6 +7171,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:119: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "03e7cd6ad713d39b98d74c09efa9b2e3277d4266d213f7405c1314986beaa208",
    "killed_at": [
     119,
@@ -7395,8 +7195,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7420,8 +7219,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "d193761c4f1e423e87d212bbcf0cb19735558582de7ee7443ce906c0e2661195",
    "killed_at": [
     234,
@@ -7445,8 +7243,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:223: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83719637211694c506738a97c08f2e5491490df2116456404240214074f52e2a",
    "killed_at": [
     223,
@@ -7470,8 +7267,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:106: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "41a6da8e5a65dfd1803255a7df6c5173ebc64b13a7a6b7d940eee1562b049a29",
    "killed_at": [
     106,
@@ -7495,6 +7291,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/EventsDocumentExamples.lean:131: Expression",
    "raw_status": "KILLED",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "cbbf503bbbe1d5cc971d4756e07b312cc5305a5afcd44f2332819c284b48665f",
    "killed_at": [
     131,
@@ -7518,8 +7315,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7543,8 +7339,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -7568,8 +7363,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:131: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "3f7137d095b03d118fd76e13efa0eca55054d2d05b98ca8eb08ae55041ccbb99",
    "killed_at": [
     131,
@@ -7612,8 +7406,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7637,8 +7430,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -7662,8 +7454,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7687,8 +7478,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -7712,8 +7502,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "83e39243f1d45b299f500c27fcb0f0990d625f02c474d5da514c8ef4f8550d5c",
    "killed_at": [
     179,
@@ -7737,8 +7526,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7762,8 +7550,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:191: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "04e6a0e8588beb23a90ae7b97b91f9212cbc7ac68889ae7f8ae72edb64a2b1a9",
    "killed_at": [
     191,
@@ -7787,8 +7574,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/UndeclaredExamples.lean:49: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "6483c6ad75f36ff556380bf5342c3ba5e9f448df7faf5c283ee743bff435e964",
    "killed_at": [
     49,
@@ -7812,8 +7598,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7837,8 +7622,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWords.lean:212: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "c492c4b056fa6e204bf01943d2c7fb9a87894f082925516c83aef9503beb1332",
    "killed_at": [
     212,
@@ -7862,8 +7646,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7887,8 +7670,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "e0eb647d8f87456b5904430880b8d86e3ed6aa7f9d26be26ae1d236a6a436d3c",
    "killed_at": [
     282,
@@ -7912,8 +7694,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -7937,8 +7718,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -7981,8 +7761,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8006,8 +7785,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8031,8 +7809,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8056,8 +7833,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -8100,8 +7876,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8125,8 +7900,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8150,8 +7924,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8175,8 +7948,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "8ee0286c85acf5cfb7e41807f35cafe87e816cbc5fa2b304830046f5c2f78fe4",
    "killed_at": [
     234,
@@ -8200,8 +7972,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Service/DocumentChainExamples.lean:172: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "79d3fc221887ffbcdf39ae94db31778c65f2be1c50b5988977dd87414b7d2bb4",
    "killed_at": [
     172,
@@ -8225,8 +7996,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8250,8 +8020,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8275,8 +8044,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8300,8 +8068,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8325,8 +8092,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8350,8 +8116,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8375,8 +8140,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8400,8 +8164,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8425,8 +8188,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8450,8 +8212,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8475,8 +8236,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8500,8 +8260,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8525,8 +8284,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8550,8 +8308,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8575,8 +8332,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8600,8 +8356,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8625,8 +8380,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8650,8 +8404,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8675,8 +8428,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8700,8 +8452,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8725,8 +8476,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8750,8 +8500,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8775,8 +8524,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8800,8 +8548,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
@@ -8825,8 +8572,7 @@
    "status": "KILLED",
    "detail": "lean/ResponseShape/Schemas/Document.lean:298: Expression",
    "raw_status": "KILLED",
-   "reused_from": "8836d0215db81b26dfc71c502824813be5473e76",
-   "carried": "checks",
+   "reused_from": "18e5ccb252b79bee4a140411a230c601da6a10ba",
    "reads": "a78e38d30e18f8edf559331e98db189b7a832fc9ab3a7a6daefcecb11a9a8aca",
    "killed_at": [
     298,
