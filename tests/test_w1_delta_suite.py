@@ -56,6 +56,19 @@ def test_the_delta_suite_is_every_unit_the_coverage_map_cannot_rule_out(monkeypa
     assert w1_delta.short("tests/test_rights.py") == "rights" and w1_delta.short(units[-1]) == units[-1]
 
 
+def test_the_suite_run_deselects_exactly_the_tests_that_read_its_output(w1_delta):
+    """The suite run deselects `READS_OUTPUT`: the tests of the shadow's test file whose body names `DELTA` or
+    `REPORT` (the saved delta and the REPORT), and only those; none of them names `parse_english`, so no record is
+    lost."""
+    import ast
+    tree = ast.parse((ROOT / w1_delta.SHADOW_TESTS).read_text())
+    tests = {node.name: {n.id for n in ast.walk(node) if isinstance(n, ast.Name)} for node in tree.body
+             if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")}
+    reading = {name for name, names in tests.items() if names & {"DELTA", "REPORT"}}
+    assert {test.split("::")[1] for test in w1_delta.READS_OUTPUT} == reading
+    assert all("parse_english" not in tests[name] for name in reading)
+
+
 def test_the_plugin_tags_only_the_records_of_its_own_log(monkeypatch, tmp_path, w1_delta):
     """The suite runs with `w1_delta` as a pytest plugin: a record written to the run's log carries its corpus and
     test, while a test's own `statement_record` call and a log the test names itself get the records they would get

@@ -41,6 +41,16 @@ CLASSES = ("lean-unavailable", "agree", "lean-unknown", "lean-stricter", "lean-l
            "both-refuse")
 DECIDED = ("agree", "both-refuse")
 SHADOWED = ("ve/norm_english.py", "parse_english")  # the one function whose W1 path writes a shadow record
+# The tests that read what this script writes (the saved delta and the REPORT checked against it): the suite run
+# deselects them, since they would check the previous run's files. None calls `parse_english`; the set is the tests
+# of the file that name `DELTA` or `REPORT` (tests/test_w1_delta_suite.py checks it from that file's source).
+SHADOW_TESTS = "tests/test_english_statement_shadow.py"
+READS_OUTPUT = tuple(f"{SHADOW_TESTS}::{name}" for name in (
+    "test_the_saved_delta_report_records_every_disagreement_with_its_class",
+    "test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement",
+    "test_the_suite_check_fails_on_a_hand_kept_or_incomplete_suite",
+    "test_the_report_s_delta_numbers_and_causes_are_the_saved_evidence",
+    "test_the_report_check_fails_on_review_f2_s_overclaim_and_on_a_wrong_number"))
 PILOTS = {"udhr": "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md",
           "constitution": "usecases/claude-constitution-pilot/run-20261104T0716Z/probe-translation.probe.md"}
 TAG: dict = {}  # the corpus and id of the call in progress, added to its record
@@ -221,8 +231,9 @@ def suite(scratch: Path, workers: int, plan: dict) -> str:
     for unit in plan["files"]:
         if unit in test_map.EXTRA_UNITS:
             subprocess.run(test_map.EXTRA_UNITS[unit], cwd=ROOT, env=env, check=False)
-    run = subprocess.run(nested_pytest.command(["-q", "-p", "w1_delta", *files], workers=workers), cwd=ROOT,
-                         env=env, check=False, capture_output=True, text=True)
+    deselect = [arg for test in READS_OUTPUT if test.split("::")[0] in files for arg in ("--deselect", test)]
+    run = subprocess.run(nested_pytest.command(["-q", "-p", "w1_delta", *deselect, *files], workers=workers),
+                         cwd=ROOT, env=env, check=False, capture_output=True, text=True)
     print(run.stdout[-4000:], run.stderr[-2000:])
     counts = [m[1] for m in re.finditer(r"^=* ?((?:\d+ [a-z]+(?:, )?)+) in [0-9.]+s", run.stdout, re.M)]
     return counts[-1] if counts else f"no pytest summary (exit {run.returncode})"
