@@ -42,7 +42,7 @@
    "english": [
     "Under every reading of the open sentence, no two rules on the same act contradict each other.",
     "This does not depend on how sentence 1 is read.",
-    "Read sentence 1 as *Every proposal must not proceed, if both of the following hold:\n  (a) that proposal is external;\n  (b) there is a level such that both that proposal has reached that level and that level is misuse, unless that proposal is classified as \"governance_found_acceptable\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+    "Read sentence 1 as *Every proposal must not proceed, if both of the following hold:\n  (a) that proposal is external;\n  (b) there is a level such that both that proposal has reached that level and that level is misuse, unless that proposal is classified as \"governance_found_acceptable_with_safety_case_where_ccl_reached\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
    ],
    "findings": {
     "SeparatedByActOnly": 0,
@@ -80,7 +80,7 @@
    "english": [
     "Under every reading of the open sentence, no two rules on the same act contradict each other.",
     "This does not depend on how sentence 1 is read.",
-    "Read sentence 1 as *Every proposal must not proceed, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that both that proposal has reached that level and that level is classified as \"ml_rd_and_misalignment\", unless that proposal is classified as \"governance_found_acceptable\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+    "Read sentence 1 as *Every proposal must not proceed, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that both that proposal has reached that level and that level is classified as \"ml_rd_and_misalignment\", unless that proposal is classified as \"governance_found_acceptable_with_safety_case_where_ccl_reached\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
    ],
    "findings": {
     "SeparatedByActOnly": 0,
@@ -155,7 +155,7 @@
       "strict",
       "default"
      ],
-     "text": "This sentence says *must*. (1) *Every proposal must have its risk assessment consider greater elicitation effort by others.* (2) *Every proposal should have its risk assessment consider greater elicitation effort by others.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+     "text": "This sentence says *must*. (1) *Every proposal must have its risk assessment conservatively weigh greater elicitation by others.* (2) *Every proposal should have its risk assessment conservatively weigh greater elicitation by others.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
      "wording": "E14"
     }
    ],
