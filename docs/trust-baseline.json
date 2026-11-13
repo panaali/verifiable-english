@@ -2,8 +2,8 @@
  "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
  "budget": {
   "K": 1018,
-  "S": 14893,
-  "V": 47797
+  "S": 14935,
+  "V": 47820
  },
  "allowances": [
   {
