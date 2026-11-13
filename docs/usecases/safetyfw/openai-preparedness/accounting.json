@@ -318,7 +318,7 @@
   {
    "id": "f1-contrib-cyb-default",
    "file": "rules.d1.ve",
-   "span_length": 34,
+   "span_length": 111,
    "used": [
     "cyberdefense_contribution",
     "cybersecurity_high",
@@ -1034,37 +1034,16 @@
    ],
    "unaccounted": [
     "approach",
-    "capabil",
-    "compile",
     "core",
     "deploy",
-    "harm",
-    "inform",
-    "minimize",
     "mitigate",
-    "need",
-    "plann",
-    "risk",
-    "safe",
-    "severe",
-    "system",
-    "threshold"
+    "safe"
    ],
    "entries": [
     {
      "words": "Safeguards that mitigate the risk of severe harm are at the core of our safe deployment approach",
      "reason": "exposition",
      "arg": ""
-    },
-    {
-     "words": "for covered systems that reach a capability threshold",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "We compile the information on the planned safeguards needed to minimize the risk of severe harm into",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -1241,19 +1220,12 @@
     "validate_evidence"
    ],
    "unaccounted": [
-    "expect",
-    "find",
     "inform",
     "receiv",
     "review",
     "sufficiency"
    ],
    "entries": [
-    {
-     "words": "If we find reasonable evidence that our safeguards are not working as expected",
-     "reason": "restates",
-     "arg": ""
-    },
     {
      "words": "the information being received",
      "reason": "restates",
@@ -1276,18 +1248,11 @@
     "review_sufficiency"
    ],
    "unaccounted": [
-    "expect",
-    "find",
     "inform",
     "receiv",
     "validate"
    ],
    "entries": [
-    {
-     "words": "If we find reasonable evidence that our safeguards are not working as expected",
-     "reason": "restates",
-     "arg": ""
-    },
     {
      "words": "we will validate",
      "reason": "rule",
@@ -2785,19 +2750,8 @@
    "used": [
     "research_review"
    ],
-   "unaccounted": [
-    "category",
-    "find",
-    "latest",
-    "periodical"
-   ],
-   "entries": [
-    {
-     "words": "We will periodically review the latest research and findings for each Research Category",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -3035,22 +2989,22 @@
  ],
  "totals": {
   "blocks": 99,
-  "blocks_with_loss": 18,
+  "blocks_with_loss": 17,
   "losses_by_class": {
-   "1": 22,
+   "1": 21,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
    "exposition": 39,
-   "loss": 24,
+   "loss": 23,
    "reading": 30,
-   "restates": 99,
+   "restates": 95,
    "rule": 18
   },
-  "unaccounted_words": 565,
-  "blocks_with_unaccounted_words": 79,
-  "quotes": 115,
+  "unaccounted_words": 546,
+  "blocks_with_unaccounted_words": 78,
+  "quotes": 116,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },
