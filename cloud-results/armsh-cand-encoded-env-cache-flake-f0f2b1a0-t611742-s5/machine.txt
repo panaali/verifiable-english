@@ -1,0 +1,9 @@
+job=armsh-cand-encoded-env-cache-flake-f0f2b1a0-t611742-s5 shard=5/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T23:17:13Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  103G  30% /
+ 23:17:13 up 10 min,  0 user,  load average: 1.59, 0.53, 0.21
+pilot/codex branches: 98
+ve-cache: lean-build exact key 664a8af90749 asset lean-build-664a8af90749-linux-aarch64.tar.zst sha256 89bf055b9f3a ok, seal ok, from download, 13.4 s
+seed: mode=seed-fp match=exact asset=lean-build-664a8af90749-linux-aarch64.tar.zst pruned=0 base=caaca9a7132e
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
