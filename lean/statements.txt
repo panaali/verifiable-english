@@ -58671,6 +58671,13 @@ theorem VE.Route.Wire.RouteVocabulary.validNames
   ∀ (self : VE.Route.Wire.RouteVocabulary), self.sourceVocabulary.namesValid = Bool.true
   -- uses VE.Bridge.Vocabulary.namesValid@VE.Bridge VE.Route.Wire.RouteVocabulary.sourceVocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 4197037603
+theorem VE.Route.Wire.astLimit_check_encode
+  ∀ (fs : List VE.Formula),
+    (∀ (φ : VE.Formula), φ ∈ fs → VE.Surface.formulaDepth φ < VE.Limits.maxDepth) →
+      List.foldl (fun x1 x2 => x1 + x2) 0 (List.map VE.Bridge.formulaNodes fs) ≤ VE.Limits.maxNodes →
+        VE.Route.AstLimit.check (List.map VE.Route.Wire.encodeFormula fs) = Except.ok ()
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.check@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 2961178360
 theorem VE.Route.Wire.backgroundCheck_ok
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (M : VE.FiniteModel VE.Bridge.Entity),
     VE.Route.Wire.backgroundCheck rv M = Except.ok () →
@@ -58682,6 +58689,44 @@ theorem VE.Route.Wire.backgroundViolation_none
     VE.Route.Wire.backgroundViolation M lits = Option.none → VE.Route.Background.literalsValid M lits = Bool.true
   -- uses VE.FiniteModel@VE.Finite VE.Route.Background.literalsValid@VE.Route.Background VE.Route.Wire.backgroundViolation@VE.Route.Wire
   -- expr 2810962019
+theorem VE.Route.Wire.decodeClosed_encodeFormula
+  ∀ (E : VE.Environment) (φ : VE.Formula) (data : Bool),
+    VE.Formula.check E [] φ = Bool.true →
+      VE.Surface.formulaDepth φ < VE.Limits.maxDepth →
+        VE.Bridge.formulaNodes φ ≤ VE.Limits.maxNodes →
+          (data = Bool.true → VE.Route.Wire.usesStringBinder φ = Bool.false) →
+            VE.Route.Wire.decodeClosed E (VE.Route.Wire.encodeFormula φ) data = Except.ok φ
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.usesStringBinder@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 3873178970
+theorem VE.Route.Wire.decodeClosed_encodeFormula_wellFormed
+  ∀ (E : VE.Environment) (φ : VE.Formula) (data : Bool),
+    VE.Formula.WellFormed E [] φ →
+      VE.Surface.formulaDepth φ < VE.Limits.maxDepth →
+        VE.Bridge.formulaNodes φ ≤ VE.Limits.maxNodes →
+          (data = Bool.true → VE.Route.Wire.usesStringBinder φ = Bool.false) →
+            VE.Route.Wire.decodeClosed E (VE.Route.Wire.encodeFormula φ) data = Except.ok φ
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.usesStringBinder@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 1550248871
+theorem VE.Route.Wire.decodeClosed_refuses_depth
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeClosed E
+        (VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not VE.Limits.maxDepth VE.Formula.top)) data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 1697895559
+theorem VE.Route.Wire.decodeClosed_refuses_depth_past_walk
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeClosed E
+        (Lean.Json.arr
+          #[Lean.Json.str "and",
+            Lean.Json.arr
+              #[Lean.Json.str "unary", Lean.Json.str "p",
+                Lean.Json.arr #[Lean.Json.str "var", Lean.Json.num (Lean.JsonNumber.fromNat (2 ^ 60))]],
+            VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not (VE.Limits.maxDepth - 1) VE.Formula.top)])
+        data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 3631933151
 theorem VE.Route.Wire.decodeDataModel_combined
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
     VE.Route.Wire.decodeDataModel rv j = Except.ok M →
@@ -58696,6 +58741,53 @@ theorem VE.Route.Wire.decodeDataModel_valid
         ∀ (f : VE.Data.Background.Flag), f ∈ rv.flags → VE.Data.Background.Intended M.asStructure f
   -- uses VE.Bridge.Entity@VE.Bridge VE.Data.Background.Flag@VE.Data.Background VE.Data.Background.Intended@VE.Data.Background VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Background.StringAdmissible@VE.Route.Background VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire
   -- expr 3691122123
+theorem VE.Route.Wire.decodeFormula_encodeFormula
+  ∀ (φ : VE.Formula) (n : Nat),
+    VE.Surface.formulaDepth φ < n → VE.Bridge.decodeFormula n (VE.Route.Wire.encodeFormula φ) = Except.ok φ
+  -- uses VE.Bridge.decodeFormula@VE.Bridge VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 1844604959
+theorem VE.Route.Wire.decodeFormulas_encode
+  ∀ (E : VE.Environment) (fs : List VE.Formula) (data : Bool),
+    (∀ (φ : VE.Formula), φ ∈ fs → VE.Formula.check E [] φ = Bool.true) →
+      (∀ (φ : VE.Formula), φ ∈ fs → VE.Surface.formulaDepth φ < VE.Limits.maxDepth) →
+        List.foldl (fun x1 x2 => x1 + x2) 0 (List.map VE.Bridge.formulaNodes fs) ≤ VE.Limits.maxNodes →
+          (data = Bool.true → ∀ (φ : VE.Formula), φ ∈ fs → VE.Route.Wire.usesStringBinder φ = Bool.false) →
+            VE.Route.Wire.decodeFormulas E (Lean.Json.arr (List.map VE.Route.Wire.encodeFormula fs).toArray) data =
+              Except.ok fs
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.usesStringBinder@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 2203313445
+theorem VE.Route.Wire.decodeFormulas_encode_wellFormed
+  ∀ (E : VE.Environment) (fs : List VE.Formula) (data : Bool),
+    (∀ (φ : VE.Formula), φ ∈ fs → VE.Formula.WellFormed E [] φ) →
+      (∀ (φ : VE.Formula), φ ∈ fs → VE.Surface.formulaDepth φ < VE.Limits.maxDepth) →
+        List.foldl (fun x1 x2 => x1 + x2) 0 (List.map VE.Bridge.formulaNodes fs) ≤ VE.Limits.maxNodes →
+          (data = Bool.true → ∀ (φ : VE.Formula), φ ∈ fs → VE.Route.Wire.usesStringBinder φ = Bool.false) →
+            VE.Route.Wire.decodeFormulas E (Lean.Json.arr (List.map VE.Route.Wire.encodeFormula fs).toArray) data =
+              Except.ok fs
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.usesStringBinder@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 2536653415
+theorem VE.Route.Wire.decodeFormulas_refuses_depth
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeFormulas E
+        (Lean.Json.arr #[VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not VE.Limits.maxDepth VE.Formula.top)])
+        data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 339541889
+theorem VE.Route.Wire.decodeFormulas_refuses_depth_past_walk
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeFormulas E
+        (Lean.Json.arr
+          #[Lean.Json.arr
+              #[Lean.Json.str "and",
+                Lean.Json.arr
+                  #[Lean.Json.str "unary", Lean.Json.str "p",
+                    Lean.Json.arr #[Lean.Json.str "var", Lean.Json.num (Lean.JsonNumber.fromNat (2 ^ 60))]],
+                VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not (VE.Limits.maxDepth - 1) VE.Formula.top)]])
+        data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 607274766
 theorem VE.Route.Wire.decodeModel_background
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
     VE.Route.Wire.decodeModel rv j = Except.ok M →
@@ -58721,6 +58813,10 @@ theorem VE.Route.Wire.decodeOrderModel_valid
       VE.Route.Background.orderLiteralsValid d.toModel rv.literals = Bool.true
   -- uses VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Background.orderLiteralsValid@VE.Route.Background VE.Route.Wire.RouteOrderVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire
   -- expr 63781846
+theorem VE.Route.Wire.decodeTerm_encodeTerm
+  ∀ (t : VE.Term), VE.Bridge.decodeTerm (VE.Route.Wire.encodeTerm t) = Except.ok t
+  -- uses VE.Bridge.decodeTerm@VE.Bridge VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term@VE.Syntax
+  -- expr 3574675810
 theorem VE.Route.Wire.decodeVocabulary_valid
   ∀ (profiles : List String) (j : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
     VE.Route.Wire.decodeVocabulary profiles j = Except.ok rv →
@@ -58735,6 +58831,231 @@ theorem VE.Route.Wire.definitionsCheck_ok
         VE.Route.Wire.definitionsCheck mem M as = Except.ok () → (as.all fun a => VE.Formula.eval M [] a) = Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Wire.definitionsCheck@VE.Route.Wire
   -- expr 1431424931
+theorem VE.Route.Wire.depth_negationChain
+  VE.Surface.formulaDepth (Nat.repeat VE.Formula.not VE.Limits.maxDepth VE.Formula.top) = VE.Limits.maxDepth
+  -- uses VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 578316773
+theorem VE.Route.Wire.encodeFormula_arr
+  ∀ (φ : VE.Formula), ∃ xs, VE.Route.Wire.encodeFormula φ = Lean.Json.arr xs
+  -- uses VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 977634334
+theorem VE.Route.Wire.foldlM_walk_encode
+  ∀ (fs : List VE.Formula) (n : Nat),
+    (∀ (φ : VE.Formula), φ ∈ fs → VE.Surface.formulaDepth φ < VE.Limits.maxDepth) →
+      n + (List.map VE.Bridge.formulaNodes fs).sum ≤ VE.Limits.maxNodes →
+        List.foldlM (VE.Route.AstLimit.walk 256 Bool.false 1) n (List.map VE.Route.Wire.encodeFormula fs) =
+            Except.ok (n + (List.map VE.Bridge.formulaNodes fs).sum) ∨
+          List.foldlM (VE.Route.AstLimit.walk 256 Bool.false 1) n (List.map VE.Route.Wire.encodeFormula fs) =
+            Except.error VE.Route.AstLimit.Halt.stop
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.stop@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 806820334
+theorem VE.Route.Wire.foldl_add
+  ∀ (l : List Nat) (k : Nat), List.foldl (fun x1 x2 => x1 + x2) k l = k + l.sum
+  -- uses
+  -- expr 3442407088
+theorem VE.Route.Wire.mapM_decodeFormula_encode
+  ∀ (fs : List VE.Formula),
+    (∀ (φ : VE.Formula), φ ∈ fs → VE.Surface.formulaDepth φ < VE.Limits.maxDepth) →
+      List.mapM (VE.Bridge.decodeFormula VE.Limits.maxDepth) (List.map VE.Route.Wire.encodeFormula fs) = Except.ok fs
+  -- uses VE.Bridge.decodeFormula@VE.Bridge VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 1908718508
+theorem VE.Route.Wire.node_step
+  ∀ {n d : Nat} (k : Except VE.Route.AstLimit.Halt Nat),
+    ¬n + 1 > VE.Limits.maxNodes →
+      ¬d > VE.Limits.maxDepth →
+        (have __do_jp := fun y =>
+            have __do_jp := fun y => k;
+            if d > VE.Limits.maxDepth then do
+              let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+              __do_jp y
+            else do
+              let y ← Pure.pure PUnit.unit
+              __do_jp y;
+          if n + 1 > VE.Limits.maxNodes then do
+            let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+            __do_jp y
+          else do
+            let y ← Pure.pure PUnit.unit
+            __do_jp y) =
+          k
+  -- uses VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit
+  -- expr 1102295428
+theorem VE.Route.Wire.ok_bind
+  ∀ {ε α β : Type} (a : α) (f : α → Except ε β), Except.ok a >>= f = f a
+  -- uses
+  -- expr 3193208867
+theorem VE.Route.Wire.term_step
+  ∀ {n : Nat} (k : Except VE.Route.AstLimit.Halt Nat),
+    ¬n + 1 > VE.Limits.maxNodes →
+      (have __do_jp := fun y => k;
+        if n + 1 > VE.Limits.maxNodes then do
+          let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+          __do_jp y
+        else do
+          let y ← Pure.pure PUnit.unit
+          __do_jp y) =
+        k
+  -- uses VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit
+  -- expr 1765166941
+theorem VE.Route.Wire.walk_binaryNode
+  ∀ {φ a b : VE.Formula} {xs ys : Array Lean.Json} {f d n : Nat},
+    φ = a.and b ∨ φ = a.or b ∨ φ = a.implies b →
+      VE.Route.Wire.encodeFormula a = Lean.Json.arr xs →
+        VE.Route.Wire.encodeFormula b = Lean.Json.arr ys →
+          VE.Route.AstLimit.walk (f + 1) Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+            have __do_jp := fun y =>
+              have __do_jp := fun y => do
+                let n ← VE.Route.AstLimit.walk f Bool.false (d + 1) (n + 1) (Lean.Json.arr xs)
+                VE.Route.AstLimit.walk f Bool.false (d + 1) n (Lean.Json.arr ys);
+              if d > VE.Limits.maxDepth then do
+                let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+                __do_jp y
+              else do
+                let y ← Pure.pure PUnit.unit
+                __do_jp y;
+            if n + 1 > VE.Limits.maxNodes then do
+              let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+              __do_jp y
+            else do
+              let y ← Pure.pure PUnit.unit
+              __do_jp y
+  -- uses VE.Formula.and@VE.Syntax VE.Formula.implies@VE.Syntax VE.Formula.or@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 3801425532
+theorem VE.Route.Wire.walk_bind
+  ∀ {r : Except VE.Route.AstLimit.Halt Nat} {k m : Nat} {f : Nat → Except VE.Route.AstLimit.Halt Nat},
+    r = Except.ok k ∨ r = Except.error VE.Route.AstLimit.Halt.stop →
+      f k = Except.ok m ∨ f k = Except.error VE.Route.AstLimit.Halt.stop →
+        r >>= f = Except.ok m ∨ r >>= f = Except.error VE.Route.AstLimit.Halt.stop
+  -- uses VE.Route.AstLimit.Halt.stop@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit
+  -- expr 3672550640
+theorem VE.Route.Wire.walk_const
+  ∀ (c : String) (f n : Nat),
+    VE.Route.AstLimit.walk (f + 1) Bool.true 1 n (VE.Route.Wire.encodeTerm (VE.Term.const c)) =
+      have __do_jp := fun y => Pure.pure (n + 1);
+      if n + 1 > VE.Limits.maxNodes then do
+        let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+        __do_jp y
+      else do
+        let y ← Pure.pure PUnit.unit
+        __do_jp y
+  -- uses VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term.const@VE.Syntax
+  -- expr 1244072718
+theorem VE.Route.Wire.walk_encodeFormula
+  ∀ (φ : VE.Formula) (fuel d n : Nat),
+    VE.Surface.formulaDepth φ + 2 ≤ fuel →
+      d + VE.Surface.formulaDepth φ ≤ VE.Limits.maxDepth →
+        n + VE.Bridge.formulaNodes φ ≤ VE.Limits.maxNodes →
+          VE.Route.AstLimit.walk fuel Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+              Except.ok (n + VE.Bridge.formulaNodes φ) ∨
+            VE.Route.AstLimit.walk fuel Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+              Except.error VE.Route.AstLimit.Halt.stop
+  -- uses VE.Bridge.formulaNodes@VE.Bridge VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.stop@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Surface.formulaDepth@VE.RoundTrip
+  -- expr 2663090307
+theorem VE.Route.Wire.walk_encodeTerm
+  ∀ (t : VE.Term) (fuel n : Nat),
+    1 ≤ fuel →
+      n + 1 ≤ VE.Limits.maxNodes →
+        VE.Route.AstLimit.walk fuel Bool.true 1 n (VE.Route.Wire.encodeTerm t) = Except.ok (n + 1) ∨
+          VE.Route.AstLimit.walk fuel Bool.true 1 n (VE.Route.Wire.encodeTerm t) =
+            Except.error VE.Route.AstLimit.Halt.stop
+  -- uses VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.stop@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term@VE.Syntax
+  -- expr 3031950967
+theorem VE.Route.Wire.walk_leafNode
+  ∀ {φ : VE.Formula} {f d n : Nat},
+    φ = VE.Formula.top ∨ φ = VE.Formula.bottom →
+      VE.Route.AstLimit.walk (f + 1) Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+        have __do_jp := fun y =>
+          have __do_jp := fun y => Pure.pure (n + 1);
+          if d > VE.Limits.maxDepth then do
+            let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+            __do_jp y
+          else do
+            let y ← Pure.pure PUnit.unit
+            __do_jp y;
+        if n + 1 > VE.Limits.maxNodes then do
+          let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+          __do_jp y
+        else do
+          let y ← Pure.pure PUnit.unit
+          __do_jp y
+  -- uses VE.Formula.bottom@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 3897603833
+theorem VE.Route.Wire.walk_pairAtom
+  ∀ {φ : VE.Formula} {t u : VE.Term} {f d n : Nat},
+    (∃ p, φ = VE.Formula.binary p t u) ∨ φ = VE.Formula.eq t u →
+      VE.Route.AstLimit.walk (f + 1) Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+        have __do_jp := fun y =>
+          have __do_jp := fun y => do
+            let n ← VE.Route.AstLimit.walk f Bool.true 1 (n + 1) (VE.Route.Wire.encodeTerm t)
+            VE.Route.AstLimit.walk f Bool.true 1 n (VE.Route.Wire.encodeTerm u);
+          if d > VE.Limits.maxDepth then do
+            let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+            __do_jp y
+          else do
+            let y ← Pure.pure PUnit.unit
+            __do_jp y;
+        if n + 1 > VE.Limits.maxNodes then do
+          let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+          __do_jp y
+        else do
+          let y ← Pure.pure PUnit.unit
+          __do_jp y
+  -- uses VE.Formula.binary@VE.Syntax VE.Formula.eq@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term@VE.Syntax
+  -- expr 1846012447
+theorem VE.Route.Wire.walk_unaryAtom
+  ∀ (p : String) (t : VE.Term) (f d n : Nat),
+    VE.Route.AstLimit.walk (f + 1) Bool.false d n (VE.Route.Wire.encodeFormula (VE.Formula.unary p t)) =
+      have __do_jp := fun y =>
+        have __do_jp := fun y => VE.Route.AstLimit.walk f Bool.true 1 (n + 1) (VE.Route.Wire.encodeTerm t);
+        if d > VE.Limits.maxDepth then do
+          let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+          __do_jp y
+        else do
+          let y ← Pure.pure PUnit.unit
+          __do_jp y;
+      if n + 1 > VE.Limits.maxNodes then do
+        let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+        __do_jp y
+      else do
+        let y ← Pure.pure PUnit.unit
+        __do_jp y
+  -- uses VE.Formula.unary@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term@VE.Syntax
+  -- expr 216482870
+theorem VE.Route.Wire.walk_unaryNode
+  ∀ {φ a : VE.Formula} {xs : Array Lean.Json} {f d n : Nat},
+    (φ = a.not ∨ (∃ s, φ = VE.Formula.all s a) ∨ ∃ s, φ = VE.Formula.ex s a) →
+      VE.Route.Wire.encodeFormula a = Lean.Json.arr xs →
+        VE.Route.AstLimit.walk (f + 1) Bool.false d n (VE.Route.Wire.encodeFormula φ) =
+          have __do_jp := fun y =>
+            have __do_jp := fun y => VE.Route.AstLimit.walk f Bool.false (d + 1) (n + 1) (Lean.Json.arr xs);
+            if d > VE.Limits.maxDepth then do
+              let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.depthLimit)
+              __do_jp y
+            else do
+              let y ← Pure.pure PUnit.unit
+              __do_jp y;
+          if n + 1 > VE.Limits.maxNodes then do
+            let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+            __do_jp y
+          else do
+            let y ← Pure.pure PUnit.unit
+            __do_jp y
+  -- uses VE.Formula.all@VE.Syntax VE.Formula.ex@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 1542750563
+theorem VE.Route.Wire.walk_var
+  ∀ (i f n : Nat),
+    VE.Route.AstLimit.walk (f + 1) Bool.true 1 n (VE.Route.Wire.encodeTerm (VE.Term.var i)) =
+      have __do_jp := fun y =>
+        if VE.Route.AstLimit.validIndex (Lean.ToJson.toJson i) = Bool.true then Pure.pure (n + 1)
+        else MonadExcept.throw VE.Route.AstLimit.Halt.stop;
+      if n + 1 > VE.Limits.maxNodes then do
+        let y ← MonadExcept.throw (VE.Route.AstLimit.Halt.limit VE.Route.AstLimit.nodeLimit)
+        __do_jp y
+      else do
+        let y ← Pure.pure PUnit.unit
+        __do_jp y
+  -- uses VE.Limits.maxNodes@VE.Limits VE.Route.AstLimit.Halt.limit@VE.Route.AstLimit VE.Route.AstLimit.Halt.stop@VE.Route.AstLimit VE.Route.AstLimit.Halt@VE.Route.AstLimit VE.Route.AstLimit.nodeLimit@VE.Route.AstLimit VE.Route.AstLimit.validIndex@VE.Route.AstLimit VE.Route.AstLimit.walk@VE.Route.AstLimit VE.Route.Wire.encodeTerm@VE.Route.Wire VE.Term.var@VE.Syntax
+  -- expr 4116054697
 theorem VE.Route.WireSound.Family.Sound.expands_intended
   ∀ {F : VE.Route.WireSound.Family},
     F.Sound →
@@ -68550,6 +68871,189 @@ theorem VE.Time.Wire.evalB_sorted_sound
       r.fst = VE.Order.Formula.eval d.toModel [] f
   -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Time.Wire.sortDomains@VE.Time.Wire VE.Time.Wire.tables@VE.Time.Wire VE.Time.evalB@VE.Time.Budget
   -- expr 2766604691
+theorem VE.Time.Wire.extension_document_sound
+  ∀ (w : VE.Time.Wire.W6Env) (id kind : String) (j answer : Lean.Json),
+    VE.Time.Document.extension w id kind j = Except.ok answer →
+      kind = "document" ∧
+        ∃ document D nodes root res report reportId,
+          j.getObjVal? "document" = Except.ok document ∧
+            VE.Time.Document.decodeDocument w document = Except.ok (D, nodes, root) ∧
+              (res.doc = D ∧
+                  res.nodes = nodes ∧
+                    res.root.name = root ∧
+                      (∃ n, n ∈ nodes ∧ n.name = root ∧ n.adm = res.root.adm ∧ n.label = res.root.label) ∧
+                        (∀ (n : VE.Time.Document.QNode w), n ∈ nodes → VE.Time.Document.NodeAdmitted D n) ∧
+                          (∀ (x : String × VE.Time.Wire.Admission w × String),
+                              x ∈ res.root.assumptions →
+                                ∃ n,
+                                  n ∈ nodes ∧
+                                    n.deduction = Option.none ∧
+                                      (n.name, n.adm, n.label) = x ∧ VE.Time.Document.LeafAdmitted D n) ∧
+                            VE.Time.Document.CitationsClosed D res.root ∧
+                              VE.Time.Document.ChoicesCompatible res.root ∧ res.root.Sound ∧ res.root.SoundOverLeaves) ∧
+                report =
+                    Lean.Json.mkObj
+                      [("root", VE.Time.Document.claimJson res.root.name res.root.adm res.root.label),
+                        ("assumptions",
+                          Lean.Json.arr
+                            (List.map (fun x => VE.Time.Document.claimJson x.fst x.snd.fst x.snd.snd)
+                                res.root.assumptions).toArray)] ∧
+                  VE.CertificateWire.digest
+                        (ToString.toString "ve-report-" ++ ToString.toString (VE.Route.Wire.identityVersion w.profiles) ++
+                          ToString.toString "\n")
+                        (Lean.Json.mkObj
+                          [("environment_id", Lean.Json.str w.environmentId), ("document", document),
+                            ("report", report)]) =
+                      Except.ok reportId ∧
+                    answer =
+                      VE.Time.Wire.ok id
+                        [("admitted", Lean.Json.bool Bool.true), ("assurance", Lean.Json.str "lean-admitted"),
+                          ("report", report), ("report_id", Lean.Json.str reportId),
+                          ("environment_id", Lean.Json.str w.environmentId),
+                          ("kinds",
+                            Lean.Json.arr (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
+  -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire
+  -- expr 945645095
+theorem VE.Time.Wire.quantity_admission_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
+        ∃ id env w quantity a value,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "quantity" = Except.ok quantity ∧
+                  VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                    answer =
+                        VE.Time.Wire.ok id
+                          ([("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+                              ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
+                              ("environment_id", Lean.Json.str w.environmentId),
+                              ("target_environment_id", Lean.Json.str w.targetId)] ++
+                            value) ∧
+                      VE.Time.Admitted w.vocab.env [] a.formula ∧
+                        VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
+                          ((∃ e, j.getObjVal? "model" = Except.error e) ∧ value = [] ∨
+                            ∃ model d b work,
+                              j.getObjVal? "model" = Except.ok model ∧
+                                VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                                  value = [("value", Lean.Json.bool b), ("evaluations", Lean.ToJson.toJson work)] ∧
+                                    b = VE.Order.Formula.eval d.toModel [] a.formula.erase)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.eval@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.SortName@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 424148063
+theorem VE.Time.Wire.quantity_certificate_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "certificate") →
+        ∃ id env w premises conclusion certificate ps c cert valid,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "premises" = Except.ok premises ∧
+                  VE.Time.Wire.admissions w premises = Except.ok ps ∧
+                    j.getObjVal? "conclusion" = Except.ok conclusion ∧
+                      VE.Time.Wire.decodeQuantity w conclusion = Except.ok c ∧
+                        j.getObjVal? "certificate" = Except.ok certificate ∧
+                          VE.Time.Wire.decodeW6Certificate certificate = Except.ok cert ∧
+                            answer =
+                                VE.Time.Wire.ok id
+                                  [("valid", Lean.Json.bool valid),
+                                    ("premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.meaningId) ps)),
+                                    ("conclusion_meaning_id", Lean.Json.str c.meaningId),
+                                    ("core_premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.coreId) ps)),
+                                    ("core_conclusion_meaning_id", Lean.Json.str c.coreId),
+                                    ("environment_id", Lean.Json.str w.environmentId),
+                                    ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                              (∀ (a : VE.Time.Wire.Admission w),
+                                  a ∈ c :: ps → VE.Time.Admitted w.vocab.env [] a.formula) ∧
+                                (valid = Bool.true →
+                                  cert.environmentId = w.environmentId ∧
+                                    cert.premiseIds = List.map (fun x => x.meaningId) ps ∧
+                                      cert.conclusionId = c.meaningId ∧
+                                        VE.Time.TEntails w.vocab.env (List.map (fun x => x.formula) ps) c.formula)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Certificate.conclusionId@VE.Time.Wire VE.Time.Wire.W6Certificate.environmentId@VE.Time.Wire VE.Time.Wire.W6Certificate.premiseIds@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.admissions@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.decodeW6Certificate@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 2396971404
+theorem VE.Time.Wire.quantity_countermodel_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "countermodel") →
+        ∃ id env w premises conclusion model ps c d refutes,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "premises" = Except.ok premises ∧
+                  VE.Time.Wire.admissions w premises = Except.ok ps ∧
+                    j.getObjVal? "conclusion" = Except.ok conclusion ∧
+                      VE.Time.Wire.decodeQuantity w conclusion = Except.ok c ∧
+                        j.getObjVal? "model" = Except.ok model ∧
+                          VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                            answer =
+                                VE.Time.Wire.ok id
+                                  [("refutes", Lean.Json.bool refutes),
+                                    ("premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.meaningId) ps)),
+                                    ("conclusion_meaning_id", Lean.Json.str c.meaningId),
+                                    ("core_premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.coreId) ps)),
+                                    ("core_conclusion_meaning_id", Lean.Json.str c.coreId),
+                                    ("environment_id", Lean.Json.str w.environmentId),
+                                    ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                              (∀ (a : VE.Time.Wire.Admission w),
+                                  a ∈ c :: ps → VE.Time.Admitted w.vocab.env [] a.formula) ∧
+                                refutes =
+                                  (((List.map (fun x => x.formula.erase) ps).all fun f =>
+                                      VE.Order.Formula.eval d.toModel [] f) &&
+                                    !VE.Order.Formula.eval d.toModel [] c.formula.erase)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.admissions@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 1903245322
+theorem VE.Time.Wire.quantity_document_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Time.Wire.runCase j VE.Time.Document.extension = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "document") →
+        ∃ id env w,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                ∃ document D nodes root res report reportId,
+                  j.getObjVal? "document" = Except.ok document ∧
+                    VE.Time.Document.decodeDocument w document = Except.ok (D, nodes, root) ∧
+                      (res.doc = D ∧
+                          res.nodes = nodes ∧
+                            res.root.name = root ∧
+                              (∃ n, n ∈ nodes ∧ n.name = root ∧ n.adm = res.root.adm ∧ n.label = res.root.label) ∧
+                                (∀ (n : VE.Time.Document.QNode w), n ∈ nodes → VE.Time.Document.NodeAdmitted D n) ∧
+                                  (∀ (x : String × VE.Time.Wire.Admission w × String),
+                                      x ∈ res.root.assumptions →
+                                        ∃ n,
+                                          n ∈ nodes ∧
+                                            n.deduction = Option.none ∧
+                                              (n.name, n.adm, n.label) = x ∧ VE.Time.Document.LeafAdmitted D n) ∧
+                                    VE.Time.Document.CitationsClosed D res.root ∧
+                                      VE.Time.Document.ChoicesCompatible res.root ∧
+                                        res.root.Sound ∧ res.root.SoundOverLeaves) ∧
+                        report =
+                            Lean.Json.mkObj
+                              [("root", VE.Time.Document.claimJson res.root.name res.root.adm res.root.label),
+                                ("assumptions",
+                                  Lean.Json.arr
+                                    (List.map (fun x => VE.Time.Document.claimJson x.fst x.snd.fst x.snd.snd)
+                                        res.root.assumptions).toArray)] ∧
+                          VE.CertificateWire.digest
+                                (ToString.toString "ve-report-" ++
+                                    ToString.toString (VE.Route.Wire.identityVersion w.profiles) ++
+                                  ToString.toString "\n")
+                                (Lean.Json.mkObj
+                                  [("environment_id", Lean.Json.str w.environmentId), ("document", document),
+                                    ("report", report)]) =
+                              Except.ok reportId ∧
+                            answer =
+                              VE.Time.Wire.ok id
+                                [("admitted", Lean.Json.bool Bool.true), ("assurance", Lean.Json.str "lean-admitted"),
+                                  ("report", report), ("report_id", Lean.Json.str reportId),
+                                  ("environment_id", Lean.Json.str w.environmentId),
+                                  ("kinds",
+                                    Lean.Json.arr
+                                      (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
+  -- uses VE.Bridge.stringField@VE.Bridge VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 2107039242
 theorem VE.Time.Wire.refutesB_sorted_sound
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (names : List String) (limit : Nat) (ps : List VE.Order.Formula)
     (c : VE.Order.Formula) (w : Nat) (b : Bool),
@@ -68557,6 +69061,11 @@ theorem VE.Time.Wire.refutesB_sorted_sound
       b = VE.Order.countermodelCheck d.toModel ps c
   -- uses VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.countermodelCheck@VE.Order.Consequence VE.Time.Wire.sortDomains@VE.Time.Wire VE.Time.Wire.tables@VE.Time.Wire VE.Time.refutesB@VE.Time.Budget
   -- expr 3071831802
+theorem VE.Time.Wire.runCaseReported_ok
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer → VE.Time.Wire.runCaseReported j more = answer
+  -- uses VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire VE.Time.Wire.runCaseReported@VE.Time.Wire
+  -- expr 4206319841
 theorem VE.Time.Wire.sortDomains_perm
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : String),
     ((VE.Time.Wire.sortDomains d).toModel.domains s).Perm (d.toModel.domains s)
