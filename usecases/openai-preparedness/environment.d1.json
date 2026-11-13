@@ -28,6 +28,9 @@
       },
       "evaluation": {
         "description": "a capability evaluation (footnote 5)"
+      },
+      "framework": {
+        "description": "the Preparedness Framework (version 2, last updated 15 April 2025), the one member of this sort: Appendix B's yearly review is of it"
       }
     },
     "predicates": {
@@ -192,11 +195,11 @@
         ],
         "description": "{0} is justified by OpenAI's forecasts and threat models as potentially posing a severe risk during development and prior to external deployment (3.2)"
       },
-      "distilled_from_below_high": {
+      "distilled_finetuned_or_quantized_from_below_high": {
         "arguments": [
           "situation"
         ],
-        "description": "{0} derives from a model determined below High"
+        "description": "{0} is a model that OpenAI distills, fine-tunes, or quantizes from a model that was previously determined not to cross a High capability threshold (footnote 6)"
       },
       "significant_increase": {
         "arguments": [
@@ -209,6 +212,14 @@
           "situation"
         ],
         "description": "it is rigorously confirmed at {0} that another frontier AI developer developed or released a system with High or Critical capability in a Tracked Category without comparable safeguards"
+      },
+      "adjustment_area": {
+        "arguments": [
+          "situation",
+          "category"
+        ],
+        "description": "4.3's adjustment at {0} is to the level of safeguards OpenAI requires in capability area {1} (“that capability area”): the Tracked Category in which the scenario rigorously confirmed at {0} occurred",
+        "verbalisation": "{0} adjusts {1}"
       },
       "adjustment_made": {
         "arguments": [
@@ -336,12 +347,6 @@
         ],
         "description": "{0} is a reported or otherwise identified potential instance of noncompliance with the Framework (5.1)"
       },
-      "conservative_upper_bound_used": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "a conservative upper bound of the model's non-sandbagged evaluation results is used at {0} (Table 2)"
-      },
       "persuasion_risk": {
         "arguments": [
           "situation"
@@ -440,11 +445,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "5.1: internal transparency",
+        "description": "5.1: “Employees may also request and receive a summary of the testing results and SAG recommendation on capability levels and safeguards (subject to certain limits for highly sensitive information).”: the summary is of the testing results and of the SAG recommendation on capability levels and safeguards; the limits are the rule's carve-out",
         "regulated": {
           "role": "permission",
           "default": "allow",
-          "act": "{0} have an employee request as well as receive a summary of testing results"
+          "act": "{0} have employees request as well as receive the testing as well as SAG summary"
         }
       },
       "decision_reversal": {
@@ -467,6 +472,17 @@
           "role": "permission",
           "default": "allow",
           "act": "{0} have a revised course of action mandated by the Board"
+        }
+      },
+      "annual_review": {
+        "arguments": [
+          "framework"
+        ],
+        "description": "Appendix B: “We will review and potentially update the Preparedness Framework for continued sufficiency at least once a year.”: {0} is reviewed at least once a year, as to its continued sufficiency; the update is optional (“potentially”) and no part of the duty",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be reviewed at least once a year as to its continued sufficiency"
         }
       },
       "adjustment_permission": {
@@ -539,11 +555,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.4 and Appendix C: sufficient safeguards (safety and security controls) during development",
+        "description": "4.4: models that have reached or are forecasted to reach Critical capability in a Tracked Category require additional safeguards (safety and security controls) during development, regardless of whether or when they are externally deployed; 4.2: safeguards that sufficiently minimize associated risks during development; Appendix C: sufficient safeguards during development",
         "regulated": {
           "role": "obligation",
           "default": "deny",
           "act": "{0} have sufficient safety as well as security controls during development"
+        }
+      },
+      "safeguards_before_internal_use": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.4, its heading “Increasing safeguards before internal use and further development” read under RS18 = inuse: models that have reached or are forecasted to reach Critical capability in a Tracked Category require additional safeguards (safety and security controls) before internal use",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have additional safety as well as security controls before internal use"
         }
       },
       "development_security_controls": {
@@ -788,17 +815,6 @@
           "act": "{0} have Leadership informed by SAG"
         }
       },
-      "annual_review": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "Appendix B: at least once a year",
-        "regulated": {
-          "role": "obligation",
-          "default": "deny",
-          "act": "{0} have an annual review"
-        }
-      },
       "misalignment_risk_minimized": {
         "arguments": [
           "situation"
@@ -898,15 +914,15 @@
           "act": "{0} have a misalignment safeguards report"
         }
       },
-      "sandbagging_bound": {
+      "sandbagging_response": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Sandbagging response; the alternative, a conservative upper bound, is the rule's carve-out",
+        "description": "Table 2, Sandbagging: “Adopt elicitation approach that overcomes sandbagging, or use a conservative upper bound of the model’s non-sandbagged evaluation results”: the one duty is met by either alternative, an elicitation approach that overcomes sandbagging or a conservative upper bound of the model's non-sandbagged evaluation results",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} adopt an elicitation approach that overcomes sandbagging"
+          "act": "{0} have sandbagging handled"
         }
       },
       "ara_tracking": {
@@ -924,11 +940,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Undermining Safeguards: robust to the discovered capability and/or propensity",
+        "description": "Table 2, Undermining Safeguards: “If a model has High or Critical capabilities in any of the Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or propensity”: what was discovered is the capability, the propensity, or both",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a safeguards case robust to discovered capability as well as propensity"
+          "act": "{0} have a safeguards case robust to what was discovered"
         }
       },
       "nuclear_safeguards": {
