@@ -702,6 +702,7 @@ module VE.Route.Budget
 module VE.Route.Checker
 module VE.Route.Checks
 module VE.Route.Closure
+module VE.Route.CodecRoundTrip
 module VE.Route.Decode
 module VE.Route.Examples
 module VE.Route.Flags
