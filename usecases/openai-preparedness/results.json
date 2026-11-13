@@ -24273,6 +24273,9 @@
      [
       "f16-chair-strict",
       "f16-chair-default"
+     ],
+     [
+      "f16-fast-track"
      ]
     ],
     "F17": [
@@ -24383,6 +24386,7 @@
     "f14-investigate",
     "f16-board-mandate",
     "f16-board-reverse",
+    "f16-fast-track",
     "f16-informed",
     "f16-sag-recommend",
     "f16-ssc-visibility",
@@ -24804,6 +24808,42 @@
     ],
     "f16-chair-default": "a scored case",
     "f16-chair-strict": "a scored case",
+    "f16-fast-track": [
+     [
+      "rapid_risk",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f16-informed": [
      [
       "leadership_decision",
@@ -25765,7 +25805,7 @@
    "choices": 1043,
    "documents_built": 352,
    "prover_calls": 13,
-   "rules": 89,
+   "rules": 90,
    "units": 389,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
@@ -25782,14 +25822,14 @@
    "bytes_by_kind": {
     "asserted": 48,
     "exposition": 5327,
-    "norm": 9195,
-    "unformalised": 52848
+    "norm": 9422,
+    "unformalised": 52621
    },
    "bytes_by_status": {
     "CHECKED": 170,
     "LABELLED": 5327,
-    "OPEN": 9073,
-    "UNFORMALISED": 52848
+    "OPEN": 9300,
+    "UNFORMALISED": 52621
    },
    "residual": {
     "assumptions": 0,
@@ -25812,7 +25852,7 @@
    }
   },
   "M5": {
-   "regulated_predicates": 60,
+   "regulated_predicates": 61,
    "violations": []
   },
   "M6": {
