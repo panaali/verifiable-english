@@ -2552,7 +2552,8 @@
       "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path",
       "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
       "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
-      "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling"
+      "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling",
+      "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling"
     }
   },
   "plan_operations": {
@@ -3169,6 +3170,26 @@
               "lean/VE/Service/Protocol.lean"
             ],
             "note": "lean-first 15b and 18: the reported value, count, trace and ResourceLimit of every evaluation, through the service's metered mode (ve.evaluate:_evaluate_lean checks the evaluation object's members and rebuilds the trace from its preorder rows)"
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "evaluate"
+            ],
+            "response": {
+              "values": "array<bool>"
+            },
+            "counts": {
+              "values": "case.ast"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
+              "lean/VE/Route/Run.lean",
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
           }
         ],
         "planned_modes": [],
@@ -3304,6 +3325,22 @@
             },
             "dispatch": [
               "lean/VE/Order/Wire.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "countermodel"
+            ],
+            "response": {
+              "refutes": "bool"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
             ]
           }
         ],
@@ -3522,6 +3559,26 @@
             "dispatch": [
               "lean/VE/Order/Wire.lean"
             ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "background": "nat"
+            },
+            "uncounted": {
+              "background": "the background the environment generates; the caller compares it with Python's"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
+              "lean/VE/Route/Wire.lean",
+              "lean/VE/Core/Wire.lean"
+            ]
           }
         ],
         "planned_modes": [],
@@ -3654,6 +3711,48 @@
             "dispatch": [
               "lean/VE/Route/Run.lean"
             ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "background"
+            ],
+            "response": {
+              "background": "array<json>",
+              "generators": "array<string>",
+              "premises": "array<json>"
+            },
+            "counts": {
+              "background": "row.premises",
+              "generators": "row.premises"
+            },
+            "uncounted": {
+              "premises": "the background the environment generates"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
+              "lean/VE/Route/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "dependency-order"
+            ],
+            "response": {
+              "order": "array<string>"
+            },
+            "counts": {
+              "order": "case.nodes"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
+              "lean/VE/Route/Run.lean"
+            ]
           }
         ],
         "planned_modes": [],
@@ -3748,6 +3847,25 @@
             "dispatch": [
               "lean/VE/Norms/Run.lean"
             ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norms-elaborate"
+            ],
+            "response": {
+              "premises": "array<object>",
+              "conflict_targets": "array<object>"
+            },
+            "uncounted": {
+              "premises": "one per norm symbol the environment registers",
+              "conflict_targets": "the conflict targets the environment registers"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean"
+            ]
           }
         ],
         "planned_modes": [],
@@ -3835,6 +3953,24 @@
               "targets": "the conflict targets the environment registers"
             },
             "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norms-conflict"
+            ],
+            "response": {
+              "verdict": "string",
+              "targets": "array<string>"
+            },
+            "uncounted": {
+              "targets": "the conflict targets the environment registers"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
               "lean/VE/Norms/Run.lean"
             ]
           }
@@ -3929,6 +4065,24 @@
               "layers": "the elaboration layers of the environment's norms"
             },
             "dispatch": [
+              "lean/VE/Norms/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norms-certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "layers": "nat"
+            },
+            "uncounted": {
+              "layers": "the elaboration layers of the environment's norms"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
               "lean/VE/Norms/Run.lean"
             ]
           }
@@ -4211,6 +4365,21 @@
               "label": "string"
             },
             "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "label"
+            ],
+            "response": {
+              "label": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
               "lean/VE/Route/Run.lean"
             ]
           }
@@ -4549,6 +4718,26 @@
               "checked": "case.lemmas"
             },
             "dispatch": [
+              "lean/VE/Route/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "bundle"
+            ],
+            "response": {
+              "lemmas": "array<string>",
+              "checked": "nat"
+            },
+            "counts": {
+              "lemmas": "case.lemmas",
+              "checked": "case.lemmas"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Norms/Run.lean",
               "lean/VE/Route/Run.lean"
             ]
           }
