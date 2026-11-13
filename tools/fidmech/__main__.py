@@ -39,6 +39,9 @@ def textcheck(args) -> int:
           f"{result['quotes']['note']} note quotes, {result['quotes']['empty']} empty (info, outside the headline)")
     print("L1 hits: " + ", ".join(f"{c} {n}" for c, n in result["counts"].items()))
     for lever, row in result["levers"].items():
+        if "error" in row:
+            print(f"  {lever} off: not segmentable ({row['error']})")
+            continue
         print(f"  {lever} off: " + ", ".join(f"{c} {n}" for c, n in row["counts"].items())
               + f" (the lever clears {len(row['cleared'])} hits and adds {len(row['added'])})")
     print(f"unpaired digit runs left as text: {result['unpaired_digit_runs']}")
@@ -60,8 +63,10 @@ def boundaries(args) -> int:
     source, b = S.Source(data), S.load_boundaries(bpath)
     pairs, unresolved = S.propose(source, b.furniture)
     hand = [f for f in b.footnotes if f["by"] == "hand"]
-    decided = {f["body"][0] for f in hand} | {f["marker_at"] for f in hand} | {u["at"] for u in b.unpaired}
+    rejected = {u["at"] for u in b.unpaired}
+    decided = {f["body"][0] for f in hand} | {f["marker_at"] for f in hand} | rejected
     open_ = [u for u in unresolved if u["at"] not in decided]
+    pairs = [f for f in pairs if f["body"][0] not in rejected]  # a proposal the builder rejected, with a reason
     frozen = [f for f in b.footnotes if f["by"] == "generator"]
     print(json.dumps({"generator": pairs, "unresolved": unresolved, "undecided": open_}, indent=1,
                      ensure_ascii=False))

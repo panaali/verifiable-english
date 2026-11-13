@@ -147,9 +147,11 @@ class Boundaries:
     extra: tuple = ()
     suppress: tuple = ()
 
-    def without(self, lever: str) -> "Boundaries":
+    def without(self, lever: str, source: "Source | None" = None) -> "Boundaries":
+        """The boundaries with one lever off; hand-footnotes off is the generator's raw proposal for the source:
+        no hand pair and no rejected proposal."""
         if lever == "hand-footnotes":
-            return replace(self, footnotes=tuple(f for f in self.footnotes if f["by"] != "hand"))
+            return replace(self, footnotes=tuple(propose(source, self.furniture)[0]), unpaired=())
         if lever not in LEVERS:
             raise ValueError(f"unknown lever {lever!r}")
         return replace(self, **{lever: ()})
@@ -254,7 +256,10 @@ def validate(source: Source, b: Boundaries) -> list[tuple[int, int, int, int]]:
             raise BoundariesError(f"footnote {n}: a marker with two bodies, or a body overlapping another or furniture")
         markers.add(m)
         bodies.append((s, e))
+    frozen = markers | {source.char(f["body"][0]) for f in b.footnotes}
     for entry in b.unpaired:
+        if source.char(_int(entry["at"], "unpaired at")) in frozen:
+            raise BoundariesError(f"unpaired entry at {entry['at']} is a frozen footnote marker or body")
         if not _standalone(source, source.char(_int(entry["at"], "unpaired at")), _int(entry["n"], "unpaired n")):
             raise BoundariesError(f"unpaired entry at {entry['at']} is not the digit run {entry['n']}")
     for key in ("extra", "suppress"):
