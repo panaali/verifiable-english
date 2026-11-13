@@ -239,8 +239,9 @@ ACTS = {
                            "classified information handling; the further actions remain open"),
     "pandemic_policy_contribution": ("{0} contribute towards improved public policy as well as pandemic preparedness",
                                      "Table 1 BIO-C: policy contribution"),
-    "cyberdefense_contribution": ("{0} contribute towards improved cyberdefense policies as well as tools",
-                                  "Table 1 CYB-H: cyberdefense contribution"),
+    "cyberdefense_contribution": ("{0} contribute to improved cyberdefense policies as well as cyberdefense tools",
+                                  "Table 1 CYB-H: \u201cContribute towards improved cyberdefense policies and tools "
+                                  "for cyberdefense\u201d"),
     "safeguards_recommended": ("{0} have the SAG recommend implementing as well as assessing the safeguards",
                                "3.3: the first next step the SAG's decision can include"),
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",

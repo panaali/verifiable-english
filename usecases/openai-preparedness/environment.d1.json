@@ -973,11 +973,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 1 CYB-H: cyberdefense contribution",
+        "description": "Table 1 CYB-H: “Contribute towards improved cyberdefense policies and tools for cyberdefense”",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} contribute towards improved cyberdefense policies as well as tools"
+          "act": "{0} contribute to improved cyberdefense policies as well as cyberdefense tools"
         }
       },
       "safeguards_recommended": {
