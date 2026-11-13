@@ -1,0 +1,1028 @@
+{
+ "base": "9be13b93de93a3cbc8a92218be3f9ab4bc3005a0",
+ "head_results": "usecases/anthropic-rsp/results.json",
+ "command": "git show <base>:usecases/anthropic-rsp/results.json against the branch's results.json (run.py)",
+ "items": 126,
+ "agree_old": 110,
+ "agree_new": 110,
+ "moved": [],
+ "rows": [
+  {
+   "id": "A-T0/PROT1",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/PROT2",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/PROT3",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/PROT4",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T0/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/PROT1",
+   "key": "SOME(cond | uncond)",
+   "old": "SOME(RS1=cond | RS1=uncond)",
+   "new": "SOME(RS1=cond | RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/PROT2",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/PROT3",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/PROT4",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/ARG1",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T1/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/PROT1",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/PROT2",
+   "key": "SOME(cond | uncond)",
+   "old": "SOME(RS1=cond | RS1=uncond)",
+   "new": "SOME(RS1=cond | RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/PROT3",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/PROT4",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/ARG2",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T2/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/PROT1",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/PROT2",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/PROT3",
+   "key": "SOME(cond | uncond)",
+   "old": "SOME(RS1=cond | RS1=uncond)",
+   "new": "SOME(RS1=cond | RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/PROT4",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/ARG3",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T3/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/PROT1",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/PROT2",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/PROT3",
+   "key": "SOME(uncond)",
+   "old": "SOME(RS1=uncond)",
+   "new": "SOME(RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/PROT4",
+   "key": "SOME(cond | uncond)",
+   "old": "SOME(RS1=cond | RS1=uncond)",
+   "new": "SOME(RS1=cond | RS1=uncond)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "A-T4/ARG4",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-PUB/INSCOPE",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-PUB/ASSESS",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-INT/INSCOPE",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-INT/ASSESS",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-INTD/INSCOPE",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-INTD/ASSESS",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-AUT/INSCOPE",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-AUT/ASSESS",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-VOL/INSCOPE",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-VOL/ASSESS",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-TRN/INSCOPE",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "B-TRN/ASSESS",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K1",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K2",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K4",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K5",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K6",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K7",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K8",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K9",
+   "key": "SOME(cond | uncond)",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "K10",
+   "key": "SOME(uncond)",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "K11",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K12a",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K12b",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K13",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K14",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K15a",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K15b",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K16",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K17",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K18",
+   "key": "ALL",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "disagree",
+   "new_status": "disagree"
+  },
+  {
+   "id": "K19a",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K19b",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K20",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K21a",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K21b",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K22a",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "K22b",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T1",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T2a",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T2b",
+   "key": "SOME(iffo)",
+   "old": "SOME(RS3o=iff&RS3i=suff | RS3o=iff&RS3i=iff)",
+   "new": "SOME(RS3o=iff&RS3i=suff | RS3o=iff&RS3i=iff)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T3",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T4a",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T4b",
+   "key": "SOME(iffo & iffi)",
+   "old": "SOME(RS3o=iff&RS3i=iff)",
+   "new": "SOME(RS3o=iff&RS3i=iff)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T5",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T6",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "T7",
+   "key": "SOME(result)",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "disagree",
+   "new_status": "disagree"
+  },
+  {
+   "id": "C1",
+   "key": "SOME(rel)",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "disagree",
+   "new_status": "disagree"
+  },
+  {
+   "id": "C2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "C3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "C4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "C5",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "C6",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "C7",
+   "key": "SOME(rel)",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "disagree",
+   "new_status": "disagree"
+  },
+  {
+   "id": "C-doc",
+   "key": "SOME(rel)",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "disagree",
+   "new_status": "disagree"
+  },
+  {
+   "id": "G1",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "G2",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "G3",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "G4",
+   "key": "SOME(trigger)",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "G5",
+   "key": "ALL",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "G6",
+   "key": "ALL",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "G7",
+   "key": {
+    "COVERED:QUARTERLY_UPDATE": "ALL",
+    "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+   },
+   "old": {
+    "COVERED:QUARTERLY_UPDATE": "ALL",
+    "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+   },
+   "new": {
+    "COVERED:QUARTERLY_UPDATE": "ALL",
+    "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+   },
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "G8",
+   "key": "SOME(intent)",
+   "old": "SOME(RS12strive=intent)",
+   "new": "SOME(RS12strive=intent)",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "N1",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "N2",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "N3",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "N4",
+   "key": "NONE",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "N5",
+   "key": "ALL",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "S1-T1",
+   "key": "catastrophic",
+   "old": "catastrophic",
+   "new": "catastrophic",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S1-T2",
+   "key": "catastrophic",
+   "old": "catastrophic",
+   "new": "catastrophic",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S1-T3",
+   "key": "catastrophic",
+   "old": "catastrophic",
+   "new": "catastrophic",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S1-T4",
+   "key": "none",
+   "old": "none",
+   "new": "none",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S2",
+   "key": "NONE",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "S3",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "S5",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D1",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D2",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D3a",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D3b",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D4",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D5",
+   "key": "ALL",
+   "old": "ALL",
+   "new": "ALL",
+   "old_status": "agree",
+   "new_status": "agree"
+  },
+  {
+   "id": "D6a",
+   "key": "NONE",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "D6b",
+   "key": "SOME(bound)",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  },
+  {
+   "id": "D7",
+   "key": "NONE",
+   "old": "UNDECIDED",
+   "new": "UNDECIDED",
+   "old_status": "UNDECIDED-faithful",
+   "new_status": "UNDECIDED-faithful"
+  }
+ ]
+}
