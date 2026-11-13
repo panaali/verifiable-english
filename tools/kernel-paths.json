@@ -1,5 +1,5 @@
 {
- "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject \u2026 = .ok answer` with the answer used, or `subject \u2026 = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject \u2026 = .ok answer` with the answer used, or `subject \u2026 = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>). kinds (kernel paths): every case kind the path's runners compare with the case's `kind`, mapped to {\"theorem\": a listed theorem whose statement fixes that kind} or {\"nonverdict\": why the answer carries no verdict}. untied_kinds: verdict-bearing kinds of a kernel path that no theorem in lean/statements.txt states (with `family`, a family the kind's theorem does not cover; `near`, theorems about a part of the answer's computation, not about the answer).",
  "verdict_tokens": [
   "CHECKED",
   "CONFLICT-FREE",
@@ -120,7 +120,27 @@
      ],
      "why": "answers `admitted: true` on the fol family; no listed theorem states what a route admission answer means"
     }
-   ]
+   ],
+   "kinds": {
+    "background": {
+     "nonverdict": "a background dump: the encoded background premises of the case's vocabulary, no verdict field"
+    },
+    "dependency-order": {
+     "nonverdict": "a listing: the definitions' dependency order (`order`), no verdict field"
+    },
+    "label": {
+     "nonverdict": "the label grammar alone: the canonical rendering of the case's label (`label`), no verdict field"
+    },
+    "evaluate": {
+     "theorem": "VE.Route.RunSound.route_fol_evaluate"
+    },
+    "countermodel": {
+     "theorem": "VE.Route.RunSound.route_fol_countermodel"
+    },
+    "certificate": {
+     "theorem": "VE.Route.RunSound.route_fol_certificate"
+    }
+   }
   },
   {
    "name": "norms",
@@ -194,7 +214,24 @@
       "VE.Norms.FlaggedSpec.runCase_conflictIn"
      ]
     }
-   ]
+   ],
+   "kinds": {
+    "admission": {
+     "theorem": "VE.Norms.Run.norms_wire_acceptance"
+    },
+    "norms-certificate": {
+     "theorem": "VE.Norms.RunSound.norms_wire_certificate_acceptance"
+    },
+    "norms-conflict": {
+     "theorem": "VE.Norms.FlaggedSpec.norms_wire_conflict_free"
+    },
+    "norms-elaborate": {
+     "nonverdict": "an elaboration: the regenerated definitions, background, premises, order and wordings; `fragment` is a syntactic class of the norms, no verdict"
+    },
+    "background": {
+     "nonverdict": "a background dump (Norms.Plain.run): the encoded background premises, no verdict field"
+    }
+   }
   },
   {
    "name": "softNorms",
@@ -240,7 +277,15 @@
      ],
      "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, and soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3)"
     }
-   ]
+   ],
+   "kinds": {
+    "admission": {
+     "theorem": "VE.SoftNorms.Run.soft_wire_acceptance"
+    },
+    "soft-elaborate": {
+     "theorem": "VE.SoftNorms.Run.soft_wire_elaborate"
+    }
+   }
   },
   {
    "name": "metered",
@@ -280,7 +325,12 @@
      ],
      "why": "encodes the non-vacuity answer; same kind, no theorem"
     }
-   ]
+   ],
+   "kinds": {
+    "evaluate-budgeted": {
+     "theorem": "VE.Route.MeteredRun.runWith_sound"
+    }
+   }
   },
   {
    "name": "quantity",
@@ -527,6 +577,91 @@
    ],
    "delegates": [],
    "nonverdict": []
+  }
+ ],
+ "untied_kinds": [
+  {
+   "path": "route",
+   "kind": "admission",
+   "why": "the answer carries `admitted: true` and a report (VE.Route.Run.runAdmit); no theorem in lean/statements.txt states the answer of a subject for this kind"
+  },
+  {
+   "path": "route",
+   "kind": "bundle",
+   "why": "the answer carries `checked`, the count of lemmas replayed (VE.Definitions.Bundle.runBundle); no theorem in lean/statements.txt states the answer of a subject for this kind"
+  },
+  {
+   "path": "route",
+   "kind": "certificate",
+   "family": "closureNary",
+   "near": [
+    "VE.Core.Wire.run_certificate_acceptance"
+   ],
+   "why": "the closureNary family's answer (VE.Core.Wire.run, VE.Core.Layers.run); the listed theorems fix the fol, closure and order families only, and no theorem in lean/statements.txt states a subject's certificate answer for this family"
+  },
+  {
+   "path": "route",
+   "kind": "countermodel",
+   "family": "closureNary",
+   "why": "the closureNary family's answer (VE.Core.Wire.run, VE.Core.Layers.run); the listed theorems fix the fol, closure and order families only, and no theorem in lean/statements.txt states a subject's countermodel answer for this family"
+  },
+  {
+   "path": "route",
+   "kind": "evaluate",
+   "family": "closureNary",
+   "why": "the closureNary family's answer (VE.Core.Wire.run, VE.Core.Layers.run); the listed theorems fix the fol, closure and order families only, and no theorem in lean/statements.txt states a subject's evaluate answer for this family"
+  },
+  {
+   "path": "norms",
+   "kind": "certificate",
+   "why": "the plain certificate answer on a norms or layered environment (VE.Norms.Plain.run, listed uncovered) carries a verdict field; no theorem in lean/statements.txt states it"
+  },
+  {
+   "path": "norms",
+   "kind": "countermodel",
+   "why": "the plain countermodel answer on a norms or layered environment (VE.Norms.Plain.run, listed uncovered) carries a verdict field; no theorem in lean/statements.txt states it"
+  },
+  {
+   "path": "norms",
+   "kind": "evaluate",
+   "why": "the plain evaluate answer on a norms or layered environment (VE.Norms.Plain.run, listed uncovered) carries a verdict field; no theorem in lean/statements.txt states it"
+  },
+  {
+   "path": "softNorms",
+   "kind": "soft-rule",
+   "why": "the answer carries `accepted: true`, that the norm decodes over the environment (a well-formedness admission); no theorem in lean/statements.txt states it"
+  },
+  {
+   "path": "softNorms",
+   "kind": "soft-rules",
+   "why": "each row's `status` says whether its norm decodes over the environment (a well-formedness admission); no theorem in lean/statements.txt states it"
+  },
+  {
+   "path": "softNorms",
+   "kind": "soft-pairs",
+   "why": "each pair's coherence `status`, `discharged` and `weighing_points` (VE.SoftNorms.Run.pairsResult); no theorem in lean/statements.txt states them"
+  },
+  {
+   "path": "softNorms",
+   "kind": "soft-certificate",
+   "near": [
+    "VE.SoftNorms.Wire.soft_wire_acceptance"
+   ],
+   "why": "the answer carries `valid` and `conditional_on`; the replay's theorem is about VE.SoftNorms.Wire.replaySoftEntailment, not about a subject's answer"
+  },
+  {
+   "path": "softNorms",
+   "kind": "soft-conflict",
+   "near": [
+    "VE.SoftNorms.Wire.soft_wire_conflict_sound",
+    "VE.SoftNorms.Wire.soft_wire_conflict_witness_sound"
+   ],
+   "why": "the answer carries `verdict` (CONFLICT, CONFLICT-FREE, UNKNOWN) and `status_text`; the replays' theorems are about VE.SoftNorms.Wire.replaySoftConflict and replaySoftWitness, not about a subject's answer"
+  },
+  {
+   "path": "metered",
+   "kind": "non-vacuity",
+   "why": "the answer carries `suitable` and `exhausted` (VE.Route.MeteredRun.nonVacuityResult, listed uncovered); no theorem in lean/statements.txt states it"
   }
  ]
 }

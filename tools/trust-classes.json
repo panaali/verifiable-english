@@ -21978,6 +21978,24 @@
         "VE.Service.EventsDocumentExamples.viewOf",
         "VE.Service.EventsDocumentExamples.datedView"
       ]
+    },
+    "VE/Kernel/Carry.lean": {
+      "K": [
+        "VE.Kernel.Path",
+        "VE.Kernel.Path.Ran",
+        "VE.Kernel.Path.row",
+        "VE.Kernel.Row",
+        "VE.Kernel.carry",
+        "VE.Kernel.shell"
+      ]
+    },
+    "VE/Kernel/CarryChecks.lean": {
+      "T": [
+        "VE.Kernel.CarryChecks.cases",
+        "VE.Kernel.CarryChecks.text",
+        "VE.Kernel.CarryChecks.toy",
+        "VE.Kernel.CarryChecks.toyRun"
+      ]
     }
   }
 }

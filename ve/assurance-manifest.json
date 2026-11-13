@@ -2422,7 +2422,6 @@
       "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
       "lean/VE/Route/MeteredWire.lean": "statements about MeteredRun.runWith and runCase evaluate-budgeted answers (Wire.ok under the case's id with an evaluation object of Metered.resultFields and an open explanation; getObjVal? of the case's environment and model, and the family decoders as the runner calls them); no runtime JSON handling",
       "lean/VE/SoftNorms/ElaborateSound.lean": "statements about SoftNorms.Run.runCase soft-elaborate answers (getObjVal? of the id, status, background and premises fields, and lookups through Json.mkObj); no runtime JSON handling",
-      "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling",
       "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
@@ -2551,7 +2550,10 @@
       "lean/ResponseShape/Encoders/EnglishStatement.lean": "theorems that the english.statement mode's rows fit their response shape (statementCaseReported_fits); JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Readings/SoftSupRunExamples.lean": "fixtures: #guards that admit NSD4a, NSDq and NSDbig n from JSON and run the soft runners on them (W-13, W-14, D14); no runner, service mode or record reads it (rd-9 sc-11c)",
       "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path",
-      "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling"
+      "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
+      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
+      "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling",
+      "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling"
     }
   },
   "plan_operations": {
