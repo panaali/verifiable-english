@@ -408,13 +408,91 @@ def test_status_tuple_schema_binds_request_without_service():
         check_row(MODE, {**row, "tuple": ["ghost"]}, case, 0)
 
 
-def test_the_manifest_lists_every_kind_the_mode_answers():
-    """The kinds the manifest binds for ve_service mode norm-defaults are the kinds of the mode's own rows: the
-    `kind` table of its response schema (rendered from `ResponseShape/Schemas/NormDefaults.lean`). A case off the
-    norm-defaults path is the norms runner's, under the norms mode's own schema."""
+SCHEMAS = ROOT / "ve/backends/lean_service_schema"
+
+
+def _answered_kinds(schema: str) -> dict[str, set[str]]:
+    """Every case kind the rendered row of `schema` selects an answer by, by the schema whose `kind` table names it:
+    the `x-select` conditions, read through every reference the answers make, so through each row fallback
+    (`norm-defaults.json` hands every case off its path to `norms.json#/row`, which hands its own to
+    `route.json#/row`). A case without a kind (an evaluation, `common.json#/$defs/no_kind`) names no kind."""
+    files: dict[str, dict] = {}
+    by_table: dict[str, set[str]] = {}
+    seen: set[tuple[str, str]] = set()
+
+    def resolve(name: str, pointer: str):
+        node = files.setdefault(name, json.loads((SCHEMAS / name).read_text()))
+        for part in filter(None, pointer.split("/")):
+            node = node[part.replace("~1", "/").replace("~0", "~")]
+        return node
+
+    def walk(node, name: str, condition: bool) -> None:
+        if isinstance(node, list):
+            for item in node:
+                walk(item, name, condition)
+        elif isinstance(node, dict):
+            if type(node.get("$ref")) is str:
+                target, _, pointer = node["$ref"].partition("#")
+                target = target or name
+                if condition:
+                    if pointer.startswith("/$defs/kind/"):
+                        by_table.setdefault(target, set()).add(pointer.removeprefix("/$defs/kind/"))
+                elif (target, pointer) not in seen:
+                    seen.add((target, pointer))
+                    walk(resolve(target, pointer), target, False)
+            for key, value in node.items():
+                if key == "x-select":
+                    for entry in value:
+                        walk(entry["when"], name, True)
+                        walk(entry["then"], name, False)
+                elif key != "$ref":
+                    walk(value, name, condition)
+
+    walk({"$ref": f"{schema}#/row"}, schema, False)
+    return by_table
+
+
+def _bound_kinds(mode: str) -> list[str]:
+    """The kinds the assurance manifest binds for `ve_service` mode `mode`, one entry per binding kind."""
     manifest = json.loads((ROOT / "ve/assurance-manifest.json").read_text())
-    listed = [kind for op in manifest["operations"] for b in (op["lean"] or {}).get("bindings", ())
-              if (b["executable"], b["mode"]) == ("ve_service", MODE) for kind in b["kinds"]]
-    schema = json.loads((ROOT / "ve/backends/lean_service_schema/norm-defaults.json").read_text())
-    answered = set(schema["$defs"]["kind"]) - {"$comment"}
-    assert len(listed) == len(set(listed)) and set(listed) == answered, set(listed) ^ answered
+    return [kind for op in manifest["operations"] for b in (op["lean"] or {}).get("bindings", ())
+            if (b["executable"], b["mode"]) == ("ve_service", mode) for kind in b["kinds"]]
+
+
+def test_the_manifest_lists_every_kind_the_mode_answers():
+    """The kinds the manifest binds for ve_service mode norm-defaults are exactly the kinds the mode answers: its
+    response schema's own `kind` table (rendered from `ResponseShape/Schemas/NormDefaults.lean`) and every kind its
+    `norms.json#/row` fallback answers, the norms row's own and those it hands on to `route.json#/row`, read from
+    the rendered schemas. Each is bound once."""
+    answered = _answered_kinds(f"{MODE}.json")
+    own = json.loads((SCHEMAS / f"{MODE}.json").read_text())["$defs"]["kind"]
+    assert answered[f"{MODE}.json"] == set(own) - {"$comment"}, "the walk misses an own kind"
+    assert {"norms.json", "route.json"} <= set(answered), "the walk misses a fallback"
+    every = set().union(*answered.values())
+    listed = _bound_kinds(MODE)
+    assert len(listed) == len(set(listed)) and set(listed) == every, set(listed) ^ every
+
+
+def test_norm_defaults_manifest_includes_delegated_kinds():
+    """Regrade ndc1-F4: each kind the norm-defaults mode answers only through its `norms.json#/row` fallback
+    (`background`, `norms-certificate`, `norms-conflict`, `norms-elaborate` from the norms table; `evaluate`,
+    `countermodel`, `certificate`, `dependency-order`, `bundle`, `label` from route's) has a ve_service/norm-defaults
+    binding, and that binding declares what the path that answers it already declares: the same response, counts
+    and uncounted fields as the operation's norms binding, else its route binding."""
+    answered = _answered_kinds(f"{MODE}.json")
+    own = answered.pop(f"{MODE}.json")
+    delegated = set().union(*answered.values()) - own
+    assert {"background", "norms-certificate", "norms-conflict", "norms-elaborate"} <= delegated, delegated
+    manifest = json.loads((ROOT / "ve/assurance-manifest.json").read_text())
+    for kind in sorted(delegated):
+        found = [(op["id"], b) for op in manifest["operations"] for b in (op["lean"] or {}).get("bindings", ())
+                 if (b["executable"], b["mode"]) == ("ve_service", MODE) and kind in b["kinds"]]
+        assert len(found) == 1, (kind, "is answered by the norm-defaults mode but not bound once for it")
+        [(op_id, binding)] = found
+        assert binding["kinds"] == [kind], binding
+        op = next(op for op in manifest["operations"] if op["id"] == op_id)
+        path = [b for b in op["lean"]["bindings"] if kind in b["kinds"] and (b["executable"], b["mode"]) in
+                (("ve_service", "norms"), ("ve_conformance", "route"))]
+        assert path, (kind, op_id, "no norms or route binding to mirror")
+        assert all(binding.get(field) == path[0].get(field) for field in ("response", "counts", "uncounted")), kind
+        assert binding["dispatch"][:2] == ["lean/VE/NormDefaults/Run.lean", "lean/VE/Norms/Run.lean"], binding

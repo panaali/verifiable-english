@@ -1,0 +1,42 @@
+{
+  "item": "norm-defaults-cfr-1-cfr-1",
+  "mutants": [
+    {
+      "id": "S1",
+      "file": "ve/assurance-manifest.json",
+      "mutation": "the ve_service/norm-defaults binding of operation norms.conflict (kind norms-conflict) removed",
+      "test": [
+        "tests/test_norm_defaults_response_binding.py::test_the_manifest_lists_every_kind_the_mode_answers",
+        "tests/test_norm_defaults_response_binding.py::test_norm_defaults_manifest_includes_delegated_kinds"
+      ],
+      "result": "killed: AssertionError {'norms-conflict'}; ('norms-conflict', 'is answered by the norm-defaults mode but not bound once for it')"
+    },
+    {
+      "id": "S2",
+      "file": "tests/test_norm_defaults_response_binding.py",
+      "mutation": "the coverage test reverted to main's own-table comparison (the defect ndc1-F4); main's manifest, which binds none of the 10 delegated kinds, passes it",
+      "test": [
+        "tests/test_norm_defaults_response_binding.py::test_norm_defaults_manifest_includes_delegated_kinds"
+      ],
+      "result": "killed on main's manifest (git show main:ve/assurance-manifest.json): ('background', 'is answered by the norm-defaults mode but not bound once for it'); the full-set test fails with the 10 kinds"
+    },
+    {
+      "id": "S3",
+      "file": "ve/assurance-manifest.json",
+      "mutation": "the norm-defaults background binding (definitions.elaborate) loses its counts (background, generators moved to uncounted): a delegated binding weaker than the route binding it mirrors",
+      "test": [
+        "tests/test_norm_defaults_response_binding.py::test_norm_defaults_manifest_includes_delegated_kinds"
+      ],
+      "result": "killed: AssertionError background"
+    },
+    {
+      "id": "S4",
+      "file": "conformance/binding_probes.py",
+      "mutation": "the norms-conflict probe keyed to mode diagnose instead of norm-defaults",
+      "test": [
+        "tests/test_assurance_manifest.py::test_every_lean_binding_has_a_probe"
+      ],
+      "result": "killed: AssertionError {('norms.conflict', 've_service', 'diagnose', 'norms-conflict'), ('norms.conflict', 've_service', 'norm-defaults', 'norms-conflict')}"
+    }
+  ]
+}
