@@ -92,6 +92,15 @@ def validOf (j : Json) : String :=
   | .ok soft, .ok slot => slot == soft.setObjVal! "facts" (toJson (0 : Nat)) && soft.getObjValD "valid" == .bool true
   | _, _ => false
 
+-- No facts: slot-conflict answers soft-conflict's answer and `facts: 0`, with and without a coherent model
+-- (the default budget, the exhibit flag and the model's decoding are the soft kind's).
+#guard [([packagesField], false), ([packagesField, ("coherent_model", parsed (situation true false))], true)].all
+  fun (extra, exhibit) => match runCase (slotCase "soft-conflict" none extra),
+      runCase (slotCase "slot-conflict" (some "[]") extra) with
+    | .ok soft, .ok slot => slot == soft.setObjVal! "facts" (toJson (0 : Nat)) &&
+        slot.getObjValD "coherent_exhibit" == .bool exhibit && slot.getObjValD "budget" == toJson (10000 : Nat)
+    | _, _ => false
+
 /-! ## The acceptance addendum's Lean-side cases -/
 
 /-- The refusal of `facts` on each slot form (certificate, conflict over packages, witness). -/
