@@ -446,6 +446,8 @@ module VE.Judgments.Examples
 module VE.Judgments.Scan
 module VE.Judgments.Status
 module VE.Judgments.Undeclared
+module VE.Kernel.Carry
+module VE.Kernel.CarryChecks
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse
@@ -1202,6 +1204,8 @@ VE.Graph.Unfolds.below@VE.ClaimGraph
 VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
+VE.Kernel.Path.Meaning@VE.Kernel.Carry
+VE.Kernel.Path.Ran@VE.Kernel.Carry
 VE.Layout.GovernedItem@VE.Layout.List
 VE.Layout.ItemUnit@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run

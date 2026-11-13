@@ -1,0 +1,168 @@
+{
+ "item": "kb-1",
+ "note": "seeded bugs, each planted alone (a and b together), shown failing the named test or check, then restored; Rust: no product code changed",
+ "seeded": [
+  {
+   "id": "a",
+   "file": "lean/VE/Route/MeteredWire.lean",
+   "language": "Lean",
+   "bug": "a 3-line helper seededId that EvaluationAnswer (the metered spec) mentions",
+   "test": "tools/kernel_closure.py --check docs/kernel/closure-baseline.json: FAIL: the kernel grew from 9504 to 9507 lines",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "b",
+   "file": "lean/VE/Service/DocumentView.lean",
+   "language": "Lean",
+   "bug": "def leak : String := \"CHECKED\"",
+   "test": "tools/kernel_closure.py --check docs/kernel/closure-baseline.json: FAIL: verdict writers outside the kernel rose from 56 to 57",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "c",
+   "file": "tools/kernel_closure.py",
+   "language": "Python",
+   "bug": "covered() counts overlapping ranges twice",
+   "test": "tests/test_kernel_closure.py::test_overlapping_ranges_are_counted_once",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "d1",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "no transitive walk of the service's imports",
+   "test": "tests/test_lean_experimental_boundary.py::test_a_module_the_service_reaches_may_not_import_an_experimental_one",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "d2",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "an expired date passes (< date.min)",
+   "test": "tests/test_lean_experimental_boundary.py::test_an_experimental_module_carries_an_expiry_date_not_yet_passed",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "d3",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "two Expires: lines accepted",
+   "test": "tests/test_lean_experimental_boundary.py::test_an_experimental_module_carries_an_expiry_date_not_yet_passed",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "e",
+   "file": "tools/kernel_closure.py",
+   "language": "Python",
+   "bug": "check_writers allows +1",
+   "test": "tests/test_kernel_closure.py::test_the_check_fails_when_verdict_writers_outside_the_kernel_rise",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "f",
+   "file": "tools/kernel_closure.py",
+   "language": "Python",
+   "bug": "signed-total refusal allows +1",
+   "test": "tests/test_kernel_closure.py::test_the_write_refuses_a_kernel_total_above_the_signed_one",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "g",
+   "file": "tools/kernel_closure.py",
+   "language": "Python",
+   "bug": "a kinds theorem not of the path accepted",
+   "test": "tests/test_kernel_closure.py::test_the_kind_table_problems_are_found_before_any_lean_runs",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "h",
+   "file": "tools/kernel-paths.json",
+   "language": "data",
+   "bug": "softNorms admission entry dropped",
+   "test": "tests/test_kernel_closure.py::test_every_case_kind_of_a_kernel_runner_has_an_entry_and_every_entry_a_kind",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "i",
+   "file": "tools/gate.py",
+   "language": "Python",
+   "bug": "the kernel check not run",
+   "test": "tests/test_gate_trust.py::test_every_gate_runs_the_kernel_check_after_the_lean_build",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "j",
+   "file": "ve/document/cli.py",
+   "language": "Python",
+   "bug": "the check help's CHECKED wording drifts from README's",
+   "test": "tests/test_kernel_closure.py::test_the_readme_quotes_what_checked_means",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "k",
+   "file": "lean/VE/Kernel/Carry.lean",
+   "language": "Lean",
+   "bug": "Path.row answers .ok case",
+   "test": "lake build VE.Kernel.Carry: Carry.lean:49:6 Tactic rfl failed (shell_provenance)",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "l",
+   "file": "tools/kernel_closure.py",
+   "language": "Python",
+   "bug": "review F2: --out skips the writer ratchet (if False and args.out.exists())",
+   "test": "tests/test_kernel_closure.py::test_the_write_refuses_more_verdict_writers_outside_than_the_file_it_replaces",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "m",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F3: first_docstring does not skip string literals (fix round 1, the lexing reader at b65639b0bd; review F4 removed that lexer)",
+   "test": "tests/test_lean_experimental_boundary.py::test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "n",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F3: comments do not nest (depth not raised on an inner /-); replanted after review F4 in _block_end, which closes the docstring",
+   "test": "tests/test_lean_experimental_boundary.py::test_a_plain_header_before_the_docstring_is_read_and_its_date_decides",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "o",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F4: first_docstring put back to the lexing reader of b65639b0bd (strings, character literals and «» names lexed by hand)",
+   "test": "tests/test_lean_experimental_boundary.py::test_the_review_f4_layouts_with_an_expired_docstring_are_refused",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "p",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F4: first_docstring searches past the first command for a doc comment instead of refusing code before it",
+   "test": "tests/test_lean_experimental_boundary.py::test_a_module_passes_only_on_a_docstring_with_no_code_in_front_of_it",
+   "result": "failed",
+   "restored": true
+  }
+ ]
+}

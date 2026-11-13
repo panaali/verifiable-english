@@ -106,6 +106,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Events/](lean__VE__Events.md) — 11 modules — -
 - [lean/VE/Grammar/](lean__VE__Grammar.md) — 9 modules — -
 - [lean/VE/Judgments/](lean__VE__Judgments.md) — 7 modules — -
+- [lean/VE/Kernel/](lean__VE__Kernel.md) — 2 modules — -
 - [lean/VE/Kit/](lean__VE__Kit.md) — 1 modules — -
 - [lean/VE/Layout/](lean__VE__Layout.md) — 3 modules — -
 - [lean/VE/NormDefaults/](lean__VE__NormDefaults.md) — 25 modules — -
