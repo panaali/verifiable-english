@@ -1,4 +1,4 @@
-rows-cond | omits: "Mitigations-our plan as a company" restates ; "We will maintain or improve on our ASL-3 protections" loss 1 ; "We will apply protections at least as strong as our ASL-3 protections (see previous row) to an expanded set of potential use cases" loss 1 ; "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the overall level of risk in our Risk Reports" loss 1
+rows-cond | omits: nothing
 rows-uncond | omits: nothing
 f5-strict | omits: "A frontier developer" reading RS2
 f5-default | omits: nothing

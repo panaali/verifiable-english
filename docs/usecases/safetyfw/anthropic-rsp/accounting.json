@@ -5,66 +5,20 @@
   {
    "id": "rows-cond",
    "file": "rules.d1.ve",
-   "span_length": 368,
+   "span_length": 2382,
    "used": [
     "crossed",
     "listed",
     "plans_in_place"
    ],
-   "unaccounted": [
-    "apply",
-    "asl",
-    "capabil",
-    "case",
-    "detail",
-    "expand",
-    "improve",
-    "level",
-    "maintain",
-    "mitig",
-    "monitor",
-    "overall",
-    "potential",
-    "practic",
-    "previou",
-    "propens",
-    "protection",
-    "report",
-    "risk",
-    "set",
-    "state",
-    "strong",
-    "system",
-    "use"
-   ],
-   "entries": [
-    {
-     "words": "Mitigations-our plan as a company",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "We will maintain or improve on our ASL-3 protections",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
-     "words": "We will apply protections at least as strong as our ASL-3 protections (see previous row) to an expanded set of potential use cases",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
-     "words": "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the overall level of risk in our Risk Reports",
-     "reason": "loss",
-     "arg": "1"
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
    "id": "rows-uncond",
    "file": "rules.d1.ve",
-   "span_length": 0,
+   "span_length": 2382,
    "used": [
     "listed",
     "plans_in_place"
@@ -1724,22 +1678,22 @@
  ],
  "totals": {
   "blocks": 85,
-  "blocks_with_loss": 4,
+  "blocks_with_loss": 3,
   "losses_by_class": {
-   "1": 5,
+   "1": 2,
    "limit 9": 1
   },
   "entries_by_reason": {
    "exposition": 12,
-   "loss": 6,
+   "loss": 3,
    "open": 5,
    "reading": 7,
-   "restates": 48,
+   "restates": 47,
    "rule": 5
   },
-  "unaccounted_words": 198,
-  "blocks_with_unaccounted_words": 39,
-  "quotes": 96,
+  "unaccounted_words": 174,
+  "blocks_with_unaccounted_words": 38,
+  "quotes": 112,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },
