@@ -261,7 +261,7 @@ def environment():
     return {"language": LANGUAGE, "profiles": ["norms@0", "relational-fol@0", "soft-norms@0"],
             "spec_revision": SPEC_REVISION,
             "vocabulary": {"sorts": {k: {"description": v} for k, v in {
-                "situation": "a development, use, deployment, review or decision of a covered model",
+                "situation": "a development, use, deployment, review or decision of a model",
                 "level": "one of Table 1's six named capability levels",
                 "category": "one of the three Tracked Categories",
                 "proposal": "a safeguard or governance proposal",
