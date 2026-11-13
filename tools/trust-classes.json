@@ -22238,11 +22238,14 @@
         "ResponseShape.SlotExamples.certificate",
         "ResponseShape.SlotExamples.conflictFree",
         "ResponseShape.SlotExamples.oneFact",
+        "ResponseShape.SlotExamples.pairNorms",
         "ResponseShape.SlotExamples.refused",
         "ResponseShape.SlotExamples.run",
         "ResponseShape.SlotExamples.soft",
         "ResponseShape.SlotExamples.unknown",
-        "ResponseShape.SlotExamples.witness"
+        "ResponseShape.SlotExamples.witness",
+        "ResponseShape.SlotExamples.witnessAt",
+        "ResponseShape.SlotExamples.witnesses"
       ]
     }
   }
