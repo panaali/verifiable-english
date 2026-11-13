@@ -131,3 +131,60 @@ def test_the_wrappers_are_removed_and_a_document_without_its_soft_source_is_coun
     assert (SoftNormDocument._init_soft, SoftenedNormDocument.selected_rules) == saved
     assert shadow.unsourced == {"item a": 1}
     assert [c[0] for c in shadow.calls] == ["completed"]
+
+
+@pytest.mark.parametrize("name,item,expected", [
+    ("openai-preparedness", {"id": "N2", "case": None, "item": ""}, "N2"),
+    ("anthropic-rsp", {"id": "G1", "case": None, "item": ""}, "G1"),
+])
+def test_query_only_probe_mismatch_keeps_its_actual_choice_and_case(name, item, expected):
+    """The review's N2 probe and RSP's sibling direct constructor have no document() call."""
+    harness = shadow_module.load(name)
+    shadow = shadow_module.Shadow()
+    with shadow_module.installed(shadow, harness, shadow_module.HARNESSES[name]):
+        harness.answer(item)
+    assert shadow.calls
+    shadow.calls = [(*call[:5], ["planted"], call[6]) for call in shadow.calls]
+
+    def ask(_doc, _model, queries):
+        return {"background": True, "results": [{**q, "selected": [], "outcome": False} for q in queries]}
+
+    report = shadow.compare(ask=ask)
+    assert report["mismatch_calls"] == len(shadow.calls)
+    assert all(row["choice"] in report["document_choices"][row["document"]]
+               and "RS" in row["choice"] and expected in row["case"] and row["model"] in shadow.models
+               for row in report["mismatches"])
+    if name == "openai-preparedness":
+        assert len({row["choice"] for row in report["mismatches"]}) > 1
+
+
+def test_reused_document_keeps_choice_case_and_model_in_every_report_row(doc_under_shadow):
+    shadow = shadow_module.Shadow()
+    module = types.SimpleNamespace(__file__=__file__)
+    module.document = lambda choice: doc_under_shadow
+    module.completed = lambda *_: False
+    with shadow_module.installed(shadow, module, {"completed": lambda h, *a: a,
+                                                "contexts": {}}):
+        def exercise(choice, case, model, block=None, situation=None):
+            doc = module.document(choice)
+            shadow.record("selected", doc, model, "x_required", ("a",), ["planted"])
+            shadow.record("selected", doc, model, "refused", ("a",), [])
+
+        exercise({"RS1": "one"}, {"id": "case-1"}, MODEL)
+        exercise({"RS1": "two"}, {"id": "case-1"}, MODEL)
+        exercise({"RS1": "one"}, {"id": "case-2"}, {**MODEL, "complete": False},
+                 types.SimpleNamespace(id="F11"), {"id": "witness-1"})
+
+    def ask(_doc, _model, queries):
+        if any(q["predicate"] == "refused" for q in queries):
+            raise ValueError("refused")
+        return {"background": False, "results": [{**q, "selected": [], "outcome": False} for q in queries]}
+
+    report = shadow.compare(ask=ask)
+    assert report["mismatch_calls"] == report["refused_calls"] == report["background_false_calls"] == 3
+    for key in ("mismatches", "refusals", "background_false"):
+        rows = report[key]
+        assert len(rows) == 3
+        assert len({(row["choice"], row["case"], row["model"]) for row in rows}) == 3
+        assert all(row["choice"] in report["document_choices"][row["document"]] for row in rows)
+        assert any("rule F11" in row["case"] and "witness-1" in row["case"] for row in rows)

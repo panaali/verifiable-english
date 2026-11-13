@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import inspect
 import json
 import re
 import subprocess
@@ -52,11 +53,14 @@ class Shadow:
         self.documents = {}      # document digest -> (SoftNormDocument, [choice labels])
         self.models = {}         # model digest -> model dict
         self.calls = []          # (kind, document digest, model digest, predicate, tuple, python answer, context)
+        self.identities = []     # (choice at the call, case at the call), aligned with calls
+        self.call_families = []  # original harness context, before case detail is appended
+        self.harness_path = None
         self.unsourced = Counter()  # selected_rules on a SoftenedNormDocument with no soft source, by context
         self.context = []        # the harness's current item labels, outermost first
 
     # -- recording -----------------------------------------------------------------------------------
-    def _document(self, soft_document):
+    def _document(self, soft_document, choice=None):
         # Through __dict__: a deferred SoftNormDocument elaborates on a missing attribute (`__getattr__`).
         digest = soft_document.__dict__.get("_shadow_digest")
         if digest is None:
@@ -66,7 +70,49 @@ class Shadow:
         for label in soft_document.__dict__.get("_shadow_choices", ()):
             if label not in entry[1]:
                 entry[1].append(label)
+        if choice is not None and choice not in entry[1]:
+            entry[1].append(choice)
         return digest
+
+    def _identity(self, soft_document):
+        """Take the active reading and case from the harness call, not from a shared document's first use."""
+        choice, case_parts = None, []
+        frame = inspect.currentframe()
+        try:
+            frame = frame.f_back
+            while frame is not None:
+                if self.harness_path and frame.f_code.co_filename == self.harness_path:
+                    local = frame.f_locals
+                    if choice is None and isinstance(local.get("choice"), dict):
+                        choice = local["choice"]
+                    if hasattr(local.get("block"), "id"):
+                        part = f"rule {local['block'].id}"
+                        if part not in case_parts:
+                            case_parts.append(part)
+                    if isinstance(local.get("id_"), str) and local["id_"] not in case_parts:
+                        case_parts.append(local["id_"])
+                    for name in ("case", "situation"):
+                        value = local.get(name)
+                        if isinstance(value, dict) and isinstance(value.get("id"), str):
+                            part = value["id"]
+                            if part not in case_parts:
+                                case_parts.append(part)
+                frame = frame.f_back
+        finally:
+            del frame
+        labels = soft_document.__dict__.get("_shadow_choices", ())
+        if choice is not None:
+            key = tuple(sorted(choice.items()))
+            matching = [label for value, label in soft_document.__dict__.get("_shadow_choice_values", ())
+                        if value == key]
+            label = matching[0] if matching else repr(key)
+        else:
+            label = labels[0] if labels else "(choice unavailable)"
+        context = " / ".join(self.context) or "(outside an item)"
+        for part in case_parts:
+            if part not in context.split(" / "):
+                context += f" / {part}"
+        return label, context
 
     def _model(self, model):
         data = model.to_dict() if hasattr(model, "to_dict") else model
@@ -76,8 +122,11 @@ class Shadow:
 
     def record(self, kind, soft_document, model, predicate, values, answer):
         """One call of `kind` ("selected" or "completed") and Python's answer to it."""
-        self.calls.append((kind, self._document(soft_document), self._model(model), predicate,
-                           tuple(values), answer, " / ".join(self.context) or "(outside an item)"))
+        choice, case = self._identity(soft_document)
+        self.calls.append((kind, self._document(soft_document, choice), self._model(model), predicate,
+                           tuple(values), answer, case))
+        self.identities.append(choice)
+        self.call_families.append(self.context[-1] if self.context else "(outside an item)")
 
     def record_selected(self, elaborated, model, predicate, values, rules):
         source = elaborated.__dict__.get("_shadow_source")
@@ -130,17 +179,17 @@ class Shadow:
             lean_calls += 1
             answers[(document, model)] = self.ask(document, model, queries, ask=ask)
         counts, answered, families = Counter(), Counter(), Counter()
-        for kind, document, model, predicate, values, python, context in self.calls:
+        for index, (kind, document, model, predicate, values, python, context) in enumerate(self.calls):
             counts[kind] += 1
             # Python's answers (so a run that compared only empty selections shows it) and the key family of
             # the innermost item label (RSP and Preparedness item ids, FSF case ids: A-T2, K3, B-L2, ...).
             answered[f"{kind} " + (("non-empty" if python else "empty") if kind == "selected"
                                     else {True: "true", False: "false"}.get(python, "unknown"))] += 1
-            family = re.match(r"[A-Za-z]*", context.split(" / ")[-1].removeprefix("default-sensitivity ")).group()
+            family = re.match(r"[A-Za-z]*", self.call_families[index].removeprefix("default-sensitivity ")).group()
             families[family or "(other)"] += 1
             rows, background, refused = answers[(document, model)]
-            choice = (self.documents[document][1] or ["(built outside the harness's document builder)"])[0]
-            cell = (kind, document, choice, context, predicate, values)
+            choice = self.identities[index]
+            cell = (kind, document, model, choice, context, predicate, values)
             if (predicate, values) in refused or ("*", ()) in refused:
                 refusals[(*cell, refused.get((predicate, values)) or refused[("*", ())])] += 1
                 continue
@@ -152,10 +201,10 @@ class Shadow:
                 mismatches[(*cell, _text(python), _text(lean), background)] += 1
 
         def rows_of(counter, fields):
-            return [dict(zip(fields, (*key[:5], list(key[5]), *key[6:])), calls=n)
+            return [dict(zip(fields, (*key[:6], list(key[6]), *key[7:])), calls=n)
                     for key, n in sorted(counter.items(), key=lambda item: _text(item[0]))]
 
-        cell_fields = ("kind", "document", "choice", "case", "predicate", "tuple")
+        cell_fields = ("kind", "document", "model", "choice", "case", "predicate", "tuple")
         return {
             "calls_compared": dict(sorted(counts.items())),
             "python_answers": dict(sorted(answered.items())),
@@ -212,6 +261,11 @@ def installed(shadow, harness, spec):
             label = _label(args, kwargs)
             if label not in labels:
                 labels.append(label)
+            if args and isinstance(args[0], (dict, tuple)):
+                key = tuple(sorted(dict(args[0]).items()))
+                values = built.__dict__.setdefault("_shadow_choice_values", [])
+                if (key, label) not in values:
+                    values.append((key, label))
             return built
         return document
 
@@ -236,6 +290,7 @@ def installed(shadow, harness, spec):
 
     SoftNormDocument._init_soft = init_soft
     SoftenedNormDocument.selected_rules = selected_rules
+    shadow.harness_path = getattr(harness, "__file__", None)
     try:
         replace(spec.get("document", "document"), documented)
         replace("completed", completed_wrapper)
