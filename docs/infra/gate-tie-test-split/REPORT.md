@@ -36,7 +36,7 @@ Script: evidence/vm1-measure.sh. Its output, with load averages and UTC times, i
 - **Result:** the longest chunk takes 275.9 s against 2,946.6 s for the single test, 9.4% of it, about 10.7× shorter.
 - **Whole file, for row 4** (`mac-pytest.sh -- -n 0 -v -p no:cacheprovider --durations=0 --durations-min=0 tests/test_consolidation_tools.py`, as eff-20261030-1's measure.sh; evidence/vm1-whole-file.*):
   - The Mac test runner sent the run to the VM ("running on the VM instead (local)" in the log).
-  - 304 passed in 3,773.12 s.
+  - 304 passed in 3,773.12 s. The evidence file keeps the node lines of 1 s or more and the summary lines; `chunk_table.py` read the full log.
   - Its largest node is [5] at 307.5 s. For about 3 minutes of this run, seeded bug S4 ran one chunk ([5]) on the same host, so [5]'s figure may include that contention.
   - `chunk_table.py` gives k=4 at 957.6 s, a best cut of 75% (evidence/chunk_table.md).
 
@@ -52,8 +52,8 @@ Script: evidence/vm1-measure.sh. Its output, with load averages and UTC times, i
 
 ## Test-removed
 
-The old unparametrized ID is no longer collected. `tools/gate_collection.py --check --prebuilt` refused it until the trailer was added. The trailer is in the report commit:
-`Test-removed: tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected — split into its 16 parametrized chunks [0]..[15] (same function, same assertions)`.
+The old unparametrized ID is no longer collected. `tools/gate_collection.py --check --prebuilt` refused it until the trailer was added. The trailer is in the final paragraph of the commit "gate-tie-test-split: trim the whole-file evidence; Test-removed trailer". In the earlier report commit the line was not in the final paragraph, so git did not read it as a trailer:
+`Test-removed: tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected — split into its 16 parametrized chunks, same function and same assertions`.
 
 ## Seeded bugs (each restored; `git status` clean after each)
 
