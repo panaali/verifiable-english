@@ -132,7 +132,7 @@
    "id": "m",
    "file": "tools/check_lean_imports.py",
    "language": "Python",
-   "bug": "review F3: first_docstring does not skip string literals",
+   "bug": "review F3: first_docstring does not skip string literals (fix round 1, the lexing reader at b65639b0bd; review F4 removed that lexer)",
    "test": "tests/test_lean_experimental_boundary.py::test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments",
    "result": "failed",
    "restored": true
@@ -141,8 +141,26 @@
    "id": "n",
    "file": "tools/check_lean_imports.py",
    "language": "Python",
-   "bug": "review F3: plain block comments do not nest (depth not raised on an inner /-)",
-   "test": "tests/test_lean_experimental_boundary.py::test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments",
+   "bug": "review F3: comments do not nest (depth not raised on an inner /-); replanted after review F4 in _block_end, which closes the docstring",
+   "test": "tests/test_lean_experimental_boundary.py::test_a_plain_header_before_the_docstring_is_read_and_its_date_decides",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "o",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F4: first_docstring put back to the lexing reader of b65639b0bd (strings, character literals and «» names lexed by hand)",
+   "test": "tests/test_lean_experimental_boundary.py::test_the_review_f4_layouts_with_an_expired_docstring_are_refused",
+   "result": "failed",
+   "restored": true
+  },
+  {
+   "id": "p",
+   "file": "tools/check_lean_imports.py",
+   "language": "Python",
+   "bug": "review F4: first_docstring searches past the first command for a doc comment instead of refusing code before it",
+   "test": "tests/test_lean_experimental_boundary.py::test_a_module_passes_only_on_a_docstring_with_no_code_in_front_of_it",
    "result": "failed",
    "restored": true
   }

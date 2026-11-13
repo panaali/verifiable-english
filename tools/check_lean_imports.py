@@ -107,55 +107,25 @@ def _block_end(source: str, i: int) -> int:
 
 
 def first_docstring(source: str) -> str | None:
-    """The text of the first actual `/--` or `/-!` doc comment of a Lean source; None when there is none.
+    """The text of the module's header docstring: a `/--` or `/-!` doc comment that is the first command after the
+    import header (`header`, the one reader of it, which `main` checks against the pinned Lean); else None.
 
-    kb-1 review F3: the source is read as Lean, not searched as text: string literals (raw ones included), character
-    literals, `--` line comments, `«…»` names and plain `/- … -/` comments (which nest) are skipped, so a doc-comment
-    opener inside any of them is not the module's docstring. A layout this reader cannot follow (an unclosed string or
-    comment) yields None, which the expiry rule refuses."""
-    ident = re.compile(r"[\w.'!?¹-￿]")
-    i, n = 0, len(source)
-    while i < n:
-        c, prev = source[i], source[i - 1] if i else ""
-        if source.startswith("--", i):
-            end = source.find("\n", i)
-            i = n if end < 0 else end + 1
-        elif source.startswith("/-", i):
-            end = _block_end(source, i)
-            if end < 0:
-                return None
-            if source[i + 2:i + 3] in ("-", "!") and not source.startswith("/--/", i):
-                return source[i + 3:end - 2]
-            i = end
-        elif c == '"' or (c == "r" and not ident.match(prev) and (raw := re.match(r'r(#*)"', source[i:]))):
-            if c == '"':
-                i += 1
-                while i < n and source[i] != '"':
-                    i += 2 if source[i] == "\\" else 1
-                if i >= n:
-                    return None
-                i += 1
-            else:
-                close = '"' + raw[1]
-                end = source.find(close, i + len(raw[0]))
-                if end < 0:
-                    return None
-                i = end + len(close)
-        elif c == "'" and not ident.match(prev):
-            char = re.match(r"'(?:\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|.)|[^\\'])'", source[i:], re.DOTALL)
-            i += len(char[0]) if char else 1
-        elif c == "«":
-            end = source.find("»", i)
-            if end < 0:
-                return None
-            i = end + 1
-        else:
-            i += 1
-    return None
+    kb-1 review F3 and F4: this reader never lexes code. Anything else as the first command (a string, a character
+    literal, an interpolation, a definition), a header outside the plain layout, or an unclosed doc comment yields
+    None, so the expiry rule refuses the module rather than guess where a string ends."""
+    try:
+        _, rest = header(source)
+    except HeaderError:
+        return None
+    if not rest.startswith(("/--", "/-!")) or rest.startswith("/--/"):
+        return None
+    end = _block_end(rest, 0)
+    return None if end < 0 else rest[3:end - 2]
 
 
 def expiry_problems(paths: dict[str, Path], today: date) -> list[str]:
-    """Each experimental module's first docstring holds a line `Expires: YYYY-MM-DD`, a date not yet passed."""
+    """Each experimental module's first docstring holds a line `Expires: YYYY-MM-DD`, a date not yet passed; a first
+    docstring after code (anything but `import` lines and comments) is refused (`first_docstring`)."""
     problems = []
     for module, path in sorted(paths.items()):
         if not is_experimental(module):
@@ -163,7 +133,8 @@ def expiry_problems(paths: dict[str, Path], today: date) -> list[str]:
         text = first_docstring(path.read_text())
         found = [m[1] for line in (text or "").split("\n") if (m := EXPIRES.fullmatch(line.strip()))]
         if len(found) != 1:
-            problems.append(f"{module}: an experimental module's first docstring needs one line `Expires: YYYY-MM-DD`")
+            problems.append(f"{module}: an experimental module's first docstring, before any code but `import` lines"
+                            " and comments, needs one line `Expires: YYYY-MM-DD`")
             continue
         try:
             expires = date.fromisoformat(found[0])
@@ -249,7 +220,13 @@ class HeaderError(ValueError):
 
 
 def imports(source: str) -> list[str]:
-    """The modules a Lean file imports, read from a header in the plain layout.
+    """The modules a Lean file imports, read from a header in the plain layout (`header`)."""
+    return header(source)[0]
+
+
+def header(source: str) -> tuple[list[str], str]:
+    """The modules a Lean file imports, read from a header in the plain layout, and the source from its first command
+    on (CRLF read as LF, the command's leading spaces dropped; empty when there is none).
 
     The header is the run of lines at the start of the file that are blank,
     full-line `--` comments, ordinary `/- -/` block comments or `import A.B.C`
@@ -285,8 +262,8 @@ def imports(source: str) -> list[str]:
                 raise HeaderError(number, f"`{match[1]}` is a header keyword, not a module")
             found.append(match[1])
             continue
-        break  # the first command: Lean's header has ended
-    return found
+        return found, "\n".join(lines[number - 1:]).lstrip(" ")  # the first command: Lean's header has ended
+    return found, ""
 
 
 def _block_comment(lines: list[str], first: int, column: int) -> int:
