@@ -625,6 +625,33 @@ the disagreements with the key are findings and are listed in [README.md](README
     the acceptable levels" has no reached-level guard. Item 4's bridge is no premise of the document: N1 alone uses
     the four exclusions it needs, as its own assumption (facts.d1.ve `item N1`). Cases G7 and G8 no longer set
     OT11 and OT3, which section 5 leaves unset.
+25. **Source clauses kept whole (safety-framework-fidelity-fix-2).** Each rule header quotes the whole sentence it
+    follows. No answer moves (260/262, the same two section-12 disagreements).
+    - **OT3 (F3, F12, F13).** The governance determination is one finding that includes "a safety case where a CCL
+      has been reached" (footnote 4, 2.1.2 and 3.1.2 step 2). Its predicate is
+      `governance_found_acceptable_with_safety_case_where_ccl_reached`, and the document's OT3 declaration makes the
+      safety case part of the term, not a factor. Section 5's LRX stipulation is that finding, so A-L*-LRX keep
+      their answers; without it F3 releases nothing.
+    - **F16 (4.2 F16 and item 24).** Old: OT4 and OT5 are the excepted cases of the recommended level under RS3 = Ds.
+      New: no exception. 1.3.5's "or we otherwise assess that the level of security applied is adequate ... or we
+      assess that the benefits of the open release of model weights outweigh the risks" are alternatives of the
+      acceptable-risk classification (F9 to F11); 2.2's open-release case is, like OT16, an example of when the
+      recommendation "may be adjusted". No case asks RECSEC with OT4 or OT5 set.
+    - **Acts and legends.** F6: "involving internal and external experts as needed" (legend; an act phrase holds no
+      "and"). F7: "as part of evaluating their deployment mitigations" (act and legend). F20: the mitigation *and*
+      its effects are proportionate; the acceptable levels are those "determined by the T/CCLs as relevant"; the
+      elicitation note's "thus requiring conservatism in the form of evaluations" (the act weighs it conservatively).
+    - **F14.** "and might result in updates to the related residual risk assessment or safety case" is a hedged
+      LABELLED unit of its own in 2.1.2 and 3.1.2 (3.3), never a duty. CHECKED bytes: 4,043 to 3,959 (main
+      document 2,935 to 2,851); README.md's figures predate this entry.
+    - **Facts.** `measures-sl2plus` states 2.1.1 as written: Security Level 2+ includes RAND SL2 (its baseline) and
+      one group of additional measures, which addresses insider threats and well-resourced non-state external
+      actors. It is not a row of 4.1; F16's inclusion clause is its only reader.
+    - **Case G8.** No level and no activity: section 5 sets exactly the levels named, and G8 names only the
+      circumvention evidence. G8's answer stays ALL.
+    - **D2.** The catastrophic `might` cell is stated of its own alternative, whose label carries src 3.2.2's
+      conditions: unrestricted access, an actor "with adequate computational resources", and "no effective way of
+      defending". The S and D answers are unchanged; D2's derived tables gain that alternative (might cells 64 to 72).
 
 ## 13. Files for the implementation round (not this commit)
 
