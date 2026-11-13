@@ -1,0 +1,149 @@
+{
+ "allow": [
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "eq-le",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "list-drop-first",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "list-drop-last",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "list-empty",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "list-first",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.QueryDecoded",
+   "operator": "list-last",
+   "reason": "S, a Prop no check can evaluate: the hypotheses each decoded query carries in soft_wire_selected and runSelected_answer (lean/VE/SoftNorms/SelectedSound.lean), established by decodeSelectedQuery_ok and decodeQueries_ok, which this mutant breaks (seeded bug S4 of docs/kernel/kb-10a/seeded-bugs.json shows the decoder side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "eq-le",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-drop-first",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-drop-last",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-drop-middle",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-empty",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-first",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "list-last",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer soft_wire_selected and runSelected_answer state (lean/VE/SoftNorms/SelectedSound.lean); every mutant breaks runSelected_answer, as seeded bugs S2b and S5 show for the runner side"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.selected",
+   "operator": "list-drop-first",
+   "reason": "equivalent where it survives: dropping `arr` before `.zip` (a non-array fails `.zip` anyway), or `str` before the predicate's `.equals \"/predicate\"`, or `arr` before the tuple's `.equals \"/tuple\"` (the value must equal the request's member, which the decoder refused unless it is a string, or an array of strings)"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.selected",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: see list-drop-first (the predicate keeps only `.equals \"/predicate\"`, the tuple only `.equals \"/tuple\"`); the results' `[.zip \u2026]` alone is killed by the empty-results guard"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.selected",
+   "operator": "list-drop-middle",
+   "reason": "equivalent where it survives: dropping the tuple's `.items str` before `.equals \"/tuple\"` (see list-drop-first); dropping the results' `.minItems 1` is killed by the empty-results guard"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.row",
+   "operator": "list-drop-first",
+   "reason": "outside this item's kind where it survives: it drops the inner select's `admission` entry, which no Lean check reads (an admitted row needs a W2 document fixture; the generated schema's admission rows are checked by the Python suite, e.g. tests/test_relay_binding_inventory.py's soft-admission route); dropping `case_error` is killed by the case_error guard"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-empty",
+   "reason": "killed in substance: the file loses every definition, so each guard of lean/ResponseShape/SoftSelectedExamples.lean that decides a soft-norms row fails; UNKNOWN because the imported lean/ResponseShape/DefaultsExamples.lean's probe cannot elaborate its own check (line 108) with the soft-norms file broken"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-first",
+   "reason": "killed in substance: as list-empty, the file keeps one definition and every soft-norms row's reference breaks"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-last",
+   "reason": "killed in substance: as list-empty, the file keeps one definition and every soft-norms row's reference breaks"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.fullOver",
+   "operator": "lit-plus",
+   "reason": "Lean refuses the text: Structure.{0} to Structure.{1} is a type mismatch at lean/VE/SoftNorms/Selected.lean:55 (the carrier is the model's Entity, a Type 0), so no build has the mutant"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.selectedAt",
+   "operator": "list-empty",
+   "reason": "Lean refuses the text: `[]` for the filtered list leaves `.map (\u00b7.name)` with no element type (invalid field notation at lean/VE/SoftNorms/Selected.lean:21), so no build has the mutant"
+  }
+ ]
+}

@@ -22037,7 +22037,9 @@
         "VE.SoftNorms.SelectedExamples.queriesText",
         "VE.SoftNorms.SelectedExamples.resultsText",
         "VE.SoftNorms.SelectedExamples.selectedCase",
-        "VE.SoftNorms.SelectedExamples.specAt"
+        "VE.SoftNorms.SelectedExamples.specAt",
+        "VE.SoftNorms.SelectedExamples.twoStrictModel",
+        "VE.SoftNorms.SelectedExamples.twoStrictText"
       ]
     },
     "ResponseShape/SoftSelectedExamples.lean": {

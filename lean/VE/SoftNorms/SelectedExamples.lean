@@ -63,11 +63,12 @@ def resultsText (outcomeAtE : String) : String :=
 per case, `selectedRow_eq`; these read `circ` directly). -/
 
 /-- `selectedAt` and `outcomeAt` of `p` at the one-entity tuple `t`, or `none` if a decoder refuses. -/
-def specAt (default excepted p t : String) : Option (List String × Bool) :=
-  match VE.SoftNorms.Wire.decodeSoftSource (parsed (environmentText default)) (parsed normsText) with
+def specAt (default excepted p t : String) (norms : String := normsText) (model : String := modelText excepted) :
+    Option (List String × Bool) :=
+  match VE.SoftNorms.Wire.decodeSoftSource (parsed (environmentText default)) (parsed norms) with
   | .error _ => none
   | .ok src =>
-    match VE.SoftNorms.Wire.decodeModel src (Json.mkObj [("model", parsed (modelText excepted))]) with
+    match VE.SoftNorms.Wire.decodeModel src (Json.mkObj [("model", parsed model)]) with
     | .error _ => none
     | .ok ⟨M, _⟩ => some (selectedAt src.D M p [("assistant", t)], outcomeAt src.D M p [("assistant", t)])
 
@@ -77,6 +78,20 @@ def specAt (default excepted p t : String) : Option (List String × Bool) :=
 #guard specAt "deny" r#"[["a"], ["e"]]"# "x_required" "e" == some ([], false)
 #guard specAt "allow" r#"[["a"], ["e"]]"# "x_required" "e" == some ([], true)
 #guard specAt "deny" r#"[["e"]]"# "x_required" "a" == some (["d"], true)
+/-- Two strict rules on `x_required` with the same guard `v`: both select at `b`, in rule order. -/
+def twoStrictText : String :=
+  r#"[{"norm": {"name": "h", "predicate": "x_required", "sign": true, "guard": ["unary", "v", ["var", 0]], "unless": [], "over": []}}, {"norm": {"name": "h2", "predicate": "x_required", "sign": true, "guard": ["unary", "v", ["var", 0]], "unless": [], "over": []}}]"#
+
+def twoStrictModel : String :=
+  r#"{"complete": true, "domains": {"assistant": ["a", "b"], "user": []}, "constants": {}, "relations": {"v": [["b"]], "w": [], "s": []}}"#
+
+#guard specAt "deny" "" "x_required" "b" twoStrictText twoStrictModel == some (["h", "h2"], true)
+#guard specAt "deny" "" "x_required" "a" twoStrictText twoStrictModel == some ([], false)
+#guard answerOf (Json.mkObj [("id", .str "s"), ("kind", .str "soft-selected"),
+    ("environment", parsed (environmentText "deny")), ("norms", parsed twoStrictText),
+    ("model", parsed twoStrictModel),
+    ("queries", parsed r#"[{"predicate": "x_required", "tuple": ["b"]}]"#)]) ==
+  "{\"background\":true,\"id\":\"s\",\"results\":[{\"outcome\":true,\"predicate\":\"x_required\",\"selected\":[\"h\",\"h2\"],\"tuple\":[\"b\"]}],\"status\":\"ok\"}"
 -- No rule on `x_permitted`: nothing selected, its default (allow) decides.
 #guard specAt "deny" r#"[["a"], ["e"]]"# "x_permitted" "a" == some ([], true)
 
