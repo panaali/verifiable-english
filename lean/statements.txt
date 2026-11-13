@@ -58689,6 +58689,19 @@ theorem VE.Route.Wire.decodeClosed_refuses_depth
       Except.error VE.Route.AstLimit.depthLimit
   -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
   -- expr 1697895559
+theorem VE.Route.Wire.decodeClosed_refuses_depth_past_walk
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeClosed E
+        (Lean.Json.arr
+          #[Lean.Json.str "and",
+            Lean.Json.arr
+              #[Lean.Json.str "unary", Lean.Json.str "p",
+                Lean.Json.arr #[Lean.Json.str "var", Lean.Json.num (Lean.JsonNumber.fromNat (2 ^ 60))]],
+            VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not (VE.Limits.maxDepth - 1) VE.Formula.top)])
+        data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 3631933151
 theorem VE.Route.Wire.decodeDataModel_combined
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
     VE.Route.Wire.decodeDataModel rv j = Except.ok M →
@@ -58736,6 +58749,20 @@ theorem VE.Route.Wire.decodeFormulas_refuses_depth
       Except.error VE.Route.AstLimit.depthLimit
   -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
   -- expr 339541889
+theorem VE.Route.Wire.decodeFormulas_refuses_depth_past_walk
+  ∀ (E : VE.Environment) (data : Bool),
+    VE.Route.Wire.decodeFormulas E
+        (Lean.Json.arr
+          #[Lean.Json.arr
+              #[Lean.Json.str "and",
+                Lean.Json.arr
+                  #[Lean.Json.str "unary", Lean.Json.str "p",
+                    Lean.Json.arr #[Lean.Json.str "var", Lean.Json.num (Lean.JsonNumber.fromNat (2 ^ 60))]],
+                VE.Route.Wire.encodeFormula (Nat.repeat VE.Formula.not (VE.Limits.maxDepth - 1) VE.Formula.top)]])
+        data =
+      Except.error VE.Route.AstLimit.depthLimit
+  -- uses VE.Environment@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Route.AstLimit.depthLimit@VE.Route.AstLimit VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 607274766
 theorem VE.Route.Wire.decodeModel_background
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
     VE.Route.Wire.decodeModel rv j = Except.ok M →

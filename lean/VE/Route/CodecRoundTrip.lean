@@ -369,6 +369,54 @@ theorem decodeFormulas_refuses_depth (E : VE.Environment) (data : Bool) :
       .error AstLimit.depthLimit :=
   rfl
 
+/-! ### The depth fuel is not redundant
+
+`AstLimit.walk` stops silently at the first node Python's decoder rejects for its shape, and
+`AstLimit.check` then returns `ok`, but `decodeTerm` still reads some of those nodes: a variable
+index above `2^53 - 1` fails `validIndex` and passes `getNat?`. For the rest of that formula the
+decoder's fuel is the only depth check. Below, a conjunction whose first conjunct holds such an index
+and whose second is the chain of `maxDepth - 1` negations over `⊤` (65 formula levels in all) is
+refused with the depth diagnostic, alone and as a premise list, and only by the fuel: the walk
+passes it, and one more unit of fuel decodes it (it is then refused later, as unbound). Raising the
+fuel alone (seed S2a) breaks these two theorems. -/
+
+/-- `decodeClosed` refuses, by its fuel, a formula one level too deep behind a variable index the
+walk stops at. -/
+theorem decodeClosed_refuses_depth_past_walk (E : VE.Environment) (data : Bool) :
+    decodeClosed E (Json.arr #[.str "and",
+        Json.arr #[.str "unary", .str "p", Json.arr #[.str "var", ((2 ^ 60 : Nat) : Json)]],
+        encodeFormula (Nat.repeat .not (VE.Limits.maxDepth - 1) .top)]) data =
+      .error AstLimit.depthLimit :=
+  rfl
+
+/-- `decodeFormulas` refuses the same formula, as a premise list, by its fuel. -/
+theorem decodeFormulas_refuses_depth_past_walk (E : VE.Environment) (data : Bool) :
+    decodeFormulas E (Json.arr #[Json.arr #[.str "and",
+        Json.arr #[.str "unary", .str "p", Json.arr #[.str "var", ((2 ^ 60 : Nat) : Json)]],
+        encodeFormula (Nat.repeat .not (VE.Limits.maxDepth - 1) .top)]]) data =
+      .error AstLimit.depthLimit :=
+  rfl
+
+-- The review's input in a concrete environment: the depth diagnostic, not the typing one (with
+-- one more unit of fuel the answer would be "ill-typed or unbound conclusion").
+#guard (match decodeClosed ⟨[], fun _ => none, fun _ => none⟩ (Json.arr #[.str "and",
+    Json.arr #[.str "unary", .str "p", Json.arr #[.str "var", ((2 ^ 60 : Nat) : Json)]],
+    encodeFormula (Nat.repeat .not (VE.Limits.maxDepth - 1) .top)]) true with
+  | .error e => e == AstLimit.depthLimit
+  | .ok _ => false)
+-- The walk passes that formula (it stops at the index), so the refusal above is the fuel's.
+#guard (match AstLimit.check [Json.arr #[.str "and",
+    Json.arr #[.str "unary", .str "p", Json.arr #[.str "var", ((2 ^ 60 : Nat) : Json)]],
+    encodeFormula (Nat.repeat .not (VE.Limits.maxDepth - 1) .top)]] with
+  | .ok () => true
+  | .error _ => false)
+-- One more unit of fuel decodes it: the formula is exactly one level past the fuel.
+#guard (match VE.Bridge.decodeFormula (VE.Limits.maxDepth + 1) (Json.arr #[.str "and",
+    Json.arr #[.str "unary", .str "p", Json.arr #[.str "var", ((2 ^ 60 : Nat) : Json)]],
+    encodeFormula (Nat.repeat .not (VE.Limits.maxDepth - 1) .top)]) with
+  | .ok _ => true
+  | .error _ => false)
+
 /-! ### The other hypotheses are the decoder's gates too
 
 Each `#guard` below is a formula (or list) that breaks exactly one hypothesis of
@@ -399,6 +447,44 @@ Each `#guard` below is a formula (or list) that breaks exactly one hypothesis of
 #guard (match decodeClosed ⟨[Background.stringSort], fun _ => none, fun _ => none⟩
     (encodeFormula (.all Background.stringSort .top)) false with
   | .ok φ => φ == .all Background.stringSort .top
+  | .error _ => false)
+
+/-! `hData` is not implied by `hCheck` on route environments. `RouteVocabulary.environment` adds
+`$string` to the sorts whenever a flag names it (`Wire.lean`'s `RouteVocabulary.environment`), so
+on a data@0 vocabulary with a functional predicate `named(person, $string)` a `$string` binder is
+typed (`hCheck` holds) and only the data gate refuses it. Without the flag the sort is absent and
+the typing gate refuses it first. -/
+
+-- data@0 with a functional `$string` flag: `$string` is a sort of the route's environment, the
+-- binder is typed there, and only the data gate refuses it (it reads back on a non-data route).
+#guard (match decodeVocabulary ["data@0"] (Json.mkObj [
+    ("sorts", Json.mkObj [("person", Json.mkObj [("description", .str "a person")])]),
+    ("predicates", Json.mkObj [("named", Json.mkObj [
+      ("arguments", Json.arr #[.str "person", .str Background.stringSort]),
+      ("functional", .bool true), ("description", .str "x is named y")])]),
+    ("constants", Json.mkObj [])]) with
+  | .ok rv =>
+    rv.environment.sorts.contains Background.stringSort &&
+    (VE.Formula.all Background.stringSort .top).check rv.environment [] &&
+    (match decodeClosed rv.environment (encodeFormula (.all Background.stringSort .top)) true with
+      | .error e => e == "UnsupportedProfile: $string quantification requires data stage 2"
+      | .ok _ => false) &&
+    (match decodeClosed rv.environment (encodeFormula (.all Background.stringSort .top)) false with
+      | .ok φ => φ == .all Background.stringSort .top
+      | .error _ => false)
+  | .error _ => false)
+-- The same predicate without the flag: `$string` is not a sort, so the typing gate refuses first.
+#guard (match decodeVocabulary ["data@0"] (Json.mkObj [
+    ("sorts", Json.mkObj [("person", Json.mkObj [("description", .str "a person")])]),
+    ("predicates", Json.mkObj [("named", Json.mkObj [
+      ("arguments", Json.arr #[.str "person", .str Background.stringSort]),
+      ("description", .str "x is named y")])]),
+    ("constants", Json.mkObj [])]) with
+  | .ok rv =>
+    !rv.environment.sorts.contains Background.stringSort &&
+    (match decodeClosed rv.environment (encodeFormula (.all Background.stringSort .top)) false with
+      | .error e => e == "ill-typed or unbound conclusion"
+      | .ok _ => false)
   | .error _ => false)
 
 end VE.Route.Wire
