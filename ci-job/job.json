@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-anthropic-rsp-fidelity-fix-4-c9214a26-t614103-s1",
+ "head": "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+ "argv": [
+  "armsh-cand-anthropic-rsp-fidelity-fix-4-c9214a26-t614103-s1",
+  "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+  "689bbd5ead442d1f36f72f82da711891214fa0a2",
+  "-",
+  "-",
+  "4",
+  "1/7"
+ ]
+}
