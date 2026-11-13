@@ -164,8 +164,11 @@ REGULATED = {
         "external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk "
         "posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' "
         "involvement, which is part of the act, not the assessment and the analysis"),
-    "residual_assessed": _obligation(["proposal"], "{0} be subject to a residual risk assessment",
-                                     "the model of {0} is subject to a residual risk assessment (1.3.4)"),
+    "residual_assessed": _obligation(
+        ["proposal"], "{0} be subject to residual risk assessments in evaluating deployment mitigations",
+        "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations "
+        "(1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating "
+        "their deployment mitigations\")"),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",
                                "the residual risk assessment for {0} is informed by a supplemental safety case "
                                "(1.3.4)"),
