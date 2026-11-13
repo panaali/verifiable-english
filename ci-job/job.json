@@ -1,0 +1,12 @@
+{
+ "job": "testmap-9a3fd7a9-t600508-s1",
+ "head": "5c111287a9f9f72d4c474e9faa564f0faabf8a15",
+ "argv": [
+  "testmap-9a3fd7a9-t600508-s1",
+  "5c111287a9f9f72d4c474e9faa564f0faabf8a15",
+  "5c111287a9f9f72d4c474e9faa564f0faabf8a15",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-664a8af90749.tar.zst",
+  "2fdad12c65d70c46aaf101691345f0d543b8621106b5ae7ed022f01139e22fd2",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_safetyfw_usecases.py tests/test_select_tests.py tests/test_lean_dump_cache.py tests/test_calc_answer.py tests/test_regen_generated.py tests/test_hang_guards.py tests/test_answer_cutoff.py tests/test_readings_s2_answer.py tests/test_calc_service.py tests/test_discourse_composed_route.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
