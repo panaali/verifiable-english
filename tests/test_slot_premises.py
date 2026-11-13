@@ -320,8 +320,8 @@ def test_slot_binding_from_request_not_answer(source, monkeypatch):
 
 @pytest.mark.parametrize("item, message", [
     (["forall", "assistant", ["unary", "undeclared", ["var", 0]]], "ill-typed or unbound formula"),
-    (7, None),
-    ("", None),
+    (7, "array expected"),
+    ("", "array expected"),
     ({"forall": "assistant"}, None),
     (["unary", "v", ["var", 0]], "ill-typed or unbound formula"),  # open: an unbound variable
 ])
