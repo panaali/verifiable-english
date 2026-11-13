@@ -243,8 +243,8 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "6dee16f07aab1a1f4c51737f13c4c93d1b0df6ed657b2634d746f17f8f882ca2",
-   "symbols": 83
+   "lexicon_id": "f0fbef114c72b3c0d0778164c4184f6a51e43a93442371074807a2d3fd86bdc5",
+   "symbols": 85
   },
   {
    "environment": "usecases/us-constitution-14th-s1/environment.json",

@@ -1418,11 +1418,20 @@
    "id": "s212-submitted",
    "span": [
     28358,
-    28544
+    28460
    ],
    "kind": "norm",
    "rule": "f14",
    "status": "CHECKED"
+  },
+  {
+   "id": "s212-might-update",
+   "span": [
+    28460,
+    28544
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
   },
   {
    "id": "s212-designed",
@@ -1970,10 +1979,19 @@
    "id": "s312-submitted",
    "span": [
     37953,
-    38139
+    38055
    ],
    "kind": "norm",
    "restates": "f14",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-might-update",
+   "span": [
+    38055,
+    38139
+   ],
+   "kind": "hedged",
    "status": "LABELLED"
   },
   {
