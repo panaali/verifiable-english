@@ -1,0 +1,299 @@
+{
+ "harness": "usecases/anthropic-rsp/run.py",
+ "command": "uv run python usecases/safetyfw_shadow.py anthropic-rsp OUT",
+ "harness_args": [
+  "--check"
+ ],
+ "harness_outcome": "exit 0",
+ "commit": "6edb29d11cec40b46817500346393e524d902159",
+ "seconds": {
+  "harness": 239.0,
+  "lean": 276.5
+ },
+ "calls_compared": {
+  "completed": 3700,
+  "selected": 3963
+ },
+ "python_answers": {
+  "completed false": 1353,
+  "completed true": 2347,
+  "selected empty": 2663,
+  "selected non-empty": 1300
+ },
+ "calls_by_family": {
+  "A": 5600,
+  "B": 360,
+  "C": 2,
+  "G": 280,
+  "K": 1220,
+  "N": 201
+ },
+ "calls_without_soft_source": {},
+ "documents": 81,
+ "models": 83,
+ "lean_calls": 458,
+ "distinct_queries": 1270,
+ "mismatch_calls": 0,
+ "mismatches": [],
+ "refused_calls": 0,
+ "refusals": [],
+ "background_false_calls": 0,
+ "background_false": [],
+ "document_choices": {
+  "0066b73c22ef6369": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "055b5a18119693db": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'allow'"
+  ],
+  "0600f4190f956f10": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny', ('f12-final', 'f12-board-approval')"
+  ],
+  "0791eed8e02cceb6": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "0a53b24559776669": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "0cc73167805600d7": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "113392b29ce331c7": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'deny'"
+  ],
+  "15ca249b78a2941d": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "16cea14bb353fa09": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "18e2448619da70ac": [],
+  "19271048b61cd1f9": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "192f6f7486c5f60b": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "1a813df5e18601a5": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "1afd2fdaf890aa8b": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "1c2f32a6a4db6cb6": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "234bd2436ed94744": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "263b1e6e6255607e": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'deny'"
+  ],
+  "269be6e70c31ece2": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "29f465668f8fb377": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'deny'"
+  ],
+  "2c56b57fb222b55a": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "2dd6be345d507030": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "2ec8d5c668da4e6b": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "324bc8d9e327674a": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'allow'"
+  ],
+  "325a0b89603c6924": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "34886c16549a9b9d": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "38c8d4a5d08d94fa": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "3c2332f909e6a5c9": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "3f52302a151b1708": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "4318aed8db1210f5": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "445f5c4303b9e494": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "4470c2fa485b67fa": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "45eb06d005cb78ed": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "47e8127a793fb1bf": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "4adb07a66c979756": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "4bbb2237ad11392c": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "54547f2c6bd2d3a8": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "558cfaa6dd8d6d77": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "5953c764da6c5964": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "5ca0b0f6f4ba2c0b": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "6560d8f9852b3284": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "6656cd9f248723f8": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "676e797bc54f47ce": [],
+  "686c9c4d1493db5a": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "68d0457c6cb19486": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "69a24adf6b006e1a": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "6c3dff2d9ffab19e": [],
+  "7cbe6688463b5388": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "7dd8e9b298698f64": [],
+  "8583fdaf519811f2": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "8f4fc968e1e59f62": [],
+  "9755a423a90f54ac": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "9c02dd599183ca41": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "a2f52230d5b1b36d": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "a50d315ba7355973": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "a89faf61cf4eab97": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'deny'"
+  ],
+  "a90f168af0790e4d": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'allow'"
+  ],
+  "ac6eab48a225a722": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "adde0647c76f4397": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "b2429eb443fe3c66": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "b97954b387ef29d3": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'default'), ('RS9', 'window')), 'allow'"
+  ],
+  "ba06d6f2b1b3b52f": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "baf7bcaac265d12f": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "bf84bd50bbcf3a67": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "c2e735ff3745b6f5": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "c54102fa3b2d58b3": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'",
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "c8fe3d3649af6315": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "ca12e98644dc98ce": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "cde0be8b16c0228c": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "d0024275a2c5cbd3": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "d495f13836cc15c8": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "d5facfb8143777bd": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "d64a10ef96a86979": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "dd98183f3e08ce3a": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "dff501373079c26f": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "ebbbd7bc20a3226b": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "ebeb65cc8ad4f37f": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "ebf7bc46649f83fb": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
+  ],
+  "eee08b8377c416d4": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "f5560904eff5622a": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "f62e1e6ccff8a0c2": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
+  ],
+  "ff16474af8e93e62": []
+ }
+}
