@@ -1,0 +1,12 @@
+{
+ "job": "testmap-b3431f71-t565464-s0",
+ "head": "cb8b9507b04348ad4fdfae95263df70bd4fd9c98",
+ "argv": [
+  "testmap-b3431f71-t565464-s0",
+  "cb8b9507b04348ad4fdfae95263df70bd4fd9c98",
+  "cb8b9507b04348ad4fdfae95263df70bd4fd9c98",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-c973584165fb.tar.zst",
+  "0c2ce7f6938200726579dee6f6abc5e7607fabfbf789a53f628abb320724c104",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_repo_map.py tests/test_b16e_rights_document.py tests/test_lean_service_schema.py tests/test_scope_authoring.py tests/test_history_tests.py tests/test_p1_amendment9.py tests/test_rights.py tests/test_grammar.py tests/test_senses_document.py tests/test_frozen_sources.py tests/test_lean_first_diff.py tests/test_answer_cutoff.py tests/test_readings_defaults_rd6b_report.py tests/test_stage0_probe_matrix.py tests/test_definitions.py tests/test_binding_census.py tests/test_english_grammar_gen.py tests/test_lean_first_b12_report.py tests/test_senses_display_cli.py tests/test_closure_certificates.py tests/test_closure_induction.py tests/test_lexicon.py tests/test_wire_contract_lint.py tests/test_metered_lean.py tests/test_lean_limits.py tests/test_english_e2_selection.py tests/test_right_clauses_lean.py tests/test_w6a_review_regressions.py tests/test_closure_witnesses.py tests/test_english_e2_overlay.py tests/test_wire_contract_three_way.py tests/test_cedar_attributes.py tests/test_keyed_answers_authority.py tests/test_fret_w6a_rerating.py tests/test_select_fast_stage.py tests/test_pack_plan_covers_fixture_imports.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
