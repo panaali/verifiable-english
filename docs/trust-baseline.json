@@ -2,8 +2,8 @@
  "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
  "budget": {
   "K": 1018,
-  "S": 14893,
-  "V": 47797
+  "S": 14935,
+  "V": 47820
  },
  "allowances": [
   {
@@ -2693,6 +2693,20 @@
    "reason": "en-e3a-cutback: VE/EnglishGrammar/Norm/Run.lean +9 (statementSpans -2, oneSpansOf +6 new, oneSpans -3, Reader +2, answerWith +3, leanReader +2, outcomeFields +1), VE/EnglishGrammar/Norm/Rules.lean -3 (normTags deleted); K +0, S +0, V +6",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a-cutback, 2026-10-18",
    "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
+  },
+  {
+   "class": "S",
+   "lines": 42,
+   "reason": "kb-10a: the soft route's soft-selected kind (new Lean-owned behaviour): S +42 (VE/SoftNorms/Selected.lean +25: selectedAt, outcomeAt, fullOver, SelectedQuery; VE/SoftNorms/SelectedSound.lean +17: QueryDecoded, SelectedAnswer), V +23 (ResponseShape/Schemas/SoftNorms.lean +22: the selected shape and its kind and row entries; VE/SoftNorms/Run.lean +1: the soft-selected branch of runSoftKind), K +0; decoders, the expansion and the runner are tied (decodeSelectedQuery_ok, decodeQueries_ok, expanded_circ, selectedRow_eq, runSelected_answer)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10a, 2026-11-12",
+   "commit": "175814252daf57038e1b5d0e227adcc4f749885d"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "kb-10a: the soft route's soft-selected kind (new Lean-owned behaviour): S +42 (VE/SoftNorms/Selected.lean +25: selectedAt, outcomeAt, fullOver, SelectedQuery; VE/SoftNorms/SelectedSound.lean +17: QueryDecoded, SelectedAnswer), V +23 (ResponseShape/Schemas/SoftNorms.lean +22: the selected shape and its kind and row entries; VE/SoftNorms/Run.lean +1: the soft-selected branch of runSoftKind), K +0; decoders, the expansion and the runner are tied (decodeSelectedQuery_ok, decodeQueries_ok, expanded_circ, selectedRow_eq, runSelected_answer)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10a, 2026-11-12",
+   "commit": "175814252daf57038e1b5d0e227adcc4f749885d"
   },
   {
    "class": "K",

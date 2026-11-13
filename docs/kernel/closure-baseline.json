@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9504,
- "keyed_kernel_lines": 9504,
- "keyed_lines": 16150,
+ "kernel_lines": 9552,
+ "keyed_kernel_lines": 9552,
+ "keyed_lines": 16198,
  "paths": [
   {
    "axioms": [],
@@ -329,12 +329,12 @@
   },
   {
    "axioms": [],
-   "lines": 4761,
+   "lines": 4920,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4753,
+   "spec_lines": 4912,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -347,7 +347,7 @@
     "VE.Acts.Table": 26,
     "VE.Acts.Tree": 23,
     "VE.Acts.Wire": 37,
-    "VE.Bridge": 78,
+    "VE.Bridge": 139,
     "VE.CertificateWire": 120,
     "VE.ClaimGraph": 103,
     "VE.Core.Bridge": 37,
@@ -356,14 +356,15 @@
     "VE.Data.Background": 17,
     "VE.Definitions.Elaborate": 52,
     "VE.Definitions.Layer": 42,
+    "VE.Finite": 36,
     "VE.Grammar.Basic": 19,
     "VE.Grammar.Derives": 47,
     "VE.Grammar.Reading": 3,
     "VE.Grammar.Table": 197,
     "VE.Limits": 14,
     "VE.Norms.Admission": 70,
-    "VE.Norms.Basic": 35,
-    "VE.Norms.Conflict": 11,
+    "VE.Norms.Basic": 38,
+    "VE.Norms.Conflict": 14,
     "VE.Norms.Elaborate": 40,
     "VE.Norms.LayersOnce": 32,
     "VE.Norms.Prefix": 12,
@@ -381,17 +382,20 @@
     "VE.Route.Route": 45,
     "VE.Route.Run": 8,
     "VE.Route.Steps": 2,
-    "VE.Route.Wire": 198,
+    "VE.Route.Wire": 206,
     "VE.Semantics": 49,
     "VE.SoftNorms.Admission": 112,
-    "VE.SoftNorms.Coherence": 1,
+    "VE.SoftNorms.Coherence": 4,
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 55,
+    "VE.SoftNorms.Selected": 15,
+    "VE.SoftNorms.SelectedSound": 15,
+    "VE.SoftNorms.Semantics": 2,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Tree": 148,
-    "VE.SoftNorms.Wire": 67,
+    "VE.SoftNorms.Wire": 80,
     "VE.Surface": 18,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
@@ -404,10 +408,11 @@
     ],
     "VE.SoftNorms.Run.runCase": [
      "VE.SoftNorms.Run.soft_wire_acceptance",
-     "VE.SoftNorms.Run.soft_wire_elaborate"
+     "VE.SoftNorms.Run.soft_wire_elaborate",
+     "VE.SoftNorms.Run.soft_wire_selected"
     ]
    },
-   "theorems": 3,
+   "theorems": 4,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
@@ -1198,7 +1203,7 @@
   },
   {
    "axioms": [],
-   "lines": 24137,
+   "lines": 24205,
    "modes": [
     "readingsRoute"
    ],
@@ -1324,7 +1329,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20445,
+   "wrap_lines": 20513,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1487,7 +1492,8 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 358,
+    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1506,12 +1512,12 @@
   },
   {
    "axioms": [],
-   "lines": 36079,
+   "lines": 36147,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36073,
+   "spec_lines": 36141,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1760,7 +1766,8 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 358,
+    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1857,12 +1864,12 @@
   },
   {
    "axioms": [],
-   "lines": 35581,
+   "lines": 35649,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 34753,
+   "spec_lines": 34821,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2108,7 +2115,8 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 358,
+    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,

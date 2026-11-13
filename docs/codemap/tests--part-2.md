@@ -1,3 +1,4 @@
+- `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.
 - `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
 - `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
 - `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
@@ -85,4 +86,3 @@
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
-- `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …

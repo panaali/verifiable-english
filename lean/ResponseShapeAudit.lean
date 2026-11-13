@@ -555,7 +555,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.SoftNorms.ruleReferences_ok
 #print axioms ResponseShape.Encoders.SoftNorms.runCaseReported_fits
 #print axioms ResponseShape.Encoders.SoftNorms.runCase_fits
+#print axioms ResponseShape.Encoders.SoftNorms.runSelected_fits
 #print axioms ResponseShape.Encoders.SoftNorms.runSoftKind_fits
+#print axioms ResponseShape.Encoders.SoftNorms.selected_fits
 #print axioms ResponseShape.Encoders.SoftNorms.softDiagnosticCode_mem
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelled_nonempty

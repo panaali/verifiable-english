@@ -495,6 +495,8 @@ import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.Once
 import VE.SoftNorms.RankProof
 import VE.SoftNorms.Run
+import VE.SoftNorms.Selected
+import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.Semantics
 import VE.SoftNorms.Soften
 import VE.SoftNorms.Status
@@ -9069,16 +9071,29 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.RanksValid.closure
 #print axioms VE.SoftNorms.RanksValid.declared
 #print axioms VE.SoftNorms.RanksValid.order
+#print axioms VE.SoftNorms.Run.decodeQueries_ok
+#print axioms VE.SoftNorms.Run.decodeSelectedQuery_ok
 #print axioms VE.SoftNorms.Run.elaborationAnswer_ok
 #print axioms VE.SoftNorms.Run.elaborationAnswer_reads
 #print axioms VE.SoftNorms.Run.excLabels_length
+#print axioms VE.SoftNorms.Run.expList_lookup
+#print axioms VE.SoftNorms.Run.expanded_circ
+#print axioms VE.SoftNorms.Run.fullOver_restrict
+#print axioms VE.SoftNorms.Run.getStr_ok
+#print axioms VE.SoftNorms.Run.mem_selectedAt
 #print axioms VE.SoftNorms.Run.mkObj_get_append
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
+#print axioms VE.SoftNorms.Run.outcomeAt_iff
 #print axioms VE.SoftNorms.Run.regeneratedCore_fields
 #print axioms VE.SoftNorms.Run.runAdmission_sound
+#print axioms VE.SoftNorms.Run.runSelected_answer
+#print axioms VE.SoftNorms.Run.selectedRow_eq
+#print axioms VE.SoftNorms.Run.selected_semantics
+#print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate
+#print axioms VE.SoftNorms.Run.soft_wire_selected
 #print axioms VE.SoftNorms.SoftChain.A_in
 #print axioms VE.SoftNorms.SoftChain.A_out
 #print axioms VE.SoftNorms.SoftChain.E_in
