@@ -1090,7 +1090,9 @@ def same_set(key, result):
 _K_ENTRY = "PLAN 12 item {}: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives {}"
 CAUSES = {"C6": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
           "C-doc": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
-          "G9": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(20, "SOME(P ∨ scoped)")}}
+          "G9": {"kind": "key finding", "feature_family": "key",
+                 "reason": _K_ENTRY.format(20, "NONE (item 25 amends item 20: C.2's unguarded duty binds G9's model "
+                                               "under both RS9 choices)")}}
 
 
 def classify(entry, result, agrees):

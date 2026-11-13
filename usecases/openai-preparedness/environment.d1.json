@@ -94,12 +94,6 @@
         ],
         "description": "{0} is a deployment under the Preparedness Framework"
       },
-      "misaligned_model_risk": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "{0} has a risk of a misaligned model circumventing human control and oversight and executing severe harms"
-      },
       "large_scale_internal": {
         "arguments": [
           "situation"
@@ -819,7 +813,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "C.2: the risk of a misaligned model circumventing human control and oversight and executing severe harms",
+        "description": "C.2: “Safeguards should sufficiently minimize the risk associated with a misaligned model circumventing human control and oversight and executing severe harms.”",
         "regulated": {
           "role": "obligation",
           "default": "deny",

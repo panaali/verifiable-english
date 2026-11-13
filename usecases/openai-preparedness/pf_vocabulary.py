@@ -52,8 +52,6 @@ BASE = {
     "substantiated_noncompliance": base(["situation"], "a noncompliance report at {0} is substantiated"),
     "external_deployment": base(["situation"], "{0} is an external deployment"),
     "framework_deployment": base(["situation"], "{0} is a deployment under the Preparedness Framework"),
-    "misaligned_model_risk": base(["situation"], "{0} has a risk of a misaligned model circumventing human control and "
-                                      "oversight and executing severe harms"),
     "large_scale_internal": base(["situation"], "{0} is a large-scale internal deployment"),
     "critical_standard_unspecified": base(["situation"], "the Critical standard has not yet been specified at {0}"),
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
@@ -221,8 +219,9 @@ ACTS = {
     "ssc_visibility": ("{0} give SSC visibility into processes", "Appendix B: SSC is the Safety and Security Committee of the OpenAI Board of Directors"),
     "recommendation_informed": ("{0} have Leadership informed by SAG", "Appendix B: SAG recommendation"),
     "misalignment_risk_minimized": ("{0} have safeguards that sufficiently minimize misaligned-model severe-harm risk",
-                                    "C.2: the risk of a misaligned model circumventing human control and oversight "
-                                    "and executing severe harms"),
+                                    "C.2: “Safeguards should sufficiently minimize the risk associated with a "
+                                    "misaligned model circumventing human control and oversight and executing severe "
+                                    "harms.”"),
     "tracking": ("{0} have the category tracked", "2.1: Tracked Category criteria"),
     "coverage_decided": ("{0} have SAG make the final coverage determination", "3.2: ambiguous coverage"),
     "checkpoint_selected": ("{0} have an appropriate development checkpoint selected to be covered",
