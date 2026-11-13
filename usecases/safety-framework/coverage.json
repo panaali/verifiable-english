@@ -8,24 +8,24 @@
   "example": 4436,
   "explanation": 3025,
   "exposition": 9990,
-  "hedged": 3276,
+  "hedged": 3444,
   "meta": 5545,
-  "norm": 8284,
+  "norm": 8116,
   "unformalised": 6865
  },
  "bytes_by_status": {
-  "CHECKED": 2935,
-  "LABELLED": 36619,
+  "CHECKED": 2851,
+  "LABELLED": 36703,
   "OPEN": 7954,
   "UNFORMALISED": 6865
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "fsf.d1.ve.md (built locally, not committed)",
- "document_sha256": "dcfa4d85856ba6edf62d7038fc5de8d3b714331df271f094ed179fd8f7b79e0f",
+ "document_sha256": "bfa68be57cfd2cba6db9ac1b39fd8ac86386f09d90c69321e8a97ace00279d0e",
  "master_bytes_by_status": {
-  "CHECKED": 4043,
-  "LABELLED": 35511,
+  "CHECKED": 3959,
+  "LABELLED": 35595,
   "OPEN": 7954,
   "UNFORMALISED": 6865
  },

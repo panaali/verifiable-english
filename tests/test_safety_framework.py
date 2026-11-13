@@ -448,7 +448,7 @@ def test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_te
     assert spans["g-external"]["open_terms"] == ["ot8_low_risk_external"]
     assert spans["g-high-risk"]["open_terms"] == ["ot7_high_risk_internal"]
     coverage = json.loads((HERE / "coverage.json").read_text())
-    assert coverage["master_bytes_by_status"]["CHECKED"] == 4043 and coverage["bytes_by_status"]["CHECKED"] == 2935
+    assert coverage["master_bytes_by_status"]["CHECKED"] == 3959 and coverage["bytes_by_status"]["CHECKED"] == 2851
 
 
 def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate():
@@ -531,3 +531,23 @@ def test_the_residual_risk_assessment_is_part_of_evaluating_the_deployment_mitig
     assert act.removeprefix("{0} ") + ", if " in _block("f7-rra").text
     assert _legend("residual_assessed").split(" (1.3.4")[0].endswith(
         "residual risk assessments as part of evaluating its deployment mitigations")
+
+
+def test_the_possibility_of_updates_after_a_safety_case_review_is_labelled_not_checked():
+    """f14, 2.1.2 and 3.1.2 step 3 "Material updates to a safety case will be submitted to the appropriate governance
+    function for review and might result in updates to the related residual risk assessment or safety case": the
+    review duty is f14's CHECKED unit (restated in 3.1.2); "and might result in updates ..." is a hedged unit of its own, LABELLED (PLAN
+    3.3), in both sections, so no CHECKED span holds the possibility and no rule makes it a duty."""
+    source = build_document.DEFAULT_SOURCE.read_bytes() if build_document.DEFAULT_SOURCE.exists() else None
+    clause = "and might result in updates to the related residual risk assessment or safety case"
+    assert re.findall(r'"([^"]*)"', _block("f14").source)[0].endswith("for review " + clause)
+    units = {u["id"]: u for u in json.loads((HERE / "spans.json").read_text())["units"]}
+    for section in ("s212", "s312"):
+        duty, might = units[f"{section}-submitted"], units[f"{section}-might-update"]
+        assert duty.get("rule", duty.get("restates")) == "f14" and duty["span"][1] == might["span"][0]
+        assert might["kind"] == "hedged" and might["status"] == "LABELLED" and "rule" not in might
+        if source is not None:
+            assert source[might["span"][0]:might["span"][1]].decode().startswith(clause)
+            assert "might" not in source[duty["span"][0]:duty["span"][1]].decode()
+    assert units["s212-submitted"]["status"] == "CHECKED" and units["s312-submitted"]["restates"] == "f14"
+    assert "update" not in _block("f14").text.split(", if ")[0].removeprefix("Rule 1. Every proposal must be submitted")
