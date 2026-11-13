@@ -392,6 +392,94 @@ def test_slot_inconsistent_facts_refused(source):
     assert answer["status"] == "error", answer
 
 
+# ---------------------------------------------------------------------------------------------------
+# (d): `facts` retyped or rebound in the two answers is refused by the schema and by the relay.
+
+RETYPED = {"deleted": ..., "7": 7, "true": True, "null": None, "[]": [], "{}": {}, "1.5": 1.5, "-1": -1,
+           "lone surrogate": "\ud800", "deep list": None, "shifted up": "+1", "shifted down": "-1"}
+
+
+def _deep():
+    value = []
+    for _ in range(10_000):
+        value = [value]
+    return value
+
+
+def _retyped(row, name):
+    forged = copy.deepcopy(row)
+    if name == "deleted":
+        del forged["facts"]
+    elif name == "deep list":
+        forged["facts"] = _deep()
+    elif name in ("shifted up", "shifted down"):
+        forged["facts"] = row["facts"] + (1 if name == "shifted up" else -1)
+    else:
+        forged["facts"] = RETYPED[name]
+    return forged
+
+
+def genuine_answers(raw, row):
+    """(case, row, call) for each slot answer with one fact: a certificate, a conflict over packages, a witness
+    (with facts [] the excluded witness is the one that conflicts)."""
+    certificate = certificate_case(raw, row, [FACT])
+    conflict = conflict_case(raw, row, [FACT], facts_model=FACTS_MODEL)
+    witness = conflict_case(raw, row, [], witness=WITNESS)
+    return {
+        "slot-certificate": (certificate, lambda: soft_route.check_soft_certificate(
+            document(), premises=[], conclusion=CLAIM, certificate=certificate["certificate"], facts=[FACT],
+            facts_model=FACTS_MODEL)),
+        "slot-conflict": (conflict, lambda: soft_route.check_soft_conflict(
+            document(), packages=conflict["packages"], facts=[FACT], facts_model=FACTS_MODEL)),
+        "slot-conflict witness": (witness, lambda: soft_route.check_soft_conflict(document(), witness=WITNESS,
+                                                                                   facts=[])),
+    }
+
+
+@pytest.mark.parametrize("name", sorted(RETYPED))
+def test_facts_retyped_or_rebound_is_unavailable(source, monkeypatch, name):
+    raw, row = source
+    for kind, (case, call) in genuine_answers(raw, row).items():
+        genuine = one(case)
+        assert genuine["status"] == "ok" and genuine["facts"] == len(case["facts"]), (kind, genuine)
+        check_row("soft-norms", genuine, case, 0)
+        forged = _retyped(genuine, name)
+        if name == "shifted down" and genuine["facts"] == 0:
+            forged["facts"] = -1
+        with pytest.raises(Invalid):
+            check_row("soft-norms", forged, case, 0)
+        real = soft_route._run
+        with monkeypatch.context() as patch:  # past the schema: the relay's own binding
+            patch.setattr(soft_route, "_run", lambda request: forged  # the relay never writes to the row
+                          if request["kind"].startswith("slot-") else real(request))
+            with pytest.raises(CheckerUnavailable, match="not bound to the request"):
+                call()
+        assert call()["facts"] == genuine["facts"]
+
+
+def test_certificate_conditional_labels_are_bound(lean):
+    """A certificate answer's `conditional_on` names open coherence labels of the document, once each, and none beside
+    an invalid certificate (`bind_certificate`); the genuine labels are kept."""
+    raw = env()
+    rules = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    row = elaborate("soft-norms", raw, rules)
+    assert row["conditional_on"] == ["soft:coherence:a,b"]
+    for kind, facts in (("soft-certificate", None), ("slot-certificate", [])):
+        case = {"id": kind, "kind": kind, "environment": raw, "norms": rules, "premises": [], "conclusion": ["top"],
+                "certificate": {"premise_meaning_ids": [0] * (len(row["background"]) + len(row["premises"]))}}
+        if facts is not None:
+            case["facts"] = facts
+        genuine = {"id": kind, "status": "ok", "valid": True, "background": len(row["background"]),
+                   "layers": len(row["premises"]), "conditional_on": ["soft:coherence:a,b"],
+                   **({"facts": 0} if facts is not None else {})}
+        assert soft_route.bind_certificate(genuine, case, row)["conditional_on"] == ["soft:coherence:a,b"]
+        for forged in (["ghost"], ["soft:coherence:a,b"] * 2, ["soft:coherence:b,a"], [7]):
+            with pytest.raises(ValueError, match="unbound certificate conditional labels"):
+                soft_route.bind_certificate(_forged(genuine, conditional_on=forged), case, row)
+        with pytest.raises(ValueError, match="unbound certificate conditional labels"):
+            soft_route.bind_certificate(_forged(genuine, valid=False), case, row)
+
+
 REPORT = ROOT / "docs/kernel/kb-3a/REPORT.md"
 CLAIM_ROW = re.compile(r"^\| (?P<claim>[^|]+?) \| `(?P<verdict>[^`]+)` \| `(?P<test>tests/[^`]+?)(?:::(?P<name>\w+))?` \|$",
                        re.M)
