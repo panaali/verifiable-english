@@ -1390,20 +1390,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-BIO-H/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS4=N&RS4s=unscoped)"
   },
   {
@@ -1452,20 +1444,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-BIO-C/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
   },
   {
@@ -1521,20 +1505,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-CYB-H/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS4=N&RS4s=unscoped)"
   },
   {
@@ -1589,20 +1565,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-CYB-C/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
   },
   {
@@ -1657,20 +1625,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-AIS-H/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS4=N&RS4s=unscoped)"
   },
   {
@@ -1719,20 +1679,12 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "transcription",
-    "kind": "key finding",
-    "reason": "answer-key.json holds the truncated cell 'SOME(N'; PLAN 6.2 says SOME(N ∧ unscoped); VE's answer equals the PLAN cell: True"
-   },
+   "agree": true,
+   "cause": null,
    "id": "B-AIS-C/MREP",
-   "key": "SOME(N",
+   "key": "SOME(N ∧ unscoped)",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
-   "soft": {
-    "key": "RS1=default",
-    "ve": []
-   },
-   "status": "disagree",
+   "status": "agree",
    "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
   },
   {
@@ -24859,8 +24811,8 @@
     "resource_limit": 0
    },
    "B": {
-    "correct": 36,
-    "disagree": 6,
+    "correct": 42,
+    "disagree": 0,
     "faithful_undecided": 0,
     "key": 42,
     "resource_limit": 0
@@ -24935,16 +24887,16 @@
   },
   "M3": {
    "bytes_by_kind": {
-    "asserted": 222,
+    "asserted": 48,
     "exposition": 5327,
     "norm": 9195,
-    "unformalised": 52674
+    "unformalised": 52848
    },
    "bytes_by_status": {
-    "CHECKED": 344,
+    "CHECKED": 170,
     "LABELLED": 5327,
     "OPEN": 9073,
-    "UNFORMALISED": 52674
+    "UNFORMALISED": 52848
    },
    "residual": {
     "assumptions": 0,
@@ -24979,7 +24931,7 @@
    "insensitive_choices": 124,
    "sensitive_choices": 669,
    "sensitive_exactly_where_silent": true,
-   "soft_key_items": 20,
+   "soft_key_items": 14,
    "soft_key_items_matched": 14,
    "soft_rows": 18
   },
@@ -25153,7 +25105,7 @@
    }
   },
   "useful_answers": {
-   "correct": 230,
+   "correct": 236,
    "faithful_undecided": 0,
    "field": "comparison[].agree; comparison[].status == 'UNDECIDED-faithful' marks the rest",
    "key": 239

@@ -76,11 +76,44 @@ OPEN_TERMS = {
     "ot16_adjustment": ("developer", "a model does not possess capabilities meaningfully different from other "
                         "publicly available models that have weaker security applied (2.2)", []),
 }
+# The vocabulary's term ids ("OT1") -> the names above ("ot1_level_reached").
+OPEN_TERM_NAMES = {name.split("_", 1)[0].upper(): name for name in OPEN_TERMS}
+assert {t for t in V.OPEN_PREDICATES.values() if t} <= set(OPEN_TERM_NAMES), "an open predicate names no open term"
+
+
+def open_predicates(node):
+    """The open predicates (vocabulary.OPEN_PREDICATES) that a wire rule or formula names, sorted."""
+    found = set()
+    stack = [node]
+    while stack:
+        item = stack.pop()
+        if type(item) is str:
+            found.add(item)
+        elif type(item) is list:
+            stack.extend(item)
+        elif type(item) is dict:
+            stack.extend(item.values())
+    return sorted(found & set(V.OPEN_PREDICATES))
+
+
+def derived_meaning(uid, spec, content):
+    """The meaning of a rule or premise unit: its listed open terms (wording its act carries, such as "periodic"),
+    then the term of every open predicate its content uses, in OPEN_TERMS order. Derived, never hand-kept: a rule
+    whose condition uses `reached`, or a premise about `low_risk`, is OPEN with that term (fsf-fidelity-fix F2:
+    f15-diff, g-external and g-high-risk were CHECKED; build checklist line 8)."""
+    listed = spec["meaning"]["open"] if type(spec["meaning"]) is dict else []
+    used = open_predicates(content)
+    termless = [p for p in used if V.OPEN_PREDICATES[p] is None]
+    derived = {OPEN_TERM_NAMES[V.OPEN_PREDICATES[p]] for p in used if V.OPEN_PREDICATES[p]}
+    terms = list(listed) + [name for name in OPEN_TERMS if name in derived and name not in listed]
+    if termless and not terms:
+        raise SystemExit(f"{uid}: uses the open predicates {termless}, which name no open term")
+    return _open(terms)
 
 # Reading sets (PLAN 3.1): set id -> (harness set, readings -> rules of that reading).
 READINGS = {
     "rs1_bullet2": ("RS1", {"s": ["f9-acc"], "g": ["f9-acc", "f9-dm", "f9-sec"]}),
-    "rs1_bullet3": ("RS1", {"s": ["f10-acc"], "g": ["f10-acc", "f10-dm-same or f10-dm-diff", "f10-sec"]}),
+    "rs1_bullet3": ("RS1", {"s": ["f10-acc"], "g": ["f10-acc", "f10-dm-diff", "f10-sec"]}),
     "rs1_bullet4": ("RS1", {"s": ["f11-acc"], "g": ["f11-acc", "f11-dm", "f11-sec"]}),
     "rs2_misuse": ("RS2", {"p": ["f12-p"], "u": ["f12-u"]}),
     "rs2_ml_rd": ("RS2", {"p": ["f13-p"], "u": ["f13-u"]}),
@@ -91,13 +124,11 @@ READINGS = {
     "rs4_within": ("RS4within", {"strict": ["f20-within-strict"], "default": ["f20-within-default"]}),
     "rs4_elicitation": ("RS4elicitation", {"strict": ["f20-elicitation-strict"],
                                            "default": ["f20-elicitation-default"]}),
-    "rs5_subsequent": ("RS5", {"d": ["f4-check-d"], "r": ["f4-check-r", "f4-further-r"]}),
-    "rs6_insider": ("RS6", {"same": ["f15-same"], "different": ["f15-diff"]}),
+    "rs5_subsequent": ("RS5", {"d": ["f4-check-d", "f4-need-d"], "r": ["f4-check-r", "f4-need-r", "f4-further-r"]}),
     "rs7_footnote4": ("RS7", {"e": ["f3"], "m": []}),
     "rs8_bullet2": ("RS8", {"scope": [], "rel": ["f9-rel"]}),
-    "rs8_bullet3": ("RS8", {"scope": [], "rel": ["f10-rel-same or f10-rel-diff"]}),
+    "rs8_bullet3": ("RS8", {"scope": [], "rel": ["f10-rel-diff"]}),
     "rs8_bullet4": ("RS8", {"scope": [], "rel": ["f11-rel"]}),
-    "rs9_bullet3": ("RS9", {"same": ["f10-dm-same"], "different": ["f10-dm-diff"]}),
 }
 
 # Unit specifications. Status follows ve.document's inference: content with a specified
@@ -214,8 +245,8 @@ UNITS = [
     ("We consider a wide range of risks", "s131-consider", label()),
     ("As explained above, we have identified risk domains", "s131-domains", label()),
     ("As part of our broader research", "s131-continue", unformalised("as_appropriate")),
-    ("For each of the four identified domains", "s131-four-domains",
-     facts("bridge-one-domain", support="assumption")),
+    # Not a closure: the text never states that the domains exclude each other (N1's own bridge, facts.d1.ve).
+    ("For each of the four identified domains", "s131-four-domains", label()),
     ("1.3.2 Inherent Risk Assessment", "s132-heading", meta()),
     ("To understand whether a model may, without appropriate mitigations", "s132-purpose", label()),
     ("We conduct a critical capability assessment prior to", "s132-cca",
@@ -282,7 +313,7 @@ UNITS = [
     ("● A model for which the inherent risk assessment indicates a ML R&D CCL", "s135-bullet3",
      readings("rs1_bullet3", "ot1_level_reached")),
     ("○ We assess that the deployment mitigations have brought the residual risk of severe", "s135-bullet3-dm",
-     readings("rs9_bullet3", "ot2_residual_risk_acceptable")),
+     condition("ot2_residual_risk_acceptable")),
     ("This is required only for external deployment and high-risk", "s135-bullet3-only",
      readings("rs8_bullet3", "ot7_high_risk_internal")),
     ("○ Security mitigations have been applied", "s135-bullet3-sec",
@@ -341,7 +372,7 @@ UNITS = [
     # Page 11: 2.2 and 2.2.1
     ("Frontier Safety Framework While we monitor", "p11-header", meta()),
     ("While we monitor for potential future risks", "s22-insider-assessment", believes()),
-    ("At this stage, additional mitigations beyond", "s22-insider-not-required", readings("rs6_insider")),
+    ("At this stage, additional mitigations beyond", "s22-insider-not-required", rule("f15-diff")),
     ("2.2 Misuse Capability Levels", "s22-heading", meta()),
     ("We set out below a set of CBRN", "s22-set-out", label()),
     ("We expect these to evolve over time.", "s22-expect", believes("expects")),
@@ -411,7 +442,8 @@ UNITS = [
     ("When a model has reached this TCL, we will carry out periodic", "s321-periodic",
      rule("f17-pra", "ot1_level_reached", "ot12_periodic")),
     ("This assessment may take into account", "s321-may", label("example")),
-    ("Since misalignment risks can manifest", "s321-internal", label("explanation")),
+    ("Since misalignment risks can manifest", "s321-internal",
+     rule("f17-hri", "ot1_level_reached", "ot7_high_risk_internal")),
     ("If the risk assessment deems the residual risk from internal deployment", "s321-safeguards",
      rule("f17-add", "ot1_level_reached")),
     ("3.2.2 ML R&D Critical Capability Levels", "s322-heading", meta()),
@@ -514,8 +546,8 @@ EXTRA_PREMISE_UNITS = {"activities-development": "s135-bullet2"}
 # A distinguishing situation per reading set: a case of cases.json at which the readings
 # give different answers in results.json.
 DISTINGUISHING = {"RS1": "A-L2-EXT", "RS2": "A-L0-EXT", "RS3 and RS3force": "B-L2", "RS4aim": "K9-L2", "RS4holistic": "K6",
-                  "RS4within": "B-L2", "RS4elicitation": "K6", "RS5": "K3", "RS6": "B-L2", "RS7": "A-L0-LRX",
-                  "RS8": "A-L2-INT", "RS9": "A-L6-HRI"}
+                  "RS4within": "B-L2", "RS4elicitation": "K6", "RS5": "K3", "RS7": "A-L0-LRX",
+                  "RS8": "A-L2-INT"}
 
 
 def spans(source):
@@ -608,31 +640,53 @@ def open_term_declarations(names=None):
             for name, (decider, what, factors) in OPEN_TERMS.items() if names is None or name in names]
 
 
-def build(source):
+def unit_content(env, facts, spec):
+    """The content of a premise or rule unit (None for any other unit). A unit restating a rule carries no content
+    in the document, but its meaning is still derived from this one."""
     from ve import ast as A
+    if "facts" in spec:
+        formulas = [f for block in spec["facts"] for f in facts[block]]
+        conjunction = formulas[0]
+        for f in formulas[1:]:
+            conjunction = A.And(conjunction, f)
+        return {"ast": formula_to_data(env, conjunction)}
+    if "rule" in spec:
+        return {"norm": json.loads(T.parsed_rule(spec["rule"]))}
+    return None
+
+
+def unit_meanings():
+    """Every unit's meaning as the builder writes it: derived for premise and rule units, as specified otherwise."""
+    from ve.softnorms import SoftEnvironment
+    env = SoftEnvironment(environment())
+    facts = {block_id: formulas for block_id, _, formulas in T.facts()}
+    return {uid: derived_meaning(uid, spec, unit_content(env, facts, spec)) if "facts" in spec or "rule" in spec
+            else spec["meaning"] for _, uid, spec in UNITS}
+
+
+def build(source):
     from ve.softnorms import SoftEnvironment
     raw_env = environment()
     env = SoftEnvironment(raw_env)
     facts = {block_id: formulas for block_id, _, formulas in T.facts()}
     used_rules, units, reading_sets, records = set(), [], [], []
     for (anchor, uid, spec), span in zip(UNITS, spans(source)):
+        content = unit_content(env, facts, spec)
+        if content is not None:
+            spec = {**spec, "meaning": derived_meaning(uid, spec, content)}
         unit = {"id": uid, "span": list(span), "kind": spec["kind"], "meaning": spec["meaning"],
                 "support": spec["support"]}
         record = {"id": uid, "span": list(span), "kind": spec["kind"] if type(spec["kind"]) is str
                   else spec["kind"][0]}
         if "facts" in spec:
-            formulas = [f for block in spec["facts"] for f in facts[block]]
-            conjunction = formulas[0]
-            for f in formulas[1:]:
-                conjunction = A.And(conjunction, f)
-            unit["content"] = {"ast": formula_to_data(env, conjunction)}
+            unit["content"] = content
             record["premises"] = spec["facts"]
         if "rule" in spec:
             if spec["rule"] in used_rules:
                 record["restates"] = spec["rule"]
             else:
                 used_rules.add(spec["rule"])
-                unit["content"] = {"norm": json.loads(T.parsed_rule(spec["rule"]))}
+                unit["content"] = content
                 record["rule"] = spec["rule"]
         if "reading_set" in spec and content_bearing(spec["reading_set"]):
             reading_sets.append(content_set(env, spec["reading_set"], uid, span, source))
@@ -673,7 +727,25 @@ def measure(document, path):
     path.write_bytes(document)
     loaded = load_document(path)
     statuses = {u["id"]: u["status"] for u in loaded["units"]}
+    overclaimed = checked_but_open(document, statuses)
+    if overclaimed:
+        raise SystemExit(f"CHECKED units whose content uses an open predicate: {overclaimed}")
     return coverage(loaded), statuses
+
+
+def checked_but_open(document, statuses):
+    """The units VE marked CHECKED whose content (a rule, a premise or a reading's rule) uses an open predicate,
+    with those predicates. CHECKED requires no open term (build checklist line 8; fsf-fidelity-fix F2), whatever
+    kind of unit carries it, so the builder refuses such a document instead of counting its bytes CHECKED."""
+    head = document.partition(b"\n---\n")[0]
+    if head[:4] != b"---\n":
+        raise SystemExit("the built document has no front matter")
+    front = json.loads(head[4:])
+    content = {u["id"]: [u.get("content")] for u in front["units"]}
+    for reading_set in front["reading_sets"]:
+        content[reading_set["unit"]] += [r.get("content") for r in reading_set["readings"]]
+    return {uid: used for uid, parts in content.items()
+            if statuses[uid] == "CHECKED" and (used := open_predicates(parts))}
 
 
 def master(records, statuses, results):

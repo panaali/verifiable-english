@@ -1051,7 +1051,6 @@ _K_ENTRY = "PLAN 12 item {}: the key cell is a key finding (KEY-FREEZE.md: secti
 CAUSES = {"C6": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
           "C-doc": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
           "G9": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(20, "SOME(P ∨ scoped)")}}
-TRANSCRIPTION = {"SOME(N": "SOME(N ∧ unscoped)"}
 
 
 def classify(entry, result, agrees):
@@ -1064,12 +1063,6 @@ def classify(entry, result, agrees):
                 "translation limit" if reason.startswith("translation limit") else "VE limit")
         return ("resource-limit" if kind == "resource limit" else "UNDECIDED-faithful",
                 {"kind": kind, "feature_family": family, "reason": reason})
-    if entry["key"] in TRANSCRIPTION:
-        plan = TRANSCRIPTION[entry["key"]]
-        return "disagree", {"kind": "key finding", "feature_family": "transcription",
-                            "reason": f"answer-key.json holds the truncated cell {entry['key']!r}; PLAN 6.2 says "
-                                      f"{plan}; VE's answer equals the PLAN cell: "
-                                      f"{same_set(plan.replace('∧', '&'), result)}"}
     cause = CAUSES.get(entry["id"], {"kind": "VE bug or key finding", "feature_family": "pending source audit",
                                      "reason": "requires a minimal repro before classification"})
     return "disagree", cause
