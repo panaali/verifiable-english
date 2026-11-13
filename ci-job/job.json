@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-norm-defaults-cfr-1b-cfr-1-af60feae-t534628-s3",
+ "head": "65e32c22709bf75467e7748c0e95524232980230",
+ "argv": [
+  "armsh-cand-norm-defaults-cfr-1b-cfr-1-af60feae-t534628-s3",
+  "65e32c22709bf75467e7748c0e95524232980230",
+  "2839ec5f669689fd9fbdb9b0f3f467b0899d5c7a",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
