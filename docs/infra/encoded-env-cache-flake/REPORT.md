@@ -53,7 +53,7 @@ Runs:
 
 ## Seeded bugs (Python; the only product language changed)
 
-Each bug was planted in `ve/environment_wire.py`, run with the tests above, and restored with `git checkout`. The tree was clean after each.
+Each bug was planted in `ve/environment_wire.py`, run with the tests above, and restored with `git checkout`. The tree was clean after each. The same list is committed as `docs/infra/encoded-env-cache-flake/seeded-bugs.json` (`file` and `test` keys), which the pre-review [mutants] check reads. M1 and M2 were planted again on fdfd8a78 for that record: M1 failed both `[full-cache]` and `[lean-oldest]` plus `test_the_environment_cache_keeps_its_newest_limit_entries` (3 failed); M2 failed `[lean-oldest]` (1 failed, 1 passed).
 
 | # | mutant | failing test(s) |
 |---|---|---|
