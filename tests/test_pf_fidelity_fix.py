@@ -547,7 +547,8 @@ def test_reasonable_evidence_quotes_4_2s_condition_with_its_decider(pf):
     OT11's decider is OpenAI ('we') as PLAN 3.2 states."""
     condition = "If we find reasonable evidence that our safeguards are not working as expected"
     assert legend_quotes("reasonable_evidence") == [condition]
-    assert "OpenAI ('we') finds reasonable evidence" in legend("reasonable_evidence")
+    assert "OpenAI ('we') finds reasonable evidence that its safeguards are not working as expected" in \
+        legend("reasonable_evidence")
     assert "OpenAI ('we') decides this (OT11)" in legend("reasonable_evidence")
     assert R.OT["OT11"] == "reasonable_evidence"
     for name in ("f10-review", "f10-validate"):
