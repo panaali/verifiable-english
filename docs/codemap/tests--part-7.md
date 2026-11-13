@@ -1,3 +1,5 @@
+- `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
+- `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
@@ -79,5 +81,3 @@
 - `tests/test_statement_scanner.py` — The shared declaration scanner of the statement gates reads a declaration's extent as Lean does (review sc-2d-f1 F2).
 - `tests/test_stats.py` — (no module docstring)
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
-- `tests/test_surface_registry.py` — (no module docstring)
-- `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
