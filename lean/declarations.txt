@@ -5717,7 +5717,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 53f22c268871e48ebf30f8b890fb41da0c9704d2e9a839bff27b619a8a2c4c53
+module VE.Audit 4d888561ca6881c85d79bfec850f6f9e17c8191c1b234b810115bb1ffcc83429
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -30293,6 +30293,13 @@ module VE.Time.Wire 147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a46
 796:0-796:85 def VE.Time.Wire.noExtension@VE.Time.Wire
 798:0-847:30 def VE.Time.Wire.runCase@VE.Time.Wire
 849:0-854:110 def VE.Time.Wire.runCaseReported@VE.Time.Wire
+module VE.Time.WireSound 8df02a772aabf4519f8608a58890dd085f4e49256d56ba82163eff32259b9d9c
+35:0-81:53 theorem VE.Time.Wire.quantity_admission_wire_sound@VE.Time.WireSound
+83:0-125:11 theorem VE.Time.Wire.quantity_countermodel_wire_sound@VE.Time.WireSound
+127:0-170:53 theorem VE.Time.Wire.quantity_certificate_wire_sound@VE.Time.WireSound
+172:0-214:11 theorem VE.Time.Wire.extension_document_sound@VE.Time.WireSound
+216:0-256:87 theorem VE.Time.Wire.quantity_document_wire_sound@VE.Time.WireSound
+258:0-262:27 theorem VE.Time.Wire.runCaseReported_ok@VE.Time.WireSound
 module VE.Typing f4b03b672954c7a6ae9cb2140fe64041785e3fe609b0edb314e611d24e89019d
 5:0-43:48 theorem VE.check_iff_wellFormed@VE.Typing
 module VE.Weighing.Conditions 9dba381a045d4aaa0c2cf0b7e63262544ef41313960ca4fd12324959f8e21de1
@@ -30906,4 +30913,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 25aca73e98840a2934234e198dfe252ba139993e14fb5a0dc90c6ed9f222d845
+module VE c49afeca19fc8f24f86f8c171c12eb1d91013894ec6df149d317212d0947d133

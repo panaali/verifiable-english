@@ -1,3 +1,7 @@
+- `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
+- `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
+- `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
+- `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
 - `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
 - `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…

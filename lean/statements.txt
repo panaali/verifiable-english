@@ -68667,6 +68667,189 @@ theorem VE.Time.Wire.evalB_sorted_sound
       r.fst = VE.Order.Formula.eval d.toModel [] f
   -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Time.Wire.sortDomains@VE.Time.Wire VE.Time.Wire.tables@VE.Time.Wire VE.Time.evalB@VE.Time.Budget
   -- expr 2766604691
+theorem VE.Time.Wire.extension_document_sound
+  ∀ (w : VE.Time.Wire.W6Env) (id kind : String) (j answer : Lean.Json),
+    VE.Time.Document.extension w id kind j = Except.ok answer →
+      kind = "document" ∧
+        ∃ document D nodes root res report reportId,
+          j.getObjVal? "document" = Except.ok document ∧
+            VE.Time.Document.decodeDocument w document = Except.ok (D, nodes, root) ∧
+              (res.doc = D ∧
+                  res.nodes = nodes ∧
+                    res.root.name = root ∧
+                      (∃ n, n ∈ nodes ∧ n.name = root ∧ n.adm = res.root.adm ∧ n.label = res.root.label) ∧
+                        (∀ (n : VE.Time.Document.QNode w), n ∈ nodes → VE.Time.Document.NodeAdmitted D n) ∧
+                          (∀ (x : String × VE.Time.Wire.Admission w × String),
+                              x ∈ res.root.assumptions →
+                                ∃ n,
+                                  n ∈ nodes ∧
+                                    n.deduction = Option.none ∧
+                                      (n.name, n.adm, n.label) = x ∧ VE.Time.Document.LeafAdmitted D n) ∧
+                            VE.Time.Document.CitationsClosed D res.root ∧
+                              VE.Time.Document.ChoicesCompatible res.root ∧ res.root.Sound ∧ res.root.SoundOverLeaves) ∧
+                report =
+                    Lean.Json.mkObj
+                      [("root", VE.Time.Document.claimJson res.root.name res.root.adm res.root.label),
+                        ("assumptions",
+                          Lean.Json.arr
+                            (List.map (fun x => VE.Time.Document.claimJson x.fst x.snd.fst x.snd.snd)
+                                res.root.assumptions).toArray)] ∧
+                  VE.CertificateWire.digest
+                        (ToString.toString "ve-report-" ++ ToString.toString (VE.Route.Wire.identityVersion w.profiles) ++
+                          ToString.toString "\n")
+                        (Lean.Json.mkObj
+                          [("environment_id", Lean.Json.str w.environmentId), ("document", document),
+                            ("report", report)]) =
+                      Except.ok reportId ∧
+                    answer =
+                      VE.Time.Wire.ok id
+                        [("admitted", Lean.Json.bool Bool.true), ("assurance", Lean.Json.str "lean-admitted"),
+                          ("report", report), ("report_id", Lean.Json.str reportId),
+                          ("environment_id", Lean.Json.str w.environmentId),
+                          ("kinds",
+                            Lean.Json.arr (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
+  -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire
+  -- expr 945645095
+theorem VE.Time.Wire.quantity_admission_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
+        ∃ id env w quantity a value,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "quantity" = Except.ok quantity ∧
+                  VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                    answer =
+                        VE.Time.Wire.ok id
+                          ([("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+                              ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
+                              ("environment_id", Lean.Json.str w.environmentId),
+                              ("target_environment_id", Lean.Json.str w.targetId)] ++
+                            value) ∧
+                      VE.Time.Admitted w.vocab.env [] a.formula ∧
+                        VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
+                          ((∃ e, j.getObjVal? "model" = Except.error e) ∧ value = [] ∨
+                            ∃ model d b work,
+                              j.getObjVal? "model" = Except.ok model ∧
+                                VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                                  value = [("value", Lean.Json.bool b), ("evaluations", Lean.ToJson.toJson work)] ∧
+                                    b = VE.Order.Formula.eval d.toModel [] a.formula.erase)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.eval@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.SortName@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 424148063
+theorem VE.Time.Wire.quantity_certificate_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "certificate") →
+        ∃ id env w premises conclusion certificate ps c cert valid,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "premises" = Except.ok premises ∧
+                  VE.Time.Wire.admissions w premises = Except.ok ps ∧
+                    j.getObjVal? "conclusion" = Except.ok conclusion ∧
+                      VE.Time.Wire.decodeQuantity w conclusion = Except.ok c ∧
+                        j.getObjVal? "certificate" = Except.ok certificate ∧
+                          VE.Time.Wire.decodeW6Certificate certificate = Except.ok cert ∧
+                            answer =
+                                VE.Time.Wire.ok id
+                                  [("valid", Lean.Json.bool valid),
+                                    ("premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.meaningId) ps)),
+                                    ("conclusion_meaning_id", Lean.Json.str c.meaningId),
+                                    ("core_premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.coreId) ps)),
+                                    ("core_conclusion_meaning_id", Lean.Json.str c.coreId),
+                                    ("environment_id", Lean.Json.str w.environmentId),
+                                    ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                              (∀ (a : VE.Time.Wire.Admission w),
+                                  a ∈ c :: ps → VE.Time.Admitted w.vocab.env [] a.formula) ∧
+                                (valid = Bool.true →
+                                  cert.environmentId = w.environmentId ∧
+                                    cert.premiseIds = List.map (fun x => x.meaningId) ps ∧
+                                      cert.conclusionId = c.meaningId ∧
+                                        VE.Time.TEntails w.vocab.env (List.map (fun x => x.formula) ps) c.formula)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Certificate.conclusionId@VE.Time.Wire VE.Time.Wire.W6Certificate.environmentId@VE.Time.Wire VE.Time.Wire.W6Certificate.premiseIds@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.admissions@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.decodeW6Certificate@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 2396971404
+theorem VE.Time.Wire.quantity_countermodel_wire_sound
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "countermodel") →
+        ∃ id env w premises conclusion model ps c d refutes,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                j.getObjVal? "premises" = Except.ok premises ∧
+                  VE.Time.Wire.admissions w premises = Except.ok ps ∧
+                    j.getObjVal? "conclusion" = Except.ok conclusion ∧
+                      VE.Time.Wire.decodeQuantity w conclusion = Except.ok c ∧
+                        j.getObjVal? "model" = Except.ok model ∧
+                          VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                            answer =
+                                VE.Time.Wire.ok id
+                                  [("refutes", Lean.Json.bool refutes),
+                                    ("premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.meaningId) ps)),
+                                    ("conclusion_meaning_id", Lean.Json.str c.meaningId),
+                                    ("core_premise_meaning_ids", Lean.ToJson.toJson (List.map (fun x => x.coreId) ps)),
+                                    ("core_conclusion_meaning_id", Lean.Json.str c.coreId),
+                                    ("environment_id", Lean.Json.str w.environmentId),
+                                    ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                              (∀ (a : VE.Time.Wire.Admission w),
+                                  a ∈ c :: ps → VE.Time.Admitted w.vocab.env [] a.formula) ∧
+                                refutes =
+                                  (((List.map (fun x => x.formula.erase) ps).all fun f =>
+                                      VE.Order.Formula.eval d.toModel [] f) &&
+                                    !VE.Order.Formula.eval d.toModel [] c.formula.erase)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.admissions@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 1903245322
+theorem VE.Time.Wire.quantity_document_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Time.Wire.runCase j VE.Time.Document.extension = Except.ok answer →
+      j.getObjVal? "kind" = Except.ok (Lean.Json.str "document") →
+        ∃ id env w,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok env ∧
+              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                ∃ document D nodes root res report reportId,
+                  j.getObjVal? "document" = Except.ok document ∧
+                    VE.Time.Document.decodeDocument w document = Except.ok (D, nodes, root) ∧
+                      (res.doc = D ∧
+                          res.nodes = nodes ∧
+                            res.root.name = root ∧
+                              (∃ n, n ∈ nodes ∧ n.name = root ∧ n.adm = res.root.adm ∧ n.label = res.root.label) ∧
+                                (∀ (n : VE.Time.Document.QNode w), n ∈ nodes → VE.Time.Document.NodeAdmitted D n) ∧
+                                  (∀ (x : String × VE.Time.Wire.Admission w × String),
+                                      x ∈ res.root.assumptions →
+                                        ∃ n,
+                                          n ∈ nodes ∧
+                                            n.deduction = Option.none ∧
+                                              (n.name, n.adm, n.label) = x ∧ VE.Time.Document.LeafAdmitted D n) ∧
+                                    VE.Time.Document.CitationsClosed D res.root ∧
+                                      VE.Time.Document.ChoicesCompatible res.root ∧
+                                        res.root.Sound ∧ res.root.SoundOverLeaves) ∧
+                        report =
+                            Lean.Json.mkObj
+                              [("root", VE.Time.Document.claimJson res.root.name res.root.adm res.root.label),
+                                ("assumptions",
+                                  Lean.Json.arr
+                                    (List.map (fun x => VE.Time.Document.claimJson x.fst x.snd.fst x.snd.snd)
+                                        res.root.assumptions).toArray)] ∧
+                          VE.CertificateWire.digest
+                                (ToString.toString "ve-report-" ++
+                                    ToString.toString (VE.Route.Wire.identityVersion w.profiles) ++
+                                  ToString.toString "\n")
+                                (Lean.Json.mkObj
+                                  [("environment_id", Lean.Json.str w.environmentId), ("document", document),
+                                    ("report", report)]) =
+                              Except.ok reportId ∧
+                            answer =
+                              VE.Time.Wire.ok id
+                                [("admitted", Lean.Json.bool Bool.true), ("assurance", Lean.Json.str "lean-admitted"),
+                                  ("report", report), ("report_id", Lean.Json.str reportId),
+                                  ("environment_id", Lean.Json.str w.environmentId),
+                                  ("kinds",
+                                    Lean.Json.arr
+                                      (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
+  -- uses VE.Bridge.stringField@VE.Bridge VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 2107039242
 theorem VE.Time.Wire.refutesB_sorted_sound
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (names : List String) (limit : Nat) (ps : List VE.Order.Formula)
     (c : VE.Order.Formula) (w : Nat) (b : Bool),
@@ -68674,6 +68857,11 @@ theorem VE.Time.Wire.refutesB_sorted_sound
       b = VE.Order.countermodelCheck d.toModel ps c
   -- uses VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.countermodelCheck@VE.Order.Consequence VE.Time.Wire.sortDomains@VE.Time.Wire VE.Time.Wire.tables@VE.Time.Wire VE.Time.refutesB@VE.Time.Budget
   -- expr 3071831802
+theorem VE.Time.Wire.runCaseReported_ok
+  ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer → VE.Time.Wire.runCaseReported j more = answer
+  -- uses VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire VE.Time.Wire.runCaseReported@VE.Time.Wire
+  -- expr 4206319841
 theorem VE.Time.Wire.sortDomains_perm
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : String),
     ((VE.Time.Wire.sortDomains d).toModel.domains s).Perm (d.toModel.domains s)
