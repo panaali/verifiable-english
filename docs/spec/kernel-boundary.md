@@ -14,15 +14,15 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is four paths:** the route, norms, soft norms and, since KB-7, the `metered` mode's
-   budgeted evaluation. Together they are **9,552 lines (M)**, under the 10,000-line target. The
+   budgeted evaluation. Together they are **9,947 lines (M)**, under the 10,000-line target. The
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,198 lines (M): the four kernel paths, the `quantity` path (a candidate: since KB-8 its wire theorems
+   16,593 lines (M): the four kernel paths, the `quantity` path (a candidate: since KB-8 its wire theorems
    leave a 75-line wrap), and the risk route and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
-   case the answer carries (the carry rule, section 3). Today 57 definitions write a verdict token
+   case the answer carries (the carry rule, section 3). Today 59 definitions write a verdict token
    and 56 of them, in 28 modules, are outside the kernel (M); that count goes to zero.
 4. **One statement form.** A document's checked content is one core document: definitions, rules
    (soft-norm nodes) and premises over one vocabulary, `(X : SoftDoc, P : List Formula)`, whose
@@ -69,8 +69,8 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 |---|---|---:|---:|---:|---:|
 | route | kernel | 26 | 4,254 | 15 | 4,265 |
 | norms | kernel | 21 | 4,371 | 2,709 | 4,410 |
-| softNorms | kernel | 4 | 4,912 | 35 | 4,920 |
-| **kernel, distinct lines** | | | | | **9,552** |
+| softNorms | kernel | 13 | 5,360 | 35 | 5,368 |
+| **kernel, distinct lines** | | | | | **9,947** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 3,245 | 2,080 | 3,251 |
 | quantity | candidate | 5 | 2,267 | 75 | 2,274 |
@@ -92,8 +92,8 @@ candidate rows moved with main's code, the kernel rows did not). Other measureme
 | Code that runs for the document mode | 35,142 lines (M) |
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
-| Definitions that write a verdict token, outside example, check and schema modules | 57, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,198, of them 9,552 in the kernel (M) |
+| Definitions that write a verdict token, outside example, check and schema modules | 59, of them 56 in 28 modules outside the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,593, of them 9,947 in the kernel (M) |
 
 Reading the table:
 
@@ -129,6 +129,13 @@ Reading the table:
   regulated atom, hold in every full structure over `E′` whose base restriction is the model and whose
   layer symbols agree with their meanings (`AgreesBelow` at the full prefix). No caller reads it yet
   (kb-10b moves the keys' `selected` and `completed` onto it).
+  Since kb-3 it also lists the premise slot's kinds: `slot_wire_certificate` and `slot_wire_conflict` state
+  the whole `slot-certificate` and `slot-conflict` answers over the replays of `VE.Compose.SlotWire` (its
+  subjects `replaySlotEntailment`, `replaySlotConflict`, `replaySlotWitness`), and `slot_wire_acceptance`,
+  `slot_wire_conflict_sound` and `slot_wire_conflict_witness_sound` say what an accepted replay means for
+  every list `facts` of base premises (`slot_route_acceptance`); `slot_wire_empty` says that with no facts
+  each slot replay is its soft twin, and `slot_wire_conflict_facts` and `slot_wire_entailment_facts` that
+  accepted facts hold together with the base in some structure.
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
@@ -146,8 +153,8 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,198 |
-| of which in the proved kernel | 9,552 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,593 |
+| of which in the proved kernel | 9,947 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (wire theorems since KB-8, a candidate; before them, 1,804 lines of wire code under no theorem, now a 75-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
@@ -392,7 +399,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 9,552 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 9,947 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order
