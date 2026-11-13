@@ -364,7 +364,9 @@
   "12c8394348778f73": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'deny'"
   ],
-  "12dc0bb23aaa0ae7": [],
+  "12dc0bb23aaa0ae7": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'rule'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "12edc6d5a430c696": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'P'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'deny'",
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'P'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'deny'"
@@ -691,7 +693,9 @@
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'",
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'sep'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'"
   ],
-  "29728795e1459267": [],
+  "29728795e1459267": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "2987234c3f1d12ce": [
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'scoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'deny'",
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'unscoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'deny'"
@@ -2536,7 +2540,9 @@
   "9de82f44f35b0fc0": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'"
   ],
-  "9e4999d18b73b71f": [],
+  "9e4999d18b73b71f": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'rule'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "9e9c918fd0431b2d": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'"
   ],
@@ -2589,7 +2595,9 @@
   "a1b2aa1ef447d6e5": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'"
   ],
-  "a1c415a4781b0e60": [],
+  "a1c415a4781b0e60": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "a1c9103db7fa2b5d": [
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'"
   ],
@@ -3258,7 +3266,9 @@
   "cdb3bf2e8c0afbfe": [
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'"
   ],
-  "ce39510b7896505d": [],
+  "ce39510b7896505d": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "ced6fa5f82ef4eaa": [
    "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'unscoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'deny'"
   ],
@@ -3826,7 +3836,9 @@
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'scoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'",
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'unscoped'), ('RS5', 'exception'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'"
   ],
-  "f9ec2a2148917843": [],
+  "f9ec2a2148917843": [
+   "(('RS0', 'commitment'), ('RS1', 'strict'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'rule'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'inuse'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'N'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict'))"
+  ],
   "fa0420516a1f1976": [
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'P'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'",
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'ext'), ('RS4', 'P'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'strict')), 'allow'"
@@ -3929,5 +3941,10 @@
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'scoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'",
    "(('RS0', 'commitment'), ('RS1', 'default'), ('RS10', 'publication'), ('RS11', 'process'), ('RS12', 'suff'), ('RS13', 'permission'), ('RS14', 'appointment'), ('RS15', 'explanation'), ('RS16', 'coupled'), ('RS17', 'bperm'), ('RS18', 'devonly'), ('RS2', 'nest'), ('RS3', 'any'), ('RS4', 'P'), ('RS4s', 'unscoped'), ('RS5', 'within'), ('RS6', 'req'), ('RS7', 'noinput'), ('RS8', 'rel'), ('RS9', 'default')), 'allow'"
   ]
+ },
+ "choice_label_correction": {
+  "commit": "33d8077a466c37ed66bf371f98a6592d63efdad2",
+  "method": "direct G1/G3 or N2 probes over baseline, m1-m6, N1-N3; no full replay",
+  "documents": 6
  }
 }

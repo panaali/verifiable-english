@@ -142,7 +142,7 @@ def test_query_only_probe_mismatch_keeps_its_actual_choice_and_case(name, item, 
     harness = shadow_module.load(name)
     shadow = shadow_module.Shadow()
     with shadow_module.installed(shadow, harness, shadow_module.HARNESSES[name]):
-        harness.answer(item)
+        answer = harness.answer(item)
     assert shadow.calls
     shadow.calls = [(*call[:5], ["planted"], call[6]) for call in shadow.calls]
 
@@ -151,8 +151,11 @@ def test_query_only_probe_mismatch_keeps_its_actual_choice_and_case(name, item, 
 
     report = shadow.compare(ask=ask)
     assert report["mismatch_calls"] == len(shadow.calls)
+    expected_choices = {repr(tuple(sorted({**harness.BASE, **row["choice"]}.items())))
+                        for row in answer["choices"]}
+    assert {row["choice"] for row in report["mismatches"]} == expected_choices
     assert all(row["choice"] in report["document_choices"][row["document"]]
-               and "RS" in row["choice"] and expected in row["case"] and row["model"] in shadow.models
+               and row["case"] == expected and row["model"] in shadow.models
                for row in report["mismatches"])
     if name == "openai-preparedness":
         assert len({row["choice"] for row in report["mismatches"]}) > 1
