@@ -1138,10 +1138,12 @@ def committed_tree():
     return decls, files, trust_map.load_table(), trust_map.statements(), trust_map.lean_predicates()
 
 
-def test_mutated_committed_ties_are_reported_or_rejected(committed_tree):
-    """Every committed tie and every declaration its theorems mention (its possible anchors) takes
-    every class, untied and tied, or none, against the committed dump and the files they live in
-    (with those files' table entries and predicates, so the sub-tree is itself a valid tree)."""
+@pytest.fixture(scope="module")
+def committed_ties(committed_tree):
+    """Every committed tie and every declaration its theorems mention (its possible anchors), sorted,
+    with the committed dump and the files they live in (with those files' table entries and
+    predicates, so the sub-tree is itself a valid tree); the whole tree and the sub-tree each pass
+    unmutated. Once per worker: the chunks below share it."""
     decls, files, table, proved, predicates = committed_tree
     walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
     assert problems == [] and not unsound(walked, table, proved, predicates)
@@ -1156,10 +1158,42 @@ def test_mutated_committed_ties_are_reported_or_rejected(committed_tree):
     predicates = {p for p in predicates if p[0] in {lean_statements.module_name(m) for m in files}}
     walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
     assert problems == [] and not unsound(walked, table, proved, predicates)
-    for module, name in targets:
-        for variant in entry_variants(table.get(module, {}).get(name), tying[:1]):
-            assert_sound_or_rejected(decls, files, mutate(table, module, name, variant), proved, predicates,
-                                     f"{name}={variant}")
+    return decls, files, table, proved, predicates, targets, tying
+
+
+# The mutation loop over the committed ties runs as this many tests, so xdist spreads it over workers
+# (one loop on one core was the gate's longest test: gate-tie-test-split). Chunk i holds the targets
+# whose index in the sorted list is i modulo CHUNKS.
+CHUNKS = 16
+
+
+def committed_cases(targets: list, table: dict, tying: list[str], chunk: int | None = None) -> list[tuple]:
+    """The (module, name, variant) mutations of chunk `chunk` of `targets`, or of all of them (None)."""
+    return [(module, name, variant) for index, (module, name) in enumerate(targets)
+            if chunk is None or index % CHUNKS == chunk
+            for variant in entry_variants(table.get(module, {}).get(name), tying[:1])]
+
+
+@pytest.mark.parametrize("chunk", range(CHUNKS))
+def test_mutated_committed_ties_are_reported_or_rejected(committed_ties, chunk):
+    """Every committed tie and every declaration its theorems mention takes every class, untied and
+    tied, or none, against the committed sub-tree (`committed_ties`): this chunk's targets."""
+    decls, files, table, proved, predicates, targets, tying = committed_ties
+    for module, name, variant in committed_cases(targets, table, tying, chunk):
+        assert_sound_or_rejected(decls, files, mutate(table, module, name, variant), proved, predicates,
+                                 f"{name}={variant}")
+
+
+def test_committed_tie_chunks_partition_every_mutation(committed_ties):
+    """The chunks together run every (target, variant) pair of the unsplit loop exactly once, and none is empty."""
+    _, _, table, _, _, targets, tying = committed_ties
+    chunks = [committed_cases(targets, table, tying, chunk) for chunk in range(CHUNKS)]
+    def key(case: tuple) -> str:
+        return json.dumps(case, sort_keys=True)
+    whole = [key(case) for module, name in targets
+             for case in ((module, name, v) for v in entry_variants(table.get(module, {}).get(name), tying[:1]))]
+    assert all(chunks) and len(whole) == len(set(whole))
+    assert sorted(key(case) for chunk in chunks for case in chunk) == sorted(whole)
 
 
 def test_committed_ledger_names_real_declarations():
