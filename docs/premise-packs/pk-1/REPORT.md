@@ -91,7 +91,9 @@ match the stub's statements token for token, after whitespace normalisation. The
    the two `assemble` calls read it, so the count has one owner. This file was not in the spec's hunk table. No
    in-flight branch edits it.
 3. **`Readings/VerdictsWire.lean`**: `xEvidenceOf` reads `Packs.labelledX L.packs` where it read `L.labelled`. This
-   one-line hunk was missing from the spec's table. It is byte-identical (A/B above).
+   one-line hunk was missing from the spec's table. On the inputs the full differential ran (A/B above, including the
+   recorded readings sessions), its outputs had 0 differences (`evidence/ab_full.txt`, exit 0). The 33 route cases
+   have no valid differential (section 2), and no theorem states the hunk's identity.
 4. **A9′** lives in `ResponseShape/Encoders/NormDefaults.lean`, not in `PacksExamples.lean`, because
    `tools/layer_policy.py` puts `ResponseShape` at layer 4 and `VE.NormDefaults` at layer 2. A9's
    `furtherEntries` rows are AT-2's.
@@ -158,7 +160,10 @@ No Rust or Python product file changed. M9 is in tooling.
 
 ## 6. Pilot bytes expected to move
 
-None: every output on today's routes is byte-identical (section 2). Nothing is claimed before a pilot audit.
+None expected. The saved evidence supports 0 differences on the inputs of the full differential only
+(`evidence/ab_full.txt`: every conformance corpus and the sessions recorded from 17 test files, section 2). It is a
+sampled comparison, not a proof of identity. The 33 route cases have no valid differential (section 2; pk-1-cfr-1b
+replaces it). Nothing is claimed before a pilot audit.
 
 ## 7. Next items
 
@@ -190,8 +195,9 @@ df50d5b7c, c7932eeac, 5cde0da38, 573e19f50, d21c1c3c7.
    list above comes from `main..HEAD --no-merges`. `ve_service`'s digest is unchanged since the A/B run.
 7. **No unsigned item.** PASS: DELTA T1 cites R16 with its evidence. The false statement is a theorem-statement
    decision, listed in this report's first line, and is not a DELTA row.
-8. **Every user-visible change in DELTA.** PASS: the base/head diff is empty (`evidence/ab_full.txt`), and DELTA
-   says so. The new `assemble` texts are unreachable from today's decoders (DELTA prose).
+8. **Every user-visible change in DELTA.** PASS for the full differential's inputs: its base/head comparison found
+   0 differences (`evidence/ab_full.txt`), and DELTA says so with that scope. The new `assemble` texts are
+   unreachable from today's decoders (DELTA prose).
 9. **Test selection.** PASS, with a note: `select_tests` picks all 347 units because `checkers.lock` and
    `Audit.lean` changed (known; see the merge recipe). M8's failing file, `tests/test_norm_defaults_layered.py`, is
    in that selection.
