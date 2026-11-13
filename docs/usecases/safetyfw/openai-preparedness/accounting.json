@@ -577,8 +577,7 @@
     "internal",
     "present",
     "severe",
-    "treat",
-    "use"
+    "treat"
    ],
    "entries": [
     {
@@ -612,11 +611,6 @@
      "arg": "1"
     },
     {
-     "words": "Such models require additional safeguards",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
      "words": "regardless of whether or when they are externally deployed",
      "reason": "exposition",
      "arg": ""
@@ -641,8 +635,7 @@
     "internal",
     "present",
     "severe",
-    "treat",
-    "use"
+    "treat"
    ],
    "entries": [
     {
@@ -662,11 +655,6 @@
     },
     {
      "words": "and should be treated with extreme caution",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
-     "words": "Such models require additional safeguards",
      "reason": "loss",
      "arg": "1"
     },
@@ -696,8 +684,7 @@
     "internal",
     "present",
     "severe",
-    "treat",
-    "use"
+    "treat"
    ],
    "entries": [
     {
@@ -755,8 +742,7 @@
     "internal",
     "present",
     "severe",
-    "treat",
-    "use"
+    "treat"
    ],
    "entries": [
     {
@@ -874,9 +860,7 @@
     "reached",
     "safeguards_during_development"
    ],
-   "unaccounted": [
-    "system"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "Systems that reach Critical capability also require",
@@ -1510,19 +1494,10 @@
    "file": "rules.d1.ve",
    "span_length": 152,
    "used": [
-    "misaligned_model_risk",
     "misalignment_risk_minimized"
    ],
-   "unaccounted": [
-    "associat"
-   ],
-   "entries": [
-    {
-     "words": "associated with",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1530,19 +1505,10 @@
    "file": "rules.d1.ve",
    "span_length": 152,
    "used": [
-    "misaligned_model_risk",
     "misalignment_risk_minimized"
    ],
-   "unaccounted": [
-    "associat"
-   ],
-   "entries": [
-    {
-     "words": "associated with",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -2991,19 +2957,19 @@
   "blocks": 99,
   "blocks_with_loss": 17,
   "losses_by_class": {
-   "1": 21,
+   "1": 19,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
    "exposition": 39,
-   "loss": 23,
+   "loss": 21,
    "reading": 30,
-   "restates": 95,
+   "restates": 93,
    "rule": 18
   },
-  "unaccounted_words": 546,
-  "blocks_with_unaccounted_words": 78,
+  "unaccounted_words": 539,
+  "blocks_with_unaccounted_words": 75,
   "quotes": 116,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
