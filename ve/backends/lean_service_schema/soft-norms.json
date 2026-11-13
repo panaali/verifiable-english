@@ -16,6 +16,7 @@
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/soft-elaborate"}},
                 {"then": {"$ref": "#/$defs/pairs"}, "when": {"$ref": "#/$defs/kind/soft-pairs"}},
                 {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/soft-certificate"}},
+                {"then": {"$ref": "#/$defs/selected"}, "when": {"$ref": "#/$defs/kind/soft-selected"}},
                 {
                   "then": {"$ref": "#/$defs/witness"},
                   "when": {"allOf": [{"$ref": "#/$defs/kind/soft-conflict"}, {"required": ["witness"]}]}
@@ -271,7 +272,8 @@
       "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
       "soft-pairs": {"properties": {"kind": {"const": "soft-pairs"}}, "required": ["kind"], "type": "object"},
       "soft-rule": {"properties": {"kind": {"const": "soft-rule"}}, "required": ["kind"], "type": "object"},
-      "soft-rules": {"properties": {"kind": {"const": "soft-rules"}}, "required": ["kind"], "type": "object"}
+      "soft-rules": {"properties": {"kind": {"const": "soft-rules"}}, "required": ["kind"], "type": "object"},
+      "soft-selected": {"properties": {"kind": {"const": "soft-selected"}}, "required": ["kind"], "type": "object"}
     },
     "packages": {
       "$comment": "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure).",
@@ -356,6 +358,35 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "results"],
+      "type": "object"
+    },
+    "selected": {
+      "$comment": "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt).",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "results": {
+          "minItems": 1,
+          "type": "array",
+          "x-zip": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "outcome": {"type": "boolean"},
+                "predicate": {"type": "string", "x-equals": "/predicate"},
+                "selected": {"items": {"type": "string"}, "type": "array"},
+                "tuple": {"items": {"type": "string"}, "type": "array", "x-equals": "/tuple"}
+              },
+              "required": ["predicate", "tuple", "selected", "outcome"],
+              "type": "object"
+            },
+            "of": "/queries"
+          }
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "background", "results"],
       "type": "object"
     },
     "soft_field": {

@@ -6,3 +6,4 @@
 - `lean/VE/Time/Semantics.lean` — Direct tagged semantics of W6a statements and their faithfulness to erasure.
 - `lean/VE/Time/Syntax.lean` — W6a annotated statements (units-schema §3.1) and their admission and erasure.
 - `lean/VE/Time/Wire.lean` — The `quantity` subcommand of `ve_conformance`: Lean admission of W6a `ve-units@1` environments and `ve-quantity@1` statements (units-schema §3).
+- `lean/VE/Time/WireSound.lean` — Wire theorems of the `quantity` service mode (kernel boundary, KB-8).

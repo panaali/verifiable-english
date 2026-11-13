@@ -237,7 +237,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/EnglishGrammar/Norm/Run.lean` | 312 | 312 | 1–312 | `e6b2e54e1f18…` |
 | `lean/VE/Events/Anchor.lean` | 41 | 41 | 1–41 | `5654820c03ae…` |
 | `lean/VE/Readings/SoftSupRun.lean` | 436 | 436 | 1–436 | `30963e3cd469…` |
-| **total** | | **46,341** | | |
+| `lean/VE/SoftNorms/Selected.lean` | 273 | 273 | 1–273 | `8d7fa3973fc2…` |
+| **total** | | **46,614** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
