@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 46341,
+    "total_lines": 46611,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2333,6 +2333,23 @@
           "sdScope"
         ],
         "reason": "rd-9 sc-11c: the soft runners on a superposed soft document: the case's assumed choice, queries, model and filling, conflict certificates and the query certificate's binding (bindCertX on the case's premisesX); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/SoftNorms/Selected.lean",
+        "lines": 270,
+        "sha256": "512ef84fd6f3c7235bc11d10a7d6eb07a046168278efd67d7564b5cff90b8e7f",
+        "ranges": [
+          [
+            1,
+            270
+          ]
+        ],
+        "declarations": [
+          "decodeSelectedQuery",
+          "decodeQueries",
+          "runSelected"
+        ],
+        "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries) and runner (runSelected); the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2550,7 +2567,10 @@
       "lean/VE/Commands/WebEnvMain.lean": "generator only: prints VE.Commands.Examples.E_web and its lexicon as JSON for usecases/webapp-commands/environment.json; reads no request and is not a service decoder",
       "lean/ResponseShape/Encoders/EnglishStatement.lean": "theorems that the english.statement mode's rows fit their response shape (statementCaseReported_fits); JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Readings/SoftSupRunExamples.lean": "fixtures: #guards that admit NSD4a, NSDq and NSDbig n from JSON and run the soft runners on them (W-13, W-14, D14); no runner, service mode or record reads it (rd-9 sc-11c)",
-      "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path"
+      "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path",
+      "lean/VE/SoftNorms/SelectedSound.lean": "statements about SoftNorms.Run.runCase soft-selected answers (getObjVal? of the queries field and the case's query objects, Json.mkObj in the stated answer) and their proofs; no runtime JSON handling",
+      "lean/VE/SoftNorms/SelectedExamples.lean": "fixtures only: #guard checks of the soft-selected kind that build its cases and models as JSON test inputs for the pinned decoders; no runner path",
+      "lean/ResponseShape/SoftSelectedExamples.lean": "fixtures only: #guard checks of soft-norms.json's selected rows on the mode's answers and their variants build JSON; no runner path"
     }
   },
   "plan_operations": {

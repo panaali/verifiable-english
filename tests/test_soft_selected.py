@@ -200,8 +200,14 @@ for _ in range(10_000):
 BAD = [7, True, None, [], {}, 1.5, "\ud800", DEEP]
 
 
-@pytest.mark.parametrize("field", ["predicate", "tuple", "query", "queries", "model"])
-@pytest.mark.parametrize("value", BAD, ids=["7", "true", "null", "list", "object", "float", "surrogate", "deep"])
+BAD_IDS = ["7", "true", "null", "list", "object", "float", "surrogate", "deep"]
+# An empty tuple is a wrong-length tuple: the refusal table above covers it.
+MALFORMED = [pytest.param(field, value, id=f"{name}-{field}")
+             for field in ("predicate", "tuple", "query", "queries", "model")
+             for value, name in zip(BAD, BAD_IDS) if not (field == "tuple" and value == [])]
+
+
+@pytest.mark.parametrize("field, value", MALFORMED)
 def test_a_malformed_request_value_is_refused_with_a_diagnostic(lean, field, value):
     """Each request node replaced by a malformed value: Lean, or the service's own decoder, refuses it; only its
     VEError, or CheckerUnavailable for a request the wire cannot carry, leaves the relay (never a TypeError)."""
@@ -215,8 +221,6 @@ def test_a_malformed_request_value_is_refused_with_a_diagnostic(lean, field, val
         queries = value
     else:
         model = value
-    if field == "tuple" and value == []:
-        pytest.skip("an empty tuple is a wrong-length tuple: covered by the refusal table above")
     with pytest.raises((VEError, CheckerUnavailable)):
         soft_route.selected_at(document(), model, queries)
 
@@ -228,12 +232,13 @@ GENUINE_PATHS = [("id",), ("status",), ("background",), ("results",), ("results"
 LEANS = {("background",): (True, False), ("results", 0, "outcome"): (True, False), ("results", 0, "selected"): ([],)}
 
 
-@pytest.mark.parametrize("path", GENUINE_PATHS, ids=lambda p: ".".join(map(str, p)))
-@pytest.mark.parametrize("value", BAD + ["absent"], ids=["7", "true", "null", "list", "object", "float", "surrogate",
-                                                          "deep", "absent"])
+RETYPED = [pytest.param(path, value, id=f"{name}-{'.'.join(map(str, path))}")
+           for path in GENUINE_PATHS for value, name in zip(BAD + ["absent"], BAD_IDS + ["absent"])
+           if not any(type(value) is type(owned) and value == owned for owned in LEANS.get(path, ()))]
+
+
+@pytest.mark.parametrize("path, value", RETYPED)
 def test_every_answer_field_retyped_is_unavailable(monkeypatch, path, value):
-    if value in LEANS.get(path, ()) and type(value) is type(LEANS[path][0]):
-        pytest.skip("Lean's value at this path (R8)")
     forged = forge(_set(path, value))
     monkeypatch.setattr(soft_route, "_run", lambda request: forged)  # the relay never writes to the row
     doc = type("Doc", (), {"rules": [type("R", (), {"to_dict": lambda self, n=n: n})() for n in RULES],
