@@ -453,33 +453,8 @@
     "deviation_reported",
     "mitigation_in_place_or_planned"
    ],
-   "unaccounted": [
-    "chang",
-    "description",
-    "future",
-    "general",
-    "keep",
-    "line",
-    "practic",
-    "subsequent"
-   ],
-   "entries": [
-    {
-     "words": "we will keep our future practices in line with this description",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "changes",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "(generally via subsequent Risk Reports)",
-     "reason": "exposition",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1684,15 +1659,15 @@
    "limit 9": 1
   },
   "entries_by_reason": {
-   "exposition": 12,
+   "exposition": 11,
    "loss": 3,
    "open": 5,
    "reading": 7,
-   "restates": 47,
+   "restates": 45,
    "rule": 5
   },
-  "unaccounted_words": 174,
-  "blocks_with_unaccounted_words": 38,
+  "unaccounted_words": 166,
+  "blocks_with_unaccounted_words": 37,
   "quotes": 112,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0

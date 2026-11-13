@@ -295,7 +295,11 @@ REGULATED = {
                             "(3.2: \"We intend for our Risk Reports to be direct, candid, and informative about how we "
                             "see the risks of our systems and our state of preparedness for them.\")"),
     "deviation_reported": _duty("{0} have the deviation reported", "the change or deviation is tracked and reported "
-                                "at {0} (3.2)"),
+                                "at {0} (3.2: \"When a Risk Report describes risk mitigations we have in place (or "
+                                "plan to implement shortly), we will keep our future practices in line with this "
+                                "description or track and report noteworthy changes and deviations (generally via "
+                                "subsequent Risk Reports).\"; a practice that deviates is not kept in line, so the "
+                                "second branch is the one required)"),
     "strong_attempt": _duty("{0} make a strong attempt to keep risk from increasing significantly", "ongoing (as "
                             "opposed to temporary) changes do not significantly increase the level of risk (3.2)"),
     "factual_documented": _duty("{0} have the factual information documented in its Risk Report", "the five "
