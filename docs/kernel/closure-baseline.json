@@ -1219,7 +1219,7 @@
   },
   {
    "axioms": [],
-   "lines": 24202,
+   "lines": 24205,
    "modes": [
     "readingsRoute"
    ],
@@ -1345,7 +1345,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20510,
+   "wrap_lines": 20513,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1509,7 +1509,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 359,
-    "VE.SoftNorms.Selected": 64,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1528,12 +1528,12 @@
   },
   {
    "axioms": [],
-   "lines": 36144,
+   "lines": 36147,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36138,
+   "spec_lines": 36141,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1783,7 +1783,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 359,
-    "VE.SoftNorms.Selected": 64,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1880,12 +1880,12 @@
   },
   {
    "axioms": [],
-   "lines": 35646,
+   "lines": 35649,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 34818,
+   "spec_lines": 34821,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2132,7 +2132,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 359,
-    "VE.SoftNorms.Selected": 64,
+    "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,

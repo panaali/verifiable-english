@@ -9042,6 +9042,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.excLabels_length
 #print axioms VE.SoftNorms.Run.expList_lookup
 #print axioms VE.SoftNorms.Run.expanded_circ
+#print axioms VE.SoftNorms.Run.fullOver_restrict
 #print axioms VE.SoftNorms.Run.getStr_ok
 #print axioms VE.SoftNorms.Run.mem_selectedAt
 #print axioms VE.SoftNorms.Run.mkObj_get_append
@@ -9052,6 +9053,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.runSelected_answer
 #print axioms VE.SoftNorms.Run.selectedRow_eq
 #print axioms VE.SoftNorms.Run.selected_semantics
+#print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate

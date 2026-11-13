@@ -101,6 +101,8 @@ theorem runSelected_answer (id : String) (j answer : Json) (h : runSelected id j
     split at hqs
     · cases hqs
     · rename_i hne
+      split at hqs
+      · cases hqs
       obtain ⟨hl, hall, hreg⟩ := decodeQueries_ok hqs
       refine ⟨environment, src, M, hM, raw, qs, henv, hsrc, hmod, hq, ?_, by simpa using hl, hall, ?_⟩
       · simpa [Array.isEmpty] using hne

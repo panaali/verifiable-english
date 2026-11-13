@@ -179,3 +179,75 @@ def test_the_genuine_answer_is_bound(monkeypatch):
     answer = soft_route.selected_at(doc, MODEL, [(q["predicate"], q["tuple"]) for q in SENT])
     assert answer == {"background": True, "results": GENUINE["results"]}
     assert sent[0]["queries"] == SENT and sent[0]["kind"] == "soft-selected" and sent[0]["model"] == MODEL
+
+
+# ---------------------------------------------------------------------------------------------------
+# Limits, malformed requests, retyped answers, and one Lean call per document and model.
+
+def test_queries_are_charged_against_max_tuples_before_any_is_decoded(lean):
+    """`queries` is counted against VE.Limits.maxTuples (100,000) before a query is read: at the limit the case
+    is answered, one over it is a ResourceLimit (whatever its queries hold)."""
+    one = {"predicate": "x_required", "tuple": ["a"]}
+    at, over = rows([case(queries=[one] * 100_000), case(queries=[{"predicate": 7}] * 100_001)])
+    assert at["status"] == "ok" and len(at["results"]) == 100_000
+    assert over == {"id": "selected", "status": "error", "code": "SOFT_RESOURCE_LIMIT",
+                    "error": "ResourceLimit: soft-selected queries over 100000"}
+
+
+DEEP = []
+for _ in range(10_000):
+    DEEP = [DEEP]
+BAD = [7, True, None, [], {}, 1.5, "\ud800", DEEP]
+
+
+@pytest.mark.parametrize("field", ["predicate", "tuple", "query", "queries", "model"])
+@pytest.mark.parametrize("value", BAD, ids=["7", "true", "null", "list", "object", "float", "surrogate", "deep"])
+def test_a_malformed_request_value_is_refused_with_a_diagnostic(lean, field, value):
+    """Each request node replaced by a malformed value: Lean, or the service's own decoder, refuses it; only its
+    VEError, or CheckerUnavailable for a request the wire cannot carry, leaves the relay (never a TypeError)."""
+    queries = [{"predicate": "x_required", "tuple": ["a"]}]
+    model = MODEL
+    if field in ("predicate", "tuple"):
+        queries = [{**queries[0], field: value}]
+    elif field == "query":
+        queries = [value]
+    elif field == "queries":
+        queries = value
+    else:
+        model = value
+    if field == "tuple" and value == []:
+        pytest.skip("an empty tuple is a wrong-length tuple: covered by the refusal table above")
+    with pytest.raises((VEError, CheckerUnavailable)):
+        soft_route.selected_at(document(), model, queries)
+
+
+GENUINE_PATHS = [("id",), ("status",), ("background",), ("results",), ("results", 0), ("results", 0, "predicate"),
+                 ("results", 0, "tuple"), ("results", 0, "tuple", 0), ("results", 0, "selected"),
+                 ("results", 0, "selected", 0), ("results", 0, "outcome")]
+# Values Lean owns at a path (R8): a mutant to one of them is a well-typed, bound answer, not a fault.
+LEANS = {("background",): (True, False), ("results", 0, "outcome"): (True, False), ("results", 0, "selected"): ([],)}
+
+
+@pytest.mark.parametrize("path", GENUINE_PATHS, ids=lambda p: ".".join(map(str, p)))
+@pytest.mark.parametrize("value", BAD + ["absent"], ids=["7", "true", "null", "list", "object", "float", "surrogate",
+                                                          "deep", "absent"])
+def test_every_answer_field_retyped_is_unavailable(monkeypatch, path, value):
+    if value in LEANS.get(path, ()) and type(value) is type(LEANS[path][0]):
+        pytest.skip("Lean's value at this path (R8)")
+    forged = forge(_set(path, value))
+    monkeypatch.setattr(soft_route, "_run", lambda request: forged)  # the relay never writes to the row
+    doc = type("Doc", (), {"rules": [type("R", (), {"to_dict": lambda self, n=n: n})() for n in RULES],
+                           "env": SoftEnvironment(env(extra=EXTRA))})()
+    with pytest.raises(CheckerUnavailable, match="not bound to the request"):
+        soft_route.selected_at(doc, MODEL, SENT)
+
+
+def test_one_lean_call_per_document_and_model(monkeypatch):
+    """SPEC 4.4: every query of a document and model goes in one case (no call per tuple)."""
+    calls = []
+    genuine = forge(lambda row: row)
+    monkeypatch.setattr(soft_route, "_run", lambda request: calls.append(request) or copy.deepcopy(genuine))
+    doc = type("Doc", (), {"rules": [type("R", (), {"to_dict": lambda self, n=n: n})() for n in RULES],
+                           "env": SoftEnvironment(env(extra=EXTRA))})()
+    soft_route.selected_at(doc, MODEL, SENT)
+    assert len(calls) == 1 and len(calls[0]["queries"]) == len(SENT)

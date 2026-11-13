@@ -79,9 +79,9 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | reports | candidate | 3 | 4,396 | 32 | 4,418 |
 | normDefaults | candidate | 7 | 5,702 | 5,535 | 6,465 |
 | risk | candidate | 6 | 6,160 | 5,670 | 7,840 |
-| readingsRoute | candidate | 8 | 9,403 | 20,510 | 24,202 |
-| discourse | candidate | 6 | 36,138 | 4,541 | 36,144 |
-| document | candidate | 7 | 34,818 | 12,818 | 35,646 |
+| readingsRoute | candidate | 8 | 9,403 | 20,513 | 24,205 |
+| discourse | candidate | 6 | 36,141 | 4,541 | 36,147 |
+| document | candidate | 7 | 34,821 | 12,818 | 35,649 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the same run:
 
