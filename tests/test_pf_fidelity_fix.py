@@ -173,7 +173,7 @@ def test_k_entries_are_the_saved_answers():
         assert rows[id_]["cause"]["kind"] == "key finding"
     plan = (PF / "PLAN.md").read_text(encoding="utf-8")
     assert "19. **Key finding (K): C6 and C-doc are NONE" in plan and "20. **Key finding (K): G9 is SOME(P ∨ scoped)" in plan
-    assert "**Amends item 20 (not rewritten; DRI ruling of 2026-11-13):** G9's VE answer is NONE" in plan
+    assert "**Amends item 20 (not rewritten; DRI ruling of 2026-11-13):** G9's VE answer is NONE" in " ".join(plan.split())
 
 
 # --- Class 11: whole source sentences ---------------------------------------------------------------------------
