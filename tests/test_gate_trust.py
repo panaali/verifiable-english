@@ -255,3 +255,26 @@ def test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash(fake):
                     value = value[key]
                 if _read(path, which) and type(new) is not type(value) or not path:
                     assert checked["passed" if which == "passed" else "pair"], (which, path, new)
+
+
+def test_every_gate_runs_the_kernel_check_after_the_lean_build(fake, monkeypatch):
+    """docs/spec/kernel-boundary.md section 6 (KB-1): a full gate and a rerun both run `tools/kernel_closure.py
+    --check` against the saved baseline in the trust stage, after the Lean build; a failing check fails the gate."""
+    check = ["uv", "run", "--frozen", "--no-sync", "python", "tools/kernel_closure.py", "--check",
+             "docs/kernel/closure-baseline.json"]
+    for flags in ((), ("--rerun-failed",)):
+        fake.run(*flags)
+        fake.failing = set()
+        stages = fake.stages()
+        assert stages.index("Lean build") < stages.index(gate.TRUST_STAGE) < stages.index("Kernel check"), flags
+        assert [args for stage, args in fake.seen if stage == "Kernel check"] == [check]
+    real = fake.command
+
+    def failing_kernel(args, *, env, stage, cwd=None):
+        if stage == "Kernel check":
+            raise RuntimeError(gate.exit_reason(stage, 1))
+        return real(args, env=env, stage=stage, cwd=cwd)
+
+    monkeypatch.setattr(gate, "command", failing_kernel)
+    code, record = fake.run()
+    assert (code, record["status"]) == (1, "failed") and "Kernel check" in json.dumps(record["failures"])

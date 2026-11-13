@@ -32,6 +32,8 @@ This allows different owners for different services. It does not silently become
 
 The guarantee is about the reasoning: **if the assumptions hold, the checked conclusion holds.** Someone still has to establish that the API really was reviewed and that review is sufficient for safety. VE makes those assumptions visible; it does not turn them into facts.
 
+What a unit's status in `ve document check` says: CHECKED: the core statements shown for this unit were admitted by the checker (one reading, well-formed over the document's vocabulary, lemmas and certificates replayed). How the unit's English was turned into those statements is shown with them; that translation is tested and audited, and proved only where the feature's page says so. CHECKED does not say the statements are true or that a conclusion follows: that is what certificate and conflict verdicts are for.
+
 ## What you can do now
 
 The following capabilities are present in the October 20, 2026 code snapshot. Features have explicit scopes, and some combinations are rejected; they are not a promise that arbitrary prose can be formalised automatically.
