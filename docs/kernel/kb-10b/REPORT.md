@@ -77,7 +77,11 @@ false` not counted. The task's (a) and (b) are planted in step (2)'s code, so th
 ## Tests
 
 - `uv run pytest -q tests/test_kb10_shadow.py`: 6 passed.
-- Selected tests on the committed final HEAD: see "Selected run" below.
+- Selected tests on the committed HEAD 75bbc77674, with a clean tree:
+  `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+  It selected 56 of 615 units and ran them on the VM (the Mac is the last resort). Result: "recorded 56 units for
+  tree 4407fd773a; … 0 failed", `exit=0; 4470s`. Only this .md file changed after that run.
+- Pre-existing failures on main (`manage-agents/main-known-red.txt`): none in the selection.
 - `uv run python tools/regen_generated.py --check`: "checked 41 entries" (after one `--write`).
 
 ## Notes for the DRI
