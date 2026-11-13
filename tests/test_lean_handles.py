@@ -236,6 +236,22 @@ def test_the_environment_cache_keeps_its_newest_limit_entries(wire_cache):
     assert set(wire_cache._cache) == {("cache-fill", index) for index in range(extra, wire_cache._LIMIT + extra)}
 
 
+def test_a_key_another_builder_cached_first_evicts_nothing(wire_cache):
+    """Two builders of one key (the build runs outside the lock): the second gets the first's object,
+    and a full cache evicts no entry for it."""
+    _fill(wire_cache, wire_cache._LIMIT - 1)
+    key = ("cache-race", 0)
+    first = []
+
+    def build():
+        first.append(wire_cache.encoded_value(key, lambda: {"builder": "first"}))
+        return {"builder": "second"}
+
+    assert wire_cache.encoded_value(key, build) is first[0]
+    assert len(wire_cache._cache) == wire_cache._LIMIT
+    assert all(("cache-fill", index) in wire_cache._cache for index in range(wire_cache._LIMIT - 1))
+
+
 def _checkers():
     return [checker for idle in rust_jsonl._idle.values() for checker in idle]
 
