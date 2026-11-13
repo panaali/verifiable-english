@@ -22,8 +22,8 @@ def regulatedArg (description default role : String) (permission : List String :
   (arg description).setObjVal! "regulated" (Json.mkObj ([("act", .str "{0} release the report"),
     ("default", .str default), ("role", .str role)] ++ permission.map (("permission", .str ·))))
 
-/-- `release_required` is regulated; `redacted` is the judgment term ("significantly redacted"); `reviewed` and
-`public` are base predicates; `c` is a constant. -/
+/-- `release_required` and `release_permitted` are regulated; `redacted` ("significantly redacted") and `material`
+("materially changed") are judgment terms; `reviewed` and `public` are base predicates; `c` is a constant. -/
 def environmentJson (profiles : List String) : Json :=
   Json.mkObj [("language", .str "ve.core@0.2"), ("profiles", toJson profiles),
     ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
@@ -32,7 +32,8 @@ def environmentJson (profiles : List String) : Json :=
       ("predicates", Json.mkObj [
         ("release_required", regulatedArg "must release" "deny" "obligation" ["release_permitted"]),
         ("release_permitted", regulatedArg "may release" "allow" "permission"),
-        ("redacted", arg "significantly redacted"), ("reviewed", arg "reviewed"), ("public", arg "public")]),
+        ("redacted", arg "significantly redacted"), ("material", arg "materially changed"),
+        ("reviewed", arg "reviewed"), ("public", arg "public")]),
       ("sorts", Json.mkObj [("agent", Json.mkObj [("description", .str "an agent")])])])]
 
 def mixedProfiles : List String :=
@@ -80,8 +81,9 @@ def openOn (terms : List String) : Json := Json.mkObj [("open", toJson terms)]
 
 def fact (p : String) : VE.Formula := .unary p (.const "c")
 
-/-- The judgment record of `redacted`, as `Judgments.records` reads it. -/
+/-- The judgment records of `redacted` and `material`, as `Judgments.records` reads them. -/
 def redactedRecord : VE.Judgments.Rec := (⟨"redacted", ["agent"], "reviewer", []⟩, 0, 0)
+def materialRecord : VE.Judgments.Rec := (⟨"material", ["agent"], "reviewer", []⟩, 0, 0)
 
 /-- Each unit's view, as `judgedViews` builds it with no active set. -/
 def viewOf (u : SourceUnit) (meaning : String) : VE.Judgments.UnitView :=
@@ -146,6 +148,29 @@ def guardUnit : SourceUnit := unitOf "u1" (softContent guardRule) (openOn ["reda
 -- register labels (and every unit without content): no statement.
 #guard answers (lowerUnits [unitOf "u1" none (.str "aspiration"), unitOf "u2" (some (.formula (fact "public")))])
   [([], ["u2 facts: premise [\"unary\",\"public\",[\"const\",\"c\"]]"])]
+
+-- A unit listing two terms declares both, in the order it lists them, then its premise.
+def bothTerms : SourceUnit :=
+  unitOf "u1" (some (.formula (.and (fact "redacted") (fact "material")))) (openOn ["redacted", "material"])
+#guard answers (lowerUnits [bothTerms] (views := some [viewOf bothTerms "open"]) (records := [redactedRecord, materialRecord]))
+  [([], ["u1 judgments@0: judgment redacted", "u1 judgments@0: judgment material",
+    "u1 facts: premise [\"and\",[\"unary\",\"redacted\",[\"const\",\"c\"]],[\"unary\",\"material\",[\"const\",\"c\"]]]"])]
+
+-- The judgments are read wherever `judgments@0` stands in the profile list.
+def judgmentsAt (first : Bool) : Option Env := E?.map fun E =>
+  let rest := E.profiles.erase "judgments@0"
+  { E with profiles := if first then "judgments@0" :: rest else rest ++ ["judgments@0"] }
+#guard [true, false].all fun first => answers (lowerUnits [guardUnit] (views := some [viewOf guardUnit "open"])
+  (env := judgmentsAt first)) [([], ["u1 judgments@0: judgment redacted", "u1 soft-norms@0: rule \"withheld\""])]
+
+-- The JSON sent is the soft relay's: a null member is dropped at every depth the relay's fuel reaches (an object
+-- inside 256 arrays), and kept below it (inside 257).
+def nested : Nat → Json → Json
+  | 0, j => j
+  | k + 1, j => Json.arr #[nested k j]
+def withNull : Json := Json.mkObj [("a", .null)]
+#guard wire (nested 256 withNull) == nested 256 (Json.mkObj [])
+#guard wire (nested 257 withNull) == nested 257 withNull
 
 /-! ## A judgment term in a rule's exception, and a fact about the term
 
@@ -218,18 +243,38 @@ def twoReadings : Except String (List (Choice × CoreDoc)) :=
 def twoSets : List ActiveSet :=
   [readingSet "a" "u1" [fact "public", .not (fact "public")], readingSet "b" "u2" [fact "reviewed", .not (fact "reviewed")]]
 
-#guard match lowerUnits [unitOf "u1" none, unitOf "u2" none] twoSets [⟨"k", [("a", ["wide", "narrow"]), ("b", ["wide", "narrow"])]⟩] with
-  | .ok cs => cs.map Prod.fst == [[("a", 0), ("b", 0)], [("a", 1), ("b", 1)]]
-  | .error _ => false
+def axis : List String := ["wide", "narrow"]
+#guard answers (lowerUnits [unitOf "u1" none, unitOf "u2" none] twoSets [⟨"k", [("a", axis), ("b", axis)]⟩]) [
+  ([("a", 0), ("b", 0)], ["u1 facts a#0: premise [\"unary\",\"public\",[\"const\",\"c\"]]",
+    "u2 facts b#0: premise [\"unary\",\"reviewed\",[\"const\",\"c\"]]"]),
+  ([("a", 1), ("b", 1)], ["u1 facts a#1: premise [\"not\",[\"unary\",\"public\",[\"const\",\"c\"]]]",
+    "u2 facts b#1: premise [\"not\",[\"unary\",\"reviewed\",[\"const\",\"c\"]]]"])]
 #guard match lowerUnits [unitOf "u1" none, unitOf "u2" none] twoSets with
   | .ok cs => cs.length == 4
   | .error _ => false
+
+-- Three sets on one axis, coupled by one coupling or by two that share a set: in both, only the two choices whose
+-- readings have one label.
+def threeUnits : List SourceUnit := [unitOf "u1" none, unitOf "u2" none, unitOf "u3" none]
+def threeSets : List ActiveSet := twoSets ++ [readingSet "c" "u3" [fact "redacted", .not (fact "redacted")]]
+#guard [[⟨"k", [("a", axis), ("b", axis), ("c", axis)]⟩], [⟨"k1", [("a", axis), ("b", axis)]⟩, ⟨"k2", [("b", axis), ("c", axis)]⟩]].all
+  fun couplings => match lowerUnits threeUnits threeSets couplings (records := []) with
+    | .ok cs => cs.map Prod.fst == [[("a", 0), ("b", 0), ("c", 0)], [("a", 1), ("b", 1), ("c", 1)]]
+    | .error _ => false
 
 /-! ## Refusals -/
 
 -- A formula over a regulated predicate is a claim about the rules, not a premise.
 #guard refusal (lowerUnits [unitOf "u1" (some (.formula (.unary "release_required" (.const "c"))))]) ==
   "UnsupportedLowering: unit u1 feature facts: a formula over the regulated predicate release_required is a claim " ++
+  "about the rules, not a premise"
+-- The first regulated predicate the formula names, wherever it stands, and either regulated predicate.
+#guard [.and (fact "public") (fact "release_required"), .and (fact "release_required") (fact "public")].all fun φ =>
+  refusal (lowerUnits [unitOf "u1" (some (.formula φ))]) ==
+    "UnsupportedLowering: unit u1 feature facts: a formula over the regulated predicate release_required is a claim " ++
+    "about the rules, not a premise"
+#guard refusal (lowerUnits [unitOf "u1" (some (.formula (fact "release_permitted")))]) ==
+  "UnsupportedLowering: unit u1 feature facts: a formula over the regulated predicate release_permitted is a claim " ++
   "about the rules, not a premise"
 -- Unit content the table has no row for.
 #guard refusal (lowerUnits [unitOf "u1" (some (.rights (Json.mkObj [])))]) ==
@@ -247,6 +292,10 @@ def twoSets : List ActiveSet :=
 -- Two readings that lower to the same statements.
 #guard refusal (lowerUnits [unitOf "u1" none] [readingSet "rs" "u1" [fact "public", .not (fact "reviewed"), fact "public"]]) ==
   "ReadingsCollapsed: reading set rs readings 0 and 2 lower to the same statements"
+
+-- Couplings that leave no choice: refused at the unit of the first set.
+#guard refusal (lowerUnits [unitOf "u1" none, unitOf "u2" none] twoSets [⟨"k", [("a", axis), ("b", ["x", "y"])]⟩]) ==
+  "UnsupportedLowering: unit u1 feature readings@1: the couplings leave no compatible choice"
 
 -- References the document does not have, or of the wrong category.
 #guard refusal (lowerUnits [unitOf "u1" none] [readingSet "rs" "u9" [fact "public", .not (fact "public")]]) ==
@@ -268,6 +317,13 @@ def manySets (n : Nat) : List SourceUnit × List ActiveSet :=
   | .ok cs => cs.length == 64
   | .error _ => false
 #guard refusal (lowerUnits (manySets 7).1 (manySets 7).2) == "ResourceLimit: 128 compatible choices, more than 64"
+-- 65 choices, one past the limit: a 13-reading set and a 5-reading set.
+def nots : Nat → VE.Formula
+  | 0 => fact "public"
+  | k + 1 => .not (nots k)
+#guard refusal (lowerUnits [unitOf "u1" none, unitOf "u2" none]
+    [readingSet "a" "u1" ((List.range 13).map nots), readingSet "b" "u2" ((List.range 5).map nots)]) ==
+  "ResourceLimit: 65 compatible choices, more than 64"
 #guard refusal (lowerUnits (manySets 13).1 (manySets 13).2) ==
   "ResourceLimit: 8192 combinations of readings, more than 4096 to enumerate"
 
@@ -276,6 +332,11 @@ def manySets (n : Nat) : List SourceUnit × List ActiveSet :=
 #guard refusal (lowerUnits [unitOf "u1" none] (records := [(⟨"missing", ["agent"], "reviewer", []⟩, 0, 0)])) ==
   "JudgmentUnbound: missing"
 #guard refusal (lowerUnits [unitOf "u1" (some (.formula (fact "redacted")))]) == "JudgmentNotChecked: u1 redacted"
+-- Every unit's view is read: the first of two, and the last.
+#guard refusal (lowerUnits [unitOf "u1" (some (.formula (fact "redacted"))), unitOf "u2" none]) ==
+  "JudgmentNotChecked: u1 redacted"
+#guard refusal (lowerUnits [unitOf "u1" none, unitOf "u2" (some (.formula (fact "redacted")))]) ==
+  "JudgmentNotChecked: u2 redacted"
 #guard refusal (lowerUnits [unitOf "u1" (softContent releaseRule) (openOn ["redacted"])]
     (views := some [viewOf (unitOf "u1" (softContent releaseRule) (openOn ["redacted"])) "open"])) ==
   "JudgmentListedUnused: u1 redacted"
