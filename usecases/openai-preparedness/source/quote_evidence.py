@@ -46,7 +46,7 @@ def fingerprint(blocks):
 
 
 def blocks():
-    return T.rule_blocks() + T.read_blocks("facts.d1.ve")
+    return T.rule_blocks() + T.fact_blocks()
 
 
 def main():
