@@ -643,11 +643,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1 and 4.2",
+        "description": "4.2: “We compile the information on the planned safeguards needed to minimize the risk of severe harm into a Safeguards Report.” (section 4: for covered systems that reach a capability threshold)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a Safeguards Report"
+          "act": "{0} have planned safeguard information compiled into a Safeguards Report"
         }
       },
       "risk_paths": {

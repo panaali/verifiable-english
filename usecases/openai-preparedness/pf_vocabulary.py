@@ -176,7 +176,10 @@ ACTS = {
     "safeguard_work": ("{0} start safeguard work to sufficiently reduce the threshold's severe-harm risk",
                        "4: work on safeguards to sufficiently reduce the risks of severe harm associated with that "
                        "threshold, even before a formal capability determination"),
-    "safeguards_report": ("{0} have a Safeguards Report", "4.1 and 4.2"),
+    "safeguards_report": ("{0} have planned safeguard information compiled into a Safeguards Report",
+                          "4.2: \u201cWe compile the information on the planned safeguards needed to minimize the "
+                          "risk of severe harm into a Safeguards Report.\u201d (section 4: for covered systems that "
+                          "reach a capability threshold)"),
     "risk_paths": ("{0} identify plausible ways severe harm can arise in the proposed deployment",
                    "4.1: the plausible ways in which the associated risk of severe harm can come to fruition in the "
                    "proposed deployment"),
