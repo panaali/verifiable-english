@@ -142,7 +142,11 @@ def test_nested_quote_keeps_its_inner_words_on_the_real_header():
 def test_a_short_quote_does_not_make_the_text_between_two_quotes_a_quote():
     """The same pairing class: a straight-quote regex skipping a short quote paired its closing mark with the next
     quote's opening one (safety-framework f16-ds took ', read distributively, ... 1.3.5's ' as a quote)."""
-    assert A.quotes(header_source("safety-framework", "f16-ds")) == ["otherwise assess"]
+    # fsf-fidelity-fix quoted both spans in full; the apostrophes of "field's" and "1.3.5's" still pair with nothing.
+    assert A.quotes(header_source("safety-framework", "f16-ds")) == [
+        "may be adjusted if our understanding of the risks changes. This may occur if, for example, ...",
+        "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits of "
+        "the open release of model weights outweigh the risks"]
 
 
 @pytest.mark.parametrize("field, expected", [

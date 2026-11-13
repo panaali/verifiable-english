@@ -2550,7 +2550,8 @@
       "lean/VE/Commands/WebEnvMain.lean": "generator only: prints VE.Commands.Examples.E_web and its lexicon as JSON for usecases/webapp-commands/environment.json; reads no request and is not a service decoder",
       "lean/ResponseShape/Encoders/EnglishStatement.lean": "theorems that the english.statement mode's rows fit their response shape (statementCaseReported_fits); JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Readings/SoftSupRunExamples.lean": "fixtures: #guards that admit NSD4a, NSDq and NSDbig n from JSON and run the soft runners on them (W-13, W-14, D14); no runner, service mode or record reads it (rd-9 sc-11c)",
-      "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path"
+      "lean/VE/Service/EventsDocumentExamples.lean": "fixtures only: #guard checks of the document route on events@0 documents (et-5b: spec 2.9 items 1-8, T15-T17) built with Json.parse and Json.mkObj and sent to `check`, `environmentOf` and `eventsLayeredOf`; no service mode or runner path",
+      "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling"
     }
   },
   "plan_operations": {

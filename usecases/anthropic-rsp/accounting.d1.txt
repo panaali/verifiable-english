@@ -10,7 +10,7 @@ f6-share | omits: "Board of Directors (Board)" restates ; "Long-Term Benefit Tru
 f6-updates | omits: "We will provide updates on whether we achieve the goals" restates
 f6-keep-past | omits: "keep" restates
 f6-strive-default | omits: "we will strive to" reading RS12strive ; "where we revise the goals in a less ambitious direction simply because we are unable to achieve them" restates
-f7-publish | omits: "discussing the risks of our systems" exposition ; "We will publish a public version of our Risk Report" restates
+f7-publish | omits: "We will publish a public version of our Risk Report" restates
 f8-public | omits: "It will cover" restates
 f8-internal | omits: "as well as" restates ; "could pose risks related to" restates ; "those posed by" restates
 f8-autonomous | omits: "this will-at a minimum-include" restates
@@ -23,12 +23,12 @@ f10-attempt-default | omits: nothing
 f11-factual | omits: "A Risk Report will document the following" restates
 f11-analyses | omits: "We will provide our reasoning and conclusions regarding both specific threat models and overall risk levels" loss 1
 f11-review | omits: "We will address" restates ; "and decisions" loss 1
-f11-goal-missed | omits: "Changes to our Frontier Safety Roadmap" loss 1 ; "any cases where we failed to meet our goals" restates
+f11-goal-missed | omits: nothing
 f11-marginal | omits: "by AI systems such as ours" open marginal_justification ; "are justifying our decision to move forward based partly on" restates ; "we will additionally address the following" restates
 f11-assess | omits: nothing
 f12-internal-feedback | omits: nothing
 f12-external-default | omits: nothing
-f12-approval | omits: "will be sent to the CEO and Responsible Scaling Officer (RSO)" restates
+f12-approval | omits: nothing
 f12-final | omits: "The CEO and RSO will make the ultimate determination" reading RS7
 f12-share | omits: nothing
 f12-board-approval | omits: "In the event that" restates ; "(see previous section)" exposition ; "(rather than just the CEO and RSO)" exposition ; "will be required" restates
@@ -43,13 +43,13 @@ f15-financial-interest | omits: "At a minimum" restates ; "itself" restates
 f15-revenue-strict | omits: "external review parties should not be teams whose" restates ; "continuing to work with them" restates
 f15-revenue-default | omits: nothing
 f15-select-approval | omits: nothing
-f16-share-one-week | omits: "The external review process will involve" restates
+f16-share-one-week | omits: nothing
 f16-ask-commentary | omits: nothing
 f16-before-board-default | omits: nothing
 f16-all-sections | omits: "All sections" restates
 f16-split-p | omits: "All sections" restates ; "of the Risk Report will be shared with at least one external reviewer" rule f16-all-sections
 f16-only-legal | omits: nothing
-f18-rso | omits: "a designated member of staff who is responsible for the implementation of this policy" loss 1
+f18-rso | omits: nothing
 f19-brief-ltbt | omits: nothing
 f19-unredacted | omits: "We will share" restates ; "with a large number of Anthropic employees (at least 200" restates
 f19-minimally-redacted | omits: "We will share" restates ; "Anthropic's" restates
@@ -66,7 +66,7 @@ f21-clause | omits: "nor will it preclude disclosure of the existence of that cl
 f22-internal-review | omits: nothing
 f22-third-party-review | omits: nothing
 f23-approval | omits: "Changes to the RSP" restates
-f23-publish | omits: "we will publicly share the updated version" restates ; "will record the differences from the prior draft" restates
+f23-publish | omits: nothing
 f23-website | omits: "We will maintain the current version of the RSP" restates
 f24-argument | omits: nothing
 f24-delay | omits: nothing
@@ -79,7 +79,7 @@ threshold-t2 | omits: nothing
 threshold-t3 | omits: nothing
 threshold-t4 | omits: nothing
 highly-capable-t4 | omits: "described in Section 1" exposition
-t4-suff | omits: "We will consider this threshold to be met" restates
+t4-suff | omits: nothing
 t4-only-if | omits: nothing
 s2-suff-third | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
 s2-only-if-third | omits: nothing

@@ -1,6 +1,7 @@
 - `lean/VE/SoftNorms/ActsFrameExamples.lean` — ap-1bg: the soft view of an `acts@0` norms frame (`Phases.actsFrame`: `acts@0` listed and exactly the empty strict block), as Python's superposed readings rout…
 - `lean/VE/SoftNorms/Admission.lean` — W2 admission on the soft-norms route (docs/spec/soft-norms.md 9.3, 9.4), W1's `Norms.Admission` with the soft decoder.
 - `lean/VE/SoftNorms/Coherence.lean` — Decision assignments, coherence and what CONFLICT-FREE means (docs/spec/soft-norms.md 6, 9.3).
+- `lean/VE/SoftNorms/ElaborateSound.lean` — The wire theorem of the soft route's `soft-elaborate` kind (kernel boundary).
 - `lean/VE/SoftNorms/Once.lean` — The layers of a soft document computed once (lean-first plan F5d).
 - `lean/VE/SoftNorms/Phases.lean` — The soft validation table (docs/spec/soft-norms.md 8), as ordered phases.
 - `lean/VE/SoftNorms/RankProof.lean` — Comparable default rules remain mutually exclusive after full layer substitution, even in structures with undefined or ill-typed constants.
