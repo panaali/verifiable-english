@@ -67,12 +67,17 @@ BASE = {
     "forecast_severe_before_deployment": base(["situation"], "{0} is justified by OpenAI's forecasts and threat models as "
                                               "potentially posing a severe risk during development and prior to "
                                               "external deployment (3.2)"),
-    "distilled_from_below_high": base(["situation"], "{0} derives from a model determined below High"),
+    "distilled_finetuned_or_quantized_from_below_high": base(["situation"], "{0} is a model that OpenAI distills, fine-tunes, or quantizes "
+                                   "from a model that was previously determined not to cross a High capability "
+                                   "threshold (footnote 6)"),
     "significant_increase": base(["situation"], "there is reason to believe at {0} that a significant increase in capability "
                                      "has occurred; OpenAI ('we') decides this (OT20)"),
     "adjustment_confirmed": base(["situation"], "it is rigorously confirmed at {0} that another frontier AI developer "
                                      "developed or released a system with High or Critical capability in a Tracked Category without "
                                      "comparable safeguards"),
+    "adjustment_area": base(["situation", "category"], "4.3's adjustment at {0} is to the level of safeguards OpenAI "
+                            "requires in capability area {1} (“that capability area”): the Tracked Category in "
+                            "which the scenario rigorously confirmed at {0} occurred", "{0} adjusts {1}"),
     "adjustment_made": base(["situation"], "OpenAI makes 4.3's marginal-risk adjustment at {0}: it adjusts the level "
                                 "of safeguards it requires in that capability area"),
     "lra_found": base(["situation"], "Long-range Autonomy is found at {0}"),
@@ -97,8 +102,6 @@ BASE = {
                                                    "sensitive information (5.1)"),
     "potential_noncompliance": base(["situation"], "{0} is a reported or otherwise identified potential instance of "
                                                    "noncompliance with the Framework (5.1)"),
-    "conservative_upper_bound_used": base(["situation"], "a conservative upper bound of the model's non-sandbagged "
-                                                         "evaluation results is used at {0} (Table 2)"),
     "persuasion_risk": base(["situation"], "{0} concerns risks related to persuasion"),
     "leadership_decision": base(["situation"], "{0} is a final decision of OpenAI Leadership"),
     "board_finds_necessary": base(["situation"], "the Board finds it necessary at {0} to act on the decision (Appendix B)"),
@@ -116,12 +119,24 @@ BASE = {
                             "regulated": {"role": "permission", "default": "allow",
                                           "act": "{0} be tracked as a category"}},
     "deployment_permitted": permission("{0} be deployed", "1: deployment of a model that reaches High"),
-    "summary_access": permission("{0} have an employee request as well as receive a summary of testing results",
-                                 "5.1: internal transparency"),
+    "summary_access": permission("{0} have employees request as well as receive the testing as well as SAG summary",
+                                 "5.1: \u201cEmployees may also request and receive a summary of the testing results "
+                                 "and SAG recommendation on capability levels and safeguards (subject to certain "
+                                 "limits for highly sensitive information).\u201d: the summary is of the testing "
+                                 "results and of the SAG recommendation on capability levels and safeguards; the "
+                                 "limits are the rule's carve-out"),
     "decision_reversal": permission("{0} have the decision reversed by the Board",
                                     "Appendix B: the Board may reverse a decision of OpenAI Leadership"),
     "revised_course_mandated": permission("{0} have a revised course of action mandated by the Board",
                                           "Appendix B: the Board may mandate a revised course of action"),
+    # Appendix B's yearly review is of the Framework itself, once, not of each situation: its sort is the Framework.
+    "annual_review": {"arguments": ["framework"],
+                      "description": "Appendix B: \u201cWe will review and potentially update the Preparedness Framework "
+                                     "for continued sufficiency at least once a year.\u201d: {0} is reviewed at least once "
+                                     "a year, as to its continued sufficiency; the update is optional "
+                                     "(\u201cpotentially\u201d) and no part of the duty",
+                      "regulated": {"role": "obligation", "default": "deny",
+                                    "act": "{0} be reviewed at least once a year as to its continued sufficiency"}},
     "adjustment_permission": {"arguments": ["situation"], "description": "{0} may have its required safeguards in that capability area adjusted (4.3)",
                               "regulated": {"role": "permission", "default": "allow",
                                             "act": "{0} have its required safeguards in that capability area adjusted"}},
@@ -139,8 +154,16 @@ ACTS = {
                                      "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the "
                                      "associated risk of severe harm before deployment"),
     "safeguards_during_development": ("{0} have sufficient safety as well as security controls during development",
-                                      "4.4 and Appendix C: sufficient safeguards (safety and security controls) "
-                                      "during development"),
+                                      "4.4: models that have reached or are forecasted to reach Critical capability "
+                                      "in a Tracked Category require additional safeguards (safety and security "
+                                      "controls) during development, regardless of whether or when they are "
+                                      "externally deployed; 4.2: safeguards that sufficiently minimize associated "
+                                      "risks during development; Appendix C: sufficient safeguards during development"),
+    "safeguards_before_internal_use": ("{0} have additional safety as well as security controls before internal use",
+                                       "4.4, its heading “Increasing safeguards before internal use and further "
+                                       "development” read under RS18 = inuse: models that have reached or are "
+                                       "forecasted to reach Critical capability in a Tracked Category require "
+                                       "additional safeguards (safety and security controls) before internal use"),
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
     "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
@@ -185,7 +208,6 @@ ACTS = {
                            "as rationale, provided to OpenAI Leadership"),
     "ssc_visibility": ("{0} give SSC visibility into processes", "Appendix B: SSC is the Safety and Security Committee of the OpenAI Board of Directors"),
     "recommendation_informed": ("{0} have Leadership informed by SAG", "Appendix B: SAG recommendation"),
-    "annual_review": ("{0} have an annual review", "Appendix B: at least once a year"),
     "misalignment_risk_minimized": ("{0} have safeguards that sufficiently minimize misaligned-model severe-harm risk",
                                     "C.2: the risk of a misaligned model circumventing human control and oversight "
                                     "and executing severe harms"),
@@ -198,12 +220,16 @@ ACTS = {
     "more_protective": ("{0} keep safeguards more protective than the other developer's", "4.3: adjustment condition"),
     "validation_shared": ("{0} have validation information shared", "4.3: adjustment condition"),
     "misalignment_report": ("{0} have a misalignment safeguards report", "Table 2: Long-range Autonomy response"),
-    "sandbagging_bound": ("{0} adopt an elicitation approach that overcomes sandbagging",
-                          "Table 2: Sandbagging response; the alternative, a conservative upper bound, is the "
-                          "rule's carve-out"),
+    "sandbagging_response": ("{0} have sandbagging handled",
+                             "Table 2, Sandbagging: \u201cAdopt elicitation approach that overcomes sandbagging, or use "
+                             "a conservative upper bound of the model\u2019s non-sandbagged evaluation results\u201d: the "
+                             "one duty is met by either alternative, an elicitation approach that overcomes sandbagging "
+                             "or a conservative upper bound of the model's non-sandbagged evaluation results"),
     "ara_tracking": ("{0} have the research category tracked", "Table 2: ARA response"),
-    "robust_case": ("{0} have a safeguards case robust to discovered capability as well as propensity",
-                    "Table 2: Undermining Safeguards: robust to the discovered capability and/or propensity"),
+    "robust_case": ("{0} have a safeguards case robust to what was discovered",
+                    "Table 2, Undermining Safeguards: \u201cIf a model has High or Critical capabilities in any of the "
+                    "Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or "
+                    "propensity\u201d: what was discovered is the capability, the propensity, or both"),
     "nuclear_safeguards": ("{0} heighten safeguards consulting appropriate US government actors",
                            "Table 2: Nuclear and Radiological: heighten safeguards (and consider further actions) in "
                            "consultation with appropriate US government actors, accounting for the complexity of "
@@ -242,6 +268,8 @@ def environment():
                 "requirement": "a stated safeguard requirement",
                 "capability": "a frontier capability considered for a Tracked Category",
                 "evaluation": "a capability evaluation (footnote 5)",
+                "framework": "the Preparedness Framework (version 2, last updated 15 April 2025), the one member of "
+                             "this sort: Appendix B's yearly review is of it",
             }.items()},
                 "predicates": {**BASE, **{name: duty(*pair) for name, pair in ACTS.items()}},
                 "constants": {**{k: {"sort": "level", "description": f"Table 1: {c}, {g}"}
