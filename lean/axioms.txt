@@ -8485,6 +8485,7 @@
 'VE.Service.expand_miss' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.expand_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.modes_complete' depends on axioms: [propext]
+'VE.Service.prepareDocument_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_digest' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.register_none' depends on axioms: [propext, Classical.choice, Quot.sound]

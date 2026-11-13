@@ -648,6 +648,13 @@ def softHandleKey : String := "soft_document_handle"
 def prepareDocument (document : Json) : Except String VE.SoftNorms.Run.Prepared :=
   VE.SoftNorms.Run.prepare (document.getObjValD "environment") (document.getObjValD "norms")
 
+/-- A prepared registered document holds the decoded `environment` and `norms` of its text. -/
+theorem prepareDocument_ok {document : Json} {p : VE.SoftNorms.Run.Prepared}
+    (h : prepareDocument document = .ok p) :
+    VE.SoftNorms.Wire.decodeSoftSource (document.getObjValD "environment") (document.getObjValD "norms") =
+      .ok p.src :=
+  (VE.SoftNorms.Run.prepare_eq h).1
+
 /-- A registered environment, and what the `metered` mode decodes from it alone
 (`MeteredRun.prepare`), decoded on the first case against it. It is kept in the entry, so it
 is replaced or dropped exactly with its handle, and it is always this environment's

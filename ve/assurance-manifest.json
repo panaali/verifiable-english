@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 46614,
+    "total_lines": 46882,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2336,20 +2336,38 @@
       },
       {
         "file": "lean/VE/SoftNorms/Selected.lean",
-        "lines": 273,
-        "sha256": "8d7fa3973fc2c91bdad6600aa59bd719358b42e77e768925b363abc0e6d8edc8",
+        "lines": 279,
+        "sha256": "44d1fd142c838b0c2d451503770d82004d5831e28b623aac7e284fc2d33376a3",
         "ranges": [
           [
             1,
-            273
+            279
           ]
         ],
         "declarations": [
           "decodeSelectedQuery",
           "decodeQueries",
+          "selectedQueries",
           "runSelected"
         ],
-        "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries) and runner (runSelected); the full file is pinned conservatively"
+        "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries, selectedQueries) and runner (runSelected); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/SoftNorms/Prepared.lean",
+        "lines": 262,
+        "sha256": "f8f5f6d8fe08ec34fd222b031ee5d4a3a2fdc233848ceb75d3d1ffe937f349cd",
+        "ranges": [
+          [
+            1,
+            262
+          ]
+        ],
+        "declarations": [
+          "prepare",
+          "decodeModelIn",
+          "runSelectedP"
+        ],
+        "reason": "kb-10e prepared soft documents: prepare decodes a document's environment and norms once (prepare_ok), decodeModelIn and runSelectedP decode a case's model and queries against it (runSelected_eq_prepared); the full file is pinned conservatively"
       }
     ],
     "other_json": {
