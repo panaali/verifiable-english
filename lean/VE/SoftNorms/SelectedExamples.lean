@@ -59,4 +59,25 @@ def resultsText (outcomeAtE : String) : String :=
 #guard answerOf (selectedCase "deny" r#"[["a"]]"# "[]") ==
   "error: InvalidInput: soft-selected needs at least one query"
 
+/-! The spec functions themselves, on the decoded source and model (the runner reads one expansion
+per case, `selectedRow_eq`; these read `circ` directly). -/
+
+/-- `selectedAt` and `outcomeAt` of `p` at the one-entity tuple `t`, or `none` if a decoder refuses. -/
+def specAt (default excepted p t : String) : Option (List String × Bool) :=
+  match VE.SoftNorms.Wire.decodeSoftSource (parsed (environmentText default)) (parsed normsText) with
+  | .error _ => none
+  | .ok src =>
+    match VE.SoftNorms.Wire.decodeModel src (Json.mkObj [("model", parsed (modelText excepted))]) with
+    | .error _ => none
+    | .ok ⟨M, _⟩ => some (selectedAt src.D M p [("assistant", t)], outcomeAt src.D M p [("assistant", t)])
+
+#guard specAt "deny" r#"[["a"], ["e"]]"# "x_required" "a" == some (["o"], false)
+#guard specAt "deny" r#"[["a"], ["e"]]"# "x_required" "b" == some (["h"], true)
+#guard specAt "deny" r#"[["a"], ["e"]]"# "x_required" "c" == some (["d"], true)
+#guard specAt "deny" r#"[["a"], ["e"]]"# "x_required" "e" == some ([], false)
+#guard specAt "allow" r#"[["a"], ["e"]]"# "x_required" "e" == some ([], true)
+#guard specAt "deny" r#"[["e"]]"# "x_required" "a" == some (["d"], true)
+-- No rule on `x_permitted`: nothing selected, its default (allow) decides.
+#guard specAt "deny" r#"[["a"], ["e"]]"# "x_permitted" "a" == some ([], true)
+
 end VE.SoftNorms.SelectedExamples
