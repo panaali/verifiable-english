@@ -38,7 +38,10 @@ BASE = {
     "covered": base(["situation"], "the model at {0} is covered by the Framework"),
     "likely_to_cross": base(["situation"], "the covered system at {0} appears likely to cross a capability threshold; "
                                                  "OpenAI ('we') decides this (OT9)"),
-    "reasonable_evidence": base(["situation"], "there is reasonable evidence that safeguards are not working at {0}"),
+    "reasonable_evidence": base(["situation"], "at {0} OpenAI ('we') finds reasonable evidence that its safeguards are "
+                                               "not working as expected (4.2: \u201cIf we find reasonable evidence that "
+                                               "our safeguards are not working as expected\u201d); OpenAI ('we') decides "
+                                               "this (OT11)"),
     "adjustment_conditions": base(["situation"], "4.3's conditions for adjusting the safeguards required in that "
                                        "capability area hold at {0}: the adjustment does not meaningfully increase the overall risk of "
                                        "severe harm, is publicly acknowledged, and keeps safeguards more protective than the other "
@@ -190,7 +193,9 @@ ACTS = {
     "efficacy_threshold_per_safeguard": ("{0} identify an efficacy threshold per safeguard", "4.1: third safeguard-selection step"),
     "validate_evidence": ("{0} validate the evidence", "4.2: evidence safeguards fail"),
     "review_sufficiency": ("{0} review safeguard sufficiency", "4.2: review sufficiency"),
-    "research_review": ("{0} have research categories reviewed", "2.3: periodic review"),
+    "research_review": ("{0} review the latest research as well as findings in each Research Category",
+                        "2.3: \u201cWe will periodically review the latest research and findings for each Research "
+                        "Category.\u201d (the periodicity stays ET-blocked)"),
     "decision_documented": ("{0} have reports to SAG as well as SAG decisions with reasoning documented",
                             "5.1: relevant reports made to the SAG and the SAG's decision and reasoning"),
     "noncompliance_investigated": ("{0} have potential noncompliance tracked as well as appropriately investigated",

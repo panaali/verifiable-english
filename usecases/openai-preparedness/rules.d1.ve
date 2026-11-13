@@ -173,7 +173,7 @@ Rule 1. Every capability must be tracked as a category, if all of the following 
 ## f17-iff-only | RS12=iff | 2.1: “We treat a frontier capability as a Tracked Category if the capability creates a risk that meets five criteria:” (RS12=iff, with 2.3: a missing criterion precludes Tracked Category treatment)
 Rule 1. Every capability must not be tracked as a category, if it is not the case that all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
 ## f13-review | always | 2.3: “We will periodically review the latest research and findings for each Research Category.”; periodicity remains ET-blocked
-Rule 1. Every situation must have research categories reviewed.
+Rule 1. Every situation must review the latest research as well as findings in each Research Category.
 ## f13-results | always | 2.3: “SAG will receive the results of such reviews and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework.”; assessment remains AP-blocked
 Rule 1. Every situation must have SAG receive the research results, if that situation is classified as "research_category_review".
 ## cl-levels | always | Change log item 2: “Also, we are removing terms “low” and “medium” from the Framework, because those levels were not operationally involved in the execution of our Preparedness work.” (the “because” clause is a reason, not translated)
