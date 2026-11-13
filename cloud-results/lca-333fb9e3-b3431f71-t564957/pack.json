@@ -1,0 +1,12 @@
+{
+ "job": "lca-333fb9e3-b3431f71-t564957",
+ "head": "cb8b9507b04348ad4fdfae95263df70bd4fd9c98",
+ "lean_tree": "333fb9e39b7c09f083787c031524072e2b0603da",
+ "entry": "9e6958a2e6b63e9caaf022fdc9ac6d87328fa5f88da463f471942d37fe161f57",
+ "name": "lean-build-333fb9e39b7c-linux-aarch64.tar.zst",
+ "sha256": "39bed12deff58ada24e0ce676cf2c0b4e1977af85140db6587d6d68ae7dd0d11",
+ "bytes": 709642880,
+ "members": 8716,
+ "lean": "Lean (version 4.24.0, aarch64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+ "platform": "Linux-aarch64"
+}
