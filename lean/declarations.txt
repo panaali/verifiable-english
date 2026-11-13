@@ -1743,6 +1743,14 @@ module ResponseShape.Skeletons 9ed1fe665bdeabe9b2d063e24dd4355f1290aec53c6fc0a53
 72:0-72:59 def ResponseShape.Skeletons.actReadings@ResponseShape.Skeletons
 73:0-73:69 def ResponseShape.Skeletons.englishStatement@ResponseShape.Skeletons
 75:0-120:41 def ResponseShape.Skeletons.row@ResponseShape.Skeletons
+module ResponseShape.SoftSelectedExamples 3a7c0f03fcc0ec4dccb6eea6745fc26334afd6542e3bc377ffdfaaa998a6a4db
+11:0-12:101 def ResponseShape.SoftSelectedExamples.accepts@ResponseShape.SoftSelectedExamples
+13:0-13:63 def ResponseShape.SoftSelectedExamples.run@ResponseShape.SoftSelectedExamples
+15:0-19:10 def ResponseShape.SoftSelectedExamples.setResult@ResponseShape.SoftSelectedExamples
+21:0-21:70 def ResponseShape.SoftSelectedExamples.deny@ResponseShape.SoftSelectedExamples
+22:0-22:72 def ResponseShape.SoftSelectedExamples.allow@ResponseShape.SoftSelectedExamples
+23:0-23:107 def ResponseShape.SoftSelectedExamples.violating@ResponseShape.SoftSelectedExamples
+24:0-25:126 def ResponseShape.SoftSelectedExamples.refused@ResponseShape.SoftSelectedExamples
 module ResponseShape a89af379dc2e885f997404f83595dbfce86f6e898b830d94905fac3576323028
 30:0-40:25 inductive ResponseShape.Re@ResponseShape
 40:11-40:14 def ResponseShape.instBEqRe.beq@ResponseShape
