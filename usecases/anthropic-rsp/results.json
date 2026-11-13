@@ -4278,7 +4278,7 @@
   "C4": {
    "basis": {
     "different_acts": {
-     "f13-redact-p": "{0} have material redacted from the public version",
+     "f13-redact-p": "{0} have material redacted from the public as well as regular-clearance versions",
      "f16-only-legal": "{0} have material redacted from the version given to external reviewers"
     }
    },

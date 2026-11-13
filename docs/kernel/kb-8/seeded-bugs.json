@@ -1,0 +1,76 @@
+{
+  "item": "kb-8",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from git (git checkout) and rebuilt; the restored tree passes every check named here. Lean seeds S1 and S3-S7 were run twice with the same results: on the first build (local branch kb-8-pre-rebase, main 9ccbf3fdf3 plus kb-8) and on the rebuilt branch (main 35a9ba135f plus kb-8, e45524436d), each by: plant, lake build VE.Time.WireSound, restore. S2 was run on the first build only: lake build ve_service VE.Time.WireSound with the seed, then the two pytest ids against that service. Its files (lean/VE/Route/Decode.lean, lean/VE/Time/*.lean other than WireSound.lean, and the two test files) are byte-identical between 9ccbf3fdf3 and 35a9ba135f (git diff --stat 9ccbf3fdf3 35a9ba135f -- them: empty).",
+  "seeds": [
+    {
+      "id": "S1",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "task seed (a): the certificate kind's answer reports valid: true unconditionally",
+      "mutation": "runCase, kind certificate: (\"valid\", .bool valid) becomes (\"valid\", .bool true)",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.quantity_certificate_wire_sound",
+      "result": "quantity_certificate_wire_sound does not build: lean/VE/Time/WireSound.lean:167:28 application type mismatch (the answer is no longer the stated field list over the checker's value)"
+    },
+    {
+      "id": "S2",
+      "language": "lean",
+      "file": "lean/VE/Route/Decode.lean",
+      "claim": "task seed (b): the model decoder drops the last row of a relation",
+      "mutation": "decodeOrderModel: pure (p, rows) becomes pure (p, rows.dropLast)",
+      "failing": "uv run pytest -p no:cacheprovider --noconftest tests/test_fret_w6a_rerating.py::test_bounded_response_unrolls_and_lean_admits_it tests/test_w6a_looprecheck1.py::test_pinned_counting_fixtures_evaluate_identically_relay_and_lean (the seeded ve_service's build id added to lean/checkers.lock for the run, then restored; --noconftest because the session's lake build stops first at the guards below)",
+      "test": "tests/test_fret_w6a_rerating.py::test_bounded_response_unrolls_and_lean_admits_it",
+      "result": "every proof of VE.Time.WireSound still builds (the theorems speak of the decoded model, whatever the decoder returns). The existing tests fail: test_bounded_response_unrolls_and_lean_admits_it[16-51] and [13-42] (Lean values [False, False, False], expected [True, True, False]); test_pinned_counting_fixtures_evaluate_identically_relay_and_lean (the relay's value, computed by the Lean service, becomes ResourceLimit, expected True). The full lake build also fails at the #guard lines lean/VE/Cardinality/RunExamples.lean:461-473 (the cardinality route shares the decoder). The restored tree in the same mode: 3 passed."
+    },
+    {
+      "id": "S3",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "the admission kind's value is the core's truth in the decoded model",
+      "mutation": "runCase, kind admission: (\"value\", Json.bool value) becomes (\"value\", Json.bool !value)",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.quantity_admission_wire_sound",
+      "result": "quantity_admission_wire_sound does not build: lean/VE/Time/WireSound.lean:74:44 application type mismatch"
+    },
+    {
+      "id": "S4",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "the countermodel kind's refutes is the refutation in the decoded model",
+      "mutation": "runCase, kind countermodel: (\"refutes\", .bool refutes) becomes (\"refutes\", .bool !refutes)",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.quantity_countermodel_wire_sound",
+      "result": "quantity_countermodel_wire_sound does not build: lean/VE/Time/WireSound.lean:123:24 application type mismatch"
+    },
+    {
+      "id": "S5",
+      "language": "lean",
+      "file": "lean/VE/Time/Document.lean",
+      "claim": "the document answer is exactly the stated report and identities",
+      "mutation": "runDocument: (\"environment_id\", .str w.environmentId) becomes (\"environment_id\", .str w.targetId)",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.extension_document_sound",
+      "result": "extension_document_sound does not build: lean/VE/Time/WireSound.lean:200:2 unsolved goals"
+    },
+    {
+      "id": "S6",
+      "language": "lean",
+      "file": "lean/VE/Time/WireSound.lean",
+      "claim": "the countermodel statement says what refutes means, and a wrong statement does not prove",
+      "mutation": "quantity_countermodel_wire_sound's conclusion refutes = (...) becomes refutes = !(...)",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.quantity_countermodel_wire_sound",
+      "result": "quantity_countermodel_wire_sound does not build: lean/VE/Time/WireSound.lean:124:4 type mismatch"
+    },
+    {
+      "id": "S7",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "sibling lesson kb-7 F1: no field after the stated ones can override valid (the answer's key list is closed)",
+      "mutation": "runCase, kind certificate: the answer appends (\"valid\", .bool true) after the environment ids",
+      "failing": "lake build VE.Time.WireSound",
+      "test": "VE.Time.Wire.quantity_certificate_wire_sound",
+      "result": "quantity_certificate_wire_sound does not build: lean/VE/Time/WireSound.lean:167:28 application type mismatch"
+    }
+  ]
+}

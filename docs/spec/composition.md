@@ -423,7 +423,7 @@ text, followed by the head. The checks, in order; the first that fires is the an
 | 3 | `alternatives@0` with `soft-norms@0` | `alternatives@0 with soft-norms@0` |
 | 4 | `risk@0` without `alternatives@0` | `risk@0 requires alternatives@0` |
 | 5 | `risk@0` with `norm-defaults@0` | `risk@0 with norm-defaults@0 is not implemented` |
-| 6 | `alternatives@0` with `norm-defaults@0` | `alternatives@0 with norm-defaults@0 is not implemented` |
+| 6 | `alternatives@0` with `norm-defaults@0`: withdrawn by events-time-causation ET-7; `todayGate` admits the pair (D46) and the numbers of the other checks are kept | none |
 | 7 | some profile is not registered (the first such, in list order) | `Unsupported profile <p>` |
 | 8 | `speech-acts@0` without `norms@0` | `speech-acts@0 requires norms@0` |
 | 9 | `speech-acts@0` with a profile outside `relational-fol@0`, `norms@0`, `speech-acts@0` (the first such) | `speech-acts@0 with <p>` |
@@ -619,9 +619,10 @@ New in S0 as texts of `dispatch`; no executable raises them until a wrapper's st
 | `UnsupportedProfile: readings@1 requires norms@0` | `readings@1` over the `frozen` route | error |
 | `UnsupportedProfile: right-clauses@0 requires rights@0` | `right-clauses@0` over `frozen`, `norms` or `soft` | error |
 
-Unchanged, and returned by `dispatch` verbatim: the texts of 4.2's eighteen checks, in that order. Unchanged and not
-`dispatch`'s: every head's own texts, the discourse wrapper's (`ve.discourse@1 requires ve-document@2`,
-`discourse admission requires the FOL family`), and every W1, soft, rights and P0 diagnostic.
+Unchanged, and returned by `dispatch` verbatim: the texts of 4.2's checks (eighteen numbered, check 6 withdrawn by
+ET-7), in that order. Unchanged and not `dispatch`'s: every head's own texts, the discourse wrapper's
+(`ve.discourse@1 requires ve-document@2`, `discourse admission requires the FOL family`), and every W1, soft, rights
+and P0 diagnostic.
 
 Named by the plan and raised by a later stage; the text is fixed here so that the stage specifications agree:
 
@@ -861,7 +862,7 @@ inductive Route
   | readings | clauses | discourse
   deriving DecidableEq, Repr
 
-/-- ve/profiles.py checker_family as a gate: the eighteen checks of 4.2 in order, with its texts. -/
+/-- ve/profiles.py checker_family as a gate: the checks of 4.2 in order (check 6 withdrawn by ET-7), with its texts. -/
 def todayGate (ps : List String) : Except String Unit :=
   if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
   else if ps.contains "alternatives@0" && !ps.contains "norms@0" then
@@ -872,8 +873,6 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "risk@0 requires alternatives@0")
   else if ps.contains "risk@0" && ps.contains "norm-defaults@0" then
     .error (unsupported "risk@0 with norm-defaults@0 is not implemented")
-  else if ps.contains "alternatives@0" && ps.contains "norm-defaults@0" then
-    .error (unsupported "alternatives@0 with norm-defaults@0 is not implemented")
   else match ps.find? (fun p => !registered.contains p) with
   | some p => .error (unsupported s!"Unsupported profile {p}")
   | none =>
@@ -923,7 +922,7 @@ def TodayList (ps : List String) : Prop :=
   ("reports@0" ∈ ps → ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps) ∧
   ("order@0" ∈ ps → "closure@0" ∉ ps ∧ "nary@0" ∉ ps) ∧ ("nary@0" ∈ ps → "closure@0" ∈ ps) ∧
   ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps) ∧
-  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "alternatives@0" ∉ ps ∧ "risk@0" ∉ ps)
+  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "risk@0" ∉ ps)
 
 theorem today_sound (ps : List String) (r : Route) (h : today ps = .ok r) : TodayList ps ∧ r = todayHead ps
 theorem today_complete (ps : List String) (h : TodayList ps) : today ps = .ok (todayHead ps)
@@ -946,7 +945,7 @@ theorem today_normDefaults (ps) (h : today ps = .ok .normDefaults) :
 theorem today_soft (ps) (h : today ps = .ok .soft) : "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "rights@0" ∉ ps
 theorem today_rights (ps) (h : today ps = .ok .rights) : "rights@0" ∈ ps ∧ "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps
 theorem today_alternatives (ps) (h : today ps = .ok .alternatives) :
-  "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps ∧ "norm-defaults@0" ∉ ps
+  "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps
 theorem today_risk (ps) (h : today ps = .ok .risk) :
   "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "norm-defaults@0" ∉ ps
 theorem today_speech (ps) (h : today ps = .ok .speechActs) : VE.SpeechActs.Wire.profileGate ps = .ok ()
@@ -1029,8 +1028,10 @@ D-all, whose two literals `Examples.lean` guards `today` against). `VE.SpeechAct
 existing gate of `lean/VE/SpeechActs/Wire.lean` (the statement uses its namespace as that file declares it). The
 alternatives, risk, rights, reports and norm-defaults gates take the environment JSON, so their requirements are
 stated as membership facts; each is the list of `unless … contains` checks of that route's `profileGate` or
-decoder, and `norm-defaults@0 ∉ ps` in `today_norms`, `today_alternatives` and `today_risk` is the gate's checks 5,
-6 and the head order (those routes do not replay `fill`, norm-defaults' integration gap). In
+decoder, and `norm-defaults@0 ∉ ps` in `today_norms` and `today_risk` is the head order and the gate's check 5
+(those routes do not replay `fill`, norm-defaults' integration gap); `today_alternatives` concludes nothing about
+`norm-defaults@0`, since ET-7 withdrew check 6 and the alternatives route answers the completion itself
+(`docs/events-time-causation/et-7/DELTA.md` row 2, D46). In
 `refusal_names` the `requires` case has `b = "rights@0"` or `"norms@0"`, absent because the base route is below it.
 
 ### 9.4 `Content.lean`
@@ -1190,7 +1191,7 @@ Lists are written as they are passed. "ok r" is `.ok r`; a text is the complete 
 | D44 | `norm-defaults@0, norms@0, relational-fol@0, rights@0, soft-norms@0` | ok `rights` |
 | D45 | `norm-defaults@0, relational-fol@0` | `UnsupportedProfile: norm-defaults@0 requires norms@0` |
 | D46 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0` | ok `alternatives` (the completion on the alternatives route, events-time-causation ET-7) |
-| D47 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (check 5 before check 6) |
+| D47 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (check 5; ET-7 withdrew check 6) |
 | D48 | `norm-defaults@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 requires alternatives@0` (check 4 before check 5) |
 | D49 | `norm-defaults@0, norms@0, relational-fol@0, speech-acts@0` | `UnsupportedProfile: speech-acts@0 with norm-defaults@0` |
 | D50 | `norm-defaults@0, norms@0, readings@1, relational-fol@0` | ok `readings`; with `readings@1` removed: ok `normDefaults` |
@@ -1311,8 +1312,9 @@ question 12).
 
 1. The stack (1.1) and the six obligations (4.1): one rank per profile; rule 2's single exception; what S0
    provides against what each layer supplies.
-2. `todayGate` (4.2, 9.3) against `ve/profiles.py` `checker_family` line by line: the eighteen checks, their order,
-   their texts, the first-offender choices in checks 7, 9, 11, 12 and 13; `TodayList` as its declarative form;
+2. `todayGate` (4.2, 9.3) against `ve/profiles.py` `checker_family` line by line: the checks (eighteen numbered,
+   check 6 withdrawn by ET-7), their order, their texts, the first-offender choices in checks 7, 9, 11, 12 and 13;
+   `TodayList` as its declarative form;
    `today_classify` against `VE.Route.Gate.classify`.
 3. The heads (4.2): `alternatives@0`, `risk@0`, `speech-acts@0` lists keep their routes although they contain
    `norms@0`; `reports@0` keeps its own; the checker family and `unit_schema` stay the head's business.

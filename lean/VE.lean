@@ -397,3 +397,4 @@ import VE.Route.MeteredWire
 import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.SelectedExamples
+import VE.Time.WireSound
