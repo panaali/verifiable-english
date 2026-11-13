@@ -598,6 +598,26 @@ reviews/dri-decisions-20261111-ucfix-cycle.md item 2). Section 6 and `answer-key
     The situation sort's legend still says "of a covered model" (sess-3 C7): the shared change is moved to
     `openai-preparedness-fidelity-fix-3` (DRI ruling of 2026-11-12, STOP RULE question 3, ruled (b)).
 
+**`openai-preparedness-fidelity-fix-3` (2026-11-13): PF round B part 1, the six checklist-only units both blind
+adjudicators judged REAL (reviews/audit-newrule-fsfpf/pf-adjud/result.md; DRI addendum 8 item 54). Section 6 and
+`answer-key.json` are not edited.**
+
+24. **Translation fixes for six round-B units (translation-fidelity checklist classes 1, 2, 7, 11).** The
+    `situation` sort is "a development, use, deployment, review or decision of a model": it no longer says
+    "covered", so `f4-security` ("We will require the following practices for High capability models") and every
+    other rule without a stated coverage condition apply to any model; "covered" stays only as the explicit guard
+    of the rules whose source states it (F2, F7, F8, F9, `f16-sag-recommend`; section 4's guard of item 11 stays)
+    (DRI ruling of 2026-11-12 on fix-2's question 3, item 2). F9's Safeguards Report act states 4.2's compilation,
+    "have planned safeguard information compiled into a Safeguards Report", its legend quoting "We compile the
+    information on the planned safeguards needed to minimize the risk of severe harm into a Safeguards Report.".
+    **Amends item 17 (not rewritten):** the CYB-H contribution act is "contribute to improved cyberdefense policies
+    as well as cyberdefense tools" ("towards" becomes "to" for the 80-character limit) and its legend quotes the
+    bullet "Contribute towards improved cyberdefense policies and tools for cyberdefense". F10's shared guard
+    `reasonable_evidence` reads "OpenAI ('we') finds reasonable evidence that its safeguards are not working as
+    expected", quoting 4.2's condition, with OT11's decider `we` (section 3.2). F13's review act is "review the
+    latest research as well as findings in each Research Category", its legend quoting 2.3's sentence; the
+    periodicity stays ET-blocked. No answer changed (236 of 239 agree, as before); regulated predicates: 60 of 64.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
