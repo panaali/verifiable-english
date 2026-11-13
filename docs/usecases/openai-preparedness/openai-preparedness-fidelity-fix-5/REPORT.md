@@ -175,7 +175,22 @@ in mutants.json.
   - So no sweep was run, as in fix-4.
 - `tools/select_tests.py --base <merge-base>` selects test_pf_fidelity_fix.py, test_safetyfw_usecases.py,
   test_safetyfw_accounting.py and test_usecase_key_transcription.py, among 55 files. It does not select every unit.
-- Final selected run: see the section of that name below.
+- `conformance/english_lean_lexicon.py` regenerated conformance/english-lean/lexicon-report.json (commit 9dff05b37c):
+  only the openai-preparedness environment.d1.json row moves (symbols 137 -> 138, its lexicon_id). The first selected
+  run found it stale (test_every_corpus_environment_has_a_valid_selected_lexicon, as fix-4 did); after the rewrite
+  that test gave "1 passed". `tools/regen_generated.py --check` was clean ("checked 41 entries"): the report is not
+  one of its entries.
+
+## Final selected run
+
+1. On 15650040db: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base <merge-base> --run` exited 1 in its fast
+   stage ("FAILED tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon",
+   "1 failed, 512 passed"); its five shards were not waited for, so the other units gave no answer.
+2. On 9dff05b37c (clean tree, the lexicon fix committed): the same command exited 0. "fast first: the cheap units
+   passed after 148 s"; "SHARD 1/5: exit 0 ... 18 units, 18 passed", "SHARD 2/5: ... 14 units, 14 passed",
+   "SHARD 3/5: ... 13 units, 13 passed", "SHARD 4/5: ... 11 units, 11 passed", "SHARD 5/5: ... 11 units, 11 passed";
+   "summary: selected tests ran on GitHub Actions (5 shards, run openai-preparedness-fidelity-fix-5-9dff05b3-t606631);
+   exit=0; 1615s". Only this REPORT changes after it.
 
 ## Open list
 
