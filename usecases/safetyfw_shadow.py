@@ -11,6 +11,10 @@ answers (docs/usecases/safetyfw/<case>/kb10-shadow.json, saved evidence that no 
     uv run python usecases/safetyfw_shadow.py anthropic-rsp docs/usecases/safetyfw/anthropic-rsp/kb10-shadow.json
 
 The harness runs with `--check`, so a shadow run that changed a keyed answer would fail as the harness does.
+
+Since kb-10b step (2) the wrapped `selected_rules` and `completed` answer from Lean's `soft-selected` too
+(`SoftenedNormDocument.selected_rules`, `outcome_at`), so a run now compares Lean with Lean; the script is kept
+as the record of how step (1)'s saved evidence was made.
 """
 from __future__ import annotations
 
