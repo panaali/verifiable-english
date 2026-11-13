@@ -38,7 +38,10 @@ BASE = {
     "covered": base(["situation"], "the model at {0} is covered by the Framework"),
     "likely_to_cross": base(["situation"], "the covered system at {0} appears likely to cross a capability threshold; "
                                                  "OpenAI ('we') decides this (OT9)"),
-    "reasonable_evidence": base(["situation"], "there is reasonable evidence that safeguards are not working at {0}"),
+    "reasonable_evidence": base(["situation"], "at {0} OpenAI ('we') finds reasonable evidence that its safeguards are "
+                                               "not working as expected (4.2: \u201cIf we find reasonable evidence that "
+                                               "our safeguards are not working as expected\u201d); OpenAI ('we') decides "
+                                               "this (OT11)"),
     "adjustment_conditions": base(["situation"], "4.3's conditions for adjusting the safeguards required in that "
                                        "capability area hold at {0}: the adjustment does not meaningfully increase the overall risk of "
                                        "severe harm, is publicly acknowledged, and keeps safeguards more protective than the other "
@@ -176,7 +179,10 @@ ACTS = {
     "safeguard_work": ("{0} start safeguard work to sufficiently reduce the threshold's severe-harm risk",
                        "4: work on safeguards to sufficiently reduce the risks of severe harm associated with that "
                        "threshold, even before a formal capability determination"),
-    "safeguards_report": ("{0} have a Safeguards Report", "4.1 and 4.2"),
+    "safeguards_report": ("{0} have planned safeguard information compiled into a Safeguards Report",
+                          "4.2: \u201cWe compile the information on the planned safeguards needed to minimize the "
+                          "risk of severe harm into a Safeguards Report.\u201d (section 4: for covered systems that "
+                          "reach a capability threshold)"),
     "risk_paths": ("{0} identify plausible ways severe harm can arise in the proposed deployment",
                    "4.1: the plausible ways in which the associated risk of severe harm can come to fruition in the "
                    "proposed deployment"),
@@ -187,7 +193,9 @@ ACTS = {
     "efficacy_threshold_per_safeguard": ("{0} identify an efficacy threshold per safeguard", "4.1: third safeguard-selection step"),
     "validate_evidence": ("{0} validate the evidence", "4.2: evidence safeguards fail"),
     "review_sufficiency": ("{0} review safeguard sufficiency", "4.2: review sufficiency"),
-    "research_review": ("{0} have research categories reviewed", "2.3: periodic review"),
+    "research_review": ("{0} review the latest research as well as findings in each Research Category",
+                        "2.3: \u201cWe will periodically review the latest research and findings for each Research "
+                        "Category.\u201d (the periodicity stays ET-blocked)"),
     "decision_documented": ("{0} have reports to SAG as well as SAG decisions with reasoning documented",
                             "5.1: relevant reports made to the SAG and the SAG's decision and reasoning"),
     "noncompliance_investigated": ("{0} have potential noncompliance tracked as well as appropriately investigated",
@@ -236,8 +244,9 @@ ACTS = {
                            "classified information handling; the further actions remain open"),
     "pandemic_policy_contribution": ("{0} contribute towards improved public policy as well as pandemic preparedness",
                                      "Table 1 BIO-C: policy contribution"),
-    "cyberdefense_contribution": ("{0} contribute towards improved cyberdefense policies as well as tools",
-                                  "Table 1 CYB-H: cyberdefense contribution"),
+    "cyberdefense_contribution": ("{0} contribute to improved cyberdefense policies as well as cyberdefense tools",
+                                  "Table 1 CYB-H: \u201cContribute towards improved cyberdefense policies and tools "
+                                  "for cyberdefense\u201d"),
     "safeguards_recommended": ("{0} have the SAG recommend implementing as well as assessing the safeguards",
                                "3.3: the first next step the SAG's decision can include"),
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",
@@ -261,7 +270,7 @@ def environment():
     return {"language": LANGUAGE, "profiles": ["norms@0", "relational-fol@0", "soft-norms@0"],
             "spec_revision": SPEC_REVISION,
             "vocabulary": {"sorts": {k: {"description": v} for k, v in {
-                "situation": "a development, use, deployment, review or decision of a covered model",
+                "situation": "a development, use, deployment, review or decision of a model",
                 "level": "one of Table 1's six named capability levels",
                 "category": "one of the three Tracked Categories",
                 "proposal": "a safeguard or governance proposal",

@@ -32,15 +32,15 @@ f7-report | omits: nothing
 f7-compile | omits: "Prior to deployment, every covered model undergoes the suite of Scalable Evaluations" exposition
 f7-recommend | omits: "The SAG reviews the Capabilities Report and decides on next steps" rule f7-report ; "These can include" reading RS16 ; "Determine that the capability threshold has been crossed, and therefore" reading RS16
 f8-start | omits: "even if a formal capability determination has not yet been made" restates
-f9-report | omits: "Safeguards that mitigate the risk of severe harm are at the core of our safe deployment approach" exposition ; "for covered systems that reach a capability threshold" restates ; "We compile the information on the planned safeguards needed to minimize the risk of severe harm into" loss 1
+f9-report | omits: "Safeguards that mitigate the risk of severe harm are at the core of our safe deployment approach" exposition
 f9-residual-strict | omits: "The Safeguards Report should include the following information" restates ; "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards" loss 1 ; "Details about the efficacy of those safeguards" loss 1 ; "Any notable limitations with the information provided" loss 1
 f9-residual-default | omits: "The Safeguards Report should include the following information" restates ; "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards" loss 1 ; "Details about the efficacy of those safeguards" loss 1 ; "Any notable limitations with the information provided" loss 1
 f9-risk-paths | omits: "We use the following process to select safeguards for a deployment" restates
 f9-specific | omits: nothing
 f9-efficacy | omits: "For each identified safeguard, we identify methods to measure their efficacy" restates
 f9-threshold | omits: nothing
-f10-validate | omits: "If we find reasonable evidence that our safeguards are not working as expected" restates ; "the information being received" restates ; "and review the sufficiency of our safeguards" rule f10-review
-f10-review | omits: "If we find reasonable evidence that our safeguards are not working as expected" restates ; "we will validate" rule f10-validate ; "the information being received" restates
+f10-validate | omits: "the information being received" restates ; "and review the sufficiency of our safeguards" rule f10-review
+f10-review | omits: "we will validate" rule f10-validate ; "the information being received" restates
 f14-document | omits: "We will document" restates
 f14-investigate | omits: "any reported or otherwise identified potential instances of noncompliance with this policy" restates ; "and where reports are substantiated, will take appropriate and proportional corrective action" rule f14-corrective
 f14-corrective | omits: "We will track and appropriately investigate any reported or otherwise identified potential" rule f14-investigate ; "instances of noncompliance with this policy" restates
@@ -85,7 +85,7 @@ f12-nuclear-unscoped | omits: nothing
 f17-suff | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" restates
 f17-iff | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
 f17-iff-only | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
-f13-review | omits: "We will periodically review the latest research and findings for each Research Category" restates
+f13-review | omits: nothing
 f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
 cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
 fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
