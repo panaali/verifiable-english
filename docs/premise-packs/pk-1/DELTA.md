@@ -3,10 +3,10 @@
 Feature item pk-1 (PK-1, premise packs, `docs/spec/premise-packs.md`; SYNTHESIS 2.1 and 4.2; acting DRI
 dri-featurefeed, 2026-10-18).
 
-**What users see does not change.** The layered norm-defaults route's extra base premises `X` are now the premises of
-a pack list (`lean/VE/NormDefaults/Packs.lean`) instead of `labelled` and `rightsCount`, and the soft and rights
-routes build `[soft]` and `[soft, rights]` through `Packs.assemble`. On those lists every answer, array and
-diagnostic is today's:
+**No user-visible change is intended, and the saved differential found none on the inputs it ran.** The layered
+norm-defaults route's extra base premises `X` are now the premises of a pack list (`lean/VE/NormDefaults/Packs.lean`)
+instead of `labelled` and `rightsCount`, and the soft and rights routes build `[soft]` and `[soft, rights]` through
+`Packs.assemble`. The evidence is a sampled comparison over the inputs below, not a proof of identity:
 
 - base-against-head output differential (`tools/lean_output_diff.py`, base `main` 93131f967, head this branch):
   452 invocations, 378 run on both builds, **0 differences**, 0 timed out, over every conformance corpus, the
