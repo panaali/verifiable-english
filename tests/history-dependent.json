@@ -814,6 +814,16 @@
    ]
   },
   {
+   "test": "tests/test_kb10_shadow.py",
+   "why": "starts git (git rev-parse) in usecases/safetyfw_shadow.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "usecases/safetyfw_shadow.py:shadow_run: git rev-parse"
+   ]
+  },
+  {
    "test": "tests/test_lean_audit_record.py",
    "why": "starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py",
    "recorded": [
