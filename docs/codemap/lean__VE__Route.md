@@ -5,6 +5,7 @@
 - `lean/VE/Route/Checker.lean` — The checker parameter of the route (PLAN-EXPAND2 3.4).
 - `lean/VE/Route/Checks.lean` — Executable checks for the route: the profile gate, the dependency DAG, labels, nested kinds and the literal generator.
 - `lean/VE/Route/Closure.lean` — Finite closures as Python and Rust build them, with their charges.
+- `lean/VE/Route/CodecRoundTrip.lean` — The round trip of the route's formula codec (kernel boundary 1.3 and 7, KB-4 and KB-9a).
 - `lean/VE/Route/Decode.lean` — Model decoding for the `route` and `quantity` runners.
 - `lean/VE/Route/Examples.lean` — A genuine environment-extending layer, as evidence that the frozen `Layer` contract is satisfiable beyond the identity: `copyLayer` adds a new unary predicate …
 - `lean/VE/Route/Flags.lean` — Functional and total tables in one pass, as Python `_valid_flags` and Rust check them.
