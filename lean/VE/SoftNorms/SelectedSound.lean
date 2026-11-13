@@ -77,6 +77,25 @@ theorem decodeQueries_ok {D : SoftDoc} {M : VE.FiniteModel VE.Bridge.Entity} :
       · exact (decodeSelectedQuery_ok hx).2.2.1
       · exact hreg y hy
 
+/-- The case's queries: a non-empty array, one decoded query per request query, in order, each
+bound to the request's query at its position and naming a regulated predicate. -/
+theorem selectedQueries_ok {D : SoftDoc} {M : VE.FiniteModel VE.Bridge.Entity} {j : Json}
+    {qs : List SelectedQuery} (h : selectedQueries D M j = .ok qs) :
+    ∃ raws : Array Json, j.getObjValD "queries" = Json.arr raws ∧ raws.toList ≠ [] ∧
+      qs.length = raws.size ∧ (∀ x ∈ raws.toList.zip qs, QueryDecoded D M x.1 x.2) ∧
+      ∀ q ∈ qs, q.pred ∈ D.T.regulated.map (·.name) := by
+  unfold selectedQueries at h
+  split at h
+  · rename_i raw hq
+    split at h
+    · cases h
+    · rename_i hne
+      split at h
+      · cases h
+      obtain ⟨hl, hall, hreg⟩ := decodeQueries_ok h
+      exact ⟨raw, hq, by simpa [Array.isEmpty] using hne, by simpa using hl, hall, hreg⟩
+  · cases h
+
 /-- The kind's runner: the case's decoders read the source, the model and a non-empty list of
 queries, each bound to the request's query at its position, and the answer is `SelectedAnswer` (one
 expansion per case, read back as `selectedAt` and `outcomeAt` by `selectedRow_eq`). -/
@@ -96,19 +115,10 @@ theorem runSelected_answer (id : String) (j answer : Json) (h : runSelected id j
   obtain ⟨qs, hqs, h⟩ := bind_ok h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
-  split at hqs
-  · rename_i raw hq
-    split at hqs
-    · cases hqs
-    · rename_i hne
-      split at hqs
-      · cases hqs
-      obtain ⟨hl, hall, hreg⟩ := decodeQueries_ok hqs
-      refine ⟨environment, src, M, hM, raw, qs, henv, hsrc, hmod, hq, ?_, by simpa using hl, hall, ?_⟩
-      · simpa [Array.isEmpty] using hne
-      · unfold SelectedAnswer
-        rw [List.map_congr_left (fun q hq => selectedRow_eq src.D M q (hreg q hq))]
-  · cases hqs
+  obtain ⟨raw, hq, hne, hl, hall, hreg⟩ := selectedQueries_ok hqs
+  refine ⟨environment, src, M, hM, raw, qs, henv, hsrc, hmod, hq, hne, hl, hall, ?_⟩
+  unfold SelectedAnswer
+  rw [List.map_congr_left (fun q hq => selectedRow_eq src.D M q (hreg q hq))]
 
 /-- The soft route's answer to a `soft-selected` case: the case's own decoders read the source,
 the model and a non-empty list of queries, each decoded query is bound to the request's query at
