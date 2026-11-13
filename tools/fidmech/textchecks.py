@@ -212,7 +212,11 @@ def report(case: Path, data: bytes, boundaries_path: Path) -> dict:
     keys = {h.key() for h in hits}
     levers = {}
     for lever in S.LEVERS:
-        off, _ = l1(S.Segmentation(source, b.without(lever)), blocks)
+        try:
+            off, _ = l1(S.Segmentation(source, b.without(lever, source)), blocks)
+        except S.BoundariesError as e:
+            levers[lever] = {"error": str(e)}
+            continue
         off_keys = {h.key() for h in off}
         levers[lever] = {"counts": counts(off), "cleared": sorted(map(list, off_keys - keys), key=str),
                          "added": sorted(map(list, keys - off_keys), key=str)}
