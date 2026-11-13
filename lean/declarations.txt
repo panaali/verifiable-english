@@ -5706,7 +5706,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 5b35bd8c1e6096ee3425682869d99e1715a9303e3f2f62402be5480f056e809a
+module VE.Audit 64a397259220399c4e7dc71a4b579e86418e859b94e5cf583b85568cc1011160
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -24670,7 +24670,7 @@ module VE.Route.Closure 9644404d173aa700591eab59d5db6c6ab51469339e208701f359f255
 455:0-458:99 def VE.Route.Closure.CacheOK@VE.Route.Closure
 460:0-473:22 theorem VE.Route.Closure.cacheOK_insert@VE.Route.Closure
 475:0-479:11 theorem VE.Route.Closure.cacheOK_empty@VE.Route.Closure
-module VE.Route.CodecRoundTrip 3900158ae416e4f465698ff8ec10aa592d506d2971f59d91e7b207f5916a8f35
+module VE.Route.CodecRoundTrip 508ff08a267d66f1b6003bda2a8eab7715ee02b0f4dfc1c4051e27e5441b1300
 26:0-28:17 theorem VE.Route.Wire.decodeTerm_encodeTerm@VE.Route.CodecRoundTrip
 30:0-86:50 theorem VE.Route.Wire.decodeFormula_encodeFormula@VE.Route.CodecRoundTrip
 93:0-100:35 theorem VE.Route.Wire.node_step@VE.Route.CodecRoundTrip
@@ -24698,6 +24698,8 @@ module VE.Route.CodecRoundTrip 3900158ae416e4f465698ff8ec10aa592d506d2971f59d91e
 355:0-357:5 theorem VE.Route.Wire.depth_negationChain@VE.Route.CodecRoundTrip
 359:0-364:5 theorem VE.Route.Wire.decodeClosed_refuses_depth@VE.Route.CodecRoundTrip
 366:0-370:5 theorem VE.Route.Wire.decodeFormulas_refuses_depth@VE.Route.CodecRoundTrip
+383:0-390:5 theorem VE.Route.Wire.decodeClosed_refuses_depth_past_walk@VE.Route.CodecRoundTrip
+392:0-398:5 theorem VE.Route.Wire.decodeFormulas_refuses_depth_past_walk@VE.Route.CodecRoundTrip
 module VE.Route.Decode 5ecebb9350433ef5965dd4897e461bec2ae0f41a5b39bf386859c89668bc41b4
 20:0-20:56 def VE.Route.Decode.domainLimit@VE.Route.Decode
 21:0-21:55 def VE.Route.Decode.tupleLimit@VE.Route.Decode

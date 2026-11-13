@@ -7775,12 +7775,14 @@
 'VE.Route.Wire.decodeClosed_encodeFormula' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeClosed_encodeFormula_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeClosed_refuses_depth' does not depend on any axioms
+'VE.Route.Wire.decodeClosed_refuses_depth_past_walk' does not depend on any axioms
 'VE.Route.Wire.decodeDataModel_combined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeDataModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeFormula_encodeFormula' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeFormulas_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeFormulas_encode_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeFormulas_refuses_depth' does not depend on any axioms
+'VE.Route.Wire.decodeFormulas_refuses_depth_past_walk' does not depend on any axioms
 'VE.Route.Wire.decodeModel_background' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeModel_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -8300,12 +8300,14 @@ import VE.WireContract.Engine
 #print axioms VE.Route.Wire.decodeClosed_encodeFormula
 #print axioms VE.Route.Wire.decodeClosed_encodeFormula_wellFormed
 #print axioms VE.Route.Wire.decodeClosed_refuses_depth
+#print axioms VE.Route.Wire.decodeClosed_refuses_depth_past_walk
 #print axioms VE.Route.Wire.decodeDataModel_combined
 #print axioms VE.Route.Wire.decodeDataModel_valid
 #print axioms VE.Route.Wire.decodeFormula_encodeFormula
 #print axioms VE.Route.Wire.decodeFormulas_encode
 #print axioms VE.Route.Wire.decodeFormulas_encode_wellFormed
 #print axioms VE.Route.Wire.decodeFormulas_refuses_depth
+#print axioms VE.Route.Wire.decodeFormulas_refuses_depth_past_walk
 #print axioms VE.Route.Wire.decodeModel_background
 #print axioms VE.Route.Wire.decodeModel_intended
 #print axioms VE.Route.Wire.decodeModel_valid
