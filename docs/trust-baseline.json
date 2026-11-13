@@ -2717,8 +2717,8 @@
   },
   {
    "class": "V",
-   "lines": 134,
-   "reason": "kb-2a step A: the lowering of a document to its core documents, experimental and unreachable from the service (docs/spec/kernel-boundary.md section 5). Untied V by file against 9a3fd7a9f9ac: VE/Experimental/CoreDocument.lean +134 (G[V] untied: Origin, Body.rule?, Body.premise?, Choice, ActiveSet, Coupling, strictRule, premise, lowerContent, lowerCandidate, declarations, readingsOf, compatible, allChoices, maxChoices, choicesOf, Plan, UnitPlan, UnitPlan.statements, planOf, judgments); tied +55 (lower, compatibleChoices, readingOptions, preliminaries, CoreDoc.of, CoreDoc, Statement, Body); G[R] refusal checks and T examples not trusted. K +0, S +0. New Lean-owned behaviour, #guard-tested in VE/Experimental/CoreDocumentExamples.lean; itemised in docs/kernel/kb-2a/DELTA.md; ties pass in manage-agents FOLLOW-UPS.md",
+   "lines": 142,
+   "reason": "kb-2a step A: the lowering of a document to its core documents, experimental and unreachable from the service (docs/spec/kernel-boundary.md section 5). Untied V by file against 9a3fd7a9f9ac: VE/Experimental/CoreDocument.lean +142 (G[V] untied: Origin, Body.rule?, Body.premise?, Choice, ActiveSet, Coupling, Options, wire, strictRule, premise, lowerContent, lowerCandidate, declarations, readingsOf, compatible, allChoices, maxChoices, choicesOf, UnitPlan, UnitPlan.statements, planOf, judgments); tied +55 (lower, compatibleChoices, readingOptions, preliminaries, CoreDoc.of, CoreDoc, Statement, Body); G[R] refusal checks and T examples not trusted. K +0, S +0. New Lean-owned behaviour, #guard-tested in VE/Experimental/CoreDocumentExamples.lean; itemised in docs/kernel/kb-2a/DELTA.md; ties pass in manage-agents FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210"
   }

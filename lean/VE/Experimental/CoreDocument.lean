@@ -108,15 +108,19 @@ def documentFeature (E : Env) (senses : Bool) : Option String :=
     else if !E.rv.definitions.isEmpty then some "definitions"
     else none
 
+/-- A JSON value as the soft relay sends it: `wireJson` with the fuel of the document mode's soft requests
+(`DocumentChain.requestOf`, `softContentOf`). -/
+def wire (j : Json) : Json := wireJson 257 j
+
 /-- The soft rule a strict W1 norm lowers to: its encoding, when the soft route's decoder, over the core document's
-environment, reads it as a strict rule with the same name, predicate, sign, guard, carve-outs and precedence, no
-exception, rank, alterable party or hardness. Otherwise there is no embedding, and the reason. -/
+environment, reads it as the strict rule with the same name, predicate, sign, guard, carve-outs and precedence, and no
+exception, rank, alterable party, hardness or split. Otherwise there is no embedding, and the reason. -/
 def strictRule (environment : Json) (n : VE.Norms.Node) : Except String Json := do
-  let rule := wireJson 257 (VE.Alternatives.Wire.encodeNode n)
+  let rule := wire (VE.Alternatives.Wire.encodeNode n)
   let src ← (VE.SoftNorms.Wire.decodeSoftSource environment (Json.arr #[])).mapError
     (s!"the soft route's decoder refuses the core environment: {·}")
   let N ← (VE.SoftNorms.Wire.decodeSoftNorm src.se rule).mapError (s!"the soft route's decoder refuses the rule: {·}")
-  unless N.toNode == n && N.mode == .strict && N.exception.isNone && N.rank.isNone && N.alterable.isEmpty && !N.hard do
+  unless N == { toNode := n, mode := .strict, rank := none, alterable := [], exception := none, hard := false } do
     throw "the soft route's decoder reads it as another rule"
   pure rule
 
@@ -126,28 +130,29 @@ def premise (E : Env) (unit : String) (φ : VE.Formula) : Except String Body := 
     throw (unsupported unit "facts" s!"a formula over the regulated predicate {p} is a claim about the rules, not a premise")
   pure (.premise φ)
 
-/-- A unit's own content, lowered: each body with the feature that lowered it. -/
+/-- A unit's own content, lowered: at most one body, with the feature that lowered it. -/
 def lowerContent (E : Env) (environment : Json) (unit : String) :
-    Option UnitContent → Except String (List (String × Body))
-  | none => pure []
-  | some (.formula φ) => return [("facts", ← premise E unit φ)]
-  | some (.soft r) => pure [("soft-norms@0", .soft (wireJson 257 r))]
+    Option UnitContent → Except String (Option (String × Body))
+  | none => pure none
+  | some (.formula φ) => return some ("facts", ← premise E unit φ)
+  | some (.soft r) => pure (some ("soft-norms@0", .soft (wire r)))
   | some (.norm n) => do
     let r ← (strictRule environment n).mapError (unsupported unit "norms@0" s!"a strict norm has no soft rule: {·}")
-    pure [("norms@0", .soft r)]
+    pure (some ("norms@0", .soft r))
   | some (.rights _) => throw (unsupported unit "rights@0" "a rights block has no row")
   | some (.cardinality _) => throw (unsupported unit "cardinality@0" "a cardinality statement has no row")
 
 /-- A reading's candidate, lowered as the same content of its unit would be; a pending reading lowers to nothing. -/
 def lowerCandidate (E : Env) (environment : Json) (unit : String) :
-    Option VE.Judgments.Content → Except String (List (String × Body))
-  | none => pure []
+    Option VE.Judgments.Content → Except String (Option (String × Body))
+  | none => pure none
   | some (.formula φ) => lowerContent E environment unit (some (.formula φ))
   | some (.rule n) => lowerContent E environment unit (some (.norm n))
 
-/-- The judgment terms a unit's `open` meaning lists: each one a declaration, never a premise. -/
+/-- The judgment terms a unit's `open` meaning lists, in its order: each one a declaration, never a premise. -/
 def declarations (J : List VE.Judgments.Judgment) (u : SourceUnit) : List (String × Body) :=
-  (listedOf u.meaning).filterMap fun t => (J.find? (·.name == t)).map fun j => ("judgments@0", .judgment j)
+  (listedOf u.meaning).filterMap (fun (t : String) =>
+    Option.map (fun j => ("judgments@0", Body.judgment j)) (J.find? (·.name == t)))
 
 /-! ## References -/
 
@@ -198,32 +203,37 @@ def statementFault (E : Env) (unitIds : List String) (sets : List ActiveSet) (s 
 
 /-! ## Readings and choices -/
 
-def readingOptions (E : Env) (environment : Json) (x : ActiveSet) : Except String (List (List (String × Body))) :=
+/-- Each reading's statements (its unit's body under that reading, if any), in the order of the readings. -/
+abbrev Options := List (Option (String × Body))
+
+def readingOptions (E : Env) (environment : Json) (x : ActiveSet) : Except String Options :=
   x.2.mapM (lowerCandidate E environment x.1.unit)
 
-def optionKeys (opts : List (List (String × Body))) : List (List String) := opts.map (·.map (·.2.key))
+def optionKeys (opts : Options) : List (Option String) := opts.map (Option.map (·.2.key))
 
 /-- The first two readings, `(i, j)` with `i < j`, that lower to the same statements. -/
-def collapsed (keys : List (List String)) : Option (Nat × Nat) :=
+def collapsed (keys : List (Option String)) : Option (Nat × Nat) :=
   (List.range keys.length).findSome? fun j =>
     (List.range j).findSome? fun i => if keys[i]? == keys[j]? then some (i, j) else none
 
 /-- Two readings of the set that lower to the same statements are refused. -/
-def distinct (x : ActiveSet) (opts : List (List (String × Body))) : Except String Unit :=
+def distinct (x : ActiveSet) (opts : Options) : Except String Unit :=
   if (optionKeys opts).Nodup then .ok () else
     let (i, j) := (collapsed (optionKeys opts)).getD (0, 0)
     .error s!"ReadingsCollapsed: reading set {x.1.id} readings {i} and {j} lower to the same statements"
 
-def readingsOf (E : Env) (environment : Json) (x : ActiveSet) :
-    Except String (ActiveSet × List (List (String × Body))) := do
+def readingsOf (E : Env) (environment : Json) (x : ActiveSet) : Except String (ActiveSet × Options) := do
   let opts ← readingOptions E environment x
   distinct x opts
   pure (x, opts)
 
+/-- A choice is compatible when, for each coupling, the readings it chooses in the coupled sets have at most one
+label on that axis. -/
 def compatible (couplings : List Coupling) (c : Choice) : Bool :=
-  couplings.all fun cp =>
-    let labels := c.filterMap fun (s, i) => (cp.members.lookup s).bind (·[i]?)
-    labels.all (· == labels.headD "")
+  couplings.all (fun (cp : Coupling) =>
+    let labels := c.filterMap (fun (p : String × Nat) =>
+      (cp.members.lookup p.1).bind (fun (ls : List String) => ls[p.2]?))
+    labels.eraseDups.length ≤ 1)
 
 /-- Every choice of one reading index per set, in the order of the sets. -/
 def allChoices : List (String × Nat) → List Choice
@@ -238,43 +248,45 @@ def maxChoices : Nat := 64
 /-- The combinations enumerated before couplings are read: a work bound; a larger product is refused. -/
 def maxCombinations : Nat := 4096
 
+/-- The unit of the first active set, which a refusal of the sets names. -/
+def firstUnit : List ActiveSet → String
+  | x :: _ => x.1.unit
+  | [] => ""
+
 def choicesOf (couplings : List Coupling) (sets : List ActiveSet) : Except String (List Choice) := do
   let combinations := (sets.map (·.1.readings.length)).foldl (· * ·) 1
   if combinations > maxCombinations then
     throw s!"ResourceLimit: {combinations} combinations of readings, more than {maxCombinations} to enumerate"
-  let cs := compatibleChoices couplings sets
-  if cs.length > maxChoices then throw s!"ResourceLimit: {cs.length} compatible choices, more than {maxChoices}"
-  if cs.isEmpty then
-    throw (unsupported ((sets.head?.map (·.1.unit)).getD "") "readings@1" "the couplings leave no compatible choice")
-  pure cs
+  match compatibleChoices couplings sets with
+  | [] => throw (unsupported (firstUnit sets) "readings@1" "the couplings leave no compatible choice")
+  | cs =>
+    if cs.length > maxChoices then throw s!"ResourceLimit: {cs.length} compatible choices, more than {maxChoices}"
+    pure cs
 
 /-! ## The lowering -/
 
-/-- A unit's lowering before a choice: its judgment declarations, then its own content's statements, or, under an
-active reading set, each reading's. -/
-inductive Plan
-  | fixed (bodies : List (String × Body))
-  | reading (set : String) (options : List (List (String × Body)))
-
+/-- A unit's lowering before a choice: its judgment declarations, then its statements under each reading of its
+active set (`set`), or, with no active set, its own content's (`set = none`, one option). -/
 structure UnitPlan where
   unit : String
   declarations : List (String × Body)
-  plan : Plan
+  set : Option String
+  options : Options
 
+/-- A unit's statements under a choice: its declarations, then the body of the reading chosen in its set (that
+reading's origin), or of its own content. -/
 def UnitPlan.statements (c : Choice) (p : UnitPlan) : List Statement :=
+  let reading := p.set.bind fun s => Option.map (s, ·) (c.lookup s)
   p.declarations.map (fun (f, b) => ⟨b, ⟨p.unit, f, none⟩⟩) ++
-    match p.plan with
-    | .fixed bs => bs.map fun (f, b) => ⟨b, ⟨p.unit, f, none⟩⟩
-    | .reading s opts =>
-      let i := (c.lookup s).getD 0
-      ((opts[i]?).getD []).map fun (f, b) => ⟨b, ⟨p.unit, f, some (s, i)⟩⟩
+    match (p.options[(Option.map Prod.snd reading).getD 0]?).join with
+    | some (f, b) => [⟨b, ⟨p.unit, f, reading⟩⟩]
+    | none => []
 
-def planOf (E : Env) (environment : Json) (J : List VE.Judgments.Judgment)
-    (rd : List (ActiveSet × List (List (String × Body)))) (u : SourceUnit) : Except String UnitPlan := do
-  let plan ← match rd.find? (·.1.1.unit == u.id) with
-    | some (x, opts) => pure (.reading x.1.id opts)
-    | none => Plan.fixed <$> lowerContent E environment u.id u.content
-  pure ⟨u.id, declarations J u, plan⟩
+def planOf (E : Env) (environment : Json) (J : List VE.Judgments.Judgment) (rd : List (ActiveSet × Options))
+    (u : SourceUnit) : Except String UnitPlan :=
+  match rd.find? (fun (r : ActiveSet × Options) => r.1.1.unit == u.id) with
+  | some (x, opts) => pure ⟨u.id, declarations J u, some x.1.id, opts⟩
+  | none => do return ⟨u.id, declarations J u, none, [← lowerContent E environment u.id u.content]⟩
 
 /-- A feature of the document that no row lowers, refused at the document's first unit. -/
 def featureRefusal (E : Env) (senses : Bool) (units : List SourceUnit) : Except String Unit :=
@@ -288,7 +300,8 @@ def judgments (E : Env) (records : List VE.Judgments.Rec) (views : List VE.Judgm
     (units : List SourceUnit) : Except String (List VE.Judgments.Judgment) := do
   if !E.profiles.contains "judgments@0" then return []
   let J ← VE.Judgments.admit E.rv.environment E.rv.definitions E.regulated records
-  unless views.map (·.id) == units.map (·.id) do throw "UnknownPart: the unit views are not the document's units"
+  unless views.map (fun (v : VE.Judgments.UnitView) => v.id) == units.map (fun (u : SourceUnit) => u.id) do
+    throw "UnknownPart: the unit views are not the document's units"
   for v in views do
     let _ ← VE.Judgments.status E.rv.definitions (VE.Judgments.names J) v
   pure J
@@ -321,11 +334,11 @@ def lower (E : Env) (senses : Bool) (records : List VE.Judgments.Rec) (views : L
     (units : List SourceUnit) (sets : List ActiveSet) (couplings : List Coupling) :
     Except String (List (Choice × CoreDoc)) := do
   let J ← preliminaries E senses records views units sets couplings
-  let rd ← sets.mapM (readingsOf E (wireJson 257 E.lower))
-  let plans ← units.mapM (planOf E (wireJson 257 E.lower) J rd)
+  let rd ← sets.mapM (readingsOf E (wire E.lower))
+  let plans ← units.mapM (planOf E (wire E.lower) J rd)
   let choices ← choicesOf couplings sets
   finish E (units.map (·.id)) sets
-    (choices.map fun c => (c, CoreDoc.of (wireJson 257 E.lower) (plans.flatMap (·.statements c))))
+    (choices.map fun c => (c, CoreDoc.of (wire E.lower) (plans.flatMap (·.statements c))))
 
 /-! ## Theorems, for every input the lowering answers -/
 
@@ -407,12 +420,16 @@ theorem choicesOf_ok {couplings : List Coupling} {sets : List ActiveSet} {cs : L
   simp only at h
   split at h
   · cases h
-  split at h
-  · cases h
-  rename_i hle
-  split at h
-  · cases h
-  · cases h; exact ⟨rfl, Nat.le_of_not_gt hle⟩
+  generalize hc : compatibleChoices couplings sets = l at h
+  cases l with
+  | nil => cases h
+  | cons c rest =>
+    dsimp only at h
+    split at h
+    · cases h
+    · rename_i hle
+      cases h
+      exact ⟨rfl, Nat.le_of_not_gt hle⟩
 
 theorem preliminaries_sets {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
     {views : List VE.Judgments.UnitView} {units : List SourceUnit} {sets : List ActiveSet}
@@ -445,9 +462,9 @@ theorem lower_ok {E : Env} {senses : Bool} {records : List VE.Judgments.Rec} {vi
     {units : List SourceUnit} {sets : List ActiveSet} {couplings : List Coupling} {cs : List (Choice × CoreDoc)}
     (h : lower E senses records views units sets couplings = .ok cs) :
     (∃ J, preliminaries E senses records views units sets couplings = .ok J) ∧
-    (∃ rd, sets.mapM (readingsOf E (wireJson 257 E.lower)) = .ok rd) ∧
+    (∃ rd, sets.mapM (readingsOf E (wire E.lower)) = .ok rd) ∧
     (∃ plans : List UnitPlan, cs = (compatibleChoices couplings sets).map
-      fun c => (c, CoreDoc.of (wireJson 257 E.lower) (plans.flatMap (UnitPlan.statements c)))) ∧
+      fun c => (c, CoreDoc.of (wire E.lower) (plans.flatMap (UnitPlan.statements c)))) ∧
     (compatibleChoices couplings sets).length ≤ maxChoices ∧
     ∀ d ∈ cs, ∀ st ∈ d.2.statements, statementFault E (units.map (·.id)) sets st = none := by
   unfold lower at h
@@ -487,7 +504,7 @@ theorem lower_readings_distinct {E : Env} {senses : Bool} {records : List VE.Jud
     {views : List VE.Judgments.UnitView} {units : List SourceUnit} {sets : List ActiveSet}
     {couplings : List Coupling} {cs : List (Choice × CoreDoc)}
     (h : lower E senses records views units sets couplings = .ok cs) :
-    ∀ x ∈ sets, ∃ opts, readingOptions E (wireJson 257 E.lower) x = .ok opts ∧
+    ∀ x ∈ sets, ∃ opts, readingOptions E (wire E.lower) x = .ok opts ∧
       (opts.map (·.map Prod.snd)).Nodup := by
   obtain ⟨_, ⟨rd, hrd⟩, _⟩ := lower_ok h
   intro x hx
@@ -503,9 +520,9 @@ theorem lower_readings_distinct {E : Env} {senses : Bool} {records : List VE.Jud
     rw [List.pairwise_map] at hn
     unfold List.Nodup
     rw [List.pairwise_map]
-    exact hn.imp fun hne heq => hne (by rw [show ∀ o : List (String × Body), o.map (·.2.key) =
-      (o.map Prod.snd).map Body.key from fun o => by simp, show ∀ o : List (String × Body), o.map (·.2.key) =
-      (o.map Prod.snd).map Body.key from fun o => by simp, heq])
+    have hk : ∀ o : Option (String × Body), o.map (·.2.key) = (o.map Prod.snd).map Body.key := fun o => by
+      cases o <;> rfl
+    exact hn.imp fun hne heq => hne (by rw [hk, hk, heq])
   · cases hu
 
 /-- (c) One core document per compatible choice, at most 64, no choice twice. -/
@@ -517,7 +534,7 @@ theorem lower_choices {E : Env} {senses : Bool} {records : List VE.Judgments.Rec
     cs.length = (compatibleChoices couplings sets).length ∧ cs.length ≤ 64 ∧ (cs.map Prod.fst).Nodup := by
   obtain ⟨_, _, ⟨plans, rfl⟩, hle, _⟩ := lower_ok h
   have hm : ((compatibleChoices couplings sets).map fun c =>
-      (c, CoreDoc.of (wireJson 257 E.lower) (plans.flatMap (UnitPlan.statements c)))).map Prod.fst =
+      (c, CoreDoc.of (wire E.lower) (plans.flatMap (UnitPlan.statements c)))).map Prod.fst =
       compatibleChoices couplings sets := by
     rw [List.map_map]
     exact List.map_id' _ ▸ rfl
@@ -548,7 +565,7 @@ theorem lower_parts {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
     {views : List VE.Judgments.UnitView} {units : List SourceUnit} {sets : List ActiveSet}
     {couplings : List Coupling} {cs : List (Choice × CoreDoc)}
     (h : lower E senses records views units sets couplings = .ok cs) :
-    ∀ d ∈ cs, d.2 = CoreDoc.of (wireJson 257 E.lower) d.2.statements := by
+    ∀ d ∈ cs, d.2 = CoreDoc.of (wire E.lower) d.2.statements := by
   obtain ⟨_, _, ⟨plans, rfl⟩, _, _⟩ := lower_ok h
   intro d hd
   obtain ⟨c, _, rfl⟩ := List.mem_map.mp hd

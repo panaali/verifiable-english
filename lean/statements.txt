@@ -23260,14 +23260,14 @@ theorem VE.Experimental.CoreDocument.lower_ok
     VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
       (∃ J, VE.Experimental.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J) ∧
         (∃ rd,
-            List.mapM (VE.Experimental.CoreDocument.readingsOf E (VE.Service.Document.wireJson 257 E.lower)) sets =
+            List.mapM (VE.Experimental.CoreDocument.readingsOf E (VE.Experimental.CoreDocument.wire E.lower)) sets =
               Except.ok rd) ∧
           (∃ plans,
               cs =
                 List.map
                   (fun c =>
                     (c,
-                      VE.Experimental.CoreDocument.CoreDoc.of (VE.Service.Document.wireJson 257 E.lower)
+                      VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower)
                         (List.flatMap (VE.Experimental.CoreDocument.UnitPlan.statements c) plans)))
                   (VE.Experimental.CoreDocument.compatibleChoices couplings sets)) ∧
             (VE.Experimental.CoreDocument.compatibleChoices couplings sets).length ≤
@@ -23277,8 +23277,8 @@ theorem VE.Experimental.CoreDocument.lower_ok
                   ∀ (st : VE.Experimental.CoreDocument.Statement),
                     st ∈ d.snd.statements →
                       VE.Experimental.CoreDocument.statementFault E (List.map (fun x => x.id) units) sets st = Option.none
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingsOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document
-  -- expr 1647620485
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingsOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 36954666
 theorem VE.Experimental.CoreDocument.lower_origin_units
   ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
     {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
@@ -23308,9 +23308,9 @@ theorem VE.Experimental.CoreDocument.lower_parts
     VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
       ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
         d ∈ cs →
-          d.snd = VE.Experimental.CoreDocument.CoreDoc.of (VE.Service.Document.wireJson 257 E.lower) d.snd.statements
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document
-  -- expr 158531548
+          d.snd = VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower) d.snd.statements
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 3965885905
 theorem VE.Experimental.CoreDocument.lower_readings_distinct
   ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
     {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
@@ -23320,10 +23320,10 @@ theorem VE.Experimental.CoreDocument.lower_readings_distinct
       ∀ (x : VE.Experimental.CoreDocument.ActiveSet),
         x ∈ sets →
           ∃ opts,
-            VE.Experimental.CoreDocument.readingOptions E (VE.Service.Document.wireJson 257 E.lower) x = Except.ok opts ∧
-              (List.map (fun x => List.map Prod.snd x) opts).Nodup
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingOptions@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document
-  -- expr 3190722443
+            VE.Experimental.CoreDocument.readingOptions E (VE.Experimental.CoreDocument.wire E.lower) x = Except.ok opts ∧
+              (List.map (fun x => Option.map Prod.snd x) opts).Nodup
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingOptions@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 975387563
 theorem VE.Experimental.CoreDocument.preliminaries_sets
   ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
     {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
