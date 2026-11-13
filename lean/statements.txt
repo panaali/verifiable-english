@@ -64687,6 +64687,15 @@ theorem VE.SoftNorms.Run.expanded_circ
       VE.SoftNorms.circ D φ
   -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Run.expList@VE.SoftNorms.Selected VE.SoftNorms.Run.listTable@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4238097549
+theorem VE.SoftNorms.Run.fullOver_restrict
+  ∀ (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity),
+    M.Valid (VE.Norms.envAt (VE.SoftNorms.soften D) 0) →
+      ∀ (rel : String → List VE.Bridge.Entity → Prop),
+        (∀ (r : String) (ws : List VE.Bridge.Entity),
+            ¬r ∈ VE.Norms.layerNames (VE.SoftNorms.soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) ↔
+          VE.Norms.restrictAll (VE.SoftNorms.soften D).T (VE.SoftNorms.Run.fullOver M rel) = M.asStructure
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.restrictAll@VE.Norms.Subst VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1425355171
 theorem VE.SoftNorms.Run.getStr_ok
   ∀ {x : Lean.Json} {s : String}, x.getStr? = Except.ok s → x = Lean.Json.str s
   -- uses
@@ -64790,6 +64799,18 @@ theorem VE.SoftNorms.Run.selected_semantics
                               (VE.Norms.atom p (VE.SoftNorms.sortsOf D p)))
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.atom@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.Run.outcomeAt@VE.SoftNorms.Selected VE.SoftNorms.Run.selectedAt@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2035656424
+theorem VE.SoftNorms.Run.selected_semantics_nonvacuous
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt (VE.SoftNorms.soften D) 0) →
+          ∃ rel,
+            (∀ (r : String) (ws : List M.asStructure.Carrier),
+                ¬r ∈ VE.Norms.layerNames (VE.SoftNorms.soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) ∧
+              VE.Norms.AgreesBelow (VE.SoftNorms.soften D) (VE.Norms.size (VE.SoftNorms.soften D))
+                (VE.SoftNorms.Run.fullOver M rel)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
+  -- expr 1736440632
 theorem VE.SoftNorms.Run.softLabelled_formulas
   ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften

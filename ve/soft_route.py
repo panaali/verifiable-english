@@ -79,12 +79,11 @@ def selected_at(soft_document: SoftNormDocument, model, queries):
     selected there (in rule order) and the completed outcome, with the model's soft `background` flag.
 
     `model` is a finite model or its wire dictionary over the regenerated base vocabulary; `queries` is
-    a non-empty sequence of `{"predicate": p, "tuple": [ids]}` or `(p, ids)` pairs. The answer is checked
+    a non-empty list of `{"predicate": p, "tuple": [ids]}` objects or `(p, ids)` tuples, sent as given. The answer is checked
     for its schema and its binding only (one result per query sent, in order, with its predicate and
     tuple; each selected name a rule of the document on that predicate, once, in the document's order);
     anything else is CheckerUnavailable. Lean's refusal of a query is raised as its diagnostic."""
-    sent = [{"predicate": q["predicate"], "tuple": list(q["tuple"])} if isinstance(q, dict)
-            else {"predicate": q[0], "tuple": list(q[1])} for q in queries]
+    sent = [_query(q) for q in queries] if type(queries) in (list, tuple) else queries
     norms = [rule.to_dict() for rule in soft_document.rules]
     case = {"id": "soft-selected", "kind": "soft-selected", "environment": soft_document.env.to_dict(),
             "norms": norms, "model": model.to_dict() if hasattr(model, "to_dict") else model,
@@ -94,6 +93,14 @@ def selected_at(soft_document: SoftNormDocument, model, queries):
         return bind_selected(row, case)
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean soft selection is not bound to the request: {error}') from error
+
+
+def _query(query):
+    """A `(predicate, ids)` pair as the wire's query object; anything else is sent as given, for Lean to decode
+    or refuse with its diagnostic."""
+    if type(query) is tuple and len(query) == 2 and type(query[1]) in (list, tuple):
+        return {"predicate": query[0], "tuple": list(query[1])}
+    return query
 
 
 def bind_selected(row, case):

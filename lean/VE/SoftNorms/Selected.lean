@@ -104,6 +104,45 @@ theorem selected_semantics (D : SoftDoc) (h : WellFormedSoft D = true)
     rw [envAt_size_predicates, ← hname]
     exact hdecl.1
 
+/-- The hypothesis `hbase` of `selected_semantics` says exactly that the base restriction of
+`fullOver M rel` is the model's structure (for a model valid over the base vocabulary, whose
+relations name no layer symbol). -/
+theorem fullOver_restrict (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (hM : M.Valid (envAt (soften D) 0))
+    (rel : String → List VE.Bridge.Entity → Prop) :
+    (∀ r ws, r ∉ layerNames (soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) ↔
+      restrictAll (soften D).T (fullOver M rel) = M.asStructure := by
+  have off : ∀ r ws, r ∈ layerNames (soften D).T → ¬ M.asStructure.relation r ws := fun r ws hr hrel => by
+    obtain ⟨ss, hss, _⟩ := hM.2 r ws hrel
+    rw [envAt_zero_later hr] at hss
+    cases hss
+  constructor
+  · intro hbase
+    simp only [restrictAll, forget, fullOver, VE.FiniteModel.asStructure] at hbase off ⊢
+    congr
+    funext r ws
+    by_cases hr : r ∈ layerNames (soften D).T
+    · simp only [hr, not_true_eq_false, false_and, eq_iff_iff, false_iff]
+      exact off r ws hr
+    · simp only [hr, not_false_eq_true, true_and, eq_iff_iff]
+      exact hbase r ws hr
+  · intro h r ws hr
+    simp only [restrictAll, forget, fullOver, VE.FiniteModel.asStructure, VE.Structure.mk.injEq, heq_eq_eq,
+      true_and] at h
+    have := congrFun (congrFun h r) ws
+    simp only [hr, not_false_eq_true, true_and] at this
+    rw [this]
+    rfl
+
+/-- `selected_semantics` is not vacuous: every model valid over the base vocabulary has a full
+structure meeting its hypotheses, each layer symbol read as its expansion (`canon`). -/
+theorem selected_semantics_nonvacuous (D : SoftDoc) (h : WellFormedSoft D = true)
+    (M : VE.FiniteModel VE.Bridge.Entity) (hM : M.Valid (envAt (soften D) 0)) :
+    ∃ rel, (∀ r ws, r ∉ layerNames (soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) ∧
+      AgreesBelow (soften D) (size (soften D)) (fullOver M rel) :=
+  ⟨(canon (soften D) M.asStructure).relation, fun _ ws hr => canon_off M.asStructure hr ws,
+    canon_agrees (valid_of_wellFormed _ (softValid_of_wellFormed D h).wf) M.asStructure
+      (fun c s hcs => hM.1 c s hcs) _⟩
+
 /-! ## The case decoder -/
 
 /-- One decoded query: a regulated predicate, the tuple's ids as sent and the typed tuple. -/
@@ -210,8 +249,9 @@ theorem selectedRow_eq (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (q : 
   simp only [Option.map_some, hname']
   rfl
 
-/-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`. A model
-that fails the soft background is answered with `background: false`, not refused. -/
+/-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`, counted
+against `maxTuples` before any query is decoded. A model that fails the soft background is
+answered with `background: false`, not refused. -/
 def runSelected (id : String) (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let src ← decodeSoftSource environment (j.getObjValD "norms")
@@ -219,6 +259,8 @@ def runSelected (id : String) (j : Json) : Except String Json := do
   let qs ← (match j.getObjValD "queries" with
     | .arr raw =>
       if raw.isEmpty then .error "InvalidInput: soft-selected needs at least one query"
+      else if raw.size > VE.Limits.maxTuples then
+        .error s!"ResourceLimit: soft-selected queries over {VE.Limits.maxTuples}"
       else decodeQueries src.D M 0 raw.toList
     | _ => .error "InvalidInput: soft-selected needs a queries array")
   let E := expanded src.D
