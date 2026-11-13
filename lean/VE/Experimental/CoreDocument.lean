@@ -152,7 +152,7 @@ def lowerCandidate (E : Env) (environment : Json) (unit : String) :
 /-- The judgment terms a unit's `open` meaning lists, in its order: each one a declaration, never a premise. -/
 def declarations (J : List VE.Judgments.Judgment) (u : SourceUnit) : List (String × Body) :=
   (listedOf u.meaning).filterMap (fun (t : String) =>
-    Option.map (fun j => ("judgments@0", Body.judgment j)) (J.find? (·.name == t)))
+    (fun j => ("judgments@0", Body.judgment j)) <$> J.find? (·.name == t))
 
 /-! ## References -/
 
@@ -231,7 +231,7 @@ def readingsOf (E : Env) (environment : Json) (x : ActiveSet) : Except String (A
 label on that axis. -/
 def compatible (couplings : List Coupling) (c : Choice) : Bool :=
   couplings.all (fun (cp : Coupling) =>
-    let labels := c.filterMap (fun (p : String × Nat) =>
+    let labels : List String := c.filterMap (fun (p : String × Nat) =>
       (cp.members.lookup p.1).bind (fun (ls : List String) => ls[p.2]?))
     labels.eraseDups.length ≤ 1)
 
@@ -254,7 +254,7 @@ def firstUnit : List ActiveSet → String
   | [] => ""
 
 def choicesOf (couplings : List Coupling) (sets : List ActiveSet) : Except String (List Choice) := do
-  let combinations := (sets.map (·.1.readings.length)).foldl (· * ·) 1
+  let combinations := (sets.map (fun (x : ActiveSet) => x.1.readings.length)).foldl (· * ·) 1
   if combinations > maxCombinations then
     throw s!"ResourceLimit: {combinations} combinations of readings, more than {maxCombinations} to enumerate"
   match compatibleChoices couplings sets with
@@ -276,9 +276,14 @@ structure UnitPlan where
 /-- A unit's statements under a choice: its declarations, then the body of the reading chosen in its set (that
 reading's origin), or of its own content. -/
 def UnitPlan.statements (c : Choice) (p : UnitPlan) : List Statement :=
-  let reading := p.set.bind fun s => Option.map (s, ·) (c.lookup s)
+  let reading := p.set.bind fun s => match c.lookup s with
+    | some i => some (s, i)
+    | none => none
+  let index := match reading with
+    | some (_, i) => i
+    | none => 0
   p.declarations.map (fun (f, b) => ⟨b, ⟨p.unit, f, none⟩⟩) ++
-    match (p.options[(Option.map Prod.snd reading).getD 0]?).join with
+    match (p.options[index]?).join with
     | some (f, b) => [⟨b, ⟨p.unit, f, reading⟩⟩]
     | none => []
 

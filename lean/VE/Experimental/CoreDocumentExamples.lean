@@ -262,6 +262,12 @@ def threeSets : List ActiveSet := twoSets ++ [readingSet "c" "u3" [fact "redacte
     | .ok cs => cs.map Prod.fst == [[("a", 0), ("b", 0), ("c", 0)], [("a", 1), ("b", 1), ("c", 1)]]
     | .error _ => false
 
+-- A coupling with no members constrains nothing.
+#guard match twoReadings, lowerUnits [unitOf "u1" (some (.formula (fact "reviewed"))), unitOf "u2" none]
+    [readingSet "rs" "u2" [fact "public", .not (fact "public")]] [⟨"k", []⟩] with
+  | .ok cs, .ok ds => ds.map Prod.fst == [[("rs", 0)], [("rs", 1)]] && ds.length == cs.length
+  | _, _ => false
+
 /-! ## Refusals -/
 
 -- A formula over a regulated predicate is a claim about the rules, not a premise.
