@@ -9,6 +9,7 @@
 - `tests/test_ve_iface.py` — (no module docstring)
 - `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
 - `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w1_delta_suite.py` — The W1 delta's suite corpus and its tagging plugin (`docs/en-e3-norm/en-2/w1_delta.py`; en-e3bb review F1).
 - `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
 - `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.

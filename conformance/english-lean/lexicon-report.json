@@ -147,7 +147,7 @@
   {
    "environment": "usecases/anthropic-rsp/environment.d1.json",
    "failures": [],
-   "lexicon_id": "439d48c847c91c077bb9190ebc3558145937d9871409e9adf7de4fdc415cd5c5",
+   "lexicon_id": "33d86d68a340285c0cd10bc1a5fa69b03a672ecec245d47d493ff535540ae57e",
    "symbols": 126
   },
   {
@@ -243,8 +243,8 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "0b98135467ea0bd24672f8c5e071221639ea4f56c27e37874efadeccab68336d",
-   "symbols": 81
+   "lexicon_id": "6dee16f07aab1a1f4c51737f13c4c93d1b0df6ed657b2634d746f17f8f882ca2",
+   "symbols": 83
   },
   {
    "environment": "usecases/us-constitution-14th-s1/environment.json",
