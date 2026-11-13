@@ -1,6 +1,6 @@
 # gate-tie-test-split: the committed-tie mutation loop as 16 tests
 
-Status: built; selected tests run on the committed final code (result below); the chain gate is still to run on the final HEAD.
+Status: built. The selected tests passed on committed code 9e0366af (GitHub Actions, 4 shards, exit 0). The chain gate is still to run on the final HEAD.
 What changed: `tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected` now runs as 16 parametrized chunks
 plus a partition test. `tools/test-durations.json` and `tools/test-chunks.json` now record the chunks.
 Longest piece on VM1, same host, run one after the other (MEASURED): 2,946.6 s for today's single test, 275.9 s for the longest chunk.
@@ -72,6 +72,15 @@ This item changes no product code in Lean, Python or Rust (tests and measured-da
 - **gate_shards** assigns whole files to shards (`tools/gate_shards.py plan`), so all 16 chunks stay in one shard. There, the shard's xdist workers spread them as above, and the shard plan's weight for the file is unchanged.
 - The arm-leg and ve-cloud-2 after-figures are for the decider's re-measure from the logs once this merges (reviews/dri-decisions-20261113-train-legs.md). This report does not claim them.
 
+## Runs on the final code
+
+- **Selected tests:** `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on the committed tree of 9e0366af (git status clean).
+  - Result: "selected tests ran on GitHub Actions (4 shards, run gate-tie-test-split-9e0366af-t585825); exit=0; 1053s".
+  - The file ran as 4 chunks under the new test-chunks row. The run's log line: "chunked tests/test_consolidation_tools.py: 1 of 4 chunks, exit 0, 825.5 s in all, longest chunk 825.5 s; 69 passed … each of its 69 tests ran in exactly one chunk"; SHARD 4/4 had 10 units, 10 passed.
+- **Collection check:** `uv run python tools/gate_collection.py --check --prebuilt`, after `lake build` (Build completed successfully, 1438 jobs): "17 added, 1 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
+- **trust_mutants: not run.** light-lane printed "NOT 251 changed lines outside generated files > 150"; nearly all of those lines are this report and its evidence. Neither the task nor the checklist asks for a sweep: no Lean or trusted file changed, trust +0, and checklist 13a covers trusted Lean growth only.
+- **Pre-existing failures** (main-known-red): none met.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer or relay touched.
@@ -79,13 +88,13 @@ This item changes no product code in Lean, Python or Rust (tests and measured-da
 3. PASS: seeded bugs S1–S4 fail `test_committed_tie_chunks_partition_every_mutation` and `test_mutated_committed_ties_are_reported_or_rejected[5]`.
 4. N.A.: no Python/Lean/Rust behaviour changed; the chunks pass on HEAD (16 passed, evidence/vm1-new.durations.txt).
 5. N.A.: no binding.
-6. PASS: the selected run happens on the committed final HEAD (below). The chain runs the gate.
+6. PASS: the selected run passed on committed 9e0366af (run gate-tie-test-split-9e0366af-t585825, exit 0); after it, only this report changed. The chain runs the gate.
 7. PASS: no DELTA row, no trust growth (no Lean file changed: `git diff --stat main...HEAD`).
 8. N.A.: no user-visible output changed (test structure and scheduling data only).
-9. PASS: `tools/select_tests.py` selects tests/test_consolidation_tools.py for this change (final selected run below).
+9. PASS: the final selected run selected tests/test_consolidation_tools.py and ran it in 4 chunks ("chunked tests/test_consolidation_tools.py … 69 passed").
 10. N.A.: no Lean statement.
 11. N.A.: no budget or deadline code. The new tests have no sleep and no timeout.
 12. PASS: total work is unchanged within 1.5% (2,991.6 s summed over the chunks vs 2,946.6 s, VM1); one fixture setup per worker.
-13. PASS: Test-removed trailer for the old ID. `tools/gate_collection.py --check --prebuilt` was rerun after the commit (result below).
+13. PASS: Test-removed trailer for the old ID. `tools/gate_collection.py --check --prebuilt`: 1 removed by a trailer, 0 refused, 0 stale, 0 malformed.
 14. PASS: in both directions, the partition test passes on HEAD and fails on S1–S3. Every timing above cites its evidence file. Spec re-read: the task's DO (1)–(4) against prompts/task-gate-tie-test-split.txt.
 15. PASS: overclaim words checked: "nothing is skipped" (the same call and inputs, diff of `tests/test_consolidation_tools.py`); "once per worker" (setup lines in evidence/vm1-new.durations.txt). Nothing deferred. The partition test's guard can fail (S1–S3).
