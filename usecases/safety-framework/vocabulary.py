@@ -160,7 +160,10 @@ REGULATED = {
         "part of the act, not a situation variable"),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
-        "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed (1.3.3)"),
+        "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
+        "external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk "
+        "posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' "
+        "involvement, which is part of the act, not the assessment and the analysis"),
     "residual_assessed": _obligation(["proposal"], "{0} be subject to a residual risk assessment",
                                      "the model of {0} is subject to a residual risk assessment (1.3.4)"),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",

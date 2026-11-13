@@ -509,3 +509,13 @@ def test_the_governance_determination_includes_the_safety_case_where_a_ccl_has_b
                "findings": [[p, "p"] for p in run.ACTIVITIES["LRX"] if p != finding]}
     assert run.describe(run.item_result("CCA", with_finding)) == "SOME(RS7=M)"
     assert run.describe(run.item_result("CCA", without)) == "ALL"
+
+
+def test_the_proximity_assessment_involves_internal_and_external_experts_as_needed():
+    """f6, 1.3.3 "we will assess the proximity of the model to the CCL and analyze the risk posed, involving internal and
+    external experts as needed": the header quotes the whole sentence and the act's legend keeps the experts'
+    involvement (an act phrase may not hold "and", so the legend carries it)."""
+    clause = "involving internal and external experts as needed"
+    assert re.findall(r'"([^"]*)"', _block("f6").source)[0].endswith("analyze the risk posed, " + clause)
+    assert _legend("proximity_assessed").split(" (1.3.3")[0].endswith("the risk posed is analysed, " + clause)
+    assert "proximity_assessed" == run.rule_predicate("f6")
