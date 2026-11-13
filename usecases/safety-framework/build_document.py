@@ -46,8 +46,9 @@ OPEN_TERMS = {
                                       "capabilities and mitigations of other publicly available models",
                                       "the historical incidence and severity of related events"]),
     "ot3_governance_determination": ("governance_function", "the appropriate governance function determines the "
-                                     "residual risk to be acceptable (2.1.2, 3.1.2)",
-                                     ["a safety case where a CCL has been reached"]),
+                                     "residual risk to be acceptable, including a safety case where a CCL has been "
+                                     "reached (footnote 4, 2.1.2, 3.1.2): the safety case is part of the finding",
+                                     []),
     "ot4_security_adequate": ("developer", "the level of security applied is adequate (1.3.5)",
                               ["mitigations already in place", "the security of other models with similar "
                                "capabilities or risk profiles"]),

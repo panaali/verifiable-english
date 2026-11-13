@@ -9504,11 +9504,11 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "536f0f2a9eac7dd13b3dbc9da25d4d0304269fe2924f95ff783098a4fdbe4a70"
+     "certificate_sha256": "16dc134ddb03400f76b84aea89bb21e2994b2baf26300ef5f908b13c82c0d55b"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "f8df594d32117155583fd38053ed0b6ee0c1175a1d76e63f99e516335db0c26a"
+     "certificate_sha256": "b28ed964054b9210c8685732108667b450b95a4cd9abdb02efa71d1efe56a3c8"
     }
    },
    "own_premises": [

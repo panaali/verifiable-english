@@ -113,9 +113,11 @@ BASE = {
     "like_public_models": _open(["proposal"], "the model of {0} does not possess capabilities meaningfully "
                                 "different from other publicly available models that have weaker security applied",
                                 "the developer (2.2)", term="OT16"),
-    "governance_found_acceptable": _open(["proposal"], "the appropriate governance function has determined the "
-                                         "residual risk of {0} to be acceptable",
-                                         "the appropriate governance function (unnamed)", term="OT3"),
+    "governance_found_acceptable_with_safety_case_where_ccl_reached": _open(
+        ["proposal"], "the appropriate governance function has determined the residual risk of {0} to be acceptable, "
+        "including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: "
+        "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
+        "case at a CCL is not this finding", "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "
         "without additional safeguards", "the developer's periodic risk assessment (3.2.1)"),
