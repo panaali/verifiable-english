@@ -1,11 +1,11 @@
 # fid-mech-b1: segmenter, L1 m/n/u/c/e, boundaries.json x3 (build report)
 
 **Status:** built; the selected run and the chain gate are recorded below. **HEAD:** the commit carrying this report (branch infra/fid-mech-b1).
-**What changed:** new `tools/fidmech/` package (`segment.py`, `textchecks.py`, `__main__.py`); `usecases/{anthropic-rsp,safety-framework,openai-preparedness}/fidmech/boundaries.json`; two condition test files and a fixture; 3 gate-optional rows. Nothing is gated and no translation file changed.
+**What changed:** new `tools/fidmech/` package (`segment.py`, `textchecks.py`, `__main__.py`); `usecases/{anthropic-rsp,safety-framework,openai-preparedness}/fidmech/boundaries.json`; two condition test files and a fixture; 3 gate-optional rows; one registry row each in tools/regen_generated.py and tools/difffuzz_corpus.py. Nothing is gated and no translation file changed.
 **Open:** none. **DRI signature:** none reserved; DELTA none (Python tooling and data, trust +0).
 **RSP L1 (saved evidence `rsp-l1.json`):** L1m 3, L1n 0, L1u 1, L1c 25, L1e 1 over 97 checked quotes in 85 blocks. 14 quotes inside translator's notes are counted as info, outside the headline.
 
-SIZE: 865 product, 492 tests, 114 fixture data + about 60 hand-written boundaries entries (the rest of the 495 boundaries.json lines is generator output) other hand-written lines.
+SIZE: 870 product, 492 tests, 114 fixture data + about 60 hand-written boundaries entries (the rest of the 495 boundaries.json lines is generator output) other hand-written lines.
 
 ## 1. Deliverables (task DO list, plan section 10 row B1, Opus round-2 points)
 
@@ -132,11 +132,20 @@ All 13 were planted one at a time, each test failed (exit 1), and each file was 
 
 - While iterating: `uv run pytest -q tests/test_fidmech_segment.py tests/test_fidmech_l1.py`, 90 passed.
 - Regen: `uv run python tools/regen_generated.py --write`, rc 0, committed in d4276b044.
-- Selected run: see section 9.
+- Selected run and reruns: section 9.
 
 ## 9. Selected run
 
-(filled in below after the run)
+- Run: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on committed tree 9ed919cb (clean). It went to GitHub Actions: run fid-mech-b1-9ed919cb-t603053, 5 shards, 73 units, exit 1 after 1238 s.
+  - Shards 2, 4 and 5 passed (14, 14 and 15 units).
+  - Shards 1 and 3 each had one failure:
+    - `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason`. The new writer `tools/fidmech/__main__.py` (`boundaries --write`) was unregistered.
+    - `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason`. The three new `usecases/*/fidmech/boundaries.json` were neither read nor excluded.
+- Fixes, one registry row each:
+  - `tools/regen_generated.py` NOT_REGENERATED gets `tools/fidmech/__main__.py` as frozen, reviewed data.
+  - `tools/difffuzz_corpus.py` EXCLUDED gets `usecases/*/fidmech/boundaries.json` as no-input, as `spans.json` already is.
+- Rerun of only the two failed ids (`zsh mac-pytest.sh -- <id>`): both passed (1 passed each, exit 0).
+- trust_mutants: not run and not required. No Lean change and no trusted-core file; the task asks for no record.
 
 ## Self-review against BUILDER-CHECKLIST
 
