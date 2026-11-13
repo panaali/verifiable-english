@@ -1390,6 +1390,7 @@ instantiated: `softConflictFreeCheck` supplies `Background_base′` where W1's `
 | `soft-pairs` | per pair: `certificate` or `witness` over `Background_base(E′) ++ Exc_T`, with all coherence conjuncts excluded | per pair RANK-RESOLVED / DISJOINT / WEIGHING POINT / UNKNOWN with detail |
 | `soft-conflict` | `packages` per target over `Background_base′`, or `witness` (base model over `E′_base` including decision tables, tuple) | `CONFLICT-FREE` (with `conditional_on` per target) / `CONFLICT` (classified) / `UNKNOWN` |
 | `soft-certificate` | `premises`, `conclusion`, `certificate` bound to `background′ ++ layer premises ++ premises` | `valid`, `background`, `layers`, `conditional_on` |
+| `soft-selected` | `model` (base model over `E′_base` including decision tables) and a non-empty `queries` of `{predicate, tuple}`, each a regulated predicate and a tuple typed for its sorts | `background` (the model passes `Background_base(E′) ++ Exc_T`; a model that fails it is answered, not refused) and per query, in order, its `predicate` and `tuple`, the rules whose `circ (selects′_N)` holds there (`selected`, in rule order) and `circ (p)` there (`outcome`) (kb-10a: `selected_semantics`, `soft_wire_selected`) |
 | `admission` | W2 document with soft norm units and graph | `admitted`, `report`, `report_id`, `kinds`, `conditional_on` |
 
 P0 and W1 cases without soft constructs delegate unchanged to `Norms.Run.runCase`; malformed soft inputs never fall

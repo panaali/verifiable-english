@@ -2695,6 +2695,20 @@
    "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
   },
   {
+   "class": "S",
+   "lines": 42,
+   "reason": "kb-10a: the soft route's soft-selected kind (new Lean-owned behaviour): S +42 (VE/SoftNorms/Selected.lean +25: selectedAt, outcomeAt, fullOver, SelectedQuery; VE/SoftNorms/SelectedSound.lean +17: QueryDecoded, SelectedAnswer), V +23 (ResponseShape/Schemas/SoftNorms.lean +22: the selected shape and its kind and row entries; VE/SoftNorms/Run.lean +1: the soft-selected branch of runSoftKind), K +0; decoders, the expansion and the runner are tied (decodeSelectedQuery_ok, decodeQueries_ok, expanded_circ, selectedRow_eq, runSelected_answer)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10a, 2026-11-12",
+   "commit": "175814252daf57038e1b5d0e227adcc4f749885d"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "kb-10a: the soft route's soft-selected kind (new Lean-owned behaviour): S +42 (VE/SoftNorms/Selected.lean +25: selectedAt, outcomeAt, fullOver, SelectedQuery; VE/SoftNorms/SelectedSound.lean +17: QueryDecoded, SelectedAnswer), V +23 (ResponseShape/Schemas/SoftNorms.lean +22: the selected shape and its kind and row entries; VE/SoftNorms/Run.lean +1: the soft-selected branch of runSoftKind), K +0; decoders, the expansion and the runner are tied (decodeSelectedQuery_ok, decodeQueries_ok, expanded_circ, selectedRow_eq, runSelected_answer)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10a, 2026-11-12",
+   "commit": "175814252daf57038e1b5d0e227adcc4f749885d"
+  },
+  {
    "class": "K",
    "lines": 34,
    "reason": "kb-1: the carry rule (VE.Kernel.Carry: Path, Row, Path.row, Path.Ran, shell, carry), K by the architect seat; spec kernel-boundary.md KB-1",
