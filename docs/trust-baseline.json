@@ -2714,6 +2714,20 @@
    "reason": "kb-1: the carry rule (VE.Kernel.Carry: Path, Row, Path.row, Path.Ran, shell, carry), K by the architect seat; spec kernel-boundary.md KB-1",
    "signature": "DRI-20261112-kb1 (reviews/dri-decisions-20261112-kb-1.md item 1)",
    "commit": "35a9ba135fe26df92ec412586a1999911839c15f"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "kb-3 (kb-3a): the premise slot of the soft route on the wire (new Lean-owned behaviour): S +3 (VE/Compose/SlotWire.lean: NoFacts), V +62 (ResponseShape/Schemas/SoftNorms.lean +37: the slot_certificate, slot_witness and slot_packages shapes, their shared field lists and factsCount; VE/SoftNorms/Run.lean +25: the slot-certificate and slot-conflict branches of runSoftKind), K +0; the decoders, the replays' verdict fields and the answers are tied (decodeFacts_ok, factsModel_sat, decodeSlotPackage_nil, slot_wire_conflict_sound, slot_wire_acceptance, slot_wire_conflict_witness_sound, slot_wire_empty, slot_wire_certificate, slot_wire_conflict)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-3a, 2026-11-13",
+   "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
+  },
+  {
+   "class": "V",
+   "lines": 62,
+   "reason": "kb-3 (kb-3a): the premise slot of the soft route on the wire (new Lean-owned behaviour): S +3 (VE/Compose/SlotWire.lean: NoFacts), V +62 (ResponseShape/Schemas/SoftNorms.lean +37: the slot_certificate, slot_witness and slot_packages shapes, their shared field lists and factsCount; VE/SoftNorms/Run.lean +25: the slot-certificate and slot-conflict branches of runSoftKind), K +0; the decoders, the replays' verdict fields and the answers are tied (decodeFacts_ok, factsModel_sat, decodeSlotPackage_nil, slot_wire_conflict_sound, slot_wire_acceptance, slot_wire_conflict_witness_sound, slot_wire_empty, slot_wire_certificate, slot_wire_conflict)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-3a, 2026-11-13",
+   "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
   }
  ]
 }
