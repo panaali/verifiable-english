@@ -223,11 +223,11 @@
         ],
         "description": "the model of {0} does not possess capabilities meaningfully different from other publicly available models that have weaker security applied. Open term OT16, decided by the developer (2.2)"
       },
-      "governance_found_acceptable": {
+      "governance_found_acceptable_with_safety_case_where_ccl_reached": {
         "arguments": [
           "proposal"
         ],
-        "description": "the appropriate governance function has determined the residual risk of {0} to be acceptable. Open term OT3, decided by the appropriate governance function (unnamed)"
+        "description": "the appropriate governance function has determined the residual risk of {0} to be acceptable, including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: \"including (with) a safety case where a CCL has been reached\"); a determination without that safety case at a CCL is not this finding. Open term OT3, decided by the appropriate governance function (unnamed)"
       },
       "internal_risk_unacceptable_without_safeguards": {
         "arguments": [

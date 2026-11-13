@@ -361,14 +361,21 @@ def test_one_mitigated_level_does_not_discharge_another_reached_level(levels, ac
 def test_a_possible_adjustment_is_no_exception_to_the_recommended_level():
     """f16-ds, f16-ds-strict: 2.2's "may be adjusted if ... This may occur if, for example, a model does not possess
     capabilities meaningfully different from other publicly available models" gives a reason, not a sufficient
-    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it;
-    1.3.5's "we otherwise assess that the level of security applied is adequate" (OT4) remains the excepted case."""
+    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it.
+    1.3.5's "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits
+    of the open release of model weights outweigh the risks" (OT4, OT5) are alternatives of the acceptable-risk
+    classification, not exceptions to the field's recommendation (2.2's open-release case is another "may occur if"):
+    with either finding the recommended level is still required, at both forces."""
     def recsec(*findings):
         case = {"id": "fsf-fix:recsec", "family": "B", "levels": ["cbrn_uplift_level_1"], "activity": None,
                 "findings": [[f, "p"] for f in findings]}
         return run.describe(run.item_result("RECSEC", case))
     assert recsec() == recsec("like_public_models") == "SOME(RS3=Ds)"
-    assert recsec("security_assessed_adequate") == "NONE"
+    assert recsec("security_assessed_adequate") == recsec("open_release_benefits_outweigh_risks") == "SOME(RS3=Ds)"
+    assert recsec("security_assessed_adequate", "open_release_benefits_outweigh_risks") == "SOME(RS3=Ds)"
+    for block in ("f16-ds", "f16-ds-strict"):
+        text = next(b.text for b in translation.rule_blocks() if b.id == block)
+        assert "excepted" not in text and "unless" not in text, block
 
 
 # --- fsf-fidelity-fix review: F1 (the "will" rules of RS0), F2 (a CHECKED unit that uses an open predicate) ---------
@@ -461,3 +468,44 @@ def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate
     termless = {"ast": ["unary", "internal_risk_unacceptable_without_safeguards", ["var", 0]]}
     with pytest.raises(SystemExit, match="internal_risk_unacceptable_without_safeguards"):
         derived("u", {"meaning": "specified"}, termless)
+
+
+# --- safety-framework-fidelity-fix-2: the units the union-rule audit confirmed ------------------------------------
+
+def _block(rule_id):
+    return next(b for b in translation.rule_blocks() if b.id == rule_id)
+
+
+def _legend(predicate):
+    return vocabulary.environment()["vocabulary"]["predicates"][predicate]["description"]
+
+
+GOVERNANCE_BLOCKS = ("f3", "f12-p", "f12-u", "f13-p", "f13-u")
+
+
+def test_the_governance_determination_includes_the_safety_case_where_a_ccl_has_been_reached():
+    """Footnote 4 "... determines the residual risk of such deployments to be acceptable even if the model has reached a
+    T/CCL (including with a safety case where a CCL has been reached)"; 2.1.2 and 3.1.2 step 2 "... only after the
+    appropriate governance function determines the residual risk to be acceptable (including a safety case where a
+    CCL has been reached)". Each of the five blocks quotes the whole clause and lifts its rule only on the one OT3
+    finding, whose name and legend carry the safety case; the document's OT3 declaration makes it part of the finding,
+    not a factor. The case LRX stipulates that finding (PLAN 5), so A-L*-LRX keep their answers; without it F3 releases
+    nothing (CCA required under both RS7 readings)."""
+    finding = run.GOVERNANCE_FINDING
+    assert finding == reference.GOV_FINDING and finding.endswith("_with_safety_case_where_ccl_reached")
+    assert "including a safety case where the model of {0} has reached a CCL" in _legend(finding)
+    assert vocabulary.OPEN_PREDICATES[finding] == "OT3"
+    decider, what, factors = build_document.OPEN_TERMS["ot3_governance_determination"]
+    assert "including a safety case where a CCL has been reached" in what and factors == []
+    for rule_id in GOVERNANCE_BLOCKS:
+        block = _block(rule_id)
+        assert re.search(r"\(including (with )?a safety case where a CCL has been reached\)", _quoted(block.source)), \
+            rule_id
+        assert f'that proposal is classified as "{finding}"' in block.text, rule_id
+        assert "governance_found_acceptable\"" not in block.text, rule_id
+    assert finding in run.ACTIVITIES["LRX"]
+    with_finding = run.CASES["A-L2-LRX"]
+    without = {**with_finding, "id": "fix2:no-ot3", "activity": None,
+               "findings": [[p, "p"] for p in run.ACTIVITIES["LRX"] if p != finding]}
+    assert run.describe(run.item_result("CCA", with_finding)) == "SOME(RS7=M)"
+    assert run.describe(run.item_result("CCA", without)) == "ALL"
