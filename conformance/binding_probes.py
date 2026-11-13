@@ -296,6 +296,21 @@ BUILDERS = {
     ("norms.elaborate", S, "norms", "norms-elaborate"): lambda: _norms_case("norms-elaborate"),
     ("norms.conflict", S, "norms", "norms-conflict"): _norms_conflict,
     ("norms.certificate", S, "norms", "norms-certificate"): _norms_certificate,
+    # The kinds the norm-defaults mode answers through its `norms.json#/row` fallback (and the norms row's own
+    # `route.json#/row` fallback): the norms and route probes, sent to the norm-defaults mode (norm-defaults-cfr-1-cfr-1).
+    ("norms.elaborate", S, "norm-defaults", "norms-elaborate"): lambda: _norms_case("norms-elaborate"),
+    ("norms.conflict", S, "norm-defaults", "norms-conflict"): _norms_conflict,
+    ("norms.certificate", S, "norm-defaults", "norms-certificate"): _norms_certificate,
+    ("definitions.elaborate", S, "norm-defaults", "background"):
+        lambda: _route_fixture("elaborated-document", "background"),
+    ("definitions.elaborate", S, "norm-defaults", "dependency-order"):
+        lambda: _route_fixture("dependency-order", "dependency-order"),
+    ("evaluate", S, "norm-defaults", "evaluate"): lambda: _evaluate_case(_route(), "evaluate", "evaluate"),
+    ("countermodel.check", S, "norm-defaults", "countermodel"): lambda: _countermodel_case(_route(), "countermodel"),
+    ("certificate.check", S, "norm-defaults", "certificate"):
+        lambda: _certificate_case(_route(), "certificate", "certificate"),
+    ("bundle.check", S, "norm-defaults", "bundle"): _bundle,
+    ("label", S, "norm-defaults", "label"): lambda: _route_fixture("labels", "label"),
     ("admission", C, "route", "admission"): lambda: _route_fixture("admission", "admission"),
     ("admission", S, "norms", "admission"): _norms_admission,
     ("admission", S, "norm-defaults", "admission"): _norm_defaults_admission,
