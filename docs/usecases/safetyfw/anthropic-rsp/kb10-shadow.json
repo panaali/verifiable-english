@@ -70,7 +70,9 @@
   "16cea14bb353fa09": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'final'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
   ],
-  "18e2448619da70ac": [],
+  "18e2448619da70ac": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ],
   "19271048b61cd1f9": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'M'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
   ],
@@ -175,7 +177,9 @@
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'",
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'noimport'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
   ],
-  "676e797bc54f47ce": [],
+  "676e797bc54f47ce": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ],
   "686c9c4d1493db5a": [
    "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
   ],
@@ -185,15 +189,21 @@
   "69a24adf6b006e1a": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
   ],
-  "6c3dff2d9ffab19e": [],
+  "6c3dff2d9ffab19e": [
+   "(('RS1', 'uncond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ],
   "7cbe6688463b5388": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
   ],
-  "7dd8e9b298698f64": [],
+  "7dd8e9b298698f64": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ],
   "8583fdaf519811f2": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'intent'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
   ],
-  "8f4fc968e1e59f62": [],
+  "8f4fc968e1e59f62": [
+   "(('RS1', 'ov'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ],
   "9755a423a90f54ac": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'Ds'), ('RS2force', 'default'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'deny'"
   ],
@@ -294,6 +304,13 @@
   "f62e1e6ccff8a0c2": [
    "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'rel'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window')), 'allow'"
   ],
-  "ff16474af8e93e62": []
+  "ff16474af8e93e62": [
+   "(('RS1', 'cond'), ('RS11', 'at'), ('RS12advance', 'default'), ('RS12before', 'default'), ('RS12candid', 'default'), ('RS12justify', 'default'), ('RS12minimize', 'default'), ('RS12review', 'default'), ('RS12strive', 'default'), ('RS13', 'default'), ('RS2', 'F'), ('RS2force', 'strict'), ('RS3i', 'suff'), ('RS3o', 'suff'), ('RS4', 'scope'), ('RS5', 'import'), ('RS6notice', 'P'), ('RS6redact', 'P'), ('RS6split', 'P'), ('RS7', 'exec'), ('RS8attempt', 'strict'), ('RS8evidence', 'strict'), ('RS8revenue', 'strict'), ('RS9', 'window'))"
+  ]
+ },
+ "choice_label_correction": {
+  "commit": "33d8077a466c37ed66bf371f98a6592d63efdad2",
+  "method": "direct G1/G3 or N2 probes over baseline, m1-m6, N1-N3; no full replay",
+  "documents": 6
  }
 }
