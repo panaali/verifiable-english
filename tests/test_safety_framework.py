@@ -519,3 +519,15 @@ def test_the_proximity_assessment_involves_internal_and_external_experts_as_need
     assert re.findall(r'"([^"]*)"', _block("f6").source)[0].endswith("analyze the risk posed, " + clause)
     assert _legend("proximity_assessed").split(" (1.3.3")[0].endswith("the risk posed is analysed, " + clause)
     assert "proximity_assessed" == run.rule_predicate("f6")
+
+
+def test_the_residual_risk_assessment_is_part_of_evaluating_the_deployment_mitigations():
+    """f7-rra, 1.3.4 "Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating
+    their deployment mitigations": the header quotes the whole sentence, and the act and its legend keep the relation."""
+    clause = "as part of evaluating their deployment mitigations"
+    assert re.findall(r'"([^"]*)"', _block("f7-rra").source)[0].endswith("residual risk assessments " + clause)
+    act = vocabulary.REGULATED["residual_assessed"]["regulated"]["act"]
+    assert act.endswith("in evaluating deployment mitigations") and len(act) <= 80
+    assert act.removeprefix("{0} ") + ", if " in _block("f7-rra").text
+    assert _legend("residual_assessed").split(" (1.3.4")[0].endswith(
+        "residual risk assessments as part of evaluating its deployment mitigations")

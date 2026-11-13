@@ -16,8 +16,8 @@ Rule 1. Every proposal must be preceded by a further critical capability assessm
 Rule 1. Every proposal must be followed by material capability change assessments on various checkpoints, if that proposal is classified as "post_training_run_completed".
 ## f6 | always | F6, 1.3.3 "When a model reaches an alert threshold for a CCL, we will assess the proximity of the model to the CCL and analyze the risk posed, involving internal and external experts as needed": the experts' involvement as needed is part of the act (its legend); "as needed" qualifies only that involvement, so the assessment and the analysis are the commitment
 Rule 1. Every proposal must be followed by an assessment of proximity to each level with a risk analysis, if both that proposal approaches that level and that level is critical.
-## f7-rra | always | F7, 1.3.4 "Models reaching TCLs or CCLs will be subject to residual risk assessments"
-Rule 1. Every proposal must be subject to a residual risk assessment, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) either that level is tracked or that level is critical, or both.
+## f7-rra | always | F7, 1.3.4 "Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating their deployment mitigations"
+Rule 1. Every proposal must be subject to residual risk assessments in evaluating deployment mitigations, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) either that level is tracked or that level is critical, or both.
 ## f7-sc | always | F7, 1.3.4 "For models reaching CCLs, the residual risk assessment will be informed by a supplemental safety case"
 Rule 1. Every proposal must have its residual risk assessment informed by a safety case, if there is a level such that both that proposal has reached that level and that level is critical.
 ## f8 | always | F8, 1.3.5 bullet 1: no T/CCL reached, deemed acceptable (a classification)
