@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 301 |
+| leaves:bound | 304 |
 | leaves:closed domain | 321 |
-| leaves:none | 1654 |
+| leaves:none | 1655 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1252 |
-| today:shape | 622 |
+| today:not probed | 1253 |
+| today:shape | 625 |
 | today:unbound | 137 |
 | answers | 606 |
 | probes | 10204 |
@@ -694,7 +694,11 @@ Delegates: `/` to norms.
 | `/report/root/name` | string | bound | x-claim-nodes |  | 2 | shape |
 | `/report_id` | string | none |  | pattern | 2 | not probed |
 | `/results/*/error` | string | none |  | minLength | 0 | not probed |
+| `/results/*/predicate` | string | bound | x-equals |  | 0 | shape |
+| `/results/*/selected/*` | string | none |  |  | 0 | not probed |
 | `/results/*/status` | string | closed domain | const |  | 4 | shape |
+| `/results/*/tuple` | any | bound | x-equals |  | 0 | shape |
+| `/results/*/tuple/*` | string | bound | x-equals |  | 0 | shape |
 | `/rule_acts/@key` | key | none |  |  | 0 | unbound |
 | `/rule_acts/{}` | string | none |  |  | 0 | unbound |
 | `/soft_residual/default_exceptions` | integer | none |  | minimum | 3 | later Lean request |
@@ -757,7 +761,9 @@ Delegates: `/` to norms.
 | `/premises` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
 | `/ranks_above/{}` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/report/assumptions` |  |  |  |  |
-| `/results` |  |  |  | drop: accept/ve/backends/soft_relay.py:check_rules; duplicate: accept/ve/backends/soft_relay.py:check_rules |
+| `/results` | x-zip | x-zip |  | drop: accept/ve/backends/soft_relay.py:check_rules; duplicate: accept/ve/backends/soft_relay.py:check_rules |
+| `/results/*/selected` |  |  |  |  |
+| `/results/*/tuple` | x-equals | x-equals |  |  |
 | `/targets` |  |  |  |  |
 | `/warnings` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/weighing_points` |  |  |  |  |
