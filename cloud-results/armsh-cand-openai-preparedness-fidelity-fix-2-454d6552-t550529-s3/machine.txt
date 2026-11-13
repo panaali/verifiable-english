@@ -1,0 +1,11 @@
+job=armsh-cand-openai-preparedness-fidelity-fix-2-454d6552-t550529-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T06:17:07Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   43G  103G  30% /
+ 06:17:07 up 13 min,  0 user,  load average: 1.27, 0.45, 0.21
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key 333fb9e39b7c asset lean-build-c973584165fb-linux-aarch64.tar.zst sha256 dc51303157b5 ok, seal ok, from download, 14.1 s
+seed: mode=seed match=seed-ancestor asset=lean-build-c973584165fb-linux-aarch64.tar.zst pruned=0 base=625eeb7dbca2
+seed: 3 modules rebuilt over the seed (traces), none stale
+seed: lake 2.3 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 15478 passed, 2 skipped, 3 failures
