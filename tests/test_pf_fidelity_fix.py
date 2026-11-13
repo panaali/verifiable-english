@@ -620,6 +620,10 @@ def test_an_uncovered_critical_model_still_needs_development_safeguards(pf):
                         (({"id": "t", "levels": [], "activity": "DEV", "findings": {"OT7": False, "OT10": True}}),
                          {"f3-develop-forecast"})):
         assert selections({"RS18": "devonly", "RS2": "sep"}, case, "safeguards_during_development") == rules
+    # the opposite direction: below Critical and with no forecast, coverage or not, no development duty is selected
+    for covered in (True, False):
+        case = {"id": "t", "levels": ["BIO-H"], "activity": "DEV", "findings": {"OT7": covered}}
+        assert selections({"RS18": "devonly", "RS2": "sep"}, case, "safeguards_during_development") == set()
 
 
 def test_c3_access_reads_no_coverage_condition_and_states_why_may_require_is_untranslated(pf):
