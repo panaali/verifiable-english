@@ -201,3 +201,10 @@ def test_a_source_that_is_not_the_boundaries_source_is_refused(tmp_path, capsys)
     assert "boundaries are for source" in capsys.readouterr().err
     with pytest.raises(S.BoundariesError):
         S.Segmentation(S.Source(other.read_bytes()), replace(segmented().boundaries))
+
+
+def test_the_occurrence_cap_fails_closed_a_capped_search_reports_a_hit_never_a_pass(monkeypatch):
+    seg = segmented()
+    assert classes(seg, 'F1 "We will keep records of every review."') == []
+    monkeypatch.setattr(T, "MAX_OCCURRENCES", 0)
+    assert classes(seg, 'F1 "We will keep records of every review."') == ["L1u"]
