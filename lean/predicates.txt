@@ -428,6 +428,8 @@ module VE.Events.Premises
 module VE.Events.RouteExamples
 module VE.Events.Wire
 module VE.Events.WireExamples
+module VE.Experimental.CoreDocument
+module VE.Experimental.CoreDocumentExamples
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
