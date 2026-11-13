@@ -1,0 +1,5 @@
+job=openai-preparedness-fidelity-fix-3-24088fb8-t569043-s1 nproc=4 host=runnervm8axu0 date=2026-11-13T11:25:30Z
+Mem:              15           1           9           0           5          14
+/dev/root       145G   64G   82G  44% /
+ 11:25:30 up 1 min,  0 user,  load average: 1.53, 0.43, 0.15
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
