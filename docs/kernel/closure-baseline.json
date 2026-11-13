@@ -1,7 +1,7 @@
 {
  "kernel_lines": 9504,
  "keyed_kernel_lines": 9504,
- "keyed_lines": 16150,
+ "keyed_lines": 16185,
  "paths": [
   {
    "axioms": [],
@@ -532,53 +532,69 @@
   },
   {
    "axioms": [],
-   "lines": 2274,
+   "lines": 2040,
    "modes": [
     "quantity"
    ],
    "name": "quantity",
-   "spec_lines": 2267,
+   "spec_lines": 613,
    "spec_modules": {
-    "VE.Bridge": 64,
-    "VE.CertificateWire": 94,
-    "VE.Limits": 12,
+    "VE.Limits": 2,
+    "VE.Order.Consequence": 3,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
-    "VE.Order.ModelCheck": 20,
+    "VE.Order.ModelCheck": 13,
     "VE.Order.Semantics": 19,
-    "VE.Order.Syntax": 65,
-    "VE.Order.Tableau": 244,
-    "VE.Order.Wire": 156,
-    "VE.Route.Admission": 154,
-    "VE.Route.Background": 3,
-    "VE.Route.Decode": 99,
-    "VE.Route.Steps": 11,
-    "VE.Route.Wire": 128,
-    "VE.Surface": 16,
-    "VE.Time.Calendar": 57,
-    "VE.Time.Decimal": 40,
-    "VE.Time.Document": 210,
+    "VE.Order.Syntax": 22,
+    "VE.Order.Tableau": 24,
+    "VE.Order.Wire": 1,
+    "VE.Route.Admission": 100,
+    "VE.Route.Background": 2,
+    "VE.Route.Budget": 22,
+    "VE.Time.Budget": 10,
+    "VE.Time.Calendar": 36,
+    "VE.Time.Document": 104,
     "VE.Time.Semantics": 86,
-    "VE.Time.Syntax": 162,
-    "VE.Time.Wire": 553
+    "VE.Time.Syntax": 78,
+    "VE.Time.Wire": 50
    },
    "stated": {
-    "VE.Time.Document.extension": [
-     "VE.Time.Wire.extension_document_sound"
+    "VE.Time.Document.admitDocument": [
+     "VE.Time.Document.admit_quantity_report_sound"
     ],
-    "VE.Time.Wire.runCase": [
-     "VE.Time.Wire.quantity_admission_wire_sound",
-     "VE.Time.Wire.quantity_countermodel_wire_sound",
-     "VE.Time.Wire.quantity_certificate_wire_sound",
-     "VE.Time.Wire.quantity_document_wire_sound"
+    "VE.Time.Wire.checkW6Certificate": [],
+    "VE.Time.evalB": [
+     "VE.Time.Wire.evalB_sorted_sound"
+    ],
+    "VE.Time.refutesB": [
+     "VE.Time.Wire.refutesB_sorted_sound"
     ]
    },
-   "theorems": 5,
+   "theorems": 4,
    "tier": "candidate",
-   "wrap_lines": 75,
+   "wrap_lines": 1804,
    "wrap_modules": {
-    "VE.Time.Syntax": 4,
-    "VE.Time.Wire": 71
+    "VE.Bridge": 64,
+    "VE.CertificateWire": 90,
+    "VE.Limits": 14,
+    "VE.Order.Finite": 7,
+    "VE.Order.ModelCheck": 20,
+    "VE.Order.Semantics": 3,
+    "VE.Order.Syntax": 54,
+    "VE.Order.Tableau": 24,
+    "VE.Order.Wire": 156,
+    "VE.Route.Admission": 93,
+    "VE.Route.Background": 3,
+    "VE.Route.Budget": 22,
+    "VE.Route.Decode": 99,
+    "VE.Route.Wire": 128,
+    "VE.Surface": 16,
+    "VE.Time.Budget": 10,
+    "VE.Time.Calendar": 69,
+    "VE.Time.Count": 43,
+    "VE.Time.Decimal": 52,
+    "VE.Time.Document": 67,
+    "VE.Time.Syntax": 115,
+    "VE.Time.Wire": 655
    }
   },
   {
