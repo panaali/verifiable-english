@@ -220,15 +220,22 @@ REGULATED = {
         "relevant information about the model of {0} is shared with appropriate government authorities (5.2)"),
     "holistic": _obligation(
         ["proposal"], "{0} have holistically assessed mitigations proportionate with expected impact",
-        "the mitigation for {0} and its effects are assessed holistically, and the mitigation is proportionate with "
-        "the expected impact of the model's risk (1.3.5 Note)"),
+        "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and "
+        "its effects are both proportionate with the expected impact of the model's risk (1.3.5 Note \"The mitigation "
+        "and the effects of such mitigation should also be assessed holistically and be proportionate with expected "
+        "impact of a model's risk\": one subject, the mitigation and its effects, with both demands)"),
     "within_levels": _obligation(
         ["proposal"], "{0} have its residual risk brought within the acceptable levels",
-        "the residual risk of {0} is brought within the acceptable levels (Glossary, Residual Risk Assessments)"),
+        "the residual risk of {0} is brought within the acceptable levels, as determined by the T/CCLs as relevant "
+        "(Glossary, Residual Risk Assessments: \"The residual risk should be brought within the acceptable levels, as "
+        "determined by the T/CCLs as relevant\")"),
     "elicitation_considered": _obligation(
-        ["proposal"], "{0} have its risk assessment consider greater elicitation effort by others",
-        "the risk assessment for {0} takes into account that other actors may put significantly more effort into "
-        "eliciting capabilities (Note on ML R&D CCLs)"),
+        ["proposal"], "{0} have its risk assessment conservatively weigh greater elicitation by others",
+        "the risk assessment for {0} takes into account the fact that other actors may put significantly more effort "
+        "into eliciting capabilities than the developer puts into assessing risk, and its evaluations are conservative "
+        "accordingly (Note on ML R&D CCLs \"Risk assessment must take into account the fact that other actors may put "
+        "significantly more effort into eliciting capabilities than we put into assessing risk, thus requiring "
+        "conservatism in the form of evaluations\")"),
 }
 
 LEVELS = {
@@ -250,10 +257,12 @@ MEASURES = {
     "security_level_2_plus": "Security Level 2+ (2.1.1): RAND SL2 with additional measures",
     "security_level_3": "Security level 3 (table 3.2.2.a), generally aligned with RAND SL3 (footnote 6)",
     "security_level_4": "Security level 4 (table 3.2.2.a), generally aligned with RAND SL4 (footnote 6)",
-    "insider_threat_measures": "the additional security measures of Security Level 2+ designed to address risks "
-                               "from insider threats (2.1.1)",
+    "rand_security_level_2": "RAND Security Level 2 (SL2), the baseline of Security Level 2+ (2.1.1)",
+    "sl2_plus_additional_measures": "the additional security measures of Security Level 2+, designed to address "
+                                    "risks from insider threats and well-resourced non-state external actors (2.1.1)",
 }
-THREATS = {"insiders": "insider threats (2.1.1)"}
+THREATS = {"insiders": "insider threats (2.1.1)",
+           "well_resourced_non_state_external_actors": "well-resourced non-state external actors (2.1.1)"}
 
 
 def constants():
