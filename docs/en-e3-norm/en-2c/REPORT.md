@@ -69,12 +69,19 @@ the ones the coverage map at the merge base `f4d52f1eb` records calling it and t
 (unrecorded, or changed since the map). `delta.json`'s `suite` saves the derivation and pytest's summary, and
 DELTA.md quotes both counts and the summary.
 
+Rerun after fsf-fidelity-fix recaptured `tests/data/norm-blocks/fsf.jsonl` (its block ids changed: f10-dm-same,
+f10-rel-same and f15-same left, f4-need-d, f4-need-r and f17-hri came), so the saved `pinned` corpus named blocks
+that no longer exist: `uv run python docs/en-e3-norm/en-2/w1_delta.py --workers 8` at `266b148e6c` on a clean tree.
+The map is now the one at `35a9ba135`, which derives 80 test units (26 recorded, 54 not ruled out). All 120 pinned
+blocks still `agree`; the suite's counts are unchanged; soft-rights has 2 more records, both `agree`. The table
+below is that run's.
+
 | corpus | records | lean-unavailable | agree | lean-stricter | lean-looser | both-refuse |
 |---|---|---|---|---|---|---|
 | pinned (120 blocks) | 120 | 0 | 120 | 0 | 0 | 0 |
-| suite (100 test units, derived from coverage) | 210 | 1 | 144 | 18 | 3 | 44 |
+| suite (80 test units, derived from coverage) | 210 | 1 | 144 | 18 | 3 | 44 |
 | suite-subprocess (`ve` processes the suite starts) | 23 | 0 | 16 | 0 | 1 | 6 |
-| soft-rights (`_w1=True` calls) | 262 | 47 | 211 | 0 | 4 | 0 |
+| soft-rights (`_w1=True` calls) | 264 | 47 | 213 | 0 | 4 | 0 |
 | udhr (norm units and readings, one at a time) | 47 | 1 | 0 | 37 | 0 | 9 |
 | constitution (the probe translation's) | 14 | 14 | 0 | 0 | 0 | 0 |
 | known (english-lean-s6.md section 5) | 15 | 0 | 3 | 2 | 9 | 1 |
@@ -181,7 +188,7 @@ No Lean or Rust product code changed.
   (`LEAN`), and the inventory classes `result.statements` as Lean's count.
 - **The span end:** where a block ends inside the source is Lean's (`statementSpans`). The span is bound inside the
   source, on boundaries, at its header and in order.
-- **Soft environments:** Lean answers W1 text in a `soft-norms@0` environment: 211 soft-rights records `agree` and
+- **Soft environments:** Lean answers W1 text in a `soft-norms@0` environment: 213 soft-rights records `agree` and
   4 are `lean-looser`. The 47 soft-rights `lean-unavailable` rows are Lean's `InvalidGrammar` refusal of the request's
   lexicon (review F2's probe: V6, predicate `rights__lim__1`), not a profile refusal. Lean refuses `soft-norms@0` with
   `UnsupportedProfile` only when `norm-defaults@0` is also in the environment, as in the constitution's, so the 14
