@@ -83,7 +83,8 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | discourse | candidate | 6 | 36,141 | 4,541 | 36,147 |
 | document | candidate | 7 | 34,821 | 12,818 | 35,649 |
 
-All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the same run:
+All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
+candidate rows moved with main's code, the kernel rows did not). Other measurements (the census and keyed figures are the saved file's):
 
 | Quantity | Value |
 |---|---:|
@@ -172,7 +173,13 @@ case are those fields (section 1.2).
 | `nonverdict` | exits reviewed as carrying no verdict, each with its reason |
 | `uncovered` | kernel paths: code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; outside the kernel (section 3): every kernel path's spec and census body is cut there, and the tool reports one a kernel path's spec or wrap still reaches |
 | `covered_writers` | kernel paths: each verdict writer inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them |
+| `kinds` | kernel paths: every case kind the path's runners compare with the case's `kind`, mapped to a listed theorem whose statement fixes that kind (`theorem`) or to why its answer carries no verdict (`nonverdict`) |
 | `tier` | `kernel` or `candidate` |
+
+The registry's `untied_kinds` lists the verdict-bearing kinds of kernel paths that no theorem in
+`lean/statements.txt` states (with `family` where the kind's theorem leaves a family out): the
+architect's list of theorems still to write. `tests/test_kernel_closure.py` reads the kind literals
+from the runners' sources and fails when one has no entry or an entry has no literal.
 
 The registry's `keys` names the paths and validators the frozen keys call (section 1.3); the tool
 reports the distinct lines under them and how many lie in the kernel.
@@ -269,10 +276,22 @@ Soundness is not relaxed. No check, guard or theorem is removed. A verdict that 
 computes today with no theorem behind it becomes a kernel row with one. The one change a reader
 sees: an answer that shows a verdict also shows the core case it is about.
 
-**For the DRI:** this fixes what `CHECKED` claims in public wording: "the core statements shown for
-this unit were proved", with the translation step visible. `NORTH-STAR.md` line 5 (retained text is
-not coverage) is unaffected. If the wording must stay as it is, the alternative is a faithfulness
-theorem per feature before its verdicts count, which is the path that produced the present size.
+**What each token claims.** The tokens are of two kinds, and the public wording keeps them apart
+(DRI, 2026-11-11):
+
+- *Admission* (`CHECKED` on a document unit; `docs/spec/document.md`): the unit's text has exactly
+  one formal reading and the checker admitted the core statements it lowers to (well-formed over the
+  document's vocabulary, lemmas and certificates replayed). It does not say the statements are true
+  or that anything follows from them. Under the carry rule its public wording is: "the core
+  statements shown for this unit were admitted by the checker; how the unit's English was turned
+  into them is shown with them".
+- *Consequence* (`CONFLICT-FREE`, `CONFLICT` with a witness, `valid` on a certificate, `ALL`, `SOME`,
+  `NONE` over readings): a kernel theorem about the core document, replayed from a certificate or a
+  model.
+
+Both kinds are the kernel's to state. `NORTH-STAR.md` line 5 (retained text is not coverage) is
+unaffected. The alternative to the carry rule is a faithfulness theorem per feature before its
+statuses count, which is the path that produced the present size.
 
 ## 4. The statement and composition model
 
@@ -347,7 +366,7 @@ if a measured document needs it (the RSP has 30 sets, S: `usecases/anthropic-rsp
 
 | Tier | Reachable from the service | May show a verdict | Enters when | Enforced by |
 |---|---|---|---|---|
-| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` imports, directly or transitively, imports it (`tools/check_lean_imports.py`, KB-1); an expiry date in its module docstring |
+| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` or `Serve` imports, directly or transitively, imports a `VE.Experimental.*` module (`tools/check_lean_imports.py`, KB-1); a line `Expires: YYYY-MM-DD` in its first docstring, a date not yet passed |
 | shell | yes | only carried kernel rows | a fidelity pass **on built code** (the family's two-seat pilot, run on what main accepts, not on plan text) and a keyed answer or audit finding that pulls it | `tools/kernel_closure.py`: the verdict-writer count outside the kernel does not rise |
 | kernel | yes | yes | the architect signs the registry change | the kernel total (section 6) |
 
@@ -358,9 +377,11 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 
 ## 6. The ratchet
 
-1. `python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json` runs where
-   `tools/trust_map.py --check` runs today (KB-1 wires it). It fails when the kernel total exceeds
-   the saved one.
+1. `python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json` runs in the release
+   gate's trust stage, after the Lean build (`tools/gate.py`, stage "Kernel check"; KB-1). It fails
+   when the kernel total exceeds the saved one, or when more verdict writers are outside the kernel
+   than the saved measurement has. The baseline is generated (`tools/regen_generated.py`, entry
+   `kernel-closure`), and `--out` refuses a kernel total above `docs/kernel/ALLOWANCES.md`'s signed total.
 2. A change that raises the total updates the baseline in the same change and carries, in
    `docs/kernel/ALLOWANCES.md`, one line: lines added, door (B or C), reason, the architect's
    signature. A change that lowers it updates the baseline with no signature.
@@ -423,7 +444,7 @@ Work this decision stops or changes:
 
 | Risk | Why it may bite | What limits it |
 |---|---|---|
-| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind, or only the input's profile gate, as `certificate`'s did on `runCase`) | the tool reports a kernel subject no listed theorem states the answer of (section 2), and a verdict writer under a subject that no `covered_writers` entry ties to a kind and theorem (section 3); the uncovered kinds found so far are listed `uncovered`. KB-1 adds the full per-kind table: each case kind of a kernel runner names its theorem, or is listed `nonverdict` or `uncovered` (kinds whose answers carry `valid`, `checked` or `admitted`, which are not verdict tokens, are found only by that table) |
+| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind, or only the input's profile gate, as `certificate`'s did on `runCase`) | the tool reports a kernel subject no listed theorem states the answer of (section 2), and a verdict writer under a subject that no `covered_writers` entry ties to a kind and theorem (section 3); the uncovered kinds found so far are listed `uncovered`. KB-1 added the per-kind table (`kinds`, `untied_kinds`; section 2): each case kind of a kernel runner names its theorem or is `nonverdict`, and the verdict-bearing kinds no theorem states are listed `untied_kinds` (kinds whose answers carry `valid`, `checked` or `admitted`, which are not verdict tokens, are found only by that table) |
 | Carrying cases makes answers larger and the document mode slower | each verdict row now carries its case | the cases are the ones the chain already builds; measure UDHR time and memory before and after KB-2a, and refuse the batch if it is markedly slower (the lean-first rule) |
 | A fold becomes a second place where verdicts are made | a status fold reads rows and writes `CHECKED` | folds are kernel code, counted and reviewed; target: one status fold |
 | Fidelity, not soundness, loses the answers (RSP 111 → 77, Preparedness 231 → 68 after audit; S: `reviews/uc-audit-rsppf-20261111.md`) | this design does not by itself repair a mistranslation | it makes the translated core statements part of every answer, which is what a back-translation check and a per-rule distinguishing scenario need; those aids are the operations seat's and the audit loop's |

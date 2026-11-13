@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from datetime import date
 import json
 import os
 from pathlib import Path
@@ -51,6 +52,98 @@ def diagnostic_only_violation(importer: str, imported: str) -> str | None:
         return None
     return (f"{importer} -> {imported}: {DIAGNOSTIC_ONLY}.* is diagnostic only and may be imported by "
             f"{DIAGNOSTIC_ONLY}.*, VE.Service.Diagnose and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
+
+
+# docs/spec/kernel-boundary.md section 5: an experimental module is unreachable from the service. No module that
+# the service's roots import, directly or transitively, may import one; each carries an expiry date in its first
+# docstring, and an expired one fails until it is promoted or deleted.
+EXPERIMENTAL = "VE.Experimental"
+SERVICE_ROOTS = ("VE.Service.Protocol", "Serve")
+EXPIRES = re.compile(r"Expires: (\d{4}-\d{2}-\d{2})")
+
+
+def is_experimental(module: str) -> bool:
+    return module == EXPERIMENTAL or module.startswith(EXPERIMENTAL + ".")
+
+
+def lean_modules(root: Path) -> dict[str, Path]:
+    """Every Lean module of the tree under `root`, by name."""
+    return {".".join(path.relative_to(root / "lean").with_suffix("").parts): path
+            for path in (root / "lean").rglob("*.lean") if ".lake" not in path.parts}
+
+
+def experimental_imports(read: dict[str, list[str]], roots=SERVICE_ROOTS, require_roots: bool = True) -> list[str]:
+    """The imports of an experimental module by a module the service's roots reach (a root included). A missing
+    root is a problem too (the rule cannot be checked without it), but for `require_roots=False`: a tree without a
+    lakefile builds no service (the layer tests' trees)."""
+    problems = [f"service root {root} is not in the tree" for root in roots if root not in read and require_roots]
+    reached, todo = set(), [root for root in roots if root in read]
+    while todo:
+        module = todo.pop()
+        if module in reached:
+            continue
+        reached.add(module)
+        for imported in read.get(module, []):
+            if is_experimental(imported):
+                problems.append(f"{module} -> {imported}: the service ({', '.join(roots)}) reaches {module}, "
+                                f"which imports the experimental {imported} (docs/spec/kernel-boundary.md section 5)")
+            todo.append(imported)
+    return sorted(problems)
+
+
+def _block_end(source: str, i: int) -> int:
+    """The index just past the `-/` that closes the comment opened at `i` (`/-` comments nest); -1 when unclosed."""
+    depth, i = 1, i + 2
+    while i < len(source):
+        if source.startswith("/-", i):
+            depth, i = depth + 1, i + 2
+        elif source.startswith("-/", i):
+            depth, i = depth - 1, i + 2
+            if depth == 0:
+                return i
+        else:
+            i += 1
+    return -1
+
+
+def first_docstring(source: str) -> str | None:
+    """The text of the module's header docstring: a `/--` or `/-!` doc comment that is the first command after the
+    import header (`header`, the one reader of it, which `main` checks against the pinned Lean); else None.
+
+    kb-1 review F3 and F4: this reader never lexes code. Anything else as the first command (a string, a character
+    literal, an interpolation, a definition), a header outside the plain layout, or an unclosed doc comment yields
+    None, so the expiry rule refuses the module rather than guess where a string ends."""
+    try:
+        _, rest = header(source)
+    except HeaderError:
+        return None
+    if not rest.startswith(("/--", "/-!")) or rest.startswith("/--/"):
+        return None
+    end = _block_end(rest, 0)
+    return None if end < 0 else rest[3:end - 2]
+
+
+def expiry_problems(paths: dict[str, Path], today: date) -> list[str]:
+    """Each experimental module's first docstring holds a line `Expires: YYYY-MM-DD`, a date not yet passed; a first
+    docstring after code (anything but `import` lines and comments) is refused (`first_docstring`)."""
+    problems = []
+    for module, path in sorted(paths.items()):
+        if not is_experimental(module):
+            continue
+        text = first_docstring(path.read_text())
+        found = [m[1] for line in (text or "").split("\n") if (m := EXPIRES.fullmatch(line.strip()))]
+        if len(found) != 1:
+            problems.append(f"{module}: an experimental module's first docstring, before any code but `import` lines"
+                            " and comments, needs one line `Expires: YYYY-MM-DD`")
+            continue
+        try:
+            expires = date.fromisoformat(found[0])
+        except ValueError:
+            problems.append(f"{module}: Expires: {found[0]} is not a date")
+            continue
+        if expires < today:
+            problems.append(f"{module}: expired on {expires.isoformat()}; promote it to the shell or delete it")
+    return problems
 
 
 # et-7 review F2: a module no default target imports is never compiled by `lake build` (the gate's build), so its
@@ -127,7 +220,13 @@ class HeaderError(ValueError):
 
 
 def imports(source: str) -> list[str]:
-    """The modules a Lean file imports, read from a header in the plain layout.
+    """The modules a Lean file imports, read from a header in the plain layout (`header`)."""
+    return header(source)[0]
+
+
+def header(source: str) -> tuple[list[str], str]:
+    """The modules a Lean file imports, read from a header in the plain layout, and the source from its first command
+    on (CRLF read as LF, the command's leading spaces dropped; empty when there is none).
 
     The header is the run of lines at the start of the file that are blank,
     full-line `--` comments, ordinary `/- -/` block comments or `import A.B.C`
@@ -163,8 +262,8 @@ def imports(source: str) -> list[str]:
                 raise HeaderError(number, f"`{match[1]}` is a header keyword, not a module")
             found.append(match[1])
             continue
-        break  # the first command: Lean's header has ended
-    return found
+        return found, "\n".join(lines[number - 1:]).lstrip(" ")  # the first command: Lean's header has ended
+    return found, ""
 
 
 def _block_comment(lines: list[str], first: int, column: int) -> int:
@@ -268,8 +367,7 @@ def lean_disagreements(lean: list[str], files: dict[str, tuple[Path, list[str]]]
 
 
 def main() -> int:
-    paths = {".".join(path.relative_to(ROOT / "lean").with_suffix("").parts): path
-             for path in (ROOT / "lean").rglob("*.lean") if ".lake" not in path.parts}
+    paths = lean_modules(ROOT)
     # Each module's layer, read once: its own first-line declaration, else tools/layer_policy.py's rules.
     layers = {}
     declarations = {}  # module -> why its declaration is refused
@@ -298,6 +396,9 @@ def main() -> int:
                        for importer, message in sorted(wrong.items()))
     diagnostic = sorted(message for importer, found in read.items() for imported in found
                         if (message := diagnostic_only_violation(importer, imported)) is not None)
+    lakefile = ROOT / "lean/lakefile.toml"
+    experimental = (experimental_imports(read, require_roots=lakefile.is_file())
+                    + expiry_problems(paths, date.today()))
     for importer, found in read.items():
         for imported in found:
             if imported not in paths:
@@ -311,7 +412,6 @@ def main() -> int:
     expected = json.loads(LEDGER.read_text())
     # A tree without a lakefile has no default build (the layer tests' trees); the repository's is read directly by
     # tests/test_lean_default_build.py, so a lost lakefile still fails there and in `lake build`.
-    lakefile = ROOT / "lean/lakefile.toml"
     unbuilt = unbuilt_modules(set(paths), read, tomllib.loads(lakefile.read_text())) if lakefile.is_file() else []
     for message in unbuilt:
         print(message, file=sys.stderr)
@@ -326,6 +426,8 @@ def main() -> int:
         print(message, file=sys.stderr)
     for message in diagnostic:
         print(f"diagnostic-only Lean import: {message}", file=sys.stderr)
+    for message in experimental:
+        print(f"experimental Lean module: {message}", file=sys.stderr)
     for edge in sorted(edges - expected.keys()):
         importer, imported = edge.split(" -> ")
         print(f"new outward Lean import: {edge} (layer {layers[importer]} -> {layers[imported]}); import inward, "
@@ -333,7 +435,8 @@ def main() -> int:
               file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or declarations or headers or unknown or diagnostic or unbuilt or edges != expected.keys():
+    if (unmapped or declarations or headers or unknown or diagnostic or experimental or unbuilt
+            or edges != expected.keys()):
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0

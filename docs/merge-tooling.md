@@ -37,6 +37,7 @@ its merge strategy:
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
 | frozen-inventory | `lean/VE/Route/frozen-sources.sha256` (`frozen.py --write`, new) | regenerate |
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |
+| kernel-closure | `docs/kernel/closure-baseline.json` (the kernel measure; a rise needs a signed line in `docs/kernel/ALLOWANCES.md`) | regenerate |
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
 | binding-census | `docs/test-architecture/binding-census.{json,md}` (from the schemas and the recorded answers) | regenerate |
