@@ -1,0 +1,22 @@
+{
+  "item": "kb-2a",
+  "note": "Each bug was planted alone in the committed lowering, the module and its examples rebuilt with `lake build VE.Experimental.CoreDocumentExamples`, and the file restored with git checkout. Line numbers are those of the commit that added this file.",
+  "mutants": [
+    {"id": "a", "file": "lean/VE/Experimental/CoreDocument.lean",
+     "bug": "the lowering drops the premise of the last fact unit: `lower` plans `units.dropLast` instead of `units`",
+     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (`#guard answers` at line 135), with the soft-norms, judgments@0 and register-label rows (lines 131, 143, 147)",
+     "result": "killed: the examples fail to evaluate to true"},
+    {"id": "b", "file": "lean/VE/Experimental/CoreDocument.lean",
+     "bug": "a premise gets the origin of the unit before it: each unit plan takes the unit id of the plan before it (`zipWith` over `plans.take 1 ++ plans`, inside the mapped Except so every proof still builds)",
+     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (line 135) and the judged fact's premise origin `[\"u2\"]` (line 161), with the two-reading and strict-norm examples",
+     "result": "killed: the examples fail to evaluate to true"},
+    {"id": "c", "file": "lean/VE/Experimental/CoreDocument.lean",
+     "bug": "the distinctness check is removed: `readingsOf` no longer calls `distinct x opts`",
+     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_readings_distinct",
+     "result": "killed: lower_readings_distinct fails to build (application type mismatch)"},
+    {"id": "d", "file": "lean/VE/Experimental/CoreDocument.lean",
+     "bug": "a reference to a missing unit is accepted: `setFault` no longer refuses a reading set whose unit the document does not have",
+     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_origin_units (through preliminaries_sets)",
+     "result": "killed: preliminaries_sets, and so lower_origin_units, fails to build (type mismatch)"}
+  ]
+}
