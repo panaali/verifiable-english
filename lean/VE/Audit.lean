@@ -493,6 +493,7 @@ import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
 import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.Once
+import VE.SoftNorms.Prepared
 import VE.SoftNorms.RankProof
 import VE.SoftNorms.Run
 import VE.SoftNorms.Selected
@@ -8920,6 +8921,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.DocumentChain.layeredOf_soft
 #print axioms VE.Service.DocumentChain.requestOf_environment
 #print axioms VE.Service.Entry.prepared_eq
+#print axioms VE.Service.Entry.soft_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
 #print axioms VE.Service.Family.closure_graph_entails
@@ -9005,6 +9007,10 @@ import VE.WireContract.Engine
 #print axioms VE.Service.coding_of_status
 #print axioms VE.Service.entry_hit
 #print axioms VE.Service.expandCases_unexpanded
+#print axioms VE.Service.expandSoft_hit
+#print axioms VE.Service.expandSoft_miss
+#print axioms VE.Service.expandSoft_plain
+#print axioms VE.Service.expandSoft_refused
 #print axioms VE.Service.expand_hit
 #print axioms VE.Service.expand_miss
 #print axioms VE.Service.expand_plain
@@ -9016,6 +9022,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.registry_names_nodup
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
+#print axioms VE.Service.response_eq
 #print axioms VE.Service.results_eq
 #print axioms VE.Service.runMode_actReadings
 #print axioms VE.Service.runMode_alternatives
@@ -9062,6 +9069,12 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_speechActs
 #print axioms VE.Service.runMode_words
 #print axioms VE.Service.runRequest_ok
+#print axioms VE.Service.runSoftRequest_ok
+#print axioms VE.Service.softExpanded_members
+#print axioms VE.Service.softResult_cached
+#print axioms VE.Service.softResult_error
+#print axioms VE.Service.softResult_plain
+#print axioms VE.Service.softResults_eq
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula
@@ -9071,12 +9084,17 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.RanksValid.closure
 #print axioms VE.SoftNorms.RanksValid.declared
 #print axioms VE.SoftNorms.RanksValid.order
+#print axioms VE.SoftNorms.Run.backgroundIn_valid
+#print axioms VE.SoftNorms.Run.decodeModelIn_prime
 #print axioms VE.SoftNorms.Run.decodeQueries_ok
 #print axioms VE.SoftNorms.Run.decodeSelectedQuery_ok
 #print axioms VE.SoftNorms.Run.elaborationAnswer_ok
 #print axioms VE.SoftNorms.Run.elaborationAnswer_reads
 #print axioms VE.SoftNorms.Run.excLabels_length
+#print axioms VE.SoftNorms.Run.expListOf_append
+#print axioms VE.SoftNorms.Run.expList_eq_of
 #print axioms VE.SoftNorms.Run.expList_lookup
+#print axioms VE.SoftNorms.Run.expandedIn_eq
 #print axioms VE.SoftNorms.Run.expanded_circ
 #print axioms VE.SoftNorms.Run.fullOver_restrict
 #print axioms VE.SoftNorms.Run.getStr_ok
@@ -9084,9 +9102,16 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.mkObj_get_append
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
 #print axioms VE.SoftNorms.Run.outcomeAt_iff
+#print axioms VE.SoftNorms.Run.prepare_eq
+#print axioms VE.SoftNorms.Run.prepare_ok
 #print axioms VE.SoftNorms.Run.regeneratedCore_fields
 #print axioms VE.SoftNorms.Run.runAdmission_sound
+#print axioms VE.SoftNorms.Run.runCaseReportedP_eq
+#print axioms VE.SoftNorms.Run.runCase_selected
+#print axioms VE.SoftNorms.Run.runSelectedP_prepareFrom
 #print axioms VE.SoftNorms.Run.runSelected_answer
+#print axioms VE.SoftNorms.Run.runSelected_eq_prepared
+#print axioms VE.SoftNorms.Run.selectedQueries_ok
 #print axioms VE.SoftNorms.Run.selectedRow_eq
 #print axioms VE.SoftNorms.Run.selected_semantics
 #print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
@@ -9094,6 +9119,8 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate
 #print axioms VE.SoftNorms.Run.soft_wire_selected
+#print axioms VE.SoftNorms.Run.soft_wire_selected_prepared
+#print axioms VE.SoftNorms.Run.vocabularyIn_eq
 #print axioms VE.SoftNorms.SoftChain.A_in
 #print axioms VE.SoftNorms.SoftChain.A_out
 #print axioms VE.SoftNorms.SoftChain.E_in

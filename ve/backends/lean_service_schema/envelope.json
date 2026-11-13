@@ -23,10 +23,15 @@
         ]
       },
       "handles": {
-        "$comment": "Service.Protocol.Handles: the case member naming a handle and the table's bounds, exactly: the client keeps the same table (Handles.insert).",
+        "$comment": "Service.Protocol.Handles: the case members naming a handle (an environment's, a soft document's) and the table's bounds, exactly: the client keeps the same table (Handles.insert).",
         "additionalProperties": false,
-        "properties": {"max": {"const": 64}, "max_bytes": {"const": 67108864}, "member": {"const": "environment_handle"}},
-        "required": ["member", "max", "max_bytes"],
+        "properties": {
+          "max": {"const": 64},
+          "max_bytes": {"const": 67108864},
+          "member": {"const": "environment_handle"},
+          "soft_member": {"const": "soft_document_handle"}
+        },
+        "required": ["member", "soft_member", "max", "max_bytes"],
         "type": "object"
       },
       "lean": {"type": "string"},

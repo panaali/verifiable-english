@@ -1,0 +1,2 @@
+- `docs/kernel/kb-10e/bench.py` — Stage timings of one `soft-selected` case in the persistent Lean service (kb-10e, deliverable 1).
+- `docs/kernel/kb-10e/bench_relay.py` — `soft-selected` through the Python relay (kb-10e, deliverable 4): the call `ve.soft_route.selected_at` makes.

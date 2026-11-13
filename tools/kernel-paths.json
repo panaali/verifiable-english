@@ -244,13 +244,16 @@
    ],
    "subject": [
     "VE.SoftNorms.Run.runCase",
-    "VE.SoftNorms.Run.runAdmission"
+    "VE.SoftNorms.Run.runAdmission",
+    "VE.SoftNorms.Run.prepare",
+    "VE.SoftNorms.Run.runSelectedP"
    ],
    "theorems": [
     "VE.SoftNorms.Run.soft_wire_acceptance",
     "VE.SoftNorms.Run.runAdmission_sound",
     "VE.SoftNorms.Run.soft_wire_elaborate",
-    "VE.SoftNorms.Run.soft_wire_selected"
+    "VE.SoftNorms.Run.soft_wire_selected",
+    "VE.SoftNorms.Run.soft_wire_selected_prepared"
    ],
    "delegates": [
     "VE.Norms.Run.runCaseReported"

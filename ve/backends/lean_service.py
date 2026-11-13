@@ -46,6 +46,15 @@ again with its environments in its cases, as before batch 2, and that answer is 
 handle never changes an answer, it only saves sending and decoding the environment again. Response
 checks read each case with its environment, as sent before.
 
+Soft documents (kb-10e). A `soft-norms` `soft-selected` case whose `environment` is a JSON object and
+whose `norms` is a list is sent naming its soft document, the compact text of
+`{"environment": …, "norms": …}`, by `soft_document_handle` (its SHA-256), registered in the same table
+the same way; the service answers it from the document it prepared once (`VE.Service.softResult_cached`:
+the answer of the case with the document written out). A request error `CheckerUnavailable` (the
+process does not hold a handle the client believed it held) is sent again once with every handle
+registered; any other request error, or a second one, is resent with the environments in the cases, as
+for environment handles. Each process registers the documents of the cases it answers.
+
 Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
 (`DEADLINES`): user CPU seconds of the service process, a base per case plus a share per MiB of
 cases, measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
@@ -116,6 +125,7 @@ ENVELOPE_BYTES = 1024
 _HANDLES = json.loads((Path(__file__).resolve().parent / "lean_service_schema/envelope.json").read_text())[
     "handshake"]["properties"]["handles"]["properties"]
 HANDLE_KEY = _HANDLES["member"]["const"]
+SOFT_HANDLE_KEY = _HANDLES["soft_member"]["const"]
 MAX_HANDLES = _HANDLES["max"]["const"]
 MAX_HANDLE_BYTES = _HANDLES["max_bytes"]["const"]
 # The modes whose cases the service never expands (`expandCases`).
@@ -557,7 +567,7 @@ class LeanService:
         self._decoded: dict[str, object] = {}
         self.handshake: dict | None = None
         self.stats = {"starts": 0, "restarts": 0, "recycles": 0, "requests": 0, "retries": 0,
-                      "registered": 0, "handle_resends": 0}
+                      "registered": 0, "handle_resends": 0, "handle_reregistered": 0}
         self._proc: subprocess.Popen | None = None
         self._stderr = None
         self._buffer = bytearray()
@@ -1003,7 +1013,14 @@ class LeanService:
         if chunk and isinstance(chunk[0], _Sent):
             if any(item.digest for item in chunk):
                 response = self._handle_request(mode, chunk, timeout)
-                if response is not None:
+                if (response is not None and response.get("status") == "error"
+                        and response.get("code") == "CheckerUnavailable" and any(item.soft for item in chunk)):
+                    # The process does not hold a soft document the client believed it held; the request
+                    # error emptied the client's table, so this sends every handle with its text, once.
+                    with self._lock:
+                        self.stats["handle_reregistered"] += 1
+                    response = self._handle_request(mode, chunk, timeout)
+                if response is not None and response.get("status") != "error":
                     return response["results"]
                 with self._lock:
                     self.stats["handle_resends"] += 1
@@ -1018,8 +1035,8 @@ class LeanService:
         return response["results"]
 
     def _handle_request(self, mode: str, chunk: list, timeout: float | None) -> dict | None:
-        """The service's answer to `chunk` sent with handles, or None when it is a request error
-        or would not fit one line with every environment registered."""
+        """The service's answer to `chunk` sent with handles (a request error included), or None when
+        it would not fit one line with every environment registered."""
         environments: dict[str, str] = {}
         for item in chunk:
             if item.digest:
@@ -1030,15 +1047,14 @@ class LeanService:
         if line > MAX_LINE_BYTES:
             return None
         decoded = {digest: self._decoded_environment(digest, text) for digest, text in environments.items()}
-        response = self._request(mode, texts, timeout, environments=environments,
-                                 expanded=[item.expanded(decoded) for item in chunk])
-        return None if response.get("status") == "error" else response
+        return self._request(mode, texts, timeout, environments=environments,
+                             expanded=[item.expanded(decoded) for item in chunk])
 
     def _sent(self, mode: str, cases: list) -> list:
         """`cases` as sent: with handles for their environments where this client uses them."""
         if not self.handles or mode in UNHANDLED_MODES:
             return _texts(cases)
-        return _encode(cases)
+        return _encode(cases, mode)
 
     def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         """The bound entries for `cases`, in order: each runner result with, beside a rejection,
@@ -1059,12 +1075,13 @@ def _dumps(value) -> str:
 
 
 class _Sent:
-    """A case as sent with a handle: its text, naming its environment by `digest`, and the
-    environment's text. A case without a JSON-object environment has no digest and is sent as is."""
-    __slots__ = ("case", "text", "digest", "environment")
+    """A case as sent with a handle: its text, naming its environment (or, `soft`, its soft document)
+    by `digest`, and that text. A case without a JSON-object environment has no digest and is sent as is."""
+    __slots__ = ("case", "text", "digest", "environment", "soft")
 
-    def __init__(self, case, text: str, digest: str | None = None, environment: str | None = None):
-        self.case, self.text, self.digest, self.environment = case, text, digest, environment
+    def __init__(self, case, text: str, digest: str | None = None, environment: str | None = None,
+                 soft: bool = False):
+        self.case, self.text, self.digest, self.environment, self.soft = case, text, digest, environment, soft
 
     def inline(self) -> str:
         """The case's text with its environment, as sent before batch 2."""
@@ -1074,19 +1091,45 @@ class _Sent:
         """The case as the service reads it: the decoded text, its handle replaced by the
         decoded environment (`VE.Service.Handles.expand`)."""
         case = json.loads(self.text, parse_int=_json_integer)
-        if self.digest is not None:
+        if self.soft:  # `VE.Service.softExpanded`
+            del case[SOFT_HANDLE_KEY]
+            document = environments[self.digest]
+            case["environment"], case["norms"] = document["environment"], document["norms"]
+        elif self.digest is not None:
             del case[HANDLE_KEY]
             case["environment"] = environments[self.digest]
         return case
 
 
-def _encode(cases: list) -> list[_Sent]:
+def _soft_selected(case) -> bool:
+    """A case the service answers from a soft document handle (`VE.Service.softNamed`): `soft-selected`,
+    an object environment, a list of norms, and no handle of its own."""
+    return (type(case) is dict and case.get("kind") == "soft-selected" and isinstance(case.get("environment"), dict)
+            and type(case.get("norms")) is list and HANDLE_KEY not in case and SOFT_HANDLE_KEY not in case)
+
+
+def _encode(cases: list, mode: str | None = None) -> list[_Sent]:
     """Each case as sent: a case object whose `environment` is an object, and which names no
     handle itself, names its environment by the SHA-256 of the environment's compact text. An
-    environment object shared by several cases is encoded once."""
+    environment object shared by several cases is encoded once. In the `soft-norms` mode a
+    `soft-selected` case names its soft document instead (`_soft_selected`), the compact text of
+    `{"environment": …, "norms": …}`, encoded once per pair of objects."""
     texts: dict[int, tuple[str, str]] = {}
+    documents: dict[tuple[int, int], tuple[str, str]] = {}
     sent = []
     for case in cases:
+        if mode == "soft-norms" and _soft_selected(case):
+            environment, norms = case["environment"], case["norms"]
+            key = (id(environment), id(norms))
+            if key not in documents:
+                env_text = environment.text if isinstance(environment, EncodedEnvironment) else _dumps(environment)
+                text = '{"environment":' + env_text + ',"norms":' + _dumps(norms) + "}"
+                documents[key] = (text, case_digest(text))
+            text, digest = documents[key]
+            rest = {key: value for key, value in case.items() if key not in ("environment", "norms")}
+            rest[SOFT_HANDLE_KEY] = digest
+            sent.append(_Sent(case, _dumps(rest), digest, text, soft=True))
+            continue
         environment = case.get("environment") if type(case) is dict and HANDLE_KEY not in case else None
         if not isinstance(environment, dict):
             sent.append(_Sent(case, _dumps(case)))
