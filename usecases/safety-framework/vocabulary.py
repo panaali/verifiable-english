@@ -113,9 +113,11 @@ BASE = {
     "like_public_models": _open(["proposal"], "the model of {0} does not possess capabilities meaningfully "
                                 "different from other publicly available models that have weaker security applied",
                                 "the developer (2.2)", term="OT16"),
-    "governance_found_acceptable": _open(["proposal"], "the appropriate governance function has determined the "
-                                         "residual risk of {0} to be acceptable",
-                                         "the appropriate governance function (unnamed)", term="OT3"),
+    "governance_found_acceptable_with_safety_case_where_ccl_reached": _open(
+        ["proposal"], "the appropriate governance function has determined the residual risk of {0} to be acceptable, "
+        "including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: "
+        "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
+        "case at a CCL is not this finding", "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "
         "without additional safeguards", "the developer's periodic risk assessment (3.2.1)"),
@@ -158,9 +160,15 @@ REGULATED = {
         "part of the act, not a situation variable"),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
-        "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed (1.3.3)"),
-    "residual_assessed": _obligation(["proposal"], "{0} be subject to a residual risk assessment",
-                                     "the model of {0} is subject to a residual risk assessment (1.3.4)"),
+        "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
+        "external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk "
+        "posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' "
+        "involvement, which is part of the act, not the assessment and the analysis"),
+    "residual_assessed": _obligation(
+        ["proposal"], "{0} be subject to residual risk assessments in evaluating deployment mitigations",
+        "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations "
+        "(1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating "
+        "their deployment mitigations\")"),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",
                                "the residual risk assessment for {0} is informed by a supplemental safety case "
                                "(1.3.4)"),
@@ -212,15 +220,22 @@ REGULATED = {
         "relevant information about the model of {0} is shared with appropriate government authorities (5.2)"),
     "holistic": _obligation(
         ["proposal"], "{0} have holistically assessed mitigations proportionate with expected impact",
-        "the mitigation for {0} and its effects are assessed holistically, and the mitigation is proportionate with "
-        "the expected impact of the model's risk (1.3.5 Note)"),
+        "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and "
+        "its effects are both proportionate with the expected impact of the model's risk (1.3.5 Note \"The mitigation "
+        "and the effects of such mitigation should also be assessed holistically and be proportionate with expected "
+        "impact of a model's risk\": one subject, the mitigation and its effects, with both demands)"),
     "within_levels": _obligation(
         ["proposal"], "{0} have its residual risk brought within the acceptable levels",
-        "the residual risk of {0} is brought within the acceptable levels (Glossary, Residual Risk Assessments)"),
+        "the residual risk of {0} is brought within the acceptable levels, as determined by the T/CCLs as relevant "
+        "(Glossary, Residual Risk Assessments: \"The residual risk should be brought within the acceptable levels, as "
+        "determined by the T/CCLs as relevant\")"),
     "elicitation_considered": _obligation(
-        ["proposal"], "{0} have its risk assessment consider greater elicitation effort by others",
-        "the risk assessment for {0} takes into account that other actors may put significantly more effort into "
-        "eliciting capabilities (Note on ML R&D CCLs)"),
+        ["proposal"], "{0} have its risk assessment conservatively weigh greater elicitation by others",
+        "the risk assessment for {0} takes into account the fact that other actors may put significantly more effort "
+        "into eliciting capabilities than the developer puts into assessing risk, and its evaluations are conservative "
+        "accordingly (Note on ML R&D CCLs \"Risk assessment must take into account the fact that other actors may put "
+        "significantly more effort into eliciting capabilities than we put into assessing risk, thus requiring "
+        "conservatism in the form of evaluations\")"),
 }
 
 LEVELS = {
@@ -242,10 +257,12 @@ MEASURES = {
     "security_level_2_plus": "Security Level 2+ (2.1.1): RAND SL2 with additional measures",
     "security_level_3": "Security level 3 (table 3.2.2.a), generally aligned with RAND SL3 (footnote 6)",
     "security_level_4": "Security level 4 (table 3.2.2.a), generally aligned with RAND SL4 (footnote 6)",
-    "insider_threat_measures": "the additional security measures of Security Level 2+ designed to address risks "
-                               "from insider threats (2.1.1)",
+    "rand_security_level_2": "RAND Security Level 2 (SL2), the baseline of Security Level 2+ (2.1.1)",
+    "sl2_plus_additional_measures": "the additional security measures of Security Level 2+, designed to address "
+                                    "risks from insider threats and well-resourced non-state external actors (2.1.1)",
 }
-THREATS = {"insiders": "insider threats (2.1.1)"}
+THREATS = {"insiders": "insider threats (2.1.1)",
+           "well_resourced_non_state_external_actors": "well-resourced non-state external actors (2.1.1)"}
 
 
 def constants():

@@ -2090,13 +2090,13 @@
    "cause": {
     "feature_family": "key",
     "kind": "key finding",
-    "reason": "PLAN 12 item 20: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives SOME(P ∨ scoped)"
+    "reason": "PLAN 12 item 20: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives NONE (item 25 amends item 20: C.2's unguarded duty binds G9's model under both RS9 choices)"
    },
    "id": "G9",
    "key": "ALL",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule",
    "status": "disagree",
-   "ve": "SOME(RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default)"
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -21078,8 +21078,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21093,8 +21094,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21108,8 +21110,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21123,8 +21126,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21140,6 +21144,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21156,6 +21161,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21172,6 +21178,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21188,6 +21195,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21202,8 +21210,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21217,8 +21226,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21232,8 +21242,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21247,8 +21258,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21262,8 +21274,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21277,8 +21290,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21292,8 +21306,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21307,8 +21322,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21322,8 +21338,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21337,8 +21354,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21352,8 +21370,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21367,8 +21386,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21384,6 +21404,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21400,6 +21421,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21416,6 +21438,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21432,6 +21455,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21446,8 +21470,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21461,8 +21486,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21476,8 +21502,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21491,8 +21518,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21506,8 +21534,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21521,8 +21550,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21536,8 +21566,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21551,8 +21582,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21566,8 +21598,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21581,8 +21614,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21596,8 +21630,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21611,8 +21646,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21628,6 +21664,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21644,6 +21681,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21660,6 +21698,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21676,6 +21715,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21690,8 +21730,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21705,8 +21746,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21720,8 +21762,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21735,8 +21778,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21750,8 +21794,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21765,8 +21810,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21780,8 +21826,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21795,8 +21842,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21810,8 +21858,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21825,8 +21874,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21840,8 +21890,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21855,8 +21906,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21872,6 +21924,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21888,6 +21941,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21904,6 +21958,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -21920,6 +21975,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -21934,8 +21990,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21949,8 +22006,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21964,8 +22022,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -21979,8 +22038,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -21994,8 +22054,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22009,8 +22070,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22024,8 +22086,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22039,8 +22102,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22054,8 +22118,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22069,8 +22134,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22084,8 +22150,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22099,8 +22166,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22116,6 +22184,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22132,6 +22201,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22148,6 +22218,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22164,6 +22235,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22178,8 +22250,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22193,8 +22266,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22208,8 +22282,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22223,8 +22298,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22238,8 +22314,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22253,8 +22330,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22268,8 +22346,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22283,8 +22362,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22298,8 +22378,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22313,8 +22394,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22328,8 +22410,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22343,8 +22426,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22360,6 +22444,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22376,6 +22461,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22392,6 +22478,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22408,6 +22495,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22422,8 +22510,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22437,8 +22526,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22452,8 +22542,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22467,8 +22558,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22482,8 +22574,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22497,8 +22590,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22512,8 +22606,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22527,8 +22622,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22542,8 +22638,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22557,8 +22654,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22572,8 +22670,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22587,8 +22686,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22604,6 +22704,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22620,6 +22721,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22636,6 +22738,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22652,6 +22755,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22666,8 +22770,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22681,8 +22786,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22696,8 +22802,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22711,8 +22818,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22726,8 +22834,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22741,8 +22850,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22756,8 +22866,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22771,8 +22882,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22786,8 +22898,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22801,8 +22914,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22816,8 +22930,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22831,8 +22946,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22848,6 +22964,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22864,6 +22981,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22880,6 +22998,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict",
       "f12-nuclear-unscoped"
      ]
@@ -22896,6 +23015,7 @@
      },
      "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default",
       "f12-nuclear-unscoped"
      ]
@@ -22910,8 +23030,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22925,8 +23046,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22940,8 +23062,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22955,8 +23078,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -22970,8 +23094,9 @@
       "RS5": "within",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -22985,8 +23110,9 @@
       "RS5": "within",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     },
@@ -23000,8 +23126,9 @@
       "RS5": "exception",
       "RS9": "strict"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-strict",
       "c3-access-strict"
      ]
     },
@@ -23015,8 +23142,9 @@
       "RS5": "exception",
       "RS9": "default"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
+      "c2-misalignment-default",
       "c3-access-default"
      ]
     }
@@ -23032,6 +23160,8 @@
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule",
    "selected_rules": [
+    "c2-misalignment-default",
+    "c2-misalignment-strict",
     "c3-access-default",
     "c3-access-strict",
     "f12-nuclear-unscoped"
@@ -25645,7 +25775,7 @@
     "RS0"
    ],
    "reading_sets": 20,
-   "some_answers": 50,
+   "some_answers": 49,
    "ve_readings": "pending: every reading set stays open in pf.d1.ve.md; the harness answers per choice"
   },
   "M3": {
@@ -25677,7 +25807,7 @@
     "A": 30,
     "B": 10,
     "D": 2,
-    "G": 2,
+    "G": 1,
     "K": 6
    }
   },

@@ -24,6 +24,9 @@ SETS = {"RS1": ("S", "G"), "RS2": ("P", "U"), "RS3": ("F", "Ds"), "RS3force": ("
         "RS9": ("different",)}
 # PLAN 12 "Excluded readings": the text excludes RS6 = same (2.2 against 2.1.1) and RS9 = same (footnote 5).
 EXCLUDED = {("RS6", "same"), ("RS9", "same")}
+# OT3: "the appropriate governance function determines the residual risk to be acceptable (including a safety case
+# where a CCL has been reached)" (footnote 4, 2.1.2, 3.1.2), one finding as the case stipulates it (PLAN 5).
+GOV_FINDING = "governance_found_acceptable_with_safety_case_where_ccl_reached"
 MISUSE = {"cbrn_uplift_tcl", "cbrn_uplift_level_1", "cyber_uplift_level_1", "harmful_manipulation_level_1"}
 ML_RD = {"stealth_and_situational_awareness_tcl", "ml_rd_acceleration_level_1", "ml_rd_automation_level_1"}
 TRACKED = {"cbrn_uplift_tcl", "stealth_and_situational_awareness_tcl"}
@@ -64,10 +67,10 @@ def requirements(s, c):
         gov = True                                                # F12 (P: misuse T/CCL; U: every model), F13
     if hri and (c["RS2"] == "U" or levels & ML_RD):
         gov = True                                                # F13: high-risk internal deployment
-    if gov and "governance_found_acceptable" not in f:
+    if gov and GOV_FINDING not in f:
         out["GOV"] = "must not proceed"
     if "first_deployment" in f and "frontier" in f:
-        released = c["RS7"] == "E" and "low_risk" in f and "governance_found_acceptable" in f
+        released = c["RS7"] == "E" and "low_risk" in f and GOV_FINDING in f
         out["CCA"] = "need not" if released else "must"          # F2, F3 (footnote 4)
     if levels:
         out["RRA"] = "must"                                       # F7
@@ -100,7 +103,7 @@ def family_a_b():
         if case["family"] == "A":
             for atom in ("DM", "SEC", "GOV", "CCA"):
                 if atom == "GOV":
-                    s = situation(case, without=("governance_found_acceptable",))
+                    s = situation(case, without=(GOV_FINDING,))
                     rows[f"{cid}/GOV"] = verdict(lambda c: requirements(s, c).get("GOV") == "must not proceed",
                                                  ALL_SETS)
                 else:
