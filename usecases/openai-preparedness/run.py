@@ -69,7 +69,7 @@ OT = {"OT1": "threshold_determined", "OT2": "sufficient_safeguards", "OT9": "lik
       "OT21": "immediate_reaction_needed"}
 # What each case's situation states beyond its findings (cases.json "situation"), as D1 base atoms.
 SITUATIONS = {
-    "K3": ("distilled_from_below_high",), "K4": ("distilled_from_below_high",),
+    "K3": ("distilled_finetuned_or_quantized_from_below_high",), "K4": ("distilled_finetuned_or_quantized_from_below_high",),
     "K6": ("adjustment_made",), "K7": ("further_development",), "K8": ("further_development",),
     "K9": ("undermining_found",), "K10": ("sandbagging_found",), "K11": ("coverage_ambiguous",),
     "K13": ("fast_track_requested",), "K14": ("deeper_testing_warranted", "third_party_available"),
@@ -79,14 +79,12 @@ SITUATIONS = {
 }
 # Atoms a case's situation states as false ("not already implemented", "no highly sensitive information").
 STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("beyond_sensitive_limits",)}
-# A disjunctive duty "A, or B" is written "A unless B" ('or' is reserved in acts): its item asks what is required
-# before either alternative is taken, so B is false by the question itself, not by a case fact (K10).
-ALTERNATIVES = {"sandbagging_bound": ("conservative_upper_bound_used",)}
 # K9's model has High capability "in a Tracked Category" without naming it: every High level is tried.
 SOME_HIGH_LEVEL = {"K9"}
 
 ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards",),
-         "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development"),
+         "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development",
+                 "safeguards_before_internal_use"),
          "HALT": ("halt_development",),
          "CAPREP": ("capabilities_report_submitted",), "SAFEREP": ("safeguards_report",), "MREP": ("misalignment_report",),
          "DISC": ("safeguards_disclosed",), "PUBRES": ("public_disclosure",),
@@ -99,7 +97,7 @@ K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFE
            "PUBLICLY_ACKNOWLEDGE_ADJUSTMENT": ("adjustment_acknowledged",),
            "SHARE_INFORMATION_TO_VALIDATE": ("validation_shared",),
            "SAFEGUARDS_DURING_DEVELOPMENT": ("safeguards_during_development",), "HALT": ("halt_development",),
-           "ROBUST_SAFEGUARDS_CASE": ("robust_case",), "ELICITATION_OR_CONSERVATIVE_BOUND": ("sandbagging_bound",),
+           "ROBUST_SAFEGUARDS_CASE": ("robust_case",), "ELICITATION_OR_CONSERVATIVE_BOUND": ("sandbagging_response",),
            "SAG_FINAL_DETERMINATION": ("coverage_decided",), "ANNUAL_REVIEW": ("annual_review",),
            "CHAIR_COORDINATES_WITH_LEADERSHIP": ("chair_coordination",),
            "THIRD_PARTY_EVALUATION": ("third_party_evaluation",),
@@ -111,11 +109,12 @@ K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFE
 ALL_OF = {"VALIDATE_AND_REVIEW_SUFFICIENCY"}  # "validating ... and reviewing ..." asks for both acts
 # Table 1, F2, F3 and F4: the rules that attach to a capability threshold (G5, G9).
 THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards", "alignment_safeguards",
-                        "safeguards_before_deployment", "safeguards_during_development", "halt_development",
+                        "safeguards_before_deployment", "safeguards_during_development", "safeguards_before_internal_use",
+                        "halt_development",
                         "pandemic_policy_contribution", "cyberdefense_contribution", "deployment_permitted")
 SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + ("access_limited", "misalignment_risk_minimized", "nuclear_safeguards")
 # The Critical-specific rules (Table 1's Critical rows and 4.4): G2.
-CRITICAL_PREDICATES = ("safeguards_during_development", "halt_development")
+CRITICAL_PREDICATES = ("safeguards_during_development", "safeguards_before_internal_use", "halt_development")
 
 M2_PERMISSION = ("Rule 1. Every situation may be deployed, if all of the following hold: (a) all of the following "
                  "hold: (i) there is a level such that both that situation has reached that level and that level "
@@ -323,6 +322,7 @@ def atoms(case, choice, level=None):
             found.add((OT[term], "s"))
     found.update((name, "s") for name in SITUATIONS.get(case["id"], ()))
     found.update((name, "s") for name in case.get("extra", ()))
+    found.update(tuple(atom) for atom in case.get("relations", ()))
     return frozenset(found)
 
 
@@ -341,7 +341,7 @@ def model(doc, found):
         _MODELS[key] = FiniteModel.from_dict(env, {"complete": True,
             "domains": {"situation": ["s"], "level": list(V.LEVELS), "category": sorted({c for c, _ in V.LEVELS.values()}),
                         "proposal": ["p"], "requirement": ["r"], "capability": ["k"],
-                        "evaluation": ["biological_capability_evaluations", "e"]},
+                        "evaluation": ["biological_capability_evaluations", "e"], "framework": ["f"]},
             "constants": {c: c for c in env.constants},
             "relations": {p: sorted(v) for p, v in relations.items()}})
     return _MODELS[key]
@@ -367,16 +367,26 @@ def regulated(predicate):
     return vocabulary()["vocabulary"]["predicates"][predicate]["regulated"]
 
 
+# The one element of each sort an act is asked of: the case's situation, a capability, the Framework (f16-year).
+SUBJECT = {"situation": "s", "capability": "k", "framework": "f"}
+
+
+def subject(predicate):
+    sort = vocabulary()["vocabulary"]["predicates"][predicate]["arguments"][0]
+    return sort, SUBJECT[sort]
+
+
 def selected(doc, found, predicate, sign):
-    return sorted(r.name for r in pick(doc, found, predicate, ("s",)) if r.sign == sign)
+    return sorted(r.name for r in pick(doc, found, predicate, (subject(predicate)[1],)) if r.sign == sign)
 
 
 def completed(doc, found, predicate):
     from ve.evaluate import _Evaluator
     env = doc.elaborated.base_environment()
     formula = doc.elaborated.outcome(predicate, base=True)
-    A._Checker(env).formula(formula, ("situation",))
-    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, (("situation", "s"),))[0]
+    sort, element = subject(predicate)
+    A._Checker(env).formula(formula, (sort,))
+    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, ((sort, element),))[0]
 
 
 @lru_cache(maxsize=None)
@@ -406,7 +416,6 @@ def unset_negations(case, predicates):
     """A negated open term the case leaves unset would be read as false by the complete case model."""
     stated = {OT[t] for t in case.get("findings", {}) if t in OT} | set(STATED_FALSE.get(case["id"], ()))
     stated |= set(SITUATIONS.get(case["id"], ())) | {"critical_standard_unspecified"}
-    stated |= {b for p in predicates for b in ALTERNATIVES.get(p, ())}
     return sorted(negated(predicates) - stated)
 
 
@@ -491,15 +500,37 @@ def silence(case, predicates, *, baseline=None, route="silence"):
             "cone": list(sets), "choices": rows}
 
 
+def predicates_of(formula):
+    """Every predicate name a formula (a tree of dataclasses) mentions."""
+    import dataclasses
+    if isinstance(formula, (tuple, list)):
+        return set().union(*(predicates_of(part) for part in formula)) if formula else set()
+    if not dataclasses.is_dataclass(formula):
+        return set()
+    names = {formula.predicate} if isinstance(getattr(formula, "predicate", None), str) else set()
+    return names.union(*(predicates_of(getattr(formula, f.name)) for f in dataclasses.fields(formula)))
+
+
+def premise_units(goal):
+    """The premise units outside FACTS (the fact blocks of rules.d1.ve, each read as its own unit) that a route on
+    `goal` rests on: those whose premises mention a predicate of the goal. A route names them in its rows' "rules",
+    so uc-audit ties the item to each unit (a FACTS block is tied to every D1 item already)."""
+    names = predicates_of(goal)
+    units = {b.id for b in T.rule_fact_blocks()}
+    return sorted(b.id for b, formulas in T.facts() if b.id in units and names & predicates_of(formulas))
+
+
 def indicator_silence(case):
     """G7: the Framework is silent on a chemical evaluation indicating a High or Critical level when two models of
     every selected premise (fn5-indicator among them) differ on it: one where the case's chemical evaluation "e"
-    indicates such a level and one where it indicates none. Neither the claim nor its negation is then entailed."""
+    indicates such a level and one where it indicates none. Neither the claim nor its negation is then entailed.
+    Each row names the premise units the claim rests on (fn5-indicator)."""
     from ve.evaluate import evaluate
     env = T.base_environment()
     goal = A.formula_from_data(env, ["exists", "evaluation", ["and", ["unary", "chemical", ["var", 0]], [
         "exists", "level", ["and", ["binary", "indicator_for", ["var", 1], ["var", 0]],
                             ["or", ["unary", "high", ["var", 0]], ["unary", "critical", ["var", 0]]]]]]])
+    units = premise_units(goal)
     rows = []
     for assignment in choices(("RS2",)):
         choice = {**BASE, **assignment}
@@ -510,7 +541,7 @@ def indicator_silence(case):
             check_premises(doc, frozenset(found), choice)
             values.append(evaluate(doc.elaborated.base_environment(), goal, model(doc, frozenset(found)),
                                    trace=False).value)
-        rows.append({"choice": assignment, "holds": values == [False, True],
+        rows.append({"choice": assignment, "holds": values == [False, True], "rules": units,
                      "reason": "two models of the selected premises differ on the claim" if values == [False, True]
                      else f"the premises decide the claim: {values}"})
     return {"route": "D1 relational-fol@0: two finite models of the selected premises", "cone": ["RS2"],
@@ -553,18 +584,21 @@ WITNESS = {
            "adjustment_conditions", "adjustment_made"),
     "C2": ("leadership_decision", "decided_without_sag"),
     "C3": ("further_development", "critical_standard_unspecified"),
-    "C4": ("covered", "distilled_from_below_high", "significant_increase"),
+    "C4": ("covered", "distilled_finetuned_or_quantized_from_below_high", "significant_increase"),
     "C5": ("covered", "external_deployment"),
     "C6": ("leadership_decision", "board_finds_necessary"),
     "m2": ("external_deployment", "misuse_standard_met"),
 }
 WITNESS_LEVELS = {"C1": ("BIO-H",), "C3": ("BIO-C",), "C5": ("AIS-H",), "m2": ("BIO-H",)}
+# F11's adjustment is in "that capability area": C1's confirmed scenario is in the witness level's category.
+WITNESS_RELATIONS = {"C1": (("adjustment_area", "s", "biological_and_chemical"),)}
 
 
 def witness(names):
     extra = sorted({a for n in names for a in WITNESS[n]})
     return {"id": "W", "levels": sorted({lv for n in names for lv in WITNESS_LEVELS.get(n, ())}),
-            "activity": None, "findings": {}, "extra": extra}
+            "activity": None, "findings": {}, "extra": extra,
+            "relations": sorted({r for n in names for r in WITNESS_RELATIONS.get(n, ())})}
 
 
 def w1(choice, include, case):
@@ -651,7 +685,7 @@ def document_conflict():
 
 # --- N: never applies ------------------------------------------------------------------------------------------
 
-N1_RULES = ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-reminder")
+N1_RULES = ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-inuse", "f3-reminder")
 
 
 def entailed(premises, goal):
@@ -705,14 +739,15 @@ def low_medium_never():
     """N4: a rule's level guard needs a reached level; from the change log's premise (cl-levels: no level is low or
     medium) no situation reaches a "low" or "medium" level, on every reading (the premise is "always")."""
     env = T.base_environment()
-    premises = tuple(f for b, fs in T.facts() if b.id == "cl-levels" for f in fs)
     goal = A.formula_from_data(env, ["forall", "situation", ["not", ["exists", "level", ["and", [
         "binary", "reached", ["var", 1], ["var", 0]], ["or", ["unary", "low", ["var", 0]],
                                                       ["unary", "medium", ["var", 0]]]]]]])
+    units = premise_units(goal)
+    premises = tuple(f for b, fs in T.facts() if b.id in units for f in fs)
     holds = entailed(premises, goal)
-    result = {"route": "D1 relational-fol@0 entailment certificate (cl-levels)", "cone": [],
+    result = {"route": f"D1 relational-fol@0 entailment certificate ({', '.join(units)})", "cone": [],
               "choices": [{"choice": {}, "holds": True if holds else None,
-                           "reason": holds or "UNKNOWN", "rules": ["cl-levels"]}]}
+                           "reason": holds or "UNKNOWN", "rules": units}]}
     if not holds:
         result["undecided"] = "resource limit: no entailment certificate"
     return result
@@ -760,14 +795,18 @@ def witness_for(block):
                  if "regulated" not in d and d["arguments"] == ["situation"]}
     capability = {n for n, d in vocabulary()["vocabulary"]["predicates"].items()
                   if "regulated" not in d and d["arguments"] == ["capability"]}
+    # A situation-category relation the guard names positively (F11's area) holds for every category, so it
+    # agrees with every level reached.
+    areas = {(n, "s", c) for n, d in vocabulary()["vocabulary"]["predicates"].items()
+             if "regulated" not in d and d["arguments"] == ["situation", "category"] and n in names[False]
+             for c in sorted({c for c, _ in V.LEVELS.values()})}
     choice = {**BASE, **dict(block.when)}
     names_ = tuple(sorted(choice.items()))
-    sort = vocabulary()["vocabulary"]["predicates"][rule["predicate"]]["arguments"][0]
-    arg = {"situation": "s", "capability": "k"}[sort]
+    arg = subject(rule["predicate"])[1]
     for positive in (names[False] - blocked, (situation | capability) - blocked):
         found = set(atoms({"id": block.id, "levels": list(LEVEL_IDS), "activity": None, "findings": {}}, choice))
         found = {a for a in found if a[0] not in situation or a[0] in positive}
-        found |= {(n, "s") for n in positive & situation} | {(n, "k") for n in positive & capability}
+        found |= {(n, "s") for n in positive & situation} | {(n, "k") for n in positive & capability} | areas
         found = frozenset(found)
         ok = True
         for default in ("deny", "allow"):
@@ -791,7 +830,8 @@ COMMITMENTS = {
            ("f1-contrib-cyb-strict", "f1-contrib-cyb-default")),
     "F2": (("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"), ("f2-no-deploy", "f2-no-deploy-any"),
            ("f2-security-developed",)),
-    "F3": (("f3-develop", "f3-develop-inuse", "f3-reminder"), ("f3-develop-forecast", "f3-develop-inuse-forecast")),
+    "F3": (("f3-develop", "f3-develop-inuse", "f3-inuse", "f3-reminder"),
+           ("f3-develop-forecast", "f3-develop-inuse-forecast", "f3-inuse-forecast")),
     "F4": (("f4-security",),),
     "F5": (("f5-ambiguous",), ("f5-checkpoint",)),
     "F6": (("f6-rel",),),
