@@ -42,6 +42,7 @@ import VE.Senses.RunExamples
 import VE.Senses.TextsExamples
 import VE.Service.RegistryExamples
 import VE.Compose.Slot
+import VE.Compose.SlotWire
 import VE.Compose.Dispatch
 import VE.Compose.Content
 import VE.Compose.Adjoin
@@ -397,6 +398,7 @@ import VE.Route.MeteredWire
 import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.SelectedExamples
+import VE.SoftNorms.SlotSound
 import VE.Kernel.Carry
 import VE.Kernel.CarryChecks
 import VE.Route.CodecRoundTrip
