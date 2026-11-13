@@ -55,7 +55,7 @@ def measure():
     units, rest = M.measure()
     oct18 = {u["id"]: u["status"] for u in M.load(R1_EVIDENCE / "units.json")["units"]}
     for u in units:
-        u["status_oct18"] = oct18[u["id"]]
+        u["status_oct18"] = oct18.get(u["id"])  # None: a unit added after Oct 18
     gaps = M.gaps(units, rest)
     gaps["master_bytes_by_status"]["oct18"] = M.load(R1_EVIDENCE / "gaps.json")["master_bytes_by_status"]["today"]
     gaps["units_changed_status_since_oct18"] = [u["id"] for u in units if u["status"] != u["status_oct18"]]

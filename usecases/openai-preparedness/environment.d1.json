@@ -94,12 +94,6 @@
         ],
         "description": "{0} is a deployment under the Preparedness Framework"
       },
-      "misaligned_model_risk": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "{0} has a risk of a misaligned model circumventing human control and oversight and executing severe harms"
-      },
       "large_scale_internal": {
         "arguments": [
           "situation"
@@ -555,11 +549,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.4: models that have reached or are forecasted to reach Critical capability in a Tracked Category require additional safeguards (safety and security controls) during development, regardless of whether or when they are externally deployed; 4.2: safeguards that sufficiently minimize associated risks during development; Appendix C: sufficient safeguards during development",
+        "description": "4.4: “Such models require additional safeguards (safety and security controls) during development, regardless of whether or when they are externally deployed.”, such models being those that have reached or are forecasted to reach Critical capability in a Tracked Category; 4.2: “Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development.”; Appendix C: “Systems that reach Critical capability also require sufficient safeguards during development.” (the act's plus stands for and, a word an act may not use; no coverage condition: none of the three sentences states one)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have sufficient safety as well as security controls during development"
+          "act": "{0} have sufficient additional safety plus security controls during development"
         }
       },
       "safeguards_before_internal_use": {
@@ -819,7 +813,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "C.2: the risk of a misaligned model circumventing human control and oversight and executing severe harms",
+        "description": "C.2: “Safeguards should sufficiently minimize the risk associated with a misaligned model circumventing human control and oversight and executing severe harms.”",
         "regulated": {
           "role": "obligation",
           "default": "deny",

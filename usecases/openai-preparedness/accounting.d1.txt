@@ -19,8 +19,8 @@ f2-reminder-any | omits: "As a reminder" exposition ; "covered systems that reac
 f2-security-developed | omits: "Covered systems that cross this capability threshold are required to have" restates ; "robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed" rule f2-deploy
 f2-no-deploy | omits: "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized" restates
 f2-no-deploy-any | omits: "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized" restates
-f3-develop | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
-f3-develop-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-develop-inuse | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-inuse-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-develop-inuse-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-inuse | omits: "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
@@ -49,8 +49,8 @@ f15-disclose | omits: "We will release information about our Preparedness Framew
 f15-safeguards | omits: "Additionally" exposition ; "if the model is beyond a High threshold, we will include information about" restates ; "Such disclosures about results and safeguards" restates
 f15-third-party | omits: "(as described in Section 3.1)" exposition ; "for example based on results of Capabilities Report presented to them" exposition ; "If we deem that a deployment warrants" restates ; "OpenAI will work with third-parties to" restates
 f16-sag-recommend | omits: nothing
-c2-misalignment-strict | omits: "associated with" restates
-c2-misalignment-default | omits: "associated with" restates
+c2-misalignment-strict | omits: nothing
+c2-misalignment-default | omits: nothing
 c3-access-strict | omits: "especially those presenting High capabilities" exposition ; "protected with strong multi-factor authentication" restates ; "and may require additional approvals for access" loss 1
 c3-access-default | omits: "especially those presenting High capabilities" exposition ; "protected with strong multi-factor authentication" restates ; "and may require additional approvals for access" loss 1
 cl4-persuasion | omits: "Going forward we will handle" restates

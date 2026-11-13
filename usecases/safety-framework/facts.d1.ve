@@ -10,8 +10,8 @@
 "ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3".
 ## levels-ml-rd-automation | always | table 3.2.2.a: ML R&D automation level 1 ("We recommend Security level 4")
 "ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4".
-## measures-sl2plus | always | 2.1.1 "Security Level 2+ ... with additional security measures designed to address risks from insider threats"
-"security_level_2_plus" includes "insider_threat_measures". "insider_threat_measures" addresses insiders.
+## measures-sl2plus | always | 2.1.1 "We also define and recommend" Security Level 2+ "which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors": the baseline and one group of additional measures, which addresses both threats
+"security_level_2_plus" includes "rand_security_level_2". "security_level_2_plus" includes "sl2_plus_additional_measures". "sl2_plus_additional_measures" addresses insiders. "sl2_plus_additional_measures" addresses "well_resourced_non_state_external_actors".
 ## closure-misuse-ccls | always | 1.2 "For misuse risk, we define CCLs in the following risk domains": CBRN, cyber and harmful manipulation
 For every level that is critical and that is misuse, at least one of the following holds: (a) that level concerns cbrn; (b) either that level concerns cyber or that level concerns "harmful_manipulation", or both.
 ## closure-ccl-kinds | always | 1.2 "We identify CCLs for two kinds of risks: misuse risk and risks related to machine learning R&D and misalignment"
