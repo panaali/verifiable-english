@@ -941,15 +941,15 @@ def handleLineMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : 
     (some answer, h', next)
 
 /-- The first line the service prints. The build hash is computed by the supervisor,
-which hashes the executable it starts. `modes` are the registry's (`VE.Service.registry`). `handles` states the handle table's member and bounds,
+which hashes the executable it starts. `modes` are the registry's (`VE.Service.registry`). `handles` states the handle table's members (an environment's, a soft document's) and bounds,
 which the client mirrors (`Handles.insert`). -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (registry.map (·.mode.name))),
     ("codes", toJson rejectionCodes),
     ("limits", Json.mkObj (VE.Limits.stated.map fun (name, limit) => (name, toJson limit))),
-    ("handles", Json.mkObj [("member", .str handleKey), ("max", toJson maxHandles),
-      ("max_bytes", toJson maxHandleBytes)])]
+    ("handles", Json.mkObj [("member", .str handleKey), ("soft_member", .str softHandleKey),
+      ("max", toJson maxHandles), ("max_bytes", toJson maxHandleBytes)])]
 
 /-! ## Dispatch pins (statement review: each mode is exactly its existing runner) -/
 

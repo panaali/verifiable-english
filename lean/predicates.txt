@@ -812,6 +812,7 @@ module VE.SoftNorms.Coherence
 module VE.SoftNorms.ElaborateSound
 module VE.SoftNorms.Once
 module VE.SoftNorms.Phases
+module VE.SoftNorms.Prepared
 module VE.SoftNorms.RankProof
 module VE.SoftNorms.Run
 module VE.SoftNorms.Selected

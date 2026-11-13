@@ -186,7 +186,7 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "7b64405464d9f768ebe00786ede77ebe0fd702bb48d0986279a37bd94b46ea72",
+    "lean/VE/Service/Protocol.lean": "b02cdcef37f75732a02aab243cb8460aaf152eed1725dee11df62ce1312bea30",
     "lean/VE/Service/Registry.lean": "cef1d0114712fa1b952f076bcc0040d4a04a3de8a921433702dd534502c163b2",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
