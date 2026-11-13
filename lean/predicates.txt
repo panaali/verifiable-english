@@ -839,6 +839,7 @@ module VE.Time.Document
 module VE.Time.Semantics
 module VE.Time.Syntax
 module VE.Time.Wire
+module VE.Time.WireSound
 module VE.Typing
 module VE.Weighing.Conditions
 module VE.Weighing.Examples
