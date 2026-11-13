@@ -173,7 +173,7 @@ def declared (E : Env) (p : String) : Bool := (E.rv.environment.predicates p).is
 
 /-- Whether the reading a statement's origin names, if any, is an active set of the statement's unit and an index
 inside it. -/
-def readingOk (sets : List ActiveSet) (s : Statement) : Bool :=
+def readingNamed (sets : List ActiveSet) (s : Statement) : Bool :=
   match s.origin.reading with
   | some (r, i) => sets.any fun x => x.1.id == r && x.1.unit == s.origin.unit && decide (i < x.1.readings.length)
   | none => true
@@ -192,7 +192,7 @@ premise or its judgment term. -/
 def statementFault (E : Env) (unitIds : List String) (sets : List ActiveSet) (s : Statement) : Option String :=
   if !unitIds.contains s.origin.unit then
     some s!"UnknownPart: a statement's origin names unit {s.origin.unit}, which the document does not have"
-  else if !readingOk sets s then
+  else if !readingNamed sets s then
     some s!"UnknownPart: a statement of unit {s.origin.unit} names a reading no active set of the unit has"
   else bodyFault E s
 
@@ -283,7 +283,7 @@ def featureRefusal (E : Env) (senses : Bool) (units : List SourceUnit) : Except 
   | none => pure ()
 
 /-- Under `judgments@0`: the records' admission (`Judgments.admit`) and each unit's judgment refusals
-(`Judgments.status`, whose value is not used), unchanged. The admitted judgments. -/
+(`Judgments.status`, whose value is not used), unchanged. The judgments `Judgments.admit` answers. -/
 def judgments (E : Env) (records : List VE.Judgments.Rec) (views : List VE.Judgments.UnitView)
     (units : List SourceUnit) : Except String (List VE.Judgments.Judgment) := do
   if !E.profiles.contains "judgments@0" then return []
@@ -300,8 +300,8 @@ def references (unitIds : List String) (sets : List ActiveSet) (couplings : List
   | none, some m => .error m
   | none, none => .ok ()
 
-/-- The refusals before any unit is lowered, in order; the admitted judgments. -/
-def admitted (E : Env) (senses : Bool) (records : List VE.Judgments.Rec) (views : List VE.Judgments.UnitView)
+/-- The refusals before any unit is lowered, in order; the judgments `Judgments.admit` answers. -/
+def preliminaries (E : Env) (senses : Bool) (records : List VE.Judgments.Rec) (views : List VE.Judgments.UnitView)
     (units : List SourceUnit) (sets : List ActiveSet) (couplings : List Coupling) :
     Except String (List VE.Judgments.Judgment) := do
   featureRefusal E senses units
@@ -320,7 +320,7 @@ document order of their units. -/
 def lower (E : Env) (senses : Bool) (records : List VE.Judgments.Rec) (views : List VE.Judgments.UnitView)
     (units : List SourceUnit) (sets : List ActiveSet) (couplings : List Coupling) :
     Except String (List (Choice × CoreDoc)) := do
-  let J ← admitted E senses records views units sets couplings
+  let J ← preliminaries E senses records views units sets couplings
   let rd ← sets.mapM (readingsOf E (wireJson 257 E.lower))
   let plans ← units.mapM (planOf E (wireJson 257 E.lower) J rd)
   let choices ← choicesOf couplings sets
@@ -329,22 +329,7 @@ def lower (E : Env) (senses : Bool) (records : List VE.Judgments.Rec) (views : L
 
 /-! ## Theorems, for every input the lowering answers -/
 
-theorem bind_ok {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β} (h : (x >>= f) = .ok b) :
-    ∃ a, x = .ok a ∧ f a = .ok b := by
-  cases x with
-  | error e => simp [bind, Except.bind] at h
-  | ok a => exact ⟨a, rfl, h⟩
-
-theorem mapM_ok {ε α β : Type} {f : α → Except ε β} :
-    ∀ {xs : List α} {ys : List β}, xs.mapM f = .ok ys → ∀ x ∈ xs, ∃ y, f x = .ok y
-  | [], _, _, _, hx => by cases hx
-  | a :: as, _, h, x, hx => by
-    rw [List.mapM_cons] at h
-    obtain ⟨b, hb, h⟩ := bind_ok h
-    obtain ⟨bs, hbs, _⟩ := bind_ok h
-    cases hx with
-    | head => exact ⟨b, hb⟩
-    | tail _ hx => exact mapM_ok hbs x hx
+open VE.Kit.Except (bind_ok)
 
 theorem finish_ok {E : Env} {unitIds : List String} {sets : List ActiveSet} {docs cs : List (Choice × CoreDoc)}
     (h : finish E unitIds sets docs = .ok cs) :
@@ -367,10 +352,10 @@ theorem statementFault_none {E : Env} {unitIds : List String} {sets : List Activ
     (∀ j, s.body = .judgment j → declared E j.name = true) := by
   unfold statementFault at h
   by_cases hu : unitIds.contains s.origin.unit = true
-  · by_cases hr : readingOk sets s = true
+  · by_cases hr : readingNamed sets s = true
     · simp only [hu, hr, Bool.not_true, Bool.false_eq_true, ↓reduceIte] at h
       refine ⟨List.contains_iff_mem.mp hu, fun r i hri => ?_, fun φ hφ p hp => ?_, fun j hj => ?_⟩
-      · unfold readingOk at hr
+      · unfold readingNamed at hr
         rw [hri] at hr
         simp only [List.any_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at hr
         obtain ⟨x, hx, ⟨h1, h2⟩, h3⟩ := hr
@@ -429,12 +414,12 @@ theorem choicesOf_ok {couplings : List Coupling} {sets : List ActiveSet} {cs : L
   · cases h
   · cases h; exact ⟨rfl, Nat.le_of_not_gt hle⟩
 
-theorem admitted_sets {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
+theorem preliminaries_sets {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
     {views : List VE.Judgments.UnitView} {units : List SourceUnit} {sets : List ActiveSet}
     {couplings : List Coupling} {J : List VE.Judgments.Judgment}
-    (h : admitted E senses records views units sets couplings = .ok J) :
+    (h : preliminaries E senses records views units sets couplings = .ok J) :
     ∀ x ∈ sets, x.1.unit ∈ units.map (·.id) := by
-  unfold admitted at h
+  unfold preliminaries at h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, hs, _⟩ := bind_ok h
@@ -459,7 +444,7 @@ theorem admitted_sets {E : Env} {senses : Bool} {records : List VE.Judgments.Rec
 theorem lower_ok {E : Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
     {units : List SourceUnit} {sets : List ActiveSet} {couplings : List Coupling} {cs : List (Choice × CoreDoc)}
     (h : lower E senses records views units sets couplings = .ok cs) :
-    (∃ J, admitted E senses records views units sets couplings = .ok J) ∧
+    (∃ J, preliminaries E senses records views units sets couplings = .ok J) ∧
     (∃ rd, sets.mapM (readingsOf E (wireJson 257 E.lower)) = .ok rd) ∧
     (∃ plans : List UnitPlan, cs = (compatibleChoices couplings sets).map
       fun c => (c, CoreDoc.of (wireJson 257 E.lower) (plans.flatMap (UnitPlan.statements c)))) ∧
@@ -495,7 +480,7 @@ theorem lower_origin_units {E : Env} {senses : Bool} {records : List VE.Judgment
     have hc := (List.mem_filter.mp hc).1
     obtain ⟨q, hq, h1, h2⟩ := allChoices_mem _ c hc p hp
     obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hq
-    exact ⟨x, hx, h1, admitted_sets hJ x hx, h2⟩
+    exact ⟨x, hx, h1, preliminaries_sets hJ x hx, h2⟩
 
 /-- (b) For every active set, the statement lists of two different readings are different. -/
 theorem lower_readings_distinct {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
@@ -506,7 +491,7 @@ theorem lower_readings_distinct {E : Env} {senses : Bool} {records : List VE.Jud
       (opts.map (·.map Prod.snd)).Nodup := by
   obtain ⟨_, ⟨rd, hrd⟩, _⟩ := lower_ok h
   intro x hx
-  obtain ⟨y, hy⟩ := mapM_ok hrd x hx
+  obtain ⟨y, _, hy⟩ := VE.Acts.mapM_ok hrd x hx
   unfold readingsOf at hy
   obtain ⟨opts, ho, hy⟩ := bind_ok hy
   obtain ⟨_, hu, _⟩ := bind_ok hy
