@@ -1,3 +1,4 @@
+- `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
 - `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
 - `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
 - `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).

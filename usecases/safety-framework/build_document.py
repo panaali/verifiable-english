@@ -46,8 +46,9 @@ OPEN_TERMS = {
                                       "capabilities and mitigations of other publicly available models",
                                       "the historical incidence and severity of related events"]),
     "ot3_governance_determination": ("governance_function", "the appropriate governance function determines the "
-                                     "residual risk to be acceptable (2.1.2, 3.1.2)",
-                                     ["a safety case where a CCL has been reached"]),
+                                     "residual risk to be acceptable, including a safety case where a CCL has been "
+                                     "reached (footnote 4, 2.1.2, 3.1.2): the safety case is part of the finding",
+                                     []),
     "ot4_security_adequate": ("developer", "the level of security applied is adequate (1.3.5)",
                               ["mitigations already in place", "the security of other models with similar "
                                "capabilities or risk profiles"]),
@@ -365,6 +366,9 @@ UNITS = [
     ("In particular, we will deem deployment mitigations adequate", "s212-deem", unformalised("degree_term")),
     ("3. Post-deployment processes", "s212-step3", hedged()),
     ("Material updates to a safety case will be submitted", "s212-submitted", rule("f14")),
+    # "might result in updates ...": a possibility (PLAN 3.3), labelled, never a duty of f14.
+    ("and might result in updates to the related residual risk assessment or safety case", "s212-might-update",
+     hedged()),
     ("This process is designed to ensure", "s212-designed", label("explanation")),
     ("With iteration on mitigations and residual risk assessments, we believe", "s212-believe", believes()),
     ("7 See section 5", "fn7", meta()),
@@ -432,6 +436,9 @@ UNITS = [
     ("In particular, we will deem deployment mitigations adequate", "s312-deem", unformalised("degree_term")),
     ("3. Post-deployment processes", "s312-step3", hedged()),
     ("Material updates to a safety case will be submitted", "s312-submitted", rule("f14")),
+    # "might result in updates ...": a possibility (PLAN 3.3), labelled, never a duty of f14.
+    ("and might result in updates to the related residual risk assessment or safety case", "s312-might-update",
+     hedged()),
     ("This process is designed to ensure", "s312-designed", label("explanation")),
     ("With iteration on mitigations and residual risk assessments, we believe", "s312-believe", believes()),
     ("3.2 ML R&D and Misalignment Capability Levels", "s32-heading", meta()),

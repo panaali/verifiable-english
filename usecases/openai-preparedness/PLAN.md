@@ -618,6 +618,27 @@ adjudicators judged REAL (reviews/audit-newrule-fsfpf/pf-adjud/result.md; DRI ad
     latest research as well as findings in each Research Category", its legend quoting 2.3's sentence; the
     periodicity stays ET-blocked. No answer changed (236 of 239 agree, as before); regulated predicates: 60 of 64.
 
+**`openai-preparedness-fidelity-fix-4` (2026-11-13): PF round B part 2, the other six checklist-only units both blind
+adjudicators judged REAL (reviews/audit-newrule-fsfpf/pf-adjud/result.md section 2; DRI addendum 8 item 54).
+Section 6 and `answer-key.json` are not edited.**
+
+25. **Translation fixes for six round-B units (translation-fidelity checklist classes 1, 2, 7, 11).** F3's
+    development act, which `f3-develop`, `f3-develop-forecast`, `f3-develop-inuse`, `f3-develop-inuse-forecast` and
+    `f3-reminder` share, is "have sufficient additional safety plus security controls during development". It keeps
+    4.4's "additional safeguards (safety and security controls)" beside the sufficiency of 4.2 and Appendix C ("plus"
+    stands for "and", which an act may not use, within the 80-character limit), and its legend quotes the three
+    sentences in full. **Amends item 22 (not rewritten):** F3's act was "sufficient safety as well as security
+    controls". None of these rules, and neither `c3-access-strict` nor `c3-access-default`, reads a coverage
+    condition: item 24's `situation` sort carries none, and their headers say so. C.2's two rules
+    (`c2-misalignment-strict`, and by the DRI ruling of 2026-11-13 item 2 `c2-misalignment-default`) lose the
+    `misaligned_model_risk` guard, which the sentence does not state; the predicate is removed, RS9 changes only the
+    modal, and the legend quotes the sentence. C.3's "may require additional approvals for access" stays
+    untranslated, with its reason in both headers and in the `rs9-access` record of `spans.json`: it states a
+    possibility, not a duty, and grants no permission (section 3.3). **Amends item 20 (not rewritten; DRI ruling of
+    2026-11-13):** G9's VE answer is NONE (it was SOME(P ∨ scoped)). C.2's duty, now unguarded, binds G9's model
+    under both RS9 choices, so the model is not covered only by C.3. The key cell (ALL) is unchanged and G9 stays a
+    key finding. No other answer changed (236 of 239 agree, as before); regulated predicates: 60 of 64.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`

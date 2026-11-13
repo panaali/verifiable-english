@@ -225,8 +225,8 @@
   {
    "environment": "usecases/openai-preparedness/environment.d1.json",
    "failures": [],
-   "lexicon_id": "2199600079d836be2962e1343d938d463ba86c7a6e6083375458754086349a77",
-   "symbols": 138
+   "lexicon_id": "e86fa12168b3e302637c278e08401a5aeca62f0654b1f7b9cb22199d2b394f21",
+   "symbols": 137
   },
   {
    "environment": "usecases/openai-preparedness/environment.d2.json",
@@ -243,8 +243,8 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "6dee16f07aab1a1f4c51737f13c4c93d1b0df6ed657b2634d746f17f8f882ca2",
-   "symbols": 83
+   "lexicon_id": "f0fbef114c72b3c0d0778164c4184f6a51e43a93442371074807a2d3fd86bdc5",
+   "symbols": 85
   },
   {
    "environment": "usecases/us-constitution-14th-s1/environment.json",

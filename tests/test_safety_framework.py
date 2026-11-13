@@ -361,14 +361,21 @@ def test_one_mitigated_level_does_not_discharge_another_reached_level(levels, ac
 def test_a_possible_adjustment_is_no_exception_to_the_recommended_level():
     """f16-ds, f16-ds-strict: 2.2's "may be adjusted if ... This may occur if, for example, a model does not possess
     capabilities meaningfully different from other publicly available models" gives a reason, not a sufficient
-    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it;
-    1.3.5's "we otherwise assess that the level of security applied is adequate" (OT4) remains the excepted case."""
+    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it.
+    1.3.5's "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits
+    of the open release of model weights outweigh the risks" (OT4, OT5) are alternatives of the acceptable-risk
+    classification, not exceptions to the field's recommendation (2.2's open-release case is another "may occur if"):
+    with either finding the recommended level is still required, at both forces."""
     def recsec(*findings):
         case = {"id": "fsf-fix:recsec", "family": "B", "levels": ["cbrn_uplift_level_1"], "activity": None,
                 "findings": [[f, "p"] for f in findings]}
         return run.describe(run.item_result("RECSEC", case))
     assert recsec() == recsec("like_public_models") == "SOME(RS3=Ds)"
-    assert recsec("security_assessed_adequate") == "NONE"
+    assert recsec("security_assessed_adequate") == recsec("open_release_benefits_outweigh_risks") == "SOME(RS3=Ds)"
+    assert recsec("security_assessed_adequate", "open_release_benefits_outweigh_risks") == "SOME(RS3=Ds)"
+    for block in ("f16-ds", "f16-ds-strict"):
+        text = next(b.text for b in translation.rule_blocks() if b.id == block)
+        assert "excepted" not in text and "unless" not in text, block
 
 
 # --- fsf-fidelity-fix review: F1 (the "will" rules of RS0), F2 (a CHECKED unit that uses an open predicate) ---------
@@ -441,7 +448,7 @@ def test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_te
     assert spans["g-external"]["open_terms"] == ["ot8_low_risk_external"]
     assert spans["g-high-risk"]["open_terms"] == ["ot7_high_risk_internal"]
     coverage = json.loads((HERE / "coverage.json").read_text())
-    assert coverage["master_bytes_by_status"]["CHECKED"] == 4043 and coverage["bytes_by_status"]["CHECKED"] == 2935
+    assert coverage["master_bytes_by_status"]["CHECKED"] == 3959 and coverage["bytes_by_status"]["CHECKED"] == 2851
 
 
 def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate():
@@ -461,3 +468,153 @@ def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate
     termless = {"ast": ["unary", "internal_risk_unacceptable_without_safeguards", ["var", 0]]}
     with pytest.raises(SystemExit, match="internal_risk_unacceptable_without_safeguards"):
         derived("u", {"meaning": "specified"}, termless)
+
+
+# --- safety-framework-fidelity-fix-2: the units the union-rule audit confirmed ------------------------------------
+
+def _block(rule_id):
+    return next(b for b in translation.rule_blocks() if b.id == rule_id)
+
+
+def _legend(predicate):
+    return vocabulary.environment()["vocabulary"]["predicates"][predicate]["description"]
+
+
+GOVERNANCE_BLOCKS = ("f3", "f12-p", "f12-u", "f13-p", "f13-u")
+
+
+def test_the_governance_determination_includes_the_safety_case_where_a_ccl_has_been_reached():
+    """Footnote 4 "... determines the residual risk of such deployments to be acceptable even if the model has reached a
+    T/CCL (including with a safety case where a CCL has been reached)"; 2.1.2 and 3.1.2 step 2 "... only after the
+    appropriate governance function determines the residual risk to be acceptable (including a safety case where a
+    CCL has been reached)". Each of the five blocks quotes the whole clause and lifts its rule only on the one OT3
+    finding, whose name and legend carry the safety case; the document's OT3 declaration makes it part of the finding,
+    not a factor. The case LRX stipulates that finding (PLAN 5), so A-L*-LRX keep their answers; without it F3 releases
+    nothing (CCA required under both RS7 readings)."""
+    finding = run.GOVERNANCE_FINDING
+    assert finding == reference.GOV_FINDING and finding.endswith("_with_safety_case_where_ccl_reached")
+    assert "including a safety case where the model of {0} has reached a CCL" in _legend(finding)
+    assert vocabulary.OPEN_PREDICATES[finding] == "OT3"
+    decider, what, factors = build_document.OPEN_TERMS["ot3_governance_determination"]
+    assert "including a safety case where a CCL has been reached" in what and factors == []
+    for rule_id in GOVERNANCE_BLOCKS:
+        block = _block(rule_id)
+        assert re.search(r"\(including (with )?a safety case where a CCL has been reached\)", _quoted(block.source)), \
+            rule_id
+        assert f'that proposal is classified as "{finding}"' in block.text, rule_id
+        assert "governance_found_acceptable\"" not in block.text, rule_id
+    assert finding in run.ACTIVITIES["LRX"]
+    with_finding = run.CASES["A-L2-LRX"]
+    without = {**with_finding, "id": "fix2:no-ot3", "activity": None,
+               "findings": [[p, "p"] for p in run.ACTIVITIES["LRX"] if p != finding]}
+    assert run.describe(run.item_result("CCA", with_finding)) == "SOME(RS7=M)"
+    assert run.describe(run.item_result("CCA", without)) == "ALL"
+
+
+def test_the_proximity_assessment_involves_internal_and_external_experts_as_needed():
+    """f6, 1.3.3 "we will assess the proximity of the model to the CCL and analyze the risk posed, involving internal and
+    external experts as needed": the header quotes the whole sentence and the act's legend keeps the experts'
+    involvement (an act phrase may not hold "and", so the legend carries it)."""
+    clause = "involving internal and external experts as needed"
+    assert re.findall(r'"([^"]*)"', _block("f6").source)[0].endswith("analyze the risk posed, " + clause)
+    assert _legend("proximity_assessed").split(" (1.3.3")[0].endswith("the risk posed is analysed, " + clause)
+    assert "proximity_assessed" == run.rule_predicate("f6")
+
+
+def test_the_residual_risk_assessment_is_part_of_evaluating_the_deployment_mitigations():
+    """f7-rra, 1.3.4 "Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating
+    their deployment mitigations": the header quotes the whole sentence, and the act and its legend keep the relation."""
+    clause = "as part of evaluating their deployment mitigations"
+    assert re.findall(r'"([^"]*)"', _block("f7-rra").source)[0].endswith("residual risk assessments " + clause)
+    act = vocabulary.REGULATED["residual_assessed"]["regulated"]["act"]
+    assert act.endswith("in evaluating deployment mitigations") and len(act) <= 80
+    assert act.removeprefix("{0} ") + ", if " in _block("f7-rra").text
+    assert _legend("residual_assessed").split(" (1.3.4")[0].endswith(
+        "residual risk assessments as part of evaluating its deployment mitigations")
+
+
+def test_the_possibility_of_updates_after_a_safety_case_review_is_labelled_not_checked():
+    """f14, 2.1.2 and 3.1.2 step 3 "Material updates to a safety case will be submitted to the appropriate governance
+    function for review and might result in updates to the related residual risk assessment or safety case": the
+    review duty is f14's CHECKED unit (restated in 3.1.2); "and might result in updates ..." is a hedged unit of its own, LABELLED (PLAN
+    3.3), in both sections, so no CHECKED span holds the possibility and no rule makes it a duty."""
+    source = build_document.DEFAULT_SOURCE.read_bytes() if build_document.DEFAULT_SOURCE.exists() else None
+    clause = "and might result in updates to the related residual risk assessment or safety case"
+    assert re.findall(r'"([^"]*)"', _block("f14").source)[0].endswith("for review " + clause)
+    units = {u["id"]: u for u in json.loads((HERE / "spans.json").read_text())["units"]}
+    for section in ("s212", "s312"):
+        duty, might = units[f"{section}-submitted"], units[f"{section}-might-update"]
+        assert duty.get("rule", duty.get("restates")) == "f14" and duty["span"][1] == might["span"][0]
+        assert might["kind"] == "hedged" and might["status"] == "LABELLED" and "rule" not in might
+        if source is not None:
+            assert source[might["span"][0]:might["span"][1]].decode().startswith(clause)
+            assert "might" not in source[duty["span"][0]:duty["span"][1]].decode()
+    assert units["s212-submitted"]["status"] == "CHECKED" and units["s312-submitted"]["restates"] == "f14"
+    assert "update" not in _block("f14").text.split(", if ")[0].removeprefix("Rule 1. Every proposal must be submitted")
+
+
+def _meaning(predicate, quote_opens):
+    """A legend's own description, before the source quotation it ends with."""
+    return _legend(predicate).split(quote_opens)[0]
+
+
+def test_the_f20_legends_keep_the_source_s_subject_qualification_and_conservatism():
+    """F20. 1.3.5 Note "The mitigation and the effects of such mitigation should also be assessed holistically and be
+    proportionate with expected impact of a model's risk": both demands are on the mitigation and its effects.
+    Glossary "The residual risk should be brought within the acceptable levels, as determined by the T/CCLs as
+    relevant". Note on ML R&D CCLs "... than we put into assessing risk, thus requiring conservatism in the form of
+    evaluations": the act weighs others' greater elicitation conservatively, not merely considers it."""
+    holistic = _meaning("holistic", " (1.3.5 Note")
+    assert holistic.endswith("the mitigation and its effects are both proportionate with the expected impact of the "
+                             "model's risk")
+    assert "the mitigation is proportionate" not in holistic
+    assert "the second on the mitigation itself" not in _block("f20-holistic-strict").source
+    assert _meaning("within_levels", " (Glossary").endswith("as determined by the T/CCLs as relevant")
+    elicitation = _meaning("elicitation_considered", " (Note on ML R&D CCLs")
+    assert "than the developer puts into assessing risk" in elicitation and "evaluations are conservative" in elicitation
+    act = vocabulary.REGULATED["elicitation_considered"]["regulated"]["act"]
+    assert "conservatively" in act and len(act) <= 80
+    for rule_id in ("f20-elicitation-strict", "f20-elicitation-default"):
+        assert act.removeprefix("{0} ") + "." in _block(rule_id).text, rule_id
+    assert re.findall(r'"([^"]*)"', _block("f20-elicitation-strict").source)[0].endswith(
+        "than we put into assessing risk, thus requiring conservatism in the form of evaluations")
+
+
+def test_security_level_2_plus_is_its_baseline_and_one_group_of_measures_against_both_threats():
+    """facts.d1.ve measures-sl2plus, 2.1.1: "Security Level 2+," "uses RAND Security Level 2 (SL2) as a baseline, with
+    additional security measures designed to address risks from insider threats and well-resourced non-state external
+    actors": the baseline and one group of additional measures, addressing both threats; no insider-only group."""
+    atoms = {a for a in run.fact_atoms() if a[0] in ("includes", "addresses")}
+    assert atoms == {("includes", "security_level_2_plus", "rand_security_level_2"),
+                     ("includes", "security_level_2_plus", "sl2_plus_additional_measures"),
+                     ("addresses", "sl2_plus_additional_measures", "insiders"),
+                     ("addresses", "sl2_plus_additional_measures", "well_resourced_non_state_external_actors")}
+    assert "insider_threat_measures" not in vocabulary.MEASURES
+
+
+def test_g8_stipulates_only_the_circumvention_evidence():
+    """PLAN 5 "exactly the levels named ... and no others" and "Every other open term is unset unless the case says so";
+    G8 (PLAN 6.5) names only "post-deployment evidence that the safeguards are circumvented": no level, no activity."""
+    g8 = run.CASES["G8"]
+    assert (g8["levels"], g8["activity"], g8["findings"]) == ([], None, [["circumvention_evidence", "p"]])
+    assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
+
+
+def test_the_catastrophic_cell_states_the_l7_rationale_s_conditions():
+    """D2, 3.2.2 (src:15): "Unrestricted access to models at this level of capability could give an actor (or AI
+    systems) with adequate computational resources the ability to reach capabilities much more powerful ... This could
+    be catastrophic if there is no effective way of defending against rapidly improving and potentially superhuman AI
+    systems wielded by threat actors". The catastrophic cell is stated, as `might`, of an alternative whose label
+    carries all three conditions; the unmitigated deployment alternatives keep only their level's own harm."""
+    sd = OWN["severity_and_dates"]
+    label = sd.UNRESTRICTED_L7_LABEL
+    for condition in ("unrestricted access", "with adequate computational resources",
+                      "when there is no effective way of defending against rapidly improving and potentially "
+                      "superhuman AI systems wielded by threat actors"):
+        assert condition in label, condition
+    cells = RESULTS["d2_d3"]["d2"]["stated_cells"]
+    catastrophic = [c for c in cells if c["harm"] == sd.CATASTROPHIC]
+    assert catastrophic == [{"alternative": sd.UNRESTRICTED_L7, "harm": sd.CATASTROPHIC, "leads": False,
+                             "might": True}]
+    assert all(c["harm"] == "harm_of_" + c["alternative"].removeprefix("deploy_") for c in cells
+               if c["alternative"].startswith("deploy_"))

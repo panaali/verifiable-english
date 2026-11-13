@@ -61,6 +61,7 @@
 - `usecases/safety-framework/vocabulary.py` — The D1 vocabulary of the safety-framework case (PLAN sections 3.2 and 7).
 - `usecases/safetyfw_accounting.py` — Source accounting: each block of a translated case says what it leaves out of its quoted source, and why.
 - `usecases/safetyfw_common.py` — Shared, source-free mechanics for the frontier-framework case studies.
+- `usecases/safetyfw_shadow.py` — kb-10b shadow (evidence only): Python's selected rules and completed outcomes against Lean's `soft-selected`.
 - `usecases/udhr-pilot/run-20261010T1400Z/measure.py` — RD-5 steps 3 to 5: check, measure and query the migrated UDHR, beside the run of 20261006T1800Z as committed.
 - `usecases/udhr-pilot/run-20261010T1400Z/migrate.py` — RD-5 step 1: migrate the UDHR translation of run 20261006T1800Z to readings with their own vocabulary.
 - `usecases/udhr-pilot/run-20261010T1400Z/situations.py` — RD-5 step 2: separating situations for the migrated UDHR sets, proposed by the search and checked by Lean.
