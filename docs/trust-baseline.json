@@ -2714,6 +2714,13 @@
    "reason": "kb-1: the carry rule (VE.Kernel.Carry: Path, Row, Path.row, Path.Ran, shell, carry), K by the architect seat; spec kernel-boundary.md KB-1",
    "signature": "DRI-20261112-kb1 (reviews/dri-decisions-20261112-kb-1.md item 1)",
    "commit": "35a9ba135fe26df92ec412586a1999911839c15f"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "kb-10e prepared soft documents (new Lean-owned behaviour): untied V +5 against 9a3fd7a9f9ac, tools/trust_map.py --check: VE/Service/Protocol.lean +4 (softHandleKey, the case member naming a soft document, 3 lines, G[V], as handleKey; handshake +1, G[V]), ResponseShape/Schemas/Envelope.lean +1 (the handshake shape's soft_member). K +0, S +0. Prepared, prepareDocument and the other new definitions are tied (prepare_ok, prepareDocument_ok, ...). Itemised in docs/kernel/kb-10e/DELTA.md row 1; ties pass in manage-agents FOLLOW-UPS.md.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10e, 2026-11-13",
+   "commit": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210"
   }
  ]
 }

@@ -64692,6 +64692,13 @@ theorem VE.Service.modes_complete
   ∀ (m : VE.Service.Mode), m ∈ VE.Service.modes
   -- uses VE.Service.Mode@VE.Service.Registry VE.Service.modes@VE.Service.Registry
   -- expr 2611419048
+theorem VE.Service.prepareDocument_ok
+  ∀ {document : Lean.Json} {p : VE.SoftNorms.Run.Prepared},
+    VE.Service.prepareDocument document = Except.ok p →
+      VE.SoftNorms.Wire.decodeSoftSource (document.getObjValD "environment") (document.getObjValD "norms") =
+        Except.ok p.src
+  -- uses VE.Service.prepareDocument@VE.Service.Protocol VE.SoftNorms.Run.Prepared.src@VE.SoftNorms.Prepared VE.SoftNorms.Run.Prepared@VE.SoftNorms.Prepared VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3250752549
 theorem VE.Service.registerOne_digest
   ∀ (h : VE.Service.Handles) (key raw digest : String),
     VE.Service.decodeString "environment handle" key = Except.ok digest →

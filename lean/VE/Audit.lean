@@ -9015,6 +9015,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.expand_miss
 #print axioms VE.Service.expand_plain
 #print axioms VE.Service.modes_complete
+#print axioms VE.Service.prepareDocument_ok
 #print axioms VE.Service.registerOne_digest
 #print axioms VE.Service.registerOne_ok
 #print axioms VE.Service.register_none
