@@ -933,10 +933,8 @@
   {
    "id": "G8",
    "family": "G",
-   "levels": [
-    "cbrn_uplift_level_1"
-   ],
-   "activity": "EXT",
+   "levels": [],
+   "activity": null,
    "findings": [
     [
      "circumvention_evidence",
