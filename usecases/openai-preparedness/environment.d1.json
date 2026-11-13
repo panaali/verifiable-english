@@ -9,7 +9,7 @@
   "vocabulary": {
     "sorts": {
       "situation": {
-        "description": "a development, use, deployment, review or decision of a covered model"
+        "description": "a development, use, deployment, review or decision of a model"
       },
       "level": {
         "description": "one of Table 1's six named capability levels"
@@ -50,7 +50,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "there is reasonable evidence that safeguards are not working at {0}"
+        "description": "at {0} OpenAI ('we') finds reasonable evidence that its safeguards are not working as expected (4.2: “If we find reasonable evidence that our safeguards are not working as expected”); OpenAI ('we') decides this (OT11)"
       },
       "adjustment_conditions": {
         "arguments": [
@@ -643,11 +643,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1 and 4.2",
+        "description": "4.2: “We compile the information on the planned safeguards needed to minimize the risk of severe harm into a Safeguards Report.” (section 4: for covered systems that reach a capability threshold)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a Safeguards Report"
+          "act": "{0} have planned safeguard information compiled into a Safeguards Report"
         }
       },
       "risk_paths": {
@@ -720,11 +720,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "2.3: periodic review",
+        "description": "2.3: “We will periodically review the latest research and findings for each Research Category.” (the periodicity stays ET-blocked)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have research categories reviewed"
+          "act": "{0} review the latest research as well as findings in each Research Category"
         }
       },
       "decision_documented": {
@@ -973,11 +973,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 1 CYB-H: cyberdefense contribution",
+        "description": "Table 1 CYB-H: “Contribute towards improved cyberdefense policies and tools for cyberdefense”",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} contribute towards improved cyberdefense policies as well as tools"
+          "act": "{0} contribute to improved cyberdefense policies as well as cyberdefense tools"
         }
       },
       "safeguards_recommended": {
