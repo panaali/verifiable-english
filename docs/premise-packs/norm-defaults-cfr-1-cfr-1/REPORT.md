@@ -3,7 +3,7 @@
 Summary: READY FOR REVIEW. The `ve_service`/`norm-defaults` bindings of ve/assurance-manifest.json now cover the
 10 kinds the mode answers only through its `norms.json#/row` fallback, each with the binding its answering path
 already declares. The coverage test reads the full answered set from the rendered schemas. No Lean, Rust or `ve/*.py`
-change; trust +0; no DELTA row; no DRI signature reserved.
+change; trust +0; no DELTA row; no DRI signature reserved. Selected run on e50ddd46d3: 310 units, 0 failed.
 
 Source: regrade #3 (ndc1-F4, C->A, cross-family Astra 11-11; reviews/l1-c-regrade-norm-defaults-c-20261111.md) and
 the DRI ruling "BIND, not reword" (reviews/dri-decisions-20261111-portfolio1500.md item 5, third bullet). Base
@@ -75,7 +75,10 @@ ve/assurance-manifest.json is JSON data (S1, S3).
 - The two Lean-probe tests (`test_every_lean_binding_routes_its_operation`, `test_every_real_answer_is_counted_and_indexed`)
   need the Rust release binary to build the `evaluate` and `countermodel` probes. That binary is missing in this
   worktree, so they run in the final selected run on the Mac runner (below).
-- Final selected run: see "Final run" below.
+- Final selected run (committed tree e50ddd46d3, clean; `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base
+  175814252d --run`, ran on ve-cloud-2): 310 of 609 units selected, exit 0, 0 failed. It included
+  tests/test_norm_defaults_response_binding.py (exit 0) and tests/test_assurance_manifest.py (exit 0, with the two
+  Lean-probe tests over all 10 new probes). Pre-existing failures on main: none met.
 
 ## Pilot bytes
 
