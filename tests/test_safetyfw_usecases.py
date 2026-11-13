@@ -463,7 +463,7 @@ def test_rsp_n1_classification_is_explicit_for_every_rule(rsp_modules):
     ("B-INTD", "in_scope"),
     ("K2", "off_cycle_published"),
     ("K4", "off_cycle_published"),
-    ("K22", "goal_miss_addressed"),
+    ("K22", "roadmap_review_addressed"),
 ])
 def test_rsp_n1_prediction_removes_inherited_commitments(rsp_modules, case_id, predicate):
     """F4: the selected Lean rules disappear when N1 is removed, even without a local 'will'."""
