@@ -1,0 +1,3 @@
+2946.64s call     tests/test_zz_main_consolidation_tmp.py::test_mutated_committed_ties_are_reported_or_rejected
+5.67s setup    tests/test_zz_main_consolidation_tmp.py::test_mutated_committed_ties_are_reported_or_rejected
+1 passed, 287 deselected in 2952.73s (0:49:12)

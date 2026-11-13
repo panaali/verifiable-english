@@ -5477,6 +5477,16 @@
    ],
    "kind": "norm",
    "reading_set": "rs9-access",
+   "untranslated": [
+    {
+     "span": [
+      64799,
+      64846
+     ],
+     "reason": "possibility_not_duty",
+     "detail": "a possibility the sentence states, not a duty, and no permission the text grants (PLAN 3.3)"
+    }
+   ],
    "open_terms": [
     "ot3"
    ],

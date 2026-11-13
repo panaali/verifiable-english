@@ -133,8 +133,9 @@ The six B-*L*/MREP cells, once truncated in `answer-key.json` (`SOME(N` and a st
 reviews/dri-decisions-20261030-usecase-pf-run.md (`usecase-pf-keyfix`, PLAN 12 item 15); section 6 is unchanged and
 `tests/test_usecase_key_transcription.py` checks every transcribed cell against it. The three disagreements are the
 K findings of PLAN 12 items 19 and 20 (openai-preparedness-fidelity-fix): C6 and C-doc are NONE, because RS11 = final
-("no other body may change them") is excluded by the Board sentence, and G9 is SOME(P ∨ scoped), because Table 2's
-nuclear row states no condition. Against those entries the count would be 239 / 239. G7 (footnote 5's indicator
+("no other body may change them") is excluded by the Board sentence, and G9 is NONE (item 20 as amended by item 25,
+openai-preparedness-fidelity-fix-4), because Table 2's nuclear row and C.2's misaligned-model sentence state no
+condition, so their duties reach G9's model too. Against those entries the count would be 239 / 239. G7 (footnote 5's indicator
 relation, `fn5-indicator`) and N4 (change log item 2, `cl-levels`) are answered (PLAN 12 item 21).
 
 All six PLAN 11 mutants change exactly their named results (M9 6/6); the m2 rule is flagged by the invention audit.
