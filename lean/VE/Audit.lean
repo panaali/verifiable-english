@@ -520,6 +520,7 @@ import VE.Time.Document
 import VE.Time.Semantics
 import VE.Time.Syntax
 import VE.Time.Wire
+import VE.Time.WireSound
 import VE.Typing
 import VE.Weighing.Conditions
 import VE.Weighing.ZoneExamples
@@ -9591,7 +9592,13 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.QVocab.core_environment
 #print axioms VE.Time.Wire.checkW6Certificate_sound
 #print axioms VE.Time.Wire.evalB_sorted_sound
+#print axioms VE.Time.Wire.extension_document_sound
+#print axioms VE.Time.Wire.quantity_admission_wire_sound
+#print axioms VE.Time.Wire.quantity_certificate_wire_sound
+#print axioms VE.Time.Wire.quantity_countermodel_wire_sound
+#print axioms VE.Time.Wire.quantity_document_wire_sound
 #print axioms VE.Time.Wire.refutesB_sorted_sound
+#print axioms VE.Time.Wire.runCaseReported_ok
 #print axioms VE.Time.Wire.sortDomains_perm
 #print axioms VE.Time.addDays_proper
 #print axioms VE.Time.addDays_succ
