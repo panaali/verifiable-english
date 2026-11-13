@@ -1,0 +1,9 @@
+job=armsh-cand-openai-preparedness-fidelity-fix-2-759abe33-t553768-s2 shard=2/4 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T07:10:49Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  103G  30% /
+ 07:10:49 up 9 min,  0 user,  load average: 1.30, 0.54, 0.27
+pilot/codex branches: 98
+ve-cache: lean-build exact key c973584165fb asset lean-build-c973584165fb-linux-aarch64.tar.zst sha256 dc51303157b5 ok, seal ok, from download, 13.2 s
+seed: mode=seed-fp match=exact asset=lean-build-c973584165fb-linux-aarch64.tar.zst pruned=0 base=ab9bbe1c1f4d
+seed: lake 0.4 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
