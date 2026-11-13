@@ -63,6 +63,35 @@ def verdictOf (j : Json) : String :=
 #guard verdictOf (slotCase "slot-conflict" (some ("[" ++ fact ++ "]")) [witnessField]) ==
   "error: InvalidModel(facts): the model violates a fact"
 
+/-! ## slot-certificate -/
+
+/-- A certificate of `claim` from `background′ ++ [fact] ++ layer premises`, and one of `top` with no facts,
+each bound as `replaySlotEntailment` binds it (Python's prover, the test's `slot_certificate`). -/
+def claim : String := r#"["forall", "assistant", ["implies", ["unary", "v", ["var", 0]], ["not", ["unary", "w", ["var", 0]]]]]"#
+def factCertificateText : String := r#"{"checker_version":"ve-tableau-checker@2","environment_id":"3eb973d9d7889fa10550e4a1fdf13ac3230ecfc7c6c58f90ddbc74ed72acb728","premise_meaning_ids":["38ba47e33900bc08cb00bb3218c2c6867ffdff842e6d9d0261dee564f1f16cbc","80d405ebfe1bcc5cd5511e9d67353ed08a77dc6da1592c5e3ba5b396d24988e3","6d9310a7bf46d7a205a785596452bfc6c7c56829416e3052e5b17db5690e77a3","a4d5fadcfaf39a790711f232d1dea2eeb25516e29b16d06bee7d9b71870894fb"],"conclusion_meaning_id":"afa05fd90352f3f0ada1b819b24e948e7297a51445c7f876a5e35ee70a3d33c2","trace":{"rule":"expand","at":4,"children":[{"rule":"expand","at":1,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":7,"children":[{"rule":"close"},{"rule":"expand","at":9,"children":[{"rule":"close"}]}]}]}]}],"parameter":"w:0"}]}}"#
+def topCertificateText : String := r#"{"checker_version":"ve-tableau-checker@2","environment_id":"3eb973d9d7889fa10550e4a1fdf13ac3230ecfc7c6c58f90ddbc74ed72acb728","premise_meaning_ids":["38ba47e33900bc08cb00bb3218c2c6867ffdff842e6d9d0261dee564f1f16cbc","6d9310a7bf46d7a205a785596452bfc6c7c56829416e3052e5b17db5690e77a3","a4d5fadcfaf39a790711f232d1dea2eeb25516e29b16d06bee7d9b71870894fb"],"conclusion_meaning_id":"0d5c1d1252b393e57a2408efa3d2188975980180136726032b7d839e0494ee96","trace":{"rule":"close"}}"#
+
+def certificateCase (kind : String) (facts : Option String) (conclusion certificate : String)
+    (extra : List (String × Json) := []) : Json :=
+  slotCase kind facts ([("premises", Json.arr #[]), ("conclusion", parsed conclusion),
+    ("certificate", parsed certificate)] ++ extra)
+
+def validOf (j : Json) : String :=
+  match runCase j with
+  | .ok a => s!"valid={a.getObjValD "valid"} facts={a.getObjValD "facts"}"
+  | .error e => "error: " ++ e
+
+-- With its fact, the claim's certificate replays; with the facts reordered or dropped it is bound to nothing.
+#guard validOf (certificateCase "slot-certificate" (some ("[" ++ fact ++ "]")) claim factCertificateText
+  [factsModel true false]) == "valid=true facts=1"
+#guard validOf (certificateCase "slot-certificate" (some "[]") claim factCertificateText) ==
+  "error: certificate is stale or bound to different inputs"
+-- No facts: slot-certificate answers soft-certificate's answer and `facts: 0` (`slot_wire_empty`).
+#guard match runCase (certificateCase "soft-certificate" none r#"["top"]"# topCertificateText),
+    runCase (certificateCase "slot-certificate" (some "[]") r#"["top"]"# topCertificateText) with
+  | .ok soft, .ok slot => slot == soft.setObjVal! "facts" (toJson (0 : Nat)) && soft.getObjValD "valid" == .bool true
+  | _, _ => false
+
 /-! ## The acceptance addendum's Lean-side cases -/
 
 /-- The refusal of `facts` on each slot form (certificate, conflict over packages, witness). -/

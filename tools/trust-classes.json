@@ -22211,10 +22211,13 @@
     },
     "VE/SoftNorms/SlotExamples.lean": {
       "T": [
+        "VE.SoftNorms.SlotExamples.certificateCase",
         "VE.SoftNorms.SlotExamples.certificateFields",
+        "VE.SoftNorms.SlotExamples.claim",
         "VE.SoftNorms.SlotExamples.contradiction",
         "VE.SoftNorms.SlotExamples.environmentText",
         "VE.SoftNorms.SlotExamples.fact",
+        "VE.SoftNorms.SlotExamples.factCertificateText",
         "VE.SoftNorms.SlotExamples.factsModel",
         "VE.SoftNorms.SlotExamples.normsText",
         "VE.SoftNorms.SlotExamples.packagesField",
@@ -22223,8 +22226,23 @@
         "VE.SoftNorms.SlotExamples.refusals",
         "VE.SoftNorms.SlotExamples.situation",
         "VE.SoftNorms.SlotExamples.slotCase",
+        "VE.SoftNorms.SlotExamples.topCertificateText",
+        "VE.SoftNorms.SlotExamples.validOf",
         "VE.SoftNorms.SlotExamples.verdictOf",
         "VE.SoftNorms.SlotExamples.witnessField"
+      ]
+    },
+    "ResponseShape/SlotExamples.lean": {
+      "T": [
+        "ResponseShape.SlotExamples.accepts",
+        "ResponseShape.SlotExamples.certificate",
+        "ResponseShape.SlotExamples.conflictFree",
+        "ResponseShape.SlotExamples.oneFact",
+        "ResponseShape.SlotExamples.refused",
+        "ResponseShape.SlotExamples.run",
+        "ResponseShape.SlotExamples.soft",
+        "ResponseShape.SlotExamples.unknown",
+        "ResponseShape.SlotExamples.witness"
       ]
     }
   }

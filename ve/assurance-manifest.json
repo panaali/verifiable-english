@@ -2596,7 +2596,8 @@
       "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
       "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
       "lean/VE/SoftNorms/SlotSound.lean": "statements about SoftNorms.Run.runCase slot-certificate and slot-conflict answers (getObjVal? of the case's facts and witness, getObjValD of its environment, norms, pairs, budget and coherent_model, Json.mkObj of a decoded model) and their proofs; no runtime JSON handling",
-      "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path"
+      "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path",
+      "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path"
     }
   },
   "plan_operations": {
