@@ -1,0 +1,8 @@
+job=armsh-cand-openai-preparedness-fidelity-fix-2-3b619aed-t547039-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T05:19:25Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  103G  30% /
+ 05:19:25 up 8 min,  0 user,  load average: 1.26, 0.51, 0.25
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=ab9bbe1c1f4d
+seed: lake 1321.6 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 574 s)
