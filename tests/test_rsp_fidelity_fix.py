@@ -604,19 +604,29 @@ def test_fix_4_each_row_plan_is_whole_in_both_row_headers_and_in_the_act_legend(
         assert len(plans[name]) == 1 and plans[name][0].startswith(start) and plans[name][0].endswith(end), name
     assert [(q[:len(s)], q[-len(e):]) for q, (s, e) in zip(plans["automated_rd"], T4_PINS)] == list(T4_PINS)
     assert len(plans["automated_rd"]) == len(T4_PINS) == 7
-    legend = _legend("plans_in_place")
     for block_id in ROW_BLOCKS:
         source = _block("rules.d1.ve", block_id).source
-        assert "..." not in source and "…" not in source, block_id
+        assert "..." not in source and "\u2026" not in source, block_id
         assert [q for q in _row_quotes() if f'"{q}"' not in source] == [], block_id
         assert _rule(block_id)["predicate"] == "plans_in_place", block_id
-    assert "..." not in legend and "…" not in legend
-    for name in ROW_PLAN_PINS:
-        assert f'({name}): "{plans[name][0]}"' in legend, name
+    assert _rows_missing_from(_legend("plans_in_place")) == []
+    # The other direction: the base's pointer legend, or a legend that lost T4's last bullet, is refused.
+    assert len(_rows_missing_from("the middle column's plans of the row of {1} are in place at {0} (section 1, "
+                                  "PROTk)")) == 4
+    assert _rows_missing_from(_legend("plans_in_place").replace(plans["automated_rd"][6], "")) == ["automated_rd"]
+
+
+def _rows_missing_from(legend):
+    """The rows whose plans the legend does not quote whole under the row's threshold (T4: "We will:" and each
+    bullet, numbered)."""
+    plans = rsp_vocabulary.ROW_PLANS
+    missing = [name for name in ROW_PLAN_PINS if f'({name}): "{plans[name][0]}"' not in legend]
     t4 = plans["automated_rd"]
-    assert f'(automated_rd): "{t4[0]}" and its five bullets' in legend
     bullets = [t4[1], f"{t4[2]} {t4[3]}", *t4[4:]]
-    assert all(f'({k}) "{bullet}"' in legend for k, bullet in enumerate(bullets, 1))
+    if (f'(automated_rd): "{t4[0]}" and its five bullets' not in legend or "..." in legend
+            or not all(f'({k}) "{bullet}"' in legend for k, bullet in enumerate(bullets, 1))):
+        missing.append("automated_rd")
+    return missing
 
 
 def test_fix_4_c3_blocks_carry_f1s_clause_and_f10s_sentence():
@@ -663,30 +673,49 @@ def test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bull
         assert saved[block_id]["span_length"] > sum(map(len, _row_quotes())), block_id
 
 
+def _omission_records(sidecar, units):
+    """uc-audit-omission-accept's record paths a file of this case can show, for `units`: a unit with no accounting
+    line ("no record"), a "loss" or "reading" entry, or a "restates" / "rule <id>" tag whose carrier's rule and legends
+    do not hold the words."""
+    acc = _accounting()
+    legend = acc.legends(json.loads((RSP / "environment.d1.json").read_text()))
+    blocks = {b["id"]: b for name in acc.BLOCK_FILES for b in acc.read_blocks(RSP / name)}
+
+    def carried(block_id):
+        text = blocks[block_id]["text"] if block_id in blocks else ""
+        return acc.words(text).union(*(legend[n]["legend"] for n in acc.used_names(text, legend)))
+
+    found = []
+    for unit in sorted(units):
+        if unit not in sidecar:
+            found.append((unit, "no record"))
+        for entry in sidecar.get(unit) or []:
+            if entry["reason"] in ("loss", "reading"):
+                found.append((unit, entry["reason"]))
+            elif entry["reason"] in ("restates", "rule"):
+                carrier = unit if entry["reason"] == "restates" else entry["arg"]
+                if not acc.words(entry["words"]) <= carried(carrier):
+                    found.append((unit, f"unresolved {entry['reason']}"))
+    return found
+
+
 def test_fix_4_c3_and_prot_units_carry_no_omission_record():
     """(c) uc-audit-omission-accept's record paths that a file of this case can show, for every unit C3 and
     PROT1-PROT4 read: an accounting line (never "no record") with no "loss"; every "restates" or "rule <id>" tag
     resolves to a carrier whose rule or legends hold the words; no "reading" tag; and no UNFORMALISED span among RS1's
     units. (PLAN 12 and REPORT records are the audit seat's read; the REPORT says so.)"""
     acc = _accounting()
-    env = json.loads((RSP / "environment.d1.json").read_text())
-    legend = acc.legends(env)
-    blocks = {b["id"]: b for name in acc.BLOCK_FILES for b in acc.read_blocks(RSP / name)}
     sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
-
-    def carried(block_id):
-        text = blocks[block_id]["text"]
-        return acc.words(text).union(*(legend[n]["legend"] for n in acc.used_names(text, legend)))
-
     units = _c3_and_prot_units()
-    assert {"rows-cond", "rows-uncond", "f10-in-line"} <= units
-    for unit in sorted(units):
-        assert unit in sidecar, f"{unit}: no record"
-        for entry in sidecar[unit] or []:
-            assert entry["reason"] not in ("loss", "reading"), (unit, entry)
-            carrier = unit if entry["reason"] == "restates" else entry["arg"]
-            if entry["reason"] in ("restates", "rule"):
-                assert acc.words(entry["words"]) <= carried(carrier), (unit, entry)
+    assert {"rows-cond", "rows-uncond", "f10-in-line", "threshold-t1"} <= units
+    assert _omission_records(sidecar, units) == []
+    # The other direction: the base's rows-cond loss, a dropped line and a tag to a carrier without the words.
+    planted = {**sidecar, "rows-cond": [{"words": "We will maintain or improve on our ASL-3 protections",
+                                         "reason": "loss", "arg": "1"}],
+               "f10-in-line": [{"words": "noteworthy changes and deviations", "reason": "rule", "arg": "f6-maintain"}]}
+    del planted["rows-uncond"]
+    assert _omission_records(planted, units) == [("f10-in-line", "unresolved rule"), ("rows-cond", "loss"),
+                                                 ("rows-uncond", "no record")]
     spans = json.loads((RSP / "spans.json").read_text())["units"]
     rs1 = [u for u in spans if u.get("reading_set", "").startswith("rs1_") or re.match(r"t[1-4]-plan", u["id"])]
     assert len(rs1) == 10 and [u["id"] for u in rs1 if u["status"] == "UNFORMALISED"] == []
