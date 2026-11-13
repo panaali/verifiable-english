@@ -18,6 +18,7 @@ import VE.Service.ReadingsChoices
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
 import VE.SoftNorms.Run
+import VE.SoftNorms.Prepared
 import VE.Rights.Run
 import VE.SpeechActs.Run
 import VE.Attribution.Run
@@ -626,24 +627,42 @@ of at most `maxHandleBytes` in all; registering beyond either bound first emptie
 A case that names a handle and no environment is answered as the case with the registered
 environment in place of the handle (`expand_hit`, `runRequest_ok`); every other case is
 answered as before (`expand_plain`). English and `risk-eval` cases are never expanded: their
-decoders are not the restricted one the table parses with. -/
+decoders are not the restricted one the table parses with.
+
+Soft documents (kb-10e) are registered the same way: the text of `{"environment": …, "norms": …}`
+under its SHA-256, in the same table, with the same bounds. A `soft-norms` `soft-selected` case that
+names one by `soft_document_handle`, and names no environment, norms or environment handle, is
+answered as the case with the document's environment and norms written out (`expandSoft_hit`), from
+the document prepared once in its entry (`softResult_cached`); any other case naming one is refused
+(`expandSoft_refused`), and a handle the table does not hold makes the request unavailable
+(`expandSoft_miss`). The service runs such requests with `runSoftRequest`. -/
 
 def maxHandles : Nat := 64
 def maxHandleBytes : Nat := 67108864
 /-- The case member naming a registered environment. -/
 def handleKey : String := "environment_handle"
+/-- The case member naming a registered soft document. -/
+def softHandleKey : String := "soft_document_handle"
+
+/-- What a registered soft document prepares to: `prepare` of its `environment` and `norms`. -/
+def prepareDocument (document : Json) : Except String VE.SoftNorms.Run.Prepared :=
+  VE.SoftNorms.Run.prepare (document.getObjValD "environment") (document.getObjValD "norms")
 
 /-- A registered environment, and what the `metered` mode decodes from it alone
 (`MeteredRun.prepare`), decoded on the first case against it. It is kept in the entry, so it
 is replaced or dropped exactly with its handle, and it is always this environment's
-(`prepared_eq`): the table holds at most `maxHandles` of them, one per held environment. -/
+(`prepared_eq`): the table holds at most `maxHandles` of them, one per held environment. Beside it,
+the entry's text read as a soft document, prepared on the first case naming it as one (`soft_eq`). -/
 structure Entry where
   environment : Json
   prepared : Thunk VE.Route.MeteredRun.Prepared
   prepared_eq : prepared.get = VE.Route.MeteredRun.prepare environment
+  soft : Thunk (Except String VE.SoftNorms.Run.Prepared)
+  soft_eq : soft.get = prepareDocument environment
 
 def Entry.of (environment : Json) : Entry :=
-  ⟨environment, Thunk.mk fun _ => VE.Route.MeteredRun.prepare environment, rfl⟩
+  ⟨environment, Thunk.mk fun _ => VE.Route.MeteredRun.prepare environment, rfl,
+    Thunk.mk fun _ => prepareDocument environment, rfl⟩
 
 structure Handles where
   table : Std.HashMap String Entry := {}
@@ -691,6 +710,43 @@ def Handles.expand (h : Handles) (j : Json) : Except String Json :=
     | _, _ => pure j
   | _ => pure j
 
+/-- The case `kvs` naming a soft document, written out: the handle replaced by the document's
+`environment` and `norms`. -/
+def softExpanded (kvs : Std.TreeMap.Raw String Json compare) (document : Json) : Json :=
+  .obj (((kvs.erase softHandleKey).insert "environment" (document.getObjValD "environment")).insert "norms"
+    (document.getObjValD "norms"))
+
+/-- A case a soft document handle may name: a `soft-selected` case of the `soft-norms` mode that
+names no environment, norms or environment handle. -/
+def softNamed (m : Mode) (j : Json) : Bool :=
+  m == .softNorms && (match j.getObjValD "kind" with | .str "soft-selected" => true | _ => false) &&
+    !(j.getObjVal? "environment").toBool && !(j.getObjVal? "norms").toBool && !(j.getObjVal? handleKey).toBool
+
+/-- The refusal of a case naming a soft document where `softNamed` does not hold. -/
+def softRefusal : String :=
+  s!"InvalidInput: {softHandleKey} names a soft document only in a soft-selected case of the soft-norms " ++
+    s!"mode, with no environment, norms or {handleKey}"
+
+/-- A case as the mode reads it: a case naming a soft document, as `softNamed` allows, written out
+with the registered document (`softExpanded`), refused (a case error) otherwise, and the request
+unavailable when the table does not hold the handle; any other case is `expand`'s. -/
+def Handles.expandSoft (h : Handles) (m : Mode) (j : Json) : Except String (Except String Json) :=
+  match j, j.getObjVal? softHandleKey with
+  | .obj kvs, .ok handle =>
+    match handle, softNamed m j with
+    | .str d, true =>
+      match h.table[d]? with
+      | some e => pure (.ok (softExpanded kvs e.environment))
+      | none => throw s!"CheckerUnavailable: soft document handle {d} is not registered"
+    | _, _ => pure (.error softRefusal)
+  | _, _ => .ok <$> h.expand j
+
+/-- The entry of the soft document a case names. -/
+def Handles.softEntry? (h : Handles) (j : Json) : Option Entry :=
+  match j.getObjVal? softHandleKey with
+  | .ok (.str d) => h.table[d]?
+  | _ => none
+
 /-- The entry a case names: its handle's, when it names a held handle and no environment. -/
 def Handles.entry? (h : Handles) (j : Json) : Option Entry :=
   match j.getObjVal? handleKey, j.getObjVal? "environment" with
@@ -711,16 +767,21 @@ def results (r : Request) (cases : Array (Except String Json)) (entries : Array 
     Array Json :=
   cases.mapIdx fun i c => caseResultWith r.mode i (entries.getD i none) c
 
+/-- The response to a request with `cases.size` cases whose results are `rs` and whose case
+digests are `digests` (one per case). -/
+def responseOf (r : Request) (cases : Array (Except String Json)) (digests : Array String) (rs : Array Json) :
+    Json :=
+  Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
+    ("results", .arr (bindResults rs digests)),
+    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
+      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
+
 /-- The response to a request whose cases decode to `cases` and whose case digests are
 `digests` (one per case). The results are computed once, for both `results` and
 `counts`. -/
 def response (r : Request) (cases : Array (Except String Json)) (digests : Array String)
     (entries : Array (Option Entry) := #[]) : Json :=
-  let rs := results r cases entries
-  Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
-    ("results", .arr (bindResults rs digests)),
-    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
-      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
+  responseOf r cases digests (results r cases entries)
 
 /-- Every decoded case expanded (`Handles.expand`), except in the English and `risk-eval`
 modes. -/
@@ -728,7 +789,7 @@ def expandCases (h : Handles) (m : Mode) (cases : Array (Except String Json)) :
     Except String (Array (Except String Json)) :=
   if m == .english || m == .riskEval then pure cases
   else cases.mapM fun
-    | .ok j => .ok <$> h.expand j
+    | .ok j => h.expandSoft m j
     | .error message => pure (.error message)
 
 /-- The request's budget: the service limits, lowered by its `budget` member. -/
@@ -737,7 +798,8 @@ def Request.budget (r : Request) : Except String Budget :=
   | some raw => decodeBudget raw
   | none => pure {}
 
-def runRequest (h : Handles) (r : Request) : Except String Json := do
+/-- The request's cases, decoded within its budget, and their digests, one per case. -/
+def Request.decoded (r : Request) : Except String (Array (Except String Json) × Array String) := do
   let budget ← r.budget
   let bytes := r.cases.utf8ByteSize
   if bytes > budget.bytes then
@@ -748,7 +810,30 @@ def runRequest (h : Handles) (r : Request) : Except String Json := do
     throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
   let digests ← caseDigests r.cases
   unless digests.size == cases.size do throw "batch split mismatch"
+  pure (cases, digests)
+
+def runRequest (h : Handles) (r : Request) : Except String Json := do
+  let (cases, digests) ← r.decoded
   pure (response r (← expandCases h r.mode cases) digests (cases.map (·.toOption.bind h.entry?)))
+
+/-- Result `i` of a `soft-norms` request, from its case as decoded (`sent`) and as expanded (`c`):
+a case naming a held soft document is answered from the entry's prepared document
+(`softResult_cached`), any other as `caseResultWith` answers it. -/
+def softResult (h : Handles) (i : Nat) (sent c : Except String Json) : Json :=
+  match sent.toOption.bind h.softEntry?, c with
+  | some e, .ok j => VE.SoftNorms.Run.runCaseReportedP e.soft.get j
+  | _, _ => caseResultWith .softNorms i (sent.toOption.bind h.entry?) c
+
+/-- The results of a `soft-norms` request in request order, `softResult` of each case. -/
+def softResults (h : Handles) (cases expanded : Array (Except String Json)) : Array Json :=
+  expanded.mapIdx fun i c => softResult h i (cases.getD i (.error "")) c
+
+/-- `runRequest` for a `soft-norms` request: the same checks, expansion and response, each result
+`softResult`'s (`runSoftRequest_ok`). -/
+def runSoftRequest (h : Handles) (r : Request) : Except String Json := do
+  let (cases, digests) ← r.decoded
+  let expanded ← expandCases h r.mode cases
+  pure (responseOf r expanded digests (softResults h cases expanded))
 
 /-- The error for a line whose envelope cannot be decoded: it answers no request, so
 it carries the id when one can be read and no binding. -/
@@ -821,16 +906,7 @@ def readingsResponse (r : Request) (cases : Array (Except String Json)) (digests
 
 def runReadingsRequest (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (r : Request) :
     Except String (Json × VE.Readings.Run.AdmissionMemo) := do
-  let budget ← r.budget
-  let bytes := r.cases.utf8ByteSize
-  if bytes > budget.bytes then
-    throw s!"ResourceLimit: cases are {bytes} bytes; budget is {budget.bytes}"
-  unless r.cases.trim.startsWith "[" do throw "request field cases must be an array"
-  let cases ← decodeCases r
-  if cases.size > budget.cases then
-    throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
-  let digests ← caseDigests r.cases
-  unless digests.size == cases.size do throw "batch split mismatch"
+  let (cases, digests) ← r.decoded
   pure (readingsResponse r (← expandCases h r.mode cases) digests memo)
 
 def respondMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
@@ -849,7 +925,7 @@ def respondMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : Str
           | .ok (answer, next) => (answer, h', next)
           | .error message => (requestError r message, h', memo)
         else
-          match runRequest h' r with
+          match (if r.mode == .softNorms then runSoftRequest h' r else runRequest h' r) with
           | .ok answer => (answer, h', memo)
           | .error message => (requestError r message, h', memo)
 
@@ -976,8 +1052,8 @@ theorem runRequest_ok (h : Handles) (r : Request) (budget : Budget) (cases expan
     (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size)
     (hx : expandCases h r.mode cases = .ok expanded) :
     runRequest h r = .ok (response r expanded digests (cases.map (·.toOption.bind h.entry?))) := by
-  simp [runRequest, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, hx, bind, Except.bind, pure,
-    Except.pure]
+  simp [runRequest, Request.decoded, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, hx, bind,
+    Except.bind, pure, Except.pure]
 
 /-- A case that names no handle is answered as it was sent. -/
 theorem expand_plain (h : Handles) (j : Json) (hj : ∀ d, j.getObjVal? handleKey ≠ .ok (.str d)) :
@@ -1053,6 +1129,116 @@ theorem expand_miss (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d
   cases hv : (Json.obj kvs).getObjVal? "environment" with
   | ok e => exact absurd hv (he e)
   | error _ => simp [hd, ht, throw, throwThe, MonadExceptOf.throw]
+
+/-! ### Soft documents (kb-10e) -/
+
+/-- A case that names no soft document is expanded as before. -/
+theorem expandSoft_plain (h : Handles) (m : Mode) (j : Json) (hj : ∀ v, j.getObjVal? softHandleKey ≠ .ok v) :
+    h.expandSoft m j = .ok <$> h.expand j := by
+  unfold Handles.expandSoft
+  split
+  · next v hv => exact absurd hv (hj v)
+  · rfl
+
+/-- A case that `softNamed` allows, naming a held soft document, is the case with the document's
+environment and norms in place of the handle. -/
+theorem expandSoft_hit (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String) (entry : Entry)
+    (hd : (Json.obj kvs).getObjVal? softHandleKey = .ok (.str d)) (hn : softNamed .softNorms (.obj kvs) = true)
+    (ht : h.table[d]? = some entry) :
+    h.expandSoft .softNorms (.obj kvs) = .ok (.ok (softExpanded kvs entry.environment)) := by
+  simp only [Handles.expandSoft, hd, hn, ht, pure, Except.pure]
+
+/-- Such a case naming a soft document the table does not hold makes the request unavailable;
+it is never answered from another entry. -/
+theorem expandSoft_miss (h : Handles) (m : Mode) (kvs : Std.TreeMap.Raw String Json compare) (d : String)
+    (hd : (Json.obj kvs).getObjVal? softHandleKey = .ok (.str d)) (hn : softNamed m (.obj kvs) = true)
+    (ht : h.table[d]? = none) :
+    h.expandSoft m (.obj kvs) = .error s!"CheckerUnavailable: soft document handle {d} is not registered" := by
+  simp only [Handles.expandSoft, hd, hn, ht, throw, throwThe, MonadExceptOf.throw]
+
+/-- Any other case naming a soft document, or one whose handle is not a string, is refused. -/
+theorem expandSoft_refused (h : Handles) (m : Mode) (kvs : Std.TreeMap.Raw String Json compare) (handle : Json)
+    (hd : (Json.obj kvs).getObjVal? softHandleKey = .ok handle)
+    (hn : ∀ d, handle = .str d → softNamed m (.obj kvs) = false) :
+    h.expandSoft m (.obj kvs) = .ok (.error softRefusal) := by
+  unfold Handles.expandSoft
+  simp only [hd]
+  split
+  · next d hs => exact absurd (hn d rfl) (by simp [hs])
+  · rfl
+
+/-- The written-out case: the document's environment and norms, and no soft document handle. -/
+theorem softExpanded_members (kvs : Std.TreeMap.Raw String Json compare) (document : Json) (hw : kvs.WF) :
+    (softExpanded kvs document).getObjVal? "environment" = .ok (document.getObjValD "environment") ∧
+      (softExpanded kvs document).getObjValD "norms" = document.getObjValD "norms" ∧
+      ∀ v, (softExpanded kvs document).getObjVal? softHandleKey ≠ .ok v := by
+  have w1 := hw.erase (a := softHandleKey)
+  have w2 := w1.insert (a := "environment") (b := document.getObjValD "environment")
+  refine ⟨?_, ?_, ?_⟩
+  · simp [softExpanded, Json.getObjVal?, Std.TreeMap.Raw.getElem?_insert w2,
+      Std.TreeMap.Raw.getElem?_insert_self w1, pure, Except.pure]
+  · have hn : (softExpanded kvs document).getObjVal? "norms" = .ok (document.getObjValD "norms") := by
+      simp only [softExpanded, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
+        Std.TreeMap.Raw.getElem?_insert_self w2]
+      rfl
+    show ((softExpanded kvs document).getObjVal? "norms").toOption.getD .null = _
+    rw [hn]
+    rfl
+  · intro v
+    have hk : (((kvs.erase softHandleKey).insert "environment" (document.getObjValD "environment")).insert "norms"
+        (document.getObjValD "norms"))[softHandleKey]? = none := by
+      rw [Std.TreeMap.Raw.getElem?_insert w2, Std.TreeMap.Raw.getElem?_insert w1,
+        Std.TreeMap.Raw.getElem?_erase_self hw]
+      simp [softHandleKey]
+    simp only [softExpanded, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?, hk]
+    simp [throw, throwThe, MonadExceptOf.throw]
+
+/-- The point of kb-10e: a case naming a held soft document is answered, from the document prepared
+in its entry, exactly as the soft route's unprepared runner answers the case with the document's
+environment and norms written out (`expandSoft_hit`). -/
+theorem softResult_cached (h : Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Json compare) (d : String)
+    (entry : Entry) (hd : (Json.obj kvs).getObjVal? softHandleKey = .ok (.str d))
+    (ht : h.table[d]? = some entry) (hw : kvs.WF) :
+    softResult h i (.ok (.obj kvs)) (.ok (softExpanded kvs entry.environment)) =
+      VE.SoftNorms.Run.runCaseReported (softExpanded kvs entry.environment) := by
+  have hs : h.softEntry? (.obj kvs) = some entry := by simp [Handles.softEntry?, hd, ht]
+  obtain ⟨he, hn, _⟩ := softExpanded_members kvs entry.environment hw
+  simp only [softResult, Except.toOption, Option.bind_some, hs, entry.soft_eq, prepareDocument]
+  exact VE.SoftNorms.Run.runCaseReportedP_eq _ _ _ he hn
+
+/-- A case that names no held soft document is answered as `caseResultWith` answers it, as in
+`runRequest`. -/
+theorem softResult_plain (h : Handles) (i : Nat) (sent c : Except String Json)
+    (hs : sent.toOption.bind h.softEntry? = none) :
+    softResult h i sent c = caseResultWith .softNorms i (sent.toOption.bind h.entry?) c := by
+  simp only [softResult, hs]
+
+/-- Outside the soft path, a refused or unexpanded case is answered as `caseResultWith` answers it. -/
+theorem softResult_error (h : Handles) (i : Nat) (sent : Except String Json) (message : String) :
+    softResult h i sent (.error message) = caseResultWith .softNorms i (sent.toOption.bind h.entry?) (.error message) := by
+  unfold softResult
+  split <;> simp_all
+
+theorem softResults_eq (h : Handles) (cases expanded : Array (Except String Json)) (i : Nat)
+    (hi : i < expanded.size) :
+    (softResults h cases expanded)[i]? = some (softResult h i (cases.getD i (.error "")) expanded[i]) := by
+  simp [softResults, hi]
+
+/-- A `soft-norms` request within its budget whose cases decode, one digest per case, is answered as
+`runRequest` answers it (`runRequest_ok`), with `softResults` for `results`. -/
+theorem runSoftRequest_ok (h : Handles) (r : Request) (budget : Budget)
+    (cases expanded : Array (Except String Json)) (digests : Array String) (hq : r.budget = .ok budget)
+    (hb : r.cases.utf8ByteSize ≤ budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
+    (hp : decodeCases r = .ok cases) (hc : cases.size ≤ budget.cases)
+    (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size)
+    (hx : expandCases h r.mode cases = .ok expanded) :
+    runSoftRequest h r = .ok (responseOf r expanded digests (softResults h cases expanded)) := by
+  simp [runSoftRequest, Request.decoded, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, hx, bind,
+    Except.bind, pure, Except.pure]
+
+theorem response_eq (r : Request) (cases : Array (Except String Json)) (digests : Array String)
+    (entries : Array (Option Entry)) :
+    response r cases digests entries = responseOf r cases digests (results r cases entries) := rfl
 
 /-- English and `risk-eval` cases are never expanded. -/
 theorem expandCases_unexpanded (h : Handles) (m : Mode) (cases : Array (Except String Json))
