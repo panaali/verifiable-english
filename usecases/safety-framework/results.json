@@ -1640,10 +1640,10 @@
   }
  ],
  "cost": {
-  "case_models": 301,
+  "case_models": 300,
   "cases": 85,
   "documents_built": 87,
-  "premises": 37,
+  "premises": 39,
   "prover_calls": 1732,
   "rule_candidates": 44
  },
@@ -1683,11 +1683,11 @@
     "T7",
     "T8"
    ],
-   "decision_record_id": "9f1a1b69733d7bf6551b433ea577b85fd8ac61cd5a7cddcb212f7d8e13795541",
-   "document_hash": "3bbc13c0a80fa2001d37289d394b0ce3fe1a056735dc3841777e55744ccf46a1",
-   "environment_id": "e4a2385113ff1b77f20d8f815e659012c647ee2f370a0238649f8fae1bb2e1be",
+   "decision_record_id": "270527b6eb464b6e5dc9f923e61ae53b750648e4d42846bea01172e12455ffdc",
+   "document_hash": "37501ec140f50e6807c390aee59a6054a8ba02ec1a8305d81ed2c315965d9287",
+   "environment_id": "c708c36478c4d96e72a5e196d72b8f37ba505eff2e761b24dc47dbcd65b0ec7e",
    "leads_cells": 0,
-   "might_cells": 64,
+   "might_cells": 72,
    "order": [
     [
      "severe",
@@ -1738,13 +1738,13 @@
      "might": true
     },
     {
-     "alternative": "deploy_ml_rd_automation_level_1",
+     "alternative": "unrestricted_access_ml_rd_automation_level_1",
      "harm": "harm_of_unchecked_ml_rd_automation",
      "leads": false,
      "might": true
     }
    ],
-   "unexamined_possible": 56,
+   "unexamined_possible": 64,
    "unranked": [
     [
      "catastrophic",
@@ -9504,11 +9504,11 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "536f0f2a9eac7dd13b3dbc9da25d4d0304269fe2924f95ff783098a4fdbe4a70"
+     "certificate_sha256": "8779cb97c1e8e56db8b86820c046993fe63a1e03f02ab3e55d057631ba22d641"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "f8df594d32117155583fd38053ed0b6ee0c1175a1d76e63f99e516335db0c26a"
+     "certificate_sha256": "ac5cc9241b2749d6860408cd885875df6e29b32354f527aa183dace83be63ca3"
     }
    },
    "own_premises": [
