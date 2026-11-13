@@ -13,12 +13,21 @@ from .report import EVENTS_CONCLUSION, _checking_environment, _fixed_premises, c
 from .render import render_document
 
 
+# What a unit's CHECKED status means (docs/spec/kernel-boundary.md section 3, DRI 2026-11-11): an admission
+# status (docs/spec/document.md), not a proof. README.md quotes it (tests/test_kernel_closure.py).
+CHECKED_MEANS = ("CHECKED: the core statements shown for this unit were admitted by the checker (one reading, "
+                 "well-formed over the document's vocabulary, lemmas and certificates replayed). How the unit's "
+                 "English was turned into those statements is shown with them; that translation is tested and "
+                 "audited, and proved only where the feature's page says so. CHECKED does not say the statements "
+                 "are true or that a conclusion follows: that is what certificate and conflict verdicts are for.")
+
+
 def main(argv=None):
     import argparse
     parser = argparse.ArgumentParser(prog="ve document")
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("check", "render", "coverage", "readings"):
-        sub.add_parser(name).add_argument("path")
+        sub.add_parser(name, description=CHECKED_MEANS if name == "check" else None).add_argument("path")
     sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
     sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
     sub.choices["readings"].add_argument("--under", action="append", metavar="SET:INDEX",
