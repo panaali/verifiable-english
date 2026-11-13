@@ -22039,6 +22039,17 @@
         "VE.SoftNorms.SelectedExamples.selectedCase",
         "VE.SoftNorms.SelectedExamples.specAt"
       ]
+    },
+    "ResponseShape/SoftSelectedExamples.lean": {
+      "T": [
+        "ResponseShape.SoftSelectedExamples.accepts",
+        "ResponseShape.SoftSelectedExamples.allow",
+        "ResponseShape.SoftSelectedExamples.deny",
+        "ResponseShape.SoftSelectedExamples.refused",
+        "ResponseShape.SoftSelectedExamples.run",
+        "ResponseShape.SoftSelectedExamples.setResult",
+        "ResponseShape.SoftSelectedExamples.violating"
+      ]
     }
   }
 }

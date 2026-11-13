@@ -97,6 +97,7 @@ module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
+module ResponseShape.SoftSelectedExamples
 module ResponseShape
 module ResponseShapeAudit
 module ScopeBenchMain
