@@ -103,7 +103,7 @@ def test_every_item_names_a_case_of_cases_json_or_none(case):
 TRANSCRIPTION_SHA256 = {
     "anthropic-rsp": {"answer-key.json": "fd00575d348f0917cc6aebd08ea21cb67c5f2f7f1540a2d970666a127f1d4a50",
                       "cases.json": "b9f912ac56eb8cea4d9075b8936c640ec8f52d0e1e7a9bf80390264f8edeb554"},
-    "openai-preparedness": {"answer-key.json": "2c8b27504eebd57bdb4953f5527fdc6373ce5e456fc5050bc8a840877b160ac2",
+    "openai-preparedness": {"answer-key.json": "f7d5be2afaad4091c3de504efc712fedb56886579d394472908e52963fd7be7a",
                             "cases.json": "a5b0d0c6a3bade39bd046e9434656231547237d06233651da909c34bd0704397"},
 }
 
@@ -463,7 +463,7 @@ def test_rsp_n1_classification_is_explicit_for_every_rule(rsp_modules):
     ("B-INTD", "in_scope"),
     ("K2", "off_cycle_published"),
     ("K4", "off_cycle_published"),
-    ("K22", "goal_miss_addressed"),
+    ("K22", "roadmap_review_addressed"),
 ])
 def test_rsp_n1_prediction_removes_inherited_commitments(rsp_modules, case_id, predicate):
     """F4: the selected Lean rules disappear when N1 is removed, even without a local 'will'."""
@@ -888,26 +888,26 @@ def test_pf_run_recomputes_every_key_item_and_records_causes(pf_clean):
     useful = saved["metrics"]["useful_answers"]
     assert (useful["correct"], useful["key"]) == (sum(r["agree"] for r in rows), 239)
     assert saved["metrics"]["M7"]["sensitive_exactly_where_silent"]
-    # The only disagreements are the six truncated key cells (VE's answer equals PLAN 6.2's cell) and the K findings
-    # of PLAN 12 items 19 (C6, C-doc) and 20 (G9).
+    # The only disagreements are the K findings of PLAN 12 items 19 (C6, C-doc) and 20 (G9); the six B-*/MREP cells,
+    # once truncated in the transcription (PLAN 12 item 15), agree with PLAN 6.2's cell.
     disagree = [r for r in rows if r["status"] == "disagree"]
-    mrep = [f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")]
-    assert [r["id"] for r in disagree] == mrep + ["C6", "C-doc", "G9"]
+    assert [r["id"] for r in disagree] == ["C6", "C-doc", "G9"]
     assert all(r["cause"]["kind"] == "key finding" for r in disagree)
-    assert all(r["cause"]["reason"].endswith("True") for r in disagree if r["id"] in mrep)
-    assert all(r["cause"]["reason"].startswith(f"PLAN 12 item {19 if r['id'] != 'G9' else 20}:")
-               for r in disagree if r["id"] not in mrep)
+    assert all(r["cause"]["reason"].startswith(f"PLAN 12 item {19 if r['id'] != 'G9' else 20}:") for r in disagree)
+    mrep = {f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")}
+    assert {(r["key"], r["status"]) for r in rows if r["id"] in mrep} == {("SOME(N ∧ unscoped)", "agree")}
 
 
 def test_pf_independent_reference_and_comparator_catch_wrong_answers(pf_clean):
     rows = pf_reference.compare()
     assert len(rows) == 199
-    assert sorted(r["id"] for r in rows if not r["agrees"]) == sorted(
-        f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C"))
+    assert [r["id"] for r in rows if not r["agrees"]] == []
     item = next(k for k in items("openai-preparedness") if k["id"] == "B-BIO-H/MREP")
-    assert item["key"] == "SOME(N"  # the transcription truncated PLAN 6.2's "SOME(N ∧ unscoped)"
+    assert item["key"] == "SOME(N ∧ unscoped)"  # PLAN 6.2's cell, repaired from the truncated "SOME(N"
     assert pf_reference.matches("SOME(N ∧ unscoped)", *pf_reference.case_answer(item))
+    assert not pf_reference.matches("SOME(N)", *pf_reference.case_answer(item))
     assert pf_run.key_terms("SOME(N") is None
+    assert pf_run.key_terms(item["key"]) == pf_run.key_terms("SOME(N & unscoped)") == [{"RS4": "N", "RS4s": "unscoped"}]
     assert pf_run.key_terms("SOME(inuse | (nest & any))") == [{"RS18": "inuse"}, {"RS2": "nest", "RS3": "any"}]
     assert not pf_reference.matches("ALL", ("RS2",), lambda c: c["RS2"] == "nest")
     one = lambda holds, choice=None: {"route": "test", "cone": list(choice or ()),
