@@ -399,6 +399,7 @@ import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.SelectedExamples
 import VE.SoftNorms.SlotSound
+import VE.SoftNorms.SlotExamples
 import VE.Kernel.Carry
 import VE.Kernel.CarryChecks
 import VE.Route.CodecRoundTrip
