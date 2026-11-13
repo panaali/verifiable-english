@@ -55,7 +55,7 @@ def fullOver (M : VE.FiniteModel VE.Bridge.Entity) (rel : String → List VE.Bri
   { M.asStructure with relation := rel }
 
 /-- The semantics of the kind. For a well-formed soft document, a model valid over the base
-vocabulary, a regulated predicate `p` and a tuple typed for its sorts, and every full structure
+vocabulary, any predicate `p` and a tuple typed for its sorts, and every full structure
 `S = fullOver M rel` whose base restriction is `M` (`rel` agrees with `M` on every non-layer
 symbol) and whose layer symbols agree with their meanings (`AgreesBelow` at the full prefix): a
 name is selected exactly when a rule of that name on `p` selects in `S`, and the outcome is `p` in
@@ -63,8 +63,7 @@ name is selected exactly when a rule of that name on `p` selects in `S`, and the
 kind answers models that fail it, SPEC 4.2). -/
 theorem selected_semantics (D : SoftDoc) (h : WellFormedSoft D = true)
     (M : VE.FiniteModel VE.Bridge.Entity) (hM : M.Valid (envAt (soften D) 0))
-    (p : String) (hp : p ∈ D.T.regulated.map (·.name))
-    (vs : List VE.Bridge.Entity) (hvs : VE.TupleTyped M.asStructure (sortsOf D p) vs)
+    (p : String) (vs : List VE.Bridge.Entity) (hvs : VE.TupleTyped M.asStructure (sortsOf D p) vs)
     (rel : String → List VE.Bridge.Entity → Prop)
     (hbase : ∀ r ws, r ∉ layerNames (soften D).T → (rel r ws ↔ M.asStructure.relation r ws))
     (ha : AgreesBelow (soften D) (size (soften D)) (fullOver M rel)) :
@@ -91,18 +90,22 @@ theorem selected_semantics (D : SoftDoc) (h : WellFormedSoft D = true)
     · rintro ⟨N, hN, hn, hpN, hs⟩
       refine ⟨N, hN, hn, hpN, (key _ ?_).mpr hs⟩
       rw [← hpN]; exact hsv.selTyped N hN
-  · apply key
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hp
-    obtain ⟨r', hfind⟩ : ∃ r', D.T.regulated.find? (·.name == r.name) = some r' :=
-      Option.isSome_iff_exists.mp (List.find?_isSome.mpr ⟨r, hr, by simp⟩)
-    have hr' := List.mem_of_find?_eq_some hfind
-    have hname : r'.name = r.name := by simpa using List.find?_some hfind
-    have hsorts : sortsOf D r.name = r'.sorts := by simp [sortsOf, sortsIn, hfind]
-    have hdecl := hv.decl _ (hv.regulated r' hr')
-    rw [hsorts]
-    refine atom_wellFormed hdecl.2.1 ?_
-    rw [envAt_size_predicates, ← hname]
-    exact hdecl.1
+  · cases hfind : D.T.regulated.find? (·.name == p) with
+    | none =>
+      -- `p` is not regulated: no sorts, its atom is `⊥` on both sides.
+      have hsorts : sortsOf D p = [] := by simp [sortsOf, sortsIn, hfind]
+      rw [hsorts]
+      exact Iff.rfl
+    | some r' =>
+      apply key
+      have hr' := List.mem_of_find?_eq_some hfind
+      have hname : r'.name = p := by simpa using List.find?_some hfind
+      have hsorts : sortsOf D p = r'.sorts := by simp [sortsOf, sortsIn, hfind]
+      have hdecl := hv.decl _ (hv.regulated r' hr')
+      rw [hsorts]
+      refine atom_wellFormed hdecl.2.1 ?_
+      rw [envAt_size_predicates, ← hname]
+      exact hdecl.1
 
 /-- The hypothesis `hbase` of `selected_semantics` says exactly that the base restriction of
 `fullOver M rel` is the model's structure (for a model valid over the base vocabulary, whose
