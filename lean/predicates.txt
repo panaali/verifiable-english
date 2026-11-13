@@ -704,6 +704,7 @@ module VE.Route.Budget
 module VE.Route.Checker
 module VE.Route.Checks
 module VE.Route.Closure
+module VE.Route.CodecRoundTrip
 module VE.Route.Decode
 module VE.Route.Examples
 module VE.Route.Flags
@@ -841,6 +842,7 @@ module VE.Time.Document
 module VE.Time.Semantics
 module VE.Time.Syntax
 module VE.Time.Wire
+module VE.Time.WireSound
 module VE.Typing
 module VE.Weighing.Conditions
 module VE.Weighing.Examples

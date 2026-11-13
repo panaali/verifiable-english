@@ -7773,16 +7773,45 @@
 'VE.Route.Wire.RouteVocabulary.chain' depends on axioms: [propext]
 'VE.Route.Wire.RouteVocabulary.nodup' depends on axioms: [propext]
 'VE.Route.Wire.RouteVocabulary.validNames' depends on axioms: [propext]
+'VE.Route.Wire.astLimit_check_encode' depends on axioms: [propext, Quot.sound]
 'VE.Route.Wire.backgroundCheck_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.backgroundViolation_none' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.decodeClosed_encodeFormula' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeClosed_encodeFormula_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeClosed_refuses_depth' does not depend on any axioms
+'VE.Route.Wire.decodeClosed_refuses_depth_past_walk' does not depend on any axioms
 'VE.Route.Wire.decodeDataModel_combined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeDataModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeFormula_encodeFormula' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeFormulas_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeFormulas_encode_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.decodeFormulas_refuses_depth' does not depend on any axioms
+'VE.Route.Wire.decodeFormulas_refuses_depth_past_walk' does not depend on any axioms
 'VE.Route.Wire.decodeModel_background' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeModel_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeModel_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.Wire.decodeOrderModel_valid' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.decodeTerm_encodeTerm' does not depend on any axioms
 'VE.Route.Wire.decodeVocabulary_valid' depends on axioms: [propext, Quot.sound]
 'VE.Route.Wire.definitionsCheck_ok' depends on axioms: [propext]
+'VE.Route.Wire.depth_negationChain' does not depend on any axioms
+'VE.Route.Wire.encodeFormula_arr' does not depend on any axioms
+'VE.Route.Wire.foldlM_walk_encode' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.foldl_add' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.mapM_decodeFormula_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Route.Wire.node_step' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.ok_bind' does not depend on any axioms
+'VE.Route.Wire.term_step' depends on axioms: [propext]
+'VE.Route.Wire.walk_binaryNode' depends on axioms: [Quot.sound]
+'VE.Route.Wire.walk_bind' does not depend on any axioms
+'VE.Route.Wire.walk_const' does not depend on any axioms
+'VE.Route.Wire.walk_encodeFormula' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.walk_encodeTerm' depends on axioms: [propext, Quot.sound]
+'VE.Route.Wire.walk_leafNode' does not depend on any axioms
+'VE.Route.Wire.walk_pairAtom' does not depend on any axioms
+'VE.Route.Wire.walk_unaryAtom' does not depend on any axioms
+'VE.Route.Wire.walk_unaryNode' depends on axioms: [Quot.sound]
+'VE.Route.Wire.walk_var' does not depend on any axioms
 'VE.Route.WireSound.Family.Sound.expands_intended' does not depend on any axioms
 'VE.Route.WireSound.Family.Sound.layer_env' does not depend on any axioms
 'VE.Route.WireSound.Family.Sound.layer_intended' does not depend on any axioms
@@ -9041,7 +9070,13 @@
 'VE.Time.Wire.QVocab.core_environment' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.checkW6Certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.evalB_sorted_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.extension_document_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.quantity_admission_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.quantity_certificate_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.quantity_countermodel_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.quantity_document_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.refutesB_sorted_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.runCaseReported_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.sortDomains_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.addDays_proper' depends on axioms: [propext, Quot.sound]
 'VE.Time.addDays_succ' does not depend on any axioms
