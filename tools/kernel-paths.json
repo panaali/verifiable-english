@@ -285,6 +285,9 @@
     },
     "soft-elaborate": {
      "theorem": "VE.SoftNorms.Run.soft_wire_elaborate"
+    },
+    "soft-selected": {
+     "theorem": "VE.SoftNorms.Run.soft_wire_selected"
     }
    }
   },
