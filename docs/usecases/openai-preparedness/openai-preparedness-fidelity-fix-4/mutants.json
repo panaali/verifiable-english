@@ -1,0 +1,49 @@
+{
+ "item": "openai-preparedness-fidelity-fix-4",
+ "language": "Python (use-case translation, vocabulary and build_document.py; no ve/, lean/ or rust/ change)",
+ "method": "planted in the worktree after a commit (sed or a one-off script), the named test run, the files restored with git checkout; tree clean after each",
+ "mutants": [
+  {
+   "id": "a1",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "the situation sort back to \"... of a covered model\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f3_development_units_read_no_coverage_condition",
+   "result": "FAILED: assert 'covered' not in 'a developme...overed model'"
+  },
+  {
+   "id": "a2",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "an explicit guard \"and that situation is covered\" on f3-reminder",
+   "test": "tests/test_pf_fidelity_fix.py::test_an_uncovered_critical_model_still_needs_development_safeguards",
+   "result": "FAILED: {'f3-develop'} == {'f3-develop', 'f3-reminder'} (test_f3_development_units_read_no_coverage_condition also failed)"
+  },
+  {
+   "id": "b",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"additional\" dropped from the shared F3 act (and the five rule sentences that use it)",
+   "test": "tests/test_pf_fidelity_fix.py::test_f3_development_act_keeps_additional_with_the_sufficiency",
+   "result": "FAILED: the act differs"
+  },
+  {
+   "id": "c",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "the misaligned_model_risk predicate and guard back on c2-misalignment-strict",
+   "test": "tests/test_pf_fidelity_fix.py::test_c2_binds_a_model_with_no_risk_finding",
+   "result": "FAILED: set() == {'c2-misalignment-strict'} (test_c2_misalignment_has_no_risk_guard_under_either_reading also failed)"
+  },
+  {
+   "id": "d",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "both c3-access-* headers cut back to \"(the “may require” clause is not translated)\" with no reason",
+   "test": "tests/test_pf_fidelity_fix.py::test_c3_access_reads_no_coverage_condition_and_states_why_may_require_is_untranslated",
+   "result": "FAILED"
+  },
+  {
+   "id": "e",
+   "file": "usecases/openai-preparedness/build_document.py",
+   "bug": "the UNTRANSLATED record skipped (spans.json regenerated without the rs9-access clause reason)",
+   "test": "tests/test_pf_fidelity_fix.py::test_c3_access_reads_no_coverage_condition_and_states_why_may_require_is_untranslated",
+   "result": "FAILED: KeyError: 'untranslated'"
+  }
+ ]
+}
