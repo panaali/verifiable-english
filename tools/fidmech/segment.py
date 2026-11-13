@@ -279,10 +279,11 @@ def _blanked_pages(source: Source, furn):
     return "".join(chars)
 
 
-def propose(source: Source, furniture) -> tuple[list[dict], list[dict]]:
+def propose(source: Source, furniture, hand_bodies=()) -> tuple[list[dict], list[dict]]:
     """(pairs, unresolved). A body is a run "<n> <Capitalised text>"; it pairs with a marker when n occurs exactly
     twice on the body's page and the page before it, the other run first. A marker has the shape of a body, so the
-    first run is never a body candidate. Other body-shaped runs are listed unresolved, for a hand decision."""
+    first run is never a body candidate. Other body-shaped runs are listed unresolved, for a hand decision. A body
+    ends at the next body (proposed, or a hand pair's at a byte offset in hand_bodies), furniture or the page end."""
     furn = furniture_matches(source, furniture)
     text = _blanked_pages(source, furn)
     occ = defaultdict(list)
@@ -297,7 +298,7 @@ def propose(source: Source, furniture) -> tuple[list[dict], list[dict]]:
                 pairs.append((n, window[0], pos))
                 used.update((window[0], pos))
     starts_by_page = defaultdict(list)
-    for _, _, s in pairs:
+    for s in [s for _, _, s in pairs] + [source.char(b) for b in hand_bodies]:
         starts_by_page[source.page_of(s)].append(s)
     out = []
     for n, m, s in sorted(pairs, key=lambda x: x[2]):

@@ -61,25 +61,42 @@ def header_quotes(field: str) -> tuple[list[Quote], str | None]:
     return out, (f"unclosed quote mark at character {start - 1}" if stack else None)
 
 
-def _occurrences(hay: str, needle: str):
-    i, n = hay.find(needle), 0
-    while i >= 0 and n < MAX_OCCURRENCES:
-        yield i
-        i, n = hay.find(needle, i + 1), n + 1
+def _digit(c: str) -> bool:
+    return c.isdigit() or c == "#"
+
+
+def _find(hay: str, needle: str, start: int) -> int:
+    """The next occurrence that does not cut a digit run: "within 3" is not found inside "within 30"."""
+    i = hay.find(needle, start)
+    while i >= 0 and ((_digit(needle[0]) and i and _digit(hay[i - 1]))
+                      or (_digit(needle[-1]) and i + len(needle) < len(hay) and _digit(hay[i + len(needle)]))):
+        i = hay.find(needle, i + 1)
+    return i
 
 
 def _chains(hay: str, frags):
     """Every placement of the fragments in order: each occurrence of the first, the rest at their next occurrence."""
-    for i in _occurrences(hay, frags[0]):
+    i, n = _find(hay, frags[0], 0), 0
+    while i >= 0 and n < MAX_OCCURRENCES:
         spans, at = [(i, i + len(frags[0]))], i + len(frags[0])
         for f in frags[1:]:
-            j = hay.find(f, at)
+            j = _find(hay, f, at)
             if j < 0:
                 break
             spans.append((j, j + len(f)))
             at = j + len(f)
         else:
             yield spans
+        i, n = _find(hay, frags[0], i + 1), n + 1
+
+
+def _masked_view(text: S.Text) -> tuple[str, list[tuple[int, int]]]:
+    """S.masked(text) with, per character, the index range of the text it stands for (a digit run for "#")."""
+    out, spans = [], []
+    for m in re.finditer(r"\d+|\D", text.text):
+        out.append("#" if m[0][0].isdigit() else m[0])
+        spans.append((m.start(), m.end()))
+    return "".join(out), spans
 
 
 @dataclass(frozen=True)
@@ -92,11 +109,18 @@ class Placement:
     end: int
 
 
-def _placements(seg: S.Segmentation, frags):
+def _placements(seg: S.Segmentation, frags, masked: bool = False):
+    """Every placement of the fragments in one run of contiguous sentences of some stream (canonical or with its
+    markers kept); masked: with every digit run masked on both sides (L1n's alignment)."""
+    if masked:
+        frags = [S.masked(f) for f in frags]
     for stream in seg.streams:
         canon = stream.canon
         for text in (canon, stream.marked) if stream.marked is not canon else (canon,):
-            for spans in _chains(text.text, frags):
+            hay, back = _masked_view(text) if masked else (text.text, None)
+            for spans in _chains(hay, frags):
+                if back:
+                    spans = [(back[a][0], back[z - 1][1]) for a, z in spans]
                 if text is not canon:  # back to the canonical stream through the bytes
                     spans = [(bisect.bisect_left(canon.starts, text.starts[a]),
                               bisect.bisect_right(canon.ends, text.ends[z - 1])) for a, z in spans]
@@ -111,12 +135,6 @@ def _placements(seg: S.Segmentation, frags):
                 whole = (any(START_SLACK.fullmatch(canon.text, x, a) for x in (first.i0, first.ib) if x <= a)
                          and END_SLACK.fullmatch(canon.text, z, max(z, last.i1)) is not None)
                 yield Placement(stream.name, tuple(touched), whole, first.lead_in, canon.starts[a], canon.ends[z - 1])
-
-
-def _masked_found(seg: S.Segmentation, frags) -> bool:
-    mf = [S.masked(f) for f in frags]
-    return any(next(_chains(S.masked(t.text), mf), None) is not None
-               for stream in seg.streams for t in (stream.canon, stream.marked))
 
 
 @dataclass(frozen=True)
@@ -166,7 +184,7 @@ def check_block(seg: S.Segmentation, block: dict) -> tuple[list[Hit], dict]:
     hits = []
     for q, frags, elided, places in placed:
         if not places:
-            masked = _masked_found(seg, frags)
+            masked = next(_placements(seg, frags, masked=True), None) is not None
             hits.append(hit("L1n" if masked else "L1u", q.text,
                             "equal only with the digit runs masked" if masked else "not source text under norm()"))
             continue
