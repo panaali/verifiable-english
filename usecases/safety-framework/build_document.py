@@ -366,6 +366,9 @@ UNITS = [
     ("In particular, we will deem deployment mitigations adequate", "s212-deem", unformalised("degree_term")),
     ("3. Post-deployment processes", "s212-step3", hedged()),
     ("Material updates to a safety case will be submitted", "s212-submitted", rule("f14")),
+    # "might result in updates ...": a possibility (PLAN 3.3), labelled, never a duty of f14.
+    ("and might result in updates to the related residual risk assessment or safety case", "s212-might-update",
+     hedged()),
     ("This process is designed to ensure", "s212-designed", label("explanation")),
     ("With iteration on mitigations and residual risk assessments, we believe", "s212-believe", believes()),
     ("7 See section 5", "fn7", meta()),
@@ -433,6 +436,9 @@ UNITS = [
     ("In particular, we will deem deployment mitigations adequate", "s312-deem", unformalised("degree_term")),
     ("3. Post-deployment processes", "s312-step3", hedged()),
     ("Material updates to a safety case will be submitted", "s312-submitted", rule("f14")),
+    # "might result in updates ...": a possibility (PLAN 3.3), labelled, never a duty of f14.
+    ("and might result in updates to the related residual risk assessment or safety case", "s312-might-update",
+     hedged()),
     ("This process is designed to ensure", "s312-designed", label("explanation")),
     ("With iteration on mitigations and residual risk assessments, we believe", "s312-believe", believes()),
     ("3.2 ML R&D and Misalignment Capability Levels", "s32-heading", meta()),
