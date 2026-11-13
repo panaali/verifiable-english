@@ -1,0 +1,1 @@
+{"kind": "lean-build", "status": "restored", "match": "seed-base", "key": "664a8af907492958d88e4f61f175daa2dccbb74d", "asset": "lean-build-333fb9e39b7c-linux-aarch64.tar.zst", "sha256": "39bed12deff58ada24e0ce676cf2c0b4e1977af85140db6587d6d68ae7dd0d11", "source": "download", "seconds": "15.6", "platform": "Linux-aarch64", "pinned_gone": ""}
