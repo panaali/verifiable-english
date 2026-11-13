@@ -29900,6 +29900,16 @@ theorem VE.Norms.InFragmentIn_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.InFragmentIn D (VE.Norms.layersOf D) = VE.Norms.InFragment D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.InFragment@VE.Norms.SmallModel VE.Norms.InFragmentIn@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 506851688
+theorem VE.Norms.Plain.forM_ok
+  ∀ {α ε : Type} (f : α → Except ε Unit) (l : List α), l.forM f = Except.ok () → ∀ (x : α), x ∈ l → f x = Except.ok ()
+  -- uses
+  -- expr 2253869588
+theorem VE.Norms.Plain.profileOkOn_holds
+  ∀ {γ : Type} [inst : DecidableEq γ] (T : VE.Norms.Tree) (relations : String → List (List γ)),
+    (VE.Norms.Plain.profileOkOn T fun name => Pure.pure (relations name)) = Except.ok () →
+      VE.Norms.Plain.ProfileHolds T relations
+  -- uses VE.Norms.Plain.ProfileHolds@VE.Norms.Plain VE.Norms.Plain.profileOkOn@VE.Norms.Plain VE.Norms.Tree@VE.Norms.Tree
+  -- expr 623466803
 theorem VE.Norms.Replay.WitnessData.background
   ∀ {src : VE.Norms.Wire.Source} (self : VE.Norms.Replay.WitnessData src),
     VE.Norms.backgroundValid src.D self.M = Bool.true
@@ -58336,6 +58346,18 @@ theorem VE.Route.MeteredRun.metered_wire_sound
                         answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCase@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluable@VE.Service.Standalone
   -- expr 1220572776
+theorem VE.Route.MeteredRun.prepare_profile
+  ∀ (environment : Lean.Json),
+    (VE.Route.MeteredRun.prepare environment).profile.get =
+      if VE.Service.Standalone.isLegacy environment = Bool.true then Except.ok Option.none
+      else VE.Service.Standalone.modelEnvironment environment >>= VE.Service.Standalone.profileTree
+  -- uses VE.Norms.Tree@VE.Norms.Tree VE.Route.MeteredRun.Prepared.profile@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone VE.Service.Standalone.modelEnvironment@VE.Service.Standalone VE.Service.Standalone.profileTree@VE.Service.Standalone
+  -- expr 3947439297
+theorem VE.Route.MeteredRun.profiled_admits
+  ∀ {γ : Type} [inst : DecidableEq γ] (p : VE.Route.MeteredRun.Prepared) (relations : String → List (List γ)),
+    VE.Route.MeteredRun.profiled p relations = Except.ok () → VE.Route.MeteredRun.ProfileAdmits p relations
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.profiled@VE.Route.MeteredRun
+  -- expr 1335765099
 theorem VE.Route.MeteredRun.query_evaluate
   ∀ (j : Lean.Json) (id : String) (q : VE.Route.MeteredRun.Query),
     VE.Route.MeteredRun.query j id Bool.false = Except.ok q → q.nonVacuity = Bool.false ∧ q.id = id
@@ -58385,10 +58407,11 @@ theorem VE.Route.MeteredRun.run_closure_sound
               VE.Closure.Bridge.decodeFormulas rv.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Closure.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Bridge.decodeFormulas@VE.Closure.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 4130045629
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Closure.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Bridge.decodeFormulas@VE.Closure.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 343394363
 theorem VE.Route.MeteredRun.run_core_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58400,10 +58423,11 @@ theorem VE.Route.MeteredRun.run_core_sound
               VE.Core.Bridge.decodeFormulas v.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Core.Wire.decodeModel v model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Core.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Core.Bridge.decodeFormulas@VE.Core.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Wire.decodeModel@VE.Core.Wire VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closureNary@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.core@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 1844886722
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Core.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Core.Bridge.decodeFormulas@VE.Core.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Wire.decodeModel@VE.Core.Wire VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closureNary@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.core@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 3706766664
 theorem VE.Route.MeteredRun.run_evaluation_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58423,10 +58447,11 @@ theorem VE.Route.MeteredRun.run_fol_sound
                   Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 1757146407
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 1255766847
 theorem VE.Route.MeteredRun.run_order_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58438,11 +58463,12 @@ theorem VE.Route.MeteredRun.run_order_sound
               VE.Order.Wire.decodeFormulas rv.vocabulary.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeOrderModel rv model = Except.ok d ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool),
-                        result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
-  -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 3026904157
+                    VE.Route.MeteredRun.ProfileAdmits p d.toModel.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool),
+                          result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
+  -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 2770110657
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
