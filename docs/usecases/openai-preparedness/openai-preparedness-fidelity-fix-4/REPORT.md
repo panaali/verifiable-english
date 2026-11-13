@@ -200,4 +200,14 @@ After merge, the DRI decider launches the production checklist pass. It re-reads
 
 ## Final selected run
 
-(Filled in after the run on the committed tree.)
+1. First run, on 3a10163f3c (clean tree), `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base <merge-base> --run`: exit 1.
+   - The fast stage reported "FAILED tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon; 1 failed, 508 passed".
+   - Cause: conformance/english-lean/lexicon-report.json is generated from every corpus environment, and the PF environment.d1.json had changed.
+   - Fix: regenerated with `python conformance/english_lean_lexicon.py`; only the PF row moves (commit 51bb5b2824). `tools/regen_generated.py --check` lists no stale entry.
+   - The failed id, rerun alone (`mac-pytest.sh -- <id>`): "1 passed".
+2. The fast-first answer stopped that run before its 3 Actions shards reported, so 24 of the 39 selected units had no result.
+   - The selection was therefore run once more, on 51bb5b2824 (clean tree): exit 0.
+   - "SHARD 1/3: … 14 units, 14 passed"; "SHARD 2/3: … 12 units, 12 passed"; "SHARD 3/3: … 13 units, 13 passed".
+   - Summary line: "selected tests ran on GitHub Actions (3 shards, run openai-preparedness-fidelity-fix-4-51bb5b28-t586299); exit=0; 1055s".
+
+Main-known-red: none of the selected tests is on /home/seyran/code/manage-agents/main-known-red.txt's list.
