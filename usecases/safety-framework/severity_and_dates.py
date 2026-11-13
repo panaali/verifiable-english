@@ -47,14 +47,24 @@ LEVELS = {  # level -> (class, the text's words)
     "ml_rd_automation_level_1": ("severe", "ML R&D CCLs: risks that \"may reach a severe scale\" (3.2.2)"),
 }
 CATASTROPHIC = "harm_of_unchecked_ml_rd_automation"
+# The catastrophic cell's alternative states src:15's conditions: unrestricted access, an actor (or AI systems) with
+# adequate computational resources, and no effective way of defending.
+UNRESTRICTED_L7 = "unrestricted_access_ml_rd_automation_level_1"
+UNRESTRICTED_L7_LABEL = ("giving an actor (or AI systems) with adequate computational resources unrestricted access to a "
+                         "model that has reached ml_rd_automation_level_1, when there is no effective way of defending "
+                         "against rapidly improving and potentially superhuman AI systems wielded by threat actors")
 
 
 def risk_environment():
     harms = {f"harm_of_{level}": cls for level, (cls, _) in LEVELS.items()}
     harms[CATASTROPHIC] = "catastrophic"
     descriptions = {f"harm_of_{level}": words for level, (_, words) in LEVELS.items()}
-    descriptions[CATASTROPHIC] = ("the L7 rationale: \"This could be catastrophic if there is no effective way of "
-                                  "defending\" (3.2.2)")
+    descriptions[CATASTROPHIC] = ("the L7 rationale (3.2.2): \"Unrestricted access to models at this level of "
+                                  "capability could give an actor (or AI systems) with adequate computational "
+                                  "resources the ability to reach capabilities much more powerful than those in the "
+                                  "other CCLs listed in a short amount of time. This could be catastrophic if there "
+                                  "is no effective way of defending against rapidly improving and potentially "
+                                  "superhuman AI systems wielded by threat actors.\"")
     return {"language": LANGUAGE, "profiles": ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"],
             "spec_revision": SPEC_REVISION,
             "vocabulary": {
@@ -98,13 +108,15 @@ def d2(order_mutant=False):
     log = Log()
     seq = 1
     cells = [(f"deploy_{level}", f"harm_of_{level}") for level in LEVELS]
-    cells.append(("deploy_ml_rd_automation_level_1", CATASTROPHIC))
+    # The L7 rationale's scenario, with its conditions in the alternative (3.2.2): its outcome "could be" catastrophic.
+    cells.append((UNRESTRICTED_L7, CATASTROPHIC))
     for action, harm in cells:
         log.add(seq, f"T{seq}", "statement", statement(action, harm, "might", author="the framework",
                                                        support="testimony"))
         seq += 1
     alternatives = [{"name": f"deploy_{level}", "label": f"deploying an unmitigated model that has reached {level}"}
-                    for level in LEVELS] + [{"name": "nothing", "label": "not deploying", "inaction": True}]
+                    for level in LEVELS] + [{"name": UNRESTRICTED_L7, "label": UNRESTRICTED_L7_LABEL},
+                                            {"name": "nothing", "label": "not deploying", "inaction": True}]
     decision = log.add(100, "D", "decision", record("severity", "the_developer", "the developer",
                                                     (policy["environment_id"], policy["document_hash"]),
                                                     alternatives, [], log.cite(*[e["id"] for e in log.entries])))

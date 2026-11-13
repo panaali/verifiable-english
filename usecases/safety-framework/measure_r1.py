@@ -93,13 +93,14 @@ def measure():
             by_rule.setdefault(rule, set()).add(item_id)
     families = {"D2": "S", "D3": "D"}
     units, attributed = [], set()
+    # A unit added after Oct 1 has no Oct 1 status (None), so it counts as changed.
     for record in spans:
         items = set().union(*(by_rule.get(r, set()) for r in unit_rules(record)))
         if "routed" in record:
             items |= {i for i in rows if i[0] == families[record["routed"]["document"]]}
         items &= set(rows)
         units.append({"id": record["id"], "bytes": record["span"][1] - record["span"][0],
-                      "status_oct1": oct1[record["id"]], "status": record["status"],
+                      "status_oct1": oct1.get(record["id"]), "status": record["status"],
                       "blockers": blockers(record, readings),
                       **({"reading_content": True} if record.get("reading_content") else {}),
                       "items": len(items), "items_agree": sum(rows[i]["agree"] for i in items),

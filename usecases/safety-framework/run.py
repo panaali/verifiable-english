@@ -148,6 +148,8 @@ def fact_atoms():
     return frozenset(atoms)
 
 
+# OT3, the governance determination that lifts F12/F13 (and with F3 releases F2): GOV is asked without it.
+GOVERNANCE_FINDING = "governance_found_acceptable_with_safety_case_where_ccl_reached"
 DOMAINS = {"proposal": ["p"], "level": list(V.LEVELS), "domain": list(V.DOMAINS),
            "measure": list(V.MEASURES), "threat": list(V.THREATS)}
 
@@ -407,7 +409,7 @@ def answer(kind, case, choice, *, default="deny", variant=(), detail=None, level
                 detail["release"] = selected(doc, model, ("assessed",), False)
         return bool(rules)
     if kind == "GOV":
-        counter = case_model(doc, case_atoms(case, without=("governance_found_acceptable",)))
+        counter = case_model(doc, case_atoms(case, without=(GOVERNANCE_FINDING,)))
         rules = selected(doc, counter, ("proceed",), False)
         if detail is not None:
             detail["rules"] = rules
