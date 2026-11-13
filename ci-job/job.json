@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-encoded-env-cache-flake-f0f2b1a0-t611742-s6",
+ "head": "689bbd5ead442d1f36f72f82da711891214fa0a2",
+ "argv": [
+  "armsh-cand-encoded-env-cache-flake-f0f2b1a0-t611742-s6",
+  "689bbd5ead442d1f36f72f82da711891214fa0a2",
+  "caaca9a7132e9d2bffc0cb6ac633d9545f12eb8d",
+  "-",
+  "-",
+  "4",
+  "6/7"
+ ]
+}
