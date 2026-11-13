@@ -474,3 +474,101 @@ def test_regulated_predicates_stay_within_64():
     stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
     count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
     assert stage0["P7"]["regulated_predicates"] == count == 60
+
+
+# --- openai-preparedness-fidelity-fix-3: the six round-B units both adjudicators judged REAL ---------------------
+# (reviews/audit-newrule-fsfpf/pf-adjud/result.md Q02 Q05 Q06 Q08 Q09 Q10; PLAN 12 item 24)
+
+def _strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, (list, dict)):
+        for item in (value.values() if isinstance(value, dict) else value):
+            yield from _strings(item)
+
+
+def predicates_read(block_id):
+    """Every predicate a rule block names: its regulated act and each guard or exception predicate."""
+    names = V.environment()["vocabulary"]["predicates"]
+    return {s for s in _strings(rule(block_id)) if s in names}
+
+
+def block(block_id):
+    return next(b for b in T.rule_blocks() if b.id == block_id)
+
+
+def legend_quotes(predicate):
+    """The “…” quotations of a legend, each of which must be source text its block's header quotes."""
+    return re.findall("“([^”]+)”", legend(predicate))
+
+
+def test_f4_security_reads_no_coverage_condition(pf):
+    """f4-security (Q08; DRI fix-2 q3 item 2): "for High capability models" states no coverage, so neither the rule
+    nor the situation sort every rule reads carries one; `covered` stays only where the source says covered."""
+    sorts = V.environment()["vocabulary"]["sorts"]
+    assert sorts["situation"]["description"] == "a development, use, deployment, review or decision of a model"
+    assert predicates_read("f4-security") == {"security_practices", "reached", "high"}
+    for name in predicates_read("f4-security"):
+        assert "covered" not in legend(name), name
+    assert "no coverage condition" in block("f4-security").source
+    # the fix-2 builder's survey the ruling names: F2, F7, F8, F9 and f16-sag-recommend, whose source states coverage
+    assert {b.id for b in T.rule_blocks() if "covered" in predicates_read(b.id)} == {
+        "f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any", "f2-security-developed", "f7-evaluations",
+        "f7-report", "f7-compile", "f8-start", "f9-report", "f16-sag-recommend"}
+
+
+def test_f9_report_act_states_the_compilation_and_its_legend_quotes_4_2(pf):
+    """f9-report (Q10): the act states 4.2's compilation, as f7-compile does for the Capabilities Report; the legend
+    quotes the 4.2 sentence in full; section 4's scope guard (covered, a reached threshold) stays."""
+    assert R.ATOMS["SAFEREP"] == ("safeguards_report",)
+    assert [b.id for b in blocks_for("safeguards_report")] == ["f9-report"]
+    assert act("safeguards_report") == "{0} have planned safeguard information compiled into a Safeguards Report"
+    sentence = ("We compile the information on the planned safeguards needed to minimize the risk of severe harm "
+                "into a Safeguards Report.")
+    assert sentence in legend_quotes("safeguards_report")
+    assert all(q in block("f9-report").source for q in legend_quotes("safeguards_report"))
+    assert rule("f9-report")["guard"][1] == ["unary", "covered", ["var", 0]]
+    assert predicates_read("f9-report") == {"safeguards_report", "covered", "reached"}
+
+
+def test_cyberdefense_tools_keep_their_purpose(pf):
+    """f1-contrib-cyb-strict and -default (Q05, Q06): one shared act keeps the tools "for cyberdefense"; the legend
+    quotes the CYB-H bullet in full (PLAN 12 item 17's condition)."""
+    assert [b.id for b in blocks_for("cyberdefense_contribution")] == ["f1-contrib-cyb-strict", "f1-contrib-cyb-default"]
+    assert act("cyberdefense_contribution").endswith("cyberdefense policies as well as cyberdefense tools")
+    assert legend_quotes("cyberdefense_contribution") == [
+        "Contribute towards improved cyberdefense policies and tools for cyberdefense"]
+    for name in ("f1-contrib-cyb-strict", "f1-contrib-cyb-default"):
+        assert legend_quotes("cyberdefense_contribution")[0] in block(name).source
+
+
+def test_reasonable_evidence_quotes_4_2s_condition_with_its_decider(pf):
+    """f10-review (Q02), and f10-validate through the shared guard: "we find" and "as expected" are in the legend, and
+    OT11's decider is OpenAI ('we') as PLAN 3.2 states."""
+    condition = "If we find reasonable evidence that our safeguards are not working as expected"
+    assert legend_quotes("reasonable_evidence") == [condition]
+    assert "OpenAI ('we') finds reasonable evidence" in legend("reasonable_evidence")
+    assert "OpenAI ('we') decides this (OT11)" in legend("reasonable_evidence")
+    assert R.OT["OT11"] == "reasonable_evidence"
+    for name in ("f10-review", "f10-validate"):
+        assert rule(name)["guard"] == ["unary", "reasonable_evidence", ["var", 0]]
+        assert condition in block(name).source
+
+
+def test_f13_review_names_the_latest_research_and_findings_per_category(pf):
+    """f13-review (Q09): the act names what is reviewed and keeps "each Research Category"; the legend quotes 2.3's
+    sentence in full; the periodicity stays ET-blocked."""
+    assert [b.id for b in blocks_for("research_review")] == ["f13-review"]
+    assert act("research_review") == ("{0} review the latest research as well as findings in each Research "
+                                      "Category")
+    sentence = "We will periodically review the latest research and findings for each Research Category."
+    assert legend_quotes("research_review") == [sentence]
+    assert sentence in block("f13-review").source
+    assert B.PLACEMENTS["We will periodically review the latest research"] == ("blocked_rule", "f13-review", ("ET",))
+
+
+def test_the_six_changed_acts_fit_the_act_limit(pf):
+    for name in ("safeguards_report", "cyberdefense_contribution", "research_review"):
+        text = act(name)
+        assert len(text) <= 80 and re.fullmatch(r"\{0\}( [A-Za-z][A-Za-z'-]*)+", text), name
+        assert not {"and", "or", "for", "if", "not", "no", "every", "must"} & set(text.lower().split()), name
