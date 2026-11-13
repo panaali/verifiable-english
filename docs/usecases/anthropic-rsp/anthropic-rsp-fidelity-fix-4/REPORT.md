@@ -139,9 +139,10 @@ ALLOCATED (START). The launcher owns the check, and this item did not run it.
   trusted +0` and PASS. No Lean changed, so there is no R6 or R16 row and no trust_mutants sweep.
   light-lane.py printed `NOT 392 changed lines outside generated files`, but the sweep has no trusted Lean to mutate.
 - DELTA: none. Only use-case files and evidence changed, and there is no user-visible checker delta.
-- SIZE: 66 product, 175 tests, 196 other hand-written lines. Product is rsp_vocabulary.py, rules.d1.ve and
-  accounting.d1.txt. Other is PLAN 12 item 23, this REPORT, answers.json and mutants.json. The counts come from
-  `git diff --numstat $(git merge-base HEAD main)`.
+- SIZE: 70 product, 173 tests, 294 other hand-written lines (`git diff --numstat $(git merge-base HEAD main)`,
+  added + deleted). Product is rsp_vocabulary.py 62, rules.d1.ve 4 and accounting.d1.txt 4. Other is PLAN 12 item
+  23 (16), this REPORT (204 at the count) and mutants.json (74). answers.json (1,076 lines) was written by the
+  comparison script and is not counted.
 - Generated or captured files were rewritten only by their own scripts: environment.d1.json (`rsp_vocabulary.py`),
   coverage.json (`build_document.py`; only document_sha256 moved), the saved accounting report
   (`safetyfw_accounting.py --report`), tests/data/route-cases.jsonl (`docs/en-e3-norm/en-2b/route_fixtures.py
@@ -151,7 +152,13 @@ ALLOCATED (START). The launcher owns the check, and this item did not run it.
 
 ## Selected tests
 
-SELECTED-RUN-PLACEHOLDER
+Final selected run on committed HEAD 225a68cc3f (clean tree):
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on GitHub Actions
+in 5 shards (run anthropic-rsp-fidelity-fix-4-225a68cc-t605745). It covered 62 units, and all passed
+(17 + 11 + 12 + 11 + 11). It exited 0 in 1,274 s. The selection included tests/test_rsp_fidelity_fix.py,
+tests/test_safetyfw_usecases.py, tests/test_safetyfw_accounting.py, tests/test_english_statement_blocks.py and
+tests/test_english_lean_lexicon.py. No failed test needed a rerun. No test in main-known-red.txt was involved.
+The commits after this run change only this REPORT (docs/*.md).
 
 ## Next item
 
