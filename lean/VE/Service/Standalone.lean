@@ -32,6 +32,14 @@ def regulatedOf (environment : Json) (predicates : List (String × Json)) :
   let ps := VE.Norms.Wire.actsProfiles true environment
   VE.Norms.Plain.decodeRegulatedAllIn ps (← VE.Norms.Wire.actsFixed ps environment) predicates
 
+/-- The norms profile of a model environment: the tree of its `regulated` predicates when it declares
+any. The `model` mode and the `metered` mode check a model against it (D13). -/
+def profileTree (modelEnv : Json) : Except String (Option VE.Norms.Tree) := do
+  let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
+  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+    return some ⟨← regulatedOf modelEnv predicates, [], []⟩
+  pure none
+
 /-- The `regulated` extension checked as `Norms.Wire.decodeNormsEnvironment`
 checks it, on any family: Python validates it in the environment constructor,
 whichever checker family the envelope selects. -/
@@ -612,9 +620,7 @@ def modelCase (j : Json) : Except String Json := do
     pure ()
   -- The norms profile generator last, as Python's `validate_background` orders
   -- it: each required relation within its permission (`Plain.profileOk`).
-  let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
-  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    VE.Norms.Plain.profileOk ⟨← regulatedOf modelEnv predicates, [], []⟩ model
+  if let some T ← profileTree modelEnv then VE.Norms.Plain.profileOk T model
   let originalProfiles ← VE.Route.Gate.profilesOf environment
   let environmentId ← environmentIdOf originalProfiles
     (← identityEnvironment environment originalProfiles)
