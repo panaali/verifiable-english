@@ -69,7 +69,10 @@ Old -> new for the items the task names. All are unchanged and agree with the ke
 - `pytest tests/test_safetyfw_accounting.py -k preparedness`: "2 passed".
 - Frozen key: `test_answer_key_equals_section_6_cell_by_cell`, `test_section_6_is_the_frozen_key` and `test_transcription_is_pinned` are unchanged and selected (`select_tests.py` lists tests/test_pf_fidelity_fix.py and tests/test_usecase_key_transcription.py).
 - Regulated predicates: 60 of 64, none added. `test_regulated_predicates_stay_within_64` asserts 60.
-- Selected tests (mac-pytest.sh --select, on the committed final code): see the build report.
+- Selected tests, run with `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`:
+  - First run, at 56a8889459: 1 failure, `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`. The committed `conformance/english-lean/lexicon-report.json` hashes environment.d1.json.
+  - Fix: the report was regenerated with `python -m conformance.english_lean_lexicon` ("valid": 43, "invalid": 0); only PF d1's `lexicon_id` changed. That test then passed.
+  - The first run's Actions shards were not collected, so the selection was rerun once on the committed final code (24088fb8a0): "exit=0", 3 shards, run openai-preparedness-fidelity-fix-3-24088fb8-t569043.
 
 ## Open list
 
@@ -108,7 +111,7 @@ The launcher's reading in the task's AMENDMENTS, 2026-11-12 20:16Z on VM1: 9.39M
 
 ## Size
 
-SIZE: 59 product (use-case translation: pf_vocabulary.py 21, rules.d1.ve 10, accounting.d1.txt 8, PLAN.md 20), 99 tests, 63 other hand-written lines (mutants.json), plus this REPORT. Generated: environment.d1.json, coverage.json, quote-hashes.json, accounting.json. Source: `git diff --numstat $(git merge-base HEAD main)`.
+SIZE: 59 product (use-case translation: pf_vocabulary.py 21, rules.d1.ve 10, accounting.d1.txt 8, PLAN.md 20), 99 tests, 63 other hand-written lines (mutants.json), plus this REPORT. Generated: environment.d1.json, coverage.json, quote-hashes.json, accounting.json, conformance/english-lean/lexicon-report.json. Source: `git diff --numstat $(git merge-base HEAD main)`.
 
 ## Notes for the DRI
 
