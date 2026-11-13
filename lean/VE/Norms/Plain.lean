@@ -57,17 +57,50 @@ def strip (environment : Json) (predicates : List (String × Json)) : Except Str
 def isPlainKind (kind : String) : Bool :=
   kind == "background" || kind == "evaluate" || kind == "countermodel" || kind == "certificate"
 
-/-- Python `_valid_profile`: each required relation is contained in its permission. -/
-def profileOk (T : Tree) (model : Json) : Except String Unit := do
-  let relations ← fields (← model.getObjVal? "relations")
-  let rows (name : String) : Except String (Array Json) :=
-    match VE.Bridge.lookup relations name with
-    | some value => value.getArr?
-    | none => pure #[]
-  for pr in pairs T do
+/-- Python `_valid_profile` over the tables `rows` gives: each required relation is contained in its
+permission. `profileOk` reads a model's JSON tables, the `metered` mode its decoded relations. -/
+def profileOkOn {β : Type} [BEq β] (T : Tree) (rows : String → Except String (List β)) :
+    Except String Unit :=
+  (pairs T).forM fun pr => do
     let permitted ← rows pr.perm
     unless (← rows pr.req).all permitted.contains do
       throw s!"InvalidModel(profile): required relation {pr.req} exceeds permission {pr.perm}"
+
+/-- Python `_valid_profile`: each required relation is contained in its permission. -/
+def profileOk (T : Tree) (model : Json) : Except String Unit := do
+  let relations ← fields (← model.getObjVal? "relations")
+  profileOkOn T fun name => match VE.Bridge.lookup relations name with
+    | some value => (·.toList) <$> value.getArr?
+    | none => pure []
+
+/-- The norms profile condition on a model's relations: for each declared (required, permission)
+pair, every tuple of the required relation is a tuple of the permission. -/
+def ProfileHolds {γ : Type} (T : Tree) (relations : String → List (List γ)) : Prop :=
+  ∀ pr ∈ pairs T, ∀ t ∈ relations pr.req, t ∈ relations pr.perm
+
+theorem forM_ok {α ε : Type} (f : α → Except ε Unit) :
+    ∀ l : List α, l.forM f = .ok () → ∀ x ∈ l, f x = .ok ()
+  | [], _, x, hx => by cases hx
+  | y :: ys, h, x, hx => by
+    simp only [List.forM] at h
+    cases hy : f y with
+    | error e => rw [hy] at h; cases h
+    | ok u =>
+      rw [hy] at h
+      rcases List.mem_cons.mp hx with rfl | hmem
+      · exact hy
+      · exact forM_ok f ys h x hmem
+
+/-- The bridge: the check over a model's relations accepts only a model satisfying the profile. -/
+theorem profileOkOn_holds {γ : Type} [DecidableEq γ] (T : Tree) (relations : String → List (List γ))
+    (h : profileOkOn T (fun name => pure (relations name)) = .ok ()) : ProfileHolds T relations := by
+  intro pr hpr t ht
+  have hp := forM_ok _ _ h pr hpr
+  simp only [pure, Except.pure, bind, Except.bind] at hp
+  split at hp
+  · rename_i hall
+    simpa using List.all_eq_true.mp hall t ht
+  · cases hp
 
 /-- The FOL route's certificate branch over `background`, bound to the
 submitted `environment`; acceptance is `VE.Tableau.checkCertificate` over

@@ -23,6 +23,25 @@ def EncodesEvaluation (id : String) (result : Metered.Result) (answer : Json) : 
   ∃ explanation : Json, answer = Wire.ok id
     [("evaluation", Json.mkObj (Metered.resultFields result ++ [("explanation", explanation)]))]
 
+/-- The prepared environment's norms profile holds in a model's relations: when the environment
+declares regulated predicates (`p.profile`, the tree the `model` mode checks), for each declared
+(required, permission) pair every tuple of the required relation is a tuple of the permission. -/
+def ProfileAdmits {γ : Type} (p : Prepared) (relations : String → List (List γ)) : Prop :=
+  ∃ T? : Option VE.Norms.Tree, p.profile.get = .ok T? ∧
+    ∀ T, T? = some T → VE.Norms.Plain.ProfileHolds T relations
+
+/-- A model the profile check accepts satisfies the profile (`Plain.profileOkOn_holds`). -/
+theorem profiled_admits {γ : Type} [DecidableEq γ] (p : Prepared) (relations : String → List (List γ))
+    (h : profiled p relations = .ok ()) : ProfileAdmits p relations := by
+  unfold profiled at h
+  cases hp : p.profile.get with
+  | error e => rw [hp] at h; cases h
+  | ok T? =>
+    rw [hp] at h
+    refine ⟨T?, hp, fun T hT => ?_⟩
+    subst hT
+    exact VE.Norms.Plain.profileOkOn_holds T relations h
+
 /-- An evaluation request decodes the document with the family's list decoder, and the document
 is not empty. -/
 theorem request_evaluate {α : Type} (q : Query) (formula : Json → Except String α)
@@ -57,7 +76,7 @@ theorem run_fol_sound (q : Query) (checked : VE.Service.Standalone.Validated) (p
       p.route.get = .ok rv ∧
       Wire.decodeFormulas rv.environment q.input (checked.envelope.profiles.contains "data@0") = .ok fs ∧
       fs ≠ [] ∧
-      Wire.decodeDataModel rv model = .ok M ∧
+      Wire.decodeDataModel rv model = .ok M ∧ ProfileAdmits p M.relations ∧
       EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M []) := by
   unfold run at h
@@ -65,9 +84,10 @@ theorem run_fol_sound (q : Query) (checked : VE.Service.Standalone.Validated) (p
   obtain ⟨rv, hrv, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
   obtain ⟨M, hM, h⟩ := bind_ok h
+  obtain ⟨⟨⟩, hP, h⟩ := bind_ok h
   obtain ⟨fs, hfs, hne, rfl⟩ := request_evaluate q _ _ r hq hr
   cases h
-  refine ⟨rv, fs, M, _, hrv, hfs, hne, hM, answer_evaluate q _ fs, ?_⟩
+  refine ⟨rv, fs, M, _, hrv, hfs, hne, hM, profiled_admits p _ hP, answer_evaluate q _ fs, ?_⟩
   intro b hb
   exact MeteredProofs.fol_sound _ M q.limit (fun p row => Budget.tableMem_iff _ M p row) fs b hb
 
@@ -80,7 +100,7 @@ theorem run_closure_sound (q : Query) (checked : VE.Service.Standalone.Validated
       p.route.get = .ok rv ∧
       VE.Closure.Bridge.decodeFormulas rv.environment q.input = .ok fs ∧
       fs ≠ [] ∧
-      Wire.decodeDataModel rv model = .ok M ∧
+      Wire.decodeDataModel rv model = .ok M ∧ ProfileAdmits p M.relations ∧
       EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M []) := by
   unfold run at h
@@ -88,9 +108,10 @@ theorem run_closure_sound (q : Query) (checked : VE.Service.Standalone.Validated
   obtain ⟨rv, hrv, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
   obtain ⟨M, hM, h⟩ := bind_ok h
+  obtain ⟨⟨⟩, hP, h⟩ := bind_ok h
   obtain ⟨fs, hfs, hne, rfl⟩ := request_evaluate q _ _ r hq hr
   cases h
-  refine ⟨rv, fs, M, _, hrv, hfs, hne, hM, answer_evaluate q _ fs, ?_⟩
+  refine ⟨rv, fs, M, _, hrv, hfs, hne, hM, profiled_admits p _ hP, answer_evaluate q _ fs, ?_⟩
   intro b hb
   exact MeteredProofs.closure_sound _ M q.limit (fun p row => Budget.tableMem_iff _ M p row) fs b hb
 
@@ -103,7 +124,7 @@ theorem run_core_sound (q : Query) (checked : VE.Service.Standalone.Validated) (
       p.core.get = .ok v ∧
       VE.Core.Bridge.decodeFormulas v.environment q.input = .ok fs ∧
       fs ≠ [] ∧
-      VE.Core.Wire.decodeModel v model = .ok M ∧
+      VE.Core.Wire.decodeModel v model = .ok M ∧ ProfileAdmits p M.relations ∧
       EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M []) := by
   unfold run at h
@@ -111,9 +132,10 @@ theorem run_core_sound (q : Query) (checked : VE.Service.Standalone.Validated) (
   obtain ⟨v, hv, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
   obtain ⟨M, hM, h⟩ := bind_ok h
+  obtain ⟨⟨⟩, hP, h⟩ := bind_ok h
   obtain ⟨fs, hfs, hne, rfl⟩ := request_evaluate q _ _ r hq hr
   cases h
-  refine ⟨v, fs, M, _, hv, hfs, hne, hM, answer_evaluate q _ fs, ?_⟩
+  refine ⟨v, fs, M, _, hv, hfs, hne, hM, profiled_admits p _ hP, answer_evaluate q _ fs, ?_⟩
   intro b hb
   exact MeteredProofs.core_sound _ M q.limit (fun p row => Budget.tableMem_iff _ M p row) fs b hb
 
@@ -127,7 +149,7 @@ theorem run_order_sound (q : Query) (checked : VE.Service.Standalone.Validated) 
       p.order.get = .ok rv ∧
       VE.Order.Wire.decodeFormulas rv.vocabulary.environment q.input = .ok fs ∧
       fs ≠ [] ∧
-      Wire.decodeOrderModel rv model = .ok d ∧
+      Wire.decodeOrderModel rv model = .ok d ∧ ProfileAdmits p d.toModel.relations ∧
       EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval d.toModel []) := by
   unfold run at h
@@ -135,9 +157,10 @@ theorem run_order_sound (q : Query) (checked : VE.Service.Standalone.Validated) 
   obtain ⟨rv, hrv, h⟩ := bind_ok h
   obtain ⟨r, hr, h⟩ := bind_ok h
   obtain ⟨d, hd, h⟩ := bind_ok h
+  obtain ⟨⟨⟩, hP, h⟩ := bind_ok h
   obtain ⟨fs, hfs, hne, rfl⟩ := request_evaluate q _ _ r hq hr
   cases h
-  refine ⟨rv, fs, d, _, hrv, hfs, hne, hd, answer_evaluate q _ fs, ?_⟩
+  refine ⟨rv, fs, d, _, hrv, hfs, hne, hd, profiled_admits p _ hP, answer_evaluate q _ fs, ?_⟩
   intro b hb
   rw [MeteredProofs.order_sound _ (Budget.sortOrderData d).toModel q.limit
     (fun p row => Budget.orderMem_iff _ _ p row) fs b hb]
@@ -156,25 +179,29 @@ def EvaluationAnswer (q : Query) (checked : VE.Service.Standalone.Validated) (p 
       (result : Metered.Result),
       p.route.get = .ok rv ∧
       Wire.decodeFormulas rv.environment q.input (checked.envelope.profiles.contains "data@0") = .ok fs ∧
-      fs ≠ [] ∧ Wire.decodeDataModel rv model = .ok M ∧ EncodesEvaluation q.id result answer ∧
+      fs ≠ [] ∧ Wire.decodeDataModel rv model = .ok M ∧ ProfileAdmits p M.relations ∧
+      EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M [])
   | .closure =>
     ∃ (rv : Wire.RouteVocabulary) (fs : List VE.Closure.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
       (result : Metered.Result),
       p.route.get = .ok rv ∧ VE.Closure.Bridge.decodeFormulas rv.environment q.input = .ok fs ∧
-      fs ≠ [] ∧ Wire.decodeDataModel rv model = .ok M ∧ EncodesEvaluation q.id result answer ∧
+      fs ≠ [] ∧ Wire.decodeDataModel rv model = .ok M ∧ ProfileAdmits p M.relations ∧
+      EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M [])
   | .closureNary =>
     ∃ (v : VE.Bridge.Vocabulary) (fs : List VE.Core.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
       (result : Metered.Result),
       p.core.get = .ok v ∧ VE.Core.Bridge.decodeFormulas v.environment q.input = .ok fs ∧
-      fs ≠ [] ∧ VE.Core.Wire.decodeModel v model = .ok M ∧ EncodesEvaluation q.id result answer ∧
+      fs ≠ [] ∧ VE.Core.Wire.decodeModel v model = .ok M ∧ ProfileAdmits p M.relations ∧
+      EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval M [])
   | .order =>
     ∃ (rv : Wire.RouteOrderVocabulary) (fs : List VE.Order.Formula)
       (d : VE.Order.ModelData VE.Order.Wire.Entity) (result : Metered.Result),
       p.order.get = .ok rv ∧ VE.Order.Wire.decodeFormulas rv.vocabulary.environment q.input = .ok fs ∧
-      fs ≠ [] ∧ Wire.decodeOrderModel rv model = .ok d ∧ EncodesEvaluation q.id result answer ∧
+      fs ≠ [] ∧ Wire.decodeOrderModel rv model = .ok d ∧ ProfileAdmits p d.toModel.relations ∧
+      EncodesEvaluation q.id result answer ∧
       ∀ b, result.value = some b → b = fs.all (fun f => f.eval d.toModel [])
 
 theorem run_evaluation_sound (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared)
