@@ -30,6 +30,15 @@ def ProfileAdmits {γ : Type} (p : Prepared) (relations : String → List (List 
   ∃ T? : Option VE.Norms.Tree, p.profile.get = .ok T? ∧
     ∀ T, T? = some T → VE.Norms.Plain.ProfileHolds T relations
 
+/-- The profile of a case's own environment is the tree the `model` mode checks a model against:
+`Standalone.profileTree` of its model environment, and none on a frozen envelope (whose `model`
+mode has no profile check). -/
+theorem prepare_profile (environment : Json) :
+    (prepare environment).profile.get =
+      if VE.Service.Standalone.isLegacy environment then .ok none
+      else VE.Service.Standalone.modelEnvironment environment >>= VE.Service.Standalone.profileTree :=
+  rfl
+
 /-- A model the profile check accepts satisfies the profile (`Plain.profileOkOn_holds`). -/
 theorem profiled_admits {γ : Type} [DecidableEq γ] (p : Prepared) (relations : String → List (List γ))
     (h : profiled p relations = .ok ()) : ProfileAdmits p relations := by
