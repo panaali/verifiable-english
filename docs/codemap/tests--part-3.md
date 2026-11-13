@@ -1,3 +1,4 @@
+- `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 - `tests/test_e1_core.py` — (no module docstring)
@@ -85,5 +86,3 @@
 - `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
 - `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
-- `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
-- `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).

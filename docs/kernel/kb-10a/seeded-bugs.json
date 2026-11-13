@@ -1,0 +1,96 @@
+{
+  "item": "kb-10a",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from git (git checkout); the restored tree passes every check named here. Line numbers are those of the tree the bug was planted in. The mechanical sweep is docs/kernel/kb-10a/trust-mutants.json (108 KILLED, 65 ALLOWED with docs/kernel/kb-10a/trust-mutants-allow.json, 10 INVALID, exit 0, on f0443cdcac).",
+  "seeds": [
+    {
+      "id": "S1",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "selectedAt lists exactly the rules on the predicate whose expanded selection formula holds (mem_selectedAt), the task's seeded bug (i)",
+      "mutation": "selectedAt filters on `N.sign` instead of `N.pred == p`",
+      "failing": "lake build VE.SoftNorms.Selected",
+      "result": "mem_selectedAt does not build (Selected.lean:40 and :42, application type mismatch), nor selectedRow_eq (rfl fails)"
+    },
+    {
+      "id": "S2",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "the runner's row answers outcome = outcomeAt, the task's seeded bug (ii)",
+      "mutation": "selectedRow answers `!x.2.eval M (tupleVal q.tuple)` for the outcome",
+      "failing": "lake build VE.SoftNorms.SelectedSound",
+      "result": "selectedRow_eq does not build (rfl fails), so soft_wire_selected, which rests on it, cannot build"
+    },
+    {
+      "id": "S2b",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "the runner answers outcome = outcomeAt (the negation planted in runSelected itself)",
+      "mutation": "runSelected reads each expanded atom negated: `let E := ((expanded src.D).1, (expanded src.D).2.map fun x => (x.1, VE.Formula.not x.2))`",
+      "failing": "lake build VE.SoftNorms.SelectedSound",
+      "result": "runSelected_answer does not build (SelectedSound.lean:108, rewrite finds no selectedRow_eq pattern), so soft_wire_selected does not build"
+    },
+    {
+      "id": "S3",
+      "language": "python",
+      "file": "ve/soft_route.py",
+      "claim": "the relay refuses a result for a tuple it did not send, the task's seeded bug (iii)",
+      "mutation": "bind_selected drops `result[\"tuple\"] != query[\"tuple\"]`",
+      "failing": "uv run pytest -q tests/test_soft_selected.py",
+      "result": "3 failed: test_a_forged_answer_is_unavailable[a tuple not sent], [a tuple of another query], [a longer tuple]. tests/test_relay_binding_inventory.py -k soft-selected still passes: the generated schema's x-zip/x-equals refuses those mutants before the relay reads them (a second layer)"
+    },
+    {
+      "id": "S4",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "a query's predicate is a regulated predicate of the source (QueryDecoded)",
+      "mutation": "decodeSelectedQuery's regulated check `if !D.T.regulated.any (·.name == p)` becomes `if false`",
+      "failing": "lake build VE.SoftNorms.SelectedSound",
+      "result": "decodeSelectedQuery_ok does not build (SelectedSound.lean:51, type mismatch)"
+    },
+    {
+      "id": "S5",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "background = classificationBackgroundValid (Background_base(E') ++ Exc_T)",
+      "mutation": "runSelected reports `backgroundValid' src.D M` as background",
+      "failing": "lake build VE.SoftNorms.SelectedSound",
+      "result": "runSelected_answer does not build (SelectedSound.lean:107, unsolved goals)"
+    },
+    {
+      "id": "S6",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Selected.lean",
+      "claim": "selected_semantics is about the full structures on the model's carrier, domains and constants (fullOver)",
+      "mutation": "fullOver sets `domain := fun _ _ => True`",
+      "failing": "lake build VE.SoftNorms.Selected",
+      "result": "selected_semantics does not build (Selected.lean:76, :78, :85, type mismatches)"
+    },
+    {
+      "id": "S7",
+      "language": "lean",
+      "file": "lean/ResponseShape/Schemas/SoftNorms.lean",
+      "claim": "the selected shape types outcome as a boolean",
+      "mutation": "(\"outcome\", .type [\"string\"]); ve_response_decode rebuilt and the schema re-rendered",
+      "failing": "uv run pytest -q tests/test_soft_selected.py",
+      "result": "the service tests fail: CheckerUnavailable 'results: [0]: outcome: expected string'. The encoder theorem selected_fits still builds: skeletons read .type [\"boolean\"] as Skel.any (as for certificate.valid), so the generated schema is the check"
+    },
+    {
+      "id": "S8",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/SelectedExamples.lean",
+      "claim": "the spec guards can fail",
+      "mutation": "the guard at c expects [\"o\"] instead of [\"d\"]",
+      "failing": "lake build VE.SoftNorms.SelectedExamples",
+      "result": "SelectedExamples.lean:76: Expression ... did not evaluate to `true`"
+    },
+    {
+      "id": "S9",
+      "language": "lean",
+      "file": "lean/ResponseShape/SoftSelectedExamples.lean",
+      "claim": "the shape guards can fail",
+      "mutation": "`accepts j (run j)` negated",
+      "failing": "lake build ResponseShape.SoftSelectedExamples",
+      "result": "SoftSelectedExamples.lean:28: Expression ... did not evaluate to `true`"
+    }
+  ]
+}

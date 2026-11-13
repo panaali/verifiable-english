@@ -42,6 +42,7 @@ ROUTES = {
     "soft-pairs": ("soft-norms", "soft-norms.json", "pairs"),
     "soft-conflict": ("soft-norms", "soft-norms.json", "packages"),
     "soft-conflict-witness": ("soft-norms", "soft-norms.json", "witness"),
+    "soft-selected": ("soft-norms", "soft-norms.json", "selected"),
     "soft-admission": ("soft-norms", "soft-norms.json", "admission"),
     "rights-elaborate": ("rights", "rights.json", "elaborate"),
     "rights-scope": ("rights", "rights.json", "scope"),
@@ -110,6 +111,10 @@ def _walk(node, base, path, out, stack=()):
     if "items" in node or "prefixItems" in node:
         out.setdefault(path, set()).add("array")
         _walk(node.get("items"), base, path + "[]", out, stack)
+    for key in ("x-zip", "x-zip-or-empty"):  # one item per item of the request's array (kb-10a's `results`)
+        if key in node:
+            out.setdefault(path, set()).add("array")
+            _walk(node[key]["items"], base, path + "[]", out, stack)
     if node.get("type") in ("string", "integer", "boolean") or "const" in node or "enum" in node:
         out.setdefault(path, set()).add("scalar")
 
@@ -295,6 +300,16 @@ INVENTORY = {
         "witness_kind": lean("the witness kind Lean replayed"),
     },
     "soft-admission": {**_ADMISSION, "kinds": BOUND, "kinds[]": BOUND},
+    # kb-10a: one result per query sent, naming it; which rules select and the outcome are Lean's
+    # (`soft_wire_selected`); each selected name is bound to a rule of the document on the query's
+    # predicate, once, in rule order (tests/test_soft_selected.py::test_a_forged_answer_is_unavailable).
+    "soft-selected": {
+        "id": BOUND, "status": BOUND, "background": lean("whether the model passes the soft background"),
+        "results": COUNTED, "results[].predicate": BOUND, "results[].tuple": BOUND, "results[].tuple[]": BOUND,
+        "results[].selected": lean("the rules whose expanded selection formula holds (selectedAt)"),
+        "results[].selected[]": lean("a rule Lean selects; bound to the document's rules on the predicate"),
+        "results[].outcome": lean("the completed outcome (outcomeAt)"),
+    },
     "rights-admission": _ADMISSION,
 }
 
@@ -532,8 +547,11 @@ def _soft_sources():
 def _soft_calls(name, document, raw, norms):
     from tests.test_soft_norms_lean import model, packages
     from ve.soft_route import admit_soft_document, check_soft_conflict, classify_soft_pairs, \
-        elaborate_soft_document
+        elaborate_soft_document, selected_at
     elaborated = elaborate_soft_document(document)
+    # kb-10a: a base model over E′ (every non-regulated predicate, all false) and both act predicates at `a`.
+    base = model({name: [] for name, entry in elaborated["environment_prime"]["vocabulary"]["predicates"].items()
+                  if "regulated" not in entry})
     leaf = next((entry for entry in elaborated["background"] if entry.get("label", "").startswith("soft:coherence:")),
                 elaborated["premises"][0])
     admission = {"units": [{"id": f"u{i}", "span": [10 * i, 10 * i + 5], "kind": "norm", "content": n}
@@ -546,6 +564,7 @@ def _soft_calls(name, document, raw, norms):
         "soft-pairs": lambda: classify_soft_pairs(document),
         "soft-conflict": lambda: check_soft_conflict(document, packages=certified, budget=7),
         "soft-admission": lambda: admit_soft_document(document.env, admission, soft_document=document),
+        "soft-selected": lambda: selected_at(document, base, [("x_required", ["a"]), ("x_permitted", ["a"])]),
         **({"soft-conflict-witness": lambda: check_soft_conflict(document, witness=witness)}
            if name == "witness" else {}),
     }
