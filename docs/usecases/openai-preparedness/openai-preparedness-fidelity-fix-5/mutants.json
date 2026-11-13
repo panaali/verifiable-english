@@ -1,0 +1,57 @@
+{
+ "item": "openai-preparedness-fidelity-fix-5",
+ "language": "Python use-case files (no Lean or Rust product code changed)",
+ "mutants": [
+  {
+   "id": "a",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f16-fast-track restricted to RS9=default: the permission is gone from f16-chair-strict's reading",
+   "test": "tests/test_pf_fidelity_fix.py::test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings",
+   "failure": "AssertionError: strict (set() == {'f16-fast-track'})"
+  },
+  {
+   "id": "b",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f16-fast-track restricted to RS9=strict: the permission is gone from f16-chair-default's reading",
+   "test": "tests/test_pf_fidelity_fix.py::test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings",
+   "failure": "AssertionError: default (set() == {'f16-fast-track'})"
+  },
+  {
+   "id": "c",
+   "file": "usecases/openai-preparedness/accounting.d1.txt",
+   "bug": "the f16-chair-strict entry for the fast-track words back to 'loss 1'",
+   "test": "tests/test_pf_fidelity_fix.py::test_accounting_has_no_loss_for_the_fast_track_words",
+   "also": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
+   "failure": "('f16-chair-strict', ..., 'loss 1'); {'f16-chair-strict': ['loss']} == {}"
+  },
+  {
+   "id": "d",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "the permission made a duty: 'Every situation must have a fast track requested ...'",
+   "test": "tests/test_pf_fidelity_fix.py::test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings",
+   "also": "tests/test_pf_fidelity_fix.py::test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings",
+   "failure": "startswith('Rule 1. Every situation may have ...') is False; live: ve.errors.SyntaxError (no declared reading)"
+  },
+  {
+   "id": "e",
+   "file": "usecases/openai-preparedness/PLAN.md",
+   "bug": "a PLAN 12 sentence '`f16-chair-strict` omits the fast-track words' (the omission rule's plan12 path)",
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
+   "failure": "{'f16-chair-strict': ['plan12']} == {}"
+  },
+  {
+   "id": "f",
+   "file": "usecases/openai-preparedness/build_document.py",
+   "bug": "the placement of the fast-track sentence removed (spans.json and coverage.json regenerated): p16-u291 back to UNFORMALISED",
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
+   "failure": "StopIteration (no span carried by f16-fast-track)"
+  },
+  {
+   "id": "g",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "fast_track_request declared with duty() instead of permission()",
+   "test": "tests/test_pf_fidelity_fix.py::test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings",
+   "failure": "ve.errors.SyntaxError: Norm consequence has no single declared reading"
+  }
+ ]
+}
