@@ -33,7 +33,8 @@ open VE.Order.ProfileGate (bind_ok)
 
 /-- The request's `facts`: absent, no facts; else an array whose every item decodes, by the route's
 formula decoder, to a closed formula over the base vocabulary (a rule's predicate or a layer symbol is not
-in it, so the decoder refuses it). The raw items are kept for the certificates' bindings. -/
+in it, so the decoder refuses it), and names no soft decision predicate (an open term: its decider decides
+it, docs/spec/kernel-boundary.md 4.1). The raw items are kept for the certificates' bindings. -/
 def decodeFacts (src : SoftSource) (j : Json) : Except String (List VE.Formula × List Json) :=
   match j.getObjVal? "facts" with
   | .error _ => pure ([], [])
@@ -42,7 +43,9 @@ def decodeFacts (src : SoftSource) (j : Json) : Except String (List VE.Formula �
     | .ok items =>
       if items.isEmpty then pure ([], []) else do
         let fs ← VE.Route.Wire.decodeFormulas (envAt (soften src.D) 0) v
-        pure (fs, items.toList)
+        match (fs.flatMap VE.Norms.preds).find? (fun p => (VE.SoftNorms.decisionNames src.D).contains p) with
+        | some p => throw s!"InvalidInput: facts: {p} is a soft decision predicate; its decider decides it, not a fact"
+        | none => pure (fs, items.toList)
 
 /-- The diagnostic of a base model that fails the soft background or a fact. -/
 def slotModelFault (src : SoftSource) (M : VE.FiniteModel VE.Bridge.Entity) : String :=
@@ -78,13 +81,14 @@ base formula per item. -/
 theorem decodeFacts_ok {src : SoftSource} {j : Json} {P : List VE.Formula} {items : List Json}
     (h : decodeFacts src j = .ok (P, items)) :
     SlotWellFormed src.D P ∧ P.length = items.length ∧
+      (∀ a ∈ P, ∀ p ∈ VE.Norms.preds a, p ∉ VE.SoftNorms.decisionNames src.D) ∧
       ((∃ e, j.getObjVal? "facts" = .error e) ∧ items = [] ∨ j.getObjVal? "facts" = .ok (Json.arr items.toArray)) := by
   unfold decodeFacts at h
   split at h
   · rename_i e he
     simp only [pure, Except.pure, Except.ok.injEq, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
-    exact ⟨(fun a ha => nomatch ha), rfl, Or.inl ⟨⟨e, he⟩, rfl⟩⟩
+    exact ⟨(fun a ha => nomatch ha), rfl, (fun a ha => nomatch ha), Or.inl ⟨⟨e, he⟩, rfl⟩⟩
   · rename_i v hv
     split at h
     · cases h
@@ -97,16 +101,21 @@ theorem decodeFacts_ok {src : SoftSource} {j : Json} {P : List VE.Formula} {item
         obtain ⟨rfl, rfl⟩ := h
         have : arr = #[] := by simpa using he
         subst this
-        exact ⟨(fun a ha => nomatch ha), rfl, Or.inr (by rw [hv, hvarr])⟩
+        exact ⟨(fun a ha => nomatch ha), rfl, (fun a ha => nomatch ha), Or.inr (by rw [hv, hvarr])⟩
       · obtain ⟨fs, hfs, h⟩ := bind_ok h
+        split at h
+        · cases h
+        rename_i hnone
         simp only [pure, Except.pure, Except.ok.injEq, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         obtain ⟨arr', harr', hlen⟩ := VE.EvaluationCounts.route_decodeFormulas_length v false hfs
         rw [harr] at harr'
         cases harr'
         refine ⟨fun a ha => (VE.check_iff_wellFormed _ _ a).mp (decodeFormulas_check _ _ _ hfs a ha),
-          by simpa using hlen, .inr ?_⟩
-        rw [hv, hvarr, Array.toArray_toList]
+          by simpa using hlen, fun a ha p hp hd => ?_, .inr ?_⟩
+        · have := List.find?_eq_none.mp hnone p (List.mem_flatMap.mpr ⟨a, ha, hp⟩)
+          simp_all
+        · rw [hv, hvarr, Array.toArray_toList]
 
 /-- `facts` absent or empty. -/
 def NoFacts (j : Json) : Prop := (∃ e, j.getObjVal? "facts" = .error e) ∨ j.getObjVal? "facts" = .ok (.arr #[])
