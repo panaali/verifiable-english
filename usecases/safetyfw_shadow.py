@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import time
@@ -128,9 +129,15 @@ class Shadow:
         for (document, model), queries in self.groups().items():
             lean_calls += 1
             answers[(document, model)] = self.ask(document, model, queries, ask=ask)
-        counts = Counter()
+        counts, answered, families = Counter(), Counter(), Counter()
         for kind, document, model, predicate, values, python, context in self.calls:
             counts[kind] += 1
+            # Python's answers (so a run that compared only empty selections shows it) and the key family of
+            # the innermost item label (RSP and Preparedness item ids, FSF case ids: A-T2, K3, B-L2, ...).
+            answered[f"{kind} " + (("non-empty" if python else "empty") if kind == "selected"
+                                    else {True: "true", False: "false"}.get(python, "unknown"))] += 1
+            family = re.match(r"[A-Za-z]*", context.split(" / ")[-1].removeprefix("default-sensitivity ")).group()
+            families[family or "(other)"] += 1
             rows, background, refused = answers[(document, model)]
             choice = (self.documents[document][1] or ["(built outside the harness's document builder)"])[0]
             cell = (kind, document, choice, context, predicate, values)
@@ -151,6 +158,8 @@ class Shadow:
         cell_fields = ("kind", "document", "choice", "case", "predicate", "tuple")
         return {
             "calls_compared": dict(sorted(counts.items())),
+            "python_answers": dict(sorted(answered.items())),
+            "calls_by_family": dict(sorted(families.items())),
             "calls_without_soft_source": dict(sorted(self.unsourced.items())),
             "documents": len(self.documents),
             "models": len(self.models),

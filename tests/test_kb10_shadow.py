@@ -68,6 +68,9 @@ def test_agreeing_answers_list_no_mismatch(lean, doc_under_shadow):  # noqa: F81
     assert answers == {"a": (["o"], False), "b": (["h"], True), "c": (["d"], True), "e": ([], False)}
     report = shadow.compare()
     assert report["calls_compared"] == {"completed": 4, "selected": 4}
+    assert report["python_answers"] == {"completed false": 2, "completed true": 2,
+                                        "selected empty": 1, "selected non-empty": 3}
+    assert report["calls_by_family"] == {"item": 8}
     assert (report["lean_calls"], report["distinct_queries"]) == (1, 4)
     assert report["mismatches"] == [] and report["refusals"] == [] and report["background_false"] == []
     assert report["document_choices"] == {next(iter(shadow.documents)): ["'deny'"]}
