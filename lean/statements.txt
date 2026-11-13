@@ -64777,28 +64777,26 @@ theorem VE.SoftNorms.Run.selected_semantics
     VE.SoftNorms.WellFormedSoft D = Bool.true →
       ∀ (M : VE.FiniteModel VE.Bridge.Entity),
         M.Valid (VE.Norms.envAt (VE.SoftNorms.soften D) 0) →
-          ∀ (p : String),
-            p ∈ List.map (fun x => x.name) D.T.regulated →
-              ∀ (vs : List VE.Bridge.Entity),
-                VE.TupleTyped M.asStructure (VE.SoftNorms.sortsOf D p) vs →
-                  ∀ (rel : String → List VE.Bridge.Entity → Prop),
-                    (∀ (r : String) (ws : List VE.Bridge.Entity),
-                        ¬r ∈ VE.Norms.layerNames (VE.SoftNorms.soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) →
-                      VE.Norms.AgreesBelow (VE.SoftNorms.soften D) (VE.Norms.size (VE.SoftNorms.soften D))
-                          (VE.SoftNorms.Run.fullOver M rel) →
-                        (∀ (name : String),
-                            name ∈ VE.SoftNorms.Run.selectedAt D M p vs ↔
-                              ∃ N,
-                                N ∈ D.T.nodes ∧
-                                  N.name = name ∧
-                                    N.pred = p ∧
-                                      VE.Formula.denote (VE.SoftNorms.Run.fullOver M rel) (VE.Norms.tupleVal vs)
-                                        (VE.SoftNorms.selects' D N)) ∧
-                          (VE.SoftNorms.Run.outcomeAt D M p vs = Bool.true ↔
-                            VE.Formula.denote (VE.SoftNorms.Run.fullOver M rel) (VE.Norms.tupleVal vs)
-                              (VE.Norms.atom p (VE.SoftNorms.sortsOf D p)))
-  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.atom@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.Run.outcomeAt@VE.SoftNorms.Selected VE.SoftNorms.Run.selectedAt@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.TupleTyped@VE.Semantics
-  -- expr 2035656424
+          ∀ (p : String) (vs : List VE.Bridge.Entity),
+            VE.TupleTyped M.asStructure (VE.SoftNorms.sortsOf D p) vs →
+              ∀ (rel : String → List VE.Bridge.Entity → Prop),
+                (∀ (r : String) (ws : List VE.Bridge.Entity),
+                    ¬r ∈ VE.Norms.layerNames (VE.SoftNorms.soften D).T → (rel r ws ↔ M.asStructure.relation r ws)) →
+                  VE.Norms.AgreesBelow (VE.SoftNorms.soften D) (VE.Norms.size (VE.SoftNorms.soften D))
+                      (VE.SoftNorms.Run.fullOver M rel) →
+                    (∀ (name : String),
+                        name ∈ VE.SoftNorms.Run.selectedAt D M p vs ↔
+                          ∃ N,
+                            N ∈ D.T.nodes ∧
+                              N.name = name ∧
+                                N.pred = p ∧
+                                  VE.Formula.denote (VE.SoftNorms.Run.fullOver M rel) (VE.Norms.tupleVal vs)
+                                    (VE.SoftNorms.selects' D N)) ∧
+                      (VE.SoftNorms.Run.outcomeAt D M p vs = Bool.true ↔
+                        VE.Formula.denote (VE.SoftNorms.Run.fullOver M rel) (VE.Norms.tupleVal vs)
+                          (VE.Norms.atom p (VE.SoftNorms.sortsOf D p)))
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.atom@VE.Norms.Basic VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.Run.outcomeAt@VE.SoftNorms.Selected VE.SoftNorms.Run.selectedAt@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2575031538
 theorem VE.SoftNorms.Run.selected_semantics_nonvacuous
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →
