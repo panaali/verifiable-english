@@ -61,8 +61,8 @@ def furniture(args) -> int:
 def boundaries(args) -> int:
     _, data, bpath = _case(args)
     source, b = S.Source(data), S.load_boundaries(bpath)
-    pairs, unresolved = S.propose(source, b.furniture)
     hand = [f for f in b.footnotes if f["by"] == "hand"]
+    pairs, unresolved = S.propose(source, b.furniture, [f["body"][0] for f in hand])
     rejected = {u["at"] for u in b.unpaired}
     decided = {f["body"][0] for f in hand} | {f["marker_at"] for f in hand} | rejected
     open_ = [u for u in unresolved if u["at"] not in decided]
