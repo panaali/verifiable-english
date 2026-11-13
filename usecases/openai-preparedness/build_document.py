@@ -110,7 +110,8 @@ READINGS = {
     "rs3-reminder": ("RS3", {"ext": ["f2-reminder"], "any": ["f2-reminder-any"]}),
     "rs3-no-deploy": ("RS3", {"ext": ["f2-no-deploy"], "any": ["f2-no-deploy-any"]}),
     "rs18-develop": ("RS18", {"devonly": ["f3-develop", "f3-develop-forecast"],
-                              "inuse": ["f3-develop-inuse", "f3-develop-inuse-forecast"]}),
+                              "inuse": ["f3-develop-inuse", "f3-develop-inuse-forecast", "f3-inuse",
+                                        "f3-inuse-forecast"]}),
     # RS2 is 4.2's "also" (p12-u195, which stays UNFORMALISED for its "during development" order); RS11 shares
     # p16-u281 with RS6. Neither has a unit of its own, so neither is placed.
     "rs2-nest": ("RS2", {"nest": ["rs2-nest"], "sep": []}),
@@ -178,7 +179,7 @@ def _complete_clause_map(block_id, source_text):
     clauses = CHECKED_CLAUSES.get(block_id)
     if not clauses:
         return False
-    fact_text = {b.id: b.text for b in T.read_blocks("facts.d1.ve")}
+    fact_text = {b.id: b.text for b in T.fact_blocks()}
     if block_id in fact_text:
         elements = {"fact": fact_text[block_id]}
     else:
@@ -265,7 +266,7 @@ def _model():
         "domains": {"situation": ["s"], "level": list(T.vocabulary.LEVELS),
                     "category": sorted({c for c, _ in T.vocabulary.LEVELS.values()}),
                     "proposal": ["p"], "requirement": ["r"], "capability": ["c"],
-                    "evaluation": ["biological_capability_evaluations"]},
+                    "evaluation": ["biological_capability_evaluations"], "framework": ["f"]},
         "constants": {c: c for c in env.constants}, "relations": relations})
 
 

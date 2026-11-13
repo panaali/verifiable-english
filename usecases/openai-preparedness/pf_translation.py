@@ -69,9 +69,29 @@ def environment():
     return SoftEnvironment(vocabulary.environment())
 
 
+def is_rule(block):
+    """rules.d1.ve holds the rule blocks and, each under its own header, the stated-sentence facts that are no part
+    of the FACTS inventory (PLAN 4.1's levels, RS2 = nest and 4.4's dated fact stay in facts.d1.ve): cl-levels and
+    fn5-indicator. A rule block's text is a numbered rule; a fact block's is VE premises."""
+    return block.text.startswith("Rule ")
+
+
 @lru_cache(maxsize=None)
 def rule_blocks():
-    return read_blocks("rules.d1.ve")
+    return tuple(b for b in read_blocks("rules.d1.ve") if is_rule(b))
+
+
+@lru_cache(maxsize=None)
+def rule_fact_blocks():
+    """The fact blocks of rules.d1.ve: premise units outside FACTS, each tied to an item only by its name in that
+    item's rows (run.premise_units)."""
+    return tuple(b for b in read_blocks("rules.d1.ve") if not is_rule(b))
+
+
+@lru_cache(maxsize=None)
+def fact_blocks():
+    """facts.d1.ve's blocks, then the fact blocks of rules.d1.ve."""
+    return read_blocks("facts.d1.ve") + rule_fact_blocks()
 
 
 @lru_cache(maxsize=None)
@@ -100,4 +120,4 @@ def base_environment():
 def facts():
     from ve.english import parse_english
     return tuple((b, tuple(parse_english(base_environment(), b.text).formulas))
-                 for b in read_blocks("facts.d1.ve"))
+                 for b in fact_blocks())
