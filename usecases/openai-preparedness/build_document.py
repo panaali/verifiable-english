@@ -197,6 +197,14 @@ def _complete_clause_map(block_id, source_text):
             return False
         residual = residual.replace(fragment, "", 1)
     return not re.search(r"\w", residual)
+# A clause of a placed unit that no rule of any reading translates, with the reason (spans.json records its byte span
+# and the reason, never its text). C.3's last clause states that access may need additional approvals: a
+# possibility the sentence states, not a duty on anyone, and it grants no permission (PLAN 3.3 admits no permission
+# the text does not grant), so neither RS9 choice has a rule for it (the c3-access-* headers say the same).
+UNTRANSLATED = {
+    "rs9-access": (("and may require additional approvals for access", "possibility_not_duty",
+                    "a possibility the sentence states, not a duty, and no permission the text grants (PLAN 3.3)"),),
+}
 OPEN_FOR = {
     "rs1-misuse-bio": ("ot1", "ot4"), "rs1-misuse-cyb": ("ot1", "ot4"),
     "rs1-alignment-cyb": ("ot1", "ot5"), "rs1-security": ("ot1", "ot3"),
@@ -393,6 +401,14 @@ def build(source):
                              for choice, blocks in choices.items()],
                 "models": {model.model_id: model.to_dict()}})
             rec["reading_set"] = ident
+        if ident in UNTRANSLATED:
+            rec["untranslated"] = []
+            for fragment, reason, detail in UNTRANSLATED[ident]:
+                if source[a:b].count(fragment.encode()) != 1:
+                    raise ValueError(f"{ident}: the untranslated clause is not once in its unit")
+                start = a + source[a:b].index(fragment.encode())
+                rec["untranslated"].append({"span": [start, start + len(fragment.encode())], "reason": reason,
+                                            "detail": detail})
         if isinstance(spec["meaning"], dict):
             if "unformalised" in spec["meaning"]:
                 rec["reason"] = spec["meaning"]["unformalised"]
