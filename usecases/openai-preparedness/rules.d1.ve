@@ -24,7 +24,7 @@ Rule 1. Every situation must contribute towards improved public policy as well a
 Rule 1. Every situation should contribute towards improved public policy as well as pandemic preparedness, if that situation has reached "biological_and_chemical_critical".
 ## f1-contrib-cyb-strict | RS1=strict | Table 1 CYB-H: “Contribute towards improved cyberdefense policies and tools for cyberdefense”
 Rule 1. Every situation must contribute to improved cyberdefense policies as well as cyberdefense tools, if that situation has reached "cybersecurity_high".
-## f1-contrib-cyb-default | RS1=default | Table 1: the same imperative under “Risk-specific safeguard guidelines”
+## f1-contrib-cyb-default | RS1=default | Table 1 CYB-H: “Contribute towards improved cyberdefense policies and tools for cyberdefense”, read under the column header “Risk-specific safeguard guidelines”
 Rule 1. Every situation should contribute to improved cyberdefense policies as well as cyberdefense tools, if that situation has reached "cybersecurity_high".
 ## f2-deploy | RS3=ext | 2.2: “Covered systems that cross this capability threshold are required to have robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed and appropriate security controls as they are developed.”; “deployed” read as external deployment (RS3=ext)
 Rule 1. Every situation must have safeguards sufficiently minimizing severe-harm risk before deployment, if all of the following hold: (a) that situation is covered; (b) all of the following hold: (i) there is a level such that both that situation has reached that level and that level is high; (ii) that situation is classified as "external_deployment".
