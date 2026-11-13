@@ -642,6 +642,25 @@ unchanged.
     | C7 | SOME(rel) | NONE | S:17, the same sentences. | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1 |
     | C-doc | SOME(rel) | NONE | S:17, the same sentences: every choice is CONFLICT-FREE. | dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1 |
 
+22. **Source-fidelity fixes (union rule).** The ten units the union-rule audit fails are repaired. Each changed
+    block's header quotes its whole source sentence, with no "..."; where an act cannot hold a qualifier within 80
+    characters, its legend quotes the sentence. (a) F7's act names both parts, the risks and the continuation
+    determinations, and its legend quotes S:11 to "in light of the risks". (b) F16's one-week act keeps the source's
+    group name "the external reviewers" and picks no quantifier; the legend of `shared_with_reviewers` quotes the
+    3.6.2 sentence with "one or more external reviewers". (c) F23's act names the baseline ("prior-draft
+    differences"); its legend quotes the 4.8 sentence and keeps "prior to or on its effective date". (d) 3.3 review
+    item 3 is one unguarded duty, `roadmap_review_addressed`: Roadmap changes and missed goals, addressed in a Risk
+    Report. The `roadmap_goal_missed` guard is gone, and K22 still stipulates that a goal was missed. (e) T4's "if we
+    determine that either" governs branch (2): `scenario_2` is the company's determination (OT1's T4 determination,
+    as OT15 is branch (1)'s). The formulas of `t4-suff` and `t4-only-if` are unchanged. (f) F13's permission covers
+    the public and the regular-clearance versions; the reasons list stays open (`redaction_reason_listed`). (g) F12
+    step 3 is the submission, `executive_submitted` ("sent to the CEO with the RSO"), not an approval obtained;
+    `f12-share` still reads the approval as its own situation (`risk_report_approved`). (h) The legends of
+    `roadmap_maintained`, `candid_reports` and `rso_maintained` quote S:11's goals and progression, S:12's two
+    subjects, and 4.1's designated staff member who is responsible for the policy's implementation; the RSO's
+    listed duties stay LABELLED (`s4-rso-duties`). No answer moves: 110/126 still match the frozen key.
+    Regulated predicates: 64 of 64. Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-3/REPORT.md`.
+
 ## 13. Files for the implementation and run rounds
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`

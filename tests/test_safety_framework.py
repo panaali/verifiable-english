@@ -2,13 +2,14 @@
 or any change in what VE computes.
 
 The answer key is PLAN.md section 6, transcribed into answer-key.json before VE
-was run, and pinned here by hash. The five recorded disagreements are findings
+was run, and pinned here by hash. The recorded disagreements (RECORDED_DISAGREEMENTS) are findings
 documented in README.md and PLAN section 12; the key is never edited to match VE.
 `test_rerun_equals_committed_results` recomputes every result with VE.
 """
 import hashlib
 import importlib
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -49,13 +50,12 @@ def _own_modules(monkeypatch):
 KEY_SHA256 = "8fbb04753730ca894789b6c2a90e6fd1916c0a90ba0e609cecca2c5398e0ce0e"
 RESULTS = json.loads((HERE / "results.json").read_text())
 RECORDED_DISAGREEMENTS = {
-    # The key notes a "need not" (REL) for internal deployment at L5 to L7; bullets 3 and 4
-    # release only further development, so no rule releases DM there (reference.py agrees).
-    "A-L5-INT/DM", "A-L6-INT/DM", "A-L7-INT/DM",
-    # The key wrote C1 and C-doc under narrowing N2 (F16 only a default rule), which the results
-    # review withdrew: under RS3 = Ds with strict force and RS6 = same, F16 and F15 conflict.
-    "C1", "C-doc",
+    # Key cells both uc-auditors found wrong (PLAN 12 item 23, fsf-fidelity-fix): they name RS9 = same, a reading
+    # the text excludes (footnote 5), so they describe no admissible choice; the section-12 answer is NONE.
+    "C3", "C-doc",
 }
+# The rules only an excluded reading selected (PLAN 12 "Excluded readings").
+EXCLUDED_RULES = {"f10-dm-same", "f10-rel-same", "f15-same"}
 
 
 def test_answer_key_is_the_transcription():
@@ -85,7 +85,11 @@ def test_results_agree_with_the_key_except_the_recorded_findings():
     rows = RESULTS["comparison"]
     assert len(rows) == 262
     assert {r["id"] for r in rows if not r["agree"]} == RECORDED_DISAGREEMENTS
-    assert sum(r["agree"] for r in rows) == 257
+    assert sum(r["agree"] for r in rows) == 260
+    # The section-12 deviation entries (key untouched): C1, C3 and C-doc are NONE, and the run agrees with each.
+    deviations = {r["id"]: r["deviation"] for r in rows if "deviation" in r}
+    assert deviations == {i: {"plan_12": 23, "answer": "NONE", "agree": True} for i in ("C1", "C3", "C-doc")}
+    assert all(r["ve"] == "NONE" for r in rows if r["id"] in deviations)
     # The comparison is recomputed from the committed results and the key.
     recomputed = run.compare(RESULTS)
     assert [r for r in rows if r["id"] in {x["id"] for x in recomputed}] == recomputed
@@ -110,11 +114,17 @@ def test_metrics():
     assert variants["m4"]["premises_inconsistent"]
     assert [c for c, d in variants["m5"]["C5"]["details"].items() if d["status"] == "CONFLICT"] == ["RS2=U"]
     assert all(v == "SOME(RS1=G)" for k, v in variants["m6"].items() if k != "C3")
+    # PLAN 11's m6: C3 disappears once DM-h and DM-s are two acts (footnote 5; RS9 = same excluded).
+    assert variants["m6"]["C3"] == "NONE"
     # With the withdrawn N2, F16 is a default rule at both forces and C1 is conflict-free.
     assert all(d["status"] == "CONFLICT-FREE" for d in variants["with_N2"]["C1"]["details"].values())
-    # M7: a completed outcome depends on the default exactly at the silent or conflicted cells.
-    assert {k for k, v in RESULTS["default_sensitive"].items() if v["conflicted_choices"]} == {
-        "B-L2/RECSEC", "B-L3/RECSEC", "B-L4/RECSEC"}
+    # M7: a completed outcome depends on the default exactly at the silent or conflicted cells; the only
+    # conflicted cells came from RS6 = same (F15 against a strict F16), which the text excludes.
+    assert {k for k, v in RESULTS["default_sensitive"].items() if v["conflicted_choices"]} == set()
+    # PLAN 6.1: under the RS0 prediction reading (without N1) nothing is required, so every item is NONE
+    # (fsf-fidelity-fix review F1: B-L5/PRA was ALL while f17-hri was missing from the "will" rules).
+    without_n1 = {v["item"]: v["without_N1"] for v in variants["without_N1"]}
+    assert len(without_n1) == 8 and set(without_n1.values()) == {"NONE"}, without_n1
 
 
 def test_span_accounting_is_complete():
@@ -168,12 +178,10 @@ def test_every_should_keeps_its_strict_reading():
                     and run.rule_predicate(b.id) == run.rule_predicate(block.id)]
         assert len(siblings) == 1 and " must " in siblings[0].text, block.id
     assert translation.READING_SETS["RS3force"] == ("strict", "default")
-    # The strict reading conflicts with F15 exactly when both name one act (RS6 same).
+    # F15 (insider misuse) and F16 (security measures) name two acts, so neither force conflicts with F15 (C1).
     details = RESULTS["items"]["C1"]["details"]
-    assert [c for c, d in details.items() if d["status"] == "CONFLICT"] == ["RS3=Ds,RS3force=strict,RS6=same"]
-    kind, true = reference.family_c_g()["C1"]
-    assert kind == "SOME" and len(true) == 2 ** (len(reference.ALL_SETS) - 3)
-    assert all((c["RS3"], c["RS3force"], c["RS6"]) == ("Ds", "strict", "same") for c in true)
+    assert {d["status"] for d in details.values()} == {"CONFLICT-FREE"} and len(details) == 4
+    assert reference.family_c_g()["C1"] == ("NONE", [])
 
 
 def test_build_check_writes_nothing_beside_the_source(tmp_path):
@@ -217,8 +225,7 @@ def test_a_set_carries_content_exactly_when_each_reading_is_one_rule_and_that_ru
         if set_id in build_document.FORCE_WORDS:
             start, stop = reading_set["source_word"]
             assert source[start:stop].decode() == word
-    assert content == {"rs2_misuse", "rs2_ml_rd", "rs4_holistic", "rs4_within", "rs4_elicitation", "rs6_insider",
-                       "rs9_bullet3"}
+    assert content == {"rs2_misuse", "rs2_ml_rd", "rs4_holistic", "rs4_within", "rs4_elicitation"}
     saved = json.loads((HERE / "readings" / "results.json").read_text())["sets"]
     assert {s for s, v in saved.items() if v["content"]} == content
 
@@ -271,11 +278,11 @@ FSF_R2 = REPO / "docs" / "usecases" / "safety-framework" / "fsf-r2"
 
 
 def test_fsf_r2_measures_every_unit_as_saved_and_none_moved_since_oct18():
-    """fsf-r2's units.json and gaps.json are measure_r2's measurement of the saved spans and results; every unit has
-    its Oct 18 status, every feature a family, and fsf-r1's evidence is what measure_r1 writes."""
-    units, gaps = measure_r2.measure()
-    for name, data in (("units.json", units), ("gaps.json", gaps)):
-        assert json.loads((FSF_R2 / name).read_text()) == json.loads(json.dumps(data)), name
+    """fsf-r2's saved units.json and gaps.json (measure_r2's measurement of the Oct 28 translation): every unit has
+    its Oct 18 status and every feature a family. They are batch evidence, read as saved (D4): fsf-fidelity-fix
+    changed the translation since, so a live measurement no longer equals them."""
+    units = json.loads((FSF_R2 / "units.json").read_text())
+    gaps = json.loads((FSF_R2 / "gaps.json").read_text())
     r1 = {u["id"]: u for u in json.loads((measure_r1.EVIDENCE / "units.json").read_text())["units"]}
     assert [u["id"] for u in units["units"]] == list(r1)
     assert all(u["status"] == u["status_oct18"] == r1[u["id"]]["status"] for u in units["units"])
@@ -304,9 +311,153 @@ def test_fsf_r2_probes_record_lean_s_answer_on_each_merged_item():
     assert probes["SC-c"]["diagnostic"] == "ScopeReadings: s135-bullet2-only"
 
 
-@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="the Lean service is not built")
-def test_fsf_r2_probes_rerun_equals_saved_probes():
-    """The probes are cut from the pinned source, which the gate runner does not store (tools/gate-optional.json)."""
+
+# --- fsf-fidelity-fix (2026-11-12): readings the source excludes (DRI decision 2026-10-29 uc-audit2 item 1) -------
+
+def test_excluded_readings_and_their_rules_are_never_offered_again(tmp_path, monkeypatch):
+    """RS9 = same (footnote 5) and RS6 = same (R14) are excluded: no reading set of the harness, the D1 document or
+    the independent reference offers them, no rule only they selected exists, a block that names one is refused,
+    the committed run selects no rule under either, and its C1, C3 and C-doc agree with the PLAN 12 NONE entries."""
+    excluded = {("RS6", "same"), ("RS9", "same")}
+    assert set(translation.EXCLUDED_READINGS) == excluded
+    for set_id, value in excluded:
+        assert value not in translation.READING_SETS[set_id] and value not in reference.SETS[set_id]
+        assert run.SETS[set_id] == ("different",)
+    assert all(reading != "same" for _, (_, readings) in build_document.READINGS.items() for reading in readings)
+    named = {r for _, (_, readings) in build_document.READINGS.items() for rules in readings.values() for r in rules}
+    assert not named & EXCLUDED_RULES
+    assert not {b.id for b in translation.rule_blocks()} & EXCLUDED_RULES
+    assert not {(s, v) for b in translation.rule_blocks() for s, v in b.when} & excluded
+    # A rule block that names an excluded reading is refused when the translation is read.
+    (tmp_path / "rules.d1.ve").write_text("## f10-dm-same | RS1=G & RS9=same | F10\nRule 1. Every proposal is acceptable.\n")
+    monkeypatch.setattr(translation, "HERE", tmp_path)
+    with pytest.raises(SystemExit, match="excluded reading RS9=same"):
+        translation.read_blocks("rules.d1.ve")
+    # The committed run: no choice, detail or rule list anywhere names an excluded reading or its rules.
+    text = json.dumps({k: v for k, v in RESULTS.items() if k != "comparison"})
+    assert "same" not in {v for s, v in re.findall(r'"(RS[69])": "(\w+)"', text)}
+    assert not re.search(r"RS[69]=same", text) and not any(r in text for r in EXCLUDED_RULES)
+    rows = {r["id"]: r for r in RESULTS["comparison"]}
+    assert {i: (rows[i]["ve"], rows[i]["deviation"]["answer"]) for i in ("C1", "C3", "C-doc")} == {
+        i: ("NONE", "NONE") for i in ("C1", "C3", "C-doc")}
+
+
+@pytest.mark.parametrize("levels, activity, adequate", [
+    (("cbrn_uplift_level_1", "cyber_uplift_level_1"), "EXT", ["applies", "p", "security_level_2_plus"]),
+    (("ml_rd_acceleration_level_1", "ml_rd_automation_level_1"), "HRI", ["security_assessed_adequate", "p"])])
+def test_one_mitigated_level_does_not_discharge_another_reached_level(levels, activity, adequate):
+    """f9-acc, f10-acc: "for the T/CCLs the model has reached" (2.1.2, 3.1.2 step 2). A model at two levels of one
+    bullet, with security adequate for both, is deemed acceptable when the deployment mitigations cover both levels,
+    and not when they cover only one (the existential reading let one mitigated level discharge the other)."""
+    def acceptable(mitigated):
+        case = {"id": "fsf-fix:" + "+".join(mitigated), "family": "R", "levels": list(levels), "activity": activity,
+                "findings": [["mitigates", "p", level] for level in mitigated] + [adequate]}
+        assert run.premise_status(run.case_atoms(case))[0] == "model"
+        return run.describe(run.item_result("ACCEPTABLE", case))
+    assert acceptable(levels) == "ALL"
+    assert acceptable(levels[:1]) == "NONE"
+
+
+def test_a_possible_adjustment_is_no_exception_to_the_recommended_level():
+    """f16-ds, f16-ds-strict: 2.2's "may be adjusted if ... This may occur if, for example, a model does not possess
+    capabilities meaningfully different from other publicly available models" gives a reason, not a sufficient
+    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it;
+    1.3.5's "we otherwise assess that the level of security applied is adequate" (OT4) remains the excepted case."""
+    def recsec(*findings):
+        case = {"id": "fsf-fix:recsec", "family": "B", "levels": ["cbrn_uplift_level_1"], "activity": None,
+                "findings": [[f, "p"] for f in findings]}
+        return run.describe(run.item_result("RECSEC", case))
+    assert recsec() == recsec("like_public_models") == "SOME(RS3=Ds)"
+    assert recsec("security_assessed_adequate") == "NONE"
+
+
+# --- fsf-fidelity-fix review: F1 (the "will" rules of RS0), F2 (a CHECKED unit that uses an open predicate) ---------
+
+def _quoted(text):
+    return " ".join(re.findall(r'"([^"]*)"', text))
+
+
+def test_every_rule_takes_its_rs0_status_from_its_source_feature():
+    """F1: the "will" rules (RS0) are derived from the feature each rule header names, with one table entry per
+    feature, so a rule added later cannot be left out (f17-hri was). A header quoting a "will" is a "will" rule, and
+    each "will" feature's entry quotes its "will"."""
+    blocks = translation.rule_blocks()
+    features = {translation.rule_feature(b) for b in blocks}
+    assert set(translation.WILL_FEATURES).isdisjoint(translation.NOT_WILL_FEATURES)
+    assert set(translation.WILL_FEATURES) | set(translation.NOT_WILL_FEATURES) == features
+    will = translation.will_rules()
+    assert will == {b.id for b in blocks if translation.rule_feature(b) in translation.WILL_FEATURES}
+    assert {"f6", "f8", "f14", "f17-pra", "f17-hri", "f17-add", "f18-yearly"} <= will
+    assert not will & {"f2", "f4-check-d", "f4-need-d", "f4-check-r", "f4-need-r", "f12-u", "f15-diff", "f19-default"}
+    assert all(re.search(r"\bwill\b", quote) for quote in translation.WILL_FEATURES.values())
+    assert {b.id for b in blocks if re.search(r"\bwill\b", _quoted(b.source))} <= will
+
+
+def test_a_rule_added_under_a_will_feature_is_a_will_rule_and_an_unclassified_feature_is_refused(monkeypatch):
+    blocks = translation.rule_blocks()
+    hri = next(b for b in blocks if b.id == "f17-hri")
+    monkeypatch.setattr(translation, "rule_blocks",
+                        lambda: blocks + [translation.Block("f17-later", hri.when, hri.source, hri.text)])
+    assert "f17-later" in translation.will_rules()
+    monkeypatch.setattr(translation, "rule_blocks",
+                        lambda: blocks + [translation.Block("f99-later", (), "F99, no feature", hri.text)])
+    with pytest.raises(SystemExit, match="F99"):
+        translation.will_rules()
+
+
+def test_every_will_quote_is_the_pinned_source_text():
+    """The quotes are the pinned source's own words, which the gate runner does not store (tools/gate-optional.json)."""
     if not build_document.DEFAULT_SOURCE.exists():
         pytest.skip("the pinned source is not stored on this machine")
-    assert measure_r2.main(["--check"]) == 0
+    text = build_document.DEFAULT_SOURCE.read_text()
+    assert [f for f, quote in translation.WILL_FEATURES.items() if quote not in text] == []
+
+
+def test_the_open_predicates_are_the_environment_legend_s_open_terms():
+    """vocabulary.OPEN_PREDICATES, which the builder derives open terms from, says what the committed environment's
+    legend says: "Open term OT<n>, decided by ..." or, with no term, "Decided by ..."."""
+    predicates = json.loads((HERE / "environment.d1.json").read_text())["vocabulary"]["predicates"]
+    legend = {}
+    for name, entry in predicates.items():
+        m = re.search(r"\. Open term (OT[0-9]+), decided by |\. Decided by ", entry["description"])
+        if m:
+            legend[name] = m[1]
+    assert legend == vocabulary.OPEN_PREDICATES
+    assert {t for t in legend.values() if t} <= set(build_document.OPEN_TERM_NAMES)
+
+
+def test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_term():
+    """F2: f15-diff's condition uses `reached` (OT1), and the Glossary premises of g-external and g-high-risk are about
+    `low_risk` (OT8) and `high_risk` (OT7); each was CHECKED. The meanings the builder writes (derived from the
+    content) are the open terms spans.json records, and no unit with an open term is CHECKED."""
+    meanings = build_document.unit_meanings()
+    spans = {u["id"]: u for u in json.loads((HERE / "spans.json").read_text())["units"]}
+    assert set(meanings) == set(spans)
+    for uid, meaning in meanings.items():
+        terms = meaning["open"] if type(meaning) is dict and "open" in meaning else None
+        assert spans[uid].get("open_terms") == terms, uid
+        assert terms is None or spans[uid]["status"] == "OPEN", uid
+    assert spans["s22-insider-not-required"]["open_terms"] == ["ot1_level_reached"]
+    assert spans["g-external"]["open_terms"] == ["ot8_low_risk_external"]
+    assert spans["g-high-risk"]["open_terms"] == ["ot7_high_risk_internal"]
+    coverage = json.loads((HERE / "coverage.json").read_text())
+    assert coverage["master_bytes_by_status"]["CHECKED"] == 4043 and coverage["bytes_by_status"]["CHECKED"] == 2935
+
+
+def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate():
+    rule = json.loads(translation.parsed_rule("f15-diff"))
+    front = {"units": [{"id": "u", "content": {"norm": rule}}, {"id": "v"}, {"id": "w"}],
+             "reading_sets": [{"unit": "w", "readings": [{"content": None}, {"content": {"norm": rule}}]}]}
+    document = b"---\n" + json.dumps(front).encode() + b"\n---\nprose"
+    checked = {"u": "CHECKED", "v": "CHECKED", "w": "CHECKED"}
+    assert build_document.checked_but_open(document, checked) == {"u": ["reached"], "w": ["reached"]}
+    assert build_document.checked_but_open(document, {"u": "OPEN", "v": "CHECKED", "w": "OPEN"}) == {}
+    # Listed terms come first, then the derived ones; an open predicate with no term and nothing listed is refused.
+    derived = build_document.derived_meaning
+    assert derived("u", {"meaning": "specified"}, {"norm": rule}) == {"open": ["ot1_level_reached"]}
+    assert derived("u", {"meaning": {"open": ["ot12_periodic"]}}, {"norm": rule}) == {
+        "open": ["ot12_periodic", "ot1_level_reached"]}
+    assert derived("u", {"meaning": "specified"}, {"ast": ["unary", "external", ["var", 0]]}) == "specified"
+    termless = {"ast": ["unary", "internal_risk_unacceptable_without_safeguards", ["var", 0]]}
+    with pytest.raises(SystemExit, match="internal_risk_unacceptable_without_safeguards"):
+        derived("u", {"meaning": "specified"}, termless)

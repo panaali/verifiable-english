@@ -18,8 +18,8 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,185 lines (M): the four kernel paths plus wire code around one proved evaluator (`quantity`), the
-   risk route and three validators that no theorem covers yet (section 1.3).
+   16,150 lines (M): the four kernel paths, the `quantity` path (a candidate: since KB-8 its wire theorems
+   leave a 75-line wrap), and the risk route and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
    case the answer carries (the carry rule, section 3). Today 57 definitions write a verdict token
@@ -73,7 +73,7 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | **kernel, distinct lines** | | | | | **9,504** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 3,245 | 2,080 | 3,251 |
-| quantity | candidate | 4 | 613 | 1,804 | 2,040 |
+| quantity | candidate | 5 | 2,267 | 75 | 2,274 |
 | rights | candidate | 2 | 5,620 | 35 | 5,636 |
 | alternatives | candidate | 2 | 3,908 | 22 | 3,921 |
 | reports | candidate | 3 | 4,396 | 32 | 4,418 |
@@ -93,7 +93,7 @@ candidate rows moved with main's code, the kernel rows did not). Other measureme
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
 | Definitions that write a verdict token, outside example, check and schema modules | 57, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,185, of them 9,504 in the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,150, of them 9,504 in the kernel (M) |
 
 Reading the table:
 
@@ -139,15 +139,15 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,185 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,150 |
 | of which in the proved kernel | 9,504 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
-| Calls to `quantity` (proved core 613 lines; 1,804 lines of wire code under no theorem) | 9,452 |
+| Calls to `quantity` (wire theorems since KB-8, a candidate; before them, 1,804 lines of wire code under no theorem, now a 75-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
 
 So the keyed answers do not depend on the wrapper modes at all. What still separates them from a
-fully proved path is the wire code around the `quantity` evaluator (KB-8), the risk route and the
-three validators. In every harness the Python side holds the premises between `soft-elaborate` and
+fully proved path is the `quantity` path's tier (a candidate with wire theorems since KB-8), the risk route
+and the three validators. In every harness the Python side holds the premises between `soft-elaborate` and
 `route certificate`: the harnesses already work by the carry rule of section 3. Since KB-7 a
 theorem states the `background` and `premises` fields of the `soft-elaborate` answer
 (`soft_wire_elaborate`); none yet states that the premises the harness carries to the certificate
