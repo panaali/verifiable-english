@@ -21,8 +21,10 @@ f2-no-deploy | omits: "We do not deploy models that reach a High capability thre
 f2-no-deploy-any | omits: "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized" restates
 f3-develop | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-develop-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
-f3-develop-inuse | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-inuse-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
-f3-develop-inuse-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-inuse | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-inuse-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-inuse-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-inuse | omits: "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-inuse-forecast | omits: "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-reminder | omits: "Systems that reach Critical capability also require" restates
 f4-security | omits: "We will require the following practices for High capability models" restates
 f7-evaluations | omits: "every covered model undergoes the suite of" restates ; "Prior to" restates
@@ -60,7 +62,7 @@ f16-board-reverse | omits: "and/or mandate a revised course of action" rule f16-
 f16-board-mandate | omits: "reverse a decision" rule f16-board-reverse
 f16-chair-strict | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
 f16-chair-default | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
-f16-year | omits: "and potentially update" exposition ; "the Preparedness Framework for continued sufficiency" loss 1
+f16-year | omits: "and potentially update" exposition
 f5-ambiguous | omits: "In cases of ambiguity about whether a model is covered by the Preparedness Framework, the SAG is responsible for making the final determination" restates
 f5-checkpoint | omits: "Preparedness Framework" restates
 f6-rel | omits: "models that we distill, fine-tune, or quantize from a model that was previously determined not to cross a High capability threshold" restates ; "barring" restates
@@ -85,6 +87,8 @@ f17-iff | omits: "We treat a frontier capability as a Tracked Category" restates
 f17-iff-only | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
 f13-review | omits: "We will periodically review the latest research and findings for each Research Category" restates
 f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
+cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
+fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
 bio-high | omits: nothing
 bio-critical | omits: nothing
 cyb-high | omits: nothing
@@ -93,5 +97,3 @@ ais-high | omits: nothing
 ais-critical | omits: nothing
 rs2-nest | omits: "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development" reading RS2
 no-critical-models | omits: "We do not currently possess any models that have Critical levels of capability" restates ; "and we expect to further update this Preparedness Framework before reaching such a level with any model" exposition
-cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
-fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates

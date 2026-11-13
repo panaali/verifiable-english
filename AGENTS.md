@@ -12,7 +12,8 @@ and whether it holds; Python and Rust carry the files, the display and a fast pa
 ## Who owns what
 
 - **Lean owns meaning.** Every verdict, diagnostic (code and text), limit, fault order and derived
-  value is computed in Lean. A Lean answer is the answer; Python never recomputes it.
+  value is computed in Lean. A Lean answer is the answer; Python never recomputes it. Not yet true
+  for soft-rule norm documents: `docs/spec/kernel-boundary.md`.
 - **Python** does the command line, files, display, the response schema and request binding only.
   A relayed answer is checked for (a) its schema, fully typed, and (b) its binding to the request:
   every id, span, count and choice it names exists in the request, and no row is empty or extra.
@@ -57,7 +58,7 @@ Adding or changing a relayed mode: follow `docs/ROUTE-RECIPE.md` (seven steps, w
 
 Never hand-edit or hand-merge; use each generator.
 
-- `uv run python tools/regen_generated.py --list`: files, generators, checks; `uv run python tools/regen_generated.py --owner <path>`: owner; `uv run python tools/repo_map.py file <path>`: generator.
+- `uv run python tools/regen_generated.py --list`: files, generators, checks; `--owner <path>`: owner; `uv run python tools/repo_map.py file <path>`: generator.
 - `uv run python tools/regen_generated.py --check`: stale files; `--write`: regenerates all in dependency order; `--resolve`: finishes `git merge --no-commit` if only generated files conflict.
 - Gate ties test IDs to commit; `tools/gate_collection.py --check` compares to merge base; no collection file committed.
 - `lean/checkers.lock` pins built checkers; `python3 tools/rust_build.py --check` fails on unpinned Rust binary.
@@ -68,7 +69,7 @@ Never hand-edit or hand-merge; use each generator.
 - `python3 lean/audit.py` audits every Lean source and theorem against the allowed axioms.
 - `uv run python tools/select_tests.py --base $(git merge-base HEAD main) --run` runs the tests a branch
   can affect. Use it while iterating.
-- `python3 tools/gate.py` is the full release gate. It writes its result to gate-result.json in the checkout.
+- `python3 tools/gate.py` is the full release gate; it writes gate-result.json in the checkout.
 - `python3 tools/rust_build.py` builds the reproducible Rust release binary.
 
 ## Testing rules that recur in reviews
@@ -76,8 +77,7 @@ Never hand-edit or hand-merge; use each generator.
 - **Run the full gate once,** on the committed final HEAD, as the last step. While iterating, run the
   selected tests and the tests you add. Never rerun the full gate on an unchanged commit.
 - **Report and evidence tests read saved evidence**: numbers and commit lists saved with the batch,
-  never a live `git diff` against a moving HEAD, so they still pass after a sync with main and after
-  the merge.
+  never a live `git diff` against a moving HEAD, so they pass after a sync with main and the merge.
 - **No literal sleeps, no short timeouts, no elapsed-time asserts.** Waits use `HANG_TIMEOUT` from
   `tests/subprocesses.py`; deadlines are tested by injecting an expired clock; `tests/test_hang_guards.py`
   enforces this. Speed is measured in `tools/bench/test_perf.py`, never in the suite.
@@ -86,5 +86,5 @@ Never hand-edit or hand-merge; use each generator.
   Record each with its file and the failing test.
 - **Every relayed answer is typed and bound**, with fuzz tests that retype and rebind each field.
 - **Verdicts are three-valued.** Exhaustion, a timeout or an empty budget is UNKNOWN, never false or none.
-- **Hermetic tests.** Write only under `tmp_path`; do not rely on caches, the network or model calls.
+- **Hermetic tests.** Write only under `tmp_path`; no caches, network or model calls.
 - `docs/TESTING.md` has the full testing guide: selection, the coverage map, workers and benchmarks.

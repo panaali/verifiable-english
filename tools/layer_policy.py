@@ -432,7 +432,7 @@ def lean_name_layer(module: str) -> int | None:
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:
         return 3
-    if module.startswith(("VE.Core.", "VE.Json", "VE.Kit.")) or module in {
+    if module.startswith(("VE.Core.", "VE.Json", "VE.Kit.", "VE.Kernel.")) or module in {
         "VE.Limits", "VE.Paths", "VE.Syntax", "VE.Semantics", "VE.Typing", "VE.Finite", "VE.Consequence",
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",

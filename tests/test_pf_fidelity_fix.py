@@ -98,7 +98,8 @@ def test_table_1_acts_name_the_high_standard(pf):
 
 def test_f2_f3_acts_carry_the_sufficiency(pf):
     """f2, f3 (class 1): SUF asks safeguards that sufficiently minimize the risk, and sufficient controls."""
-    assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development"}
+    assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development",
+                                   "safeguards_before_internal_use"}
     assert "sufficiently minimizing severe-harm risk" in act("safeguards_before_deployment")
     assert "sufficient safety as well as security controls" in act("safeguards_during_development")
     for name in ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"):
@@ -149,7 +150,7 @@ def test_rs11_final_is_excluded_and_no_rule_of_it_returns(pf):
     """f16-final, f16-process (classes 5, 9): RS11 = final is not offered, and no rule is selected by RS11."""
     assert T.READING_SETS["RS11"] == ("process",) and T.EXCLUDED_READINGS == {"RS11": ("final",)}
     assert B.READINGS["rs11-final"] == ("RS11", {"process": []})
-    blocks = T.rule_blocks() + T.read_blocks("facts.d1.ve")
+    blocks = T.rule_blocks() + T.fact_blocks()
     assert not [b.id for b in blocks if any(s == "RS11" for s, _ in b.when)]
     assert not {"f16-final", "f16-process"} & {b.id for b in blocks}
     assert "decision_reversal" in {json.loads(T.parsed_rule(b.id))["predicate"] for b in blocks
@@ -223,7 +224,7 @@ def test_change_log_removal_of_low_and_medium_is_a_blocked_unit(pf):
     assert unit["residual"] == "unmapped_duty-p15-u245-b1881efef95f"  # main's residual id is kept
     assert "cl-levels" not in B.FACT_ANCHORS and "cl-levels" not in B.CHECKED_CLAUSES
     # The block's own header quotes the sentence; its "because" clause has no element in the facts.
-    header = next(b.source for b in T.read_blocks("facts.d1.ve") if b.id == "cl-levels")
+    header = next(b.source for b in T.fact_blocks() if b.id == "cl-levels")
     sentence = re.search(r"(Also, we are removing terms.*?Preparedness work\.)", header)[1].encode()
     assert not B._complete_clause_map("cl-levels", sentence)
 
@@ -269,3 +270,207 @@ def test_every_blocked_reason_has_one_named_family(pf):
     # BLOCKER_DETAIL owns each reason's family; a reason missing from it cannot be placed (the replanted F1 hit one).
     assert set(B.BLOCKED_RULE_REASONS.values()) <= set(B.BLOCKER_DETAIL)
     assert not hasattr(B, "BLOCKER_FAMILY")
+
+
+# --- openai-preparedness-fidelity-fix-2: the 12 units the whole-document pass failed (PLAN 12 item 23) -----------
+# Each test pins one claimed fix; the selection tests ask VE (soft-norms@0) on a case model built by run.atoms.
+
+needs_lean = pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+
+
+def legend(predicate):
+    return V.environment()["vocabulary"]["predicates"][predicate]["description"]
+
+
+def rule(block_id):
+    return json.loads(T.parsed_rule(block_id))
+
+
+def selections(reading, case, predicate, sign=True):
+    """The rules VE selects for `predicate` on the case model, under both completion defaults."""
+    choice = {**R.BASE, **reading}
+    names, found = tuple(sorted(choice.items())), R.atoms(case, choice)
+    picked = [set(R.selected(R.document(names, d), found, predicate, sign)) for d in ("deny", "allow")]
+    assert picked[0] == picked[1]
+    return picked[0]
+
+
+def key_item(id_):
+    return next(k for k in json.loads((PF / "answer-key.json").read_text())["items"] if k["id"] == id_)
+
+
+def test_f3_internal_use_is_its_own_act_and_both_legends_say_additional(pf):
+    """f3-develop-inuse(-forecast) (classes 1, 4): under RS18 = inuse the heading's internal use has its own act,
+    "before internal use"; the development blocks name development only; both legends keep 4.4's wording."""
+    for name in ("f3-inuse", "f3-inuse-forecast"):
+        assert rule(name)["predicate"] == "safeguards_before_internal_use"
+        assert "internal_deployment" in json.dumps(rule(name)["guard"])
+        assert next(b for b in T.rule_blocks() if b.id == name).when == (("RS18", "inuse"),)
+    for name in ("f3-develop-inuse", "f3-develop-inuse-forecast"):
+        assert rule(name)["predicate"] == "safeguards_during_development"
+        assert "internal_deployment" not in json.dumps(rule(name)["guard"])
+    assert act("safeguards_before_internal_use").endswith("before internal use")
+    assert "during development" not in act("safeguards_before_internal_use")
+    for predicate in ("safeguards_before_internal_use", "safeguards_during_development"):
+        assert "additional safeguards (safety and security controls)" in legend(predicate)
+    assert B.READINGS["rs18-develop"][1]["inuse"] == ["f3-develop-inuse", "f3-develop-inuse-forecast", "f3-inuse",
+                                                      "f3-inuse-forecast"]
+    assert "safeguards_before_internal_use" in R.ATOMS["SUF"] and "f3-inuse" in R.N1_RULES
+
+
+@needs_lean
+def test_f3_internal_deployment_selects_the_internal_use_act_only(pf):
+    for case, block in (({"id": "t", "levels": ["BIO-C"], "activity": "INT", "findings": {}}, "f3-inuse"),
+                        ({"id": "t", "levels": [], "activity": "INT", "findings": {"OT10": True}}, "f3-inuse-forecast")):
+        reading = {"RS18": "inuse", "RS2": "sep", "RS3": "ext"}
+        assert selections(reading, case, "safeguards_before_internal_use") == {block}
+        assert selections(reading, case, "safeguards_during_development") == set()
+        assert selections({**reading, "RS18": "devonly"}, case, "safeguards_before_internal_use") == set()
+
+
+TWO_AREAS = {"id": "t", "levels": ["BIO-H", "CYB-H"], "activity": "EXT", "findings": {"OT12": True},
+             "extra": ["adjustment_conditions"], "relations": [["adjustment_area", "s", "biological_and_chemical"]]}
+ONE_AREA = {**TWO_AREAS, "levels": ["BIO-H"]}
+EXCEPTION = {"RS5": "exception", "RS3": "ext"}
+
+
+def test_f11_exception_guards_name_the_capability_area(pf):
+    """f11-exception(-deploy) (classes 2, 7): each releases only where a reached level is in the confirmed area,
+    unless a reached level is in no confirmed area."""
+    for name in ("f11-exception", "f11-exception-deploy"):
+        data = rule(name)
+        assert "adjustment_area" in json.dumps(data["guard"]) and "adjustment_area" in json.dumps(data["unless"])
+        assert "in_category" in json.dumps(data["unless"])
+        assert "that capability area" in legend("adjustment_area")
+    assert R.WITNESS_RELATIONS["C1"] == (("adjustment_area", "s", "biological_and_chemical"),)
+
+
+@needs_lean
+def test_one_areas_adjustment_does_not_release_another_areas_duty(pf):
+    """C1's sentence: "the level of safeguards that we require in that capability area"."""
+    assert selections(EXCEPTION, ONE_AREA, "safeguards_before_deployment", sign=False) == {"f11-exception"}
+    assert "f11-exception" not in selections(EXCEPTION, TWO_AREAS, "safeguards_before_deployment", sign=False)
+    assert "f2-deploy" in selections(EXCEPTION, TWO_AREAS, "safeguards_before_deployment")
+
+
+@needs_lean
+def test_the_deploy_exception_permits_only_inside_the_confirmed_area(pf):
+    assert selections(EXCEPTION, ONE_AREA, "deployment_permitted") == {"f11-exception-deploy"}
+    assert selections(EXCEPTION, TWO_AREAS, "deployment_permitted") == set()
+    assert "f2-no-deploy" in selections(EXCEPTION, TWO_AREAS, "deployment_permitted", sign=False)
+
+
+def test_f6_guard_names_footnote_6s_three_methods(pf):
+    """f6-rel (class 3): the guard is a model OpenAI distills, fine-tunes, or quantizes from one below High."""
+    guard = json.dumps(rule("f6-rel")["guard"])
+    name = "distilled_finetuned_or_quantized_from_below_high"
+    assert name in guard and "significant_increase" in json.dumps(rule("f6-rel")["unless"])
+    assert ("distills, fine-tunes, or quantizes from a model that was previously determined not to cross a High "
+            "capability threshold") in legend(name)
+    assert "derives" not in legend(name)
+    assert "generally" in next(b.text for b in T.rule_blocks() if b.id == "f6-rel")
+
+
+def test_f14_summary_covers_the_sag_recommendation_with_no_request_guard(pf):
+    """f14-summary (classes 1, 7): the testing results and the SAG recommendation; requesting is permitted, not
+    presupposed; the sensitive-information limits stay the carve-out."""
+    data = rule("f14-summary")
+    assert data["predicate"] == "summary_access" and data["guard"] == ["top"]
+    assert "beyond_sensitive_limits" in json.dumps(data["unless"])
+    assert "SAG summary" in act("summary_access") and len(act("summary_access")) <= 80
+    assert ("a summary of the testing results and SAG recommendation on capability levels and safeguards (subject "
+            "to certain limits for highly sensitive information)") in legend("summary_access")
+
+
+def test_f12_undermining_keeps_and_or(pf):
+    """f12-undermining(-unscoped) (classes 1, 5): no conjunction between capability and propensity."""
+    assert "as well as" not in act("robust_case") and "what was discovered" in act("robust_case")
+    assert "robust to the discovered capability and/or propensity" in legend("robust_case")
+    assert {rule(n)["predicate"] for n in ("f12-undermining", "f12-undermining-unscoped")} == {"robust_case"}
+
+
+def test_f12_sandbagging_is_one_disjunctive_duty(pf):
+    """f12-sandbagging(-unscoped) (classes 1, 5, 7, 8): one act carries both alternatives; no carve-out and no
+    harness assumption that the bound is unused."""
+    for name in ("f12-sandbagging", "f12-sandbagging-unscoped"):
+        assert rule(name)["predicate"] == "sandbagging_response" and rule(name)["unless"] == []
+    assert rule("f12-sandbagging")["guard"] == ["unary", "sandbagging_found", ["var", 0]]
+    assert rule("f12-sandbagging-unscoped")["guard"] == ["top"]
+    assert ("Adopt elicitation approach that overcomes sandbagging, or use a conservative upper bound of the "
+            "model’s non-sandbagged evaluation results") in legend("sandbagging_response")
+    assert not hasattr(R, "ALTERNATIVES")
+    assert "conservative_upper_bound_used" not in V.environment()["vocabulary"]["predicates"]
+
+
+@needs_lean
+def test_k10_stays_some_n_and_k12_all_on_a_live_query(pf):
+    R.MUTANT = R.WITHOUT_NARROWING = None
+    k10 = R.answer(key_item("K10"))
+    assert "undecided" not in k10 and k10["choices"]
+    assert all(row["holds"] == (row["choice"]["RS4"] == "N") for row in k10["choices"])
+    k12 = R.answer(key_item("K12"))
+    assert "undecided" not in k12 and k12["choices"] and all(row["holds"] for row in k12["choices"])
+
+
+def test_f16_year_reviews_the_framework_once_as_to_continued_sufficiency(pf):
+    """f16-year (classes 1, 2): the duty's subject is the Framework (a one-member sort), not each situation."""
+    environment = V.environment()["vocabulary"]
+    assert environment["predicates"]["annual_review"]["arguments"] == ["framework"]
+    assert "Preparedness Framework" in environment["sorts"]["framework"]["description"]
+    assert "continued sufficiency" in act("annual_review") and "at least once a year" in act("annual_review")
+    assert ("We will review and potentially update the Preparedness Framework for continued sufficiency at least "
+            "once a year.") in legend("annual_review")
+    assert rule("f16-year")["predicate"] == "annual_review"
+    assert next(b.text for b in T.rule_blocks() if b.id == "f16-year").startswith("Rule 1. Every framework must")
+
+
+def test_facts_hold_exactly_their_stated_inventory(pf):
+    """FACTS (class 7): facts.d1.ve is PLAN 4.1's levels, RS2 = nest and 4.4's dated fact; the change log's and
+    footnote 5's sentences are headed blocks of rules.d1.ve, each read as its own unit; N4 names cl-levels."""
+    assert [b.id for b in T.read_blocks("facts.d1.ve")] == [
+        "bio-high", "bio-critical", "cyb-high", "cyb-critical", "ais-high", "ais-critical", "rs2-nest",
+        "no-critical-models"]
+    in_rules = {b.id: b for b in T.read_blocks("rules.d1.ve") if not T.is_rule(b)}
+    assert set(in_rules) == {"cl-levels", "fn5-indicator"} and all(b.when == () for b in in_rules.values())
+    assert re.search(r"^## cl-levels \| always \| Change log item 2: “Also, we are removing terms",
+                     (PF / "rules.d1.ve").read_text(encoding="utf-8"), re.M)
+    assert {"cl-levels", "fn5-indicator"} <= {b.id for b, _ in T.facts()}
+    assert not {"cl-levels", "fn5-indicator"} & {b.id for b in T.rule_blocks()}
+    saved = json.loads((PF / "results.json").read_text())
+    assert saved["items"]["N4"]["choices"][0]["rules"] == ["cl-levels"]
+    # Review F1: G7 rests on footnote 5's indicator premise, so every G7 row names fn5-indicator.
+    assert [row["rules"] for row in saved["items"]["G7"]["choices"]] == [["fn5-indicator"]] * 2
+
+
+def test_every_premise_unit_outside_facts_is_named_by_an_item():
+    """Review F1 as a class: uc-audit ties an item to the units its results.json record names, plus FACTS. A fact
+    block of rules.d1.ve is no part of FACTS, so some item's rows must name it, or an UNFAITHFUL re-read of it
+    would fail no item."""
+    saved = json.loads((PF / "results.json").read_text())
+    named = {unit for item in saved["items"].values() for row in item.get("choices", ())
+             for unit in row.get("rules", ())}
+    units = {b.id for b in T.rule_fact_blocks()}
+    assert units == {b.id for b in T.read_blocks("rules.d1.ve") if not T.is_rule(b)}
+    assert units <= named, f"premise units no item names: {sorted(units - named)}"
+
+
+def test_premise_units_follow_the_goal(pf):
+    """Review F1: a route's premise units are derived from its goal's predicates (run.premise_units), not listed by
+    hand: G7's goal (indicator_for) rests on fn5-indicator, N4's (low, medium) on cl-levels, and a goal naming
+    neither rests on no unit outside FACTS."""
+    from ve import ast as A
+    env = T.base_environment()
+    level = lambda p: ["exists", "level", ["unary", p, ["var", 0]]]  # noqa: E731
+    indicator = ["exists", "evaluation", ["exists", "level", ["binary", "indicator_for", ["var", 1], ["var", 0]]]]
+    assert R.premise_units(A.formula_from_data(env, indicator)) == ["fn5-indicator"]
+    assert R.premise_units(A.formula_from_data(env, ["or", level("low"), level("medium")])) == ["cl-levels"]
+    assert R.premise_units(A.formula_from_data(env, ["and", indicator, level("low")])) == [
+        "cl-levels", "fn5-indicator"]
+    assert R.premise_units(A.formula_from_data(env, level("high"))) == []
+    assert R.low_medium_never()["choices"][0]["rules"] == ["cl-levels"]
+
+
+def test_regulated_predicates_stay_within_64():
+    stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
+    count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
+    assert stage0["P7"]["regulated_predicates"] == count == 60
