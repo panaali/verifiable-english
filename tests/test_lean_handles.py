@@ -192,6 +192,50 @@ def test_adapter_environment_is_encoded_once_and_immutable():
         rust["profiles"].append("bogus@0")
 
 
+@pytest.fixture
+def wire_cache():
+    """`environment_wire._cache`, emptied for the test and restored after it with its entries in their
+    order, so a test that fills the cache leaves later tests the state they would have had."""
+    from ve import environment_wire
+    saved = list(environment_wire._cache.items())
+    environment_wire._cache.clear()
+    yield environment_wire
+    environment_wire._cache.clear()
+    environment_wire._cache.update(saved)
+
+
+def _fill(wire, count: int) -> None:
+    for index in range(count):
+        wire.encoded_value(("cache-fill", index), lambda index=index: {"index": index})
+
+
+@pytest.mark.parametrize("lean_first", [False, True], ids=["full-cache", "lean-oldest"])
+def test_a_full_environment_cache_keeps_the_entries_in_use(wire_cache, lean_first):
+    """The sequence of `test_adapter_environment_is_encoded_once_and_immutable` after earlier tests
+    left the cache one short of full (`lean-oldest`: and its lean entry the oldest of them): the rust
+    insert evicts one entry, never the lean one just used."""
+    from ve.backends.lean_runner import cached_route_environment
+    from ve.environment import Environment
+    env = Environment(POLICY)
+    if lean_first:
+        cached_route_environment(env)
+        _fill(wire_cache, wire_cache._LIMIT - 1)
+    else:
+        _fill(wire_cache, wire_cache._LIMIT - 1)
+    lean = cached_route_environment(env)
+    rust = rust_jsonl.cached_rust_environment(env)
+    assert cached_route_environment(env) is lean
+    assert rust_jsonl.cached_rust_environment(env) is rust
+    assert len(wire_cache._cache) == wire_cache._LIMIT
+
+
+def test_the_environment_cache_keeps_its_newest_limit_entries(wire_cache):
+    extra = 10
+    _fill(wire_cache, wire_cache._LIMIT + extra)
+    assert len(wire_cache._cache) == wire_cache._LIMIT
+    assert set(wire_cache._cache) == {("cache-fill", index) for index in range(extra, wire_cache._LIMIT + extra)}
+
+
 def _checkers():
     return [checker for idle in rust_jsonl._idle.values() for checker in idle]
 
