@@ -1,0 +1,44 @@
+{
+ "audit_rc": 0,
+ "base": "cb8b9507b04348ad4fdfae95263df70bd4fd9c98",
+ "changed_modules": [
+  "ResponseShape/Encoders/SoftNorms",
+  "ResponseShape/Schemas/SoftNorms",
+  "ResponseShape/SoftSelectedExamples",
+  "ResponseShapeAudit",
+  "VE",
+  "VE/Audit",
+  "VE/SoftNorms/ElaborateSound",
+  "VE/SoftNorms/Run",
+  "VE/SoftNorms/Selected",
+  "VE/SoftNorms/SelectedExamples",
+  "VE/SoftNorms/SelectedSound"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Encoders/SoftNorms": "48468ea6ef6614720470e808cbc87ea8012402a1cdee360378b4bdab4823840b",
+  "ResponseShape/Schemas/SoftNorms": "36b11e28e278753d55c77ccb10719d528655d673ec44b743cfbc53c4459b707d",
+  "ResponseShape/SoftSelectedExamples": "88710c20c128e5db0392e39af5dfb531c350e4da1910fd6c8d65b8d4e006b250",
+  "ResponseShapeAudit": null,
+  "VE": "21e8a01ec012059c6ee1ed0800983cd1d29d89919e009131f29448742a3caae6",
+  "VE/Audit": null,
+  "VE/SoftNorms/ElaborateSound": "443ecc3e0cc23e5dff8000c316543a106421b1bfb55de5d6cc4cf9b1af0366c5",
+  "VE/SoftNorms/Run": "049e7239a262f8904986f99843899a9b6cb8ea9c2a093c11f5d236c4fe469d0b",
+  "VE/SoftNorms/Selected": "6064f8b62dcd03994a8068d86d625c5c762c8750b71f6b9c92732e85097c9865",
+  "VE/SoftNorms/SelectedExamples": "34316cbdb44522e3f6992b564c9d8c8c62988772577ae9e0d933892402a3e554",
+  "VE/SoftNorms/SelectedSound": "1a241e43731ab47dd48b2349ec462b689cc3aa9704e66d588e1346504cba2e17"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "c16c6cceb5e2f94d883091e419f4baf50beaaec23490aea1bc03dd6c069c99c0",
+  "lean/VE/Audit.lean": "b2f24193e5997bab407c351761ffd0f48c1a0cf83601c514bdfc08e1916b621e",
+  "lean/axioms.txt": "4fee0304fe7ddd59fa79fe99cbf5cf92ede623f4b896edb67b01b73d3067d2d2",
+  "lean/declarations.txt": "f5adb5a687ca84088c388b3c97d6649dacb13fa4468beb188eea9d706675b0ed",
+  "lean/predicates.txt": "2163e1fde04dc5d56eca609f687dcc683d304a16a1f0e374f4cde66d26d20a59",
+  "lean/statements.txt": "7a0647b779472100b0f2fef3115366b9f8e112eed4b25786922493e60fb98561"
+ },
+ "head": "0e2b666639929cf62ddf43585cf796166137e70c",
+ "lake_rc": 0,
+ "oleans_n": 864,
+ "oleans_sha256": "9c3636178cd42c63abbba05909c46f4538aeeb2b607473480adfcc030160e7a5",
+ "seed": "seed-fp",
+ "statements_rc": 0
+}
