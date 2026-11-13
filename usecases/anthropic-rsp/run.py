@@ -80,7 +80,7 @@ PREDICATES = {
     "PUBLISH_BY_EFFECTIVE_DATE_AND_CHANGE_LOG": "update_published",
     "TRACK_AND_REPORT_DEVIATION": "deviation_reported", "STRONG_ARGUMENT": "argument_required",
     "DELAY": "delay", "MEET_OR_EXCEED_COMPETITOR_POSTURE": "posture_matched",
-    "SIGNIFICANT_EFFORT": "significant_effort", "RISK_REPORT_ADDRESSES_MISS": "goal_miss_addressed",
+    "SIGNIFICANT_EFFORT": "significant_effort", "RISK_REPORT_ADDRESSES_MISS": "roadmap_review_addressed",
     "OTHER_CONSEQUENCE": "delay", "QUARTERLY_UPDATE": "quarterly_updates",
     "ASSESS": "assessed_in_report", "INSCOPE": "in_scope",
 }

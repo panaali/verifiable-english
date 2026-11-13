@@ -928,16 +928,7 @@
     "cbrn_uplift_tcl"
    ],
    "activity": null,
-   "findings": [
-    [
-     "unmitigated_public_safety_risk",
-     "p"
-    ],
-    [
-     "sharing_facilitates_safety",
-     "p"
-    ]
-   ]
+   "findings": []
   },
   {
    "id": "G8",
@@ -947,10 +938,6 @@
    ],
    "activity": "EXT",
    "findings": [
-    [
-     "governance_found_acceptable",
-     "p"
-    ],
     [
      "circumvention_evidence",
      "p"
