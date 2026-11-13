@@ -1,0 +1,12 @@
+{
+ "job": "testmap-14dbcaa5-t612621-s2",
+ "head": "caaca9a7132e9d2bffc0cb6ac633d9545f12eb8d",
+ "argv": [
+  "testmap-14dbcaa5-t612621-s2",
+  "caaca9a7132e9d2bffc0cb6ac633d9545f12eb8d",
+  "caaca9a7132e9d2bffc0cb6ac633d9545f12eb8d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-664a8af90749.tar.zst",
+  "2fdad12c65d70c46aaf101691345f0d543b8621106b5ae7ed022f01139e22fd2",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s2.json.gz\" tests/test_trust_mutants.py tests/test_trust_mutants_probe_scope.py tests/test_lean_conformance.py tests/test_lean_dump_cache.py tests/test_gate_collection_renumber.py tests/test_properties.py tests/test_scope_5_4_statements.py tests/test_assurance_manifest.py tests/test_rust_reproducible.py tests/test_trust_budget.py tests/test_wire_contract_faults.py tests/test_readings_sup_verdicts.py tests/test_scope_readings_document.py tests/test_b16f_document.py tests/test_single_owner.py tests/test_scope_lean.py tests/test_judgments_chain.py tests/test_batch_evidence.py tests/test_right_clauses_lean.py tests/test_entailment_adversarial.py tests/test_english_e2_overlay.py tests/test_suite_tail.py tests/test_select_fast_stage.py tests/test_select_defer.py tests/test_lean_service_audit.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
