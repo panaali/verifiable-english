@@ -432,6 +432,7 @@ import VE.Route.Background
 import VE.Route.Budget
 import VE.Route.Checker
 import VE.Route.Closure
+import VE.Route.CodecRoundTrip
 import VE.Route.Decode
 import VE.Route.Examples
 import VE.Route.Flags
@@ -8296,16 +8297,45 @@ import VE.WireContract.Engine
 #print axioms VE.Route.Wire.RouteVocabulary.chain
 #print axioms VE.Route.Wire.RouteVocabulary.nodup
 #print axioms VE.Route.Wire.RouteVocabulary.validNames
+#print axioms VE.Route.Wire.astLimit_check_encode
 #print axioms VE.Route.Wire.backgroundCheck_ok
 #print axioms VE.Route.Wire.backgroundViolation_none
+#print axioms VE.Route.Wire.decodeClosed_encodeFormula
+#print axioms VE.Route.Wire.decodeClosed_encodeFormula_wellFormed
+#print axioms VE.Route.Wire.decodeClosed_refuses_depth
+#print axioms VE.Route.Wire.decodeClosed_refuses_depth_past_walk
 #print axioms VE.Route.Wire.decodeDataModel_combined
 #print axioms VE.Route.Wire.decodeDataModel_valid
+#print axioms VE.Route.Wire.decodeFormula_encodeFormula
+#print axioms VE.Route.Wire.decodeFormulas_encode
+#print axioms VE.Route.Wire.decodeFormulas_encode_wellFormed
+#print axioms VE.Route.Wire.decodeFormulas_refuses_depth
+#print axioms VE.Route.Wire.decodeFormulas_refuses_depth_past_walk
 #print axioms VE.Route.Wire.decodeModel_background
 #print axioms VE.Route.Wire.decodeModel_intended
 #print axioms VE.Route.Wire.decodeModel_valid
 #print axioms VE.Route.Wire.decodeOrderModel_valid
+#print axioms VE.Route.Wire.decodeTerm_encodeTerm
 #print axioms VE.Route.Wire.decodeVocabulary_valid
 #print axioms VE.Route.Wire.definitionsCheck_ok
+#print axioms VE.Route.Wire.depth_negationChain
+#print axioms VE.Route.Wire.encodeFormula_arr
+#print axioms VE.Route.Wire.foldlM_walk_encode
+#print axioms VE.Route.Wire.foldl_add
+#print axioms VE.Route.Wire.mapM_decodeFormula_encode
+#print axioms VE.Route.Wire.node_step
+#print axioms VE.Route.Wire.ok_bind
+#print axioms VE.Route.Wire.term_step
+#print axioms VE.Route.Wire.walk_binaryNode
+#print axioms VE.Route.Wire.walk_bind
+#print axioms VE.Route.Wire.walk_const
+#print axioms VE.Route.Wire.walk_encodeFormula
+#print axioms VE.Route.Wire.walk_encodeTerm
+#print axioms VE.Route.Wire.walk_leafNode
+#print axioms VE.Route.Wire.walk_pairAtom
+#print axioms VE.Route.Wire.walk_unaryAtom
+#print axioms VE.Route.Wire.walk_unaryNode
+#print axioms VE.Route.Wire.walk_var
 #print axioms VE.Route.WireSound.Family.Sound.expands_intended
 #print axioms VE.Route.WireSound.Family.Sound.layer_env
 #print axioms VE.Route.WireSound.Family.Sound.layer_intended
