@@ -101,7 +101,7 @@ def test_f2_f3_acts_carry_the_sufficiency(pf):
     assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development",
                                    "safeguards_before_internal_use"}
     assert "sufficiently minimizing severe-harm risk" in act("safeguards_before_deployment")
-    assert "sufficient safety as well as security controls" in act("safeguards_during_development")
+    assert "sufficient additional safety plus security controls" in act("safeguards_during_development")
     for name in ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"):
         block = next(b for b in T.rule_blocks() if b.id == name)
         assert "sufficiently minimize the associated risk of severe harm" in block.source, name
@@ -161,17 +161,19 @@ def test_rs11_final_is_excluded_and_no_rule_of_it_returns(pf):
 
 
 def test_k_entries_are_the_saved_answers():
-    """C6 and C-doc are NONE and G9 is SOME(P ∨ scoped) (PLAN 12 items 19, 20); section 6 keeps its cells."""
+    """C6 and C-doc are NONE (PLAN 12 item 19); G9 is NONE (item 20 as amended by item 25: C.2's duty, unguarded
+    under both RS9 choices, binds G9's model too); section 6 keeps its cells."""
     saved = json.loads((PF / "results.json").read_text())
     rows = {r["id"]: r for r in saved["comparison"]}
-    assert rows["C6"]["ve"] == rows["C-doc"]["ve"] == "NONE"
+    assert rows["C6"]["ve"] == rows["C-doc"]["ve"] == rows["G9"]["ve"] == "NONE"
     g9 = saved["items"]["G9"]["choices"]
-    assert g9 and all(row["holds"] == (row["choice"]["RS4"] == "P" or row["choice"]["RS4s"] == "scoped")
-                      for row in g9)
+    assert g9 and not any(row["holds"] for row in g9)
+    assert "item 25 amends item 20" in rows["G9"]["cause"]["reason"]
     for id_ in ("C6", "C-doc", "G9"):
         assert rows[id_]["cause"]["kind"] == "key finding"
     plan = (PF / "PLAN.md").read_text(encoding="utf-8")
     assert "19. **Key finding (K): C6 and C-doc are NONE" in plan and "20. **Key finding (K): G9 is SOME(P ∨ scoped)" in plan
+    assert "**Amends item 20 (not rewritten; DRI ruling of 2026-11-13):** G9's VE answer is NONE" in " ".join(plan.split())
 
 
 # --- Class 11: whole source sentences ---------------------------------------------------------------------------
@@ -573,3 +575,108 @@ def test_the_six_changed_acts_fit_the_act_limit(pf):
         text = act(name)
         assert len(text) <= 80 and re.fullmatch(r"\{0\}( [A-Za-z][A-Za-z'-]*)+", text), name
         assert not {"and", "or", "for", "if", "not", "no", "every", "must"} & set(text.lower().split()), name
+
+
+# --- openai-preparedness-fidelity-fix-4: round B part 2, the other six units both adjudicators judged REAL ---------
+# (reviews/audit-newrule-fsfpf/pf-adjud/result.md section 2: R01 R02 R03 R13 R14 R15; PLAN 12 item 25)
+
+F3_DEVELOPMENT = ("f3-develop", "f3-develop-forecast", "f3-develop-inuse", "f3-develop-inuse-forecast", "f3-reminder")
+SENTENCE_4_4 = ("Such models require additional safeguards (safety and security controls) during development, "
+                "regardless of whether or when they are externally deployed.")
+SENTENCE_APPENDIX_C = "Systems that reach Critical capability also require sufficient safeguards during development."
+
+
+def test_f3_development_act_keeps_additional_with_the_sufficiency(pf):
+    """f3-develop, f3-develop-forecast, f3-reminder (R13-R15, C1): one shared act, not forked, carries 4.4's
+    "additional" safety and security controls and the sufficiency of 4.2 and Appendix C; its legend quotes the
+    three sentences in full."""
+    assert [b.id for b in blocks_for("safeguards_during_development")] == list(F3_DEVELOPMENT)
+    assert act("safeguards_during_development") == (
+        "{0} have sufficient additional safety plus security controls during development")
+    assert legend_quotes("safeguards_during_development") == [
+        SENTENCE_4_4, "Systems that reach Critical capability also require safeguards that sufficiently minimize "
+        "associated risks during development.", SENTENCE_APPENDIX_C]
+    for name in F3_DEVELOPMENT[:4]:
+        assert SENTENCE_4_4 in block(name).source, name
+    assert SENTENCE_APPENDIX_C in block("f3-reminder").source
+
+
+def test_f3_development_units_read_no_coverage_condition(pf):
+    """f3-develop, f3-develop-forecast, f3-reminder (R13-R15, C7): neither the sentences nor the rules state
+    coverage; the situation sort (fix-3) carries none, and no predicate the rules read does."""
+    assert "covered" not in V.environment()["vocabulary"]["sorts"]["situation"]["description"]
+    for name in ("f3-develop", "f3-develop-forecast", "f3-reminder"):
+        assert "covered" not in predicates_read(name), name
+        for predicate in predicates_read(name):
+            assert "covered" not in legend(predicate).replace("no coverage condition", ""), (name, predicate)
+        assert "no coverage condition" in block(name).source, name
+
+
+@needs_lean
+def test_an_uncovered_critical_model_still_needs_development_safeguards(pf):
+    """The live consequence of R13-R15's C7: OT7 false (not covered) does not release the development duty."""
+    for case, rules in ((({"id": "t", "levels": ["BIO-C"], "activity": "DEV", "findings": {"OT7": False}}),
+                         {"f3-develop", "f3-reminder"}),
+                        (({"id": "t", "levels": [], "activity": "DEV", "findings": {"OT7": False, "OT10": True}}),
+                         {"f3-develop-forecast"})):
+        assert selections({"RS18": "devonly", "RS2": "sep"}, case, "safeguards_during_development") == rules
+    # the opposite direction: below Critical and with no forecast, coverage or not, no development duty is selected
+    for covered in (True, False):
+        case = {"id": "t", "levels": ["BIO-H"], "activity": "DEV", "findings": {"OT7": covered}}
+        assert selections({"RS18": "devonly", "RS2": "sep"}, case, "safeguards_during_development") == set()
+
+
+def test_c3_access_reads_no_coverage_condition_and_states_why_may_require_is_untranslated(pf):
+    """c3-access-strict and -default (R02, R03): "For all models" states no coverage, so the rules read none; the
+    untranslated "may require" clause has its reason (a possibility, not a duty; no permission granted) in both
+    headers and in the reading set's spans.json record, with its byte span inside the unit."""
+    assert "covered" not in V.environment()["vocabulary"]["sorts"]["situation"]["description"]
+    for name in ("c3-access-strict", "c3-access-default"):
+        assert predicates_read(name) == {"access_limited"} and rule(name)["guard"] == ["top"], name
+        assert "covered" not in legend("access_limited")
+        header = block(name).source
+        assert "no coverage condition" in header and "the “may require” clause is not translated, because" in header
+        assert "a possibility" in header and "not a duty" in header and "grants no one a permission" in header
+    record = next(u for u in json.loads((PF / "spans.json").read_text())["units"]
+                  if u.get("reading_set") == "rs9-access")
+    (fragment, reason, detail), = B.UNTRANSLATED["rs9-access"]
+    (clause,) = record["untranslated"]
+    assert clause == {"span": clause["span"], "reason": "possibility_not_duty", "detail": detail}
+    assert fragment == "and may require additional approvals for access" and reason == clause["reason"]
+    start, end = clause["span"]
+    assert record["span"][0] <= start and end == start + len(fragment.encode()) <= record["span"][1]
+    assert "not a duty" in detail and "PLAN 3.3" in detail
+
+
+@needs_lean
+def test_an_uncovered_model_still_has_access_strictly_limited(pf):
+    """The live consequence of R02/R03: G9's uncovered model at no threshold is bound by C.3's access duty."""
+    case = {"id": "t", "levels": [], "activity": None, "findings": {"OT7": False}}
+    assert selections({"RS9": "strict"}, case, "access_limited") == {"c3-access-strict"}
+    assert selections({"RS9": "default"}, case, "access_limited") == {"c3-access-default"}
+
+
+SENTENCE_C2 = ("Safeguards should sufficiently minimize the risk associated with a misaligned model circumventing human "
+               "control and oversight and executing severe harms.")
+
+
+def test_c2_misalignment_has_no_risk_guard_under_either_reading(pf):
+    """c2-misalignment-strict (R01) and, by the DRI ruling of 2026-11-13 item 2, -default: C.2's sentence states no
+    applicability condition, so neither rule waits for a finding that the risk exists; RS9 changes only the modal;
+    the legend quotes the sentence in full."""
+    assert "misaligned_model_risk" not in V.environment()["vocabulary"]["predicates"]
+    for name, modal in (("c2-misalignment-strict", "must"), ("c2-misalignment-default", "should")):
+        assert rule(name)["guard"] == ["top"] and predicates_read(name) == {"misalignment_risk_minimized"}, name
+        assert block(name).text.startswith(f"Rule 1. Every situation {modal} have safeguards"), name
+        assert SENTENCE_C2 in block(name).source and "no applicability condition" in block(name).source, name
+    assert legend_quotes("misalignment_risk_minimized") == [SENTENCE_C2]
+    assert B.READINGS["rs9-c2-misalignment"][1] == {"strict": ["c2-misalignment-strict"],
+                                                    "default": ["c2-misalignment-default"]}
+
+
+@needs_lean
+def test_c2_binds_a_model_with_no_risk_finding(pf):
+    """The live consequence: a model at no threshold, uncovered and with no risk finding (G9's model), is bound."""
+    case = {"id": "t", "levels": [], "activity": None, "findings": {"OT7": False}}
+    assert selections({"RS9": "strict"}, case, "misalignment_risk_minimized") == {"c2-misalignment-strict"}
+    assert selections({"RS9": "default"}, case, "misalignment_risk_minimized") == {"c2-misalignment-default"}
