@@ -1,0 +1,47 @@
+pk-1 route-case differential, rebuilt base vs head (pk-1-cfr-1b)
+base 3cc70f557e988c08cca45827495f79749a3f001c (main before pk-1: first parent of pk-1's merge)
+head cb033316a7cb0476e856065e4047efe411bbe43d (pk-1's merge on main, cb033316a7)
+base lean/ clean: 0 changes; head lean/ clean: 0 changes
+baseline manifest: 3cc70f557e988c08cca45827495f79749a3f001c
+cases: docs/premise-packs/pk-1-cfr-1b/evidence/route_cases_norm_defaults.jsonl sha256 df47679e39b000328f0918aca414c8470b5000f67912c5ca6a6fbd3cb1a9d107 (the 33 ["norm-defaults", case] lines of tests/data/route-cases.jsonl at head)
+command 1 (in head): uv run python docs/premise-packs/pk-1-cfr-1b/evidence/route_case_sessions.py route_cases_norm_defaults.jsonl /tmp/pk1cfr1b/recorded
+route-case nd-01 id=layer swapped kind=admission sha256=a96134c7db2d
+route-case nd-02 id=u15-deny:8 kind=admission sha256=635353a59484
+route-case nd-03 id=u1-allow:8 kind=admission sha256=ceee6fd727bc
+route-case nd-04 id=u1-deny:8 kind=admission sha256=0f5e9783aae0
+route-case nd-05 id=x kind=no-such-kind sha256=452aa1dd375c
+route-case nd-06 id=norm-defaults-certificate kind=norm-defaults-certificate sha256=1fed57d1997b
+route-case nd-07 id=u15-deny:7 kind=norm-defaults-certificate sha256=322d2e86f99d
+route-case nd-08 id=u1-allow:7 kind=norm-defaults-certificate sha256=8cb3ca1fb96c
+route-case nd-09 id=u1-deny:7 kind=norm-defaults-certificate sha256=0a5035514d76
+route-case nd-10 id=norm-defaults-conflict kind=norm-defaults-conflict sha256=6cd18fd8f5af
+route-case nd-11 id=u6:13 kind=norm-defaults-conflict sha256=5f308603af54
+route-case nd-12 id=t981:21973 kind=norm-defaults-conflict sha256=be23d240cca7
+route-case nd-13 id=t193:4216 kind=norm-defaults-conflict sha256=571aeb6b3ab6
+route-case nd-14 id=u15-deny:5 kind=norm-defaults-conflict sha256=543315b8ed93
+route-case nd-15 id=u1-deny:5 kind=norm-defaults-conflict sha256=0dbfc31584ae
+route-case nd-16 id=u1-allow:5 kind=norm-defaults-conflict sha256=6adbdc17a169
+route-case nd-17 id=u15-deny:0 kind=norm-defaults-elaborate sha256=d2f33389ce23
+route-case nd-18 id=u15-unspecified:0 kind=norm-defaults-elaborate sha256=66e7439ab939
+route-case nd-19 id=u5a:0 kind=norm-defaults-elaborate sha256=925bedf401c2
+route-case nd-20 id=u5a:11 kind=norm-defaults-gaps sha256=e453137de8d6
+route-case nd-21 id=u5a:10 kind=norm-defaults-gaps sha256=1eb0b2c18cb3
+route-case nd-22 id=u5c:11 kind=norm-defaults-gaps sha256=26b465a86dfe
+route-case nd-23 id=u15-deny:1 kind=norm-defaults-status sha256=1e9ae3e6251e
+route-case nd-24 id=u15-deny:2 kind=norm-defaults-status sha256=beb4c0278360
+route-case nd-25 id=u15-deny:3 kind=norm-defaults-status sha256=581d95246a42
+route-case nd-26 id=norm-defaults-report kind=norm-defaults-report sha256=e849ff8555a0
+route-case nd-27 id=norm-defaults-report kind=norm-defaults-report sha256=a497d68bc77c
+route-case nd-28 id=norm-defaults-elaborate kind=norm-defaults-elaborate sha256=bbf67871b623
+route-case nd-29 id=norm-defaults-report kind=norm-defaults-report sha256=ba2921427634
+route-case nd-30 id=norm-defaults-report kind=norm-defaults-report sha256=096a1247ea48
+route-case nd-31 id=norm-defaults-elaborate kind=norm-defaults-elaborate sha256=587f9da8baa3
+route-case nd-32 id=norm-defaults-report kind=norm-defaults-report sha256=eb9490d3fd6c
+route-case nd-33 id=norm-defaults-report kind=norm-defaults-report sha256=55ca57da4155
+33 route-case sessions written
+invocation plan (in head): static ve_service 323, static ve_speech_acts_route 17, recorded route-case ve_service sessions 33 (33 distinct)
+command 2 (in head): uv run python tools/lean_output_diff.py --baseline /home/seyran/code/ve-pk-1-cfr-1b-base/lean/.lake/ve-output-baseline --recorded /tmp/pk1cfr1b/recorded --jobs 8
+baseline 3cc70f557e98; executables rebuilt with a different digest: ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_senses_route, ve_service, ve_speech_acts_route
+ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_senses_route 1, ve_service 358, ve_speech_acts_route 17
+456 invocations, 382 run on both builds, 74 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out
+exit 0
