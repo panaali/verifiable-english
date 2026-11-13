@@ -50,7 +50,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "there is reasonable evidence that safeguards are not working at {0}"
+        "description": "at {0} OpenAI ('we') finds reasonable evidence that its safeguards are not working as expected (4.2: “If we find reasonable evidence that our safeguards are not working as expected”); OpenAI ('we') decides this (OT11)"
       },
       "adjustment_conditions": {
         "arguments": [
@@ -720,11 +720,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "2.3: periodic review",
+        "description": "2.3: “We will periodically review the latest research and findings for each Research Category.” (the periodicity stays ET-blocked)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have research categories reviewed"
+          "act": "{0} review the latest research as well as findings in each Research Category"
         }
       },
       "decision_documented": {
