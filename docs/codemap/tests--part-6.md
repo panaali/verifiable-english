@@ -1,3 +1,5 @@
+- `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
+- `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
 - `tests/test_readings_defaults_names.py` — The `<reading>` slot (docs/spec/readings-defaults.md 2.3, review A4) names readings by what they say, and two readings that say different things never share a …
 - `tests/test_readings_defaults_rd2a_report.py` — RD-2a's report against its saved evidence (build checklist 20).
 - `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
@@ -78,5 +80,3 @@
 - `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
 - `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
 - `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
-- `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
-- `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
