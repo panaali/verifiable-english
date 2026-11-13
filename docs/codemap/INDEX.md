@@ -15,7 +15,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/document-model/](docs__document-model.md) — 3 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
-- [docs/en-e3-norm/](docs__en-e3-norm.md) — 1 modules — -
+- [docs/en-e3-norm/](docs__en-e3-norm.md) — 3 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 22 modules — -
@@ -120,13 +120,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 24 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
-- [lean/VE/Route/](lean__VE__Route.md) — 30 modules — -
+- [lean/VE/Route/](lean__VE__Route.md) — 31 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
 - [lean/VE/Scope/](lean__VE__Scope.md) — 20 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 17 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 32 modules — -
-- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
+- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 14 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
@@ -138,11 +138,11 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 90 modules — -
 - [tests/ part 2](tests--part-2.md) — 88 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
-- [tests/ part 4](tests--part-4.md) — 83 modules — -
+- [tests/ part 4](tests--part-4.md) — 84 modules — -
 - [tests/ part 5](tests--part-5.md) — 85 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
 - [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 40 modules — -
+- [tests/ part 8](tests--part-8.md) — 41 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 97 modules — -
 - [tools/ part 2](tools--part-2.md) — 20 modules — -
