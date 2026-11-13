@@ -18,7 +18,7 @@
       "claim": "task seed (b), fuel only: decodeFormulas and decodeClosed decode with fuel maxDepth + 1",
       "mutation": "decodeFormula VE.Limits.maxDepth -> decodeFormula (VE.Limits.maxDepth + 1) at Wire.lean:536 and :546",
       "failing": "lake build VE.Route.CodecRoundTrip",
-      "result": "decodeClosed_encodeFormula (:305) and decodeFormulas_encode (:335) do not build, but only because their proofs rewrite at the literal fuel; their statements stay true. decodeClosed_refuses_depth and decodeFormulas_refuses_depth still build: AstLimit.check refuses depth 65 first with the same diagnostic, so this change alone changes no answer (finding, see REPORT)"
+      "result": "first build: decodeClosed_encodeFormula (:305) and decodeFormulas_encode (:335) do not build (their proofs rewrite at the literal fuel; their statements stay true); the first record wrongly said the change alters no answer. Behind a variable index above 2^53-1, where AstLimit.walk stops silently, the fuel is the only depth check (review F1). Replanted on 14595501ff: decodeClosed_refuses_depth_past_walk (:383), decodeFormulas_refuses_depth_past_walk (:392) and the concrete-environment #guard (:402) fail, as do the round-trip proofs (:306, :336); decodeClosed_refuses_depth and decodeFormulas_refuses_depth still build (on the negation chain the walk refuses depth 65 first). Log /tmp/kb9a-fix/s2a.log at the time"
     },
     {
       "id": "S2b",
@@ -73,6 +73,15 @@
       "mutation": "decodeClosed: unless a.check E [] -> unless (a.check E [] || true)",
       "failing": "lake build VE.Route.CodecRoundTrip",
       "result": "the hCheck #guard fails (CodecRoundTrip.lean:389)"
+    },
+    {
+      "id": "S8",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "fix round, review F2: hData is not implied by hCheck on route environments (a data@0 flag naming $string puts it in the sorts)",
+      "mutation": "RouteVocabulary.environment (:47): then [Background.stringSort] else [] -> then [] else []",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "the data@0 decodeVocabulary #guard (CodecRoundTrip.lean:460) fails; restored with git checkout and rebuilt on 14595501ff. Log /tmp/kb9a-fix/s8.log at the time"
     }
   ]
 }
