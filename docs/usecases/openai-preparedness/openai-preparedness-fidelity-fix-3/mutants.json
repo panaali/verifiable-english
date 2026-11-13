@@ -1,0 +1,63 @@
+{
+ "item": "openai-preparedness-fidelity-fix-3",
+ "language": "Python (use-case translation and vocabulary; no ve/, lean/ or rust/ change)",
+ "method": "planted by a /tmp script, the one named test run, the file restored from its saved text; tree clean after each",
+ "mutants": [
+  {
+   "id": "a",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "the situation sort legend back to \"a development, use, deployment, review or decision of a covered model\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f4_security_reads_no_coverage_condition",
+   "result": "FAILED: the situation sort description differs"
+  },
+  {
+   "id": "a'",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f4-security gains an explicit guard \"(a) that situation is covered\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f4_security_reads_no_coverage_condition",
+   "result": "FAILED: assert {'covered', ...} == {'high', 'reached', 'security_practices'}"
+  },
+  {
+   "id": "b",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "safeguards_report's act back to \"{0} have a Safeguards Report\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f9_report_act_states_the_compilation_and_its_legend_quotes_4_2",
+   "result": "FAILED: the act differs"
+  },
+  {
+   "id": "b'",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "safeguards_report's legend back to \"4.1 and 4.2\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f9_report_act_states_the_compilation_and_its_legend_quotes_4_2",
+   "result": "FAILED: the 4.2 sentence is not among the legend quotes"
+  },
+  {
+   "id": "c",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"for cyberdefense\" dropped from cyberdefense_contribution's legend",
+   "test": "tests/test_pf_fidelity_fix.py::test_cyberdefense_tools_keep_their_purpose",
+   "result": "FAILED: the legend quote differs from the CYB-H bullet"
+  },
+  {
+   "id": "d",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"as expected\" dropped from reasonable_evidence's legend wording",
+   "test": "tests/test_pf_fidelity_fix.py::test_reasonable_evidence_quotes_4_2s_condition_with_its_decider",
+   "result": "FAILED: \"... not working as expected\" not in the legend"
+  },
+  {
+   "id": "d'",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"we find\" replaced by \"there is\" in reasonable_evidence's quoted condition",
+   "test": "tests/test_pf_fidelity_fix.py::test_reasonable_evidence_quotes_4_2s_condition_with_its_decider",
+   "result": "FAILED: the legend quote differs from 4.2's condition"
+  },
+  {
+   "id": "e",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "research_review's act without \"the latest research as well as findings\" (\"review research in each Research Category\")",
+   "test": "tests/test_pf_fidelity_fix.py::test_f13_review_names_the_latest_research_and_findings_per_category",
+   "result": "FAILED: the act differs"
+  }
+ ]
+}
