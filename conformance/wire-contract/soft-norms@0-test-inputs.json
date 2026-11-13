@@ -7732,6 +7732,284 @@
   ]
  ],
  [
+  "tests/test_soft_selected.py::test_selected_rules_and_outcomes_of_the_three_rule_document[allow]",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "s": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "s"
+     },
+     "v": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "v"
+     },
+     "w": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "w"
+     },
+     "x_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "x_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "permission": "x_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "guard": [
+      "unary",
+      "v",
+      [
+       "var",
+       0
+      ]
+     ],
+     "name": "h",
+     "over": [],
+     "predicate": "x_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "s",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "d",
+     "over": [
+      "o"
+     ],
+     "predicate": "x_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "unary",
+      "w",
+      [
+       "var",
+       0
+      ]
+     ],
+     "mode": "default",
+     "name": "o",
+     "over": [],
+     "predicate": "x_required",
+     "sign": false,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
+  "tests/test_soft_selected.py::test_selected_rules_and_outcomes_of_the_three_rule_document[deny]",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "s": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "s"
+     },
+     "v": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "v"
+     },
+     "w": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "w"
+     },
+     "x_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "x_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "deny",
+       "permission": "x_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "guard": [
+      "unary",
+      "v",
+      [
+       "var",
+       0
+      ]
+     ],
+     "name": "h",
+     "over": [],
+     "predicate": "x_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "s",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "d",
+     "over": [
+      "o"
+     ],
+     "predicate": "x_required",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "unary",
+      "w",
+      [
+       "var",
+       0
+      ]
+     ],
+     "mode": "default",
+     "name": "o",
+     "over": [],
+     "predicate": "x_required",
+     "sign": false,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
   "tests/test_softnorms_contract.py::test_unspecified_default_without_norm_defaults_names_the_profile",
   {
    "language": "ve.core@0.2",
