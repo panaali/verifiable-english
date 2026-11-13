@@ -1,6 +1,6 @@
 # safety-framework-fidelity-fix-2: REPORT
 
-**Status:** batches 1-6 delivered (all 19 confirmed units). The final selected-test run is recorded under "Tests" below. No VE answer moved (run.py: 260/262, the same two section-12 disagreements, C3 and C-doc).
+**Status:** batches 1-6 delivered (all 19 confirmed units). Final selected run: 60 units, 0 failed (Tests). No VE answer moved (run.py: 260/262, the same two section-12 disagreements, C3 and C-doc).
 **HEAD:** see `git log`; commits below. **Changed:** use-case files only (rules, vocabulary, facts, cases, D2 cell, span map), plus their regenerated outputs and tests. No ve/, lean/ or rust/ change. No key edit.
 **PROJECTED union count** (nothing claimed before the re-read): 165 -> 223 (batch 1) -> 235 -> 243 -> 251 -> 252 -> 253 (batch 6).
 **Open:** no DRI question sent (no answer left its key). No DRI signature needed, no DELTA rows.
@@ -134,7 +134,7 @@ Runs while iterating:
 - `uv run python usecases/safety-framework/run.py` after batches 1, 2, 3, 4 and 6, and `run.py --check` after batch 5: each "agreement with the answer key: 260/262", DISAGREE C3 and C-doc only;
 - `build_document.py --check` after seed S-e was restored: exit 0.
 
-Final selected run on the committed tree: see "Selected run" below.
+**Selected run** (final, on the committed clean tree e1c1b6b9fe, tree 3f59e7998e): `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 6949e5de43 --run`. Output: "recorded 60 units for tree 3f59e7998e; ... 0 failed" and "summary: ran LOCALLY (VM) ...; exit=0; 3961s". It covers tests/test_safety_framework.py, test_safetyfw_accounting.py, test_safetyfw_usecases.py, test_english_statement_blocks.py, test_english_lean_lexicon.py and test_keyed_answers_authority.py. No test of main-known-red.txt was hit. Only this REPORT changed after it.
 
 ## Seeded bugs (docs/usecases/safety-framework/safety-framework-fidelity-fix-2/mutants.json)
 
@@ -200,7 +200,7 @@ Both resolve through their generators (`regen_generated.py --resolve`, route_fix
 6. Gate evidence matches the final HEAD: PASS. Commits are listed from main..HEAD --no-merges; the chain runs the gate on the committed final HEAD.
 7. No unsigned item: PASS. No DELTA rows; trust_map +0.
 8. Every user-visible change is in DELTA: N.A. No product output changed; VE answers are unchanged (run.py 260/262 per batch).
-9. Test selection: PASS. The selected run on the final tree (below) includes tests/test_safety_framework.py, the test seeds S-a..S-h fail.
+9. Test selection: PASS. `tools/select_tests.py --base 6949e5de43` selects tests/test_safety_framework.py, the test file whose tests the seeds S-a..S-h make fail (60 units in all).
 10. Lean statements: N.A. No Lean change.
 11. Budgets and deadlines: N.A. No evaluator or limit was added. The tests use no sleeps or deadlines.
 12. No CPU or memory regression: N.A. Use-case data only. run.py times were 155.8 s, 112.3 s, 107.9 s, 107.3 s and 121.3 s, against 167.1 s after batch 1.
