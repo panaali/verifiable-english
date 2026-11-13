@@ -1,0 +1,9 @@
+job=armsh-cand-fid-mech-b1-14dbcaa5-t609627-s4 shard=4/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T22:41:55Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  103G  30% /
+ 22:41:55 up 10 min,  0 user,  load average: 1.41, 0.51, 0.22
+pilot/codex branches: 98
+ve-cache: lean-build exact key 664a8af90749 asset lean-build-664a8af90749-linux-aarch64.tar.zst sha256 89bf055b9f3a ok, seal ok, from download, 14.0 s
+seed: mode=seed-fp match=exact asset=lean-build-664a8af90749-linux-aarch64.tar.zst pruned=0 base=3ed84ea90de4
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
