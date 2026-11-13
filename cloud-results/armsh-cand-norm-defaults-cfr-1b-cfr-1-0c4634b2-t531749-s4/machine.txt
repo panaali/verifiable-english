@@ -1,0 +1,10 @@
+job=armsh-cand-norm-defaults-cfr-1b-cfr-1-0c4634b2-t531749-s4 shard=4/4 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-13T01:04:01Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   43G  103G  30% /
+ 01:04:01 up 2 min,  0 user,  load average: 1.25, 0.39, 0.14
+pilot/codex branches: 98
+ve-cache: lean-build exact key 088f453cf6ff asset lean-build-088f453cf6ff-linux-aarch64.tar.zst sha256 9d64f9d42ade ok, seal ok, from download, 13.1 s
+seed: mode=seed-fp match=exact asset=lean-build-088f453cf6ff-linux-aarch64.tar.zst pruned=0 base=b94efc9225d7
+seed: lake 0.3 s (rc 0, match exact)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 548 s)
+p1-tokenizers: 443909a61d42 fetched
