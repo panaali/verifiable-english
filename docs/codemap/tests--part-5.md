@@ -1,3 +1,5 @@
+- `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
+- `tests/test_norm_defaults_records.py` — norm-defaults-text-1: four record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1, F3, F4).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
 - `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2) and norm-defaults-cfr-1b: the norm-defaults mode's answers are bound to their request.
@@ -81,5 +83,3 @@
 - `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
 - `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
 - `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
-- `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
-- `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
