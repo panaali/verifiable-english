@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-gate-tie-test-split-1b4d35a0-t592440-s4",
+ "head": "63611ca99c626fa7999da290a6d953e062cd6cd1",
+ "argv": [
+  "armsh-cand-gate-tie-test-split-1b4d35a0-t592440-s4",
+  "63611ca99c626fa7999da290a6d953e062cd6cd1",
+  "14fef85441c7adf623debcfab10f80ec423d5abb",
+  "-",
+  "-",
+  "4",
+  "4/4"
+ ]
+}
