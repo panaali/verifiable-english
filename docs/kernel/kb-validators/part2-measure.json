@@ -1,0 +1,207 @@
+{
+ "item": "kb-validators",
+ "measured_on": "ebbb7d94a6 + prepare_profile (d5606ee2bd), ve_service pinned in lean/checkers.lock",
+ "method": "each harness run once through iso.sh <name> 16G with /tmp/kbv-hook/sitecustomize.py (copy: tracer.py.txt) recording every Lean call of the modes metered, model, environment and check, and every FiniteModel.from_dict branch; a second run of rsp, prep (--base-only), fsf and elig (--no-write) recorded the Python call site of every check answer carrying Q or core",
+ "runs": {
+  "rsp": {
+   "command": "usecases/anthropic-rsp/run.py --check",
+   "result": "rc=0 secs=338",
+   "calls": {
+    "check": 20400,
+    "environment": 20,
+    "from_dict|soft": 2986,
+    "from_dict|validated": 2554,
+    "metered": 4852,
+    "model": 29
+   }
+  },
+  "prep": {
+   "command": "usecases/openai-preparedness/run.py --check",
+   "result": "rc=0 secs=1623",
+   "calls": {
+    "check": 84938,
+    "environment": 19,
+    "from_dict|soft": 16969,
+    "from_dict|validated": 720,
+    "metered": 16230,
+    "model": 24
+   }
+  },
+  "fsf": {
+   "command": "usecases/safety-framework/run.py --check",
+   "result": "rc=0 secs=177",
+   "calls": {
+    "check": 10377,
+    "environment": 14,
+    "from_dict|soft": 112,
+    "from_dict|validated": 8932,
+    "metered": 8233,
+    "model": 424
+   }
+  },
+  "agent": {
+   "command": "usecases/agent-policy/check.py base --write (restored after)",
+   "result": "rc=0 secs=173",
+   "calls": {
+    "check": 17715,
+    "environment": 308,
+    "from_dict|validated": 13068,
+    "metered": 11829,
+    "model": 1261
+   }
+  },
+  "elig": {
+   "command": "usecases/eligibility/run.py --no-mutants (restored after)",
+   "result": "rc=0 secs=269",
+   "calls": {
+    "check": 26593,
+    "environment": 14
+   }
+  }
+ },
+ "i": {
+  "rsp": {
+   "metered_cases": 4852,
+   "by_kind": {
+    "evaluate-budgeted": 4852
+   },
+   "with_regulated_environment": 0,
+   "with_a_declared_pair": 0,
+   "model_mode_asked_first": 0,
+   "not_asked_first": 0,
+   "soft_path_models": 2986,
+   "soft_path_models_with_regulated": 0,
+   "metered_refusals": 0,
+   "profile_refusals": 0
+  },
+  "prep": {
+   "metered_cases": 16230,
+   "by_kind": {
+    "evaluate-budgeted": 16230
+   },
+   "with_regulated_environment": 0,
+   "with_a_declared_pair": 0,
+   "model_mode_asked_first": 0,
+   "not_asked_first": 0,
+   "soft_path_models": 16969,
+   "soft_path_models_with_regulated": 0,
+   "metered_refusals": 0,
+   "profile_refusals": 0
+  },
+  "fsf": {
+   "metered_cases": 8233,
+   "by_kind": {
+    "evaluate-budgeted": 8233
+   },
+   "with_regulated_environment": 0,
+   "with_a_declared_pair": 0,
+   "model_mode_asked_first": 0,
+   "not_asked_first": 0,
+   "soft_path_models": 112,
+   "soft_path_models_with_regulated": 0,
+   "metered_refusals": 0,
+   "profile_refusals": 0
+  },
+  "agent": {
+   "metered_cases": 11829,
+   "by_kind": {
+    "evaluate-budgeted": 11829
+   },
+   "with_regulated_environment": 480,
+   "with_a_declared_pair": 480,
+   "model_mode_asked_first": 480,
+   "not_asked_first": 0,
+   "soft_path_models": 0,
+   "soft_path_models_with_regulated": 0,
+   "metered_refusals": 0,
+   "profile_refusals": 0
+  },
+  "elig": {
+   "metered_cases": 0,
+   "by_kind": {},
+   "with_regulated_environment": 0,
+   "with_a_declared_pair": 0,
+   "model_mode_asked_first": 0,
+   "not_asked_first": 0,
+   "soft_path_models": 0,
+   "soft_path_models_with_regulated": 0,
+   "metered_refusals": 0,
+   "profile_refusals": 0
+  }
+ },
+ "ii": {
+  "rsp": {
+   "environments": 20,
+   "with_regulated": 0,
+   "regulated_predicates": 0,
+   "acts@0": 0,
+   "differing": 0,
+   "first20": []
+  },
+  "prep": {
+   "environments": 19,
+   "with_regulated": 0,
+   "regulated_predicates": 0,
+   "acts@0": 0,
+   "differing": 0,
+   "first20": []
+  },
+  "fsf": {
+   "environments": 14,
+   "with_regulated": 0,
+   "regulated_predicates": 0,
+   "acts@0": 0,
+   "differing": 0,
+   "first20": []
+  },
+  "agent": {
+   "environments": 214,
+   "with_regulated": 128,
+   "regulated_predicates": 256,
+   "acts@0": 0,
+   "differing": 0,
+   "first20": []
+  },
+  "elig": {
+   "environments": 2,
+   "with_regulated": 0,
+   "regulated_predicates": 0,
+   "acts@0": 0,
+   "differing": 0,
+   "first20": []
+  }
+ },
+ "iii_check_Q_sites": {
+  "rsp": {
+   "usecases/anthropic-rsp/stage0.py:158:_proved -> ve/units.py:382:_core_problem": 141,
+   "usecases/anthropic-rsp/run.py:529:factor_within_five -> ve/units.py:382:_core_problem": 3,
+   "usecases/anthropic-rsp/run.py:534:factor_within_five -> ve/units.py:382:_core_problem": 1
+  },
+  "prep": {
+   "usecases/openai-preparedness/run.py:902:certified -> ve/units.py:382:_core_problem": 29
+  },
+  "fsf": {
+   "usecases/safety-framework/severity_and_dates.py:232:d3 -> ve/units.py:382:_core_problem": 12,
+   "usecases/safety-framework/severity_and_dates.py:240:d3 -> ve/units.py:382:_core_problem": 8
+  },
+  "elig": {
+   "usecases/eligibility/run.py:93:single_shot -> ve/units.py:382:_core_problem": 20571,
+   "usecases/eligibility/run.py:81:prove -> ve/units.py:382:_core_problem": 3458,
+   "usecases/eligibility/run.py:580:english_facts -> ve/units.py:330:elaborate_quantity": 166,
+   "usecases/eligibility/run.py:582:english_facts -> ve/units.py:330:elaborate_quantity": 166,
+   "usecases/eligibility/run.py:583:english_facts -> ve/units.py:330:elaborate_quantity": 86,
+   "usecases/eligibility/run.py:538:probes -> ve/units.py:330:elaborate_quantity": 3,
+   "usecases/eligibility/run.py:539:probes -> ve/units.py:330:elaborate_quantity": 3,
+   "usecases/eligibility/run.py:541:probes -> ve/units.py:330:elaborate_quantity": 3,
+   "usecases/eligibility/run.py:483:main -> ve/units.py:382:_core_problem": 1,
+   "usecases/eligibility/run.py:514:python -> ve/units.py:330:elaborate_quantity": 1
+  }
+ },
+ "result_files": {
+  "rsp": "--check passed (byte-identical)",
+  "prep": "--check passed (byte-identical)",
+  "fsf": "--check passed (byte-identical)",
+  "agent": "written file differs from the committed one only in M10.seconds and M10.policy_seconds (6 timing leaves)",
+  "elig": "branch run and a main run (merge base 0f6d59d441, same flags) differ only in `seconds`; both differ from the committed file (2026-09-29) in the --no-mutants sections and 81 wording strings changed on main since 2026-10-05"
+ }
+}
