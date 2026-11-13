@@ -66,7 +66,14 @@ Each bug was planted in `ve/environment_wire.py`, run with the tests above, and 
 
 ## Selected run
 
-`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` was run on the committed HEAD. The result is given in the build report that hands this item back; this file was committed before that run (docs-only commits after it keep the chain's reuse).
+I ran `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on committed HEAD fc1faba2ef with a clean tree. It was started detached with `wait-bg.sh --start` and wrote its log to `/tmp/eecf-select2.log`.
+
+- Result: `exit=0; 4732s`. It ran on the VM (runner's choice: "MAC_LAST").
+- Every one of the 341 unit lines reads `exit 0`, and `tests/test_lean_handles.py: exit 0 in 11.3 s` is among them.
+- The log ends `recorded 333 units for tree 13f24ffbc8; ... 0 failed`.
+- Only this docs file changed after the run.
+
+An earlier attempt at the same command (`/tmp/eecf-select.log`) was stopped at the tool's background time limit before it finished. It had reported no failures by then. I did not use it as evidence.
 
 ## Pre-existing failures
 
