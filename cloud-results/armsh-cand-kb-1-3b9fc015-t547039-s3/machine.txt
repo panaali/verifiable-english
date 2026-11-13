@@ -1,0 +1,11 @@
+job=armsh-cand-kb-1-3b9fc015-t547039-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-13T05:18:47Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   42G  103G  29% /
+ 05:18:47 up 1 min,  0 user,  load average: 1.70, 0.52, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key 333fb9e39b7c asset lean-build-4030950bfb1c-linux-aarch64.tar.zst sha256 97a4d9863d7f ok, seal ok, from download, 12.6 s
+seed: mode=seed-fp match=seed-ancestor asset=lean-build-4030950bfb1c-linux-aarch64.tar.zst pruned=0 base=b11414c9fe11
+seed: 4 modules rebuilt over the seed (traces), none stale
+seed: lake 3.6 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 15478 passed, 2 skipped, 3 failures
