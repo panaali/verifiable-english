@@ -156,12 +156,16 @@ ACTS = {
     "safeguards_before_deployment": ("{0} have safeguards sufficiently minimizing severe-harm risk before deployment",
                                      "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the "
                                      "associated risk of severe harm before deployment"),
-    "safeguards_during_development": ("{0} have sufficient safety as well as security controls during development",
-                                      "4.4: models that have reached or are forecasted to reach Critical capability "
-                                      "in a Tracked Category require additional safeguards (safety and security "
+    "safeguards_during_development": ("{0} have sufficient additional safety plus security controls during development",
+                                      "4.4: “Such models require additional safeguards (safety and security "
                                       "controls) during development, regardless of whether or when they are "
-                                      "externally deployed; 4.2: safeguards that sufficiently minimize associated "
-                                      "risks during development; Appendix C: sufficient safeguards during development"),
+                                      "externally deployed.”, such models being those that have reached or are "
+                                      "forecasted to reach Critical capability in a Tracked Category; 4.2: “Systems "
+                                      "that reach Critical capability also require safeguards that sufficiently "
+                                      "minimize associated risks during development.”; Appendix C: “Systems that "
+                                      "reach Critical capability also require sufficient safeguards during "
+                                      "development.” (the act's plus stands for and, a word an act may not use; no "
+                                      "coverage condition: none of the three sentences states one)"),
     "safeguards_before_internal_use": ("{0} have additional safety as well as security controls before internal use",
                                        "4.4, its heading “Increasing safeguards before internal use and further "
                                        "development” read under RS18 = inuse: models that have reached or are "

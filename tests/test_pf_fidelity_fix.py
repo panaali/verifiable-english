@@ -101,7 +101,7 @@ def test_f2_f3_acts_carry_the_sufficiency(pf):
     assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development",
                                    "safeguards_before_internal_use"}
     assert "sufficiently minimizing severe-harm risk" in act("safeguards_before_deployment")
-    assert "sufficient safety as well as security controls" in act("safeguards_during_development")
+    assert "sufficient additional safety plus security controls" in act("safeguards_during_development")
     for name in ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"):
         block = next(b for b in T.rule_blocks() if b.id == name)
         assert "sufficiently minimize the associated risk of severe harm" in block.source, name
@@ -573,3 +573,48 @@ def test_the_six_changed_acts_fit_the_act_limit(pf):
         text = act(name)
         assert len(text) <= 80 and re.fullmatch(r"\{0\}( [A-Za-z][A-Za-z'-]*)+", text), name
         assert not {"and", "or", "for", "if", "not", "no", "every", "must"} & set(text.lower().split()), name
+
+
+# --- openai-preparedness-fidelity-fix-4: round B part 2, the other six units both adjudicators judged REAL ---------
+# (reviews/audit-newrule-fsfpf/pf-adjud/result.md section 2: R01 R02 R03 R13 R14 R15; PLAN 12 item 25)
+
+F3_DEVELOPMENT = ("f3-develop", "f3-develop-forecast", "f3-develop-inuse", "f3-develop-inuse-forecast", "f3-reminder")
+SENTENCE_4_4 = ("Such models require additional safeguards (safety and security controls) during development, "
+                "regardless of whether or when they are externally deployed.")
+SENTENCE_APPENDIX_C = "Systems that reach Critical capability also require sufficient safeguards during development."
+
+
+def test_f3_development_act_keeps_additional_with_the_sufficiency(pf):
+    """f3-develop, f3-develop-forecast, f3-reminder (R13-R15, C1): one shared act, not forked, carries 4.4's
+    "additional" safety and security controls and the sufficiency of 4.2 and Appendix C; its legend quotes the
+    three sentences in full."""
+    assert [b.id for b in blocks_for("safeguards_during_development")] == list(F3_DEVELOPMENT)
+    assert act("safeguards_during_development") == (
+        "{0} have sufficient additional safety plus security controls during development")
+    assert legend_quotes("safeguards_during_development") == [
+        SENTENCE_4_4, "Systems that reach Critical capability also require safeguards that sufficiently minimize "
+        "associated risks during development.", SENTENCE_APPENDIX_C]
+    for name in F3_DEVELOPMENT[:4]:
+        assert SENTENCE_4_4 in block(name).source, name
+    assert SENTENCE_APPENDIX_C in block("f3-reminder").source
+
+
+def test_f3_development_units_read_no_coverage_condition(pf):
+    """f3-develop, f3-develop-forecast, f3-reminder (R13-R15, C7): neither the sentences nor the rules state
+    coverage; the situation sort (fix-3) carries none, and no predicate the rules read does."""
+    assert "covered" not in V.environment()["vocabulary"]["sorts"]["situation"]["description"]
+    for name in ("f3-develop", "f3-develop-forecast", "f3-reminder"):
+        assert "covered" not in predicates_read(name), name
+        for predicate in predicates_read(name):
+            assert "covered" not in legend(predicate).replace("no coverage condition", ""), (name, predicate)
+        assert "no coverage condition" in block(name).source, name
+
+
+@needs_lean
+def test_an_uncovered_critical_model_still_needs_development_safeguards(pf):
+    """The live consequence of R13-R15's C7: OT7 false (not covered) does not release the development duty."""
+    for case, rules in ((({"id": "t", "levels": ["BIO-C"], "activity": "DEV", "findings": {"OT7": False}}),
+                         {"f3-develop", "f3-reminder"}),
+                        (({"id": "t", "levels": [], "activity": "DEV", "findings": {"OT7": False, "OT10": True}}),
+                         {"f3-develop-forecast"})):
+        assert selections({"RS18": "devonly", "RS2": "sep"}, case, "safeguards_during_development") == rules
