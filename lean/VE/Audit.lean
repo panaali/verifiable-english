@@ -4568,7 +4568,6 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.FlaggedSpec.verdict_witness
 #print axioms VE.Norms.FlaggedSpec.wf_preds_congr
 #print axioms VE.Norms.InFragmentIn_eq
-#print axioms VE.Norms.Plain.forM_ok
 #print axioms VE.Norms.Plain.profileOkOn_holds
 #print axioms VE.Norms.Replay.WitnessData.background
 #print axioms VE.Norms.Replay.WitnessData.mem

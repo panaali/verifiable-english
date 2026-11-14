@@ -4038,7 +4038,6 @@
 'VE.Norms.FlaggedSpec.verdict_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.wf_preds_congr' depends on axioms: [propext]
 'VE.Norms.InFragmentIn_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Norms.Plain.forM_ok' depends on axioms: [propext]
 'VE.Norms.Plain.profileOkOn_holds' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Replay.WitnessData.background' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Replay.WitnessData.mem' depends on axioms: [propext, Quot.sound]
