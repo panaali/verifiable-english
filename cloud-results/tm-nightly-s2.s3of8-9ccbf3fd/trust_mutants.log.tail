@@ -1,0 +1,13 @@
+trust_mutants: 72 definitions, 84 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Presupposition/Admit.lean:249 VE.Presupposition.separated (G[V], trusted) list-empty: ss -> [] (lean/VE/Presupposition/Admit.lean:249: Invalid match expression: The type of pattern variable 'fs...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:130 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-empty: f.sentence?.toList -> [] (lean/VE/EnglishGrammar/Norm/Run.lean:130: typeclass instance problem is stuck, it is often due to...)
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-first: VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) ++ [chainProfiles] -> ((VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) ++ [chainProfiles]).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:61 VE.EnglishGrammar.adviceTable (G[V], trusted) list-first: adviceRows ++ sourceWordAdvice -> ((adviceRows ++ sourceWordAdvice).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:879 VE.Compose.environmentWrappers (G[V], trusted) list-first: ["right-clauses@0", "readings@1"] -> (["right-clauses@0", "readings@1"].take 1) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/NormDefaults/Run.lean:146 VE.NormDefaults.Run.usesNormDefaultsPath (S, trusted) list-first: (Wire.unspecifiedNames env) -> ((Wire.unspecifiedNames env).take 1)
+trust_mutants: 4 KILLED, 1 SURVIVOR, 5 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 73 OTHER SHARD in 4276 s
+trust_mutants: D[V], trusted: 1 KILLED, 2 UNKNOWN, 1 INVALID, 26 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 3 UNKNOWN, 37 OTHER SHARD
+trust_mutants: K, trusted: 2 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 8 OTHER SHARD
+trust_mutants: steps: wall plan 15.5 s, scratch 3.6 s, control_build 0.3 s, probe_install 1.2 s, mutants 4248.7 s, cleanup 6.3 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 20.7 s (4), mutant_builds 579.6 s (11), mutant_checks 10750.8 s (10), stage_controls 1199.9 s (2), mutant_probes 20.8 s (4)
