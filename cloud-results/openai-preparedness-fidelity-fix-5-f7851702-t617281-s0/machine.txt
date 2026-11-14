@@ -1,0 +1,5 @@
+job=openai-preparedness-fidelity-fix-5-f7851702-t617281-s0 nproc=4 host=ip-10-0-133-46 date=2026-11-14T00:50:59Z
+Mem:              15           1           9           0           5          13
+/dev/mapper/cow-root  145G   60G   85G  42% /
+ 00:50:59 up 1 min,  0 user,  load average: 1.76, 0.65, 0.24
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
