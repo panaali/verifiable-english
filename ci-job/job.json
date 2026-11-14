@@ -1,0 +1,15 @@
+{
+ "job": "armsh-cand-openai-preparedness-fidelity-fix-5-dc67245e-t621732-cold",
+ "head": "bf18ba451b1ad4e132b9c28fb0f2f1dc6f412b31",
+ "argv": [
+  "armsh-cand-openai-preparedness-fidelity-fix-5-dc67245e-t621732-cold",
+  "bf18ba451b1ad4e132b9c28fb0f2f1dc6f412b31",
+  "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+  "-",
+  "-",
+  "4",
+  "-",
+  "-"
+ ],
+ "shadow_of": "armsh-cand-openai-preparedness-fidelity-fix-5-dc67245e-t621732"
+}
