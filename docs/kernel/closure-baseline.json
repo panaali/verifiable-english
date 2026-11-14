@@ -1903,12 +1903,12 @@
   },
   {
    "axioms": [],
-   "lines": 36420,
+   "lines": 36428,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35567,
+   "spec_lines": 35570,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2148,7 +2148,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.CoreCheck": 151,
+    "VE.Service.CoreCheck": 154,
     "VE.Service.CoreDocument": 265,
     "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 75,
@@ -2196,7 +2196,7 @@
    },
    "theorems": 9,
    "tier": "candidate",
-   "wrap_lines": 12816,
+   "wrap_lines": 12821,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -2299,7 +2299,7 @@
     "VE.Scope.Readings": 96,
     "VE.Scope.Wire": 94,
     "VE.Semantics": 14,
-    "VE.Service.CoreCheck": 27,
+    "VE.Service.CoreCheck": 32,
     "VE.Service.CoreDocument": 3,
     "VE.Service.Document": 878,
     "VE.Service.ParseDiagnostic": 337,
