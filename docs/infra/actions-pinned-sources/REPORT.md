@@ -8,7 +8,7 @@
   sources. The ve-cloud-2 copy of 11-13 12:45Z changed nothing (Notes for the DRI, 1). This branch fixes that too.
 - Open: the post-merge Actions run (decision item 2 condition) and the arm step install (section "arm workflow step").
 
-SIZE: 198 product (tools 176, workflow 20, plus the 33-line pins file), 344 tests, 2 other hand-written files (this report and
+SIZE: 199 product (tools 177, workflow 20, plus the 33-line pins file), 344 tests, 2 other hand-written files (this report and
 `fetch-vm1.txt`). Counted with `git diff --numstat $(git merge-base HEAD main)..HEAD`, codemap excluded.
 
 ## Deliverables (task DO 1 to 5)
@@ -190,4 +190,10 @@ to this build).
 
 ## Final selected run
 
-See the commit after this report.
+- `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on committed 1e65477c51
+  (log `/tmp/aps-select.log`; ran on the VM, MAC_LAST): 203 units recorded, 1 failed:
+  `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason` ("unread: usecases/pinned_sources.json").
+- Fix d75f28b519: `tools/difffuzz_corpus.py` EXCLUDED lists the pins file as `no-input` (it has no environment or request).
+  Rerun of the failed id only: `zsh mac-pytest.sh -- tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason`
+  on ve-mac-1, HEAD d75f28b5 clean: 1 passed, exit 0. `regen_generated.py --check`: 41 entries fresh.
+- Because a code commit followed the selected run, the chain gate cannot reuse it and runs in full on the final HEAD.
