@@ -1,0 +1,165 @@
+"""Throwaway tracer for kb-validators part 2 (measurement only; no product change).
+
+Active only when KBV_TRACE_DIR is set. Appends one JSON line per Lean call (modes metered, model,
+environment, check) and per FiniteModel.from_dict branch to $KBV_TRACE_DIR/<pid>.jsonl."""
+import os
+
+_DIR = os.environ.get("KBV_TRACE_DIR")
+
+
+def _install():
+    import hashlib
+    import json
+    import threading
+    import time
+
+    local = threading.local()
+    pid_files = {}
+
+    def out(record):
+        pid = os.getpid()
+        f = pid_files.get(pid)
+        if f is None:
+            f = open(os.path.join(_DIR, f"{pid}.jsonl"), "a", encoding="utf-8")
+            pid_files.clear()
+            pid_files[pid] = f
+        record["t"] = time.time()
+        record["pid"] = pid
+        f.write(json.dumps(record, default=str, ensure_ascii=False) + "\n")
+        f.flush()
+
+    def canon_model(m):
+        try:
+            m = dict(m)
+            return hashlib.sha256(json.dumps({
+                "domains": {s: sorted(map(str, v)) for s, v in dict(m.get("domains", {})).items()},
+                "constants": {c: str(v) for c, v in dict(m.get("constants", {})).items()},
+                "relations": {p: sorted(json.dumps([str(x) for x in r]) for r in rows)
+                              for p, rows in dict(m.get("relations", {})).items()},
+            }, sort_keys=True).encode()).hexdigest()[:20]
+        except Exception as exc:  # noqa: BLE001
+            return f"unhashable:{type(exc).__name__}"
+
+    def regulated(env):
+        try:
+            preds = dict(dict(env)["vocabulary"])["predicates"]
+            return {p: dict(d["regulated"]) for p, d in dict(preds).items()
+                    if isinstance(d, dict) and isinstance(d.get("regulated"), dict)}
+        except Exception:  # noqa: BLE001
+            return {}
+
+    def envkey(env):
+        try:
+            return hashlib.sha256(json.dumps(env, sort_keys=True, default=str).encode()).hexdigest()[:20]
+        except Exception:  # noqa: BLE001
+            return "unhashable"
+
+    def leaves(value, path=""):
+        if isinstance(value, dict):
+            for k, v in value.items():
+                yield from leaves(v, f"{path}/{k}")
+        elif isinstance(value, list):
+            for i, v in enumerate(value):
+                yield from leaves(v, f"{path}/{i}")
+        elif isinstance(value, str):
+            yield path, value
+
+    def record(mode, cases, entries):
+        for case, entry in zip(cases, entries):
+            row = entry.get("result", entry) if isinstance(entry, dict) else {}
+            if not isinstance(case, dict):
+                continue
+            status = row.get("status")
+            error = str(row.get("error", ""))[:200]
+            if mode == "metered":
+                env = case.get("environment", {})
+                reg = regulated(env)
+                out({"mode": mode, "kind": case.get("kind"), "env": envkey(env),
+                     "pairs": sorted((p, r.get("permission")) for p, r in reg.items()
+                                     if r.get("role") == "obligation"),
+                     "regulated": len(reg), "model": canon_model(case.get("model", {})),
+                     "status": status, "error": error})
+            elif mode == "model":
+                env = case.get("environment", {})
+                reg = regulated(env)
+                out({"mode": mode, "env": envkey(env), "regulated": len(reg),
+                     "model": canon_model(case.get("model", {})), "status": status, "error": error,
+                     "leaves": [(p, v) for p, v in leaves(row) if p not in ("/id", "/status")]})
+            elif mode == "environment":
+                env = case.get("environment", {})
+                reg = regulated(env)
+                out({"mode": mode, "env": envkey(env),
+                     "profiles": list(dict(env).get("profiles") or []),
+                     "authored_acts": {p: r.get("act") for p, r in reg.items()},
+                     "roles": {p: r.get("role") for p, r in reg.items()},
+                     "status": status, "error": error,
+                     "acts": row.get("acts"), "model_acts": row.get("model_acts"),
+                     "leaves": [(p, v) for p, v in leaves(row) if p not in ("/id", "/status")]})
+            elif mode == "check":
+                site = None
+                if "Q" in row or "core" in row:
+                    import traceback
+                    site = [f"{fr.filename.split('ve-kb-validators/')[-1]}:{fr.lineno}:{fr.name}"
+                            for fr in traceback.extract_stack()
+                            if ("/ve/" in fr.filename or "/usecases/" in fr.filename)
+                            and "/backends/" not in fr.filename][-8:]
+                out({"mode": mode, "kind": case.get("kind"), "status": status, "error": error, "site": site,
+                     "leaves": [(p, v) for p, v in leaves(row)
+                                if p not in ("/id", "/status") and len(v) >= 6]})
+
+    from ve.backends import lean_service
+
+    def wrap(cls):
+        orig = cls.run_bound
+
+        def run_bound(self, mode, cases, **kw):
+            depth = getattr(local, "depth", 0)
+            local.depth = depth + 1
+            try:
+                entries = orig(self, mode, cases, **kw)
+            finally:
+                local.depth = depth
+            if depth == 0 and mode in ("metered", "model", "environment", "check"):
+                try:
+                    record(mode, list(cases), entries)
+                except Exception as exc:  # noqa: BLE001
+                    out({"mode": "tracer-error", "error": repr(exc)[:300]})
+            return entries
+        cls.run_bound = run_bound
+
+    wrap(lean_service.LeanServicePool)
+    wrap(lean_service.LeanService)
+
+    from ve.backends import lean as lean_oneshot
+    orig_run = lean_oneshot.run
+
+    def run(operation, executable, cases, **kw):
+        result = orig_run(operation, executable, cases, **kw)
+        out({"mode": "oneshot", "operation": str(operation), "submode": str(kw.get("mode", "")),
+             "cases": len(cases)})
+        return result
+    lean_oneshot.run = run
+
+    from ve import model as ve_model
+    from_dict = ve_model.FiniteModel.from_dict.__func__
+
+    def traced(cls, env, wire, *a, **kw):
+        soft = (any(getattr(env, slot, ()) for slot in ("soft_premises", "rights_premises", "fill_premises"))
+                or any(name.startswith(("soft__", "rights__", "reports__")) for name in env.predicates))
+        branch = "deferred" if kw.get("_defer_model_id") else ("soft" if soft else "validated")
+        try:
+            reg = {p: d for p, d in env.to_dict()["vocabulary"]["predicates"].items()
+                   if isinstance(d, dict) and "regulated" in d}
+        except Exception:  # noqa: BLE001
+            reg = {}
+        out({"mode": "from_dict", "branch": branch, "regulated": len(reg), "model": canon_model(wire)})
+        return from_dict(cls, env, wire, *a, **kw)
+    ve_model.FiniteModel.from_dict = classmethod(traced)
+
+
+if _DIR:
+    try:
+        _install()
+    except Exception as exc:  # noqa: BLE001
+        with open(os.path.join(_DIR, f"install-error-{os.getpid()}.txt"), "w") as f:
+            f.write(repr(exc))

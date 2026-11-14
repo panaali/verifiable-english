@@ -718,6 +718,7 @@ module VE.Route.Gate
 module VE.Route.Inert
 module VE.Route.Layer
 module VE.Route.Metered
+module VE.Route.MeteredProfileExamples
 module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
@@ -1295,6 +1296,7 @@ VE.Norms.LayerMeaning@VE.Norms.Prefix
 VE.Norms.Meaning@VE.Norms.Prefix
 VE.Norms.MeaningsBelow@VE.Norms.Prefix
 VE.Norms.PairsBelow@VE.Norms.Prefix
+VE.Norms.Plain.ProfileHolds@VE.Norms.Plain
 VE.Norms.PrefixAdmissible@VE.Norms.Prefix
 VE.Norms.RulesTyped@VE.Norms.Elaborate
 VE.Norms.Run.AdmissionAnswer@VE.Norms.Run
@@ -1562,6 +1564,7 @@ VE.Route.Layer.Intended@VE.Route.Layer
 VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire
 VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire
 VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire
+VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire
 VE.Route.ReadingChoices.below@VE.Route.Readings
 VE.Route.ReadingChoices@VE.Route.Readings
 VE.Route.RunSound.RunnerKind@VE.Route.RunSound

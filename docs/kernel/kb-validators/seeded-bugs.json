@@ -1,0 +1,45 @@
+{
+  "item": "kb-validators",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from a saved copy (diffed clean against the commit). Seeds S1-S3 are the task's seeded bugs (a)-(c); S4 is the pin of the tree the check reads. No Python or Rust product code changed in this item, so every seed is Lean.",
+  "seeds": [
+    {
+      "id": "S1",
+      "task_seed": "a",
+      "language": "lean",
+      "file": "lean/VE/Route/MeteredRun.lean",
+      "claim": "metered applies the norms profile check before it answers, and its theorem states it (ProfileAdmits in EvaluationAnswer, runWith_sound, metered_wire_sound)",
+      "mutation": "the fol branch of `run` drops `profiled p M.relations`",
+      "failing": "lake build VE.Route.MeteredWire",
+      "result": "run_fol_sound does not build (MeteredWire.lean:96, application type mismatch at `bind_ok h`: no profile step to read ProfileAdmits from), so run_evaluation_sound, runWith_sound and metered_wire_sound cannot build"
+    },
+    {
+      "id": "S2",
+      "task_seed": "b",
+      "language": "lean",
+      "file": "lean/VE/Norms/Plain.lean",
+      "claim": "the bridge: a model the shared check accepts satisfies ProfileHolds (Plain.profileOkOn_holds)",
+      "mutation": "profileOkOn compares the permission relation with itself (`(← rows pr.perm).all permitted.contains`)",
+      "failing": "lake build VE.Norms.Plain",
+      "result": "profileOkOn_holds does not build (Plain.lean:102, application type mismatch: `t ∈ relations pr.req` is not the checked list)"
+    },
+    {
+      "id": "S3",
+      "task_seed": "c",
+      "language": "lean",
+      "file": "lean/VE/Route/MeteredRun.lean",
+      "claim": "a model whose required relation exceeds its permission, sent straight to metered without the model mode, is refused with the model mode's diagnostic on every family and kind; before this change it was answered",
+      "mutation": "every `profiled p …` line removed from `run` (the pre-change runner); ve_service rebuilt and pinned for the run, VE_NATIVE_PREBUILT=1",
+      "failing": "uv run pytest -q tests/test_metered_profile.py",
+      "result": "26 failed, 36 passed: all 24 test_a_model_beyond_its_permission_is_refused_by_metered_with_the_model_modes_diagnostic cases, test_the_handle_path_checks_the_profile_as_the_first_case_does and test_a_profile_refusal_reaches_python_as_checker_unavailable_never_as_an_answer; the refused case was answered {\"evaluation\": {\"evaluations\": 3, \"explanation\": null, \"status\": \"Violated\", \"value\": false}, \"id\": \"e\", \"status\": \"ok\"} (fol and closure)"
+    },
+    {
+      "id": "S4",
+      "language": "lean",
+      "file": "lean/VE/Route/MeteredRun.lean",
+      "claim": "the tree metered checks is the model mode's: Standalone.profileTree of the model environment (prepare_profile)",
+      "mutation": "`prepare` sets `profile` to `pure none` on every environment (`if true then pure none`)",
+      "failing": "lake build VE.Route.MeteredWire",
+      "result": "prepare_profile does not build (MeteredWire.lean:33, not a definitional equality); without that pin ProfileAdmits would hold vacuously"
+    }
+  ]
+}

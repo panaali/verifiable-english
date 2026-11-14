@@ -5726,9 +5726,13 @@
         "VE.Norms.Plain.isPlainKind",
         "VE.Norms.Plain.orderCertificate",
         "VE.Norms.Plain.profileOk",
+        "VE.Norms.Plain.profileOkOn",
         "VE.Norms.Plain.reduced",
         "VE.Norms.Plain.run",
         "VE.Norms.Plain.statementLayers"
+      ],
+      "S": [
+        "VE.Norms.Plain.ProfileHolds"
       ]
     },
     "VE/Norms/Prefix.lean": {
@@ -9093,6 +9097,7 @@
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
         "VE.Route.MeteredRun.prepare",
+        "VE.Route.MeteredRun.profiled",
         {
           "name": "VE.Route.MeteredRun.query",
           "tied": [
@@ -9132,6 +9137,37 @@
         },
         "VE.Route.MeteredRun.tick",
         "VE.Route.MeteredRun.tickCache"
+      ]
+    },
+    "VE/Route/MeteredProfileExamples.lean": {
+      "T": [
+        "VE.Route.MeteredProfileExamples.bad",
+        "VE.Route.MeteredProfileExamples.beyond",
+        "VE.Route.MeteredProfileExamples.closure",
+        "VE.Route.MeteredProfileExamples.diagnostic",
+        "VE.Route.MeteredProfileExamples.entry",
+        "VE.Route.MeteredProfileExamples.environmentText",
+        "VE.Route.MeteredProfileExamples.families",
+        "VE.Route.MeteredProfileExamples.fol",
+        "VE.Route.MeteredProfileExamples.formula",
+        "VE.Route.MeteredProfileExamples.good",
+        "VE.Route.MeteredProfileExamples.kinds",
+        "VE.Route.MeteredProfileExamples.meteredCase",
+        "VE.Route.MeteredProfileExamples.modelRefusal",
+        "VE.Route.MeteredProfileExamples.modelText",
+        "VE.Route.MeteredProfileExamples.nary",
+        "VE.Route.MeteredProfileExamples.onRelations",
+        "VE.Route.MeteredProfileExamples.onTwo",
+        "VE.Route.MeteredProfileExamples.order",
+        "VE.Route.MeteredProfileExamples.pairsOf",
+        "VE.Route.MeteredProfileExamples.parsed",
+        "VE.Route.MeteredProfileExamples.plainEntry",
+        "VE.Route.MeteredProfileExamples.refusal",
+        "VE.Route.MeteredProfileExamples.tree",
+        "VE.Route.MeteredProfileExamples.tree2",
+        "VE.Route.MeteredProfileExamples.treeOf",
+        "VE.Route.MeteredProfileExamples.value",
+        "VE.Route.MeteredProfileExamples.within"
       ]
     },
     "VE/Route/MeteredTrace.lean": {
@@ -10622,7 +10658,8 @@
         "VE.Service.Standalone.surfaceReader",
         "VE.Service.Standalone.tableFields",
         "VE.Service.Standalone.regulatedOf",
-        "VE.Service.Standalone.actsRead"
+        "VE.Service.Standalone.actsRead",
+        "VE.Service.Standalone.profileTree"
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -21942,7 +21979,8 @@
       "S": [
         "VE.Route.MeteredRun.CaseModel",
         "VE.Route.MeteredRun.EncodesEvaluation",
-        "VE.Route.MeteredRun.EvaluationAnswer"
+        "VE.Route.MeteredRun.EvaluationAnswer",
+        "VE.Route.MeteredRun.ProfileAdmits"
       ]
     },
     "VE/SoftNorms/ElaborateSound.lean": {

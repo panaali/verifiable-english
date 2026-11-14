@@ -1,3 +1,7 @@
+- `tests/test_risk_every_diagnostic.py` — Every diagnostic of risk.md 6 from the Lean route on a hand-written input (docs/spec/risk.md 8.3).
+- `tests/test_risk_fixtures.py` — risk@0 fixtures of docs/spec/risk.md 8.1 checked against the expectations of 8.2 on the Lean route.
+- `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
+- `tests/test_risk_integration.py` — Risk spec cell fixtures through the Python relay and direct Lean route.
 - `tests/test_risk_lean_route.py` — The Lean `ve_risk_route` on the risk@0 stage A fixtures (docs/spec/risk.md 8.1, expectations 8.2).
 - `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
 - `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
@@ -76,8 +80,3 @@
 - `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
 - `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
 - `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
-- `tests/test_stage2_parse.py` — Parsing on the Lean authority: Lean's surface parsers decide acceptance.
-- `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
-- `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
-- `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
-- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).

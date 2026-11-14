@@ -1,3 +1,4 @@
+- `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
 - `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
 - `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.

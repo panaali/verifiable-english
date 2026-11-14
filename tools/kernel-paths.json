@@ -35,6 +35,30 @@
    "environment": [
     "VE.Service.Standalone.reportedEnvironment"
    ]
+  },
+  "validator_roles": {
+   "comment": "What each validator is to the verdict paths the keys call (decision D13, kb-validators; docs/kernel/kb-validators/REPORT.md). A pre-filter of a path: the path checks the same inputs itself, so a wrong \"ok\" from the validator changes none of that path's verdicts. A translator: a value of its answer is carried into later cases or shown, and no path checks it.",
+   "check": {
+    "role": "pre-filter",
+    "of": [
+     "metered",
+     "route",
+     "quantity"
+    ],
+    "note": "each of the three re-types its formulas; quantity re-elaborates the W6 statement and binds its meaning ids. The `Q` and `core` a check answer gives Python are counted as translations in the report's part 2 (iii), not here."
+   },
+   "model": {
+    "role": "pre-filter",
+    "of": [
+     "metered"
+    ],
+    "note": "since kb-validators: metered applies the norms profile check itself (VE.Route.MeteredRun.profiled, the model mode's Plain.profileOkOn) and runWith_sound states it (ProfileAdmits)."
+   },
+   "environment": {
+    "role": "translator",
+    "of": [],
+    "note": "not a pre-filter: Python stores its canonical `acts` in place of the authored act texts and sends them in every later case (ve/backends/validation.py:85-105, ve/environment.py:225-226); counted under the keys until the architect seat rules on part 2 (ii)."
+   }
   }
  },
  "paths": [

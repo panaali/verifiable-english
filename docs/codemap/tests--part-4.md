@@ -72,6 +72,7 @@
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
 - `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
 - `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
+- `tests/test_metered_profile.py` — The `metered` mode checks the norms profile of its model itself (kb-validators part 1, decision D13).
 - `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
 - `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
 - `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
@@ -83,4 +84,3 @@
 - `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
 - `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
-- `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…

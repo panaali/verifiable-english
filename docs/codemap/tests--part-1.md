@@ -20,6 +20,7 @@
 - `tests/nonvacuity_oracle.py` — Frozen answers of the pre-deletion Python non-vacuity check, the oracle of Lean's.
 - `tests/omission_rule.py` — The record paths of the uc-audit omission rule, ported for the use-case condition tests (one copy in this repo).
 - `tests/p1_findings.py` — The P1 items' reference findings, checked several at a time, once per process.
+- `tests/pinned_source.py` — The one helper every pinned-source test calls: the pinned publisher text of a use case, checked against its pin.
 - `tests/premise_scale_fixtures.py` — Premise sets for premise-scale's tests and the service corpus: content whose smallest model needs more entities of one sort than the shared domain bound (QT-0p…
 - `tests/probe_matrix.py` — Stage 0 executable Python oracle and frozen behaviour baseline.
 - `tests/profile_gate_oracle.py` — Frozen pre-batch Python profile gate for regression comparisons only.
@@ -86,4 +87,3 @@
 - `tests/test_attacks.py` — (no module docstring)
 - `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
 - `tests/test_authoring.py` — (no module docstring)
-- `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
