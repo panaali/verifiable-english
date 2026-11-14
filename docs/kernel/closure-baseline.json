@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9552,
- "keyed_kernel_lines": 9552,
- "keyed_lines": 16198,
+ "kernel_lines": 9947,
+ "keyed_kernel_lines": 9947,
+ "keyed_lines": 16593,
  "paths": [
   {
    "axioms": [],
@@ -328,13 +328,15 @@
    }
   },
   {
-   "axioms": [],
-   "lines": 4920,
+   "axioms": [
+    "Classical.choice"
+   ],
+   "lines": 5368,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4912,
+   "spec_lines": 5360,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -350,6 +352,8 @@
     "VE.Bridge": 139,
     "VE.CertificateWire": 120,
     "VE.ClaimGraph": 103,
+    "VE.Compose.Slot": 19,
+    "VE.Compose.SlotWire": 58,
     "VE.Core.Bridge": 37,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
@@ -363,16 +367,18 @@
     "VE.Grammar.Table": 197,
     "VE.Limits": 14,
     "VE.Norms.Admission": 70,
-    "VE.Norms.Basic": 38,
-    "VE.Norms.Conflict": 14,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Basic": 41,
+    "VE.Norms.Conflict": 20,
+    "VE.Norms.Elaborate": 45,
+    "VE.Norms.Layer": 2,
     "VE.Norms.LayersOnce": 32,
-    "VE.Norms.Prefix": 12,
-    "VE.Norms.Replay": 8,
+    "VE.Norms.Prefix": 15,
+    "VE.Norms.Replay": 19,
     "VE.Norms.Run": 10,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
     "VE.Norms.Wire": 268,
+    "VE.Norms.WitnessKind": 2,
     "VE.Paths": 3,
     "VE.Route.Admission": 369,
     "VE.Route.AstLimit": 70,
@@ -382,20 +388,21 @@
     "VE.Route.Route": 45,
     "VE.Route.Run": 8,
     "VE.Route.Steps": 2,
-    "VE.Route.Wire": 206,
+    "VE.Route.Wire": 229,
     "VE.Semantics": 49,
     "VE.SoftNorms.Admission": 112,
-    "VE.SoftNorms.Coherence": 4,
+    "VE.SoftNorms.Coherence": 26,
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 55,
+    "VE.SoftNorms.Run": 178,
     "VE.SoftNorms.Selected": 15,
     "VE.SoftNorms.SelectedSound": 15,
-    "VE.SoftNorms.Semantics": 2,
+    "VE.SoftNorms.Semantics": 47,
     "VE.SoftNorms.Soften": 516,
-    "VE.SoftNorms.Tree": 148,
-    "VE.SoftNorms.Wire": 80,
+    "VE.SoftNorms.Status": 5,
+    "VE.SoftNorms.Tree": 151,
+    "VE.SoftNorms.Wire": 198,
     "VE.Surface": 18,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
@@ -403,16 +410,30 @@
     "VE.TableauClosure": 63
    },
    "stated": {
+    "VE.Compose.SlotWire.replaySlotConflict": [
+     "VE.Compose.SlotWire.slot_wire_conflict_sound",
+     "VE.Compose.SlotWire.slot_wire_conflict_facts"
+    ],
+    "VE.Compose.SlotWire.replaySlotEntailment": [
+     "VE.Compose.SlotWire.slot_wire_acceptance",
+     "VE.Compose.SlotWire.slot_wire_entailment_facts"
+    ],
+    "VE.Compose.SlotWire.replaySlotWitness": [
+     "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
+     "VE.Compose.SlotWire.slot_wire_witness_facts"
+    ],
     "VE.SoftNorms.Run.runAdmission": [
      "VE.SoftNorms.Run.runAdmission_sound"
     ],
     "VE.SoftNorms.Run.runCase": [
      "VE.SoftNorms.Run.soft_wire_acceptance",
      "VE.SoftNorms.Run.soft_wire_elaborate",
-     "VE.SoftNorms.Run.soft_wire_selected"
+     "VE.SoftNorms.Run.soft_wire_selected",
+     "VE.SoftNorms.Run.slot_wire_certificate",
+     "VE.SoftNorms.Run.slot_wire_conflict"
     ]
    },
-   "theorems": 4,
+   "theorems": 13,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
@@ -1203,7 +1224,7 @@
   },
   {
    "axioms": [],
-   "lines": 24205,
+   "lines": 24392,
    "modes": [
     "readingsRoute"
    ],
@@ -1329,7 +1350,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20513,
+   "wrap_lines": 20700,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1358,6 +1379,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 209,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1492,7 +1514,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1512,12 +1534,12 @@
   },
   {
    "axioms": [],
-   "lines": 36147,
+   "lines": 36334,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36141,
+   "spec_lines": 36328,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1561,6 +1583,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 261,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1766,7 +1789,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1864,12 +1887,12 @@
   },
   {
    "axioms": [],
-   "lines": 35649,
+   "lines": 35836,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 34821,
+   "spec_lines": 35008,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1914,6 +1937,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 221,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -2115,7 +2139,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 67,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -2783,6 +2807,24 @@
    "name": "VE.SoftNorms.Run.runSoftKind",
    "tokens": [
     "CONFLICT-FREE",
+    "CONFLICT"
+   ]
+  },
+  {
+   "in_kernel": true,
+   "inside": "spec-or-wrap",
+   "module": "VE.SoftNorms.Run",
+   "name": "VE.SoftNorms.Run.slotConflictAnswer",
+   "tokens": [
+    "CONFLICT-FREE"
+   ]
+  },
+  {
+   "in_kernel": true,
+   "inside": "spec-or-wrap",
+   "module": "VE.SoftNorms.Run",
+   "name": "VE.SoftNorms.Run.slotWitnessAnswer",
+   "tokens": [
     "CONFLICT"
    ]
   },
