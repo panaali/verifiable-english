@@ -76,14 +76,15 @@ def test_the_wording_has_one_owner():
 
 
 def test_saved_harness_paths_match_the_table():
-    """Every path the three keyed harnesses took (saved 2026-11-11) is in the table with its true owner."""
+    """Every path the three keyed harnesses took (saved 2026-11-14) is in the table with its true owner."""
     evidence = json.loads(keyed_paths.EVIDENCE.read_text())
     assert sorted(evidence) == sorted(keyed_paths.HARNESSES)
     for harness, counts in evidence.items():
         assert counts, harness
         _check_against_table(counts)
-        # The claims the review found overstated: selection and conflicts are Python's in every harness.
-        assert counts["python selected_rules"] > 0 and counts["python _find_conflict"] > 0, harness
+        # Selection and outcomes are Lean's in every harness (kb-10b); conflicts are still Python's (kb-10c).
+        assert counts["lean soft-selected"] > 0 and counts["python _find_conflict"] > 0, harness
+        assert "python selected_rules" not in counts and "python completed" not in counts, harness
         assert "lean _check_conflict_lean" not in counts, harness
 
 
@@ -128,11 +129,27 @@ def test_a_soft_document_takes_no_lean_norms_route(soft_document):
     assert not norms._lean_route(soft_document)
 
 
-def test_selection_is_pythons_evaluation(soft_document):
+def test_selection_and_outcome_are_leans_soft_selected(soft_document):
+    """kb-10b: a document built from its soft source asks Lean's `soft-selected`, once per document and model."""
+    model = _case(soft_document)
     with keyed_paths.recording() as counts:
-        selected = soft_document.selected_rules("required", _case(soft_document), ("a",))
-    assert [rule.name for rule in selected] == ["rule-2"]
-    assert dict(counts) == {"python selected_rules": 1}
+        selected = soft_document.selected_rules("required", model, ("a",))
+        outcome = soft_document.outcome_at("required", model, ("a",))
+    assert [rule.name for rule in selected] == ["rule-2"] and outcome is True
+    assert dict(counts) == {"lean soft-selected": 1}
+    _check_against_table(counts)
+
+
+def test_a_hand_built_document_keeps_pythons_selection(soft_document):
+    """A SoftenedNormDocument without its soft source is Python's evaluation, and the page says so."""
+    from ve.softnorms import SoftenedNormDocument
+    bare = SoftenedNormDocument(soft_document.env, list(soft_document.rules))
+    model = _case(soft_document)
+    with keyed_paths.recording() as counts:
+        selected = bare.selected_rules("required", model, ("a",))
+        outcome = bare.outcome_at("required", model, ("a",))
+    assert [rule.name for rule in selected] == ["rule-2"] and outcome is True
+    assert dict(counts) == {"python selected_rules": 1, "python outcome_at": 1}
     _check_against_table(counts)
 
 
