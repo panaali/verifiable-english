@@ -24893,7 +24893,7 @@ module VE.Route.Metered bf4ce15e1e4ce7bad432543bbdd3f4c5d522949ba83d246ecf3212f7
 116:0-119:26 def VE.Route.Metered.traceRequested@VE.Route.Metered
 121:0-127:16 def VE.Route.Metered.limit@VE.Route.Metered
 129:0-132:41 def VE.Route.Metered.resultFields@VE.Route.Metered
-module VE.Route.MeteredProfileExamples cddd1f3b335084717b432fb344a813d52e7c1a368c255df923a0c944980c0865
+module VE.Route.MeteredProfileExamples c58b5030be5060c788fc5b9f928ecfe1ed35a50f983c7ea99cff95585b67b2d3
 12:0-13:82 def VE.Route.MeteredProfileExamples.diagnostic@VE.Route.MeteredProfileExamples
 15:0-23:109 def VE.Route.MeteredProfileExamples.environmentText@VE.Route.MeteredProfileExamples
 25:0-27:55 def VE.Route.MeteredProfileExamples.modelText@VE.Route.MeteredProfileExamples
@@ -24914,6 +24914,15 @@ module VE.Route.MeteredProfileExamples cddd1f3b335084717b432fb344a813d52e7c1a368
 87:0-90:13 def VE.Route.MeteredProfileExamples.pairsOf@VE.Route.MeteredProfileExamples
 96:0-98:10 def VE.Route.MeteredProfileExamples.tree@VE.Route.MeteredProfileExamples
 100:0-104:22 def VE.Route.MeteredProfileExamples.onRelations@VE.Route.MeteredProfileExamples
+114:0-117:10 def VE.Route.MeteredProfileExamples.tree2@VE.Route.MeteredProfileExamples
+119:0-123:22 def VE.Route.MeteredProfileExamples.onTwo@VE.Route.MeteredProfileExamples
+130:0-133:13 def VE.Route.MeteredProfileExamples.treeOf@VE.Route.MeteredProfileExamples
+135:0-137:46 def VE.Route.MeteredProfileExamples.entry@VE.Route.MeteredProfileExamples
+139:0-139:76 def VE.Route.MeteredProfileExamples.plainEntry@VE.Route.MeteredProfileExamples
+150:0-152:52 instance VE.Route.MeteredProfileExamples.instDecidableProfileHoldsString@VE.Route.MeteredProfileExamples
+154:0-154:101 def VE.Route.MeteredProfileExamples.good@VE.Route.MeteredProfileExamples
+155:0-155:100 def VE.Route.MeteredProfileExamples.bad@VE.Route.MeteredProfileExamples
+160:0-162:101 def VE.Route.MeteredProfileExamples.prep@VE.Route.MeteredProfileExamples
 module VE.Route.MeteredProofs 3e29a02f94999d43dfb7d5e2d28ac80a663eb689ede25dd8961e5451affdd391
 8:0-16:12 theorem VE.Route.MeteredProofs.fol_sound@VE.Route.MeteredProofs
 18:0-26:12 theorem VE.Route.MeteredProofs.order_sound@VE.Route.MeteredProofs
