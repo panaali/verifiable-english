@@ -12,13 +12,14 @@ rules Lean selects and the completed outcome under the deny and allow defaults.
 from __future__ import annotations
 
 import copy
-import importlib.util
 import sys
+import types
 from pathlib import Path
 
 import pytest
 
 from tests.test_soft_selected import EXPECTED, MODEL, document, lean  # noqa: F401  (`lean` is a fixture)
+from tests.usecase_scope import load_script, sibling_names, usecase_scope
 from ve import soft_route, softnorms
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.model import FiniteModel
@@ -255,16 +256,13 @@ def test_a_document_from_its_soft_source_never_runs_pythons_selection(lean, call
 
 # -- the harnesses' `completed` -------------------------------------------------------------------
 
+HARNESSES = ("anthropic-rsp", "safety-framework", "openai-preparedness")
+
+
 def harness(name):
-    path = ROOT / "usecases" / name / "run.py"
-    spec = importlib.util.spec_from_file_location(f"kb10b_switch_{name.replace('-', '_')}", path)
-    module = importlib.util.module_from_spec(spec)
-    sys.path.insert(0, str(path.parent))
-    try:
-        spec.loader.exec_module(module)
-    finally:
-        sys.path.remove(str(path.parent))
-    return module
+    """The harness's `run.py`, loaded with its own sibling modules (tests/usecase_scope.py): another use case's
+    `translation`, `run` or `reference` already in `sys.modules` is not used, and the harness leaves none behind."""
+    return load_script(ROOT / "usecases" / name / "run.py", f"kb10b_switch_{name.replace('-', '_')}")
 
 
 class _Elaborated:
@@ -286,8 +284,28 @@ def test_the_harnesses_completed_is_outcome_at(monkeypatch, answer):
             ("anthropic-rsp", ("case", "act", ["s", "t"]), ("act", "M", ("s", "t"))),
             ("safety-framework", ("M", "act", ["p"]), ("act", "M", ("p",))),
             ("openai-preparedness", ("found", "act"), ("act", "M", ("k",)))):
+        with usecase_scope(ROOT / "usecases" / name):  # a sibling `completed` imports late is the harness's own
+            module = harness(name)
+            monkeypatch.setattr(module, "model", lambda *a: "M", raising=False)
+            monkeypatch.setattr(module, "subject", lambda predicate: ("capability", "k"), raising=False)
+            doc = type("Doc", (), {"elaborated": _Elaborated(answer)})()
+            assert module.completed(doc, *args) is answer and doc.elaborated.asked == [expected], name
+
+
+def test_a_harness_loads_its_own_siblings_and_leaves_none_behind(monkeypatch):
+    """Review F1 (kb-10b-switch): with another use case's module standing in `sys.modules` under each sibling
+    name of every harness (as `tests/test_eligibility_wfp.py` leaves eligibility's `translation`), each harness
+    still loads its own siblings; afterwards `sys.modules` and `sys.path` are exactly as before."""
+    names = set().union(*(sibling_names(ROOT / "usecases" / name) for name in HARNESSES))
+    assert {"translation", "run", "reference", "stage0"} <= names
+    decoys = {name: types.ModuleType(name) for name in names}
+    for name, decoy in decoys.items():
+        monkeypatch.setitem(sys.modules, name, decoy)
+    path_before = list(sys.path)
+    for name in HARNESSES:
+        directory = ROOT / "usecases" / name
         module = harness(name)
-        monkeypatch.setattr(module, "model", lambda *a: "M", raising=False)
-        monkeypatch.setattr(module, "subject", lambda predicate: ("capability", "k"), raising=False)
-        doc = type("Doc", (), {"elaborated": _Elaborated(answer)})()
-        assert module.completed(doc, *args) is answer and doc.elaborated.asked == [expected], name
+        for value in (module.T, module.V):
+            assert Path(value.__file__).resolve().parent == directory.resolve(), (name, value)
+        assert sys.path == path_before, name
+        assert all(sys.modules[n] is decoys[n] for n in names), name
