@@ -1,22 +1,22 @@
 {
   "item": "kb-2a",
-  "note": "Each bug was planted alone in the committed lowering, the module and its examples rebuilt with `lake build VE.Experimental.CoreDocumentExamples`, and the file restored with git checkout. Line numbers are those of the commit that added this file.",
+  "note": "Each bug was planted alone in the lowering at commit c4b9accca8, the module (c, d) or the module and its examples (a, b) rebuilt with lake build, and the file restored with git checkout. First run at 52bb9cda80 on the first version of the lowering; rerun here after the sweep-driven rewrite (one body per unit, no Plan). Line numbers are those of commit c4b9accca8.",
   "mutants": [
     {"id": "a", "file": "lean/VE/Experimental/CoreDocument.lean",
-     "bug": "the lowering drops the premise of the last fact unit: `lower` plans `units.dropLast` instead of `units`",
-     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (`#guard answers` at line 135), with the soft-norms, judgments@0 and register-label rows (lines 131, 143, 147)",
-     "result": "killed: the examples fail to evaluate to true"},
+     "bug": "the lowering drops the premise of the last fact unit: lower plans units.dropLast instead of units",
+     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (#guard answers at line 137), with the soft-norms, judgments@0, two-terms and register-label rows (lines 133, 145, 149, 155) and the judged-fact and strict-norm examples (163, 186, 189)",
+     "result": "killed: the examples fail to evaluate to true (lake build VE.Experimental.CoreDocumentExamples exit 1)"},
     {"id": "b", "file": "lean/VE/Experimental/CoreDocument.lean",
-     "bug": "a premise gets the origin of the unit before it: each unit plan takes the unit id of the plan before it (`zipWith` over `plans.take 1 ++ plans`, inside the mapped Except so every proof still builds)",
-     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (line 135) and the judged fact's premise origin `[\"u2\"]` (line 161), with the two-reading and strict-norm examples",
-     "result": "killed: the examples fail to evaluate to true"},
+     "bug": "a premise gets the origin of the unit before it: each unit plan takes the unit id of the plan before it (List.zipWith over ps.take 1 ++ ps, inside the mapped Except so every proof still builds)",
+     "test": "lean/VE/Experimental/CoreDocumentExamples.lean: the facts row (line 137), the register-label row (149), the judged fact's premise origin [\"u2\"] (186, 189) and the two-reading and coupled-set examples (236, 247, 252, 260)",
+     "result": "killed: the examples fail to evaluate to true (lake build VE.Experimental.CoreDocumentExamples exit 1)"},
     {"id": "c", "file": "lean/VE/Experimental/CoreDocument.lean",
-     "bug": "the distinctness check is removed: `readingsOf` no longer calls `distinct x opts`",
-     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_readings_distinct",
-     "result": "killed: lower_readings_distinct fails to build (application type mismatch)"},
+     "bug": "the distinctness check is removed: readingsOf no longer calls distinct x opts",
+     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_readings_distinct (line 508)",
+     "result": "killed: lower_readings_distinct fails to build (CoreDocument.lean:518, application type mismatch)"},
     {"id": "d", "file": "lean/VE/Experimental/CoreDocument.lean",
-     "bug": "a reference to a missing unit is accepted: `setFault` no longer refuses a reading set whose unit the document does not have",
-     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_origin_units (through preliminaries_sets)",
-     "result": "killed: preliminaries_sets, and so lower_origin_units, fails to build (type mismatch)"}
+     "bug": "a reference to a missing unit is accepted: setFault no longer refuses a reading set whose unit the document does not have (its first test is false)",
+     "test": "lean/VE/Experimental/CoreDocument.lean: theorem lower_origin_units, through preliminaries_sets (line 439)",
+     "result": "killed: preliminaries_sets, and so lower_origin_units, fails to build (CoreDocument.lean:463, type mismatch)"}
   ]
 }
