@@ -2573,7 +2573,9 @@
       "lean/ResponseShape/SoftSelectedExamples.lean": "fixtures only: #guard checks of soft-norms.json's selected rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling",
       "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
-      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it"
+      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
+      "lean/VE/Experimental/CoreDocument.lean": "experimental: the lowering of a document to its core documents builds the core document's environment and norm objects as JSON (`wireJson` of `E.lower` and of a unit's canonical soft rule, `encodeNode` of a strict norm) and reads a strict norm back only through the soft route's own decoder (`decodeSoftSource`, `decodeSoftNorm`); it decodes no field itself, and no service mode imports it (kb-2a step A; tools/check_lean_imports.py)",
+      "lean/VE/Experimental/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it"
     }
   },
   "plan_operations": {
