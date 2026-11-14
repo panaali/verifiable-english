@@ -1,0 +1,8 @@
+job=armsh-cand-anthropic-rsp-fidelity-fix-4b-0eae7a4c-t686736-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-14T20:07:27Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 20:07:27 up 1 min,  0 user,  load average: 1.41, 0.40, 0.14
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=d1efdf5f479a
+seed: lake 1368.0 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 595 s)
