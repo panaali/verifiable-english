@@ -29900,10 +29900,6 @@ theorem VE.Norms.InFragmentIn_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.InFragmentIn D (VE.Norms.layersOf D) = VE.Norms.InFragment D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.InFragment@VE.Norms.SmallModel VE.Norms.InFragmentIn@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 506851688
-theorem VE.Norms.Plain.forM_ok
-  ∀ {α ε : Type} (f : α → Except ε Unit) (l : List α), l.forM f = Except.ok () → ∀ (x : α), x ∈ l → f x = Except.ok ()
-  -- uses
-  -- expr 2253869588
 theorem VE.Norms.Plain.profileOkOn_holds
   ∀ {γ : Type} [inst : DecidableEq γ] (T : VE.Norms.Tree) (relations : String → List (List γ)),
     (VE.Norms.Plain.profileOkOn T fun name => Pure.pure (relations name)) = Except.ok () →

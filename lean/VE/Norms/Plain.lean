@@ -1,4 +1,5 @@
 import VE.Norms.Wire
+import VE.Norms.Admission
 import VE.Compose.Dispatch
 import VE.Route.Run
 import VE.Order.Conservativity
@@ -78,24 +79,11 @@ pair, every tuple of the required relation is a tuple of the permission. -/
 def ProfileHolds {γ : Type} (T : Tree) (relations : String → List (List γ)) : Prop :=
   ∀ pr ∈ pairs T, ∀ t ∈ relations pr.req, t ∈ relations pr.perm
 
-theorem forM_ok {α ε : Type} (f : α → Except ε Unit) :
-    ∀ l : List α, l.forM f = .ok () → ∀ x ∈ l, f x = .ok ()
-  | [], _, x, hx => by cases hx
-  | y :: ys, h, x, hx => by
-    simp only [List.forM] at h
-    cases hy : f y with
-    | error e => rw [hy] at h; cases h
-    | ok u =>
-      rw [hy] at h
-      rcases List.mem_cons.mp hx with rfl | hmem
-      · exact hy
-      · exact forM_ok f ys h x hmem
-
 /-- The bridge: the check over a model's relations accepts only a model satisfying the profile. -/
 theorem profileOkOn_holds {γ : Type} [DecidableEq γ] (T : Tree) (relations : String → List (List γ))
     (h : profileOkOn T (fun name => pure (relations name)) = .ok ()) : ProfileHolds T relations := by
   intro pr hpr t ht
-  have hp := forM_ok _ _ h pr hpr
+  have hp := VE.Norms.Admission.forM_ok _ _ h pr hpr
   simp only [pure, Except.pure, bind, Except.bind] at hp
   split at hp
   · rename_i hall
