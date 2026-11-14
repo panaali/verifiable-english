@@ -65,6 +65,8 @@ EXCLUDED = {
     "usecases/*/answer-key.json": ("no-input", "a use case's hand-written answer key"),
     "usecases/*/coverage.json": ("no-input", "a use case's source-coverage table"),
     "usecases/*/spans.json": ("no-input", "a use case's source spans"),
+    "usecases/*/fidmech/boundaries.json": ("no-input", "a use case's frozen source boundaries for the fidmech text "
+                                           "checks (tools/fidmech)"),
     "usecases/*/*.manifest.json": ("no-input", "a use case's document manifest (its .ve files are read)"),
     "usecases/*/environment.english.json": ("no-input", "English surface words for an environment"),
     "usecases/*/log.vocabulary.json": ("no-input", "a vocabulary fragment the use case's script merges"),
@@ -72,6 +74,7 @@ EXCLUDED = {
     "usecases/*/theorems/*/verdict.json": ("artifact", "a recorded verdict"),
     "usecases/*/theorems/*/certificate.json": (
         "no-input", "a certificate whose premises are built by the use case's script (math-mini-paper/verify.sh)"),
+    "usecases/pinned_sources.json": ("no-input", "the publisher sources' sha256 pins (tools/fetch_pinned_sources.py)"),
     "usecases/eligibility/cases.json": ("no-input", "applicant profiles the use case's script turns into documents"),
     "usecases/eligibility/rules.json": ("no-input", "rule records the use case's script turns into documents"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),

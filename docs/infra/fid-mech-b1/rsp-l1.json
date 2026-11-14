@@ -1,0 +1,569 @@
+{
+ "document": "anthropic-rsp",
+ "checks": [
+  "L1"
+ ],
+ "source_sha256": "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063",
+ "boundaries_sha256": "19c7a3dd2fe333424fb07e127d046aeec85d162de7cc28ac60ce881ecf61ad95",
+ "blocks": 85,
+ "quotes": {
+  "note": 14,
+  "empty": 0,
+  "checked": 97
+ },
+ "counts": {
+  "L1m": 3,
+  "L1n": 0,
+  "L1u": 1,
+  "L1c": 25,
+  "L1e": 1
+ },
+ "also_gated": {},
+ "sentences": {
+  "main": 466,
+  "footnote": 22
+ },
+ "footnote_pairs": {
+  "generator": 12,
+  "hand": 1
+ },
+ "unpaired_digit_runs": 6,
+ "hits": [
+  {
+   "class": "L1u",
+   "block": "rows-cond",
+   "file": "rules.d1.ve",
+   "quote": "Mitigations—our plan as a company",
+   "detail": "not source text under norm()",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "rows-cond",
+   "file": "rules.d1.ve",
+   "quote": "We will maintain or improve on our ASL-3 protections",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    10071,
+    10123
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "rows-cond",
+   "file": "rules.d1.ve",
+   "quote": "We will apply protections at least as strong as our ASL-3 protections ... to an expanded set of potential use cases",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    12291,
+    12421
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "rows-uncond",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f5-strict",
+   "file": "rules.d1.ve",
+   "quote": "A frontier developer should make a strong argument that ...",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    10741,
+    10796
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f5-default",
+   "file": "rules.d1.ve",
+   "quote": "should",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    8714,
+    8720
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f5-evidence-strict",
+   "file": "rules.d1.ve",
+   "quote": "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems.",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    21081,
+    21541
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f5-evidence-default",
+   "file": "rules.d1.ve",
+   "quote": "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems.",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    21081,
+    21541
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6-strive-default",
+   "file": "rules.d1.ve",
+   "quote": "we will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    23803,
+    23938
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f8-public",
+   "file": "rules.d1.ve",
+   "quote": "It will cover all publicly deployed models as of the coverage date",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    25116,
+    25182
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f8-autonomous",
+   "file": "rules.d1.ve",
+   "quote": "this will—at a minimum—include any internal models that we are deploying for large-scale, fully autonomous research",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    25560,
+    25679
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f9-internal",
+   "file": "rules.d1.ve",
+   "quote": "Within 30 days of determining that we have an internally deployed model that (1) could pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed those of all models for which we have publicly analyzed such risks (e.g., in a prior Risk Report, System Card, or other public artifact).",
+   "detail": "a list item quoted without its lead-in",
+   "at": [
+    "main",
+    26891,
+    27210
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-candid-default",
+   "file": "rules.d1.ve",
+   "quote": "We intend for our Risk Reports to be direct, candid, and informative about how we see the risks of our systems and our state of preparedness for them.",
+   "detail": "a list item quoted without its lead-in",
+   "at": [
+    "main",
+    27313,
+    27463
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-in-line",
+   "file": "rules.d1.ve",
+   "quote": "When a Risk Report describes risk mitigations we have in place (or plan to implement shortly), we will keep our future practices in line with this description or track and report noteworthy changes and deviations (generally via subsequent Risk Reports).",
+   "detail": "a list item quoted without its lead-in",
+   "at": [
+    "main",
+    27873,
+    28126
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-attempt-default",
+   "file": "rules.d1.ve",
+   "quote": "should",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    8714,
+    8720
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f12-final",
+   "file": "rules.d1.ve",
+   "quote": "The CEO and RSO will make the ultimate determination",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    32903,
+    32955
+   ]
+  },
+  {
+   "class": "L1e",
+   "block": "f12-board-approval",
+   "file": "rules.d1.ve",
+   "quote": "In the event that marginal risk analysis ... plays a major role in a decision to move forward, explicit approval of the Risk Report by the Board and LTBT (rather than just the CEO and RSO) will be required",
+   "detail": "an elision",
+   "at": [
+    "main",
+    33572,
+    33796
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f14-full-review",
+   "file": "rules.d1.ve",
+   "quote": "At a minimum, we will complete a full external review process (described below) with at least one external reviewer anytime a Risk Report covers highly capable models and is significantly redacted",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    35743,
+    35940
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f15-financial-interest",
+   "file": "rules.d1.ve",
+   "quote": "At a minimum, a reviewing organization itself may not have a financial interest in Anthropic",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    37680,
+    37773
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f15-revenue-strict",
+   "file": "rules.d1.ve",
+   "quote": "external review parties should not be teams whose revenue, reputation and success depend entirely on Anthropic and similar companies continuing to work with them",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    37451,
+    37612
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f15-revenue-default",
+   "file": "rules.d1.ve",
+   "quote": "should not",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    37475,
+    37485
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f16-all-sections",
+   "file": "rules.d1.ve",
+   "quote": "All sections of the Risk Report will be shared with at least one external reviewer",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    38649,
+    38731
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f20-notice-p",
+   "file": "rules.d1.ve",
+   "quote": "and we may provide public notice of the same",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    43235,
+    43279
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f20-retaliation",
+   "file": "rules.d1.ve",
+   "quote": "Finally, we will protect reporters from retaliation",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    43281,
+    43332
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f20-board-recipient",
+   "file": "rules.d1.ve",
+   "quote": "where a report concerns the conduct of the RSO, at least one recipient will be a member of the Board",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    43338,
+    43438
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "highly-capable-t4",
+   "file": "facts.d1.ve",
+   "quote": "A model is 'highly capable' if we conclude that it crosses the threshold for automated AI R&D described in Section 1",
+   "detail": "a list item quoted without its lead-in",
+   "at": [
+    "main",
+    35967,
+    36088
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "t4-only-if",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "s2-suff-third",
+   "file": "facts.d1.ve",
+   "quote": "We would consider scenario (2) to have occurred where (a) we observe or expect double the rate of progress ... and (b) it is plausible that this doubling is substantially attributable to the automation of research and/or engineering",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    18706,
+    19124
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "s2-suff-third",
+   "file": "facts.d1.ve",
+   "quote": "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    22326,
+    22426
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "s2-only-if-third",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  }
+ ],
+ "levers": {
+  "extra": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 35,
+    "L1e": 1
+   },
+   "cleared": [
+    [
+     "L1c",
+     "f13-redact-p",
+     "We will publish a public version of our Risk Report. We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees. Reasons we may redact material include but are not limited to:"
+    ],
+    [
+     "L1c",
+     "f14-public-review-default",
+     "We will work toward a practice of seeking comprehensive, public external review on our Risk Reports"
+    ],
+    [
+     "L1c",
+     "f16-share-one-week",
+     "The external review process will involve sharing the Risk Report with one or more external reviewers within one week of submitting the same report to our Board and LTBT."
+    ],
+    [
+     "L1c",
+     "f24-argument",
+     "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model."
+    ],
+    [
+     "L1c",
+     "f24-delay",
+     "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model."
+    ],
+    [
+     "L1c",
+     "f6-maintain",
+     "We will maintain a Frontier Safety Roadmap laying out ambitious but achievable goals for improving our risk mitigations—charting our progress as a company and raising the bar over time."
+    ],
+    [
+     "L1c",
+     "f7-publish",
+     "We will publish Risk Reports discussing the risks of our systems and how we have made determinations about whether to continue AI development and deployment in light of the risks."
+    ],
+    [
+     "L1c",
+     "f7-publish",
+     "We will publish a public version of our Risk Report"
+    ],
+    [
+     "L1c",
+     "rows-cond",
+     "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the overall level of risk in our Risk Reports"
+    ],
+    [
+     "L1c",
+     "rows-cond",
+     "We will:"
+    ]
+   ],
+   "added": []
+  },
+  "suppress": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 25,
+    "L1e": 1
+   },
+   "cleared": [],
+   "added": []
+  },
+  "abbrev": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 25,
+    "L1e": 1
+   },
+   "cleared": [],
+   "added": []
+  },
+  "furniture": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 26,
+    "L1e": 1
+   },
+   "cleared": [
+    [
+     "L1c",
+     "rows-cond",
+     "Mitigations—our plan as a company"
+    ],
+    [
+     "L1c",
+     "threshold-t1",
+     "Non-novel chemical/biological weapons production"
+    ],
+    [
+     "L1c",
+     "threshold-t2",
+     "Novel chemical/biological weapons production"
+    ],
+    [
+     "L1u",
+     "f23-publish",
+     "If we update the RSP, we will publicly share the updated version prior to or on its effective date and will record the differences from the prior draft in the Change Log."
+    ]
+   ],
+   "added": [
+    [
+     "L1c",
+     "f5-evidence-default",
+     "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems."
+    ],
+    [
+     "L1c",
+     "f5-evidence-strict",
+     "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems."
+    ],
+    [
+     "L1u",
+     "rows-cond",
+     "Mitigations—our plan as a company"
+    ]
+   ]
+  },
+  "footnotes": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 4,
+    "L1c": 29,
+    "L1e": 1
+   },
+   "cleared": [
+    [
+     "L1c",
+     "f12-share",
+     "Following approval of a Risk Report, the CEO and RSO will promptly share their decision(s), the underlying Risk Report, and internal feedback with both the Board and the LTBT."
+    ],
+    [
+     "L1c",
+     "f16-only-legal",
+     "For purposes of external review, the only redactions to the Risk Report will be those necessary to comply with legal prohibitions or to maintain our legal rights."
+    ],
+    [
+     "L1c",
+     "f8-internal",
+     "It will cover all publicly deployed models as of the coverage date, as well as any internally deployed models as of the coverage date that, by the time of the report's publication, we have determined (1) could pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed those posed by models covered by a prior Risk Report."
+    ],
+    [
+     "L1c",
+     "f9-public",
+     "When we publicly deploy a model that we determine is (1) significantly more capable than (2) all models for which we have publicly analyzed risks related to chemical/biological weapons production, high-stakes misalignment, or automated R&D (e.g., in a prior Risk Report, System Card, or other public artifact)."
+    ],
+    [
+     "L1u",
+     "f11-marginal",
+     "If we determine that the absolute level of risk being imposed industry-wide by AI systems such as ours is high, and are justifying our decision to move forward based partly on a marginal risk analysis, we will additionally address the following"
+    ],
+    [
+     "L1u",
+     "f24-argument",
+     "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model."
+    ],
+    [
+     "L1u",
+     "f24-delay",
+     "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model."
+    ]
+   ],
+   "added": []
+  },
+  "hand-footnotes": {
+   "counts": {
+    "L1m": 3,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 25,
+    "L1e": 1
+   },
+   "cleared": [],
+   "added": []
+  }
+ }
+}

@@ -801,7 +801,7 @@ def run_step_script(name: str) -> str:
 
 
 def clean_env(**extra: str) -> dict:
-    dropped = ("VE_LEAN_FROM", "VE_LEAN_FROM_SHA256", "VE_LEAN_ASSET_DIR")
+    dropped = ("VE_LEAN_FROM", "VE_LEAN_FROM_SHA256", "VE_LEAN_ASSET_DIR", "VE_REQUIRE_PINNED_SOURCES", "GATE_JOB")
     return {**{k: v for k, v in os.environ.items() if not k.startswith(("GH_", "GITHUB_", "LEAN_")) and k not in dropped},
             **extra}
 
@@ -914,7 +914,7 @@ def run_job_step(tmp_path: Path, **env: str) -> dict:
     rt = tmp_path / "rt"
     (rt / "ci-job").mkdir(parents=True)
     (rt / "ci-job/job.json").write_text(json.dumps({"argv": []}))
-    (rt / "ci-job/job.sh").write_text('for v in VE_LEAN_FROM VE_LEAN_FROM_SHA256 VE_LEAN_ASSET_DIR; do '
+    (rt / "ci-job/job.sh").write_text('for v in VE_LEAN_FROM VE_LEAN_FROM_SHA256 VE_LEAN_ASSET_DIR VE_REQUIRE_PINNED_SOURCES; do '
                                       'echo "$v=${!v-unset}"; done > "$3/env.txt"\n')
     (rt / "out").mkdir()
     done = subprocess.run(["bash", "-c", run_step_script("job")], cwd=tmp_path, capture_output=True, text=True,
@@ -931,3 +931,49 @@ def test_job_sh_gets_the_pack_only_when_the_check_passed(tmp_path):
     assert (refused["VE_LEAN_FROM"], refused["VE_LEAN_FROM_SHA256"]) == ("unset", "unset"), refused
     job = next(step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if step.get("name") == "job")
     assert job["env"]["LEAN_FROM"] == "${{ steps.leanfrom.outputs.file }}", "job.sh's pack is not the check's output"
+
+
+# --- the pinned sources (actions-pinned-sources) ---------------------------------------------------------------------
+
+@pytest.mark.parametrize("argv, gate", [
+    (["j", "h", "b", "-", "-", "4", "1/4"], "1"),
+    (["j", "h", "b", "-", "-", "4", "2/4", "authority"], "1"),
+    (["j", "h", "b", "-", "-", "4"], "1"),
+    (["j", "h", "b", "-", "-", "lake=true"], ""),
+    (["j", "h", "b", "-", "-", "4; x"], ""),
+    (["j", "h", "b", "-", "-", 4], ""),
+    ([], ""),
+], ids=["shard", "nightly authority", "unsharded", "cmd job", "injection", "int workers", "no argv"])
+def test_only_a_gate_job_fetches_and_requires_the_pinned_sources(tmp_path, argv, gate):
+    """A gate job is gate-job.sh's contract: argv[5] is its <workers> count; a cmd job has <name>=<command> there."""
+    outputs, _ = run_job_commit_step(tmp_path, {"argv": argv})
+    assert outputs["gate"] == gate, outputs
+    run = parse(VE_JOB.read_text())["jobs"]["run"]
+    fetch = next(step for step in steps(run) if step.get("name") == "pinned sources")
+    assert fetch.get("if") == "steps.job.outputs.gate == '1'" and "env" not in fetch and "uses" not in fetch
+    job = next(step for step in steps(run) if step.get("name") == "job")
+    assert job["env"]["GATE_JOB"] == "${{ steps.job.outputs.gate }}"
+    names = [step.get("name") for step in steps(run)]
+    assert names.index("tools") < names.index("pinned sources") < names.index("job"), names
+
+
+def test_the_job_step_requires_the_pinned_sources_only_in_a_gate_job(tmp_path):
+    lean = {"LEAN_FROM": "", "LEAN_SHA": ""}
+    assert run_job_step(tmp_path / "a", GATE_JOB="1", **lean)["VE_REQUIRE_PINNED_SOURCES"] == "1"
+    assert run_job_step(tmp_path / "b", GATE_JOB="", **lean)["VE_REQUIRE_PINNED_SOURCES"] == "unset"
+    assert run_job_step(tmp_path / "c", **lean)["VE_REQUIRE_PINNED_SOURCES"] == "unset"
+
+
+@pytest.mark.parametrize("code", [0, 1])
+def test_the_fetch_step_records_its_status_and_never_fails_the_run(tmp_path, code):
+    """The tests fail by name under VE_REQUIRE_PINNED_SOURCES=1 when a source is missing; the step itself only
+    records what the fetch said and its exit status."""
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools/fetch_pinned_sources.py").write_text(f"print('FAILED doc: said'); raise SystemExit({code})\n")
+    rt = tmp_path / "rt"
+    (rt / "out").mkdir(parents=True)
+    done = subprocess.run(["bash", "-c", run_step_script("pinned sources")], cwd=tmp_path, capture_output=True,
+                          text=True, env=clean_env(RUNNER_TEMP=str(rt)), timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, f"{done.stdout}{done.stderr}"
+    assert (rt / "out/pinned-sources.txt").read_text() == "FAILED doc: said\n"
+    assert (rt / "out/gha-setup.tsv").read_text().startswith(f"pinned_sources\t{code}\t")

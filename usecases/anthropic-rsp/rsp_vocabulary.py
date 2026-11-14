@@ -198,9 +198,61 @@ BASE = {
                                      "autonomous research (3.1)", "no one the text names (unstated)", "OT22"),
 }
 
+# Section 1's middle column ("Mitigations—our plan as a company"), row by row, verbatim (NFKC, the apostrophe written
+# ' as the accounting tool's `norm` writes it; PLAN 1): the plans
+# `plans_in_place` carries for the row of each threshold. Row T4's second bullet is split by the page layout (its
+# text continues on p. 9 after the right column of p. 8), so it is two quotes.
+ROW_PLANS = {
+    "non_novel_chem_bio_weapons": (
+        "We will maintain or improve on our ASL-3 protections, which include classifier guards at least as robust as "
+        "our initial Constitutional Classifiers; access controls for trusted users with exemptions to classifier "
+        "guards; red-teaming, bug bounties, and threat intelligence for continually assessing the threat of "
+        "jailbreaks; and a number of noteworthy security controls. Specifics may change, but we will maintain "
+        "equally or more robust measures over time and will publish updates in our Risk Reports.",),
+    "novel_chem_bio_weapons": (
+        "We will apply protections at least as strong as our ASL-3 protections (see previous row) to an expanded set "
+        "of potential use cases for AI, covering the most likely vectors for this threat. Additionally, we will "
+        "identify the most concerning specific threat pathways, create policy recommendations for early detection "
+        "and response for such threats, and share this content with policymakers.",),
+    "misaligned_high_stakes": (
+        "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the "
+        "overall level of risk in our Risk Reports.",),
+    "automated_rd": (
+        "We will:",
+        "Resource and complete significant “moonshot R&D for security” projects, to explore ambitious and possibly "
+        "unconventional ways to achieve unprecedented levels of security against the world's best-resourced "
+        "attackers.",
+        "Achieve an “eyes on everything” state for our internal AI development. We will comprehensively gather, "
+        "centralize, and maintain logs",
+        "for all critical AI-development activities, and use AI to analyze them for issues including security "
+        "threats, concerning behavior by insiders (humans as well as AI systems themselves), and training processes "
+        "or data that are out of line with the public Constitution that shapes and defines our AI models.",
+        "Perform systematic alignment assessments to examine Claude's behavioral patterns and propensities, "
+        "meaningfully incorporating mechanistic interpretability and adversarial red-teaming to test our auditing "
+        "methods.",
+        "Develop our internal red-teaming of our deployment safeguards to the point where our internal red-teaming "
+        "performs better at finding potential jailbreaks than the collective abilities of the participants in our "
+        "established bug bounty programs.",
+        "Publish Risk Reports with the status of, and noteworthy findings from, all of the above, subject to external "
+        "review by at least one expert, experienced, credible, candid and disinterested external party."),
+}
+_T4_BULLETS = ROW_PLANS["automated_rd"]
+
+
+def _row_plans_legend():
+    """`plans_in_place`'s legend: what "the plans of the company about {1}" are, for each row, in the source's words."""
+    rows = [f"row {THRESHOLDS[name].split(':')[0]} ({name}): \"{ROW_PLANS[name][0]}\""
+            for name in ("non_novel_chem_bio_weapons", "novel_chem_bio_weapons", "misaligned_high_stakes")]
+    t4 = (f"row T4 (automated_rd): \"{_T4_BULLETS[0]}\" and its five bullets, each one of the plans: "
+          f"(1) \"{_T4_BULLETS[1]}\"; (2) \"{_T4_BULLETS[2]} {_T4_BULLETS[3]}\"; (3) \"{_T4_BULLETS[4]}\"; "
+          f"(4) \"{_T4_BULLETS[5]}\"; (5) \"{_T4_BULLETS[6]}\"")
+    return ("the plans of the middle column (\"Mitigations—our plan as a company\") of the row of {1} are in place at "
+            "{0} (section 1, PROTk); the plans of each row are: " + "; ".join(rows + [t4]))
+
+
 REGULATED = {
-    "plans_in_place": _duty("{0} have the plans of the company about {1} in place", "the middle column's plans of "
-                            "the row of {1} are in place at {0} (section 1, PROTk)", ("situation", "threshold")),
+    "plans_in_place": _duty("{0} have the plans of the company about {1} in place", _row_plans_legend(),
+                            ("situation", "threshold")),
     "strong_argument": _duty("{0} make a strong argument about {1}", "the strong argument of the right column's row "
                              "of {1} is made at {0} (section 1, ARGk)", ("situation", "threshold")),
     "advance_recommendations": _duty("{0} advance the industry-wide recommendations", "section 1 at {0}: \"We will "
@@ -243,7 +295,11 @@ REGULATED = {
                             "(3.2: \"We intend for our Risk Reports to be direct, candid, and informative about how we "
                             "see the risks of our systems and our state of preparedness for them.\")"),
     "deviation_reported": _duty("{0} have the deviation reported", "the change or deviation is tracked and reported "
-                                "at {0} (3.2)"),
+                                "at {0} (3.2: \"When a Risk Report describes risk mitigations we have in place (or "
+                                "plan to implement shortly), we will keep our future practices in line with this "
+                                "description or track and report noteworthy changes and deviations (generally via "
+                                "subsequent Risk Reports).\"; a practice that deviates is not kept in line, so the "
+                                "second branch is the one required)"),
     "strong_attempt": _duty("{0} make a strong attempt to keep risk from increasing significantly", "ongoing (as "
                             "opposed to temporary) changes do not significantly increase the level of risk (3.2)"),
     "factual_documented": _duty("{0} have the factual information documented in its Risk Report", "the five "

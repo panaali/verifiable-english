@@ -26,6 +26,13 @@
 # shard builds cold; it never fails the run. job.sh checks the pack again (seal: this lean tree) before its lake build.
 # The build job's job.json also says "lean_publish": false: the publish job runs every check of its pack and records its
 # sha256 (status checked) but uploads nothing to lean-branch-cache (a gate's build is for its own shards only).
+# 2026-11-14 actions-pinned-sources (manage-agents reviews/dri-decisions-20261113-nightly-x86-pinned-source.md item 2): a
+# gate job (job.json argv[5] is gate-job.sh's <workers> count: every gate shard, the nightly's included) first runs
+# tools/fetch_pinned_sources.py: each publisher document of usecases/pinned_sources.json, downloaded and checked against
+# its sha256 and size pins (like the Lean and uv downloads above), extracted by the case's committed extract step and
+# checked against its text pins, then written where build_document.DEFAULT_SOURCE looks ($HOME/code/manage-agents/...;
+# tools/gate.py copies it into its fresh home). The step never fails the run; its record is pinned-sources.txt. The job
+# step then sets VE_REQUIRE_PINNED_SOURCES=1, so a pinned-source test whose text is absent or not its pin FAILS by name.
 # Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
 name: ve-job
 on:
@@ -64,6 +71,7 @@ jobs:
           lean_asset=$(python3 -I -c 'import json; print("1" if json.load(open("ci-job/job.json")).get("lean_asset") is True else "")')
           lean_publish=$(python3 -I -c 'import json; print("false" if json.load(open("ci-job/job.json")).get("lean_publish") is False else "")')
           lean_from=$(python3 -I -c 'import json, re; d = json.load(open("ci-job/job.json")).get("lean_from"); ok = isinstance(d, dict) and set(d) == {"run_id", "sha256"} and isinstance(d["run_id"], str) and isinstance(d["sha256"], str) and re.fullmatch("[0-9]{1,20}", d["run_id"]) and re.fullmatch("[0-9a-f]{64}", d["sha256"]); print(d["run_id"] + " " + d["sha256"] if ok else ("malformed" if d is not None else ""))')
+          gate=$(python3 -I -c 'import json, re; a = json.load(open("ci-job/job.json"))["argv"]; print("1" if isinstance(a, list) and len(a) > 5 and isinstance(a[5], str) and re.fullmatch("[0-9]{1,4}", a[5]) else "")')
           [ "$(git rev-parse HEAD~1)" = "$head" ] && [ -z "$(git rev-parse -q --verify HEAD^2 || true)" ] || { echo "the job commit's parent is not $head"; exit 1; }
           extra=$(git diff --name-only HEAD~1 HEAD | grep -v -x -E 'ci-job/job\.json|ci-job/job\.sh|\.github/workflows/ve-job\.yml' || true)
           [ -z "$extra" ] || { echo "the job commit changes other files: $extra"; exit 1; }
@@ -72,7 +80,7 @@ jobs:
           [ "$lean_from" != malformed ] || { echo "lean-from: job.json's lean_from is malformed: cold build" > "$RUNNER_TEMP/out/lean-from.txt"; lean_from=""; }
           git checkout -q --detach "$head"
           echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"; echo "lean_asset=$lean_asset" >> "$GITHUB_OUTPUT"; echo "lean_publish=$lean_publish" >> "$GITHUB_OUTPUT"
-          echo "lean_run=${lean_from% *}" >> "$GITHUB_OUTPUT"; echo "lean_sha=${lean_from#* }" >> "$GITHUB_OUTPUT"
+          echo "lean_run=${lean_from% *}" >> "$GITHUB_OUTPUT"; echo "lean_sha=${lean_from#* }" >> "$GITHUB_OUTPUT"; echo "gate=$gate" >> "$GITHUB_OUTPUT"
       - name: tools
         run: |
           set -euo pipefail
@@ -92,6 +100,14 @@ jobs:
           sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
           printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
           { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
+      - name: pinned sources
+        if: steps.job.outputs.gate == '1'
+        run: |
+          set -uo pipefail
+          t0=$(date +%s); P=$RUNNER_TEMP/out/pinned-sources.txt
+          if [ -f tools/fetch_pinned_sources.py ]; then timeout 1800 python3 -I tools/fetch_pinned_sources.py > "$P" 2>&1; rc=$?
+          else echo "no tools/fetch_pinned_sources.py at this head" > "$P"; rc=0; fi
+          cat "$P"; printf 'pinned_sources\t%s\t%s\n' "$rc" "$(( $(date +%s) - t0 ))" >> "$RUNNER_TEMP/out/gha-setup.tsv"
       - name: lean-from download
         if: steps.job.outputs.lean_run != ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
@@ -125,8 +141,10 @@ jobs:
           LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}
           LEAN_FROM: ${{ steps.leanfrom.outputs.file }}
           LEAN_SHA: ${{ steps.job.outputs.lean_sha }}
+          GATE_JOB: ${{ steps.job.outputs.gate }}
         run: |
           set -uo pipefail
+          [ "${GATE_JOB:-}" != 1 ] || export VE_REQUIRE_PINNED_SOURCES=1
           [ "$LEAN_ASSET" != 1 ] || export VE_LEAN_ASSET_DIR="$RUNNER_TEMP/lean-build"
           [ -z "$LEAN_FROM" ] || export VE_LEAN_FROM="$LEAN_FROM" VE_LEAN_FROM_SHA256="$LEAN_SHA"
           mapfile -t argv < <(python3 -I -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["argv"]))' "$RUNNER_TEMP/ci-job/job.json")

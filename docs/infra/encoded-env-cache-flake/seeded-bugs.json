@@ -1,0 +1,31 @@
+{
+  "item": "encoded-env-cache-flake",
+  "language": "python",
+  "note": "Each bug was planted in the file, run with the named tests, and restored with git checkout; REPORT.md 'Seeded bugs' has the table.",
+  "mutants": [
+    {"id": "M1", "file": "ve/environment_wire.py", "mutation": "_cache.popitem(last=False) -> _cache.clear() (the old behaviour)",
+     "test": ["tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[full-cache]",
+              "tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[lean-oldest]",
+              "tests/test_lean_handles.py::test_the_environment_cache_keeps_its_newest_limit_entries"],
+     "result": "killed"},
+    {"id": "M2", "file": "ve/environment_wire.py", "mutation": "move_to_end on a hit removed (insertion-order eviction)",
+     "test": ["tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[lean-oldest]"],
+     "result": "killed"},
+    {"id": "M3", "file": "ve/environment_wire.py", "mutation": "popitem(last=True) (evicts the newest entry)",
+     "test": ["tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[full-cache]",
+              "tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[lean-oldest]",
+              "tests/test_lean_handles.py::test_the_environment_cache_keeps_its_newest_limit_entries"],
+     "result": "killed"},
+    {"id": "M4", "file": "ve/environment_wire.py", "mutation": "len(_cache) >= _LIMIT -> len(_cache) > _LIMIT (bound off by one)",
+     "test": ["tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[full-cache]",
+              "tests/test_lean_handles.py::test_a_full_environment_cache_keeps_the_entries_in_use[lean-oldest]",
+              "tests/test_lean_handles.py::test_the_environment_cache_keeps_its_newest_limit_entries"],
+     "result": "killed"},
+    {"id": "M5", "file": "ve/environment_wire.py", "mutation": "'key not in _cache' guard removed",
+     "test": ["tests/test_lean_handles.py::test_a_key_another_builder_cached_first_evicts_nothing"],
+     "result": "killed"},
+    {"id": "M6", "file": "ve/environment_wire.py", "mutation": "_cache.setdefault(key, fresh) -> _cache[key] = fresh (the second builder wins)",
+     "test": ["tests/test_lean_handles.py::test_a_key_another_builder_cached_first_evicts_nothing"],
+     "result": "killed"}
+  ]
+}

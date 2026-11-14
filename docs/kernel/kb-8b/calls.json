@@ -1,0 +1,149 @@
+{
+ "commands": {
+  "agent-policy": "usecases/agent-policy/check.py base",
+  "anthropic-rsp": "usecases/anthropic-rsp/run.py --check",
+  "eligibility": "usecases/eligibility/run.py --no-write",
+  "openai-preparedness": "usecases/openai-preparedness/run.py --check",
+  "safety-framework": "usecases/safety-framework/run.py --check"
+ },
+ "keys": {
+  "agent-policy": {},
+  "anthropic-rsp": {
+   "certificate": {
+    "calls": 26,
+    "error_ids": [],
+    "reads": {
+     "status": [
+      "ve/backends/relay.py:158:decided"
+     ],
+     "valid": [
+      "ve/units.py:422:check_quantity_certificate"
+     ]
+    },
+    "status": {
+     "ok": 26
+    }
+   }
+  },
+  "eligibility": {
+   "admission(absent)": {
+    "calls": 6781,
+    "error_ids": [
+     "P1"
+    ],
+    "reads": {
+     "error": [
+      "usecases/eligibility/run.py:521:lean_admits"
+     ],
+     "id": [
+      "usecases/eligibility/run.py:280:lean",
+      "usecases/eligibility/run.py:455:main",
+      "usecases/eligibility/run.py:521:lean_admits"
+     ],
+     "status": [
+      "usecases/eligibility/run.py:468:<genexpr>",
+      "usecases/eligibility/run.py:470:<genexpr>",
+      "usecases/eligibility/run.py:521:lean_admits"
+     ],
+     "value": [
+      "usecases/eligibility/run.py:468:<genexpr>",
+      "usecases/eligibility/run.py:471:<genexpr>"
+     ]
+    },
+    "status": {
+     "error": 1,
+     "ok": 6780
+    }
+   },
+   "certificate": {
+    "calls": 2353,
+    "error_ids": [],
+    "reads": {
+     "id": [
+      "usecases/eligibility/run.py:280:lean",
+      "usecases/eligibility/run.py:455:main"
+     ],
+     "status": [
+      "usecases/eligibility/run.py:464:<genexpr>"
+     ],
+     "valid": [
+      "usecases/eligibility/run.py:464:<genexpr>",
+      "usecases/eligibility/run.py:489:main"
+     ]
+    },
+    "status": {
+     "ok": 2353
+    }
+   },
+   "document": {
+    "calls": 269,
+    "error_ids": [],
+    "reads": {
+     "assurance": [
+      "usecases/eligibility/run.py:465:main"
+     ],
+     "id": [
+      "usecases/eligibility/run.py:280:lean",
+      "usecases/eligibility/run.py:455:main"
+     ],
+     "status": [
+      "usecases/eligibility/run.py:465:main"
+     ]
+    },
+    "status": {
+     "ok": 269
+    }
+   }
+  },
+  "openai-preparedness": {
+   "certificate": {
+    "calls": 30,
+    "error_ids": [],
+    "reads": {
+     "status": [
+      "ve/backends/relay.py:158:decided"
+     ],
+     "valid": [
+      "ve/units.py:422:check_quantity_certificate"
+     ]
+    },
+    "status": {
+     "ok": 30
+    }
+   }
+  },
+  "safety-framework": {
+   "certificate": {
+    "calls": 3,
+    "error_ids": [],
+    "reads": {
+     "status": [
+      "ve/backends/relay.py:158:decided"
+     ],
+     "valid": [
+      "ve/units.py:422:check_quantity_certificate"
+     ]
+    },
+    "status": {
+     "ok": 3
+    }
+   },
+   "countermodel": {
+    "calls": 1,
+    "error_ids": [],
+    "reads": {
+     "refutes": [
+      "ve/units.py:431:quantity_countermodel"
+     ],
+     "status": [
+      "ve/backends/relay.py:158:decided"
+     ]
+    },
+    "status": {
+     "ok": 1
+    }
+   }
+  }
+ },
+ "recorder": "/tmp/kb8b/site/sitecustomize.py (throwaway; wraps ve.backends.lean_service.LeanService._run_chunk for mode quantity and logs each field read of each returned row with its reading frame)"
+}
