@@ -2,11 +2,11 @@
 import sys, time, json, runpy, collections
 root, script, *args = sys.argv[1:]
 sys.path.insert(0, root)
-from ve import soft_route
-orig = soft_route.selected_at; n = collections.Counter()
+from ve import softnorms  # the relay the document calls
+orig = softnorms.selected_at; n = collections.Counter()
 def wrapped(d, m, q):
     n["calls"] += 1; n["queries"] += len(q); return orig(d, m, q)
-soft_route.selected_at = wrapped
+softnorms.selected_at = wrapped
 sys.argv = [script, *args]; s = time.monotonic(); rc = 0
 try:
     runpy.run_path(script, run_name="__main__")
