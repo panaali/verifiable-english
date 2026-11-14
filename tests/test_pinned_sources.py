@@ -5,6 +5,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -34,6 +35,16 @@ def _entry(data: bytes, url: str, *, text: bytes | None = None, extract=COPY, pa
     return {"url": url, "pdf_sha256": hashlib.sha256(data).hexdigest(), "pdf_bytes": len(data),
             "extract": list(extract), "path": path, "text_sha256": hashlib.sha256(text).hexdigest(),
             "text_bytes": len(text)}
+
+
+def _outcome(doc: str, **kwargs) -> tuple[str, str]:
+    """("fail" | "skip" | "returned", message) of the helper: a skip never passes for a failure."""
+    try:
+        return "returned", str(pinned_source(doc, **kwargs))
+    except pytest.fail.Exception as exc:
+        return "fail", str(exc)
+    except pytest.skip.Exception as exc:
+        return "skip", str(exc)
 
 
 def _pins(tmp_path: Path, entries: dict) -> Path:
@@ -74,9 +85,10 @@ def test_a_malformed_pin_is_refused(tmp_path, change):
 def test_the_helper_fails_by_name_when_required_and_absent(tmp_path, monkeypatch):
     monkeypatch.setenv(F.REQUIRE, "1")
     for skip in (True, False):
-        with pytest.raises(pytest.fail.Exception, match=r"the pinned source safety-framework is not stored at .*"
-                           r"VE_REQUIRE_PINNED_SOURCES=1"):
-            pinned_source("safety-framework", skip=skip, home=tmp_path)
+        kind, said = _outcome("safety-framework", skip=skip, home=tmp_path)
+        assert kind == "fail", (kind, said)
+        assert re.fullmatch(r"the pinned source safety-framework is not stored at .*/fsf-3\.1\.txt "
+                            r"\(VE_REQUIRE_PINNED_SOURCES=1; fetch it: .*\)", said), said
 
 
 @pytest.mark.parametrize("required", ["1", None])
@@ -90,9 +102,11 @@ def test_the_helper_fails_by_name_when_the_hash_is_wrong(tmp_path, monkeypatch, 
     stored = tmp_path / entry["path"]
     stored.parent.mkdir(parents=True)
     stored.write_bytes(b"x" * entry["text_bytes"])
-    with pytest.raises(pytest.fail.Exception, match=r"the pinned source anthropic-rsp at .* has sha256 [0-9a-f]{64} "
-                       r"\(59410 bytes\), not the pin c7de7fe2f1f4"):
-        pinned_source("anthropic-rsp", skip=False, home=tmp_path)
+    for skip in (True, False):
+        kind, said = _outcome("anthropic-rsp", skip=skip, home=tmp_path)
+        assert kind == "fail", (kind, said)
+        assert re.match(r"the pinned source anthropic-rsp at .* has sha256 [0-9a-f]{64} \(59410 bytes\), not the pin "
+                        r"c7de7fe2f1f4", said), said
 
 
 @pytest.mark.parametrize("value", [None, "0", "", "yes"])
@@ -101,9 +115,8 @@ def test_the_helper_skips_when_not_required(tmp_path, monkeypatch, value):
         monkeypatch.delenv(F.REQUIRE, raising=False)
     else:
         monkeypatch.setenv(F.REQUIRE, value)
-    with pytest.raises(pytest.skip.Exception, match=SKIP_REASON):
-        pinned_source("openai-preparedness", home=tmp_path)
-    assert pinned_source("openai-preparedness", skip=False, home=tmp_path) is None
+    assert _outcome("openai-preparedness", home=tmp_path) == ("skip", SKIP_REASON)
+    assert _outcome("openai-preparedness", skip=False, home=tmp_path) == ("returned", "None")
     assert SKIP_REASON == "the pinned source is not stored on this machine"  # tools/gate-optional.json's reason
 
 
@@ -127,10 +140,10 @@ def test_gate_optional_still_allows_the_unset_skips():
 
 def test_the_fetch_refuses_bytes_whose_sha256_is_not_the_pin(tmp_path, capsys):
     served = tmp_path / "served.pdf"
-    served.write_bytes(b"other bytes")
-    entry = {**_entry(b"the pinned bytes", served.as_uri())}
+    served.write_bytes(b"the pinned bytez")  # the pinned size, another sha256
+    entry = _entry(b"the pinned bytes", served.as_uri())
     home = tmp_path / "home"
-    with pytest.raises(F.FetchError, match=r"served sha256 [0-9a-f]{64} \(11 bytes\), not the pin"):
+    with pytest.raises(F.FetchError, match=r"served sha256 [0-9a-f]{64} \(16 bytes\), not the pin"):
         F.fetch("doc", entry, home)
     assert not (home / entry["path"]).exists()
     assert F.main(["--home", str(home)], pins=_pins(tmp_path, {"doc": entry})) == 1
