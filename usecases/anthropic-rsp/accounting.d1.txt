@@ -1,4 +1,4 @@
-rows-cond | omits: "Mitigations-our plan as a company" restates ; "We will maintain or improve on our ASL-3 protections" loss 1 ; "We will apply protections at least as strong as our ASL-3 protections (see previous row) to an expanded set of potential use cases" loss 1 ; "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the overall level of risk in our Risk Reports" loss 1
+rows-cond | omits: nothing
 rows-uncond | omits: nothing
 f5-strict | omits: "A frontier developer" reading RS2
 f5-default | omits: nothing
@@ -17,7 +17,7 @@ f8-autonomous | omits: "this will-at a minimum-include" restates
 f9-public | omits: "an analysis of an individual model's relevant risks" restates ; "(e.g., how the model's capabilities and propensities affect or change prior analyses)" exposition ; "in the following circumstances" restates ; "that we determine is" open more_capable_than_analyzed ; "risks related to chemical/biological weapons production, high-stakes misalignment, or automated R&D" open more_capable_than_analyzed ; "(e.g., in a prior Risk Report, System Card, or other public artifact" exposition
 f9-internal | omits: "Within 30 days of" loss limit 9 ; "determining that" open exceeds_all_analyzed ; "could pose risks related to high-stakes misalignment or automated R&D" open exceeds_all_analyzed ; "(e.g., in a prior Risk Report, System Card, or other public artifact" exposition
 f10-candid-default | omits: "We intend" reading RS12candid
-f10-in-line | omits: "we will keep our future practices in line with this description" restates ; "changes" restates ; "(generally via subsequent Risk Reports)" exposition
+f10-in-line | omits: nothing
 f10-attempt-strict | omits: "to ensure that" restates
 f10-attempt-default | omits: nothing
 f11-factual | omits: "A Risk Report will document the following" restates
