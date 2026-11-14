@@ -2598,7 +2598,9 @@
       "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
       "lean/VE/SoftNorms/SlotSound.lean": "statements about SoftNorms.Run.runCase slot-certificate and slot-conflict answers (getObjVal? of the case's facts and witness, getObjValD of its environment, norms, pairs, budget and coherent_model, Json.mkObj of a decoded model) and their proofs; no runtime JSON handling",
       "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path",
-      "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path"
+      "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path",
+      "lean/VE/Experimental/CoreDocument.lean": "experimental: the lowering of a document to its core documents builds the core document's environment and norm objects as JSON (`wireJson` of `E.lower` and of a unit's canonical soft rule, `encodeNode` of a strict norm) and reads a strict norm back only through the soft route's own decoder (`decodeSoftSource`, `decodeSoftNorm`); it decodes no field itself, and no service mode imports it (kb-2a step A; tools/check_lean_imports.py)",
+      "lean/VE/Experimental/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it"
     }
   },
   "plan_operations": {
