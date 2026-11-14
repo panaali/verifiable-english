@@ -426,6 +426,7 @@ import VE.Risk.Report
 import VE.Risk.Run
 import VE.Risk.Severity
 import VE.Risk.Wire
+import VE.Risk.WireSound
 import VE.Risk.Words
 import VE.RoundTrip
 import VE.Route.Admission
@@ -7853,12 +7854,19 @@ import VE.WireContract.Engine
 #print axioms VE.Risk.RiskValid.sorts
 #print axioms VE.Risk.RiskValid.trans
 #print axioms VE.Risk.Run.bind_unit
+#print axioms VE.Risk.Run.riskPremiseRows_class
+#print axioms VE.Risk.Run.riskPremiseRows_order
+#print axioms VE.Risk.Run.risk_decision_wire_sound
+#print axioms VE.Risk.Run.risk_elaborate_wire_sound
 #print axioms VE.Risk.Run.risk_wire_acceptance
 #print axioms VE.Risk.Run.risk_wire_audit_sound
 #print axioms VE.Risk.Run.risk_wire_conflict_sound
 #print axioms VE.Risk.Run.risk_wire_followable_sound
 #print axioms VE.Risk.Run.risk_wire_scenario_sound
 #print axioms VE.Risk.Run.runAdmission_sound
+#print axioms VE.Risk.Run.runCaseReported_ok
+#print axioms VE.Risk.Run.zip_const_filter_ne
+#print axioms VE.Risk.Run.zip_const_filter_self
 #print axioms VE.Risk.SignEq.neg
 #print axioms VE.Risk.SignEq.pos
 #print axioms VE.Risk.SignEq.refl

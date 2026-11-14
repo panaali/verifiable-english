@@ -696,6 +696,7 @@ module VE.Risk.Report
 module VE.Risk.Run
 module VE.Risk.Severity
 module VE.Risk.Wire
+module VE.Risk.WireSound
 module VE.Risk.Words
 module VE.RoundTrip
 module VE.Route.Admission

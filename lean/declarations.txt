@@ -5717,7 +5717,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit b2f24193e5997bab407c351761ffd0f48c1a0cf83601c514bdfc08e1916b621e
+module VE.Audit 49fd87c3e8cdfa50bc8a0fdb8c55ab95e72a4d5fd7933d9e13d7c5fef8a9302b
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -24337,6 +24337,14 @@ module VE.Risk.Wire 2ec792a1681039c48a6f76ca7106230122d6aabcf0c84be43c62d5671bd9
 430:0-435:11 def VE.Risk.Wire.chainOrder@VE.Risk.Wire
 437:0-471:115 def VE.Risk.Wire.legend@VE.Risk.Wire
 473:0-490:58 def VE.Risk.Wire.regenerated@VE.Risk.Wire
+module VE.Risk.WireSound 08dbe271b9028a0e0dd7e6c962b3a7de193e69ea3d90c64eb836676791915443
+36:0-40:96 theorem VE.Risk.Run.zip_const_filter_ne@VE.Risk.WireSound
+42:0-47:21 theorem VE.Risk.Run.zip_const_filter_self@VE.Risk.WireSound
+49:0-58:19 theorem VE.Risk.Run.riskPremiseRows_class@VE.Risk.WireSound
+60:0-70:19 theorem VE.Risk.Run.riskPremiseRows_order@VE.Risk.WireSound
+74:0-127:22 theorem VE.Risk.Run.risk_elaborate_wire_sound@VE.Risk.WireSound
+129:0-239:18 theorem VE.Risk.Run.risk_decision_wire_sound@VE.Risk.WireSound
+241:0-244:31 theorem VE.Risk.Run.runCaseReported_ok@VE.Risk.WireSound
 module VE.Risk.Words f4d2db28dfbedc6e836650157b5af762d547267d0ee3ad8652d424d3ffe0f79e
 25:0-26:60 theorem VE.Risk.harm_mem@VE.Risk.Words
 28:0-29:62 theorem VE.Risk.action_mem@VE.Risk.Words
@@ -30963,4 +30971,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE ec2c4b29e6796686e49ac86307357464cbe8a3ca62d6bb5cd14747f2aec028c2
+module VE caa156f0698c83fb3b70e4541db54c7f00b45447a735fb3d4309b976aaed846e
