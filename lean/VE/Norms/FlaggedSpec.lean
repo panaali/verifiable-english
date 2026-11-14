@@ -734,9 +734,9 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
 /-- `normsEnvironment_flag_not_defined` with or without the decoder's `acts@0` reading. -/
 theorem normsEnvironment_flag_not_defined_joined (H : VE.Norms.Wire.ActsHook) (environment : Json)
     (acts joined : Bool) (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment H environment true acts joined = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith H environment true acts joined = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name := by
-  unfold VE.Norms.Wire.decodeNormsEnvironment at h
+  unfold VE.Norms.Wire.decodeNormsEnvironmentWith at h
   obtain ⟨ps, _, h⟩ := bind_ok h
   obtain ⟨e, _, h⟩ := bind_ok h
   extract_lets vocab jpX jpY at h
@@ -768,12 +768,12 @@ theorem normsEnvironment_flag_not_defined_joined (H : VE.Norms.Wire.ActsHook) (e
 
 theorem normsEnvironment_flag_not_defined_in (H : VE.Norms.Wire.ActsHook) (environment : Json) (acts : Bool)
     (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment H environment true acts = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith H environment true acts = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
   normsEnvironment_flag_not_defined_joined H environment acts false ne h
 
 theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain environment = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain environment = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
   normsEnvironment_flag_not_defined_in VE.Norms.Wire.ActsHook.plain environment false ne h
 

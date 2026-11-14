@@ -77,7 +77,7 @@ def w1Environment (environment : Json) : Except String Unit := do
   if listed.contains "norms@0" then
     let defaults := listed.contains VE.NormDefaults.Wire.profile
     let decoded ← if defaults then VE.NormDefaults.Wire.placeholderJson environment else pure environment
-    let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain decoded
+    let ne ← VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain decoded
     if defaults then
       for n in VE.NormDefaults.Wire.declaredNames environment do
         if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
@@ -94,7 +94,7 @@ def typingEnvironment (root : Json) : Option VE.Environment := do
   let environment := environmentOf root
   let decoded ← if underDefaults root then (VE.NormDefaults.Wire.placeholderJson environment).toOption
     else some environment
-  let ne ← (VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain decoded).toOption
+  let ne ← (VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain decoded).toOption
   pure ne.rv.environment
 
 /-! ## 3.8 and 3.9: the syntax walk -/
