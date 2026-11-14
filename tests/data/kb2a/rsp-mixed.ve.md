@@ -1113,13 +1113,37 @@
    ]
   },
   {
-   "id": "t4-name-source",
+   "id": "t1-plan-source",
    "kind": "meta",
    "meaning": "specified",
    "support": "none",
    "span": [
     358,
-    411
+    755
+   ]
+  },
+  {
+   "id": "t1-plan",
+   "kind": "norm",
+   "meaning": {
+    "open": [
+     "crossed"
+    ]
+   },
+   "support": "testimony",
+   "span": [
+    755,
+    1129
+   ]
+  },
+  {
+   "id": "t4-name-source",
+   "kind": "meta",
+   "meaning": "specified",
+   "support": "none",
+   "span": [
+    1129,
+    1182
    ]
   },
   {
@@ -1138,28 +1162,8 @@
     ]
    },
    "span": [
-    411,
-    442
-   ]
-  },
-  {
-   "id": "s32-strong-attempt-source",
-   "kind": "meta",
-   "meaning": "specified",
-   "support": "none",
-   "span": [
-    442,
-    616
-   ]
-  },
-  {
-   "id": "s32-strong-attempt",
-   "kind": "norm",
-   "meaning": "specified",
-   "support": "testimony",
-   "span": [
-    616,
-    756
+    1182,
+    1213
    ]
   },
   {
@@ -1168,8 +1172,8 @@
    "meaning": "specified",
    "support": "none",
    "span": [
-    756,
-    936
+    1213,
+    1393
    ]
   },
   {
@@ -1197,8 +1201,8 @@
     }
    },
    "span": [
-    936,
-    1095
+    1393,
+    1552
    ]
   },
   {
@@ -1207,8 +1211,8 @@
    "meaning": "specified",
    "support": "none",
    "span": [
-    1095,
-    1338
+    1552,
+    1795
    ]
   },
   {
@@ -1229,8 +1233,8 @@
     }
    },
    "span": [
-    1338,
-    1429
+    1795,
+    1886
    ]
   },
   {
@@ -1239,8 +1243,8 @@
    "meaning": "specified",
    "support": "none",
    "span": [
-    1429,
-    1680
+    1886,
+    2137
    ]
   },
   {
@@ -1282,12 +1286,29 @@
     }
    },
    "span": [
-    1680,
-    1901
+    2137,
+    2358
    ]
   }
  ],
  "open_terms": [
+  {
+   "name": "crossed",
+   "arguments": [
+    "situation",
+    "threshold"
+   ],
+   "decided_by": "company",
+   "necessary": [],
+   "sufficient": [],
+   "factors": [
+    "the model has crossed threshold Tk (3.3; T4: \"if we determine\")",
+    "the row's description"
+   ],
+   "precedents": [],
+   "jurisdiction": "rsp_v3_4",
+   "version": 1
+  },
   {
    "name": "highly_capable",
    "arguments": [
@@ -1322,71 +1343,203 @@
  ],
  "reading_sets": [
   {
-   "id": "rs8-attempt",
-   "unit": "s32-strong-attempt",
+   "id": "rs1-t1",
+   "unit": "t1-plan",
    "version": 1,
    "status": "open",
    "readings": [
     {
-     "id": "strict",
+     "id": "cond",
      "kind": "norm",
      "content": {
       "norm": {
        "guard": [
-        "top"
+        "and",
+        [
+         "unary",
+         "listed",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "crossed",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
        ],
-       "name": "rs8-attempt",
+       "name": "rs1-t1",
        "over": [],
-       "predicate": "strong_attempt",
+       "predicate": "plans_in_place",
        "sign": true,
        "unless": []
       }
      },
-     "meaning_id": "e9c6200816794b7cb93e2673be2957e727486cf7d4334aa7f790a295bb03ef76",
+     "meaning_id": "411bb3b8a948bde748b04151d898d2edd86bc4f674f3011aa075298bf54128d8",
      "admission": {
       "who": "translator",
-      "why": "RS8attempt = strict: rule f10-attempt-strict of rules.d1.ve"
+      "why": "RS1 = cond: rule rows-cond of rules.d1.ve",
+      "distinguishing_models": {
+       "uncond": "2663a3552ec23fb1634fb9adf1e1e9d108cd447ac877da8e0304381aa74c2ed7"
+      }
      }
     },
     {
-     "id": "default",
+     "id": "uncond",
      "kind": "norm",
      "content": {
       "norm": {
-       "exception": {
-        "decided_by": "unstated",
-        "factors": [],
-        "necessary": [],
-        "sufficient": []
-       },
        "guard": [
-        "top"
+        "unary",
+        "listed",
+        [
+         "var",
+         0
+        ]
        ],
-       "mode": "default",
-       "name": "rs8-attempt",
+       "name": "rs1-t1",
        "over": [],
-       "predicate": "strong_attempt",
+       "predicate": "plans_in_place",
        "sign": true,
        "unless": []
       }
      },
-     "meaning_id": "f58a9bf07a2c099f0c585a6b0686fe90cf9df9d31464f4a7741808622be75a53",
+     "meaning_id": "80b9d6c34193e775bf34377878fd677e371b2ff58decd5519b72c3fec0a39209",
      "admission": {
       "who": "translator",
-      "why": "RS8attempt = default: rule f10-attempt-default of rules.d1.ve"
+      "why": "RS1 = uncond: rule rows-uncond of rules.d1.ve",
+      "distinguishing_models": {
+       "cond": "2663a3552ec23fb1634fb9adf1e1e9d108cd447ac877da8e0304381aa74c2ed7"
+      }
+     }
+    },
+    {
+     "id": "ov",
+     "kind": "norm",
+     "meaning_id": "pending",
+     "content": null,
+     "admission": {
+      "who": "translator",
+      "why": "RS1 = ov: no rule",
+      "distinguishing_models": {}
      }
     }
-   ]
+   ],
+   "situations": {
+    "2663a3552ec23fb1634fb9adf1e1e9d108cd447ac877da8e0304381aa74c2ed7": {
+     "base": {
+      "domains": {
+       "competitor": [
+        "c"
+       ],
+       "situation": [
+        "s"
+       ],
+       "threshold": [
+        "t"
+       ]
+      },
+      "constants": {
+       "automated_rd": "t",
+       "misaligned_high_stakes": "t",
+       "non_novel_chem_bio_weapons": "t",
+       "novel_chem_bio_weapons": "t"
+      },
+      "relations": {
+       "ai_evidence_risk": [],
+       "automation_attributable": [],
+       "autonomous_research_use": [],
+       "candidate_has_financial_interest": [],
+       "candidate_revenue_dependent": [],
+       "competitors_evidence": [],
+       "concerns_rso": [],
+       "continuation_accelerates": [],
+       "crossed": [],
+       "describes_mitigation_and_deviates": [],
+       "determined_by_publication": [],
+       "develops_highly_capable": [],
+       "double_rate": [],
+       "exceeds_all_analyzed": [],
+       "exceeds_prior_report": [],
+       "external_review_process": [],
+       "full_substitution_at_competitive_cost": [],
+       "goal_revised_less_ambitious": [],
+       "highly_capable": [],
+       "impedes_safety_concerns": [],
+       "in_the_lead": [],
+       "internally_deployed": [],
+       "lead_delay_needed": [],
+       "lead_evidence": [],
+       "lead_no_longer_believed": [],
+       "legal_prohibition_redaction": [],
+       "legal_rights_redaction": [],
+       "listed": [
+        [
+         "t"
+        ]
+       ],
+       "ltbt_requested_review": [],
+       "marginal_justification": [],
+       "marginal_major_role": [],
+       "material_safety_risk": [],
+       "mitigation_evidence": [],
+       "mitigation_in_place_or_planned": [],
+       "more_capable_than_analyzed": [],
+       "non_disparagement_clause_offered": [],
+       "noncompliance_report_received": [],
+       "noteworthy": [],
+       "off_cycle_internal_deployment": [],
+       "off_cycle_public_deployment": [],
+       "posture_attainable": [],
+       "posture_delay_needed": [],
+       "publicly_deployed": [],
+       "redaction_reason_listed": [],
+       "risk_report_approved": [],
+       "roadmap_goal_missed": [],
+       "roadmap_goal_unachieved": [],
+       "rsp_change_proposed": [],
+       "rsp_updated": [],
+       "scenario_2": [],
+       "selecting_reviewers": [],
+       "significantly_redacted": [],
+       "strong_argument_made": [],
+       "submitted_under_external_review": [],
+       "substantiated": []
+      }
+     },
+     "fixed": [],
+     "witness": "cond",
+     "decisions": [],
+     "probe": {
+      "outcome": {
+       "predicate": "plans_in_place",
+       "tuple": [
+        "s",
+        "t"
+       ]
+      }
+     },
+     "value": false
+    }
+   }
   }
  ]
 }
 ---
 ## intro-aspire (v): “We aspire to advance the latter through a mixture of example-setting, addressing unsolved technical problems, advocacy through industry groups, and policy advocacy.”
 We aspire to advance the latter through a mixture of example-setting, addressing unsolved technical problems, advocacy through industry groups, and policy advocacy. 
+## t1-plan (iii): “We will maintain or improve on our ASL-3 protections , which include classiﬁer guards at least as robust as our initial Constitutional Classiﬁers; access controls for trusted users with exemptions to classiﬁer guards; red-teaming, bug bounties, and threat intelligence for continually assessing the threat of jailbreaks; and a number of noteworthy security controls.”
+We will maintain or improve on our ASL-3 protections , which include classiﬁer guards at least as robust as our initial Constitutional Classiﬁers; access controls for trusted users with exemptions to classiﬁer guards; red-teaming, bug bounties, and threat intelligence for continually assessing the threat of jailbreaks; and a number of noteworthy security controls. 
 ## t4-name (iv): “Automated R&D in key domains.”
 Automated R&D in key domains. 
-## s32-strong-attempt (iii): “We should make a strong attempt to ensure that ongoing (as opposed to temporary) changes do not signiﬁcantly increase the level of risk.”
-We should make a strong attempt to ensure that ongoing (as opposed to temporary) changes do not signiﬁcantly increase the level of risk. 
 ## s35-aim (i): “We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees.”
 We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees. 
 ## s35-disclose (rule): “We will disclose the existence of each redaction made in the public version of the report and aim to give a brief justiﬁcation for such redactions, though in many cases this will necessarily be very high-level.”

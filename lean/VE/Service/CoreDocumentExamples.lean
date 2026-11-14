@@ -1,17 +1,17 @@
 -- ve-layer: 4 (fixtures of the document mode's lowering; experimental, unreachable from the service)
-import VE.Experimental.CoreDocument
+import VE.Service.CoreDocument
 
-/-! Examples of the lowering (`VE.Experimental.CoreDocument.lower`): one small document per row of the table, a
+/-! Examples of the lowering (`VE.Service.CoreDocument.lower`): one small document per row of the table, a
 judgment term read by a soft rule's exception beside a fact about that term, a two-reading set, couplings, and each
 refusal. The environment is decoded by the document mode's own decoder (`decodedEnvironment`), soft rules by the soft
 route's (`decodeSoftNorm`, `softCanonical`), as `check` has them before its status folds.
 
 Expires: 2026-12-07 -/
 
-namespace VE.Experimental.CoreDocumentExamples
+namespace VE.Service.CoreDocumentExamples
 open Lean
 open VE.Service.Document
-open VE.Experimental.CoreDocument
+open VE.Service.CoreDocument
 
 /-! ## The document's environment and units -/
 
@@ -347,4 +347,4 @@ def nots : Nat → VE.Formula
     (views := some [viewOf (unitOf "u1" (softContent releaseRule) (openOn ["redacted"])) "open"])) ==
   "JudgmentListedUnused: u1 redacted"
 
-end VE.Experimental.CoreDocumentExamples
+end VE.Service.CoreDocumentExamples

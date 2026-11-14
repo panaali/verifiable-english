@@ -19,6 +19,7 @@ module ResponseShape.Encoders.ClausesElaborate
 module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
+module ResponseShape.Encoders.CoreCheck
 module ResponseShape.Encoders.Discourse
 module ResponseShape.Encoders.Document
 module ResponseShape.Encoders.English
@@ -430,8 +431,6 @@ module VE.Events.Premises
 module VE.Events.RouteExamples
 module VE.Events.Wire
 module VE.Events.WireExamples
-module VE.Experimental.CoreDocument
-module VE.Experimental.CoreDocumentExamples
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
@@ -453,6 +452,7 @@ module VE.Judgments.Status
 module VE.Judgments.Undeclared
 module VE.Kernel.Carry
 module VE.Kernel.CarryChecks
+module VE.Kernel.DocumentFold
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse
@@ -784,6 +784,9 @@ module VE.Senses.Version
 module VE.Service.ActsExamples
 module VE.Service.CardinalityExamples
 module VE.Service.ComposedAdmissionExamples
+module VE.Service.CoreCheck
+module VE.Service.CoreDocument
+module VE.Service.CoreDocumentExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.DocumentChain
@@ -1072,6 +1075,7 @@ VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
 VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire
+VE.Compose.SlotWire.SlotAdmitted@VE.Compose.SlotWire
 VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths
@@ -1611,6 +1615,7 @@ VE.Senses.glossed_negative@VE.Senses.Dictionary
 VE.Senses.lines_read@VE.Senses.Preamble
 VE.Senses.project_total@VE.Senses.Project
 VE.Senses.senseMap_ids@VE.Senses.Read
+VE.Service.CoreCheck.AdmissionMeaning@VE.Service.CoreCheck
 VE.Service.FamilyBundle.ReadingBound@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.ReadingCompatible@VE.Service.FamilyBundle
 VE.Service.FamilyBundle.Sound@VE.Service.FamilyBundle

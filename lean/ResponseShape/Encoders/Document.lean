@@ -106,7 +106,7 @@ theorem composedSetRow_fits (j out authored : Json) :
     fits using composedList_fits j _ readings hrows
 
 theorem body_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkBody j) := by
-  unfold VE.Service.Document.checkBody VE.Service.Document.encode
+  unfold VE.Service.Document.checkBody VE.Service.Document.encode VE.Service.Document.encodeFields
   okfits
   all_goals split
   all_goals (try simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append, List.append_nil])
@@ -176,7 +176,7 @@ theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.D
     intro k v hk
     simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
     rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      (unfold encode; split <;> split <;> rfl)
+      (unfold encode encodeFields; split <;> split <;> rfl)
   unfold VE.Scope.foldGovernors
   simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
     e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),
@@ -213,7 +213,7 @@ theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
     intro k v hk
     simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
     rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      (unfold encode; split <;> split <;> rfl)
+      (unfold encode encodeFields; split <;> split <;> rfl)
   unfold VE.Scope.foldGovernors
   simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
     e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),

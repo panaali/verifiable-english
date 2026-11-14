@@ -2,6 +2,7 @@
 (moved from `ve/document.py`, AR-16a)."""
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -28,7 +29,32 @@ def load_document(path: str | Path):
     `ve-document@2` document's admission is Lean's (`ve_discourse_route` on the same bytes,
     docs/spec/discourse.md 3.4): a document Lean rejects raises Lean's diagnostic before any Python check runs,
     and a document Lean admits that Python cannot load is `CheckerUnavailable`, never a Python-only verdict."""
-    return _load(Path(path), admit=False)
+    doc = _load(Path(path), admit=False)
+    if "core" in doc:
+        raise CheckerUnavailable(CORE_ONLY)
+    return doc
+
+
+# kb-2a-b: a document Lean answers on its core path has no Python document object; only its answer is shown.
+CORE_ONLY = ("CheckerUnavailable: this document is answered on Lean's core document path; `ve document check` shows "
+             "Lean's answer")
+
+
+def lean_answer(path: str | Path) -> dict:
+    """Lean's `document` row for the document at `path`, bound to it (`ve document check --json`). A document Lean's
+    mode does not decide has none to show."""
+    path = Path(path)
+    raw = path.read_bytes()
+    row = _lean_answer(raw, True, path.parent, {}, None)
+    if row is None:
+        raise CheckerUnavailable("CheckerUnavailable: Lean's document mode does not decide this document, so there is "
+                                 "no Lean answer to print")
+    from .core import is_core
+    if is_core(row):
+        _core_document(raw, row)
+    else:
+        _lean_document(raw, path, row, admitted=True, prepared={})
+    return row
 
 
 def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes | None = None):
@@ -42,6 +68,9 @@ def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes 
         row = _lean_answer(raw, admit, path.parent, prepared, chain_of)
         if row is None:
             return _load_document(raw, path, None)
+        from .core import is_core
+        if is_core(row):
+            return _core_document(raw, row)
         return _lean_document(raw, path, row, admitted=admit, prepared=prepared)
     lean = lean_admission(raw, Path(path).parent)
     if lean["status"] == "error":
@@ -52,6 +81,20 @@ def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes 
         raise
     except Exception as exc:
         raise unavailable_report(exc) from exc
+
+
+def _core_document(raw: bytes, row: dict) -> dict:
+    """A document Lean answered on its core path (`ve.document.core`): its answer, bound to the text sent."""
+    from .core import bind_core_answer
+    try:
+        meta = json.loads(raw[4:raw.find(b"\n---\n", 4)].decode("utf-8"))
+        _, body, _ = _split(raw)
+        declared = list(_parts(meta["units"]))
+    except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
+        raise CheckerUnavailable("CheckerUnavailable: the Lean core document answer is for a front matter Python "
+                                 "cannot read") from exc
+    bind_core_answer(meta, body, declared, row)
+    return {"core": row}
 
 
 def _meaning(value, open_names, *, reports=False):

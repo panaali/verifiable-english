@@ -14329,6 +14329,11 @@ theorem VE.Compose.SlotWire.ok_bind
   ∀ {ε α β : Type} (a : α) (f : α → Except ε β), Except.ok a >>= f = f a
   -- uses
   -- expr 3193208867
+theorem VE.Compose.SlotWire.replaySlotAdmission_sound
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotAdmission),
+    VE.Compose.SlotWire.replaySlotAdmission j = Except.ok r → VE.Compose.SlotWire.SlotAdmitted j r
+  -- uses VE.Compose.SlotWire.SlotAdmission@VE.Compose.SlotWire VE.Compose.SlotWire.SlotAdmitted@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotAdmission@VE.Compose.SlotWire
+  -- expr 195883797
 theorem VE.Compose.SlotWire.replaySlotConflict_parts
   ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
     VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
@@ -23355,160 +23360,6 @@ theorem VE.Events.wf_transfer
               VE.Formula.WellFormed E' Γ a → (VE.Formula.denote T (List.map ι ρ) a ↔ VE.Formula.denote S ρ a)
   -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 676985057
-theorem VE.Experimental.CoreDocument.allChoices_mem
-  ∀ (L : List (String × Nat)) (c : VE.Experimental.CoreDocument.Choice),
-    c ∈ VE.Experimental.CoreDocument.allChoices L →
-      ∀ (p : String × Nat), p ∈ c → ∃ q, q ∈ L ∧ q.fst = p.fst ∧ p.snd < q.snd
-  -- uses VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.allChoices@VE.Experimental.CoreDocument
-  -- expr 984303624
-theorem VE.Experimental.CoreDocument.allChoices_nodup
-  ∀ (L : List (String × Nat)), (VE.Experimental.CoreDocument.allChoices L).Nodup
-  -- uses VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.allChoices@VE.Experimental.CoreDocument
-  -- expr 2523417240
-theorem VE.Experimental.CoreDocument.choicesOf_ok
-  ∀ {couplings : List VE.Experimental.CoreDocument.Coupling} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {cs : List VE.Experimental.CoreDocument.Choice},
-    VE.Experimental.CoreDocument.choicesOf couplings sets = Except.ok cs →
-      cs = VE.Experimental.CoreDocument.compatibleChoices couplings sets ∧
-        cs.length ≤ VE.Experimental.CoreDocument.maxChoices
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.choicesOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument
-  -- expr 2136123958
-theorem VE.Experimental.CoreDocument.finish_ok
-  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {docs cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.finish E unitIds sets docs = Except.ok cs →
-      cs = docs ∧
-        ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
-          d ∈ docs →
-            ∀ (st : VE.Experimental.CoreDocument.Statement),
-              st ∈ d.snd.statements → VE.Experimental.CoreDocument.statementFault E unitIds sets st = Option.none
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.finish@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Service.Document.Env@VE.Service.Document
-  -- expr 4282679310
-theorem VE.Experimental.CoreDocument.lower_choices
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      List.map Prod.fst cs = VE.Experimental.CoreDocument.compatibleChoices couplings sets ∧
-        cs.length = (VE.Experimental.CoreDocument.compatibleChoices couplings sets).length ∧
-          cs.length ≤ 64 ∧ (List.map Prod.fst cs).Nodup
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 2393331415
-theorem VE.Experimental.CoreDocument.lower_names_bound
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
-        d ∈ cs →
-          (∀ (φ : VE.Formula),
-              φ ∈ d.snd.premises →
-                ∀ (p : String), p ∈ VE.Norms.preds φ → (E.rv.environment.predicates p).isSome = Bool.true) ∧
-            ∀ (st : VE.Experimental.CoreDocument.Statement),
-              st ∈ d.snd.statements →
-                ∀ (j : VE.Judgments.Judgment),
-                  st.body = VE.Experimental.CoreDocument.Body.judgment j →
-                    (E.rv.environment.predicates j.name).isSome = Bool.true
-  -- uses VE.Environment.predicates@VE.Syntax VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.judgment@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.premises@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Norms.preds@VE.Norms.Tree VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 1153100332
-theorem VE.Experimental.CoreDocument.lower_ok
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      (∃ J, VE.Experimental.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J) ∧
-        (∃ rd,
-            List.mapM (VE.Experimental.CoreDocument.readingsOf E (VE.Experimental.CoreDocument.wire E.lower)) sets =
-              Except.ok rd) ∧
-          (∃ plans,
-              cs =
-                List.map
-                  (fun c =>
-                    (c,
-                      VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower)
-                        (List.flatMap (VE.Experimental.CoreDocument.UnitPlan.statements c) plans)))
-                  (VE.Experimental.CoreDocument.compatibleChoices couplings sets)) ∧
-            (VE.Experimental.CoreDocument.compatibleChoices couplings sets).length ≤
-                VE.Experimental.CoreDocument.maxChoices ∧
-              ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
-                d ∈ cs →
-                  ∀ (st : VE.Experimental.CoreDocument.Statement),
-                    st ∈ d.snd.statements →
-                      VE.Experimental.CoreDocument.statementFault E (List.map (fun x => x.id) units) sets st = Option.none
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingsOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 36954666
-theorem VE.Experimental.CoreDocument.lower_origin_units
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
-        d ∈ cs →
-          (∀ (st : VE.Experimental.CoreDocument.Statement),
-              st ∈ d.snd.statements →
-                st.origin.unit ∈ List.map (fun x => x.id) units ∧
-                  ∀ (r : String) (i : Nat),
-                    st.origin.reading = Option.some (r, i) →
-                      ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = st.origin.unit ∧ i < x.fst.readings.length) ∧
-            ∀ (p : String × Nat),
-              p ∈ d.fst →
-                ∃ x,
-                  x ∈ sets ∧
-                    x.fst.id = p.fst ∧ x.fst.unit ∈ List.map (fun x => x.id) units ∧ p.snd < x.fst.readings.length
-  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.reading@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.unit@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.origin@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 1049460352
-theorem VE.Experimental.CoreDocument.lower_parts
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
-        d ∈ cs →
-          d.snd = VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower) d.snd.statements
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 3965885905
-theorem VE.Experimental.CoreDocument.lower_readings_distinct
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling}
-    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
-    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
-      ∀ (x : VE.Experimental.CoreDocument.ActiveSet),
-        x ∈ sets →
-          ∃ opts,
-            VE.Experimental.CoreDocument.readingOptions E (VE.Experimental.CoreDocument.wire E.lower) x = Except.ok opts ∧
-              (List.map (fun x => Option.map Prod.snd x) opts).Nodup
-  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingOptions@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 975387563
-theorem VE.Experimental.CoreDocument.preliminaries_sets
-  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
-    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {couplings : List VE.Experimental.CoreDocument.Coupling} {J : List VE.Judgments.Judgment},
-    VE.Experimental.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J →
-      ∀ (x : VE.Experimental.CoreDocument.ActiveSet), x ∈ sets → x.fst.unit ∈ List.map (fun x => x.id) units
-  -- uses VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
-  -- expr 1406617114
-theorem VE.Experimental.CoreDocument.statementFault_none
-  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Experimental.CoreDocument.ActiveSet}
-    {s : VE.Experimental.CoreDocument.Statement},
-    VE.Experimental.CoreDocument.statementFault E unitIds sets s = Option.none →
-      s.origin.unit ∈ unitIds ∧
-        (∀ (r : String) (i : Nat),
-            s.origin.reading = Option.some (r, i) →
-              ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = s.origin.unit ∧ i < x.fst.readings.length) ∧
-          (∀ (φ : VE.Formula),
-              s.body = VE.Experimental.CoreDocument.Body.premise φ →
-                ∀ (p : String), p ∈ VE.Norms.preds φ → VE.Experimental.CoreDocument.declared E p = Bool.true) ∧
-            ∀ (j : VE.Judgments.Judgment),
-              s.body = VE.Experimental.CoreDocument.Body.judgment j →
-                VE.Experimental.CoreDocument.declared E j.name = Bool.true
-  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.judgment@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.premise@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.reading@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.unit@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.origin@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.declared@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Norms.preds@VE.Norms.Tree VE.Service.Document.Env@VE.Service.Document
-  -- expr 754036471
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
@@ -25060,6 +24911,22 @@ theorem VE.Judgments.viewOf_legacy
       VE.Discourse.Loader.foldStatus active unit (VE.Discourse.Loader.w2Status own.isSome meaning)
   -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.foldStatus@VE.Discourse.Loader VE.Discourse.Loader.w2Status@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
   -- expr 3651100867
+theorem VE.Kernel.DocumentFold.fold_checked_iff
+  ∀ (u : VE.Kernel.DocumentFold.UnitRow) (rows : List VE.Kernel.Row),
+    VE.Kernel.DocumentFold.status u rows = "CHECKED" ↔
+      u.statements ≠ [] ∧
+        VE.Kernel.DocumentFold.opens u = Bool.false ∧
+          VE.Kernel.DocumentFold.asserted u = Bool.true ∧ ∀ (r : VE.Kernel.Row), r ∈ rows → r.result.isOk = Bool.true
+  -- uses VE.Kernel.DocumentFold.Stmt@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.statements@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.asserted@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
+  -- expr 1929791837
+theorem VE.Kernel.DocumentFold.fold_reads_rows_only
+  ∀ (p : VE.Kernel.Path) (elaborate : Lean.Json → Except String (List Lean.Json))
+    (view : List (String × String) → Lean.Json) (table : List VE.Kernel.DocumentFold.UnitRow)
+    (request answer : Lean.Json),
+    VE.Kernel.shell p elaborate (VE.Kernel.DocumentFold.fold view table) request = Except.ok answer →
+      ∃ rows, (∀ (r : VE.Kernel.Row), r ∈ rows → p.Ran r) ∧ answer = VE.Kernel.DocumentFold.fold view table request rows
+  -- uses VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Kernel.shell@VE.Kernel.Carry
+  -- expr 550820509
 theorem VE.Kernel.Path.sound
   ∀ (self : VE.Kernel.Path) (case answer : Lean.Json), self.run case = Except.ok answer → self.Meaning case answer
   -- uses VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.run@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry
@@ -64000,6 +63867,224 @@ theorem VE.Senses.wf_iff_no_failure
   ∀ (D : VE.Senses.Dictionary) (ss : List String), D.wf ss = Bool.true ↔ D.failures ss = []
   -- uses VE.Senses.DictFailure@VE.Senses.Dictionary VE.Senses.Dictionary.failures@VE.Senses.Dictionary VE.Senses.Dictionary.wf@VE.Senses.Dictionary VE.Senses.Dictionary@VE.Senses.Dictionary
   -- expr 460844231
+theorem VE.Service.CoreCheck.caseOf_get
+  ∀ (i : Nat) (d : VE.Service.CoreDocument.CoreDoc),
+    (VE.Service.CoreCheck.caseOf i d).getObjValD "environment" = d.environment ∧
+      (VE.Service.CoreCheck.caseOf i d).getObjValD "norms" = d.norms ∧
+        (VE.Service.CoreCheck.caseOf i d).getObjVal? "facts" = Except.ok (VE.Service.CoreCheck.factsJson d.premises)
+  -- uses VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.factsJson@VE.Service.CoreCheck VE.Service.CoreDocument.CoreDoc.environment@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.norms@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.premises@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument
+  -- expr 3717482340
+theorem VE.Service.CoreCheck.casesFrom_ok
+  ∀ (docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)) (i : Nat) (cases : List Lean.Json),
+    VE.Service.CoreCheck.casesFrom i docs = Except.ok cases →
+      cases.length = docs.length ∧
+        ∀ (k : Nat) (hk : k < docs.length),
+          cases[k]? = Option.some (VE.Service.CoreCheck.caseOf (i + k) docs[k].snd) ∧
+            VE.Service.CoreCheck.caseFault docs[k].snd = Option.none
+  -- uses VE.Service.CoreCheck.caseFault@VE.Service.CoreCheck VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.casesFrom@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument
+  -- expr 2817852418
+theorem VE.Service.CoreCheck.casesOf_ok
+  ∀ {docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)} {cases : List Lean.Json},
+    VE.Service.CoreCheck.casesOf docs = Except.ok cases →
+      cases.length = docs.length ∧
+        ∀ (k : Nat) (hk : k < docs.length),
+          cases[k]? = Option.some (VE.Service.CoreCheck.caseOf k docs[k].snd) ∧
+            VE.Service.CoreCheck.caseFault docs[k].snd = Option.none
+  -- uses VE.Service.CoreCheck.caseFault@VE.Service.CoreCheck VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.casesOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument
+  -- expr 2850068476
+theorem VE.Service.CoreCheck.core_facts_round_trip
+  ∀ {docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)} {cases : List Lean.Json},
+    VE.Service.CoreCheck.casesOf docs = Except.ok cases →
+      ∀ (k : Nat) (hk : k < docs.length) (src : VE.SoftNorms.Wire.SoftSource),
+        VE.SoftNorms.Wire.decodeSoftSource ((VE.Service.CoreCheck.caseOf k docs[k].snd).getObjValD "environment")
+              ((VE.Service.CoreCheck.caseOf k docs[k].snd).getObjValD "norms") =
+            Except.ok src →
+          cases[k]? = Option.some (VE.Service.CoreCheck.caseOf k docs[k].snd) ∧
+            VE.Compose.SlotWire.decodeFacts src (VE.Service.CoreCheck.caseOf k docs[k].snd) =
+              Except.ok (docs[k].snd.premises, List.map VE.Route.Wire.encodeFormula docs[k].snd.premises)
+  -- uses VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.casesOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.premises@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 1212600074
+theorem VE.Service.CoreCheck.document_core_sound
+  ∀ (j row : Lean.Json),
+    VE.Service.CoreCheck.answer j = Except.ok row →
+      ∃ p,
+        VE.Service.CoreCheck.prepare j = Except.ok p ∧
+          VE.Service.CoreDocument.lower p.I.d.E p.I.d.senses p.I.d.records p.I.views p.I.d.units p.I.sets [] =
+              Except.ok p.docs ∧
+            p.cases.length = p.docs.length ∧
+              (∀ (k : Nat) (hk : k < p.docs.length),
+                  p.cases[k]? = Option.some (VE.Service.CoreCheck.caseOf k p.docs[k].snd)) ∧
+                ∃ rows,
+                  rows = List.map VE.Service.CoreCheck.softNormsPath.row p.cases ∧
+                    (∀ (r : VE.Kernel.Row),
+                        r ∈ rows →
+                          VE.Service.CoreCheck.softNormsPath.Ran r ∧
+                            ∃ x, r.result = Except.ok x ∧ VE.Service.CoreCheck.softNormsPath.Meaning r.case x) ∧
+                      row =
+                        VE.Route.Wire.ok p.I.id
+                          [("view",
+                              (VE.Kernel.DocumentFold.fold (VE.Service.CoreCheck.viewOf p.I p.docs)
+                                    (VE.Service.CoreCheck.tableOf p.I p.docs) j rows).getObjValD
+                                "view"),
+                            ("rows",
+                              (VE.Kernel.DocumentFold.fold (VE.Service.CoreCheck.viewOf p.I p.docs)
+                                    (VE.Service.CoreCheck.tableOf p.I p.docs) j rows).getObjValD
+                                "rows")]
+  -- uses VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path.row@VE.Kernel.Carry VE.Kernel.Row.case@VE.Kernel.Carry VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Route.Wire.ok@VE.Route.Wire VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.id@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.sets@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.views@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.I@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.cases@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.docs@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared@VE.Service.CoreCheck VE.Service.CoreCheck.answer@VE.Service.CoreCheck VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.prepare@VE.Service.CoreCheck VE.Service.CoreCheck.softNormsPath@VE.Service.CoreCheck VE.Service.CoreCheck.tableOf@VE.Service.CoreCheck VE.Service.CoreCheck.viewOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.records@VE.Service.Document VE.Service.Document.Decoded.senses@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document
+  -- expr 52129990
+theorem VE.Service.CoreCheck.firstRefused_none
+  ∀ (rows : List VE.Kernel.Row) (i : Nat),
+    VE.Service.CoreCheck.firstRefused rows i = Option.none → ∀ (r : VE.Kernel.Row), r ∈ rows → ∃ x, r.result = Except.ok x
+  -- uses VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Service.CoreCheck.firstRefused@VE.Service.CoreCheck
+  -- expr 1882872169
+theorem VE.Service.CoreDocument.allChoices_mem
+  ∀ (L : List (String × Nat)) (c : VE.Service.CoreDocument.Choice),
+    c ∈ VE.Service.CoreDocument.allChoices L → ∀ (p : String × Nat), p ∈ c → ∃ q, q ∈ L ∧ q.fst = p.fst ∧ p.snd < q.snd
+  -- uses VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.allChoices@VE.Service.CoreDocument
+  -- expr 3375734780
+theorem VE.Service.CoreDocument.allChoices_nodup
+  ∀ (L : List (String × Nat)), (VE.Service.CoreDocument.allChoices L).Nodup
+  -- uses VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.allChoices@VE.Service.CoreDocument
+  -- expr 12820759
+theorem VE.Service.CoreDocument.choicesOf_ok
+  ∀ {couplings : List VE.Service.CoreDocument.Coupling} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {cs : List VE.Service.CoreDocument.Choice},
+    VE.Service.CoreDocument.choicesOf couplings sets = Except.ok cs →
+      cs = VE.Service.CoreDocument.compatibleChoices couplings sets ∧ cs.length ≤ VE.Service.CoreDocument.maxChoices
+  -- uses VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.choicesOf@VE.Service.CoreDocument VE.Service.CoreDocument.compatibleChoices@VE.Service.CoreDocument VE.Service.CoreDocument.maxChoices@VE.Service.CoreDocument
+  -- expr 4124492449
+theorem VE.Service.CoreDocument.finish_ok
+  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {docs cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.finish E unitIds sets docs = Except.ok cs →
+      cs = docs ∧
+        ∀ (d : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+          d ∈ docs →
+            ∀ (st : VE.Service.CoreDocument.Statement),
+              st ∈ d.snd.statements → VE.Service.CoreDocument.statementFault E unitIds sets st = Option.none
+  -- uses VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.CoreDocument.finish@VE.Service.CoreDocument VE.Service.CoreDocument.statementFault@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document
+  -- expr 2090390540
+theorem VE.Service.CoreDocument.lower_choices
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      List.map Prod.fst cs = VE.Service.CoreDocument.compatibleChoices couplings sets ∧
+        cs.length = (VE.Service.CoreDocument.compatibleChoices couplings sets).length ∧
+          cs.length ≤ 64 ∧ (List.map Prod.fst cs).Nodup
+  -- uses VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.compatibleChoices@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 750281289
+theorem VE.Service.CoreDocument.lower_names_bound
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+        d ∈ cs →
+          (∀ (φ : VE.Formula),
+              φ ∈ d.snd.premises →
+                ∀ (p : String), p ∈ VE.Norms.preds φ → (E.rv.environment.predicates p).isSome = Bool.true) ∧
+            ∀ (st : VE.Service.CoreDocument.Statement),
+              st ∈ d.snd.statements →
+                ∀ (j : VE.Judgments.Judgment),
+                  st.body = VE.Service.CoreDocument.Body.judgment j →
+                    (E.rv.environment.predicates j.name).isSome = Bool.true
+  -- uses VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Norms.preds@VE.Norms.Tree VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Body.judgment@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.premises@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.body@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 457314524
+theorem VE.Service.CoreDocument.lower_ok
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      (∃ J, VE.Service.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J) ∧
+        (∃ rd,
+            List.mapM (VE.Service.CoreDocument.readingsOf E (VE.Service.CoreDocument.wire E.lower)) sets = Except.ok rd) ∧
+          (∃ plans,
+              cs =
+                List.map
+                  (fun c =>
+                    (c,
+                      VE.Service.CoreDocument.CoreDoc.of (VE.Service.CoreDocument.wire E.lower)
+                        (List.flatMap (VE.Service.CoreDocument.UnitPlan.statements c) plans)))
+                  (VE.Service.CoreDocument.compatibleChoices couplings sets)) ∧
+            (VE.Service.CoreDocument.compatibleChoices couplings sets).length ≤ VE.Service.CoreDocument.maxChoices ∧
+              ∀ (d : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+                d ∈ cs →
+                  ∀ (st : VE.Service.CoreDocument.Statement),
+                    st ∈ d.snd.statements →
+                      VE.Service.CoreDocument.statementFault E (List.map (fun x => x.id) units) sets st = Option.none
+  -- uses VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.of@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.Options@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.CoreDocument.UnitPlan.statements@VE.Service.CoreDocument VE.Service.CoreDocument.UnitPlan@VE.Service.CoreDocument VE.Service.CoreDocument.compatibleChoices@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.CoreDocument.maxChoices@VE.Service.CoreDocument VE.Service.CoreDocument.preliminaries@VE.Service.CoreDocument VE.Service.CoreDocument.readingsOf@VE.Service.CoreDocument VE.Service.CoreDocument.statementFault@VE.Service.CoreDocument VE.Service.CoreDocument.wire@VE.Service.CoreDocument VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 2687596646
+theorem VE.Service.CoreDocument.lower_origin_units
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+        d ∈ cs →
+          (∀ (st : VE.Service.CoreDocument.Statement),
+              st ∈ d.snd.statements →
+                st.origin.unit ∈ List.map (fun x => x.id) units ∧
+                  ∀ (r : String) (i : Nat),
+                    st.origin.reading = Option.some (r, i) →
+                      ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = st.origin.unit ∧ i < x.fst.readings.length) ∧
+            ∀ (p : String × Nat),
+              p ∈ d.fst →
+                ∃ x,
+                  x ∈ sets ∧
+                    x.fst.id = p.fst ∧ x.fst.unit ∈ List.map (fun x => x.id) units ∧ p.snd < x.fst.readings.length
+  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.reading@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.unit@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 3766181330
+theorem VE.Service.CoreDocument.lower_parts
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+        d ∈ cs → d.snd = VE.Service.CoreDocument.CoreDoc.of (VE.Service.CoreDocument.wire E.lower) d.snd.statements
+  -- uses VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.of@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.CoreDocument.wire@VE.Service.CoreDocument VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 568486642
+theorem VE.Service.CoreDocument.lower_readings_distinct
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling}
+    {cs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)},
+    VE.Service.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (x : VE.Service.CoreDocument.ActiveSet),
+        x ∈ sets →
+          ∃ opts,
+            VE.Service.CoreDocument.readingOptions E (VE.Service.CoreDocument.wire E.lower) x = Except.ok opts ∧
+              (List.map (fun x => Option.map Prod.snd x) opts).Nodup
+  -- uses VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.Options@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.CoreDocument.readingOptions@VE.Service.CoreDocument VE.Service.CoreDocument.wire@VE.Service.CoreDocument VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 994064557
+theorem VE.Service.CoreDocument.preliminaries_sets
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {couplings : List VE.Service.CoreDocument.Coupling} {J : List VE.Judgments.Judgment},
+    VE.Service.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J →
+      ∀ (x : VE.Service.CoreDocument.ActiveSet), x ∈ sets → x.fst.unit ∈ List.map (fun x => x.id) units
+  -- uses VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.preliminaries@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 1545199419
+theorem VE.Service.CoreDocument.statementFault_none
+  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Service.CoreDocument.ActiveSet}
+    {s : VE.Service.CoreDocument.Statement},
+    VE.Service.CoreDocument.statementFault E unitIds sets s = Option.none →
+      s.origin.unit ∈ unitIds ∧
+        (∀ (r : String) (i : Nat),
+            s.origin.reading = Option.some (r, i) →
+              ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = s.origin.unit ∧ i < x.fst.readings.length) ∧
+          (∀ (φ : VE.Formula),
+              s.body = VE.Service.CoreDocument.Body.premise φ →
+                ∀ (p : String), p ∈ VE.Norms.preds φ → VE.Service.CoreDocument.declared E p = Bool.true) ∧
+            ∀ (j : VE.Judgments.Judgment),
+              s.body = VE.Service.CoreDocument.Body.judgment j → VE.Service.CoreDocument.declared E j.name = Bool.true
+  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Norms.preds@VE.Norms.Tree VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Body.judgment@VE.Service.CoreDocument VE.Service.CoreDocument.Body.premise@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.reading@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.unit@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.body@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.CoreDocument.declared@VE.Service.CoreDocument VE.Service.CoreDocument.statementFault@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document
+  -- expr 4075945728
 theorem VE.Service.Diagnose.diagnoseCase_registered
   ∀ (j : Lean.Json) (unit : String) (registered : VE.WireContract.Diagnose.Registered),
     j.getObjValD "unit" = Lean.Json.str unit →
@@ -65819,6 +65904,24 @@ theorem VE.SoftNorms.Run.selected_semantics_nonvacuous
                 (VE.SoftNorms.Run.fullOver M rel)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
   -- expr 1736440632
+theorem VE.SoftNorms.Run.slot_wire_admission
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "slot-admission" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id r,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (j.getObjVal? "facts").toBool = Bool.true ∧
+                VE.Compose.SlotWire.replaySlotAdmission j = Except.ok r ∧
+                  VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") =
+                      Except.ok r.src ∧
+                    VE.SoftNorms.WellFormedSoft r.src.D = Bool.true ∧
+                      r.src.D.E = r.src.se.ne.rv.environment ∧
+                        r.src.D.lits = r.src.se.ne.rv.literals ∧
+                          VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items) ∧
+                            VE.Compose.SlotWellFormed r.src.D r.facts ∧ answer = VE.SoftNorms.Run.slotAdmissionAnswer id r
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.SlotWire.SlotAdmission.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotAdmission.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotAdmission.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotAdmission@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotAdmission@VE.Compose.SlotWire VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.slotAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.lits@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource.se@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 115363528
 theorem VE.SoftNorms.Run.slot_wire_certificate
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →

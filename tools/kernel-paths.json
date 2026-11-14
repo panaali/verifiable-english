@@ -616,14 +616,17 @@
     "document"
    ],
    "entry": [
-    "VE.Service.Document.runCaseReported"
+    "VE.Service.CoreCheck.runCaseReported"
    ],
    "subject": [
+    "VE.Service.CoreCheck.answer",
     "VE.Service.Document.checkDocSetsView",
     "VE.Service.Document.checkDocSets",
     "VE.Service.Document.checkDoc"
    ],
    "theorems": [
+    "VE.Service.CoreCheck.document_core_sound",
+    "VE.Service.CoreCheck.core_facts_round_trip",
     "VE.Service.Document.checkDocSetsView_candidates",
     "VE.Service.Document.checkDocSetsView_ok",
     "VE.Service.Document.checkDocSetsView_packs",
@@ -633,7 +636,16 @@
     "VE.Scope.scope_admission"
    ],
    "delegates": [],
-   "nonverdict": []
+   "nonverdict": [],
+   "fold": {
+    "module": "VE.Kernel.DocumentFold",
+    "function": "VE.Kernel.DocumentFold.fold",
+    "theorems": [
+     "VE.Kernel.DocumentFold.fold_checked_iff",
+     "VE.Kernel.DocumentFold.fold_reads_rows_only"
+    ],
+    "why": "the document mode's fold (kb-2a-b; DESIGN kb-2a 2.3): a routed document's unit statuses from the request's unit table and the softNorms kernel rows (VE.Kernel.Carry.shell over VE.Service.CoreCheck.softNormsPath); kernel tier, signed +60"
+   }
   }
  ],
  "untied_kinds": [

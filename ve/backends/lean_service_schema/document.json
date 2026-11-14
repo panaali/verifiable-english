@@ -70,6 +70,17 @@
         },
         "required": ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
         "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "rows": {"items": {"$ref": "#/$defs/core_row"}, "minItems": 1, "type": "array"},
+          "status": {"const": "ok"},
+          "view": {"$ref": "#/$defs/core_view"}
+        },
+        "required": ["id", "status", "view", "rows"],
+        "type": "object"
       }
     ]
   },
@@ -237,6 +248,153 @@
       "required": ["set", "version", "unit", "readings"],
       "type": "object"
     },
+    "core_choices": {
+      "items": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {"reading": {"$ref": "common.json#/$defs/nat"}, "set": {"type": "string"}},
+          "required": ["set", "reading"],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "core_row": {
+      "additionalProperties": false,
+      "anyOf": [{"required": ["answer"]}, {"required": ["refused"]}],
+      "properties": {
+        "answer": {
+          "additionalProperties": false,
+          "properties": {
+            "facts": {"$ref": "common.json#/$defs/nat"},
+            "id": {"type": "string"},
+            "rules": {"$ref": "common.json#/$defs/nat"},
+            "status": {"const": "ok"}
+          },
+          "required": ["id", "status", "rules", "facts"],
+          "type": "object"
+        },
+        "case": {
+          "additionalProperties": false,
+          "properties": {
+            "environment": {
+              "additionalProperties": false,
+              "properties": {
+                "language": {"type": "string"},
+                "profiles": {"$ref": "common.json#/$defs/strings"},
+                "spec_revision": {"type": "string"},
+                "vocabulary": {"type": "object"}
+              },
+              "required": ["language", "profiles", "spec_revision", "vocabulary"],
+              "type": "object"
+            },
+            "facts": {"items": {"$ref": "common.json#/$defs/fol_formula"}, "type": "array"},
+            "id": {"type": "string"},
+            "kind": {"const": "slot-admission"},
+            "norms": {"items": {"$ref": "#/$defs/soft_content"}, "type": "array"}
+          },
+          "required": ["id", "kind", "environment", "norms", "facts"],
+          "type": "object"
+        },
+        "refused": {"$ref": "common.json#/$defs/text"}
+      },
+      "required": ["case"],
+      "type": "object"
+    },
+    "core_statement": {
+      "$comment": "Service.CoreCheck.statementJson: a core statement with its origin's feature and reading, and its body: a rule, a premise or a judgment term.",
+      "additionalProperties": false,
+      "anyOf": [{"required": ["rule"]}, {"required": ["premise"]}, {"required": ["judgment"]}],
+      "properties": {
+        "feature": {"type": "string"},
+        "judgment": {"type": "string"},
+        "premise": {"$ref": "common.json#/$defs/fol_formula"},
+        "reading": {
+          "additionalProperties": false,
+          "properties": {"index": {"$ref": "common.json#/$defs/nat"}, "set": {"type": "string"}},
+          "required": ["set", "index"],
+          "type": "object"
+        },
+        "rule": {"$ref": "#/$defs/soft_content"}
+      },
+      "required": ["feature"],
+      "type": "object"
+    },
+    "core_statements": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "choices": {"items": {"items": {"$ref": "#/$defs/core_statement"}, "type": "array"}, "type": "array"},
+          "id": {"type": "string"}
+        },
+        "required": ["id", "choices"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "core_view": {
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {"$ref": "#/$defs/cardinality_report"},
+        "choices": {"$ref": "#/$defs/core_choices"},
+        "composed": {
+          "additionalProperties": false,
+          "properties": {
+            "chain_document": {"type": "string"},
+            "counting_document": {"type": "string"},
+            "not_certified": {"$ref": "common.json#/$defs/strings"},
+            "scope": {"type": "string"}
+          },
+          "required": ["counting_document", "chain_document", "not_certified", "scope"],
+          "type": "object"
+        },
+        "composed_readings": {"$ref": "#/$defs/composed_readings"},
+        "coverage": {"$ref": "#/$defs/coverage"},
+        "document_id": {"$ref": "common.json#/$defs/hex64"},
+        "events_view": {
+          "additionalProperties": false,
+          "properties": {
+            "language": {"type": "string"},
+            "profiles": {"$ref": "common.json#/$defs/strings"},
+            "spec_revision": {"type": "string"},
+            "vocabulary": {
+              "additionalProperties": false,
+              "properties": {
+                "acts": true,
+                "constants": {
+                  "additionalProperties": {
+                    "additionalProperties": false,
+                    "properties": {"description": {"type": "string"}, "sort": {"type": "string"}, "verbalisation": true},
+                    "required": ["sort", "description"],
+                    "type": "object"
+                  },
+                  "type": "object"
+                },
+                "predicates": {"additionalProperties": {"$ref": "common.json#/$defs/environment_predicate"}, "type": "object"},
+                "rights": true,
+                "soft": true,
+                "sorts": {"additionalProperties": true, "type": "object"}
+              },
+              "required": ["sorts", "predicates", "constants"],
+              "type": "object"
+            }
+          },
+          "required": ["language", "profiles", "spec_revision", "vocabulary"],
+          "type": "object"
+        },
+        "judgment_lines": {"$ref": "#/$defs/judgment_lines"},
+        "judgments": {"$ref": "#/$defs/judgments"},
+        "source": {"type": "string"},
+        "source_id": {"$ref": "common.json#/$defs/hex64"},
+        "statements": {"$ref": "#/$defs/core_statements"},
+        "undeclared_evaluative": {"$ref": "#/$defs/undeclared_evaluative"},
+        "units": {"items": {"$ref": "#/$defs/unit"}, "type": "array"}
+      },
+      "required": ["document_id", "source_id", "source", "units", "coverage", "choices", "statements"],
+      "type": "object"
+    },
     "coverage": {
       "additionalProperties": false,
       "properties": {
@@ -267,6 +425,7 @@
       "properties": {
         "error": {"$ref": "common.json#/$defs/text"},
         "id": {"type": "string", "x-equals": "/id"},
+        "lowering": {"$ref": "#/$defs/lowering"},
         "span": {
           "additionalProperties": false,
           "properties": {
@@ -333,6 +492,7 @@
       "required": ["used", "unused"],
       "type": "object"
     },
+    "lowering": {"$comment": "Service.CoreCheck.runCaseReported: the document is on the core path.", "const": true},
     "meaning": {
       "$comment": "Discourse.Loader.meaningStatus: specified, or one contextual, open or unformalised member.",
       "anyOf": [
@@ -362,6 +522,7 @@
       "properties": {
         "error": {"$ref": "common.json#/$defs/text"},
         "id": {"x-echo": "/id"},
+        "lowering": {"$ref": "#/$defs/lowering"},
         "path": {"$ref": "common.json#/$defs/text"},
         "status": {"const": "error"}
       },
@@ -384,7 +545,12 @@
     },
     "plain_error": {
       "additionalProperties": false,
-      "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "lowering": {"$ref": "#/$defs/lowering"},
+        "status": {"const": "error"}
+      },
       "required": ["id", "status", "error"],
       "type": "object"
     },

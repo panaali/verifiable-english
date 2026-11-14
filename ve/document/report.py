@@ -458,6 +458,10 @@ def check_document(path, *, raw=None):
 
 def _check_document(path, *, raw=None):
     doc = _load(Path(path), admit=True, raw=raw)
+    if "core" in doc:
+        # kb-2a-b: Lean's core document answer, rendered; Python computes no status.
+        from .core import core_report
+        return core_report(doc["core"])
     report = _checked_report(doc)
     lines = doc.get("lean", {}).get("judgment_lines")
     # Lean's lines of a `judgments@0` document (jt-3's legend and status), verbatim.

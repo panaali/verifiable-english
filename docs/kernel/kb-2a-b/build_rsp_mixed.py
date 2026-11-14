@@ -16,11 +16,14 @@ REPORT lists the same):
 * s35-aim (i): D1 gives it the set RS12minimize (default: the soft rule f13-minimize-default; intent: no rule); here
   its content is the default reading's rule, the one soft rule with an exception of the translation (the collapse
   fsf-r2 probe DF-b makes); no D1 unit has a soft rule as its own content;
-* s32-strong-attempt (iii): the set RS8attempt with its two readings' rules (f10-attempt-strict, f10-attempt-default)
-  as content, one rule name for both (the twins of `safety-framework/build_document.content_set`). RS3o, the first
-  candidate, cannot be lowered: its reading `iff` is two rules, and a reading carries one content. W2 calls a set
-  `authored` only with one signed reading (Loader.lean `authored reading needs one signed choice`), so this
-  two-reading set is `open`.
+* t1-plan (iii): D1's set RS1 (rs1_t1) with its readings' rules as content (cond: rows-cond, uncond: rows-uncond;
+  ov: no rule, pending), one rule name for both (the twins of `safety-framework/build_document.content_set`), and OT1
+  declared on the predicate the rules read (`crossed`; D1's OT13 names no predicate of the rules, so it is not
+  listed). RS3o, the first candidate, cannot be lowered: its reading `iff` is two rules, and a reading carries one
+  content. RS8 (strict or default force, two one-rule readings) cannot either: a reading's rule is lowered as a
+  strict W1 rule only (`CoreDocument.lowerCandidate`; `Document.setCandidates` reads it with the W1 decoder), so a
+  default reading is refused. W2 calls a set `authored` only with one signed reading (Loader.lean `authored reading
+  needs one signed choice`), so this set is `open`.
 """
 from __future__ import annotations
 
@@ -36,10 +39,13 @@ sys.path.insert(0, str(ROOT / "usecases/anthropic-rsp"))
 sys.path.insert(0, str(ROOT / "usecases"))
 
 # (unit id, the role DESIGN section 3 gives it)
-UNITS = [("intro-aspire", "v"), ("t4-name", "iv"), ("s32-strong-attempt", "iii"), ("s35-aim", "i"),
+UNITS = [("intro-aspire", "v"), ("t1-plan", "iii"), ("t4-name", "iv"), ("s35-aim", "i"),
          ("s35-disclose", "rule"), ("s36-full-review", "ii")]
 PROFILES = ["documents@1", "judgments@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]
-JUDGED = {"highly_capable": "ot5_highly_capable", "significantly_redacted": "ot4_significantly_redacted"}
+JUDGED = {"crossed": "ot1_crossed", "highly_capable": "ot5_highly_capable",
+          "significantly_redacted": "ot4_significantly_redacted"}
+# Reading set RS1 on t1-plan (D1's rs1_t1): each reading's rule in rules.d1.ve, or none (`ov`).
+RS1 = (("cond", "rows-cond"), ("uncond", "rows-uncond"), ("ov", None))
 
 
 def sentence(source: bytes, a: int, b: int) -> str:
@@ -53,6 +59,33 @@ def sentence(source: bytes, a: int, b: int) -> str:
                         text.find(": ", stop_char - 1)) if i >= 0]
     end = min(ends) + 1
     return " ".join(text[begin:end].split())
+
+
+def situation_id(written_env: dict, entry: dict) -> str:
+    """The id the readings route gives `entry` over the document's written environment (`situation_id.lean`): Python
+    reads no environment that lists `judgments@0`, so Lean computes it."""
+    import subprocess
+    import tempfile
+    with tempfile.TemporaryDirectory() as scratch:
+        env_path, entry_path = Path(scratch) / "environment.json", Path(scratch) / "entry.json"
+        env_path.write_text(json.dumps(written_env))
+        entry_path.write_text(json.dumps(entry))
+        out = subprocess.run(["lake", "env", "lean", "--run", str(HERE / "situation_id.lean"), str(env_path),
+                              str(entry_path)], cwd=ROOT / "lean", capture_output=True, text=True, check=True)
+    return out.stdout.strip()
+
+
+def situations(raw_env: dict, written_env: dict, unit: dict, reading_set: dict) -> dict:
+    """The set with the situations Python's search finds for its pair of readings, recorded as
+    `safety-framework/build_document.record_situations` records them (no hint),
+    each keyed by its id over the written environment."""
+    from ve.readings_route import document_wire
+    from ve.readings_s1 import record_situations, search
+    env = {**raw_env, "profiles": sorted({*raw_env["profiles"], "readings@1"})}
+    wire = document_wire([{"id": unit["id"], "kind": unit["kind"], "content": unit.get("content")}], [reading_set])
+    found = {k: v for k, v in search(env, wire, reading_set["id"]).items() if v is not None}
+    found = {pair: (situation_id(written_env, entry), entry) for pair, (_, entry) in found.items()}
+    return record_situations(reading_set, found)
 
 
 def build(source: bytes) -> bytes:
@@ -80,19 +113,27 @@ def build(source: bytes) -> bytes:
         header = f"## {uid} ({role}): “{sentence(source, a, b)}”\n".encode()
         add({"id": f"{uid}-source", "kind": "meta", "meaning": "specified", "support": "none"}, header)
         if uid == "s36-full-review":
-            u["meaning"] = {"open": list(JUDGED)}
+            u["meaning"] = {"open": ["highly_capable", "significantly_redacted"]}
+        if uid == "t1-plan":
+            u["meaning"] = {"open": ["crossed"]}
         if uid == "s35-aim":
             u["content"] = {"norm": json.loads(B.T.parsed_rule("f13-minimize-default"))}
-        if uid == "s32-strong-attempt":
+        if uid == "t1-plan":
             readings = []
-            for choice, rule_id in (("strict", "f10-attempt-strict"), ("default", "f10-attempt-default")):
+            for choice, rule_id in RS1:
+                if rule_id is None:
+                    readings.append({"id": choice, "kind": "norm", "meaning_id": "pending", "content": None,
+                                     "admission": {"who": "translator", "why": f"RS1 = {choice}: no rule",
+                                                   "distinguishing_models": {}}})
+                    continue
                 reading = {"id": choice, "kind": "norm",
-                           "content": {"norm": {**json.loads(B.T.parsed_rule(rule_id)), "name": "rs8-attempt"}}}
-                readings.append({**reading, "meaning_id": s1_content_meaning_id(SoftEnvironment(front["environment"]), "rs8-attempt",
-                                                                                  reading),
-                                 "admission": {"who": "translator",
-                                               "why": f"RS8attempt = {choice}: rule {rule_id} of rules.d1.ve"}})
-            sets.append({"id": "rs8-attempt", "unit": uid, "version": 1, "status": "open", "readings": readings})
+                           "content": {"norm": {**json.loads(B.T.parsed_rule(rule_id)), "name": "rs1-t1"}}}
+                readings.append({**reading, "meaning_id": s1_content_meaning_id(SoftEnvironment(front["environment"]),
+                                                                                  "rs1-t1", reading),
+                                 "admission": {"who": "translator", "why": f"RS1 = {choice}: rule {rule_id} of rules.d1.ve",
+                                               "distinguishing_models": {}}})
+            sets.append(situations(front["environment"], env, u, {"id": "rs1-t1", "unit": uid, "version": 1,
+                                                                   "status": "open", "readings": readings}))
         add(u, source[a:b] + (b"" if source[a:b].endswith(b"\n") else b"\n"))
     front_out = {"format": "ve-document@1", "environment": env, "units": units, "open_terms": open_terms,
                  "reading_sets": sets}
