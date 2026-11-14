@@ -11,6 +11,8 @@ import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
+import VE.Acts.HookToday
+import VE.Acts.HookTwins
 import VE.Acts.Index
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
@@ -626,6 +628,33 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.FaithfulExamples.value_eq
 #print axioms VE.Acts.FaithfulExamples.value_forget
 #print axioms VE.Acts.FaithfulExamples.yieldsB_iff
+#print axioms VE.Acts.HookToday.actsProfiles_eq_nil
+#print axioms VE.Acts.HookToday.canonicalShape_nil
+#print axioms VE.Acts.HookToday.decodeFlaggedActs_today
+#print axioms VE.Acts.HookToday.decodeFlagged_plain
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_acts
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_lexical
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_plain
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_plain_refuses
+#print axioms VE.Acts.HookToday.decodeSource_acts
+#print axioms VE.Acts.HookToday.decodeSource_plain
+#print axioms VE.Acts.HookTwins.actsProfiles_nil_of_underActs
+#print axioms VE.Acts.HookTwins.admitDocumentIn_congr
+#print axioms VE.Acts.HookTwins.bind_congr_ok
+#print axioms VE.Acts.HookTwins.error_bind
+#print axioms VE.Acts.HookTwins.getObjValD_of_ok
+#print axioms VE.Acts.HookTwins.ok_bind
+#print axioms VE.Acts.HookTwins.replayConflictIn_congr
+#print axioms VE.Acts.HookTwins.replayEntailmentIn_congr
+#print axioms VE.Acts.HookTwins.replayWitnessIn_congr
+#print axioms VE.Acts.HookTwins.runAdmissionActs_today
+#print axioms VE.Acts.HookTwins.runAdmissionIn_congr
+#print axioms VE.Acts.HookTwins.runAdmission_plain
+#print axioms VE.Acts.HookTwins.runCaseActsRouted_today
+#print axioms VE.Acts.HookTwins.runCaseActs_today
+#print axioms VE.Acts.HookTwins.runCaseIn_congr
+#print axioms VE.Acts.HookTwins.runCaseRouted_today
+#print axioms VE.Acts.HookTwins.runCase_plain
 #print axioms VE.Acts.Lexical.actWord_chars
 #print axioms VE.Acts.Lexical.check_extends
 #print axioms VE.Acts.Lexical.check_iff
