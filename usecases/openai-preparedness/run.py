@@ -849,7 +849,7 @@ COMMITMENTS = {
     "F15": (("f15-disclose",), ("f15-safeguards",), ("f15-third-party",)),
     "F16": (("f16-sag-recommend",), ("f16-informed",), ("f16-without-noinput", "f16-without-nodelib"),
             ("f16-ssc-visibility",), ("f16-board-reverse",), ("f16-board-mandate",), ("f16-year",),
-            ("f16-chair-strict", "f16-chair-default")),
+            ("f16-chair-strict", "f16-chair-default"), ("f16-fast-track",)),
     "F17": (("f17-suff", "f17-iff"), ("f17-iff-only",)),
 }
 

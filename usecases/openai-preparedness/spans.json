@@ -4358,14 +4358,15 @@
     51430,
     51657
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
-   "residual": "unmapped_duty-p16-u291-36d31ca8a427",
-   "waits": [
-    "AP"
+   "kind": "norm",
+   "rule": "f16-fast-track",
+   "open_terms": [
+    "ot18"
    ],
-   "status": "UNFORMALISED"
+   "waits": [
+    "JT"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p16-u292",

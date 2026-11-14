@@ -1,0 +1,57 @@
+{
+ "schema": "fidmech-boundaries/1",
+ "source_sha256": "32bc8595a16ae028fc260bc61a0c56e2e86b34ff5f96b4d3009c40b0710e4c76",
+ "abbrev": [
+  {
+   "text": "No.",
+   "reason": "'form No. A1': a form number"
+  }
+ ],
+ "furniture": [
+  {
+   "pattern": "Example Policy, Page \\d+$",
+   "where": "page-end",
+   "reason": "running footer"
+  },
+  {
+   "pattern": "^Capability or usage threshold Mitigations 3 Notes",
+   "where": "page-start",
+   "reason": "repeated table header; its 3 is footnote 3's marker"
+  }
+ ],
+ "footnotes": [
+  {
+   "n": 8,
+   "marker_at": 276,
+   "body": [
+    680,
+    713
+   ],
+   "by": "generator",
+   "reason": "generator: 8 occurs twice on pages 2-2, the second run body-shaped"
+  },
+  {
+   "n": 4,
+   "marker_at": 212,
+   "body": [
+    714,
+    751
+   ],
+   "by": "generator",
+   "reason": "generator: 4 occurs twice on pages 2-2, the second run body-shaped"
+  },
+  {
+   "n": 3,
+   "marker_at": 71,
+   "body": [
+    752,
+    783
+   ],
+   "by": "hand",
+   "reason": "hand: the marker is in the repeated table header (furniture) of the body's page"
+  }
+ ],
+ "unpaired": [],
+ "extra": [],
+ "suppress": []
+}

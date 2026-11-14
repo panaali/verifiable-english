@@ -1,0 +1,107 @@
+{
+ "schema": "fidmech-boundaries/1",
+ "source_sha256": "d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f",
+ "abbrev": [],
+ "furniture": [
+  {
+   "pattern": "(?<!\\S)\\d{1,2}$",
+   "where": "page-end",
+   "reason": "the page number, inline at each page end"
+  }
+ ],
+ "footnotes": [],
+ "unpaired": [
+  {
+   "at": 2744,
+   "n": 1,
+   "reason": "rejected proposal: 'Contents 1 Introduction': a section number after the table of contents title; its paired 'marker' at 2346 is footnote 1's body (the marker is the attached 'harm.1')"
+  },
+  {
+   "at": 2861,
+   "n": 2,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 3208,
+   "n": 3,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 3555,
+   "n": 4,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4019,
+   "n": 5,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4250,
+   "n": 12,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4266,
+   "n": 14,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4297,
+   "n": 15,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4468,
+   "n": 16,
+   "reason": "rejected proposal: table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4571,
+   "n": 18,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4687,
+   "n": 1,
+   "reason": "rejected proposal: section number of the heading '1 Introduction' at the page start; its paired 'marker' is a table of contents number"
+  },
+  {
+   "at": 9247,
+   "n": 2,
+   "reason": "section number of the heading '2 Deciding where to focus' (after the attached marker 'peers.2'); no footnote"
+  },
+  {
+   "at": 16470,
+   "n": 5,
+   "reason": "probably footnote 5's body ('We will build safeguards against both biological and chemical threats'), but no standalone 5 precedes it on its page or the page before: PF's markers are attached ('harm.1'), a shape the RSP-frozen rules do not take as a marker; kept as text"
+  },
+  {
+   "at": 22790,
+   "n": 2,
+   "reason": "the text 'version 2' before a table cell 'AI Self-improvement'; no footnote"
+  },
+  {
+   "at": 25802,
+   "n": 3,
+   "reason": "section number of the heading '3 Measuring capabilities'; no footnote"
+  },
+  {
+   "at": 29782,
+   "n": 6,
+   "reason": "probably footnote 6's body ('If justified by our forecasts ...'), but no standalone 6 precedes it on its page or the page before (PF's markers are attached); kept as text"
+  },
+  {
+   "at": 31693,
+   "n": 4,
+   "reason": "section number of the heading '4 Safeguarding against severe harm'; no footnote"
+  },
+  {
+   "at": 40359,
+   "n": 5,
+   "reason": "section number of the heading '5 Building trust'; no footnote"
+  }
+ ],
+ "extra": [],
+ "suppress": []
+}
