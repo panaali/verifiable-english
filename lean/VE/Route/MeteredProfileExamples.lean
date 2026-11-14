@@ -147,10 +147,6 @@ def plainEntry : String := r#"{"arguments": ["point"], "description": "d"}"#
 #guard treeOf ("{\"a_upper\": " ++ plainEntry ++ ", \"z_lone\": " ++ entry "plain" "" ++ "}") == some []
 
 -- `ProfileHolds` on finite relations.
-instance (T : VE.Norms.Tree) (relations : String → List (List String)) :
-    Decidable (VE.Norms.Plain.ProfileHolds T relations) := by
-  unfold VE.Norms.Plain.ProfileHolds; infer_instance
-
 def good : String → List (List String) := fun name => if name == "r" then [["a"]] else [["a"], ["b"]]
 def bad : String → List (List String) := fun name => if name == "r" then [["a"], ["b"]] else [["a"]]
 
