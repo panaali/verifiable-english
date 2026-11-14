@@ -83,3 +83,4 @@ t4-suff | omits: nothing
 t4-only-if | omits: nothing
 s2-suff-third | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
 s2-only-if-third | omits: nothing
+CASES | omits: nothing
