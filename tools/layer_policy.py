@@ -396,7 +396,8 @@ def lean_name_layer(module: str) -> int | None:
         return 4  # states the twins of Norms.Run's and NormDefaults.Run's theorems (act-phrases 6.4)
     if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems", "VE.Route.MeteredWire",
                   "VE.SoftNorms.ElaborateSound",  # with MeteredWire: kernel boundary KB-7
-                  "VE.SoftNorms.SelectedSound", "VE.SoftNorms.SelectedExamples"}:  # kb-10a: soft-selected
+                  "VE.SoftNorms.SelectedSound", "VE.SoftNorms.SelectedExamples",  # kb-10a: soft-selected
+                  "VE.SoftNorms.SlotSound", "VE.SoftNorms.SlotExamples"}:  # kb-3: slot-certificate, slot-conflict
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Calc.Ties"}:
         return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)

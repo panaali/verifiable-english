@@ -662,3 +662,31 @@ def test_the_readme_quotes_what_checked_means():
     assert CHECKED_MEANS.startswith("CHECKED: the core statements shown for this unit were admitted by the checker")
     assert CHECKED_MEANS in (ROOT / "README.md").read_text()
     assert "were proved" not in CHECKED_MEANS
+
+
+WHY_ROW = re.compile(r"^  (\w+) (spec|wrap): (\d+) lines; chain: (.+)$")
+
+
+def test_why_names_the_part_and_one_shortest_chain_checked_by_hand(lake, capsys):
+    """`--why NAME` (kb-8b, for KB-4's measure) on a definition whose chains were checked by hand. Norms spec: the
+    statement of `norms_wire_conflict_free` names `decodeSource` (lean/statements.txt), whose body calls
+    `decodeNormsEnvironment` (lean/VE/Norms/Wire.lean); no statement of a norms theorem names it, so no chain is
+    shorter. Norms wrap: the entry `Norms.Run.runCaseReported` calls `runCaseRouted`, which hands `Acts.Run.normsSource`
+    to the elaborate exit, and `normsSource` calls `decodeSource`. A name no kernel path counts is said to be so."""
+    target, absent = "VE.Norms.Wire.decodeNormsEnvironment", "VE.Norms.Wire.noSuchDefinition"
+    assert kernel_closure.main(["--why", target, "--why", absent]) == 0
+    out = capsys.readouterr().out.splitlines()
+    assert out[0] == target and out[-1] == f"{absent}: counted by no kernel path"
+    rows = {(m[1], m[2]): (int(m[3]), m[4].split(" -> ")) for line in out[1:-1] if (m := WHY_ROW.match(line))}
+    assert len(rows) == len(out) - 2
+    assert rows[("norms", "spec")][1] == ["VE.Norms.FlaggedSpec.norms_wire_conflict_free", "VE.Norms.Wire.decodeSource",
+                                         target]
+    assert rows[("norms", "wrap")][1] == ["VE.Norms.Run.runCaseReported", "VE.Norms.Run.runCaseRouted",
+                                         "VE.Acts.Run.normsSource", "VE.Norms.Wire.decodeSource", target]
+    # one definition, so the lines are its own source range, in every part that counts it
+    assert len({lines for lines, _ in rows.values()}) == 1 and next(iter(rows.values()))[0] > 0
+    kernel = {path["name"] for path in KERNEL}
+    for (path, _), (_, chain) in rows.items():
+        entry = next(p for p in KERNEL if p["name"] == path)
+        assert path in kernel and chain[0] in entry["theorems"] + entry["entry"], chain
+        assert chain[-1] == target or chain[-1].startswith(target + "."), chain
