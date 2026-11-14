@@ -1,0 +1,13 @@
+trust_mutants: 72 definitions, 84 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Cardinality/Wire.lean:35 VE.Cardinality.projectW6 (D[V], trusted) list-first: (Wire.projectedProfiles profiles) -> ((Wire.projectedProfiles profiles).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: modeProfiles -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:831 VE.Compose.packRows (G[V], trusted) list-first: ["relational-fol@0", "norms@0", "norm-defaults@0"] -> (["relational-fol@0", "norms@0", "norm-defaults@0"].take 1) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/NormDefaults/Layered.lean:112 VE.NormDefaults.Wire.hookPacks (D[V], trusted) list-first: (hookBlock H).map VE.Events.eventsPack |>.toList -> (((hookBlock H).map VE.Events.eventsPack |>.toList).take 1) (the proofs it breaks: lean/VE/Events/Chain.lean:42, lean/VE/NormDefaults/PacksExamples.lean:154)
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:56 VE.EnglishGrammar.sourceWordAdvice (G[V], trusted) list-first: sourceWords.filterMap fun r => match r.kind with | .refuse code text _ => if r.frame == "authored... -> ((sourceWords.filterMap fun r => match r.kind with | .refuse code text _ => if r.frame == "author... (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-first: eventsRefusals ++ eventsReadingSets ++ eventsFixed -> ((eventsRefusals ++ eventsReadingSets ++ eventsFixed).take 1) (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 4 KILLED, 1 SURVIVOR, 5 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 73 OTHER SHARD in 5731 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 SURVIVOR, 1 UNKNOWN, 26 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 3 UNKNOWN, 37 OTHER SHARD
+trust_mutants: K, trusted: 2 OTHER SHARD
+trust_mutants: S, trusted: 1 UNKNOWN, 1 INVALID, 8 OTHER SHARD
+trust_mutants: steps: wall plan 16.9 s, scratch 3.9 s, control_build 0.3 s, probe_install 1.1 s, mutants 5702.7 s, cleanup 6.1 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 129.4 s (5), mutant_builds 932.2 s (12), mutant_checks 14574 s (16), stage_controls 1447.8 s (4), mutant_probes 154.7 s (5)
