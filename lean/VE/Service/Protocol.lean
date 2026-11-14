@@ -31,6 +31,7 @@ import VE.Discourse.Run
 import VE.Readings.Run
 import VE.Service.Diagnose
 import VE.Service.Document
+import VE.Service.CoreCheck
 import VE.SearchBudget.Run
 import VE.Calc.Run
 import VE.Cardinality.Run
@@ -129,7 +130,7 @@ def runMode : Mode → Json → Json
   | .discourse, j => VE.Discourse.Run.runCaseReported j
   | .readingsRoute, j => VE.Readings.Run.runCaseReported j
   | .diagnose, j => Diagnose.diagnoseCase j
-  | .document, j => Document.runCaseReported j
+  | .document, j => CoreCheck.runCaseReported j
   | .englishQuestion, j => VE.Question.Run.caseReported j
   | .searchBudget, j => VE.SearchBudget.Run.runCaseReported j
   | .ask, j => VE.Ask.Run.caseReported j

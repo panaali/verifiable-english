@@ -1,10 +1,8 @@
--- ve-layer: 4 (the document mode's lowering over its decoded units; experimental, unreachable from the service)
+-- ve-layer: 4 (the document mode's lowering over its decoded units; shell, called by Service.CoreCheck)
 import VE.Service.Document
 
 /-! The lowering of a document to its core documents (kb-2a step A; docs/spec/kernel-boundary.md 4.1 and 4.2;
 the architect seat's design for kb-2a, section 2.1).
-
-Expires: 2026-12-07
 
 `lower` takes what the document mode's `check` has decoded before its status folds (the environment `Env`, the
 judgment records and unit views, the units with their `UnitContent`, the active reading sets with their candidates)
@@ -14,10 +12,10 @@ document text again, calls no kernel, and has no flag, status or verdict of its 
 documents or a refusal (`UnsupportedLowering`, `ReadingsCollapsed`, `UnknownPart`, `ResourceLimit`, or the judgment
 refusals of `Judgments.admit` and `Judgments.status`, reused unchanged).
 
-Tier: experimental (spec section 5); nothing the service imports reaches this module. Step B promotes it to the
-shell and calls it from the document mode. -/
+Tier: shell (spec section 5; promoted from the experimental tier by kb-2a-b). The document mode's core path
+(`Service.CoreCheck`) calls it and sends each core document to the kernel; nothing here is trusted. -/
 
-namespace VE.Experimental.CoreDocument
+namespace VE.Service.CoreDocument
 open Lean
 open VE.Service.Document
 open VE.Discourse (FrontSet)
@@ -576,4 +574,4 @@ theorem lower_parts {E : Env} {senses : Bool} {records : List VE.Judgments.Rec}
   obtain ⟨c, _, rfl⟩ := List.mem_map.mp hd
   rfl
 
-end VE.Experimental.CoreDocument
+end VE.Service.CoreDocument

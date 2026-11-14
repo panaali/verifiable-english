@@ -406,5 +406,7 @@ import VE.Kernel.Carry
 import VE.Kernel.CarryChecks
 import VE.Route.CodecRoundTrip
 import VE.Time.WireSound
-import VE.Experimental.CoreDocument
-import VE.Experimental.CoreDocumentExamples
+import VE.Service.CoreDocument
+import VE.Service.CoreDocumentExamples
+import VE.Service.CoreCheck
+import VE.Kernel.DocumentFold

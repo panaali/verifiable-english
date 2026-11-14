@@ -241,7 +241,7 @@ set_option maxHeartbeats 800000 in
 theorem encode_units (id : String) (c : Checked) :
     (encode id c).getObjValD "units" = toJson (c.rows.map unitJson) ∧
       (encode id c).getObjValD "source" = .str c.source := by
-  unfold encode VE.Route.Wire.ok
+  unfold encode encodeFields VE.Route.Wire.ok
   cases c.judgments <;> cases c.cardinality <;> cases c.composed <;> cases c.eventsView <;> exact ⟨rfl, rfl⟩
 
 theorem toJson_jsons (l : List Json) : toJson l = Json.arr l.toArray := by

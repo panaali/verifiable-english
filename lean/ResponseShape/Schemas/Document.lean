@@ -212,7 +212,8 @@ def composedReadings : Shape := n [arr, .items (ref "#/$defs/composed_set")]
 /-- A rejected case with no location: the request's id, the message. -/
 def plain_error : Shape :=
   n [obj, .required ["id", "status", "error"],
-    closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "common.json#/$defs/text")]]
+    closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "common.json#/$defs/text"),
+      ("lowering", ref "#/$defs/lowering")]]
 
 /-- A distinguishing model's located diagnostic (`Service.Document.locatedModel`, batch 16f): the `model` mode's text
 and its non-empty JSON pointer into the model, which the receiver binds to a member of a model the document
@@ -220,7 +221,7 @@ supplies. -/
 def model_error : Shape :=
   n [obj, .required ["id", "status", "error", "path"],
     closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "common.json#/$defs/text"),
-      ("path", ref "common.json#/$defs/text")]]
+      ("path", ref "common.json#/$defs/text"), ("lowering", ref "#/$defs/lowering")]]
 
 /-- A strict fence's located diagnostic (`Service.Document.locatedFence`, batch 16f): the `parse` mode's text and its
 span in the fence's text, which the receiver binds to a strict fence of the document sent. -/
@@ -232,7 +233,7 @@ def fence_error : Shape :=
         closed [("start", ref "common.json#/$defs/nat"),
           ("end", ref "common.json#/$defs/nat"),
           ("line", ref "common.json#/$defs/nat"),
-          ("column", ref "common.json#/$defs/nat")]])]]
+          ("column", ref "common.json#/$defs/nat")]]), ("lowering", ref "#/$defs/lowering")]]
 
 /-- Under `cardinality@0`, `Service.Document.cardinalityReport`: the three environment identities, the report and its id. -/
 def cardinalityReport : Shape :=
@@ -244,17 +245,8 @@ def cardinalityReport : Shape :=
     ("leaf_labels", n [arr, .items (n [obj, .required ["name", "label"], closed [("name", str), ("label", str)]])]),
     ("report_id", ref "common.json#/$defs/hex64")]]
 
-def «row» : Shape :=
-  .anyOf [
-    ref "common.json#/$defs/case_error",
-    ref "#/$defs/plain_error",
-    ref "#/$defs/model_error",
-    ref "#/$defs/fence_error",
-    n [obj,
-      .required ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
-      closed [
-        ("id", n [str, .equals "/id"]),
-        ("status", constS "ok"),
+/-- The answer's fields of a checked document (`Service.Document.encodeFields`). -/
+def answerFields : List (String × Shape) := [
         ("document_id", ref "common.json#/$defs/hex64"),
         ("source_id", ref "common.json#/$defs/hex64"),
         ("source", str),
@@ -280,7 +272,72 @@ def «row» : Shape :=
               ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
               ("constants", n [obj, .object [] (some (n [obj, .required ["sort", "description"],
                 closed [("sort", str), ("description", str), ("verbalisation", .bool true)]]))]),
-              ("soft", .bool true), ("rights", .bool true), ("acts", .bool true)]])]])]]]
+              ("soft", .bool true), ("rights", .bool true), ("acts", .bool true)]])]])]
+
+/-- A refusal row of a document the core path reads (`Service.CoreCheck.runCaseReported`): no other path decides it. -/
+def lowering : Shape := c "Service.CoreCheck.runCaseReported: the document is on the core path." [.const (.bool true)]
+
+/-- One core statement (`Service.CoreCheck.statementJson`): the feature that lowered it, its reading, and its body. -/
+def core_statement : Shape :=
+  c "Service.CoreCheck.statementJson: a core statement with its origin's feature and reading, and its body: a rule, a premise or a judgment term." [
+    obj, .required ["feature"],
+    .anyOf [.required ["rule"], .required ["premise"], .required ["judgment"]],
+    closed [("feature", str),
+      ("reading", n [obj, .required ["set", "index"], closed [("set", str), ("index", ref "common.json#/$defs/nat")]]),
+      ("rule", copied "CoreDocument.lowerContent: the unit's own rule, or its reading's, as the soft relay sends it; the client binds it to the document's unit or reading" <|
+        ref "#/$defs/soft_content"),
+      ("premise", copied "CoreDocument.premise: a formula unit's checked formula, encoded; the client binds it to the unit's content" <|
+        ref "common.json#/$defs/fol_formula"),
+      ("judgment", str)]]
+
+/-- The core path's view (`Service.CoreCheck.viewOf`): the answer's fields over the fold's statuses, the choices of
+readings, and each unit's core statements per choice. -/
+def core_view : Shape :=
+  n [obj, .required ["document_id", "source_id", "source", "units", "coverage", "choices", "statements"],
+    closed (answerFields ++ [("choices", ref "#/$defs/core_choices"), ("statements", ref "#/$defs/core_statements")])]
+
+/-- The compatible choices of readings, one per kernel row (`Service.CoreCheck.choicesJson`). -/
+def core_choices : Shape :=
+  n [arr, .minItems 1, .items (n [arr, .items (n [obj, .required ["set", "reading"],
+    closed [("set", str), ("reading", ref "common.json#/$defs/nat")]])])]
+
+/-- Each unit's core statements, choice by choice (`Service.CoreCheck.statementsJson`). -/
+def core_statements : Shape :=
+  n [arr, .items (n [obj, .required ["id", "choices"],
+    closed [("id", str), ("choices", n [arr, .items (n [arr, .items (ref "#/$defs/core_statement")])])]])]
+
+/-- A kernel row of the core path (`VE.Kernel.carry`): the `slot-admission` case built from a core document and the
+soft route's answer, verbatim. -/
+def core_row : Shape :=
+  n [obj, .required ["case"], .anyOf [.required ["answer"], .required ["refused"]],
+    closed [
+      ("case", copied "Service.CoreCheck.caseOf: the core document of a choice, as the lowering made it; the client binds it to the document" <|
+        n [obj, .required ["id", "kind", "environment", "norms", "facts"], closed [
+          ("id", str), ("kind", constS "slot-admission"),
+          ("environment", n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [
+            ("language", str), ("profiles", ref "common.json#/$defs/strings"), ("spec_revision", str),
+            ("vocabulary", n [obj])]]),
+          ("norms", n [arr, .items (ref "#/$defs/soft_content")]),
+          ("facts", n [arr, .items (ref "common.json#/$defs/fol_formula")])]]),
+      ("answer", copied "SoftNorms.Run.slotAdmissionAnswer: the kernel's answer to the case, verbatim (carry)" <|
+        n [obj, .required ["id", "status", "rules", "facts"], closed [("id", str), ("status", constS "ok"),
+          ("rules", ref "common.json#/$defs/nat"), ("facts", ref "common.json#/$defs/nat")]]),
+      ("refused", ref "common.json#/$defs/text")]]
+
+def «row» : Shape :=
+  .anyOf [
+    ref "common.json#/$defs/case_error",
+    ref "#/$defs/plain_error",
+    ref "#/$defs/model_error",
+    ref "#/$defs/fence_error",
+    n [obj,
+      .required ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
+      closed ([
+        ("id", n [str, .equals "/id"]),
+        ("status", constS "ok")] ++ answerFields)],
+    n [obj, .required ["id", "status", "view", "rows"],
+      closed [("id", n [str, .equals "/id"]), ("status", constS "ok"), ("view", ref "#/$defs/core_view"),
+        ("rows", n [arr, .minItems 1, .items (ref "#/$defs/core_row")])]]]
 
 def file : File where
   name := "document.json"
@@ -291,10 +348,13 @@ def file : File where
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
-    ("rights_block", .schema rights_block)]
+    ("rights_block", .schema rights_block), ("lowering", .schema lowering),
+    ("core_statement", .schema core_statement), ("core_view", .schema core_view), ("core_row", .schema core_row),
+    ("core_choices", .schema core_choices), ("core_statements", .schema core_statements)]
 
--- The document protocol includes every composed-reading field and every existing row, and `events_view` (et-5b).
--- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 3654778105975326606
+-- The document protocol includes every composed-reading field and every existing row, `events_view` (et-5b), and the
+-- core path's row and refusal mark (kb-2a-b). Its rendered fingerprint is fixed with this wire change; changing the
+-- shape requires review.
+#guard (file.render.toOption.map (hash ·.compress)) == some 6294539892942463016
 
 end ResponseShape.Schemas.Document

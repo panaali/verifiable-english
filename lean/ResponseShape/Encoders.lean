@@ -13,6 +13,7 @@ import ResponseShape.Encoders.Discourse
 import ResponseShape.Encoders.ReadingsRoute
 import ResponseShape.Encoders.Envelope
 import ResponseShape.Encoders.Document
+import ResponseShape.Encoders.CoreCheck
 import ResponseShape.Encoders.Question
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.Ask
@@ -80,7 +81,7 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Discourse.runCaseReported_fits j
   · exact ReadingsRoute.runCaseReported_fits j hj
   · exact English.diagnose_fits j
-  · exact Document.runCaseReported_fits j
+  · exact CoreCheck.runCaseReported_fits j
   · exact Question.caseReported_fits j
   · exact SearchBudget.runCaseReported_fits j
   · exact Ask.caseReported_fits j

@@ -30,7 +30,8 @@
                   "then": {"$ref": "#/$defs/slot_witness"},
                   "when": {"allOf": [{"$ref": "#/$defs/kind/slot-conflict"}, {"required": ["witness"]}]}
                 },
-                {"then": {"$ref": "#/$defs/slot_packages"}, "when": {"$ref": "#/$defs/kind/slot-conflict"}}
+                {"then": {"$ref": "#/$defs/slot_packages"}, "when": {"$ref": "#/$defs/kind/slot-conflict"}},
+                {"then": {"$ref": "#/$defs/slot_admission"}, "when": {"$ref": "#/$defs/kind/slot-admission"}}
               ]
             }
           ]
@@ -276,6 +277,7 @@
     },
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "slot-admission": {"properties": {"kind": {"const": "slot-admission"}}, "required": ["kind"], "type": "object"},
       "slot-certificate": {"properties": {"kind": {"const": "slot-certificate"}}, "required": ["kind"], "type": "object"},
       "slot-conflict": {"properties": {"kind": {"const": "slot-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-certificate": {"properties": {"kind": {"const": "soft-certificate"}}, "required": ["kind"], "type": "object"},
@@ -398,6 +400,18 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "background", "results"],
+      "type": "object"
+    },
+    "slot_admission": {
+      "$comment": "SoftNorms.Run.slotAdmissionAnswer (slot-admission, kb-2a-b): the number of rules and of facts of the core document read back (one rule per norm object sent, one fact per fact sent); no verdict word.",
+      "additionalProperties": false,
+      "properties": {
+        "facts": {"$ref": "common.json#/$defs/nat", "x-count": "/facts"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "rules": {"$ref": "common.json#/$defs/nat", "x-count": "/norms"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "rules", "facts"],
       "type": "object"
     },
     "slot_certificate": {

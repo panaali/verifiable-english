@@ -1171,8 +1171,8 @@ def eventsView (environment : Json) (senses : Bool) (terms : Option Json) :
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
 envelope is read only under `senses` (`frozenEnv`, batch 16f). -/
-def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) (terms : Option Json := none) :
-    Except String Env := do
+def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) (terms : Option Json := none)
+    (core : Bool := false) : Except String Env := do
   match environment.getObjValD "profiles" with
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
@@ -1195,7 +1195,8 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed judgmentsApart
     -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.
-    if exceptionConditioned units then
+    -- Under `core` (kb-2a-b), a document the core path reads (`Service.CoreCheck.routed`) goes on to its lowering.
+    if exceptionConditioned units && !core then
       VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
@@ -1204,13 +1205,15 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
   let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
-  if soft && (block != .none || listed.contains "readings@1") then
+  if soft && (block != .none || listed.contains "readings@1") && !core then
     throw (unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route")
   if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
     throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
     if let .arr _ := units then
-      let _ ← softSource (VE.Compose.withoutDocumentLayers environment) (softSourceNorms units)
+      -- The core path reads its soft source without the `readings@1` wrapper, as its lowering's environment (`E.lower`).
+      let _ ← softSource (VE.Compose.withoutDocumentLayers (if core then lowerReadings environment else environment))
+        (softSourceNorms units)
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
@@ -2523,12 +2526,34 @@ structure Checked where
   client builds the document over Lean's view, never its own; its identities stay the written environment's. -/
   eventsView : Option Json := none
 
-/-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
-admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
-whose chain reading `text` is (`chainBound`), bound before anything else is read. -/
-def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
-    (governed : Option Json := none) (governedSets : Option Json := none) (parent : Option Json := none) :
-    Except String Checked := do
+/-- What `check` decodes before its status folds: the split document and the front matter it reads, the environment, the
+judgment records and their names, the units with their own statuses, and every reading set with the units attached to
+one. The document mode's core path (`Service.CoreCheck`, kb-2a-b) reads the same values. -/
+structure Decoded where
+  doc : Loader.Split
+  front : Json
+  whole : Json
+  chainList : Bool
+  senses : Bool
+  E : Env
+  judged : Bool
+  records : List VE.Judgments.Rec
+  openNames : List String
+  J : List String
+  R : Option RightsDoc
+  S : Option SoftLayer
+  N : Option SensesLayer
+  names : List String
+  units : List SourceUnit
+  unitIds : List String
+  all : List (FrontSet × List Bool)
+  attached : List String
+
+/-- `check`'s steps up to its status folds. `core`: the environment of a document the core path reads
+(`environmentOf`'s `core`). -/
+def decode (text : String) (lexicon : Option Json := none) (packs : Option Json := none)
+    (governed : Option Json := none) (governedSets : Option Json := none) (parent : Option Json := none)
+    (core : Bool := false) : Except String Decoded := do
   if let some p := parent then chainBound text p
   let doc ← split text (senses := true)
   -- `scope@0`'s fold (`VE.Scope.foldGovernors`) writes no `judgments` member: the two do not compose yet.
@@ -2550,7 +2575,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless environment matches .obj _ do throw "document needs an embedded environment"
   let senses := (front.getObjVal? "senses").isOk
   let E ← environmentOf environment (front.getObjValD "units") senses
-    (if front == doc.front then some (Loader.optionalList front "open_terms") else none)
+    (if front == doc.front then some (Loader.optionalList front "open_terms") else none) core
   -- The chain list: this row reads its counting units, and the chain reads the rest on its own request (`chainText`).
   let chainList := E.cardinality.any (·.profiles == VE.Cardinality.Wire.chainProfiles)
   let whole := front
@@ -2604,6 +2629,17 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
       (python := true) (formula := formulaCheck F)
       (modelRefused := some modelRefused)
     pure (sets, [])
+  pure ⟨doc, front, whole, chainList, senses, E, judged, records, openNames, J, R, S, N, names, units, unitIds, all,
+    attached⟩
+
+/-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
+admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
+whose chain reading `text` is (`chainBound`), bound before anything else is read. -/
+def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
+    (governed : Option Json := none) (governedSets : Option Json := none) (parent : Option Json := none) :
+    Except String Checked := do
+  let ⟨doc, front, whole, chainList, senses, E, judged, records, openNames, J, R, S, N, names, units, unitIds, all,
+    attached⟩ ← decode text lexicon packs governed governedSets parent
   let active := Loader.activeOf all
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
   -- Under `judgments@0`, each unit's status is `Judgments.status` of its view, in unit order (spec 8.1).
@@ -2649,8 +2685,9 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
     ← if chainList then some <$> composedJson text whole front else pure none, active, E.eventsView⟩
 
-def encode (id : String) (c : Checked) : Json :=
-  VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
+/-- The answer's fields of a checked document (`encode`; the core path's view, `Service.CoreCheck.viewOf`). -/
+def encodeFields (c : Checked) : List (String × Json) :=
+  [("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
     (match c.judgments, c.cardinality, c.composed with
@@ -2661,7 +2698,9 @@ def encode (id : String) (c : Checked) : Json :=
     | none, none, none => []) ++
     match c.eventsView with
     | some v => [("events_view", v)]
-    | none => [])
+    | none => []
+
+def encode (id : String) (c : Checked) : Json := VE.Route.Wire.ok id (encodeFields c)
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
