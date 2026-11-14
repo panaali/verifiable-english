@@ -2573,7 +2573,8 @@
       "lean/ResponseShape/SoftSelectedExamples.lean": "fixtures only: #guard checks of soft-norms.json's selected rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling",
       "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
-      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it"
+      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
+      "lean/VE/Route/MeteredProfileExamples.lean": "fixtures only: #guard checks of the metered norms profile check (kb-validators) on environments and models built with Json.parse and Json.mkObj, run through runCase, modelCase and profileTree; no runner path"
     }
   },
   "plan_operations": {
