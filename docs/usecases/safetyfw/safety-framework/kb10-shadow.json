@@ -1,0 +1,162 @@
+{
+ "harness": "usecases/safety-framework/run.py",
+ "command": "uv run python usecases/safetyfw_shadow.py safety-framework OUT",
+ "harness_args": [
+  "--check"
+ ],
+ "harness_outcome": "exit 0",
+ "commit": "6edb29d11cec40b46817500346393e524d902159",
+ "seconds": {
+  "harness": 115.5,
+  "lean": 31.6
+ },
+ "calls_compared": {
+  "completed": 1194,
+  "selected": 4366
+ },
+ "python_answers": {
+  "completed false": 482,
+  "completed true": 712,
+  "selected empty": 3635,
+  "selected non-empty": 731
+ },
+ "calls_by_family": {
+  "A": 2814,
+  "B": 728,
+  "G": 269,
+  "K": 139,
+  "R": 54,
+  "conflict": 2,
+  "stage": 1554
+ },
+ "calls_without_soft_source": {},
+ "documents": 28,
+ "models": 130,
+ "lean_calls": 641,
+ "distinct_queries": 2763,
+ "mismatch_calls": 0,
+ "mismatches": [],
+ "refused_calls": 0,
+ "refusals": [],
+ "background_false_calls": 0,
+ "background_false": [],
+ "document_choices": {
+  "0d21a9217522f909": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f16-ds-strict',)), ('add', ('f16-ds-n2', 'Rule 1. Every proposal should apply each measure to the model weights, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) at least one of the following holds: (i) that level recommends that measure; (ii) there is a second measure such that both that level recommends the second measure and the second measure includes that measure. Rule 1 is excepted when either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both. The exception to rule 1 is decided by the developer.', (('RS3', 'Ds'), ('RS3force', 'strict')))))",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f16-ds-strict',)), ('add', ('f16-ds-n2', 'Rule 1. Every proposal should apply each measure to the model weights, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) at least one of the following holds: (i) that level recommends that measure; (ii) there is a second measure such that both that level recommends the second measure and the second measure includes that measure. Rule 1 is excepted when either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both. The exception to rule 1 is decided by the developer.', (('RS3', 'Ds'), ('RS3force', 'strict')))))"
+  ],
+  "0fa862e5706530ff": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f16-ds-strict',)), ('add', ('f16-ds-n2', 'Rule 1. Every proposal should apply each measure to the model weights, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) at least one of the following holds: (i) that level recommends that measure; (ii) there is a second measure such that both that level recommends the second measure and the second measure includes that measure. Rule 1 is excepted when either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both. The exception to rule 1 is decided by the developer.', (('RS3', 'Ds'), ('RS3force', 'strict')))))"
+  ],
+  "222cef7105e2c01d": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "2b1e7011ed0f6731": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'default', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'default', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}"
+  ],
+  "3c2b2a821aa75659": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f10-acc', 'f10-dm-diff', 'f10-rel-diff', 'f10-sec', 'f11-acc', 'f11-dm', 'f11-rel', 'f11-sec', 'f14', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f6', 'f7-rra', 'f7-sc', 'f8', 'f9-acc', 'f9-dm', 'f9-rel', 'f9-sec')),)",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', (('drop', ('f10-acc', 'f10-dm-diff', 'f10-rel-diff', 'f10-sec', 'f11-acc', 'f11-dm', 'f11-rel', 'f11-sec', 'f14', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f6', 'f7-rra', 'f7-sc', 'f8', 'f9-acc', 'f9-dm', 'f9-rel', 'f9-sec')),)",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f10-acc', 'f10-dm-diff', 'f10-rel-diff', 'f10-sec', 'f11-acc', 'f11-dm', 'f11-rel', 'f11-sec', 'f14', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f6', 'f7-rra', 'f7-sc', 'f8', 'f9-acc', 'f9-dm', 'f9-rel', 'f9-sec')),)",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', (('drop', ('f10-acc', 'f10-dm-diff', 'f10-rel-diff', 'f10-sec', 'f11-acc', 'f11-dm', 'f11-rel', 'f11-sec', 'f14', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f6', 'f7-rra', 'f7-sc', 'f8', 'f9-acc', 'f9-dm', 'f9-rel', 'f9-sec')),)"
+  ],
+  "3d367a7c6e17411b": [
+   "{'RS1': 'S', 'RS2': 'U', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "3fb6fb4d68d454b9": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f9-rel', 'f9-dm', 'f9-acc')), ('add', ('m6-f9-dm', 'Rule 1. Every proposal must have mitigations make the residual risk of harm acceptable, if there is a level such that both that proposal has reached that level and that level is misuse.', (('RS1', 'G'),))), ('add', ('m6-f9-acc', 'Rule 1. Every proposal is acceptable, if all of the following hold: (a) there is a level such that both that proposal has reached that level and that level is misuse; (b) for every level that is misuse and that that proposal has reached, all of the following hold: (i) that proposal mitigates that level; (ii) at least one of the following holds: (a) there is a measure such that both that level recommends that measure and that proposal applies that measure; (b) either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both.')))",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', (('drop', ('f9-rel', 'f9-dm', 'f9-acc')), ('add', ('m6-f9-dm', 'Rule 1. Every proposal must have mitigations make the residual risk of harm acceptable, if there is a level such that both that proposal has reached that level and that level is misuse.', (('RS1', 'G'),))), ('add', ('m6-f9-acc', 'Rule 1. Every proposal is acceptable, if all of the following hold: (a) there is a level such that both that proposal has reached that level and that level is misuse; (b) for every level that is misuse and that that proposal has reached, all of the following hold: (i) that proposal mitigates that level; (ii) at least one of the following holds: (a) there is a measure such that both that level recommends that measure and that proposal applies that measure; (b) either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both.')))"
+  ],
+  "577ca1d03db2c9d0": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f16-ds-strict',)), ('add', ('f16-ds-n2', 'Rule 1. Every proposal should apply each measure to the model weights, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) at least one of the following holds: (i) that level recommends that measure; (ii) there is a second measure such that both that level recommends the second measure and the second measure includes that measure. Rule 1 is excepted when either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both. The exception to rule 1 is decided by the developer.', (('RS3', 'Ds'), ('RS3force', 'strict')))))"
+  ],
+  "5ac83b678de61e0f": [
+   "{'RS1': 'S', 'RS2': 'U', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'U', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'S', 'RS2': 'U', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "5d10514e4691ccb6": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'intent', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "71d9f8508adfa49c": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f9-rel', 'f9-dm', 'f9-acc')), ('add', ('m6-f9-dm', 'Rule 1. Every proposal must have mitigations make the residual risk of harm acceptable, if there is a level such that both that proposal has reached that level and that level is misuse.', (('RS1', 'G'),))), ('add', ('m6-f9-acc', 'Rule 1. Every proposal is acceptable, if all of the following hold: (a) there is a level such that both that proposal has reached that level and that level is misuse; (b) for every level that is misuse and that that proposal has reached, all of the following hold: (i) that proposal mitigates that level; (ii) at least one of the following holds: (a) there is a measure such that both that level recommends that measure and that proposal applies that measure; (b) either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both.')))"
+  ],
+  "73f43f0c6db0abfa": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'default', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'default', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}"
+  ],
+  "98cbd70b6a71e20c": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "99f7315bd21d6ede": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "9df8d3964b6d908a": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('precedence', {}), ('drop', ('f10-acc', 'f11-acc', 'f12-p', 'f13-p', 'f14', 'f15-diff', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f19-default', 'f20-elicitation-strict', 'f20-holistic-strict', 'f20-within-strict', 'f4-check-d', 'f4-need-d', 'f5', 'f6', 'f7-rra', 'f7-sc', 'f8', 'f9-acc')))"
+  ],
+  "9e602063f1a1f729": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'Ds', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "a2bb6230823ce200": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'allow'"
+  ],
+  "a7e5cffc3c88b4f7": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'intent', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'intent', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "a978e67c22b7b0a8": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'M', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'M', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "b3a071195d24d089": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'allow'",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'default', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "be98eea998aef517": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'R', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'R', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'R', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny'"
+  ],
+  "dfecd0ef39797c04": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'M', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "e617b1f2f98cade8": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}",
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny'"
+  ],
+  "ea4a2f7c5c4bc378": [
+   "{'RS1': 'S', 'RS2': 'U', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', (('drop', ('f8',)), ('add', ('m5-f8', 'Rule 1. Every proposal may proceed, if it is not the case that there is a level such that that proposal has reached that level.')), ('drop', ('f10-acc', 'f11-acc', 'f14', 'f15-diff', 'f17-add', 'f17-hri', 'f17-pra', 'f18-frequent', 'f18-yearly', 'f19-default', 'f2', 'f20-elicitation-strict', 'f20-holistic-strict', 'f20-within-strict', 'f3', 'f4-check-d', 'f4-need-d', 'f5', 'f6', 'f7-rra', 'f7-sc', 'f9-acc')))"
+  ],
+  "ea6a17829f164ab1": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'default', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'deny', ()",
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'default', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}"
+  ],
+  "f2cc7f673713ed5d": [
+   "{'RS1': 'S', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'R', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "f8e91f38d255b060": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'scope', 'RS9': 'different'}, 'allow'"
+  ],
+  "f8fc0467ac44febf": [
+   "{'RS1': 'G', 'RS2': 'P', 'RS3': 'F', 'RS3force': 'strict', 'RS4aim': 'default', 'RS4holistic': 'strict', 'RS4within': 'strict', 'RS4elicitation': 'strict', 'RS5': 'D', 'RS6': 'different', 'RS7': 'E', 'RS8': 'rel', 'RS9': 'different'}, 'deny', (('drop', ('f9-rel', 'f9-dm', 'f9-acc')), ('add', ('m6-f9-dm', 'Rule 1. Every proposal must have mitigations make the residual risk of harm acceptable, if there is a level such that both that proposal has reached that level and that level is misuse.', (('RS1', 'G'),))), ('add', ('m6-f9-acc', 'Rule 1. Every proposal is acceptable, if all of the following hold: (a) there is a level such that both that proposal has reached that level and that level is misuse; (b) for every level that is misuse and that that proposal has reached, all of the following hold: (i) that proposal mitigates that level; (ii) at least one of the following holds: (a) there is a measure such that both that level recommends that measure and that proposal applies that measure; (b) either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified as \"open_release_benefits_outweigh_risks\", or both.')))"
+  ]
+ }
+}

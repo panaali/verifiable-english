@@ -1,0 +1,52 @@
+{
+  "item": "kb-10b",
+  "round": "step (1) only (the shadow); steps (2)-(4) wait for the architect seat and the DRI (DRI GATE 2026-11-11)",
+  "note": "Each bug was planted in usecases/safetyfw_shadow.py as committed at 6edb29d11c, `uv run pytest -q tests/test_kb10_shadow.py` was run and failed as recorded, and the file was restored with git checkout; the restored file passes all 6 tests. The task's seeded bugs (a) and (b) concern step (2) code (the relay attribution inside SoftenedNormDocument and outcome_at), which this round does not write; they are planted in the continue round.",
+  "seeds": [
+    {
+      "id": "c",
+      "language": "python",
+      "file": "usecases/safetyfw_shadow.py",
+      "claim": "the shadow compares Python's answer with Lean's, not with Python's (the task's seeded bug (c))",
+      "mutation": "in Shadow.compare, `lean = row[\"selected\"] if kind == \"selected\" else row[\"outcome\"]` becomes `lean = python if kind == \"selected\" else python is True`",
+      "failing": "tests/test_kb10_shadow.py::test_a_planted_difference_is_listed_with_python_and_lean_answers",
+      "result": "1 failed, 5 passed"
+    },
+    {
+      "id": "d",
+      "language": "python",
+      "file": "usecases/safetyfw_shadow.py",
+      "claim": "each Lean result is compared with the call of the query it answers",
+      "mutation": "in Shadow.ask, Lean's results are keyed by the next query (`zip(sent, results[1:] + results[:1])`)",
+      "failing": "tests/test_kb10_shadow.py::test_agreeing_answers_list_no_mismatch, ::test_a_planted_difference_is_listed_with_python_and_lean_answers, ::test_one_lean_call_per_document_and_model",
+      "result": "3 failed, 3 passed"
+    },
+    {
+      "id": "e",
+      "language": "python",
+      "file": "usecases/safetyfw_shadow.py",
+      "claim": "a query Lean refuses is listed as a refusal, not dropped",
+      "mutation": "in Shadow.compare, the refusal counter line becomes `pass`",
+      "failing": "tests/test_kb10_shadow.py::test_a_refused_query_is_listed_not_dropped",
+      "result": "1 failed, 5 passed"
+    },
+    {
+      "id": "f",
+      "language": "python",
+      "file": "usecases/safetyfw_shadow.py",
+      "claim": "the installed wrapper returns Python's answer unchanged (no behaviour change)",
+      "mutation": "the selected_rules wrapper returns `rules[1:]`",
+      "failing": "tests/test_kb10_shadow.py::test_agreeing_answers_list_no_mismatch, ::test_the_wrappers_are_removed_and_a_document_without_its_soft_source_is_counted",
+      "result": "2 failed, 4 passed"
+    },
+    {
+      "id": "g",
+      "language": "python",
+      "file": "usecases/safetyfw_shadow.py",
+      "claim": "a call answered with background false is counted (SPEC 4.2)",
+      "mutation": "`if background is False:` becomes `if background is None:`",
+      "failing": "tests/test_kb10_shadow.py::test_a_model_outside_the_soft_premises_is_counted_with_background_false",
+      "result": "1 failed, 5 passed"
+    }
+  ]
+}

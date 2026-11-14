@@ -1,0 +1,185 @@
+{
+ "schema": "fidmech-boundaries/1",
+ "source_sha256": "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063",
+ "abbrev": [],
+ "furniture": [
+  {
+   "pattern": "Responsible Scaling Policy, Anthropic \\d+$",
+   "where": "page-end",
+   "reason": "running footer with the page number, inline at each page end"
+  },
+  {
+   "pattern": "^Capability or usage threshold Mitigations—our plan as a company 3 Mitigations—ambitious industry-wide recommendations",
+   "where": "page-start",
+   "reason": "Table 1's column headers, repeated at the start of each page of the table (pages 6-10); the 3 in it is footnote 3's marker"
+  }
+ ],
+ "footnotes": [
+  {
+   "n": 1,
+   "marker_at": 5428,
+   "body": [
+    7825,
+    8280
+   ],
+   "by": "generator",
+   "reason": "generator: 1 occurs twice on pages 4-4, the second run body-shaped"
+  },
+  {
+   "n": 2,
+   "marker_at": 8634,
+   "body": [
+    9269,
+    9608
+   ],
+   "by": "generator",
+   "reason": "generator: 2 occurs twice on pages 5-5, the second run body-shaped"
+  },
+  {
+   "n": 3,
+   "marker_at": 9715,
+   "body": [
+    11376,
+    11565
+   ],
+   "by": "hand",
+   "reason": "hand: the marker is in Table 1's column header 'Mitigations—our plan as a company 3' (furniture, repeated on pages 6-10); its first copy is on page 6, the body's page"
+  },
+  {
+   "n": 7,
+   "marker_at": 12259,
+   "body": [
+    14509,
+    14526
+   ],
+   "by": "generator",
+   "reason": "generator: 7 occurs twice on pages 7-7, the second run body-shaped"
+  },
+  {
+   "n": 6,
+   "marker_at": 12216,
+   "body": [
+    14527,
+    14596
+   ],
+   "by": "generator",
+   "reason": "generator: 6 occurs twice on pages 7-7, the second run body-shaped"
+  },
+  {
+   "n": 5,
+   "marker_at": 12014,
+   "body": [
+    14597,
+    14817
+   ],
+   "by": "generator",
+   "reason": "generator: 5 occurs twice on pages 7-7, the second run body-shaped"
+  },
+  {
+   "n": 4,
+   "marker_at": 11981,
+   "body": [
+    14818,
+    14942
+   ],
+   "by": "generator",
+   "reason": "generator: 4 occurs twice on pages 7-7, the second run body-shaped"
+  },
+  {
+   "n": 9,
+   "marker_at": 18926,
+   "body": [
+    21542,
+    21582
+   ],
+   "by": "generator",
+   "reason": "generator: 9 occurs twice on pages 9-9, the second run body-shaped"
+  },
+  {
+   "n": 8,
+   "marker_at": 18813,
+   "body": [
+    21583,
+    22090
+   ],
+   "by": "generator",
+   "reason": "generator: 8 occurs twice on pages 9-9, the second run body-shaped"
+  },
+  {
+   "n": 10,
+   "marker_at": 25113,
+   "body": [
+    26660,
+    26845
+   ],
+   "by": "generator",
+   "reason": "generator: 10 occurs twice on pages 11-11, the second run body-shaped"
+  },
+  {
+   "n": 11,
+   "marker_at": 31187,
+   "body": [
+    33259,
+    33455
+   ],
+   "by": "generator",
+   "reason": "generator: 11 occurs twice on pages 13-13, the second run body-shaped"
+  },
+  {
+   "n": 12,
+   "marker_at": 39019,
+   "body": [
+    39885,
+    40147
+   ],
+   "by": "generator",
+   "reason": "generator: 12 occurs twice on pages 15-15, the second run body-shaped"
+  },
+  {
+   "n": 13,
+   "marker_at": 45616,
+   "body": [
+    47332,
+    47436
+   ],
+   "by": "generator",
+   "reason": "generator: 13 occurs twice on pages 17-17, the second run body-shaped"
+  }
+ ],
+ "unpaired": [],
+ "extra": [
+  {
+   "at": 13844,
+   "reason": "table cell: Table 1 row T3, the middle column's cell starts here, after the threshold cell's unfinished line 'could (if directed toward this goal,'"
+  },
+  {
+   "at": 16688,
+   "reason": "table cell: Table 1 row T4, the middle column's cell 'We will:' starts here, after the threshold cell's line"
+  },
+  {
+   "at": 23139,
+   "reason": "heading: '2. Frontier Safety Roadmap' has no closing punctuation"
+  },
+  {
+   "at": 24566,
+   "reason": "heading: '3. Risk Reports' has no closing punctuation"
+  },
+  {
+   "at": 33830,
+   "reason": "heading: '3.5. Publication and Redactions' has no closing punctuation"
+  },
+  {
+   "at": 34924,
+   "reason": "heading: '3.6. External Review' has no closing punctuation"
+  },
+  {
+   "at": 38225,
+   "reason": "heading: '3.6.2. Timing and access' has no closing punctuation"
+  },
+  {
+   "at": 45531,
+   "reason": "heading: 'Scenario Commitment' (Appendix A) has no closing punctuation"
+  }
+ ],
+ "suppress": []
+}
