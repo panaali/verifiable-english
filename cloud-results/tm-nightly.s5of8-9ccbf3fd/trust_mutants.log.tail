@@ -1,0 +1,10 @@
+trust_mutants: 61 definitions, 76 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Closure/Syntax.lean:43 VE.Closure.Formula.WellFormed (K, trusted) body-false: a.toCore.WellFormed E Γ -> False (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:83 VE.EnglishGrammar.advice (G[V], trusted) list-empty: (adviceTable.find? fun r => profiles.contains r.profile && r.patterns.any (advPrefix (ws.drop i))) -> [] (lean/VE/EnglishGrammar/Advice.lean:83: Type mismatch)
+UNKNOWN lean/VE/Compose/Dispatch.lean:884 VE.Compose.withoutClauses (G[V], trusted) list-empty: ps -> [] (lean/VE/Compose/Dispatch.lean:884: Application type mismatch: The argument)
+trust_mutants: 8 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 65 OTHER SHARD in 3588 s
+trust_mutants: D[V], trusted: 2 KILLED, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 2 UNKNOWN, 31 OTHER SHARD
+trust_mutants: K, trusted: 1 UNKNOWN, 6 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 8 OTHER SHARD
+trust_mutants: steps: wall plan 12.4 s, scratch 2.1 s, control_build 0.3 s, probe_install 1 s, mutants 3571.8 s, cleanup 0.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 163.4 s (11), mutant_builds 271.7 s (15), mutant_checks 8032.9 s (17), stage_controls 2303.3 s (7), mutant_probes 172.5 s (11)
