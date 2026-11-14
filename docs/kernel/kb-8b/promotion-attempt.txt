@@ -1,0 +1,19 @@
+path          tier        theorems    spec    wrap   lines  modes
+certificate   candidate          4    1372     637    1377  checkCertificate
+route         kernel            26    4254      15    4265  route
+norms         kernel            21    4371    2709    4410  norms
+softNorms     kernel             4    4912      35    4920  softNorms
+metered       kernel             2    3245    2080    3251  metered
+quantity      kernel             5    2267      75    2274  quantity
+rights        candidate          2    5620      35    5636  rights
+normDefaults  candidate          7    5702    5535    6465  normDefaults
+alternatives  candidate          2    3908      22    3921  alternatives
+risk          candidate          6    6160    5670    7840  risk
+reports       candidate          3    4396      32    4418  reports
+readingsRoute candidate          8    9403   20513   24205  readingsRoute
+discourse     candidate          6   36141    4541   36147  discourse
+document      candidate          7   34821   12818   35649  document
+kernel (distinct lines of every path of tier kernel): 10673
+under the frozen keys' answers: 16198, of them in the kernel: 10673
+definitions that write a verdict token: 57, of them outside the kernel: 56 in 28 modules
+problem: quantity: a statement leaves answer fields open (state them by key): VE.Time.Wire.quantity_admission_wire_sound
