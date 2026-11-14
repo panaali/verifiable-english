@@ -670,11 +670,11 @@ WHY_ROW = re.compile(r"^  (\w+) (spec|wrap): (\d+) lines; chain: (.+)$")
 def test_why_names_the_part_and_one_shortest_chain_checked_by_hand(lake, capsys):
     """`--why NAME` (kb-8b, for KB-4's measure) on a definition whose chains were checked by hand. Norms spec: the
     statement of `norms_wire_conflict_free` names `decodeSource` (lean/statements.txt), whose body calls
-    `decodeNormsEnvironment` (lean/VE/Norms/Wire.lean); no statement of a norms theorem names it, so no chain is
+    `decodeNormsEnvironmentWith` (lean/VE/Norms/Wire.lean); no statement of a norms theorem names it, so no chain is
     shorter. Norms wrap: none since kb-4a: the entry `Norms.Run.runCaseReported` calls `runCaseRouted`, which hands a
     case that reads `acts@0` to `runCaseActsRouted` (a delegate: the candidate path `normsActs`) and every other case
     to the subject `runCase`, so no wrap reaches the decoder. A name no kernel path counts is said to be so."""
-    target, absent = "VE.Norms.Wire.decodeNormsEnvironment", "VE.Norms.Wire.noSuchDefinition"
+    target, absent = "VE.Norms.Wire.decodeNormsEnvironmentWith", "VE.Norms.Wire.noSuchDefinition"
     assert kernel_closure.main(["--why", target, "--why", absent]) == 0
     out = capsys.readouterr().out.splitlines()
     assert out[0] == target and out[-1] == f"{absent}: counted by no kernel path"
@@ -698,6 +698,7 @@ def test_no_kernel_path_counts_the_act_grammar_or_the_elaboration(lake, capsys):
     case that reads `acts@0` goes to the candidate path `normsActs`. So the act grammar, its parse table, the
     elaboration and the instance that packages them are counted by no kernel path, while the plain instance is."""
     absent = ["VE.Acts.Grammar", "VE.Grammar.Table", "VE.Acts.Elaborate", "VE.Norms.Wire.ActsHook.acts",
+              "VE.Norms.Wire.decodeNormsEnvironment",
               "VE.Norms.Wire.actsOf", "VE.Norms.Run.runCaseActsRouted"]
     present = "VE.Norms.Wire.ActsHook.plain"
     assert kernel_closure.main([arg for name in absent + [present] for arg in ("--why", name)]) == 0
