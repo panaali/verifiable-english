@@ -118,6 +118,22 @@ def test_same_environment_with_other_rules_is_another_document(lean, calls):
     assert len(calls) == 2
 
 
+def test_the_documents_call_names_its_soft_document_by_handle(lean, calls, monkeypatch):
+    """kb-10e: the pair's one call goes to the service by soft-document handle (`_Sent.soft`), not written out."""
+    from ve.backends import lean_service
+    sent = []
+    genuine = lean_service._encode
+
+    def recording(cases, mode=None):
+        encoded = genuine(cases, mode)
+        sent.extend((item.case.get("kind"), item.soft) for item in encoded if type(item.case) is dict)
+        return encoded
+    monkeypatch.setattr(lean_service, "_encode", recording)
+    doc = document()
+    assert doc.elaborated.outcome_at("x_required", model_of(doc), ("b",)) is True
+    assert [soft for kind, soft in sent if kind == "soft-selected"] == [True]
+
+
 def test_a_wire_dictionary_model_is_the_same_pair_as_its_finite_model(lean, calls):
     doc = document()
     assert doc.elaborated.outcome_at("x_required", model_of(doc), ("b",)) is True
