@@ -165,4 +165,114 @@ end pieces
 #guard !VE.Service.CoreCheck.routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++
   (edit "\"readings@1\"," "") ++ "\n---\n" ++ body))])
 
+/-! ## More units: a second reading set, authored sets, a last unit whose fold status is not its own -/
+
+section more
+open VE.Service.CoreCheck
+
+def frontJ : Json := (Json.parse front).toOption.getD .null
+def unitsJ : List Json := ((frontJ.getObjValD "units").getArr?.toOption.map (·.toList)).getD []
+def setsJ : List Json := ((frontJ.getObjValD "reading_sets").getArr?.toOption.map (·.toList)).getD []
+
+/-- The document mode's environment of `front` (the core path's decoding), for the identities the sets name. -/
+def envE : Option VE.Service.Document.Env :=
+  (VE.Service.Document.environmentOf (frontJ.getObjValD "environment") (frontJ.getObjValD "units") false none true).toOption
+def ast (f : VE.Formula) : Json := VE.Route.Wire.encodeFormula f
+def mid (f : VE.Formula) : String :=
+  (envE.bind fun E => (VE.Route.Wire.meaningId E.profiles E.envId (ast f)).toOption).getD ""
+def qAll : VE.Formula := .all "assistant" (.unary "q" (.var 0))
+def notQ : VE.Formula := .all "assistant" (.not (.unary "q" (.var 0)))
+def tAll : VE.Formula := .all "assistant" (.unary "t" (.var 0))
+def modelData : Json := (Json.parse r#"{"complete": true, "domains": {"assistant": ["a"], "user": []}, "constants": {}, "relations": {"v": [], "w": [], "q": [["a"]], "t": [], "x_required": [], "x_permitted": []}}"#).toOption.getD .null
+def modelName : String :=
+  (envE.bind fun E => (VE.Discourse.Loader.modelId E.profiles E.envId modelData).toOption).getD ""
+def admission (others : List String) : Json :=
+  Json.mkObj [("who", .str "translator"), ("why", .str "r"),
+    ("distinguishing_models", Json.mkObj (others.map fun o => (o, .str modelName)))]
+def asserted (id : String) (f : VE.Formula) (others : List String) : Json :=
+  Json.mkObj [("id", .str id), ("kind", .str "asserted"), ("meaning_id", .str (mid f)), ("content", ast f),
+    ("admission", admission others)]
+def unitJ (id : String) (a b : Nat) (kind meaning : Json) (content : Option Json) : Json :=
+  Json.mkObj ([("id", .str id), ("span", toJson [a, b]), ("kind", kind), ("meaning", meaning),
+    ("support", .str "testimony")] ++ (content.map ("content", ·)).toList)
+def softM : Json := (Json.parse r#"{"norm": {"name": "m", "predicate": "x_required", "sign": true, "guard": ["unary", "w", ["var", 0]], "unless": [], "over": [], "mode": "default", "exception": {"decided_by": "unstated", "sufficient": [["unary", "v", ["var", 0]], ["unary", "t", ["var", 0]]], "necessary": [], "factors": []}}}"#).toOption.getD .null
+
+/-- `front` with two units more: u6, asserted, its open set s2 of two asserted readings (q, not q) told apart by one
+model; u7 last, a soft rule whose exception's second sufficient condition reads the judgment term. -/
+def richBody : String := body ++ "Asserted.\nLast.\n"
+def rich : String :=
+  let n := body.utf8ByteSize
+  let units := unitsJ ++ [unitJ "u6" n (n + 10) (.str "asserted") (.str "specified") none,
+    unitJ "u7" (n + 10) (n + 16) (.str "norm") (.str "specified") (some softM)]
+  let s2 := Json.mkObj [("id", .str "s2"), ("unit", .str "u6"), ("version", toJson (1 : Nat)), ("status", .str "open"),
+    ("readings", Json.arr #[asserted "a" qAll ["b"], asserted "b" notQ ["a"]]),
+    ("models", Json.mkObj [(modelName, modelData)])]
+  ((frontJ.setObjVal! "units" (Json.arr units.toArray)).setObjVal! "reading_sets" (Json.arr (setsJ ++ [s2]).toArray)).compress
+def runRich : Json := VE.Service.CoreCheck.runCaseReported (Json.mkObj [("id", .str "d"),
+  ("document", .str ("---\n" ++ rich ++ "\n---\n" ++ richBody)), ("admit", .bool true)])
+
+-- Two sets, four choices, one row each; u6 is OPEN (its set is open though both readings are asserted); u7, the last
+-- unit, is OPEN by its exception's second condition though its own status is CHECKED.
+#guard statuses runRich == [("u1", "LABELLED"), ("u2", "CHECKED"), ("u3", "CHECKED"), ("u4", "OPEN"), ("u5", "OPEN"),
+  ("u6", "OPEN"), ("u7", "OPEN")]
+#guard (rows runRich).map (·.1) == ["choice-0", "choice-1", "choice-2", "choice-3"]
+#guard (rows runRich).map (fun r => (r.2.1, r.2.2.1)) == [(4, 2), (4, 2), (3, 2), (3, 2)]
+#guard (statements runRich).lookup "u6" == some [[("facts", some 0)], [("facts", some 1)], [("facts", some 0)], [("facts", some 1)]]
+-- The judgment lines name the term the document's units read.
+#guard ((runRich.getObjValD "view").getObjValD "judgment_lines").getObjValD "legend" != Json.arr #[]
+
+/-- `front` with u4's set authored: one signed reading. -/
+def authoredWith (meaning : Json) (reading : Json) : String :=
+  let units := unitsJ.map fun u => if u.getObjValD "id" == .str "u4" then u.setObjVal! "meaning" meaning else u
+  let s := ((setsJ.head?.getD .null).setObjVal! "status" (.str "authored")).setObjVal! "signature" (.str "translator")
+    |>.setObjVal! "readings" (Json.arr #[reading])
+  ((frontJ.setObjVal! "units" (Json.arr units.toArray)).setObjVal! "reading_sets" (Json.arr #[s])).compress
+
+-- An authored set of one rule reading (not asserted): OPEN.
+#guard (statuses (run (authoredWith (.str "specified")
+  ((((setsJ.head?.getD .null).getObjValD "readings").getArr?.toOption.getD #[]).toList.headD .null)))).lookup "u4" ==
+  some "OPEN"
+-- An authored set of one asserted reading decides its unit: CHECKED, or OPEN when the reading reads a judgment term.
+#guard (statuses (run (authoredWith (.str "specified") (asserted "r0" qAll [])))).lookup "u4" == some "CHECKED"
+#guard (statuses (run (authoredWith (Json.mkObj [("open", toJson ["t"])]) (asserted "r0" tAll [])))).lookup "u4" ==
+  some "OPEN"
+
+-- The shell's pieces at their boundaries: several facts, the base level, the node limit (each `top` one node).
+#guard factsJson [qAll, notQ] == Json.arr #[ast qAll, ast notQ]
+#guard VE.Bridge.formulaNodes .top == 1
+#guard (src).any fun s => !roundTrips s [fact, deep] && !roundTrips s [fact, fact, illTyped] &&
+  !roundTrips s [.all "assistant" (.unary "x_required" (.var 0))]
+#guard (src).any fun s => roundTrips s (List.replicate 10000 .top) && !roundTrips s (List.replicate 10001 .top)
+-- A soft rule's exception conditions, every one, sufficient then necessary.
+def se : Option VE.SoftNorms.Wire.SoftEnvironment := (src).map (·.se)
+def softN : Json := (Json.parse r#"{"norm": {"name": "n", "predicate": "x_required", "sign": true, "guard": ["top"], "unless": [], "over": [], "mode": "default", "exception": {"decided_by": "unstated", "sufficient": [["unary", "v", ["var", 0]], ["unary", "w", ["var", 0]]], "necessary": [["unary", "q", ["var", 0]]], "factors": []}}}"#).toOption.getD .null
+#guard exceptionFormulas se (some (.soft softN)) ==
+  [.unary "v" (.var 0), .unary "w" (.var 0), .unary "q" (.var 0)]
+#guard exceptionFormulas se (some (.soft ruleH)) == [] && exceptionFormulas se (some (.formula fact)) == []
+-- Every profile is read, the last one too: a profile with no row anywhere in the list is not routed.
+#guard !routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++ (frontJ.setObjVal! "environment"
+  ((frontJ.getObjValD "environment").setObjVal! "profiles" (toJson ["documents@1", "judgments@0", "norms@0",
+    "readings@1", "relational-fol@0", "soft-norms@0", "norm-defaults@0"]))).compress ++ "\n---\n" ++ body))])
+-- environmentOf's two routed refusals, each only where it applies, read with every argument given.
+def envWith (ps : List String) : Json := (frontJ.getObjValD "environment").setObjVal! "profiles" (toJson ps)
+#guard (VE.Service.Document.environmentOf (envWith ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"])
+  (frontJ.getObjValD "units") false none false).toOption.isSome
+#guard (VE.Service.Document.environmentOf (envWith ["documents@1", "norms@0", "readings@1", "relational-fol@0",
+  "soft-norms@0"]) (frontJ.getObjValD "units") false none false).toOption.isNone
+#guard (VE.Service.Document.environmentOf (envWith ["documents@1", "norms@0", "readings@1", "relational-fol@0",
+  "soft-norms@0"]) (frontJ.getObjValD "units") false none true).toOption.isSome
+-- No front matter: not routed; today's answer.
+#guard !routed (Json.mkObj [("id", .str "d"), ("document", .str "no front matter")])
+-- `check` admits a claim graph unless asked not to (`withGraph`); a graph rooted nowhere is refused.
+def plainGraph : String :=
+  ((frontJ.setObjVal! "environment" ((frontJ.getObjValD "environment").setObjVal! "profiles"
+    (toJson ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"]))).setObjVal! "units"
+    (Json.arr (unitsJ.map fun u => if u.getObjValD "id" == .str "u5" then u.setObjVal! "meaning" (.str "specified") else u).toArray)
+    |>.setObjVal! "reading_sets" (Json.arr #[]) |>.setObjVal! "open_terms" (Json.arr #[])
+    |>.setObjVal! "graph" (Json.mkObj [("root", .str "nowhere"), ("nodes", Json.arr #[])])).compress
+#guard (VE.Service.Document.check ("---\n" ++ plainGraph ++ "\n---\n" ++ body)).toOption.isNone &&
+  (VE.Service.Document.check ("---\n" ++ plainGraph ++ "\n---\n" ++ body) (withGraph := false)).toOption.isSome
+
+end more
+
 end VE.Service.CoreCheckExamples

@@ -128,9 +128,8 @@ reader's `softContent` does not (pc-1 review F1): a statement whose exception re
 def exceptionFormulas (S : Option VE.SoftNorms.Wire.SoftEnvironment) : Option UnitContent → List VE.Formula
   | some (.soft rule) => match S with
     | some se =>
-      let N := (VE.SoftNorms.Wire.decodeSoftNorm se rule).toOption <|>
-        (VE.SoftNorms.Wire.decodeSoftNorm se (Json.mkObj [("norm", rule.getObjValD "norm")])).toOption
-      ((N.bind (·.exception)).map fun e => e.sufficient ++ e.necessary).getD []
+      ((((VE.SoftNorms.Wire.decodeSoftNorm se rule).toOption).bind (·.exception)).map fun e =>
+        e.sufficient ++ e.necessary).getD []
     | none => []
   | _ => []
 

@@ -119,6 +119,9 @@ FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
                "usecases/question-answering/group.ve.md": "surface parser"}
 PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
+# kb-2a-b: the seeds Lean answers on its core path (Service.CoreCheck), which Python's own loader refuses
+# (`judgments@0`): Lean's answer, never Python's; tests/test_kb2a_document.py checks it.
+LEAN_CORE = {"tests/data/kb2a/rsp-mixed.ve.md": "judgments@0 documents are checked by Lean's document mode"}
 
 
 @pytest.fixture(scope="module")
@@ -129,10 +132,14 @@ def seed_answers(service):
 
 
 def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
-    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
+    assert set(seed_answers) == DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK | set(LEAN_CORE)
     assert LARGE_FALLBACK <= PYTHON_FALLBACK
     assert all(dw.fuzzed(seed_answers[name][0], name) for name in LARGE_FALLBACK)
     for name, (doc, python, answer) in seed_answers.items():
+        if name in LEAN_CORE:
+            assert answer["outcome"] == "ok" and answer.get("core") is True, (name, answer)
+            assert python["outcome"] != "ok" and LEAN_CORE[name] in python.get("text", ""), (name, python)
+            continue
         if name in PYTHON_FALLBACK:
             from ve.document import _lean_answer
             assert python["outcome"] == answer["outcome"] == "ok"

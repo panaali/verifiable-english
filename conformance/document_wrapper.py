@@ -125,8 +125,11 @@ def lean_answers(service, texts) -> list:
     for entry in entries:
         row = entry["result"]
         if row.get("status") == "ok":
-            out.append({"outcome": "ok", "value": projection_of(row["units"], row["coverage"], row["document_id"],
-                                                                 row["source_id"])})
+            # kb-2a-b: a document of the core path answers its fields under `view`, beside the kernel's rows.
+            fields = row["view"] if "view" in row else row
+            out.append({"outcome": "ok", "value": projection_of(fields["units"], fields["coverage"],
+                                                                 fields["document_id"], fields["source_id"]),
+                        **({"core": True} if "view" in row else {})})
         else:
             out.append({"outcome": "error", "code": entry.get("code") or "InvalidInput", "text": row["error"],
                         **_location(row)})
