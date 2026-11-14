@@ -77,7 +77,9 @@ def kind : Def :=
     ("soft-pairs", kindIs "soft-pairs"),
     ("soft-certificate", kindIs "soft-certificate"),
     ("soft-conflict", kindIs "soft-conflict"),
-    ("soft-selected", kindIs "soft-selected")]
+    ("soft-selected", kindIs "soft-selected"),
+    ("slot-certificate", kindIs "slot-certificate"),
+    ("slot-conflict", kindIs "slot-conflict")]
 
 def error : Shape :=
   c
@@ -281,53 +283,82 @@ def pairs : Shape :=
         ("discharged", ref "#/$defs/coherence_labels"),
         ("weighing_points", ref "#/$defs/coherence_labels")]]
 
+/-- The fields of a `soft-certificate` answer; a `slot-certificate` answer adds `facts`. -/
+def certificateFields : List (String × Shape) := [
+  ("id", ref "common.json#/$defs/id_ok"),
+  ("status", constS "ok"),
+  ("valid", .type ["boolean"]),
+  ("background", ref "common.json#/$defs/nat"),
+  ("layers", ref "common.json#/$defs/nat"),
+  ("conditional_on", ref "#/$defs/coherence_labels")]
+
+def certificateRequired : List String := ["id", "status", "valid", "background", "layers", "conditional_on"]
+
+/-- The fields of a `soft-conflict` answer with a witness; a `slot-conflict` answer adds `facts`. -/
+def witnessFields : List (String × Shape) := [
+  ("id", ref "common.json#/$defs/id_ok"),
+  ("status", constS "ok"),
+  ("verdict", enumS ["CONFLICT", "UNKNOWN"]),
+  ("target", n [str, .equals "/witness/target"]),
+  ("targets", ref "common.json#/$defs/strings"),
+  ("status_text", ref "common.json#/$defs/text"),
+  ("witness_kind", n [str, .pattern (Re.prefixes ["pair conflict on ", "strict collision on "])])]
+
+def witnessRequired : List String := ["id", "status", "verdict", "target", "targets", "status_text"]
+
+def witnessKindBeside : Shape :=
+  .ite (props [("verdict", constS "CONFLICT")]) (.required ["witness_kind"]) (.not (.required ["witness_kind"]))
+
+/-- The fields of a `soft-conflict` answer over packages; a `slot-conflict` answer adds `facts`. -/
+def packagesFields : List (String × Shape) := [
+  ("id", ref "common.json#/$defs/id_ok"),
+  ("status", constS "ok"),
+  ("verdict", enumS ["CONFLICT-FREE", "UNKNOWN"]),
+  ("status_text", ref "common.json#/$defs/text"),
+  ("coherent_exhibit", .type ["boolean"]),
+  ("budget", ref "common.json#/$defs/nat"),
+  ("targets", ref "common.json#/$defs/strings"),
+  ("conditional_on", ref "#/$defs/coherence_labels"),
+  ("detail", ref "common.json#/$defs/text")]
+
+def packagesRequired : List String :=
+  ["id", "status", "verdict", "status_text", "coherent_exhibit", "budget", "targets", "conditional_on"]
+
+def detailBeside : Shape :=
+  .ite (props [("verdict", constS "UNKNOWN")]) (.required ["detail"]) (.not (.required ["detail"]))
+
+/-- A slot answer's `facts`: the number of facts the request sent (kb-3; `needFacts` requires the array). -/
+def factsCount : List (String × Shape) := [("facts", n [ref "common.json#/$defs/nat", .count "/facts"])]
+
 def certificate : Shape :=
   c
     "SoftNorms.Run.runSoftKind soft-certificate: the replay's verdict, Background' and layer counts, and the coherence premises a valid certificate is conditional on."
-    [
-      obj,
-      .required ["id", "status", "valid", "background", "layers", "conditional_on"],
-      closed [
-        ("id", ref "common.json#/$defs/id_ok"),
-        ("status", constS "ok"),
-        ("valid", .type ["boolean"]),
-        ("background", ref "common.json#/$defs/nat"),
-        ("layers", ref "common.json#/$defs/nat"),
-        ("conditional_on", ref "#/$defs/coherence_labels")]]
+    [obj, .required certificateRequired, closed certificateFields]
 
 def witness : Shape :=
   c
     "SoftNorms.Run.runSoftKind soft-conflict with a witness: the requested target, and its kind beside a CONFLICT."
-    [
-      obj,
-      .required ["id", "status", "verdict", "target", "targets", "status_text"],
-      closed [
-        ("id", ref "common.json#/$defs/id_ok"),
-        ("status", constS "ok"),
-        ("verdict", enumS ["CONFLICT", "UNKNOWN"]),
-        ("target", n [str, .equals "/witness/target"]),
-        ("targets", ref "common.json#/$defs/strings"),
-        ("status_text", ref "common.json#/$defs/text"),
-        ("witness_kind", n [str, .pattern (Re.prefixes ["pair conflict on ", "strict collision on "])])],
-      .ite (props [("verdict", constS "CONFLICT")]) (.required ["witness_kind"]) (.not (.required ["witness_kind"]))]
+    [obj, .required witnessRequired, closed witnessFields, witnessKindBeside]
 
 def packages : Shape :=
   c
     "SoftNorms.Run.runSoftKind soft-conflict over certificate packages: detail exactly beside UNKNOWN (firstFailure)."
-    [
-      obj,
-      .required ["id", "status", "verdict", "status_text", "coherent_exhibit", "budget", "targets", "conditional_on"],
-      closed [
-        ("id", ref "common.json#/$defs/id_ok"),
-        ("status", constS "ok"),
-        ("verdict", enumS ["CONFLICT-FREE", "UNKNOWN"]),
-        ("status_text", ref "common.json#/$defs/text"),
-        ("coherent_exhibit", .type ["boolean"]),
-        ("budget", ref "common.json#/$defs/nat"),
-        ("targets", ref "common.json#/$defs/strings"),
-        ("conditional_on", ref "#/$defs/coherence_labels"),
-        ("detail", ref "common.json#/$defs/text")],
-      .ite (props [("verdict", constS "UNKNOWN")]) (.required ["detail"]) (.not (.required ["detail"]))]
+    [obj, .required packagesRequired, closed packagesFields, detailBeside]
+
+def slot_certificate : Shape :=
+  c
+    "SoftNorms.Run.slotCertificateAnswer (slot-certificate, kb-3): soft-certificate's fields over the slot replay, and the number of facts sent."
+    [obj, .required (certificateRequired ++ ["facts"]), closed (certificateFields ++ factsCount)]
+
+def slot_witness : Shape :=
+  c
+    "SoftNorms.Run.slotWitnessAnswer (slot-conflict with a witness, kb-3): soft-conflict's witness fields over a model of the facts, and the number of facts sent."
+    [obj, .required (witnessRequired ++ ["facts"]), closed (witnessFields ++ factsCount), witnessKindBeside]
+
+def slot_packages : Shape :=
+  c
+    "SoftNorms.Run.slotConflictAnswer (slot-conflict over packages, kb-3): soft-conflict's fields over the slot replay, and the number of facts sent."
+    [obj, .required (packagesRequired ++ ["facts"]), closed (packagesFields ++ factsCount), detailBeside]
 
 def selected : Shape :=
   c
@@ -362,7 +393,10 @@ def «row» : Shape :=
         (ref "#/$defs/kind/soft-certificate", ref "#/$defs/certificate"),
         (ref "#/$defs/kind/soft-selected", ref "#/$defs/selected"),
         (.allOf [ref "#/$defs/kind/soft-conflict", .required ["witness"]], ref "#/$defs/witness"),
-        (ref "#/$defs/kind/soft-conflict", ref "#/$defs/packages")]]),
+        (ref "#/$defs/kind/soft-conflict", ref "#/$defs/packages"),
+        (ref "#/$defs/kind/slot-certificate", ref "#/$defs/slot_certificate"),
+        (.allOf [ref "#/$defs/kind/slot-conflict", .required ["witness"]], ref "#/$defs/slot_witness"),
+        (ref "#/$defs/kind/slot-conflict", ref "#/$defs/slot_packages")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -394,6 +428,9 @@ def file : File where
     ("certificate", .schema certificate),
     ("witness", .schema witness),
     ("packages", .schema packages),
-    ("selected", .schema selected)]
+    ("selected", .schema selected),
+    ("slot_certificate", .schema slot_certificate),
+    ("slot_witness", .schema slot_witness),
+    ("slot_packages", .schema slot_packages)]
 
 end ResponseShape.Schemas.SoftNorms

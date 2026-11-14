@@ -1,0 +1,13 @@
+# VM1 (multi-agent-lab, x86_64) 2026-11-14: python3 -I tools/fetch_pinned_sources.py --home $H (a fresh empty dir), commit 28cd689006
+ok anthropic-rsp: https://www-cdn.anthropic.com/files/4zrzovbb/website/0bacdc8440ea96e62a8766d99ebe1d4eea6d5f3a.pdf -> $H/code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt (sha256 c7de7fe2f1f4, 59410 bytes)
+ok openai-preparedness: https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf -> $H/code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt (sha256 d2e3dd5b80e5, 67418 bytes)
+ok safety-framework: https://storage.googleapis.com/deepmind-media/DeepMind.com/Blog/strengthening-our-frontier-safety-framework/frontier-safety-framework_3-1.pdf -> $H/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt (sha256 18e3375b35c6, 54373 bytes)
+# cmp $H/<path> ~/code/manage-agents/pilots/<path> (the stored copies):
+identical code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt
+identical code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt
+identical code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt
+# python3 -I tools/fetch_pinned_sources.py --check (the VM's real home):
+ok anthropic-rsp: stored at its pin
+ok openai-preparedness: stored at its pin
+ok safety-framework: stored at its pin
+exit 0

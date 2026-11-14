@@ -35,6 +35,30 @@
    "environment": [
     "VE.Service.Standalone.reportedEnvironment"
    ]
+  },
+  "validator_roles": {
+   "comment": "What each validator is to the verdict paths the keys call (decision D13, kb-validators; docs/kernel/kb-validators/REPORT.md). A pre-filter of a path: the path checks the same inputs itself, so a wrong \"ok\" from the validator changes none of that path's verdicts. A translator: a value of its answer is carried into later cases or shown, and no path checks it.",
+   "check": {
+    "role": "pre-filter",
+    "of": [
+     "metered",
+     "route",
+     "quantity"
+    ],
+    "note": "each of the three re-types its formulas; quantity re-elaborates the W6 statement and binds its meaning ids. The `Q` and `core` a check answer gives Python are counted as translations in the report's part 2 (iii), not here."
+   },
+   "model": {
+    "role": "pre-filter",
+    "of": [
+     "metered"
+    ],
+    "note": "since kb-validators: metered applies the norms profile check itself (VE.Route.MeteredRun.profiled, the model mode's Plain.profileOkOn) and runWith_sound states it (ProfileAdmits)."
+   },
+   "environment": {
+    "role": "translator",
+    "of": [],
+    "note": "not a pre-filter: Python stores its canonical `acts` in place of the authored act texts and sends them in every later case (ve/backends/validation.py:85-105, ve/environment.py:225-226); counted under the keys until the architect seat rules on part 2 (ii)."
+   }
   }
  },
  "paths": [
@@ -246,14 +270,26 @@
     "VE.SoftNorms.Run.runCase",
     "VE.SoftNorms.Run.runAdmission",
     "VE.SoftNorms.Run.prepare",
-    "VE.SoftNorms.Run.runSelectedP"
+    "VE.SoftNorms.Run.runSelectedP",
+    "VE.Compose.SlotWire.replaySlotConflict",
+    "VE.Compose.SlotWire.replaySlotWitness",
+    "VE.Compose.SlotWire.replaySlotEntailment"
    ],
    "theorems": [
     "VE.SoftNorms.Run.soft_wire_acceptance",
     "VE.SoftNorms.Run.runAdmission_sound",
     "VE.SoftNorms.Run.soft_wire_elaborate",
     "VE.SoftNorms.Run.soft_wire_selected",
-    "VE.SoftNorms.Run.soft_wire_selected_prepared"
+    "VE.SoftNorms.Run.soft_wire_selected_prepared",
+    "VE.SoftNorms.Run.slot_wire_certificate",
+    "VE.SoftNorms.Run.slot_wire_conflict",
+    "VE.Compose.SlotWire.slot_wire_acceptance",
+    "VE.Compose.SlotWire.slot_wire_conflict_sound",
+    "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
+    "VE.Compose.SlotWire.slot_wire_empty",
+    "VE.Compose.SlotWire.slot_wire_conflict_facts",
+    "VE.Compose.SlotWire.slot_wire_entailment_facts",
+    "VE.Compose.SlotWire.slot_wire_witness_facts"
    ],
    "delegates": [
     "VE.Norms.Run.runCaseReported"
@@ -279,7 +315,7 @@
       "soft-certificate",
       "soft-conflict"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), and soft_wire_selected covers soft-selected (its whole answer; kb-10a), which is therefore not listed here"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here"
     }
    ],
    "kinds": {
@@ -291,6 +327,12 @@
     },
     "soft-selected": {
      "theorem": "VE.SoftNorms.Run.soft_wire_selected"
+    },
+    "slot-certificate": {
+     "theorem": "VE.SoftNorms.Run.slot_wire_certificate"
+    },
+    "slot-conflict": {
+     "theorem": "VE.SoftNorms.Run.slot_wire_conflict"
     }
    }
   },
@@ -475,7 +517,9 @@
     "VE.Risk.Run.risk_wire_audit_sound",
     "VE.Risk.Run.risk_wire_conflict_sound",
     "VE.Risk.Run.risk_wire_followable_sound",
-    "VE.Risk.Run.risk_wire_scenario_sound"
+    "VE.Risk.Run.risk_wire_scenario_sound",
+    "VE.Risk.Run.risk_elaborate_wire_sound",
+    "VE.Risk.Run.risk_decision_wire_sound"
    ],
    "delegates": [
     "VE.SoftNorms.Run.runCaseReported",

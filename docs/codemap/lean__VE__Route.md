@@ -13,6 +13,7 @@
 - `lean/VE/Route/Inert.lean` — Nonfactivity (purpose-explanation spec 3, plan D8a): the W2 kinds whose content no route reads as a premise or a rule.
 - `lean/VE/Route/Layer.lean` — The route contract of PLAN-EXPAND2 section 3.4: typed, environment-extending layers over an abstract semantics.
 - `lean/VE/Route/Metered.lean` — A document-level meter.
+- `lean/VE/Route/MeteredProfileExamples.lean` — Examples of the norms profile check on the `metered` path (kb-validators, decision D13), on the environment of tests/test_metered_profile.py: one obligation `r…
 - `lean/VE/Route/MeteredProofs.lean` — A completed metered document has the value of the total evaluator, hence by each family's `eval_iff_denote` it has its finite-model denotation.
 - `lean/VE/Route/MeteredRun.lean` — The batch-15a Lean entry point.
 - `lean/VE/Route/MeteredTrace.lean` — Explanations are display data.

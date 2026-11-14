@@ -2905,13 +2905,12 @@
   },
   {
    "blockers": [
-    "AP"
+    "JT"
    ],
    "bytes": 227,
    "id": "p16-u291",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "status": "OPEN"
   },
   {
    "blockers": [

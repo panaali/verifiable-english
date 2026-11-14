@@ -45,9 +45,10 @@ What the table shows:
 1. The five keys call 9 of the service's 43 modes. None calls the `document`, `readingsRoute` or
    `discourse` mode, whose code is 35,142, 20,356 and 35,782 lines: the largest wrappers carry no keyed
    answer.
-2. All Lean code under the keys' answers is **16,206 distinct lines** (spec and wrap of the ten paths
+2. All Lean code under the keys' answers is **16,777 distinct lines** (16,769 before kb-10e listed `soft_wire_selected_prepared`; 16,742 before kb-validators made `metered` check and state the norms profile; 16,593 before kb-risk's runner theorems added
+   their statements to the risk path's spec; spec and wrap of the ten paths
    above, the three validators counted in full; the registry's `keys`, measured by `tools/kernel_closure.py`
-   as `keyed_lines`). The proved kernel is 9,560 of them (9,504 before kb-10a listed `soft_wire_selected`, 9,552 before kb-10e listed `soft_wire_selected_prepared`). (The first measurement, 17,355 and 9,565, also
+   as `keyed_lines`). The proved kernel is 10,023 of them (9,504 before kb-10a listed `soft_wire_selected`, 9,552 before kb-3 listed the slot kinds' theorems, 9,947 before kb-validators made `metered` check and state the norms profile, 10,015 before kb-10e listed `soft_wire_selected_prepared`). (The first measurement, 17,355 and 9,565, also
    counted the `checkCertificate` path, which no key calls and which is now a candidate; the second,
    16,831 and 8,956, also read the route's `bundle` and `admission` runners, which no theorem covers,
    through `runCase_dispatch`.)

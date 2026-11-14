@@ -14275,6 +14275,167 @@ theorem VE.Compose.SlotChain.restrict
     self.R.restrict S = VE.Norms.forget (List.take k (VE.Norms.layerNames (VE.SoftNorms.soften X).T)) S
   -- uses VE.Compose.SlotChain.R@VE.Compose.Slot VE.Compose.SlotChain@VE.Compose.Slot VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.forget@VE.Norms.Basic VE.Norms.layerNames@VE.Norms.Tree VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.fol@VE.Route.Checker VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4177888397
+theorem VE.Compose.SlotWire.SlotWitnessData.background
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} (w : VE.Compose.SlotWire.SlotWitnessData src P),
+    VE.Compose.backgroundValidP src.D P w.M = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Compose.backgroundValidP@VE.Compose.Slot VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 3307107253
+theorem VE.Compose.SlotWire.SlotWitnessData.facts
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} (self : VE.Compose.SlotWire.SlotWitnessData src P),
+    (P.all fun a => VE.Formula.eval self.sw.M [] a) = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.sw@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire
+  -- expr 1883000951
+theorem VE.Compose.SlotWire.decodeFacts_empty
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) {j : Lean.Json},
+    VE.Compose.SlotWire.NoFacts j → VE.Compose.SlotWire.decodeFacts src j = Except.ok ([], [])
+  -- uses VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 1672009255
+theorem VE.Compose.SlotWire.decodeFacts_ok
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {j : Lean.Json} {P : List VE.Formula} {items : List Lean.Json},
+    VE.Compose.SlotWire.decodeFacts src j = Except.ok (P, items) →
+      VE.Compose.SlotWellFormed src.D P ∧
+        P.length = items.length ∧
+          (∀ (a : VE.Formula), a ∈ P → ∀ (p : String), p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames src.D) ∧
+            ((∃ e, j.getObjVal? "facts" = Except.error e) ∧ items = [] ∨
+              j.getObjVal? "facts" = Except.ok (Lean.Json.arr items.toArray))
+  -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 890957422
+theorem VE.Compose.SlotWire.decodeFormulas_check
+  ∀ (E : VE.Environment) (j : Lean.Json) (fs : List VE.Formula),
+    VE.Route.Wire.decodeFormulas E j = Except.ok fs → ∀ (a : VE.Formula), a ∈ fs → VE.Formula.check E [] a = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
+  -- expr 2027362431
+theorem VE.Compose.SlotWire.decodeSlotPackage_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (environment norms packages : Lean.Json),
+    VE.Compose.SlotWire.decodeSlotPackage src environment norms packages [] =
+      VE.SoftNorms.Wire.decodeSoftPackage src environment norms packages
+  -- uses VE.Compose.SlotWire.decodeSlotPackage@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftPackage@VE.SoftNorms.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 3633377333
+theorem VE.Compose.SlotWire.factsModel_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (j : Lean.Json), VE.Compose.SlotWire.factsModel src [] j = Except.ok ()
+  -- uses VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 440558740
+theorem VE.Compose.SlotWire.factsModel_sat
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} {j : Lean.Json},
+    VE.Compose.SlotWire.factsModel src P j = Except.ok () → P ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP src.D P B
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 1113186561
+theorem VE.Compose.SlotWire.map_bind_congr
+  ∀ {ε α β γ δ : Type} (x : Except ε α) {f : α → Except ε β} {g : α → Except ε γ} {p : β → δ} {q : γ → δ},
+    (∀ (a : α), Except.map p (f a) = Except.map q (g a)) → Except.map p (x >>= f) = Except.map q (x >>= g)
+  -- uses
+  -- expr 3219376943
+theorem VE.Compose.SlotWire.ok_bind
+  ∀ {ε α β : Type} (a : α) (f : α → Except ε β), Except.ok a >>= f = f a
+  -- uses
+  -- expr 3193208867
+theorem VE.Compose.SlotWire.replaySlotConflict_parts
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
+        VE.Compose.SlotWire.decodeFacts res.src j = Except.ok (res.facts, res.items) ∧
+          VE.Compose.SlotWire.factsModel res.src res.facts j = Except.ok ()
+  -- uses VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3035266465
+theorem VE.Compose.SlotWire.replaySlotEntailment_parts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+        VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items) ∧
+          VE.Compose.SlotWire.factsModel r.src r.facts j = Except.ok ()
+  -- uses VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3396925625
+theorem VE.Compose.SlotWire.replaySlotWitness_parts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+        VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items)
+  -- uses VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 19414657
+theorem VE.Compose.SlotWire.slotWitnessFrom_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (w : Lean.Json),
+    Except.map (fun d => (d.M, d.target, d.tuple, d.conflict)) (VE.Compose.SlotWire.slotWitnessFrom src [] w) =
+      Except.map (fun d => (d.M, d.target, d.tuple, d.conflict)) (VE.SoftNorms.Wire.softWitnessFrom src w)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.target@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.tuple@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Compose.SlotWire.slotWitnessFrom@VE.Compose.SlotWire VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.target@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.tuple@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.softWitnessFrom@VE.SoftNorms.Wire
+  -- expr 1710999480
+theorem VE.Compose.SlotWire.slot_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      r.valid = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+          (∀ (S : VE.Structure),
+              S.Admissible (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) (VE.Norms.size (VE.SoftNorms.soften r.src.D))) →
+                VE.SoftNorms.holdsSoft r.src.D S →
+                  VE.Norms.definitionsHold (VE.SoftNorms.soften r.src.D) S →
+                    VE.Norms.profileHold (VE.SoftNorms.soften r.src.D) S →
+                      VE.Norms.Sat S (VE.Norms.backgroundBase (VE.SoftNorms.soften r.src.D)) →
+                        VE.Norms.Sat S (VE.SoftNorms.softPremises r.src.D) →
+                          VE.Norms.Sat S r.facts → VE.Norms.Sat S r.premises → VE.Formula.denote S [] r.conclusion) ∧
+            (VE.Compose.ConflictFreeP r.src.D r.facts →
+              (∀ (a : VE.Formula),
+                  a ∈ r.premises → VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) 0) [] a) →
+                VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) 0) [] r.conclusion →
+                  ∀ (B : VE.Structure),
+                    VE.Compose.BaseAdmissibleP r.src.D r.facts B →
+                      VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWire.SlotEntailmentReplay.conclusion@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.premises@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.valid@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 170064832
+theorem VE.Compose.SlotWire.slot_wire_conflict_facts
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      VE.Compose.SlotWire.decodeFacts res.src j = Except.ok (res.facts, res.items) ∧
+        (res.facts ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP res.src.D res.facts B)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 3088267190
+theorem VE.Compose.SlotWire.slot_wire_conflict_sound
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      res.conflictFree = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
+          VE.SoftNorms.WellFormedSoft res.src.D = Bool.true ∧
+            VE.Compose.SlotWellFormed res.src.D res.facts ∧ VE.Compose.ConflictFreeP res.src.D res.facts
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.SlotWire.SlotConflictReplay.conflictFree@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3015774107
+theorem VE.Compose.SlotWire.slot_wire_conflict_witness_sound
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      r.w.conflict = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+          VE.Compose.BaseAdmissibleP r.src.D r.facts r.w.M.asStructure ∧
+            ¬VE.Norms.ConflictFree (VE.SoftNorms.soften r.src.D) r.w.M.asStructure ∧
+              ¬VE.Compose.ConflictFreeP r.src.D r.facts ∧
+                (¬VE.SoftNorms.NoStrictCollision r.src.D r.w.M.asStructure ∨
+                  ¬VE.SoftNorms.NoHardPairConflict r.src.D r.w.M.asStructure)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.w@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.FiniteModel.asStructure@VE.Finite VE.Norms.ConflictFree@VE.Norms.Conflict VE.SoftNorms.NoHardPairConflict@VE.SoftNorms.Coherence VE.SoftNorms.NoStrictCollision@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 2807643998
+theorem VE.Compose.SlotWire.slot_wire_empty
+  ∀ (j : Lean.Json),
+    VE.Compose.SlotWire.NoFacts j →
+      Except.map (fun r => (r.src, r.facts, r.certs, r.conflictFree)) (VE.Compose.SlotWire.replaySlotConflict j) =
+          Except.map (fun r => (r.src, [], r.certs, r.conflictFree)) (VE.SoftNorms.Wire.replaySoftConflict j) ∧
+        Except.map (fun r => (r.src, r.facts, r.w.M, r.w.target, r.w.tuple, r.w.conflict))
+              (VE.Compose.SlotWire.replaySlotWitness j) =
+            Except.map (fun r => (r.fst, [], r.snd.M, r.snd.target, r.snd.tuple, r.snd.conflict))
+              (VE.SoftNorms.Wire.replaySoftWitness j) ∧
+          Except.map (fun r => (r.src, r.facts, r.premises, r.conclusion, r.cert, r.valid))
+              (VE.Compose.SlotWire.replaySlotEntailment j) =
+            Except.map (fun r => (r.src, [], r.premises, r.conclusion, r.cert, r.valid))
+              (VE.SoftNorms.Wire.replaySoftEntailment j)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.certs@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.conflictFree@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.cert@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.conclusion@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.premises@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.valid@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.target@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.tuple@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.w@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftConflictReplay.certs@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.cert@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.conclusion@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.premises@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.valid@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.target@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.tuple@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftEntailment@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 1300970991
+theorem VE.Compose.SlotWire.slot_wire_entailment_facts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items) ∧
+        (r.facts ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP r.src.D r.facts B)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 3114353547
+theorem VE.Compose.SlotWire.slot_wire_witness_facts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items)
+  -- uses VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Formula@VE.Syntax
+  -- expr 2395042325
 theorem VE.Compose.adjoin_admissible
   ∀ (E : VE.Environment) (B : VE.Structure), (VE.Compose.adjoinOne B).Admissible E ↔ B.Admissible E
   -- uses VE.Compose.adjoinOne@VE.Compose.Adjoin VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
@@ -23194,6 +23355,160 @@ theorem VE.Events.wf_transfer
               VE.Formula.WellFormed E' Γ a → (VE.Formula.denote T (List.map ι ρ) a ↔ VE.Formula.denote S ρ a)
   -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 676985057
+theorem VE.Experimental.CoreDocument.allChoices_mem
+  ∀ (L : List (String × Nat)) (c : VE.Experimental.CoreDocument.Choice),
+    c ∈ VE.Experimental.CoreDocument.allChoices L →
+      ∀ (p : String × Nat), p ∈ c → ∃ q, q ∈ L ∧ q.fst = p.fst ∧ p.snd < q.snd
+  -- uses VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.allChoices@VE.Experimental.CoreDocument
+  -- expr 984303624
+theorem VE.Experimental.CoreDocument.allChoices_nodup
+  ∀ (L : List (String × Nat)), (VE.Experimental.CoreDocument.allChoices L).Nodup
+  -- uses VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.allChoices@VE.Experimental.CoreDocument
+  -- expr 2523417240
+theorem VE.Experimental.CoreDocument.choicesOf_ok
+  ∀ {couplings : List VE.Experimental.CoreDocument.Coupling} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {cs : List VE.Experimental.CoreDocument.Choice},
+    VE.Experimental.CoreDocument.choicesOf couplings sets = Except.ok cs →
+      cs = VE.Experimental.CoreDocument.compatibleChoices couplings sets ∧
+        cs.length ≤ VE.Experimental.CoreDocument.maxChoices
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.choicesOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument
+  -- expr 2136123958
+theorem VE.Experimental.CoreDocument.finish_ok
+  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {docs cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.finish E unitIds sets docs = Except.ok cs →
+      cs = docs ∧
+        ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
+          d ∈ docs →
+            ∀ (st : VE.Experimental.CoreDocument.Statement),
+              st ∈ d.snd.statements → VE.Experimental.CoreDocument.statementFault E unitIds sets st = Option.none
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.finish@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Service.Document.Env@VE.Service.Document
+  -- expr 4282679310
+theorem VE.Experimental.CoreDocument.lower_choices
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      List.map Prod.fst cs = VE.Experimental.CoreDocument.compatibleChoices couplings sets ∧
+        cs.length = (VE.Experimental.CoreDocument.compatibleChoices couplings sets).length ∧
+          cs.length ≤ 64 ∧ (List.map Prod.fst cs).Nodup
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 2393331415
+theorem VE.Experimental.CoreDocument.lower_names_bound
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
+        d ∈ cs →
+          (∀ (φ : VE.Formula),
+              φ ∈ d.snd.premises →
+                ∀ (p : String), p ∈ VE.Norms.preds φ → (E.rv.environment.predicates p).isSome = Bool.true) ∧
+            ∀ (st : VE.Experimental.CoreDocument.Statement),
+              st ∈ d.snd.statements →
+                ∀ (j : VE.Judgments.Judgment),
+                  st.body = VE.Experimental.CoreDocument.Body.judgment j →
+                    (E.rv.environment.predicates j.name).isSome = Bool.true
+  -- uses VE.Environment.predicates@VE.Syntax VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.judgment@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.premises@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Norms.preds@VE.Norms.Tree VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 1153100332
+theorem VE.Experimental.CoreDocument.lower_ok
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      (∃ J, VE.Experimental.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J) ∧
+        (∃ rd,
+            List.mapM (VE.Experimental.CoreDocument.readingsOf E (VE.Experimental.CoreDocument.wire E.lower)) sets =
+              Except.ok rd) ∧
+          (∃ plans,
+              cs =
+                List.map
+                  (fun c =>
+                    (c,
+                      VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower)
+                        (List.flatMap (VE.Experimental.CoreDocument.UnitPlan.statements c) plans)))
+                  (VE.Experimental.CoreDocument.compatibleChoices couplings sets)) ∧
+            (VE.Experimental.CoreDocument.compatibleChoices couplings sets).length ≤
+                VE.Experimental.CoreDocument.maxChoices ∧
+              ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
+                d ∈ cs →
+                  ∀ (st : VE.Experimental.CoreDocument.Statement),
+                    st ∈ d.snd.statements →
+                      VE.Experimental.CoreDocument.statementFault E (List.map (fun x => x.id) units) sets st = Option.none
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.UnitPlan@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.compatibleChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.maxChoices@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingsOf@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 36954666
+theorem VE.Experimental.CoreDocument.lower_origin_units
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
+        d ∈ cs →
+          (∀ (st : VE.Experimental.CoreDocument.Statement),
+              st ∈ d.snd.statements →
+                st.origin.unit ∈ List.map (fun x => x.id) units ∧
+                  ∀ (r : String) (i : Nat),
+                    st.origin.reading = Option.some (r, i) →
+                      ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = st.origin.unit ∧ i < x.fst.readings.length) ∧
+            ∀ (p : String × Nat),
+              p ∈ d.fst →
+                ∃ x,
+                  x ∈ sets ∧
+                    x.fst.id = p.fst ∧ x.fst.unit ∈ List.map (fun x => x.id) units ∧ p.snd < x.fst.readings.length
+  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.reading@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.unit@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.origin@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 1049460352
+theorem VE.Experimental.CoreDocument.lower_parts
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (d : VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc),
+        d ∈ cs →
+          d.snd = VE.Experimental.CoreDocument.CoreDoc.of (VE.Experimental.CoreDocument.wire E.lower) d.snd.statements
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.of@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc.statements@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 3965885905
+theorem VE.Experimental.CoreDocument.lower_readings_distinct
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling}
+    {cs : List (VE.Experimental.CoreDocument.Choice × VE.Experimental.CoreDocument.CoreDoc)},
+    VE.Experimental.CoreDocument.lower E senses records views units sets couplings = Except.ok cs →
+      ∀ (x : VE.Experimental.CoreDocument.ActiveSet),
+        x ∈ sets →
+          ∃ opts,
+            VE.Experimental.CoreDocument.readingOptions E (VE.Experimental.CoreDocument.wire E.lower) x = Except.ok opts ∧
+              (List.map (fun x => Option.map Prod.snd x) opts).Nodup
+  -- uses VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Choice@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.CoreDoc@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Options@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.lower@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.readingOptions@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.wire@VE.Experimental.CoreDocument VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 975387563
+theorem VE.Experimental.CoreDocument.preliminaries_sets
+  ∀ {E : VE.Service.Document.Env} {senses : Bool} {records : List VE.Judgments.Rec} {views : List VE.Judgments.UnitView}
+    {units : List VE.Service.Document.SourceUnit} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {couplings : List VE.Experimental.CoreDocument.Coupling} {J : List VE.Judgments.Judgment},
+    VE.Experimental.CoreDocument.preliminaries E senses records views units sets couplings = Except.ok J →
+      ∀ (x : VE.Experimental.CoreDocument.ActiveSet), x ∈ sets → x.fst.unit ∈ List.map (fun x => x.id) units
+  -- uses VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Coupling@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.preliminaries@VE.Experimental.CoreDocument VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 1406617114
+theorem VE.Experimental.CoreDocument.statementFault_none
+  ∀ {E : VE.Service.Document.Env} {unitIds : List String} {sets : List VE.Experimental.CoreDocument.ActiveSet}
+    {s : VE.Experimental.CoreDocument.Statement},
+    VE.Experimental.CoreDocument.statementFault E unitIds sets s = Option.none →
+      s.origin.unit ∈ unitIds ∧
+        (∀ (r : String) (i : Nat),
+            s.origin.reading = Option.some (r, i) →
+              ∃ x, x ∈ sets ∧ x.fst.id = r ∧ x.fst.unit = s.origin.unit ∧ i < x.fst.readings.length) ∧
+          (∀ (φ : VE.Formula),
+              s.body = VE.Experimental.CoreDocument.Body.premise φ →
+                ∀ (p : String), p ∈ VE.Norms.preds φ → VE.Experimental.CoreDocument.declared E p = Bool.true) ∧
+            ∀ (j : VE.Judgments.Judgment),
+              s.body = VE.Experimental.CoreDocument.Body.judgment j →
+                VE.Experimental.CoreDocument.declared E j.name = Bool.true
+  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.readings@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Experimental.CoreDocument.ActiveSet@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.judgment@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body.premise@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.reading@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Origin.unit@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.body@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement.origin@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.Statement@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.declared@VE.Experimental.CoreDocument VE.Experimental.CoreDocument.statementFault@VE.Experimental.CoreDocument VE.Formula@VE.Syntax VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Norms.preds@VE.Norms.Tree VE.Service.Document.Env@VE.Service.Document
+  -- expr 754036471
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
@@ -29900,6 +30215,12 @@ theorem VE.Norms.InFragmentIn_eq
   ∀ (D : VE.Norms.Doc), VE.Norms.InFragmentIn D (VE.Norms.layersOf D) = VE.Norms.InFragment D
   -- uses VE.Norms.Doc@VE.Norms.Tree VE.Norms.InFragment@VE.Norms.SmallModel VE.Norms.InFragmentIn@VE.Norms.LayersOnce VE.Norms.layersOf@VE.Norms.LayersOnce
   -- expr 506851688
+theorem VE.Norms.Plain.profileOkOn_holds
+  ∀ {γ : Type} [inst : DecidableEq γ] (T : VE.Norms.Tree) (relations : String → List (List γ)),
+    (VE.Norms.Plain.profileOkOn T fun name => Pure.pure (relations name)) = Except.ok () →
+      VE.Norms.Plain.ProfileHolds T relations
+  -- uses VE.Norms.Plain.ProfileHolds@VE.Norms.Plain VE.Norms.Plain.profileOkOn@VE.Norms.Plain VE.Norms.Tree@VE.Norms.Tree
+  -- expr 623466803
 theorem VE.Norms.Replay.WitnessData.background
   ∀ {src : VE.Norms.Wire.Source} (self : VE.Norms.Replay.WitnessData src),
     VE.Norms.backgroundValid src.D self.M = Bool.true
@@ -55431,6 +55752,110 @@ theorem VE.Risk.Run.bind_unit
     x >>= f = Except.ok b → x = Except.ok () ∧ f () = Except.ok b
   -- uses
   -- expr 2617081726
+theorem VE.Risk.Run.riskPremiseRows_class
+  ∀ (R : VE.Risk.RiskDoc),
+    List.filter (fun x => x.fst == "risk:class") ((VE.Risk.riskPremiseLabels R).zip (VE.Risk.riskPremises R)) =
+      List.map (fun p => ("risk:class", VE.Formula.binary VE.Risk.classPred (VE.Term.const p.fst) (VE.Term.const p.snd)))
+        R.risk.harmClasses
+  -- uses VE.Formula.binary@VE.Syntax VE.Formula@VE.Syntax VE.Risk.RiskDoc.risk@VE.Risk.Decl VE.Risk.RiskDoc@VE.Risk.Decl VE.Risk.RiskEnv.harmClasses@VE.Risk.Decl VE.Risk.classPred@VE.Risk.Decl VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background VE.Term.const@VE.Syntax
+  -- expr 3557527684
+theorem VE.Risk.Run.riskPremiseRows_order
+  ∀ (R : VE.Risk.RiskDoc),
+    List.filter (fun x => x.fst == "risk:order") ((VE.Risk.riskPremiseLabels R).zip (VE.Risk.riskPremises R)) =
+      List.map (fun p => ("risk:order", VE.Risk.orderLiteral R p)) (VE.Risk.classPairs R)
+  -- uses VE.Formula@VE.Syntax VE.Risk.RiskDoc@VE.Risk.Decl VE.Risk.classPairs@VE.Risk.Decl VE.Risk.orderLiteral@VE.Risk.Background VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background
+  -- expr 1184824535
+theorem VE.Risk.Run.risk_decision_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "risk-decision" →
+        VE.Risk.Run.usesRiskPath j = Bool.true →
+          ∃ id src entry supplied d,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              VE.Risk.Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = Except.ok src ∧
+                VE.Risk.Wire.decodeEntry (j.getObjValD "decision") = Except.ok entry ∧
+                  VE.Risk.Wire.decodeSupplied (j.getObjValD "entries") = Except.ok supplied ∧
+                    VE.Risk.admitDecision src.R entry supplied = Except.ok d ∧
+                      VE.Risk.WellFormedRisk src.R = Bool.true ∧
+                        VE.Risk.validateDecision src.R d = Except.ok () ∧
+                          VE.Risk.marginLimit src.R d = Except.ok () ∧
+                            (match
+                                VE.Alternatives.scenarioConflict (VE.Risk.toAlt src.R)
+                                  (VE.Risk.decisionModel src.R d) with
+                              | Option.some (t, vs) =>
+                                ∃ text,
+                                  answer =
+                                    VE.Risk.Run.ok id
+                                      [("environment_id", Lean.Json.str src.R.policy.fst),
+                                        ("document_hash", Lean.Json.str src.R.policy.snd),
+                                        ("decision_record_id", Lean.Json.str (VE.Risk.Run.decisionRecordId entry)),
+                                        ("verdict", Lean.Json.str "CONFLICT"), ("target", Lean.Json.str t.fst),
+                                        ("tuple", Lean.ToJson.toJson (List.map (fun x => x.snd) vs)),
+                                        ("text", Lean.Json.str text)]
+                              | Option.none =>
+                                ∃ witness worst margins invalid conflict ruledOut points defaulted dilemmas legend text,
+                                  (∀ (c : String × String) (kv : String × Lean.Json),
+                                      kv ∈ witness c → kv.fst = "witness") ∧
+                                    answer =
+                                      VE.Risk.Run.ok id
+                                        [("environment_id", Lean.Json.str src.R.policy.fst),
+                                          ("document_hash", Lean.Json.str src.R.policy.snd), ⋯]) ∧
+                              ∀ (a : String),
+                                a ∈ VE.Risk.names d →
+                                  ∀ (hm : String),
+                                    hm ∈ VE.Risk.harms src.R →
+                                      ((a, hm) ∈ (VE.Risk.regenerate src.R d).might ↔
+                                          ∃ v H, VE.Risk.Completed src.R d v H ∧ H a hm = Bool.true) ∧
+                                        ((a, hm) ∈ (VE.Risk.regenerate src.R d).leads ↔
+                                          ∀ (v : VE.Risk.Valuation) (H : String → String → Bool),
+                                            VE.Risk.Completed src.R d v H → H a hm = Bool.true)
+  -- uses VE.Alternatives.scenarioConflict@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge VE.Bridge.stringField@VE.Bridge VE.Formula@VE.Syntax VE.Risk.Cited.id@VE.Risk.Record VE.Risk.Cited@VE.Risk.Record VE.Risk.Completed@VE.Risk.Record VE.Risk.Cond.top@VE.Risk.Cond VE.Risk.Cond@VE.Risk.Cond VE.Risk.Decision.cited@VE.Risk.Record VE.Risk.Decision@VE.Risk.Record VE.Risk.Entry@VE.Risk.Record VE.Risk.Log@VE.Risk.Record VE.Risk.RiskDoc.policy@VE.Risk.Decl VE.Risk.Run.decisionRecordId@VE.Risk.Run VE.Risk.Run.firingRules@VE.Risk.Run VE.Risk.Run.ok@VE.Risk.Run VE.Risk.Run.risk_decision_wire_sound.match_1@VE.Risk.WireSound VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run VE.Risk.Status.clear@VE.Risk.Record VE.Risk.Status.permitted@VE.Risk.Record VE.Risk.Status.required@VE.Risk.Record VE.Risk.Status@VE.Risk.Record VE.Risk.Tables.leads@VE.Risk.Record VE.Risk.Tables.might@VE.Risk.Record VE.Risk.Valuation@VE.Risk.Cond VE.Risk.WellFormedRisk@VE.Risk.Decl VE.Risk.Wire.RiskSource.R@VE.Risk.Wire VE.Risk.Wire.RiskSource@VE.Risk.Wire VE.Risk.Wire.decodeEntry@VE.Risk.Wire VE.Risk.Wire.decodeRiskSource@VE.Risk.Wire VE.Risk.Wire.decodeSupplied@VE.Risk.Wire VE.Risk.addressed@VE.Risk.Record VE.Risk.admitDecision@VE.Risk.Record VE.Risk.cellsOf@VE.Risk.Record VE.Risk.completion@VE.Risk.Record VE.Risk.decisionModel@VE.Risk.Record VE.Risk.harms@VE.Risk.Decl VE.Risk.instDecidableEqCond@VE.Risk.Cond VE.Risk.marginLimit@VE.Risk.Report VE.Risk.names@VE.Risk.Record VE.Risk.regenerate@VE.Risk.Record VE.Risk.statuses@VE.Risk.Record VE.Risk.toAlt@VE.Risk.Decl VE.Risk.validateDecision@VE.Risk.Record VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 3279877419
+theorem VE.Risk.Run.risk_elaborate_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "risk-elaborate" →
+        VE.Risk.Run.usesRiskPath j = Bool.true →
+          ∃ id src,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              VE.Risk.Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = Except.ok src ∧
+                VE.Risk.WellFormedRisk src.R = Bool.true ∧
+                  (∃ eRisk legend inlined alternatives base followable unmapped norms coverage,
+                      List.map (fun x => x.fst) norms =
+                          ["order", "background", "premises", "conflict_targets", "fragment"] ∧
+                        (coverage = [] ∨ ∃ c, coverage = [("coverage", c)]) ∧
+                          answer =
+                            VE.Risk.Run.ok id
+                              ([("environment_id", Lean.Json.str src.R.policy.fst),
+                                    ("document_hash", Lean.Json.str src.R.policy.snd), ("e_risk", eRisk),
+                                    ("legend", legend),
+                                    ("risk_premises",
+                                      Lean.Json.arr
+                                        (List.map
+                                            (fun p =>
+                                              Lean.Json.mkObj
+                                                [("label", Lean.Json.str p.fst), ("ast", VE.Risk.Wire.enc p.snd)])
+                                            ((VE.Risk.riskPremiseLabels src.R).zip
+                                              (VE.Risk.riskPremises src.R))).toArray),
+                                    ("unranked_severities",
+                                      Lean.ToJson.toJson
+                                        (List.map (fun p => [p.fst, p.snd]) (VE.Risk.Wire.unrankedSeverities src.R))),
+                                    ("inlined", inlined), ("alternatives", alternatives), ("base_premises", base),
+                                    ("followable", followable), ("unmapped_obligations", unmapped)] ++
+                                  norms ++
+                                coverage)) ∧
+                    List.filter (fun x => x.fst == "risk:class")
+                          ((VE.Risk.riskPremiseLabels src.R).zip (VE.Risk.riskPremises src.R)) =
+                        List.map
+                          (fun p =>
+                            ("risk:class",
+                              VE.Formula.binary VE.Risk.classPred (VE.Term.const p.fst) (VE.Term.const p.snd)))
+                          src.R.risk.harmClasses ∧
+                      List.filter (fun x => x.fst == "risk:order")
+                          ((VE.Risk.riskPremiseLabels src.R).zip (VE.Risk.riskPremises src.R)) =
+                        List.map (fun p => ("risk:order", VE.Risk.orderLiteral src.R p)) (VE.Risk.classPairs src.R)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Formula.binary@VE.Syntax VE.Formula@VE.Syntax VE.Risk.RiskDoc.policy@VE.Risk.Decl VE.Risk.RiskDoc.risk@VE.Risk.Decl VE.Risk.RiskEnv.harmClasses@VE.Risk.Decl VE.Risk.Run.ok@VE.Risk.Run VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run VE.Risk.WellFormedRisk@VE.Risk.Decl VE.Risk.Wire.RiskSource.R@VE.Risk.Wire VE.Risk.Wire.RiskSource@VE.Risk.Wire VE.Risk.Wire.decodeRiskSource@VE.Risk.Wire VE.Risk.Wire.enc@VE.Risk.Wire VE.Risk.Wire.unrankedSeverities@VE.Risk.Wire VE.Risk.classPairs@VE.Risk.Decl VE.Risk.classPred@VE.Risk.Decl VE.Risk.orderLiteral@VE.Risk.Background VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background VE.Route.Run.caseKind@VE.Route.Run VE.Term.const@VE.Syntax
+  -- expr 158598987
 theorem VE.Risk.Run.risk_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.Risk.Run.runCase j = Except.ok answer →
@@ -55504,6 +55929,22 @@ theorem VE.Risk.Run.runAdmission_sound
       VE.Risk.Run.RiskAdmissionAnswer id environment document answer
   -- uses VE.Risk.Run.RiskAdmissionAnswer@VE.Risk.Run VE.Risk.Run.runAdmission@VE.Risk.Run
   -- expr 3373695771
+theorem VE.Risk.Run.runCaseReported_ok
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.usesRiskPath j = Bool.true →
+      VE.Risk.Run.runCase j = Except.ok answer → VE.Risk.Run.runCaseReported j = answer
+  -- uses VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run
+  -- expr 1887595080
+theorem VE.Risk.Run.zip_const_filter_ne
+  ∀ {β : Type} (l p : String) (xs : List β),
+    (l == p) = Bool.false → List.filter (fun x => x.fst == p) ((List.map (fun x => l) xs).zip xs) = []
+  -- uses
+  -- expr 1137696076
+theorem VE.Risk.Run.zip_const_filter_self
+  ∀ {β : Type} (l : String) (xs : List β),
+    List.filter (fun x => x.fst == l) ((List.map (fun x => l) xs).zip xs) = List.map (fun x => (l, x)) xs
+  -- uses
+  -- expr 1143981601
 theorem VE.Risk.SignEq.neg
   ∀ {a b : Int}, VE.Risk.SignEq a b → VE.Risk.SignEq (-a) (-b)
   -- uses VE.Risk.SignEq@VE.Risk.Piecewise
@@ -58336,6 +58777,18 @@ theorem VE.Route.MeteredRun.metered_wire_sound
                         answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCase@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluable@VE.Service.Standalone
   -- expr 1220572776
+theorem VE.Route.MeteredRun.prepare_profile
+  ∀ (environment : Lean.Json),
+    (VE.Route.MeteredRun.prepare environment).profile.get =
+      if VE.Service.Standalone.isLegacy environment = Bool.true then Except.ok Option.none
+      else VE.Service.Standalone.modelEnvironment environment >>= VE.Service.Standalone.profileTree
+  -- uses VE.Norms.Tree@VE.Norms.Tree VE.Route.MeteredRun.Prepared.profile@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone VE.Service.Standalone.modelEnvironment@VE.Service.Standalone VE.Service.Standalone.profileTree@VE.Service.Standalone
+  -- expr 3947439297
+theorem VE.Route.MeteredRun.profiled_admits
+  ∀ {γ : Type} [inst : DecidableEq γ] (p : VE.Route.MeteredRun.Prepared) (relations : String → List (List γ)),
+    VE.Route.MeteredRun.profiled p relations = Except.ok () → VE.Route.MeteredRun.ProfileAdmits p relations
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.profiled@VE.Route.MeteredRun
+  -- expr 1335765099
 theorem VE.Route.MeteredRun.query_evaluate
   ∀ (j : Lean.Json) (id : String) (q : VE.Route.MeteredRun.Query),
     VE.Route.MeteredRun.query j id Bool.false = Except.ok q → q.nonVacuity = Bool.false ∧ q.id = id
@@ -58385,10 +58838,11 @@ theorem VE.Route.MeteredRun.run_closure_sound
               VE.Closure.Bridge.decodeFormulas rv.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Closure.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Bridge.decodeFormulas@VE.Closure.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 4130045629
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Closure.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Bridge.decodeFormulas@VE.Closure.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 343394363
 theorem VE.Route.MeteredRun.run_core_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58400,10 +58854,11 @@ theorem VE.Route.MeteredRun.run_core_sound
               VE.Core.Bridge.decodeFormulas v.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Core.Wire.decodeModel v model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Core.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Core.Bridge.decodeFormulas@VE.Core.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Wire.decodeModel@VE.Core.Wire VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closureNary@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.core@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 1844886722
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Core.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Core.Bridge.decodeFormulas@VE.Core.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Wire.decodeModel@VE.Core.Wire VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closureNary@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.core@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 3706766664
 theorem VE.Route.MeteredRun.run_evaluation_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58423,10 +58878,11 @@ theorem VE.Route.MeteredRun.run_fol_sound
                   Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Formula.eval M [] f
-  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 1757146407
+                    VE.Route.MeteredRun.ProfileAdmits p M.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 1255766847
 theorem VE.Route.MeteredRun.run_order_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58438,11 +58894,12 @@ theorem VE.Route.MeteredRun.run_order_sound
               VE.Order.Wire.decodeFormulas rv.vocabulary.environment q.input = Except.ok fs ∧
                 fs ≠ [] ∧
                   VE.Route.Wire.decodeOrderModel rv model = Except.ok d ∧
-                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
-                      ∀ (b : Bool),
-                        result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
-  -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
-  -- expr 3026904157
+                    VE.Route.MeteredRun.ProfileAdmits p d.toModel.relations ∧
+                      VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                        ∀ (b : Bool),
+                          result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
+  -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 2770110657
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
@@ -65199,6 +65656,10 @@ theorem VE.SoftNorms.Run.mkObj_get_append
       (k, v) ∈ pre → ¬k ∈ List.map (fun x => x.fst) rest → (Lean.Json.mkObj (pre ++ rest)).getObjVal? k = Except.ok v
   -- uses
   -- expr 3129764167
+theorem VE.SoftNorms.Run.needFacts_ok
+  ∀ {j : Lean.Json} {u : Unit}, VE.SoftNorms.Run.needFacts j = Except.ok u → (j.getObjVal? "facts").toBool = Bool.true
+  -- uses VE.SoftNorms.Run.needFacts@VE.SoftNorms.Run
+  -- expr 1558622277
 theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
   ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (answer : Lean.Json),
     answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
@@ -65358,6 +65819,51 @@ theorem VE.SoftNorms.Run.selected_semantics_nonvacuous
                 (VE.SoftNorms.Run.fullOver M rel)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
   -- expr 1736440632
+theorem VE.SoftNorms.Run.slot_wire_certificate
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "slot-certificate" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id r openLabels,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (j.getObjVal? "facts").toBool = Bool.true ∧
+                VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r ∧
+                  VE.SoftNorms.Run.openAfterClassification r.src (j.getObjValD "environment") (j.getObjValD "norms")
+                        (j.getObjValD "pairs") =
+                      Except.ok openLabels ∧
+                    answer = VE.SoftNorms.Run.slotCertificateAnswer id r openLabels
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.openAfterClassification@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.slotCertificateAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
+  -- expr 4268038003
+theorem VE.SoftNorms.Run.slot_wire_conflict
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "slot-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (j.getObjVal? "facts").toBool = Bool.true ∧
+                ((∃ r names,
+                    (j.getObjVal? "witness").toBool = Bool.true ∧
+                      VE.Compose.SlotWire.replaySlotWitness j = Except.ok r ∧
+                        VE.Bridge.strings ((j.getObjValD "witness").getObjValD "tuple") = Except.ok names ∧
+                          answer = VE.SoftNorms.Run.slotWitnessAnswer id r names) ∨
+                  ∃ res openLabels exhibit,
+                    (j.getObjVal? "witness").toBool = Bool.false ∧
+                      VE.Compose.SlotWire.replaySlotConflict j = Except.ok res ∧
+                        VE.SoftNorms.Run.openAfterClassification res.src (j.getObjValD "environment")
+                              (j.getObjValD "norms") (j.getObjValD "pairs") =
+                            Except.ok openLabels ∧
+                          (exhibit = Bool.true →
+                              ∃ M hM,
+                                VE.SoftNorms.Wire.decodeModel res.src
+                                      (Lean.Json.mkObj [("model", j.getObjValD "coherent_model")]) =
+                                    Except.ok ⟨M, hM⟩ ∧
+                                  VE.Compose.backgroundValidP res.src.D res.facts M = Bool.true) ∧
+                            answer =
+                              VE.SoftNorms.Run.slotConflictAnswer id res openLabels
+                                ((j.getObjValD "budget").getNat?.toOption.getD 10000) exhibit)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.stringField@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.openAfterClassification@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.slotConflictAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.slotWitnessAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeModel@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 278227341
 theorem VE.SoftNorms.Run.softLabelled_formulas
   ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften
