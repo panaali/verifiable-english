@@ -108,6 +108,65 @@ def onRelations (r p : List (List String)) : Option String :=
 #guard onRelations [["a"], ["b"]] [["b"], ["a"]] == none
 #guard onRelations [] [] == none
 
+#guard onRelations [["b"], ["a"]] [["a"]] == some "InvalidModel(profile): required relation r exceeds permission p"
+
+-- Two pairs: a tuple beyond its permission in either pair is refused.
+def tree2 : VE.Norms.Tree :=
+  ⟨[⟨"r1", ["s"], false, .obligation, some "{0} x", some "p1"⟩, ⟨"p1", ["s"], false, .permission, some "{0} x", none⟩,
+    ⟨"r2", ["s"], false, .obligation, some "{0} y", some "p2"⟩, ⟨"p2", ["s"], false, .permission, some "{0} y", none⟩],
+   [], []⟩
+
+def onTwo (r1 p1 r2 p2 : List (List String)) : Option String :=
+  match VE.Norms.Plain.profileOkOn tree2 (fun name =>
+      pure (match name with | "r1" => r1 | "p1" => p1 | "r2" => r2 | "p2" => p2 | _ => [])) with
+  | .ok () => none
+  | .error e => some e
+
+#guard onTwo [["a"]] [] [] [] == some "InvalidModel(profile): required relation r1 exceeds permission p1"
+#guard onTwo [] [] [["a"]] [] == some "InvalidModel(profile): required relation r2 exceeds permission p2"
+#guard onTwo [["a"]] [["a"]] [["b"]] [["b"]] == none
+
+-- The tree is read from every predicate, wherever the regulated ones sort.
+def treeOf (predicates : String) : Option (List VE.Norms.Pair) :=
+  match VE.Service.Standalone.profileTree (parsed (r#"{"vocabulary": {"predicates": "# ++ predicates ++ "}}")) with
+  | .ok (some T) => some (VE.Norms.pairs T)
+  | _ => none
+
+def entry (role extra : String) : String :=
+  r#"{"arguments": ["point"], "description": "d", "regulated": {"role": ""# ++ role ++
+    r#"", "default": "deny""# ++ extra ++ "}}"
+
+def plainEntry : String := r#"{"arguments": ["point"], "description": "d"}"#
+
+-- An unregulated predicate first, the pair after it.
+#guard treeOf ("{\"a_upper\": " ++ plainEntry ++ ", \"permitted\": " ++ entry "permission" r#", "act": "{0} be done""# ++
+  ", \"required\": " ++ entry "obligation" r#", "act": "{0} be done", "permission": "permitted""# ++ "}") ==
+  some [⟨"required", "permitted", ["point"]⟩]
+-- One regulated predicate, sorted first or last: a tree with no pair.
+#guard treeOf ("{\"a_lone\": " ++ entry "plain" "" ++ ", \"z_upper\": " ++ plainEntry ++ "}") == some []
+#guard treeOf ("{\"a_upper\": " ++ plainEntry ++ ", \"z_lone\": " ++ entry "plain" "" ++ "}") == some []
+
+-- `ProfileHolds` on finite relations, and `ProfileAdmits` of a prepared environment with a profile.
+instance (T : VE.Norms.Tree) (relations : String → List (List String)) :
+    Decidable (VE.Norms.Plain.ProfileHolds T relations) := by
+  unfold VE.Norms.Plain.ProfileHolds; infer_instance
+
+def good : String → List (List String) := fun name => if name == "r" then [["a"]] else [["a"], ["b"]]
+def bad : String → List (List String) := fun name => if name == "r" then [["a"], ["b"]] else [["a"]]
+
+#guard decide (VE.Norms.Plain.ProfileHolds tree good)
+#guard !decide (VE.Norms.Plain.ProfileHolds tree bad)
+
+def prep (T? : Option VE.Norms.Tree) : VE.Route.MeteredRun.Prepared :=
+  { checked := .error "", layered := Thunk.pure (.error ""), route := Thunk.pure (.error ""),
+    order := Thunk.pure (.error ""), core := Thunk.pure (.error ""), profile := Thunk.pure (.ok T?) }
+
+example : VE.Route.MeteredRun.ProfileAdmits (prep (some tree)) good :=
+  ⟨some tree, rfl, fun T h => by cases h; decide⟩
+example : ¬ VE.Route.MeteredRun.ProfileAdmits (prep (some tree)) bad := fun ⟨T?, h, hall⟩ => by
+  cases h; exact absurd (hall _ rfl) (by decide)
+example : VE.Route.MeteredRun.ProfileAdmits (prep none) bad := ⟨none, rfl, fun T h => by cases h⟩
+
 -- A frozen envelope has no profile, as its `model` mode has no profile check.
 #guard match (VE.Route.MeteredRun.prepare (parsed r#"{"language": "ve.core@0"}"#)).profile.get with
   | .ok none => true
