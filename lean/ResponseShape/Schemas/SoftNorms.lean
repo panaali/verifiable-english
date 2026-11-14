@@ -79,7 +79,8 @@ def kind : Def :=
     ("soft-conflict", kindIs "soft-conflict"),
     ("soft-selected", kindIs "soft-selected"),
     ("slot-certificate", kindIs "slot-certificate"),
-    ("slot-conflict", kindIs "slot-conflict")]
+    ("slot-conflict", kindIs "slot-conflict"),
+    ("slot-admission", kindIs "slot-admission")]
 
 def error : Shape :=
   c
@@ -360,6 +361,14 @@ def slot_packages : Shape :=
     "SoftNorms.Run.slotConflictAnswer (slot-conflict over packages, kb-3): soft-conflict's fields over the slot replay, and the number of facts sent."
     [obj, .required (packagesRequired ++ ["facts"]), closed (packagesFields ++ factsCount), detailBeside]
 
+def slot_admission : Shape :=
+  c
+    "SoftNorms.Run.slotAdmissionAnswer (slot-admission, kb-2a-b): the number of rules and of facts of the core document read back (one rule per norm object sent, one fact per fact sent); no verdict word."
+    [obj, .required ["id", "status", "rules", "facts"], closed ([
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("rules", n [ref "common.json#/$defs/nat", .count "/norms"])] ++ factsCount)]
+
 def selected : Shape :=
   c
     "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt)."
@@ -396,7 +405,8 @@ def «row» : Shape :=
         (ref "#/$defs/kind/soft-conflict", ref "#/$defs/packages"),
         (ref "#/$defs/kind/slot-certificate", ref "#/$defs/slot_certificate"),
         (.allOf [ref "#/$defs/kind/slot-conflict", .required ["witness"]], ref "#/$defs/slot_witness"),
-        (ref "#/$defs/kind/slot-conflict", ref "#/$defs/slot_packages")]]),
+        (ref "#/$defs/kind/slot-conflict", ref "#/$defs/slot_packages"),
+        (ref "#/$defs/kind/slot-admission", ref "#/$defs/slot_admission")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -431,6 +441,7 @@ def file : File where
     ("selected", .schema selected),
     ("slot_certificate", .schema slot_certificate),
     ("slot_witness", .schema slot_witness),
-    ("slot_packages", .schema slot_packages)]
+    ("slot_packages", .schema slot_packages),
+    ("slot_admission", .schema slot_admission)]
 
 end ResponseShape.Schemas.SoftNorms

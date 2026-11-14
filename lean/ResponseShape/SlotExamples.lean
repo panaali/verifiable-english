@@ -81,4 +81,22 @@ def witnesses : List Json := [true, false].flatMap fun slot =>
 #guard !accepts (unknown.setObjVal! "kind" (.str "soft-conflict")) (run unknown)
 #guard !accepts (certificate.setObjVal! "kind" (.str "slot-conflict")) (run certificate)
 
+/-! ## slot-admission (kb-2a-b) -/
+
+def admissions : List Json := [slotCase "slot-admission" (some oneFact) [], slotCase "slot-admission" (some "[]") [],
+  slotCase "slot-admission" (some contradiction) []]
+-- accepted: each answer and each refusal
+#guard admissions.all fun j => (run j).getObjValD "status" == .str "ok" && accepts j (run j)
+#guard [slotCase "slot-admission" none [], slotCase "slot-admission" (some "7") []].all fun j =>
+  (run j).getObjValD "status" == .str "error" && accepts j (run j)
+-- refused: every variant (a member added or dropped, retyped), and `rules` or `facts` not the number sent
+#guard admissions.all fun j => (variants [] 6 (run j)).all (!accepts j ·)
+#guard admissions.all fun j => ["rules", "facts"].all fun k =>
+  let a := run j
+  let n := (a.getObjValD k).getNat?.toOption.getD 0
+  [a.setObjVal! k (toJson (n + 1)), a.setObjVal! k (.str (toString n)), a.setObjVal! k (toJson [n])].all (!accepts j ·)
+-- an admission is not another slot kind's row, nor the other way round
+#guard admissions.all fun j => !accepts (j.setObjVal! "kind" (.str "slot-certificate")) (run j)
+#guard !accepts (certificate.setObjVal! "kind" (.str "slot-admission")) (run certificate)
+
 end ResponseShape.SlotExamples
