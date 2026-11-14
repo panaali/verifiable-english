@@ -686,6 +686,11 @@ theorem VE.Acts.HookTwins.bind_congr_ok
   ∀ {ε α β : Type} {x : Except ε α} {f g : α → Except ε β}, (∀ (a : α), x = Except.ok a → f a = g a) → x >>= f = x >>= g
   -- uses
   -- expr 368345413
+theorem VE.Acts.HookTwins.envelopeGate_actsProfiles
+  ∀ {environment : Lean.Json},
+    VE.Norms.Admission.envelopeGate environment = Except.ok () → VE.Norms.Wire.actsProfiles Bool.true environment = []
+  -- uses VE.Norms.Admission.envelopeGate@VE.Norms.Admission VE.Norms.Wire.actsProfiles@VE.Norms.Wire
+  -- expr 2582444845
 theorem VE.Acts.HookTwins.error_bind
   ∀ {ε α β : Type} (e : ε) (f : α → Except ε β), Except.error e >>= f = Except.error e
   -- uses
@@ -716,10 +721,6 @@ theorem VE.Acts.HookTwins.replayWitnessIn_congr
       VE.Norms.Flagged.replayWitnessIn d₁ j = VE.Norms.Flagged.replayWitnessIn d₂ j
   -- uses VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.replayWitnessIn@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
   -- expr 844167425
-theorem VE.Acts.HookTwins.runAdmissionActs_today
-  VE.Norms.Run.runAdmissionActs = VE.Acts.HookTwins.Today.runAdmission
-  -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmissionActs@VE.Norms.Run
-  -- expr 2702872762
 theorem VE.Acts.HookTwins.runAdmissionIn_congr
   ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {environment : Lean.Json},
     (∀ (n : Lean.Json), d₁ environment n = d₂ environment n) →
@@ -733,6 +734,11 @@ theorem VE.Acts.HookTwins.runAdmission_plain
       VE.Norms.Run.runAdmission id environment document = VE.Acts.HookTwins.Today.runAdmission id environment document
   -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmission@VE.Norms.Run VE.Norms.Wire.actsProfiles@VE.Norms.Wire
   -- expr 160287859
+theorem VE.Acts.HookTwins.runAdmission_today
+  ∀ (id : String) (environment document : Lean.Json),
+    VE.Norms.Run.runAdmission id environment document = VE.Acts.HookTwins.Today.runAdmission id environment document
+  -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmission@VE.Norms.Run
+  -- expr 2436381116
 theorem VE.Acts.HookTwins.runCaseActsRouted_today
   VE.Norms.Run.runCaseActsRouted = VE.Acts.HookTwins.Today.runCaseRouted
   -- uses VE.Acts.HookTwins.Today.runCaseRouted@VE.Acts.HookTwins VE.Norms.Run.runCaseActsRouted@VE.Norms.Run

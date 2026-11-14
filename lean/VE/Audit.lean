@@ -641,15 +641,16 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.HookTwins.actsProfiles_nil_of_underActs
 #print axioms VE.Acts.HookTwins.admitDocumentIn_congr
 #print axioms VE.Acts.HookTwins.bind_congr_ok
+#print axioms VE.Acts.HookTwins.envelopeGate_actsProfiles
 #print axioms VE.Acts.HookTwins.error_bind
 #print axioms VE.Acts.HookTwins.getObjValD_of_ok
 #print axioms VE.Acts.HookTwins.ok_bind
 #print axioms VE.Acts.HookTwins.replayConflictIn_congr
 #print axioms VE.Acts.HookTwins.replayEntailmentIn_congr
 #print axioms VE.Acts.HookTwins.replayWitnessIn_congr
-#print axioms VE.Acts.HookTwins.runAdmissionActs_today
 #print axioms VE.Acts.HookTwins.runAdmissionIn_congr
 #print axioms VE.Acts.HookTwins.runAdmission_plain
+#print axioms VE.Acts.HookTwins.runAdmission_today
 #print axioms VE.Acts.HookTwins.runCaseActsRouted_today
 #print axioms VE.Acts.HookTwins.runCaseActs_today
 #print axioms VE.Acts.HookTwins.runCaseIn_congr

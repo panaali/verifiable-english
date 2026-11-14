@@ -117,6 +117,7 @@ module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Hook
+module VE.Acts.HookExamples
 module VE.Acts.HookToday
 module VE.Acts.HookTwins
 module VE.Acts.Index

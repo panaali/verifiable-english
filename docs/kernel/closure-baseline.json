@@ -1286,7 +1286,7 @@
   },
   {
    "axioms": [],
-   "lines": 24472,
+   "lines": 24476,
    "modes": [
     "readingsRoute"
    ],
@@ -1413,7 +1413,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20780,
+   "wrap_lines": 20784,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1507,7 +1507,7 @@
     "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
-    "VE.Norms.Run": 107,
+    "VE.Norms.Run": 111,
     "VE.Norms.SmallModel": 9,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
@@ -1598,12 +1598,12 @@
   },
   {
    "axioms": [],
-   "lines": 36425,
+   "lines": 36430,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36419,
+   "spec_lines": 36424,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1760,7 +1760,7 @@
     "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
-    "VE.Norms.Run": 112,
+    "VE.Norms.Run": 117,
     "VE.Norms.SmallModel": 9,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
@@ -1952,12 +1952,12 @@
   },
   {
    "axioms": [],
-   "lines": 35925,
+   "lines": 35930,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35099,
+   "spec_lines": 35104,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2105,7 +2105,7 @@
     "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
-    "VE.Norms.Run": 112,
+    "VE.Norms.Run": 117,
     "VE.Norms.SmallModel": 9,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
