@@ -274,6 +274,9 @@ NOT_REGENERATED = {
     "docs/act-phrases/ap-parse-index/seed_bugs.py": "ap-parse-index seeded-bug evidence: each plant is run and restored "
                                                     "(the checker pin with it), then mutants.json is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
+    "tools/fidmech/__main__.py": "frozen data: `boundaries --write` proposes footnote pairs into a use case's "
+        "fidmech/boundaries.json beside hand decisions a person makes with reasons; `boundaries --check` and "
+        "tests/test_fidmech_segment.py check it",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
     "tools/lean_decided_share.py": "measurement report",
