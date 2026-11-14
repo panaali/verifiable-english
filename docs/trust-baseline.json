@@ -2721,6 +2721,20 @@
    "reason": "kb-2a step A: the lowering of a document to its core documents, experimental and unreachable from the service (docs/spec/kernel-boundary.md section 5). Untied V by file against 9a3fd7a9f9ac: VE/Experimental/CoreDocument.lean +147 (G[V] untied: Origin, Body.rule?, Body.premise?, Choice, ActiveSet, Coupling, Options, wire, strictRule, premise, lowerContent, lowerCandidate, declarations, readingsOf, compatible, allChoices, maxChoices, choicesOf, UnitPlan, UnitPlan.statements, planOf, judgments); tied +55 (lower, compatibleChoices, readingOptions, preliminaries, CoreDoc.of, CoreDoc, Statement, Body); G[R] refusal checks and T examples not trusted. K +0, S +0. New Lean-owned behaviour, #guard-tested in VE/Experimental/CoreDocumentExamples.lean; itemised in docs/kernel/kb-2a/DELTA.md; ties pass in manage-agents FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "kb-3 (kb-3a): the premise slot of the soft route on the wire (new Lean-owned behaviour): S +3 (VE/Compose/SlotWire.lean: NoFacts), V +62 (ResponseShape/Schemas/SoftNorms.lean +37: the slot_certificate, slot_witness and slot_packages shapes, their shared field lists and factsCount; VE/SoftNorms/Run.lean +25: the slot-certificate and slot-conflict branches of runSoftKind), K +0; the decoders, the replays' verdict fields and the answers are tied (decodeFacts_ok, factsModel_sat, decodeSlotPackage_nil, slot_wire_conflict_sound, slot_wire_acceptance, slot_wire_conflict_witness_sound, slot_wire_empty, slot_wire_certificate, slot_wire_conflict)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-3a, 2026-11-13",
+   "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
+  },
+  {
+   "class": "V",
+   "lines": 62,
+   "reason": "kb-3 (kb-3a): the premise slot of the soft route on the wire (new Lean-owned behaviour): S +3 (VE/Compose/SlotWire.lean: NoFacts), V +62 (ResponseShape/Schemas/SoftNorms.lean +37: the slot_certificate, slot_witness and slot_packages shapes, their shared field lists and factsCount; VE/SoftNorms/Run.lean +25: the slot-certificate and slot-conflict branches of runSoftKind), K +0; the decoders, the replays' verdict fields and the answers are tied (decodeFacts_ok, factsModel_sat, decodeSlotPackage_nil, slot_wire_conflict_sound, slot_wire_acceptance, slot_wire_conflict_witness_sound, slot_wire_empty, slot_wire_certificate, slot_wire_conflict)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-3a, 2026-11-13",
+   "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
   }
  ]
 }

@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 304 |
+| leaves:bound | 305 |
 | leaves:closed domain | 321 |
 | leaves:none | 1655 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
 | today:not probed | 1253 |
-| today:shape | 625 |
+| today:shape | 626 |
 | today:unbound | 137 |
 | answers | 606 |
 | probes | 10204 |
@@ -653,6 +653,7 @@ Delegates: `/` to norms.
 | `/environment_prime/vocabulary/soft` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
+| `/facts` | integer | bound | x-count | minimum | 0 | shape |
 | `/id` | any | bound | x-echo |  | 24 | shape |
 | `/id` | string | bound | x-equals |  | 24 | shape |
 | `/incompatible_pairs/*/0` | string | none |  |  | 0 | not probed |
