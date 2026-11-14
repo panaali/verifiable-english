@@ -1,7 +1,8 @@
 # kb-10e: prepared soft documents — build report
 
-No DRI signature needed: every DELTA row cites a standing ruling (R16, R3, R8, R2, R12). The kernel growth is
-under the architect seat's signed allowance (`docs/kernel/ALLOWANCES.md`).
+No DRI signature needed beyond those given: rows 1, 2 and 5 cite standing rulings (R16, R3, R12); rows 3 and 4
+are SIGNED by the DRI (reviews/dri-decisions-20261113-kb-10e.md item 1; reviews/dri-decisions-20261114-kb-10e.md
+item 1, after review F1). The kernel growth is under the architect seat's signed allowance (`docs/kernel/ALLOWANCES.md`).
 
 Kernel 9,552 to 9,560 lines (+8, allowance +60). Lines added to `lean/VE/Service/Protocol.lean`: 219 (26
 removed), which the measure does not count. Trust K +0, S +0, V +5 (R16). A repeat `soft-selected` call on a
@@ -286,8 +287,31 @@ handle, and their answers are the same bytes (acceptance (i)).
 
 ## Answers on main to a case naming a soft document
 
-The same requests went to main's binary and this branch's (`/tmp/kb10e-trace/oldprobe.py`; one `soft-norms`
-request registering the document, each case naming its handle):
+On main, `expandCases` ignored `soft_document_handle` and the soft runner checks no unknown member, so a case
+carrying it was answered as the same case without it. A valid case carrying it was answered in full. On this
+branch, every mode `expandCases` expands (`Handles.expandSoft`, `lean/VE/Service/Protocol.lean:740`, through
+`expandCases`, `:795`) refuses such a case with the case error `InvalidInput: soft_document_handle names a soft
+document only …` unless it is the handle form of DELTA row 3. That covers every `soft-norms` kind (a written-out
+`soft-selected` case included), `readings-route` and every other handled mode. `english` and `risk-eval` are not
+reached (`expandCases_unexpanded`): their answer is unchanged. These are answers turning into refusals. R2 (fault
+order) does not cover them; the DRI signed them on 2026-11-14 (reviews/dri-decisions-20261114-kb-10e.md item 1,
+DELTA row 4). No producer in the repository sends the member there (only the client's handle form and
+`docs/kernel/kb-10e/bench.py`), so no public `ve` answer changes.
+
+Valid cases that main answered, with a stray handle (`"0"` × 64), are now refused
+(`tests/test_soft_document_handles.py::test_a_stray_soft_document_handle_refuses_a_case_main_answered`; on main the
+member was ignored, so its answer is the answer to the case without it, which the test asks first):
+
+| case | main | this branch |
+|---|---|---|
+| the captured RSP case `docs/kernel/kb-10e/cases/rsp-case-1.json` (soft-norms, `soft-selected` written out) | answered (`status: ok`) | case error `InvalidInput: soft_document_handle names a soft document only …` |
+| a written-out `soft-selected` case (document A of the alternating test) | answered | the same InvalidInput |
+| the first answered case of each handled mode of `tests/data/route-cases.jsonl` (19 modes, `readings-route` and `soft-norms` included) | answered | the same InvalidInput |
+| the first answered `risk-eval` case of that corpus | answered | answered, the same result (not reached) |
+
+Cases that also had another fault went to main's binary and this branch's (`/tmp/kb10e-trace/oldprobe.py`; one
+`soft-norms` request registering the document, each case naming its handle). Main answered them by that other
+fault:
 
 | case | main | this branch |
 |---|---|---|
@@ -307,16 +331,24 @@ request registering the document, each case naming its handle):
 | c | Python | `ve/backends/lean_service.py` | `_encode` keys documents by environment only, so document B's case (B's model) is sent with A's handle | `test_a_model_for_another_document_is_not_answered_from_this_one`: Lean's model decoder refuses (`fields do not match`). Also `test_twenty_alternating_…[one-request]`: when the vocabularies agree, `bind_selected` accepts A's answer (same rule names) and the byte comparison fails. |
 | d | schema | `ve/backends/lean_service_schema/envelope.json` | `required` without `soft_member` | `test_bad_or_missing_handshake_is_unavailable[missing-soft-member]` |
 
+| e | Lean | `lean/VE/Service/Protocol.lean` | `respondMemo` sends every mode but `soft-norms` to `runSoftRequest` (`==` to `!=`, trust mutant M003) | the `#guard` of `lean/VE/Service/MemoExamples.lean:168` (every registered mode's one-case line, `handleLineMemo` against `handleLine`): 24 of 45 modes differ |
+| f | Lean | `lean/VE/Service/Protocol.lean` | `expandSoft` ignores a stray `soft_document_handle` (main's behaviour) | `expandSoft_refused` does not build; with its proof cut, `test_a_stray_soft_document_handle_refuses_a_case_main_answered` fails for every handled mode (`[rsp-case-1]` is answered) and passes only `[route-corpus-risk-eval]`; all six `test_any_other_case_naming_a_soft_document_is_refused` cases fail |
 Each was restored with `git checkout`.
 
 Trust mutants: `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --deep --allow
-docs/kernel/kb-10e/trust-mutants-allow.json --json docs/kernel/kb-10e/trust-mutants.json` gives **24 KILLED, 0
-SURVIVOR, 0 UNKNOWN, 21 ALLOWED, exit 0**, after one run without the allow file (`--deep`: 24 KILLED, 19 SURVIVOR,
-2 UNKNOWN). Without `--deep` the handshake's `#guard` (lean/ResponseShape/Schemas.lean:113) is out of the cone, and
-all 45 were SURVIVOR or UNKNOWN. Every allowance has its reason in the file. Seventeen are mutants that only loosen
-the handshake's response shape; those change the generated envelope.json. One is `respondMemo`'s branch, an
-equivalent mutant: `runRequest` and `runSoftRequest` answer alike. Two are `Entry.soft_eq` mutants that do not
-compile.
+docs/kernel/kb-10e/trust-mutants-allow.json --rescore docs/kernel/kb-10e/trust-mutants.json --json
+docs/kernel/kb-10e/trust-mutants.json` on 6c6531aea4 (base c9214a26; a full run, 45 of 45 rerun) gives **25 KILLED,
+0 SURVIVOR, 0 UNKNOWN, 20 ALLOWED, exit 0**. Without `--deep` the handshake's `#guard`
+(lean/ResponseShape/Schemas.lean:113) is out of the cone, and all 45 were SURVIVOR or UNKNOWN. Every allowance has
+its reason in the file. Eighteen are mutants that only loosen the handshake's response shape; those change the
+generated envelope.json. Two are `Entry.soft_eq` mutants that do not compile.
+
+M003 (`respondMemo`'s branch, `==` to `!=`) is KILLED by the `#guard` of `lean/VE/Service/MemoExamples.lean:168`.
+The guard asks a one-case line of every registered mode through `handleLineMemo` and through `handleLine` and
+requires the same answer. The first record (24 KILLED, 21 ALLOWED, on 7b36e2d9) allowed M003 as an equivalent
+mutant, claiming `runRequest` and `runSoftRequest` "answer every request alike". That was false (review F2):
+`softResult` answers every case that names no held soft document with `caseResultWith .softNorms`
+(`Protocol.lean:832`), so the mutant answers 24 of the 45 modes differently (seeded bug e). Its allowance is removed.
 
 ## Other soft kinds
 
@@ -392,8 +424,9 @@ The two failed ids were rerun: `zsh manage-agents/mac-pytest.sh -- <the two ids>
    186 passed with the handle tests). A wrong document's handle is refused (`test_a_model_for_another_document_…`).
 6. Gate evidence on the final HEAD: PASS. Synced with main (merge b9724f0628), regenerated after it, and the final
    selected run is on the committed tree (section above). The full gate is the chain's.
-7. No unsigned item: PASS. DELTA rows cite R16, R3, R8, R2 and R12. The kernel allowance is the architect seat's
-   signed line.
+7. No unsigned item: PASS. DELTA rows 1, 2 and 5 cite R16, R3 and R12; rows 3 and 4 are SIGNED by the DRI
+   (dri-decisions-20261113-kb-10e.md item 1; dri-decisions-20261114-kb-10e.md item 1). The kernel allowance is the
+   architect seat's signed line.
 8. Every user-visible change in DELTA: PASS. Rows 2 to 4, with main's answers probed (section "Answers on main").
 9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` selects all 615 units because
    `ve/backends/lean_service.py` and the service binary are read by every relay test, a real dependency. It
