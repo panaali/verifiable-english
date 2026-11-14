@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pytest
 
-import tests.omission_rule as omission_rule
 import tests.test_usecase_key_transcription as transcription
 
 REPO = Path(__file__).resolve().parents[1]
@@ -695,13 +694,14 @@ SENTENCE_CHAIR = ("The SAG Chair should also coordinate with OpenAI Leadership f
                   "address the risk.")
 FAST_TRACK_WORDS = "we can request a fast track for the SAG to process the report urgently"
 CHAIR_UNITS = ("f16-chair-strict", "f16-chair-default")
-ACCOUNTING_ENTRY = re.compile(r'"([^"]*)"\s*([^;"]*)')
+ACCOUNTING_ENTRY = r'"([^"]*)"\s*([^;"]*)'
 
 
 def accounting_entries():
     """accounting.d1.txt as {block id: [(omitted words, reason tag)]}."""
     lines = (PF / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
-    return {line.split(" | omits:")[0]: [(w, t.strip()) for w, t in ACCOUNTING_ENTRY.findall(line.split(" | omits:")[1])]
+    return {line.split(" | omits:")[0]:
+            [(w, t.strip()) for w, t in re.findall(ACCOUNTING_ENTRY, line.split(" | omits:")[1])]
             for line in lines}
 
 
@@ -767,11 +767,13 @@ def test_accounting_has_no_loss_for_the_fast_track_words():
 # every fail-closed path (any tag but restates / rule / reading = loss). This file keeps no copy of its own.
 def omission_records(units):
     """{unit: [path]} for every record path of the installed omission rule that names one of `units`."""
+    import tests.omission_rule as omission_rule
     return omission_rule.record_paths("openai-preparedness", units)
 
 
 def omission_exposures(units):
     """{unit: [(path, detail)]}: the rule's exposures of `units`, with the words or sentence each one records."""
+    import tests.omission_rule as omission_rule
     return {u: [(e[2], e[3]) for e in es] for u, es in omission_rule.exposures("openai-preparedness", units).items()}
 
 
