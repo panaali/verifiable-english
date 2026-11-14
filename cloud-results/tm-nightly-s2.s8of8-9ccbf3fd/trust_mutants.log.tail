@@ -1,0 +1,11 @@
+trust_mutants: 72 definitions, 84 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Cardinality/Wire.lean:22 VE.Cardinality.Wire.chainProfiles (D[V], trusted) list-first: ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] -> (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"].take 1) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/NormDefaults/Packs.lean:389 VE.NormDefaults.Packs.eventsArray (D[V], trusted) list-first: match packPremises qs "events" with | [] => [] | ls => [("events_premises", Json.arr (ls.map (fun... -> ((match packPremises qs "events" with | [] => [] | ls => [("events_premises", Json.arr (ls.map (f...
+UNKNOWN lean/VE/Presupposition/Admit.lean:60 VE.Presupposition.rootsWith (G[V], trusted) list-first: let os := obs.filter (·.unit == u) let first := (os.find? (·.carrier == .unresolved)).map (·.id) ... -> ((let os := obs.filter (·.unit == u) let first := (os.find? (·.carrier == .unresolved)).map (·.id... (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) list-drop-last: premises -> (premises.dropLast) (the proofs it breaks: lean/VE/Closure/Consequence.lean:11, lean/VE/Core/Conservativity.lean:42, l...)
+trust_mutants: 5 KILLED, 2 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 75 OTHER SHARD in 4676 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 27 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 UNKNOWN, 38 OTHER SHARD
+trust_mutants: K, trusted: 1 SURVIVOR, 1 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 9 OTHER SHARD
+trust_mutants: steps: wall plan 12.3 s, scratch 2.3 s, control_build 0.3 s, probe_install 0.9 s, mutants 4659.7 s, cleanup 0.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 13.3 s (5), mutant_builds 380.9 s (11), mutant_checks 12956.5 s (15), stage_controls 4038.1 s (4), mutant_probes 16 s (5)
