@@ -312,7 +312,7 @@ def decodeRiskSource (environment document : Json) : Except String RiskSource :=
   if ext && ps != unitProfiles then throw w6ProfileText
   let units ← decodeUnits environment
   checkVocabularyUnits environment units ext
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment view
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain view
   if ext then checkExtension environment units
   unless ne.rv.definitions.isEmpty do throw "UnsupportedProfile: risk route with definitions is not implemented"
   unless ne.rv.flags.isEmpty do throw "UnsupportedProfile: risk route with data flags is not implemented"

@@ -2064,7 +2064,7 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
       else if E.soft then
         (VE.SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document)).mapError
           fun e => unavailable s!"a claim graph the soft route rejects keeps its loader's code: {e}"
-      else if norms then VE.Norms.Run.runAdmission "admission" E.lower document
+      else if norms then VE.Norms.Run.runAdmissionActs "admission" E.lower document
       else VE.Route.Run.dispatch "admission" E.json E.checked.envelope
         (Json.mkObj [("kind", .str "admission"), ("document", document)])
     | .alternatives => VE.Alternatives.Run.runAdmission "admission" E.json document
@@ -2183,10 +2183,10 @@ def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List Str
   let (free, single) := freeNorms units setUnits attached
   let checked : Except String Unit := do
     unless single.isEmpty do
-      let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true) (joined := false)
+      let base ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment (Json.arr #[]) (flags := true) (joined := false)
       single.forM (VE.Norms.Admission.checkQuoted base)
     if !free.isEmpty || E.regulates then
-      let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true) (joined := false)
+      let _ ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment (Json.arr free.toArray) (flags := true) (joined := false)
   -- The norms route words these faults, and classes some, otherwise than the retained loader's `NormDocument`
   -- (`InvalidInput` for an `UnknownSymbol:` text, Python's `repr` of a name), so a rejection keeps that loader's.
   checked.mapError fun e => unavailable s!"a norm document the norms route refuses keeps its loader's diagnostic: {e}"

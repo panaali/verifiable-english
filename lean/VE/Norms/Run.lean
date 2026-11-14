@@ -199,6 +199,8 @@ theorem norms_wire_acceptanceIn (dec : Wire.SourceDecoder) (j answer : Json) (h 
 
 /-! ## The route's own decoder -/
 
+/-- The route's runners without `acts@0` (`Wire.decodeFlagged`, `ActsHook.plain`): an environment from which `acts@0`
+is read is refused. The norms mode hands such a case to `runCaseActsRouted` first (`runCaseRouted`). -/
 def runAdmission : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeFlagged
 def AdmissionAnswer : String → Json → Json → Json → Prop := AdmissionAnswerIn Wire.decodeFlagged
 def runCase : Json → Except String Json := runCaseIn Wire.decodeFlagged
@@ -214,19 +216,41 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
       AdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer :=
   norms_wire_acceptanceIn Wire.decodeFlagged j answer h hk hn
 
+/-- The route's runners as they were before the acts hook (kb-4a): `acts@0` read, joined acts admitted and not
+elaborated (`Wire.decodeFlaggedActs`, today's `decodeFlagged`). The callers that can meet an `acts@0` environment
+outside the norms mode's own dispatch run these: the soft-norms and speech-acts modes' delegation of a plain norms
+case, document admission and discourse composition. -/
+def runAdmissionActs : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeFlaggedActs
+def runCaseActs : Json → Except String Json := runCaseIn Wire.decodeFlaggedActs
+
 /-- Whether a case's environment is read with `acts@0`. -/
 def underActs (environment : Json) : Bool := !(Wire.actsProfiles true environment).isEmpty
 
-/-- The norms route's decoder of `environment`: the elaborated document under `acts@0` (act-phrases 6.4); else
-today's. -/
-def decoderOf (environment : Json) : Wire.SourceDecoder :=
-  if underActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlagged
+/-- Whether the environment a `norms-elaborate` case decodes (`Compose.decidingEnvironment`) is read with `acts@0`. -/
+def decidesActs (environment : Json) : Bool :=
+  match VE.Compose.decidingEnvironment environment with
+  | .ok e => underActs e
+  | .error _ => false
 
-/-- The norms route's public entry: `acts-elaborate` (act-phrases 6.7); else `runCaseIn` at the decoder of the case's
-environment. -/
-def runCaseRouted (j : Json) : Except String Json :=
+/-- The norms route's decoder of `environment` under the acts hook: the elaborated document under `acts@0`
+(act-phrases 6.4); else today's decoder with `acts@0` (`Wire.decodeFlaggedActs`). -/
+def decoderOf (environment : Json) : Wire.SourceDecoder :=
+  if underActs environment then VE.Acts.Decode.flaggedSource else Wire.decodeFlaggedActs
+
+/-- The norms route as it was before the acts hook (kb-4a): `acts-elaborate` (act-phrases 6.7); else `runCaseIn` at
+the decoder of the case's environment. The entry of the registry path `normsActs`; `runCaseRouted` hands it every
+case that reads `acts@0`. -/
+def runCaseActsRouted (j : Json) : Except String Json :=
   if VE.Acts.Run.isElaborate j then VE.Acts.Run.runElaborate VE.Acts.Run.normsSource j
   else runCaseIn (decoderOf (j.getObjValD "environment")) j
+
+/-- The norms route's public entry: an `acts-elaborate` case, or one whose environment (or the environment it decides
+over) is read with `acts@0`, goes to `runCaseActsRouted`; every other case to the plain runner `runCase`, which then
+meets no `acts@0` environment. It answers as before on every input (`VE.Acts.HookTwins.runCaseRouted_today`). -/
+def runCaseRouted (j : Json) : Except String Json :=
+  if VE.Acts.Run.isElaborate j || underActs (j.getObjValD "environment") || decidesActs (j.getObjValD "environment")
+  then runCaseActsRouted j
+  else runCase j
 
 def runCaseReported (j : Json) : Json :=
   if usesNormsPath j || Plain.layered (j.getObjValD "environment") then

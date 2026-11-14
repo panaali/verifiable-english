@@ -80,7 +80,7 @@ def decodeEnvironmentU (environment : Json) (joined : Bool := false) :
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     pure environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame (acts := true) (joined := joined)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts frame (acts := true) (joined := joined)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "Definitions require definitions@0"
   pure ne
@@ -141,7 +141,7 @@ def decodeSourceUWith (joined : Bool) (environment norms : Json) : Except String
     let env' ← placeholderJson environment
     -- `data@0` flags are admitted as Python's base did; every model a case supplies must satisfy them
     -- (`InvalidModel(flags)`, `Replay`, `Report`), and no check reads a flag premise, so each is conservative.
-    let src ← VE.Norms.Wire.decodeSource env' norms true true joined
+    let src ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts env' norms true true joined
     let names := unspecifiedNames environment
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U
@@ -151,7 +151,7 @@ def decodeSourceUWith (joined : Bool) (environment norms : Json) : Except String
   else do
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-    let src ← VE.Norms.Wire.decodeSource environment norms (joined := joined)
+    let src ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms (joined := joined)
     pure ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h),
       fun _ => rfl, []⟩
 
@@ -195,16 +195,16 @@ and the canonical environment bytes are the same. -/
 theorem decode_conservative (environment norms : Json) (hp : hasProfile environment = false)
     (hu : unspecifiedNames environment = []) :
     (decodeSourceU environment norms).map (fun s => (s.src, s.U)) =
-      (VE.Norms.Wire.decodeSource environment norms).map (fun s => (s, (⟨s.D, []⟩ : UDoc))) ∧
+      (VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms).map (fun s => (s, (⟨s.D, []⟩ : UDoc))) ∧
     canonicalEnvironmentJsonU environment = VE.Norms.Wire.canonicalEnvironmentJson environment := by
   refine ⟨?_, rfl⟩
   unfold decodeSourceU decodeSourceUWith
   simp only [hp, Bool.false_eq_true, if_false, hu, List.isEmpty_nil]
-  cases VE.Norms.Wire.decodeSource environment norms <;> rfl
+  cases VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms <;> rfl
 
 theorem decodeSourceU_plain {environment norms : Json} {s : SourceU}
     (h : decodeSourceU environment norms = .ok s) (hp : hasProfile environment = false) :
-    VE.Norms.Wire.decodeSource environment norms = .ok s.src ∧ s.U = ⟨s.src.D, []⟩ := by
+    VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms = .ok s.src ∧ s.U = ⟨s.src.D, []⟩ := by
   unfold decodeSourceU decodeSourceUWith at h
   simp only [hp, Bool.false_eq_true, if_false] at h
   split at h

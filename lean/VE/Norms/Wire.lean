@@ -211,22 +211,59 @@ def actsView (environment : Json) (ps : List String) : Json :=
   if readsActs ps then (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
   else environment
 
+/-- What the `acts@0` profile supplies the norms decoder (docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4):
+the decoder reads the profile only through these operations, so which code may change how a document decodes is
+fixed by the instance it is given. `ActsHook.plain` (below) refuses an environment from which `acts@0` is read and
+references no acts decoding; `ActsHook.acts` (lean/VE/Acts/Hook.lean) packages today's operations unchanged. -/
+structure ActsHook where
+  /-- The vocabulary the joined-act check reads (`VE.Acts.Vocab` under `acts@0`). -/
+  Vocab : Type
+  /-- The profiles from which `acts@0` is read (`actsProfiles`), or the refusal of such an environment. -/
+  profiles : Bool → Json → Except String (List String)
+  /-- The fixed phrases of the `acts` block under those profiles (`actsFixed`). -/
+  fixed : List String → Json → Except String (List String)
+  /-- The frames and adverbs of the `acts` block under those profiles (`actsVocab`). -/
+  vocab : List String → Json → Except String Vocab
+  /-- The act check of a declaration under the profiles and fixed phrases (`canonicalActIn`). -/
+  check : List String → List String → String → Nat → Json → Except String String
+  /-- The act check that admits a joined act, without reading it (`canonicalShape`). -/
+  shape : List String → List String → String → Nat → Json → Except String String
+  /-- The joined-act check: each joined act and its one meaning, when the decoder admits them (`joinedActs`). -/
+  joined : Bool → List String → List String → Vocab → List Regulated →
+    Except String (List (String × VE.Acts.Act))
+
+/-- The refusal of the plain decoder on an environment from which `acts@0` is read. -/
+def actsHookRefusal : String := "UnsupportedProfile: acts@0 needs the acts decoder"
+
+/-- The norms decoder without the acts decoder: an environment from which `acts@0` is read (`actsProfiles`) is
+refused (`actsHookRefusal`); otherwise the profiles are none, so the fixed phrases and the vocabulary are empty, the
+act check is `canonicalAct` and no joined act is read, as `ActsHook.acts` answers on such an environment. -/
+def ActsHook.plain : ActsHook where
+  Vocab := Unit
+  profiles acts environment := if (actsProfiles acts environment).isEmpty then pure [] else throw actsHookRefusal
+  fixed _ _ := pure []
+  vocab _ _ := pure ()
+  check _ _ := canonicalAct
+  shape _ _ := canonicalAct
+  joined _ _ _ _ _ := pure []
+
 /-- Separate `regulated` from each predicate entry, decode the rest with the
 frozen P0 decoder, then decode and retain every `regulated` extension. With
 `acts`, an environment listing `acts@0` is read with its `acts` block and the
-act check of act-phrases 3.2; without it, `acts@0` is refused as today. The act check is `Lexical.check`, unless
+act check of act-phrases 3.2 (through the hook `H`: `ActsHook.acts` reads it, `ActsHook.plain` refuses it); without
+it, `acts@0` is refused as today. The act check is `Lexical.check`, unless
 `joined`, which admits a joined act (`canonicalShape`, then `actsOf`): only `decodeSource` for an entry point that runs
 on the elaborated document passes it (act-phrases 6.4; DRI 2026-11-02 ap-3db item 2). -/
-def decodeNormsEnvironment (environment : Json)
+def decodeNormsEnvironment (H : ActsHook) (environment : Json)
     (displayConstants : Bool := true) (acts : Bool := false) (joined : Bool := false) :
     Except String NormsEnvironment := do
-  let ps := actsProfiles acts environment
+  let ps ← H.profiles acts environment
   let e ← VE.Route.Gate.decodeEnvelope (if ps.isEmpty then environment else actsView environment ps)
   unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
   unless e.family == .fol do
     throw (VE.Route.Gate.unsupported "the norms route admits FOL documents only")
-  let fx ← actsFixed ps environment
-  let V ← actsVocab ps environment
+  let fx ← H.fixed ps environment
+  let V ← H.vocab ps environment
   let vocab := e.vocabulary
   let predicates ← fields (← vocab.getObjVal? "predicates")
   let stripped ← predicates.mapM fun (p, entry) => do
@@ -242,10 +279,11 @@ def decodeNormsEnvironment (environment : Json)
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> (if joined then decodeRegulatedShape ps fx else decodeRegulatedIn ps fx) p args raw
+      some <$> (if joined then decodeRegulatedWith (ps.contains "acts@0") (H.shape ps fx)
+        else decodeRegulatedWith (ps.contains "acts@0") (H.check ps fx)) p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
-  let acts ← joinedActs joined ps fx V regs
+  let acts ← H.joined joined ps fx V regs
   pure ⟨rv, regs, if ps.isEmpty then e.profiles else ps, environment, acts⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
@@ -410,12 +448,12 @@ regenerated from the decoded flags), and its report theorem takes the flag
 premises as a separate hypothesis. Every other norms case keeps the gate, since
 its regenerated Background and conflict checks are stated over literals and
 profile premises only (`backgroundBase`). The norms route reads `acts@0`
-(act-phrases 2.8); a route that does not hook it calls `decodeNormsEnvironment`
-without `acts`, or refuses the profile before it calls this. `joined` admits a joined act: an entry point that does
+(act-phrases 2.8) through the hook `H` (`ActsHook.acts`; `ActsHook.plain` refuses it); a route that does not hook it
+calls `decodeNormsEnvironment` without `acts`, or refuses the profile before it calls this. `joined` admits a joined act: an entry point that does
 not run on the elaborated document passes `joined := false` (act-phrases 6.4). -/
-def decodeSource (environment norms : Json) (flags : Bool := false)
+def decodeSource (H : ActsHook) (environment norms : Json) (flags : Bool := false)
     (displayConstants : Bool := true) (joined : Bool := true) : Except String Source := do
-  let ne ← decodeNormsEnvironment environment displayConstants (acts := true) (joined := joined)
+  let ne ← decodeNormsEnvironment H environment displayConstants (acts := true) (joined := joined)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   unless flags || ne.rv.flags.isEmpty do
@@ -434,8 +472,9 @@ def decodeSource (environment norms : Json) (flags : Bool := false)
 /-- The decoder an entry point of the norms route reads its source with. -/
 abbrev SourceDecoder := Json → Json → Except String Source
 
-/-- The route's decoder without `acts@0`: `data@0` flags admitted. -/
-abbrev decodeFlagged : SourceDecoder := fun environment norms => decodeSource environment norms (flags := true)
+/-- The route's decoder without `acts@0` (`ActsHook.plain`, which refuses an environment from which it is read):
+`data@0` flags admitted. Today's decoder with `acts@0` is `decodeFlaggedActs` (lean/VE/Acts/Hook.lean). -/
+abbrev decodeFlagged : SourceDecoder := fun environment norms => decodeSource ActsHook.plain environment norms (flags := true)
 
 /-! ## Regenerated outputs -/
 
