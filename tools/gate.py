@@ -22,7 +22,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import gate_shards, lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
+from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -62,6 +62,7 @@ STAGE_ENVIRONMENT = {
     "source identity": ("GIT_INDEX_FILE",),  # a fresh index in scratch, read from the commit
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY",
+               fetch_pinned_sources.REQUIRE,  # 1 or absent: an absent pinned source fails (tests/pinned_source.py)
                test_schedule.SOURCE_VARIABLE),  # the order the suite's tests start in, never which run
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
@@ -549,6 +550,27 @@ def gate_environment(scratch: Path) -> dict[str, str]:
     return env
 
 
+def seed_pinned_sources(home: Path, account: Path) -> str:
+    """Copy each pinned source text stored under the account's home (usecases/pinned_sources.json) to the same
+    path in the gate's fresh home, where build_document.DEFAULT_SOURCE looks; tests/pinned_source.py checks its
+    hash. A text is copied, never linked, and only a regular file."""
+    said = []
+    for doc, entry in sorted(fetch_pinned_sources.load().items()):
+        stored, target = account / entry["path"], home / entry["path"]
+        if stored.is_file() and not stored.is_symlink():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(stored, target)
+            said.append(f"{doc} copied")
+        else:
+            said.append(f"{doc} absent")
+    return "; ".join(said)
+
+
+def pinned_requirement() -> dict[str, str]:
+    """VE_REQUIRE_PINNED_SOURCES=1 from the caller (the Actions gate and nightly), the one setting passed through."""
+    return {fetch_pinned_sources.REQUIRE: "1"} if fetch_pinned_sources.required() else {}
+
+
 def scratch_of(env: dict[str, str]) -> Path:
     return Path(env["HOME"]).parent
 
@@ -797,6 +819,7 @@ def main() -> int:
         scratch = Path(directory)
         try:
             env = record_environment(result, "base", gate_environment(scratch))
+            print(f"[gate] pinned sources: {seed_pinned_sources(Path(env['HOME']), account_home())}", flush=True)
             result["commit_sha"], result["dirty"] = source_identity(env)
             if result["dirty"]:
                 raise RuntimeError("worktree is dirty at gate start")
@@ -919,7 +942,8 @@ def main() -> int:
                 env, VE_GATE_PYTEST_RESULT=str(collection_file),
                 VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
                 VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
-                VE_RUST_BINARY=str(rust_binary), **{test_schedule.SOURCE_VARIABLE: str(durations_file)}))
+                VE_RUST_BINARY=str(rust_binary), **{test_schedule.SOURCE_VARIABLE: str(durations_file)},
+                **pinned_requirement()))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python, files=selection)
