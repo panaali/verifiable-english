@@ -2622,7 +2622,8 @@
       "lean/VE/Service/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it",
       "lean/VE/Service/CoreCheck.lean": "shell: the document mode's core path (kb-2a-b) builds each core document's slot-admission case as JSON (`caseOf`: the lowering's environment and norm objects, the premises by `Route.Wire.encodeFormula`) and its view (`viewOf`: `Document.encodeFields` and the statements); it decodes nothing itself (the request through `Document.decode`, each case's facts read back only by the kernel's `decodeFacts`, `core_facts_round_trip`)",
       "lean/VE/Kernel/DocumentFold.lean": "kernel: the document mode's fold (kb-2a-b) writes the answer only through `VE.Kernel.carry` (its view and the kernel's rows verbatim); it reads no JSON",
-      "lean/ResponseShape/Encoders/CoreCheck.lean": "theorems that the document mode's core rows fit document.json (`VE.Service.CoreCheck.runCaseReported`); proofs only, no runner reads it"
+      "lean/ResponseShape/Encoders/CoreCheck.lean": "theorems that the document mode's core rows fit document.json (`VE.Service.CoreCheck.runCaseReported`); proofs only, no runner reads it",
+      "lean/VE/Service/CoreCheckExamples.lean": "fixtures only: #guard checks of the document mode's core path (`VE.Service.CoreCheck.runCaseReported`) on one small document and its one-edit variations; no service mode or record reads it"
     }
   },
   "plan_operations": {
