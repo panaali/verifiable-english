@@ -74,6 +74,7 @@ EXCLUDED = {
     "usecases/*/theorems/*/verdict.json": ("artifact", "a recorded verdict"),
     "usecases/*/theorems/*/certificate.json": (
         "no-input", "a certificate whose premises are built by the use case's script (math-mini-paper/verify.sh)"),
+    "usecases/pinned_sources.json": ("no-input", "the publisher sources' sha256 pins (tools/fetch_pinned_sources.py)"),
     "usecases/eligibility/cases.json": ("no-input", "applicant profiles the use case's script turns into documents"),
     "usecases/eligibility/rules.json": ("no-input", "rule records the use case's script turns into documents"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),
