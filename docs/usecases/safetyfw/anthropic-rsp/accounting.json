@@ -30,29 +30,20 @@
   {
    "id": "f5-strict",
    "file": "rules.d1.ve",
-   "span_length": 55,
+   "span_length": 4835,
    "used": [
     "crossed",
     "listed",
     "strong_argument"
    ],
-   "unaccounted": [
-    "developer",
-    "frontier"
-   ],
-   "entries": [
-    {
-     "words": "A frontier developer",
-     "reason": "reading",
-     "arg": "RS2"
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
    "id": "f5-default",
    "file": "rules.d1.ve",
-   "span_length": 0,
+   "span_length": 4835,
    "used": [
     "crossed",
     "listed",
@@ -1662,13 +1653,13 @@
    "exposition": 11,
    "loss": 3,
    "open": 5,
-   "reading": 7,
+   "reading": 6,
    "restates": 45,
    "rule": 5
   },
-  "unaccounted_words": 166,
-  "blocks_with_unaccounted_words": 37,
-  "quotes": 112,
+  "unaccounted_words": 164,
+  "blocks_with_unaccounted_words": 36,
+  "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

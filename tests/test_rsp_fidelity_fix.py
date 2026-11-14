@@ -3,6 +3,7 @@
 The frozen key is compared cell by cell with PLAN section 6; the Appendix A, F9, F13/F16 and G1/N3/C-doc repairs are
 checked on the translation and on the saved results, each in the direction it was written for and the opposite one.
 """
+import hashlib
 import json
 import re
 
@@ -719,3 +720,130 @@ def test_fix_4_c3_and_prot_units_carry_no_omission_record():
     spans = json.loads((RSP / "spans.json").read_text())["units"]
     rs1 = [u for u in spans if u.get("reading_set", "").startswith("rs1_") or re.match(r"t[1-4]-plan", u["id"])]
     assert len(rs1) == 10 and [u["id"] for u in rs1 if u["status"] == "UNFORMALISED"] == []
+
+
+# --- anthropic-rsp-fidelity-fix-4b: no ARG answer rests on the merge of the rows' arguments (PLAN section 12, item 24)
+
+F5_BLOCKS = ("f5-strict", "f5-default")
+# Independent pins, from the pinned source (PLAN 1): each row's right column, part by part (the lead, then each bullet;
+# a part the page layout splits is two pieces). A part cut short, dropped or moved fails its row's pins.
+ROW_ARGUMENT_PINS = {
+    "non_novel_chem_bio_weapons": (
+        (("A frontier developer should make a strong argument that individual users and relatively small teams",
+          "via theft of model weights. This will likely require:"),),
+        (("Restrictions on model behavior, and/or measures", "sustainably circumvent via jailbreaking."),),
+        (("Precautions against opportunistic theft of model weights", "third-party applications and software "
+                                                                      "updates."),)),
+    "novel_chem_bio_weapons": (
+        (("A frontier developer should make a strong argument that threat actors will not become significantly",
+          "a credible governance regime enforcing the recommendations for industry-wide safety outlined here."),),),
+    "misaligned_high_stakes": (
+        (("A frontier developer should make a strong argument that AI systems will not carry out sabotage",
+          "As risk becomes harder to rule out, this case will likely include some combination"), ("of:", "of:")),
+        (("Internal compartmentalization, restriction, and code review", "sabotage opportunities for AI models."),),
+        (("Capability assessments demonstrating", "(which would generally mean unnoticed) sabotage."),),
+        (("Monitoring and/or restricting AI behavior", "and usage internally."),),
+        (("Evidence that AI models lack the propensity", "to deceive, manipulate, or sabotage users."),)),
+    "automated_rd": (
+        (("A frontier developer should make a strong argument that:", "a strong argument that:"),),
+        (("No user or team of users (including those backed by top-tier states)",
+          "Actors subject to such a regime would not need"),
+         ("to be treated as threats to each other's model weights.", "each other's model weights.")),
+        (("Even malicious employees and other insiders with maximal levels of access",
+          "(up to and including the company's CEO as well as its most privileged technical employees) to circumvent "
+          "the Usage Policy."),),
+        (("AI models have not been deliberately or inadvertently trained with dangerous goals",
+          "much of the key evidence is suspect due to the possibility of manipulation by AI systems."),)),
+}
+# Each row's pieces, joined by newlines (SHA-256), measured on the pinned rsp-3.4.txt (NFKC, the apostrophe written '):
+# a cut inside a piece that the pins' ends do not see, made consistently in the dict, headers and legend, fails here.
+ROW_ARGUMENT_SHA256 = {
+    "non_novel_chem_bio_weapons": "6affc1ab20e15608ba57fa4721b8914ae7108c56396724f1c8280d4eb1da0b6a",
+    "novel_chem_bio_weapons": "43d09fd091c073ff48115e1f7096e41a0d4748db052dec2423e24f1d9dedd1a4",
+    "misaligned_high_stakes": "44421eb5b29f83ab82846d1afde3f43a3ef1714f95611ee0a766ae5d68f01bb1",
+    "automated_rd": "c83c7bd769513d359405a48e25650216377e80dc0ea388adb4bb3b3dd5f2c9be",
+}
+BASE_ARGUMENT_LEGEND = "the strong argument of the right column's row of {1} is made at {0} (section 1, ARGk)"
+
+
+def _row_segment(text, name):
+    """The part of a header or legend that speaks for one row: from its label to the next row's label."""
+    start = text.find(f"({name}): ")
+    if start < 0:
+        return ""
+    end = text.find("; row T", start)
+    return text[start:end if end >= 0 else len(text)]
+
+
+def _argument_rows_missing(legend=None, headers=None):
+    """The rows whose argument the legend, or any of the headers, does not carry whole under the row's own label:
+    the headers quote every piece verbatim, the legend each part with its pieces joined, the bullets numbered."""
+    missing = []
+    for name, parts in rsp_vocabulary.ROW_ARGUMENTS.items():
+        lead, *bullets = parts
+        ok = True
+        for text in headers or ():
+            segment = _row_segment(text, name)
+            ok &= "..." not in text and "…" not in text and all(
+                f'"{piece}"' in segment for part in parts for piece in part)
+        if legend is not None:
+            segment = _row_segment(legend, name)
+            ok &= "..." not in legend and segment.startswith(f'({name}): "{" ".join(lead)}"') and all(
+                f'({k}) "{" ".join(bullet)}"' in segment for k, bullet in enumerate(bullets, 1))
+        if not ok:
+            missing.append(name)
+    return missing
+
+
+@pytest.mark.parametrize("name", list(ROW_ARGUMENT_PINS))
+def test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend(name):
+    """(a) The right column's argument of the row of `name` (T1..T4): whole (each part's start and end pins), quoted
+    verbatim in f5-strict's and f5-default's headers under the row's label, and carried by `strong_argument`'s legend
+    under the row's threshold; the base's pointer legend, and a header or legend that lost this row's last part, are
+    refused for this row."""
+    arguments = rsp_vocabulary.ROW_ARGUMENTS
+    assert list(arguments) == list(rsp_vocabulary.THRESHOLDS)
+    parts = arguments[name]
+    assert [[(piece[:len(s)], piece[-len(e):]) for piece, (s, e) in zip(part, pins)] for part, pins in
+            zip(parts, ROW_ARGUMENT_PINS[name])] == [list(pins) for pins in ROW_ARGUMENT_PINS[name]]
+    assert [len(part) for part in parts] == [len(pins) for pins in ROW_ARGUMENT_PINS[name]]
+    pieces = "\n".join(piece for part in parts for piece in part)
+    assert hashlib.sha256(pieces.encode()).hexdigest() == ROW_ARGUMENT_SHA256[name]
+    headers = [_block("rules.d1.ve", block_id).source for block_id in F5_BLOCKS]
+    for block_id in F5_BLOCKS:
+        assert _rule(block_id)["predicate"] == "strong_argument", block_id
+    legend = _legend("strong_argument")
+    assert name not in _argument_rows_missing(legend, headers)
+    # The other direction.
+    assert _argument_rows_missing(BASE_ARGUMENT_LEGEND) == list(arguments)
+    last = parts[-1][-1]
+    assert name in _argument_rows_missing(legend.replace(last, ""))
+    for k in range(len(headers)):
+        cut = [h.replace(f'"{last}"', "") if i == k else h for i, h in enumerate(headers)]
+        assert name in _argument_rows_missing(headers=cut), (name, F5_BLOCKS[k])
+
+
+def test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word():
+    """(b) accounting.d1.txt: f5-strict and f5-default omit nothing (no entry: no "loss", no "reading"), every word of
+    their quoted spans is carried, every piece of every row's argument is one of their quotes, and no omission record
+    path shows on them; the saved --source report agrees, with every quote anchored."""
+    acc = _accounting()
+    result = acc.account(RSP)
+    assert result["problems"] == []
+    blocks = {b["id"]: b for b in result["blocks"]}
+    saved_report = json.loads((base.REPO / "docs/usecases/safetyfw/anthropic-rsp/accounting.json").read_text())
+    saved = {b["id"]: b for b in saved_report["blocks"]}
+    pieces = [piece for parts in rsp_vocabulary.ROW_ARGUMENTS.values() for part in parts for piece in part]
+    for block_id in F5_BLOCKS:
+        for report in (blocks, saved):
+            assert report[block_id]["entries"] == [] and report[block_id]["unaccounted"] == [], block_id
+        assert saved[block_id]["problems"] == [], block_id
+        assert saved[block_id]["span_length"] > sum(len(p) for p in pieces if len(p) >= acc.MIN_QUOTE), block_id
+        quotes = acc.quotes(_block("rules.d1.ve", block_id).source)
+        assert [p for p in pieces if len(p) >= acc.MIN_QUOTE and acc.norm(p) not in quotes] == [], block_id
+    assert saved_report["source_sha256"] is not None and saved_report["totals"]["unanchored_quotes"] == 0
+    sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
+    assert _omission_records(sidecar, set(F5_BLOCKS)) == []
+    planted = {**sidecar, "f5-strict": [{"words": "A frontier developer", "reason": "reading", "arg": "RS2"}],
+               "f5-default": [{"words": "threat actors", "reason": "loss", "arg": "1"}]}
+    assert _omission_records(planted, set(F5_BLOCKS)) == [("f5-default", "loss"), ("f5-strict", "reading")]

@@ -677,6 +677,25 @@ unchanged.
     110/126 still match the frozen key, and C3 and every A item keep their answers. Regulated predicates: 64 of 64.
     Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-4/REPORT.md`.
 
+24. **The row arguments carried in full (omission rule; item 2's merge drops no argument).** Under the same ruling,
+    the 20 ARG answers (A-T0 to A-T4, ARG1 to ARG4) rested on `f5-strict` and `f5-default`. Their headers quoted only
+    "A frontier developer should make a strong argument that ..." (an elided quote) and `f5-default` quoted nothing.
+    The legend of `strong_argument` pointed at "the right column's row of {1}" and quoted no row. So item 2's merge
+    of the four rows into one rule left out what each row says the argument must show. (a) Section 1's right column,
+    row by row and verbatim, is now `rsp_vocabulary.ROW_ARGUMENTS`: each row's lead and bullets. T1 has its "This
+    will likely require:" and two bullets. T2 is one paragraph, to "outlined here.". T3 continues on p. 8 after its
+    footnotes ("some combination" / "of:") and has four bullets. T4 is "A frontier developer should make a strong
+    argument that:" with three bullets; the first continues on p. 9 ("would not need" / "to be treated as threats to
+    each other's model weights."), and the third ends with the evidence sentence `f5-evidence-*` also quote. The
+    legend of `strong_argument` quotes each row's argument in full under that row's threshold. Both f5 headers quote
+    the same parts with no "...", the page-split parts as two quotes. (b) The rule texts are unchanged. Each reading
+    stays one rule over the listed rows, with the row as the act's parameter (item 2's shape; no predicate added), and
+    `listed` holds for exactly T1 to T4. The strict and default readings differ only in the force. (c) The
+    accounting lines for `f5-strict` and `f5-default` read "omits: nothing". `f5-strict`'s "A frontier developer"
+    reading RS2 entry is gone because the legend now carries those words. The RS2 Ds reading stays recorded in both
+    blocks' when fields and headers. No answer moves: 110/126 still match the frozen key. Regulated predicates: 64 of
+    64. Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-4b/REPORT.md`.
+
 ## 13. Files for the implementation and run rounds
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`
