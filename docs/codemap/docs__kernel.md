@@ -1,1 +1,5 @@
 - `docs/kernel/kb-10b/repair_shadow_choices.py` — Fill the original kb-10b reports' empty choice inventories from the same direct probe calls.
+- `docs/kernel/kb-10e/bench.py` — Stage timings of one `soft-selected` case in the persistent Lean service (kb-10e, deliverable 1).
+- `docs/kernel/kb-10e/bench_relay.py` — `soft-selected` through the Python relay (kb-10e, deliverable 4): the call `ve.soft_route.selected_at` makes.
+- `docs/kernel/kb-10e/registrations.py` — (no module docstring)
+- `docs/kernel/kb-10e/trace_order.py` — Trace the order of Lean soft-selected calls a harness would make (kb-10e registrations estimate).

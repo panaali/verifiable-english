@@ -2716,6 +2716,13 @@
    "commit": "35a9ba135fe26df92ec412586a1999911839c15f"
   },
   {
+   "class": "V",
+   "lines": 5,
+   "reason": "kb-10e prepared soft documents (new Lean-owned behaviour): untied V +5 against 9a3fd7a9f9ac, tools/trust_map.py --check: VE/Service/Protocol.lean +4 (softHandleKey, the case member naming a soft document, 3 lines, G[V], as handleKey; handshake +1, G[V]), ResponseShape/Schemas/Envelope.lean +1 (the handshake shape's soft_member). K +0, S +0. Prepared, prepareDocument and the other new definitions are tied (prepare_ok, prepareDocument_ok, ...). Itemised in docs/kernel/kb-10e/DELTA.md row 1; ties pass in manage-agents FOLLOW-UPS.md.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-10e, 2026-11-13",
+   "commit": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210"
+  },
+  {
    "class": "S",
    "lines": 16,
    "reason": "kb-validators part 1: metered enforces and states the norms profile on its model (new Lean-owned behaviour, D13): S +16 (VE/Route/MeteredWire.lean +11: ProfileAdmits and its conjunct in EvaluationAnswer and the four run_*_sound statements; VE/Norms/Plain.lean +5: ProfileHolds), V +21 (VE/Route/MeteredRun.lean +11: Prepared.profile, prepare, profiled and its four calls in run; VE/Service/Standalone.lean +6: profileTree; VE/Norms/Plain.lean +4: profileOkOn, profileOk through it); K +0",

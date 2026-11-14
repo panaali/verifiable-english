@@ -78,11 +78,12 @@ def handshake : Shape :=
           .required (VE.Limits.stated.map (·.1)),
           closed (VE.Limits.stated.map fun (name, limit) => (name, .const (toJson limit)))]),
       ("handles", c
-        "Service.Protocol.Handles: the case member naming a handle and the table's bounds, exactly: the client keeps the same table (Handles.insert)."
+        "Service.Protocol.Handles: the case members naming a handle (an environment's, a soft document's) and the table's bounds, exactly: the client keeps the same table (Handles.insert)."
         [obj,
-          .required ["member", "max", "max_bytes"],
+          .required ["member", "soft_member", "max", "max_bytes"],
           closed [
             ("member", constS VE.Service.handleKey),
+            ("soft_member", constS VE.Service.softHandleKey),
             ("max", .const (toJson VE.Service.maxHandles)),
             ("max_bytes", .const (toJson VE.Service.maxHandleBytes))]])]]
 

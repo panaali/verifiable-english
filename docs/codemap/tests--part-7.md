@@ -56,6 +56,7 @@
 - `tests/test_slot_premises.py` — The premise slot of the soft route on the wire (kb-3): the `slot-certificate` and `slot-conflict` kinds.
 - `tests/test_soft_candidate_economy.py` — Batch 6 latency: a document's candidates cost Lean a fixed number of soft requests, not one per candidate (docs/lean-first/b6/DELTA.md, Latency; recheck findin…
 - `tests/test_soft_decision_keys.py` — Each soft decision's key in Lean's soft-norms row (`SoftNorms.keyedDecisions`; rd-9 soft-chain plan SC-8).
+- `tests/test_soft_document_handles.py` — Soft-document handles (kb-10e): a `soft-selected` case names its document by handle and is answered from the document the service prepared once.
 - `tests/test_soft_norms_conformance.py` — Three-way checks against the acceptance fixtures in soft-norms.md §10.
 - `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
 - `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
@@ -79,4 +80,3 @@
 - `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
 - `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
 - `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
-- `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.

@@ -252,20 +252,26 @@ theorem selectedRow_eq (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (q : 
   simp only [Option.map_some, hname']
   rfl
 
-/-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`, counted
-against `maxTuples` before any query is decoded. A model that fails the soft background is
-answered with `background: false`, not refused. -/
+/-- The case's `queries`: a non-empty array, counted against `maxTuples` before any query is
+decoded, each query decoded against `D` and `M` (`decodeQueries`). -/
+def selectedQueries (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (j : Json) :
+    Except String (List SelectedQuery) :=
+  match j.getObjValD "queries" with
+  | .arr raw =>
+    if raw.isEmpty then .error "InvalidInput: soft-selected needs at least one query"
+    else if raw.size > VE.Limits.maxTuples then
+      .error s!"ResourceLimit: soft-selected queries over {VE.Limits.maxTuples}"
+    else decodeQueries D M 0 raw.toList
+  | _ => .error "InvalidInput: soft-selected needs a queries array"
+
+/-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`
+(`selectedQueries`). A model that fails the soft background is answered with
+`background: false`, not refused. -/
 def runSelected (id : String) (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let src ← decodeSoftSource environment (j.getObjValD "norms")
   let ⟨M, _⟩ ← decodeModel src j
-  let qs ← (match j.getObjValD "queries" with
-    | .arr raw =>
-      if raw.isEmpty then .error "InvalidInput: soft-selected needs at least one query"
-      else if raw.size > VE.Limits.maxTuples then
-        .error s!"ResourceLimit: soft-selected queries over {VE.Limits.maxTuples}"
-      else decodeQueries src.D M 0 raw.toList
-    | _ => .error "InvalidInput: soft-selected needs a queries array")
+  let qs ← selectedQueries src.D M j
   let E := expanded src.D
   pure (VE.Route.Wire.ok id [("background", .bool (classificationBackgroundValid src.D M)),
     ("results", Json.arr (qs.map (selectedRow E M)).toArray)])

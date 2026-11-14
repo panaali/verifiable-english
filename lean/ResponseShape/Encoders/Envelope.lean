@@ -108,14 +108,19 @@ theorem bound_fits (index : Nat) (digest : String) (result : Json) :
       refine Fits.ofAlt (List.mem_of_getElem? (i := 1) rfl) ?_
       fits using Fits.kindNot (by simp only [kind]; first | decide | (split <;> decide))
 
-theorem response_fits (r : Request) (cases : Array (Except String Json)) (digests : Array String) :
-    Fits req (skel% "envelope.json#/$defs/ok") (response r cases digests) := by
-  unfold response bindResults
-  simp only []
+/-- A response with any results (`response`'s, `runSoftRequest`'s) fits the envelope. -/
+theorem responseOf_fits (r : Request) (cases : Array (Except String Json)) (digests : Array String)
+    (rs : Array Json) :
+    Fits req (skel% "envelope.json#/$defs/ok") (responseOf r cases digests rs) := by
+  unfold responseOf bindResults
   fits
   refine Fits.arrOf fun x hx => ?_
   obtain ⟨i, hi, rfl⟩ := Array.mem_mapIdx.mp hx
   exact bound_fits _ _ _
+
+theorem response_fits (r : Request) (cases : Array (Except String Json)) (digests : Array String) :
+    Fits req (skel% "envelope.json#/$defs/ok") (response r cases digests) :=
+  responseOf_fits r cases digests _
 
 theorem requestError_fits (r : Request) (message : String) :
     Fits req (skel% "envelope.json#/$defs/error") (requestError r message) := by

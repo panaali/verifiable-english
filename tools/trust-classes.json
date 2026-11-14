@@ -9139,37 +9139,6 @@
         "VE.Route.MeteredRun.tickCache"
       ]
     },
-    "VE/Route/MeteredProfileExamples.lean": {
-      "T": [
-        "VE.Route.MeteredProfileExamples.bad",
-        "VE.Route.MeteredProfileExamples.beyond",
-        "VE.Route.MeteredProfileExamples.closure",
-        "VE.Route.MeteredProfileExamples.diagnostic",
-        "VE.Route.MeteredProfileExamples.entry",
-        "VE.Route.MeteredProfileExamples.environmentText",
-        "VE.Route.MeteredProfileExamples.families",
-        "VE.Route.MeteredProfileExamples.fol",
-        "VE.Route.MeteredProfileExamples.formula",
-        "VE.Route.MeteredProfileExamples.good",
-        "VE.Route.MeteredProfileExamples.kinds",
-        "VE.Route.MeteredProfileExamples.meteredCase",
-        "VE.Route.MeteredProfileExamples.modelRefusal",
-        "VE.Route.MeteredProfileExamples.modelText",
-        "VE.Route.MeteredProfileExamples.nary",
-        "VE.Route.MeteredProfileExamples.onRelations",
-        "VE.Route.MeteredProfileExamples.onTwo",
-        "VE.Route.MeteredProfileExamples.order",
-        "VE.Route.MeteredProfileExamples.pairsOf",
-        "VE.Route.MeteredProfileExamples.parsed",
-        "VE.Route.MeteredProfileExamples.plainEntry",
-        "VE.Route.MeteredProfileExamples.refusal",
-        "VE.Route.MeteredProfileExamples.tree",
-        "VE.Route.MeteredProfileExamples.tree2",
-        "VE.Route.MeteredProfileExamples.treeOf",
-        "VE.Route.MeteredProfileExamples.value",
-        "VE.Route.MeteredProfileExamples.within"
-      ]
-    },
     "VE/Route/MeteredTrace.lean": {
       "G[V]": [
         "VE.Route.MeteredTrace.Entity",
@@ -10525,7 +10494,15 @@
         "VE.Service.respond",
         "VE.Service.restrictedCases",
         "VE.Service.results",
-        "VE.Service.unsigned"
+        "VE.Service.unsigned",
+        {
+          "name": "VE.Service.Handles.expandSoft",
+          "tied": [
+            "VE.Service.expandSoft_hit"
+          ]
+        },
+        "VE.Service.Handles.softEntry?",
+        "VE.Service.Request.decoded"
       ],
       "D[I]": [
         "VE.Service.Sha256.State",
@@ -10571,7 +10548,50 @@
         "VE.Service.readingsResponse",
         "VE.Service.readingsResults",
         "VE.Service.respondMemo",
-        "VE.Service.runReadingsRequest"
+        "VE.Service.runReadingsRequest",
+        "VE.Service.softHandleKey",
+        {
+          "name": "VE.Service.prepareDocument",
+          "tied": [
+            "VE.Service.prepareDocument_ok"
+          ]
+        },
+        {
+          "name": "VE.Service.softExpanded",
+          "tied": [
+            "VE.Service.softExpanded_members"
+          ]
+        },
+        {
+          "name": "VE.Service.softNamed",
+          "tied": [
+            "VE.Service.expandSoft_hit"
+          ]
+        },
+        {
+          "name": "VE.Service.softResult",
+          "tied": [
+            "VE.Service.softResult_cached"
+          ]
+        },
+        {
+          "name": "VE.Service.softResults",
+          "tied": [
+            "VE.Service.softResults_eq"
+          ]
+        },
+        {
+          "name": "VE.Service.runSoftRequest",
+          "tied": [
+            "VE.Service.runSoftRequest_ok"
+          ]
+        },
+        {
+          "name": "VE.Service.responseOf",
+          "tied": [
+            "VE.Service.response_eq"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Service.caseError",
@@ -10580,7 +10600,8 @@
         "VE.Service.maxHandles",
         "VE.Service.rejectionCode",
         "VE.Service.rejectionCodes",
-        "VE.Service.requestError"
+        "VE.Service.requestError",
+        "VE.Service.softRefusal"
       ],
       "T": [
         "VE.Service.objectMembersByChars",
@@ -22070,6 +22091,12 @@
           "tied": [
             "VE.SoftNorms.Run.decodeSelectedQuery_ok"
           ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.selectedQueries",
+          "tied": [
+            "VE.SoftNorms.Run.selectedQueries_ok"
+          ]
         }
       ],
       "G[V]": [
@@ -22153,6 +22180,103 @@
         "VE.Kernel.CarryChecks.text",
         "VE.Kernel.CarryChecks.toy",
         "VE.Kernel.CarryChecks.toyRun"
+      ]
+    },
+    "VE/SoftNorms/Prepared.lean": {
+      "G[V]": [
+        {
+          "name": "VE.SoftNorms.Run.Prepared",
+          "tied": [
+            "VE.SoftNorms.Run.prepare_ok"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.vocabularyIn",
+          "tied": [
+            "VE.SoftNorms.Run.vocabularyIn_eq"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.expListOf",
+          "tied": [
+            "VE.SoftNorms.Run.expList_eq_of"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.expandedIn",
+          "tied": [
+            "VE.SoftNorms.Run.expandedIn_eq"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.backgroundIn",
+          "tied": [
+            "VE.SoftNorms.Run.backgroundIn_valid"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.prepareFrom",
+          "tied": [
+            "VE.SoftNorms.Run.prepare_eq"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.prepare",
+          "tied": [
+            "VE.SoftNorms.Run.prepare_ok"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.runSelectedP",
+          "tied": [
+            "VE.SoftNorms.Run.soft_wire_selected_prepared"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.runCaseReportedP",
+          "tied": [
+            "VE.SoftNorms.Run.runCaseReportedP_eq"
+          ]
+        }
+      ],
+      "D[V]": [
+        {
+          "name": "VE.SoftNorms.Run.decodeModelIn",
+          "tied": [
+            "VE.SoftNorms.Run.decodeModelIn_prime"
+          ]
+        }
+      ]
+    },
+    "VE/Route/MeteredProfileExamples.lean": {
+      "T": [
+        "VE.Route.MeteredProfileExamples.bad",
+        "VE.Route.MeteredProfileExamples.beyond",
+        "VE.Route.MeteredProfileExamples.closure",
+        "VE.Route.MeteredProfileExamples.diagnostic",
+        "VE.Route.MeteredProfileExamples.entry",
+        "VE.Route.MeteredProfileExamples.environmentText",
+        "VE.Route.MeteredProfileExamples.families",
+        "VE.Route.MeteredProfileExamples.fol",
+        "VE.Route.MeteredProfileExamples.formula",
+        "VE.Route.MeteredProfileExamples.good",
+        "VE.Route.MeteredProfileExamples.kinds",
+        "VE.Route.MeteredProfileExamples.meteredCase",
+        "VE.Route.MeteredProfileExamples.modelRefusal",
+        "VE.Route.MeteredProfileExamples.modelText",
+        "VE.Route.MeteredProfileExamples.nary",
+        "VE.Route.MeteredProfileExamples.onRelations",
+        "VE.Route.MeteredProfileExamples.onTwo",
+        "VE.Route.MeteredProfileExamples.order",
+        "VE.Route.MeteredProfileExamples.pairsOf",
+        "VE.Route.MeteredProfileExamples.parsed",
+        "VE.Route.MeteredProfileExamples.plainEntry",
+        "VE.Route.MeteredProfileExamples.refusal",
+        "VE.Route.MeteredProfileExamples.tree",
+        "VE.Route.MeteredProfileExamples.tree2",
+        "VE.Route.MeteredProfileExamples.treeOf",
+        "VE.Route.MeteredProfileExamples.value",
+        "VE.Route.MeteredProfileExamples.within"
       ]
     },
     "VE/Experimental/CoreDocument.lean": {

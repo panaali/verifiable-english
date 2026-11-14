@@ -252,6 +252,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Envelope.lacks
 #print axioms ResponseShape.Encoders.Envelope.one_field
 #print axioms ResponseShape.Encoders.Envelope.requestError_fits
+#print axioms ResponseShape.Encoders.Envelope.responseOf_fits
 #print axioms ResponseShape.Encoders.Envelope.response_fits
 #print axioms ResponseShape.Encoders.Family.answer_fits
 #print axioms ResponseShape.Encoders.Family.bundle_fits

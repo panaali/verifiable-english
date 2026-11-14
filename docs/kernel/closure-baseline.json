@@ -1,7 +1,7 @@
 {
- "kernel_lines": 10015,
- "keyed_kernel_lines": 10015,
- "keyed_lines": 16769,
+ "kernel_lines": 10023,
+ "keyed_kernel_lines": 10023,
+ "keyed_lines": 16777,
  "paths": [
   {
    "axioms": [],
@@ -331,12 +331,12 @@
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 5368,
+   "lines": 5376,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 5360,
+   "spec_lines": 5368,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -395,6 +395,7 @@
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Prepared": 8,
     "VE.SoftNorms.Run": 178,
     "VE.SoftNorms.Selected": 15,
     "VE.SoftNorms.SelectedSound": 15,
@@ -422,6 +423,9 @@
      "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
      "VE.Compose.SlotWire.slot_wire_witness_facts"
     ],
+    "VE.SoftNorms.Run.prepare": [
+     "VE.SoftNorms.Run.soft_wire_selected_prepared"
+    ],
     "VE.SoftNorms.Run.runAdmission": [
      "VE.SoftNorms.Run.runAdmission_sound"
     ],
@@ -431,9 +435,12 @@
      "VE.SoftNorms.Run.soft_wire_selected",
      "VE.SoftNorms.Run.slot_wire_certificate",
      "VE.SoftNorms.Run.slot_wire_conflict"
+    ],
+    "VE.SoftNorms.Run.runSelectedP": [
+     "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ]
    },
-   "theorems": 13,
+   "theorems": 14,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
@@ -1229,7 +1236,7 @@
   },
   {
    "axioms": [],
-   "lines": 24395,
+   "lines": 24400,
    "modes": [
     "readingsRoute"
    ],
@@ -1355,7 +1362,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20703,
+   "wrap_lines": 20708,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1520,7 +1527,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 428,
-    "VE.SoftNorms.Selected": 67,
+    "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1539,12 +1546,12 @@
   },
   {
    "axioms": [],
-   "lines": 36344,
+   "lines": 36349,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36338,
+   "spec_lines": 36343,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1795,7 +1802,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 428,
-    "VE.SoftNorms.Selected": 67,
+    "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -1892,12 +1899,12 @@
   },
   {
    "axioms": [],
-   "lines": 35844,
+   "lines": 35849,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35018,
+   "spec_lines": 35023,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2145,7 +2152,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 428,
-    "VE.SoftNorms.Selected": 67,
+    "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
