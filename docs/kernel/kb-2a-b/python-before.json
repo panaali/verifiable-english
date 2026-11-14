@@ -1,7 +1,9 @@
 {
  "base_commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e",
  "command": "uv run python -m ve document check tests/data/kb2a/rsp-mixed.ve.md",
+ "document_sha256": "fee26bdbef52fa114110a1c9a3968ae9e6e333bbcb559a5f7fc310267094f213",
  "exit": 5,
+ "how": "Run in a git worktree of the base commit (the branch point, code unchanged, Lean and Rust built there) on the final tests/data/kb2a/rsp-mixed.ve.md (this SHA-256). A first record, made before commit (1) on an earlier draft of the document (unit s32-strong-attempt with RS8attempt in place of t1-plan with RS1), gave the same exit code and the same answer.",
  "lean_document_mode": {
   "error": "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route",
   "how": "ve.backends.relay.answer('document', {'id': 'document', 'document': <text>, 'admit': True})"
