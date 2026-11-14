@@ -599,6 +599,35 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
 
 
+# The Glossary definitions a predicate's legend quotes whole: a legend carries what a predicate means (DEF, WHAT) and
+# never force, bearer, condition, exception or deadline (reviews/dri-decisions-20261114-uc-split-precedent.md item 4).
+GLOSSARY_DEFINITIONS = {
+    "safety_case": "are an assessable argument showing how severe risks associated with a model's CCLs have been "
+                   "reduced to an acceptable level",
+    "internal": "represent model releases restricted to Google employees for internal use",
+    "high_risk": "represent model releases restricted to Google employees for use cases with the potential to enable "
+                 "severe threat scenarios (e.g. building internal security infrastructure or automating ML R&D)",
+}
+
+
+@pytest.mark.parametrize("predicate", sorted(GLOSSARY_DEFINITIONS))
+def test_the_legend_quotes_the_glossary_definition_whole(predicate):
+    """f7-sc's safety case, and the internal and high-risk internal deployments: each legend holds its Glossary
+    definition word for word, in quotes, and the predicate's role (obligation or classification) is unchanged."""
+    legend = _legend(predicate)
+    assert f'"{GLOSSARY_DEFINITIONS[predicate]}"' in legend
+    entry = vocabulary.environment()["vocabulary"]["predicates"][predicate]
+    assert ("regulated" in entry) == (predicate == "safety_case")
+    if predicate == "safety_case":
+        assert run.rule_predicate("f7-sc") == "safety_case"
+
+
+def test_every_glossary_definition_is_the_pinned_source_text():
+    """The quotes are the pinned source's own words, which the gate runner does not store (tools/gate-optional.json)."""
+    text = " ".join(pinned_source("safety-framework").read_text().split())
+    assert [p for p, quote in GLOSSARY_DEFINITIONS.items() if quote not in text] == []
+
+
 @pytest.mark.parametrize("case_id", ["G4", "G5"])
 def test_g4_and_g5_name_no_activity(case_id):
     """PLAN 5: "The proposal is of the named activity" and "Every other open term is unset unless the case says so".
