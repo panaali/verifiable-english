@@ -546,3 +546,176 @@ def test_regulated_predicates_stay_64_after_fix_3():
     regulated = [n for n, e in rsp_vocabulary.environment()["vocabulary"]["predicates"].items() if "regulated" in e]
     assert len(regulated) == 64
     assert {"goal_miss_addressed", "executive_approved"}.isdisjoint(regulated)
+
+
+# --- anthropic-rsp-fidelity-fix-4: no counted answer rests on an omission in rows-cond (PLAN section 12, item 23) ---
+
+def _accounting():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("safetyfw_accounting_fix4",
+                                                  base.REPO / "usecases" / "safetyfw_accounting.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+ROW_BLOCKS = ("rows-cond", "rows-uncond")
+# Independent pins, from the pinned source (PLAN 1): where each row's plans start and end, and row T4's "We will:" and
+# its five bullets (the second split by the page layout, so two quotes). A plan cut short fails its row's pin.
+ROW_PLAN_PINS = {
+    "non_novel_chem_bio_weapons": ("We will maintain or improve on our ASL-3 protections, which include classifier",
+                                   "Specifics may change, but we will maintain equally or more robust measures over "
+                                   "time and will publish updates in our Risk Reports."),
+    "novel_chem_bio_weapons": ("We will apply protections at least as strong as our ASL-3 protections (see previous "
+                               "row) to an expanded set of potential use cases for AI",
+                               "create policy recommendations for early detection and response for such threats, and "
+                               "share this content with policymakers."),
+    "misaligned_high_stakes": ("We will detail the state of our AI systems' capabilities and propensities",
+                               "our monitoring practices, and the overall level of risk in our Risk Reports."),
+}
+T4_PINS = (("We will:", "We will:"),
+           ("Resource and complete significant “moonshot R&D for security” projects", "best-resourced attackers."),
+           ("Achieve an “eyes on everything” state for our internal AI development.", "and maintain logs"),
+           ("for all critical AI-development activities", "the public Constitution that shapes and defines our AI "
+                                                          "models."),
+           ("Perform systematic alignment assessments", "adversarial red-teaming to test our auditing methods."),
+           ("Develop our internal red-teaming of our deployment safeguards", "participants in our established bug "
+                                                                            "bounty programs."),
+           ("Publish Risk Reports with the status of, and noteworthy findings from, all of the above",
+            "subject to external review by at least one expert, experienced, credible, candid and disinterested "
+            "external party."))
+F1_CLAUSE = "Specifics may change, but we will maintain equally or more robust measures over time"
+F10_SENTENCE = ("we will keep our future practices in line with this description or track and report noteworthy "
+                "changes and deviations (generally via subsequent Risk Reports)")
+
+
+def _row_quotes():
+    plans = rsp_vocabulary.ROW_PLANS
+    return [quote for name in rsp_vocabulary.THRESHOLDS for quote in plans[name]]
+
+
+def test_fix_4_each_row_plan_is_whole_in_both_row_headers_and_in_the_act_legend():
+    """(a) T1-T3's plan sentences and T4's "We will:" with each bullet: whole (the pins' start and end), verbatim in
+    the rows-cond and rows-uncond headers, and carried by the legend of the act both rules require, row by row under
+    the row's threshold (not a pointer to the column)."""
+    plans = rsp_vocabulary.ROW_PLANS
+    assert set(plans) == set(rsp_vocabulary.THRESHOLDS)
+    for name, (start, end) in ROW_PLAN_PINS.items():
+        assert len(plans[name]) == 1 and plans[name][0].startswith(start) and plans[name][0].endswith(end), name
+    assert [(q[:len(s)], q[-len(e):]) for q, (s, e) in zip(plans["automated_rd"], T4_PINS)] == list(T4_PINS)
+    assert len(plans["automated_rd"]) == len(T4_PINS) == 7
+    for block_id in ROW_BLOCKS:
+        source = _block("rules.d1.ve", block_id).source
+        assert "..." not in source and "\u2026" not in source, block_id
+        assert [q for q in _row_quotes() if f'"{q}"' not in source] == [], block_id
+        assert _rule(block_id)["predicate"] == "plans_in_place", block_id
+    assert _rows_missing_from(_legend("plans_in_place")) == []
+    # The other direction: the base's pointer legend, or a legend that lost T4's last bullet, is refused.
+    assert len(_rows_missing_from("the middle column's plans of the row of {1} are in place at {0} (section 1, "
+                                  "PROTk)")) == 4
+    assert _rows_missing_from(_legend("plans_in_place").replace(plans["automated_rd"][6], "")) == ["automated_rd"]
+
+
+def _rows_missing_from(legend):
+    """The rows whose plans the legend does not quote whole under the row's threshold (T4: "We will:" and each
+    bullet, numbered)."""
+    plans = rsp_vocabulary.ROW_PLANS
+    missing = [name for name in ROW_PLAN_PINS if f'({name}): "{plans[name][0]}"' not in legend]
+    t4 = plans["automated_rd"]
+    bullets = [t4[1], f"{t4[2]} {t4[3]}", *t4[4:]]
+    if (f'(automated_rd): "{t4[0]}" and its five bullets' not in legend or "..." in legend
+            or not all(f'({k}) "{bullet}"' in legend for k, bullet in enumerate(bullets, 1))):
+        missing.append("automated_rd")
+    return missing
+
+
+def test_fix_4_c3_blocks_carry_f1s_clause_and_f10s_sentence():
+    """(d) C3 (F1's "maintain equally or more robust measures over time" against F10's "keep ... in line ... or track
+    and report") is stated by the blocks run.py reads for it: each row block's header and act legend carry F1's
+    clause, and f10-in-line's act legend carries F10's whole sentence."""
+    c3 = rsp_run.CLUSTERS["C3"]
+    assert set(ROW_BLOCKS) | {"f10-in-line"} == set(c3)
+    for block_id in ROW_BLOCKS:
+        assert F1_CLAUSE in _block("rules.d1.ve", block_id).source, block_id
+        assert F1_CLAUSE in _legend(_rule(block_id)["predicate"]), block_id
+    assert F10_SENTENCE in _legend(_rule("f10-in-line")["predicate"])
+    assert F10_SENTENCE in _block("rules.d1.ve", "f10-in-line").source
+
+
+def _c3_and_prot_units():
+    """The units C3 and PROT1-PROT4 read: C3's blocks (run.py) and RS1's blocks (build_document), with the threshold
+    premises the A cases list."""
+    rs1 = {block for k in range(1, 5) for choice in rsp_build_readings(f"rs1_t{k}").values() for block in choice}
+    return set(rsp_run.CLUSTERS["C3"]) | rs1 | {f"threshold-t{k}" for k in range(1, 5)}
+
+
+def rsp_build_readings(set_id):
+    return base.rsp_build.READINGS[set_id][1]
+
+
+def test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bullets():
+    """(b) accounting.d1.txt: rows-cond, rows-uncond and f10-in-line omit nothing (no "loss" left on a sentence this
+    item formalises), every word of their quoted spans is carried, and each T4 bullet is a quote of both row
+    blocks, so it is accounted, not dropped; the saved --source report agrees."""
+    acc = _accounting()
+    result = acc.account(RSP)
+    assert result["problems"] == []
+    blocks = {b["id"]: b for b in result["blocks"]}
+    saved = {b["id"]: b for b in json.loads((base.REPO / "docs/usecases/safetyfw/anthropic-rsp/accounting.json")
+                                            .read_text())["blocks"]}
+    for block_id in (*ROW_BLOCKS, "f10-in-line"):
+        for report in (blocks, saved):
+            assert report[block_id]["entries"] == [] and report[block_id]["unaccounted"] == [], block_id
+        assert saved[block_id]["span_length"] > 0, block_id
+    for block_id in ROW_BLOCKS:
+        quotes = acc.quotes(_block("rules.d1.ve", block_id).source)
+        assert [q for q in rsp_vocabulary.ROW_PLANS["automated_rd"][1:] if acc.norm(q) not in quotes] == [], block_id
+        assert saved[block_id]["span_length"] > sum(map(len, _row_quotes())), block_id
+
+
+def _omission_records(sidecar, units):
+    """uc-audit-omission-accept's record paths a file of this case can show, for `units`: a unit with no accounting
+    line ("no record"), a "loss" or "reading" entry, or a "restates" / "rule <id>" tag whose carrier's rule and legends
+    do not hold the words."""
+    acc = _accounting()
+    legend = acc.legends(json.loads((RSP / "environment.d1.json").read_text()))
+    blocks = {b["id"]: b for name in acc.BLOCK_FILES for b in acc.read_blocks(RSP / name)}
+
+    def carried(block_id):
+        text = blocks[block_id]["text"] if block_id in blocks else ""
+        return acc.words(text).union(*(legend[n]["legend"] for n in acc.used_names(text, legend)))
+
+    found = []
+    for unit in sorted(units):
+        if unit not in sidecar:
+            found.append((unit, "no record"))
+        for entry in sidecar.get(unit) or []:
+            if entry["reason"] in ("loss", "reading"):
+                found.append((unit, entry["reason"]))
+            elif entry["reason"] in ("restates", "rule"):
+                carrier = unit if entry["reason"] == "restates" else entry["arg"]
+                if not acc.words(entry["words"]) <= carried(carrier):
+                    found.append((unit, f"unresolved {entry['reason']}"))
+    return found
+
+
+def test_fix_4_c3_and_prot_units_carry_no_omission_record():
+    """(c) uc-audit-omission-accept's record paths that a file of this case can show, for every unit C3 and
+    PROT1-PROT4 read: an accounting line (never "no record") with no "loss"; every "restates" or "rule <id>" tag
+    resolves to a carrier whose rule or legends hold the words; no "reading" tag; and no UNFORMALISED span among RS1's
+    units. (PLAN 12 and REPORT records are the audit seat's read; the REPORT says so.)"""
+    acc = _accounting()
+    sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
+    units = _c3_and_prot_units()
+    assert {"rows-cond", "rows-uncond", "f10-in-line", "threshold-t1"} <= units
+    assert _omission_records(sidecar, units) == []
+    # The other direction: the base's rows-cond loss, a dropped line and a tag to a carrier without the words.
+    planted = {**sidecar, "rows-cond": [{"words": "We will maintain or improve on our ASL-3 protections",
+                                         "reason": "loss", "arg": "1"}],
+               "f10-in-line": [{"words": "noteworthy changes and deviations", "reason": "rule", "arg": "f6-maintain"}]}
+    del planted["rows-uncond"]
+    assert _omission_records(planted, units) == [("f10-in-line", "unresolved rule"), ("rows-cond", "loss"),
+                                                 ("rows-uncond", "no record")]
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    rs1 = [u for u in spans if u.get("reading_set", "").startswith("rs1_") or re.match(r"t[1-4]-plan", u["id"])]
+    assert len(rs1) == 10 and [u["id"] for u in rs1 if u["status"] == "UNFORMALISED"] == []

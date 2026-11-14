@@ -1,3 +1,5 @@
+- `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
+- `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
@@ -14,7 +16,6 @@
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
 - `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
 - `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
-- `tests/test_kb10_shadow.py` — The kb-10b shadow (`usecases/safetyfw_shadow.py`): it records Python's answers unchanged and compares them with Lean's `soft-selected`, not with Python's own.
 - `tests/test_kernel_closure.py` — The kernel boundary's measuring tool (docs/spec/kernel-boundary.md, sections 2 and 6).
 - `tests/test_keyed_answers_authority.py` — keyed-wording F1: docs say who computes the keyed answers of a soft-rule norm document, and that is true.
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…

@@ -1,0 +1,9 @@
+anthropic-rsp: 85 blocks, 97 quotes checked, 14 note quotes, 0 empty (info, outside the headline)
+L1 hits: L1m 3, L1n 0, L1u 1, L1c 25, L1e 1
+  extra off: L1m 3, L1n 0, L1u 1, L1c 35, L1e 1 (the lever clears 10 hits and adds 0)
+  suppress off: L1m 3, L1n 0, L1u 1, L1c 25, L1e 1 (the lever clears 0 hits and adds 0)
+  abbrev off: L1m 3, L1n 0, L1u 1, L1c 25, L1e 1 (the lever clears 0 hits and adds 0)
+  furniture off: L1m 3, L1n 0, L1u 1, L1c 26, L1e 1 (the lever clears 4 hits and adds 3)
+  footnotes off: L1m 3, L1n 0, L1u 4, L1c 29, L1e 1 (the lever clears 7 hits and adds 0)
+  hand-footnotes off: L1m 3, L1n 0, L1u 1, L1c 25, L1e 1 (the lever clears 0 hits and adds 0)
+unpaired digit runs left as text: 6
