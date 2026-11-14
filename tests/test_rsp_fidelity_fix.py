@@ -3,6 +3,7 @@
 The frozen key is compared cell by cell with PLAN section 6; the Appendix A, F9, F13/F16 and G1/N3/C-doc repairs are
 checked on the translation and on the saved results, each in the direction it was written for and the opposite one.
 """
+import hashlib
 import json
 import re
 
@@ -754,6 +755,14 @@ ROW_ARGUMENT_PINS = {
         (("AI models have not been deliberately or inadvertently trained with dangerous goals",
           "much of the key evidence is suspect due to the possibility of manipulation by AI systems."),)),
 }
+# Each row's pieces, joined by newlines (SHA-256), measured on the pinned rsp-3.4.txt (NFKC, the apostrophe written '):
+# a cut inside a piece that the pins' ends do not see, made consistently in the dict, headers and legend, fails here.
+ROW_ARGUMENT_SHA256 = {
+    "non_novel_chem_bio_weapons": "6affc1ab20e15608ba57fa4721b8914ae7108c56396724f1c8280d4eb1da0b6a",
+    "novel_chem_bio_weapons": "43d09fd091c073ff48115e1f7096e41a0d4748db052dec2423e24f1d9dedd1a4",
+    "misaligned_high_stakes": "44421eb5b29f83ab82846d1afde3f43a3ef1714f95611ee0a766ae5d68f01bb1",
+    "automated_rd": "c83c7bd769513d359405a48e25650216377e80dc0ea388adb4bb3b3dd5f2c9be",
+}
 BASE_ARGUMENT_LEGEND = "the strong argument of the right column's row of {1} is made at {0} (section 1, ARGk)"
 
 
@@ -798,6 +807,8 @@ def test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend(n
     assert [[(piece[:len(s)], piece[-len(e):]) for piece, (s, e) in zip(part, pins)] for part, pins in
             zip(parts, ROW_ARGUMENT_PINS[name])] == [list(pins) for pins in ROW_ARGUMENT_PINS[name]]
     assert [len(part) for part in parts] == [len(pins) for pins in ROW_ARGUMENT_PINS[name]]
+    pieces = "\n".join(piece for part in parts for piece in part)
+    assert hashlib.sha256(pieces.encode()).hexdigest() == ROW_ARGUMENT_SHA256[name]
     headers = [_block("rules.d1.ve", block_id).source for block_id in F5_BLOCKS]
     for block_id in F5_BLOCKS:
         assert _rule(block_id)["predicate"] == "strong_argument", block_id
