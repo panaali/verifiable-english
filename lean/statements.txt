@@ -69784,33 +69784,51 @@ theorem VE.Time.Wire.extension_document_sound
                             Lean.Json.arr (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
   -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire
   -- expr 945645095
-theorem VE.Time.Wire.quantity_admission_wire_sound
+theorem VE.Time.Wire.quantity_admission_wire_sound_plain
   ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
     VE.Time.Wire.runCase j more = Except.ok answer →
       (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
-        ∃ id env w quantity a value,
-          VE.Bridge.stringField j "id" = Except.ok id ∧
-            j.getObjVal? "environment" = Except.ok env ∧
-              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
-                j.getObjVal? "quantity" = Except.ok quantity ∧
-                  VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
-                    answer =
-                        VE.Time.Wire.ok id
-                          ([("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+        (∃ e, j.getObjVal? "model" = Except.error e) →
+          ∃ id env w quantity a,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              j.getObjVal? "environment" = Except.ok env ∧
+                VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                  j.getObjVal? "quantity" = Except.ok quantity ∧
+                    VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                      answer =
+                          VE.Time.Wire.ok id
+                            [("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
                               ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
                               ("environment_id", Lean.Json.str w.environmentId),
-                              ("target_environment_id", Lean.Json.str w.targetId)] ++
-                            value) ∧
-                      VE.Time.Admitted w.vocab.env [] a.formula ∧
-                        VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
-                          ((∃ e, j.getObjVal? "model" = Except.error e) ∧ value = [] ∨
-                            ∃ model d b work,
-                              j.getObjVal? "model" = Except.ok model ∧
-                                VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
-                                  value = [("value", Lean.Json.bool b), ("evaluations", Lean.ToJson.toJson work)] ∧
-                                    b = VE.Order.Formula.eval d.toModel [] a.formula.erase)
+                              ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                        VE.Time.Admitted w.vocab.env [] a.formula ∧
+                          VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.SortName@VE.Order.Syntax VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 195127907
+theorem VE.Time.Wire.quantity_admission_wire_sound_valued
+  ∀ (j answer model : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
+        j.getObjVal? "model" = Except.ok model →
+          ∃ id env w quantity a d b work,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              j.getObjVal? "environment" = Except.ok env ∧
+                VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                  j.getObjVal? "quantity" = Except.ok quantity ∧
+                    VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                      VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                        answer =
+                            VE.Time.Wire.ok id
+                              [("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+                                ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
+                                ("environment_id", Lean.Json.str w.environmentId),
+                                ("target_environment_id", Lean.Json.str w.targetId), ("value", Lean.Json.bool b),
+                                ("evaluations", Lean.ToJson.toJson work)] ∧
+                          VE.Time.Admitted w.vocab.env [] a.formula ∧
+                            VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
+                              b = VE.Order.Formula.eval d.toModel [] a.formula.erase
   -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.eval@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.SortName@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
-  -- expr 424148063
+  -- expr 1940952525
 theorem VE.Time.Wire.quantity_certificate_wire_sound
   ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
     VE.Time.Wire.runCase j more = Except.ok answer →

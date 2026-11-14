@@ -1,6 +1,6 @@
 {
- "kernel_lines": 10023,
- "keyed_kernel_lines": 10023,
+ "kernel_lines": 11119,
+ "keyed_kernel_lines": 11119,
  "keyed_lines": 16777,
  "paths": [
   {
@@ -602,14 +602,15 @@
      "VE.Time.Wire.extension_document_sound"
     ],
     "VE.Time.Wire.runCase": [
-     "VE.Time.Wire.quantity_admission_wire_sound",
+     "VE.Time.Wire.quantity_admission_wire_sound_plain",
+     "VE.Time.Wire.quantity_admission_wire_sound_valued",
      "VE.Time.Wire.quantity_countermodel_wire_sound",
      "VE.Time.Wire.quantity_certificate_wire_sound",
      "VE.Time.Wire.quantity_document_wire_sound"
     ]
    },
-   "theorems": 5,
-   "tier": "candidate",
+   "theorems": 6,
+   "tier": "kernel",
    "wrap_lines": 75,
    "wrap_modules": {
     "VE.Time.Syntax": 4,
