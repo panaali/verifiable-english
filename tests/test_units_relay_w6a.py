@@ -207,3 +207,94 @@ def test_either_w6_field_takes_lean_s_decoder():
             Environment(raw)
         assert str(caught.value).startswith("fields do not match: expected [language, profiles, "
                                             "spec_revision, vocabulary, unit_schema, units]"), caught.value
+
+
+# --- kb-8c: the shown quantity values come from the `quantity` mode's admission row (decision D13) -------
+
+PAYLOAD = {"format": "ve-quantity@1", "formula": ["eq", ["date", "2026-09-16"], ["date", "2026-09-16"]]}
+
+
+def _spied(monkeypatch):
+    """Every relay call `ve.units` makes, with the rows Lean answered."""
+    from ve.backends import relay
+    calls, original = [], relay.decide
+
+    def spy(mode, cases, **options):
+        rows = original(mode, cases, **options)
+        calls.append((mode, cases, rows))
+        return rows
+
+    monkeypatch.setattr(relay, "decide", spy)
+    return calls
+
+
+def test_the_shown_values_are_the_quantity_admission_rows(monkeypatch):
+    """`_checked_quantity` asks the `quantity` mode's admission kind (no `kind`, no `model`: the answer
+    `quantity_admission_wire_sound_plain` states) and shows its `Q`, `core` and `meaning_id` as answered."""
+    from ve.units import core_formula
+    env = Environment(raw_environment({"day": {"scale": "1", "display": {"kind": "iso_date"}}}))
+    calls = _spied(monkeypatch)
+    canonical, core = elaborate_quantity(env, PAYLOAD)
+    meaning_id = quantity_meaning_id(env, PAYLOAD)
+    target, formula = core_formula(env, PAYLOAD)
+    # core_formula also types the core in the erased environment (ve.ast's `check` typing case, no `quantity`)
+    assert not [case for mode, cases, _ in calls if mode != "quantity" for case in cases if "quantity" in case]
+    calls = [call for call in calls if call[0] == "quantity"]
+    assert len(calls) == 3
+    for mode, [case], [row] in calls:
+        assert set(case) == {"id", "environment", "quantity"}
+        assert case["quantity"] == PAYLOAD and row["environment_id"] == env.environment_id
+        assert set(row) == {"id", "status", "assurance", "Q", "core", "meaning_id", "core_meaning_id",
+                            "environment_id", "target_environment_id"}
+    row = calls[0][2][0]
+    assert canonical == {"format": "ve-quantity@1", "formula": row["Q"], "traces": []} and core == row["core"]
+    assert meaning_id == row["meaning_id"] and formula == formula_from_data(target, row["core"])
+
+
+@pytest.mark.parametrize("entry", ["elaborate_quantity", "quantity_meaning_id", "core_formula"])
+def test_an_admission_row_of_another_environment_is_refused(monkeypatch, entry):
+    """The row's `environment_id` is bound to the request's environment: a genuine row rebound to another
+    environment's identity is `CheckerUnavailable` at every entry that shows its values, never a value."""
+    from ve import units
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    env = Environment(raw_environment({"day": {"scale": "1", "display": {"kind": "iso_date"}}}))
+    [genuine] = relay.decide("quantity", [{"id": "quantity", "environment": env.to_dict(), "quantity": PAYLOAD}])
+    other = Environment(raw_environment()).environment_id
+    assert other != env.environment_id
+    for rebound in (other, "0" * 64):
+        monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [{**genuine, "environment_id": rebound}])
+        with pytest.raises(CheckerUnavailable, match="W6 environment identity mismatch"):
+            getattr(units, entry)(env, PAYLOAD)
+
+
+RETYPES = [None, True, 7, "x", [], {}, "a" * 64, "deleted"]
+
+
+@pytest.mark.parametrize("field", ["environment_id", "Q", "core", "meaning_id"])
+def test_a_retyped_admission_field_fails_the_schema(field):
+    """The four fields `_checked_quantity` reads are typed by the `quantity` mode's schema: the genuine exchange
+    passes, and every retype of one of them, sent as bytes through the service's decoder, is refused."""
+    from tests.lean_build import lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
+    from ve.backends.service_schema import Invalid, check_response
+    env = Environment(raw_environment({"day": {"scale": "1", "display": {"kind": "iso_date"}}}))
+    cases = [{"id": "quantity", "environment": env.to_dict(), "quantity": PAYLOAD}]
+    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("quantity", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "quantity", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("quantity", _decode_json(json.dumps(response).encode()), request)
+    genuine = response["results"][0]["result"]
+    for value in RETYPES:
+        if value == genuine[field] or (field == "meaning_id" or field == "environment_id") and value == "a" * 64:
+            continue  # a hex64 is a well-typed identity; its binding is the test above
+        mutant = json.loads(json.dumps(response))
+        if value == "deleted":
+            del mutant["results"][0]["result"][field]
+        else:
+            mutant["results"][0]["result"][field] = value
+        with pytest.raises((Invalid, ValueError)):
+            check_response("quantity", _decode_json(json.dumps(mutant).encode()), request)
