@@ -1,0 +1,12 @@
+{
+ "job": "testmap-04f11378-t641331-s1",
+ "head": "752ff70d6efc80d3cadb862b1f29ccd1f40391a8",
+ "argv": [
+  "testmap-04f11378-t641331-s1",
+  "752ff70d6efc80d3cadb862b1f29ccd1f40391a8",
+  "752ff70d6efc80d3cadb862b1f29ccd1f40391a8",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-56a10383b016.tar.zst",
+  "4785478a5470ea1be7284021381b999af30f0ac6c8196b202cf5b19dcd68b9c2",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_safetyfw_usecases.py tests/test_english_statement_blocks.py tests/test_packs_guard_mutants.py tests/test_speech_acts_conformance.py tests/test_gate_quarantine.py tests/test_ps_e1.py tests/test_calc_units.py tests/test_lean_certificates.py tests/test_agent_policy.py tests/test_scope_readings_document.py tests/test_norm_defaults_contract.py tests/test_code_map.py tests/test_order_round2.py tests/test_acts_elaborate_relay.py tests/test_lean_limits.py tests/test_source_words.py tests/test_cardinality_exercised.py tests/test_rights_open_act_is_open.py tests/test_ar8_evidence.py tests/test_fidmech_segment.py tests/test_acts_specialise_layer.py tests/test_lean_first_b3b_report.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
