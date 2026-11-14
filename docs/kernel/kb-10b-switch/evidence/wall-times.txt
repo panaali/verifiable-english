@@ -1,4 +1,7 @@
-# pair5.sh rounds r1 and r2 (base = main 4a5d3460d3, head = this branch rebased on it; the head's later commits in r2 change tests and docs only)
+# pair5.sh rounds (base = main 4a5d3460d3, head = this branch rebased on it; the head's later commits change tests, docs and evidence only).
+# r1, r2: all five keys. Their openai-preparedness and agent-policy 'before' runs are VOID: without PYTHONPATH those two
+# scripts imported the head's ve in the base worktree (the venv's editable install). r3, r4 rerun those two pairs with PYTHONPATH per side
+# (each line names the ve the side imports).
 start r1 2026-11-14T20:03Z load 16.44 19.36 15.56
 anthropic-rsp after rc=0 wall=344.2s fba43bcdf7 20:08Z
 anthropic-rsp before rc=0 wall=362.9s 4a5d3460d3 20:09Z
@@ -27,24 +30,33 @@ openai-preparedness before rc=0 wall=1893.7s 4a5d3460d3 21:15Z
 end r2 2026-11-14T21:15Z load 20.39 27.05 30.01
 /home/seyran/code/ve-kb-10b-switch-base status: 0 changed
 /home/seyran/code/ve-kb-10b-switch status: 0 changed
-# harness summary lines
-time-r1-agent-policy-after.log: 
-time-r1-agent-policy-before.log: 
+start r3 2026-11-14T21:55Z load 27.84 29.69 32.10
+agent-policy before rc=0 wall=166.0s 4a5d3460d3 21:58Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
+agent-policy after rc=0 wall=167.7s f4128281d5 21:58Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+openai-preparedness before rc=0 wall=1535.1s 4a5d3460d3 22:21Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
+py_funcs before openai-preparedness rc=0
+openai-preparedness after rc=0 wall=1766.6s f4128281d5 22:25Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+end r3 2026-11-14T22:25Z load 7.80 17.61 25.28
+/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
+/home/seyran/code/ve-kb-10b-switch status: 2 changed
+start r4 2026-11-14T22:25Z load 6.60 17.03 25.00
+agent-policy after rc=0 wall=201.8s 61a1ae2cdc 22:29Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+agent-policy before rc=0 wall=203.9s 4a5d3460d3 22:29Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
+openai-preparedness before rc=0 wall=1517.0s 4a5d3460d3 22:50Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
+openai-preparedness after rc=0 wall=1709.4s 615d3ccc43 22:54Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+end r4 2026-11-14T22:54Z load 22.33 29.74 29.22
+/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
+/home/seyran/code/ve-kb-10b-switch status: 0 changed
+# harness summary lines (RSP and Preparedness print their score)
 time-r1-anthropic-rsp-after.log: 110 / 126 (342.7 s)
 time-r1-anthropic-rsp-before.log: 110 / 126 (361.5 s)
-time-r1-eligibility-after.log: 
-time-r1-eligibility-before.log: 
-time-r1-openai-preparedness-after.log: 236 / 239 (1886.8 s)
-time-r1-openai-preparedness-before.log: 236 / 239 (1888.4 s)
-time-r1-safety-framework-after.log: 
-time-r1-safety-framework-before.log: 
-time-r2-agent-policy-after.log: 
-time-r2-agent-policy-before.log: 
 time-r2-anthropic-rsp-after.log: 110 / 126 (378.8 s)
 time-r2-anthropic-rsp-before.log: 110 / 126 (409.2 s)
-time-r2-eligibility-after.log: 
-time-r2-eligibility-before.log: 
+time-r1-openai-preparedness-after.log: 236 / 239 (1886.8 s)
+time-r1-openai-preparedness-before.log: 236 / 239 (1888.4 s)
 time-r2-openai-preparedness-after.log: 236 / 239 (1884.9 s)
 time-r2-openai-preparedness-before.log: 236 / 239 (1890.2 s)
-time-r2-safety-framework-after.log: 
-time-r2-safety-framework-before.log: 
+time-r3-openai-preparedness-after.log: 236 / 239 (1763.2 s)
+time-r3-openai-preparedness-before.log: 236 / 239 (1533.7 s)
+time-r4-openai-preparedness-after.log: 236 / 239 (1706.6 s)
+time-r4-openai-preparedness-before.log: 236 / 239 (1515.7 s)
