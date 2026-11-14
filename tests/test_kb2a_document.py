@@ -187,6 +187,19 @@ def test_document_lowering_never_falls_back_to_python(tmp_path, lean_only):
     assert caught.value.lowering is True
 
 
+def test_a_feature_without_a_lowering_row_keeps_today_s_path(tmp_path, monkeypatch):
+    """DESIGN kb-2a 2: the core path is for documents whose features have a lowering. A feature with no row (here a
+    `couplings` block; the FSF D1 translation's soft readings likewise, docs/kernel/kb-2a-b/status-compare.json) is
+    `UnsupportedLowering`, and the document keeps today's path: Lean's refusal of the pair, unmarked."""
+    def coupled(meta):
+        meta["couplings"] = []
+    path = variation(tmp_path, coupled)
+    row, error = relay.answer("document", {"id": "document", "document": path.read_text(encoding="utf-8"),
+                                          "admit": True})
+    assert str(error) == "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"
+    assert getattr(error, "lowering", None) is None and "lowering" not in row
+
+
 def test_kb2a_python_before_recorded():
     """DRI item 6: what Python decided for the acceptance document before the fallback was removed is recorded, and
     every listed difference from Lean's answer names its cause (a file:line or a rule)."""

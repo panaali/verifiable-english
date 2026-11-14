@@ -110,7 +110,10 @@ def inputs (j : Json) : Except String Inputs := do
   let active := VE.Discourse.Loader.activeOf d.all
   let rules := (d.S.bind (·.rules)) <|> (d.R.bind (·.rules))
   let views ← if d.judged then judgedViews d.E d.front d.names active d.units rules d.R else pure []
-  let sets ← active.mapM fun (s, _) => return (s, ← setCandidates d.E d.front s)
+  -- A reading the candidate reader cannot read (a soft rule: `setCandidates` reads W1 rules and formulas, and
+  -- `CoreDocument.lowerCandidate` lowers a strict rule only) is a feature with no row of the lowering.
+  let sets ← active.mapM fun (s, _) => return (s, ← (setCandidates d.E d.front s).mapError fun e =>
+    unsupported s.unit "readings@1" s!"a reading the lowering cannot read: {e}")
   VE.Discourse.Loader.checkLemmas d.front
   for u in d.units do
     if u.kind == .str "asserted" && u.content.isNone && !(d.all.any (·.1.unit == u.id)) then
@@ -250,13 +253,19 @@ def routed (j : Json) : Bool :=
       | .error e => routedRefusals.contains e
       | .ok _ => false
 
+/-- A refusal of the lowering's table (`CoreDocument.unsupported`): a feature with no row of the lowering. -/
+def noRow (message : String) : Bool := message.startsWith "UnsupportedLowering: "
+
 /-- The document mode's entry: a routed document is answered here or refused here, its refusal row marked
-`lowering` (so no other path decides it); every other case is `Document.runCaseReported`'s, unchanged. -/
+`lowering` (so no other path decides it). A routed document with a feature the lowering has no row for is not on the
+core path (DESIGN kb-2a 2: one path for every document whose features have a lowering): it keeps today's answer, as
+every other case does (`Document.runCaseReported`, unchanged). -/
 def runCaseReported (j : Json) : Json :=
   if routed j then
     match answer j with
     | .ok a => a
     | .error message =>
+      if noRow message then Document.runCaseReported j else
       let row := match locatedOf j message with
         | some (text, at_) => locatedRow j text at_
         | none => Standalone.reported (fun _ => .error message) j

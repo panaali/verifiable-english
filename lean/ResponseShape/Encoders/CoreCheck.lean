@@ -79,6 +79,8 @@ theorem runCaseReported_fits (j : Json) : Fits j Skeletons.document (VE.Service.
     · exact answer_fits j _ ‹_›
     · simp only []
       split
+      · exact Document.runCaseReported_fits j
+      split
       · unfold VE.Service.Document.locatedRow
         split <;> (try unfold VE.Service.ParseDiagnostic.span) <;> rw [setObjVal_mkObj] <;>
           simp only [List.cons_append, List.nil_append] <;> fits
