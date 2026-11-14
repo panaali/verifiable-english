@@ -130,6 +130,14 @@ BASE = {
                                     "Appendix B: the Board may reverse a decision of OpenAI Leadership"),
     "revised_course_mandated": permission("{0} have a revised course of action mandated by the Board",
                                           "Appendix B: the Board may mandate a revised course of action"),
+    # The fast track is something OpenAI may ask for; the urgent processing is what it asks for, not a duty on the
+    # SAG that the sentence states (PLAN 3.3: no permission or duty the text does not grant).
+    "fast_track_request": permission("{0} have a fast track requested so the SAG processes the report urgently",
+                                     "Appendix B, Fast-track: “In the rare case that a risk of severe harm "
+                                     "rapidly develops (e.g., there is a change in our understanding of model safety "
+                                     "that requires urgent response), we can request a fast track for the SAG to "
+                                     "process the report urgently.”: OpenAI ('we') may request it; the request is "
+                                     "for the SAG to process the report urgently"),
     # Appendix B's yearly review is of the Framework itself, once, not of each situation: its sort is the Framework.
     "annual_review": {"arguments": ["framework"],
                       "description": "Appendix B: \u201cWe will review and potentially update the Preparedness Framework "
@@ -253,7 +261,8 @@ ACTS = {
     "safeguards_recommended": ("{0} have the SAG recommend implementing as well as assessing the safeguards",
                                "3.3: the first next step the SAG's decision can include"),
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",
-                           "Appendix B: fast track"),
+                           "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership "
+                           "for immediate reaction as needed to address the risk.”"),
     "third_party_evaluation": ("{0} have third parties independently evaluate the model",
                                "5.2: third-party evaluation of tracked model capabilities"),
     "residual_risk_assessment": ("{0} include an assessment of residual severe-harm risk in the Safeguards Report",
