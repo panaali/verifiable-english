@@ -97,6 +97,7 @@ none). The selected run and its result are below.
 | b | usecases/openai-preparedness/pf_vocabulary.py | "first" dropped from `risk_paths`' legend | test_f9_selection_steps_..._as_et[f9-risk-paths-...] (legend quote differs) |
 | c | usecases/openai-preparedness/pf_vocabulary.py | "then" dropped from `specific_safeguards_per_path`' legend | test_f9_selection_steps_..._as_et[f9-specific-...] (legend quote differs) |
 | d | usecases/openai-preparedness/spans.json | f9-risk-paths' ET record and ET wait removed | test_f9_selection_steps_..._as_et[f9-risk-paths-...] ("assert 'ET' in ['JT']") |
+| f | usecases/openai-preparedness/accounting.d1.txt | f15's "(as described in Section 3.1)" retagged `restates` | test_fix6_units_carry_only_their_recorded_exposures (the record paths differ) |
 | e | usecases/openai-preparedness/build_document.py | f9-specific's placement waits back to ("SC",) | tests/test_safetyfw_usecases.py::test_pf_every_byte_has_ve_status_and_one_unit ("spans.json or coverage.json is out of date") |
 
 Only Python changed, in the use case. There is no ve/, lean/ or rust/ change, so no Lean or Rust seed applies, and
@@ -133,7 +134,10 @@ The launcher gave no reading. I did not run ucfix-budget.py.
      read clears them, not on this fix alone.
    - Item 27 of PLAN section 12 adds a `plan12` exposure to f15-third-party and one to f9-specific.
    - f9-specific keeps its `unformalised` exposure (SC).
-   - f9-risk-paths has none.
+   - f9-risk-paths has none from the case's files.
+   - This REPORT's own sentences add `report` exposures, one for each sentence that names a unit next to a drop word:
+     these Notes, and seed d's row. The test pins every path except `report`, because a permanent test does not pin
+     batch-report text (D4). The seat reads them with the rest.
    - The full-sentence legends resolve the three `mistag` exposures main had: f9-risk-paths' "We use the following
      process to select safeguards for a deployment" (restates), and f15-third-party's "If we deem that a deployment
      warrants" and "OpenAI will work with third-parties to" (restates).
@@ -153,8 +157,8 @@ After merge, the DRI decider launches both of these; the builder runs no audit:
 
 ## Size
 
-SIZE: 30 product (use-case Python and rules: pf_vocabulary.py 17+/6-, build_document.py 7+/2-, rules.d1.ve 3+/3-;
-added lines), 106 tests, 19 other hand-written lines (PLAN 13, README 6), plus this REPORT. Generated: spans.json,
+SIZE: 27 product (added lines; 11 removed; use-case Python and rules: pf_vocabulary.py 17+/6-, build_document.py
+7+/2-, rules.d1.ve 3+/3-), 106 tests, 19 other hand-written lines (PLAN 13, README 6), plus this REPORT. Generated: spans.json,
 coverage.json, environment.d1.json, gaps.json, units.json. Measured with `git diff --numstat $(git merge-base HEAD
 main)`.
 
@@ -164,7 +168,7 @@ main)`.
 2. PASS: deliverables 1-3, condition tests (a)-(c), seeds (a)-(d) (plus e), the PLAN 12 entry, README and REPORT are
    above. Each is tied to commit 3750cbbb82 or d9ef41082c and to the tests named above. The only overlap is
    kb-10b-switch on run.py, which this item does not edit.
-3. PASS: seeds a-e, each failing its named test.
+3. PASS: seeds a-f, each failing its named test.
 4. N.A.: no Python, Lean or Rust checker path changed. The valid case still passes: run.py gives 236 / 239.
 5. N.A.: no binding or relay changed.
 6. PASS: the selected run on the committed final HEAD is below.
@@ -181,9 +185,9 @@ main)`.
     this REPORT names its command. The spec re-reads are listed above.
 15. PASS:
     - Overclaims checked: "no answer moved" (run.py output, results.json unchanged), "unchanged" SC record (test (c)),
-      "none" exposures for f9-risk-paths (`test_fix6_units_carry_only_their_recorded_exposures`).
+      no exposure from the case's files for f9-risk-paths (`test_fix6_units_carry_only_their_recorded_exposures`).
     - No deliverable was cut.
-    - Every new check has a seed (a-e).
+    - Every new check has a seed (a-f).
     - Limits: N.A.
 
 ## Selected run
