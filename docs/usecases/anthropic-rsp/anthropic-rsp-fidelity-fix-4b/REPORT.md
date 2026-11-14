@@ -189,7 +189,13 @@ fixloop round has run. The launcher owns the check, and this builder did not run
 
 ## Selected tests
 
-(Filled in after the final selected run on the committed HEAD; see below.)
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 4a5d3460d3 --run`, on the committed HEAD c7044d465
+(tree bcfc8e19b9, git status clean). It selected 62 of 622 test units, which ran as 65 units in 5 shards on GitHub
+Actions (run anthropic-rsp-fidelity-fix-4b-c7044d46-t674896). Exit 0 after 1,703 s: 65 units passed, 0 failed. The
+selection includes tests/test_rsp_fidelity_fix.py, tests/test_safetyfw_accounting.py,
+tests/test_english_statement_blocks.py, tests/test_english_lean_lexicon.py and tests/test_safetyfw_usecases.py. The
+commit after this run changes only this REPORT (docs/*.md). Not run by this builder: the full gate (the chain runs it)
+and trust_mutants (see Trust, DELTA, size). No test of main-known-red.txt was touched.
 
 ## Next item
 
@@ -220,7 +226,7 @@ After merge, the DRI decider launches two re-reads:
    chain gate runs on the final HEAD.
 7. No unsigned item: PASS. DELTA none, and no reserved signature.
 8. Every user-visible change in DELTA: N.A. Only use-case translation files changed (no checker delta).
-9. Test selection finds the tests: PASS if the selected run lists tests/test_rsp_fidelity_fix.py,
+9. Test selection finds the tests: PASS. The selected run lists tests/test_rsp_fidelity_fix.py,
    tests/test_safetyfw_accounting.py and tests/test_english_statement_blocks.py (Selected tests).
 10. Lean statements: N.A. No Lean changed.
 11. Budgets fail closed: N.A. No evaluator or limit changed.
