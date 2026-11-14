@@ -72,7 +72,7 @@ and the REPORT scan would read those tags as records: `exposure-before.txt` (mai
 | FACTS, rs2-nest, plan12 | 2 | 2 |
 | FACTS, no-critical-models, plan12 | 1 | 1 |
 | FACTS, FACTS, report (fix-2 REPORT.md:102) | 1 | 1 |
-| FACTS, no-critical-models, unformalised p13-u212 | 1 | 1 |
+| FACTS, no-critical-models, the spans.json path (p13-u212) | 1 | 1 |
 | CASES, CASES, no-record | 1 | 0 |
 | total on FACTS/CASES (the script's last line) | 9 | 8 |
 
