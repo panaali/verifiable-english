@@ -43,6 +43,11 @@ import VE.Route.Run
 * Any case without a norm construct (no `regulated` field, no `norms`, not a
   `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
+* `acts@0` (kb-4a): the mode's dispatch `runCaseRouted` hands an `acts-elaborate` case, and every case whose
+  environment (or the environment a `norms-elaborate` case decides over) reads `acts@0`, to `runCaseActsRouted`,
+  the runner as it was before the acts hook (the registry's candidate path `normsActs`); every other case runs on
+  `runCase`, whose decoder (`Wire.decodeFlagged`, `ActsHook.plain`) references no act grammar. Every input is
+  answered as before (`VE.Acts.HookTwins.runCaseRouted_today`).
 
 W2 documents containing norm units use regenerated layer leaves and the
 unchanged W2 graph checker. -/
