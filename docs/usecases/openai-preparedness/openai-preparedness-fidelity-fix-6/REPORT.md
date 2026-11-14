@@ -159,7 +159,7 @@ After merge, the DRI decider launches both of these; the builder runs no audit:
 
 SIZE: 27 product (added lines; 11 removed; use-case Python and rules: pf_vocabulary.py 17+/6-, build_document.py
 7+/2-, rules.d1.ve 3+/3-), 106 tests, 19 other hand-written lines (PLAN 13, README 6), plus this REPORT. Generated: spans.json,
-coverage.json, environment.d1.json, gaps.json, units.json. Measured with `git diff --numstat $(git merge-base HEAD
+coverage.json, environment.d1.json, gaps.json, units.json, conformance/english-lean/lexicon-report.json. Measured with `git diff --numstat $(git merge-base HEAD
 main)`.
 
 ## Self-review against BUILDER-CHECKLIST
@@ -171,7 +171,8 @@ main)`.
 3. PASS: seeds a-f, each failing its named test.
 4. N.A.: no Python, Lean or Rust checker path changed. The valid case still passes: run.py gives 236 / 239.
 5. N.A.: no binding or relay changed.
-6. PASS: the selected run on the committed final HEAD is below.
+6. PASS: the selected run (on f33bc5654f, with the one failed id rerun after the lexicon-report regeneration) is
+   below. The chain gate runs on the final HEAD.
 7. PASS: no DELTA row and no reserved signature.
 8. N.A.: no user-visible VE behaviour changed (use-case translation text only; results.json is unchanged).
 9. PASS: the new tests are in tests/test_pf_fidelity_fix.py, which the selection maps to usecases/openai-preparedness/,
@@ -192,4 +193,14 @@ main)`.
 
 ## Selected run
 
-(filled in below after the run on the committed HEAD)
+- `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 4a5d3460d3 --run` on f33bc5654f selected 42 of 622
+  units. The fast stage ran 18 of them and gave "1 failed, 594 passed" (manage-agents gha-tests/
+  openai-preparedness-fidelity-fix-6-f33bc565-t672746/fast.log). The wrapper stopped on that failure and did not
+  wait for the 3 Actions shards holding the other 24 units, so their results did not come back. Those units are left
+  to the chain's gate on the final HEAD.
+- The failure was `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`:
+  the committed conformance/english-lean/lexicon-report.json was stale, because the PF environment's lexicon id
+  changes when its legends change. I regenerated it with `uv run python -m conformance.english_lean_lexicon`, which
+  printed `{"valid": 43, "invalid": 0, "failures_by_condition": {}}` and changed one line, as fix-5's 9dff05b37c did.
+- `zsh mac-pytest.sh -- <that id>` then gave "1 passed" (exit 0).
+- None of the selected tests is on main-known-red.txt.
