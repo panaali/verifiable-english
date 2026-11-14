@@ -1,0 +1,46 @@
+{
+  "item": "kb-risk",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored byte for byte from a copy taken before the plant (lean/VE/Risk/Run.lean and lean/VE/Risk/Wire.lean are unchanged against HEAD: git diff --quiet HEAD -- them, and cmp against the copies). Lean seeds S1, S2 and S4 were run against the final lean/VE/Risk/WireSound.lean (commit ceb580f8c8) by: plant, lake build VE.Risk.WireSound, restore. S3 was run by: plant, lake build ve_service (the binary is then unlisted in lean/checkers.lock, so the run read a temporary copy of the lock under /tmp that also lists the seeded build's hash, through a throwaway pytest plugin setting ve.backends.lean_service.BUILD_LOCK), then the pytest id, then restore and a full lake build (the restored ve_service is 9c3315ce..., pinned in lean/checkers.lock). S3 does not touch the theorems' file and no proof catches it (the theorems state that decodeSupplied returned `supplied`, not what it holds); tools/select_tests.py --paths lean/VE/Risk/Wire.lean selects the catching test file.",
+  "seeds": [
+    {
+      "id": "S1",
+      "language": "lean",
+      "file": "lean/VE/Risk/Run.lean",
+      "claim": "task seed (a): runDecision reports the verdict of the opposite branch (the CONFLICT and non-conflict answers swapped)",
+      "mutation": "runDecision: `match res.conflict with` becomes `match (if res.conflict.isSome then none else some ((\"\", [], .top), []) : type_of% res.conflict) with`: the tables answer when the decision model has a conflict, and a CONFLICT answer when it has none",
+      "failing": "lake build VE.Risk.WireSound",
+      "test": "VE.Risk.Run.risk_decision_wire_sound",
+      "result": "risk_decision_wire_sound does not build: lean/VE/Risk/WireSound.lean:228:54 (the closed-list rfl of the non-conflict branch) deterministic timeout at whnf, then 129:0 (the declaration) timeout; Run.lean itself compiles with the seed"
+    },
+    {
+      "id": "S2",
+      "language": "lean",
+      "file": "lean/VE/Risk/Wire.lean",
+      "claim": "task seed (b): the elaborate kind drops one class from its answer",
+      "mutation": "Wire.regenerated: (\"risk_premises\", labelled (riskPremiseLabels R) (riskPremises R)) becomes labelled (riskPremiseLabels R).dropLast (riskPremises R).dropLast: the last risk:class row is gone",
+      "failing": "lake build VE.Risk.WireSound",
+      "test": "VE.Risk.Run.risk_elaborate_wire_sound",
+      "result": "risk_elaborate_wire_sound does not build: lean/VE/Risk/WireSound.lean:123:4 (case eq: the rfl between the answer and the stated field list) deterministic timeout at whnf, and 102:82 tactic timeout"
+    },
+    {
+      "id": "S3",
+      "language": "lean",
+      "file": "lean/VE/Risk/Wire.lean",
+      "claim": "task seed (c): decodeSupplied drops its last entry",
+      "mutation": "decodeSupplied: `xs.mapM fun x => do ...` becomes `List.dropLast <$> xs.mapM fun x => do ...`",
+      "failing": "uv run pytest -q tests/test_risk_lean_route.py::test_k10_decision_17 (against ve_service built with the seed)",
+      "test": "tests/test_risk_lean_route.py::test_k10_decision_17",
+      "result": "1 failed: AssertionError: {'error': 'MissingEntry: E2', 'id': 'd', 'status': 'error'} (the cited estimate E2, the last supplied entry, is no longer supplied); no proof fails (lake build VE.Risk.WireSound with the seed: exit 0)"
+    },
+    {
+      "id": "S4",
+      "language": "lean",
+      "file": "lean/VE/Risk/WireSound.lean",
+      "claim": "the decision theorem states the leads table, not another table (a wrong statement in the file this item adds must not prove)",
+      "mutation": "risk_decision_wire_sound's statement: (\"leads\", Json.arr ((regenerate src.R d).leads.map ...)) becomes (regenerate src.R d).might.map",
+      "failing": "lake build VE.Risk.WireSound",
+      "test": "VE.Risk.Run.risk_decision_wire_sound",
+      "result": "risk_decision_wire_sound does not build: lean/VE/Risk/WireSound.lean:228:54 deterministic timeout at isDefEq (the answer's leads table is not the stated one), then 129:0 timeout"
+    }
+  ]
+}
