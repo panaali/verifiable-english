@@ -816,3 +816,111 @@ def test_k13_units_carry_only_their_exposition_and_plan12_records():
     assert fast["status"] == "OPEN" and fast["span"][1] == chair["span"][0] and "untranslated" not in chair
     # the check is not vacuous: a loss the case really records (c3-access-default's accounting line) is found
     assert "loss" in omission_records(("f16-year", "c3-access-default"))["c3-access-default"]
+
+
+# --- openai-preparedness-fidelity-fix-6: the three units both relay seats judged REAL (pf-relay4) ----------------
+SENTENCE_5_2 = ("If we deem that a deployment warrants deeper testing of Tracked Categories of capability (as described "
+                "in Section 3.1), for example based on results of Capabilities Report presented to them, then when "
+                "available and feasible, OpenAI will work with third-parties to independently evaluate models.")
+SENTENCE_RISK_PATHS = ("We use the following process to select safeguards for a deployment: • We first identify the "
+                       "plausible ways in which the associated risk of severe harm can come to fruition in the proposed "
+                       "deployment.")
+SENTENCE_SPECIFIC = ("• For each of those, we then identify specific safeguards that either exist or should be "
+                     "implemented that would address the risk.")
+# (unit, its regulated predicate, the order word, the sentence its legend quotes, its spans.json key)
+SELECTION_STEPS = (("f9-risk-paths", "risk_paths", "first", SENTENCE_RISK_PATHS, "rule"),
+                   ("f9-specific", "specific_safeguards_per_path", "then", SENTENCE_SPECIFIC, "blocked_rule"))
+FIX6_UNITS = ("f15-third-party", "f9-risk-paths", "f9-specific")
+
+
+def span_record(unit, key):
+    return next(u for u in json.loads((PF / "spans.json").read_text())["units"] if u.get(key) == unit)
+
+
+def test_f15_third_party_act_is_openais_work_with_third_parties(pf):
+    """f15-third-party (pf-relay4 Q06, (ii) by both): the act keeps "work with third parties to independently
+    evaluate" (OpenAI's undertaking), not the required result "have third parties independently evaluate"; the legend
+    quotes 5.2's sentence in full; the two guards (the deeming about a deployment, OT14; "when available and
+    feasible") are unchanged, and K14 keeps its key."""
+    assert [b.id for b in blocks_for("third_party_evaluation")] == ["f15-third-party"]
+    text = act("third_party_evaluation")
+    assert text == "{0} work with third parties to independently evaluate the model"
+    assert "work with third parties to independently evaluate" in text
+    assert len(text) <= 80 and re.fullmatch(r"\{0\}( [A-Za-z]+)+", text)
+    assert not {"and", "or", "for", "if", "not", "no", "every", "must", "is", "then"} & set(text.lower().split())
+    acts = [p["regulated"]["act"] for p in V.environment()["vocabulary"]["predicates"].values() if "regulated" in p]
+    assert not any("have third parties independently evaluate" in a for a in acts)
+    assert not any("have third parties independently evaluate" in b.text for b in T.rule_blocks())
+    assert block("f15-third-party").text.startswith(
+        "Rule 1. Every situation must work with third parties to independently evaluate the model, if both")
+    assert legend_quotes("third_party_evaluation") == [SENTENCE_5_2]
+    assert SENTENCE_5_2 in block("f15-third-party").source
+    assert predicates_read("f15-third-party") == {"third_party_evaluation", "deeper_testing_warranted",
+                                                   "third_party_available"}
+    assert legend("deeper_testing_warranted") == "OpenAI deems that {0} warrants deeper testing of Tracked Categories"
+    assert legend("third_party_available") == "third-party evaluation is available and feasible at {0}"
+    assert R.K_ITEMS["THIRD_PARTY_EVALUATION"] == ("third_party_evaluation",)
+    k14 = next(c for c in json.loads((PF / "results.json").read_text())["comparison"] if c["id"] == "K14")
+    assert (k14["key"], k14["ve"], k14["agree"]) == ("ALL", "ALL", True)
+
+
+@pytest.mark.parametrize("unit, predicate, word, sentence, key", SELECTION_STEPS)
+def test_f9_selection_steps_carry_their_order_word_and_record_the_order_as_et(pf, unit, predicate, word, sentence,
+                                                                              key):
+    """f9-risk-paths and f9-specific (pf-relay4 Q14, Q15, (iv) by both): each legend quotes its 4.1 sentence in full,
+    so "first" and "then" are in the translation's words (the act cannot hold them: 82 characters with "first";
+    "then" is reserved); the header and the spans.json entry both say the order between the two steps is event
+    order (ET, PLAN O7), not formalised, and the entry's record spans exactly the order word."""
+    assert legend_quotes(predicate) == [sentence]
+    assert word in sentence.split() and sentence in block(unit).source
+    assert word not in act(predicate).split()
+    header = block(unit).source
+    assert f"event order (ET, as PLAN O7): the order the word {word} states" in header
+    assert "is not formalised" in header and "so the legend carries it" in header
+    record = span_record(unit, key)
+    assert "ET" in record["waits"]
+    (clause,) = record["untranslated"]
+    (fragment, reason, detail), = B.UNTRANSLATED[unit]
+    assert (fragment, reason) == (word, "event_order")
+    assert clause == {"span": clause["span"], "reason": "event_order", "detail": detail}
+    assert detail.startswith("ET: ") and f"the order '{word}' states" in detail and "not formalised" in detail
+    start, end = clause["span"]
+    assert record["span"][0] <= start and end == start + len(word.encode()) <= record["span"][1]
+    source = pinned_source("openai-preparedness", skip=False)
+    if source is not None:
+        assert source.read_bytes()[start:end] == word.encode()
+
+
+def test_f9_specific_keeps_its_per_item_scope_record(pf):
+    """f9-specific's per-item scope (C2, "each risk path" in a unary act) is unchanged: SC-blocked in the header, the
+    act, the blocked-rule reason and its spans.json entry (both relay seats: no defect)."""
+    assert "per-item quantification remains SC-blocked" in block("f9-specific").source
+    assert act("specific_safeguards_per_path") == "{0} identify specific safeguards that would address each risk path"
+    assert B.BLOCKED_RULE_REASONS["f9-specific"] == "quantifier_scope"
+    record = span_record("f9-specific", "blocked_rule")
+    assert record["kind"] == "unformalised" and record["status"] == "UNFORMALISED"
+    assert record["reason"] == "quantifier_scope"
+    assert record["detail"] == "SC: D1's unary situation rule does not bind each source item in safeguard selection"
+    assert record["waits"] == ["SC", "ET"]
+    assert "the per-item scope stays SC-blocked" in legend("specific_safeguards_per_path")
+
+
+def test_fix6_units_carry_only_their_recorded_exposures():
+    """Under the installed omission rule (tests/omission_rule.py: any tag but restates / rule / reading is a loss)
+    the three units carry exactly these exposures: f15-third-party the two `exposition` entries of its accounting
+    line (as on main; a read must clear them before K14 counts as audited) and PLAN 12 item 27; f9-specific item 27
+    and its UNFORMALISED unit (SC); f9-risk-paths none. No `mistag` is left (main had three: the full-sentence
+    legends now carry the words the accounting says each rule restates). The `report` path (sentences of a docs
+    REPORT.md) is left out here: it reads batch reports, which no permanent test pins (D4)."""
+    exposures = {u: [(p, d) for p, d in rows if p != "report"] for u, rows in omission_exposures(FIX6_UNITS).items()}
+    records = {u: [p for p in paths if p != "report"] for u, paths in omission_records(FIX6_UNITS).items()}
+    assert {u: paths for u, paths in records.items() if paths} == {"f15-third-party": ["loss", "loss", "plan12"],
+                                                                  "f9-specific": ["plan12", "unformalised"]}
+    assert [d for p, d in exposures["f15-third-party"] if p == "loss"] == [
+        "(as described in Section 3.1) (exposition)",
+        "for example based on results of Capabilities Report presented to them (exposition)"]
+    item27 = plan12_item(27)
+    assert item27.startswith("27. **5.2's third-party evaluation and 4.1's two ordered selection steps")
+    for name, rows in exposures.items():
+        for path, detail in rows:
+            assert path in ("loss", "unformalised") or detail.rstrip(".") in item27, (name, path, detail)

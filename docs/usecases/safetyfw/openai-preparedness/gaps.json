@@ -36,19 +36,19 @@
    "units": 12
   },
   "ET": {
-   "bytes": 8272,
+   "bytes": 8466,
    "sole_bytes": 5914,
    "sole_units": 17,
    "statuses": {
-    "OPEN": 1618,
-    "UNFORMALISED": 6654
+    "OPEN": 1752,
+    "UNFORMALISED": 6714
    },
-   "units": 29
+   "units": 31
   },
   "JT": {
    "bytes": 6509,
-   "sole_bytes": 2193,
-   "sole_units": 12,
+   "sole_bytes": 2059,
+   "sole_units": 11,
    "statuses": {
     "OPEN": 5981,
     "UNFORMALISED": 528
@@ -66,8 +66,8 @@
   },
   "SC": {
    "bytes": 4710,
-   "sole_bytes": 3759,
-   "sole_units": 24,
+   "sole_bytes": 3699,
+   "sole_units": 23,
    "statuses": {
     "OPEN": 951,
     "UNFORMALISED": 3759

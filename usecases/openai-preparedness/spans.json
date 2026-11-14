@@ -2409,11 +2409,22 @@
    ],
    "kind": "norm",
    "rule": "f9-risk-paths",
+   "untranslated": [
+    {
+     "span": [
+      32528,
+      32533
+     ],
+     "reason": "event_order",
+     "detail": "ET: the order 'first' states between the two safeguard-selection steps (f9-risk-paths, then f9-specific) is not formalised; its legend carries 'first'"
+    }
+   ],
    "open_terms": [
     "ot2"
    ],
    "waits": [
-    "JT"
+    "JT",
+    "ET"
    ],
    "status": "OPEN"
   },
@@ -2425,10 +2436,21 @@
    ],
    "kind": "unformalised",
    "blocked_rule": "f9-specific",
+   "untranslated": [
+    {
+     "span": [
+      32681,
+      32685
+     ],
+     "reason": "event_order",
+     "detail": "ET: the order 'then' states after the first safeguard-selection step (f9-risk-paths) is not formalised; its legend carries 'then', a word an act may not use"
+    }
+   ],
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
-    "SC"
+    "SC",
+    "ET"
    ],
    "status": "UNFORMALISED"
   },
