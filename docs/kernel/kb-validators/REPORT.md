@@ -3,7 +3,7 @@
 Status: parts 1 and 2 done; READY for the chain gate. No DRI signature is needed (DELTA rows cite R7, R16, R12). Code HEAD `78c92cdde1` on merge base `0f6d59d441`.
 Changed: `metered` applies the `model` mode's profile check (`Plain.profileOkOn`) on every family; `runWith_sound` and `metered_wire_sound` gain the conjunct `ProfileAdmits`.
 Acceptance: no keyed call is refused; RSP, Preparedness and FSF `--check` pass on the final binary; agent-policy and eligibility match (timing fields only). `lake build` passes, and `lean/audit.py` passes with no new axiom.
-Kernel 9,552 to 9,620 (+68, inside the signed +80). Trust K +0, S +4, V +33 (R16). Trust mutants exit 0.
+Kernel 9,552 to 9,620 (+68, inside the signed +80). Trust K +0, S +16, V +21 (R16). Trust mutants exit 0.
 Open: none. Part 2 is for the architect seat's ruling on (ii) and (iii). The full release gate is the chain's (not run here).
 
 SIZE: 103 product, 306 tests, 164 other hand-written lines (plus this report; 323 generated and 507 evidence lines not counted) (`git diff --numstat 0f6d59d441 HEAD`: product = `lean/VE/**` outside the examples file; tests = `tests/**` and `lean/VE/Route/MeteredProfileExamples.lean`).
@@ -236,7 +236,7 @@ specification's table and figures and the frozen-keys figures quote the regenera
 
 No Python or Rust product code changed, so every seed is Lean. Trust mutants (the mechanical sweep, R16):
 `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/kernel/kb-validators/trust-mutants.json --test lean/VE/Route/MeteredProfileExamples.lean --allow docs/kernel/kb-validators/trust-mutants-allow.json`.
-A full run on `844655983c` was followed by a rescore after an allow-only edit (`fb4b9c5d6b`): **20 KILLED,
+A full run on `844655983c` was followed by a rescore after an allow-only edit (`fb4b9c5d6b`), and another after the declarations were classified (`babec72be2`, Lean unchanged; classes S 39, G[V] 27, D[V] 6 mutants): **20 KILLED,
 0 SURVIVOR, 0 UNKNOWN, 6 INVALID, 46 ALLOWED, exit 0**. What is allowed:
 - `EvaluationAnswer` (30 mutants), `ProfileAdmits` (5) and `ProfileHolds` (2): Props. A body mutant of
   `ProfileHolds` changes the instance that decides it, so the tool reads the failing `#guard`s as UNKNOWN.
@@ -277,6 +277,23 @@ The full release gate (the chain's, on the final HEAD). Eligibility's mutants se
 the branch makes no `metered` or `model` call there, and main and branch match on everything else).
 Preparedness' traced call-site run used `--base-only`; its acceptance runs used `--check` (with mutants).
 
+## Selected tests
+
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 0f6d59d441 --run` on the committed `af20f59485`
+(the run fell back to the VM; 10,640 s): every unit passed except two files, both mine:
+- `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: the new example file
+  builds JSON and was in no list. It is now under `lean_decoders.other_json` in `ve/assurance-manifest.json`,
+  with its reason.
+- `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration` (35 unclassified
+  lines) and `::test_committed_ledger_names_real_declarations`. The five new trusted declarations are now
+  classified in `tools/trust-classes.json`: `ProfileHolds` and `ProfileAdmits` S; `profileOkOn` and `profiled`
+  G[V]; `profileTree` D[V], as `regulatedOf`. That moved the growth between classes (S +16, V +21; the total
+  is still +37), and the two allowances say so. The consolidation plan's step 5 row is re-measured: tied
+  415 to 413, because `modelCase` and `profileOk` are shorter.
+
+The three failed ids rerun on the fixed commit (`mac-pytest.sh -- <ids>`, `babec72b`): 3 passed. The
+trust mutants were rescored after the reclassification (Lean unchanged).
+
 ## Spec re-read
 
 - "apply the SAME check the `model` mode applies (… on the same tree, built the same way as Standalone.lean:612-615; share the code)" against the task: the tree comes from `profileTree`, which `modelCase` calls in place of those lines, and the check is `profileOkOn`, which `profileOk` runs.
@@ -295,7 +312,7 @@ Preparedness' traced call-site run used `--base-only`; its acceptance runs used 
 6. Gate evidence matches the final HEAD: PASS for what is mine. The trust mutants ran on the final Lean, the keys reran on the final binary, and the commits after them change no Lean. The gate itself is the chain's.
 7. No unsigned item: PASS. DELTA rows cite R7, R16 and R12, and the kernel growth is signed in ALLOWANCES.md (architect seat, round 4).
 8. Every user-visible change is in DELTA: PASS. Row 1, and the keys' outputs are unchanged (Acceptance).
-9. Test selection finds the tests: PASS. `tools/select_tests.py --base 0f6d59d441` runs in the final selected run (see the build report). `tests/test_metered_profile.py` and `tests/test_kernel_closure.py` are new or changed files the selection lists.
+9. Test selection finds the tests: PASS. `tools/select_tests.py --base 0f6d59d441` lists `tests/test_metered_profile.py` and `tests/test_kernel_closure.py`, and the selected run's two failures were in tests the change affects (section "Selected tests").
 10. Lean statements say what is claimed: PASS. S1, S2 and S4 break the build. The theorem is about the decoded `M` the answer is computed in (the same `M` that `answer` evaluates).
 11. Budgets and deadlines fail closed: N.A. No budget or limit changed; the check runs after the model decoder's limits.
 12. No CPU or memory regression: PASS. The check is one walk over the declared pairs' tuples, and the tree is decoded once per prepared environment (a `Thunk`, kept with a handle). The key wall times are in `part2-measure.json`, measured under VM load, so they are no benchmark.
