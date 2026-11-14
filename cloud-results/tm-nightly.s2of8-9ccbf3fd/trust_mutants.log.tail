@@ -1,0 +1,10 @@
+trust_mutants: 61 definitions, 76 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Service/Standalone.lean:320 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) bool-flip: false -> true (lean/VE/Service/ActsExamples.lean:559: Expression (Lean elaborates it otherwise than without the ...)
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:75 VE.EnglishGrammar.Norm.Run.oneSpansOf (G[V], trusted) list-empty: rs -> [] (lean/VE/EnglishGrammar/Norm/Run.lean:75: Invalid dotted identifier notation: The expected type of...)
+SURVIVOR lean/VE/Compose/ProfilesMain.lean:13 main (G[V], trusted) list-empty: [("environment", toJson environmentProfiles), ("document_layers", toJson documentLayers), ("cardi... -> []
+trust_mutants: 8 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 65 OTHER SHARD in 6128 s
+trust_mutants: D[V], trusted: 3 KILLED, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 SURVIVOR, 2 UNKNOWN, 29 OTHER SHARD
+trust_mutants: K, trusted: 7 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 10 OTHER SHARD
+trust_mutants: steps: wall plan 10.5 s, scratch 3 s, control_build 0.8 s, probe_install 0.9 s, mutants 6107.2 s, cleanup 5.5 s, reads 0.1 s; lake control_build 0.7 s (1), probe_install 0.8 s (1), control_probes 57.1 s (9), mutant_builds 164.7 s (11), mutant_checks 16055 s (17), stage_controls 5699.1 s (7), mutant_probes 100.2 s (10)
