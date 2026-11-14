@@ -1,0 +1,49 @@
+{
+ "allow": [
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-drop-first",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-drop-last",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-drop-middle",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-empty",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-first",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "ResponseShape.Schemas.Envelope.handshake",
+   "operator": "list-last",
+   "reason": "G[V], the handshake's response shape: this mutant only loosens the shape (a combinator, a closed-object member or a `required` name dropped), so the handshake still fits it and the #guard of lean/ResponseShape/Schemas.lean:113 still passes; the shape is rendered to the generated ve/backends/lean_service_schema/envelope.json, so the mutant makes `tools/regen_generated.py --check` fail (the rendered file differs), and the client validates every handshake against that file (tests/test_soft_document_handles.py::test_the_handshake_states_the_soft_member reads its soft_member). The VE.Service.handshake mutants of the same lines are all KILLED by that #guard (--deep)."
+  },
+  {
+   "definition": "VE.Service.respondMemo",
+   "operator": "eq-ne",
+   "reason": "an equivalent mutant: it sends soft-norms requests to runRequest and every other request to runSoftRequest, and the two answer every request alike: expandCases expands soft document handles in both (expandSoft), a case naming no held soft document is answered by caseResultWith in both (softResult_plain, runSoftRequest_ok), and one naming a held document is answered as runCaseReported answers it written out, which is runMode .softNorms (softResult_cached, runMode_softNorms). The branch only picks the prepared path, whose effect is speed (docs/kernel/kb-10e/after-*.md: a repeat call 2 ms against about 1,000 ms), which the suite does not time (no elapsed-time asserts)"
+  },
+  {
+   "definition": "VE.Service.Entry",
+   "operator": "eq-le",
+   "reason": "G[V], the field soft_eq (soft.get = prepareDocument environment): `≤` has no instance on Except String Prepared: the mutant does not elaborate (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Service.Entry",
+   "operator": "eq-ne",
+   "reason": "G[V], the field soft_eq (soft.get = prepareDocument environment): the mutated field makes Entry.of's own proof `rfl` fail (Protocol.lean:672, application type mismatch): no Entry can be built, so the module does not compile"
+  }
+ ]
+}
