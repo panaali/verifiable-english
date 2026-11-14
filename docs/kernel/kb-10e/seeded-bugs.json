@@ -41,6 +41,16 @@
       "failing": "lake build VE.Service.MemoExamples",
       "test": "the #guard of lean/VE/Service/MemoExamples.lean:168 (every registered mode, handleLineMemo against handleLine)",
       "result": "the #guard fails (MemoExamples.lean:168:0, the expression did not evaluate to true): 24 of the 45 modes are answered differently"
+    },
+    {
+      "id": "f",
+      "language": "lean",
+      "file": "lean/VE/Service/Protocol.lean",
+      "claim": "a case naming soft_document_handle outside the handle form of soft-selected is the case error InvalidInput in every mode expandCases reaches, including a valid case main answered (DELTA row 4, review F1)",
+      "mutation": "Handles.expandSoft's refusal arm `| _, _ => pure (.error softRefusal)` replaced by main's `| _, _ => .ok <$> h.expand j` (the member ignored); expandSoft_refused's proof cut to `sorry` and the seeded build listed in lean/checkers.lock so ve_service builds and starts",
+      "failing": "lake build VE.Service.Protocol (with the proof kept); uv run pytest tests/test_soft_document_handles.py -k 'stray or any_other'",
+      "test": "expandSoft_refused; tests/test_soft_document_handles.py::test_a_stray_soft_document_handle_refuses_a_case_main_answered",
+      "result": "expandSoft_refused does not build; with it cut, 27 failed, 1 passed: every case of test_a_stray_soft_document_handle_refuses_a_case_main_answered but [route-corpus-risk-eval] (a mode expandCases does not reach) and all six of test_any_other_case_naming_a_soft_document_is_refused; [rsp-case-1] is answered (status ok, no code)"
     }
   ]
 }

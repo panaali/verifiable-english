@@ -20,7 +20,7 @@ from tests.lean_build import lean_build
 from tests.test_soft_norms_lean import env, norm, should
 from tests.test_soft_selected import EXCEPTION, EXTRA, MODEL, QUERIES, RULES
 from ve import soft_route
-from ve.backends.lean_service import HANDLE_KEY, SOFT_HANDLE_KEY, LeanService, case_digest
+from ve.backends.lean_service import HANDLE_KEY, SOFT_HANDLE_KEY, UNHANDLED_MODES, LeanService, case_digest
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 
 # Handle reuse between requests is what the answer store's lines leave out (tests/answer_store.py).
@@ -176,6 +176,44 @@ def test_any_other_case_naming_a_soft_document_is_refused(executable, mode, edit
     assert response["status"] == "ok"
     [entry] = response["results"]
     assert entry["result"]["status"] == "error" and entry["code"] == "InvalidInput"
+    assert entry["result"]["error"].startswith(f"InvalidInput: {SOFT_HANDLE_KEY} names a soft document only")
+
+
+def _route_corpus() -> dict[str, list[dict]]:
+    """The recorded corpus of every route answer kind (`tests/data/route-cases.jsonl`), by mode."""
+    corpus: dict[str, list[dict]] = {}
+    for line in (ROOT / "tests/data/route-cases.jsonl").read_text().splitlines():
+        mode, case = json.loads(line)
+        corpus.setdefault(mode, []).append(json.loads(case) if isinstance(case, str) else case)
+    return corpus
+
+
+STRAY = [("soft-norms", "rsp-case-1", json.loads((CAPTURED / "rsp-case-1.json").read_text())),
+         ("soft-norms", "soft-selected-written-out", alternating()[0]),
+         *((mode, f"route-corpus-{mode}", cases) for mode, cases in sorted(_route_corpus().items()))]
+
+
+@pytest.mark.parametrize("mode, cases", [(m, c) for m, _, c in STRAY], ids=[name for _, name, _ in STRAY])
+def test_a_stray_soft_document_handle_refuses_a_case_main_answered(executable, mode, cases):
+    """Review F1 (DELTA row 4, SIGNED by the DRI 2026-11-14): main ignored `soft_document_handle` and answered the
+    case in full; in every mode `expandCases` reaches, a case naming it outside the handle form of `soft-selected`
+    is now the case error InvalidInput. English and risk-eval (`UNHANDLED_MODES`) are not reached: their answer
+    stays the answer without the member. The first case of the mode the service answers is the one asked."""
+    cases = cases if isinstance(cases, list) else [cases]
+    stray = "0" * 64
+    with LeanService(executable) as service:
+        plain = _raw(service, mode, cases[:8])
+        assert plain["status"] == "ok", plain
+        answered = [i for i, row in enumerate(plain["results"]) if row["result"].get("status") != "error"]
+        assert answered, plain["results"]
+        case = cases[answered[0]]
+        response = _raw(service, mode, [{**case, SOFT_HANDLE_KEY: stray}])
+    assert response["status"] == "ok", response
+    [entry] = response["results"]
+    if mode in UNHANDLED_MODES:
+        assert entry["result"] == plain["results"][answered[0]]["result"]
+        return
+    assert entry["code"] == "InvalidInput" and entry["result"]["status"] == "error"
     assert entry["result"]["error"].startswith(f"InvalidInput: {SOFT_HANDLE_KEY} names a soft document only")
 
 
