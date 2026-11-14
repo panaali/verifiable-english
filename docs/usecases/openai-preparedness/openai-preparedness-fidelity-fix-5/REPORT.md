@@ -9,6 +9,51 @@ No DRI signature is reserved, there is no DELTA, and no question was sent: neith
 - **Scope:** only use-case files changed. Nothing changed in ve/, lean/ or rust/, and there is no key edit: PLAN section 6
   and answer-key.json are untouched.
 
+## Review fix (F1, review of f85aa30ddb)
+
+The probe's f16-fast-track clause still fails, by design: see the third bullet under "What the installed rule says".
+Its REPORT clause passes.
+
+**Finding.** Test (c)'s `omission_records` said it applied the omission rule's record paths, but it applied only some
+of them. It counted only a `loss` tag as a loss, while the rule counts any other or empty tag as a loss too. The
+REPORT also said the rule was not installed, but omission-1 went in at 21:55Z, before this branch's 22:17Z commit.
+
+**Class and fix.** The class is a test's copy of the rule drifting from the installed rule. The fix is structural:
+- tests/omission_rule.py is now the one copy in this repository. It ports the installed rule's exposure step whole
+  (`omit_exposure`, omission-2, sha256 1c7cc4f79bce94e8), takes the case as a parameter, and reads the working tree.
+- test_pf_fidelity_fix.py keeps no rule logic of its own.
+- tests/test_omission_rule.py has 48 scenarios on a synthetic case, each with its exact records. They cover every
+  record path and the fail-closed answers. test_every_record_path_has_a_scenario fails if a path has no scenario.
+  The regression for F1 is the scenarios tag-exposition, tag-dropped, tag-empty and tag-unknown-case, plus
+  test_an_exposition_tag_records_its_words_as_a_loss.
+- Test (c) is renamed test_k13_units_carry_only_their_exposition_and_plan12_records. It pins the exact records.
+
+**Differential evidence** (omission-differential.json). The installed rule was run in manage-agents; tests cannot read
+it.
+- All 48 scenarios: the installed rule gives each scenario's expected records, and the port's exposure tuples equal
+  the installed rule's.
+- The three use cases at dc4348580c, every rule block plus FACTS: the port equals the installed rule on all 397 exposures
+  (openai-preparedness 280, anthropic-rsp 93, safety-framework 24).
+
+**What the installed rule says.** The review (22:34Z) ran omission-1. omission-2 replaced it at 22:59Z
+(reviews/dri-decisions-20261113-uc-audit-omission-bind.md item 1). In PLAN section 12, omission-2 records every
+sentence that names a unit, bare or in backticks, drop word or not, and it widens the drop-word list. At dc4348580c:
+- Each chair unit has its two exposition entries, as the review found, and PLAN 12 item 26's sentence naming it.
+  K13 is therefore not scored audited until an omission-audit seat's reads clear them.
+- No record holds the fast-track words.
+- f16-fast-track has item 26's two sentences naming it. So the probe's `set(r) == {chair units}` clause fails under
+  the installed rule. Item 26 is the PLAN 12 entry the task requires. Naming the new rule there is the traceable
+  record, and dropping the id only to clear the scan would hide a deviation from the rule, so I kept it.
+- The README sentence on this fix began in lower case, so the rule's splitter joined it to the sentence before, which
+  says "UNFORMALISED". That made a `report` record on f16-fast-track. The sentence now begins "In
+  openai-preparedness-fidelity-fix-5". The scenarios readme-lowercase-start and readme-new-sentence pin the boundary.
+- Four sentences of this REPORT named a K13 unit next to a drop word: seeded-bug rows c and e, a quoted test output
+  and the note for the DRI. They were not omission records, and they are rephrased. Test (c) pins that no `report`
+  record names these units.
+
+**Notes.** C1 is fixed (the act is 72 characters). For C2, the "drop sentence" control is now the scenarios
+plan12-bare and readme-drop, and test (c)'s comment no longer promises it. C3 and C4 are unchanged (not filed).
+
 ## What changed, and the class each fix answers
 
 | Unit | Before | After | Class (translation-fidelity checklist) |
@@ -230,6 +275,8 @@ SIZE: 18 product, 159 tests, about 190 other hand-written lines.
   5 lines removed.
 - Other: PLAN 18, README 7, the safetyfw REPORT 1, this REPORT and mutants.json.
 - Generated files are not counted.
+- The F1 fix adds 500 test lines (tests/omission_rule.py 281, tests/test_omission_rule.py 183, test_pf_fidelity_fix.py
+  36 added and 62 removed) and 3 README lines. It changes no product line.
 
 ## Next item
 
