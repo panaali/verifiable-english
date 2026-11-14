@@ -639,6 +639,24 @@ Section 6 and `answer-key.json` are not edited.**
     under both RS9 choices, so the model is not covered only by C.3. The key cell (ALL) is unchanged and G9 stays a
     key finding. No other answer changed (236 of 239 agree, as before); regulated predicates: 60 of 64.
 
+**`openai-preparedness-fidelity-fix-5` (2026-11-13): PF round B part 3, K13's fast-track words
+(reviews/dri-decisions-20261113-lp1701.md item 1; orchestrator ruling of 2026-11-13 17:23Z (B)). Section 6 and
+`answer-key.json` are not edited.**
+
+26. **Appendix B's fast-track sentence is a permission rule (translation-fidelity checklist class 1).** "In the rare
+    case that a risk of severe harm rapidly develops (e.g., there is a change in our understanding of model safety
+    that requires urgent response), we can request a fast track for the SAG to process the report urgently." is the
+    rule `f16-fast-track`: in the rapid-risk case (OT18) every situation may have a fast track requested so the SAG
+    processes the report urgently. "Can" grants OpenAI a permission; the urgent processing is what the request asks
+    for, and the translation adds no duty on the SAG (section 3.3). The rule holds under both RS9 choices, because
+    the sentence has no "should". The act's legend quotes the sentence in full. `f16-chair-strict` and
+    `f16-chair-default` quote the whole passage as before, and their accounting entries for the fast-track words now
+    name the rule `f16-fast-track` (they were "loss 1"); "In the rare case that" and the "(e.g., ...)" example stay
+    exposition. The Chair's coordination rule is as it was (RS9 strict/default), and its legend now quotes its own
+    sentence. A rule block holds one rule, so the permission has its own block, placed on the sentence's own source
+    unit (p16-u291, now OPEN). The new regulated predicate `fast_track_request` makes 61 of 64. K13 keeps its answer
+    (ALL, soft under RS9 = default), and no other answer moved (236 of 239 agree, as before).
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`

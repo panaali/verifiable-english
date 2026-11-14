@@ -1,0 +1,666 @@
+{
+ "item": "openai-preparedness-fidelity-fix-5",
+ "finding": "F1",
+ "rule": "~/code/manage-agents/tools-local/uc-audit.py",
+ "version": "omission-2",
+ "sha256": "1c7cc4f79bce94e8dd310e2ebbe17e6e1695ce75df8afbc0db51e88ca5c4c70a",
+ "method": "(1) every SCENARIOS row of tests/test_omission_rule.py built in a temporary git repository and passed to the installed omit_exposure: \"installed\" is its record paths, \"port_equal\" compares its full exposure tuples (unit, record unit, path, detail) with tests/omission_rule.exposures on the same tree; (2) each use case at commit \"commit\", units = every rule block id + FACTS + f9-threshold + f16-ask-commentary + an unknown id, exposure tuples compared as multisets.",
+ "commit": "dc4348580c89c4043d71dab739cca90c8b62a0ad",
+ "cases": [
+  {
+   "case": "openai-preparedness",
+   "exposures": 280,
+   "paths": {
+    "mistag": 120,
+    "loss": 58,
+    "plan12": 38,
+    "report": 46,
+    "unformalised": 15,
+    "no-record": 2,
+    "revoked": 1
+   },
+   "port_equal": true
+  },
+  {
+   "case": "anthropic-rsp",
+   "exposures": 93,
+   "paths": {
+    "mistag": 50,
+    "loss": 23,
+    "plan12": 11,
+    "report": 6,
+    "no-record": 2,
+    "revoked": 1
+   },
+   "port_equal": true
+  },
+  {
+   "case": "safety-framework",
+   "exposures": 24,
+   "paths": {
+    "no-record": 1,
+    "plan12": 5,
+    "report": 18
+   },
+   "port_equal": true
+  }
+ ],
+ "scenarios": [
+  {
+   "scenario": "clean",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "tag-loss",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "tag-exposition",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "tag-dropped",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "tag-empty",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "tag-unknown-case",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "line-unparseable",
+   "installed": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-carried",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-in-legend",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-missing-word",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-negation-counts",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-across-segments",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-header-quote",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-comment",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-quoted-literal",
+   "installed": {
+    "u-carrier": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-carrier": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-substring",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "restates-articles-only",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "rule-carried",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "rule-not-carried",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "rule-unknown-id",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "rule-no-id",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "reading-named",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "reading-other-set",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "reading-not-in-header",
+   "installed": {
+    "u-carrier": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-carrier": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "words-empty",
+   "installed": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "mistag"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "no-line",
+   "installed": {
+    "u-rule": [
+     "no-record"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "no-record"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "no-file",
+   "installed": {
+    "*": [
+     "no-record"
+    ]
+   },
+   "expected": {
+    "*": [
+     "no-record"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "plan12-bare",
+   "installed": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "plan12-backticks",
+   "installed": {
+    "u-rule": [
+     "plan12"
+    ],
+    "u-carrier": [
+     "plan12"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "plan12"
+    ],
+    "u-carrier": [
+     "plan12"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "plan12-h3",
+   "installed": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "plan12-missing",
+   "installed": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "plan12"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "readme-drop",
+   "installed": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "readme-loss-word",
+   "installed": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "readme-lowercase-start",
+   "installed": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "readme-new-sentence",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "report-drop",
+   "installed": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "report-safetyfw-dir",
+   "installed": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "report"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "report-no-drop-word",
+   "installed": {},
+   "expected": {},
+   "port_equal": true
+  },
+  {
+   "scenario": "gaps-json",
+   "installed": {
+    "u-rule": [
+     "gaps"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "gaps"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "gaps-json-key",
+   "installed": {
+    "u-carrier": [
+     "gaps"
+    ]
+   },
+   "expected": {
+    "u-carrier": [
+     "gaps"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "gaps-text",
+   "installed": {
+    "u-rule": [
+     "gaps"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "gaps"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "gaps-unparseable",
+   "installed": null,
+   "expected": null,
+   "port_equal": true
+  },
+  {
+   "scenario": "unformalised",
+   "installed": {
+    "u-rule": [
+     "unformalised",
+     "unformalised"
+    ],
+    "u-carrier": [
+     "unformalised"
+    ]
+   },
+   "expected": {
+    "u-rule": [
+     "unformalised",
+     "unformalised"
+    ],
+    "u-carrier": [
+     "unformalised"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "facts",
+   "installed": {
+    "FACTS": [
+     "loss"
+    ]
+   },
+   "expected": {
+    "FACTS": [
+     "loss"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "revoked",
+   "installed": {
+    "f9-threshold": [
+     "no-record",
+     "revoked"
+    ]
+   },
+   "expected": {
+    "f9-threshold": [
+     "no-record",
+     "revoked"
+    ]
+   },
+   "port_equal": true
+  },
+  {
+   "scenario": "no-rules",
+   "installed": null,
+   "expected": null,
+   "port_equal": true
+  },
+  {
+   "scenario": "no-plan",
+   "installed": null,
+   "expected": null,
+   "port_equal": true
+  },
+  {
+   "scenario": "bad-spans",
+   "installed": null,
+   "expected": null,
+   "port_equal": true
+  }
+ ],
+ "k13_units_installed_at_commit": {
+  "f16-chair-strict": [
+   "loss",
+   "loss",
+   "plan12"
+  ],
+  "f16-chair-default": [
+   "loss",
+   "loss",
+   "plan12"
+  ],
+  "f16-fast-track": [
+   "plan12",
+   "plan12"
+  ]
+ }
+}

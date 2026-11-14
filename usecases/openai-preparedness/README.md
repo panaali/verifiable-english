@@ -62,9 +62,9 @@ sections remain visible whenever the whole source unit contains a duty or hedge.
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
 | CHECKED | 7 | 170 | 0.3% |
-| OPEN | 44 | 9,073 | 13.5% |
+| OPEN | 45 | 9,300 | 13.8% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 290 | 52,848 | 78.4% |
+| UNFORMALISED | 289 | 52,621 | 78.1% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or
@@ -73,11 +73,11 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 119 | 21,554 | 111, 19,678 | D1 has no act or complete rule for these duties |
+| AP | 118 | 21,327 | 110, 19,451 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,623 | 53, 11,750 | hedges, beliefs and expectations |
 | DF | 12 | 2,098 | 0, 0 | default readings |
 | ET | 29 | 8,272 | 17, 5,914 | event order and deadlines |
-| JT | 34 | 6,282 | 11, 1,966 | open judgments |
+| JT | 35 | 6,509 | 12, 2,193 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
 | SC | 27 | 4,710 | 24, 3,759 | per-item or universal scope |
 | WG | 1 | 183 | 0, 0 | weighing of risks |
@@ -90,7 +90,9 @@ The 289 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit
 residual. `usecase-pf-run` moved ten units from UNFORMALISED to OPEN (2,021 bytes): each now carries the reading
 set or rule the key needs (section 1's deployment sentence, the two Table 1 contribution bullets, 3.3's first next
 step, the residual-risk bullet, 5.2's third-party evaluation, Appendix B's decisions without the SAG, the Board's
-reversal and the fast track, and C.3's access practice). No assumption, bridge leaf or exception is represented as certified.
+reversal and the fast track, and C.3's access practice). In openai-preparedness-fidelity-fix-5 Appendix B's
+fast-track sentence ("we can request a fast track for the SAG to process the report urgently") became a permission
+rule, f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). No assumption, bridge leaf or exception is represented as certified.
 
 ## Stage 0
 
