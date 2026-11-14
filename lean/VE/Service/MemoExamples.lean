@@ -161,3 +161,11 @@ def memoCase : Except String Json :=
   return parts.map (·.1) == ["main", "rs_a", "rs_b"] && ready.map (·.1) == parts.map (·.1) &&
     rows.toList.map (·.getObjValD "component") == ["main", "rs_a", "rs_b"].map Json.str
 
+
+-- The service loop (`handleLineMemo`, `respondMemo`) answers a one-case line of every registered mode as
+-- `handleLine` answers it: its readings memo and the soft runner change no answer (kb-10e review F2: the trust
+-- mutant M003, which sent every other mode to `runSoftRequest`, whose results are `caseResultWith .softNorms`'s).
+#guard (registry.map (·.mode)).all fun m =>
+  let line := (Json.mkObj [("id", .str "r"), ("mode", .str m.name),
+    ("cases", Json.arr #[Json.mkObj [("id", .str "c")]])]).compress
+  (handleLineMemo {} {} line).1 == (handleLine {} line).1
