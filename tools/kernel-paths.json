@@ -383,7 +383,7 @@
   },
   {
    "name": "quantity",
-   "tier": "candidate",
+   "tier": "kernel",
    "modes": [
     "quantity"
    ],
@@ -396,7 +396,8 @@
     "VE.Time.Document.extension"
    ],
    "theorems": [
-    "VE.Time.Wire.quantity_admission_wire_sound",
+    "VE.Time.Wire.quantity_admission_wire_sound_plain",
+    "VE.Time.Wire.quantity_admission_wire_sound_valued",
     "VE.Time.Wire.quantity_countermodel_wire_sound",
     "VE.Time.Wire.quantity_certificate_wire_sound",
     "VE.Time.Wire.quantity_document_wire_sound",
@@ -412,7 +413,36 @@
      "name": "VE.Time.Wire.runConversion",
      "why": "answers the conversion kinds `day`, `civil`, `lower` and `render` with a day number, an ISO date, a lowered coordinate or a rendered amount; none is a verdict"
     }
-   ]
+   ],
+   "kinds": {
+    "admission": {
+     "theorem": "VE.Time.Wire.quantity_admission_wire_sound_valued"
+    },
+    "countermodel": {
+     "theorem": "VE.Time.Wire.quantity_countermodel_wire_sound"
+    },
+    "certificate": {
+     "theorem": "VE.Time.Wire.quantity_certificate_wire_sound"
+    },
+    "document": {
+     "theorem": "VE.Time.Wire.quantity_document_wire_sound"
+    },
+    "count": {
+     "nonverdict": "the canonical counting expansion of a formula (VE.Time.Wire.runCount, listed nonverdict): an `expansion` field, no truth value, entailment or admission"
+    },
+    "day": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "civil": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "lower": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "render": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    }
+   }
   },
   {
    "name": "rights",

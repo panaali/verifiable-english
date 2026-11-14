@@ -9692,7 +9692,8 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.checkW6Certificate_sound
 #print axioms VE.Time.Wire.evalB_sorted_sound
 #print axioms VE.Time.Wire.extension_document_sound
-#print axioms VE.Time.Wire.quantity_admission_wire_sound
+#print axioms VE.Time.Wire.quantity_admission_wire_sound_plain
+#print axioms VE.Time.Wire.quantity_admission_wire_sound_valued
 #print axioms VE.Time.Wire.quantity_certificate_wire_sound
 #print axioms VE.Time.Wire.quantity_countermodel_wire_sound
 #print axioms VE.Time.Wire.quantity_document_wire_sound
