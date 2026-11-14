@@ -90,9 +90,9 @@ The 289 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit
 residual. `usecase-pf-run` moved ten units from UNFORMALISED to OPEN (2,021 bytes): each now carries the reading
 set or rule the key needs (section 1's deployment sentence, the two Table 1 contribution bullets, 3.3's first next
 step, the residual-risk bullet, 5.2's third-party evaluation, Appendix B's decisions without the SAG, the Board's
-reversal and the fast track, and C.3's access practice). openai-preparedness-fidelity-fix-5 made Appendix B's
-fast-track sentence ("we can request a fast track for the SAG to process the report urgently") a permission rule,
-f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). No assumption, bridge leaf or exception is represented as certified.
+reversal and the fast track, and C.3's access practice). In openai-preparedness-fidelity-fix-5 Appendix B's
+fast-track sentence ("we can request a fast track for the SAG to process the report urgently") became a permission
+rule, f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). No assumption, bridge leaf or exception is represented as certified.
 
 ## Stage 0
 

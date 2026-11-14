@@ -1,6 +1,6 @@
 {
  "item": "openai-preparedness-fidelity-fix-5",
- "language": "Python use-case files (no Lean or Rust product code changed)",
+ "language": "Python use-case files and the Python test helper tests/omission_rule.py (no Lean or Rust product code changed)",
  "mutants": [
   {
    "id": "a",
@@ -21,8 +21,8 @@
    "file": "usecases/openai-preparedness/accounting.d1.txt",
    "bug": "the f16-chair-strict entry for the fast-track words back to 'loss 1'",
    "test": "tests/test_pf_fidelity_fix.py::test_accounting_has_no_loss_for_the_fast_track_words",
-   "also": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
-   "failure": "('f16-chair-strict', ..., 'loss 1'); {'f16-chair-strict': ['loss']} == {}"
+   "also": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records",
+   "failure": "AssertionError: ('f16-chair-strict', 'we can request a fast track ...', 'loss 1'); test (c): the record list changes"
   },
   {
    "id": "d",
@@ -35,16 +35,16 @@
   {
    "id": "e",
    "file": "usecases/openai-preparedness/PLAN.md",
-   "bug": "a PLAN 12 sentence '`f16-chair-strict` omits the fast-track words' (the omission rule's plan12 path)",
-   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
-   "failure": "{'f16-chair-strict': ['plan12']} == {}"
+   "bug": "a new PLAN 12 item 27: '`f16-chair-strict` omits the fast-track words.'",
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records",
+   "failure": "a third plan12 record on f16-chair-strict (record-path dict != the pinned one)"
   },
   {
    "id": "f",
    "file": "usecases/openai-preparedness/build_document.py",
    "bug": "the placement of the fast-track sentence removed (spans.json and coverage.json regenerated): p16-u291 back to UNFORMALISED",
-   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_no_omission_record_on_any_path",
-   "failure": "StopIteration (no span carried by f16-fast-track)"
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records",
+   "failure": "StopIteration (no span carried by f16-fast-track); rerun on the F1 fix"
   },
   {
    "id": "g",
@@ -52,6 +52,73 @@
    "bug": "fast_track_request declared with duty() instead of permission()",
    "test": "tests/test_pf_fidelity_fix.py::test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings",
    "failure": "ve.errors.SyntaxError: Norm consequence has no single declared reading"
+  },
+  {
+   "id": "h",
+   "file": "usecases/openai-preparedness/accounting.d1.txt",
+   "bug": "line 63's fast-track words tagged 'rule f16-chair-strict' (the chair rule does not carry them)",
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records",
+   "failure": "a mistag record on f16-chair-strict"
+  },
+  {
+   "id": "m5",
+   "file": "usecases/openai-preparedness/accounting.d1.txt",
+   "bug": "line 63's 'In the rare case that' retagged 'dropped' (review F1 mutant M5)",
+   "test": "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records",
+   "failure": "loss details ['In the rare case that (dropped)', ...] != the two exposition entries"
+  },
+  {
+   "id": "p1",
+   "file": "tests/omission_rule.py",
+   "bug": "the 'any other or empty tag = loss' branch removed (F1's class)",
+   "test": "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[tag-exposition]",
+   "also": [
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[tag-dropped]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[tag-empty]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[tag-unknown-case]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[line-unparseable]",
+    "tests/test_omission_rule.py::test_an_exposition_tag_records_its_words_as_a_loss",
+    "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records"
+   ],
+   "failure": "assert {'u-rule': ['mistag']} == {'u-rule': ['loss']}"
+  },
+  {
+   "id": "p2",
+   "file": "tests/omission_rule.py",
+   "bug": "a tag resolves when ANY of its words is in a carrier segment",
+   "test": "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[restates-missing-word]",
+   "also": [
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[restates-negation-counts]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[restates-across-segments]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[rule-not-carried]"
+   ],
+   "failure": "assert {} == {'u-rule': ['mistag']}"
+  },
+  {
+   "id": "p3",
+   "file": "tests/omission_rule.py",
+   "bug": "PLAN 12 and gaps text record only a sentence with a drop word",
+   "test": "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[plan12-bare]",
+   "also": [
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[plan12-backticks]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[plan12-h3]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[plan12-missing]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[gaps-text]",
+    "tests/test_pf_fidelity_fix.py::test_k13_units_carry_only_their_exposition_and_plan12_records"
+   ],
+   "failure": "assert {} == {'u-rule': ['plan12']}"
+  },
+  {
+   "id": "p4",
+   "file": "tests/omission_rule.py",
+   "bug": "gaps / coverage files not scanned",
+   "test": "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[gaps-json]",
+   "also": [
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[gaps-json-key]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[gaps-text]",
+    "tests/test_omission_rule.py::test_each_record_path_of_the_omission_rule[gaps-unparseable]"
+   ],
+   "failure": "assert {} == {'u-rule': ['gaps']}"
   }
  ]
 }
