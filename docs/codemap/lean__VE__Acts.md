@@ -9,6 +9,9 @@
 - `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
 - `lean/VE/Acts/GrammarExamples.lean` — Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
+- `lean/VE/Acts/Hook.lean` — The `acts@0` hook of the norms decoder (docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4; kb-4a): today's acts operations, packaged unchanged as the in…
+- `lean/VE/Acts/HookToday.lean` — The decoders' equality theorems of the acts hook (kb-4a; docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4).
+- `lean/VE/Acts/HookTwins.lean` — The runners' equality theorems of the acts hook (kb-4a; docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4).
 - `lean/VE/Acts/Index.lean` — First occurrences and their places, by hashing (ap-parse-index).
 - `lean/VE/Acts/Lexical.lean` — Lexical acts (docs/spec/act-phrases.md 1.1 to 1.3, 2.1, 4.2 and 4.3; batch AP-1).
 - `lean/VE/Acts/LexicalBase.lean` — The words of an act phrase (docs/spec/act-phrases.md 4.1), below `VE.Norms.Wire` and `VE.Acts.Lexical`: the reserved words, slot scanning, Python's whitespace …
