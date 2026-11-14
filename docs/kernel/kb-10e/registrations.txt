@@ -1,0 +1,19 @@
+documents 1125, text bytes median 40396, max 42820, total 44872559
+
+pair order (one Lean call per document and model): 6366 asks, 6355 runs of one document
+  empty-when-full, bound 64: 1381 registrations (1.23 per document), emptied 21 times
+  empty-when-full, bound 128: 1263 registrations (1.12 per document), emptied 9 times
+  empty-when-full, bound 256: 1200 registrations (1.07 per document), emptied 4 times
+  empty-when-full, bound 1024: 1147 registrations (1.02 per document), emptied 1 times
+  evict least recently used, bound 64: 1275 registrations (1.13 per document)
+  evict least recently used, bound 128: 1207 registrations (1.07 per document)
+  evict least recently used, bound 256: 1125 registrations (1.00 per document)
+
+call order (one Lean call per harness call): 167364 asks, 92086 runs of one document
+  empty-when-full, bound 64: 2294 registrations (2.04 per document), emptied 35 times
+  empty-when-full, bound 128: 2175 registrations (1.93 per document), emptied 16 times
+  empty-when-full, bound 256: 1944 registrations (1.73 per document), emptied 7 times
+  empty-when-full, bound 1024: 1356 registrations (1.21 per document), emptied 1 times
+  evict least recently used, bound 64: 2100 registrations (1.87 per document)
+  evict least recently used, bound 128: 2004 registrations (1.78 per document)
+  evict least recently used, bound 256: 1528 registrations (1.36 per document)
