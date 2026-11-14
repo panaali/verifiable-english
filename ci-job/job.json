@@ -1,0 +1,12 @@
+{
+ "job": "testmap-6f5ab742-t645353-s5",
+ "head": "727404017d6083f3ee2144824f3b27e3da63d579",
+ "argv": [
+  "testmap-6f5ab742-t645353-s5",
+  "727404017d6083f3ee2144824f3b27e3da63d579",
+  "727404017d6083f3ee2144824f3b27e3da63d579",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-981008cd9db8.tar.zst",
+  "9706cadd8e157360086ec1f56e004b08f4a044e027279a7c57dbca206ed2cee9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s5.json.gz\" tests/test_wire_gate_corpus.py tests/test_difffuzz.py tests/test_scope_answer.py tests/test_events_wire_mutants.py tests/test_history_tests.py tests/test_gate_quarantine.py tests/test_readings_defaults_statements.py tests/test_rd9_statements.py tests/test_regen_generated.py tests/test_norm_defaults_response_binding.py tests/test_test_chunks.py tests/test_gate_integrity.py tests/test_statement_scanner.py tests/test_lean_import_reader.py tests/test_english_grammar_gen.py tests/test_webapp_commands_env.py tests/test_gen_inv_design.py tests/test_profile_table.py tests/test_scope_5_6_statements.py tests/test_scope_rights_reach.py tests/test_source_words.py tests/test_cardinality_exercised.py tests/test_judgments_exercised.py tests/test_lean_statements_parts.py tests/test_pk1c_fixture_assurance_claim.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
