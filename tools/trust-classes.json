@@ -22700,6 +22700,20 @@
       "P": [
         "ResponseShape.Encoders.CoreCheck.rowsJson"
       ]
+    },
+    "VE/Service/CoreCheckExamples.lean": {
+      "T": [
+        "VE.Service.CoreCheckExamples.front",
+        "VE.Service.CoreCheckExamples.collapsed",
+        "VE.Service.CoreCheckExamples.body",
+        "VE.Service.CoreCheckExamples.run",
+        "VE.Service.CoreCheckExamples.arr",
+        "VE.Service.CoreCheckExamples.statuses",
+        "VE.Service.CoreCheckExamples.statements",
+        "VE.Service.CoreCheckExamples.rows",
+        "VE.Service.CoreCheckExamples.refusal",
+        "VE.Service.CoreCheckExamples.edit"
+      ]
     }
   }
 }

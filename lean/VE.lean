@@ -409,4 +409,5 @@ import VE.Time.WireSound
 import VE.Service.CoreDocument
 import VE.Service.CoreDocumentExamples
 import VE.Service.CoreCheck
+import VE.Service.CoreCheckExamples
 import VE.Kernel.DocumentFold
