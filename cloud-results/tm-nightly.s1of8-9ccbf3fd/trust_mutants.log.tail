@@ -1,0 +1,17 @@
+trust_mutants: 61 definitions, 76 mutants (12 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-false: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:889 VE.Compose.environmentRows (G[V], trusted) any-all: any -> all (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:149 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Closure/Syntax.lean:63 VE.Closure.Formula.denote (K, trusted) body-true: a.toCore.denote S ρ -> True (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:1067 VE.Compose.eventsFault (G[V], trusted) list-empty: ((packRows.flatMap (rowChecks ps)).find? (·.1)) -> [] (lean/VE/Compose/Dispatch.lean:1067: Type mismatch)
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-empty: if ps == Wire.chainProfiles then ["order@0", "relational-fol@0", "time@0"] else ps.filter (· != "... -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:776 VE.Compose.cardinalityOthers (G[V], trusted) list-empty: ["acts@0", "alternatives@0", "closure@0", "data@0", "definitions@0", "events@0", "nary@0", "repor... -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:63 VE.EnglishGrammar.Norm.Run.statementSpans (G[V], trusted) list-empty: sents.toList.foldl (fun acc sent => match sentenceBytes sent with | none => acc | some (a, b) => ... -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Commands/Steps.lean:85 VE.Commands.shapeOutcome (G[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:129 VE.EnglishGrammar.eventsReadingSets (G[V], trusted) list-empty: [untilEventReadings, withinDateReadings] -> [] (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 2 KILLED, 0 SURVIVOR, 10 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 64 OTHER SHARD in 5861 s
+trust_mutants: D[V], trusted: 3 UNKNOWN, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 6 UNKNOWN, 28 OTHER SHARD
+trust_mutants: K, trusted: 1 UNKNOWN, 6 OTHER SHARD
+trust_mutants: S, trusted: 11 OTHER SHARD
+trust_mutants: steps: wall plan 19.8 s, scratch 5 s, control_build 0.4 s, probe_install 1.5 s, mutants 5829.9 s, cleanup 4.5 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 16.4 s (2), mutant_builds 2983.5 s (18), mutant_checks 17787.6 s (15), stage_controls 100.1 s (2), mutant_probes 24.2 s (2)
