@@ -30,6 +30,13 @@ tables, DELTA, this report, seeded bugs, allow file, ALLOWANCES, kernel-paths, l
 | 6383f22a93 | (11) REPORT |
 | 46d87523a0 | (12) the kernel figures quoted in kernel-boundary.md and frozen-keys; the wire gate's test inputs |
 | 2521eefcf9 | (13) REPORT: the final selected run |
+| 8982dcdf54 | (14) REPORT commit table |
+| 2e7874a7ad | fix (1): a `#guard` pins `respondMemo`'s dispatch over every registered mode (review F2); seeded bug e |
+| 6c6531aea4 | fix (2): M003's allowance removed |
+| 5e6b8884fc | fix (3): trust-mutant sweep on 6c6531aea4: 25 KILLED, 0 SURVIVOR, 20 ALLOWED |
+| 8c6f161279 | fix (4): a stray `soft_document_handle` refuses a case main answered, every handled mode (review F1); seeded bug f |
+| a7b4f61b25 | fix (5): DELTA rows 3 and 4 (SIGNED by the DRI), REPORT corrected (review F1, F2) |
+| (this commit) | fix (6): REPORT records the fix round's selected run |
 
 ## (1) Measure: the stages before the change
 
@@ -407,6 +414,26 @@ Before the tests it ran the layer checks, `lake build` and `lean/audit.py`. Unit
 
 The two failed ids were rerun: `zsh manage-agents/mac-pytest.sh -- <the two ids>`, **2 passed** (700 s, exit 0,
 `/tmp/kb10e-rerun.log`). The full gate is the chain's, on the final HEAD.
+
+## Review fix round (kb-10e-review.final.md, F1 and F2)
+
+- F1: DELTA row 4 said main answered a case carrying `soft_document_handle` "by their other fault". That was true
+  only of cases with another fault. Main answered a valid case in full (the member ignored), and this branch refuses
+  it. Row 4 and the section "Answers on main" now say so and list the modes reached. Row 4's Ruling cell is the DRI's
+  2026-11-14 signature. The behaviour is unchanged. New test:
+  `tests/test_soft_document_handles.py::test_a_stray_soft_document_handle_refuses_a_case_main_answered`, 22 cases:
+  the captured RSP case, a written-out `soft-selected` case, and one per mode of `tests/data/route-cases.jsonl`.
+  Seeded bug f restores main's behaviour; 27 of the 28 refusal cases then fail.
+- F2: M003 is killed by the `#guard` of `lean/VE/Service/MemoExamples.lean:168`. Its false "equivalent" allowance
+  is removed, and the sweep record is rerun (section "Seeded bugs").
+- Row 3's Ruling cell is the D1 signature (review note C2), not R8.
+
+Probes: PROBE F1 and PROBE F2 failed on 8982dcdf54 and pass on a7b4f61b25. Checks on a7b4f61b25: `lake build`
+(1441 jobs), `python3 lean/audit.py` PASS, `uv run python tools/regen_generated.py --check` (41 entries),
+`review-ready.py --delta-dri-needed` (no row reserved). Selected run: `zsh manage-agents/mac-pytest.sh --select --
+--base $(git merge-base HEAD main) --run` on a7b4f61b25, committed and clean (ve-cloud-2, 7,488 s). It selected
+618/618 test units (map 1b4d35a0cc) after the layer checks and `lake build`: 634 lines `exit 0`, none failed, exit 0
+(`/tmp/kb10e-sel.log`).
 
 ## Self-review against BUILDER-CHECKLIST
 
