@@ -29,7 +29,9 @@ statement mode, `stated`: for each opaque name (the path's subject), the roots w
 says something about its answer (`answersStated`). A subject no root states the answer of is
 not what the theorems are about (the Python half reports it for a kernel path); and
 `open_fields`: the roots and reached definitions that quantify existentially over a list of answer
-fields (`hasOpenFields`), which the Python half reports for a kernel path. -/
+fields (`hasOpenFields`), which the Python half reports for a kernel path. A path may also name
+`"why": [..]` (modules or declarations, `--why` of the Python half); its output's `why` then gives, for
+each one the closure counts, one shortest chain of references from a root to it (`whyChains`). -/
 open Lean Elab Command Meta
 
 namespace VE.KernelClosure
@@ -85,6 +87,35 @@ def closure (env : Lean.Environment) (roots opaqueNames : List Name) (statement 
     | _ => pure ()
     out := { out with consts := out.consts.push n }
     pending := readDeps info ++ pending
+  return out
+
+/-- `closure`'s constants walked breadth-first with the same reading rules, each with the constant it was
+first reached from (`none` for a root of a run; the root theorem for a constant its statement mentions),
+in the order reached, so the first of any set is one nearest the roots (`--why` of tools/kernel_closure.py). -/
+def firstReached (env : Lean.Environment) (roots opaqueNames : List Name) (statement : Bool) :
+    Array (Name × Option Name) := Id.run do
+  let mut seen : Std.HashSet Name := {}
+  for o in opaqueNames do seen := seen.insert o
+  let mut queue : Array (Name × Option Name) := #[]
+  for r in roots do
+    match env.find? r with
+    | none => pure ()
+    | some info =>
+      if statement then
+        queue := queue ++ info.type.getUsedConstants.map fun c => (c, some r)
+      else
+        queue := queue.push (r, none)
+  let mut out : Array (Name × Option Name) := #[]
+  let mut i := 0
+  while i < queue.size do
+    let (n, p) := queue[i]!
+    i := i + 1
+    if seen.contains n then continue
+    seen := seen.insert n
+    let some info := env.find? n | continue
+    if let .thmInfo _ := info then continue
+    out := out.push (n, p)
+    queue := queue ++ (readDeps info).toArray.map fun d => (d, some n)
   return out
 
 /-- Count the lines covered by a list of inclusive ranges, overlaps once. -/
@@ -178,6 +209,30 @@ def strList (j : Json) (key : String) : List Name :=
   | .arr xs => xs.toList.filterMap fun x => x.getStr?.toOption.map String.toName
   | _ => []
 
+/-- For each target (a module, or a declaration: the name `rows` gives the source range a constant sits in), one
+shortest chain of references from a root to the nearest counted constant (a project one with a source range)
+that the target names, root first, as constant names. A target the closure does not count has no entry. -/
+def whyChains (env : Lean.Environment) (reached : Array (Name × Option Name)) (targets : List Name) :
+    CommandElabM (List (String × Json)) := do
+  if targets.isEmpty then return []
+  let parent : Std.HashMap Name (Option Name) := reached.foldl (fun m (n, p) => m.insert n p) {}
+  let mut counted : Array (Name × Name × Name) := #[]  -- constant, its module, its declaration
+  for (c, _) in reached do
+    let some m := moduleOf env c | continue
+    unless projectModule m do continue
+    if let some (decl, _, _) ← rangeOf c then counted := counted.push (c, m, decl)
+  let mut out : List (String × Json) := []
+  for t in targets do
+    let some (c, _, _) := counted.find? fun (c, m, decl) => c == t || decl == t || m == t | continue
+    let mut chain : List Name := [c]
+    let mut cur := c
+    for _ in [:reached.size + 1] do
+      match parent.get? cur with
+      | some (some p) => chain := p :: chain; cur := p
+      | _ => break
+    out := out ++ [(toString t, toJson (chain.map toString))]
+  return out
+
 def measure (path : Json) : CommandElabM Json := do
   let env ← getEnv
   let name := (path.getObjValAs? String "name").toOption.getD "?"
@@ -224,7 +279,10 @@ def measure (path : Json) : CommandElabM Json := do
     for s in opaqueNames do
       stated := stated.push (toString s, toJson (bySubject.getD s #[]))
   let openTails := if statement then openFields env roots reached else []
+  let targets := strList path "why"
+  let why ← if targets.isEmpty then pure [] else whyChains env (firstReached env roots opaqueNames statement) targets
   return Json.mkObj [
+    ("why", Json.mkObj why),
     ("name", name), ("mode", if statement then "statement" else "run"),
     ("open_fields", toJson (openTails.map toString)),
     ("roots", toJson (roots.map toString)), ("opaque", toJson (opaqueNames.map toString)),
