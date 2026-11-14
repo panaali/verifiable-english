@@ -957,12 +957,12 @@ def test_cases_accounting_line_exists_and_parses():
     no-record, loss or mistag exposure. Its report path is left out: it reads batch reports, which no permanent
     test pins (D4)."""
     lines = (PF / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
-    assert lines[-1] == "CASES | omits: nothing"
     assert [line for line in lines if line.startswith("CASES ")] == [lines[-1]]
     result = _accounting_tool().account(PF)
     assert result["problems"] == []
-    assert result["collections"] == [{"id": "CASES", "entries": [], "problems": []}]
     assert [p for p, _ in omission_exposures(["CASES"]).get("CASES", []) if p != "report"] == []
+    assert result["collections"] == [{"id": "CASES", "entries": [], "problems": []}]
+    assert lines[-1] == "CASES | omits: nothing"
 
 
 def test_every_case_text_is_plan_text_or_an_allowed_transcription():
