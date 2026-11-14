@@ -20,7 +20,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 22 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
-- [docs/kernel/](docs__kernel.md) — 1 modules — -
+- [docs/kernel/](docs__kernel.md) — 5 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -129,7 +129,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 17 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 32 modules — -
-- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 19 modules — -
+- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 20 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 9 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
@@ -145,7 +145,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 5](tests--part-5.md) — 85 modules — -
 - [tests/ part 6](tests--part-6.md) — 79 modules — -
 - [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 60 modules — -
+- [tests/ part 8](tests--part-8.md) — 61 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 96 modules — -
 - [tools/ part 2](tools--part-2.md) — 22 modules — -

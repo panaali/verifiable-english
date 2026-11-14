@@ -4,6 +4,7 @@
 - `lean/VE/SoftNorms/ElaborateSound.lean` — The wire theorem of the soft route's `soft-elaborate` kind (kernel boundary).
 - `lean/VE/SoftNorms/Once.lean` — The layers of a soft document computed once (lean-first plan F5d).
 - `lean/VE/SoftNorms/Phases.lean` — The soft validation table (docs/spec/soft-norms.md 8), as ordered phases.
+- `lean/VE/SoftNorms/Prepared.lean` — Prepared soft documents (kb-10e): the per-document work of the `soft-selected` kind, done once per document.
 - `lean/VE/SoftNorms/RankProof.lean` — Comparable default rules remain mutually exclusive after full layer substitution, even in structures with undefined or ill-typed constants.
 - `lean/VE/SoftNorms/Run.lean` — The `ve_service` mode `soft-norms` (docs/spec/soft-norms.md 9.4), formerly the one-shot `ve_soft_norms_route`.
 - `lean/VE/SoftNorms/Selected.lean` — The soft route's `soft-selected` kind (kb-10a): which rules are selected at a typed tuple of a decoded base model, and the completed outcome there, both read f…

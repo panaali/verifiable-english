@@ -269,6 +269,8 @@
    "subject": [
     "VE.SoftNorms.Run.runCase",
     "VE.SoftNorms.Run.runAdmission",
+    "VE.SoftNorms.Run.prepare",
+    "VE.SoftNorms.Run.runSelectedP",
     "VE.Compose.SlotWire.replaySlotConflict",
     "VE.Compose.SlotWire.replaySlotWitness",
     "VE.Compose.SlotWire.replaySlotEntailment"
@@ -278,6 +280,7 @@
     "VE.SoftNorms.Run.runAdmission_sound",
     "VE.SoftNorms.Run.soft_wire_elaborate",
     "VE.SoftNorms.Run.soft_wire_selected",
+    "VE.SoftNorms.Run.soft_wire_selected_prepared",
     "VE.SoftNorms.Run.slot_wire_certificate",
     "VE.SoftNorms.Run.slot_wire_conflict",
     "VE.Compose.SlotWire.slot_wire_acceptance",
