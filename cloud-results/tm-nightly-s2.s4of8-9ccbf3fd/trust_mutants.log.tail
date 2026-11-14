@@ -1,0 +1,10 @@
+trust_mutants: 72 definitions, 84 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:202 VE.Commands.combineShapes (G[V], trusted) list-empty: os -> [] (lean/VE/Commands/Steps.lean:203: Invalid dotted identifier notation: The expected type of `.refus...)
+UNKNOWN lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) list-first: premises -> (premises.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: environmentWrappers -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:884 VE.Compose.withoutClauses (G[V], trusted) list-first: ps -> (ps.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/NormDefaults/Layered.lean:128 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) list-first: (VE.SoftNorms.decisions src.D) -> ((VE.SoftNorms.decisions src.D).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Presupposition/Admit.lean:94 VE.Presupposition.withObligations (G[V], trusted) list-first: D.units.filter (fun x => obs.any (·.unit == x.id) && unitOf D x.id == some x) -> ((D.units.filter (fun x => obs.any (·.unit == x.id) && unitOf D x.id == some x)).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/NormDefaults/Run.lean:436 VE.NormDefaults.Run.runCaseE (G[V], trusted) list-first: (VE.Compose.listedProfiles environment) -> ((VE.Compose.listedProfiles environment).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Presupposition/Couple.lean:42 VE.Presupposition.repCandidate (S, trusted) list-first: g.members -> (g.members.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:22 VE.Cardinality.Wire.chainProfiles (D[V], trusted) list-drop-last: ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] -> (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"].dropLast) (lake build did not finish in 1800 s (--build-timeout))
