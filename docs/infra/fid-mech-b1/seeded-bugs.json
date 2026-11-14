@@ -1,0 +1,145 @@
+[
+ {
+  "behaviour": "clause numbers split only after a ':' lead-in (point 1)",
+  "file": "tools/fidmech/segment.py",
+  "find": "    out.update(m.end() + 1 for m in RUN_IN.finditer(t))\n",
+  "replace": "    out.update(m.end() + 1 for m in RUN_IN.finditer(t))\n    out.update(m.start() for m in re.finditer(r\"\\((?:\\d+|[a-z])\\) \", t))\n",
+  "test": "tests/test_fidmech_segment.py::test_clause_numbers_inside_a_sentence_do_not_split_it_and_split_only_after_a_lead_in",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_clause_numbers_inside_a_sentence_do_not_split_it_and_split_only_after_a_lead_in"
+  ]
+ },
+ {
+  "behaviour": "frozen footnote markers are removed from the main stream",
+  "file": "tools/fidmech/segment.py",
+  "find": "        canon = self._main(removed + markers)\n",
+  "replace": "        canon = self._main(removed)\n",
+  "test": "tests/test_fidmech_segment.py::test_paired_markers_are_removed_and_digits_without_a_body_are_kept",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_paired_markers_are_removed_and_digits_without_a_body_are_kept"
+  ]
+ },
+ {
+  "behaviour": "furniture patterns must be anchored",
+  "file": "tools/fidmech/segment.py",
+  "find": "        if where not in anchored or not anchored[where]:\n",
+  "replace": "        if where not in anchored:\n",
+  "test": "tests/test_fidmech_segment.py::test_a_furniture_pattern_not_anchored_to_its_page_position_is_refused",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_a_furniture_pattern_not_anchored_to_its_page_position_is_refused[Example Policy, Page \\\\d+-page-end]"
+  ]
+ },
+ {
+  "behaviour": "every boundaries entry needs a reason",
+  "file": "tools/fidmech/segment.py",
+  "find": "            if not isinstance(entry[\"reason\"], str) or not entry[\"reason\"].strip():\n",
+  "replace": "            if not isinstance(entry[\"reason\"], str):\n",
+  "test": "tests/test_fidmech_segment.py::test_a_boundaries_entry_without_a_reason_or_outside_its_source_is_refused",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_a_boundaries_entry_without_a_reason_or_outside_its_source_is_refused[<lambda>0]"
+  ]
+ },
+ {
+  "behaviour": "norm() keeps every digit (plain()'s 1-2 digit loss)",
+  "file": "tools/fidmech/segment.py",
+  "find": "    return normalise((c, 0, 0) for c in text).text\n",
+  "replace": "    return normalise((c, 0, 0) for c in re.sub(r\" \\d{1,2} (?=[a-z])\", \" \", text)).text\n",
+  "test": "tests/test_fidmech_segment.py::test_norm_folds_whitespace_quote_styles_dashes_and_ligatures_and_keeps_digits",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_norm_folds_whitespace_quote_styles_dashes_and_ligatures_and_keeps_digits"
+  ]
+ },
+ {
+  "behaviour": "the generator leaves the marker out of the body candidates (bodies in the order 8, 4)",
+  "file": "tools/fidmech/segment.py",
+  "find": "            if shaped and len(window) == 2 and window[1] == pos:\n",
+  "replace": "            if shaped and len(window) == 2:\n",
+  "test": "tests/test_fidmech_segment.py::test_the_generator_pairs_bodies_that_come_later_on_the_page_in_the_order_8_4",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_segment.py::test_the_generator_pairs_bodies_that_come_later_on_the_page_in_the_order_8_4"
+  ]
+ },
+ {
+  "behaviour": "L1n is decided before L1u",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "            masked = next(_placements(seg, frags, masked=True), None) is not None\n",
+  "replace": "            masked = False\n",
+  "test": "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once[n-days-L1n]"
+  ]
+ },
+ {
+  "behaviour": "L1c: a cut end is a hit",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "END_SLACK = re.compile(r'[ \"\\')\\].,;:!?]*')\n",
+  "replace": "END_SLACK = re.compile(r'.*')\n",
+  "test": "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once[c-cut-L1c]"
+  ]
+ },
+ {
+  "behaviour": "L1c: a list item needs its lead-in",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "        elif p.lead_in is not None and (p.stream, p.lead_in) not in covered:\n",
+  "replace": "        elif False:\n",
+  "test": "tests/test_fidmech_l1.py::test_a_bullet_needs_its_lead_in_among_the_same_blocks_quotes",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_a_bullet_needs_its_lead_in_among_the_same_blocks_quotes"
+  ]
+ },
+ {
+  "behaviour": "L1e: an elision is a hit",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "        elif elided:\n",
+  "replace": "        elif False:\n",
+  "test": "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_each_plant_gives_exactly_its_class_once[e-ellipsis-L1e]"
+  ]
+ },
+ {
+  "behaviour": "a translator's note quote is info, not a source quote (point 2)",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "                out.append(Quote(field[start:i], start, depth > 0))\n",
+  "replace": "                out.append(Quote(field[start:i], start, False))\n",
+  "test": "tests/test_fidmech_l1.py::test_a_translators_note_quote_is_counted_as_info_and_not_checked",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_a_translators_note_quote_is_counted_as_info_and_not_checked"
+  ]
+ },
+ {
+  "behaviour": "a matched fragment does not cut a digit run",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "    while i >= 0 and ((_digit(needle[0])",
+  "replace": "    while False and ((_digit(needle[0])",
+  "test": "tests/test_fidmech_l1.py::test_precedence_gives_one_hit_per_quote_the_first_that_applies",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_precedence_gives_one_hit_per_quote_the_first_that_applies"
+  ]
+ },
+ {
+  "behaviour": "the lever-off rerun shows the hits a lever clears",
+  "file": "tools/fidmech/textchecks.py",
+  "find": "            off, _ = l1(S.Segmentation(source, b.without(lever, source)), blocks)\n",
+  "replace": "            off, _ = l1(S.Segmentation(source, b), blocks)\n",
+  "test": "tests/test_fidmech_l1.py::test_the_report_prints_each_lever_off_and_the_hits_it_clears_or_adds",
+  "exit": 1,
+  "failed": [
+   "tests/test_fidmech_l1.py::test_the_report_prints_each_lever_off_and_the_hits_it_clears_or_adds"
+  ]
+ }
+]
