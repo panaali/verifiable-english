@@ -1,3 +1,4 @@
+import VE.Acts.Hook
 import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Fixed.Norms
 import VE.Norms.Wire
@@ -18,7 +19,7 @@ environment that names `soft-norms@0` is decoded without its soft constructs. -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
   let soft := (VE.Route.Gate.profilesOf E.source).toOption.any (·.contains VE.SoftNorms.Wire.softProfile)
   match (if soft then VE.SoftNorms.Wire.stripSoft E.source else .ok E.source) >>=
-      (VE.Norms.Wire.decodeNormsEnvironment · (acts := true)) with
+      (VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts · (acts := true)) with
   | .ok ne => ne.regulated
   | .error _ => []
 

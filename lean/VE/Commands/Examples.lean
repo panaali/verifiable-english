@@ -471,10 +471,10 @@ def chooseFrame : Json := Json.mkObj [("head", .str "choose"), ("markers", Lean.
 
 -- The stripped environment: the norms decoder refuses `acts@0` by default and reads it with its hook (S16).
 #guard match VE.SpeechActs.Wire.stripSpeech E_acts with
-  | .ok j => (match VE.Norms.Wire.decodeNormsEnvironment j with
+  | .ok j => (match VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain j with
       | .error e => e == "UnsupportedProfile: Unsupported profile acts@0"
       | .ok _ => false) &&
-    (match VE.Norms.Wire.decodeNormsEnvironment j (acts := true), decodeSpeechEnvironmentFull E_acts with
+    (match VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts j (acts := true), decodeSpeechEnvironmentFull E_acts with
       | .ok n, .ok se => n.regulated == se.ne.regulated && n.profiles == se.ne.profiles
       | _, _ => false)
   | .error _ => false

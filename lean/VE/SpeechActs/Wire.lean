@@ -1,4 +1,5 @@
 import VE.SpeechActs.Consequence
+import VE.Acts.HookToday
 import VE.Norms.Replay
 import VE.Route.Admission
 import Std.Data.TreeMap.Raw.Lemmas
@@ -244,7 +245,7 @@ def decodeEnvironmentWith (gate : List String → Except String Unit) (acts : Bo
   let sc ← parseScope block
   let canonical ← canonicalEnvironmentJson environment
   let stripped ← stripSpeech environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped (acts := acts)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts stripped (acts := acts)
   checkActsBlock profiles environment stripped
   checkPhrases ne sc
   checkEnvironmentScope ne sc
@@ -420,10 +421,11 @@ set_option maxHeartbeats 2000000 in
 /-- What W1's decoder read of `acts@0`: its fixed phrases, and every act checked by AP-1's `check` under them. -/
 theorem decodeNorms_acts {s : Json} {ne : VE.Norms.Wire.NormsEnvironment}
     (hc : (actsProfiles true s).contains "acts@0" = true)
-    (h : VE.Norms.Wire.decodeNormsEnvironment s (acts := true) = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts s (acts := true) = .ok ne) :
     ∃ fx, actsFixed (actsProfiles true s) s = .ok fx ∧ ∀ g ∈ ne.regulated, ∀ a, g.act = some a →
       ∃ k raw, VE.Acts.Lexical.check fx g.name k raw = .ok a := by
-  unfold VE.Norms.Wire.decodeNormsEnvironment at h
+  rw [VE.Acts.HookToday.decodeNormsEnvironment_acts] at h
+  unfold VE.Acts.HookToday.Today.decodeNormsEnvironment at h
   repeat' (first
     | (cases h; done)
     | (have h' := VE.Order.ProfileGate.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h')
@@ -502,7 +504,7 @@ theorem profileGate_mono (ps : List String) (h : profileGate₀ ps = .ok ()) : p
 /-- What a decoded environment holds, step by step. -/
 theorem decode_steps {j : Json} {se : SpeechEnvironment} (h : decodeSpeechEnvironmentFull j = .ok se) :
     ∃ s, profilesField j = .ok se.profiles ∧ profileGate se.profiles = .ok () ∧ se.json = j ∧ stripSpeech j = .ok s ∧
-      VE.Norms.Wire.decodeNormsEnvironment s (acts := true) = .ok se.ne ∧ checkActsBlock se.profiles j s = .ok () := by
+      VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts s (acts := true) = .ok se.ne ∧ checkActsBlock se.profiles j s = .ok () := by
   unfold decodeSpeechEnvironmentFull decodeEnvironmentWith at h
   obtain ⟨ps, hp, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, hg, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -523,7 +525,7 @@ theorem decode_steps {j : Json} {se : SpeechEnvironment} (h : decodeSpeechEnviro
 /-- Decoder compatibility: the speech route decodes its regulated declarations with the norms decoder, `acts@0`'s hook
 on, on the environment without the speech block. -/
 theorem decode_acts_compatible (j : Json) (se : SpeechEnvironment) (h : decodeSpeechEnvironmentFull j = .ok se) :
-    ∃ j', stripSpeech j = .ok j' ∧ VE.Norms.Wire.decodeNormsEnvironment j' (acts := true) = .ok se.ne := by
+    ∃ j', stripSpeech j = .ok j' ∧ VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts j' (acts := true) = .ok se.ne := by
   obtain ⟨s, _, _, _, hs, hne, _⟩ := decode_steps h
   exact ⟨s, hs, hne⟩
 
@@ -537,8 +539,8 @@ theorem decode_without_acts (j : Json) (ps : List String) (hp : profilesField j 
     have : ps.contains "acts@0" = false := by simpa using h
     simp only [checkActsBlock, this, Bool.false_and, Bool.false_eq_true, if_false]
     rfl
-  have hn : ∀ s, stripSpeech j = .ok s → VE.Norms.Wire.decodeNormsEnvironment s (acts := true) =
-      VE.Norms.Wire.decodeNormsEnvironment s (acts := false) := fun s hs => by
+  have hn : ∀ s, stripSpeech j = .ok s → VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts s (acts := true) =
+      VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts s (acts := false) := fun s hs => by
     have hc : ¬ (ps.filter (· != speechProfile)).contains "acts@0" = true := fun hc =>
       h (List.mem_filter.mp (List.contains_iff_mem.mp hc)).1
     have hr : readsActs (ps.filter (· != speechProfile)) = false := by
@@ -547,7 +549,7 @@ theorem decode_without_acts (j : Json) (ps : List String) (hp : profilesField j 
       rfl
     have he : actsProfiles true s = actsProfiles false s := by
       simp only [actsProfiles, stripSpeech_profiles hp hs, hr, Bool.false_eq_true, if_false]
-    simp only [VE.Norms.Wire.decodeNormsEnvironment, he]
+    simp only [VE.Acts.HookToday.decodeNormsEnvironment_acts, VE.Acts.HookToday.Today.decodeNormsEnvironment, he]
   unfold decodeSpeechEnvironmentFull decodeSpeechEnvironmentFull₀ decodeEnvironmentWith
   simp only [hp, hg, bind, Except.bind]
   cases hs : stripSpeech j with

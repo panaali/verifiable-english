@@ -55,7 +55,7 @@ def chainConstructs (environment j : Json) : Bool :=
 /-- The route `dispatch` chooses for the base list, run on the base environment and a resolved document. -/
 def dispatchAdmission (ps : List String) (environment document : Json) : Except String Json :=
   match VE.Compose.dispatch ps with
-  | .ok .norms => VE.Norms.Run.runAdmission "" environment document
+  | .ok .norms => VE.Norms.Run.runAdmissionActs "" environment document
   | .ok .normDefaults => VE.NormDefaults.Run.runAdmission "" environment document
   | .ok .soft => VE.SoftNorms.Run.runAdmission "" environment document
   | .ok .rights => VE.Rights.Run.runAdmission "" environment document
@@ -68,7 +68,7 @@ def dispatchAdmission (ps : List String) (environment document : Json) : Except 
 without a document (each checks the FOL family); a list no chain route reads is `dispatchAdmission`'s refusal. -/
 def chainEnvironment (ps : List String) (be : Json) : Except String VE.Norms.Wire.NormsEnvironment :=
   match VE.Compose.dispatch ps with
-  | .ok .norms => VE.Norms.Wire.decodeNormsEnvironment be
+  | .ok .norms => VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain be
   | .ok .normDefaults => VE.NormDefaults.Wire.decodeEnvironmentU be
   | .ok .soft => (VE.SoftNorms.Phases.checkSource be (.arr #[])).map (·.ne) |>.mapError (·.message)
   | .ok .rights => (·.se.ne) <$> VE.Rights.Wire.decodeRightsEnvironment be

@@ -1,4 +1,5 @@
 import VE.SpeechActs.Wire
+import VE.Acts.HookToday
 import VE.EnglishGrammar.Run
 import VE.Commands.Texts
 import VE.Scope.Theorems
@@ -1246,11 +1247,12 @@ theorem wf_strip {j s : Json} (hw : VE.Scope.JsonWF j) (h : VE.SpeechActs.Wire.s
 /-- W1's decoder, `acts@0`'s hook on or off, over a well-formed environment: each regulated predicate is declared
 with its sorts, and the regulated and constant names are distinct. -/
 theorem norms_facts {env : Json} {ne : VE.Norms.Wire.NormsEnvironment} {acts : Bool}
-    (h : VE.Norms.Wire.decodeNormsEnvironment env (acts := acts) = .ok ne)
+    (h : VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts env (acts := acts) = .ok ne)
     (hwe : VE.Scope.JsonWF env) :
     (∀ g ∈ ne.regulated, ne.rv.environment.predicates g.name = some g.sorts) ∧ (ne.regulated.map (·.name)).Nodup ∧
       (ne.rv.vocabulary.constants.map (·.1)).Nodup := by
-  unfold VE.Norms.Wire.decodeNormsEnvironment at h
+  rw [VE.Acts.HookToday.decodeNormsEnvironment_acts] at h
+  unfold VE.Acts.HookToday.Today.decodeNormsEnvironment at h
   simp only [VE.Norms.Wire.joinedActs, Bool.false_and, Bool.false_eq_true, if_false] at h
   generalize hps : VE.Norms.Wire.actsProfiles acts env = ps at h
   have hw : ∀ v, (if ps.isEmpty then env else VE.Norms.Wire.actsView env ps).getObjVal? "vocabulary" = .ok v →

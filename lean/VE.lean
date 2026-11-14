@@ -270,6 +270,9 @@ import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
 import VE.Acts.Tree
+import VE.Acts.Hook
+import VE.Acts.HookToday
+import VE.Acts.HookTwins
 import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
