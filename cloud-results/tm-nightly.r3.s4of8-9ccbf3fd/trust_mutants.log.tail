@@ -1,0 +1,8 @@
+trust_mutants: 29 definitions, 35 mutants (6 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:82 VE.Commands.readingTuples (G[V], trusted) list-drop-last: xs -> (xs.dropLast) (lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke ...)
+trust_mutants: 5 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 3035 s
+trust_mutants: D[V], trusted: 11 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 1 UNKNOWN, 15 OTHER SHARD
+trust_mutants: K, trusted: 1 OTHER SHARD
+trust_mutants: S, trusted: 2 OTHER SHARD
+trust_mutants: steps: wall plan 11.6 s, scratch 3.2 s, control_build 0.3 s, probe_install 1 s, mutants 3012.6 s, cleanup 5.8 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 31.5 s (7), mutant_builds 77.7 s (8), mutant_checks 6815.6 s (13), stage_controls 3044 s (7), mutant_probes 34.2 s (7)
