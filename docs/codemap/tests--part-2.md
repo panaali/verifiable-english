@@ -1,3 +1,5 @@
+- `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
+- `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
 - `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.
 - `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
 - `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
@@ -85,4 +87,3 @@
 - `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
-- `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
