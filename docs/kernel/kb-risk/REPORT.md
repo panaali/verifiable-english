@@ -5,7 +5,7 @@ Changed: `lean/VE/Risk/WireSound.lean` (new: `risk_elaborate_wire_sound`, `risk_
 Figures: kernel 9,552 unchanged; risk path spec 6,160 -> 6,309, wrap 5,670 -> 5,670; trusted Lean K +0, S +0; every RSP S item and every risk-route item of the other keys is stated by a theorem (table below).
 Open: none blocking. Two deviations from the task text, each the conservative option (Notes for the DRI 1 and 2): the answer shapes are written out inside the theorems, not as `…Answer` definitions (a definition would be S +65 with no ruling to sign it), and the four kinds no key calls are listed here, not as `uncovered` in the registry (the tool refuses `uncovered` on a candidate path).
 
-SIZE: 247 product (Lean: WireSound.lean 246, VE.lean 1), 0 tests, 140 other hand-written lines (CALLS.md 77, seeded-bugs.json 46, registry 2, assurance manifest 1, spec and frozen-keys re-quotes 14; not counting this report).
+SIZE: 248 product (Lean: WireSound.lean 247, VE.lean 1), 0 tests, 140 other hand-written lines (CALLS.md 77, seeded-bugs.json 46, registry 2, assurance manifest 1, spec and frozen-keys re-quotes 14; not counting this report).
 
 ## Step 1: what the keys call (docs/kernel/kb-risk/CALLS.md, commit b28ae39ce3)
 
@@ -69,12 +69,14 @@ Ten largest spec modules of the risk path after (lines): VE.Risk.Record 763, VE.
 
 Kinds no key calls get no runner theorem here: `risk-conflict` (`runConflict`), `risk-followable` (`runFollowable`), `risk-audit` (`runAudit`), `risk-certificate` (`runCertificate`). They are not written as `uncovered` in the registry (Notes for the DRI 2).
 
-## Checks run (final Lean, commit ceb580f8c8 unless said)
+## Checks run (final Lean, commit 12a668d54f unless said)
 
-- `lake build` (full): `Build completed successfully (1439 jobs)`, exit 0. No `sorry` in WireSound.lean (`grep -n sorry`: none).
+The first selected run (on 80da452520) stopped at `tools/check_lean_imports.py`: `new outward Lean import: VE.Risk.WireSound -> VE.Risk.Run (layer 2 -> 4)`. 12a668d54f declares the layer on the file's first line (`-- ve-layer: 4 (...)`, as `lean/VE/Readings/SoftSupRunExamples.lean:1` does; no Python change); the lint then reports `Lean layer graph kept`. The build, regen, audit, closure, trust map and trust mutants below were rerun on it; the harness runs, statement checks and seeds were not rerun: the edit adds a comment line, and the `ve_service` built on it is the pinned one (sha256 9c3315ce..., in `lean/checkers.lock`).
+
+- `lake build` (full, on 12a668d54f): `Build completed successfully (1439 jobs)`, exit 0. No `sorry` in WireSound.lean (`grep -n sorry`: none).
 - `python3 lean/audit.py` (run by `regen_generated.py --write --only lean-statements --only lean-audit-manifests --only lean-roots --only trust-tables`): `PASS: 873 source files; 9972 named theorem declarations audited ...; only the declared standard axiom allowlist`. New axioms lines are `propext`, `Classical.choice`, `Quot.sound` only (`lean/axioms.txt`).
 - `uv run python tools/trust_map.py --check`: `against 0f6d59d44107: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0 ... PASS`.
-- Trust mutants: light lane `NOT` (new Lean file), so `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/kernel/kb-risk/trust-mutants.json`: `0 definitions, 0 mutants ... 0 KILLED, 0 SURVIVOR, 0 UNKNOWN`, exit 0 (no trusted declaration added or changed).
+- Trust mutants: light lane `NOT` (new Lean file), so `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/kernel/kb-risk/trust-mutants.json` on ceb580f8c8, then `--rescore` of that record on 12a668d54f: `0 definitions, 0 mutants ... 0 KILLED, 0 SURVIVOR, 0 UNKNOWN`, exit 0 both times (no trusted declaration added or changed).
 - Five frozen keys, each through `zsh iso.sh <name> 16G --` with the pinned `ve_service` (sha256 9c3315ce..., listed in `lean/checkers.lock`): RSP `run.py --check` exit 0, `110 / 126`; Preparedness `run.py --check` exit 0, `236 / 239`; FSF `run.py --check` exit 0, `260/262` (C3 and C-doc disagree, as on main, CALLS.md); agent-policy `check.py base` exit 0; eligibility `run.py --no-write` exit 0, `mutants_killed 32/32`. `sha256sum usecases/*/results.json` before and after: identical (`diff` empty).
 - `tools/check_*_statements.py` (all eight): exit 0 (none covers Risk).
 - `uv run python tools/gate_collection.py --check --prebuilt`: `0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed`.
@@ -84,10 +86,10 @@ Kinds no key calls get no runner theorem here: `risk-conflict` (`runConflict`), 
 
 | Seed | File | Mutation | Fails |
 |---|---|---|---|
-| S1 (task a) | lean/VE/Risk/Run.lean | `runDecision` answers with the opposite branch (tables on a conflict, CONFLICT on none) | `risk_decision_wire_sound` does not build (WireSound.lean:228, the closed-list `rfl`) |
-| S2 (task b) | lean/VE/Risk/Wire.lean | `regenerated` drops the last `risk_premises` row (a `risk:class` row) | `risk_elaborate_wire_sound` does not build (WireSound.lean:123, `case eq`) |
+| S1 (task a) | lean/VE/Risk/Run.lean | `runDecision` answers with the opposite branch (tables on a conflict, CONFLICT on none) | `risk_decision_wire_sound` does not build (WireSound.lean:229, the closed-list `rfl`) |
+| S2 (task b) | lean/VE/Risk/Wire.lean | `regenerated` drops the last `risk_premises` row (a `risk:class` row) | `risk_elaborate_wire_sound` does not build (WireSound.lean:124, `case eq`) |
 | S3 (task c) | lean/VE/Risk/Wire.lean | `decodeSupplied` drops its last entry | no proof (exit 0); `tests/test_risk_lean_route.py::test_k10_decision_17` fails: `MissingEntry: E2` |
-| S4 | lean/VE/Risk/WireSound.lean | the statement's `leads` table reads `might` | `risk_decision_wire_sound` does not build (WireSound.lean:228) |
+| S4 | lean/VE/Risk/WireSound.lean | the statement's `leads` table reads `might` | `risk_decision_wire_sound` does not build (WireSound.lean:229) |
 
 The Lean failures are heartbeat timeouts at the `rfl` that equates the runner's answer with the stated list. Each seeded statement is false for the seeded runner (S1: on a model without conflict the answer has `verdict`, the statement `tables`; S2: one row fewer; S4: a different table on any record where `might` and `leads` differ), so no budget would make the proof succeed. S3 is caught by a test, not a proof: the theorems state that `decodeSupplied` returned `supplied` and that `admitDecision` admitted `d` from it, not what the decoder keeps. `tools/select_tests.py --paths lean/VE/Risk/Wire.lean` selects `tests/test_risk_lean_route.py`. Every file was restored byte for byte (`git diff --quiet HEAD` on Run.lean and Wire.lean).
 
