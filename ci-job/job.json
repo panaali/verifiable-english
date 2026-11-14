@@ -1,0 +1,12 @@
+{
+ "job": "testmap-c9214a26-t617033-s5",
+ "head": "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+ "argv": [
+  "testmap-c9214a26-t617033-s5",
+  "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+  "3bfb37ab823066aad7bb8d68d2c28e8e3a3da2c8",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-664a8af90749.tar.zst",
+  "2fdad12c65d70c46aaf101691345f0d543b8621106b5ae7ed022f01139e22fd2",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s5.json.gz\" tests/test_defaults_checks.py tests/test_soft_review_regressions.py tests/test_scope_answer.py tests/test_ask_cli.py tests/test_english.py tests/test_p1_amendment13.py tests/test_inventory_path.py tests/test_p1_preflight.py tests/test_data_surface.py tests/test_asimov_laws.py tests/test_english_lean_route.py tests/test_readings_components_document.py tests/test_b16d_norm_roles.py tests/test_cardinality_answer.py tests/test_sa_checked_view.py tests/test_lean_service.py tests/test_test_chunks.py tests/test_ask_relay.py tests/test_senses_route.py tests/test_p1_reconcile.py tests/test_t1c.py tests/test_readings_s1_pilot_rebuild.py tests/test_b16f_senses_document.py tests/test_question_fixture_sources.py tests/test_p1_history.py tests/test_document.py tests/test_acts_profile.py tests/test_speech_acts_lean.py tests/test_stage2_norms.py tests/test_defaults_readings.py tests/test_lean_first_b13a.py tests/test_speech_acts_acts0.py tests/test_closure_induction.py tests/test_acts_elaborate_relay.py tests/test_data_three_way.py tests/test_report_english.py tests/test_inventory_lint.py tests/test_order_grammar.py tests/test_metered_lean.py tests/test_w6a_limits.py tests/test_judgments_compose.py tests/test_rd9_followup_bindings.py tests/test_speech_acts.py tests/test_discourse_three_way.py tests/test_readings_defaults_rd6a.py tests/test_english_e2_overlay.py tests/test_reports_wants.py tests/test_discourse_constitution.py tests/test_rust_jsonl_schema.py tests/test_parser_renderer.py tests/test_fol_names.py tests/test_authoring.py tests/test_data_flags.py tests/test_nary_folio.py tests/test_coverage_dashboard.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
