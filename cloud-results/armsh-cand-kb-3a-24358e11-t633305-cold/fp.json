@@ -1,0 +1,42 @@
+{
+ "audit_rc": 0,
+ "base": "9e74684f939a751f9580e16abdb9d7c4495a098c",
+ "changed_modules": [
+  "ResponseShape/Encoders/SoftNorms",
+  "ResponseShape/Schemas/SoftNorms",
+  "ResponseShape/SlotExamples",
+  "ResponseShapeAudit",
+  "VE",
+  "VE/Audit",
+  "VE/Compose/SlotWire",
+  "VE/SoftNorms/Run",
+  "VE/SoftNorms/SlotExamples",
+  "VE/SoftNorms/SlotSound"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Encoders/SoftNorms": "5b6d206a36e6411fdc995a77b22ef9b2d78b6951783032509ad0b5f3a63c3728",
+  "ResponseShape/Schemas/SoftNorms": "5fd0763f3164abe2928758bf1b19eea038917b7c64eed4b4086f79f773f3b757",
+  "ResponseShape/SlotExamples": "8249d3138d8faf8744c3e2a06d055cfbb507a2d2992ee941e4d077d0aac500f3",
+  "ResponseShapeAudit": null,
+  "VE": "9de82b0edb5d731030d975f85b6759fe2ad22383ad5df88fa1330ed183364b2c",
+  "VE/Audit": null,
+  "VE/Compose/SlotWire": "145b77055411a829bacdba744da50182f7981f50ae2b521e6235b57af48b90f2",
+  "VE/SoftNorms/Run": "2aa769a385b398c6853825d95f3c54b511b6e034367cd73dc67a7f2ce4e28178",
+  "VE/SoftNorms/SlotExamples": "7b73bc95c421be1f927bef51b1ff2d12f32a70a1f13756db697685e2daaf65e6",
+  "VE/SoftNorms/SlotSound": "fc80bfc3c1822614df704c1bcce2f8ca0a46a3afd915588d5f2190899fd00057"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "5bbd42667b3d70daed8b0dc054c6eecf2fc69fcc3456b94705f2b843a7b7bef3",
+  "lean/VE/Audit.lean": "d7bdf7b83359176b519f8d76de579c2f40f7f76ec3432c52e55c2f8c179d87f3",
+  "lean/axioms.txt": "b174475309e4c22990d12660a62ac247af6c9341a8d3659d9a92b38145e10001",
+  "lean/declarations.txt": "85a498e5c74c78c5d782688b3677d6773f6aa265912642a58b000ed244169659",
+  "lean/predicates.txt": "06cf99b6a41049a71582a37570c1d31f107aeb4a551fd7619c485f8a60f37cce",
+  "lean/statements.txt": "668a76fdee560e08a3fd31ca4f09aa2c8a476575675c5399b34df1e32d7197a0"
+ },
+ "head": "558a6bf48015e1c1fe912132e31c545866946e04",
+ "lake_rc": 0,
+ "oleans_n": 868,
+ "oleans_sha256": "83599161e54f6285e1d5f0232022349bb566448014e93de20d41267f43ab777b",
+ "seed": "cold-fp",
+ "statements_rc": 0
+}
