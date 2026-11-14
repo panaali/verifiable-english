@@ -1,0 +1,33 @@
+{
+ "version": 1,
+ "about": "The publisher documents the safety-framework use cases quote, pinned by hash: hashes, sizes and URLs only, never their text. tools/fetch_pinned_sources.py downloads each, checks pdf_sha256 and pdf_bytes, runs extract (the case's committed extract step) and checks text_sha256 and text_bytes before it writes the text at Path.home() / path, where build_document.DEFAULT_SOURCE looks. tests/pinned_source.py and tools/gate.py read the same entries.",
+ "sources": {
+  "anthropic-rsp": {
+   "url": "https://www-cdn.anthropic.com/files/4zrzovbb/website/0bacdc8440ea96e62a8766d99ebe1d4eea6d5f3a.pdf",
+   "pdf_sha256": "6247b9e4001fd342827526fabc476c9d4dd6b2041ac00055f0ccda26f4d0b07d",
+   "pdf_bytes": 304755,
+   "extract": ["uv", "run", "--no-project", "--with", "pypdf==6.19.0", "python", "-I", "usecases/anthropic-rsp/source/extract_text.py", "{pdf}", "{text}"],
+   "path": "code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt",
+   "text_sha256": "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063",
+   "text_bytes": 59410
+  },
+  "openai-preparedness": {
+   "url": "https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf",
+   "pdf_sha256": "fae6e4cc6f7212a010bb9348fc0cde1fe711b9cad426c6a99db97740ee52729b",
+   "pdf_bytes": 170399,
+   "extract": ["uv", "run", "--no-project", "--with", "pypdf==6.19.0", "python", "-I", "usecases/openai-preparedness/source/extract_text.py", "{pdf}", "{text}"],
+   "path": "code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt",
+   "text_sha256": "d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f",
+   "text_bytes": 67418
+  },
+  "safety-framework": {
+   "url": "https://storage.googleapis.com/deepmind-media/DeepMind.com/Blog/strengthening-our-frontier-safety-framework/frontier-safety-framework_3-1.pdf",
+   "pdf_sha256": "ad10d2d240e0d557ecad406dbccedcbb4a70295f8ba8eec46bfe01803cb9c301",
+   "pdf_bytes": 447155,
+   "extract": ["uv", "run", "--no-project", "--with", "pypdf==6.19.0", "python", "-I", "usecases/safety-framework/source/extract_text.py", "{pdf}", "{text}"],
+   "path": "code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+   "text_sha256": "18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946",
+   "text_bytes": 54373
+  }
+ }
+}
