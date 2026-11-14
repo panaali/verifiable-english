@@ -255,7 +255,7 @@ body per unit instead of the `Plan` inductive, the fuel in one `wire`, a single 
 
 1. Typed and contained Lean answers: N.A., no relayed answer, schema or route (the module is unreachable).
 2. Deliverables built, no rule broken: PASS, deliverables (1)-(5) above with their examples and theorems; no Python
-   copy, no report test (`git diff main...HEAD --stat -- tests ve` empty).
+   copy, no report test (`git diff main...HEAD --stat -- tests` empty; under `ve/` only the manifest's two entries).
 3. Tests and gates can fail: PASS, seeded bugs (a)-(d) and `docs/kernel/kb-2a/trust-mutants.json` (exit 0).
 4. Python, Lean and Rust agree: N.A., Lean only, no route output changed.
 5. R8 binding: PASS for the lowering's own references, examples "UnknownPart: ..." (`CoreDocumentExamples.lean`
