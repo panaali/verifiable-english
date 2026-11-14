@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-kb-8b-0a4f489f-t628126-s6",
+ "head": "9e74684f939a751f9580e16abdb9d7c4495a098c",
+ "argv": [
+  "armsh-cand-kb-8b-0a4f489f-t628126-s6",
+  "9e74684f939a751f9580e16abdb9d7c4495a098c",
+  "bf18ba451b1ad4e132b9c28fb0f2f1dc6f412b31",
+  "-",
+  "-",
+  "4",
+  "6/7"
+ ]
+}
