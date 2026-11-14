@@ -85,9 +85,10 @@ def test_every_subject_body_is_cut_at_every_uncovered_kind():
 
 
 def statement_states(theorem: str, subject: str) -> bool:
-    """Review kb-0 F1's probe: the statement names the subject and says something an answer means."""
+    """Review kb-0 F1's probe: the statement names the subject and says something an answer means (an
+    admission answer means an admission relation: `Admitted`, `NodeAdmitted`, as on the quantity path)."""
     text = STATEMENTS.get(theorem, "")
-    return subject + "@" in text and re.search(r'"valid"|"verdict"|Answer|Entails', text) is not None
+    return subject + "@" in text and re.search(r'"valid"|"verdict"|Answer|Entails|Admitted\b', text) is not None
 
 
 def test_every_kernel_subject_has_a_listed_theorem_that_states_its_answer():
@@ -496,12 +497,27 @@ KIND_SOURCES = {
     "softNorms": ["lean/VE/SoftNorms/Run.lean"],
     "metered": ["lean/VE/Route/MeteredRun.lean"],
     "certificate": ["lean/VE/CertificateWire.lean"],
+    "quantity": ["lean/VE/Time/Wire.lean", "lean/VE/Time/Document.lean"],
 }
 KIND_LITERAL = re.compile(r'\bkind\s*==\s*"([^"]+)"')
+# Runners that dispatch with `match kind with` arms and a `[...].contains kind` list instead of `kind == "<k>"`:
+# the path, the source and the runner's `def` line (its body runs to the next top-level `def`).
+KIND_MATCHES = {"quantity": ("lean/VE/Time/Wire.lean", "def runCase ")}
+KIND_ARM = re.compile(r'^\s*\| "([^"]+)" =>', re.MULTILINE)
+KIND_LIST = re.compile(r'\[([^\]]*)\]\.contains kind\b')
 
 
 def kind_literals(path: str) -> set[str]:
-    return {kind for source in KIND_SOURCES[path] for kind in KIND_LITERAL.findall((ROOT / source).read_text())}
+    kinds = {kind for source in KIND_SOURCES[path] for kind in KIND_LITERAL.findall((ROOT / source).read_text())}
+    if path in KIND_MATCHES:
+        source, start = KIND_MATCHES[path]
+        text = (ROOT / source).read_text()
+        body = text[text.index(start):]
+        end = body.find("\ndef ", 1)
+        body = body if end < 0 else body[:end]
+        kinds |= set(KIND_ARM.findall(body))
+        kinds |= {kind for listed in KIND_LIST.findall(body) for kind in re.findall(r'"([^"]+)"', listed)}
+    return kinds
 
 
 def test_every_case_kind_of_a_kernel_runner_has_an_entry_and_every_entry_a_kind():
@@ -519,6 +535,8 @@ def test_every_case_kind_of_a_kernel_runner_has_an_entry_and_every_entry_a_kind(
         assert literals == set(path["kinds"]) | whole, path["name"]
         assert partial <= set(path["kinds"]), path["name"]
     assert kind_literals("certificate") == set()
+    assert kind_literals("quantity") == {"admission", "countermodel", "certificate", "count", "document",
+                                         "day", "civil", "lower", "render"}
 
 
 def test_each_kind_theorem_fixes_its_kind_and_no_theorem_states_an_untied_kind():
