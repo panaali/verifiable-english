@@ -1,0 +1,7 @@
+job=armsh-watch-4a5d3460-4a5d3460-t662080-s3 shard=3/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-14T13:16:29Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 13:16:29 up 23 min,  0 user,  load average: 1.43, 0.49, 0.22
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
