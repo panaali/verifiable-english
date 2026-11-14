@@ -22584,13 +22584,58 @@
     },
     "VE/Acts/HookExamples.lean": {
       "T": [
+        "VE.Acts.HookExamples.a1",
+        "VE.Acts.HookExamples.a2",
+        "VE.Acts.HookExamples.a3",
         "VE.Acts.HookExamples.acts",
+        "VE.Acts.HookExamples.actsP",
+        "VE.Acts.HookExamples.block",
+        "VE.Acts.HookExamples.caseOf",
+        "VE.Acts.HookExamples.d4",
+        "VE.Acts.HookExamples.desc",
         "VE.Acts.HookExamples.doc0",
+        "VE.Acts.HookExamples.elabCase",
+        "VE.Acts.HookExamples.env",
+        "VE.Acts.HookExamples.envA",
+        "VE.Acts.HookExamples.err",
+        "VE.Acts.HookExamples.fxs",
+        "VE.Acts.HookExamples.joinedE",
+        "VE.Acts.HookExamples.judgedA",
         "VE.Acts.HookExamples.lexical",
+        "VE.Acts.HookExamples.perm",
         "VE.Acts.HookExamples.plainCase",
         "VE.Acts.HookExamples.plainD",
         "VE.Acts.HookExamples.plainEnv",
+        "VE.Acts.HookExamples.plainReg",
+        "VE.Acts.HookExamples.pred",
+        "VE.Acts.HookExamples.rule",
+        "VE.Acts.HookExamples.seek",
+        "VE.Acts.HookExamples.shown",
+        "VE.Acts.HookExamples.sortedRefusal",
+        "VE.Acts.HookExamples.unsorted",
         "VE.Acts.HookExamples.view"
+      ]
+    },
+    "VE/Alternatives/HookExamples.lean": {
+      "T": [
+        "VE.Alternatives.HookExamples.desc",
+        "VE.Alternatives.HookExamples.flaggedEnv"
+      ]
+    },
+    "VE/NormDefaults/HookExamples.lean": {
+      "T": [
+        "VE.NormDefaults.HookExamples.desc",
+        "VE.NormDefaults.HookExamples.err",
+        "VE.NormDefaults.HookExamples.ndEnv"
+      ]
+    },
+    "VE/Service/HookExamples.lean": {
+      "T": [
+        "VE.Service.HookExamples.caseOf",
+        "VE.Service.HookExamples.desc",
+        "VE.Service.HookExamples.err",
+        "VE.Service.HookExamples.flagRefusal",
+        "VE.Service.HookExamples.flaggedEnv"
       ]
     }
   }
