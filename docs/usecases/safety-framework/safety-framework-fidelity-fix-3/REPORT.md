@@ -104,9 +104,9 @@ block's predicate or legend was renamed.
   deployments (3.2.1)". No carrier change.
 - (c) safety-framework-fidelity-fix-2/REPORT.md:213: left as it is (DRI answer NO,
   reviews/dri-decisions-20261114-facts-void.md item 1). Row record-void-counter or the omission read handles it.
-- (d) Not reworded, also because of that NO. They are for the omission seat: safety-framework-fidelity-fix-2/REPORT.md:59
+- (d) Not reworded, also because of that NO. Each waits for a clearing read: safety-framework-fidelity-fix-2/REPORT.md:59
   (f16-ds, f16-ds-strict, the class 7 row), :36 (the f7-rra bullet) and :107 (the f5 bullet).
-- (e) Kept as they are, for the omission seat: PLAN.md:647 (measures-sl2plus), PLAN.md:581 (f16-ds-strict) and
+- (e) Kept as they are, each waiting for a clearing read: PLAN.md:647 (measures-sl2plus), PLAN.md:581 (f16-ds-strict) and
   PLAN.md:616 (f4-need-d, f4-need-r).
 
 The scan, run read-only at this branch's head (omit_exposure on the 15:04Z manifest with ve_commit set to the
