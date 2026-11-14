@@ -1,7 +1,7 @@
 {
- "base": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210",
- "head": "d51132a0654248f418a392734e5f0cb1d9ed8c98",
- "tree": "92238f48d9e468e267b27eae949d681ca6faf93e",
+ "base": "f0f2b1a0b6eb04d881869990ba9ad7ff54e7d6cb",
+ "head": "00c74f57aa758d887358e891bdc06d0061809d19",
+ "tree": "0b53a49345b4d2be176184afd3a3242928d48169",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,33 +9,33 @@
  "tests": [
   "lean/VE/Experimental/CoreDocumentExamples.lean"
  ],
- "seconds": 1151,
+ "seconds": 1241,
  "steps": {
   "wall": {
-   "plan": 14.7,
-   "scratch": 31.7,
-   "control_build": 0.3,
-   "probe_install": 2.1,
+   "plan": 23.2,
+   "scratch": 29.0,
+   "control_build": 0.5,
+   "probe_install": 3.3,
    "control_probes": 0.0,
-   "mutants": 1099.2,
-   "cleanup": 3.5,
+   "mutants": 1182.2,
+   "cleanup": 3.1,
    "reads": 0.1
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 2.0,
-   "control_probes": 157.8,
-   "mutant_builds": 857.8,
-   "mutant_checks": 1041.1,
+   "control_build": 0.4,
+   "probe_install": 3.2,
+   "control_probes": 173.9,
+   "mutant_builds": 979.5,
+   "mutant_checks": 1113.4,
    "outside_checks": 0.0,
-   "stage_controls": 86.4,
-   "mutant_probes": 5427.4,
+   "stage_controls": 89.2,
+   "mutant_probes": 5667.7,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 14,
+   "control_probes": 16,
    "mutant_builds": 210,
    "mutant_checks": 184,
    "outside_checks": 0,
@@ -63,10 +63,10 @@
   }
  },
  "inputs": {
-  "tool": "f454ad144bdf687b7c156e2943cedbc1ac3bf83f3423b702216ef8313beecfbf",
+  "tool": "d4d50a1a68d5a4d3433368b9b15d957075ca0bf33a8091ce232607b659479bf2",
   "lean": "a18f118af00f8a8c90aa54186f0bd8d8e0f31c3b817ac92ea42ea3cb745d4c9f",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "base": "9a3fd7a9f9ac78d4b12b759ec8d6999faefc9210",
+  "base": "f0f2b1a0b6eb04d881869990ba9ad7ff54e7d6cb",
   "options": "{\"deep\": false, \"test\": [\"VE/Experimental/CoreDocumentExamples.lean\"], \"classes\": [\"trusted\"]}",
   "files": {
    ".gitignore": "75bc8884425a3d4838f61ef2220c29d24975c25b774ecea6c4cb75ff0044fe38",
@@ -999,10 +999,19 @@
    "tools/lean_dump_cache.py": "5c14d3407bec99011813bc86e087741cb7a57e9c3fb1cb092771c568c6b444c4",
    "tools/lean_share.py": "fb51c782a26c1e1f75cb6c50109da6fe705d7ef0b1d08ac859bda8d277ce25ca",
    "tools/lean_statements.py": "312d7c93ac754239d718567f0013fdad6511db5ec222ac10d5dd2c254c133a16",
-   "tools/regen_generated.py": "dc56f01d35b331527b4639979266f600d2bb4ff98186a9a0fa3d7b978dc0cc82",
+   "tools/regen_generated.py": "cdac5670f937f369b786d0bb34947b36427797e1f2487699126333993cbbd411",
    "tools/trust_map.py": "81082574f08249aea02a276fe8323ce76cbacdc09d6ba8851ef55ee2e77830a7",
    "tools/trust_mutants.py": "fb7b216c8a58688621908208ebeaa619a269ba0a0a530879cc32dd6728a80abd"
   }
+ },
+ "rescore": {
+  "file": "docs/kernel/kb-2a/trust-mutants.json",
+  "head": null,
+  "mode": "full",
+  "changed": [],
+  "reused": 0,
+  "rerun": 186,
+  "full_run": "its inputs differ (tool): tools/regen_generated.py"
  },
  "definitions": [
   "lean/VE/Experimental/CoreDocument.lean: VE.Experimental.CoreDocument.Body.premise?",
