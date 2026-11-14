@@ -203,5 +203,21 @@
   "fsf": "--check passed (byte-identical)",
   "agent": "written file differs from the committed one only in M10.seconds and M10.policy_seconds (6 timing leaves)",
   "elig": "branch run and a main run (merge base 0f6d59d441, same flags) differ only in `seconds`; both differ from the committed file (2026-09-29) in the --no-mutants sections and 81 wording strings changed on main since 2026-10-05"
+ },
+ "final_binary_rerun": {
+  "ve_service": "a6cf2276b104 (the final Lean; the traced runs used cf72c2e5847e, built before the proof-only edits)",
+  "results": {
+   "rsp": "rc=0 secs=317",
+   "prep": "rc=0 secs=1739",
+   "fsf": "rc=0 secs=195",
+   "agent": "rc=0 secs=178",
+   "elig": "rc=0 secs=242"
+  },
+  "rsp": "--check passed",
+  "prep": "--check passed",
+  "fsf": "--check passed",
+  "agent": "written file differs from the committed one only in M10.seconds and M10.policy_seconds",
+  "elig": "differs from the main run only in `seconds`",
+  "untraced": "run without the tracer (no PYTHONPATH hook)"
  }
 }
