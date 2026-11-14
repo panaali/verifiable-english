@@ -1,0 +1,7 @@
+run_id=43628720671 attempt=1 runner=GitHub Actions 1000008845 image=ubuntu24-arm64-20261111.182.1 arch=aarch64 nproc=4
+Lean (version 4.24.0, aarch64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (aarch64-unknown-linux-gnu)
+/home/runner/.cargo/bin/rustup
+/dev/root       145G   43G  102G  30% /
+git: the runner's git is the pin 2.56.1; gate.py's PATH (/usr/bin:/bin) finds git version 2.56.1 at /usr/bin/git
+run_url=https://github.com/panaali/verifiable-english/actions/runs/43628720671 run_result=success
