@@ -1,6 +1,6 @@
 # kb-2a step A: the lowering of a document to its core documents (REPORT)
 
-Status: built; trust mutants exit 0; selected tests: see "Runs" (final run on the committed tree). HEAD: see `git log -1`.
+Status: built; trust mutants exit 0; selected run: one failure (assurance manifest classification), fixed and its file rerun (167 passed). HEAD: see `git log -1`.
 What changed: one new experimental Lean module, `lean/VE/Experimental/CoreDocument.lean` (the lowering, its refusals,
 origins and theorems), and its examples, `lean/VE/Experimental/CoreDocumentExamples.lean`; no Python, Rust or service change.
 Open items: none of this task's deliverables. For step B: couplings, narrowings and purposes/markers (section "Gaps").
@@ -221,7 +221,13 @@ body per unit instead of the `Plan` inductive, the fuel in one `wire`, a single 
   verdict writers outside the kernel 56 <= 56, `document` path spec lines 34821 (the baseline's 34821).
 - `uv run python tools/check_lean_imports.py`: exit 0 (the experimental module is unreachable from the service).
 - `uv run python tools/trust_map.py --check`: PASS, against f0f2b1a0b6eb K +0, S +0, trusted +147 (allowance 147).
-- Selected tests: SELECTED_RESULT
+- Selected tests: `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+  on ff07374e0d (clean tree), ve-cloud-2, 7722 s: exit 1, one failure,
+  `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the two new Lean files build
+  JSON and were not classified in `ve/assurance-manifest.json`); every other selected file passed (log /tmp/kb2a-select.log).
+  Fixed by two hand-reviewed `other_json` entries (the manifest's writer only restores its layout); rerun:
+  `uv run pytest -q tests/test_assurance_manifest.py`, 167 passed; `tools/assurance_manifest.py --check` exit 0;
+  `check_assurance_layout()` and `check_assurance_pins()` 0. Not on main's known-red list.
 - Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Acceptance
@@ -233,7 +239,7 @@ body per unit instead of the `Plan` inductive, the fuel in one `wire`, a single 
 | experimental boundary check | AGENT | `tools/check_lean_imports.py` exit 0 |
 | selected tests pass, no test changed | AGENT | Runs; `git diff main...HEAD --stat -- tests` is empty |
 | generated Lean files regenerated with their tool | AGENT | `tools/lean_statements.py`, `tools/regen_generated.py --write` |
-| no Python change; `Document.lean` unchanged | AGENT | `git diff main...HEAD --stat -- ve lean/VE/Service` is empty |
+| no Python change; `Document.lean` unchanged | AGENT | `git diff main...HEAD --stat -- ve lean/VE/Service` lists only `ve/assurance-manifest.json` (two data entries classifying the new Lean files, required by `tests/test_assurance_manifest.py`) |
 
 ## Notes for the DRI
 
@@ -258,7 +264,7 @@ body per unit instead of the `Plan` inductive, the fuel in one `wire`, a single 
    the gate is the chain's.
 7. No unsigned item: PASS, DELTA rows cite R16 and R12.
 8. Every user-visible change in DELTA: PASS, none is user-visible (unreachable module); trust and generated rows recorded.
-9. Test selection: PASS, the final selected run (Runs) selected the Lean-backed tests for the changed modules.
+9. Test selection: PASS, the final selected run (Runs) selected the Lean-wide tests and caught the manifest classification (`tests/test_assurance_manifest.py`).
 10. Lean statements say what is claimed: PASS, seeded bugs (c), (d) break `lower_readings_distinct` and
     `lower_origin_units`; statements quoted above from the source.
 11. Budgets fail closed: PASS, `ResourceLimit` examples at 65, 128 choices and 8192 combinations (refused before
