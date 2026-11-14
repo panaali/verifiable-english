@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.pinned_source import pinned_source
 from tools.fidmech import segment as S
 from tools.fidmech.__main__ import main
 
@@ -271,8 +272,7 @@ def test_the_frozen_boundaries_fit_the_pinned_source(doc, capsys):
     generator's proposal and no candidate is undecided."""
     case = ROOT / "usecases" / doc
     path = S.doc_source(case)
-    if not path.exists():
-        pytest.skip("the pinned source is not stored on this machine")
+    assert path == pinned_source(doc)
     data = path.read_bytes()
     b = S.load_boundaries(case / "fidmech/boundaries.json")
     assert hashlib.sha256(data).hexdigest() == b.source_sha256

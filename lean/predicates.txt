@@ -97,6 +97,7 @@ module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
+module ResponseShape.SlotExamples
 module ResponseShape.SoftSelectedExamples
 module ResponseShape
 module ResponseShapeAudit
@@ -292,6 +293,7 @@ module VE.Compose.Dispatch
 module VE.Compose.Examples
 module VE.Compose.ProfilesMain
 module VE.Compose.Slot
+module VE.Compose.SlotWire
 module VE.Compose.Stack
 module VE.Consequence
 module VE.Core.Bridge
@@ -428,6 +430,8 @@ module VE.Events.Premises
 module VE.Events.RouteExamples
 module VE.Events.Wire
 module VE.Events.WireExamples
+module VE.Experimental.CoreDocument
+module VE.Experimental.CoreDocumentExamples
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
@@ -696,6 +700,7 @@ module VE.Risk.Report
 module VE.Risk.Run
 module VE.Risk.Severity
 module VE.Risk.Wire
+module VE.Risk.WireSound
 module VE.Risk.Words
 module VE.RoundTrip
 module VE.Route.Admission
@@ -713,6 +718,7 @@ module VE.Route.Gate
 module VE.Route.Inert
 module VE.Route.Layer
 module VE.Route.Metered
+module VE.Route.MeteredProfileExamples
 module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
@@ -819,6 +825,8 @@ module VE.SoftNorms.Selected
 module VE.SoftNorms.SelectedExamples
 module VE.SoftNorms.SelectedSound
 module VE.SoftNorms.Semantics
+module VE.SoftNorms.SlotExamples
+module VE.SoftNorms.SlotSound
 module VE.SoftNorms.Soften
 module VE.SoftNorms.Status
 module VE.SoftNorms.Tree
@@ -1063,6 +1071,7 @@ VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
 VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
+VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire
 VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths
@@ -1288,6 +1297,7 @@ VE.Norms.LayerMeaning@VE.Norms.Prefix
 VE.Norms.Meaning@VE.Norms.Prefix
 VE.Norms.MeaningsBelow@VE.Norms.Prefix
 VE.Norms.PairsBelow@VE.Norms.Prefix
+VE.Norms.Plain.ProfileHolds@VE.Norms.Plain
 VE.Norms.PrefixAdmissible@VE.Norms.Prefix
 VE.Norms.RulesTyped@VE.Norms.Elaborate
 VE.Norms.Run.AdmissionAnswer@VE.Norms.Run
@@ -1555,6 +1565,7 @@ VE.Route.Layer.Intended@VE.Route.Layer
 VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire
 VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire
 VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire
+VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire
 VE.Route.ReadingChoices.below@VE.Route.Readings
 VE.Route.ReadingChoices@VE.Route.Readings
 VE.Route.RunSound.RunnerKind@VE.Route.RunSound

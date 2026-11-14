@@ -156,10 +156,15 @@ structure Prepared where
   route : Thunk (Except String Wire.RouteVocabulary)
   order : Thunk (Except String Wire.RouteOrderVocabulary)
   core : Thunk (Except String VE.Bridge.Vocabulary)
+  /-- The norms profile the `model` mode checks a model of the environment against
+  (`Standalone.profileTree` of its model environment; none on a frozen envelope). -/
+  profile : Thunk (Except String (Option VE.Norms.Tree))
 
 def prepare (environment : Json) : Prepared :=
   let checked := VE.Service.Standalone.evaluable environment
   { checked
+    profile := Thunk.mk fun _ => if VE.Service.Standalone.isLegacy environment then pure none
+      else do VE.Service.Standalone.profileTree (← VE.Service.Standalone.modelEnvironment environment)
     layered := Thunk.mk fun _ => do
       let c ← checked
       VE.Core.Layers.decodeLayered c.envelope.profiles (← c.layers.elim (throw "no layers") pure)
@@ -167,8 +172,15 @@ def prepare (environment : Json) : Prepared :=
     order := Thunk.mk fun _ => do Wire.decodeOrderVocabulary (← checked).envelope.vocabulary
     core := Thunk.mk fun _ => do VE.Core.Bridge.decodeEnvironment (← checked).decodable }
 
+/-- The norms profile condition on a decoded model's relations, by the `model` mode's own check
+(`Plain.profileOkOn`, D13): a verdict path checks its model itself. -/
+def profiled {γ : Type} [DecidableEq γ] (p : Prepared) (relations : String → List (List γ)) :
+    Except String Unit := do
+  if let some T ← p.profile.get then VE.Norms.Plain.profileOkOn T fun name => pure (relations name)
+
 /-- The family dispatch: each family's vocabulary (`p`, of the validated environment
-`checked`), request and model decoders, in that order, then `answer`. -/
+`checked`), request and model decoders and the norms profile (`profiled`), in that order,
+then `answer`. -/
 def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (model : Json) :
     Except String Json := do
   let e := checked.envelope
@@ -179,6 +191,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (
     let r ← request q (Wire.decodeClosed rv.environment · data)
       (Wire.decodeFormulas rv.environment · data)
     let M ← Wire.decodeDataModel rv model
+    profiled p M.relations
     pure (answer q (fol q.limit M (Budget.tableMem M (Wire.modelIndex rv M))) r)
   | .closure => do
     let rv ← p.route.get
@@ -188,6 +201,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (
         pure f)
       (VE.Closure.Bridge.decodeFormulas rv.environment)
     let M ← Wire.decodeDataModel rv model
+    profiled p M.relations
     pure (answer q (closure q.limit M (Budget.tableMem M (Wire.modelIndex rv M))) r)
   | .order => do
     let rv ← p.order.get
@@ -197,6 +211,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (
         pure f)
       (VE.Order.Wire.decodeFormulas rv.vocabulary.environment)
     let d ← Wire.decodeOrderModel rv model
+    profiled p d.toModel.relations
     let M := (Budget.sortOrderData d).toModel
     pure (answer q (order q.limit M (Budget.orderMem M (Wire.orderIndex rv M))) r)
   | .closureNary => do
@@ -207,6 +222,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (
         pure f)
       (VE.Core.Bridge.decodeFormulas v.environment)
     let M ← VE.Core.Wire.decodeModel v model
+    profiled p M.relations
     pure (answer q (core q.limit M (Budget.tableMem M (VE.Core.Wire.index v M))) r)
 
 /-- A case answered with `prepared`, what its environment decodes to (`prepare`). -/

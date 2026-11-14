@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9560,
- "keyed_kernel_lines": 9560,
- "keyed_lines": 16206,
+ "kernel_lines": 10023,
+ "keyed_kernel_lines": 10023,
+ "keyed_lines": 16777,
  "paths": [
   {
    "axioms": [],
@@ -328,13 +328,15 @@
    }
   },
   {
-   "axioms": [],
-   "lines": 4928,
+   "axioms": [
+    "Classical.choice"
+   ],
+   "lines": 5376,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4920,
+   "spec_lines": 5368,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -350,6 +352,8 @@
     "VE.Bridge": 139,
     "VE.CertificateWire": 120,
     "VE.ClaimGraph": 103,
+    "VE.Compose.Slot": 19,
+    "VE.Compose.SlotWire": 58,
     "VE.Core.Bridge": 37,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
@@ -363,16 +367,18 @@
     "VE.Grammar.Table": 197,
     "VE.Limits": 14,
     "VE.Norms.Admission": 70,
-    "VE.Norms.Basic": 38,
-    "VE.Norms.Conflict": 14,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Basic": 41,
+    "VE.Norms.Conflict": 20,
+    "VE.Norms.Elaborate": 45,
+    "VE.Norms.Layer": 2,
     "VE.Norms.LayersOnce": 32,
-    "VE.Norms.Prefix": 12,
-    "VE.Norms.Replay": 8,
+    "VE.Norms.Prefix": 15,
+    "VE.Norms.Replay": 19,
     "VE.Norms.Run": 10,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
     "VE.Norms.Wire": 268,
+    "VE.Norms.WitnessKind": 2,
     "VE.Paths": 3,
     "VE.Route.Admission": 369,
     "VE.Route.AstLimit": 70,
@@ -382,21 +388,22 @@
     "VE.Route.Route": 45,
     "VE.Route.Run": 8,
     "VE.Route.Steps": 2,
-    "VE.Route.Wire": 206,
+    "VE.Route.Wire": 229,
     "VE.Semantics": 49,
     "VE.SoftNorms.Admission": 112,
-    "VE.SoftNorms.Coherence": 4,
+    "VE.SoftNorms.Coherence": 26,
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Prepared": 8,
-    "VE.SoftNorms.Run": 55,
+    "VE.SoftNorms.Run": 178,
     "VE.SoftNorms.Selected": 15,
     "VE.SoftNorms.SelectedSound": 15,
-    "VE.SoftNorms.Semantics": 2,
+    "VE.SoftNorms.Semantics": 47,
     "VE.SoftNorms.Soften": 516,
-    "VE.SoftNorms.Tree": 148,
-    "VE.SoftNorms.Wire": 80,
+    "VE.SoftNorms.Status": 5,
+    "VE.SoftNorms.Tree": 151,
+    "VE.SoftNorms.Wire": 198,
     "VE.Surface": 18,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
@@ -404,6 +411,18 @@
     "VE.TableauClosure": 63
    },
    "stated": {
+    "VE.Compose.SlotWire.replaySlotConflict": [
+     "VE.Compose.SlotWire.slot_wire_conflict_sound",
+     "VE.Compose.SlotWire.slot_wire_conflict_facts"
+    ],
+    "VE.Compose.SlotWire.replaySlotEntailment": [
+     "VE.Compose.SlotWire.slot_wire_acceptance",
+     "VE.Compose.SlotWire.slot_wire_entailment_facts"
+    ],
+    "VE.Compose.SlotWire.replaySlotWitness": [
+     "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
+     "VE.Compose.SlotWire.slot_wire_witness_facts"
+    ],
     "VE.SoftNorms.Run.prepare": [
      "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ],
@@ -413,13 +432,15 @@
     "VE.SoftNorms.Run.runCase": [
      "VE.SoftNorms.Run.soft_wire_acceptance",
      "VE.SoftNorms.Run.soft_wire_elaborate",
-     "VE.SoftNorms.Run.soft_wire_selected"
+     "VE.SoftNorms.Run.soft_wire_selected",
+     "VE.SoftNorms.Run.slot_wire_certificate",
+     "VE.SoftNorms.Run.slot_wire_conflict"
     ],
     "VE.SoftNorms.Run.runSelectedP": [
      "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ]
    },
-   "theorems": 5,
+   "theorems": 14,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
@@ -430,15 +451,16 @@
   },
   {
    "axioms": [],
-   "lines": 3251,
+   "lines": 3358,
    "modes": [
     "metered"
    ],
    "name": "metered",
-   "spec_lines": 3245,
+   "spec_lines": 3352,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
+    "VE.Alternatives.Wire": 4,
     "VE.Bridge": 169,
     "VE.Cardinality.Wire": 9,
     "VE.Closure.Bridge": 53,
@@ -458,8 +480,8 @@
     "VE.Finite": 33,
     "VE.Limits": 16,
     "VE.NormDefaults.Wire": 25,
-    "VE.Norms.Plain": 17,
-    "VE.Norms.Tree": 41,
+    "VE.Norms.Plain": 21,
+    "VE.Norms.Tree": 80,
     "VE.Norms.Wire": 84,
     "VE.Order.Finite": 41,
     "VE.Order.ModelCheck": 20,
@@ -477,20 +499,20 @@
     "VE.Route.Flags": 23,
     "VE.Route.Gate": 72,
     "VE.Route.Metered": 28,
-    "VE.Route.MeteredRun": 47,
-    "VE.Route.MeteredWire": 46,
+    "VE.Route.MeteredRun": 52,
+    "VE.Route.MeteredWire": 56,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Run": 3,
     "VE.Route.Typed": 18,
     "VE.Route.Wire": 315,
     "VE.Semantics": 14,
-    "VE.Service.Standalone": 261,
+    "VE.Service.Standalone": 281,
     "VE.SoftNorms.Phases": 18,
     "VE.Surface": 18,
     "VE.Syntax": 49,
     "VE.Time.Budget": 21,
-    "VE.Time.Wire": 3
+    "VE.Time.Wire": 28
    },
    "stated": {
     "VE.Route.MeteredRun.runWith": [
@@ -499,10 +521,11 @@
    },
    "theorems": 2,
    "tier": "kernel",
-   "wrap_lines": 2080,
+   "wrap_lines": 2154,
    "wrap_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
+    "VE.Alternatives.Wire": 4,
     "VE.Bridge": 159,
     "VE.Cardinality.Wire": 9,
     "VE.Closure.Bridge": 10,
@@ -518,7 +541,7 @@
     "VE.Limits": 10,
     "VE.NormDefaults.Wire": 25,
     "VE.Norms.Plain": 17,
-    "VE.Norms.Tree": 41,
+    "VE.Norms.Tree": 61,
     "VE.Norms.Wire": 84,
     "VE.Order.ModelCheck": 5,
     "VE.Order.Syntax": 4,
@@ -529,17 +552,17 @@
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 1,
     "VE.Route.Gate": 72,
-    "VE.Route.MeteredRun": 39,
+    "VE.Route.MeteredRun": 44,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Run": 3,
     "VE.Route.Typed": 18,
     "VE.Route.Wire": 186,
-    "VE.Service.Standalone": 261,
+    "VE.Service.Standalone": 281,
     "VE.SoftNorms.Phases": 18,
     "VE.Surface": 18,
     "VE.Syntax": 49,
-    "VE.Time.Wire": 3
+    "VE.Time.Wire": 28
    }
   },
   {
@@ -948,12 +971,12 @@
   },
   {
    "axioms": [],
-   "lines": 7840,
+   "lines": 7989,
    "modes": [
     "risk"
    ],
    "name": "risk",
-   "spec_lines": 6160,
+   "spec_lines": 6309,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -1003,13 +1026,14 @@
     "VE.Risk.Admission": 87,
     "VE.Risk.Audit": 90,
     "VE.Risk.Background": 46,
-    "VE.Risk.Cond": 119,
+    "VE.Risk.Cond": 132,
     "VE.Risk.Decl": 214,
     "VE.Risk.Derive": 55,
-    "VE.Risk.Record": 760,
+    "VE.Risk.Record": 763,
     "VE.Risk.Report": 112,
-    "VE.Risk.Run": 60,
-    "VE.Risk.Wire": 343,
+    "VE.Risk.Run": 76,
+    "VE.Risk.Wire": 349,
+    "VE.Risk.WireSound": 111,
     "VE.Route.Admission": 369,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 14,
@@ -1048,10 +1072,12 @@
      "VE.Risk.Run.runAdmission_sound"
     ],
     "VE.Risk.Run.runCase": [
-     "VE.Risk.Run.risk_wire_acceptance"
+     "VE.Risk.Run.risk_wire_acceptance",
+     "VE.Risk.Run.risk_elaborate_wire_sound",
+     "VE.Risk.Run.risk_decision_wire_sound"
     ]
    },
-   "theorems": 6,
+   "theorems": 8,
    "tier": "candidate",
    "wrap_lines": 5670,
    "wrap_modules": {
@@ -1210,7 +1236,7 @@
   },
   {
    "axioms": [],
-   "lines": 24210,
+   "lines": 24400,
    "modes": [
     "readingsRoute"
    ],
@@ -1336,7 +1362,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20518,
+   "wrap_lines": 20708,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1365,6 +1391,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 209,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1425,7 +1452,7 @@
     "VE.Norms.Elaborate": 40,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 201,
+    "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 93,
@@ -1499,7 +1526,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1519,12 +1546,12 @@
   },
   {
    "axioms": [],
-   "lines": 36152,
+   "lines": 36349,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36146,
+   "spec_lines": 36343,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1568,6 +1595,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 261,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1676,7 +1704,7 @@
     "VE.Norms.Elaborate": 40,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 201,
+    "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 94,
@@ -1767,13 +1795,13 @@
     "VE.Senses.Version": 3,
     "VE.Service.Document": 1846,
     "VE.Service.ParseDiagnostic": 7,
-    "VE.Service.Standalone": 841,
+    "VE.Service.Standalone": 848,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1871,12 +1899,12 @@
   },
   {
    "axioms": [],
-   "lines": 35654,
+   "lines": 35849,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 34826,
+   "spec_lines": 35023,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1921,6 +1949,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 221,
     "VE.Compose.Slot": 16,
+    "VE.Compose.SlotWire": 118,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -2019,7 +2048,7 @@
     "VE.Norms.Elaborate": 40,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 201,
+    "VE.Norms.Plain": 204,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 94,
@@ -2116,13 +2145,13 @@
     "VE.Service.DocumentView": 75,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
-    "VE.Service.Standalone": 841,
+    "VE.Service.Standalone": 848,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 359,
+    "VE.SoftNorms.Run": 428,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -2155,7 +2184,7 @@
    },
    "theorems": 7,
    "tier": "candidate",
-   "wrap_lines": 12818,
+   "wrap_lines": 12826,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -2219,7 +2248,7 @@
     "VE.Norms.Conflict": 11,
     "VE.Norms.Elaborate": 33,
     "VE.Norms.LayersOnce": 32,
-    "VE.Norms.Plain": 28,
+    "VE.Norms.Plain": 31,
     "VE.Norms.Prefix": 10,
     "VE.Norms.Replay": 8,
     "VE.Norms.Subst": 31,
@@ -2260,7 +2289,7 @@
     "VE.Semantics": 14,
     "VE.Service.Document": 918,
     "VE.Service.ParseDiagnostic": 337,
-    "VE.Service.Standalone": 1136,
+    "VE.Service.Standalone": 1141,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
@@ -2790,6 +2819,24 @@
    "name": "VE.SoftNorms.Run.runSoftKind",
    "tokens": [
     "CONFLICT-FREE",
+    "CONFLICT"
+   ]
+  },
+  {
+   "in_kernel": true,
+   "inside": "spec-or-wrap",
+   "module": "VE.SoftNorms.Run",
+   "name": "VE.SoftNorms.Run.slotConflictAnswer",
+   "tokens": [
+    "CONFLICT-FREE"
+   ]
+  },
+  {
+   "in_kernel": true,
+   "inside": "spec-or-wrap",
+   "module": "VE.SoftNorms.Run",
+   "name": "VE.SoftNorms.Run.slotWitnessAnswer",
+   "tokens": [
     "CONFLICT"
    ]
   },

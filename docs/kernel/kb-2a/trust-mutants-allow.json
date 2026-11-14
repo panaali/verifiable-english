@@ -1,0 +1,4 @@
+{"allow": [
+  {"definition": "VE.Experimental.CoreDocument.compatible", "operator": "list-empty",
+   "reason": "not a program: `[]` in place of `labels` (in `labels.eraseDups`) or of `labels.eraseDups.length` leaves its element type unknown, so Lean cannot synthesize `BEq` or `LE` (the error is reported outside the mutant's text, hence UNKNOWN, not INVALID); every list-empty mutant of compatible that elaborates is KILLED"}
+]}

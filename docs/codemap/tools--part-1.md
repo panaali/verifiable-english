@@ -30,6 +30,7 @@
 - `tools/difffuzz_corpus.py` — The differential fuzzer's corpus: every fixture of `conformance/` and `usecases/`, read into seeds.
 - `tools/english_codes.py` — Write or check `ve/english_grammar/codes.json`, Lean's table of codes, classes and statuses.
 - `tools/english_grammar_gen.py` — The fixed rules of English in Lean as data: source checks, the Lean table generator and the lock file.
+- `tools/fetch_pinned_sources.py` — Fetch each publisher document of usecases/pinned_sources.json at its sha256 pin and write its extracted text.
 - `tools/gate.py` — Full offline verification gate.
 - `tools/gate_collection.py` — The gate's test collection, checked against the merge base's.
 - `tools/gate_pytest.py` — Minimal pytest event recorder for tools/gate.py (loaded with -p).
@@ -93,5 +94,3 @@
 - `tools/run_order.py` — The order an agent's run takes its test units in, and what it remembers of the last run.
 - `tools/rust_build.py` — Reproducible Rust checker builds: the same source gives the same binary in any checkout.
 - `tools/rust_output_diff.py` — Rust output differential (bundle D of docs/ARCHITECTURE-LAYERS-PLAN2.md).
-- `tools/select_tests.py` — Select the tests a change can affect, and the builds and checks they need.
-- `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
