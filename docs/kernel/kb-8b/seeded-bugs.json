@@ -1,0 +1,62 @@
+[
+ {
+  "id": "S1",
+  "file": "tools/kernel_closure.lean",
+  "mutation": "a statement's constants lose their root theorem as parent (chain starts below the root)",
+  "test": "tests/test_kernel_closure.py::test_why_names_the_part_and_one_shortest_chain_checked_by_hand",
+  "exit": 1,
+  "summary": "1 failed in 13.58s",
+  "first_error": [
+   "E       AssertionError: assert ['VE.Norms.Wi...sEnvironment'] == ['VE.Norms.Fl...sEnvironment']",
+   "E         "
+  ]
+ },
+ {
+  "id": "S2",
+  "file": "tools/kernel_closure.lean",
+  "mutation": "the walk is depth-first (last in, first out), so a chain need not be shortest",
+  "test": "tests/test_kernel_closure.py::test_why_names_the_part_and_one_shortest_chain_checked_by_hand",
+  "exit": 1,
+  "summary": "1 failed in 13.40s",
+  "first_error": [
+   "E       AssertionError: assert ['VE.Norms.Ru...ment.match_3'] == ['VE.Norms.Fl...sEnvironment']",
+   "E         "
+  ]
+ },
+ {
+  "id": "S3",
+  "file": "tools/kernel_closure.py",
+  "mutation": "spec and wrap are swapped in the row of a part",
+  "test": "tests/test_kernel_closure.py::test_why_names_the_part_and_one_shortest_chain_checked_by_hand",
+  "exit": 1,
+  "summary": "1 failed in 13.28s",
+  "first_error": [
+   "E       AssertionError: assert ['VE.Norms.Ru...sEnvironment'] == ['VE.Norms.Fl...sEnvironment']",
+   "E         "
+  ]
+ },
+ {
+  "id": "S4",
+  "file": "tools/kernel_closure.py",
+  "mutation": "a name no kernel path counts is printed as nothing",
+  "test": "tests/test_kernel_closure.py::test_why_names_the_part_and_one_shortest_chain_checked_by_hand",
+  "exit": 1,
+  "summary": "1 failed in 11.18s",
+  "first_error": [
+   "E       AssertionError: assert ('VE.Norms.Wir...msEnvironment' == 'VE.Norms.Wir...msEnvironment'",
+   "E         "
+  ]
+ },
+ {
+  "id": "S5",
+  "file": "tools/kernel_closure.py",
+  "mutation": "--why is ignored and the plain measure runs",
+  "test": "tests/test_kernel_closure.py::test_why_names_the_part_and_one_shortest_chain_checked_by_hand",
+  "exit": 1,
+  "summary": "1 failed in 84.66s (0:01:24)",
+  "first_error": [
+   "E       AssertionError: assert ('path        ... lines  modes' == 'VE.Norms.Wir...msEnvironment'",
+   "E         "
+  ]
+ }
+]
