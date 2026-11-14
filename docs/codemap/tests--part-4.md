@@ -1,3 +1,7 @@
+- `tests/test_grammar_cli.py` — (no module docstring)
+- `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
+- `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
+- `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
@@ -80,5 +84,3 @@
 - `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
 - `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
-- `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
-- `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).

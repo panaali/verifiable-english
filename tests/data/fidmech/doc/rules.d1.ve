@@ -1,0 +1,54 @@
+## clean-whole | always | F1 "We will keep records of every review."
+Rule 1. A fixture rule.
+## clean-digits | always | F2 "We will answer each request within 30 days of receipt."
+Rule 1. A fixture rule.
+## clean-two-sentences | always | F2 "We will keep records of every review. We will answer each request within 30 days of receipt."
+Rule 1. A fixture rule.
+## clean-marker-removed | always | F3 "The policy addresses catastrophic harm. That is, harm at a large scale."
+Rule 1. A fixture rule.
+## clean-marker-kept | always | F3 "We track the rate of progress 8 in AI research every quarter."
+Rule 1. A fixture rule.
+## clean-footnote-body | always | F3, footnote 8 "Progress means research output."
+Rule 1. A fixture rule.
+## clean-permit | always | F4 "Staff may permit 1 attempt per day and may permit 2 attempts per week."
+Rule 1. A fixture rule.
+## clean-clause-numbers | always | F5 "If a report is (1) substantiated and (2) involves a material risk, we will notify the Board."
+Rule 1. A fixture rule.
+## clean-bullet-with-lead-in | always | F6 "Each review covers the following items:" and its first bullet "the model weights;"
+Rule 1. A fixture rule.
+## clean-across-join | always | F7 "Our reports will be published once a review ends and will include a public summary."
+Rule 1. A fixture rule.
+## clean-paren-lead-in | always | F8 "We will select reviewers that:" "(1) know the field; and (2) have no conflict."
+Rule 1. A fixture rule.
+## clean-abbrev | always | F9 "The audit names two checks, e.g. Code review, and a data check."
+Rule 1. A fixture rule.
+## clean-with-note | always | F1 "We will keep records of every review." ("every" is OT1)
+Rule 1. A fixture rule.
+## m-none | always | F1, no quotation
+Rule 1. A fixture rule.
+## m-empty | always | F1 ""
+Rule 1. A fixture rule.
+## m-note-only | always | F1, the word ("every" is OT1)
+Rule 1. A fixture rule.
+## n-days | always | F2 "We will answer each request within 3 days of receipt."
+Rule 1. A fixture rule.
+## n-permit | always | F4 "Staff may permit 2 attempt per day and may permit 2 attempts per week."
+Rule 1. A fixture rule.
+## u-word | always | F1 "We will keep records of each review."
+Rule 1. A fixture rule.
+## c-cut | always | F1 "We will keep records of every"
+Rule 1. A fixture rule.
+## c-join | always | F7 "Our reports will be published once a review ends and will"
+Rule 1. A fixture rule.
+## c-bullet | always | F6 "the model weights;"
+Rule 1. A fixture rule.
+## c-clause-two | always | F5 "(2) involves a material risk, we will notify the Board."
+Rule 1. A fixture rule.
+## clean-form-number | always | F10 "Each request uses form No. A1 for its record."
+Rule 1. A fixture rule.
+## e-ellipsis | always | F1 "We will keep records … review."
+Rule 1. A fixture rule.
+## c-abbrev | always | F10 "Each request uses form No."
+Rule 1. A fixture rule.
+## clean-hand-footnote | always | F3, footnote 3 "This column summarizes plans."
+Rule 1. A fixture rule.

@@ -14,15 +14,18 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is four paths:** the route, norms, soft norms and, since KB-7, the `metered` mode's
-   budgeted evaluation. Together they are **9,620 lines (M)**, under the 10,000-line target. The
+   budgeted evaluation. Together they are **10,015 lines (M)**, 15 over the 10,000-line target: kb-3's signed rise (+395, the slot kinds)
+   and kb-validators' (+68, the profile condition on `metered`) were measured apart and add up on
+   merging (section 6; docs/kernel/ALLOWANCES.md). The
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,225 lines (M): the four kernel paths, the `quantity` path (a candidate: since KB-8 its wire theorems
-   leave a 75-line wrap), and the risk route and three validators that no theorem covers yet (section 1.3).
+   16,769 lines (M): the four kernel paths, the `quantity` path (a candidate: since KB-8 its wire theorems
+   leave a 75-line wrap), the risk route (a candidate: since kb-risk runner theorems state the two kinds the
+   keys call) and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
-   case the answer carries (the carry rule, section 3). Today 57 definitions write a verdict token
+   case the answer carries (the carry rule, section 3). Today 59 definitions write a verdict token
    and 56 of them, in 28 modules, are outside the kernel (M); that count goes to zero.
 4. **One statement form.** A document's checked content is one core document: definitions, rules
    (soft-norm nodes) and premises over one vocabulary, `(X : SoftDoc, P : List Formula)`, whose
@@ -35,7 +38,7 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    signature in the same change; the count of verdict writers outside the kernel may not grow at
    all (section 6).
 
-What this replaces: the per-pair refusals of `lean/VE/Service/Document.lean:1166-1180`, the stack
+What this replaces: the per-pair refusals of `Service/Document.lean` `environmentOf` (lines 1174-1208 on main 9a3fd7a9f9), the stack
 whitelist `VE.Compose.Contract.listedStacks` with `RouteFacts … | _ => False`
 (`lean/VE/Compose/Contract.lean:181-184`), and the profile-composition (PC) lineage's plan to prove
 one route per stack. The Lean it proved (`Compose/Slot.lean`) is kept: it is the core document.
@@ -69,8 +72,8 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 |---|---|---:|---:|---:|---:|
 | route | kernel | 26 | 4,254 | 15 | 4,265 |
 | norms | kernel | 21 | 4,371 | 2,709 | 4,410 |
-| softNorms | kernel | 4 | 4,912 | 35 | 4,920 |
-| **kernel, distinct lines** | | | | | **9,620** |
+| softNorms | kernel | 13 | 5,360 | 35 | 5,368 |
+| **kernel, distinct lines** | | | | | **10,015** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 3,352 | 2,154 | 3,358 |
 | quantity | candidate | 5 | 2,267 | 75 | 2,274 |
@@ -78,10 +81,10 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | alternatives | candidate | 2 | 3,908 | 22 | 3,921 |
 | reports | candidate | 3 | 4,396 | 32 | 4,418 |
 | normDefaults | candidate | 7 | 5,702 | 5,535 | 6,465 |
-| risk | candidate | 6 | 6,160 | 5,670 | 7,840 |
-| readingsRoute | candidate | 8 | 9,403 | 20,516 | 24,208 |
-| discourse | candidate | 6 | 36,151 | 4,541 | 36,157 |
-| document | candidate | 7 | 34,831 | 12,826 | 35,657 |
+| risk | candidate | 8 | 6,309 | 5,670 | 7,989 |
+| readingsRoute | candidate | 8 | 9,403 | 20,703 | 24,395 |
+| discourse | candidate | 6 | 36,338 | 4,541 | 36,344 |
+| document | candidate | 7 | 35,018 | 12,826 | 35,844 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
 candidate rows moved with main's code, the kernel rows did not). Other measurements (the census and keyed figures are the saved file's):
@@ -92,8 +95,8 @@ candidate rows moved with main's code, the kernel rows did not). Other measureme
 | Code that runs for the document mode | 35,142 lines (M) |
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
-| Definitions that write a verdict token, outside example, check and schema modules | 57, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,225, of them 9,620 in the kernel (M) |
+| Definitions that write a verdict token, outside example, check and schema modules | 59, of them 56 in 28 modules outside the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,769, of them 10,015 in the kernel (M) |
 
 Reading the table:
 
@@ -131,6 +134,13 @@ Reading the table:
   regulated atom, hold in every full structure over `E′` whose base restriction is the model and whose
   layer symbols agree with their meanings (`AgreesBelow` at the full prefix). No caller reads it yet
   (kb-10b moves the keys' `selected` and `completed` onto it).
+  Since kb-3 it also lists the premise slot's kinds: `slot_wire_certificate` and `slot_wire_conflict` state
+  the whole `slot-certificate` and `slot-conflict` answers over the replays of `VE.Compose.SlotWire` (its
+  subjects `replaySlotEntailment`, `replaySlotConflict`, `replaySlotWitness`), and `slot_wire_acceptance`,
+  `slot_wire_conflict_sound` and `slot_wire_conflict_witness_sound` say what an accepted replay means for
+  every list `facts` of base premises (`slot_route_acceptance`); `slot_wire_empty` says that with no facts
+  each slot replay is its soft twin, and `slot_wire_conflict_facts` and `slot_wire_entailment_facts` that
+  accepted facts hold together with the base in some structure.
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
@@ -148,15 +158,15 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,225 |
-| of which in the proved kernel | 9,620 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,769 |
+| of which in the proved kernel | 10,015 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (wire theorems since KB-8, a candidate; before them, 1,804 lines of wire code under no theorem, now a 75-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
 
 So the keyed answers do not depend on the wrapper modes at all. What still separates them from a
-fully proved path is the `quantity` path's tier (a candidate with wire theorems since KB-8), the risk route
-and the three validators. In every harness the Python side holds the premises between `soft-elaborate` and
+fully proved path is the `quantity` path's tier (a candidate with wire theorems since KB-8), the risk route's
+tier (a candidate with runner theorems for its two keyed kinds since kb-risk) and the three validators. In every harness the Python side holds the premises between `soft-elaborate` and
 `route certificate`: the harnesses already work by the carry rule of section 3. Since KB-7 a
 theorem states the `background` and `premises` fields of the `soft-elaborate` answer
 (`soft_wire_elaborate`); none yet states that the premises the harness carries to the certificate
@@ -368,7 +378,7 @@ if a measured document needs it (the RSP has 30 sets, S: `usecases/anthropic-rsp
 
 | Tier | Reachable from the service | May show a verdict | Enters when | Enforced by |
 |---|---|---|---|---|
-| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` or `Serve` imports, directly or transitively, imports a `VE.Experimental.*` module (`tools/check_lean_imports.py`, KB-1); a line `Expires: YYYY-MM-DD` in its first docstring, a date not yet passed |
+| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` or `Serve` imports, directly or transitively, imports a `VE.Experimental.*` module (`tools/check_lean_imports.py`, KB-1); a header docstring (a `/--` or `/-!` doc comment that is the module's first command: before it only blank lines, `--` and `/- -/` comments and `import` lines, in the plain layout `header` reads) holding exactly one line that is `Expires: YYYY-MM-DD` and nothing else, a valid date no earlier than the day of the check; any other first command, an unclosed doc comment or a header outside that layout fails the module (`tools/check_lean_imports.py`, `first_docstring` and `expiry_problems`) |
 | shell | yes | only carried kernel rows | a fidelity pass **on built code** (the family's two-seat pilot, run on what main accepts, not on plan text) and a keyed answer or audit finding that pulls it | `tools/kernel_closure.py`: the verdict-writer count outside the kernel does not rise |
 | kernel | yes | yes | the architect signs the registry change | the kernel total (section 6) |
 
@@ -394,7 +404,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 9,620 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 10,015 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order
@@ -408,11 +418,11 @@ check of section 6 passes.
 | Id | What | Door / tier | Acceptance, beyond the above |
 |---|---|---|---|
 | KB-1 | Wire the measure: `lean/VE/Kernel/Carry.lean` (section 3, verbatim), the kernel check in the gate and in `tools/regen_generated.py`, the experimental import boundary, a rewritten `docs/trust-baseline.json` (`trust_map.py --write`, so the old file says 63,068) | kernel (signed here: +about 70 lines) | the gate fails on a seeded kernel growth of one definition and on a seeded verdict writer in a shell module |
-| KB-2a | The document mode shows verdicts by the carry rule: `Service.Document`'s unit statuses become one fold over kernel rows; the chain's routes are called as kernel paths | shell | `document`'s spec at most 1,500 lines; its two verdict writers are the fold; every `tests/` document fixture's answer is unchanged except for the added carried cases |
+| KB-2a | The document mode shows verdicts by the carry rule: `Service.Document`'s unit statuses become one fold over kernel rows; the chain's routes are called as kernel paths | shell | `document`'s spec at most 1,500 lines; its two verdict writers are the fold; every `tests/` document fixture's answer is unchanged except for the added carried cases. See section 8. |
 | KB-2b | The same for the other writers: readings (17), the service's own modes (9, the document's among them), alternatives (6), discourse (5), risk (3), speech acts (3), soft norms (2: `runSoftKind` and `residualStatus`, kinds no theorem covers; with KB-3), the rest (8); one change per module group of `closure-baseline.json` `verdict_writers` | shell | writers outside the kernel fall by the group's count |
 | KB-7 | A wire theorem for `metered` `evaluate-budgeted` on the entry's own runner (`MeteredRun.runCase`), ending in `MeteredProofs.fol_sound` and its three siblings | candidate, then kernel | `metered`: wrap at most 30 lines, spec at most 2,500 (A) |
 | KB-8 | The same for `quantity` (`Time.Wire.runCase`), ending in `checkW6Certificate_sound`, `evalB_sorted_sound`, `refutesB_sorted_sound` and `admit_quantity_report_sound` | candidate, then kernel | `quantity`: wrap at most 30 lines |
-| KB-3 | The core mode: the soft route's `soft-certificate`, `soft-conflict` and `admission` kinds accept `premises` (the slot `P`), with the wire theorem from `slot_route_acceptance`; then delete, one per family as it lowers, the pair refusals (`Document.lean:1166-1180`), `layersApart`, `listedStacks` and `RouteFacts` | kernel (signed per change) | a document listing `judgments@0` with `soft-norms@0` (RSP probe P8) is admitted through the slot and its judgments are premises of the carried case; the refusal text is gone from `lean/` |
+| KB-3 | The core mode: the soft route's `soft-certificate`, `soft-conflict` and `admission` kinds accept `premises` (the slot `P`), with the wire theorem from `slot_route_acceptance`; then delete, one per family as it lowers, the pair refusals (`Service/Document.lean` `environmentOf` (lines 1174-1208 on main 9a3fd7a9f9)), `layersApart`, `listedStacks` and `RouteFacts` | kernel (signed per change) | a document listing `judgments@0` with `soft-norms@0` (RSP probe P8) is admitted through the slot and its judgments are premises of the carried case; the refusal text is gone from `lean/`. See section 8. |
 | KB-4 | Shrink the kernel's own spec: the acts decoder becomes a lowering instead of a decoder parameter (removes norms' 2,703-line wrap); one formula codec with a round-trip theorem replaces the per-route decoders (`CONSOLIDATION-PLAN.md` step 8a) | kernel | kernel at most 7,000 lines (A) |
 | KB-5 | Retire the class table as a gate: `trust_map.py` reports only; `docs/ARCHITECTURE.md` section 5 is rendered from `closure-baseline.json` | tools | `tests/test_architecture_docs.py` reads the new file |
 | KB-6 | Promote rights, alternatives and reports to `kernel` once their theorems name the entry's own runner (their wrap is already 22 to 35 lines); and `certificate` once a theorem on `CertificateWire.runCase` states what `valid: true` means for both its branches (today its subject is the decision `Query.accepts`, its wrap 637 lines) | kernel | each path's row has tier `kernel`; the total stays within the signed figure |
@@ -451,3 +461,47 @@ Work this decision stops or changes:
 | A fold becomes a second place where verdicts are made | a status fold reads rows and writes `CHECKED` | folds are kernel code, counted and reviewed; target: one status fold |
 | Fidelity, not soundness, loses the answers (RSP 111 → 77, Preparedness 231 → 68 after audit; S: `reviews/uc-audit-rsppf-20261111.md`) | this design does not by itself repair a mistranslation | it makes the translated core statements part of every answer, which is what a back-translation check and a per-rule distinguishing scenario need; those aids are the operations seat's and the audit loop's |
 | The 64-predicate limit and the act-phrase limits bound the RSP fix cycle | `checkW1` refuses more than 64 regulated predicates (`SoftNorms/Soften.lean:471`); the RSP uses 64 | backlog `translim-predicates`; it is a resource bound, so door B's proof duties do not apply: it needs a measured check time at the new bound, nothing else |
+
+## 8. Amendments of 2026-11-13 (architect seat, round 4)
+
+These replace what earlier sections say where they differ.
+
+**8.1 One row per answer.** An answer that rests on two kernel facts about the same document, model or
+formulas is asked as ONE case whose theorem states both. Client code never carries a formula or a model
+out of one kernel answer into another case as if the two were bound; there are no cross-call composition
+theorems, because there is nothing to compose. Row KB-9 is restated accordingly: the `soft-selected` kind
+takes the case's fact premises and its theorem says the case model is `BaseAdmissibleP` when the answer's `background`, `coherent` and `facts` flags are true; the theorem the row
+first named (a route certificate over a `soft-elaborate` answer's fields) is not built, because no keyed
+answer is produced that way (measured 2026-11-12, per-item traces) and the soft route's own certificate kinds
+already regenerate their premises.
+
+**8.2 The document mode moves in three steps** (replaces the one-line row KB-2a; design:
+`docs/kernel/kb-2a/DESIGN.md`). A: the lowering, a pure function from a decoded document to one core
+document `(X, P)` per compatible reading choice, with an origin on every statement and no flag or status of
+its own. B: one kernel admission row per choice (`slot-admission`), the status fold, the carried answer, and
+no Python decision on that path; it delivers the acceptance test (one mixed-feature RSP document through
+`ve document check`). C: one change per feature group moves that feature's documents onto the path and
+deletes its pair refusals and its old route call; the last one deletes `profileTable`'s document refusals,
+`layersApart`, `listedStacks` and `RouteFacts`. A unit status is not a route's verdict: it is the fold of
+section 2.3 of the design, computed on the unit's core statements, which is why no pair needs a rule.
+
+**8.3 Prepared documents.** A route may split its runner into a pure `prepare` step that depends on the
+document only and a step that reads the rest of the case, provided a theorem states the split equal to the
+unsplit runner. The service may keep `prepare`'s result with a registered handle, as it keeps environments,
+provided a theorem states that a case naming the handle is answered as the same case written out. The handle
+table and the request loop are trusted input/output code that the line measure does not count; a change
+there reports its added lines.
+
+**8.4 Tiers.** `certificate` is a candidate (review kb-0, finding F1): acknowledged by the architect seat.
+`quantity` joins the kernel when row kb-8b's measurement shows every keyed kind covered by a runner theorem.
+`risk` stays a candidate after its runner theorems (row kb-risk) until the architect seat signs its size.
+With `quantity` the kernel total is above 10,000 lines; that is the honest size of what the frozen keys rest
+on with theorems, and step KB-4 (acts decoding as a lowering, one wire codec, the profile gate out of the
+metered path) is the step that brings it down. The figure to watch beside it is `keyed_lines`: all Lean
+under the keyed answers, proved or not.
+
+**8.5 Limits are resource bounds.** The 64-regulated-predicate bound has no proof behind it (it is an
+inline check in six decoders; this document's paragraph on `translim-predicates` says the same). Raising it
+needs one named constant in `VE.Limits` in place of the six literals, a measured check time at the new
+bound, and nothing else. The 80-character bound on a plain act is treated the same way once a builder has
+confirmed that no theorem statement mentions it.

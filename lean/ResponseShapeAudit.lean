@@ -558,6 +558,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.SoftNorms.runSelected_fits
 #print axioms ResponseShape.Encoders.SoftNorms.runSoftKind_fits
 #print axioms ResponseShape.Encoders.SoftNorms.selected_fits
+#print axioms ResponseShape.Encoders.SoftNorms.slotFirstFailure_of_not_free
 #print axioms ResponseShape.Encoders.SoftNorms.softDiagnosticCode_mem
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty
 #print axioms ResponseShape.Encoders.SoftNorms.softLabelled_nonempty

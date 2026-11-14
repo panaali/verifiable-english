@@ -2,6 +2,7 @@ import VE.SoftNorms.Admission
 import VE.SoftNorms.Selected
 import VE.Norms.Run
 import VE.Norms.WitnessKind
+import VE.Compose.SlotWire
 
 /-! The `ve_service` mode `soft-norms` (docs/spec/soft-norms.md 9.4), formerly the one-shot `ve_soft_norms_route`. Each case is
 `{"id", "environment", "kind", ...}`; a `soft-norms@0` environment must also
@@ -24,6 +25,9 @@ enable `norms@0`.
 * `soft-certificate`: `premises`, `conclusion`, `certificate` bound to
   `background′ ++ layer premises ++ premises` over `E′` → `valid`
   (`Wire.soft_wire_acceptance`).
+* `slot-certificate` and `slot-conflict` (kb-3): the two kinds above with the premise slot `facts`
+  (`VE.Compose.SlotWire`), each answer with `facts`, the number of facts; their theorems are
+  `slot_wire_certificate` and `slot_wire_conflict` (`SlotSound.lean`).
 * `admission`: a W2 document with soft norm units (`Run.soft_wire_acceptance`).
 * A case without a soft construct is delegated unchanged to W1's
   `Norms.Run.runCase` (which delegates P0 cases to `Route.Run.runCase`); a soft
@@ -310,6 +314,63 @@ def documentIdentityEnvironment (source request : Json) : Except String (Json ×
       throw "InvalidInput: identity environment differs from the soft source"
     pure (original, profiles)
 
+/-! ## The premise slot (kb-3): `slot-certificate` and `slot-conflict` -/
+
+open VE.Compose.SlotWire in
+/-- `entailmentValidWithout` relative to the slot: the facts follow the soft premises. -/
+def slotEntailmentValidWithout (r : SlotEntailmentReplay) (labels : List String) : Bool :=
+  VE.Tableau.checkCertificate (envAt (soften r.src.D) (size (soften r.src.D)))
+    (VE.Norms.background (soften r.src.D) ++ softWithout r.src.D labels ++ r.facts ++
+      elaborate (soften r.src.D).T ++ r.premises) r.conclusion r.cert
+
+open VE.Compose.SlotWire in
+/-- `conflictValidWithout` relative to the slot. -/
+def slotConflictValidWithout (r : SlotConflictReplay) (labels : List String) : Bool :=
+  ((targets (soften r.src.D)).zip r.certs).all (fun (t, c) => match c with
+    | some c => VE.Tableau.checkCertificate (envAt (soften r.src.D) 0)
+        (VE.Norms.backgroundBase (soften r.src.D) ++ softWithout r.src.D labels ++ r.facts)
+        (targetConclusion t) c
+    | none => false)
+
+open VE.Compose.SlotWire in
+/-- The `slot-certificate` answer: the fields of `soft-certificate` and `facts`. -/
+def slotCertificateAnswer (id : String) (r : SlotEntailmentReplay) (openLabels : List String) : Json :=
+  VE.Route.Wire.ok id [("valid", .bool r.valid),
+    ("background", toJson (background' r.src.D).length), ("layers", toJson (elaborate (soften r.src.D).T).length),
+    ("conditional_on", toJson (if r.valid then sufficientCoherence openLabels (slotEntailmentValidWithout r) else [])),
+    ("facts", toJson r.facts.length)]
+
+open VE.Compose.SlotWire in
+/-- The `slot-conflict` answer with a witness: the fields of `soft-conflict`'s and `facts`. -/
+def slotWitnessAnswer (id : String) (r : SlotWitnessReplay) (names : List String) : Json :=
+  VE.Route.Wire.ok id ([("verdict", .str (if r.w.conflict then "CONFLICT" else "UNKNOWN")),
+    ("target", .str r.w.target.1), ("targets", toJson ((targets (soften r.src.D)).map (·.1))),
+    ("status_text", .str (if r.w.conflict then s!"CONFLICT: {witnessKind r.w.target} at {String.intercalate ", " names}"
+                          else s!"UNKNOWN: {r.w.target.1}, budget 10000"))] ++
+    (if r.w.conflict then [("witness_kind", .str (witnessKind r.w.target))] else []) ++
+    [("facts", toJson r.facts.length)])
+
+open VE.Compose.SlotWire in
+/-- The `slot-conflict` answer over packages: the fields of `soft-conflict`'s and `facts`. -/
+def slotConflictAnswer (id : String) (res : SlotConflictReplay) (openLabels : List String) (budget : Nat)
+    (exhibit : Bool) : Json :=
+  let conditional := if res.conflictFree then sufficientCoherence openLabels (slotConflictValidWithout res) else []
+  VE.Route.Wire.ok id ([("verdict", .str (if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN")),
+    ("status_text", .str (if res.conflictFree then conflictFreeText conditional openLabels exhibit budget
+      else s!"UNKNOWN: {(slotFirstFailure res).getD "target unspecified"}, budget {budget}")),
+    ("coherent_exhibit", .bool exhibit),
+    ("budget", toJson budget),
+    ("targets", toJson ((targets (soften res.src.D)).map (·.1))),
+    ("conditional_on", toJson conditional)] ++
+    (match slotFirstFailure res with
+      | some d => if res.conflictFree then [] else [("detail", .str d)]
+      | none => []) ++
+    [("facts", toJson res.facts.length)])
+
+/-- A slot case sends its facts: `facts` is required (an empty array is no facts). -/
+def needFacts (j : Json) : Except String Unit :=
+  unless (j.getObjVal? "facts").toBool do throw "InvalidInput: a slot case needs a facts array"
+
 def runSoftKind (id kind : String) (j : Json) : Except String Json := do
   if kind == "soft-selected" then return ← runSelected id j
   if kind == "soft-rule" then
@@ -385,6 +446,31 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
       match firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
+  if kind == "slot-certificate" then
+    needFacts j
+    let r ← VE.Compose.SlotWire.replaySlotEntailment j
+    let openLabels ← openAfterClassification r.src (j.getObjValD "environment")
+      (j.getObjValD "norms") (j.getObjValD "pairs")
+    return slotCertificateAnswer id r openLabels
+  if kind == "slot-conflict" && (j.getObjVal? "witness").toBool then
+    needFacts j
+    let r ← VE.Compose.SlotWire.replaySlotWitness j
+    let names ← VE.Bridge.strings ((j.getObjValD "witness").getObjValD "tuple")
+    return slotWitnessAnswer id r names
+  if kind == "slot-conflict" then
+    needFacts j
+    let res ← VE.Compose.SlotWire.replaySlotConflict j
+    let openLabels ← openAfterClassification res.src (j.getObjValD "environment")
+      (j.getObjValD "norms") (j.getObjValD "pairs")
+    let budget := (j.getObjValD "budget").getNat?.toOption.getD 10000
+    let exhibit ← if (j.getObjVal? "coherent_model").toBool then do
+      let ⟨model, _⟩ ← decodeModel res.src
+        (Json.mkObj [("model", j.getObjValD "coherent_model")])
+      unless VE.Compose.backgroundValidP res.src.D res.facts model do
+        throw (VE.Compose.SlotWire.slotModelFault res.src model)
+      pure true
+    else pure false
+    return slotConflictAnswer id res openLabels budget exhibit
   throw s!"UnsupportedProfile: case kind {kind} is not available on the soft-norms route"
 
 def runCase (j : Json) : Except String Json := do

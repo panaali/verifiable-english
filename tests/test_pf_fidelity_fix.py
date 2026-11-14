@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.pinned_source import pinned_source
+
 import tests.test_usecase_key_transcription as transcription
 
 REPO = Path(__file__).resolve().parents[1]
@@ -184,7 +186,7 @@ def test_every_header_quotes_whole_source_text(pf):
     assert evidence == {"source_sha256": B.TEXT_SHA256, "quotes": Q.fingerprint(blocks)}
     assert len(evidence["quotes"]) == len(blocks)
     assert all(Q.quotes(block) and all("…" not in q for q in Q.quotes(block)) for block in blocks)
-    if B.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = B.DEFAULT_SOURCE.read_bytes()
         B.check_source(source)
         assert Q.quote_faults(blocks, source.decode()) == []
@@ -239,7 +241,7 @@ def test_a_partial_fact_word_map_is_not_complete(pf, monkeypatch):
 
 
 def test_a_fact_anchored_on_a_partly_translated_unit_is_blocked(pf, monkeypatch):
-    if B.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = B.DEFAULT_SOURCE.read_bytes()
         B.check_source(source)
         _, records = B.build(source)
@@ -475,7 +477,8 @@ def test_premise_units_follow_the_goal(pf):
 def test_regulated_predicates_stay_within_64():
     stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
     count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
-    assert stage0["P7"]["regulated_predicates"] == count == 60
+    # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26)
+    assert stage0["P7"]["regulated_predicates"] == count == 61 <= 64
 
 
 # --- openai-preparedness-fidelity-fix-3: the six round-B units both adjudicators judged REAL ---------------------
@@ -680,3 +683,136 @@ def test_c2_binds_a_model_with_no_risk_finding(pf):
     case = {"id": "t", "levels": [], "activity": None, "findings": {"OT7": False}}
     assert selections({"RS9": "strict"}, case, "misalignment_risk_minimized") == {"c2-misalignment-strict"}
     assert selections({"RS9": "default"}, case, "misalignment_risk_minimized") == {"c2-misalignment-default"}
+
+
+# --- openai-preparedness-fidelity-fix-5: K13's fast-track words (lp1701 item 1; PLAN 12 item 26) -----------------
+# The ruling: a documented omission earns no credit. K13's case contains the words f16-chair-* once recorded as
+# "loss 1" ("a fast track is requested"), so the fast-track sentence is now a rule: OpenAI may request the fast track.
+
+SENTENCE_FAST_TRACK = ("In the rare case that a risk of severe harm rapidly develops (e.g., there is a change in our "
+                       "understanding of model safety that requires urgent response), we can request a fast track for "
+                       "the SAG to process the report urgently.")
+SENTENCE_CHAIR = ("The SAG Chair should also coordinate with OpenAI Leadership for immediate reaction as needed to "
+                  "address the risk.")
+FAST_TRACK_WORDS = "we can request a fast track for the SAG to process the report urgently"
+CHAIR_UNITS = ("f16-chair-strict", "f16-chair-default")
+ACCOUNTING_ENTRY = r'"([^"]*)"\s*([^;"]*)'
+
+
+def accounting_entries():
+    """accounting.d1.txt as {block id: [(omitted words, reason tag)]}."""
+    lines = (PF / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
+    return {line.split(" | omits:")[0]:
+            [(w, t.strip()) for w, t in re.findall(ACCOUNTING_ENTRY, line.split(" | omits:")[1])]
+            for line in lines}
+
+
+def test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings(pf):
+    """f16-chair-strict and -default quote the whole Fast-track passage; the fast-track sentence is carried by the
+    rule their accounting names, f16-fast-track: under every RS9 choice OpenAI MAY request the fast track in the
+    rapid-risk case (a permission, not a duty), and the act's legend quotes the full sentence, not a pointer."""
+    entries = accounting_entries()
+    fast = block("f16-fast-track")
+    assert fast.when == () and SENTENCE_FAST_TRACK in fast.source
+    for name in CHAIR_UNITS:
+        assert SENTENCE_FAST_TRACK + " " + SENTENCE_CHAIR in block(name).source, name
+        assert (FAST_TRACK_WORDS, "rule f16-fast-track") in entries[name], name
+    assert fast.text.startswith("Rule 1. Every situation may have a fast track requested so the SAG processes")
+    norm = rule("f16-fast-track")
+    assert norm["predicate"] == "fast_track_request" and norm["sign"] is True and norm["unless"] == []
+    assert norm["guard"] == ["unary", "rapid_risk", ["var", 0]]
+    regulated = V.environment()["vocabulary"]["predicates"]["fast_track_request"]["regulated"]
+    assert regulated["role"] == "permission" and regulated["default"] == "allow"
+    text = act("fast_track_request")
+    assert text == "{0} have a fast track requested so the SAG processes the report urgently"
+    assert len(text) <= 80 and re.fullmatch(r"\{0\}( [A-Za-z]+)+", text)
+    assert not {"and", "or", "for", "if", "not", "no", "every", "must", "is", "then"} & set(text.lower().split())
+    assert legend_quotes("fast_track_request") == [SENTENCE_FAST_TRACK]
+    # The Chair's coordination stays RS9 strict/default on its own sentence, and its legend quotes it in full.
+    assert legend_quotes("chair_coordination") == [SENTENCE_CHAIR]
+    for name, modal in (("f16-chair-strict", "must"), ("f16-chair-default", "should")):
+        assert block(name).text.startswith(f"Rule 1. Every situation {modal} have the SAG Chair coordinate"), name
+        assert predicates_read(name) == {"chair_coordination", "rapid_risk", "immediate_reaction_needed"}, name
+    assert B.READINGS["rs9-chair"][1] == {"strict": ["f16-chair-strict"], "default": ["f16-chair-default"]}
+    assert ("f16-fast-track",) in R.COMMITMENTS["F16"]
+
+
+@needs_lean
+def test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings(pf):
+    """The live consequence: in the rapid-risk case VE selects the permission under RS9 strict and default, never a
+    duty or a prohibition on the request; without the rapid-risk finding nothing is selected."""
+    rapid = {"id": "t", "levels": [], "activity": None, "findings": {"OT18": True}}
+    calm = {"id": "t", "levels": [], "activity": None, "findings": {"OT18": False}}
+    for choice in ("strict", "default"):
+        assert selections({"RS9": choice}, rapid, "fast_track_request") == {"f16-fast-track"}, choice
+        assert selections({"RS9": choice}, rapid, "fast_track_request", sign=False) == set(), choice
+        assert selections({"RS9": choice}, calm, "fast_track_request") == set(), choice
+    assert [b.id for b in blocks_for("fast_track_request")] == ["f16-fast-track"]
+
+
+def test_accounting_has_no_loss_for_the_fast_track_words():
+    """No block records "we can request a fast track for the SAG to process the report urgently" as a loss; the
+    passage's "In the rare case that" and its "(e.g., ...)" example stay exposition with their reasons."""
+    entries = accounting_entries()
+    for name, rows in entries.items():
+        for words, tag in rows:
+            assert not ("fast track" in words and tag.startswith("loss")), (name, words, tag)
+    for name in CHAIR_UNITS:
+        assert ("In the rare case that", "exposition") in entries[name], name
+        assert ("(e.g., there is a change in our understanding of model safety that requires urgent response)",
+                "exposition") in entries[name], name
+        assert not any(tag.startswith("loss") for _, tag in entries[name]), name
+    assert entries["f16-fast-track"] == []
+
+
+# The record paths of the uc-audit omission rule: tests/omission_rule.py ports the installed rule (omission-2) whole, with
+# every fail-closed path (any tag but restates / rule / reading = loss). This file keeps no copy of its own.
+def omission_records(units):
+    """{unit: [path]} for every record path of the installed omission rule that names one of `units`."""
+    import tests.omission_rule as omission_rule
+    return omission_rule.record_paths("openai-preparedness", units)
+
+
+def omission_exposures(units):
+    """{unit: [(path, detail)]}: the rule's exposures of `units`, with the words or sentence each one records."""
+    import tests.omission_rule as omission_rule
+    return {u: [(e[2], e[3]) for e in es] for u, es in omission_rule.exposures("openai-preparedness", units).items()}
+
+
+def plan12_item(number):
+    """PLAN section 12's item `number` as one line of normalised text."""
+    plan = (PF / "PLAN.md").read_text(encoding="utf-8")
+    item = re.search(rf"^{number}\. .*?(?=^\d+\. |^\*\*|^## |\Z)", plan, re.M | re.S).group(0)
+    return " ".join(item.split())
+
+
+def test_k13_units_carry_only_their_exposition_and_plan12_records():
+    """K13 (the Chair coordinating in the rapid-risk case with a fast track requested) reads f16-chair-strict and
+    -default. Under the installed omission rule each still carries exactly two exposures from its accounting line, the
+    exposition entries "In the rare case that" and the "(e.g., ...)" example (an exposition tag counts as a loss), and
+    PLAN 12 item 26's record sentence; f16-fast-track carries item 26's sentences only. No record holds the fast-track
+    words, so K13 counts as audited once an omission-audit seat's reads clear these exposures, and not before."""
+    k13 = json.loads((PF / "results.json").read_text())["items"]["K13"]
+    assert set(k13["selected_rules"]) == set(CHAIR_UNITS)
+    assert [c["holds"] for c in k13["choices"]] == [True, True]
+    exposures = omission_exposures(CHAIR_UNITS + ("f16-fast-track",))
+    assert omission_records(CHAIR_UNITS + ("f16-fast-track",)) == {
+        "f16-chair-strict": ["loss", "loss", "plan12"],
+        "f16-chair-default": ["loss", "loss", "plan12"],
+        "f16-fast-track": ["plan12", "plan12"]}
+    for name in CHAIR_UNITS:
+        assert [d for p, d in exposures[name] if p == "loss"] == [
+            "In the rare case that (exposition)",
+            "(e.g., there is a change in our understanding of model safety that requires urgent response) (exposition)"]
+    item26 = plan12_item(26)
+    assert item26.startswith("26. **Appendix B's fast-track sentence is a permission rule")
+    for name, rows in exposures.items():
+        for path, detail in rows:
+            assert path == "loss" or detail in item26, (name, path, detail)
+            assert path == "plan12" or "fast track" not in detail.lower(), (name, path, detail)
+    spans = json.loads((PF / "spans.json").read_text())["units"]
+    fast = next(u for u in spans if u.get("rule") == "f16-fast-track")
+    chair = next(u for u in spans if u.get("reading_set") == "rs9-chair")
+    assert fast["status"] == "OPEN" and fast["span"][1] == chair["span"][0] and "untranslated" not in chair
+    # the check is not vacuous: a loss the case really records (c3-access-default's accounting line) is found
+    assert "loss" in omission_records(("f16-year", "c3-access-default"))["c3-access-default"]

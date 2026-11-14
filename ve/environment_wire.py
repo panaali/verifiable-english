@@ -7,6 +7,7 @@ projection name, so a second Environment with the same identity shares one encod
 """
 from __future__ import annotations
 
+from collections import OrderedDict
 import copy
 import json
 import math
@@ -76,7 +77,10 @@ def checked_list(value: list) -> CheckedList:
     return CheckedList(value)
 
 
-_cache: dict[tuple[str, str], EncodedEnvironment] = {}
+# Least recently used first: a hit moves its entry to the end, and a full cache evicts the first entry
+# only, so an entry in use survives the inserts of others (insertion order would evict an old entry
+# just read; clearing all would drop every entry in use).
+_cache: OrderedDict[tuple[str, str], EncodedEnvironment] = OrderedDict()
 _lock = threading.Lock()
 _LIMIT = 256
 
@@ -90,13 +94,16 @@ def encoded_value(key: tuple, build) -> EncodedEnvironment:
     determines the object: an environment's digest and projection, or a model's identities)."""
     with _lock:
         cached = _cache.get(key)
-    if cached is not None:
-        return cached
+        if cached is not None:
+            _cache.move_to_end(key)
+            return cached
     fresh = EncodedEnvironment(build())
     with _lock:
-        if len(_cache) >= _LIMIT:
-            _cache.clear()
-        return _cache.setdefault(key, fresh)
+        if key not in _cache and len(_cache) >= _LIMIT:
+            _cache.popitem(last=False)
+        cached = _cache.setdefault(key, fresh)
+        _cache.move_to_end(key)
+        return cached
 
 
 # Container levels a transport encodes. `json`'s C encoder overflows its stack near 50,000 nested

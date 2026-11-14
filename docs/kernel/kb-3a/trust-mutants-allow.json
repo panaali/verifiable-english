@@ -1,0 +1,99 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Compose.SlotWire.NoFacts",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (an existential over Json errors): the hypothesis of slot_wire_empty (lean/VE/Compose/SlotWire.lean), established by decodeFacts_empty, which this mutant breaks or makes vacuous; its instances are checked by the #guard twins of slot_wire_empty in lean/VE/SoftNorms/SlotExamples.lean (facts [] answers the soft kind's answer with facts 0, certificate and conflict) and by tests/test_slot_premises.py::test_slot_certificate_with_no_facts_is_soft_certificate_on_every_fixture"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.NoFacts",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (an existential over Json errors): the hypothesis of slot_wire_empty (lean/VE/Compose/SlotWire.lean), established by decodeFacts_empty, which this mutant breaks or makes vacuous; its instances are checked by the #guard twins of slot_wire_empty in lean/VE/SoftNorms/SlotExamples.lean (facts [] answers the soft kind's answer with facts 0, certificate and conflict) and by tests/test_slot_premises.py::test_slot_certificate_with_no_facts_is_soft_certificate_on_every_fixture"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.NoFacts",
+   "operator": "or-and",
+   "reason": "S, a Prop no check can evaluate (an existential over Json errors): the hypothesis of slot_wire_empty (lean/VE/Compose/SlotWire.lean), established by decodeFacts_empty, which this mutant breaks or makes vacuous; its instances are checked by the #guard twins of slot_wire_empty in lean/VE/SoftNorms/SlotExamples.lean (facts [] answers the soft kind's answer with facts 0, certificate and conflict) and by tests/test_slot_premises.py::test_slot_certificate_with_no_facts_is_soft_certificate_on_every_fixture"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.NoFacts",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate (an existential over Json errors): the hypothesis of slot_wire_empty (lean/VE/Compose/SlotWire.lean), established by decodeFacts_empty, which this mutant breaks or makes vacuous; its instances are checked by the #guard twins of slot_wire_empty in lean/VE/SoftNorms/SlotExamples.lean (facts [] answers the soft kind's answer with facts 0, certificate and conflict) and by tests/test_slot_premises.py::test_slot_certificate_with_no_facts_is_soft_certificate_on_every_fixture"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.NoFacts",
+   "operator": "eq-le",
+   "reason": "Lean refuses the text: `≤` on Except String Json has no instance (failed to synthesize at lean/VE/Compose/SlotWire.lean:121), so the mutant never builds"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-empty",
+   "reason": "killed in substance: the file loses every definition, so every soft-norms row's reference breaks and each accepting #guard of lean/ResponseShape/SlotExamples.lean fails; UNKNOWN only because the imported DefaultsExamples probe cannot elaborate the mutated file"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-first",
+   "reason": "killed in substance: the file keeps one definition, so every soft-norms row's reference breaks and each accepting #guard of lean/ResponseShape/SlotExamples.lean fails; UNKNOWN only because the imported DefaultsExamples probe cannot elaborate the mutated file"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-last",
+   "reason": "killed in substance: the file keeps one definition, so every soft-norms row's reference breaks and each accepting #guard of lean/ResponseShape/SlotExamples.lean fails; UNKNOWN only because the imported DefaultsExamples probe cannot elaborate the mutated file"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.factsCount",
+   "operator": "list-last",
+   "reason": "equivalent: `.count \"/facts\"` alone holds only for an integer equal to the size of the request's facts array (lean/ResponseShape.lean, the .count case), which is a nat, so `common.json#/$defs/nat` beside it refuses nothing more"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.factsCount",
+   "operator": "list-drop-first",
+   "reason": "equivalent: `.count \"/facts\"` alone holds only for an integer equal to the size of the request's facts array (lean/ResponseShape.lean, the .count case), which is a nat, so `common.json#/$defs/nat` beside it refuses nothing more"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_certificate",
+   "operator": "list-first",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_certificate",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_witness",
+   "operator": "list-first",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_witness",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_packages",
+   "operator": "list-first",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.slot_packages",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: `factsCount` is a one-element list, so its take 1 and reverse.take 1 are itself; the definition's other lists are killed by the variants guards of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.witnessFields",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: the target's [str, .equals \"/witness/target\"] keeps only `.equals`, and the request's witness target is a string (replaySlotWitness and the soft replay refuse any other), so `str` refuses nothing more; the witness_kind prefixes' mutants are killed by the pair-conflict witness guard of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.witnessFields",
+   "operator": "list-drop-first",
+   "reason": "equivalent where it survives: the target's [str, .equals \"/witness/target\"] keeps only `.equals`, and the request's witness target is a string (replaySlotWitness and the soft replay refuse any other), so `str` refuses nothing more; the witness_kind prefixes' mutants are killed by the pair-conflict witness guard of lean/ResponseShape/SlotExamples.lean"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.row",
+   "operator": "list-drop-first",
+   "reason": "outside this item's kinds where it survives: it drops the inner select's `admission` entry, which no Lean check reads (an admitted row needs a W2 document fixture; Python checks admission rows against the generated schema, as kb-10a's allow file records); the outer and witness-entry drops are killed by the case_error and soft-bogus guards"
+  }
+ ]
+}

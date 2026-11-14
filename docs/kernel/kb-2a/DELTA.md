@@ -1,0 +1,11 @@
+# kb-2a (step A): user-visible delta
+
+Feature item kb-2a, step A (architect seat, round 4: `manage-agents/fable-team/architect/kb-2a/DESIGN.md`, section
+2.1). One new experimental Lean module, `VE.Experimental.CoreDocument`, and its examples. Nothing the service imports
+reaches it (`tools/check_lean_imports.py`), so no mode, answer, diagnostic, schema or Python path changes; the kernel
+total and the `document` path's figures are unchanged (`tools/kernel_closure.py --check`).
+
+| # | Delta | Evidence | Ruling |
+|---|---|---|---|
+| 1 | Trusted Lean K +0, S +0, V +147 (trusted +147), measured with `uv run python tools/trust_map.py --check` on the final tree against its merge base with main, f0f2b1a0b6eb: `lean/VE/Experimental/CoreDocument.lean` +147 (G[V], untied: `Origin`, `Body.rule?`, `Body.premise?`, `Choice`, `ActiveSet`, `Coupling`, `Options`, `wire`, `strictRule`, `premise`, `lowerContent`, `lowerCandidate`, `declarations`, `readingsOf`, `compatible`, `allChoices`, `maxChoices`, `choicesOf`, `UnitPlan`, `UnitPlan.statements`, `planOf`, `judgments`). Tied, not counted (+55): `lower` to `lower_origin_units`, `lower_choices` and `lower_names_bound`; `compatibleChoices` to `lower_choices`; `readingOptions` to `lower_readings_distinct`; `preliminaries` to `preliminaries_sets`; `CoreDoc.of` to `lower_parts`; `CoreDoc` and `Body` to `lower_names_bound`; `Statement` to `lower_origin_units`. The refusal checks and diagnostic texts are G[R] (as `checkNorms` and `environmentFault` are in `Document.lean`), the examples' fixtures T. The allowance is recorded in `docs/trust-baseline.json`; the ties pass is asked for in `manage-agents/FOLLOW-UPS.md` ("kb-2a") and in `FOLLOW-UPS.md` here. Every untied definition is exercised by a `#guard` of `CoreDocumentExamples.lean` that can fail (`seeded-bugs.json`, `trust-mutants.json`) | `uv run python tools/trust_map.py --check` exit 0; `docs/kernel/kb-2a/seeded-bugs.json`; `docs/kernel/kb-2a/trust-mutants.json` | R16 |
+| 2 | Generated files: the Lean inventories (`lean/declarations.txt`, `lean/statements.txt`, `lean/predicates.txt`, `lean/axioms.txt`, `lean/VE/Audit.lean`) and the code map, through `uv run python tools/regen_generated.py --write` | `uv run python tools/regen_generated.py --check` | R12 |
