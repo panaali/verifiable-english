@@ -1,0 +1,12 @@
+trust_mutants: 61 definitions, 76 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) body-false: VE.Core.Entails.{u} E (premises.map Formula.toCore) conclusion.toCore -> False (lean/VE/Closure/Consequence.lean:13: the failing proof cannot be cut: too many explicit universe ...)
+UNKNOWN lean/VE/Acts/Lexical.lean:147 VE.Acts.Lexical.joinFree (D[V], trusted) body-true: match lex fx act with | .ok ts => match joinCheck "" act ts with | .ok _ => true | .error _ => fa... -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) list-empty: premises -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) not-drop: ! ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:879 VE.Compose.environmentWrappers (G[V], trusted) list-empty: ["right-clauses@0", "readings@1"] -> [] (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 3 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 68 OTHER SHARD in 4338 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 2 UNKNOWN, 32 OTHER SHARD
+trust_mutants: K, trusted: 2 UNKNOWN, 5 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 10 OTHER SHARD
+trust_mutants: steps: wall plan 15.7 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.1 s, mutants 4310.7 s, cleanup 6.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 15.5 s (4), mutant_builds 730 s (14), mutant_checks 11016 s (12), stage_controls 807.7 s (3), mutant_probes 15.4 s (4)
