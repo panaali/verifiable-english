@@ -1,0 +1,6 @@
+trust_mutants: 72 definitions, 84 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:93 VE.EnglishGrammar.eventsRefusals (G[V], trusted) list-first: [ eventsRefusal "until" eventsUntilAdvice "if it is not the case that that closure happens no lat... -> ([ eventsRefusal "until" eventsUntilAdvice "if it is not the case that that closure happens no la... (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: documentLayers -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Norms/Wire.lean:175 VE.Norms.Wire.actsOf (D[V], trusted) list-first: r.sorts -> (r.sorts.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Presupposition/Admit.lean:116 VE.Presupposition.baseTreeOf (G[V], trusted) list-first: D.norms.nodes -> (D.norms.nodes.take 1) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/SpeechActs/Wire.lean:231 VE.SpeechActs.Wire.checkActsBlock (D[V], trusted) list-first: profiles -> (profiles.take 1) (the proofs it breaks: lean/VE/SpeechActs/Wire.lean:530, lean/VE/SpeechActs/Wire.lean:562)
