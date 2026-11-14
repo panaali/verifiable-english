@@ -33,7 +33,7 @@ the "before" figures of every row in [the kernel boundary](../spec/kernel-bounda
 | `norms`, norms-conflict | 0 | 0 | 0 | 1 | 0 | kernel: proved from the wire |
 | `soft-norms`, soft-elaborate | 182 | 206 | 154 | 0 | 0 | kernel path, a kind no theorem covers (registry `uncovered`): outside the kernel; its `soft_status` is `CHECKED` or `OPEN` (`residualStatus`) |
 | `metered`, evaluate-budgeted | 6,384 | 1,272 | 9,120 | 8,169 | 0 | **candidate: proved core 519 lines, 3,761 lines of wire code under no theorem** |
-| `quantity` (certificate, document, countermodel, plain) | 25 | 20 | 4 | 0 | 9,403 | **candidate: proved core 613 lines, 1,804 lines of wire code under no theorem** |
+| `quantity` (certificate, document, countermodel, plain) | 25 | 20 | 4 | 0 | 9,403 | **candidate: proved core 613 lines, 1,804 lines of wire code under no theorem** (kernel since kb-8c: runner theorems since KB-8, a 75-line wrap) |
 | `risk` (risk-decision, risk-elaborate) | 3 | 6 | 2 | 0 | 0 | candidate: spec 6,159, wrap 5,669 |
 | `check` | 18,448 | 8,722 | 12,337 | 688 | 4,916 | validator, no theorem (3,461 lines run) |
 | `model` | 26 | 12 | 427 | 453 | 0 | validator, no theorem (7,195 lines run) |
@@ -48,7 +48,7 @@ What the table shows:
 2. All Lean code under the keys' answers is **16,777 distinct lines** (16,769 before kb-10e listed `soft_wire_selected_prepared`; 16,742 before kb-validators made `metered` check and state the norms profile; 16,593 before kb-risk's runner theorems added
    their statements to the risk path's spec; spec and wrap of the ten paths
    above, the three validators counted in full; the registry's `keys`, measured by `tools/kernel_closure.py`
-   as `keyed_lines`). The proved kernel is 10,023 of them (9,504 before kb-10a listed `soft_wire_selected`, 9,552 before kb-3 listed the slot kinds' theorems, 9,947 before kb-validators made `metered` check and state the norms profile, 10,015 before kb-10e listed `soft_wire_selected_prepared`). (The first measurement, 17,355 and 9,565, also
+   as `keyed_lines`). The proved kernel is 11,119 of them (9,504 before kb-10a listed `soft_wire_selected`, 9,552 before kb-3 listed the slot kinds' theorems, 9,947 before kb-validators made `metered` check and state the norms profile, 10,015 before kb-10e listed `soft_wire_selected_prepared`, 10,023 before kb-8c promoted `quantity`). (The first measurement, 17,355 and 9,565, also
    counted the `checkCertificate` path, which no key calls and which is now a candidate; the second,
    16,831 and 8,956, also read the route's `bundle` and `admission` runners, which no theorem covers,
    through `runCase_dispatch`.)
@@ -59,3 +59,5 @@ What the table shows:
    the harness is the shell and already works by the carry rule (elaborate, then let the kernel replay a
    certificate over the premises shown). The audit's losses (RSP 111 to 77, Preparedness 231 to 68) are
    in what the rules say, which no path above can see.
+
+Tier of quantity changed by kb-8c on 2026-11-14 (candidate to kernel; docs/kernel/kb-8c/REPORT.md).

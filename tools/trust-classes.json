@@ -11956,7 +11956,8 @@
         {
           "name": "VE.Time.Wire.runCase",
           "tied": [
-            "VE.Time.Wire.quantity_admission_wire_sound",
+            "VE.Time.Wire.quantity_admission_wire_sound_plain",
+            "VE.Time.Wire.quantity_admission_wire_sound_valued",
             "VE.Time.Wire.quantity_countermodel_wire_sound",
             "VE.Time.Wire.quantity_certificate_wire_sound",
             "VE.Time.Wire.quantity_document_wire_sound"
