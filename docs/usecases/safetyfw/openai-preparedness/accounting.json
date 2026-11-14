@@ -1820,8 +1820,8 @@
     },
     {
      "words": "we can request a fast track for the SAG to process the report urgently",
-     "reason": "loss",
-     "arg": "1"
+     "reason": "rule",
+     "arg": "f16-fast-track"
     }
    ],
    "problems": []
@@ -1862,10 +1862,22 @@
     },
     {
      "words": "we can request a fast track for the SAG to process the report urgently",
-     "reason": "loss",
-     "arg": "1"
+     "reason": "rule",
+     "arg": "f16-fast-track"
     }
    ],
+   "problems": []
+  },
+  {
+   "id": "f16-fast-track",
+   "file": "rules.d1.ve",
+   "span_length": 225,
+   "used": [
+    "fast_track_request",
+    "rapid_risk"
+   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -2954,23 +2966,23 @@
   }
  ],
  "totals": {
-  "blocks": 99,
-  "blocks_with_loss": 17,
+  "blocks": 100,
+  "blocks_with_loss": 15,
   "losses_by_class": {
-   "1": 19,
+   "1": 17,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
    "exposition": 39,
-   "loss": 21,
+   "loss": 19,
    "reading": 30,
    "restates": 93,
-   "rule": 18
+   "rule": 20
   },
   "unaccounted_words": 539,
   "blocks_with_unaccounted_words": 75,
-  "quotes": 116,
+  "quotes": 117,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

@@ -468,6 +468,17 @@
           "act": "{0} have a revised course of action mandated by the Board"
         }
       },
+      "fast_track_request": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B, Fast-track: “In the rare case that a risk of severe harm rapidly develops (e.g., there is a change in our understanding of model safety that requires urgent response), we can request a fast track for the SAG to process the report urgently.”: OpenAI ('we') may request it; the request is for the SAG to process the report urgently",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} have a fast track requested so the SAG processes the report urgently"
+        }
+      },
       "annual_review": {
         "arguments": [
           "framework"
@@ -989,7 +1000,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: fast track",
+        "description": "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership for immediate reaction as needed to address the risk.”",
         "regulated": {
           "role": "obligation",
           "default": "deny",
