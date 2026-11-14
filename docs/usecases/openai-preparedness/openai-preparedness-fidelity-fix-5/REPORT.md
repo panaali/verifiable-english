@@ -252,6 +252,15 @@ block id, because a REPORT sentence that names a unit next to a word like "loss"
    "summary: selected tests ran on GitHub Actions (5 shards, run openai-preparedness-fidelity-fix-5-9dff05b3-t606631);
    exit=0; 1615s". Only this REPORT changes after it.
 
+3. F1 fix, on a9206bfc9b (clean tree): `zsh mac-pytest.sh --select -- --base <merge-base> --run` exited 0. "47/616
+   test units"; changed tests ran first (tests/test_omission_rule.py, tests/test_pf_fidelity_fix.py); "fast first: the
+   cheap units passed after 105 s"; "SHARD 1/2: exit 0 in 1000.9 s; 27 units, 27 passed", "SHARD 2/2: exit 0 in
+   1163.0 s; 20 units, 20 passed"; "summary: selected tests ran on GitHub Actions (2 shards, run
+   openai-preparedness-fidelity-fix-5-a9206bfc-t615550); exit=0; 1299s". Before it, on the same tree:
+   `lake build` (after lean-prep.sh) "Build completed successfully (1438 jobs)", `python3 lean/audit.py` "PASS: 872
+   source files; 9965 named theorem declarations audited", and `tools/regen_generated.py --check` "checked 41
+   entries". Only this REPORT changes after it.
+
 ## Open list
 
 - K13 is not scored audited yet: an omission-audit seat's reads must clear the four exposition exposures and the
