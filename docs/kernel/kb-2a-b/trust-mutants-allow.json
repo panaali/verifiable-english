@@ -31,16 +31,6 @@
    "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
   },
   {
-   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
-   "operator": "imp-and",
-   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
-  },
-  {
-   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
-   "operator": "exists-forall",
-   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
-  },
-  {
    "definition": "VE.Compose.SlotWire.SlotAdmitted",
    "operator": "and-or",
    "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
@@ -68,16 +58,6 @@
   {
    "definition": "VE.Compose.SlotWire.SlotAdmitted",
    "operator": "eq-ne",
-   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
-  },
-  {
-   "definition": "VE.Compose.SlotWire.SlotAdmitted",
-   "operator": "imp-and",
-   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
-  },
-  {
-   "definition": "VE.Compose.SlotWire.SlotAdmitted",
-   "operator": "exists-forall",
    "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
   },
   {
@@ -179,6 +159,46 @@
    "definition": "VE.SoftNorms.Run.runSoftKind",
    "operator": "eq-ne",
    "reason": "killed by a check the tool cannot attribute: the slot-admission #guards (lean/VE/SoftNorms/SlotExamples.lean, lean/VE/Service/CoreCheckExamples.lean:47) fail on this mutant, but the tool reports that the check computes through a proof the mutant broke (an `@[csimp]` lemma on SoftNorms.Run's runner rests on runSoftKind)"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "not-drop",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "or-and",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "le-eq",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "ne-eq",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "not-drop",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "or-and",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "le-eq",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "ne-eq",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
   }
  ]
 }
