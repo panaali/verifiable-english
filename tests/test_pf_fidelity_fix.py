@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.pinned_source import pinned_source
+
 import tests.test_usecase_key_transcription as transcription
 
 REPO = Path(__file__).resolve().parents[1]
@@ -184,7 +186,7 @@ def test_every_header_quotes_whole_source_text(pf):
     assert evidence == {"source_sha256": B.TEXT_SHA256, "quotes": Q.fingerprint(blocks)}
     assert len(evidence["quotes"]) == len(blocks)
     assert all(Q.quotes(block) and all("…" not in q for q in Q.quotes(block)) for block in blocks)
-    if B.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = B.DEFAULT_SOURCE.read_bytes()
         B.check_source(source)
         assert Q.quote_faults(blocks, source.decode()) == []
@@ -239,7 +241,7 @@ def test_a_partial_fact_word_map_is_not_complete(pf, monkeypatch):
 
 
 def test_a_fact_anchored_on_a_partly_translated_unit_is_blocked(pf, monkeypatch):
-    if B.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = B.DEFAULT_SOURCE.read_bytes()
         B.check_source(source)
         _, records = B.build(source)
