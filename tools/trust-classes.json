@@ -5795,6 +5795,7 @@
         "VE.Norms.Run.usesNormsPath"
       ],
       "G[V]": [
+        "VE.Norms.Run.decidesActs",
         "VE.Norms.Run.decoderOf",
         "VE.Norms.Run.reportDomain",
         "VE.Norms.Run.reportJson",
@@ -5802,6 +5803,8 @@
         "VE.Norms.Run.runAdmission",
         "VE.Norms.Run.runAdmissionIn",
         "VE.Norms.Run.runCase",
+        "VE.Norms.Run.runCaseActs",
+        "VE.Norms.Run.runCaseActsRouted",
         "VE.Norms.Run.runCaseIn",
         "VE.Norms.Run.runCaseReported",
         "VE.Norms.Run.runCaseRouted",
@@ -5895,6 +5898,8 @@
     },
     "VE/Norms/Wire.lean": {
       "D[V]": [
+        "VE.Norms.Wire.ActsHook",
+        "VE.Norms.Wire.ActsHook.plain",
         "VE.Norms.Wire.NormsEnvironment",
         "VE.Norms.Wire.Source",
         "VE.Norms.Wire.SourceDecoder",
@@ -5911,7 +5916,7 @@
         "VE.Norms.Wire.decodeBudgeted",
         "VE.Norms.Wire.decodeFlagged",
         "VE.Norms.Wire.decodeNorm",
-        "VE.Norms.Wire.decodeNormsEnvironment",
+        "VE.Norms.Wire.decodeNormsEnvironmentWith",
         "VE.Norms.Wire.decodeRegulated",
         "VE.Norms.Wire.decodeRegulatedIn",
         "VE.Norms.Wire.decodeRegulatedShape",
@@ -5931,7 +5936,8 @@
         "VE.Norms.Wire.canonicalEnvironmentJson"
       ],
       "D[R]": [
-        "VE.Norms.Wire.actsFamilyRefusal"
+        "VE.Norms.Wire.actsFamilyRefusal",
+        "VE.Norms.Wire.actsHookRefusal"
       ]
     },
     "VE/Norms/WitnessKind.lean": {
@@ -22551,6 +22557,40 @@
         "ResponseShape.SlotExamples.witness",
         "ResponseShape.SlotExamples.witnessAt",
         "ResponseShape.SlotExamples.witnesses"
+      ]
+    },
+    "VE/Acts/Hook.lean": {
+      "D[V]": [
+        "VE.Norms.Wire.ActsHook.acts",
+        "VE.Norms.Wire.ActsHook.lexical",
+        "VE.Norms.Wire.decodeFlaggedActs",
+        "VE.Norms.Wire.decodeNormsEnvironment"
+      ]
+    },
+    "VE/Acts/HookToday.lean": {
+      "P": [
+        "VE.Acts.HookToday.Today.decodeFlagged",
+        "VE.Acts.HookToday.Today.decodeNormsEnvironment",
+        "VE.Acts.HookToday.Today.decodeSource"
+      ]
+    },
+    "VE/Acts/HookTwins.lean": {
+      "P": [
+        "VE.Acts.HookTwins.Today.decoderOf",
+        "VE.Acts.HookTwins.Today.runAdmission",
+        "VE.Acts.HookTwins.Today.runCase",
+        "VE.Acts.HookTwins.Today.runCaseRouted"
+      ]
+    },
+    "VE/Acts/HookExamples.lean": {
+      "T": [
+        "VE.Acts.HookExamples.acts",
+        "VE.Acts.HookExamples.doc0",
+        "VE.Acts.HookExamples.lexical",
+        "VE.Acts.HookExamples.plainCase",
+        "VE.Acts.HookExamples.plainD",
+        "VE.Acts.HookExamples.plainEnv",
+        "VE.Acts.HookExamples.view"
       ]
     }
   }
