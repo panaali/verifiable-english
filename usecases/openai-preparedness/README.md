@@ -76,10 +76,10 @@ counts under each. “Alone” means exactly one recorded blocker.
 | AP | 118 | 21,327 | 110, 19,451 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,623 | 53, 11,750 | hedges, beliefs and expectations |
 | DF | 12 | 2,098 | 0, 0 | default readings |
-| ET | 29 | 8,272 | 17, 5,914 | event order and deadlines |
-| JT | 35 | 6,509 | 12, 2,193 | open judgments |
+| ET | 31 | 8,466 | 17, 5,914 | event order and deadlines |
+| JT | 35 | 6,509 | 11, 2,059 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
-| SC | 27 | 4,710 | 24, 3,759 | per-item or universal scope |
+| SC | 27 | 4,710 | 23, 3,699 | per-item or universal scope |
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
@@ -92,7 +92,9 @@ set or rule the key needs (section 1's deployment sentence, the two Table 1 cont
 step, the residual-risk bullet, 5.2's third-party evaluation, Appendix B's decisions without the SAG, the Board's
 reversal and the fast track, and C.3's access practice). In openai-preparedness-fidelity-fix-5 Appendix B's
 fast-track sentence ("we can request a fast track for the SAG to process the report urgently") became a permission
-rule, f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). No assumption, bridge leaf or exception is represented as certified.
+rule, f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). In openai-preparedness-fidelity-fix-6 the two
+4.1 safeguard-selection units (p11-u161, p11-u162) also record ET: their legends carry "first" and "then", and the
+order between the two steps stays event order (PLAN 12 item 27). No assumption, bridge leaf or exception is represented as certified.
 
 ## Stage 0
 
