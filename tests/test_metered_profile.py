@@ -110,3 +110,36 @@ def test_a_profile_refusal_reaches_python_as_checker_unavailable_never_as_an_ans
     case = _case(FAMILIES["fol"], _model(["a"], []))
     with pytest.raises(CheckerUnavailable, match=r"InvalidModel\(profile\)"):
         read_evaluation(metered_evaluation(case), case)
+
+
+def test_every_public_entry_refuses_the_same_model_before_metered_as_on_main():
+    # DELTA row 1 (R7): through the Python API the record is unavailable with the same text on main and
+    # here. The validated path asks the `model` mode (`FiniteModel.from_dict`), which refuses it.
+    from ve import Environment, FiniteModel
+    from ve.errors import InvalidModel
+    env = Environment(_environment(FAMILIES["fol"]))
+    with pytest.raises(InvalidModel, match=r"^InvalidModel\(profile\): required relation required exceeds "
+                                           r"permission permitted$"):
+        FiniteModel.from_dict(env, _model(["a"], []))
+    # Its opposite: the admissible model is built.
+    assert FiniteModel.from_dict(env, _model(["a"], ["a"])).model_id
+
+
+def test_the_soft_path_refuses_the_same_model_in_python_before_metered():
+    # A soft environment's model is not sent to the `model` mode (ve/model.py); Python's own decoder
+    # refuses the profile violation there, so no public entry sends it to `metered` either.
+    from tests.test_soft_selected import document
+    from ve import FiniteModel
+    from ve.errors import InvalidModel
+    extended = document("deny").extended_env
+    assert extended.soft_premises
+    predicates = extended.to_dict()["vocabulary"]["predicates"]
+    relations = {name: [] for name in predicates if name not in extended.definition_entries}
+
+    def model(permitted):
+        return {"complete": True, "constants": {},
+                "domains": {sort: ["a"] if sort == "assistant" else [] for sort in extended.model_sorts},
+                "relations": {**relations, "x_required": [["a"]], "x_permitted": permitted}}
+    with pytest.raises(InvalidModel, match="required relation x_required exceeds permission x_permitted"):
+        FiniteModel.from_dict(extended, model([]))
+    assert FiniteModel.from_dict(extended, model([["a"]])).model_id
