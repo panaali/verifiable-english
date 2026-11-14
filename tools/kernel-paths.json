@@ -244,13 +244,25 @@
    ],
    "subject": [
     "VE.SoftNorms.Run.runCase",
-    "VE.SoftNorms.Run.runAdmission"
+    "VE.SoftNorms.Run.runAdmission",
+    "VE.Compose.SlotWire.replaySlotConflict",
+    "VE.Compose.SlotWire.replaySlotWitness",
+    "VE.Compose.SlotWire.replaySlotEntailment"
    ],
    "theorems": [
     "VE.SoftNorms.Run.soft_wire_acceptance",
     "VE.SoftNorms.Run.runAdmission_sound",
     "VE.SoftNorms.Run.soft_wire_elaborate",
-    "VE.SoftNorms.Run.soft_wire_selected"
+    "VE.SoftNorms.Run.soft_wire_selected",
+    "VE.SoftNorms.Run.slot_wire_certificate",
+    "VE.SoftNorms.Run.slot_wire_conflict",
+    "VE.Compose.SlotWire.slot_wire_acceptance",
+    "VE.Compose.SlotWire.slot_wire_conflict_sound",
+    "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
+    "VE.Compose.SlotWire.slot_wire_empty",
+    "VE.Compose.SlotWire.slot_wire_conflict_facts",
+    "VE.Compose.SlotWire.slot_wire_entailment_facts",
+    "VE.Compose.SlotWire.slot_wire_witness_facts"
    ],
    "delegates": [
     "VE.Norms.Run.runCaseReported"
@@ -276,7 +288,7 @@
       "soft-certificate",
       "soft-conflict"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), and soft_wire_selected covers soft-selected (its whole answer; kb-10a), which is therefore not listed here"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here"
     }
    ],
    "kinds": {
@@ -288,6 +300,12 @@
     },
     "soft-selected": {
      "theorem": "VE.SoftNorms.Run.soft_wire_selected"
+    },
+    "slot-certificate": {
+     "theorem": "VE.SoftNorms.Run.slot_wire_certificate"
+    },
+    "slot-conflict": {
+     "theorem": "VE.SoftNorms.Run.slot_wire_conflict"
     }
    }
   },

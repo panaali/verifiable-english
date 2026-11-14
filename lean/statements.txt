@@ -14275,6 +14275,167 @@ theorem VE.Compose.SlotChain.restrict
     self.R.restrict S = VE.Norms.forget (List.take k (VE.Norms.layerNames (VE.SoftNorms.soften X).T)) S
   -- uses VE.Compose.SlotChain.R@VE.Compose.Slot VE.Compose.SlotChain@VE.Compose.Slot VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.forget@VE.Norms.Basic VE.Norms.layerNames@VE.Norms.Tree VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.fol@VE.Route.Checker VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4177888397
+theorem VE.Compose.SlotWire.SlotWitnessData.background
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} (w : VE.Compose.SlotWire.SlotWitnessData src P),
+    VE.Compose.backgroundValidP src.D P w.M = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Compose.backgroundValidP@VE.Compose.Slot VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 3307107253
+theorem VE.Compose.SlotWire.SlotWitnessData.facts
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} (self : VE.Compose.SlotWire.SlotWitnessData src P),
+    (P.all fun a => VE.Formula.eval self.sw.M [] a) = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.sw@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire
+  -- expr 1883000951
+theorem VE.Compose.SlotWire.decodeFacts_empty
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) {j : Lean.Json},
+    VE.Compose.SlotWire.NoFacts j → VE.Compose.SlotWire.decodeFacts src j = Except.ok ([], [])
+  -- uses VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 1672009255
+theorem VE.Compose.SlotWire.decodeFacts_ok
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {j : Lean.Json} {P : List VE.Formula} {items : List Lean.Json},
+    VE.Compose.SlotWire.decodeFacts src j = Except.ok (P, items) →
+      VE.Compose.SlotWellFormed src.D P ∧
+        P.length = items.length ∧
+          (∀ (a : VE.Formula), a ∈ P → ∀ (p : String), p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames src.D) ∧
+            ((∃ e, j.getObjVal? "facts" = Except.error e) ∧ items = [] ∨
+              j.getObjVal? "facts" = Except.ok (Lean.Json.arr items.toArray))
+  -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 890957422
+theorem VE.Compose.SlotWire.decodeFormulas_check
+  ∀ (E : VE.Environment) (j : Lean.Json) (fs : List VE.Formula),
+    VE.Route.Wire.decodeFormulas E j = Except.ok fs → ∀ (a : VE.Formula), a ∈ fs → VE.Formula.check E [] a = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
+  -- expr 2027362431
+theorem VE.Compose.SlotWire.decodeSlotPackage_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (environment norms packages : Lean.Json),
+    VE.Compose.SlotWire.decodeSlotPackage src environment norms packages [] =
+      VE.SoftNorms.Wire.decodeSoftPackage src environment norms packages
+  -- uses VE.Compose.SlotWire.decodeSlotPackage@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftPackage@VE.SoftNorms.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 3633377333
+theorem VE.Compose.SlotWire.factsModel_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (j : Lean.Json), VE.Compose.SlotWire.factsModel src [] j = Except.ok ()
+  -- uses VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 440558740
+theorem VE.Compose.SlotWire.factsModel_sat
+  ∀ {src : VE.SoftNorms.Wire.SoftSource} {P : List VE.Formula} {j : Lean.Json},
+    VE.Compose.SlotWire.factsModel src P j = Except.ok () → P ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP src.D P B
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 1113186561
+theorem VE.Compose.SlotWire.map_bind_congr
+  ∀ {ε α β γ δ : Type} (x : Except ε α) {f : α → Except ε β} {g : α → Except ε γ} {p : β → δ} {q : γ → δ},
+    (∀ (a : α), Except.map p (f a) = Except.map q (g a)) → Except.map p (x >>= f) = Except.map q (x >>= g)
+  -- uses
+  -- expr 3219376943
+theorem VE.Compose.SlotWire.ok_bind
+  ∀ {ε α β : Type} (a : α) (f : α → Except ε β), Except.ok a >>= f = f a
+  -- uses
+  -- expr 3193208867
+theorem VE.Compose.SlotWire.replaySlotConflict_parts
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
+        VE.Compose.SlotWire.decodeFacts res.src j = Except.ok (res.facts, res.items) ∧
+          VE.Compose.SlotWire.factsModel res.src res.facts j = Except.ok ()
+  -- uses VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3035266465
+theorem VE.Compose.SlotWire.replaySlotEntailment_parts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+        VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items) ∧
+          VE.Compose.SlotWire.factsModel r.src r.facts j = Except.ok ()
+  -- uses VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.factsModel@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3396925625
+theorem VE.Compose.SlotWire.replaySlotWitness_parts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+        VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items)
+  -- uses VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 19414657
+theorem VE.Compose.SlotWire.slotWitnessFrom_nil
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (w : Lean.Json),
+    Except.map (fun d => (d.M, d.target, d.tuple, d.conflict)) (VE.Compose.SlotWire.slotWitnessFrom src [] w) =
+      Except.map (fun d => (d.M, d.target, d.tuple, d.conflict)) (VE.SoftNorms.Wire.softWitnessFrom src w)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.target@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.tuple@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData@VE.Compose.SlotWire VE.Compose.SlotWire.slotWitnessFrom@VE.Compose.SlotWire VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.target@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.tuple@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.softWitnessFrom@VE.SoftNorms.Wire
+  -- expr 1710999480
+theorem VE.Compose.SlotWire.slot_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      r.valid = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+          (∀ (S : VE.Structure),
+              S.Admissible (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) (VE.Norms.size (VE.SoftNorms.soften r.src.D))) →
+                VE.SoftNorms.holdsSoft r.src.D S →
+                  VE.Norms.definitionsHold (VE.SoftNorms.soften r.src.D) S →
+                    VE.Norms.profileHold (VE.SoftNorms.soften r.src.D) S →
+                      VE.Norms.Sat S (VE.Norms.backgroundBase (VE.SoftNorms.soften r.src.D)) →
+                        VE.Norms.Sat S (VE.SoftNorms.softPremises r.src.D) →
+                          VE.Norms.Sat S r.facts → VE.Norms.Sat S r.premises → VE.Formula.denote S [] r.conclusion) ∧
+            (VE.Compose.ConflictFreeP r.src.D r.facts →
+              (∀ (a : VE.Formula),
+                  a ∈ r.premises → VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) 0) [] a) →
+                VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften r.src.D) 0) [] r.conclusion →
+                  ∀ (B : VE.Structure),
+                    VE.Compose.BaseAdmissibleP r.src.D r.facts B →
+                      VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWire.SlotEntailmentReplay.conclusion@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.premises@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.valid@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 170064832
+theorem VE.Compose.SlotWire.slot_wire_conflict_facts
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      VE.Compose.SlotWire.decodeFacts res.src j = Except.ok (res.facts, res.items) ∧
+        (res.facts ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP res.src.D res.facts B)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 3088267190
+theorem VE.Compose.SlotWire.slot_wire_conflict_sound
+  ∀ (j : Lean.Json) (res : VE.Compose.SlotWire.SlotConflictReplay),
+    VE.Compose.SlotWire.replaySlotConflict j = Except.ok res →
+      res.conflictFree = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
+          VE.SoftNorms.WellFormedSoft res.src.D = Bool.true ∧
+            VE.Compose.SlotWellFormed res.src.D res.facts ∧ VE.Compose.ConflictFreeP res.src.D res.facts
+  -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.SlotWire.SlotConflictReplay.conflictFree@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 3015774107
+theorem VE.Compose.SlotWire.slot_wire_conflict_witness_sound
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      r.w.conflict = Bool.true →
+        VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+          VE.Compose.BaseAdmissibleP r.src.D r.facts r.w.M.asStructure ∧
+            ¬VE.Norms.ConflictFree (VE.SoftNorms.soften r.src.D) r.w.M.asStructure ∧
+              ¬VE.Compose.ConflictFreeP r.src.D r.facts ∧
+                (¬VE.SoftNorms.NoStrictCollision r.src.D r.w.M.asStructure ∨
+                  ¬VE.SoftNorms.NoHardPairConflict r.src.D r.w.M.asStructure)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.w@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.FiniteModel.asStructure@VE.Finite VE.Norms.ConflictFree@VE.Norms.Conflict VE.SoftNorms.NoHardPairConflict@VE.SoftNorms.Coherence VE.SoftNorms.NoStrictCollision@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 2807643998
+theorem VE.Compose.SlotWire.slot_wire_empty
+  ∀ (j : Lean.Json),
+    VE.Compose.SlotWire.NoFacts j →
+      Except.map (fun r => (r.src, r.facts, r.certs, r.conflictFree)) (VE.Compose.SlotWire.replaySlotConflict j) =
+          Except.map (fun r => (r.src, [], r.certs, r.conflictFree)) (VE.SoftNorms.Wire.replaySoftConflict j) ∧
+        Except.map (fun r => (r.src, r.facts, r.w.M, r.w.target, r.w.tuple, r.w.conflict))
+              (VE.Compose.SlotWire.replaySlotWitness j) =
+            Except.map (fun r => (r.fst, [], r.snd.M, r.snd.target, r.snd.tuple, r.snd.conflict))
+              (VE.SoftNorms.Wire.replaySoftWitness j) ∧
+          Except.map (fun r => (r.src, r.facts, r.premises, r.conclusion, r.cert, r.valid))
+              (VE.Compose.SlotWire.replaySlotEntailment j) =
+            Except.map (fun r => (r.src, [], r.premises, r.conclusion, r.cert, r.valid))
+              (VE.SoftNorms.Wire.replaySoftEntailment j)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.certs@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.conflictFree@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.cert@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.conclusion@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.premises@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.valid@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.M@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.conflict@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.target@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessData.tuple@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.w@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftConflictReplay.certs@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.cert@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.conclusion@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.premises@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay.valid@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftEntailmentReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.target@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.tuple@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftEntailment@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 1300970991
+theorem VE.Compose.SlotWire.slot_wire_entailment_facts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotEntailmentReplay),
+    VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r →
+      VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items) ∧
+        (r.facts ≠ [] → ∃ B, VE.Compose.BaseAdmissibleP r.src.D r.facts B)
+  -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.SlotEntailmentReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.Structure@VE.Semantics
+  -- expr 3114353547
+theorem VE.Compose.SlotWire.slot_wire_witness_facts
+  ∀ (j : Lean.Json) (r : VE.Compose.SlotWire.SlotWitnessReplay),
+    VE.Compose.SlotWire.replaySlotWitness j = Except.ok r →
+      VE.Compose.SlotWire.decodeFacts r.src j = Except.ok (r.facts, r.items)
+  -- uses VE.Compose.SlotWire.SlotWitnessReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.items@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Formula@VE.Syntax
+  -- expr 2395042325
 theorem VE.Compose.adjoin_admissible
   ∀ (E : VE.Environment) (B : VE.Structure), (VE.Compose.adjoinOne B).Admissible E ↔ B.Admissible E
   -- uses VE.Compose.adjoinOne@VE.Compose.Adjoin VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
@@ -65063,6 +65224,10 @@ theorem VE.SoftNorms.Run.mkObj_get_append
       (k, v) ∈ pre → ¬k ∈ List.map (fun x => x.fst) rest → (Lean.Json.mkObj (pre ++ rest)).getObjVal? k = Except.ok v
   -- uses
   -- expr 3129764167
+theorem VE.SoftNorms.Run.needFacts_ok
+  ∀ {j : Lean.Json} {u : Unit}, VE.SoftNorms.Run.needFacts j = Except.ok u → (j.getObjVal? "facts").toBool = Bool.true
+  -- uses VE.SoftNorms.Run.needFacts@VE.SoftNorms.Run
+  -- expr 1558622277
 theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
   ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (answer : Lean.Json),
     answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
@@ -65155,6 +65320,51 @@ theorem VE.SoftNorms.Run.selected_semantics_nonvacuous
                 (VE.SoftNorms.Run.fullOver M rel)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.Run.fullOver@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
   -- expr 1736440632
+theorem VE.SoftNorms.Run.slot_wire_certificate
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "slot-certificate" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id r openLabels,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (j.getObjVal? "facts").toBool = Bool.true ∧
+                VE.Compose.SlotWire.replaySlotEntailment j = Except.ok r ∧
+                  VE.SoftNorms.Run.openAfterClassification r.src (j.getObjValD "environment") (j.getObjValD "norms")
+                        (j.getObjValD "pairs") =
+                      Except.ok openLabels ∧
+                    answer = VE.SoftNorms.Run.slotCertificateAnswer id r openLabels
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Compose.SlotWire.SlotEntailmentReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotEntailmentReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotEntailment@VE.Compose.SlotWire VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.openAfterClassification@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.slotCertificateAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
+  -- expr 4268038003
+theorem VE.SoftNorms.Run.slot_wire_conflict
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "slot-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              (j.getObjVal? "facts").toBool = Bool.true ∧
+                ((∃ r names,
+                    (j.getObjVal? "witness").toBool = Bool.true ∧
+                      VE.Compose.SlotWire.replaySlotWitness j = Except.ok r ∧
+                        VE.Bridge.strings ((j.getObjValD "witness").getObjValD "tuple") = Except.ok names ∧
+                          answer = VE.SoftNorms.Run.slotWitnessAnswer id r names) ∨
+                  ∃ res openLabels exhibit,
+                    (j.getObjVal? "witness").toBool = Bool.false ∧
+                      VE.Compose.SlotWire.replaySlotConflict j = Except.ok res ∧
+                        VE.SoftNorms.Run.openAfterClassification res.src (j.getObjValD "environment")
+                              (j.getObjValD "norms") (j.getObjValD "pairs") =
+                            Except.ok openLabels ∧
+                          (exhibit = Bool.true →
+                              ∃ M hM,
+                                VE.SoftNorms.Wire.decodeModel res.src
+                                      (Lean.Json.mkObj [("model", j.getObjValD "coherent_model")]) =
+                                    Except.ok ⟨M, hM⟩ ∧
+                                  VE.Compose.backgroundValidP res.src.D res.facts M = Bool.true) ∧
+                            answer =
+                              VE.SoftNorms.Run.slotConflictAnswer id res openLabels
+                                ((j.getObjValD "budget").getNat?.toOption.getD 10000) exhibit)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.stringField@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Compose.SlotWire.SlotConflictReplay.facts@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay.src@VE.Compose.SlotWire VE.Compose.SlotWire.SlotConflictReplay@VE.Compose.SlotWire VE.Compose.SlotWire.SlotWitnessReplay@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotConflict@VE.Compose.SlotWire VE.Compose.SlotWire.replaySlotWitness@VE.Compose.SlotWire VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.openAfterClassification@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.slotConflictAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.slotWitnessAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeModel@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 278227341
 theorem VE.SoftNorms.Run.softLabelled_formulas
   ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften
