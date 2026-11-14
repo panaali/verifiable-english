@@ -1011,11 +1011,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "5.2: third-party evaluation of tracked model capabilities",
+        "description": "5.2: “If we deem that a deployment warrants deeper testing of Tracked Categories of capability (as described in Section 3.1), for example based on results of Capabilities Report presented to them, then when available and feasible, OpenAI will work with third-parties to independently evaluate models.” (the act is OpenAI's work with third parties, not a required result; the guards carry the deeming about a deployment, OT14, and 'when available and feasible')",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have third parties independently evaluate the model"
+          "act": "{0} work with third parties to independently evaluate the model"
         }
       },
       "residual_risk_assessment": {
