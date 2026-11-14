@@ -119,8 +119,8 @@ sweep because no Lean changed (build checklist 13a covers trusted Lean only), an
 Command: a read-only script (`/tmp/expall/expall.py`, not committed). It loads the installed counter and runs `omit_exposure`
 on the RSP manifest (reviews/audit-c2-rspbase/rspbase/union/manifest.json, 79 units) at main a84c072d76 and at 0a611a163,
 this REPORT's first commit. Output: "units 79; exposures 125 -> 124", and the one row that left is
-`('CASES', 'CASES', 'no-record') no accounting line`. No row is new on any unit. This was re-run on the final commit
-(below).
+`('CASES', 'CASES', 'no-record') no accounting line`. No row is new on any unit. Re-run at 2de71fb1a, the commit with the
+finished REPORT: the same output, and exposure.py again ends "7 exposures on FACTS/CASES".
 
 ## Self-review against BUILDER-CHECKLIST
 
