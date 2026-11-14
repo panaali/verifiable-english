@@ -109,7 +109,44 @@ sweep because no Lean changed (build checklist 13a covers trusted Lean only), an
 - Named unchanged tests: `tests/test_safetyfw_usecases.py -k "test_section_6_is_the_frozen_key or
   test_transcription_is_pinned"` (4 passed; not in the selection, because their inputs did not change).
   `test_regulated_predicates_stay_64_after_fix_3` and fix-4's and fix-4b's tests are in test_rsp_fidelity_fix.py, which is selected.
-- Selected run: see "Final selected run" below.
+- Final selected run, on committed 0a611a163 with a clean tree: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
+  a84c072d76 --run` exit 0. It ran on GitHub Actions (run anthropic-rsp-cases-repair-0a611a16-t698487): shard 1 had 16 units,
+  16 passed; shard 2 had 15 units, 15 passed; 0 failed. After it, only this REPORT changed.
+- Tests on main-known-red.txt: none of the three is in this item's selection.
+
+## Every unit
+
+Command: a read-only script (`/tmp/expall/expall.py`, not committed). It loads the installed counter and runs `omit_exposure`
+on the RSP manifest (reviews/audit-c2-rspbase/rspbase/union/manifest.json, 79 units) at main a84c072d76 and at 0a611a163,
+this REPORT's first commit. Output: "units 79; exposures 125 -> 124", and the one row that left is
+`('CASES', 'CASES', 'no-record') no accounting line`. No row is new on any unit. This was re-run on the final commit
+(below).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: N.A. No relayed route or Lean answer is touched.
+2. Every deliverable built, no rule broken: PASS. See the Deliverables table (1, 2, 3, (a), (b)). The diff touches no ve/,
+   lean/, rust/, run.py, key or PLAN file (`git diff --stat main...HEAD`: the 5 files plus this folder). No permanent report
+   test is added. The in-flight branch overlap check printed nothing.
+3. Tests and gates can fail: PASS. Seeded bugs a-g (table above) each fail a named test.
+4. Python, Lean and Rust agree; valid inputs still pass: PASS for what exists here. The tool on main and on the branch
+   give the same 85-block result (`--check` output above). openai-preparedness's sidecar still passes:
+   test_safetyfw_accounting.py::test_case_sidecar_passes_in_form[openai-preparedness]. No Lean or Rust path.
+5. R8 binding: N.A. No relayed field.
+6. Gate evidence matches the final HEAD: PASS for the selected run (committed tree, above). The chain runs the gate.
+7. No unsigned item: PASS. No DELTA row; trust is +0 (`tools/trust_map.py --check`).
+8. Every user-visible change is in DELTA: N.A. Use-case files only; results.json is unchanged (Answers).
+9. Test selection finds the tests: PASS. `tools/select_tests.py --base a84c072d76` selects 29 of 622 units, including
+   test_rsp_fidelity_fix.py and test_safetyfw_accounting.py, which catch seeded bugs a-g.
+10. Lean statements: N.A. No Lean.
+11. Budgets and deadlines: N.A. No evaluator, budget or deadline is touched.
+12. CPU and memory: N.A. A one-line sidecar and a loop over at most two collection lines.
+13. Test-removed trailers: N.A. No test is removed or renamed.
+14. Both directions, cited evidence, spec re-read: PASS. The tool test has accept and refuse rows. Test (b) plants a changed
+    situation, a wrong factor and a stale allowance. Every count above names its command. PLAN 5, 6 and 12 item 15 were
+    re-read for the case check.
+15. No overclaim: PASS. Each "none" or "every" names its command (results diff, expall, trust_map). No silent cut: PASS
+    (deliverables 1-3 built). Every new check can fail: PASS (seeded bugs a-g). Limits charged before work: N.A. (no evaluator).
 
 ## Notes for the DRI
 
