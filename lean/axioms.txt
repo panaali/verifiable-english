@@ -102,15 +102,16 @@
 'VE.Acts.HookTwins.actsProfiles_nil_of_underActs' depends on axioms: [propext]
 'VE.Acts.HookTwins.admitDocumentIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.bind_congr_ok' does not depend on any axioms
+'VE.Acts.HookTwins.envelopeGate_actsProfiles' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.error_bind' does not depend on any axioms
 'VE.Acts.HookTwins.getObjValD_of_ok' does not depend on any axioms
 'VE.Acts.HookTwins.ok_bind' does not depend on any axioms
 'VE.Acts.HookTwins.replayConflictIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.replayEntailmentIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.replayWitnessIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Acts.HookTwins.runAdmissionActs_today' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.runAdmissionIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.runAdmission_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.HookTwins.runAdmission_today' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.runCaseActsRouted_today' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.runCaseActs_today' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.HookTwins.runCaseIn_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
