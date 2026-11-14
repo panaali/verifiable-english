@@ -43,6 +43,11 @@ ROUTES = {
     "soft-conflict": ("soft-norms", "soft-norms.json", "packages"),
     "soft-conflict-witness": ("soft-norms", "soft-norms.json", "witness"),
     "soft-selected": ("soft-norms", "soft-norms.json", "selected"),
+    # kb-3: the certificate relay (`check_soft_certificate`) and the slot kinds with `facts`.
+    "soft-certificate": ("soft-norms", "soft-norms.json", "certificate"),
+    "slot-certificate": ("soft-norms", "soft-norms.json", "slot_certificate"),
+    "slot-conflict": ("soft-norms", "soft-norms.json", "slot_packages"),
+    "slot-conflict-witness": ("soft-norms", "soft-norms.json", "slot_witness"),
     "soft-admission": ("soft-norms", "soft-norms.json", "admission"),
     "rights-elaborate": ("rights", "rights.json", "elaborate"),
     "rights-scope": ("rights", "rights.json", "scope"),
@@ -312,6 +317,17 @@ INVENTORY = {
     },
     "rights-admission": _ADMISSION,
 }
+# kb-3: the certificate answer's counts are Lean's elaboration's and the certificate's premise list
+# (`soft_route.bind_certificate`); a slot answer's `facts` is the number of facts sent (`bind_facts`;
+# tests/test_slot_premises.py::test_facts_retyped_or_rebound_is_unavailable fuzzes it with facts sent).
+INVENTORY["soft-certificate"] = {
+    "id": BOUND, "status": BOUND, "valid": lean("the certificate replay's verdict"),
+    "background": BOUND, "layers": BOUND,
+    "conditional_on": lean("which open premises Lean's replay used; each label is bound"), "conditional_on[]": BOUND,
+}
+INVENTORY["slot-certificate"] = {**INVENTORY["soft-certificate"], "facts": BOUND}
+INVENTORY["slot-conflict"] = {**INVENTORY["soft-conflict"], "facts": BOUND}
+INVENTORY["slot-conflict-witness"] = {**INVENTORY["soft-conflict-witness"], "facts": BOUND}
 
 # The fields of the document row this chain's answer carries. A soft norm's content is bound to the rule as written
 # (`_rule_bound`), its condition formulas to the same rule, all through the one path `units[].content`.
@@ -546,8 +562,9 @@ def _soft_sources():
 
 def _soft_calls(name, document, raw, norms):
     from tests.test_soft_norms_lean import model, packages
-    from ve.soft_route import admit_soft_document, check_soft_conflict, classify_soft_pairs, \
+    from ve.soft_route import admit_soft_document, check_soft_certificate, check_soft_conflict, classify_soft_pairs, \
         elaborate_soft_document, selected_at
+    from ve.wire import digest
     elaborated = elaborate_soft_document(document)
     # kb-10a: a base model over E′ (every non-regulated predicate, all false) and both act predicates at `a`.
     base = model({name: [] for name, entry in elaborated["environment_prime"]["vocabulary"]["predicates"].items()
@@ -559,7 +576,21 @@ def _soft_calls(name, document, raw, norms):
                  "graph": {"root": "leaf", "nodes": [{"name": "leaf", "ast": leaf["ast"], "label": leaf["label"]}]}}
     certified = packages(raw, norms, elaborated)
     witness = {"target": "x_required->x_permitted", "model": model({"soft__excepted__s": []}), "tuple": ["a"]}
+    # kb-3: a certificate of `top` bound to background′ and the layer premises (no facts).
+    prime = elaborated["environment_prime"]
+    version = "v0.2:" + ",".join(prime["profiles"])
+    env_id = digest(f"ve-environment-{version}\n", prime)
+    meaning = lambda ast: digest(f"ve-meaning-{version}\n", {"environment_id": env_id, "ast": ast})
+    top = {"checker_version": "ve-tableau-checker@2", "environment_id": env_id, "trace": {"rule": "close"},
+           "premise_meaning_ids": [meaning(item["ast"]) for item in elaborated["background"] + elaborated["premises"]],
+           "conclusion_meaning_id": meaning(["top"])}
     return {
+        "soft-certificate": lambda: check_soft_certificate(document, premises=[], conclusion=["top"], certificate=top),
+        "slot-certificate": lambda: check_soft_certificate(document, premises=[], conclusion=["top"], certificate=top,
+                                                           facts=[]),
+        "slot-conflict": lambda: check_soft_conflict(document, packages=certified, budget=7, facts=[]),
+        **({"slot-conflict-witness": lambda: check_soft_conflict(document, witness=witness, facts=[])}
+           if name == "witness" else {}),
         "soft-elaborate": lambda: elaborate_soft_document(document),
         "soft-pairs": lambda: classify_soft_pairs(document),
         "soft-conflict": lambda: check_soft_conflict(document, packages=certified, budget=7),
@@ -573,7 +604,7 @@ def _soft_calls(name, document, raw, norms):
 def _soft_route_of(case):
     kind = case["kind"]
     return ("soft-admission" if kind == "admission" else
-            "soft-conflict-witness" if kind == "soft-conflict" and "witness" in case else kind)
+            f"{kind}-witness" if kind in ("soft-conflict", "slot-conflict") and "witness" in case else kind)
 
 
 def _rights_sources():
@@ -950,6 +981,9 @@ UNEXERCISED = {
                                         "test_a_mutated_conflict_report_part_is_refused")},
     # `acts@0` refuses `rights@0`; the rights route's prime is bound by the soft route's binder (ap-1bg)
     "rights-elaborate": _ACTS_PRIME,
+    # kb-3: a certificate of `top` uses no coherence premise; the labels are forged in the item's own test.
+    "soft-certificate": {"conditional_on[]": "test_certificate_conditional_labels_are_bound"},
+    "slot-certificate": {"conditional_on[]": "test_certificate_conditional_labels_are_bound"},
     # The W1 path sends no overlay.
     "english.statement": {"result.identities.overlay_digest":
                           "test_an_overlay_digest_the_request_did_not_send_is_unavailable"},

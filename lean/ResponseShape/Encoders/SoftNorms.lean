@@ -118,6 +118,24 @@ theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : repl
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
+/-- The slot twin: not conflict-free relative to the facts, so some target's certificate is missing or
+fails, which `slotFirstFailure` names. -/
+theorem slotFirstFailure_of_not_free (j : Json) (res : VE.Compose.SlotWire.SlotConflictReplay)
+    (h : VE.Compose.SlotWire.replaySlotConflict j = .ok res) (hf : res.conflictFree = false) :
+    (VE.Compose.SlotWire.slotFirstFailure res).isSome = true := by
+  unfold VE.Compose.SlotWire.replaySlotConflict at h
+  obtain ⟨env, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨src, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  simp only [VE.Compose.SlotWire.SlotConflictReplay.conflictFree, VE.Compose.slotConflictFreeCheck, List.length_map,
+    beq_self_eq_true, Bool.true_and, List.all_eq_false] at hf
+  obtain ⟨⟨t, c⟩, hm, hc⟩ := hf
+  simp only [VE.Compose.SlotWire.slotFirstFailure, Option.isSome_map]
+  rw [List.find?_isSome]
+  exact ⟨(t, c), hm, by cases c <;> simp_all⟩
+
 /-- A `soft-selected` answer: the background flag and one typed row per decoded query. -/
 theorem selected_fits (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
     (E : List (SoftNode × VE.Formula) × List (String × VE.Formula)) (qs : List SelectedQuery) :
@@ -147,12 +165,16 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
     | fits_from elaborate_fits _ _ _ _ _ _
     | fits_from pairs_fits _ _ _ _ _ _ ‹_›
     | (intro v hv; fits_from runSelected_fits _ _ _ hv)
+    | (simp only [slotCertificateAnswer, slotWitnessAnswer, slotConflictAnswer, VE.Route.Wire.ok]; fits)
     | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
-  all_goals
-    exfalso
-    have := firstFailure_of_not_free j _ ‹replaySoftConflict j = .ok _› (by simp_all)
-    simp_all
+  all_goals first
+    | (exfalso
+       have := firstFailure_of_not_free j _ ‹replaySoftConflict j = .ok _› (by simp_all)
+       simp_all; done)
+    | (exfalso
+       have := slotFirstFailure_of_not_free j _ ‹VE.Compose.SlotWire.replaySlotConflict j = .ok _› (by simp_all)
+       simp_all)
 
 /-- Every admission's kinds are its units' rendered kinds. -/
 theorem admitDocument_kinds (environment document : Json) :
