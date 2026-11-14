@@ -230,3 +230,15 @@ Task bug (c), the shadow comparing Python with Python, belongs to step (1). It w
     Python's for a hand-built one (`tests/test_keyed_answers_authority.py::test_a_hand_built_document_keeps_pythons_selection`).
 15. Overclaim, silent cut, checks can fail, limits: PASS. Each number above names its file. The Preparedness parts
     are written as not run. Each new check has a seeded bug. The query limit is Lean's, charged before decoding (kb-10a).
+
+## Review fix (kb-10b-switch-review.final.md)
+
+- **F1 (B):** `harness()` in `tests/test_kb10b_switch.py` ran each harness's `run.py` with whatever another test
+  had left in `sys.modules`, so eligibility's `translation` (from `tests/test_eligibility_wfp.py`) stood in for
+  FSF's, and it left the harness's own siblings and `sys.path` entries behind. The class is any harness loader
+  that does not keep a use case's bare-named siblings apart. Fix: one shared loader, `tests/usecase_scope.py`
+  (`usecase_scope`, `load_script`), whose sibling names are every `*.py` stem of the use case's directory (read
+  from the tree, not a hand list); it moves other use cases' modules aside while the script loads and restores
+  `sys.modules` and the whole `sys.path` afterwards. Regression test:
+  `tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind` (a decoy module
+  under every sibling name of the three harnesses). Two seeded loader bugs are in `seeded-bugs.json`.
