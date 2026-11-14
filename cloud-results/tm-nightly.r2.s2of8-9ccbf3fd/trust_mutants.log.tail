@@ -1,0 +1,9 @@
+trust_mutants: 35 definitions, 35 mutants (6 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/NormDefaults/Layered.lean:129 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) list-first: hookPacks H -> ((hookPacks H).take 1) (the proofs it breaks: lean/VE/NormDefaults/PacksExamples.lean:154)
+SURVIVOR lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) list-first: premises.map Formula.toCore -> ((premises.map Formula.toCore).take 1) (the proofs it breaks: lean/VE/Closure/Consequence.lean:11, lean/VE/Core/Conservativity.lean:42, l...)
+trust_mutants: 4 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 29 OTHER SHARD in 2820 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 SURVIVOR, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 13 OTHER SHARD
+trust_mutants: K, trusted: 1 SURVIVOR
+trust_mutants: S, trusted: 1 KILLED, 2 OTHER SHARD
+trust_mutants: steps: wall plan 12.3 s, scratch 2.1 s, control_build 0.2 s, probe_install 1 s, mutants 2804.3 s, cleanup 0.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 35.8 s (4), mutant_builds 70.2 s (7), mutant_checks 6104 s (12), stage_controls 915.9 s (3), mutant_probes 36.5 s (4)
