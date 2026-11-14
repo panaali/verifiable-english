@@ -44,7 +44,6 @@
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
-- `tests/test_pinned_sources.py` — usecases/pinned_sources.json, tools/fetch_pinned_sources.py, the test helper tests/pinned_source.py and the gate's seeding of its fresh home (item actions-pinn…
 - `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
 - `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
@@ -84,3 +83,4 @@
 - `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).
 - `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
 - `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
+- `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).

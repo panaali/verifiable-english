@@ -82,7 +82,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 9 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 10 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 34 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 47 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
@@ -96,7 +96,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 12 modules — -
 - [lean/VE/Commands/](lean__VE__Commands.md) — 11 modules — -
-- [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
+- [lean/VE/Compose/](lean__VE__Compose.md) — 10 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
 - [lean/VE/Defaults/](lean__VE__Defaults.md) — 15 modules — -
@@ -121,14 +121,14 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 8 modules — -
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 24 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
-- [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
+- [lean/VE/Risk/](lean__VE__Risk.md) — 15 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 32 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
 - [lean/VE/Scope/](lean__VE__Scope.md) — 20 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 17 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 32 modules — -
-- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 17 modules — -
+- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 19 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 9 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
@@ -138,16 +138,16 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 89 modules — -
-- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 87 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
 - [tests/ part 5](tests--part-5.md) — 86 modules — -
-- [tests/ part 6](tests--part-6.md) — 79 modules — -
+- [tests/ part 6](tests--part-6.md) — 80 modules — -
 - [tests/ part 7](tests--part-7.md) — 83 modules — -
-- [tests/ part 8](tests--part-8.md) — 56 modules — -
+- [tests/ part 8](tests--part-8.md) — 55 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
-- [tools/ part 1](tools--part-1.md) — 96 modules — -
-- [tools/ part 2](tools--part-2.md) — 22 modules — -
+- [tools/ part 1](tools--part-1.md) — 97 modules — -
+- [tools/ part 2](tools--part-2.md) — 20 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 4 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.

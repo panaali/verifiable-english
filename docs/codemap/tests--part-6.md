@@ -1,4 +1,3 @@
-- `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
 - `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
 - `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
 - `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
@@ -77,3 +76,5 @@
 - `tests/test_risk_english.py` — Fixture k19 (risk.md 2.1 to 2.3, 8.2): the gate of the risk English surface.
 - `tests/test_risk_every_diagnostic.py` — Every diagnostic of risk.md 6 from the Lean route on a hand-written input (docs/spec/risk.md 8.3).
 - `tests/test_risk_fixtures.py` — risk@0 fixtures of docs/spec/risk.md 8.1 checked against the expectations of 8.2 on the Lean route.
+- `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
+- `tests/test_risk_integration.py` — Risk spec cell fixtures through the Python relay and direct Lean route.

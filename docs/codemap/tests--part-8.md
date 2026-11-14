@@ -1,4 +1,3 @@
-- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
 - `tests/test_statement_scanner.py` — The shared declaration scanner of the statement gates reads a declaration's extent as Lean does (review sc-2d-f1 F2).
 - `tests/test_stats.py` — (no module docstring)
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
