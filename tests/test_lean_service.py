@@ -21,7 +21,7 @@ from hypothesis import HealthCheck, given, settings, strategies as st
 
 from subprocesses import BUSY_PHASES, HANG_TIMEOUT, busy_cpu
 from tests.lean_build import lean_build
-from ve.backends.lean_service import (ADDRESS_SPACE, HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES,
+from ve.backends.lean_service import (ADDRESS_SPACE, HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES, SOFT_HANDLE_KEY,
                                       MAX_LINE_BYTES, CheckerUnavailable, LeanService,
                                       DEADLINES, LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
@@ -133,6 +133,7 @@ def test_response_schemas_follow_lean_sources():
     assert re.search(r"def maxHandles : Nat := (\d+)", protocol)[1] == str(MAX_HANDLES)
     assert re.search(r"def maxHandleBytes : Nat := (\d+)", protocol)[1] == str(MAX_HANDLE_BYTES)
     assert re.search(r'def handleKey : String := "(\w+)"', protocol)[1] == HANDLE_KEY
+    assert re.search(r'def softHandleKey : String := "(\w+)"', protocol)[1] == SOFT_HANDLE_KEY
     runner = (ROOT / "lean/VE/Service/EnglishRun.lean").read_text()
     terms = runner.split("def encodeTerm :", 1)[1].split("def encodeFormula :", 1)[0]
     formulas = runner.split("def encodeFormula :", 1)[1].split("/-- Decide", 1)[0]
@@ -181,8 +182,8 @@ def test_handshake(service_executable):
         assert deadline_key_faults(DEADLINES, service.handshake["modes"]) == []
         assert service.handshake["limits"] == STATED_LIMITS
         # The handle table the client mirrors (lean-first b2): the service states it, the schema pins it.
-        assert service.handshake["handles"] == {"member": HANDLE_KEY, "max": MAX_HANDLES,
-                                                "max_bytes": MAX_HANDLE_BYTES}
+        assert service.handshake["handles"] == {"member": HANDLE_KEY, "soft_member": SOFT_HANDLE_KEY,
+                                                "max": MAX_HANDLES, "max_bytes": MAX_HANDLE_BYTES}
         assert len(service.build) == 64
 
 
@@ -528,7 +529,8 @@ hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": __MODES__,
          "codes": __CODES__,
          "limits": __LIMITS__,
-         "handles": {"member": "environment_handle", "max": 64, "max_bytes": 67108864}}
+         "handles": {"member": "environment_handle", "soft_member": "soft_document_handle", "max": 64,
+                     "max_bytes": 67108864}}
 if behaviour == "handshake":
     hello["service"] = "other"
 if behaviour == "null-modes":
@@ -550,6 +552,13 @@ if behaviour == "large-limits":
     hello["limits"]["max_line_bytes"] += 1
 if behaviour == "missing-limit":
     del hello["limits"]["max_nodes"]
+# The soft document member (kb-10e) is the schema's const, required: each fault is refused at the start.
+if behaviour == "missing-soft-member":
+    del hello["handles"]["soft_member"]
+if behaviour == "retyped-soft-member":
+    hello["handles"]["soft_member"] = 7
+if behaviour == "other-soft-member":
+    hello["handles"]["soft_member"] = "environment_handle"
 if behaviour == "bad-protocol":
     hello["protocol"] = 1
 if behaviour == "startup-eof":
@@ -1517,7 +1526,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
 
 @pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "fewer-modes", "extra-mode",
                                        "reordered-modes", "duplicate-mode", "retyped-mode", "small-limits",
-                                       "large-limits", "missing-limit", "bad-protocol", "startup-eof"])
+                                       "large-limits", "missing-limit", "missing-soft-member", "retyped-soft-member",
+                                       "other-soft-member", "bad-protocol", "startup-eof"])
 def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
     expired.handshakes = behaviour == "silent"
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
