@@ -1,3 +1,4 @@
+-- ve-layer: 4 (states theorems on Risk.Run.runCase, a layer-4 runner: kb-risk)
 import VE.Risk.Run
 
 /-! Runner theorems of the `risk` route's keyed case kinds (kb-risk; docs/spec/kernel-boundary.md 1.2, 1.3, 7).
