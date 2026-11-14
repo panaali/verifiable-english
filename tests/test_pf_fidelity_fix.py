@@ -925,3 +925,87 @@ def test_fix6_units_carry_only_their_recorded_exposures():
     for name, rows in exposures.items():
         for path, detail in rows:
             assert path in ("loss", "unformalised") or detail.rstrip(".") in item27, (name, path, detail)
+
+
+# openai-preparedness-cases-repair: the case records (cases.json, the unit CASES of the omission audit) have an accounting
+# line. It says "nothing" because the records hold PLAN's case facts and PLAN 6's situations, not Preparedness source text.
+CASE_KEYS = {"id", "family", "levels", "activity", "situation", "findings", "quantities"}
+# Situations that are not a PLAN 6 Situation cell word for word, each with the PLAN cell and the reason.
+SITUATION_ALLOWED = {
+    "K8": ("the same", "the same (as K7)", "PLAN 6.3's 'the same' names K7's row above it"),
+    "T2": ("5 weeks against 20", "a generational improvement in 5 weeks; the equivalent 2024 progress took 20 weeks",
+           "PLAN 6.4's short cell written in T1's form; quantities holds 5 and 20"),
+}
+
+
+def _accounting_tool():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("safetyfw_accounting", REPO / "usecases" / "safetyfw_accounting.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    return tool
+
+
+def _plan_section(number):
+    plan = (PF / "PLAN.md").read_text(encoding="utf-8")
+    return re.search(rf"^## {number}\. .*?(?=^## \d+\. |\Z)", plan, re.M | re.S).group(0)
+
+
+def test_cases_accounting_line_exists_and_parses():
+    """The last line of accounting.d1.txt is the case records' line, "nothing". The accounting tool reads it as a
+    collection unit with no problem, and the installed omission rule (tests/omission_rule.py) gives CASES no
+    no-record, loss or mistag exposure. Its report path is left out: it reads batch reports, which no permanent
+    test pins (D4)."""
+    lines = (PF / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
+    assert lines[-1] == "CASES | omits: nothing"
+    assert [line for line in lines if line.startswith("CASES ")] == [lines[-1]]
+    result = _accounting_tool().account(PF)
+    assert result["problems"] == []
+    assert result["collections"] == [{"id": "CASES", "entries": [], "problems": []}]
+    assert [p for p, _ in omission_exposures(["CASES"]).get("CASES", []) if p != "report"] == []
+
+
+def test_every_case_text_is_plan_text_or_an_allowed_transcription():
+    """Every text field of cases.json is PLAN wording. Families A and B are PLAN 5's table read with its case-facts
+    sentence (one case per level, and per activity for A); K, T and G situations are their PLAN 6 Situation cells,
+    except SITUATION_ALLOWED, each with its reason. `source` is PLAN 5's case-facts sentence and the activity names
+    are PLAN 2's four activities. No record has a field beyond CASE_KEYS: a transcribed source sentence would need
+    a field of its own and its own accounting entry."""
+    cases = json.loads((PF / "cases.json").read_text(encoding="utf-8"))
+    plan5, plan6 = _plan_section(5), _plan_section(6)
+    norm = lambda text: " ".join(text.replace("*", "").split())
+    facts = norm(re.search(r"\*\*Case facts\.\*\* (.*?)\n\n", plan5, re.S).group(1))
+    assert cases["source"] == ("PLAN.md section 5 case facts: " + facts[0].lower() + facts[1:-1]
+                               + " (findings: true found, false found not to hold); transcribed, not changed")
+    assert set(cases["activities"].values()) <= set(norm(_plan_section(2).split("the four activities the text "
+                                                     "distinguishes: ")[1].split(";")[0]).split(", "))
+    levels = re.search(r"\*L\* ∈ \{([^}]*)\}", plan5).group(1).split(", ")
+    activities = re.search(r"\*X\* ∈ \{([^}]*)\}", plan5).group(1).split(", ")
+    assert sorted(activities) == sorted(cases["activities"])
+    cells = {}   # one case scored as several items (K6a, K6b, K6c): its first row states it, the rest say "the same"
+    for case_id, item, cell in re.findall(r"^\| ([KTG]\d+)([a-z]?) \| ([^|]*?) \|", plan6, re.M):
+        assert cells.setdefault(case_id, cell) == cell or item > "a" and cell == "the same", (case_id, item)
+    seen = set()
+    for case in cases["cases"]:
+        assert set(case) <= CASE_KEYS, case["id"]
+        reached = "no threshold reached" if not case["levels"] else f"{case['levels'][0]} reached"
+        if case["family"] == "A":
+            level, activity = case["id"][2:].rsplit("-", 1)
+            assert level in levels and activity in activities and case["activity"] == activity, case["id"]
+            assert case["levels"] == ([] if level == "L0" else [level]) and case["findings"] == {}, case["id"]
+            assert case["situation"] == f"{reached}; activity {activity}", case["id"]
+        elif case["family"] == "B":
+            level = case["id"][2:]
+            assert level in levels and case["levels"] == ([] if level == "L0" else [level]), case["id"]
+            assert case["findings"] == {"OT13": True}, case["id"]
+            assert case["situation"] == f"{reached}; a major deployment (OT13)", case["id"]
+        elif case["id"] in SITUATION_ALLOWED:
+            cell, situation, _reason = SITUATION_ALLOWED[case["id"]]
+            assert cells[case["id"]] == cell and case["situation"] == situation, case["id"]
+        else:
+            assert case["situation"] == cells[case["id"]], case["id"]
+        seen.add(case["id"])
+    assert set(cells) <= seen   # every K, T and G case of PLAN 6 has its record, and no record is extra
+    assert len(seen) == len(cases["cases"]) == len(levels) * len(activities) + len(levels) + len(cells)
+    assert {c["id"]: c.get("quantities") for c in cases["cases"] if c["family"] == "T"} == {
+        "T1": {"weeks": 4, "weeks_2024": 20}, "T2": {"weeks": 5, "weeks_2024": 20}}
