@@ -1,33 +1,29 @@
 {
  "anthropic-rsp": {
-  "lean _check_certificate_lean": 1434,
-  "lean _evaluate_lean": 652,
+  "lean _check_certificate_lean": 1675,
+  "lean _evaluate_lean": 492,
   "lean soft-elaborate": 279,
+  "lean soft-selected": 122,
   "python _check_conflict_python": 26,
   "python _find_conflict": 26,
-  "python completed": 362,
-  "python prover-self-replay": 1451,
-  "python selected_rules": 392
+  "python prover-self-replay": 1692
  },
  "openai-preparedness": {
-  "lean _check_certificate_lean": 3131,
-  "lean _evaluate_lean": 1714,
-  "lean soft-elaborate": 1237,
+  "lean _check_certificate_lean": 3185,
+  "lean _evaluate_lean": 1750,
+  "lean soft-elaborate": 1241,
+  "lean soft-selected": 1180,
   "python _check_conflict_python": 52,
   "python _find_conflict": 52,
-  "python completed": 2620,
-  "python prover-self-replay": 3151,
-  "python selected_rules": 13394
+  "python prover-self-replay": 3205
  },
  "safety-framework": {
-  "lean _check_certificate_lean": 3979,
-  "lean _evaluate_lean": 9076,
-  "lean soft-elaborate": 315,
-  "python _check_conflict_python": 2426,
-  "python _evaluate_validated": 370,
-  "python _find_conflict": 2344,
-  "python holds_at": 3314,
-  "python prover-self-replay": 4059,
-  "python selected_rules": 6173
+  "lean _check_certificate_lean": 3325,
+  "lean _evaluate_lean": 8193,
+  "lean soft-elaborate": 273,
+  "lean soft-selected": 642,
+  "python _check_conflict_python": 1463,
+  "python _find_conflict": 1399,
+  "python prover-self-replay": 3413
  }
 }

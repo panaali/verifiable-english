@@ -358,8 +358,10 @@ class SoftenedNormDocument(NormDocument):
         with _SELECTION_LOCK:
             state = self.__dict__.get("_selection")
             if state is None:
-                identity = soft_digest("ve-soft-selected-document\n",
-                                       [source.env.to_dict(), [rule.to_dict() for rule in source.rules]])
+                # An in-process key of the request's soft source (not a published identity).
+                identity = hashlib.sha256(json.dumps(
+                    [source.env.to_dict(), [rule.to_dict() for rule in source.rules]], ensure_ascii=False,
+                    sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
                 state = self.__dict__["_selection"] = {"identity": identity, "keys": {}}
             known = state["keys"].get(id(model))
             if known is not None and known[0] is model:
