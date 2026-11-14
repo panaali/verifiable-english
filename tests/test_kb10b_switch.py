@@ -105,6 +105,19 @@ def test_another_model_or_another_document_is_another_call(lean, calls):
     assert len(calls) == 3
 
 
+def test_same_environment_with_other_rules_is_another_document(lean, calls):
+    """Review F1: a document is its environment AND its rules. Without the strict rule `h`, `b` selects `d`, not
+    `h`; a kept answer keyed by the environment alone would give the second document the first one's rows."""
+    from tests.test_soft_selected import RULES
+    from ve.softnorms import SoftNormDocument
+    full = document()
+    fewer = SoftNormDocument(full.env, RULES[1:])
+    assert full.env.to_dict() == fewer.env.to_dict()
+    assert [r.name for r in full.elaborated.selected_rules("x_required", model_of(full), ("b",))] == ["h"]
+    assert [r.name for r in fewer.elaborated.selected_rules("x_required", model_of(fewer), ("b",))] == ["d"]
+    assert len(calls) == 2
+
+
 def test_a_wire_dictionary_model_is_the_same_pair_as_its_finite_model(lean, calls):
     doc = document()
     assert doc.elaborated.outcome_at("x_required", model_of(doc), ("b",)) is True

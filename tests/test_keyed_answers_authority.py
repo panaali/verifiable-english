@@ -129,12 +129,18 @@ def test_a_soft_document_takes_no_lean_norms_route(soft_document):
     assert not norms._lean_route(soft_document)
 
 
-def test_selection_and_outcome_are_leans_soft_selected(soft_document):
-    """kb-10b: a document built from its soft source asks Lean's `soft-selected`, once per document and model."""
+@pytest.mark.parametrize("first", ["selected_rules", "outcome_at"])
+def test_selection_and_outcome_are_leans_soft_selected(soft_document, monkeypatch, first):
+    """kb-10b: a document built from its soft source asks Lean's `soft-selected`, once per document and model,
+    whichever question comes first. The process-wide kept answers start empty, so an earlier test that asked the
+    same pair (here: the other parameter, on the same module-scoped document) cannot hide the call."""
+    from ve import softnorms
+    monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
     model = _case(soft_document)
     with keyed_paths.recording() as counts:
-        selected = soft_document.selected_rules("required", model, ("a",))
-        outcome = soft_document.outcome_at("required", model, ("a",))
+        answers = {name: getattr(soft_document, name)("required", model, ("a",))
+                   for name in (first, *{"selected_rules", "outcome_at"} - {first})}
+        selected, outcome = answers["selected_rules"], answers["outcome_at"]
     assert [rule.name for rule in selected] == ["rule-2"] and outcome is True
     assert dict(counts) == {"lean soft-selected": 1}
     _check_against_table(counts)

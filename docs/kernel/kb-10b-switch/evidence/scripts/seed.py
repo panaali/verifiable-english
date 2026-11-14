@@ -19,6 +19,14 @@ BUGS = [
   "tests/test_kb10b_switch.py::test_one_call_per_document_and_model_sends_every_query_of_the_pair"),
  ("k", "usecases/anthropic-rsp/run.py", 'outcome_at(predicate, model(doc, case), tuple(values))', 'outcome_at(predicate, model(doc, case), tuple(values)[::-1])',
   "tests/test_kb10b_switch.py::test_the_harnesses_completed_is_outcome_at"),
+ # Restart round (DRI note 2026-11-14 item 2): review F1 (a document keyed by its environment alone) and F7 (the
+ # authority test does not reset the process-wide kept answers; its second parameter then sees no call).
+ ("l", "ve/softnorms.py", '[source.env.to_dict(), [rule.to_dict() for rule in source.rules]]', '[source.env.to_dict()]',
+  "tests/test_kb10b_switch.py::test_same_environment_with_other_rules_is_another_document"),
+ ("m", "tests/test_keyed_answers_authority.py",
+  '    monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())\n    model = _case(soft_document)\n    with',
+  '    model = _case(soft_document)\n    with',
+  "tests/test_keyed_answers_authority.py::test_selection_and_outcome_are_leans_soft_selected"),
 ]
 out = []
 for name, path, a, b, test in BUGS:
