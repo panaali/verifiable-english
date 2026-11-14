@@ -1,0 +1,10 @@
+trust_mutants: 29 definitions, 35 mutants (4 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-drop-last: ["order@0", "relational-fol@0", "time@0"] -> (["order@0", "relational-fol@0", "time@0"].dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Service/Standalone.lean:323 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) list-drop-last: VE.Compose.documentLayers -> (VE.Compose.documentLayers.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) list-drop-last: VE.Cardinality.Wire.profileLists -> (VE.Cardinality.Wire.profileLists.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 1 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 31 OTHER SHARD in 1989 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 10 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 2 UNKNOWN, 18 OTHER SHARD
+trust_mutants: K, trusted: 1 OTHER SHARD
+trust_mutants: S, trusted: 2 OTHER SHARD
+trust_mutants: steps: wall plan 20 s, scratch 5.1 s, control_build 0.4 s, probe_install 1.4 s, mutants 1958.3 s, cleanup 4.2 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 13.7 s (1), mutant_builds 190.4 s (5), mutant_checks 5890.9 s (5), stage_controls 291.8 s (1), mutant_probes 23.9 s (1)
