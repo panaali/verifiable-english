@@ -1,4 +1,3 @@
--- ve-layer: 4 (the document mode's core path: the lowering's core documents sent to the kernel, the fold's answer)
 import VE.Service.CoreDocument
 import VE.Kernel.DocumentFold
 import VE.SoftNorms.SlotSound
@@ -172,12 +171,20 @@ def choicesJson (docs : List (Choice × CoreDoc)) : Json :=
   Json.arr (docs.map fun (c, _) =>
     Json.arr (c.map fun (s, i) => Json.mkObj [("set", .str s), ("reading", toJson i)]).toArray).toArray
 
+/-- The answer's name of a status of the fold. -/
+def unitStatus : DocumentFold.Status → UnitStatus
+  | .checked => .checked
+  | .opened => .opened
+  | .labelled => .labelled
+  | .unformalised => .unformalised
+
 /-- The view: today's answer fields over the fold's statuses (`Document.encode`), each unit's core statements per
 choice, and the choices. It reads the statuses it is given and decides none. -/
-def viewOf (I : Inputs) (docs : List (Choice × CoreDoc)) (statuses : List (String × String)) : Json :=
-  let status := fun (id own : String) => (statuses.lookup id).getD own
-  let units := I.d.units.map fun u => { u with status := status u.id u.status }
-  let rows := I.rows.map fun r => { r with status := (UnitStatus.ofName? (status r.id r.status.name)).getD r.status }
+def viewOf (I : Inputs) (docs : List (Choice × CoreDoc)) (statuses : List (String × DocumentFold.Status)) : Json :=
+  let status := fun (id : String) (own : UnitStatus) => ((statuses.lookup id).map unitStatus).getD own
+  let units := I.d.units.map fun u =>
+    { u with status := ((statuses.lookup u.id).map fun s => (unitStatus s).name).getD u.status }
+  let rows := I.rows.map fun r => { r with status := status r.id r.status }
   let J := I.d.records.map (·.1)
   let c : Checked := ⟨I.documentId, VE.Discourse.Loader.sourceIdOf I.d.E.version I.d.doc.source, I.d.doc.source, units, rows, I.d.front,
     I.block, if I.d.judged then some (VE.Judgments.usageMap I.d.E.rv.definitions I.d.J I.views) else none,
@@ -211,8 +218,8 @@ def refusal (docs : List (Choice × CoreDoc)) (i : Nat) (e : String) : String :=
   s!"{e} (core document of choice {i}: {((docs[i]?.map (·.1)).getD []).map fun (s, k) => s!"{s} reading {k}"})"
 
 /-- A unit whose authored status is not the fold's. -/
-def contradicted (I : Inputs) (statuses : List (String × String)) : Bool :=
-  I.d.units.any fun u => u.explicit.any (some · != statuses.lookup u.id)
+def contradicted (I : Inputs) (statuses : List (String × DocumentFold.Status)) : Bool :=
+  I.d.units.any fun u => u.explicit.any (some · != (statuses.lookup u.id).map fun s => (unitStatus s).name)
 
 def answer (j : Json) : Except String Json := do
   let p ← prepare j

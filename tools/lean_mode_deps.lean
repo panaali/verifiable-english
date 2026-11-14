@@ -30,7 +30,7 @@ def responseModules (env : Environment) (start : Name) : List String := Id.run d
   return modules.eraseDups
 
 example (j : Json) :
-    VE.Service.runMode .document j = VE.Service.Document.runCaseReported j := rfl
+    VE.Service.runMode .document j = VE.Service.CoreCheck.runCaseReported j := rfl
 
 run_cmd do
   let env ← getEnv
@@ -39,7 +39,7 @@ run_cmd do
   for mode in VE.Service.modes do
     let key := (toString (repr mode)).splitOn "." |>.getLast!
     let pin := Name.str `VE.Service s!"runMode_{key}"
-    let rhs ← if mode == .document then pure (mkConst ``VE.Service.Document.runCaseReported) else do
+    let rhs ← if mode == .document then pure (mkConst ``VE.Service.CoreCheck.runCaseReported) else do
       let some info := env.find? pin | throwError m!"missing dispatch pin {pin}"
       let .forallE _ _ body _ := info.type | throwError m!"malformed dispatch pin {pin}"
       let args := body.getAppArgs

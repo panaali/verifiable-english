@@ -28,7 +28,7 @@ theorem choices_fits (j : Json) (docs : List (VE.Service.CoreDocument.Choice × 
   fits
 
 theorem view_fits (j : Json) (I : Inputs)
-    (docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)) (st : List (String × String)) :
+    (docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc)) (st : List (String × VE.Kernel.DocumentFold.Status)) :
     Fits j (skel% "document.json#/$defs/core_view") (viewOf I docs st) := by
   unfold viewOf VE.Service.Document.encodeFields
   by_cases hj : I.d.judged <;> simp only [hj, ↓reduceIte, Bool.false_eq_true, List.cons_append, List.nil_append,
@@ -49,12 +49,12 @@ def rowsJson (rows : List VE.Kernel.Row) : Json :=
     | .ok a => ("answer", a)
     | .error e => ("refused", Json.str e)]).toArray
 
-theorem fold_eq (v : List (String × String) → Json) (t : List VE.Kernel.DocumentFold.UnitRow) (req : Json)
+theorem fold_eq (v : List (String × VE.Kernel.DocumentFold.Status) → Json) (t : List VE.Kernel.DocumentFold.UnitRow) (req : Json)
     (rows : List VE.Kernel.Row) :
     VE.Kernel.DocumentFold.fold v t req rows =
       Json.mkObj [("view", v (VE.Kernel.DocumentFold.statuses t rows)), ("rows", rowsJson rows)] := rfl
 
-theorem fold_get (v : List (String × String) → Json) (t : List VE.Kernel.DocumentFold.UnitRow) (req : Json)
+theorem fold_get (v : List (String × VE.Kernel.DocumentFold.Status) → Json) (t : List VE.Kernel.DocumentFold.UnitRow) (req : Json)
     (rows : List VE.Kernel.Row) :
     (VE.Kernel.DocumentFold.fold v t req rows).getObjValD "view" = v (VE.Kernel.DocumentFold.statuses t rows) ∧
       (VE.Kernel.DocumentFold.fold v t req rows).getObjValD "rows" = rowsJson rows := by

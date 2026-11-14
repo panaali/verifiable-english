@@ -1,7 +1,7 @@
 {
- "kernel_lines": 10023,
- "keyed_kernel_lines": 10023,
- "keyed_lines": 16777,
+ "kernel_lines": 10041,
+ "keyed_kernel_lines": 10041,
+ "keyed_lines": 16795,
  "paths": [
   {
    "axioms": [],
@@ -331,12 +331,12 @@
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 5376,
+   "lines": 5394,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 5368,
+   "spec_lines": 5386,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -353,7 +353,7 @@
     "VE.CertificateWire": 120,
     "VE.ClaimGraph": 103,
     "VE.Compose.Slot": 19,
-    "VE.Compose.SlotWire": 58,
+    "VE.Compose.SlotWire": 72,
     "VE.Core.Bridge": 37,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
@@ -396,7 +396,7 @@
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Prepared": 8,
-    "VE.SoftNorms.Run": 178,
+    "VE.SoftNorms.Run": 182,
     "VE.SoftNorms.Selected": 15,
     "VE.SoftNorms.SelectedSound": 15,
     "VE.SoftNorms.Semantics": 47,
@@ -411,6 +411,9 @@
     "VE.TableauClosure": 63
    },
    "stated": {
+    "VE.Compose.SlotWire.replaySlotAdmission": [
+     "VE.Compose.SlotWire.replaySlotAdmission_sound"
+    ],
     "VE.Compose.SlotWire.replaySlotConflict": [
      "VE.Compose.SlotWire.slot_wire_conflict_sound",
      "VE.Compose.SlotWire.slot_wire_conflict_facts"
@@ -434,13 +437,14 @@
      "VE.SoftNorms.Run.soft_wire_elaborate",
      "VE.SoftNorms.Run.soft_wire_selected",
      "VE.SoftNorms.Run.slot_wire_certificate",
-     "VE.SoftNorms.Run.slot_wire_conflict"
+     "VE.SoftNorms.Run.slot_wire_conflict",
+     "VE.SoftNorms.Run.slot_wire_admission"
     ],
     "VE.SoftNorms.Run.runSelectedP": [
      "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ]
    },
-   "theorems": 14,
+   "theorems": 16,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
@@ -1236,7 +1240,7 @@
   },
   {
    "axioms": [],
-   "lines": 24400,
+   "lines": 24421,
    "modes": [
     "readingsRoute"
    ],
@@ -1362,7 +1366,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20708,
+   "wrap_lines": 20729,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1391,7 +1395,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 209,
     "VE.Compose.Slot": 16,
-    "VE.Compose.SlotWire": 118,
+    "VE.Compose.SlotWire": 132,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1526,7 +1530,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 428,
+    "VE.SoftNorms.Run": 435,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1546,12 +1550,12 @@
   },
   {
    "axioms": [],
-   "lines": 36349,
+   "lines": 36404,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36343,
+   "spec_lines": 36398,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1595,7 +1599,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 261,
     "VE.Compose.Slot": 16,
-    "VE.Compose.SlotWire": 118,
+    "VE.Compose.SlotWire": 132,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -1793,7 +1797,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1846,
+    "VE.Service.Document": 1880,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.Standalone": 848,
     "VE.Service.TypingDiagnostic": 201,
@@ -1801,7 +1805,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 428,
+    "VE.SoftNorms.Run": 435,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -1899,12 +1903,12 @@
   },
   {
    "axioms": [],
-   "lines": 35849,
+   "lines": 36420,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35023,
+   "spec_lines": 35567,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1948,8 +1952,8 @@
     "VE.Closure.Tableau": 37,
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 221,
-    "VE.Compose.Slot": 16,
-    "VE.Compose.SlotWire": 118,
+    "VE.Compose.Slot": 18,
+    "VE.Compose.SlotWire": 140,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -2025,6 +2029,8 @@
     "VE.Judgments.Scan": 3,
     "VE.Judgments.Status": 82,
     "VE.Judgments.Undeclared": 23,
+    "VE.Kernel.Carry": 22,
+    "VE.Kernel.DocumentFold": 35,
     "VE.Layout.Anchors": 56,
     "VE.Layout.List": 92,
     "VE.Limits": 24,
@@ -2110,6 +2116,7 @@
     "VE.Risk.Decl": 212,
     "VE.Risk.Run": 11,
     "VE.Risk.Wire": 288,
+    "VE.RoundTrip": 4,
     "VE.Route.Admission": 415,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 22,
@@ -2141,7 +2148,9 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 2112,
+    "VE.Service.CoreCheck": 151,
+    "VE.Service.CoreDocument": 265,
+    "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 75,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
@@ -2151,7 +2160,7 @@
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
-    "VE.SoftNorms.Run": 428,
+    "VE.SoftNorms.Run": 435,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
@@ -2174,6 +2183,9 @@
     "VE.Words.Situation": 5
    },
    "stated": {
+    "VE.Service.CoreCheck.answer": [
+     "VE.Service.CoreCheck.document_core_sound"
+    ],
     "VE.Service.Document.checkDoc": [
      "VE.Scope.scope_admission"
     ],
@@ -2182,9 +2194,9 @@
     ],
     "VE.Service.Document.checkDocSetsView": []
    },
-   "theorems": 7,
+   "theorems": 9,
    "tier": "candidate",
-   "wrap_lines": 12826,
+   "wrap_lines": 12816,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -2287,7 +2299,9 @@
     "VE.Scope.Readings": 96,
     "VE.Scope.Wire": 94,
     "VE.Semantics": 14,
-    "VE.Service.Document": 918,
+    "VE.Service.CoreCheck": 27,
+    "VE.Service.CoreDocument": 3,
+    "VE.Service.Document": 878,
     "VE.Service.ParseDiagnostic": 337,
     "VE.Service.Standalone": 1141,
     "VE.Service.TypingDiagnostic": 201,

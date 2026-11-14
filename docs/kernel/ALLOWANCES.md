@@ -6,7 +6,7 @@ It may fall freely. It may rise only with a line in the table below, added in th
 raises it and signed by the architect seat (`manage-agents/fable-team/architect/HANDOFF.md`).
 `tests/test_kernel_closure.py` reads the figure after the words "signed total:".
 
-signed total: 10,023 lines
+signed total: 10,041 lines
 
 | Date | Change | Door | Lines | Total after | Signed |
 |---|---|---|---:|---:|---|
@@ -18,6 +18,8 @@ signed total: 10,023 lines
 | 2026-11-13 | kb-3: the premise slot on the wire. `VE.SoftNorms.Run.slot_wire_certificate` and `slot_wire_conflict` (the `slot-certificate` and `slot-conflict` kinds' whole answers) and the replay theorems of `VE.Compose.SlotWire` (`slot_wire_acceptance`, `slot_wire_conflict_sound`, `slot_wire_conflict_witness_sound`, `slot_wire_empty`, `slot_wire_conflict_facts`, `slot_wire_entailment_facts`, `slot_wire_witness_facts`) listed on `softNorms`, with the three slot replays as subjects; the spec reads the answers (`SoftNorms.Run` +123), the soft replays `slot_wire_empty` compares with (`SoftNorms.Wire` +118), `decodeFacts` and `factsModel` (`Compose.SlotWire` +58) and the slot's semantics (path 4,920 to 5,368 lines, distinct kernel lines +395) | C | +395 | 9,947 | kb-3, door C (the slot claim kinds), pre-signed by the architect seat up to +400 lines |
 | 2026-11-13 | kb-validators part 1: the norms profile condition enforced and stated on the metered path (`VE.Route.MeteredRun.profiled` on every family, `ProfileAdmits` in `EvaluationAnswer`, the bridge `VE.Norms.Plain.profileOkOn_holds`, the pin `prepare_profile`; up to +80) | C | +68 | 10,015 | architect seat, round 4 (entered after kb-3 at the merge with ve-integration: the two signed rises are disjoint, 9,552 + 395 + 68 measured as 10,015) |
 | 2026-11-13 | kb-10e prepared soft documents: softNorms path up to +60 lines (the `Prepared` structure and `prepare` where a theorem statement mentions them); architect seat, round 4. Used: `VE.SoftNorms.Run.soft_wire_selected_prepared` listed on `softNorms` (subjects `prepare` and `runSelectedP`; its spec adds the `Prepared` structure; path spec 4,912 to 4,920 lines, distinct kernel lines +8). The service's prepared path (`VE.Service.runSoftRequest`, `softResult`) is not on a measured entry | C | +8 | 10,023 | architect seat, round 4 (task kb-10e, signed 2026-11-13; entered after kb-3 and kb-validators at the merge with ve-integration: the rises are disjoint, measured on the merged tree as 10,015 + 8 = 10,023, softNorms path spec 5,360 to 5,368) |
+| 2026-11-14 | kb-2a-b: the document mode's kernel row. `VE.SoftNorms.Run.slot_wire_admission` (the `slot-admission` kind's whole answer) and `VE.Compose.SlotWire.replaySlotAdmission_sound` listed on `softNorms`, with `replaySlotAdmission` as a subject (softNorms path spec 5,368 to 5,386 lines, distinct kernel lines +18) | C | +18 | 10,041 | architect seat, round 4 (DESIGN kb-2a section 4: `slot-admission` up to +60 lines) |
+| 2026-11-14 | kb-2a-b: the document mode's fold, `VE.Kernel.DocumentFold` (44 code lines), registered as the `document` path's fold (`tools/kernel-paths.json`). The `document` path is a candidate, so no kernel path reads the fold and `kernel_lines` does not change; the fold enters the total when the architect seat makes the path a kernel path | C | +0 | 10,041 | architect seat, round 4 (DESIGN kb-2a section 4: the status fold up to +60) |
 
 Pre-signed, to be entered by the change that uses it:
 

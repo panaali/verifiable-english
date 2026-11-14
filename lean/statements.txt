@@ -24913,20 +24913,20 @@ theorem VE.Judgments.viewOf_legacy
   -- expr 3651100867
 theorem VE.Kernel.DocumentFold.fold_checked_iff
   ∀ (u : VE.Kernel.DocumentFold.UnitRow) (rows : List VE.Kernel.Row),
-    VE.Kernel.DocumentFold.status u rows = "CHECKED" ↔
+    VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.checked ↔
       u.statements ≠ [] ∧
         VE.Kernel.DocumentFold.opens u = Bool.false ∧
           VE.Kernel.DocumentFold.asserted u = Bool.true ∧ ∀ (r : VE.Kernel.Row), r ∈ rows → r.result.isOk = Bool.true
-  -- uses VE.Kernel.DocumentFold.Stmt@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.statements@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.asserted@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
-  -- expr 1929791837
+  -- uses VE.Kernel.DocumentFold.Status.checked@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Stmt@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.statements@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.asserted@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
+  -- expr 3453371948
 theorem VE.Kernel.DocumentFold.fold_reads_rows_only
   ∀ (p : VE.Kernel.Path) (elaborate : Lean.Json → Except String (List Lean.Json))
-    (view : List (String × String) → Lean.Json) (table : List VE.Kernel.DocumentFold.UnitRow)
+    (view : List (String × VE.Kernel.DocumentFold.Status) → Lean.Json) (table : List VE.Kernel.DocumentFold.UnitRow)
     (request answer : Lean.Json),
     VE.Kernel.shell p elaborate (VE.Kernel.DocumentFold.fold view table) request = Except.ok answer →
       ∃ rows, (∀ (r : VE.Kernel.Row), r ∈ rows → p.Ran r) ∧ answer = VE.Kernel.DocumentFold.fold view table request rows
-  -- uses VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Kernel.shell@VE.Kernel.Carry
-  -- expr 550820509
+  -- uses VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Kernel.shell@VE.Kernel.Carry
+  -- expr 3814726455
 theorem VE.Kernel.Path.sound
   ∀ (self : VE.Kernel.Path) (case answer : Lean.Json), self.run case = Except.ok answer → self.Meaning case answer
   -- uses VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.run@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry

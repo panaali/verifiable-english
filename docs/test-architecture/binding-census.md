@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 305 |
-| leaves:closed domain | 321 |
-| leaves:none | 1655 |
+| leaves:bound | 306 |
+| leaves:closed domain | 346 |
+| leaves:none | 1846 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1253 |
-| today:shape | 626 |
+| today:not probed | 1444 |
+| today:shape | 652 |
 | today:unbound | 137 |
 | answers | 606 |
 | probes | 10204 |
@@ -702,6 +702,7 @@ Delegates: `/` to norms.
 | `/results/*/tuple/*` | string | bound | x-equals |  | 0 | shape |
 | `/rule_acts/@key` | key | none |  |  | 0 | unbound |
 | `/rule_acts/{}` | string | none |  |  | 0 | unbound |
+| `/rules` | integer | bound | x-count | minimum | 0 | shape |
 | `/soft_residual/default_exceptions` | integer | none |  | minimum | 3 | later Lean request |
 | `/soft_residual/holistic_overrides` | integer | none |  | minimum | 3 | later Lean request |
 | `/soft_residual/instruction_switches` | integer | none |  | minimum | 3 | later Lean request |
@@ -3151,6 +3152,26 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/judgments/used/*/term` | string | none |  | pattern | 4 | not probed |
 | `/judgments/used/*/units/*` | string | none |  | pattern | 5 | not probed |
 | `/path` | string | none |  | minLength | 1 | not probed |
+| `/rows/*/answer/facts` | integer | none |  | minimum | 0 | not probed |
+| `/rows/*/answer/id` | string | none |  |  | 0 | not probed |
+| `/rows/*/answer/rules` | integer | none |  | minimum | 0 | not probed |
+| `/rows/*/answer/status` | string | closed domain | const |  | 0 | shape |
+| `/rows/*/case/environment/language` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/profiles/*` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/spec_revision` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/id` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/kind` | string | closed domain | const |  | 0 | shape |
+| `/rows/*/case/norms/*/cites/@key` | key | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/cites/{}/*` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/alterable/*` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/mode` | string | closed domain | const |  | 0 | shape |
+| `/rows/*/case/norms/*/norm/name` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/norms/*/norm/rank` | string | none |  |  | 0 | not probed |
+| `/rows/*/refused` | string | none |  | minLength | 0 | not probed |
 | `/source` | string | none |  |  | 6 | hand: `ve/document/lean.py:require` |
 | `/source_id` | string | none |  | pattern | 6 | hand: `ve/document/lean.py:_lean_document` |
 | `/span/column` | integer | none |  | minimum | 1 | not probed |
@@ -3259,6 +3280,202 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/units/*/span/1` | integer | none |  | minimum | 8 | hand: `ve/document/lean.py:require` |
 | `/units/*/status` | string | closed domain | enum |  | 8 | shape: `ve/document/lean.py:require` |
 | `/units/*/support` | string | closed domain | enum |  | 8 | shape |
+| `/view/cardinality/environment_id` | string | none |  | pattern | 0 | not probed |
+| `/view/cardinality/leaf_labels/*/label` | string | none |  |  | 0 | not probed |
+| `/view/cardinality/leaf_labels/*/name` | string | none |  |  | 0 | not probed |
+| `/view/cardinality/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/view/cardinality/report/leaves/*/name` | string | none |  |  | 0 | not probed |
+| `/view/cardinality/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/view/cardinality/report/root/name` | string | none |  |  | 0 | not probed |
+| `/view/cardinality/report_id` | string | none |  | pattern | 0 | not probed |
+| `/view/cardinality/w6_environment_id` | string | none |  | pattern | 0 | not probed |
+| `/view/cardinality/w6_target_environment_id` | string | none |  | pattern | 0 | not probed |
+| `/view/choices/*/*/reading` | integer | none |  | minimum | 0 | not probed |
+| `/view/choices/*/*/set` | string | none |  |  | 0 | not probed |
+| `/view/composed/chain_document` | string | none |  |  | 0 | not probed |
+| `/view/composed/counting_document` | string | none |  |  | 0 | not probed |
+| `/view/composed/not_certified/*` | string | none |  |  | 0 | not probed |
+| `/view/composed/scope` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/readings/*/content/norm/name` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/readings/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/readings/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/readings/*/id` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/set` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/unit` | string | none |  |  | 0 | not probed |
+| `/view/composed_readings/*/version` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/accounted_bytes` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/alternatives/alternatives_declared/*/action` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/alternatives_declared/*/chooser` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/alternatives_declared/*/support` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/alternatives_declared/*/unit` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/assumed_harm_free/*/action` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/assumed_harm_free/*/decider` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/assumed_harm_free/*/harm` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/assumed_harm_free/*/premise` | string | closed domain | const |  | 0 | shape |
+| `/view/coverage/alternatives/counterfactual_leaves/*/action` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/counterfactual_leaves/*/decider` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/counterfactual_leaves/*/harm` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/counterfactual_leaves/*/support` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/counterfactual_leaves/*/unit` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/by` | string | none |  | pattern | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/id` | string | none |  | pattern | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/keeps/*` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/reason_spans/*` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/set` | string | none |  | pattern | 0 | not probed |
+| `/view/coverage/alternatives/narrowings/*/version` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/alternatives/proximate_judgments/*/action` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/proximate_judgments/*/decider` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/proximate_judgments/*/harm` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/proximate_judgments/*/support` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/proximate_judgments/*/unit` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/table_complete/decider` | string | none |  |  | 0 | not probed |
+| `/view/coverage/alternatives/table_complete/premise` | string | closed domain | const |  | 0 | shape |
+| `/view/coverage/alternatives/unmapped_obligations/*` | string | none |  |  | 0 | not probed |
+| `/view/coverage/bytes_by_kind/@key` | key | none |  |  | 0 | not probed |
+| `/view/coverage/bytes_by_kind/{}` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/bytes_by_status/@key` | key | none |  |  | 0 | not probed |
+| `/view/coverage/bytes_by_status/{}` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/coverage_percent` | integer | closed domain | const |  | 0 | shape |
+| `/view/coverage/residual/@key` | key | none |  |  | 0 | not probed |
+| `/view/coverage/residual/{}` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/residual_total` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/source_bytes` | integer | none |  | minimum | 0 | not probed |
+| `/view/coverage/unformalised_reasons/@key` | key | none |  |  | 0 | not probed |
+| `/view/coverage/unformalised_reasons/{}` | integer | none |  | minimum | 0 | not probed |
+| `/view/document_id` | string | none |  | pattern | 0 | not probed |
+| `/view/events_view/language` | string | none |  |  | 0 | not probed |
+| `/view/events_view/profiles/*` | string | none |  |  | 0 | not probed |
+| `/view/events_view/spec_revision` | string | none |  |  | 0 | not probed |
+| `/view/events_view/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/view/events_view/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/view/events_view/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
+| `/view/events_view/vocabulary/predicates/@key` | key | none |  |  | 0 | not probed |
+| `/view/events_view/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 0 | not probed |
+| `/view/judgment_lines/legend/*/lines/*` | string | none |  |  | 0 | not probed |
+| `/view/judgment_lines/legend/*/term` | string | none |  | pattern | 0 | not probed |
+| `/view/judgment_lines/status/*/line` | string | none |  |  | 0 | not probed |
+| `/view/judgment_lines/status/*/unit` | string | none |  | pattern | 0 | not probed |
+| `/view/judgments/unused/*` | string | none |  | pattern | 0 | not probed |
+| `/view/judgments/used/*/term` | string | none |  | pattern | 0 | not probed |
+| `/view/judgments/used/*/units/*` | string | none |  | pattern | 0 | not probed |
+| `/view/source` | string | none |  |  | 0 | not probed |
+| `/view/source_id` | string | none |  | pattern | 0 | not probed |
+| `/view/statements/*/choices/*/*/feature` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/judgment` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/reading/index` | integer | none |  | minimum | 0 | not probed |
+| `/view/statements/*/choices/*/*/reading/set` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/cites/@key` | key | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/cites/{}/*` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/mode` | string | closed domain | const |  | 0 | shape |
+| `/view/statements/*/choices/*/*/rule/norm/name` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/choices/*/*/rule/norm/rank` | string | none |  |  | 0 | not probed |
+| `/view/statements/*/id` | string | none |  |  | 0 | not probed |
+| `/view/undeclared_evaluative/*` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/content/bar/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/bar/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/bar/reading` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/cites/@key` | key | none |  |  | 0 | not probed |
+| `/view/units/*/content/cites/{}/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/conditions/*/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/conditions/*/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/conditions/*/role` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/limitation/conditions/*/verbalisation` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/kinds` | string | closed domain | const |  | 0 | shape |
+| `/view/units/*/content/limitation/kinds/*` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/limitation/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/limitation/scope` | string | closed domain | const |  | 0 | shape |
+| `/view/units/*/content/limitation/scope/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/content/norm/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/mode` | string | closed domain | const |  | 0 | shape |
+| `/view/units/*/content/norm/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/norm/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/holder` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/cites/@key` | key | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/cites/{}/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/fan_out/@key` | key | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/fan_out/{}` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/holder_slot` | integer | none |  | minimum | 0 | not probed |
+| `/view/units/*/content/right/lines/*/kind` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right/lines/*/liberty/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right/lines/*/liberty/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/liberty/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right/lines/*/norm/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/norm/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right/lines/*/recognition/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/lines/*/recognition/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/cites/@key` | key | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/cites/{}/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/fan_out/@key` | key | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/fan_out/{}` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/holder_slot` | integer | none |  | minimum | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/kind` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right_lines/lines/*/liberty/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right_lines/lines/*/liberty/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/liberty/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right_lines/lines/*/norm/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/norm/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/alterable/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/factors/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/mode` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/content/right_lines/lines/*/recognition/name` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/over/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/predicate` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/lines/*/recognition/rank` | string | none |  |  | 0 | not probed |
+| `/view/units/*/content/right_lines/right` | string | none |  |  | 0 | not probed |
+| `/view/units/*/id` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/kind` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/meaning` | string | closed domain | const |  | 0 | shape |
+| `/view/units/*/meaning/contextual` | string | none |  | minLength | 0 | not probed |
+| `/view/units/*/meaning/open/*` | string | none |  |  | 0 | not probed |
+| `/view/units/*/meaning/unformalised` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/parent_id` | string | none |  | pattern | 0 | not probed |
+| `/view/units/*/span/0` | integer | none |  | minimum | 0 | not probed |
+| `/view/units/*/span/1` | integer | none |  | minimum | 0 | not probed |
+| `/view/units/*/status` | string | closed domain | enum |  | 0 | shape |
+| `/view/units/*/support` | string | closed domain | enum |  | 0 | shape |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
@@ -3266,6 +3483,11 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/cardinality/report/root/formula` | formula |  | 0 |
 | `/composed_readings/*/readings/*/content/norm/guard` | generated_formula |  | 0 |
 | `/composed_readings/*/readings/*/content/norm/unless/*` | generated_formula |  | 0 |
+| `/rows/*/case/facts/*` | fol_formula |  | 0 |
+| `/rows/*/case/norms/*/norm/exception/necessary/*` | generated_formula |  | 0 |
+| `/rows/*/case/norms/*/norm/exception/sufficient/*` | generated_formula |  | 0 |
+| `/rows/*/case/norms/*/norm/guard` | generated_formula |  | 0 |
+| `/rows/*/case/norms/*/norm/unless/*` | generated_formula |  | 0 |
 | `/units/*/content` | generated_formula |  | 15 |
 | `/units/*/content/formula` | formula |  | 0 |
 | `/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
@@ -3298,6 +3520,47 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/units/*/content/right_lines/lines/*/recognition/guard` | generated_formula |  | 0 |
 | `/units/*/content/right_lines/lines/*/recognition/unless/*` | generated_formula |  | 0 |
 | `/units/*/kind` | kind.anyOf.1 |  | 2 |
+| `/view/cardinality/report/leaves/*/formula` | formula |  | 0 |
+| `/view/cardinality/report/root/formula` | formula |  | 0 |
+| `/view/composed_readings/*/readings/*/content/norm/guard` | generated_formula |  | 0 |
+| `/view/composed_readings/*/readings/*/content/norm/unless/*` | generated_formula |  | 0 |
+| `/view/statements/*/choices/*/*/premise` | fol_formula |  | 0 |
+| `/view/statements/*/choices/*/*/rule/norm/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/statements/*/choices/*/*/rule/norm/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/statements/*/choices/*/*/rule/norm/guard` | generated_formula |  | 0 |
+| `/view/statements/*/choices/*/*/rule/norm/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content` | generated_formula |  | 0 |
+| `/view/units/*/content/formula` | formula |  | 0 |
+| `/view/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/norm/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/norm/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/liberty/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/liberty/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/liberty/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/liberty/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/norm/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/norm/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/norm/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/norm/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/recognition/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/recognition/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/recognition/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right/lines/*/recognition/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/liberty/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/liberty/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/norm/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/norm/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/necessary/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/sufficient/*` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/recognition/guard` | generated_formula |  | 0 |
+| `/view/units/*/content/right_lines/lines/*/recognition/unless/*` | generated_formula |  | 0 |
+| `/view/units/*/kind` | kind.anyOf.1 |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
@@ -3325,6 +3588,17 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/judgments/unused` |  |  |  |  |
 | `/judgments/used` |  |  |  |  |
 | `/judgments/used/*/units` |  |  |  |  |
+| `/rows` |  |  |  |  |
+| `/rows/*/case/environment/profiles` |  |  |  |  |
+| `/rows/*/case/facts` |  |  |  |  |
+| `/rows/*/case/norms` |  |  |  |  |
+| `/rows/*/case/norms/*/cites/{}` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/alterable` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/exception/factors` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/exception/necessary` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/exception/sufficient` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/over` |  |  |  |  |
+| `/rows/*/case/norms/*/norm/unless` |  |  |  |  |
 | `/undeclared_evaluative` |  |  |  |  |
 | `/units` |  |  |  | drop: accept/accepted, accept/ve/document/lean.py:require; duplicate: accept/accepted, accept/ve/document/lean.py:require; replace: accept/accepted, accept/ve/document/lean.py:require; reverse: accept/accepted, accept/ve/document/lean.py:require |
 | `/units/*/content/cites/{}` |  |  |  |  |
@@ -3380,6 +3654,97 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/units/*/content/right_lines/lines/*/recognition/unless` |  |  |  |  |
 | `/units/*/meaning/open` |  |  |  |  |
 | `/units/*/span` |  |  |  |  |
+| `/view/cardinality/leaf_labels` |  |  |  |  |
+| `/view/cardinality/report/leaves` |  |  |  |  |
+| `/view/choices` |  |  |  |  |
+| `/view/choices/*` |  |  |  |  |
+| `/view/composed/not_certified` |  |  |  |  |
+| `/view/composed_readings` |  |  |  |  |
+| `/view/composed_readings/*/readings` |  |  |  |  |
+| `/view/composed_readings/*/readings/*/content/norm/over` |  |  |  |  |
+| `/view/composed_readings/*/readings/*/content/norm/unless` |  |  |  |  |
+| `/view/coverage/alternatives/alternatives_declared` |  |  |  |  |
+| `/view/coverage/alternatives/assumed_harm_free` |  |  |  |  |
+| `/view/coverage/alternatives/counterfactual_leaves` |  |  |  |  |
+| `/view/coverage/alternatives/dilemmas` |  |  |  |  |
+| `/view/coverage/alternatives/narrowings` |  |  |  |  |
+| `/view/coverage/alternatives/narrowings/*/keeps` |  |  |  |  |
+| `/view/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
+| `/view/coverage/alternatives/proximate_judgments` |  |  |  |  |
+| `/view/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/view/events_view/profiles` |  |  |  |  |
+| `/view/events_view/vocabulary/predicates/{}/arguments` |  |  |  |  |
+| `/view/judgment_lines/legend` |  |  |  |  |
+| `/view/judgment_lines/legend/*/lines` |  |  |  |  |
+| `/view/judgment_lines/status` |  |  |  |  |
+| `/view/judgments/unused` |  |  |  |  |
+| `/view/judgments/used` |  |  |  |  |
+| `/view/judgments/used/*/units` |  |  |  |  |
+| `/view/statements` |  |  |  |  |
+| `/view/statements/*/choices` |  |  |  |  |
+| `/view/statements/*/choices/*` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/cites/{}` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/alterable` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/exception/factors` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/exception/necessary` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/exception/sufficient` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/over` |  |  |  |  |
+| `/view/statements/*/choices/*/*/rule/norm/unless` |  |  |  |  |
+| `/view/undeclared_evaluative` |  |  |  |  |
+| `/view/units` |  |  |  |  |
+| `/view/units/*/content/cites/{}` |  |  |  |  |
+| `/view/units/*/content/limitation/conditions` |  |  |  |  |
+| `/view/units/*/content/limitation/factors` |  |  |  |  |
+| `/view/units/*/content/limitation/kinds` |  |  |  |  |
+| `/view/units/*/content/limitation/scope` |  |  |  |  |
+| `/view/units/*/content/norm/alterable` |  |  |  |  |
+| `/view/units/*/content/norm/exception/factors` |  |  |  |  |
+| `/view/units/*/content/norm/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/norm/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/norm/over` |  |  |  |  |
+| `/view/units/*/content/norm/unless` |  |  |  |  |
+| `/view/units/*/content/right/lines` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/cites/{}` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/alterable` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/over` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/liberty/unless` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/alterable` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/over` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/norm/unless` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/alterable` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/over` |  |  |  |  |
+| `/view/units/*/content/right/lines/*/recognition/unless` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/cites/{}` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/alterable` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/over` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/liberty/unless` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/alterable` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/over` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/norm/unless` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/alterable` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/factors` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/necessary` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/exception/sufficient` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/over` |  |  |  |  |
+| `/view/units/*/content/right_lines/lines/*/recognition/unless` |  |  |  |  |
+| `/view/units/*/meaning/open` |  |  |  |  |
+| `/view/units/*/span` |  |  |  |  |
 
 ## english.question
 

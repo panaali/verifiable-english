@@ -360,6 +360,13 @@ _NOT_THIS_CHAIN = {
     "undeclared_evaluative": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "coverage.alternatives": lean("`alternatives@0`'s, which this chain refuses; refused by the coverage's equality"),
     "units[].content.": lean("a form of `units[].content`, bound as a whole by `_rule_bound` to the rule as written"),
+    # kb-2a-b: the core path's answer and refusal mark. This chain lists norm-defaults@0, which has no lowering row,
+    # so it never takes the core path; a core answer is bound by `ve.document.core.bind_core_answer`, each of its
+    # members retyped and rebound in tests/test_kb2a_document.py, and a marked refusal is raised by `_lean_answer`.
+    "lowering": lean("a core-path refusal's mark (kb-2a-b); a refusal is raised, not read"),
+    "view": lean("the core path's view (kb-2a-b); refused by the row's member set here, bound by `bind_core_answer`"),
+    "rows": lean("the core path's kernel rows (kb-2a-b); refused by the row's member set here, bound by "
+                 "`bind_core_answer`"),
 }
 
 
