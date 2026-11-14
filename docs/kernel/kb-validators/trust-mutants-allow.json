@@ -69,6 +69,26 @@
    "definition": "VE.Service.Standalone.profileTree",
    "operator": "list-empty",
    "reason": "does not elaborate: the mutant replaces `predicates` by `[]`, whose `.any` has no element type to resolve, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
   }
  ]
 }
