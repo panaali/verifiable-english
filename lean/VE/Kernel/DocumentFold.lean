@@ -20,6 +20,11 @@ structure UnitRow where
   set : Option Bool
   rightsOpen : Bool
 
+/-- A unit's status (`Service.Document.UnitStatus` renders it). It is not a verdict: CHECKED says the unit's core
+statements were admitted by the checker. -/
+inductive Status | checked | opened | labelled | unformalised
+  deriving DecidableEq, Repr
+
 def Row.ok (r : Row) : Bool := match r.result with
   | .ok _ => true
   | .error _ => false
@@ -31,25 +36,25 @@ def opens (u : UnitRow) : Bool := u.statements.any (!·.reads.isEmpty) || u.set 
 def asserted (u : UnitRow) : Bool := u.set == some true || (u.set.isNone && u.meaning == "specified")
 
 /-- A status that no core statement decides, as today (`Loader.w2Status` without content). -/
-def baseless (meaning : String) : String :=
-  if meaning == "open" then "OPEN" else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
+def baseless (meaning : String) : Status :=
+  if meaning == "open" then .opened else if meaning == "unformalised" then .unformalised else .labelled
 
-def status (u : UnitRow) (rows : List Row) : String :=
-  if opens u then "OPEN"
+def status (u : UnitRow) (rows : List Row) : Status :=
+  if opens u then .opened
   else if u.statements.isEmpty || !asserted u then baseless u.meaning
-  else if rows.all Row.ok then "CHECKED" else "OPEN"
+  else if rows.all Row.ok then .checked else .opened
 
-def statuses (table : List UnitRow) (rows : List Row) : List (String × String) :=
+def statuses (table : List UnitRow) (rows : List Row) : List (String × Status) :=
   table.map fun u => (u.id, status u rows)
 
 /-- The answer: the shell's view over the statuses, and the kernel's rows verbatim (`carry`). -/
-def fold (view : List (String × String) → Json) (table : List UnitRow) (request : Json) (rows : List Row) : Json :=
+def fold (view : List (String × Status) → Json) (table : List UnitRow) (request : Json) (rows : List Row) : Json :=
   carry (fun _ => view (statuses table rows)) request rows
 
 theorem fold_checked_iff (u : UnitRow) (rows : List Row) :
-    status u rows = "CHECKED" ↔
+    status u rows = .checked ↔
       u.statements ≠ [] ∧ opens u = false ∧ asserted u = true ∧ ∀ r ∈ rows, r.result.isOk = true := by
-  have hb : ∀ m, baseless m ≠ "CHECKED" := fun m => by
+  have hb : ∀ m, baseless m ≠ .checked := fun m => by
     unfold baseless; split
     · decide
     · split <;> decide
@@ -62,7 +67,7 @@ theorem fold_checked_iff (u : UnitRow) (rows : List Row) :
 /-- The answer reads the rows only: in the form `shell_provenance` gives it, a shell answer with this fold is the fold
 of rows the kernel itself gave. -/
 theorem fold_reads_rows_only (p : Path) (elaborate : Json → Except String (List Json))
-    (view : List (String × String) → Json) (table : List UnitRow) (request answer : Json)
+    (view : List (String × Status) → Json) (table : List UnitRow) (request answer : Json)
     (h : shell p elaborate (fold view table) request = .ok answer) :
     ∃ rows : List Row, (∀ r ∈ rows, p.Ran r) ∧ answer = fold view table request rows :=
   shell_provenance p elaborate (fold view table) request answer h
