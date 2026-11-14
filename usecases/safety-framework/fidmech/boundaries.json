@@ -1,0 +1,203 @@
+{
+ "schema": "fidmech-boundaries/1",
+ "source_sha256": "18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946",
+ "abbrev": [],
+ "furniture": [
+  {
+   "pattern": "^Frontier Safety Framework",
+   "where": "page-start",
+   "reason": "running header, at the start of every page"
+  },
+  {
+   "pattern": "Frontier Safety Framework \\| \\d+$",
+   "where": "page-end",
+   "reason": "running footer with the page number, inline at each page end"
+  }
+ ],
+ "footnotes": [
+  {
+   "n": 3,
+   "marker_at": 1502,
+   "body": [
+    2789,
+    3026
+   ],
+   "by": "generator",
+   "reason": "generator: 3 occurs twice on pages 2-2, the second run body-shaped"
+  },
+  {
+   "n": 2,
+   "marker_at": 1415,
+   "body": [
+    3027,
+    3168
+   ],
+   "by": "generator",
+   "reason": "generator: 2 occurs twice on pages 2-2, the second run body-shaped"
+  },
+  {
+   "n": 1,
+   "marker_at": 548,
+   "body": [
+    3169,
+    3518
+   ],
+   "by": "generator",
+   "reason": "generator: 1 occurs twice on pages 2-2, the second run body-shaped"
+  },
+  {
+   "n": 4,
+   "marker_at": 9431,
+   "body": [
+    11696,
+    12033
+   ],
+   "by": "generator",
+   "reason": "generator: 4 occurs twice on pages 5-5, the second run body-shaped"
+  },
+  {
+   "n": 5,
+   "marker_at": 18737,
+   "body": [
+    19280,
+    19634
+   ],
+   "by": "generator",
+   "reason": "generator: 5 occurs twice on pages 7-7, the second run body-shaped"
+  },
+  {
+   "n": 6,
+   "marker_at": 23847,
+   "body": [
+    24718,
+    25383
+   ],
+   "by": "generator",
+   "reason": "generator: 6 occurs twice on pages 9-9, the second run body-shaped"
+  },
+  {
+   "n": 7,
+   "marker_at": 26062,
+   "body": [
+    29112,
+    29165
+   ],
+   "by": "generator",
+   "reason": "generator: 7 occurs twice on pages 10-10, the second run body-shaped"
+  },
+  {
+   "n": 8,
+   "marker_at": 31176,
+   "body": [
+    31869,
+    31973
+   ],
+   "by": "generator",
+   "reason": "generator: 8 occurs twice on pages 11-11, the second run body-shaped"
+  },
+  {
+   "n": 10,
+   "marker_at": 35686,
+   "body": [
+    36944,
+    36998
+   ],
+   "by": "generator",
+   "reason": "generator: 10 occurs twice on pages 13-13, the second run body-shaped"
+  },
+  {
+   "n": 9,
+   "marker_at": 34939,
+   "body": [
+    36999,
+    37153
+   ],
+   "by": "generator",
+   "reason": "generator: 9 occurs twice on pages 13-13, the second run body-shaped"
+  },
+  {
+   "n": 13,
+   "marker_at": 42157,
+   "body": [
+    42817,
+    43048
+   ],
+   "by": "generator",
+   "reason": "generator: 13 occurs twice on pages 15-15, the second run body-shaped"
+  },
+  {
+   "n": 12,
+   "marker_at": 41270,
+   "body": [
+    43049,
+    43227
+   ],
+   "by": "generator",
+   "reason": "generator: 12 occurs twice on pages 15-15, the second run body-shaped"
+  },
+  {
+   "n": 11,
+   "marker_at": 40983,
+   "body": [
+    43228,
+    43296
+   ],
+   "by": "generator",
+   "reason": "generator: 11 occurs twice on pages 15-15, the second run body-shaped"
+  },
+  {
+   "n": 14,
+   "marker_at": 52915,
+   "body": [
+    52918,
+    52984
+   ],
+   "by": "generator",
+   "reason": "generator: 14 occurs twice on pages 19-19, the second run body-shaped"
+  },
+  {
+   "n": 15,
+   "marker_at": 53727,
+   "body": [
+    54279,
+    54341
+   ],
+   "by": "generator",
+   "reason": "generator: 15 occurs twice on pages 20-20, the second run body-shaped"
+  }
+ ],
+ "unpaired": [
+  {
+   "at": 3875,
+   "n": 7,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4113,
+   "n": 12,
+   "reason": "rejected proposal: table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4414,
+   "n": 14,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4486,
+   "n": 16,
+   "reason": "rejected proposal: table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4590,
+   "n": 17,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  },
+  {
+   "at": 4602,
+   "n": 18,
+   "reason": "table of contents page number, followed by the next section title; no footnote"
+  }
+ ],
+ "extra": [],
+ "suppress": []
+}
