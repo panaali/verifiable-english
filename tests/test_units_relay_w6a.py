@@ -268,7 +268,7 @@ def test_an_admission_row_of_another_environment_is_refused(monkeypatch, entry):
             getattr(units, entry)(env, PAYLOAD)
 
 
-RETYPES = [None, True, 7, "x", [], {}, "a" * 64, "deleted"]
+RETYPES = [None, True, 7, 1.5, "x", "\ud800", [], {}, "a" * 64, "deep", "deleted"]
 
 
 @pytest.mark.parametrize("field", ["environment_id", "Q", "core", "meaning_id"])
@@ -296,5 +296,6 @@ def test_a_retyped_admission_field_fails_the_schema(field):
             del mutant["results"][0]["result"][field]
         else:
             mutant["results"][0]["result"][field] = value
+        line = json.dumps(mutant).replace('"deep"', "[" * 10_000 + "]" * 10_000).encode()
         with pytest.raises((Invalid, ValueError)):
-            check_response("quantity", _decode_json(json.dumps(mutant).encode()), request)
+            check_response("quantity", _decode_json(line), request)
