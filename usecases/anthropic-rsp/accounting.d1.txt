@@ -1,6 +1,6 @@
 rows-cond | omits: nothing
 rows-uncond | omits: nothing
-f5-strict | omits: "A frontier developer" reading RS2
+f5-strict | omits: nothing
 f5-default | omits: nothing
 f5-evidence-strict | omits: nothing
 f5-evidence-default | omits: nothing
