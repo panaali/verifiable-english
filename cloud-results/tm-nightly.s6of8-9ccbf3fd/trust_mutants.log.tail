@@ -1,0 +1,14 @@
+trust_mutants: 61 definitions, 76 mutants (10 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/SpeechActs/Wire.lean:990 VE.SpeechActs.Wire.surfaceKind (D[V], trusted) any-all: any -> all (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Closure/Syntax.lean:63 VE.Closure.Formula.denote (K, trusted) body-false: a.toCore.denote S ρ -> False (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:232 VE.SpeechActs.Wire.checkActsBlock (D[V], trusted) ne-eq: != -> == (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:134 VE.EnglishGrammar.Norm.Run.statementRequest (D[V], trusted) list-empty: ["id", "environment", "lexicon", "kind", "source"] -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:47 VE.EnglishGrammar.Norm.sourceView (S, trusted) list-empty: E.forms.aliases -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:93 VE.EnglishGrammar.eventsRefusals (G[V], trusted) list-empty: [ eventsRefusal "until" eventsUntilAdvice "if it is not the case that that closure happens no lat... -> [] (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 3 KILLED, 0 SURVIVOR, 7 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 66 OTHER SHARD in 4593 s
+trust_mutants: D[V], trusted: 4 UNKNOWN, 18 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 UNKNOWN, 32 OTHER SHARD
+trust_mutants: K, trusted: 1 UNKNOWN, 6 OTHER SHARD
+trust_mutants: S, trusted: 1 UNKNOWN, 10 OTHER SHARD
+trust_mutants: steps: wall plan 12.2 s, scratch 2.1 s, control_build 0.3 s, probe_install 0.9 s, mutants 4577.2 s, cleanup 0.7 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 96 s (8), mutant_builds 773 s (14), mutant_checks 14550.6 s (16), stage_controls 1143.4 s (2), mutant_probes 118.9 s (8)
