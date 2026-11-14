@@ -396,6 +396,7 @@ import VE.Defaults.ZoneWireExamples
 import VE.Attitudes.Examples
 import VE.Attitudes.Theorems
 import VE.Route.MeteredWire
+import VE.Route.MeteredProfileExamples
 import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.SelectedExamples

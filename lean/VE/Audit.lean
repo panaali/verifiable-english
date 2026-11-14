@@ -273,6 +273,7 @@ import VE.Norms.FlaggedSpec
 import VE.Norms.Layer
 import VE.Norms.LayersOnce
 import VE.Norms.Once
+import VE.Norms.Plain
 import VE.Norms.Prefix
 import VE.Norms.Replay
 import VE.Norms.Run
@@ -4604,6 +4605,7 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.FlaggedSpec.verdict_witness
 #print axioms VE.Norms.FlaggedSpec.wf_preds_congr
 #print axioms VE.Norms.InFragmentIn_eq
+#print axioms VE.Norms.Plain.profileOkOn_holds
 #print axioms VE.Norms.Replay.WitnessData.background
 #print axioms VE.Norms.Replay.WitnessData.mem
 #print axioms VE.Norms.Replay.WitnessData.typed
@@ -8313,6 +8315,8 @@ import VE.WireContract.Engine
 #print axioms VE.Route.MeteredProofs.order_sound
 #print axioms VE.Route.MeteredRun.answer_evaluate
 #print axioms VE.Route.MeteredRun.metered_wire_sound
+#print axioms VE.Route.MeteredRun.prepare_profile
+#print axioms VE.Route.MeteredRun.profiled_admits
 #print axioms VE.Route.MeteredRun.query_evaluate
 #print axioms VE.Route.MeteredRun.reportedWith_ok
 #print axioms VE.Route.MeteredRun.reportedWith_prepare

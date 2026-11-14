@@ -1,0 +1,104 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate: it quantifies over what the family decoders read from a case (vocabulary, formulas, model) and the metered result; it is the conclusion of run_evaluation_sound, runWith_sound and metered_wire_sound, whose proofs this mutant breaks (MeteredWire.lean, run_evaluation_sound), and seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate: it quantifies over what the family decoders read from a case (vocabulary, formulas, model) and the metered result; it is the conclusion of run_evaluation_sound, runWith_sound and metered_wire_sound, whose proofs this mutant breaks (MeteredWire.lean, run_evaluation_sound), and seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate: it quantifies over what the family decoders read from a case (vocabulary, formulas, model) and the metered result; it is the conclusion of run_evaluation_sound, runWith_sound and metered_wire_sound, whose proofs this mutant breaks (MeteredWire.lean, run_evaluation_sound), and seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate: it quantifies over what the family decoders read from a case (vocabulary, formulas, model) and the metered result; it is the conclusion of run_evaluation_sound, runWith_sound and metered_wire_sound, whose proofs this mutant breaks (MeteredWire.lean, run_evaluation_sound), and seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "ne-eq",
+   "reason": "S, a Prop no check can evaluate: it quantifies over what the family decoders read from a case (vocabulary, formulas, model) and the metered result; it is the conclusion of run_evaluation_sound, runWith_sound and metered_wire_sound, whose proofs this mutant breaks (MeteredWire.lean, run_evaluation_sound), and seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.EvaluationAnswer",
+   "operator": "eq-le",
+   "reason": "does not elaborate: the mutant writes `≤` between Except values, which have no LE instance, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "eq-le",
+   "reason": "does not elaborate: the mutant writes `≤` between Except values, which have no LE instance, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOk",
+   "operator": "list-empty",
+   "reason": "does not elaborate: the mutant rewrites the namespace prefix `VE.Bridge` of `VE.Bridge.lookup` as a list expression, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOk",
+   "operator": "list-first",
+   "reason": "does not elaborate: the mutant rewrites the namespace prefix `VE.Bridge` of `VE.Bridge.lookup` as a list expression, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOk",
+   "operator": "list-last",
+   "reason": "does not elaborate: the mutant rewrites the namespace prefix `VE.Bridge` of `VE.Bridge.lookup` as a list expression, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOk",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: the mutant rewrites the namespace prefix `VE.Bridge` of `VE.Bridge.lookup` as a list expression, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOk",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: the mutant rewrites the namespace prefix `VE.Bridge` of `VE.Bridge.lookup` as a list expression, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Norms.Plain.profileOkOn",
+   "operator": "list-empty",
+   "reason": "does not elaborate: the mutant replaces `(pairs T)` by `[]`, whose `.forM` has no element type to resolve, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Service.Standalone.profileTree",
+   "operator": "list-empty",
+   "reason": "does not elaborate: the mutant replaces `predicates` by `[]`, whose `.any` has no element type to resolve, so no program is built from it (Lean reports it at the mutated declaration)"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Route.MeteredRun.ProfileAdmits",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate: an existential over the prepared environment's profile, the conjunct of EvaluationAnswer that profiled_admits establishes and run_fol_sound, run_closure_sound, run_core_sound and run_order_sound read, whose proofs this mutant breaks (MeteredWire.lean, profiled_admits); seeded bugs S1 and S4 of docs/kernel/kb-validators/seeded-bugs.json break the runner side, and the #guards of MeteredProfileExamples.lean decide ProfileHolds, its body"
+  },
+  {
+   "definition": "VE.Norms.Plain.ProfileHolds",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate under this tool's rules: its decidability is found through its body, so a check of it elaborates otherwise under a body mutant (the #guards of MeteredProfileExamples.lean that decide it fail, read as UNKNOWN for that reason); profileOkOn_holds, whose proof this mutant breaks (Plain.lean), and seeded bug S2 of docs/kernel/kb-validators/seeded-bugs.json exercise it"
+  },
+  {
+   "definition": "VE.Norms.Plain.ProfileHolds",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate under this tool's rules: its decidability is found through its body, so a check of it elaborates otherwise under a body mutant (the #guards of MeteredProfileExamples.lean that decide it fail, read as UNKNOWN for that reason); profileOkOn_holds, whose proof this mutant breaks (Plain.lean), and seeded bug S2 of docs/kernel/kb-validators/seeded-bugs.json exercise it"
+  }
+ ]
+}
