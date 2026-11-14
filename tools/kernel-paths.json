@@ -472,7 +472,9 @@
     "VE.Risk.Run.risk_wire_audit_sound",
     "VE.Risk.Run.risk_wire_conflict_sound",
     "VE.Risk.Run.risk_wire_followable_sound",
-    "VE.Risk.Run.risk_wire_scenario_sound"
+    "VE.Risk.Run.risk_wire_scenario_sound",
+    "VE.Risk.Run.risk_elaborate_wire_sound",
+    "VE.Risk.Run.risk_decision_wire_sound"
    ],
    "delegates": [
     "VE.SoftNorms.Run.runCaseReported",
