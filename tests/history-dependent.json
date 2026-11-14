@@ -824,6 +824,17 @@
    ]
   },
   {
+   "test": "tests/test_kb10b_switch.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status"
+   ]
+  },
+  {
    "test": "tests/test_lean_audit_record.py",
    "why": "starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py",
    "recorded": [
