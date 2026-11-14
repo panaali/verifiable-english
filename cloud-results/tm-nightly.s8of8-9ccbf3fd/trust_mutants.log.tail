@@ -1,0 +1,13 @@
+trust_mutants: 61 definitions, 76 mutants (7 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Cardinality/Wire.lean:22 VE.Cardinality.Wire.chainProfiles (D[V], trusted) list-empty: ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Closure/Syntax.lean:43 VE.Closure.Formula.WellFormed (K, trusted) body-true: a.toCore.WellFormed E Γ -> True (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:768 VE.Compose.actsRefuses (G[V], trusted) list-empty: (["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not implem... -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) list-empty: ps -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:160 VE.EnglishGrammar.Norm.Run.leanReader (G[V], trusted) list-empty: G.rules -> [] (lean/VE/EnglishGrammar/Norm/Run.lean:160: Type mismatch)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:96 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) list-empty: rs -> [] (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100, lean/VE/EnglishGrammar/Norm/Ow...)
+trust_mutants: 1 KILLED, 1 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 69 OTHER SHARD in 2630 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 3 UNKNOWN, 33 OTHER SHARD
+trust_mutants: K, trusted: 1 UNKNOWN, 6 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 9 OTHER SHARD
+trust_mutants: steps: wall plan 19.6 s, scratch 4.9 s, control_build 0.3 s, probe_install 1.4 s, mutants 2599.6 s, cleanup 4.3 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 9.9 s (1), mutant_builds 1244.5 s (12), mutant_checks 7922.1 s (8), stage_controls 13.5 s (1), mutant_probes 7.3 s (1)
