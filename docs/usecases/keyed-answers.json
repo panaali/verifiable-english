@@ -9,13 +9,13 @@
   "python prover-self-replay": 1692
  },
  "openai-preparedness": {
-  "lean _check_certificate_lean": 3185,
-  "lean _evaluate_lean": 1750,
-  "lean soft-elaborate": 1241,
-  "lean soft-selected": 1180,
+  "lean _check_certificate_lean": 3237,
+  "lean _evaluate_lean": 1768,
+  "lean soft-elaborate": 1243,
+  "lean soft-selected": 1182,
   "python _check_conflict_python": 52,
   "python _find_conflict": 52,
-  "python prover-self-replay": 3205
+  "python prover-self-replay": 3257
  },
  "safety-framework": {
   "lean _check_certificate_lean": 3325,
