@@ -713,6 +713,7 @@ module VE.Route.Gate
 module VE.Route.Inert
 module VE.Route.Layer
 module VE.Route.Metered
+module VE.Route.MeteredProfileExamples
 module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
