@@ -1,0 +1,1 @@
+- `docs/kernel/kb-10b/repair_shadow_choices.py` — Fill the original kb-10b reports' empty choice inventories from the same direct probe calls.
