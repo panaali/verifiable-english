@@ -194,11 +194,17 @@ ACTS = {
                           "risk of severe harm into a Safeguards Report.\u201d (section 4: for covered systems that "
                           "reach a capability threshold)"),
     "risk_paths": ("{0} identify plausible ways severe harm can arise in the proposed deployment",
-                   "4.1: the plausible ways in which the associated risk of severe harm can come to fruition in the "
-                   "proposed deployment"),
+                   "4.1: “We use the following process to select safeguards for a deployment: • We first "
+                   "identify the plausible ways in which the associated risk of severe harm can come to fruition in "
+                   "the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it "
+                   "would pass the 80-character limit; the order it states before the next step is event order, "
+                   "not formalised: ET, as PLAN O7)"),
     "specific_safeguards_per_path": ("{0} identify specific safeguards that would address each risk path",
-                                     "4.1: specific safeguards that either exist or should be implemented that would "
-                                     "address the risk"),
+                                     "4.1: “• For each of those, we then identify specific safeguards that "
+                                     "either exist or should be implemented that would address the risk.” (the "
+                                     "second step; 'then' is in this legend only, a word an act may not use; the "
+                                     "order it states after the first step is event order, not formalised: ET, as "
+                                     "PLAN O7; the per-item scope stays SC-blocked)"),
     "efficacy_methods_per_safeguard": ("{0} identify efficacy methods per safeguard", "4.1: third safeguard-selection step"),
     "efficacy_threshold_per_safeguard": ("{0} identify an efficacy threshold per safeguard", "4.1: third safeguard-selection step"),
     "validate_evidence": ("{0} validate the evidence", "4.2: evidence safeguards fail"),
@@ -263,8 +269,13 @@ ACTS = {
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",
                            "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership "
                            "for immediate reaction as needed to address the risk.”"),
-    "third_party_evaluation": ("{0} have third parties independently evaluate the model",
-                               "5.2: third-party evaluation of tracked model capabilities"),
+    "third_party_evaluation": ("{0} work with third parties to independently evaluate the model",
+                               "5.2: “If we deem that a deployment warrants deeper testing of Tracked Categories "
+                               "of capability (as described in Section 3.1), for example based on results of "
+                               "Capabilities Report presented to them, then when available and feasible, OpenAI will "
+                               "work with third-parties to independently evaluate models.” (the act is OpenAI's "
+                               "work with third parties, not a required result; the guards carry the deeming about a "
+                               "deployment, OT14, and 'when available and feasible')"),
     "residual_risk_assessment": ("{0} include an assessment of residual severe-harm risk in the Safeguards Report",
                                  "4.2: an assessment on the residual risk of severe harm based on the deployment"),
     "persuasion_handled_outside": ("{0} have persuasion risks handled outside the Preparedness Framework",
