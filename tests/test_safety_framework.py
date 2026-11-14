@@ -677,6 +677,33 @@ def test_every_glossary_definition_is_the_pinned_source_text():
     assert [p for p, quote in GLOSSARY_DEFINITIONS.items() if quote not in text] == []
 
 
+F10_SPEC_REREAD = (
+    'RS9 and RS6 keep the one reading "different", and the blocks f10-dm-same, f10-rel-same and f15-same no longer '
+    'exist.',
+    'The blocks f10-dm-diff, f10-rel-diff and f15-diff stay, selected by "different".',
+)
+DROP_WORDS = ("drop", "merge", "remove", "lost", "omit", "out of scope", "excluded", "deleted", "replaced", "folded")
+
+
+def test_the_f10_spec_reread_names_the_surviving_blocks_without_a_drop_word():
+    """docs/usecases/safety-framework/fsf-fidelity-fix/REPORT.md, "Spec re-read" (a): the blocks deleted under
+    reviews/dri-decisions-20261029-uc-audit2.md item 1 and the -diff blocks that stay are separate sentences, and the
+    one naming the -diff blocks holds none of the drop words (the saved text, never git)."""
+    text = " ".join((REPO / "docs/usecases/safety-framework/fsf-fidelity-fix/REPORT.md").read_text().split())
+    assert all(sentence in text for sentence in F10_SPEC_REREAD)
+    assert not [w for w in DROP_WORDS if w in F10_SPEC_REREAD[1].lower()]
+    assert "the three ids are exactly the deleted blocks; f10-dm-diff" not in text
+
+
+def test_the_section_12_f17_quote_is_carried_by_f17_hri():
+    """PLAN section 12 item 24: 'F17: the periodic assessments "also account for the safety implications of high-risk
+    internal deployments" (f17-hri)': f17-hri's act carries the quoted words in its legend."""
+    quote = "also account for the safety implications of high-risk internal deployments"
+    assert f'F17: the periodic assessments "{quote}" (f17-hri).' in " ".join((HERE / "PLAN.md").read_text().split())
+    assert run.rule_predicate("f17-hri") == "periodic_covers_internal"
+    assert quote in _legend("periodic_covers_internal")
+
+
 @pytest.mark.parametrize("case_id", ["G4", "G5"])
 def test_g4_and_g5_name_no_activity(case_id):
     """PLAN 5: "The proposal is of the named activity" and "Every other open term is unset unless the case says so".
