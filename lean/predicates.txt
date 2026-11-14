@@ -9,6 +9,7 @@ module Main
 module MeteredMain
 module ResponseDecode
 module ResponseShape.CaseDeciders
+module ResponseShape.CoreCheckExamples
 module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.ActReadings
 module ResponseShape.Encoders.Alternatives
@@ -453,6 +454,7 @@ module VE.Judgments.Undeclared
 module VE.Kernel.Carry
 module VE.Kernel.CarryChecks
 module VE.Kernel.DocumentFold
+module VE.Kernel.DocumentFoldExamples
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse

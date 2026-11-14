@@ -159,6 +159,13 @@ module ResponseShape.CaseDeciders 1b58f0b0a9c88f49876e8f3ceb5acfe1213edbd0f35ce5
 54:0-65:89 def ResponseShape.CaseDecider.fn@ResponseShape.CaseDeciders
 67:0-67:72 def ResponseShape.CaseDecider.ofName?@ResponseShape.CaseDeciders
 74:0-75:76 def ResponseShape.decidedCase@ResponseShape.CaseDeciders
+module ResponseShape.CoreCheckExamples d2fd5b609eb9042e71e9809e6a96b87a7392db98c0a22a3599e644bce75d31bb
+12:0-13:110 def ResponseShape.CoreCheckExamples.case@ResponseShape.CoreCheckExamples
+14:0-14:132 def ResponseShape.CoreCheckExamples.accepts@ResponseShape.CoreCheckExamples
+15:0-15:70 def ResponseShape.CoreCheckExamples.answer@ResponseShape.CoreCheckExamples
+17:0-22:21 def ResponseShape.CoreCheckExamples.setAt@ResponseShape.CoreCheckExamples
+23:0-27:22 def ResponseShape.CoreCheckExamples.getAt@ResponseShape.CoreCheckExamples
+29:0-31:100 def ResponseShape.CoreCheckExamples.refusedAt@ResponseShape.CoreCheckExamples
 module ResponseShape.DefaultsExamples f36207374b6963968782100a070a049fccb31b8b6ffdfd14eb802958cf913933
 11:0-12:104 def ResponseShape.DefaultsExamples.accepts@ResponseShape.DefaultsExamples
 13:0-13:69 def ResponseShape.DefaultsExamples.set@ResponseShape.DefaultsExamples
@@ -14452,6 +14459,11 @@ module VE.Kernel.DocumentFold 3f4e88a922041b9691a08789366cc90fb804be6f34739370d5
 50:0-52:58 def VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold
 54:0-65:65 theorem VE.Kernel.DocumentFold.fold_checked_iff@VE.Kernel.DocumentFold
 67:0-73:65 theorem VE.Kernel.DocumentFold.fold_reads_rows_only@VE.Kernel.DocumentFold
+module VE.Kernel.DocumentFoldExamples 9fee094ab4531bdba3e9937df9073f4465251aaf6fd8d0565043fcee7eb8b81c
+8:0-8:44 def VE.Kernel.DocumentFoldExamples.ok@VE.Kernel.DocumentFoldExamples
+9:0-9:45 def VE.Kernel.DocumentFoldExamples.refused@VE.Kernel.DocumentFoldExamples
+11:0-12:50 def VE.Kernel.DocumentFoldExamples.unit@VE.Kernel.DocumentFoldExamples
+44:0-45:104 def VE.Kernel.DocumentFoldExamples.view@VE.Kernel.DocumentFoldExamples
 module VE.Kit.Except 191eaa7c5f51a708ed94eca4c2d0b5f4180d8dc619318a9d1de35cbdc399c101
 4:0-9:29 theorem VE.Kit.Except.bind_ok@VE.Kit.Except
 module VE.Layout.Anchors 510feb53d134208d46e12f1910b41e49c554ff63124b771113e61c2d669f138c
@@ -27293,7 +27305,7 @@ module VE.Service.CoreCheck 0cd4bdb6307a8dbdebddc7903d66e36c1018da71ac1d9f3382b9
 323:0-334:65 theorem VE.Service.CoreCheck.caseOf_get@VE.Service.CoreCheck
 336:0-376:12 theorem VE.Service.CoreCheck.core_facts_round_trip@VE.Service.CoreCheck
 378:0-417:20 theorem VE.Service.CoreCheck.document_core_sound@VE.Service.CoreCheck
-module VE.Service.CoreCheckExamples 3c946f36aeb5cd62ae0c54a360e2f12ed8fe3b87cd4c5afc41108792e53cc285
+module VE.Service.CoreCheckExamples 882a89d235c7857a822283fef28abc89b5e77b35b18da0ca081c96194140b824
 10:0-10:2445 def VE.Service.CoreCheckExamples.front@VE.Service.CoreCheckExamples
 12:0-14:2283 def VE.Service.CoreCheckExamples.collapsed@VE.Service.CoreCheckExamples
 16:0-16:60 def VE.Service.CoreCheckExamples.body@VE.Service.CoreCheckExamples
@@ -27304,6 +27316,16 @@ module VE.Service.CoreCheckExamples 3c946f36aeb5cd62ae0c54a360e2f12ed8fe3b87cd4c
 35:0-39:85 def VE.Service.CoreCheckExamples.rows@VE.Service.CoreCheckExamples
 41:0-42:116 def VE.Service.CoreCheckExamples.refusal@VE.Service.CoreCheckExamples
 44:0-44:61 def VE.Service.CoreCheckExamples.edit@VE.Service.CoreCheckExamples
+88:0-91:30 def VE.Service.CoreCheckExamples.casesText@VE.Service.CoreCheckExamples
+93:0-95:73 def VE.Service.CoreCheckExamples.env@VE.Service.CoreCheckExamples
+96:0-97:30 def VE.Service.CoreCheckExamples.ruleH@VE.Service.CoreCheckExamples
+99:0-99:25 def VE.Service.CoreCheckExamples.x@VE.Service.CoreCheckExamples
+100:0-100:82 def VE.Service.CoreCheckExamples.fact@VE.Service.CoreCheckExamples
+101:0-101:65 def VE.Service.CoreCheckExamples.illTyped@VE.Service.CoreCheckExamples
+102:0-102:78 def VE.Service.CoreCheckExamples.deep@VE.Service.CoreCheckExamples
+103:0-103:76 def VE.Service.CoreCheckExamples.decision@VE.Service.CoreCheckExamples
+104:0-104:106 def VE.Service.CoreCheckExamples.core@VE.Service.CoreCheckExamples
+105:0-106:76 def VE.Service.CoreCheckExamples.src@VE.Service.CoreCheckExamples
 module VE.Service.CoreDocument 0f8b31ed4fe137cd68b1376e2278f730633de744ad1f70dbbc1f8057827477e8
 25:0-31:28 structure VE.Service.CoreDocument.Origin@VE.Service.CoreDocument
 28:2-28:6 def VE.Service.CoreDocument.Origin.unit@VE.Service.CoreDocument
@@ -31436,4 +31458,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 689698a3f1bae0ff944b7c858dc98e38d3c3ee6676f8d30f9975011521e860f9
+module VE dc1b73c939351b2fcb6e14b53832a0fcbf959105ff86198c81fd12b4b2e26369

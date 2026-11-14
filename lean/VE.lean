@@ -411,3 +411,4 @@ import VE.Service.CoreDocumentExamples
 import VE.Service.CoreCheck
 import VE.Service.CoreCheckExamples
 import VE.Kernel.DocumentFold
+import VE.Kernel.DocumentFoldExamples

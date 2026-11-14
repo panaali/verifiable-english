@@ -20,7 +20,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 22 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
-- [docs/kernel/](docs__kernel.md) — 8 modules — -
+- [docs/kernel/](docs__kernel.md) — 9 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -82,7 +82,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 10 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 11 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 35 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 47 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
@@ -107,7 +107,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Events/](lean__VE__Events.md) — 11 modules — -
 - [lean/VE/Grammar/](lean__VE__Grammar.md) — 9 modules — -
 - [lean/VE/Judgments/](lean__VE__Judgments.md) — 7 modules — -
-- [lean/VE/Kernel/](lean__VE__Kernel.md) — 3 modules — -
+- [lean/VE/Kernel/](lean__VE__Kernel.md) — 4 modules — -
 - [lean/VE/Kit/](lean__VE__Kit.md) — 1 modules — -
 - [lean/VE/Layout/](lean__VE__Layout.md) — 3 modules — -
 - [lean/VE/NormDefaults/](lean__VE__NormDefaults.md) — 25 modules — -

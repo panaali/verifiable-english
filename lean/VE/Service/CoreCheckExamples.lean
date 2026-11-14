@@ -79,4 +79,90 @@ def edit (old new : String) : String := front.replace old new
   (edit "\"judgments@0\",\"norms@0\"" "\"judgments@0\",\"norm-defaults@0\",\"norms@0\"") ++ "\n---\n" ++ body))])
 #guard VE.Service.CoreCheck.routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++ front ++ "\n---\n" ++ body))])
 
+/-! ## The shell's pieces, one by one -/
+
+section pieces
+open VE.Service.CoreCheck
+open VE.Service.CoreDocument (CoreDoc Statement)
+
+/-- An answer of `casesOf`, as text. -/
+def casesText : Except String (List Json) → String
+  | .ok l => (Json.arr l.toArray).compress
+  | .error e => "error: " ++ e
+
+/-- The cases' environment: the document's, without `judgments@0` and `readings@1`. -/
+def env : Json := (((Json.parse front).toOption.getD .null).getObjValD "environment").setObjVal! "profiles"
+  (toJson ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"])
+def ruleH : Json := ((((((Json.parse front).toOption.getD .null).getObjValD "units").getArr?.toOption.getD #[]).toList.getD 2
+  .null).getObjValD "content")
+
+def x : VE.Term := .var 0
+def fact : VE.Formula := .all "assistant" (.implies (.unary "v" x) (.unary "q" x))
+def illTyped : VE.Formula := .all "assistant" (.unary "nosuch" x)
+def deep : VE.Formula := (List.replicate 64 ()).foldl (fun f _ => .not f) .top
+def decision : VE.Formula := .all "assistant" (.unary "soft__excepted__h" x)
+def core (P : List VE.Formula) (norms : List Json := []) : CoreDoc := ⟨env, Json.arr norms.toArray, P, []⟩
+def src (norms : List Json := []) : Option VE.SoftNorms.Wire.SoftSource :=
+  (VE.SoftNorms.Wire.decodeSoftSource env (Json.arr norms.toArray)).toOption
+
+-- The premises as the route's encoder writes them, and the case of a choice.
+#guard factsJson [] == Json.arr #[] && factsJson [fact] == Json.arr #[VE.Route.Wire.encodeFormula fact]
+#guard caseOf 3 (core [fact] [ruleH]) == Json.mkObj [("id", .str "choice-3"), ("kind", .str "slot-admission"),
+  ("environment", env), ("norms", Json.arr #[ruleH]), ("facts", factsJson [fact])]
+-- The round trip's gates: typing, depth (the decoder's bound exactly), and no soft decision predicate.
+#guard (src).any fun s => roundTrips s [] && roundTrips s [fact] && !roundTrips s [illTyped] && !roundTrips s [deep] &&
+  !roundTrips s [fact, illTyped]
+#guard (src [ruleH]).any fun s => roundTrips s [fact] && !roundTrips s [decision]
+#guard (src).any fun s => roundTrips s [(List.replicate 63 ()).foldl (fun f _ => .not f) .top]
+-- A premise that would not read back is refused with the decoder's own diagnostic; a source the soft decoder refuses is
+-- the kernel's to refuse.
+#guard caseFault (core [fact]) == none && caseFault (core [illTyped]) == some "ill-typed or unbound formula"
+#guard (caseFault (core [decision] [ruleH])).any (·.startsWith "InvalidInput: facts: soft__excepted__h")
+#guard caseFault ⟨.null, Json.arr #[], [illTyped], []⟩ == none
+#guard (src).any fun s => factsRefusal s [illTyped] == "ill-typed or unbound formula"
+-- One case per core document, in order; the first refusal names its choice.
+#guard casesText (casesOf [([], core [fact]), ([("s", 1)], core [] [ruleH])]) ==
+  (Json.arr #[caseOf 0 (core [fact]), caseOf 1 (core [] [ruleH])]).compress
+#guard casesText (casesOf [([], core [fact]), ([], core [illTyped])]) ==
+  "error: ill-typed or unbound formula (core document of choice 1)"
+#guard casesText (casesOf []) == "[]"
+-- The first refused row and its choice.
+#guard firstRefused [⟨.null, .ok .null⟩, ⟨.null, .error "e"⟩, ⟨.null, .error "f"⟩] 0 == some (1, "e")
+#guard firstRefused [⟨.null, .ok .null⟩] 0 == none && firstRefused [⟨.null, .error "e"⟩] 4 == some (4, "e")
+#guard VE.Service.CoreCheck.refusal [([("s", 1)], core [])] 0 "e" == "e (core document of choice 0: [s reading 1])"
+#guard VE.Service.CoreCheck.refusal [] 2 "e" == "e (core document of choice 2: [])"
+-- A refusal of the lowering's table, and nothing else, sends a document back to today's path.
+#guard noRow "UnsupportedLowering: unit u feature couplings: the table has no row for it" && !noRow "UnknownPart: x" &&
+  !noRow "UnsupportedLoweringx" && !noRow "CheckerUnavailable: UnsupportedLowering: x"
+#guard routedRefusals == ["CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route",
+  "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route"]
+-- The fold's statuses as the answer names them.
+#guard [VE.Kernel.DocumentFold.Status.checked, .opened, .labelled, .unformalised].map (fun s => (unitStatus s).name) ==
+  ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]
+-- A statement as the view writes it: its feature, its reading, its body.
+#guard statementJson ⟨.premise fact, ⟨"u", "facts", none⟩⟩ ==
+  Json.mkObj [("feature", .str "facts"), ("premise", VE.Route.Wire.encodeFormula fact)]
+#guard statementJson ⟨.soft ruleH, ⟨"u", "norms@0", some ("s", 2)⟩⟩ == Json.mkObj [("feature", .str "norms@0"),
+  ("reading", Json.mkObj [("set", .str "s"), ("index", toJson (2 : Nat))]), ("rule", ruleH)]
+#guard choicesJson [([("s", 0), ("r", 1)], core [])] == Json.arr #[Json.arr #[
+  Json.mkObj [("set", .str "s"), ("reading", toJson (0 : Nat))], Json.mkObj [("set", .str "r"), ("reading", toJson (1 : Nat))]]]
+-- A soft rule's exception conditions, read for the fold's judgment condition; none for any other content.
+#guard exceptionFormulas none (some (.soft ruleH)) == []
+#guard exceptionFormulas none none == []
+
+end pieces
+
+-- The view's coverage counts each unit's bytes under the fold's status.
+#guard ((run front).getObjValD "view" |>.getObjValD "coverage" |>.getObjValD "bytes_by_status") ==
+  Json.mkObj [("CHECKED", toJson (12 : Nat)), ("LABELLED", toJson (7 : Nat)), ("OPEN", toJson (13 : Nat))]
+-- An asserted unit with neither content nor a reading set: W2's refusal, Lean's, marked.
+#guard refusal (run (edit "\"kind\":\"meta\"" "\"kind\":\"asserted\"")) ==
+  ("asserted unit needs content or a reading set", .bool true)
+-- Senses are no row of the lowering: not routed.
+#guard !VE.Service.CoreCheck.routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++
+  (edit "\"format\":\"ve-document@1\"" "\"format\":\"ve-document@1\",\"senses\":{}") ++ "\n---\n" ++ body))])
+-- A document no refusal stops (no readings@1, no exception condition): not routed.
+#guard !VE.Service.CoreCheck.routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++
+  (edit "\"readings@1\"," "") ++ "\n---\n" ++ body))])
+
 end VE.Service.CoreCheckExamples
