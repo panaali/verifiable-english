@@ -21,11 +21,14 @@ tables, DELTA, this report, seeded bugs, allow file, ALLOWANCES, kernel-paths, l
 | 679ce8c726 | (3) soft-document handles in the service table, answered from the prepared entry (`softResult_cached`) |
 | 23833cce1b | (4) the client sends soft-selected cases by handle; handshake `soft_member`; kernel registry and allowance; regenerated files |
 | 120b6538bd | (5) `prepareDocument_ok`; trust classes, baseline row (R16), regenerated files |
-| (6) | after-change timings, registration trace of a Preparedness run, seeded bugs |
-| (7) | trust mutants (`--deep`): 24 KILLED, 21 ALLOWED |
-| (8) | the fake service's handshake states `soft_member`; `test_handshake` and the handshake fuzz |
-| (9) | DELTA |
-| (10) | the code map, regenerated after the merge with main (c9214a2608) |
+| 7b36e2d951 | after-change timings, registration trace of a Preparedness run, seeded bugs |
+| 50b45e7902 | trust mutants (`--deep`): 24 KILLED, 21 ALLOWED |
+| f4b2a61cb1 | the fake service's handshake states `soft_member`; `test_handshake` and the handshake fuzz |
+| 3a31727ba4 | DELTA |
+| 2025551d10 | the code map, regenerated after the merge with main (c9214a2608, merge b9724f0628) |
+| 6383f22a93 | (11) REPORT |
+| 46d87523a0 | (12) the kernel figures quoted in kernel-boundary.md and frozen-keys; the wire gate's test inputs |
+| 2521eefcf9 | (13) REPORT: the final selected run |
 
 ## (1) Measure: the stages before the change
 
