@@ -52,5 +52,23 @@
   "test": "tests/test_kb10b_switch.py::test_the_harnesses_completed_is_outcome_at",
   "result": "2 failed in 1.55s",
   "caught": true
+ },
+ {
+  "bug": "review-F1-modules",
+  "file": "tests/usecase_scope.py",
+  "from": "saved = {name: sys.modules.pop(name) for name in names if name in sys.modules}",
+  "to": "saved = {name: sys.modules[name] for name in names if name in sys.modules}",
+  "test": "tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind",
+  "result": "1 failed in 0.51s",
+  "caught": true
+ },
+ {
+  "bug": "review-F1-path",
+  "file": "tests/usecase_scope.py",
+  "from": "sys.path[:] = path  # the scripts put their own directories on `sys.path` too",
+  "to": "sys.path.remove(directory)  # the scripts put their own directories on `sys.path` too",
+  "test": "tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind",
+  "result": "1 failed in 1.92s",
+  "caught": true
  }
 ]
