@@ -599,6 +599,55 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
 
 
+# facts.d1.ve's blocks: PLAN 4.1's level table, the 1.2 closures and the activity facts, with tcl-not-ccl (section 12,
+# item 4) and measures-sl2plus (section 12, item 25; its own item-scoped move waits for row
+# safety-framework-case-alternatives, reviews/dri-decisions-20261114-safety-framework-fidelity-fix-3.md item 5).
+FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-stealth", "levels-ml-rd-acceleration",
+                "levels-ml-rd-automation", "measures-sl2plus", "closure-misuse-ccls", "closure-ccl-kinds",
+                "closure-tcls", "tcl-not-ccl", "activities-internal-external", "activities-development",
+                "activities-high-risk", "activities-low-risk"]
+
+
+def test_facts_holds_the_premises_of_every_item_and_no_item_s_own_bridge():
+    """No block of facts.d1.ve is an item's own premise; N1's bridge is a block of rules.d1.ve headed `item N1`, and
+    a facts.d1.ve block headed `item <id>` is refused."""
+    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == FACTS_BLOCKS
+    assert all(b.when == () for b in translation.read_blocks("facts.d1.ve"))
+    assert [(b.id, b.when) for b in translation.rule_fact_blocks()] == [("bridge-one-domain", (("item", "N1"),))]
+    assert "bridge-one-domain" not in {b.id for b in translation.rule_blocks()}
+
+
+def test_an_item_s_premise_in_facts_or_an_unscoped_fact_in_rules_is_refused(tmp_path, monkeypatch):
+    monkeypatch.setattr(translation, "HERE", tmp_path)
+    (tmp_path / "facts.d1.ve").write_text("## b | item N1 | x\n\"a\" is tracked.\n")
+    with pytest.raises(SystemExit, match="belongs in rules.d1.ve"):
+        translation.read_blocks("facts.d1.ve")
+    (tmp_path / "rules.d1.ve").write_text("## b | always | x\n\"a\" is tracked.\n")
+    translation.rule_fact_blocks.cache_clear()
+    try:
+        with pytest.raises(SystemExit, match="belongs in facts.d1.ve"):
+            translation.rule_fact_blocks()
+    finally:
+        translation.rule_fact_blocks.cache_clear()
+
+
+def test_n1_alone_loads_its_bridge_and_its_record_names_it():
+    """N1's own assumption reaches N1's proof and no other item's: every other item reads facts() only. Without it the
+    4.1 closure does not certify N1 (PLAN section 12, item 26); the results record the bridge as N1's own premise and
+    in the invention audit."""
+    document = {b for b, _, _ in translation.facts()}
+    assert "bridge-one-domain" not in document
+    assert [b for b, _, _ in translation.facts("N1") if b not in document] == ["bridge-one-domain"]
+    assert {b for b, _, _ in translation.facts("N2")} == document
+    assert RESULTS["items"]["N1"]["own_premises"] == ["bridge-one-domain"]
+    assert RESULTS["items"]["N1"]["verdict"] == "ALL"
+    assert run.invention_audit()["bridges"] == RESULTS["invention_audit"]["bridges"] == ["bridge-one-domain"]
+    premises = tuple(f for _, _, formulas in translation.facts() for f in formulas)
+    goal = run.A.Not(run.A.Exists("level", run.A.And(run.A.Unary("tracked", run.A.Var(0)),
+                                                     run.A.Binary("concerns", run.A.Var(0), run.A.Const("cyber")))))
+    assert run.refute(premises, [], goal) is None
+
+
 # The Glossary definitions a predicate's legend quotes whole: a legend carries what a predicate means (DEF, WHAT) and
 # never force, bearer, condition, exception or deadline (reviews/dri-decisions-20261114-uc-split-precedent.md item 4).
 GLOSSARY_DEFINITIONS = {
