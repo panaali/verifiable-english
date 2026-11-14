@@ -847,3 +847,114 @@ def test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word():
     planted = {**sidecar, "f5-strict": [{"words": "A frontier developer", "reason": "reading", "arg": "RS2"}],
                "f5-default": [{"words": "threat actors", "reason": "loss", "arg": "1"}]}
     assert _omission_records(planted, set(F5_BLOCKS)) == [("f5-default", "loss"), ("f5-strict", "reading")]
+
+
+# --- anthropic-rsp-cases-repair: the case records (the audit's CASES unit) have an accounting line ------------------
+
+def _plan_sections_5_and_6():
+    """PLAN 5 (the case-facts sentence) and PLAN 6 (each case's situation, in its key row), whitespace collapsed."""
+    plan = (RSP / "PLAN.md").read_text(encoding="utf-8")
+    start, end = plan.index("\n## 5. "), plan.index("\n## 7. ")
+    return " ".join(plan[start:end].split())
+
+
+# The situations that are not PLAN text verbatim, each with the PLAN text it transcribes and how (checked below).
+SITUATION_ALLOWED = {
+    **{f"A-T{k}": "PLAN 5's case-facts sentence for PLAN 6's row A-Tk, k = 1 … 4" for k in range(1, 5)},
+    **{case_id: "PLAN 6's row with the sign × written x; quantities.cost_factor carries the factor"
+       for case_id in ("T1", "T2", "T5")},
+}
+CASE_FIELDS = {"id", "family", "thresholds", "situation", "findings", "quantities", "source_sentence"}
+
+
+def _cases():
+    return json.loads((RSP / "cases.json").read_text(encoding="utf-8"))["cases"]
+
+
+def _situation_mismatches(cases, plan):
+    """The cases whose situation is neither PLAN 5-6 text nor an allowed transcription of it."""
+    out = []
+    for case in cases:
+        situation = " ".join(case["situation"].split())
+        verbatim = situation in plan
+        if verbatim:
+            ok = case["id"] not in SITUATION_ALLOWED   # a stale allowance is a mismatch too
+        elif case["id"].startswith("A-T"):
+            k = case["id"][3:]
+            ok = (case["id"] in SITUATION_ALLOWED and situation == f"T{k} crossed, no other threshold"
+                  and case["thresholds"] == [f"T{k}"]
+                  and "The model has crossed the thresholds named (T0: none) and no others" in plan
+                  and "| A-Tk, k = 1 … 4 |" in plan)
+        else:
+            factor = re.search(r"(\d+(?:\.\d+)?)x\b", situation)
+            ok = (case["id"] in SITUATION_ALLOWED and factor is not None
+                  and re.sub(r"(\d)x\b", r"\1×", situation) in plan
+                  and case.get("quantities", {}).get("cost_factor") == float(factor[1]))
+        if not ok:
+            out.append(case["id"])
+    return out
+
+
+def test_cases_accounting_line_exists_and_parses():
+    """(a) accounting.d1.txt has one CASES line, after every block line, "omits: nothing"; the accounting tool reads
+    it as the CASES collection with no problem, and the saved --source report agrees."""
+    acc = _accounting()
+    lines = acc.read_sidecar(RSP / "accounting.d1.txt")
+    cases_lines = [line for line in lines if line[1] == "CASES"]
+    assert [(entries, problem) for _, _, entries, problem in cases_lines] == [([], None)]
+    assert cases_lines[0][0] > max(n for n, block_id, _, _ in lines if block_id not in acc.COLLECTIONS)
+    result = acc.account(RSP)
+    assert result["problems"] == []
+    saved = json.loads((base.REPO / "docs/usecases/safetyfw/anthropic-rsp/accounting.json").read_text())
+    for report in (result, saved):
+        assert [c for c in report["collections"] if c["id"] == "CASES"] == [
+            {"id": "CASES", "entries": [], "problems": []}]
+    assert saved["problems"] == [] and saved["source_sha256"] is not None
+
+
+def test_every_case_situation_is_plan_text_or_an_allowed_transcription():
+    """(b) Each case's situation is PLAN 5-6 text verbatim, or on SITUATION_ALLOWED with the transcription its reason
+    names: A-T1..A-T4 from PLAN 5's case-facts sentence; T1, T2 and T5 with "x" for "×" and the factor carried."""
+    plan = _plan_sections_5_and_6()
+    cases = _cases()
+    assert len(cases) == 49 and {c["id"] for c in cases} >= set(SITUATION_ALLOWED)
+    assert _situation_mismatches(cases, plan) == []
+    # The other direction: a changed situation, a stale allowance and a wrong carried factor are each caught.
+    changed = [{**c, "situation": c["situation"] + " in the morning"} if c["id"] == "K7" else c for c in cases]
+    assert _situation_mismatches(changed, plan) == ["K7"]
+    t1 = [{**c, "quantities": {"cost_factor": 5}} if c["id"] == "T1" else c for c in cases]
+    assert _situation_mismatches(t1, plan) == ["T1"]
+    stale = [{**c, "situation": "T1 crossed"} if c["id"] == "A-T1" else c for c in cases]
+    assert _situation_mismatches(stale, plan) == ["A-T1"]
+
+
+def _finding_predicates(case):
+    """The predicates a case's findings set (run.py's OT and scenario maps own the names)."""
+    out = set()
+    for term in case["findings"]:
+        names = [rsp_run.SCENARIO_TERMS[s][term] for s in rsp_run.SCENARIOS.get(case["id"], ())
+                 if term in rsp_run.SCENARIO_TERMS[s]]
+        out.update(names or [rsp_run.OT.get(term, term)])
+    return out
+
+
+def test_transcribed_source_sentences_are_whole_quotes_the_rules_account_and_the_findings_carry():
+    """(c) The only source words the case records hold are two `source_sentence` fields (K21, T2; PLAN 12 item 15).
+    Each is inside a header quote of a block whose accounting line omits nothing, and every word of it is in the legend
+    of a predicate the case's findings set: the records leave out no word of what they transcribe."""
+    acc = _accounting()
+    cases = _cases()
+    assert set().union(*map(set, cases)) == CASE_FIELDS
+    legend = acc.legends(json.loads((RSP / "environment.d1.json").read_text()))
+    sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
+    blocks = [b for name in acc.BLOCK_FILES for b in acc.read_blocks(RSP / name)]
+    quoted = {c["id"]: c["source_sentence"] for c in cases if "source_sentence" in c}
+    assert sorted(quoted) == ["K21", "T2"]
+    by_id = {c["id"]: c for c in cases}
+    for case_id, sentence in quoted.items():
+        holders = [b["id"] for b in blocks if any(acc.norm(sentence) in q for q in acc.quotes(b["source"]))]
+        assert [h for h in holders if sidecar[h] == []], (case_id, holders)
+        predicates = _finding_predicates(by_id[case_id])
+        assert predicates <= set(legend), (case_id, predicates)
+        carried = set().union(*(legend[p]["legend"] for p in predicates))
+        assert acc.words(acc.norm(sentence)) - carried == set(), case_id
