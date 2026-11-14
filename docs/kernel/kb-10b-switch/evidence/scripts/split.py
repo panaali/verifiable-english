@@ -3,8 +3,8 @@ calls, and the rest (Python and other Lean kinds). usage: split.py <root> <harne
 import sys, time, json, hashlib, importlib.util
 root, name = sys.argv[1], sys.argv[2]
 sys.path.insert(0, root)
-from ve import soft_route
-orig = soft_route.selected_at; seen = set(); acc = {"first": [0, 0.0], "later": [0, 0.0]}; each = []
+from ve import softnorms  # the relay the document calls (`SoftenedNormDocument._ask_rows`)
+orig = softnorms.selected_at; seen = set(); acc = {"first": [0, 0.0], "later": [0, 0.0]}; each = []
 def wrapped(d, m, q):
     k = hashlib.sha256(json.dumps([d.env.to_dict(), [r.to_dict() for r in d.rules]], sort_keys=True).encode()).hexdigest()
     kind = "later" if k in seen else "first"; seen.add(k)
@@ -13,7 +13,7 @@ def wrapped(d, m, q):
         return orig(d, m, q)
     finally:
         acc[kind][0] += 1; acc[kind][1] += time.monotonic() - s; each.append(time.monotonic() - s)
-soft_route.selected_at = wrapped
+softnorms.selected_at = wrapped
 
 
 def service_cpu():
@@ -41,7 +41,7 @@ def wrapped(d, m, q):  # noqa: F811  (the Lean CPU of each call too)
         return _timed(d, m, q)
     finally:
         cpu.append(service_cpu() - before)
-soft_route.selected_at = wrapped
+softnorms.selected_at = wrapped
 spec = importlib.util.spec_from_file_location("h", f"{root}/usecases/{name}/run.py"); mod = importlib.util.module_from_spec(spec)
 sys.path.insert(0, f"{root}/usecases/{name}"); spec.loader.exec_module(mod)
 s = time.monotonic(); rc = mod.main(["--check"]); wall = time.monotonic() - s
