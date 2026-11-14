@@ -1,0 +1,236 @@
+{
+ "script": "usecases/safety-framework/run.py",
+ "total_lines": 7017,
+ "total_functions": 692,
+ "files": {
+  "english.py": {
+   "functions": 70,
+   "lines": 1083
+  },
+  "entailment.py": {
+   "functions": 47,
+   "lines": 677
+  },
+  "backends/lean_service.py": {
+   "functions": 49,
+   "lines": 666
+  },
+  "backends/service_schema.py": {
+   "functions": 102,
+   "lines": 511
+  },
+  "order.py": {
+   "functions": 52,
+   "lines": 458
+  },
+  "softnorms.py": {
+   "functions": 40,
+   "lines": 449
+  },
+  "norm_english.py": {
+   "functions": 24,
+   "lines": 440
+  },
+  "ast.py": {
+   "functions": 43,
+   "lines": 380
+  },
+  "norms.py": {
+   "functions": 41,
+   "lines": 354
+  },
+  "environment.py": {
+   "functions": 21,
+   "lines": 291
+  },
+  "printer.py": {
+   "functions": 10,
+   "lines": 207
+  },
+  "evaluate.py": {
+   "functions": 10,
+   "lines": 177
+  },
+  "backends/english_lean.py": {
+   "functions": 24,
+   "lines": 167
+  },
+  "background.py": {
+   "functions": 22,
+   "lines": 121
+  },
+  "model.py": {
+   "functions": 10,
+   "lines": 100
+  },
+  "environment_wire.py": {
+   "functions": 13,
+   "lines": 88
+  },
+  "units.py": {
+   "functions": 11,
+   "lines": 83
+  },
+  "backends/validation.py": {
+   "functions": 16,
+   "lines": 81
+  },
+  "backends/lean_runner.py": {
+   "functions": 12,
+   "lines": 80
+  },
+  "wire.py": {
+   "functions": 10,
+   "lines": 68
+  },
+  "backends/relay.py": {
+   "functions": 6,
+   "lines": 64
+  },
+  "surface/unambiguity.py": {
+   "functions": 2,
+   "lines": 60
+  },
+  "english_vocabulary.py": {
+   "functions": 2,
+   "lines": 57
+  },
+  "profiles.py": {
+   "functions": 8,
+   "lines": 56
+  },
+  "surface/softnorms.py": {
+   "functions": 3,
+   "lines": 55
+  },
+  "surface/registry.py": {
+   "functions": 10,
+   "lines": 47
+  },
+  "assurance.py": {
+   "functions": 8,
+   "lines": 42
+  },
+  "search.py": {
+   "functions": 2,
+   "lines": 41
+  },
+  "english_grammar/__init__.py": {
+   "functions": 12,
+   "lines": 34
+  },
+  "__init__.py": {
+   "functions": 4,
+   "lines": 22
+  },
+  "backends/soft_relay.py": {
+   "functions": 2,
+   "lines": 22
+  },
+  "closure.py": {
+   "functions": 1,
+   "lines": 10
+  },
+  "backends/dispatch.py": {
+   "functions": 1,
+   "lines": 8
+  },
+  "errors.py": {
+   "functions": 1,
+   "lines": 6
+  },
+  "english_phrases.py": {
+   "functions": 2,
+   "lines": 6
+  },
+  "identity.py": {
+   "functions": 1,
+   "lines": 6
+  }
+ },
+ "norms_functions": [
+  "Norm.to_dict",
+  "NormDocument.__init__",
+  "NormDocument.__init__.<locals>.<genexpr>",
+  "NormDocument.__init__.<locals>.<genexpr>",
+  "NormDocument.__init__.<locals>.<genexpr>",
+  "NormDocument.__init__.<locals>.height",
+  "NormDocument.__init__.<locals>.height.<locals>.<genexpr>",
+  "NormDocument._expand",
+  "NormDocument._require_completion",
+  "NormDocument.conflict_targets",
+  "NormDocument.outcome",
+  "NormDocument.selected_rules",
+  "NormDocument.selected_rules.<locals>.<genexpr>",
+  "NormDocument.selected_rules.<locals>.<genexpr>",
+  "NormDocument.selection",
+  "NormDocument.selection.<locals>.<genexpr>",
+  "NormDocument.selection.<locals>.<genexpr>",
+  "NormDocument.selection.<locals>.<genexpr>",
+  "NormDocument.selection.<locals>.subtree",
+  "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+  "_any",
+  "_base_model",
+  "_bind",
+  "_check_conflict_python",
+  "_conflict_report",
+  "_conflict_report.<locals>.<genexpr>",
+  "_conflict_report.<locals>.<genexpr>",
+  "_find_conflict",
+  "_find_conflict.<locals>.<genexpr>",
+  "_generator_targets",
+  "_generator_targets.<locals>.<genexpr>",
+  "_lean_route",
+  "_plain_acts",
+  "_prove_targets",
+  "_regulated_closure",
+  "_reject_filling",
+  "_reject_split",
+  "_retained",
+  "base_data",
+  "check_conflict",
+  "plain_wordings"
+ ],
+ "softnorms_functions": [
+  "SoftBaseEnvironment.__init__",
+  "SoftEnvironment.__init__",
+  "SoftEnvironment.__init__.<locals>.<genexpr>",
+  "SoftEnvironment._init_soft",
+  "SoftEnvironment.to_dict",
+  "SoftNormDocument.__init__",
+  "SoftNormDocument._elaborate",
+  "SoftNormDocument._elaborate.<locals>.<genexpr>",
+  "SoftNormDocument._init_rules",
+  "SoftNormDocument._init_rules.<locals>.<genexpr>",
+  "SoftNormDocument._init_soft",
+  "SoftNormDocument._init_soft.<locals>.<genexpr>",
+  "SoftNormDocument._init_soft.<locals>.<genexpr>",
+  "SoftNormDocument._init_soft.<locals>.<genexpr>",
+  "SoftNormDocument._init_soft.<locals>.<genexpr>",
+  "SoftNormDocument._init_soft.<locals>.<genexpr>",
+  "SoftRule.to_dict",
+  "SoftenedNormDocument.base_environment",
+  "_act_key",
+  "_decision_key",
+  "_decision_key.<locals>.<genexpr>",
+  "_decision_key.<locals>.<genexpr>",
+  "_hydrate_rule",
+  "_hydrate_rule.<locals>.<genexpr>",
+  "_incompatible",
+  "_rank_above",
+  "base_predicate_declaration",
+  "bind_prime_environment",
+  "bind_prime_environment.<locals>.<genexpr>",
+  "bind_soft_elaboration",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "bind_soft_elaboration.<locals>.<genexpr>",
+  "check_soft_source",
+  "rule_key"
+ ]
+}

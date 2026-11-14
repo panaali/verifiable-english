@@ -1,0 +1,127 @@
+id	verdict	key	agree	python_decision_calls	route	soft_selected_on_path
+A-T0/ARG1	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/ARG2	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/ARG3	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/ARG4	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/PROT1	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/PROT2	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/PROT3	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T0/PROT4	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/ARG1	"SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"	"SOME(Ds)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/ARG2	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/ARG3	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/ARG4	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/PROT1	"SOME(RS1=cond | RS1=uncond)"	"SOME(cond | uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/PROT2	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/PROT3	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T1/PROT4	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/ARG1	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/ARG2	"SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"	"SOME(Ds)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/ARG3	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/ARG4	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/PROT1	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/PROT2	"SOME(RS1=cond | RS1=uncond)"	"SOME(cond | uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/PROT3	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T2/PROT4	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/ARG1	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/ARG2	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/ARG3	"SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"	"SOME(Ds)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/ARG4	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/PROT1	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/PROT2	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/PROT3	"SOME(RS1=cond | RS1=uncond)"	"SOME(cond | uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T3/PROT4	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/ARG1	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/ARG2	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/ARG3	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/ARG4	"SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"	"SOME(Ds)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/PROT1	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/PROT2	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/PROT3	"SOME(RS1=uncond)"	"SOME(uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+A-T4/PROT4	"SOME(RS1=cond | RS1=uncond)"	"SOME(cond | uncond)"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-AUT/ASSESS	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-AUT/INSCOPE	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-INT/ASSESS	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-INT/INSCOPE	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-INTD/ASSESS	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-INTD/INSCOPE	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-PUB/ASSESS	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-PUB/INSCOPE	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-TRN/ASSESS	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-TRN/INSCOPE	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-VOL/ASSESS	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+B-VOL/INSCOPE	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+C-doc	"NONE"	"SOME(rel)"	False	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C1	"NONE"	"SOME(rel)"	False	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C2	"NONE"	"NONE"	True	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C3	"NONE"	"NONE"	True	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C4	"NONE"	"NONE"	True	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C5	"NONE"	"NONE"	True	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C6	"NONE"	"NONE"	True	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+C7	"NONE"	"SOME(rel)"	False	evaluate.py:_Evaluator.__init__;evaluate.py:_Evaluator.explanation;evaluate.py:_Evaluator.formula;evaluate.py:_Evaluator.term;evaluate.py:_Evaluator.tick;norms.py:NormDocument._expand;norms.py:NormDocument.selection;norms.py:_check_conflict_python	D1 norms@0 W1 check_conflict with a validated witness model	False
+D1	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+D2	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+D3a	"NONE"	"NONE"	True		D3 ve-units@1 quantity certificate replay	False
+D3b	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+D4	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+D5	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+D6a	"UNDECIDED"	"NONE"	False		D3 ve-units@1	False
+D6b	"UNDECIDED"	"SOME(bound)"	False		D3 ve-units@1	False
+D7	"UNDECIDED"	"NONE"	False		D3 ve-units@1	False
+G1	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules on a query-only vocabulary extension	True
+G2	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion; silence	True
+G3	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules on a query-only vocabulary extension	True
+G4	"UNDECIDED"	"SOME(trigger)"	False		D3 ve-units@1	False
+G5	"UNDECIDED"	"ALL"	False		D1	False
+G6	"UNDECIDED"	"ALL"	False		D1	False
+G7	{"REQUIRED:PROMPT_BOARD_NOTICE": "NONE", "COVERED:QUARTERLY_UPDATE": "ALL"}	{"REQUIRED:PROMPT_BOARD_NOTICE": "NONE", "COVERED:QUARTERLY_UPDATE": "ALL"}	True		D1	True
+G8	"SOME(RS12strive=intent)"	"SOME(intent)"	True		D1 soft-norms@0 selected_rules, deny and allow completion; silence is no selected goals_kept rule	True
+K1	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K10	"UNDECIDED"	"SOME(uncond)"	False		D1	False
+K11	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K12a	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K12b	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K13	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K14	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K15a	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K15b	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K16	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K17	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K18	"NONE"	"ALL"	False		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K19a	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K19b	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K2	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K20	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K21a	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K21b	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K22a	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K22b	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K3	"NONE"	"NONE"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K4	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K5	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K6	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K7	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K8	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion	True
+K9	"UNDECIDED"	"SOME(cond | uncond)"	False		D1	False
+N1	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation	True
+N2	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation	True
+N3	"ALL"	"ALL"	True		D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation	True
+N4	"UNDECIDED"	"NONE"	False		D1	False
+N5	"UNDECIDED"	"ALL"	False		D1	False
+S1-T1	"catastrophic"	"catastrophic"	True		D2 risk@0 risk:class	False
+S1-T2	"catastrophic"	"catastrophic"	True		D2 risk@0 risk:class	False
+S1-T3	"catastrophic"	"catastrophic"	True		D2 risk@0 risk:class	False
+S1-T4	"none"	"none"	True		D2 risk@0 risk:class	False
+S2	"UNDECIDED"	"NONE"	False		D2 risk@0	False
+S3	"ALL"	"ALL"	True		D2 risk@0 risk-decision	False
+S4	"NONE"	"NONE"	True		D2 risk@0 risk-decision	False
+S5	"ALL"	"ALL"	True		D2 risk@0 risk:class	False
+T1	"ALL"	"ALL"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T2a	"NONE"	"NONE"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T2b	"SOME(RS3o=iff&RS3i=suff | RS3o=iff&RS3i=iff)"	"SOME(iffo)"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T3	"ALL"	"ALL"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T4a	"NONE"	"NONE"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T4b	"SOME(RS3o=iff&RS3i=iff)"	"SOME(iffo & iffi)"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T5	"ALL"	"ALL"	True		D3 ve-units@1 quantity certificate replay	False
+T6	"NONE"	"NONE"	True		D1 relational-fol@0 entailment certificate or validated finite countermodel	False
+T7	"NONE"	"SOME(result)"	False		D1 relational-fol@0 entailment certificate or validated finite countermodel	False

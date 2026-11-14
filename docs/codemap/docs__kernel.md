@@ -1,0 +1,9 @@
+- `docs/kernel/kb-10b/repair_shadow_choices.py` — Fill the original kb-10b reports' empty choice inventories from the same direct probe calls.
+- `docs/kernel/kb-10b-switch/evidence/scripts/count.py` — Count soft-selected calls under one harness run: calls, queries, Lean seconds, distinct documents and pairs.
+- `docs/kernel/kb-10b-switch/evidence/scripts/count2.py` — Count soft-selected calls under any script run (runpy): usage count2.py <root> <script> [args].
+- `docs/kernel/kb-10b-switch/evidence/scripts/handles.py` — Registrations a run makes under Protocol.lean's handle table (Handles.insert: at most maxHandles entries, emptied first when one more would exceed it), from th…
+- `docs/kernel/kb-10b-switch/evidence/scripts/order.py` — The (document, model) pairs of a harness --check run in first-question order (the order the kb-10b switch sends its soft-selected calls), recorded on the base …
+- `docs/kernel/kb-10b-switch/evidence/scripts/pyunder_diff.py` — py_under.py before/after comparison for kb-10b step (4): which ve/norms.py functions stop running under each harness.
+- `docs/kernel/kb-10b-switch/evidence/scripts/seed.py` — kb-10b-switch seeded bugs: plant each bug, run the one test that should catch it, restore the file from its saved text.
+- `docs/kernel/kb-10b-switch/evidence/scripts/split.py` — The ruling's split of a harness --check run: Lean time of each document's first soft-selected call, of later calls, and the rest (Python and other Lean kinds).
+- `docs/kernel/kb-10b-switch/ownership/trace_item_callers.py` — reviews/lean-ownership-20261112/trace_item.py with one addition: for each Python decision function called, the distinct call chains from the harness (usecases/…

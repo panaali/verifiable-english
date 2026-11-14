@@ -1,0 +1,56 @@
+[
+ {
+  "bug": "a",
+  "file": "ve/softnorms.py",
+  "from": "for query, row in zip(queries, answer[\"results\"]):",
+  "to": "for query, row in zip(queries[1:], answer[\"results\"]):",
+  "test": "tests/test_kb10b_switch.py::test_selected_rules_and_outcomes_are_leans_answers_at_each_tuple",
+  "result": "2 failed in 0.74s",
+  "caught": true
+ },
+ {
+  "bug": "b",
+  "file": "ve/softnorms.py",
+  "from": "return self._selected_row(source, predicate, model, values)[\"outcome\"]",
+  "to": "return bool(self._selected_row(source, predicate, model, values)[\"selected\"])",
+  "test": "tests/test_kb10b_switch.py::test_the_outcome_is_not_the_truth_of_the_selection",
+  "result": "1 failed in 0.66s",
+  "caught": true
+ },
+ {
+  "bug": "h",
+  "file": "ve/softnorms.py",
+  "from": "if limit and isinstance(error, ResourceLimit):",
+  "to": "if limit and getattr(error, \"code\", None) == \"ResourceLimit\":",
+  "test": "tests/test_kb10b_switch.py::test_over_the_query_limit_the_pair_is_asked_per_predicate",
+  "result": "1 failed in 0.65s",
+  "caught": true
+ },
+ {
+  "bug": "i",
+  "file": "ve/softnorms.py",
+  "from": "pair = pairs.setdefault(key, {",
+  "to": "pair = pairs.setdefault(\"\", {",
+  "test": "tests/test_kb10b_switch.py::test_another_model_or_another_document_is_another_call",
+  "result": "1 failed in 0.61s",
+  "caught": true
+ },
+ {
+  "bug": "j",
+  "file": "ve/softnorms.py",
+  "from": "            predicates += [p for p in self.order if p not in predicates]\n",
+  "to": "",
+  "test": "tests/test_kb10b_switch.py::test_one_call_per_document_and_model_sends_every_query_of_the_pair",
+  "result": "1 failed in 0.57s",
+  "caught": true
+ },
+ {
+  "bug": "k",
+  "file": "usecases/anthropic-rsp/run.py",
+  "from": "outcome_at(predicate, model(doc, case), tuple(values))",
+  "to": "outcome_at(predicate, model(doc, case), tuple(values)[::-1])",
+  "test": "tests/test_kb10b_switch.py::test_the_harnesses_completed_is_outcome_at",
+  "result": "2 failed in 1.60s",
+  "caught": true
+ }
+]

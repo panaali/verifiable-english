@@ -1,0 +1,16 @@
+start 2026-11-13T23:53Z load 17.07 21.21 25.17
+safety-framework before rc=0 wall=158.7s 0f6d59d441 23:55Z
+safety-framework after rc=0 wall=179.9s b44f9ac7bf 23:56Z
+end 2026-11-13T23:56Z load 14.66 18.66 23.50
+start 2026-11-13T23:56Z load 14.66 18.66 23.50
+anthropic-rsp before rc=0 wall=279.6s 0f6d59d441 00:00Z
+anthropic-rsp after rc=0 wall=527.3s b44f9ac7bf 00:04Z
+end 2026-11-14T00:04Z load 7.29 10.96 17.89
+start 2026-11-14T00:05Z load 7.19 10.88 17.82
+anthropic-rsp before rc=0 wall=314.2s 0f6d59d441 00:10Z
+anthropic-rsp after rc=0 wall=650.1s b44f9ac7bf 00:15Z
+end 2026-11-14T00:15Z load 17.63 21.21 20.41
+start 2026-11-14T00:15Z load 17.63 21.21 20.41
+safety-framework before rc=0 wall=138.0s 0f6d59d441 00:18Z
+safety-framework after rc=0 wall=159.1s b44f9ac7bf 00:18Z
+end 2026-11-14T00:18Z load 15.94 19.57 19.94
