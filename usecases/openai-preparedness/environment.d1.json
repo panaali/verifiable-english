@@ -659,7 +659,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1: the plausible ways in which the associated risk of severe harm can come to fruition in the proposed deployment",
+        "description": "4.1: “We use the following process to select safeguards for a deployment: • We first identify the plausible ways in which the associated risk of severe harm can come to fruition in the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it would pass the 80-character limit; the order it states before the next step is event order, not formalised: ET, as PLAN O7)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -670,7 +670,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1: specific safeguards that either exist or should be implemented that would address the risk",
+        "description": "4.1: “• For each of those, we then identify specific safeguards that either exist or should be implemented that would address the risk.” (the second step; 'then' is in this legend only, a word an act may not use; the order it states after the first step is event order, not formalised: ET, as PLAN O7; the per-item scope stays SC-blocked)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
