@@ -1,4 +1,3 @@
--- ve-layer: 4 (the document mode's lowering over its decoded units; shell, called by Service.CoreCheck)
 import VE.Service.Document
 
 /-! The lowering of a document to its core documents (kb-2a step A; docs/spec/kernel-boundary.md 4.1 and 4.2;
