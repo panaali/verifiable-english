@@ -938,6 +938,13 @@ def _finding_predicates(case):
     return out
 
 
+def _whole_sentence_of(sentence, quote):
+    """`sentence` is one or more whole sentences of `quote`: it ends a sentence and starts the quote or a sentence."""
+    at = quote.find(sentence)
+    return (at >= 0 and sentence.endswith(".") and (at == 0 or quote[:at].rstrip().endswith(".")) and
+            quote[at + len(sentence):][:1] in ("", " "))
+
+
 def test_transcribed_source_sentences_are_whole_quotes_the_rules_account_and_the_findings_carry():
     """(c) The only source words the case records hold are two `source_sentence` fields (K21, T2; PLAN 12 item 15).
     Each is inside a header quote of a block whose accounting line omits nothing, and every word of it is in the legend
@@ -952,7 +959,8 @@ def test_transcribed_source_sentences_are_whole_quotes_the_rules_account_and_the
     assert sorted(quoted) == ["K21", "T2"]
     by_id = {c["id"]: c for c in cases}
     for case_id, sentence in quoted.items():
-        holders = [b["id"] for b in blocks if any(acc.norm(sentence) in q for q in acc.quotes(b["source"]))]
+        holders = [b["id"] for b in blocks if any(_whole_sentence_of(acc.norm(sentence), q)
+                                                  for q in acc.quotes(b["source"]))]
         assert [h for h in holders if sidecar[h] == []], (case_id, holders)
         predicates = _finding_predicates(by_id[case_id])
         assert predicates <= set(legend), (case_id, predicates)
