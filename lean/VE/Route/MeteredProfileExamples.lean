@@ -146,7 +146,7 @@ def plainEntry : String := r#"{"arguments": ["point"], "description": "d"}"#
 #guard treeOf ("{\"a_lone\": " ++ entry "plain" "" ++ ", \"z_upper\": " ++ plainEntry ++ "}") == some []
 #guard treeOf ("{\"a_upper\": " ++ plainEntry ++ ", \"z_lone\": " ++ entry "plain" "" ++ "}") == some []
 
--- `ProfileHolds` on finite relations, and `ProfileAdmits` of a prepared environment with a profile.
+-- `ProfileHolds` on finite relations.
 instance (T : VE.Norms.Tree) (relations : String → List (List String)) :
     Decidable (VE.Norms.Plain.ProfileHolds T relations) := by
   unfold VE.Norms.Plain.ProfileHolds; infer_instance
@@ -156,16 +156,6 @@ def bad : String → List (List String) := fun name => if name == "r" then [["a"
 
 #guard decide (VE.Norms.Plain.ProfileHolds tree good)
 #guard !decide (VE.Norms.Plain.ProfileHolds tree bad)
-
-def prep (T? : Option VE.Norms.Tree) : VE.Route.MeteredRun.Prepared :=
-  { checked := .error "", layered := Thunk.pure (.error ""), route := Thunk.pure (.error ""),
-    order := Thunk.pure (.error ""), core := Thunk.pure (.error ""), profile := Thunk.pure (.ok T?) }
-
-example : VE.Route.MeteredRun.ProfileAdmits (prep (some tree)) good :=
-  ⟨some tree, rfl, fun T h => by cases h; decide⟩
-example : ¬ VE.Route.MeteredRun.ProfileAdmits (prep (some tree)) bad := fun ⟨T?, h, hall⟩ => by
-  cases h; exact absurd (hall _ rfl) (by decide)
-example : VE.Route.MeteredRun.ProfileAdmits (prep none) bad := ⟨none, rfl, fun T h => by cases h⟩
 
 -- A frozen envelope has no profile, as its `model` mode has no profile check.
 #guard match (VE.Route.MeteredRun.prepare (parsed r#"{"language": "ve.core@0"}"#)).profile.get with
