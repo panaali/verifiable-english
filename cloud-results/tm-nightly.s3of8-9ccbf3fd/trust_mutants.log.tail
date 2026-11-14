@@ -1,0 +1,8 @@
+trust_mutants: 61 definitions, 76 mutants (7 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/WireContract/Hooks/Purposes.lean:66 VE.WireContract.Hooks.Purposes.classifier (G[V], trusted) arm-default: match decodeBlock (purposesOf root) with -> .ok (lean/VE/WireContract/Hooks/Purposes.lean:67: Inconsistent number of patterns in match alternative...)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 69 OTHER SHARD in 4671 s
+trust_mutants: D[V], trusted: 2 KILLED, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 UNKNOWN, 32 OTHER SHARD
+trust_mutants: K, trusted: 7 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 10 OTHER SHARD
+trust_mutants: steps: wall plan 12.4 s, scratch 2.1 s, control_build 0.2 s, probe_install 1 s, mutants 4654.4 s, cleanup 0.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 32.3 s (8), mutant_builds 83 s (7), mutant_checks 11964.9 s (11), stage_controls 5711 s (5), mutant_probes 35.8 s (8)
