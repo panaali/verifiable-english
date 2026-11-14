@@ -205,7 +205,10 @@ theorem norms_wire_acceptanceIn (dec : Wire.SourceDecoder) (j answer : Json) (h 
 /-! ## The route's own decoder -/
 
 /-- The route's runners without `acts@0` (`Wire.decodeFlagged`, `ActsHook.plain`): an environment from which `acts@0`
-is read is refused. The norms mode hands such a case to `runCaseActsRouted` first (`runCaseRouted`). -/
+is read is refused. The norms mode hands such a case to `runCaseActsRouted` first (`runCaseRouted`). Admission
+refuses such an environment before it decodes (`Admission.envelopeGate`), so `runAdmission` answers as before on
+every input (`VE.Acts.HookTwins.runAdmission_today`) and its callers (document admission, discourse composition)
+take it as it is. -/
 def runAdmission : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeFlagged
 def AdmissionAnswer : String → Json → Json → Json → Prop := AdmissionAnswerIn Wire.decodeFlagged
 def runCase : Json → Except String Json := runCaseIn Wire.decodeFlagged
@@ -221,11 +224,10 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
       AdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer :=
   norms_wire_acceptanceIn Wire.decodeFlagged j answer h hk hn
 
-/-- The route's runners as they were before the acts hook (kb-4a): `acts@0` read, joined acts admitted and not
+/-- The route's runner as it was before the acts hook (kb-4a): `acts@0` read, joined acts admitted and not
 elaborated (`Wire.decodeFlaggedActs`, today's `decodeFlagged`). The callers that can meet an `acts@0` environment
-outside the norms mode's own dispatch run these: the soft-norms and speech-acts modes' delegation of a plain norms
-case, document admission and discourse composition. -/
-def runAdmissionActs : String → Json → Json → Except String Json := runAdmissionIn Wire.decodeFlaggedActs
+outside the norms mode's own dispatch run it: the soft-norms and speech-acts modes' delegation of a plain norms
+case. -/
 def runCaseActs : Json → Except String Json := runCaseIn Wire.decodeFlaggedActs
 
 /-- Whether a case's environment is read with `acts@0`. -/

@@ -55,7 +55,7 @@ def chainConstructs (environment j : Json) : Bool :=
 /-- The route `dispatch` chooses for the base list, run on the base environment and a resolved document. -/
 def dispatchAdmission (ps : List String) (environment document : Json) : Except String Json :=
   match VE.Compose.dispatch ps with
-  | .ok .norms => VE.Norms.Run.runAdmissionActs "" environment document
+  | .ok .norms => VE.Norms.Run.runAdmission "" environment document
   | .ok .normDefaults => VE.NormDefaults.Run.runAdmission "" environment document
   | .ok .soft => VE.SoftNorms.Run.runAdmission "" environment document
   | .ok .rights => VE.Rights.Run.runAdmission "" environment document

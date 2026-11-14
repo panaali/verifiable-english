@@ -8,10 +8,12 @@ over today's decoder `HookToday.Today.decodeFlagged`, frozen for these statement
 (`Acts.Decode.flaggedSource`, `Acts.Run.normsSource`) are today's: each now passes `ActsHook.acts` to `decodeSource`,
 which is today's decoder by `rfl` (`HookToday.decodeSource_acts`).
 
-* `runCaseActsRouted_today`, `runCaseActs_today`, `runAdmissionActs_today`: the acts-instantiated runners are today's
-  runners, on every input (`rfl`).
+* `runCaseActsRouted_today`, `runCaseActs_today`: the acts-instantiated runners are today's runners, on every input
+  (`rfl`).
 * `runCase_plain`, `runAdmission_plain`: the plain runners are today's wherever the decoder meets no environment from
   which `acts@0` is read (the case's environment, and the one a `norms-elaborate` case decides over).
+* `runAdmission_today`: the plain admission runner answers every input as before (admission refuses `acts@0` before
+  it decodes, `envelopeGate_actsProfiles`).
 * `runCaseRouted_today`: the norms mode's dispatch answers every input as before. -/
 namespace VE.Acts.HookTwins
 open Lean VE.Norms VE.Norms.Wire
@@ -37,7 +39,6 @@ end Today
 
 theorem runCaseActsRouted_today : VE.Norms.Run.runCaseActsRouted = Today.runCaseRouted := rfl
 theorem runCaseActs_today : VE.Norms.Run.runCaseActs = Today.runCase := rfl
-theorem runAdmissionActs_today : VE.Norms.Run.runAdmissionActs = Today.runAdmission := rfl
 
 /-! ## Two decoders that agree where a runner reads give the same answer -/
 
@@ -121,6 +122,28 @@ theorem runCase_plain (j : Json) (hE : actsProfiles true (j.getObjValD "environm
 theorem runAdmission_plain (id : String) (environment document : Json) (h : actsProfiles true environment = []) :
     VE.Norms.Run.runAdmission id environment document = Today.runAdmission id environment document :=
   runAdmissionIn_congr (fun n => HookToday.decodeFlagged_plain environment n h) id document
+
+/-- Admission refuses, before it decodes, every environment from which `acts@0` is read: the envelope admits known
+profiles only (`Route.Gate.decodeEnvelope_sound`), and `acts@0` is not one. -/
+theorem envelopeGate_actsProfiles {environment : Json} (h : Admission.envelopeGate environment = .ok ()) :
+    actsProfiles true environment = [] := by
+  unfold Admission.envelopeGate at h
+  obtain ⟨e, he, -⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨-, hp, ha⟩ := VE.Route.Gate.decodeEnvelope_sound _ _ he
+  refine HookToday.actsProfiles_eq_nil true environment fun ps hps hmem => ?_
+  rw [hp] at hps
+  cases hps
+  exact absurd (ha.2.1 _ hmem) (by decide)
+
+/-- The plain admission runner answers every input as before: no caller relied on today's acceptance of `acts@0`. -/
+theorem runAdmission_today (id : String) (environment document : Json) :
+    VE.Norms.Run.runAdmission id environment document = Today.runAdmission id environment document := by
+  cases hg : Admission.envelopeGate environment with
+  | error m =>
+    unfold VE.Norms.Run.runAdmission Today.runAdmission VE.Norms.Run.runAdmissionIn Admission.admitDocumentIn
+    simp only [hg]
+    rfl
+  | ok u => exact runAdmission_plain id environment document (envelopeGate_actsProfiles hg)
 
 /-- The norms mode's dispatch answers every input as before the acts hook: a case that reads `acts@0` (or an
 `acts-elaborate` case) goes to today's runner itself, and every other case to the plain runner, which then decodes

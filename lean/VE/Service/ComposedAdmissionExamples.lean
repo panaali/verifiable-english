@@ -38,7 +38,7 @@ def chainField (text key : String) : Json :=
 #guard chainField doc "inner_report_id" == (chainField doc "inner").getObjValD "report_id"
 -- S4-1: `inner` is the norms route's answer on the document without the discourse block (`chainDocument`)
 #guard match VE.Discourse.Run.loadCase (caseOf doc) with
-  | .ok (d, env) => (chainDocument (baseEnvironment env) d >>= VE.Norms.Run.runAdmissionActs "" (baseEnvironment env)).toOption ==
+  | .ok (d, env) => (chainDocument (baseEnvironment env) d >>= VE.Norms.Run.runAdmission "" (baseEnvironment env)).toOption ==
       some (chainField doc "inner")
   | .error _ => false
 -- a large well-formed document: 200 norm units end within the chain document's byte limit
