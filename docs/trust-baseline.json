@@ -2714,6 +2714,20 @@
    "reason": "kb-1: the carry rule (VE.Kernel.Carry: Path, Row, Path.row, Path.Ran, shell, carry), K by the architect seat; spec kernel-boundary.md KB-1",
    "signature": "DRI-20261112-kb1 (reviews/dri-decisions-20261112-kb-1.md item 1)",
    "commit": "35a9ba135fe26df92ec412586a1999911839c15f"
+  },
+  {
+   "class": "S",
+   "lines": 4,
+   "reason": "kb-validators part 1: metered enforces and states the norms profile on its model (new Lean-owned behaviour, D13): S +4 (VE/Route/MeteredWire.lean: ProfileAdmits), V +33 (VE/Route/MeteredRun.lean +11: Prepared.profile, prepare, profiled and its four calls in run; VE/Norms/Plain.lean +9: profileOkOn, ProfileHolds, profileOk through profileOkOn; VE/Route/MeteredWire.lean +7: the ProfileAdmits conjunct in EvaluationAnswer and the run_*_sound statements; VE/Service/Standalone.lean +6: profileTree); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-validators, 2026-11-14",
+   "commit": "0f6d59d441078280f74de2714657ec5652e5269e"
+  },
+  {
+   "class": "V",
+   "lines": 33,
+   "reason": "kb-validators part 1: metered enforces and states the norms profile on its model (new Lean-owned behaviour, D13): S +4 (VE/Route/MeteredWire.lean: ProfileAdmits), V +33 (VE/Route/MeteredRun.lean +11: Prepared.profile, prepare, profiled and its four calls in run; VE/Norms/Plain.lean +9: profileOkOn, ProfileHolds, profileOk through profileOkOn; VE/Route/MeteredWire.lean +7: the ProfileAdmits conjunct in EvaluationAnswer and the run_*_sound statements; VE/Service/Standalone.lean +6: profileTree); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-validators, 2026-11-14",
+   "commit": "0f6d59d441078280f74de2714657ec5652e5269e"
   }
  ]
 }
