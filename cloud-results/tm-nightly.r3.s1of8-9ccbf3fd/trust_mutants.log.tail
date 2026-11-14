@@ -1,0 +1,7 @@
+trust_mutants: 29 definitions, 35 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:61 VE.EnglishGrammar.adviceTable (G[V], trusted) list-drop-last: adviceRows -> (adviceRows.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Closure/Consequence.lean:9 VE.Closure.Entails (K, trusted) list-drop-last: premises.map Formula.toCore -> ((premises.map Formula.toCore).dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:768 VE.Compose.actsRefuses (G[V], trusted) list-drop-last: ["soft-norms@0", "rights@0", "alternatives@0"] -> (["soft-norms@0", "rights@0", "alternatives@0"].dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:120 VE.SpeechActs.Wire.profilesAllowed (D[V], trusted) list-first: allow -> (allow.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-drop-last: eventsRefusals -> (eventsRefusals.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-first: (baseRows.map (·.profile)).eraseDups -> (((baseRows.map (·.profile)).eraseDups).take 1) (lake build did not finish in 1800 s (--build-timeout))
