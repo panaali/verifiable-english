@@ -22712,7 +22712,35 @@
         "VE.Service.CoreCheckExamples.statements",
         "VE.Service.CoreCheckExamples.rows",
         "VE.Service.CoreCheckExamples.refusal",
-        "VE.Service.CoreCheckExamples.edit"
+        "VE.Service.CoreCheckExamples.edit",
+        "VE.Service.CoreCheckExamples.casesText",
+        "VE.Service.CoreCheckExamples.env",
+        "VE.Service.CoreCheckExamples.ruleH",
+        "VE.Service.CoreCheckExamples.x",
+        "VE.Service.CoreCheckExamples.fact",
+        "VE.Service.CoreCheckExamples.illTyped",
+        "VE.Service.CoreCheckExamples.deep",
+        "VE.Service.CoreCheckExamples.decision",
+        "VE.Service.CoreCheckExamples.core",
+        "VE.Service.CoreCheckExamples.src"
+      ]
+    },
+    "VE/Kernel/DocumentFoldExamples.lean": {
+      "T": [
+        "VE.Kernel.DocumentFoldExamples.ok",
+        "VE.Kernel.DocumentFoldExamples.refused",
+        "VE.Kernel.DocumentFoldExamples.unit",
+        "VE.Kernel.DocumentFoldExamples.view"
+      ]
+    },
+    "ResponseShape/CoreCheckExamples.lean": {
+      "T": [
+        "ResponseShape.CoreCheckExamples.case",
+        "ResponseShape.CoreCheckExamples.accepts",
+        "ResponseShape.CoreCheckExamples.answer",
+        "ResponseShape.CoreCheckExamples.setAt",
+        "ResponseShape.CoreCheckExamples.getAt",
+        "ResponseShape.CoreCheckExamples.refusedAt"
       ]
     }
   }
