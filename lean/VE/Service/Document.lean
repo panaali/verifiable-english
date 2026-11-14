@@ -2064,7 +2064,7 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
       else if E.soft then
         (VE.SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document)).mapError
           fun e => unavailable s!"a claim graph the soft route rejects keeps its loader's code: {e}"
-      else if norms then VE.Norms.Run.runAdmissionActs "admission" E.lower document
+      else if norms then VE.Norms.Run.runAdmission "admission" E.lower document
       else VE.Route.Run.dispatch "admission" E.json E.checked.envelope
         (Json.mkObj [("kind", .str "admission"), ("document", document)])
     | .alternatives => VE.Alternatives.Run.runAdmission "admission" E.json document

@@ -232,7 +232,7 @@ theorem joint_fits (profiles : List String) (environment : Json) (rv : VE.Route.
 /-- Each chain route's admission answer fits `chain_admission`. -/
 theorem dispatchAdmission_fits (ps : List String) (environment document : Json) :
     OkFits req (skel% "discourse.json#/$defs/chain_admission") (dispatchAdmission ps environment document) := by
-  unfold dispatchAdmission VE.Norms.Run.runAdmissionActs VE.Norms.Run.runAdmissionIn
+  unfold dispatchAdmission VE.Norms.Run.runAdmission VE.Norms.Run.runAdmissionIn
     VE.NormDefaults.Run.runAdmission VE.NormDefaults.Run.runAdmissionIn
     VE.SoftNorms.Run.runAdmission VE.Rights.Run.runAdmission
   split
