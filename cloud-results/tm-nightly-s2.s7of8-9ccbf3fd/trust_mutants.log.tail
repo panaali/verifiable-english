@@ -1,0 +1,6 @@
+trust_mutants: 72 definitions, 84 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/SpeechActs/Wire.lean:990 VE.SpeechActs.Wire.surfaceKind (D[V], trusted) list-empty: (· -> (fun x_tm => [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) list-first: ps -> (ps.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:768 VE.Compose.actsRefuses (G[V], trusted) list-first: (["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not implem... -> (((["soft-norms@0", "rights@0", "alternatives@0"].map fun q => (q, s!"acts@0 with {q} is not impl... (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/NormDefaults/Explain.lean:204 VE.NormDefaults.Wire.sourcesJson (D[V], trusted) list-first: S -> (S.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/WireContract/Diagnose.lean:39 VE.WireContract.Diagnose.units (G[V], trusted) list-first: [("inner@0", ⟨Tables.Corpus.Inner.table, Hooks.Corpus.hooks, caseRoot ["x", "ys"]⟩), ("demo@0", ⟨... -> (([("inner@0", ⟨Tables.Corpus.Inner.table, Hooks.Corpus.hooks, caseRoot ["x", "ys"]⟩), ("demo@0",... (lean/VE/WireContract/Diagnose.lean:39: Invalid `⟨...⟩` notation: The expected type of this term c...)
