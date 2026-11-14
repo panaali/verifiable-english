@@ -9122,6 +9122,30 @@
         "VE.Route.MeteredRun.tickCache"
       ]
     },
+    "VE/Route/MeteredProfileExamples.lean": {
+      "T": [
+        "VE.Route.MeteredProfileExamples.beyond",
+        "VE.Route.MeteredProfileExamples.closure",
+        "VE.Route.MeteredProfileExamples.diagnostic",
+        "VE.Route.MeteredProfileExamples.environmentText",
+        "VE.Route.MeteredProfileExamples.families",
+        "VE.Route.MeteredProfileExamples.fol",
+        "VE.Route.MeteredProfileExamples.formula",
+        "VE.Route.MeteredProfileExamples.kinds",
+        "VE.Route.MeteredProfileExamples.meteredCase",
+        "VE.Route.MeteredProfileExamples.modelRefusal",
+        "VE.Route.MeteredProfileExamples.modelText",
+        "VE.Route.MeteredProfileExamples.nary",
+        "VE.Route.MeteredProfileExamples.onRelations",
+        "VE.Route.MeteredProfileExamples.order",
+        "VE.Route.MeteredProfileExamples.pairsOf",
+        "VE.Route.MeteredProfileExamples.parsed",
+        "VE.Route.MeteredProfileExamples.refusal",
+        "VE.Route.MeteredProfileExamples.tree",
+        "VE.Route.MeteredProfileExamples.value",
+        "VE.Route.MeteredProfileExamples.within"
+      ]
+    },
     "VE/Route/MeteredTrace.lean": {
       "G[V]": [
         "VE.Route.MeteredTrace.Entity",
