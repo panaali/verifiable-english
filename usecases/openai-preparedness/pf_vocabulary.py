@@ -263,8 +263,13 @@ ACTS = {
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",
                            "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership "
                            "for immediate reaction as needed to address the risk.”"),
-    "third_party_evaluation": ("{0} have third parties independently evaluate the model",
-                               "5.2: third-party evaluation of tracked model capabilities"),
+    "third_party_evaluation": ("{0} work with third parties to independently evaluate the model",
+                               "5.2: \u201cIf we deem that a deployment warrants deeper testing of Tracked Categories "
+                               "of capability (as described in Section 3.1), for example based on results of "
+                               "Capabilities Report presented to them, then when available and feasible, OpenAI will "
+                               "work with third-parties to independently evaluate models.\u201d (the act is OpenAI's "
+                               "work with third parties, not a required result; the guards carry the deeming about a "
+                               "deployment, OT14, and 'when available and feasible')"),
     "residual_risk_assessment": ("{0} include an assessment of residual severe-harm risk in the Safeguards Report",
                                  "4.2: an assessment on the residual risk of severe harm based on the deployment"),
     "persuasion_handled_outside": ("{0} have persuasion risks handled outside the Preparedness Framework",
