@@ -129,6 +129,7 @@ import VE.Compose.Contract
 import VE.Compose.ContractExamples
 import VE.Compose.Dispatch
 import VE.Compose.Slot
+import VE.Compose.SlotWire
 import VE.Compose.Stack
 import VE.Consequence
 import VE.Core.Congruence
@@ -499,6 +500,7 @@ import VE.SoftNorms.Run
 import VE.SoftNorms.Selected
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.Semantics
+import VE.SoftNorms.SlotSound
 import VE.SoftNorms.Soften
 import VE.SoftNorms.Status
 import VE.SoftNorms.Tree
@@ -2503,6 +2505,27 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.SlotChain.E_out
 #print axioms VE.Compose.SlotChain.premises
 #print axioms VE.Compose.SlotChain.restrict
+#print axioms VE.Compose.SlotWire.SlotWitnessData.background
+#print axioms VE.Compose.SlotWire.SlotWitnessData.facts
+#print axioms VE.Compose.SlotWire.decodeFacts_empty
+#print axioms VE.Compose.SlotWire.decodeFacts_ok
+#print axioms VE.Compose.SlotWire.decodeFormulas_check
+#print axioms VE.Compose.SlotWire.decodeSlotPackage_nil
+#print axioms VE.Compose.SlotWire.factsModel_nil
+#print axioms VE.Compose.SlotWire.factsModel_sat
+#print axioms VE.Compose.SlotWire.map_bind_congr
+#print axioms VE.Compose.SlotWire.ok_bind
+#print axioms VE.Compose.SlotWire.replaySlotConflict_parts
+#print axioms VE.Compose.SlotWire.replaySlotEntailment_parts
+#print axioms VE.Compose.SlotWire.replaySlotWitness_parts
+#print axioms VE.Compose.SlotWire.slotWitnessFrom_nil
+#print axioms VE.Compose.SlotWire.slot_wire_acceptance
+#print axioms VE.Compose.SlotWire.slot_wire_conflict_facts
+#print axioms VE.Compose.SlotWire.slot_wire_conflict_sound
+#print axioms VE.Compose.SlotWire.slot_wire_conflict_witness_sound
+#print axioms VE.Compose.SlotWire.slot_wire_empty
+#print axioms VE.Compose.SlotWire.slot_wire_entailment_facts
+#print axioms VE.Compose.SlotWire.slot_wire_witness_facts
 #print axioms VE.Compose.adjoin_admissible
 #print axioms VE.Compose.adjoin_baseAdmissibleP
 #print axioms VE.Compose.adjoin_denote
@@ -9090,6 +9113,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.getStr_ok
 #print axioms VE.SoftNorms.Run.mem_selectedAt
 #print axioms VE.SoftNorms.Run.mkObj_get_append
+#print axioms VE.SoftNorms.Run.needFacts_ok
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
 #print axioms VE.SoftNorms.Run.outcomeAt_iff
 #print axioms VE.SoftNorms.Run.regeneratedCore_fields
@@ -9098,6 +9122,8 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.selectedRow_eq
 #print axioms VE.SoftNorms.Run.selected_semantics
 #print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
+#print axioms VE.SoftNorms.Run.slot_wire_certificate
+#print axioms VE.SoftNorms.Run.slot_wire_conflict
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate

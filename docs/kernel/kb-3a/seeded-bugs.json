@@ -1,0 +1,87 @@
+{
+ "item": "kb-3a",
+ "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from git (git checkout); the restored tree passes every check named here (lake build, lean/audit.py, the selected run). A Lean seed that breaks a theorem was then run a second time with only that proof replaced by `sorry` (seed run only, never committed), with the seeded ve_service build pinned for that run alone (lean/checkers.lock restored after), so the named Python test and the #guard twins show the behaviour fails too. Python tests ran with VE_NATIVE_PREBUILT=1 on the seeded build. The mechanical sweep is docs/kernel/kb-3a/trust-mutants.json.",
+ "seeds": [
+  {
+   "id": "i",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "an accepted slot certificate is a certificate from background′ ++ P ++ the layer premises ++ the premises (the task's seeded bug (i))",
+   "mutation": "SlotEntailmentReplay.valid checks the certificate against `backgroundP r.src.D []` (P dropped from the premise list)",
+   "failing": "lake build VE.Compose.SlotWire",
+   "result": "slot_wire_acceptance does not build (SlotWire.lean:368, application type mismatch; :369 and :351 whnf timeouts)"
+  },
+  {
+   "id": "ii",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "the slot conflict check replays the targets' certificates over backgroundBaseP (the task's seeded bug (ii))",
+   "mutation": "SlotConflictReplay.conflictFree is slotConflictFreeCheck's text with `backgroundBase' r.src.D` in place of `backgroundBaseP r.src.D r.facts`",
+   "failing": "lake build VE.Compose.SlotWire",
+   "result": "slot_wire_conflict_sound does not build (SlotWire.lean:207: `hv` has type `res.conflictFree = true`, expected `slotConflictFreeCheck res.src.D res.facts res.certs = true`), nor slot_wire_empty (SlotWire.lean:418, unsolved goals); the theorem catches it before fixture (a) can run"
+  },
+  {
+   "id": "iii",
+   "language": "python",
+   "file": "ve/soft_route.py",
+   "claim": "the relay sends the facts under `facts` with the slot kind (the task's seeded bug (iii))",
+   "mutation": "_slot_case sends `\"premises\": list(facts)` instead of `\"facts\": list(facts)`",
+   "failing": "tests/test_slot_premises.py::test_fixture_a_is_conflict_free_only_with_the_fact",
+   "result": "FAILED: VEError `InvalidInput: a slot case needs a facts array` (the relayed slot-conflict has no facts)"
+  },
+  {
+   "id": "T1",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "a fact naming a rule's regulated predicate, permission or a layer symbol is refused by the decoder over E′_base (addendum T1)",
+   "mutation": "decodeFacts decodes over `envAt (soften src.D) (size (soften src.D))` (E′, where the regulated predicates are declared) instead of `envAt (soften src.D) 0`",
+   "failing": "lake build VE.Compose.SlotWire; with decodeFacts_ok's proof sorried: tests/test_slot_premises.py::test_slot_fact_cannot_discharge_rule and lake build VE.SoftNorms.SlotExamples",
+   "result": "decodeFacts_ok does not build (SlotWire.lean:114, SlotWellFormed over E′_base fails); seed run: test_slot_fact_cannot_discharge_rule FAILED on all 3 parameters (slot-certificate answered `InvalidModel(facts): the model violates a fact`, not `ill-typed or unbound formula`), #guards SlotExamples.lean:113 and :115 fail"
+  },
+  {
+   "id": "T2",
+   "language": "python",
+   "file": "ve/soft_route.py",
+   "claim": "the relay binds the answer's `facts` to the number of facts SENT (addendum T2)",
+   "mutation": "bind_facts compares `row[\"facts\"] != row[\"facts\"]` (the count taken from the answer itself) instead of `len(case[\"facts\"])`",
+   "failing": "tests/test_slot_premises.py::test_slot_binding_from_request_not_answer",
+   "result": "FAILED: DID NOT RAISE ValueError (a forged count is accepted)"
+  },
+  {
+   "id": "T3",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "every item of `facts` decodes or the case is refused; none is skipped (addendum T3)",
+   "mutation": "decodeFacts decodes each item alone and keeps those that decode (`items.toList.flatMap fun it => (decodeFormulas E (.arr #[it])).toOption.getD []`)",
+   "failing": "lake build VE.Compose.SlotWire; with decodeFacts_ok's proof sorried: tests/test_slot_premises.py::test_slot_every_fact_item_decoded and lake build VE.SoftNorms.SlotExamples",
+   "result": "decodeFacts_ok does not build (SlotWire.lean:105, the length equation fails); seed run: test_slot_every_fact_item_decoded 5 of 5 FAILED (answered `certificate is stale or bound to different inputs` instead of the decoder's diagnostic), #guards SlotExamples.lean:113, :115, :118, :119 fail"
+  },
+  {
+   "id": "T4",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "a fact naming an undeclared constant or predicate, or a declared one at the wrong sort or arity, is refused (addendum T4)",
+   "mutation": "decodeFacts swallows the decoder's refusal: `let some fs := (decodeFormulas E v).toOption | pure ([], [])`",
+   "failing": "lake build VE.Compose.SlotWire; with decodeFacts_ok's proof sorried: tests/test_slot_premises.py::test_slot_fact_unknown_target_refused and lake build VE.SoftNorms.SlotExamples",
+   "result": "decodeFacts_ok does not build (SlotWire.lean:105); seed run: test_slot_fact_unknown_target_refused 4 of 4 FAILED (the answer's facts count 0 is refused by the response schema, `facts: is not the number of the request's /facts`, instead of Lean's `ill-typed or unbound formula`), #guards SlotExamples.lean:113, :115, :118, :119, :120, :126, :127 fail"
+  },
+  {
+   "id": "T5",
+   "language": "lean",
+   "file": "lean/VE/Compose/SlotWire.lean",
+   "claim": "non-empty facts need a facts_model in which Background_base′ and every fact hold, so jointly unsatisfiable facts never yield CONFLICT-FREE or valid (addendum T5; factsModel_sat, slot_wire_conflict_facts, slot_wire_entailment_facts)",
+   "mutation": "factsModel answers `if true then pure () else ...` (the model check skipped)",
+   "failing": "lake build VE.Compose.SlotWire; with factsModel_sat's proof sorried: tests/test_slot_premises.py::test_slot_inconsistent_facts_refused and lake build VE.SoftNorms.SlotExamples",
+   "result": "factsModel_sat does not build (SlotWire.lean:134, split fails); seed run: test_slot_inconsistent_facts_refused FAILED (facts [p(a), not p(a)] answered status ok with facts 2), #guards SlotExamples.lean:132, :134, :136, :138 fail"
+  },
+  {
+   "id": "T6",
+   "language": "docs",
+   "file": "docs/kernel/kb-3a/REPORT.md",
+   "claim": "every verdict the REPORT's claim table prints is asserted by the test it names (addendum T6)",
+   "mutation": "the claim table's CONFLICT-FREE row prints `CONFLICT FREE` (a verdict no test asserts)",
+   "failing": "tests/test_slot_premises.py::test_slot_report_claims_have_runs",
+   "result": "FAILED: AssertionError ('Fixture (a), `slot-conflict` with the fact and its model', 'CONFLICT FREE', 'tests/test_slot_premises.py', 'test_fixture_a_is_conflict_free_only_with_the_fact'); restored, it passes. The same test also caught a real row while this report was written: `array expected` is in test_slot_every_fact_item_decoded's parametrize decorator, not its body, so that row was removed"
+  }
+ ]
+}

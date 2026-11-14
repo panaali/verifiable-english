@@ -97,6 +97,7 @@ module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
+module ResponseShape.SlotExamples
 module ResponseShape.SoftSelectedExamples
 module ResponseShape
 module ResponseShapeAudit
@@ -292,6 +293,7 @@ module VE.Compose.Dispatch
 module VE.Compose.Examples
 module VE.Compose.ProfilesMain
 module VE.Compose.Slot
+module VE.Compose.SlotWire
 module VE.Compose.Stack
 module VE.Consequence
 module VE.Core.Bridge
@@ -819,6 +821,8 @@ module VE.SoftNorms.Selected
 module VE.SoftNorms.SelectedExamples
 module VE.SoftNorms.SelectedSound
 module VE.SoftNorms.Semantics
+module VE.SoftNorms.SlotExamples
+module VE.SoftNorms.SlotSound
 module VE.SoftNorms.Soften
 module VE.SoftNorms.Status
 module VE.SoftNorms.Tree
@@ -1063,6 +1067,7 @@ VE.Compose.Contract.ScopeSetsFaithful@VE.Compose.Contract
 VE.Compose.ContractExamples.G1.G1Checks@VE.Compose.ContractExamples
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
+VE.Compose.SlotWire.NoFacts@VE.Compose.SlotWire
 VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths

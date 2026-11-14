@@ -1,3 +1,4 @@
+- `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
 - `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
@@ -84,5 +85,3 @@
 - `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
-- `tests/test_grammar_cli.py` — (no module docstring)
-- `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.

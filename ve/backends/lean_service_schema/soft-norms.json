@@ -21,7 +21,16 @@
                   "then": {"$ref": "#/$defs/witness"},
                   "when": {"allOf": [{"$ref": "#/$defs/kind/soft-conflict"}, {"required": ["witness"]}]}
                 },
-                {"then": {"$ref": "#/$defs/packages"}, "when": {"$ref": "#/$defs/kind/soft-conflict"}}
+                {"then": {"$ref": "#/$defs/packages"}, "when": {"$ref": "#/$defs/kind/soft-conflict"}},
+                {
+                  "then": {"$ref": "#/$defs/slot_certificate"},
+                  "when": {"$ref": "#/$defs/kind/slot-certificate"}
+                },
+                {
+                  "then": {"$ref": "#/$defs/slot_witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/slot-conflict"}, {"required": ["witness"]}]}
+                },
+                {"then": {"$ref": "#/$defs/slot_packages"}, "when": {"$ref": "#/$defs/kind/slot-conflict"}}
               ]
             }
           ]
@@ -267,6 +276,8 @@
     },
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "slot-certificate": {"properties": {"kind": {"const": "slot-certificate"}}, "required": ["kind"], "type": "object"},
+      "slot-conflict": {"properties": {"kind": {"const": "slot-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-certificate": {"properties": {"kind": {"const": "soft-certificate"}}, "required": ["kind"], "type": "object"},
       "soft-conflict": {"properties": {"kind": {"const": "soft-conflict"}}, "required": ["kind"], "type": "object"},
       "soft-elaborate": {"properties": {"kind": {"const": "soft-elaborate"}}, "required": ["kind"], "type": "object"},
@@ -387,6 +398,71 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "background", "results"],
+      "type": "object"
+    },
+    "slot_certificate": {
+      "$comment": "SoftNorms.Run.slotCertificateAnswer (slot-certificate, kb-3): soft-certificate's fields over the slot replay, and the number of facts sent.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "common.json#/$defs/nat"},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "facts": {"$ref": "common.json#/$defs/nat", "x-count": "/facts"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "layers": {"$ref": "common.json#/$defs/nat"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "background", "layers", "conditional_on", "facts"],
+      "type": "object"
+    },
+    "slot_packages": {
+      "$comment": "SoftNorms.Run.slotConflictAnswer (slot-conflict over packages, kb-3): soft-conflict's fields over the slot replay, and the number of facts sent.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["detail"]}},
+      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
+      "properties": {
+        "budget": {"$ref": "common.json#/$defs/nat"},
+        "coherent_exhibit": {"type": "boolean"},
+        "conditional_on": {"$ref": "#/$defs/coherence_labels"},
+        "detail": {"$ref": "common.json#/$defs/text"},
+        "facts": {"$ref": "common.json#/$defs/nat", "x-count": "/facts"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "status_text": {"$ref": "common.json#/$defs/text"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+      },
+      "required": [
+        "id",
+        "status",
+        "verdict",
+        "status_text",
+        "coherent_exhibit",
+        "budget",
+        "targets",
+        "conditional_on",
+        "facts"
+      ],
+      "then": {"required": ["detail"]},
+      "type": "object"
+    },
+    "slot_witness": {
+      "$comment": "SoftNorms.Run.slotWitnessAnswer (slot-conflict with a witness, kb-3): soft-conflict's witness fields over a model of the facts, and the number of facts sent.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["witness_kind"]}},
+      "if": {"properties": {"verdict": {"const": "CONFLICT"}}},
+      "properties": {
+        "facts": {"$ref": "common.json#/$defs/nat", "x-count": "/facts"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "status_text": {"$ref": "common.json#/$defs/text"},
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
+        "witness_kind": {"pattern": "(pair conflict on |strict collision on ).*", "type": "string"}
+      },
+      "required": ["id", "status", "verdict", "target", "targets", "status_text", "facts"],
+      "then": {"required": ["witness_kind"]},
       "type": "object"
     },
     "soft_field": {
