@@ -1,8 +1,8 @@
 """kb-10b steps (2)-(4): a soft document's selected rules and completed outcomes are Lean's `soft-selected` answers.
 
 `SoftenedNormDocument.selected_rules` and `SoftenedNormDocument.outcome_at` read Lean's bound answer
-(`ve.soft_route.selected_at`) for a document built by `SoftNormDocument`. One call per (document, model)
-sends every query the pair can be asked; the answers are kept per document request and model. Over Lean's
+(`ve.softnorms.selected_at`, which `ve.soft_route.selected_at` relays through its own runner) for a document
+built by `SoftNormDocument`. One call per (document, model) sends every query the pair can be asked; the answers are kept per document request and model. Over Lean's
 query limit the pair is asked per predicate, then per query. A hand-built document without its soft source
 keeps Python's path. The three safety-framework harnesses' `completed` read `outcome_at`.
 
@@ -19,8 +19,7 @@ from pathlib import Path
 import pytest
 
 from tests.test_soft_selected import EXPECTED, MODEL, document, lean  # noqa: F401  (`lean` is a fixture)
-from ve import soft_route
-from ve import softnorms
+from ve import soft_route, softnorms
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.model import FiniteModel
 from ve.softnorms import SoftenedNormDocument
@@ -34,12 +33,12 @@ def calls(monkeypatch):
     """Every `selected_at` call (its query list), answered by Lean; and an empty answer cache."""
     monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
     sent = []
-    genuine = soft_route.selected_at
+    genuine = softnorms.selected_at
 
     def recording(doc, model, queries):
         sent.append([(q[0], tuple(q[1])) for q in queries])
         return genuine(doc, model, queries)
-    monkeypatch.setattr(soft_route, "selected_at", recording)
+    monkeypatch.setattr(softnorms, "selected_at", recording)
     return sent
 
 
@@ -128,7 +127,7 @@ def limited(monkeypatch, limit):
     `ResourceLimit`, Lean's wire code), and asks Lean otherwise."""
     monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
     sent = []
-    genuine = soft_route.selected_at
+    genuine = softnorms.selected_at
 
     def relay(doc, model, queries):
         sent.append([(q[0], tuple(q[1])) for q in queries])
@@ -137,7 +136,7 @@ def limited(monkeypatch, limit):
             error.code = "SOFT_RESOURCE_LIMIT"
             raise error
         return genuine(doc, model, queries)
-    monkeypatch.setattr(soft_route, "selected_at", relay)
+    monkeypatch.setattr(softnorms, "selected_at", relay)
     return sent
 
 
@@ -172,12 +171,12 @@ def test_within_the_limit_the_pair_is_one_call(lean, monkeypatch):
 
 def test_a_refusal_other_than_the_limit_is_raised_not_answered(lean, monkeypatch):
     monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
-    monkeypatch.setattr(soft_route, "selected_at",
+    monkeypatch.setattr(softnorms, "selected_at",
                         lambda *a: (_ for _ in ()).throw(VEError("InvalidInput: query 0: refused")))
     doc = document()
     with pytest.raises(VEError, match="query 0: refused"):
         doc.elaborated.selected_rules("x_required", model_of(doc), ("b",))
-    monkeypatch.setattr(soft_route, "selected_at",
+    monkeypatch.setattr(softnorms, "selected_at",
                         lambda *a: (_ for _ in ()).throw(CheckerUnavailable("CheckerUnavailable: not bound")))
     with pytest.raises(CheckerUnavailable):
         doc.elaborated.outcome_at("x_required", model_of(doc), ("b",))
@@ -187,16 +186,26 @@ def test_an_unbound_answer_is_unavailable_through_the_document(lean, monkeypatch
     """The relay's binding stands between Lean and the document: a row for a tuple that was not sent at its
     position is CheckerUnavailable, not an answer."""
     monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
-    real = soft_route._run
+    real = softnorms._relay_run
 
     def shifted(case):
         row = real(case)
         row["results"] = row["results"][1:] + row["results"][:1]
         return row
-    monkeypatch.setattr(soft_route, "_run", shifted)
+    monkeypatch.setattr(softnorms, "_relay_run", shifted)
     doc = document()
     with pytest.raises(CheckerUnavailable, match="not bound to the request"):
         doc.elaborated.selected_rules("x_required", model_of(doc), ("b",))
+
+
+def test_the_public_relay_sends_the_same_request_and_binds_the_same_answer(lean, monkeypatch):
+    """`ve.soft_route.selected_at` is `ve.softnorms.selected_at` through the route's runner (`soft_route._run`)."""
+    sent = []
+    monkeypatch.setattr(soft_route, "_run", lambda case: sent.append(case) or softnorms._relay_run(case))
+    doc = document()
+    queries = [("x_required", ["c"]), ("x_permitted", ["a"])]
+    assert soft_route.selected_at(doc, MODEL, queries) == softnorms.selected_at(doc, MODEL, queries)
+    assert sent[0]["queries"] == [{"predicate": p, "tuple": t} for p, t in queries]
 
 
 @pytest.mark.parametrize("predicate, values, message", [

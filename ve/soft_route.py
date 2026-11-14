@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from .errors import CheckerUnavailable, VEError
-from .softnorms import SoftEnvironment, SoftNormDocument, bind_soft_elaboration
+from .softnorms import (SoftEnvironment, SoftNormDocument, bind_selected, bind_soft_elaboration,  # noqa: F401
+                        selected_at as _selected_at)
 from .backends.soft_relay import run as _run, wire as _wire
 
 
@@ -75,64 +76,9 @@ def check_soft_conflict(soft_document: SoftNormDocument, *, packages=None, witne
 
 
 def selected_at(soft_document: SoftNormDocument, model, queries):
-    """Lean's `soft-selected` answer: for each query `(predicate, tuple)` of the base `model`, the rules
-    selected there (in rule order) and the completed outcome, with the model's soft `background` flag.
-
-    `model` is a finite model or its wire dictionary over the regenerated base vocabulary; `queries` is
-    a non-empty list of `{"predicate": p, "tuple": [ids]}` objects or `(p, ids)` tuples, sent as given. The answer is checked
-    for its schema and its binding only (one result per query sent, in order, with its predicate and
-    tuple; each selected name a rule of the document on that predicate, once, in the document's order);
-    anything else is CheckerUnavailable. Lean's refusal of a query is raised as its diagnostic."""
-    sent = [_query(q) for q in queries] if type(queries) in (list, tuple) else queries
-    norms = [rule.to_dict() for rule in soft_document.rules]
-    case = {"id": "soft-selected", "kind": "soft-selected", "environment": soft_document.env.to_dict(),
-            "norms": norms, "model": model.to_dict() if hasattr(model, "to_dict") else model,
-            "queries": sent}
-    row = _run(case)
-    try:
-        return bind_selected(row, case)
-    except (KeyError, TypeError, ValueError) as error:
-        raise CheckerUnavailable(f'CheckerUnavailable: Lean soft selection is not bound to the request: {error}') from error
-
-
-def _query(query):
-    """A `(predicate, ids)` pair as the wire's query object; anything else is sent as given, for Lean to decode
-    or refuse with its diagnostic."""
-    if type(query) is tuple and len(query) == 2 and type(query[1]) in (list, tuple):
-        return {"predicate": query[0], "tuple": list(query[1])}
-    return query
-
-
-def bind_selected(row, case):
-    """The `soft-selected` row bound to the `case` it answers: its id, its queries and its rules."""
-    sent, norms = case["queries"], case["norms"]
-    if type(row) is not dict or set(row) != {"id", "status", "background", "results"}:
-        raise ValueError('unexpected soft selection fields')
-    if row["id"] != case["id"] or row["status"] != "ok" or type(row["background"]) is not bool:
-        raise ValueError('mistyped soft selection')
-    results = row["results"]
-    if type(results) is not list or len(results) != len(sent):
-        raise ValueError('not one result per query')
-    rules = [(n["norm"]["name"], n["norm"]["predicate"]) for n in norms]
-    bound = []
-    for query, result in zip(sent, results):
-        if type(result) is not dict or set(result) != {"predicate", "tuple", "selected", "outcome"}:
-            raise ValueError('unexpected result fields')
-        if (type(result["predicate"]) is not str or result["predicate"] != query["predicate"]
-                or type(result["tuple"]) is not list or result["tuple"] != query["tuple"]
-                or not all(type(x) is str for x in result["tuple"])):
-            raise ValueError('result names a query that was not sent at its position')
-        selected = result["selected"]
-        if type(selected) is not list or not all(type(x) is str for x in selected):
-            raise ValueError('mistyped selected rules')
-        on_predicate = [name for name, predicate in rules if predicate == query["predicate"]]
-        if selected != [name for name in on_predicate if name in selected] or len(set(selected)) != len(selected):
-            raise ValueError('selected names are not rules of the document on the predicate, once, in order')
-        if type(result["outcome"]) is not bool:
-            raise ValueError('mistyped outcome')
-        bound.append({"predicate": query["predicate"], "tuple": list(query["tuple"]),
-                      "selected": list(selected), "outcome": result["outcome"]})
-    return {"background": row["background"], "results": bound}
+    """Lean's `soft-selected` answer for `queries` of the base `model` (`ve.softnorms.selected_at`, the one owner
+    of the request and its binding), sent through this route's runner."""
+    return _selected_at(soft_document, model, queries, run=_run)
 
 
 def admit_soft_document(environment, document, *, soft_document=None):
