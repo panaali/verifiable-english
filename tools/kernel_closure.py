@@ -37,6 +37,8 @@ the number moves.
     python3 tools/kernel_closure.py --out FILE         # also save the full measurement as JSON
     python3 tools/kernel_closure.py --check FILE       # exit 1 if the kernel total, or the number of verdict
                                                        # writers outside the kernel, exceeds FILE's
+    python3 tools/kernel_closure.py --why NAME         # where the kernel counts a module or definition: per
+                                                       # kernel path, spec or wrap, and one shortest chain to it
 
 `--out` refuses to save a kernel total above the "signed total:" figure of `docs/kernel/ALLOWANCES.md`:
 a rise needs the architect's signed line there first (section 6.2). It also refuses to raise the number of
@@ -362,6 +364,56 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
             "verdict_writers": writers, **keyed(registry, ranges_of, validator_ranges, kernel_ranges)}
 
 
+def why(registry: dict, names: list[str], timeout: float = 3600) -> dict:
+    """`--why`: where the kernel counts each name (a module or a definition). Runs the Lean half on the spec
+    and wrap requests of every kernel path, asking each for its chains to `names` (`whyChains`)."""
+    build_imports(registry.get("imports", []), timeout)
+    kernel = {path["name"] for path in registry["paths"] if path.get("tier") == "kernel"}
+    asked = [dict(r, why=list(names)) for r in requests(registry)
+             if r["name"].split(":", 1)[0] in ("spec", "wrap") and r["name"].split(":", 1)[1] in kernel]
+    raw, _ = run_lean(asked, [], registry.get("imports", []), timeout)
+    return why_rows([r["name"] for r in asked], raw, names)
+
+
+def why_rows(asked: list[str], raw: dict, names: list[str]) -> dict:
+    """Per name, one row per kernel path part (`spec:<path>` or `wrap:<path>` of `asked`) that counts it: the
+    part, the lines it counts there, the counted definitions it names (the module's, or the one definition),
+    largest first, and one shortest chain of references from the part's root to it (a listed theorem, whose
+    statement is read, for the spec; the path's entry for the wrap), root first."""
+    out = {}
+    for name in names:
+        rows = []
+        for request in asked:
+            part, path = request.split(":", 1)
+            measured = raw[request]
+            decls = [d for d in measured["decls"] if name in (d["name"], d["module"])]
+            chain = measured.get("why", {}).get(name)
+            if not decls and chain is None:
+                continue
+            decls.sort(key=lambda d: (-(d["to"] - d["from"] + 1), d["name"]))
+            rows.append({"path": path, "part": part, "lines": covered((d["module"], d["from"], d["to"]) for d in decls),
+                         "definitions": [{"name": d["name"], "module": d["module"], "from": d["from"], "to": d["to"],
+                                          "lines": d["to"] - d["from"] + 1} for d in decls],
+                         "chain": chain})
+        out[name] = rows
+    return out
+
+
+def why_text(found: dict) -> str:
+    lines = []
+    for name, rows in found.items():
+        if not rows:
+            lines.append(f"{name}: counted by no kernel path")
+            continue
+        lines.append(name)
+        for row in rows:
+            size = (f"{row['lines']} lines in {len(row['definitions'])} definitions"
+                    if len(row["definitions"]) != 1 or row["definitions"][0]["name"] != name else f"{row['lines']} lines")
+            chain = " -> ".join(row["chain"]) if row["chain"] else "(no chain)"
+            lines.append(f"  {row['path']} {row['part']}: {size}; chain: {chain}")
+    return "\n".join(lines)
+
+
 def is_fixture(module: str) -> bool:
     """Example, check and fixture modules compute no service answer."""
     last = module.rsplit(".", 1)[-1]
@@ -393,7 +445,13 @@ def main(argv=None) -> int:
     parser.add_argument("--allowances", type=Path, default=ALLOWANCES,
                         help="the signed total --out may not exceed (default docs/kernel/ALLOWANCES.md)")
     parser.add_argument("--timeout", type=float, default=3600)
+    parser.add_argument("--why", action="append", metavar="NAME",
+                        help="a module or definition name (repeatable): for each kernel path that counts it, spec "
+                        "or wrap, and one shortest chain of references to it; measures nothing else")
     args = parser.parse_args(argv)
+    if args.why:
+        print(why_text(why(json.loads(args.registry.read_text()), args.why, args.timeout)))
+        return 0
     result = measure(json.loads(args.registry.read_text()), args.timeout)
     print(table(result))
     if args.out:
