@@ -14,7 +14,7 @@ No DRI signature is reserved, there is no DELTA, and no question was sent: neith
 | Unit | Before | After | Class (translation-fidelity checklist) |
 |---|---|---|---|
 | f16-fast-track (new rule block) | the fast-track sentence (span p16-u291, 227 bytes) was UNFORMALISED, `unmapped_duty` | Rule 1. Every situation may have a fast track requested so the SAG processes the report urgently, if that situation is classified as "rapid_risk". The block's header quotes the sentence, and its `when` is `always`. | 1 (dropped clause) |
-| fast_track_request (new act) | — | A `permission()` act (role permission, default allow): "{0} have a fast track requested so the SAG processes the report urgently". It is 71 characters, letters only, with no reserved word. Its legend quotes the whole sentence. | 1, 11 |
+| fast_track_request (new act) | — | A `permission()` act (role permission, default allow): "{0} have a fast track requested so the SAG processes the report urgently". It is 72 characters, letters only, with no reserved word. Its legend quotes the whole sentence. | 1, 11 |
 | f16-chair-strict, f16-chair-default (accounting) | the fast-track words carried `loss 1` | The fast-track words are tagged `rule f16-fast-track`. "In the rare case that" and the "(e.g., ...)" example stay exposition. | 1 |
 | chair_coordination (legend) | "Appendix B: fast track" (a pointer legend) | The legend quotes its own sentence, "The SAG Chair should also coordinate with OpenAI Leadership for immediate reaction as needed to address the risk." The rule and its RS9 strict/default modals are unchanged. | 11 |
 | build_document.py | the sentence was unplaced | `PLACEMENTS` places it as ("rule", "f16-fast-track", ("JT",)). `OPEN_FOR` gets "f16-fast-track": ("ot18",). | — |
@@ -83,7 +83,8 @@ STOP RULE question 2 did not arise.
 | Output | 99 blocks, 539 unaccounted words in 75 blocks, 17 blocks with a loss {'1': 19, '3': 1, 'limit 21': 1}, 0 of 116 quotes unanchored | 100 blocks, 539 unaccounted words in 75 blocks, 15 blocks with a loss {'1': 17, '3': 1, 'limit 21': 1}, 0 of 117 quotes unanchored |
 
 - Before is fix-4's REPORT. After is this run.
-- The two chair lines no longer carry a loss, and the new block's line is "omits: nothing".
+- The fast-track words no longer carry a `loss` tag on the two chair lines, and the new block's line is "omits:
+  nothing". The chair lines' two exposition entries stay, and the omission rule counts them as losses (test (c)).
 - The saved report docs/usecases/safetyfw/openai-preparedness/accounting.json was regenerated with `--report`.
 
 ## Generated files (each by the case's own script)
@@ -120,22 +121,28 @@ STOP RULE question 2 did not arise.
 **(b) test_accounting_has_no_loss_for_the_fast_track_words**
 - No block has a loss entry on the fast-track words.
 - "In the rare case that" and the "(e.g., ...)" example stay exposition on both chair lines.
-- f16-fast-track's line omits nothing.
+- f16-fast-track's accounting line is empty.
 
-**(c) test_k13_units_carry_no_omission_record_on_any_path**
-- The rule (`uc-audit-omission-accept`) is not on VE main. It is manage-agents tools-local/uc-audit.py.new-omit, not
-  installed. So this test applies the record paths that rule specifies (omit_exposure) to the units K13 uses (results.json
-  K13 selected_rules = the two chair units) and to f16-fast-track:
-  - an accounting "loss";
-  - a `rule <id>` or `restates` tag whose carrier does not hold the content words (mistag);
-  - no accounting line;
-  - a PLAN 12, README or REPORT sentence with a drop word naming the unit in backticks;
-  - an UNFORMALISED span blocked on the unit.
-- None names these units.
+**(c) test_k13_units_carry_only_their_exposition_and_plan12_records** (rewritten in the F1 fix, see "Review fix")
+- The omission rule IS installed. omission-1 went in at 2026-11-13 21:55Z
+  (reviews/dri-decisions-20261113-uc-audit-omission-install.md item 1), before this branch's commit 15650040db at 22:17Z;
+  omission-2 replaced it at 22:59Z (reviews/dri-decisions-20261113-uc-audit-omission-bind.md item 1). The first version
+  of this test wrongly said the rule was absent, and it applied only part of the rule's record paths.
+- tests/omission_rule.py now ports the installed rule's exposure step (omission-2, manage-agents tools-local/uc-audit.py,
+  sha256 1c7cc4f79bce94e8) whole, every record path included. In particular, any accounting tag other than `restates`,
+  `rule` or `reading` counts as a loss, and so does an empty tag.
+- Under that rule K13's units (results.json K13 selected_rules = the two chair units) still carry exposures:
+  - each chair unit: its two exposition entries, "In the rare case that" and the "(e.g., ...)" example, which count as
+    losses, and the PLAN 12 item 26 sentence that names it (in PLAN section 12 every sentence naming a unit is a
+    record);
+  - f16-fast-track: the two item 26 sentences that name it, and nothing else.
+- The test pins exactly these records: the path list per unit, the two exposition words, and that every other record
+  is an item 26 sentence. No record holds the fast-track words.
+- So K13 is NOT scored audited yet. An omission-audit seat must read K13 and clear each exposure: the dependency read
+  must find that K13 does not rest on "In the rare case that" or on the "(e.g., ...)" example, and must cite item 26's
+  record sentence. The exposition tags stay, as the task requires.
 - The fast-track span is OPEN and adjoins the chair span, which has no untranslated clause.
-- A positive control shows the check is not vacuous: c3-access-default's real recorded loss is found.
-- The "union-rule count scores K13 audited" form waits for that rule to be installed. This was checked on the record
-  paths only.
+- Positive control: c3-access-default's exposition entry is found as a loss.
 
 **Unchanged and passing:**
 - test_section_6_is_the_frozen_key and test_transcription_is_pinned (tests/test_usecase_key_transcription.py).
@@ -145,20 +152,28 @@ STOP RULE question 2 did not arise.
 **Changed test:** test_regulated_predicates_stay_within_64 pinned 60. It now pins 61 <= 64. It pinned a count, not
 unfaithful text. No pf_* test in tests/test_safetyfw_usecases.py changed, and no test was removed.
 
-## Seeded bugs (Python use-case files; no Lean or Rust product code changed)
+## Seeded bugs (Python use-case files and the Python test helper; no Lean or Rust product code changed)
 
-Each was planted on the committed tree, run against its test, and restored with `git checkout`. They are also recorded
-in mutants.json.
+Each was planted, run against its test, and restored. They are also recorded in mutants.json. Rows a, b, d and g
+were run on 15650040db. Rows c, e and f were run again on the F1 fix against the rewritten test (c), and rows h, m5
+and p1 to p4 are new with that fix. The rows name the chair units by their accounting line and the PLAN item instead of by
+block id, because a REPORT sentence that names a unit next to a word like "loss" is itself an omission record.
 
 | # | File | Bug | Failing test (output) |
 |---|---|---|---|
-| a | usecases/openai-preparedness/rules.d1.ve | f16-fast-track restricted to RS9=default (the permission is absent from f16-chair-strict's reading) | test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings ("AssertionError: strict"; set() == {'f16-fast-track'}) |
-| b | usecases/openai-preparedness/rules.d1.ve | f16-fast-track restricted to RS9=strict (absent from f16-chair-default's reading) | the same test ("AssertionError: default") |
-| c | usecases/openai-preparedness/accounting.d1.txt | the f16-chair-strict entry for the fast-track words back to "loss 1" | test_accounting_has_no_loss_for_the_fast_track_words and test_k13_units_carry_no_omission_record_on_any_path ("{'f16-chair-strict': ['loss']} == {}") |
+| a | usecases/openai-preparedness/rules.d1.ve | the new permission restricted to RS9=default (absent from the strict chair reading) | test_a_rapid_risk_case_may_request_the_fast_track_under_both_readings ("AssertionError: strict") |
+| b | usecases/openai-preparedness/rules.d1.ve | the new permission restricted to RS9=strict (absent from the default chair reading) | the same test ("AssertionError: default") |
+| c | usecases/openai-preparedness/accounting.d1.txt | line 63's tag for the fast-track words set back to "loss 1" | test_accounting_has_no_loss_for_the_fast_track_words (AssertionError naming line 63's unit, its words and "loss 1") and test_k13_units_carry_only_their_exposition_and_plan12_records |
 | d | usecases/openai-preparedness/rules.d1.ve | the permission made a duty ("Every situation must have a fast track requested ...") | test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings (startswith "may" is False); the live test (ve.errors.SyntaxError: no declared reading) |
-| e | usecases/openai-preparedness/PLAN.md | a PLAN 12 drop sentence naming the f16-chair-strict unit in backticks | test_k13_units_carry_no_omission_record_on_any_path ("{'f16-chair-strict': ['plan12']} == {}") |
-| f | usecases/openai-preparedness/build_document.py | the sentence's placement removed (spans.json and coverage.json regenerated; p16-u291 back to UNFORMALISED) | test_k13_units_carry_no_omission_record_on_any_path (StopIteration: no span carried by f16-fast-track) |
+| e | usecases/openai-preparedness/PLAN.md | a new PLAN 12 item 27 naming line 63's unit in backticks with a drop word | test_k13_units_carry_only_their_exposition_and_plan12_records (a third `plan12` record) |
+| f | usecases/openai-preparedness/build_document.py | the sentence's placement removed (spans.json and coverage.json regenerated; p16-u291 back to UNFORMALISED) | test_k13_units_carry_only_their_exposition_and_plan12_records (StopIteration: no span carried by the new rule) |
 | g | usecases/openai-preparedness/pf_vocabulary.py | fast_track_request declared with duty() | test_fast_track_sentence_is_carried_by_a_permission_rule_under_both_chair_readings (ve.errors.SyntaxError) |
+| h | usecases/openai-preparedness/accounting.d1.txt | line 63's fast-track words tagged as carried by the strict chair rule itself | test (c) (a `mistag` record) |
+| m5 | usecases/openai-preparedness/accounting.d1.txt | line 63's "In the rare case that" retagged `dropped` (the review's mutant M5) | test (c) (the record list holds "(dropped)", not "(exposition)") |
+| p1 | tests/omission_rule.py | the "any other or empty tag = loss" branch removed (F1's class) | 5 test_each_record_path_of_the_omission_rule scenarios (tag-exposition, tag-dropped, tag-empty, tag-unknown-case, line-unparseable), test_an_exposition_tag_records_its_words_as_a_loss and test (c) |
+| p2 | tests/omission_rule.py | a tag resolves when ANY of its words is in a carrier segment, not all | 4 scenarios (restates-missing-word, restates-negation-counts, restates-across-segments, rule-not-carried) |
+| p3 | tests/omission_rule.py | PLAN 12 sentences record only with a drop word | 5 scenarios (plan12-bare, plan12-h3, gaps-text, ...) and test (c) |
+| p4 | tests/omission_rule.py | gaps / coverage files not scanned | 4 scenarios (gaps-json, gaps-json-key, gaps-text, gaps-unparseable) |
 
 ## Checks run
 
@@ -194,7 +209,8 @@ in mutants.json.
 
 ## Open list
 
-- K13's audited status is decided by the re-read, not here.
+- K13 is not scored audited yet: an omission-audit seat's reads must clear the four exposition exposures and the
+  two PLAN 12 item 26 records on the chair units (test (c)). The re-read decides, not this branch.
 - The pf-split-relay-astra row (Astra seat of the four-class relay on the 15 PF split units) has no result: there is
   no reviews/pf-split-relay* in manage-agents at the time of writing. So no REAL unit was added (deliverable 3), and it
   is named as the next item.
@@ -228,8 +244,8 @@ SIZE: 18 product, 159 tests, about 190 other hand-written lines.
 
 - The task's condition (a) assumed a block could carry the permission. The case's format allows one rule per block,
   so the permission is its own block on its own source unit, and the chair blocks' accounting names it. See "Why a
-  separate block" above. If the audit's manifest for K13 should list f16-fast-track among its uses, it carries no
-  omission record either (test (c) includes it).
+  separate block" above. If the audit's manifest for K13 should list the new rule among its uses, its only records
+  are PLAN 12 item 26's two sentences (test (c) pins them).
 - The narrower reading was taken: no duty on the SAG to process the report urgently.
 
 ## Spec re-read
@@ -237,8 +253,9 @@ SIZE: 18 product, 159 tests, about 190 other hand-written lines.
 - "we can request a fast track for the SAG to process the report urgently": checked against the pinned pf-v2.txt
   (byte 51430, the Fast-track paragraph) and usecases/openai-preparedness/PLAN.md 3.3 ("No permission the text does not
   grant").
-- The record paths: checked against manage-agents tools-local/uc-audit.py.new-omit omit_exposure (lines 1517-1600) and
-  prompts/dri-task-uc-audit-omission-accept.txt steps 1-3.
+- The record paths: tests/omission_rule.py is checked against the installed manage-agents tools-local/uc-audit.py
+  omit_exposure (omission-2, sha256 1c7cc4f79bce94e8, lines 1681-1827) by the differential in omission-differential.json
+  (see "Review fix").
 - The act-phrase limits: checked against lean/VE/Acts/LexicalBase.lean:7 actReserved, and against
   reviews/ucfix-classify-20261111.md (80 characters; the 64 cap counts regulated predicates only).
 
@@ -248,7 +265,8 @@ SIZE: 18 product, 159 tests, about 190 other hand-written lines.
 2. PASS. Deliverables 1 and 2 are built (commits 294fa87046 and the tests commit). Deliverable 3 waits on a result that
    has not landed, so it is the next item, as the task allows. The diff has no Python copy of a Lean decision and no
    report test. Overlap was checked: main's merged branches touch no PF file.
-3. PASS. Seven seeded bugs, a to g, each with its failing test (mutants.json). Test (c) has a positive control.
+3. PASS. Thirteen seeded bugs, each with its failing test (mutants.json). Test (c) has a positive control, and
+   test_omission_rule.py has a scenario for every record path (test_every_record_path_has_a_scenario).
 4. PASS: run.py's comparison against the key is identical before and after, 236/239.
 5. N.A.: no binding changed.
 6. PASS. Main was merged before the final selected run. The gate runs on the final HEAD in the chain.

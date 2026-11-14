@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+import tests.omission_rule as omission_rule
 import tests.test_usecase_key_transcription as transcription
 
 REPO = Path(__file__).resolve().parents[1]
@@ -762,79 +763,52 @@ def test_accounting_has_no_loss_for_the_fast_track_words():
     assert entries["f16-fast-track"] == []
 
 
-# The record paths of the uc-audit omission rule (manage-agents prompts/dri-task-uc-audit-omission-accept.txt,
-# tools-local/uc-audit.py.new-omit omit_exposure): a "loss" entry; a "restates" / "rule <id>" / "reading RSn" tag
-# that does not resolve; no accounting line; a PLAN section 12, README or REPORT sentence with a drop word naming
-# the unit in backticks; an UNFORMALISED span blocked on the unit. That rule is not in this repository, so this test
-# applies its record paths to the units K13 uses.
-OMIT_DROP = re.compile(r"\b(drop|drops|dropped|merge|merged|merges|leaves out|left out|omit|omits|omitted|"
-                       r"not translated|no rule|unformalised|restates?|removed|lost|lose|loses)\b", re.I)
-OMIT_STOP = set("the a an and or of to in on for by with as at be is are was were will that this these those its it "
-                "their our we us any each such from into than then there which who whom whose not no nor but if when "
-                "where".split())
-
-
-def _norm(text):
-    for a, b in (("’", "'"), ("“", '"'), ("”", '"'), ("‐", "-")):
-        text = text.replace(a, b)
-    return re.sub(r"\s+", " ", text.lower())
-
-
-def _content_words(text):
-    return [w for w in re.findall(r"[a-z0-9]+", _norm(text)) if len(w) > 2 and w not in OMIT_STOP]
-
-
+# The record paths of the uc-audit omission rule: tests/omission_rule.py ports the installed rule (omission-2) whole, with
+# every fail-closed path (any tag but restates / rule / reading = loss). This file keeps no copy of its own.
 def omission_records(units):
-    """{unit: [path]} for every record path of the omission rule that names one of `units`."""
-    found = {}
-    blocks = {b.id: b for b in T.rule_blocks()}
+    """{unit: [path]} for every record path of the installed omission rule that names one of `units`."""
+    return omission_rule.record_paths("openai-preparedness", units)
 
-    def carrier(uid):
-        b = blocks[uid]
-        return _norm(b.source + "\n" + b.text + "\n" + "\n".join(legend(p) for p in predicates_read(uid)))
 
-    entries = accounting_entries()
-    for unit in units:
-        if unit not in entries:
-            found.setdefault(unit, []).append("no-record")
-            continue
-        for words, tag in entries[unit]:
-            kind, *arg = tag.split() or [""]
-            words_ = _content_words(words)
-            if kind == "loss":
-                found.setdefault(unit, []).append("loss")
-            elif kind == "rule":
-                if not (arg and arg[0] in blocks and all(w in carrier(arg[0]) for w in words_)):
-                    found.setdefault(unit, []).append("mistag")
-            elif kind == "restates":
-                if sum(w in carrier(unit) for w in words_) < 0.8 * len(words_):
-                    found.setdefault(unit, []).append("mistag")
+def omission_exposures(units):
+    """{unit: [(path, detail)]}: the rule's exposures of `units`, with the words or sentence each one records."""
+    return {u: [(e[2], e[3]) for e in es] for u, es in omission_rule.exposures("openai-preparedness", units).items()}
+
+
+def plan12_item(number):
+    """PLAN section 12's item `number` as one line of normalised text."""
     plan = (PF / "PLAN.md").read_text(encoding="utf-8")
-    docs = [("plan12", re.search(r"^## 12\..*?(?=^## 13\.|\Z)", plan, re.M | re.S).group(0))]
-    docs += [("report", p.read_text(encoding="utf-8")) for p in
-             [PF / "README.md", *sorted((REPO / "docs/usecases/openai-preparedness").rglob("REPORT.md"))]]
-    for path, text in docs:
-        for sentence in re.split(r"(?<=[.;:])\s+(?=[A-Z(`])|\n\s*\n|\n(?=\s*(?:\d+\.|[-*])\s)|\s\|\s", text):
-            if OMIT_DROP.search(sentence):
-                for unit in set(re.findall(r"`([A-Za-z0-9_.:+-]+)`", sentence)) & set(units):
-                    found.setdefault(unit, []).append(path)
-    for record in json.loads((PF / "spans.json").read_text())["units"]:
-        if record.get("status") == "UNFORMALISED" and record.get("blocked_rule") in units:
-            found.setdefault(record["blocked_rule"], []).append("unformalised")
-    return found
+    item = re.search(rf"^{number}\. .*?(?=^\d+\. |^\*\*|^## |\Z)", plan, re.M | re.S).group(0)
+    return " ".join(item.split())
 
 
-def test_k13_units_carry_no_omission_record_on_any_path():
+def test_k13_units_carry_only_their_exposition_and_plan12_records():
     """K13 (the Chair coordinating in the rapid-risk case with a fast track requested) reads f16-chair-strict and
-    -default: no record path of the omission rule names either unit any more, the fast-track sentence's own span is
-    a rule's unit (no longer UNFORMALISED) and the Chair's span keeps no untranslated clause."""
+    -default. Under the installed omission rule each still carries exactly two exposures from its accounting line, the
+    exposition entries "In the rare case that" and the "(e.g., ...)" example (an exposition tag counts as a loss), and
+    PLAN 12 item 26's record sentence; f16-fast-track carries item 26's sentences only. No record holds the fast-track
+    words, so K13 counts as audited once an omission-audit seat's reads clear these exposures, and not before."""
     k13 = json.loads((PF / "results.json").read_text())["items"]["K13"]
     assert set(k13["selected_rules"]) == set(CHAIR_UNITS)
     assert [c["holds"] for c in k13["choices"]] == [True, True]
-    assert omission_records(CHAIR_UNITS + ("f16-fast-track",)) == {}
+    exposures = omission_exposures(CHAIR_UNITS + ("f16-fast-track",))
+    assert omission_records(CHAIR_UNITS + ("f16-fast-track",)) == {
+        "f16-chair-strict": ["loss", "loss", "plan12"],
+        "f16-chair-default": ["loss", "loss", "plan12"],
+        "f16-fast-track": ["plan12", "plan12"]}
+    for name in CHAIR_UNITS:
+        assert [d for p, d in exposures[name] if p == "loss"] == [
+            "In the rare case that (exposition)",
+            "(e.g., there is a change in our understanding of model safety that requires urgent response) (exposition)"]
+    item26 = plan12_item(26)
+    assert item26.startswith("26. **Appendix B's fast-track sentence is a permission rule")
+    for name, rows in exposures.items():
+        for path, detail in rows:
+            assert path == "loss" or detail in item26, (name, path, detail)
+            assert path == "plan12" or "fast track" not in detail.lower(), (name, path, detail)
     spans = json.loads((PF / "spans.json").read_text())["units"]
     fast = next(u for u in spans if u.get("rule") == "f16-fast-track")
     chair = next(u for u in spans if u.get("reading_set") == "rs9-chair")
     assert fast["status"] == "OPEN" and fast["span"][1] == chair["span"][0] and "untranslated" not in chair
-    # the check is not vacuous: the recorded loss of main before this fix is caught, and a drop sentence too
-    assert omission_records(("f16-year", "c3-access-default"))["c3-access-default"] == ["loss"]
+    # the check is not vacuous: a loss the case really records (c3-access-default's accounting line) is found
+    assert "loss" in omission_records(("f16-year", "c3-access-default"))["c3-access-default"]
