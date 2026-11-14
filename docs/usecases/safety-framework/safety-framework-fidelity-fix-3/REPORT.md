@@ -226,3 +226,40 @@ that the 4.1 closure alone does not certify N1. Sections 1-11 are not edited, no
 2. Fresh omission reads at that same commit (every FSF read is commit-bound), with row uc-split-scope-codex's read.
 3. The records for what (1) answers NOT-PRESENT.
 4. Rows safety-framework-case-alternatives and safety-framework-proximity-tcl (filed by the DRI).
+
+## exposure.py after
+
+On this branch at 0498caff73, the commit carrying this report before this section (raw output:
+exposure-after.txt beside this report). The record texts are shown by file:line, as above:
+
+```
+counter sha256 28966da1  case safety-framework  commit 0498caff73  state run
+FACTS <- measures-sl2plus     plan12       | usecases/safety-framework/PLAN.md:647
+FACTS <- FACTS                report       | docs/usecases/safety-framework/safety-framework-fidelity-fix-2/REPORT.md:213
+CASES <- CASES                report       | docs/usecases/safety-framework/safety-framework-fidelity-fix-2/REPORT.md:213
+D2D3  <- D2D3                 report       | docs/usecases/safety-framework/safety-framework-fidelity-fix-2/REPORT.md:213
+3 exposures on FACTS/CASES
+```
+
+The same 3 records as before. This item adds no exposure, and none of the 3 is removed: under DRI items 1
+(facts-void) and 5 (this item), both records stand until a read clears them.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Every Lean answer typed and contained: N.A. (no relayed route or Lean answer touched).
+2. Every deliverable built or ruled: PASS. Batches 1-4 are above; DRI items 2, 3 and 5 rule what is held
+   (tests/test_safety_framework.py::test_g4_and_g5_name_no_activity, ::test_n1_alone_loads_its_bridge_and_its_record_names_it).
+3. Tests can fail: PASS. Eight seeded bugs, each with its failing test (section "Seeded bugs").
+4. Python, Lean and Rust agree: N.A. (no Lean or Rust change). tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[fsf] still pins the 44 statement blocks.
+5. R8 binding: N.A. (no relayed answer). The input side is covered: an item-scoped premise in facts.d1.ve, or an unscoped
+   fact block in rules.d1.ve, is refused (::test_an_item_s_premise_in_facts_or_an_unscoped_fact_in_rules_is_refused).
+6. Gate evidence matches the final HEAD: PASS. The gate is the chain's; the selected run is on the committed head.
+7. No unsigned item: PASS. DELTA has no rows and trust is +0 (tools/trust_map.py --check).
+8. Every user-visible change in DELTA: PASS. No checker output changed. Of the use case's results, only N1's
+   certificate hashes changed (::test_rerun_equals_committed_results).
+9. Test selection finds the tests: PASS. The selected run (tools/select_tests.py) covers tests/test_safety_framework.py and
+   tests/test_english_statement_blocks.py, which the bridge move broke before its fix.
+10. Lean statements and proofs: N.A. (no Lean).
+11. Budgets fail closed: N.A. (no budgeted operation touched).
+12. No CPU or memory regression: N.A. (run.py takes 157-201 s, as before; no evaluator added).
+13. Test-removed trailers: N.A. (no test removed or renamed).
