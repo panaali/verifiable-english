@@ -220,11 +220,20 @@ docs/kernel/kb-10b/seeded-bugs.json.
 - Selected run and the other final checks: "Final runs" below.
 - Not run: the full gate (the chain runs it), and trust_mutants (no Lean change, so build-checklist 13a and R16 do not
   apply; the light lane printed NOT only for the line count).
-- Pre-existing failures (`manage-agents/main-known-red.txt`): see "Final runs".
+- Pre-existing failures (`manage-agents/main-known-red.txt`): none met (no test failed).
 
-## Final runs
+## Final runs (on 1afa9b5284, committed and clean; only this section was committed after them)
 
-(Filled in below after the selected run on the committed HEAD.)
+- Selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. It ran on
+  GitHub Actions in 6 shards (run kb-10b-switch-1afa9b52-t698009): exit 0, 308 units passed, 0 failed, recorded for
+  tree a6a4220d38 (`git write-tree` of 1afa9b5284). The selection includes `tests/test_kb10b_switch.py`,
+  `tests/test_keyed_answers_authority.py`, `tests/test_soft_selected.py`, `tests/test_soft_document_handles.py`,
+  `tests/test_kb10_shadow.py`, `tests/test_relay_binding_inventory.py` and `tests/test_safetyfw_usecases.py`.
+- `uv run python tools/regen_generated.py --check`: exit 0, "checked 41 entries".
+- `uv run python tools/gate_collection.py --check --prebuilt`: exit 0, "35223 collected, 35197 at 4a5d3460d3; 27
+  added, 1 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
+- `uv run python tools/relay_mutation_gate.py`: exit 0, "50 routes, 155878 mutants, 0 failures".
+- No test failed, so nothing from `main-known-red.txt` applies.
 
 ## Notes for the DRI
 
