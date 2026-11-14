@@ -321,11 +321,9 @@ class SoftenedNormDocument(NormDocument):
         evaluation of `outcome(predicate, base=True)` for a document without its soft source."""
         source = self.__dict__.get("_soft_source")
         if source is None:
-            from .ast import _Checker
             from .evaluate import _Evaluator
             sorts = self._query_sorts(predicate, model, values)
             env, formula = self.base_environment(), self.outcome(predicate, base=True)
-            _Checker(env).formula(formula, tuple(reversed(sorts)))
             return _Evaluator(env, model, 1_000_000, trace=False).formula(
                 formula, tuple(zip(reversed(sorts), reversed(values))))[0]
         return self._selected_row(source, predicate, model, values)["outcome"]
