@@ -661,6 +661,22 @@ unchanged.
     listed duties stay LABELLED (`s4-rso-duties`). No answer moves: 110/126 still match the frozen key.
     Regulated predicates: 64 of 64. Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-3/REPORT.md`.
 
+23. **The row plans carried in full (omission rule).** Under the ruling that a documented omission earns no credit,
+    C3 and PROT1 to PROT4 rested on `rows-cond`. Its header quoted only the first sentence of each row, and
+    `accounting.d1.txt` recorded the T1 to T3 plans as "loss 1". T4's "We will:" and its five bullets were dropped
+    and not recorded, and `rows-uncond` quoted nothing. (a) Section 1's middle column, row by row, is now
+    `rsp_vocabulary.ROW_PLANS`. The legend of `plans_in_place` quotes each row's plans in full under that row's
+    threshold: T1 with F1's "Specifics may change, but we will maintain equally or more robust measures over time
+    and will publish updates in our Risk Reports.", T2 with its "Additionally" sentence, T3, and T4's "We will:"
+    with each bullet. Both row headers quote the same spans with no "...". The rule stays one rule per reading over
+    the listed thresholds, with the row as the act's parameter. This is item 2's shape, and it adds no predicate.
+    Because `listed` holds for exactly T1 to T4, that one rule requires what four row rules would. (b) C3 also reads
+    `f10-in-line`. Its "restates" entries ("we will keep our future practices in line with this description",
+    "changes") had no carrier, so the legend of `deviation_reported` now quotes the whole 3.2 sentence. (c) The
+    accounting lines for `rows-cond`, `rows-uncond` and `f10-in-line` read "omits: nothing". No answer moves:
+    110/126 still match the frozen key, and C3 and every A item keep their answers. Regulated predicates: 64 of 64.
+    Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-4/REPORT.md`.
+
 ## 13. Files for the implementation and run rounds
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`

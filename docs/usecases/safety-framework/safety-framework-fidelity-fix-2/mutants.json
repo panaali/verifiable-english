@@ -1,0 +1,70 @@
+{
+ "item": "safety-framework-fidelity-fix-2",
+ "note": "Seeded bugs, one per claimed behaviour; each was planted, run against the one named test (which failed), and restored from a copy. No product code (ve/, lean/, rust/) changed; all are in the use case's Python harness and VE translation files.",
+ "mutants": [
+  {
+   "id": "S-a",
+   "file": "usecases/safety-framework/rules.d1.ve",
+   "behaviour": "batch 1: f3, f12-*, f13-* carry the safety-case clause",
+   "change": "f13-u header: \" (including a safety case where a CCL has been reached)\" cut",
+   "test": "tests/test_safety_framework.py::test_the_governance_determination_includes_the_safety_case_where_a_ccl_has_been_reached",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-b",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "batch 4: f7-rra keeps \"as part of evaluating their deployment mitigations\"",
+   "change": "residual_assessed legend: \"as part of evaluating its deployment mitigations\" cut",
+   "test": "tests/test_safety_framework.py::test_the_residual_risk_assessment_is_part_of_evaluating_the_deployment_mitigations",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-c",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "batch 3: f6 keeps \"internal and external experts as needed\"",
+   "change": "proximity_assessed legend: \"involving internal and external experts\" -> \"involving internal external experts\"",
+   "test": "tests/test_safety_framework.py::test_the_proximity_assessment_involves_internal_and_external_experts_as_needed",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-d",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "batch 6: f20-holistic proportionality covers the mitigation and its effects",
+   "change": "holistic legend: \"the mitigation and its effects are both proportionate\" -> \"the mitigation is proportionate\"",
+   "test": "tests/test_safety_framework.py::test_the_f20_legends_keep_the_source_s_subject_qualification_and_conservatism",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-e",
+   "file": "usecases/safety-framework/build_document.py",
+   "behaviour": "batch 5: f14's \"might result in updates\" is LABELLED, not CHECKED",
+   "change": "the s212-might-update unit deleted and spans.json regenerated (the whole sentence CHECKED under f14)",
+   "test": "tests/test_safety_framework.py::test_the_possibility_of_updates_after_a_safety_case_review_is_labelled_not_checked",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-f",
+   "file": "usecases/safety-framework/severity_and_dates.py",
+   "behaviour": "batch 6: D2D3's cell states src:15's conditions",
+   "change": "UNRESTRICTED_L7_LABEL: \"with adequate computational resources\" cut",
+   "test": "tests/test_safety_framework.py::test_the_catastrophic_cell_states_the_l7_rationale_s_conditions",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-g",
+   "file": "usecases/safety-framework/rules.d1.ve",
+   "behaviour": "batch 2: OT4/OT5 are no exception to f16",
+   "change": "f16-ds-strict: \", unless ... security_assessed_adequate ... open_release_benefits_outweigh_risks, or both\" restored",
+   "test": "tests/test_safety_framework.py::test_a_possible_adjustment_is_no_exception_to_the_recommended_level",
+   "result": "FAILED"
+  },
+  {
+   "id": "S-h",
+   "file": "usecases/safety-framework/facts.d1.ve",
+   "behaviour": "batch 6: FACTS states SL2+ as 2.1.1 gives it",
+   "change": "measures-sl2plus: the well-resourced non-state external actors fact cut",
+   "test": "tests/test_safety_framework.py::test_security_level_2_plus_is_its_baseline_and_one_group_of_measures_against_both_threats",
+   "result": "FAILED"
+  }
+ ]
+}
