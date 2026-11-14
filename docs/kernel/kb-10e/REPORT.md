@@ -353,7 +353,25 @@ field and one equality, plus `softNamed` widened with a `runCaseReportedP_eq` ca
 
 ## Final selected run
 
-PENDING (filled in after the run on the committed tree).
+`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on
+6383f22a93, committed and clean, on the VM (the Mac last; 9,313 s). It selected 618/618 test units (map c9214a2608).
+Before the tests it ran the layer checks, `lake build` and `lean/audit.py`. Units: 632 lines `exit 0` and 2 `exit 1`
+(`/tmp/kb10e-final-sel.log`). Both failures were this branch's, and both are fixed in commit (12):
+
+- `tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement`: `docs/spec/kernel-boundary.md` and
+  `docs/kernel/frozen-keys-20261111.md` still quoted 9,552 and 16,198. They now quote the regenerated baseline
+  (9,560, 16,206, and the softNorms, readingsRoute, discourse and document rows).
+- `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`: the soft source of
+  `test_the_relay_answers_a_document_by_handle` was missing from the gate's corpus. It was recorded with `uv run
+  python -m conformance.wire_contract_gate --record-test-inputs`, keeping only the
+  `soft-norms@0-test-inputs.json` change, as kb-10a did (546d2d43c5). The same command also rewrites
+  `soft-norms@0-gate.json`, last written 2026-10-03. That rewrite reported 778 boundary problems in validation
+  messages that have nothing to do with this item (for example `AST exceeds depth or node budget` against
+  `ResourceLimit: AST exceeds depth or node budget`), so it was reverted. Note for the DRI: the saved gate report
+  is out of date with today's tree.
+
+The two failed ids were rerun: `zsh manage-agents/mac-pytest.sh -- <the two ids>`, **2 passed** (700 s, exit 0,
+`/tmp/kb10e-rerun.log`). The full gate is the chain's, on the final HEAD.
 
 ## Self-review against BUILDER-CHECKLIST
 
