@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.pinned_source import pinned_source
+
 REPO = Path(__file__).resolve().parents[1]
 HERE = REPO / "usecases" / "safety-framework"
 # usecases/eligibility has modules with the same bare names (run, reference, translation), and
@@ -135,7 +137,7 @@ def test_span_accounting_is_complete():
     spans = json.loads((HERE / "spans.json").read_text())["units"]
     assert spans[0]["span"][0] == 0 and spans[-1]["span"][1] == build_document.TEXT_BYTES
     assert all(a["span"][1] == b["span"][0] for a, b in zip(spans, spans[1:]))
-    if build_document.DEFAULT_SOURCE.exists():
+    if pinned_source("safety-framework", skip=False) is not None:
         assert build_document.main(["--check"]) == 0
 
 
@@ -186,10 +188,9 @@ def test_every_should_keeps_its_strict_reading():
 
 def test_build_check_writes_nothing_beside_the_source(tmp_path):
     """`build_document.py --check` must run against a read-only copy of the pinned source."""
-    if not build_document.DEFAULT_SOURCE.exists():
-        pytest.skip("the pinned source is not stored on this machine")
+    stored = pinned_source("safety-framework")
     source = tmp_path / "fsf-3.1.txt"
-    source.write_bytes(build_document.DEFAULT_SOURCE.read_bytes())
+    source.write_bytes(stored.read_bytes())
     tmp_path.chmod(0o555)
     try:
         assert build_document.main(["--source", str(source), "--check"]) == 0
@@ -250,8 +251,7 @@ def test_ve_decides_every_content_bearing_set_and_keeps_its_unit_open():
 @pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="the Lean service is not built")
 def test_readings_rerun_equals_committed_readings():
     """The part documents are cut from the pinned source, which the gate runner does not store (tools/gate-optional.json)."""
-    if not build_document.DEFAULT_SOURCE.exists():
-        pytest.skip("the pinned source is not stored on this machine")
+    pinned_source("safety-framework")
     assert readings_r1.main(["--check"]) == 0
 
 
@@ -414,9 +414,7 @@ def test_a_rule_added_under_a_will_feature_is_a_will_rule_and_an_unclassified_fe
 
 def test_every_will_quote_is_the_pinned_source_text():
     """The quotes are the pinned source's own words, which the gate runner does not store (tools/gate-optional.json)."""
-    if not build_document.DEFAULT_SOURCE.exists():
-        pytest.skip("the pinned source is not stored on this machine")
-    text = build_document.DEFAULT_SOURCE.read_text()
+    text = pinned_source("safety-framework").read_text()
     assert [f for f, quote in translation.WILL_FEATURES.items() if quote not in text] == []
 
 
@@ -538,7 +536,8 @@ def test_the_possibility_of_updates_after_a_safety_case_review_is_labelled_not_c
     function for review and might result in updates to the related residual risk assessment or safety case": the
     review duty is f14's CHECKED unit (restated in 3.1.2); "and might result in updates ..." is a hedged unit of its own, LABELLED (PLAN
     3.3), in both sections, so no CHECKED span holds the possibility and no rule makes it a duty."""
-    source = build_document.DEFAULT_SOURCE.read_bytes() if build_document.DEFAULT_SOURCE.exists() else None
+    stored = pinned_source("safety-framework", skip=False)
+    source = None if stored is None else stored.read_bytes()
     clause = "and might result in updates to the related residual risk assessment or safety case"
     assert re.findall(r'"([^"]*)"', _block("f14").source)[0].endswith("for review " + clause)
     units = {u["id"]: u for u in json.loads((HERE / "spans.json").read_text())["units"]}
