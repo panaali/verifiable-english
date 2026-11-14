@@ -1903,12 +1903,12 @@
   },
   {
    "axioms": [],
-   "lines": 36428,
+   "lines": 36427,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35570,
+   "spec_lines": 35569,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -2148,7 +2148,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.CoreCheck": 154,
+    "VE.Service.CoreCheck": 153,
     "VE.Service.CoreDocument": 265,
     "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 75,

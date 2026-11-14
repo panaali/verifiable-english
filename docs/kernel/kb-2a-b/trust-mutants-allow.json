@@ -1,0 +1,184 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "bool-flip",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "eq-le",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "imp-and",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.AdmissionMeaning",
+   "operator": "exists-forall",
+   "reason": "S, a Prop no check can evaluate (it quantifies over SlotAdmission and states equalities of Except values): what softNormsPath's rows mean, established by VE.SoftNorms.Run.slot_wire_admission in softNormsPath.sound, which this mutant breaks or makes vacuous (CoreCheck.lean); its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean and the core path's rows in lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "and-or",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "bool-flip",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "eq-le",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "imp-and",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Compose.SlotWire.SlotAdmitted",
+   "operator": "exists-forall",
+   "reason": "S, a Prop no check can evaluate (equalities of Except values over a decoded SoftSource): the conclusion of replaySlotAdmission_sound and slot_wire_admission, which this mutant breaks or makes vacuous; its instances are checked by the slot-admission #guards of lean/VE/SoftNorms/SlotExamples.lean (the source and facts decoded, every refusal of decodeFacts)"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.inputs",
+   "operator": "all-any",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.inputs",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.exceptionFormulas",
+   "operator": "arm-default",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.exceptionFormulas",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.reads",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.tableOf",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems; and `R.opens -> []`: rights@0 has no lowering row, so I.d.R is none on the core path and the lookup is never read"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.viewOf",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.viewOf",
+   "operator": "append-right",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.roundTrips",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems (`P -> []` before `.all`); the list-empty mutants of the node sum are killed by the 10,001-node #guard of CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.Kernel.DocumentFold.opens",
+   "operator": "list-empty",
+   "reason": "not a program: the mutant does not elaborate (the build reports a type error inside the mutated definition, e.g. a list literal where an Option, a structure or a non-list value is expected, or `any` where only `all` exists); the tool reads that failure as UNKNOWN because the module also holds theorems"
+  },
+  {
+   "definition": "VE.Service.CoreDocument.compatible",
+   "operator": "list-empty",
+   "reason": "not a program: `[]` in place of `labels` (in `labels.eraseDups`) or of `labels.eraseDups.length` leaves its element type unknown, so Lean cannot synthesize `BEq` or `LE` (kb-2a's allow, the module moved by kb-2a-b)"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-empty",
+   "reason": "the schema file's definition table emptied or cut to its first entry breaks ResponseShape.Encoders' proofs (not a check module) before the check modules build, so the tool reads UNKNOWN; every definition of the table is read by the accepting #guards of lean/ResponseShape/SlotExamples.lean (a missing definition fails `accepts`)"
+  },
+  {
+   "definition": "ResponseShape.Schemas.SoftNorms.file",
+   "operator": "list-first",
+   "reason": "the schema file's definition table emptied or cut to its first entry breaks ResponseShape.Encoders' proofs (not a check module) before the check modules build, so the tool reads UNKNOWN; every definition of the table is read by the accepting #guards of lean/ResponseShape/SlotExamples.lean (a missing definition fails `accepts`)"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.tableOf",
+   "operator": "all-any",
+   "reason": "equivalent: an active set is `authored` only with exactly one reading (Loader.compileSets: `authored reading needs one signed choice`, Loader.lean:523), and `all` and `any` agree on a one-element list; the `open` sets' value is false either way (the conjunction's left side)"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.tableOf",
+   "operator": "bool-flip",
+   "reason": "equivalent on the core path: the rights route's `opens` (`== some true`) is read only for rights@0, which has no lowering row, so I.d.R is none and the lookup is none either way"
+  },
+  {
+   "definition": "VE.Service.CoreCheck.inputs",
+   "operator": "bool-flip",
+   "reason": "equivalent: `python := true` changes only the text of meaningStatus' refusals, and every meaning reaching `inputs` was decoded by Document.decode's sourceUnit (which refuses an invalid meaning first), so meaningStatus never refuses here"
+  },
+  {
+   "definition": "VE.Service.Document.decode",
+   "operator": "bool-flip",
+   "reason": "a default argument flipped: Lean inlines a default at every call site, so each check that calls the definition with its default elaborates otherwise than without the mutant and the tool cannot attribute a kill (its reason: 'Lean elaborates it otherwise' or 'X, which it reads, is not what it is without the mutant'); the default's behaviour is checked by #guards that call it with the default: `core := false` by the routed refusals of lean/VE/Service/CoreCheckExamples.lean (a document of the core path through Document.check keeps today's refusal) and every Document.check example"
+  },
+  {
+   "definition": "VE.Service.Document.check",
+   "operator": "bool-flip",
+   "reason": "a default argument flipped: Lean inlines a default at every call site, so each check that calls the definition with its default elaborates otherwise than without the mutant and the tool cannot attribute a kill (its reason: 'Lean elaborates it otherwise' or 'X, which it reads, is not what it is without the mutant'); the default's behaviour is checked by #guards that call it with the default: `withGraph := true` by the plainGraph #guard of lean/VE/Service/CoreCheckExamples.lean (a graph rooted nowhere is refused unless withGraph := false)"
+  },
+  {
+   "definition": "VE.Service.Document.environmentOf",
+   "operator": "bool-flip",
+   "reason": "a default argument flipped: Lean inlines a default at every call site, so each check that calls the definition with its default elaborates otherwise than without the mutant and the tool cannot attribute a kill (its reason: 'Lean elaborates it otherwise' or 'X, which it reads, is not what it is without the mutant'); the default's behaviour is checked by #guards that call it with the default: `senses := false` and `core := false` by the Document examples (CardinalityExamples.lean:55, DocumentChainExamples.lean:172, whose guards fail on the mutant) and the routing #guards of lean/VE/Service/CoreCheckExamples.lean"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.runSoftKind",
+   "operator": "eq-ne",
+   "reason": "killed by a check the tool cannot attribute: the slot-admission #guards (lean/VE/SoftNorms/SlotExamples.lean, lean/VE/Service/CoreCheckExamples.lean:47) fail on this mutant, but the tool reports that the check computes through a proof the mutant broke (an `@[csimp]` lemma on SoftNorms.Run's runner rests on runSoftKind)"
+  }
+ ]
+}

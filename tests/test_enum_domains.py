@@ -38,6 +38,10 @@ open Lean ResponseShape ResponseShape.Skeletons ResponseShape.EnumSites
 COPIED = {
     ("discourse.json", "/$defs/reference/properties/form/enum"),
     ("soft-norms.json", "/$defs/elaborated/colliding_pairs/items/properties/outweighs/anyOf/0/const"),
+    # kb-2a-b: a core row's case and the kernel's answer are copied whole (`core_row`); `ve.document.core.
+    # bind_core_answer` binds each to the case it rebuilds from the document and to that case's admission.
+    ("document.json", "/$defs/core_row/properties/answer/properties/status/const"),
+    ("document.json", "/$defs/core_row/properties/case/properties/kind/const"),
 }
 
 @pytest.fixture(scope="module")
