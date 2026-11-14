@@ -1,5 +1,5 @@
 {
- "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject \u2026 = .ok answer` with the answer used, or `subject \u2026 = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>). kinds (kernel paths): every case kind the path's runners compare with the case's `kind`, mapped to {\"theorem\": a listed theorem whose statement fixes that kind} or {\"nonverdict\": why the answer carries no verdict}. untied_kinds: verdict-bearing kinds of a kernel path that no theorem in lean/statements.txt states (with `family`, a family the kind's theorem does not cover; `near`, theorems about a part of the answer's computation, not about the answer).",
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject … = .ok answer` with the answer used, or `subject … = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>). kinds (kernel paths): every case kind the path's runners compare with the case's `kind`, mapped to {\"theorem\": a listed theorem whose statement fixes that kind} or {\"nonverdict\": why the answer carries no verdict}. untied_kinds: verdict-bearing kinds of a kernel path that no theorem in lean/statements.txt states (with `family`, a family the kind's theorem does not cover; `near`, theorems about a part of the answer's computation, not about the answer).",
  "verdict_tokens": [
   "CHECKED",
   "CONFLICT-FREE",
@@ -273,7 +273,8 @@
     "VE.SoftNorms.Run.runSelectedP",
     "VE.Compose.SlotWire.replaySlotConflict",
     "VE.Compose.SlotWire.replaySlotWitness",
-    "VE.Compose.SlotWire.replaySlotEntailment"
+    "VE.Compose.SlotWire.replaySlotEntailment",
+    "VE.Compose.SlotWire.replaySlotAdmission"
    ],
    "theorems": [
     "VE.SoftNorms.Run.soft_wire_acceptance",
@@ -289,7 +290,9 @@
     "VE.Compose.SlotWire.slot_wire_empty",
     "VE.Compose.SlotWire.slot_wire_conflict_facts",
     "VE.Compose.SlotWire.slot_wire_entailment_facts",
-    "VE.Compose.SlotWire.slot_wire_witness_facts"
+    "VE.Compose.SlotWire.slot_wire_witness_facts",
+    "VE.SoftNorms.Run.slot_wire_admission",
+    "VE.Compose.SlotWire.replaySlotAdmission_sound"
    ],
    "delegates": [
     "VE.Norms.Run.runCaseReported"
@@ -315,7 +318,7 @@
       "soft-certificate",
       "soft-conflict"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here; slot_wire_admission covers slot-admission (its whole answer, the document mode's kernel row; kb-2a-b), not listed either"
     }
    ],
    "kinds": {
@@ -333,6 +336,9 @@
     },
     "slot-conflict": {
      "theorem": "VE.SoftNorms.Run.slot_wire_conflict"
+    },
+    "slot-admission": {
+     "theorem": "VE.SoftNorms.Run.slot_wire_admission"
     }
    }
   },

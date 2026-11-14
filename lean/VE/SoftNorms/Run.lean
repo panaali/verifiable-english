@@ -367,6 +367,12 @@ def slotConflictAnswer (id : String) (res : SlotConflictReplay) (openLabels : Li
       | none => []) ++
     [("facts", toJson res.facts.length)])
 
+open VE.Compose.SlotWire in
+/-- The `slot-admission` answer (kb-2a-b): the number of rules and of facts of the core document read back. It
+carries no verdict word: an admission says the core document decodes, nothing about consistency. -/
+def slotAdmissionAnswer (id : String) (r : SlotAdmission) : Json :=
+  VE.Route.Wire.ok id [("rules", toJson r.src.D.T.nodes.length), ("facts", toJson r.facts.length)]
+
 /-- A slot case sends its facts: `facts` is required (an empty array is no facts). -/
 def needFacts (j : Json) : Except String Unit :=
   unless (j.getObjVal? "facts").toBool do throw "InvalidInput: a slot case needs a facts array"
@@ -471,6 +477,9 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
       pure true
     else pure false
     return slotConflictAnswer id res openLabels budget exhibit
+  if kind == "slot-admission" then
+    needFacts j
+    return slotAdmissionAnswer id (← VE.Compose.SlotWire.replaySlotAdmission j)
   throw s!"UnsupportedProfile: case kind {kind} is not available on the soft-norms route"
 
 def runCase (j : Json) : Except String Json := do

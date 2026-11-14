@@ -165,7 +165,8 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
     | fits_from elaborate_fits _ _ _ _ _ _
     | fits_from pairs_fits _ _ _ _ _ _ ‹_›
     | (intro v hv; fits_from runSelected_fits _ _ _ hv)
-    | (simp only [slotCertificateAnswer, slotWitnessAnswer, slotConflictAnswer, VE.Route.Wire.ok]; fits)
+    | (simp only [slotCertificateAnswer, slotWitnessAnswer, slotConflictAnswer, slotAdmissionAnswer,
+        VE.Route.Wire.ok]; fits)
     | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals first
