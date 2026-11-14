@@ -73,7 +73,7 @@ end Today
 /-! ## With `ActsHook.acts`: today's decoders, on every input -/
 
 theorem decodeNormsEnvironment_acts (environment : Json) (displayConstants acts joined : Bool) :
-    decodeNormsEnvironment ActsHook.acts environment displayConstants acts joined =
+    decodeNormsEnvironmentWith ActsHook.acts environment displayConstants acts joined =
       Today.decodeNormsEnvironment environment displayConstants acts joined := rfl
 
 theorem decodeSource_acts (environment norms : Json) (flags displayConstants joined : Bool) :
@@ -85,7 +85,7 @@ theorem decodeFlaggedActs_today : decodeFlaggedActs = Today.decodeFlagged := rfl
 /-! ## With `ActsHook.lexical`: today's decoder wherever no joined act is admitted -/
 
 theorem decodeNormsEnvironment_lexical (environment : Json) (displayConstants acts : Bool) :
-    decodeNormsEnvironment ActsHook.lexical environment displayConstants acts false =
+    decodeNormsEnvironmentWith ActsHook.lexical environment displayConstants acts false =
       Today.decodeNormsEnvironment environment displayConstants acts false := rfl
 
 /-! ## With `ActsHook.plain`: today's decoders wherever `acts@0` is not read -/
@@ -107,9 +107,9 @@ theorem canonicalShape_nil (fx : List String) : canonicalShape [] fx = canonical
 
 theorem decodeNormsEnvironment_plain (environment : Json) (displayConstants acts joined : Bool)
     (h : actsProfiles acts environment = []) :
-    decodeNormsEnvironment ActsHook.plain environment displayConstants acts joined =
+    decodeNormsEnvironmentWith ActsHook.plain environment displayConstants acts joined =
       Today.decodeNormsEnvironment environment displayConstants acts joined := by
-  simp only [decodeNormsEnvironment, Today.decodeNormsEnvironment, ActsHook.plain, h, List.isEmpty_nil,
+  simp only [decodeNormsEnvironmentWith, Today.decodeNormsEnvironment, ActsHook.plain, h, List.isEmpty_nil,
     if_true, pure_bind, actsFixed, actsVocab, decodeRegulatedShape, decodeRegulatedIn, canonicalShape_nil,
     canonicalActIn_without_acts [] _ List.not_mem_nil, joinedActs, List.contains_nil, Bool.and_false]
   rfl
@@ -117,12 +117,12 @@ theorem decodeNormsEnvironment_plain (environment : Json) (displayConstants acts
 /-- Elsewhere the plain decoder refuses, before it reads anything else. -/
 theorem decodeNormsEnvironment_plain_refuses (environment : Json) (displayConstants acts joined : Bool)
     (h : actsProfiles acts environment ≠ []) :
-    decodeNormsEnvironment ActsHook.plain environment displayConstants acts joined = .error actsHookRefusal := by
+    decodeNormsEnvironmentWith ActsHook.plain environment displayConstants acts joined = .error actsHookRefusal := by
   have : (actsProfiles acts environment).isEmpty = false := by
     cases hp : actsProfiles acts environment
     · exact absurd hp h
     · rfl
-  simp only [decodeNormsEnvironment, ActsHook.plain, this]
+  simp only [decodeNormsEnvironmentWith, ActsHook.plain, this]
   rfl
 
 theorem decodeSource_plain (environment norms : Json) (flags displayConstants joined : Bool)

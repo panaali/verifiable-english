@@ -80,7 +80,7 @@ def decodeEnvironmentU (environment : Json) (joined : Bool := false) :
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     pure environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts frame (acts := true) (joined := joined)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts frame (acts := true) (joined := joined)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "Definitions require definitions@0"
   pure ne

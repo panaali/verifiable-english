@@ -235,7 +235,7 @@ def decodeAltSource (environment norms premises : Json) (scope : Scope := .docum
     | .ok b => pure b
     | .error _ => throw "InvalidInput: alternatives.block"
   let view ← normsView environment ps
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain view
+  let ne ← VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain view
   otherDeclarations scope view ne
   let b ← decodeBlock block
   checkReservedWording (← environment.getObjVal? "vocabulary")

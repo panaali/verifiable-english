@@ -31,8 +31,17 @@ def ActsHook.lexical : ActsHook where
   shape := canonicalShape
   joined _ _ _ _ _ := pure []
 
+/-- Today's decoder by its name and signature: `decodeNormsEnvironmentWith ActsHook.acts`, which is today's on every
+input (`VE.Acts.HookToday.decodeNormsEnvironment_acts`). Every caller in this repository names its hook
+(`decodeNormsEnvironmentWith`), except lean/VE/EnglishGrammar/Norm/Rules.lean, whose bytes the English grammar lock
+pins (ve/english_grammar/LOCK.json: a change there needs a new `actions_version`, which every English answer
+carries as an identity); it reads `acts@0` as before through this name. -/
+def decodeNormsEnvironment (environment : Json) (displayConstants : Bool := true) (acts : Bool := false)
+    (joined : Bool := false) : Except String NormsEnvironment :=
+  decodeNormsEnvironmentWith ActsHook.acts environment displayConstants acts joined
+
 /-- The route's decoder with `acts@0` read and joined acts admitted, without elaborating them: today's
-`decodeFlagged` (`VE.Acts.HookTwins.decodeFlaggedActs_today`). -/
+`decodeFlagged` (`VE.Acts.HookToday.decodeFlaggedActs_today`). -/
 abbrev decodeFlaggedActs : SourceDecoder := fun environment norms =>
   decodeSource ActsHook.acts environment norms (flags := true)
 

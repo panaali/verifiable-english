@@ -1247,7 +1247,7 @@ theorem wf_strip {j s : Json} (hw : VE.Scope.JsonWF j) (h : VE.SpeechActs.Wire.s
 /-- W1's decoder, `acts@0`'s hook on or off, over a well-formed environment: each regulated predicate is declared
 with its sorts, and the regulated and constant names are distinct. -/
 theorem norms_facts {env : Json} {ne : VE.Norms.Wire.NormsEnvironment} {acts : Bool}
-    (h : VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.acts env (acts := acts) = .ok ne)
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts env (acts := acts) = .ok ne)
     (hwe : VE.Scope.JsonWF env) :
     (∀ g ∈ ne.regulated, ne.rv.environment.predicates g.name = some g.sorts) ∧ (ne.regulated.map (·.name)).Nodup ∧
       (ne.rv.vocabulary.constants.map (·.1)).Nodup := by

@@ -211,8 +211,8 @@ def actsView (environment : Json) (ps : List String) : Json :=
   if readsActs ps then (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
   else environment
 
-/-- What the `acts@0` profile supplies the norms decoder (docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4):
-the decoder reads the profile only through these operations, so which code may change how a document decodes is
+/-- What the `acts@0` profile supplies the norms decoder `decodeNormsEnvironmentWith` (docs/spec/kernel-boundary.md
+decisions 2 and 5, row KB-4): the decoder reads the profile only through these operations, so which code may change how a document decodes is
 fixed by the instance it is given. `ActsHook.plain` (below) refuses an environment from which `acts@0` is read and
 references no acts decoding; `ActsHook.acts` (lean/VE/Acts/Hook.lean) packages today's operations unchanged. -/
 structure ActsHook where
@@ -254,7 +254,7 @@ act check of act-phrases 3.2 (through the hook `H`: `ActsHook.acts` reads it, `A
 it, `acts@0` is refused as today. The act check is `Lexical.check`, unless
 `joined`, which admits a joined act (`canonicalShape`, then `actsOf`): only `decodeSource` for an entry point that runs
 on the elaborated document passes it (act-phrases 6.4; DRI 2026-11-02 ap-3db item 2). -/
-def decodeNormsEnvironment (H : ActsHook) (environment : Json)
+def decodeNormsEnvironmentWith (H : ActsHook) (environment : Json)
     (displayConstants : Bool := true) (acts : Bool := false) (joined : Bool := false) :
     Except String NormsEnvironment := do
   let ps ← H.profiles acts environment
@@ -453,7 +453,7 @@ calls `decodeNormsEnvironment` without `acts`, or refuses the profile before it 
 not run on the elaborated document passes `joined := false` (act-phrases 6.4). -/
 def decodeSource (H : ActsHook) (environment norms : Json) (flags : Bool := false)
     (displayConstants : Bool := true) (joined : Bool := true) : Except String Source := do
-  let ne ← decodeNormsEnvironment H environment displayConstants (acts := true) (joined := joined)
+  let ne ← decodeNormsEnvironmentWith H environment displayConstants (acts := true) (joined := joined)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   unless flags || ne.rv.flags.isEmpty do

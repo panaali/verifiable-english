@@ -24,7 +24,7 @@ open VE.WireContract.Hooks.Norms (environmentOf rulesOf)
 /-- `U = (D, unspec)` as `NormDefaults.Wire.decodeSourceU` builds it, without its validation. -/
 def author (root : Json) : Option UDoc := do
   let environment := environmentOf root
-  let ne ← (VE.Norms.Wire.decodeNormsEnvironment VE.Norms.Wire.ActsHook.plain (← (VE.NormDefaults.Wire.placeholderJson environment).toOption)).toOption
+  let ne ← (VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain (← (VE.NormDefaults.Wire.placeholderJson environment).toOption)).toOption
   let nodes ← ((rulesOf root).mapM fun u => VE.Norms.Wire.decodeNorm u).toOption
   let defs := ne.rv.definitions.map fun d =>
     ({ name := d.name, args := d.args, body := d.body } : VE.Norms.Definition)
