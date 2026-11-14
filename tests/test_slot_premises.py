@@ -266,6 +266,15 @@ def test_slot_fact_cannot_discharge_rule(source, name):
                                           facts_model=FACTS_MODEL)
 
 
+def test_an_unknown_slot_kind_is_refused_as_before(source):
+    """Before kb-3 every `slot-*` kind was refused by `runSoftKind`'s last line (main's
+    lean/VE/SoftNorms/Run.lean:388); a kind beside the two new ones still is, with that diagnostic."""
+    raw, row = source
+    answer = one({**conflict_case(raw, row, []), "kind": "slot-bogus"})
+    assert answer == {"id": "c", "status": "error", "code": "SOFT_UNSUPPORTED_PROFILE",
+                      "error": "UnsupportedProfile: case kind slot-bogus is not available on the soft-norms route"}
+
+
 def test_slot_fact_cannot_name_a_soft_decision_predicate(lean):
     """T1, the soft layer's own symbols: an exception's decision predicate is an open term its decider decides
     (docs/spec/kernel-boundary.md 4.1), so a fact naming it is refused, though it is in the base vocabulary."""
