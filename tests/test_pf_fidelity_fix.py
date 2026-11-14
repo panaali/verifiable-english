@@ -910,10 +910,12 @@ def test_fix6_units_carry_only_their_recorded_exposures():
     the three units carry exactly these exposures: f15-third-party the two `exposition` entries of its accounting
     line (as on main; a read must clear them before K14 counts as audited) and PLAN 12 item 27; f9-specific item 27
     and its UNFORMALISED unit (SC); f9-risk-paths none. No `mistag` is left (main had three: the full-sentence
-    legends now carry the words the accounting says each rule restates)."""
-    exposures = omission_exposures(FIX6_UNITS)
-    assert omission_records(FIX6_UNITS) == {"f15-third-party": ["loss", "loss", "plan12"],
-                                            "f9-specific": ["plan12", "unformalised"]}
+    legends now carry the words the accounting says each rule restates). The `report` path (sentences of a docs
+    REPORT.md) is left out here: it reads batch reports, which no permanent test pins (D4)."""
+    exposures = {u: [(p, d) for p, d in rows if p != "report"] for u, rows in omission_exposures(FIX6_UNITS).items()}
+    records = {u: [p for p in paths if p != "report"] for u, paths in omission_records(FIX6_UNITS).items()}
+    assert {u: paths for u, paths in records.items() if paths} == {"f15-third-party": ["loss", "loss", "plan12"],
+                                                                  "f9-specific": ["plan12", "unformalised"]}
     assert [d for p, d in exposures["f15-third-party"] if p == "loss"] == [
         "(as described in Section 3.1) (exposition)",
         "for example based on results of Capabilities Report presented to them (exposition)"]
