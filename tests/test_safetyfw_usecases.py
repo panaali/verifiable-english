@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.pinned_source import pinned_source
+
 REPO = Path(__file__).resolve().parents[1]
 USECASES = REPO / "usecases"
 
@@ -221,7 +223,7 @@ def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
     assert spans[0]["span"][0] == 0 and spans[-1]["span"][1] == 59410
     assert all(a["span"][1] == b["span"][0] for a, b in zip(spans, spans[1:]))
     assert [u["id"] for u in spans] == [uid for _, uid, _ in rsp_build.UNITS]
-    if rsp_build.DEFAULT_SOURCE.exists():
+    if pinned_source("anthropic-rsp", skip=False) is not None:
         assert rsp_build.main(["--check"]) == 0
 
 
@@ -237,7 +239,7 @@ def test_rsp_reviewer_prohibitions_are_separate_coverage_units():
     assert [u["span"][0] for u in clauses] == sorted(u["span"][0] for u in clauses)
     assert all(a["span"][1] == b["span"][0] for a, b in zip(clauses, clauses[1:]))
     assert (clauses[0]["span"][0], clauses[-1]["span"][1]) == (37680, 38099)
-    if rsp_build.DEFAULT_SOURCE.exists():
+    if pinned_source("anthropic-rsp", skip=False) is not None:
         source = rsp_build.DEFAULT_SOURCE.read_bytes()
         for unit, phrase in zip(clauses, (b"a reviewing organization itself may not",
                                               b"individuals involved in conducting the review",
@@ -323,6 +325,7 @@ def test_rsp_stage0_saved_answers(rsp_modules):
 def test_rsp_stage0_rerun_equals_saved(rsp_modules):
     """Stage 0 recomputed by VE; the source probes need the pinned source, which the gate runner does not store
     (tools/gate-optional.json), and are left out without it."""
+    pinned_source("anthropic-rsp", skip=False)
     assert rsp_stage0.main(["--check"]) == 0
 
 
@@ -646,7 +649,7 @@ def test_pf_appendix_c2_should_is_a_pending_norm_reading(pf_modules):
     assert set(choices) == {"strict", "default"}
     assert {json.loads(pf_translation.parsed_rule(ids[0])).get("mode", "strict") for ids in choices.values()} == {
         "strict", "default"}
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         _, rebuilt = pf_build.build(pf_build.DEFAULT_SOURCE.read_bytes())
         assert next(r for r in rebuilt if r["id"] == unit["id"])["reading_set"] == unit["reading_set"]
     for page in (18, 19, 20):
@@ -697,7 +700,7 @@ def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_
         "f7-evaluations", "f9-specific", "f9-efficacy", "f9-threshold")} == {
         "f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         _, rebuilt = pf_build.build(pf_build.DEFAULT_SOURCE.read_bytes())
         assert {unit["id"]: unit["reason"] for unit in rebuilt if unit["id"] in blocked} == {
             unit_id: reason for unit_id, (reason, _) in blocked.items()}
@@ -747,7 +750,7 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
     pending = [r for r in records if r.get("reason") in {"unmapped_claim", "unmapped_duty"}]
     assert pending and all(r["status"] == "UNFORMALISED" and r.get("residual") for r in pending)
     assert len({r["residual"] for r in pending}) == len(pending)
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = pf_build.DEFAULT_SOURCE.read_bytes()
         _, rebuilt = pf_build.build(source)
         assert rebuilt == [{k: v for k, v in r.items() if k != "status"} for r in records]
@@ -771,7 +774,7 @@ def test_pf_checked_has_no_wait_or_unmapped_source_clause(pf_modules):
     assert "applicable_risks" not in pf_translation.parsed_rule("f16-sag-recommend")
     assert units["p16-u283"]["status"] == "CHECKED"
     assert not pf_build._complete_clause_map("f16-ssc-visibility", b"The SSC will be given visibility into processes and reports")
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = pf_build.DEFAULT_SOURCE.read_bytes()[slice(*units["p16-u283"]["span"])]
         assert pf_build._complete_clause_map("f16-ssc-visibility", source)
         assert pf_build.main(["--check"]) == 0
@@ -781,7 +784,7 @@ def test_pf_label_requires_positive_exposition_without_claim_marker(pf_modules):
     units = {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
     for uid in ("p11-u169", "p19-u327", "p19-u335", "p19-u336"):
         assert units[uid]["status"] != "LABELLED"
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         source = pf_build.DEFAULT_SOURCE.read_bytes()
         for unit in units.values():
             if unit["status"] == "LABELLED":
@@ -825,7 +828,7 @@ def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
         report_row = next(line for line in (PF_EVIDENCE.parent / "REPORT.md").read_text().splitlines()
                           if line.startswith("| OpenAI PF v2 |"))
         assert f"{amount:,} ({amount / 67418:.1%})" in report_row
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         assert pf_build.main(["--check"]) == 0
 
 
@@ -847,7 +850,7 @@ def test_pf_stage0_and_gaps(pf_modules):
     for unit in units["units"]:
         assert (unit["status"] == "CHECKED") == (unit["blockers"] == [])
         assert set(unit["blockers"]) <= set(pf_measure.FAMILIES)
-    if pf_build.DEFAULT_SOURCE.exists():
+    if pinned_source("openai-preparedness", skip=False) is not None:
         assert pf_stage0.main(["--check"]) == 0
 
 

@@ -1,3 +1,5 @@
+- `tools/select_tests.py` — Select the tests a change can affect, and the builds and checks they need.
+- `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
 - `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
 - `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
 - `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
