@@ -1,4 +1,3 @@
--- ve-layer: 4 (fixtures of the document mode's lowering; experimental, unreachable from the service)
 import VE.Service.CoreDocument
 
 /-! Examples of the lowering (`VE.Service.CoreDocument.lower`): one small document per row of the table, a

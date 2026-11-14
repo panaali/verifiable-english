@@ -90,7 +90,7 @@ def _core_document(raw: bytes, row: dict) -> dict:
         meta = json.loads(raw[4:raw.find(b"\n---\n", 4)].decode("utf-8"))
         _, body, _ = _split(raw)
         declared = list(_parts(meta["units"]))
-    except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
+    except (ValueError, KeyError, TypeError, VEError) as exc:  # Lean accepted this front matter
         raise CheckerUnavailable("CheckerUnavailable: the Lean core document answer is for a front matter Python "
                                  "cannot read") from exc
     bind_core_answer(meta, body, declared, row)
