@@ -5714,9 +5714,13 @@
         "VE.Norms.Plain.isPlainKind",
         "VE.Norms.Plain.orderCertificate",
         "VE.Norms.Plain.profileOk",
+        "VE.Norms.Plain.profileOkOn",
         "VE.Norms.Plain.reduced",
         "VE.Norms.Plain.run",
         "VE.Norms.Plain.statementLayers"
+      ],
+      "S": [
+        "VE.Norms.Plain.ProfileHolds"
       ]
     },
     "VE/Norms/Prefix.lean": {
@@ -9081,6 +9085,7 @@
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
         "VE.Route.MeteredRun.prepare",
+        "VE.Route.MeteredRun.profiled",
         {
           "name": "VE.Route.MeteredRun.query",
           "tied": [
@@ -10641,7 +10646,8 @@
         "VE.Service.Standalone.surfaceReader",
         "VE.Service.Standalone.tableFields",
         "VE.Service.Standalone.regulatedOf",
-        "VE.Service.Standalone.actsRead"
+        "VE.Service.Standalone.actsRead",
+        "VE.Service.Standalone.profileTree"
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -21940,7 +21946,8 @@
       "S": [
         "VE.Route.MeteredRun.CaseModel",
         "VE.Route.MeteredRun.EncodesEvaluation",
-        "VE.Route.MeteredRun.EvaluationAnswer"
+        "VE.Route.MeteredRun.EvaluationAnswer",
+        "VE.Route.MeteredRun.ProfileAdmits"
       ]
     },
     "VE/SoftNorms/ElaborateSound.lean": {
