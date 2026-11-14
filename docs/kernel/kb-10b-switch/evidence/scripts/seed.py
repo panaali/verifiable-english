@@ -27,6 +27,15 @@ BUGS = [
   '    monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())\n    model = _case(soft_document)\n    with',
   '    model = _case(soft_document)\n    with',
   "tests/test_keyed_answers_authority.py::test_selection_and_outcome_are_leans_soft_selected"),
+ # Review round 1, F1 (the harness loader; tests/usecase_scope.py).
+ ("review-F1-modules", "tests/usecase_scope.py",
+  'saved = {name: sys.modules.pop(name) for name in names if name in sys.modules}',
+  'saved = {name: sys.modules[name] for name in names if name in sys.modules}',
+  "tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind"),
+ ("review-F1-path", "tests/usecase_scope.py",
+  'sys.path[:] = path  # the scripts put their own directories on `sys.path` too',
+  'sys.path.remove(directory)  # the scripts put their own directories on `sys.path` too',
+  "tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind"),
 ]
 out = []
 for name, path, a, b, test in BUGS:
