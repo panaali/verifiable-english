@@ -599,6 +599,17 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
 
 
+@pytest.mark.parametrize("case_id", ["G4", "G5"])
+def test_g4_and_g5_name_no_activity(case_id):
+    """PLAN 5: "The proposal is of the named activity" and "Every other open term is unset unless the case says so".
+    G4 ("significant but not severe cyber or manipulation risk") and G5 ("a capability in a domain outside the four")
+    name no activity, so neither case is an external, first or frontier deployment; F8's catch-all still answers ALL."""
+    case = run.CASES[case_id]
+    assert (case["levels"], case["activity"], case["findings"]) == ([], None, [])
+    assert not {a[0] for a in run.case_atoms(case)} & {"external", "first_deployment", "frontier"}
+    assert next(r for r in RESULTS["comparison"] if r["id"] == case_id)["ve"] == "ALL"
+
+
 def test_the_catastrophic_cell_states_the_l7_rationale_s_conditions():
     """D2, 3.2.2 (src:15): "Unrestricted access to models at this level of capability could give an actor (or AI
     systems) with adequate computational resources the ability to reach capabilities much more powerful ... This could
