@@ -58,8 +58,8 @@ PLACEMENTS = {
     "Determine that the capability threshold has been crossed": ("readings", "rs16-recommend", ("readings",)),
     "appears likely to cross": ("rule", "f8-start", ("JT", "ET")),
     "planned safeguards needed to minimize": ("rule", "f9-report", ("JT",)),
-    "We first identify the plausible ways": ("rule", "f9-risk-paths", ("JT",)),
-    "For each of those, we then identify": ("blocked_rule", "f9-specific", ("SC",)),
+    "We first identify the plausible ways": ("rule", "f9-risk-paths", ("JT", "ET")),
+    "For each of those, we then identify": ("blocked_rule", "f9-specific", ("SC", "ET")),
     "An assessment on the residual risk of severe harm": ("readings", "rs9-residual", ("JT",)),
     "For each identified safeguard, we identify": ("blocked_rule", "f9-efficacy", ("SC",)),
     "and an efficacy threshold": ("blocked_rule", "f9-threshold", ("SC",)),
@@ -205,6 +205,11 @@ def _complete_clause_map(block_id, source_text):
 UNTRANSLATED = {
     "rs9-access": (("and may require additional approvals for access", "possibility_not_duty",
                     "a possibility the sentence states, not a duty, and no permission the text grants (PLAN 3.3)"),),
+    # 4.1's two ordered selection steps: each legend carries its order word; the order itself is ET (PLAN O7).
+    "f9-risk-paths": (("first", "event_order", "ET: the order 'first' states between the two safeguard-selection "
+                       "steps (f9-risk-paths, then f9-specific) is not formalised; its legend carries 'first'"),),
+    "f9-specific": (("then", "event_order", "ET: the order 'then' states after the first safeguard-selection step "
+                     "(f9-risk-paths) is not formalised; its legend carries 'then', a word an act may not use"),),
 }
 OPEN_FOR = {
     "rs1-misuse-bio": ("ot1", "ot4"), "rs1-misuse-cyb": ("ot1", "ot4"),
