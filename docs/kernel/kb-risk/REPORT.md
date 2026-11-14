@@ -80,7 +80,11 @@ The first selected run (on 80da452520) stopped at `tools/check_lean_imports.py`:
 - Five frozen keys, each through `zsh iso.sh <name> 16G --` with the pinned `ve_service` (sha256 9c3315ce..., listed in `lean/checkers.lock`): RSP `run.py --check` exit 0, `110 / 126`; Preparedness `run.py --check` exit 0, `236 / 239`; FSF `run.py --check` exit 0, `260/262` (C3 and C-doc disagree, as on main, CALLS.md); agent-policy `check.py base` exit 0; eligibility `run.py --no-write` exit 0, `mutants_killed 32/32`. `sha256sum usecases/*/results.json` before and after: identical (`diff` empty).
 - `tools/check_*_statements.py` (all eight): exit 0 (none covers Risk).
 - `uv run python tools/gate_collection.py --check --prebuilt`: `0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed`.
-- Selected tests: see "Selected run" below.
+- Selected tests: see "Selected run" below: 114 units, 0 failed.
+
+## Selected run
+
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 0f6d59d441 --run` on the committed clean tree 0786cb57d1 (ran on the VM, the Mac being the last resort): `recorded 114 units for tree 0aea7b6e09; ... 0 failed`, `exit=0` (4,321 s). It covers `check_lean_imports`, `lake build`, `lean/audit.py`, the layer policy and 110 test files, among them `tests/test_kernel_closure.py`, `tests/test_trust_budget.py`, `tests/test_trust_ratchet.py`, `tests/test_trust_mutants.py` and `tests/test_assurance_manifest.py`. An earlier run on 80da452520 stopped at the layer lint, before any test (fixed in 12a668d54f, see Checks run). No test failed, so none is pre-existing (`main-known-red.txt` not needed).
 
 ## Seeded bugs (docs/kernel/kb-risk/seeded-bugs.json)
 
@@ -110,7 +114,7 @@ The Lean failures are heartbeat timeouts at the `rfl` that equates the runner's 
 ## Notes
 
 - Code map: `docs/codemap/lean__VE__Risk.md` has no line for the new module (the codemap check is advisory on branches; left to its generator, as the task asked).
-- Pre-existing failures: see "Selected run".
+- Pre-existing failures: none met (the selected run had no failure).
 
 ## Self-review against BUILDER-CHECKLIST
 
