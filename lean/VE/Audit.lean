@@ -215,6 +215,7 @@ import VE.Events.Conservative
 import VE.Events.Premises
 import VE.Events.Wire
 import VE.Events.WireExamples
+import VE.Experimental.CoreDocument
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -3704,6 +3705,18 @@ import VE.WireContract.Engine
 #print axioms VE.Events.unhooked_X_wellFormed
 #print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Events.wf_transfer
+#print axioms VE.Experimental.CoreDocument.allChoices_mem
+#print axioms VE.Experimental.CoreDocument.allChoices_nodup
+#print axioms VE.Experimental.CoreDocument.choicesOf_ok
+#print axioms VE.Experimental.CoreDocument.finish_ok
+#print axioms VE.Experimental.CoreDocument.lower_choices
+#print axioms VE.Experimental.CoreDocument.lower_names_bound
+#print axioms VE.Experimental.CoreDocument.lower_ok
+#print axioms VE.Experimental.CoreDocument.lower_origin_units
+#print axioms VE.Experimental.CoreDocument.lower_parts
+#print axioms VE.Experimental.CoreDocument.lower_readings_distinct
+#print axioms VE.Experimental.CoreDocument.preliminaries_sets
+#print axioms VE.Experimental.CoreDocument.statementFault_none
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
