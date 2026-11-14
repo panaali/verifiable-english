@@ -1,0 +1,9 @@
+job=armsh-cand-anthropic-rsp-fidelity-fix-4b-0eae7a4c-t686736-s4 shard=4/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-14T20:07:09Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 20:07:10 up 1 min,  0 user,  load average: 1.29, 0.37, 0.13
+pilot/codex branches: 98
+ve-cache: lean-build exact key 2c837ebba87d asset lean-build-2c837ebba87d-linux-aarch64.tar.zst sha256 e11f3de02583 ok, seal ok, from download, 10.9 s
+seed: mode=seed-fp match=exact asset=lean-build-2c837ebba87d-linux-aarch64.tar.zst pruned=0 base=d1efdf5f479a
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
