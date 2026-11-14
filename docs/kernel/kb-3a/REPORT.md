@@ -1,7 +1,7 @@
 # kb-3a: the premise slot of the soft route on the wire (build report)
 
 Status: built, every deliverable of the task and the acceptance addendum (T1 to T6); no DRI signature is needed (DELTA rows cite R8, R8, R16, R12).
-Code: `ve-kb-3a` branch `feature/kb-3a`, final code at the merge of main `c9214a2608` (`346a885f9a`); this report and its records come after it.
+Code: `ve-kb-3a` branch `feature/kb-3a`, final code at the merge of main `c9214a2608` (`346a885f9a`). After it come the records and one docs fix (`9ef8642183`, three rows of kernel-boundary.md).
 What changed: `soft-norms` answers two new kinds, `slot-certificate` and `slot-conflict` (with or without `witness`). Each takes a list of base-vocabulary facts P and is proved sound for any P (`VE.Compose.SlotWire`). With P empty it is its soft twin (`slot_wire_empty`).
 Open: one FOLLOW-UPS row, the R16 ties pass (`FOLLOW-UPS.md`). Not run by me: the full gate (the chain runs it on the final HEAD).
 SIZE: 845 product, 776 tests, 549 other hand-written lines (`git diff --numstat main`: docs, records, registry and trust tables; generated files and the trust-mutants record excluded).
@@ -94,7 +94,7 @@ Full records: `docs/kernel/kb-3a/seeded-bugs.json`. Each was planted, run and re
 - `uv run python tools/regen_generated.py --write` after the main merge; `--check` exits 0.
 - `uv run python tools/trust_map.py --check`, `tools/kernel_closure.py --check`: PASS.
 - The trust-mutants sweep and rescore above.
-- The selected tests: SELECTED_RUN.
+- The selected tests on the committed tree `a3ee8d86db` (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ran on ve-cloud-2, 8916 s): 541 units recorded, 1 failed, `tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement`. This branch had regenerated `docs/kernel/closure-baseline.json` after writing `docs/spec/kernel-boundary.md`'s table, so its `readingsRoute`, `discourse` and `document` rows still quoted main's figures. Each path reaches the soft-norms runner and grew by 187 lines. Fixed in `9ef8642183` (the three rows only); the failed id was rerun with `zsh mac-pytest.sh -- tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement`: 1 passed, exit 0 (ve-mac-1, HEAD 9ef86421, clean). The selection was not rerun (rule: failed ids only).
 - Not run by me: the full release gate (the chain runs it on the final HEAD).
 
 ## Notes for the DRI
