@@ -1,5 +1,3 @@
-- `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
-- `tests/test_risk_integration.py` — Risk spec cell fixtures through the Python relay and direct Lean route.
 - `tests/test_risk_lean_route.py` — The Lean `ve_risk_route` on the risk@0 stage A fixtures (docs/spec/risk.md 8.1, expectations 8.2).
 - `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
 - `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
@@ -51,6 +49,7 @@
 - `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
 - `tests/test_since_pass.py` — Selection against the branch's last passing tree (tools/since_pass.py, test-speed batch B3): the rule's choice of base, its step and age bounds, the shadow row…
 - `tests/test_single_owner.py` — A differential never compares an engine with itself (lean-first batch 15b, review B2).
+- `tests/test_slot_premises.py` — The premise slot of the soft route on the wire (kb-3): the `slot-certificate` and `slot-conflict` kinds.
 - `tests/test_soft_candidate_economy.py` — Batch 6 latency: a document's candidates cost Lean a fixed number of soft requests, not one per candidate (docs/lean-first/b6/DELTA.md, Latency; recheck findin…
 - `tests/test_soft_decision_keys.py` — Each soft decision's key in Lean's soft-norms row (`SoftNorms.keyedDecisions`; rd-9 soft-chain plan SC-8).
 - `tests/test_soft_norms_conformance.py` — Three-way checks against the acceptance fixtures in soft-norms.md §10.
@@ -81,3 +80,4 @@
 - `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
 - `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
 - `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
+- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).

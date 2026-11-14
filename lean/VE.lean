@@ -224,6 +224,7 @@ import VE.Risk.Audit
 import VE.Risk.Run
 import VE.Risk.Wire
 import VE.Risk.Admission
+import VE.Risk.WireSound
 import VE.Rights.Examples
 import VE.Rights.Run
 import VE.Rights.OpenActExamples

@@ -55746,6 +55746,110 @@ theorem VE.Risk.Run.bind_unit
     x >>= f = Except.ok b → x = Except.ok () ∧ f () = Except.ok b
   -- uses
   -- expr 2617081726
+theorem VE.Risk.Run.riskPremiseRows_class
+  ∀ (R : VE.Risk.RiskDoc),
+    List.filter (fun x => x.fst == "risk:class") ((VE.Risk.riskPremiseLabels R).zip (VE.Risk.riskPremises R)) =
+      List.map (fun p => ("risk:class", VE.Formula.binary VE.Risk.classPred (VE.Term.const p.fst) (VE.Term.const p.snd)))
+        R.risk.harmClasses
+  -- uses VE.Formula.binary@VE.Syntax VE.Formula@VE.Syntax VE.Risk.RiskDoc.risk@VE.Risk.Decl VE.Risk.RiskDoc@VE.Risk.Decl VE.Risk.RiskEnv.harmClasses@VE.Risk.Decl VE.Risk.classPred@VE.Risk.Decl VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background VE.Term.const@VE.Syntax
+  -- expr 3557527684
+theorem VE.Risk.Run.riskPremiseRows_order
+  ∀ (R : VE.Risk.RiskDoc),
+    List.filter (fun x => x.fst == "risk:order") ((VE.Risk.riskPremiseLabels R).zip (VE.Risk.riskPremises R)) =
+      List.map (fun p => ("risk:order", VE.Risk.orderLiteral R p)) (VE.Risk.classPairs R)
+  -- uses VE.Formula@VE.Syntax VE.Risk.RiskDoc@VE.Risk.Decl VE.Risk.classPairs@VE.Risk.Decl VE.Risk.orderLiteral@VE.Risk.Background VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background
+  -- expr 1184824535
+theorem VE.Risk.Run.risk_decision_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "risk-decision" →
+        VE.Risk.Run.usesRiskPath j = Bool.true →
+          ∃ id src entry supplied d,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              VE.Risk.Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = Except.ok src ∧
+                VE.Risk.Wire.decodeEntry (j.getObjValD "decision") = Except.ok entry ∧
+                  VE.Risk.Wire.decodeSupplied (j.getObjValD "entries") = Except.ok supplied ∧
+                    VE.Risk.admitDecision src.R entry supplied = Except.ok d ∧
+                      VE.Risk.WellFormedRisk src.R = Bool.true ∧
+                        VE.Risk.validateDecision src.R d = Except.ok () ∧
+                          VE.Risk.marginLimit src.R d = Except.ok () ∧
+                            (match
+                                VE.Alternatives.scenarioConflict (VE.Risk.toAlt src.R)
+                                  (VE.Risk.decisionModel src.R d) with
+                              | Option.some (t, vs) =>
+                                ∃ text,
+                                  answer =
+                                    VE.Risk.Run.ok id
+                                      [("environment_id", Lean.Json.str src.R.policy.fst),
+                                        ("document_hash", Lean.Json.str src.R.policy.snd),
+                                        ("decision_record_id", Lean.Json.str (VE.Risk.Run.decisionRecordId entry)),
+                                        ("verdict", Lean.Json.str "CONFLICT"), ("target", Lean.Json.str t.fst),
+                                        ("tuple", Lean.ToJson.toJson (List.map (fun x => x.snd) vs)),
+                                        ("text", Lean.Json.str text)]
+                              | Option.none =>
+                                ∃ witness worst margins invalid conflict ruledOut points defaulted dilemmas legend text,
+                                  (∀ (c : String × String) (kv : String × Lean.Json),
+                                      kv ∈ witness c → kv.fst = "witness") ∧
+                                    answer =
+                                      VE.Risk.Run.ok id
+                                        [("environment_id", Lean.Json.str src.R.policy.fst),
+                                          ("document_hash", Lean.Json.str src.R.policy.snd), ⋯]) ∧
+                              ∀ (a : String),
+                                a ∈ VE.Risk.names d →
+                                  ∀ (hm : String),
+                                    hm ∈ VE.Risk.harms src.R →
+                                      ((a, hm) ∈ (VE.Risk.regenerate src.R d).might ↔
+                                          ∃ v H, VE.Risk.Completed src.R d v H ∧ H a hm = Bool.true) ∧
+                                        ((a, hm) ∈ (VE.Risk.regenerate src.R d).leads ↔
+                                          ∀ (v : VE.Risk.Valuation) (H : String → String → Bool),
+                                            VE.Risk.Completed src.R d v H → H a hm = Bool.true)
+  -- uses VE.Alternatives.scenarioConflict@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge VE.Bridge.stringField@VE.Bridge VE.Formula@VE.Syntax VE.Risk.Cited.id@VE.Risk.Record VE.Risk.Cited@VE.Risk.Record VE.Risk.Completed@VE.Risk.Record VE.Risk.Cond.top@VE.Risk.Cond VE.Risk.Cond@VE.Risk.Cond VE.Risk.Decision.cited@VE.Risk.Record VE.Risk.Decision@VE.Risk.Record VE.Risk.Entry@VE.Risk.Record VE.Risk.Log@VE.Risk.Record VE.Risk.RiskDoc.policy@VE.Risk.Decl VE.Risk.Run.decisionRecordId@VE.Risk.Run VE.Risk.Run.firingRules@VE.Risk.Run VE.Risk.Run.ok@VE.Risk.Run VE.Risk.Run.risk_decision_wire_sound.match_1@VE.Risk.WireSound VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run VE.Risk.Status.clear@VE.Risk.Record VE.Risk.Status.permitted@VE.Risk.Record VE.Risk.Status.required@VE.Risk.Record VE.Risk.Status@VE.Risk.Record VE.Risk.Tables.leads@VE.Risk.Record VE.Risk.Tables.might@VE.Risk.Record VE.Risk.Valuation@VE.Risk.Cond VE.Risk.WellFormedRisk@VE.Risk.Decl VE.Risk.Wire.RiskSource.R@VE.Risk.Wire VE.Risk.Wire.RiskSource@VE.Risk.Wire VE.Risk.Wire.decodeEntry@VE.Risk.Wire VE.Risk.Wire.decodeRiskSource@VE.Risk.Wire VE.Risk.Wire.decodeSupplied@VE.Risk.Wire VE.Risk.addressed@VE.Risk.Record VE.Risk.admitDecision@VE.Risk.Record VE.Risk.cellsOf@VE.Risk.Record VE.Risk.completion@VE.Risk.Record VE.Risk.decisionModel@VE.Risk.Record VE.Risk.harms@VE.Risk.Decl VE.Risk.instDecidableEqCond@VE.Risk.Cond VE.Risk.marginLimit@VE.Risk.Report VE.Risk.names@VE.Risk.Record VE.Risk.regenerate@VE.Risk.Record VE.Risk.statuses@VE.Risk.Record VE.Risk.toAlt@VE.Risk.Decl VE.Risk.validateDecision@VE.Risk.Record VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 3279877419
+theorem VE.Risk.Run.risk_elaborate_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "risk-elaborate" →
+        VE.Risk.Run.usesRiskPath j = Bool.true →
+          ∃ id src,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              VE.Risk.Wire.decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document") = Except.ok src ∧
+                VE.Risk.WellFormedRisk src.R = Bool.true ∧
+                  (∃ eRisk legend inlined alternatives base followable unmapped norms coverage,
+                      List.map (fun x => x.fst) norms =
+                          ["order", "background", "premises", "conflict_targets", "fragment"] ∧
+                        (coverage = [] ∨ ∃ c, coverage = [("coverage", c)]) ∧
+                          answer =
+                            VE.Risk.Run.ok id
+                              ([("environment_id", Lean.Json.str src.R.policy.fst),
+                                    ("document_hash", Lean.Json.str src.R.policy.snd), ("e_risk", eRisk),
+                                    ("legend", legend),
+                                    ("risk_premises",
+                                      Lean.Json.arr
+                                        (List.map
+                                            (fun p =>
+                                              Lean.Json.mkObj
+                                                [("label", Lean.Json.str p.fst), ("ast", VE.Risk.Wire.enc p.snd)])
+                                            ((VE.Risk.riskPremiseLabels src.R).zip
+                                              (VE.Risk.riskPremises src.R))).toArray),
+                                    ("unranked_severities",
+                                      Lean.ToJson.toJson
+                                        (List.map (fun p => [p.fst, p.snd]) (VE.Risk.Wire.unrankedSeverities src.R))),
+                                    ("inlined", inlined), ("alternatives", alternatives), ("base_premises", base),
+                                    ("followable", followable), ("unmapped_obligations", unmapped)] ++
+                                  norms ++
+                                coverage)) ∧
+                    List.filter (fun x => x.fst == "risk:class")
+                          ((VE.Risk.riskPremiseLabels src.R).zip (VE.Risk.riskPremises src.R)) =
+                        List.map
+                          (fun p =>
+                            ("risk:class",
+                              VE.Formula.binary VE.Risk.classPred (VE.Term.const p.fst) (VE.Term.const p.snd)))
+                          src.R.risk.harmClasses ∧
+                      List.filter (fun x => x.fst == "risk:order")
+                          ((VE.Risk.riskPremiseLabels src.R).zip (VE.Risk.riskPremises src.R)) =
+                        List.map (fun p => ("risk:order", VE.Risk.orderLiteral src.R p)) (VE.Risk.classPairs src.R)
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Formula.binary@VE.Syntax VE.Formula@VE.Syntax VE.Risk.RiskDoc.policy@VE.Risk.Decl VE.Risk.RiskDoc.risk@VE.Risk.Decl VE.Risk.RiskEnv.harmClasses@VE.Risk.Decl VE.Risk.Run.ok@VE.Risk.Run VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run VE.Risk.WellFormedRisk@VE.Risk.Decl VE.Risk.Wire.RiskSource.R@VE.Risk.Wire VE.Risk.Wire.RiskSource@VE.Risk.Wire VE.Risk.Wire.decodeRiskSource@VE.Risk.Wire VE.Risk.Wire.enc@VE.Risk.Wire VE.Risk.Wire.unrankedSeverities@VE.Risk.Wire VE.Risk.classPairs@VE.Risk.Decl VE.Risk.classPred@VE.Risk.Decl VE.Risk.orderLiteral@VE.Risk.Background VE.Risk.riskPremiseLabels@VE.Risk.Background VE.Risk.riskPremises@VE.Risk.Background VE.Route.Run.caseKind@VE.Route.Run VE.Term.const@VE.Syntax
+  -- expr 158598987
 theorem VE.Risk.Run.risk_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.Risk.Run.runCase j = Except.ok answer →
@@ -55819,6 +55923,22 @@ theorem VE.Risk.Run.runAdmission_sound
       VE.Risk.Run.RiskAdmissionAnswer id environment document answer
   -- uses VE.Risk.Run.RiskAdmissionAnswer@VE.Risk.Run VE.Risk.Run.runAdmission@VE.Risk.Run
   -- expr 3373695771
+theorem VE.Risk.Run.runCaseReported_ok
+  ∀ (j answer : Lean.Json),
+    VE.Risk.Run.usesRiskPath j = Bool.true →
+      VE.Risk.Run.runCase j = Except.ok answer → VE.Risk.Run.runCaseReported j = answer
+  -- uses VE.Risk.Run.runCase@VE.Risk.Run VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Risk.Run.usesRiskPath@VE.Risk.Run
+  -- expr 1887595080
+theorem VE.Risk.Run.zip_const_filter_ne
+  ∀ {β : Type} (l p : String) (xs : List β),
+    (l == p) = Bool.false → List.filter (fun x => x.fst == p) ((List.map (fun x => l) xs).zip xs) = []
+  -- uses
+  -- expr 1137696076
+theorem VE.Risk.Run.zip_const_filter_self
+  ∀ {β : Type} (l : String) (xs : List β),
+    List.filter (fun x => x.fst == l) ((List.map (fun x => l) xs).zip xs) = List.map (fun x => (l, x)) xs
+  -- uses
+  -- expr 1143981601
 theorem VE.Risk.SignEq.neg
   ∀ {a b : Int}, VE.Risk.SignEq a b → VE.Risk.SignEq (-a) (-b)
   -- uses VE.Risk.SignEq@VE.Risk.Piecewise
