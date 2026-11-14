@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 46614,
+    "total_lines": 47051,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2350,6 +2350,27 @@
           "runSelected"
         ],
         "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries) and runner (runSelected); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Compose/SlotWire.lean",
+        "lines": 437,
+        "sha256": "069c0e8168d2b6549ac9a08c7e99739f83428fc13f3a6a4ec944755ddcf33cc3",
+        "ranges": [
+          [
+            1,
+            437
+          ]
+        ],
+        "declarations": [
+          "decodeFacts",
+          "factsModel",
+          "decodeSlotPackage",
+          "replaySlotConflict",
+          "slotWitnessFrom",
+          "replaySlotWitness",
+          "replaySlotEntailment"
+        ],
+        "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2573,7 +2594,10 @@
       "lean/ResponseShape/SoftSelectedExamples.lean": "fixtures only: #guard checks of soft-norms.json's selected rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Route/CodecRoundTrip.lean": "statements about Route.Wire's formula codec (decodeClosed and decodeFormulas of encodeFormula, and AstLimit.walk over an encoding) and #guard fixtures (decodeVocabulary of a data@0 vocabulary object); no runtime JSON handling",
       "lean/VE/Kernel/Carry.lean": "kernel: the carry rule's types over Json (a path's runner and meaning, a row's case and result) and the plain fold `carry`, which builds an answer object (Json.mkObj of the view and the rows verbatim); it decodes no field, and no service mode runs it yet (KB-2a)",
-      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it"
+      "lean/VE/Kernel/CarryChecks.lean": "checks only: a toy kernel path over Json numbers (getNat?, toJson) and #guard comparisons of the carry rule's answers by their compressed text; no service mode or record reads it",
+      "lean/VE/SoftNorms/SlotSound.lean": "statements about SoftNorms.Run.runCase slot-certificate and slot-conflict answers (getObjVal? of the case's facts and witness, getObjValD of its environment, norms, pairs, budget and coherent_model, Json.mkObj of a decoded model) and their proofs; no runtime JSON handling",
+      "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path",
+      "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path"
     }
   },
   "plan_operations": {
