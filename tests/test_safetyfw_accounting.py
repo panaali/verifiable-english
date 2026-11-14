@@ -142,9 +142,13 @@ def test_nested_quote_keeps_its_inner_words_on_the_real_header():
 def test_a_short_quote_does_not_make_the_text_between_two_quotes_a_quote():
     """The same pairing class: a straight-quote regex skipping a short quote paired its closing mark with the next
     quote's opening one (safety-framework f16-ds took ', read distributively, ... 1.3.5's ' as a quote)."""
-    # fsf-fidelity-fix quoted both spans in full; the apostrophes of "field's" and "1.3.5's" still pair with nothing.
+    # Both spans are quoted in full; the apostrophes of "field's" and "1.3.5's" still pair with nothing.
     assert A.quotes(header_source("safety-framework", "f16-ds")) == [
-        "may be adjusted if our understanding of the risks changes. This may occur if, for example, ...",
+        "These recommended security levels reflect our current thinking proportionate to the risks posed and may be "
+        "adjusted if our understanding of the risks changes. This may occur if, for example, a model does not possess "
+        "capabilities meaningfully different from other publicly available models that have weaker security applied "
+        "(in which case the marginal benefit of higher security is limited), or if we assess that the benefits of the "
+        "open release of model weights outweigh the risks",
         "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits of "
         "the open release of model weights outweigh the risks"]
 

@@ -1,0 +1,74 @@
+{
+ "item": "anthropic-rsp-fidelity-fix-4",
+ "command": "uv run pytest -q tests/test_rsp_fidelity_fix.py -k fix_4 (each mutant planted alone, then git checkout)",
+ "mutants": [
+  {
+   "id": "a",
+   "language": "Python",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "mutation": "plans_in_place's legend back to the base's pointer legend (the generic plans of each threshold)",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_each_row_plan_is_whole_in_both_row_headers_and_in_the_act_legend",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_blocks_carry_f1s_clause_and_f10s_sentence"
+   ]
+  },
+  {
+   "id": "b",
+   "language": "data (.ve)",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "mutation": "rows-cond's header without T4's five bullets",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_each_row_plan_is_whole_in_both_row_headers_and_in_the_act_legend",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bullets"
+   ]
+  },
+  {
+   "id": "c",
+   "language": "data (sidecar)",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "mutation": "rows-cond | omits: \"We will maintain or improve on our ASL-3 protections\" loss 1",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bullets",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_and_prot_units_carry_no_omission_record"
+   ]
+  },
+  {
+   "id": "d",
+   "language": "data (.ve)",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "mutation": "rows-cond's header without F1's \"Specifics may change, but we will maintain equally or more robust measures over time and will publish updates in our Risk Reports.\"",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_each_row_plan_is_whole_in_both_row_headers_and_in_the_act_legend",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_blocks_carry_f1s_clause_and_f10s_sentence"
+   ]
+  },
+  {
+   "id": "e",
+   "language": "Python",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "mutation": "deviation_reported's legend back to the base's \"... at {0} (3.2)\"",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_blocks_carry_f1s_clause_and_f10s_sentence"
+   ]
+  },
+  {
+   "id": "f",
+   "language": "data (sidecar)",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "mutation": "f10-in-line | omits: \"noteworthy changes and deviations\" rule f6-maintain (a tag to a carrier without the words)",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bullets",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_and_prot_units_carry_no_omission_record"
+   ]
+  },
+  {
+   "id": "g",
+   "language": "data (generated)",
+   "file": "usecases/anthropic-rsp/spans.json",
+   "mutation": "t1-plan-robust's status LABELLED -> UNFORMALISED",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_c3_and_prot_units_carry_no_omission_record"
+   ]
+  }
+ ]
+}
