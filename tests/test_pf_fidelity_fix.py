@@ -822,14 +822,15 @@ def test_k13_units_carry_only_their_exposition_and_plan12_records():
 SENTENCE_5_2 = ("If we deem that a deployment warrants deeper testing of Tracked Categories of capability (as described "
                 "in Section 3.1), for example based on results of Capabilities Report presented to them, then when "
                 "available and feasible, OpenAI will work with third-parties to independently evaluate models.")
-SENTENCE_RISK_PATHS = ("We use the following process to select safeguards for a deployment: • We first identify the "
-                       "plausible ways in which the associated risk of severe harm can come to fruition in the proposed "
-                       "deployment.")
-SENTENCE_SPECIFIC = ("• For each of those, we then identify specific safeguards that either exist or should be "
-                     "implemented that would address the risk.")
-# (unit, its regulated predicate, the order word, the sentence its legend quotes, its spans.json key)
-SELECTION_STEPS = (("f9-risk-paths", "risk_paths", "first", SENTENCE_RISK_PATHS, "rule"),
-                   ("f9-specific", "specific_safeguards_per_path", "then", SENTENCE_SPECIFIC, "blocked_rule"))
+# (unit, its regulated predicate, the order word, the sentence its legend quotes, its spans.json key); a plain literal,
+# as the merge train's source-quote step requires of a module-level statement added to a source-test file
+SELECTION_STEPS = (("f9-risk-paths", "risk_paths", "first",
+                    "We use the following process to select safeguards for a deployment: • We first identify the "
+                    "plausible ways in which the associated risk of severe harm can come to fruition in the proposed "
+                    "deployment.", "rule"),
+                   ("f9-specific", "specific_safeguards_per_path", "then",
+                    "• For each of those, we then identify specific safeguards that either exist or should be "
+                    "implemented that would address the risk.", "blocked_rule"))
 FIX6_UNITS = ("f15-third-party", "f9-risk-paths", "f9-specific")
 
 
