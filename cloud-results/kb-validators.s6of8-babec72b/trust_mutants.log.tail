@@ -1,0 +1,6 @@
+trust_mutants: 7 definitions, 72 mutants (6 to run), 4 jobs, base 3ed84ea90de4
+trust_mutants: 2 KILLED, 0 SURVIVOR, 0 UNKNOWN, 1 INVALID, 6 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 20 s; 3 carried from fb4b9c5d6b26 (plan-only: tools/trust-classes.json)
+trust_mutants: D[V], trusted: 6 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 1 INVALID, 1 ALLOWED, 23 OTHER SHARD
+trust_mutants: S, trusted: 5 ALLOWED, 34 OTHER SHARD
+trust_mutants: steps: wall plan 8.6 s, scratch 3 s, control_build 0.1 s, probe_install 0.9 s, mutants 5 s, cleanup 2.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), mutant_builds 12.8 s (10), mutant_checks 5.3 s (4)
