@@ -76,7 +76,7 @@ def profileOk (T : Tree) (model : Json) : Except String Unit := do
 
 /-- The norms profile condition on a model's relations: for each declared (required, permission)
 pair, every tuple of the required relation is a tuple of the permission. -/
-def ProfileHolds {γ : Type} (T : Tree) (relations : String → List (List γ)) : Prop :=
+abbrev ProfileHolds {γ : Type} (T : Tree) (relations : String → List (List γ)) : Prop :=
   ∀ pr ∈ pairs T, ∀ t ∈ relations pr.req, t ∈ relations pr.perm
 
 /-- The bridge: the check over a model's relations accepts only a model satisfying the profile. -/
