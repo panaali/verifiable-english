@@ -1,0 +1,19 @@
+{
+ "base_commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e",
+ "command": "uv run python -m ve document check tests/data/kb2a/rsp-mixed.ve.md",
+ "exit": 5,
+ "lean_document_mode": {
+  "error": "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route",
+  "how": "ve.backends.relay.answer('document', {'id': 'document', 'document': <text>, 'admit': True})"
+ },
+ "note": "--json does not exist on the base ('ve document: error: unrecognized arguments: --json', exit 2); part (5) adds it. The base's 've document check' prints JSON already, recorded here verbatim.",
+ "path": "Lean answered CheckerUnavailable, so _lean_answer returned None and Python's _load_document took the document; it refused it (ve/document/load.py:184).",
+ "stdout": {
+  "error": {
+   "code": "CheckerUnavailable",
+   "message": "CheckerUnavailable: judgments@0 documents are checked by Lean's document mode"
+  },
+  "status": "CheckerUnavailable"
+ },
+ "what": "kb-2a-b (4b): what the unchanged base answers for tests/data/kb2a/rsp-mixed.ve.md, recorded once before commit (1)"
+}
