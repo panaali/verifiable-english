@@ -72,6 +72,15 @@
   "caught": true
  },
  {
+  "bug": "n",
+  "file": "ve/backends/lean_service.py",
+  "from": "if mode == \"soft-norms\" and _soft_selected(case):",
+  "to": "if mode == \"soft-norm\" and _soft_selected(case):",
+  "test": "tests/test_kb10b_switch.py::test_the_documents_call_names_its_soft_document_by_handle",
+  "result": "1 failed in 0.39s",
+  "caught": true
+ },
+ {
   "bug": "review-F1-modules",
   "file": "tests/usecase_scope.py",
   "from": "saved = {name: sys.modules.pop(name) for name in names if name in sys.modules}",

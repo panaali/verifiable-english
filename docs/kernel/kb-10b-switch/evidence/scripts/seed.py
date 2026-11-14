@@ -27,6 +27,10 @@ BUGS = [
   '    monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())\n    model = _case(soft_document)\n    with',
   '    model = _case(soft_document)\n    with',
   "tests/test_keyed_answers_authority.py::test_selection_and_outcome_are_leans_soft_selected"),
+ # Restart round: the switch's call goes by kb-10e's soft-document handle (the bug is planted in kb-10e's client,
+ # a file this branch does not change: it shows the test can fail).
+ ("n", "ve/backends/lean_service.py", 'if mode == "soft-norms" and _soft_selected(case):', 'if mode == "soft-norm" and _soft_selected(case):',
+  "tests/test_kb10b_switch.py::test_the_documents_call_names_its_soft_document_by_handle"),
  # Review round 1, F1 (the harness loader; tests/usecase_scope.py).
  ("review-F1-modules", "tests/usecase_scope.py",
   'saved = {name: sys.modules.pop(name) for name in names if name in sys.modules}',
@@ -38,7 +42,8 @@ BUGS = [
   "tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind"),
 ]
 out = []
-for name, path, a, b, test in BUGS:
+ONLY = set(sys.argv[1:])  # bug names to run (default: all)
+for name, path, a, b, test in [bug for bug in BUGS if not ONLY or bug[0] in ONLY]:
     s = open(path).read(); assert s.count(a) == 1, name
     open(path, "w").write(s.replace(a, b))  # restored below from `s`, the file as it was
     try:
