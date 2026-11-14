@@ -1,0 +1,30 @@
+{
+  "item": "kb-2a-b",
+  "note": "Each bug was planted alone, the module rebuilt with lake build (and, for Python tests, the service rebuilt and repinned), the named check run, and the file restored (git checkout, or the saved copy). The task's five bugs (a) to (e), one per behaviour claimed; Lean (a, b, c, e) and Python (d), the two languages whose product code changed.",
+  "mutants": [
+    {"id": "a", "file": "lean/VE/Kernel/DocumentFold.lean",
+     "bug": "the fold reports CHECKED for a unit when one choice's row was refused: status's last branch `if rows.all Row.ok then \"CHECKED\" else \"OPEN\"` became `if true then \"CHECKED\" else \"OPEN\"`",
+     "test": "lean/VE/Kernel/DocumentFold.lean: theorem fold_checked_iff",
+     "result": "killed: fold_checked_iff fails to build (DocumentFold.lean:51, unsolved goals; lake build VE.Kernel.DocumentFold exit 1)"},
+    {"id": "b", "file": "lean/VE/Service/CoreCheck.lean",
+     "bug": "the shell sends the kernel a core document for only the FIRST choice: casesFrom's last branch `(casesFrom (i + 1) ds).map (caseOf i d.2 :: ·)` became `.ok [caseOf i d.2]`",
+     "test": "lean/VE/Service/CoreCheck.lean: theorem casesFrom_ok, and so casesOf_ok and document_core_sound (which state that the rows are the lowering's list: p.cases.length = p.docs.length and each case is caseOf k p.docs[k])",
+     "result": "killed by the theorem: casesFrom_ok fails to build (CoreCheck.lean:259, unsolved goals; lake build VE.Service.CoreCheck exit 1). The golden test (tests/test_kb2a_document.py::test_document_answer_is_the_golden_file) was not needed to catch it."},
+    {"id": "c", "file": "lean/VE/Compose/SlotWire.lean",
+     "bug": "slot-admission answers ok without decoding the facts: replaySlotAdmission's `let (P, items) ← decodeFacts src j; pure ⟨src, P, items⟩` became `pure ⟨src, [], []⟩`",
+     "test": "lean/VE/Compose/SlotWire.lean: theorem replaySlotAdmission_sound, on which VE.SoftNorms.Run.slot_wire_admission rests",
+     "result": "killed: replaySlotAdmission_sound fails to build (SlotWire.lean:410, application type mismatch; lake build VE.SoftNorms.SlotSound exit 1)"},
+    {"id": "d", "file": "ve/document/lean.py",
+     "bug": "Python falls back to its own path when Lean refuses a document of the core path: _lean_answer's `if error is not None and getattr(error, \"lowering\", False): raise error` made never true (`and False`)",
+     "test": "tests/test_kb2a_document.py::test_document_lowering_never_falls_back_to_python",
+     "result": "killed: AssertionError: Python's own document path decided a document of the core path (1 failed)"},
+    {"id": "e", "file": "lean/VE/Kernel/DocumentFold.lean",
+     "bug": "the carried rows omit the facts member: fold passes carry the rows with `facts` erased from each case",
+     "test": "the build (lean/ResponseShape/Encoders/CoreCheck.lean: fold_eq, the carried rows are the kernel's rows) and tests/test_kb2a_document.py::test_document_lowered_facts_inconsistent_no_verdict",
+     "result": "killed twice: ResponseShape.Encoders.CoreCheck fails to build (fold_eq is no longer rfl); with fold_eq's proof replaced by sorry for the run, the test fails (the relay refuses the answer: its rows' cases lack the required facts, CheckerUnavailable: malformed response)"},
+    {"id": "f", "file": "lean/VE/Service/CoreCheck.lean",
+     "bug": "(found while building, kept as a check) the fold's judgment condition reads a soft rule through softContent only (guard and carve-outs), not its exception conditions: reads without exceptionFormulas",
+     "test": "tests/test_judgments_chain.py::test_a_judgment_term_read_only_in_an_exception_makes_the_unit_open",
+     "result": "killed: with `++ exceptionFormulas rules u.content` removed from reads (service rebuilt and repinned), both parametrisations fail: ['CHECKED'] == ['OPEN'] (2 failed, 22 passed)"}
+  ]
+}
