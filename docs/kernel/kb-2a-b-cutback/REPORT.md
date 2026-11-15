@@ -1,5 +1,12 @@
 # kb-2a-b-cutback: the ties pass of kb-2a-b (REPORT)
 
+**Current status (F1 review fix):** Fixed in `010c493e53`; no DRI signature reserved and no user-visible delta.
+`Document.environmentOf` now calls two named refusal-site helpers. `routed_sites` proves the exception-conditioned
+judgment/soft and soft/readings conditions on lowering profiles; both routing declarations tie to it. The updated
+trust evidence cuts 229 counted lines. See `FIX-REPORT.md` for the probe, regression, mutation and test results.
+
+## Original delivery report (before the F1 review fix)
+
 **Summary.** Status: done; no DRI signature is reserved; no answer changes. Branch `feature/kb-2a-b-cutback` on pinned
 main b6cbafe80a. The 15 untied trusted declarations of kb-2a-b's ties pass (13 of `Service/CoreCheck.lean`,
 `DocumentFold.statuses`, `Document.decode`) are tied to theorems that state their purpose (new
