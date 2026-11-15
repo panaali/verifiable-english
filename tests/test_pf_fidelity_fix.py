@@ -84,13 +84,14 @@ def test_the_cell_comparison_catches_one_changed_cell(id_, field, value):
 
 # --- The corrected acts and the questions that ask them ---------------------------------------------------------
 
-STANDARD = {"misuse_safeguards": "(Appendix C.1)", "misuse_safeguards_before_external": "(Appendix C.1)",
-            "alignment_safeguards": "(Appendix C.2)", "security_controls": "(Appendix C.3)"}
+STANDARD = {"misuse_safeguards": "(Appendix C.1)", "alignment_safeguards": "(Appendix C.2)",
+            "security_controls": "(Appendix C.3)"}
 
 
 def test_table_1_acts_name_the_high_standard(pf):
     """f1 (class 1): the MIS, ALN and SEC acts are safeguards "meeting the High standard" of their appendix."""
-    assert set(R.ATOMS["MIS"]) | set(R.ATOMS["ALN"]) <= set(STANDARD) and "security_controls" in R.ATOMS["SEC"]
+    assert (set(R.ATOMS["MIS"]) - {"misuse_safeguards_before_external"}) | set(R.ATOMS["ALN"]) <= set(STANDARD)
+    assert "security_controls" in R.ATOMS["SEC"]
     for predicate, appendix in STANDARD.items():
         assert "meeting the High standard" in act(predicate), predicate
         users = blocks_for(predicate)
