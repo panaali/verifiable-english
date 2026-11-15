@@ -127,10 +127,11 @@ BASE = {
                         "to fully substitute for our entire set of Research Scientists and Research Engineers, at "
                         "competitive costs (i.e., within a factor of 5); or (2) there is 'dramatic acceleration' of "
                         "the pace of AI progress for reasons that likely relate to the "
-                        "automation of AI R&D.\")", WE + " (\"if we determine\")", "OT1"),
+                        "automation of AI R&D.\"; row T4 says when we make it: \"We would consider scenario (2) to "
+                        "have occurred where\" its conditions hold)", WE + " (\"if we determine\")", "OT1"),
     # Open terms (PLAN 3.2): the decider is the text's own.
-    "highly_capable": _open(["situation"], "the model of {0} is highly capable (3.6: it crosses the threshold for "
-                            "automated AI R&D)", WE + " (\"if we conclude\")", "OT5"),
+    "highly_capable": _open(["situation"], "the model of {0} is highly capable (3.6: it crosses \"the threshold for "
+                            "automated AI R&D described in Section 1\")", WE + " (\"if we conclude\")", "OT5"),
     "more_capable_than_analyzed": _open(["situation"], "the model of {0} is significantly more capable than all "
                                         "models for which we have publicly analyzed the named risks (3.1, off-cycle "
                                         "bullet 1)", WE, "OT2"),
@@ -187,8 +188,8 @@ BASE = {
                                                    "factor is checked in D3)", WE + " (\"if we determine\")", "OT15"),
     "double_rate": _open(["situation"], "at {0} we observe or expect double the rate of progress in AI aggregate "
                          "capabilities compared to both the rate we'd expect and the fastest rate of extended progress "
-                         "we've observed without significant AI contributions (T4 (2)(a), footnotes 8 and 9)", WE,
-                         "OT16"),
+                         "we've observed \"in the absence of significant AI contributions to AI R&D\" (T4 (2)(a), "
+                         "footnotes 8 and 9)", WE, "OT16"),
     "automation_attributable": _open(["situation"], "at {0} it is plausible that the doubling is substantially "
                                         "attributable to the automation of research and/or engineering (T4 (2)(b))",
                                         WE, "OT17"),
