@@ -1,0 +1,10 @@
+job=armsh-cand-fidq-dri-read-exact-1999eb66-t759121-s5 shard=5/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T16:40:41Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 16:40:41 up 2 min,  0 user,  load average: 1.58, 0.53, 0.19
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key d820b947a44d asset lean-build-01c754bab66a-linux-aarch64.tar.zst sha256 217168e3ad60 ok, seal ok, from download, 14.6 s
+seed: mode=seed match=seed-ancestor asset=lean-build-01c754bab66a-linux-aarch64.tar.zst pruned=16 base=eeb600b52835
+seed: 123 modules rebuilt over the seed (traces), none stale
+seed: lake 504.2 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
