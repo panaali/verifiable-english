@@ -77,10 +77,12 @@ BASE = {
                      "model weights of {0}", "{0} applies {1}"),
     # The activity proposed (Glossary, p. 19).
     "further_development": _base(["proposal"], "{0} is further development of the model"),
-    "internal": _base(["proposal"], "{0} is an internal deployment: a release restricted to Google employees for "
-                      "internal use", "{0} is internal"),
-    "high_risk": _open(["proposal"], "{0} is a high-risk internal deployment: for use cases with the potential to "
-                       "enable severe threat scenarios", "no one the text names (unstated)", term="OT7"),
+    "internal": _base(["proposal"], "{0} is an internal deployment (Glossary: Internal Deployments \"represent model "
+                      "releases restricted to Google employees for internal use\")", "{0} is internal"),
+    "high_risk": _open(["proposal"], "{0} is a high-risk internal deployment (Glossary: High-Risk Internal "
+                       "Deployments \"represent model releases restricted to Google employees for use cases with the "
+                       "potential to enable severe threat scenarios (e.g. building internal security infrastructure or "
+                       "automating ML R&D)\")", "no one the text names (unstated)", term="OT7"),
     "external": _base(["proposal"], "{0} is an external deployment: a model release to entities outside Google",
                       "{0} is external"),
     "low_risk": _open(["proposal"], "{0} is a low-risk external deployment: a small scale and private release "
@@ -171,7 +173,8 @@ REGULATED = {
         "their deployment mitigations\")"),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",
                                "the residual risk assessment for {0} is informed by a supplemental safety case "
-                               "(1.3.4)"),
+                               "(1.3.4); safety cases \"are an assessable argument showing how severe risks "
+                               "associated with a model's CCLs have been reduced to an acceptable level\" (Glossary)"),
     "periodic_assessed": _obligation(
         ["proposal"], "{0} be subject to periodic residual risk assessments of misalignment risk",
         "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)"),
