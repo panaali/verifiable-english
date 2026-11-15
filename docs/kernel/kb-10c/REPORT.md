@@ -1,12 +1,23 @@
 # kb-10c: conflicts of soft-norms documents on Lean's soft route
 
-**DRI signature needed: DELTA row 2.** This is the reason the item stops (L52). Lean CPU per conflict check exceeds
-R4 on RSP and Preparedness. Requested 2026-11-15 in `manage-agents/inbox/dri/20261115T050510Z-kb-10c-3111473.md`;
-recommended: sign on the 2.0x-per-harness rule of the kb-10b-switch decision (1.07x, 0.97x, 1.04x here).
-Status: every deliverable (1)-(5) is built. HEAD: the last commit of `feature/kb-10c`; product code last changed in a2905d1c1.
-What changed: three Lean theorems on `soft-conflict`'s answer; a three-harness shadow (0 differences in 2,039 calls);
-the harnesses' conflicts are now decided on Lean's soft route; no keyed answer changed.
-Open: only the row-2 signature. The full gate is the chain's.
+Status: DELTA row 2 is SIGNED by the DRI 2026-11-15 (`reviews/dri-decisions-20261115-kb-10c.md` item 1); every saved ratio is at most 1.38x against the 2.0x bound.
+HEAD: the final local commit on `feature/kb-10c` (see git log); the merge train runs the full gate.
+What changed: three Lean theorems, a three-harness shadow (0 differences in 2,039 calls), and a switch to Lean's soft route for conflict witnesses. RSP and Preparedness use its conflict-freedom replay; FSF's keyed CONFLICT-FREE uses `refute` with `T.facts()` premises and Lean's entailment certificate replay. No keyed answer changed.
+Open: no DRI signature remains; selected tests, Lean build and audit are recorded below.
+
+## Review fix round
+
+- F1: the kept-answer regression asks the same certificate question for two documents with the same environment
+  and different rules. Lean accepts the first and returns UNKNOWN for the second. Dropping `norms` from the
+  canonical cache key made this test fail; the original key keeps the answers separate.
+- F2: the keyed-answer page and FSF harness docstring now identify `refute` and Lean's entailment certificate
+  replay as the source of FSF keyed CONFLICT-FREE. The page distinguishes RSP and Preparedness's
+  `soft-conflict` certificate path, and the FSF `w1_without_premises` side field. The regression checks the
+  attribution against the harness function's calls.
+- F-ready1: seed S9 changes the equality premise in the changed Lean theorem; the build fails. It is restored.
+- DELTA row 2: `reviews/dri-decisions-20261115-kb-10c.md` item 1 signs the measured ratio under the 2.0x
+  bound. The F1 regression meets its cache-key condition; the existing shadow self-test covers its other
+  test condition. The three keyed `--check` runs and saved ratios are the decision's remaining evidence.
 
 ## Deliverables
 
@@ -94,7 +105,8 @@ conditional on the open coherence premises" (`conditional_on`); the harness's W1
   the target the one sent, or the call is CheckerUnavailable. The report is then Python's `_conflict_report`, as on
   the W1 Lean route.
 - **Certificates.** It proposes certificates with `_prove_targets` and re-binds them to the soft source. Lean's
-  CONFLICT-FREE is returned with Lean's status text. Lean's UNKNOWN is kept only if its `detail` names a target the
+  CONFLICT-FREE is returned with Lean's status text. RSP and Preparedness use it as the keyed answer; FSF records
+  it as `w1_without_premises` and uses `refute` over `T.facts()` premises for keyed CONFLICT-FREE. Lean's UNKNOWN is kept only if its `detail` names a target the
   request sent (the targets themselves are bound by `bind_conflict`); anything else is CheckerUnavailable.
 - **Exhaustion.** An exhausted search or prover is UNKNOWN without a Lean call.
 - **Kept answers.** Lean's answers are kept per request: the key is the canonical JSON of environment, norms, and
@@ -121,6 +133,9 @@ Cost (DELTA row 2): every paired round, its rows and R4's figures are in DELTA.m
 - **S1 (Lean)**, `lean/VE/SoftNorms/Run.lean`. Bug: line 425 answers CONFLICT-FREE when `res.conflictFree` is
   false. Result: `lake build VE.SoftNorms.ConflictSound` fails in `soft_conflict_verdict`, which
   `soft_wire_conflict_free` is proved from (a deterministic timeout at lines 49, 67, 78, 81).
+- **S9 (Lean)**, `lean/VE/SoftNorms/ConflictSound.lean`. Bug: the exclusive theorem assumes the first case's
+  norms equal themselves instead of the second case's norms. `lake build VE.SoftNorms.ConflictSound` fails at
+  line 164:14 because the final rewrite cannot identify the two decoded sources. Restored after the failing build.
 - **S2 (Python)**, `usecases/safetyfw_conflict_shadow.py`. Bug: the shadow compares Python with Python. Fails:
   `test_a_planted_difference_is_listed_with_python_and_soft_answers` (and
   `test_pythons_witness_is_sent_and_a_refused_model_is_explained`).
@@ -135,7 +150,11 @@ Cost (DELTA row 2): every paired round, its rows and R4's figures are in DELTA.m
 - **S7**, same file. Bug: the UNKNOWN detail's target is not bound. Fails:
   `test_an_unbound_packages_answer_is_checker_unavailable[unsent-target]`.
 - **S8**, `usecases/keyed_paths.py`. Bug: `soft-conflict` relays are not counted. Fails:
-  `tests/test_keyed_answers_authority.py::test_the_harnesses_conflicts_are_leans_soft_conflict`.
+  `tests/test_keyed_answers_authority.py::test_soft_route_replays_both_conflict_answers`.
+- **F1 cache-key mutant**, `ve.wire.canonical_json` drops `norms` from the kept-answer question. Before the
+  regression, all 25 relevant tests passed. Afterwards,
+  `tests/test_kb10c_soft_conflict.py::test_kept_answer_includes_the_rules_with_the_same_environment_and_case`
+  fails: a second document receives the first document's CONFLICT-FREE answer instead of Lean's UNKNOWN.
 
 Each was restored after its run (`git status --short` empty).
 
@@ -206,13 +225,13 @@ No FOLLOW-UP: every deliverable is built, and no defect makes a verdict, a bindi
 2. **PASS.** Every deliverable is in the table above. There is no Python copy of a Lean decision: UNKNOWN on an
    exhausted generator asserts nothing, as on the W1 Lean route. No new report test (the authority test was edited,
    not added as a report test).
-3. **PASS.** Seeded bugs S1 (Lean) and S2-S8 (Python), each with its failing test.
+3. **PASS.** Seeded bugs S1 and S9 (Lean), S2-S8 (Python), and the F1 cache-key mutant each fail their check.
 4. **PASS.** Python and Lean agree in the shadow: 2,039 calls, 0 differences (`kb10-conflict-shadow.json` ×3).
 5. **PASS.** R8 binding: an unsent target is refused (`[unsent-target]`), and so is a witness confirmed for another
    target (`test_a_witness_confirmed_for_another_target_is_checker_unavailable`). Targets and labels are bound by
    `bind_conflict`.
 6. **N.A.** Gate evidence matches the final HEAD: the chain runs the gate on the final HEAD.
-7. **PASS.** DELTA row 2 is reserved, and the first line of this report says so. Row 1 cites R12.
+7. **PASS.** DELTA row 2 cites the DRI's 2026-11-15 signature and its cache-key regression; row 1 cites R12.
 8. **PASS.** Every user-visible change is in DELTA: the keyed outputs are identical (`--check` rc 0), the new API is
    described, and the cost is row 2.
 9. **PASS.** Test selection: the selected run includes `tests/test_kb10c_*` and `tests/test_keyed_answers_authority.py` (selected-run log).
