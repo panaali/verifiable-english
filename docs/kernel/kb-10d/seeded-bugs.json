@@ -1,0 +1,61 @@
+{
+ "comment": "kb-10d seeded bugs: each planted, its test run, then removed (git checkout). Commands: /tmp/own/seed.py for S1-S5 (python tools), the (a) edit by hand with pytest -k 'traced_inputs or three_passing'.",
+ "seeded": [
+  {
+   "id": "a",
+   "file": "usecases/anthropic-rsp/run.py",
+   "language": "Python",
+   "bug": "`selected` calls Python's NormDocument.selected_rules(doc.elaborated, ...) instead of the soft document's Lean path",
+   "test": "tests/test_ownership_floor.py::test_ownership_json_is_of_the_traced_inputs and ::test_three_passing_items_per_key_still_pass",
+   "result": "both fail (2 failed in 113.91s): ownership.json is stale (run.py's blob id changed), and the re-traced A-T0/ARG1 fails criterion 1 (ve/evaluate.py:_Evaluator.__init__); restored"
+  },
+  {
+   "id": "b",
+   "file": "tools/kernel-paths.json (a scratch copy in the test)",
+   "language": "JSON (registry data)",
+   "bug": "soft-norms kind soft-selected listed under softNorms `uncovered` (also: listed nonverdict; the path made a candidate)",
+   "test": "tests/test_ownership_floor.py::test_a_kind_the_registry_no_longer_covers_fails_criterion_two",
+   "result": "criterion 2 fails every passing item whose value is a soft-selected answer (537: anthropic-rsp 85, openai-preparedness 214, safety-framework 238) and keeps the other 301; with the uncovered check removed from kind_problem (S2) the test fails"
+  },
+  {
+   "id": "S1",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "decision_hits ignores code nested in a listed function",
+   "test": "tests/test_ownership_floor.py::test_decision_functions_match_functions_and_their_nested_code_not_the_class_body",
+   "result": "1 failed in 0.58s"
+  },
+  {
+   "id": "S2",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "kind_problem ignores the registry's uncovered lists",
+   "test": "tests/test_ownership_floor.py::test_a_kind_the_registry_no_longer_covers_fails_criterion_two",
+   "result": "1 failed, 2 passed in 0.74s"
+  },
+  {
+   "id": "S3",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "a family-qualified untied entry never fails a case",
+   "test": "tests/test_ownership_floor.py::test_criterion_two_reads_kinds_families_and_the_relay",
+   "result": "1 failed in 0.54s"
+  },
+  {
+   "id": "S4",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "blob_id ignores the file's content",
+   "test": "tests/test_ownership_floor.py::test_a_changed_traced_input_makes_ownership_json_stale",
+   "result": "1 failed in 0.49s"
+  },
+  {
+   "id": "S5",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "criterion 3 accepts any deviation text without reading PLAN.md section 12",
+   "test": "tests/test_ownership_floor.py::test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records",
+   "result": "1 failed in 0.42s"
+  }
+ ]
+}
