@@ -815,6 +815,7 @@ module VE.Service.UndeclaredExamples
 module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
+module VE.SoftNorms.ConflictSound
 module VE.SoftNorms.ElaborateSound
 module VE.SoftNorms.Once
 module VE.SoftNorms.Phases

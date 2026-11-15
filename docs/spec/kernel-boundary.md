@@ -14,14 +14,14 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is five paths:** the route, norms, soft norms, since KB-7 the `metered` mode's
-   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **11,119 lines (M)**, 1,119 over the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
+   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **11,121 lines (M)**, 1,121 over the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
    kb-validators' (+68, the profile condition on `metered`) and kb-10e's (+8, the prepared `soft-selected` theorem)
-   were measured apart and add up on merging, and kb-8c's promotion of `quantity` adds +1,096 (signed up to +1,300, decision D11; KB-4 is what brings the total down)
+   were measured apart and add up on merging, and kb-8c's promotion of `quantity` adds +1,096 (signed up to +1,300, decision D11; KB-4 is what brings the total down), and kb-10c's `soft-conflict` theorems +2
    (section 6; docs/kernel/ALLOWANCES.md). The
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,777 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 75-line wrap),
+   16,779 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 75-line wrap),
    the risk route (a candidate: since kb-risk runner theorems state the two kinds the
    keys call) and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
@@ -73,9 +73,9 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 |---|---|---:|---:|---:|---:|
 | route | kernel | 26 | 4,254 | 15 | 4,265 |
 | norms | kernel | 21 | 4,371 | 2,709 | 4,410 |
-| softNorms | kernel | 14 | 5,368 | 35 | 5,376 |
+| softNorms | kernel | 17 | 5,370 | 35 | 5,378 |
 | quantity | kernel | 6 | 2,267 | 75 | 2,274 |
-| **kernel, distinct lines** | | | | | **11,119** |
+| **kernel, distinct lines** | | | | | **11,121** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 3,352 | 2,154 | 3,358 |
 | rights | candidate | 2 | 5,620 | 35 | 5,636 |
@@ -97,7 +97,7 @@ candidate rows moved with main's code, the kernel rows did not). Other measureme
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
 | Definitions that write a verdict token, outside example, check and schema modules | 59, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,777, of them 11,119 in the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,779, of them 11,121 in the kernel (M) |
 
 Reading the table:
 
@@ -159,8 +159,8 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,777 |
-| of which in the proved kernel | 11,119 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,779 |
+| of which in the proved kernel | 11,121 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (wire theorems since KB-8, kernel since kb-8c; before them, 1,804 lines of wire code under no theorem, now a 75-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
@@ -234,9 +234,10 @@ lists every definition whose body holds one of these literals and whether it is 
 in a kernel path's spec or wrap, or in code a kernel subject runs for a case kind a listed theorem
 covers. A writer of the last kind must be a `covered_writers` entry naming its kinds and theorems,
 or the tool reports it; code for kinds no theorem covers (`uncovered`) is outside. Today that is
-the soft route's kinds other than `admission` (`SoftNorms.Run.runSoftKind`, whose `soft-conflict`
-writes `CONFLICT` and `CONFLICT-FREE` and whose `soft-elaborate` writes `CHECKED` through
-`residualStatus`), the plain kinds on a layered norms environment (`Norms.Plain.run`) and the
+the soft route's kinds other than `admission` (`SoftNorms.Run.runSoftKind`, whose `soft-elaborate`
+writes `CHECKED` through `residualStatus`; its `soft-conflict` branch writes `CONFLICT` and
+`CONFLICT-FREE`, and since kb-10c `soft_wire_conflict_free` and `soft_wire_conflict_witness` state
+those two verdicts, but the declaration also serves uncovered kinds, so it stays outside), the plain kinds on a layered norms environment (`Norms.Plain.run`) and the
 route's `bundle` and `admission` kinds (M).
 
 **Carry rule.** A shell mode that wants to show a verdict does not compute it. It elaborates the
@@ -405,7 +406,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 11,119 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 11,121 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order

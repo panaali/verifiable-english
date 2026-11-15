@@ -65665,6 +65665,12 @@ theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
     answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
   -- uses VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 1875777254
+theorem VE.SoftNorms.Run.ok_verdict
+  ∀ (id v : String) (rest : List (String × Lean.Json)),
+    ¬"verdict" ∈ List.map (fun x => x.fst) rest →
+      (VE.Route.Wire.ok id (("verdict", Lean.Json.str v) :: rest)).getObjValD "verdict" = Lean.Json.str v
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3679161013
 theorem VE.SoftNorms.Run.outcomeAt_iff
   ∀ (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (p : String) (vs : List VE.Bridge.Entity),
     VE.SoftNorms.Run.outcomeAt D M p vs = Bool.true ↔
@@ -65868,6 +65874,23 @@ theorem VE.SoftNorms.Run.softLabelled_formulas
   ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften
   -- expr 2529973739
+theorem VE.SoftNorms.Run.soft_conflict_verdict
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ((j.getObjVal? "witness").toBool = Bool.true ∧
+              ∃ src w,
+                VE.SoftNorms.Wire.replaySoftWitness j = Except.ok ⟨src, w⟩ ∧
+                  answer.getObjValD "verdict" =
+                    Lean.Json.str (if w.conflict = Bool.true then "CONFLICT" else "UNKNOWN")) ∨
+            (j.getObjVal? "witness").toBool = Bool.false ∧
+              ∃ res,
+                VE.SoftNorms.Wire.replaySoftConflict j = Except.ok res ∧
+                  answer.getObjValD "verdict" =
+                    Lean.Json.str (if res.conflictFree = Bool.true then "CONFLICT-FREE" else "UNKNOWN")
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire
+  -- expr 3023849634
 theorem VE.SoftNorms.Run.soft_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →
@@ -65878,6 +65901,53 @@ theorem VE.SoftNorms.Run.soft_wire_acceptance
               VE.SoftNorms.Run.SoftAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
   -- expr 3819520681
+theorem VE.SoftNorms.Run.soft_wire_conflict_exclusive
+  ∀ (j₁ j₂ a₁ a₂ : Lean.Json),
+    VE.SoftNorms.Run.runCase j₁ = Except.ok a₁ →
+      VE.Route.Run.caseKind j₁ = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j₁ = Bool.true →
+          VE.SoftNorms.Run.runCase j₂ = Except.ok a₂ →
+            VE.Route.Run.caseKind j₂ = Except.ok "soft-conflict" →
+              VE.SoftNorms.Run.usesSoftPath j₂ = Bool.true →
+                j₁.getObjValD "environment" = j₂.getObjValD "environment" →
+                  j₁.getObjValD "norms" = j₂.getObjValD "norms" →
+                    a₁.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+                      a₂.getObjValD "verdict" ≠ Lean.Json.str "CONFLICT"
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
+  -- expr 900473672
+theorem VE.SoftNorms.Run.soft_wire_conflict_free
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          (j.getObjVal? "witness").toBool = Bool.false →
+            answer.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+              ∃ res,
+                VE.SoftNorms.Wire.replaySoftConflict j = Except.ok res ∧
+                  res.conflictFree = Bool.true ∧
+                    VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") =
+                        Except.ok res.src ∧
+                      VE.SoftNorms.WellFormedSoft res.src.D = Bool.true ∧ VE.SoftNorms.SoftConflictFree res.src.D
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire
+  -- expr 1954699145
+theorem VE.SoftNorms.Run.soft_wire_conflict_witness
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          (j.getObjVal? "witness").toBool = Bool.true →
+            answer.getObjValD "verdict" = Lean.Json.str "CONFLICT" →
+              ∃ src w,
+                VE.SoftNorms.Wire.replaySoftWitness j = Except.ok ⟨src, w⟩ ∧
+                  w.conflict = Bool.true ∧
+                    VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") =
+                        Except.ok src ∧
+                      ¬VE.Norms.ConflictFree (VE.SoftNorms.soften src.D) w.M.asStructure ∧
+                        ¬VE.SoftNorms.SoftConflictFree src.D ∧
+                          (¬VE.SoftNorms.NoStrictCollision src.D w.M.asStructure ∨
+                            ¬VE.SoftNorms.NoHardPairConflict src.D w.M.asStructure)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.ConflictFree@VE.Norms.Conflict VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.NoHardPairConflict@VE.SoftNorms.Coherence VE.SoftNorms.NoStrictCollision@VE.SoftNorms.Coherence VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3470644586
 theorem VE.SoftNorms.Run.soft_wire_elaborate
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →
