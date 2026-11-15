@@ -283,7 +283,12 @@
       "294ea005ac24f591d56af1ed6cbec7fbca8f70a2a5be6c6294507d17d17c4215"
     ],
     "f7-evaluations": [
-      "294ea005ac24f591d56af1ed6cbec7fbca8f70a2a5be6c6294507d17d17c4215"
+      "294ea005ac24f591d56af1ed6cbec7fbca8f70a2a5be6c6294507d17d17c4215",
+      "aee50b18a03c89e4883a5acadf5c8614dd7fd2f111c3b616e1a8d6427edc3e3f"
+    ],
+    "f7-evaluations-any": [
+      "294ea005ac24f591d56af1ed6cbec7fbca8f70a2a5be6c6294507d17d17c4215",
+      "aee50b18a03c89e4883a5acadf5c8614dd7fd2f111c3b616e1a8d6427edc3e3f"
     ],
     "f7-recommend": [
       "ea42d72265fc0e7defcd6a7b23f98a4b27e27d39dc8a2ca2d2c9eed12d88d1e9"
