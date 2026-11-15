@@ -1,0 +1,7 @@
+job=x86sh-pinsrc2-da0822ae-da0822ae-t764559-s1 shard=1/4 nproc=4 arch=x86_64 host=ip-10-0-143-178 date=2026-11-15T17:44:03Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/mapper/cow-root  145G   61G   85G  42% /
+ 17:44:03 up 2 min,  0 user,  load average: 1.37, 0.48, 0.18
+pilot/codex branches: 98
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
