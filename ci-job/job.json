@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-pinsrc-da0822ae-da0822ae-t756965-s1",
+ "head": "7cbec4b340b804cc41f3dcd8345dd7a8f5695941",
+ "argv": [
+  "x86sh-pinsrc-da0822ae-da0822ae-t756965-s1",
+  "7cbec4b340b804cc41f3dcd8345dd7a8f5695941",
+  "fe02c47af28e6575a4e5705c66ce495f62e45a70",
+  "-",
+  "-",
+  "4",
+  "1/2",
+  "authority"
+ ]
+}
