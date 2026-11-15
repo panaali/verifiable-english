@@ -134,6 +134,10 @@ SOUND = ["VE.CertificateWire.Query.accepts_sound", "VE.CertificateWire.ClosureQu
 ACCEPTS = ["VE.CertificateWire.Query.accepts", "VE.CertificateWire.ClosureQuery.accepts"]
 SPLITTER = "_private.VE.Route.Admission.0.VE.Route.Admission.NodeAdmitted.match_1.splitter"
 ROUTE = next(path for path in KERNEL if path["name"] == "route")
+FX = "VE.KernelClosure."  # the charge rule's fixtures in tools/kernel_closure.lean
+FIXTURE_REGISTRY = {"paths": [{"name": "fixture", "tier": "kernel", "modes": [], "entry": [FX + "wrapFixtureEntry"],
+                               "theorems": [FX + "wrapFixture_sound"], "subject": [FX + "wrapFixtureRun"],
+                               "kinds": {"x": {"theorem": FX + "wrapFixture_sound"}}}]}
 
 
 @pytest.fixture(scope="module")
@@ -150,6 +154,11 @@ def lean_answer(lake):
         {"name": "route-uncut", "roots": ROUTE["theorems"], "opaque": ROUTE["subject"]},
         {"name": "open-tail", "roots": ["VE.KernelClosure.openTailFixture_stated"], "opaque": []},
         {"name": "keyed", "roots": ["VE.KernelClosure.keyedFixture_stated"], "opaque": []},
+        {"name": "reuse-g", "roots": [FX + "reuseG"], "opaque": [], "mode": "run", "why": [FX + "reuseF"]},
+        {"name": "reuse-both", "roots": [FX + "reuseBoth"], "opaque": [], "mode": "run"},
+        {"name": "odd", "roots": [FX + "oddFixture"], "opaque": [], "mode": "run"},
+        {"name": "size", "roots": [FX + "sizeFixture"], "opaque": [], "mode": "run"},
+        *kernel_closure.requests(FIXTURE_REGISTRY),
         *measured,
     ], [], [], HANG_TIMEOUT)
     return raw, census
@@ -176,6 +185,75 @@ def test_the_lean_half_finds_answer_fields_left_open_and_passes_fields_read_by_k
     raw, _ = lean_answer
     assert raw["open-tail"]["open_fields"] == ["VE.KernelClosure.openTailFixture"]
     assert raw["keyed"]["open_fields"] == []
+
+
+def span(decl: dict) -> int:
+    return decl["to"] - decl["from"] + 1
+
+
+def test_a_matcher_reused_from_an_unreached_declaration_is_charged_to_its_user(lean_answer):
+    """kb-closure-attrib (DRI kb-8 item 1): Lean shares `reuseF.match_1` with `reuseG`. A run of `reuseG`
+    does not reach `reuseF`, so it is charged none of `reuseF`'s lines (the old `rangeOf` charged its whole
+    range, as `decodeUnit`'s 40 lines in the quantity wrap); the matcher is listed with its user, and
+    `--why` finds no chain to `reuseF`."""
+    raw, _ = lean_answer
+    g = raw["reuse-g"]
+    assert [d["name"] for d in g["decls"]] == [FX + "reuseG"]
+    assert g["lines"] == span(g["decls"][0])
+    reused = [d for d in raw["reuse-both"]["decls"] if d["name"] == FX + "reuseF"]
+    assert g["attributed"] == [{"name": FX + "reuseF.match_1", "by": FX + "reuseG", "prefix": FX + "reuseF",
+                                "module": g["decls"][0]["module"], "lines": span(reused[0])}]
+    assert g["why"] == {}
+
+
+def test_a_reached_declaration_is_still_charged_its_lines_once(lean_answer):
+    """The conservative direction: where the closure reaches `reuseF` itself, its matcher is charged
+    `reuseF`'s range (counted once, nothing attributed); `evenFixture._mutual`, which holds
+    `evenFixture`'s code, charges `evenFixture`'s lines to `oddFixture`, which runs it; and
+    `sizeFixture`, whose structural mutual recursion holds `sizeListFixture`'s body and matcher
+    without naming it, is charged `sizeListFixture`'s lines."""
+    raw, _ = lean_answer
+    both = raw["reuse-both"]
+    assert sorted(d["name"] for d in both["decls"]) == [FX + "reuseBoth", FX + "reuseF", FX + "reuseG"]
+    assert both["lines"] == sum(span(d) for d in both["decls"])
+    assert both["attributed"] == []
+    odd = raw["odd"]
+    assert sorted(d["name"] for d in odd["decls"]) == [FX + "evenFixture", FX + "oddFixture"]
+    assert odd["lines"] == sum(span(d) for d in odd["decls"]) and odd["attributed"] == []
+    size = raw["size"]
+    assert {FX + "sizeFixture", FX + "sizeListFixture"} <= {d["name"] for d in size["decls"]}
+    assert size["attributed"] == []
+
+
+def test_the_wrap_figure_leaves_out_what_the_spec_reads(lean_answer, monkeypatch):
+    """`wrapFixtureEntry` builds `WrapFixtureEnv`, which the spec (`wrapFixture_sound`) reads: the wrap
+    figure is the entry's own lines; `lines` and the kernel total stay the distinct lines of both."""
+    raw, _ = lean_answer
+    spec, wrap = raw["spec:fixture"], raw["wrap:fixture"]
+    assert {FX + "WrapFixtureEnv"} <= {d["name"] for d in spec["decls"]} & {d["name"] for d in wrap["decls"]}
+    monkeypatch.setattr(kernel_closure, "run_lean", lambda *args, **kw: (raw, []))
+    result = kernel_closure.measure(FIXTURE_REGISTRY)
+    [row] = result["paths"]
+    [entry] = [d for d in wrap["decls"] if d["name"] == FX + "wrapFixtureEntry"]
+    assert row["wrap_lines"] == span(entry) < wrap["lines"]
+    both = [(d["module"], d["from"], d["to"]) for d in spec["decls"] + wrap["decls"]]
+    assert row["lines"] == result["kernel_lines"] == kernel_closure.covered(both) == spec["lines"] + span(entry)
+    assert result["problems"] == []
+
+
+def test_the_wrap_figure_subtracts_the_spec_and_the_kernel_total_does_not(monkeypatch):
+    """The same rule on a fixed Lean answer: a declaration in both spec and wrap counts in the spec figure
+    only, a wrap declaration of another name over the same lines still counts in the wrap figure, and the
+    path's lines and the kernel total are the distinct lines of spec and wrap together."""
+    registry = {"paths": [{"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S"],
+                           "kinds": KINDS}]}
+    spec = lean_part([("M", 1, 10)], {"S": ["T"]})
+    wrap = lean_part([("M", 1, 10), ("M", 20, 22), ("N", 1, 10)])
+    raw = {"spec:k": spec, "wrap:k": wrap, "body:k": lean_part()}
+    monkeypatch.setattr(kernel_closure, "run_lean", lambda *args, **kw: (raw, []))
+    result = kernel_closure.measure(registry)
+    [row] = result["paths"]
+    assert (row["spec_lines"], row["wrap_lines"], row["lines"], result["kernel_lines"]) == (10, 13, 23, 23)
 
 
 def test_no_kernel_statement_leaves_answer_fields_open(lean_answer):

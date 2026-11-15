@@ -118,8 +118,8 @@ READINGS = {
     "rs1-contrib-cyb": ("RS1", {"strict": ["f1-contrib-cyb-strict"], "default": ["f1-contrib-cyb-default"]}),
     # F2 (2.2, 4.2, Appendix C) and section 1's deployment sentence: "deployed" is RS3. 2.2's second object
     # ("appropriate security controls as they are developed") holds under both choices.
-    "rs3-deploy": ("RS3", {"ext": ["f2-deploy", "f2-security-developed"],
-                           "any": ["f2-deploy-any", "f2-security-developed"]}),
+    "rs3-deploy": ("RS3", {"ext": ["f2-deploy", "f2-security-developed", "f7-evaluations"],
+                           "any": ["f2-deploy-any", "f2-security-developed", "f7-evaluations-any"]}),
     "rs3-reminder": ("RS3", {"ext": ["f2-reminder"], "any": ["f2-reminder-any"]}),
     "rs3-no-deploy": ("RS3", {"ext": ["f2-no-deploy"], "any": ["f2-no-deploy-any"]}),
     "rs18-develop": ("RS18", {"devonly": ["f3-develop", "f3-develop-forecast"],

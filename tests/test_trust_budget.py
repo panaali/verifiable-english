@@ -48,13 +48,33 @@ def test_formula_and_report_encoders_are_verdict_bearing():
     out; every other such encoder of the tree is [V] or S. No encoder of the table is [I] or [R], and the claim
     graph's node, entry and graph types, which carry the statements and leaves the report is read from, are G[V]."""
     classes = trust_map.load_table(ROOT / "tools/trust-classes.json")
-    encoders = {(file, name): cls for file, names in classes.items() for name, cls in names.items()
-                if ENCODER.match(name.rsplit(".", 1)[-1])}
+    # A tied entry (`load_table`: {"class", "tied"}) keeps its class; the tie does not change it.
+    encoders = {(file, name): cls if isinstance(cls, str) else cls["class"] for file, names in classes.items()
+                for name, cls in names.items() if ENCODER.match(name.rsplit(".", 1)[-1])}
     assert ("VE/Cardinality/Run.lean", "VE.Cardinality.Run.reportJson") in encoders
     assert sorted(f"{file}: {name} is {cls}" for (file, name), cls in encoders.items()
                   if cls.endswith(("[I]", "[R]"))) == []
     document = classes["VE/Cardinality/Document.lean"]
     assert {document[f"VE.Cardinality.Document.{name}"] for name in ("CNode", "Entry", "Graph", "Entries")} == {"G[V]"}
+
+
+def test_core_routing_ties_name_both_environment_refusal_sites():
+    """kb-2a-b-cutback F1: a routing tie must prove the two site conditions, not only restate the route's body."""
+    table = trust_map.load_table(ROOT / "tools/trust-classes.json")["VE/Service/CoreCheck.lean"]
+    names = ("VE.Service.CoreCheck.routed", "VE.Service.CoreCheck.routedRefusals")
+    tied = [set(table[name]["tied"]) for name in names]
+    assert all(tied)
+    statements = inventory_path("lean/statements.txt").read_text()
+
+    def statement(name):
+        return statements.split(f"theorem {name}\n", 1)[1].split("\ntheorem ", 1)[0]
+
+    assert any(all(token in statement(name) for token in (
+        "environmentOf", "routedRefusals", "judgmentSoftRefusal", "softReadingsRefusal",
+        "exceptionConditioned", '"soft-norms@0"', '"readings@1"')) for name in tied[0] & tied[1])
+    source = (ROOT / "lean/VE/Service/Document.lean").read_text().split("def environmentOf ", 1)[1]
+    assert "judgmentSoftRefusal listed units core" in source
+    assert "softReadingsRefusal listed core" in source
 
 
 def test_arith_lookup_and_fixture_helpers_are_classified(live):
