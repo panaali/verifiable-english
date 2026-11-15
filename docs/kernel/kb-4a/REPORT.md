@@ -6,6 +6,14 @@ hands every `acts@0` case to today's runner (`runCaseActsRouted`, new candidate 
 grammar, its table and the elaboration are counted by no kernel path. No answer byte changes (equality theorems; five keys checked).
 Open: none blocking; deviations from the task's letter are D1-D6 under "Notes for the DRI"; the full gate is the chain's.
 
+**F1 review fix.** `Service.FamilyNorms.folCase` now uses `Wire.decodeFlaggedActs` for every FOL-view source,
+including `Flagged.replayWitnessIn`. Before the fix, the review probe and
+`tests/test_stage2_norms.py::test_family_norms_fol_witness_uses_the_acts_decoder` failed on `acts@0` witnesses;
+after the fix, the exact probe and all four regression cases pass. The regression includes both `CONFLICT`
+and `UNKNOWN` witnesses with and without `acts@0`. No Python or Rust product code changed. The base-main
+known-red tests remain separate and were not edited. The final selected run, Lean build and audit are recorded
+in the fix handoff; the merge train owns the full gate.
+
 SIZE: 535 product, 316 tests, 805 other hand-written lines (product: 304 of them are the proof modules
 `VE.Acts.HookToday` and `VE.Acts.HookTwins`; tests: the #guard modules and tests/test_kernel_closure.py; other: 506
 are `MEASURE.md` and the trust-mutants evidence, written by their tools; `git diff --numstat` against the merge base,
