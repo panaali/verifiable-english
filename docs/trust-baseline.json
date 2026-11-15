@@ -2758,6 +2758,20 @@
    "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
   },
   {
+   "class": "S",
+   "lines": 48,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
+  },
+  {
+   "class": "V",
+   "lines": 235,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
+  },
+  {
    "class": "V",
    "lines": 99,
    "reason": "kb-4a: the acts hook of the norms decoder (decisions 2 and 5, row KB-4; Lean-owned behaviour: the plain decoder's own refusal of an environment from which acts@0 is read, and the norms mode's dispatch of such cases, including the deciding view, to today's runner): V +99, K +0, S +0 (VE/Acts/Hook.lean +37: ActsHook.acts, ActsHook.lexical, decodeNormsEnvironment, decodeFlaggedActs; VE/Norms/Wire.lean +36: ActsHook, ActsHook.plain and the hook's uses in decodeNormsEnvironmentWith, decodeSource and decodeFlagged; VE/Norms/Run.lean +26: runCaseActs, decidesActs, decoderOf, runCaseActsRouted, runCaseRouted); the equality theorems are VE.Acts.HookToday and VE.Acts.HookTwins, a ties pass is asked in docs/kernel/kb-4a/FOLLOW-UPS.md",
