@@ -15,9 +15,12 @@ bear on an item (its cone):
    strict rule on the same act).
 2. The case is a finite model over T's base vocabulary: the level tables and
    closure sentences of `facts.d1.ve` (closed world over the named levels),
-   the case facts of `cases.json`, and the minimal decision findings the soft
+   the case facts of `cases.json`, an item's own fact blocks (`rules.d1.ve`,
+   headed `item <id>, ...`), and the minimal decision findings the soft
    premises force (an exception is found only where a sufficient condition the
-   text states holds). VE validates the model, Background included.
+   text states holds). VE validates the model, Background included. A case with
+   alternatives (a PLAN 5 row "X or Y") is one model per alternative, and the
+   item holds at a choice where it holds in every one.
 3. The premises are checked on the case: the model satisfies every premise, or
    VE's prover certifies that the premises and the case facts are inconsistent
    (the certificate is replayed). Neither is UNKNOWN.
@@ -125,8 +128,36 @@ def document(choice, default="deny", variant=()):
 
 # --- cases as finite models -----------------------------------------------------------
 
+def situations(case):
+    """The situations of a case: its alternatives, or the case alone. A PLAN 5 row "X or Y" is one case whose
+    `alternatives` state X and Y, each with its own levels, activity and findings."""
+    item = {"item": case["item"]} if "item" in case else {}
+    return [{**alternative, **item} for alternative in case.get("alternatives", [case])]
+
+
+def item_case(item_id, case):
+    """The case of an item whose own premises (`own_facts`) the case model and the premise check must carry."""
+    return {**case, "item": item_id} if own_facts(item_id) else case
+
+
+@lru_cache(maxsize=None)
+def own_facts(item_id):
+    """An item's own premises: the fact blocks of rules.d1.ve whose header names the item (`item <id>, ...`)."""
+    document = {b for b, _, _ in T.facts()}
+    return tuple(f for f in T.facts(item_id) if f[0] not in document)
+
+
+def with_own_premises(item_id, record):
+    """An item's record names the own premise blocks its proof loaded (the case model and the premise check)."""
+    if own_facts(item_id):
+        record["own_premises"] = [b for b, _, _ in own_facts(item_id)]
+    return record
+
+
 def case_atoms(case, *, without=()):
-    atoms = set()
+    if "alternatives" in case:
+        raise SystemExit(f"case {case['id']} has alternatives: each is a situation of its own (situations())")
+    atoms = set(fact_atoms(case["item"]) - fact_atoms()) if "item" in case else set()
     for level in case.get("levels", []):
         atoms.add(("reached", "p", level))
     for predicate in ACTIVITIES.get(case.get("activity") or "", []):
@@ -137,15 +168,22 @@ def case_atoms(case, *, without=()):
 
 
 @lru_cache(maxsize=None)
-def fact_atoms():
+def fact_atoms(item=None):
     atoms = set()
-    for _, _, formulas in T.facts():
+    for _, _, formulas in T.facts(item):
         for f in formulas:
             if type(f) is A.Unary:
                 atoms.add((f.predicate, f.term.name))
             elif type(f) is A.Binary:
                 atoms.add((f.predicate, f.left.name, f.right.name))
     return frozenset(atoms)
+
+
+@lru_cache(maxsize=None)
+def document_atoms():
+    """The ground facts of every fact block the source document states, item-scoped blocks included (the
+    distinguishing models of `build_document.py`)."""
+    return frozenset().union(*(fact_atoms(item) for item in [None] + T.fact_items()))
 
 
 # OT3, the governance determination that lifts F12/F13 (and with F3 releases F2): GOV is asked without it.
@@ -209,12 +247,12 @@ def holds(env, formula, model):
 
 
 @lru_cache(maxsize=None)
-def premise_status(atoms):
-    """`model` if the case model satisfies every premise; `inconsistent` with a
+def premise_status(atoms, item=None):
+    """`model` if the case model satisfies every premise (the item's own included); `inconsistent` with a
     replayed certificate if VE proves the premises and case facts contradictory."""
     env = T.base_environment()
     model = _model(env, frozenset(a for a in fact_atoms() | atoms if a[0] in env.predicates))
-    premises = [f for _, _, formulas in T.facts() for f in formulas]
+    premises = PREMISES(item)
     failed = [i for i, f in enumerate(premises) if not holds(env, f, model)]
     if not failed:
         return ("model", None)
@@ -247,8 +285,14 @@ def constants_of(formula, found=None):
 PROVER_CALLS = [0]
 
 
-def PREMISES():
-    return [f for _, _, formulas in T.facts() for f in formulas]
+def PREMISES(item=None):
+    return [f for _, _, formulas in T.facts(item) for f in formulas]
+
+
+def case_premises(case):
+    """The premise status of a case: of its first situation that is no model of the premises, else `model`."""
+    statuses = [premise_status(case_atoms(s), s.get("item")) for s in situations(case)]
+    return next((status for status in statuses if status[0] != "model"), statuses[0])
 
 
 def identifier_lint():
@@ -278,8 +322,9 @@ def identifier_lint():
 def invention_audit():
     """M6: every premise and rule is traced to a source span (its header), and every forced
     choice the translation makes is listed."""
-    untraced = [b.id for b in T.read_blocks("facts.d1.ve") + T.rule_blocks() if not b.source.strip()]
-    bridges = [b.id for b in T.read_blocks("facts.d1.ve") if "bridge" in b.source]
+    untraced = [b.id for b in T.read_blocks("facts.d1.ve") + T.rule_blocks() + list(T.rule_fact_blocks())
+                if not b.source.strip()]
+    bridges = [b.id for b in T.read_blocks("facts.d1.ve") + list(T.rule_fact_blocks()) if "bridge" in b.source]
     return {"untraced": untraced, "bridges": bridges,
             "forced_choices": [
                 "completion defaults: every regulated predicate is run under deny and under allow (M7)",
@@ -406,6 +451,9 @@ def answer(kind, case, choice, *, default="deny", variant=(), detail=None, level
                 detail["release"] = selected(doc, model, DM, False)
             if kind == "CCA":
                 detail["release"] = selected(doc, model, ("assessed",), False)
+            if kind == "RECSEC":
+                detail["measures"] = sorted(args[1] for args, picks in selections(doc, model, "applied").items()
+                                            if any(sign for _, sign in picks))
         return bool(rules)
     if kind == "GOV":
         counter = case_model(doc, case_atoms(case, without=(GOVERNANCE_FINDING,)))
@@ -447,6 +495,15 @@ def item_result(kind, case, *, level=None, variant=(), predicates=None):
     if kind == "SILENT:EVIDENCE":
         parts = [item_result(f"{kind}@{p}", case, variant=variant, predicates=(p,)) for p in item_predicates(kind)]
         return intersect_results(parts)
+    if "alternatives" in case:
+        # A PLAN 5 row "X or Y" keys every situation it names (its key cell is one answer for X and for Y), so the
+        # item holds at a choice exactly when it holds in each alternative.
+        if kind in ("DM", "CCA"):
+            raise SystemExit(f"{kind}: a release set is not combined over the alternatives of case {case['id']}")
+        parts = {s["id"]: item_result(kind, s, level=level, variant=variant, predicates=predicates)
+                 for s in situations(case)}
+        combined = intersect_results(list(parts.values()))
+        return {"cone": combined["cone"], "true": combined["true"], "alternatives": parts}
     sets = cone(predicates or item_predicates(kind))
     true, release, details = [], [], {}
     for assignment in choices(sets):
@@ -552,7 +609,7 @@ def witness_situations():
                    "activity": activity, "findings": []}
 
 
-def cluster_conflict(rule_ids, choice, variant=()):
+def cluster_conflict(rule_ids, choice, variant=(), item=None):
     """The conflict status of the sub-document of `rule_ids` at one choice.
 
     CONFLICT: a situation that satisfies every premise, on which VE's W1 check
@@ -573,8 +630,8 @@ def cluster_conflict(rule_ids, choice, variant=()):
     # Only rules of opposite sign on one predicate can conflict (no dual pairs are declared).
     search = witness_situations() if any(len(v) == 2 for v in signs.values()) else ()
     for situation in search:
-        atoms = case_atoms(situation)
-        if premise_status(atoms)[0] != "model":
+        atoms = case_atoms({**situation, "item": item} if item else situation)
+        if premise_status(atoms, item)[0] != "model":
             continue
         model = case_model(sub, atoms)
         report = check_conflict(sub.elaborated, model=model)
@@ -583,7 +640,7 @@ def cluster_conflict(rule_ids, choice, variant=()):
                     "rules": sorted(keep)}
     plain = check_conflict(sub.elaborated, prove=True).status
     env = sub.elaborated.base_environment()
-    premises = tuple(f for _, _, formulas in T.facts() for f in formulas)
+    premises = tuple(PREMISES(item))
     for target, sorts, formula in sub.elaborated.conflict_targets():
         goal = formula
         for sort in reversed(sorts):
@@ -593,12 +650,12 @@ def cluster_conflict(rule_ids, choice, variant=()):
     return {"status": "CONFLICT-FREE", "rules": sorted(keep), "w1_without_premises": plain}
 
 
-def conflict_result(rule_ids, variant=()):
+def conflict_result(rule_ids, variant=(), item=None):
     predicates = {rule_predicate(r) for r in rule_ids if r in {b.id for b in T.rule_blocks()}}
     sets = cone(predicates)
     true, details = [], {}
     for assignment in choices(sets):
-        outcome = cluster_conflict(rule_ids, full_choice(assignment), variant)
+        outcome = cluster_conflict(rule_ids, full_choice(assignment), variant, item)
         details[",".join(f"{s}={v}" for s, v in assignment) or "-"] = outcome
         if outcome["status"] == "UNKNOWN":
             raise SystemExit(f"conflict check UNKNOWN for {rule_ids} at {assignment}: {outcome}")
@@ -665,7 +722,7 @@ def family_n(evaluations):
     env = T.base_environment()
     premises = tuple(f for _, _, formulas in T.facts() for f in formulas)
     out = {}
-    # N1: no TCL concerns cyber or harmful manipulation, from the premises and N1's own bridge (facts.d1.ve
+    # N1: no TCL concerns cyber or harmful manipulation, from the premises and N1's own bridge (rules.d1.ve
     # `item N1`), which no other item uses.
     n1_premises = tuple(f for _, _, formulas in T.facts("N1") for f in formulas)
     goals = {}
@@ -693,13 +750,13 @@ def family_n(evaluations):
     # N3: every rule has a witness: a situation satisfying the premises, at a choice that
     # includes the rule, where VE selects it.
     witnesses, dead = {}, []
-    situations = list(CASES.values()) + list(witness_situations())
+    found_in = [s for case in CASES.values() for s in situations(case)] + list(witness_situations())
     for block in T.rule_blocks():
         choice = {**BASE_CHOICE, **dict(block.when)}
         doc = document(choice)
         predicate = rule_predicate(block.id)
         found = None
-        for situation in situations:
+        for situation in found_in:
             atoms = case_atoms(situation)
             if premise_status(atoms)[0] != "model":
                 continue
@@ -743,6 +800,11 @@ def default_sensitive(kind, case, level=None):
     select, so the outcome falls to the default)? M7 expects the two to coincide."""
     if kind not in SELECTION_ITEMS and not kind.startswith("SILENT:") or kind.startswith("SILENT:EVIDENCE"):
         return None
+    if "alternatives" in case:
+        per = [default_sensitive(kind, s, level) for s in situations(case)]
+        return [{"choice": rows[0]["choice"], "sensitive": any(r["sensitive"] for r in rows),
+                 "conflicted": any(r["conflicted"] for r in rows), "coincide": all(r["coincide"] for r in rows)}
+                for rows in zip(*per)]
     rows = []
     for assignment in choices(cone(item_predicates(kind))):
         choice = full_choice(assignment)
@@ -786,19 +848,20 @@ def run():
         kind, case_id = item["item"], item["case"]
         if case_id is None:
             continue
-        case = CASES[case_id]
-        status = premise_status(case_atoms(case))
-        results["premises"][case_id] = {"status": status[0], "failed": status[1]}
+        case = item_case(item["id"], CASES[case_id])
+        status = case_premises(case)
+        document_status = case_premises(CASES[case_id])
+        results["premises"][case_id] = {"status": document_status[0], "failed": document_status[1]}
         if kind == "SILENT:CCA+GOV":
             parts = {"SILENT:CCA": item_result("SILENT:CCA", case), "GOV": item_result("GOV", case)}
-            results["items"][item["id"]] = {"parts": parts, "premises": status[0]}
+            results["items"][item["id"]] = with_own_premises(item["id"], {"parts": parts, "premises": status[0]})
             evaluations.extend(parts.values())
             continue
         if kind == "FORBIDS+L0":
             other = CASES["G9-L0"]
             results["premises"]["G9-L0"] = {"status": premise_status(case_atoms(other))[0], "failed": None}
             parts = {"FORBIDS": item_result("FORBIDS", case), "FORBIDS@G9-L0": item_result("FORBIDS", other)}
-            results["items"][item["id"]] = {"parts": parts, "premises": status[0]}
+            results["items"][item["id"]] = with_own_premises(item["id"], {"parts": parts, "premises": status[0]})
             evaluations.extend(parts.values())
             continue
         if kind == "PROXIMITY":
@@ -806,11 +869,13 @@ def run():
         else:
             result = item_result(kind, case)
         result["premises"] = status[0]
-        results["items"][item["id"]] = result
+        results["items"][item["id"]] = with_own_premises(item["id"], result)
         evaluations.append(result)
     progress("conflict clusters")
     for name, rule_ids in CONFLICT_CLUSTERS.items():
-        results["items"][next(i["id"] for i in plan if i["item"] == name)] = conflict_result(rule_ids)
+        item_id = next(i["id"] for i in plan if i["item"] == name)
+        result = conflict_result(rule_ids, item=item_id if own_facts(item_id) else None)
+        results["items"][item_id] = with_own_premises(item_id, result)
     progress("document conflicts")
     per_predicate = document_conflicts()
     results["document_conflicts"] = per_predicate
@@ -825,7 +890,7 @@ def run():
         if item["case"] is None or item["item"] in ("SILENT:CCA+GOV", "FORBIDS+L0", "GOV", "CATCH_ALL",
                                                      "CHECKPOINT_MCCA"):
             continue
-        rows = default_sensitive(item["item"], CASES[item["case"]], item.get("level"))
+        rows = default_sensitive(item["item"], item_case(item["id"], CASES[item["case"]]), item.get("level"))
         if rows is not None:
             results["default_sensitive"][item["id"]] = {
                 "choices": len(rows), "sensitive_choices": sum(r["sensitive"] for r in rows),
@@ -874,8 +939,8 @@ def variants():
                 ("add", ("f16-ds-n2", next(b.text for b in T.rule_blocks() if b.id == "f16-ds"),
                          (("RS3", "Ds"), ("RS3force", "strict")))))
     out["with_N2"] = {
-        "C1": conflict_result(CONFLICT_CLUSTERS["CONFLICT:f15:f16"] + ("f16-ds-n2",), narrowed),
-        "B-L2/RECSEC": item_result("RECSEC", CASES["B-L2"], variant=narrowed),
+        "C1": conflict_result(CONFLICT_CLUSTERS["CONFLICT:f15:f16"] + ("f16-ds-n2",), narrowed, "C1"),
+        "B-L2/RECSEC": item_result("RECSEC", item_case("B-L2/RECSEC", CASES["B-L2"]), variant=narrowed),
     }
     # Without N1: every rule from a "will" sentence is a prediction, not a norm.
     prediction = (("drop", tuple(sorted(T.will_rules()))),)

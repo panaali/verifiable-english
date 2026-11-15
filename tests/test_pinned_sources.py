@@ -134,6 +134,7 @@ def test_gate_optional_still_allows_the_unset_skips():
     rows = json.loads((ROOT / "tools/gate-optional.json").read_text())["optional_tests"]
     pinned = {r["nodeid"] for r in rows if r["reason"] == SKIP_REASON}
     assert "tests/test_safety_framework.py::test_every_will_quote_is_the_pinned_source_text" in pinned
+    assert "tests/test_safety_framework.py::test_every_glossary_definition_is_the_pinned_source_text" in pinned
 
 
 # --- the fetch step ---------------------------------------------------------------------------------------------------

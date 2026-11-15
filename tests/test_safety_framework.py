@@ -580,10 +580,10 @@ def test_the_f20_legends_keep_the_source_s_subject_qualification_and_conservatis
 
 
 def test_security_level_2_plus_is_its_baseline_and_one_group_of_measures_against_both_threats():
-    """facts.d1.ve measures-sl2plus, 2.1.1: "Security Level 2+," "uses RAND Security Level 2 (SL2) as a baseline, with
+    """rules.d1.ve measures-sl2plus, 2.1.1: "Security Level 2+," "uses RAND Security Level 2 (SL2) as a baseline, with
     additional security measures designed to address risks from insider threats and well-resourced non-state external
     actors": the baseline and one group of additional measures, addressing both threats; no insider-only group."""
-    atoms = {a for a in run.fact_atoms() if a[0] in ("includes", "addresses")}
+    atoms = {a for a in run.document_atoms() if a[0] in ("includes", "addresses")}
     assert atoms == {("includes", "security_level_2_plus", "rand_security_level_2"),
                      ("includes", "security_level_2_plus", "sl2_plus_additional_measures"),
                      ("addresses", "sl2_plus_additional_measures", "insiders"),
@@ -597,6 +597,124 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     g8 = run.CASES["G8"]
     assert (g8["levels"], g8["activity"], g8["findings"]) == ([], None, [["circumvention_evidence", "p"]])
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
+
+
+# Named fact blocks in source order. measures-sl2plus now lives in rules.d1.ve with its item scope;
+# tests/test_fsf_case_alternatives.py checks the items that read it.
+FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-stealth", "levels-ml-rd-acceleration",
+                "levels-ml-rd-automation", "measures-sl2plus", "closure-misuse-ccls", "closure-ccl-kinds",
+                "closure-tcls", "tcl-not-ccl", "activities-internal-external", "activities-development",
+                "activities-high-risk", "activities-low-risk"]
+
+
+def test_facts_holds_the_premises_of_every_item_and_no_item_s_own_bridge():
+    """No block of facts.d1.ve is an item's own premise; N1's bridge is a block of rules.d1.ve headed `item N1`, and
+    a facts.d1.ve block headed `item <id>` is refused."""
+    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == [
+        block_id for block_id in FACTS_BLOCKS if block_id != "measures-sl2plus"
+    ]
+    assert all(b.when == () for b in translation.read_blocks("facts.d1.ve"))
+    assert [b.id for b in translation.rule_fact_blocks()] == ["bridge-one-domain", "measures-sl2plus"]
+    assert translation.rule_fact_blocks()[0].when == (("item", "N1"),)
+    assert "bridge-one-domain" not in {b.id for b in translation.rule_blocks()}
+
+
+def test_an_item_s_premise_in_facts_or_an_unscoped_fact_in_rules_is_refused(tmp_path, monkeypatch):
+    monkeypatch.setattr(translation, "HERE", tmp_path)
+    (tmp_path / "facts.d1.ve").write_text("## b | item N1 | x\n\"a\" is tracked.\n")
+    with pytest.raises(SystemExit, match="belongs in rules.d1.ve"):
+        translation.read_blocks("facts.d1.ve")
+    (tmp_path / "rules.d1.ve").write_text("## b | always | x\n\"a\" is tracked.\n")
+    translation.rule_fact_blocks.cache_clear()
+    try:
+        with pytest.raises(SystemExit, match="belongs in facts.d1.ve"):
+            translation.rule_fact_blocks()
+    finally:
+        translation.rule_fact_blocks.cache_clear()
+
+
+def test_n1_alone_loads_its_bridge_and_its_record_names_it():
+    """N1's own assumption reaches N1's proof and no other item's: every other item reads facts() only. Without it the
+    4.1 closure does not certify N1 (PLAN section 12, item 26); the results record the bridge as N1's own premise and
+    in the invention audit."""
+    document = {b for b, _, _ in translation.facts()}
+    assert "bridge-one-domain" not in document
+    assert [b for b, _, _ in translation.facts("N1") if b not in document] == ["bridge-one-domain"]
+    assert {b for b, _, _ in translation.facts("N2")} == document
+    assert RESULTS["items"]["N1"]["own_premises"] == ["bridge-one-domain"]
+    assert RESULTS["items"]["N1"]["verdict"] == "ALL"
+    assert run.invention_audit()["bridges"] == RESULTS["invention_audit"]["bridges"] == ["bridge-one-domain"]
+    premises = tuple(f for _, _, formulas in translation.facts() for f in formulas)
+    goal = run.A.Not(run.A.Exists("level", run.A.And(run.A.Unary("tracked", run.A.Var(0)),
+                                                     run.A.Binary("concerns", run.A.Var(0), run.A.Const("cyber")))))
+    assert run.refute(premises, [], goal) is None
+
+
+# The Glossary definitions a predicate's legend quotes whole: a legend carries what a predicate means (DEF, WHAT) and
+# never force, bearer, condition, exception or deadline (reviews/dri-decisions-20261114-uc-split-precedent.md item 4).
+GLOSSARY_DEFINITIONS = {
+    "safety_case": "are an assessable argument showing how severe risks associated with a model's CCLs have been "
+                   "reduced to an acceptable level",
+    "internal": "represent model releases restricted to Google employees for internal use",
+    "high_risk": "represent model releases restricted to Google employees for use cases with the potential to enable "
+                 "severe threat scenarios (e.g. building internal security infrastructure or automating ML R&D)",
+}
+
+
+@pytest.mark.parametrize("predicate", sorted(GLOSSARY_DEFINITIONS))
+def test_the_legend_quotes_the_glossary_definition_whole(predicate):
+    """f7-sc's safety case, and the internal and high-risk internal deployments: each legend holds its Glossary
+    definition word for word, in quotes, and the predicate's role (obligation or classification) is unchanged."""
+    legend = _legend(predicate)
+    assert f'"{GLOSSARY_DEFINITIONS[predicate]}"' in legend
+    entry = vocabulary.environment()["vocabulary"]["predicates"][predicate]
+    assert ("regulated" in entry) == (predicate == "safety_case")
+    if predicate == "safety_case":
+        assert run.rule_predicate("f7-sc") == "safety_case"
+
+
+def test_every_glossary_definition_is_the_pinned_source_text():
+    """The quotes are the pinned source's own words, which the gate runner does not store (tools/gate-optional.json)."""
+    text = " ".join(pinned_source("safety-framework").read_text().split())
+    assert [p for p, quote in GLOSSARY_DEFINITIONS.items() if quote not in text] == []
+
+
+F10_SPEC_REREAD = (
+    'RS9 and RS6 keep the one reading "different", and the blocks f10-dm-same, f10-rel-same and f15-same no longer '
+    'exist.',
+    'The blocks f10-dm-diff, f10-rel-diff and f15-diff stay, selected by "different".',
+)
+DROP_WORDS = ("drop", "merge", "remove", "lost", "omit", "out of scope", "excluded", "deleted", "replaced", "folded")
+
+
+def test_the_f10_spec_reread_names_the_surviving_blocks_without_a_drop_word():
+    """docs/usecases/safety-framework/fsf-fidelity-fix/REPORT.md, "Spec re-read" (a): the blocks deleted under
+    reviews/dri-decisions-20261029-uc-audit2.md item 1 and the -diff blocks that stay are separate sentences, and the
+    one naming the -diff blocks holds none of the drop words (the saved text, never git)."""
+    text = " ".join((REPO / "docs/usecases/safety-framework/fsf-fidelity-fix/REPORT.md").read_text().split())
+    assert all(sentence in text for sentence in F10_SPEC_REREAD)
+    assert not [w for w in DROP_WORDS if w in F10_SPEC_REREAD[1].lower()]
+    assert "the three ids are exactly the deleted blocks; f10-dm-diff" not in text
+
+
+def test_the_section_12_f17_quote_is_carried_by_f17_hri():
+    """PLAN section 12 item 24: 'F17: the periodic assessments "also account for the safety implications of high-risk
+    internal deployments" (f17-hri)': f17-hri's act carries the quoted words in its legend."""
+    quote = "also account for the safety implications of high-risk internal deployments"
+    assert f'F17: the periodic assessments "{quote}" (f17-hri).' in " ".join((HERE / "PLAN.md").read_text().split())
+    assert run.rule_predicate("f17-hri") == "periodic_covers_internal"
+    assert quote in _legend("periodic_covers_internal")
+
+
+@pytest.mark.parametrize("case_id", ["G4", "G5"])
+def test_g4_and_g5_name_no_activity(case_id):
+    """PLAN 5: "The proposal is of the named activity" and "Every other open term is unset unless the case says so".
+    G4 ("significant but not severe cyber or manipulation risk") and G5 ("a capability in a domain outside the four")
+    name no activity, so neither case is an external, first or frontier deployment; F8's catch-all still answers ALL."""
+    case = run.CASES[case_id]
+    assert (case["levels"], case["activity"], case["findings"]) == ([], None, [])
+    assert not {a[0] for a in run.case_atoms(case)} & {"external", "first_deployment", "frontier"}
+    assert next(r for r in RESULTS["comparison"] if r["id"] == case_id)["ve"] == "ALL"
 
 
 def test_the_catastrophic_cell_states_the_l7_rationale_s_conditions():

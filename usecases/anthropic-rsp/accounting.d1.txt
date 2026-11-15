@@ -78,7 +78,7 @@ threshold-t1 | omits: nothing
 threshold-t2 | omits: nothing
 threshold-t3 | omits: nothing
 threshold-t4 | omits: nothing
-highly-capable-t4 | omits: "described in Section 1" exposition
+highly-capable-t4 | omits: "described in Section 1" restates
 t4-suff | omits: nothing
 t4-only-if | omits: nothing
 s2-suff-third | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
