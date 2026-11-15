@@ -365,8 +365,7 @@ def completed(doc, model, predicate, values):
     el = doc.elaborated
     if predicate not in el.order:
         return doc.env.predicates[predicate].regulated.default == "allow"
-    sorts = T.environment().predicates[predicate].arguments
-    return holds_at(el.base_environment(), el.outcome(predicate, base=True), model, sorts, values)
+    return el.outcome_at(predicate, model, tuple(values))
 
 
 # --- items ---------------------------------------------------------------------------------

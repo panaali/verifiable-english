@@ -381,12 +381,8 @@ def selected(doc, found, predicate, sign):
 
 
 def completed(doc, found, predicate):
-    from ve.evaluate import _Evaluator
-    env = doc.elaborated.base_environment()
-    formula = doc.elaborated.outcome(predicate, base=True)
-    sort, element = subject(predicate)
-    A._Checker(env).formula(formula, (sort,))
-    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, ((sort, element),))[0]
+    """The completed outcome of `predicate` at its subject in the case model: Lean's `soft-selected` answer."""
+    return doc.elaborated.outcome_at(predicate, model(doc, found), (subject(predicate)[1],))
 
 
 @lru_cache(maxsize=None)
