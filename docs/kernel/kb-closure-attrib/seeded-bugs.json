@@ -1,0 +1,21 @@
+{
+ "item": "kb-closure-attrib",
+ "note": "Each bug was planted alone, the named test run, and the file restored (script /tmp/kbca_seed.py, run 2026-11-15 on 09f80d178+; every run ended '1 failed', none at a build step).",
+ "mutants": [
+  {"id": "a", "language": "Lean", "file": "tools/kernel_closure.lean", "definition": "attributedTo?",
+   "bug": "charge every codeless auxiliary nothing, even when its prefix f is reached (drop the reachedUsers test)",
+   "test": "tests/test_kernel_closure.py::test_a_reached_declaration_is_still_charged_its_lines_once", "result": "1 failed"},
+  {"id": "b", "language": "Python", "file": "tools/kernel_closure.py", "definition": "measure",
+   "bug": "subtract the spec from the kernel total instead of from the wrap figure (kernel ranges without the spec's, wrap figure left whole)",
+   "test": "tests/test_kernel_closure.py::test_the_wrap_figure_subtracts_the_spec_and_the_kernel_total_does_not", "result": "1 failed"},
+  {"id": "c", "language": "Lean", "file": "tools/kernel_closure.lean", "definition": "chargedUsers",
+   "bug": "forget the mutual block: reaching sizeFixture no longer counts as reaching sizeListFixture",
+   "test": "tests/test_kernel_closure.py::test_a_reached_declaration_is_still_charged_its_lines_once", "result": "1 failed"},
+  {"id": "d", "language": "Lean", "file": "tools/kernel_closure.lean", "definition": "attributedTo?",
+   "bug": "never attribute (the old rangeOf charge: reuseG pays reuseF's range)",
+   "test": "tests/test_kernel_closure.py::test_a_matcher_reused_from_an_unreached_declaration_is_charged_to_its_user", "result": "1 failed"},
+  {"id": "e", "language": "Python", "file": "tools/kernel_closure.py", "definition": "measure",
+   "bug": "the wrap figure counts declarations the spec already reads (the old wrap_lines)",
+   "test": "tests/test_kernel_closure.py::test_the_wrap_figure_leaves_out_what_the_spec_reads", "result": "1 failed"}
+ ]
+}
