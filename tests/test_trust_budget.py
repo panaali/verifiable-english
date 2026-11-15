@@ -48,8 +48,9 @@ def test_formula_and_report_encoders_are_verdict_bearing():
     out; every other such encoder of the tree is [V] or S. No encoder of the table is [I] or [R], and the claim
     graph's node, entry and graph types, which carry the statements and leaves the report is read from, are G[V]."""
     classes = trust_map.load_table(ROOT / "tools/trust-classes.json")
-    encoders = {(file, name): cls for file, names in classes.items() for name, cls in names.items()
-                if ENCODER.match(name.rsplit(".", 1)[-1])}
+    # A tied entry (`load_table`: {"class", "tied"}) keeps its class; the tie does not change it.
+    encoders = {(file, name): cls if isinstance(cls, str) else cls["class"] for file, names in classes.items()
+                for name, cls in names.items() if ENCODER.match(name.rsplit(".", 1)[-1])}
     assert ("VE/Cardinality/Run.lean", "VE.Cardinality.Run.reportJson") in encoders
     assert sorted(f"{file}: {name} is {cls}" for (file, name), cls in encoders.items()
                   if cls.endswith(("[I]", "[R]"))) == []
