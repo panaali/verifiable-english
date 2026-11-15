@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fidq-dri-read-exact-231ff3e8-t762730-s6",
+ "head": "0d4a318f2cde66d7632f256fcdef6fc5b02ba3e8",
+ "argv": [
+  "armsh-cand-fidq-dri-read-exact-231ff3e8-t762730-s6",
+  "0d4a318f2cde66d7632f256fcdef6fc5b02ba3e8",
+  "b416f65a7432c57e36db6006e8c9efce4a569d13",
+  "-",
+  "-",
+  "4",
+  "6/7"
+ ]
+}
