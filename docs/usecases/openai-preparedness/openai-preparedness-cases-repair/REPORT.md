@@ -164,4 +164,12 @@ No Lean or Rust file changed, so no bug was seeded there.
 
 ## Final-commit check
 
-(Filled after the REPORT's commit.)
+On 40210482ed (tree f3bf51508a, the REPORT committed):
+- `python3 -I /tmp/pfexpall/expall.py <main> <HEAD>`: "units 90; exposures 254 -> 253". The only row that left is
+  ('CASES', 'CASES', 'no-record'), and no row is new. The first REPORT draft (fa880920b4) gave 254 -> 255: a table cell
+  joined a unit name with the spans.json path's own word, and the scan read it as a record. That cell is reworded.
+- exposure.py on 40210482ed: "8 exposures on FACTS/CASES", the same rows as `exposure-after.txt`.
+- Selected tests, once, on the committed tree: `MAC_PYTEST_NO_DEFER=1 zsh ~/code/manage-agents/mac-pytest.sh --select --
+  --base $(git merge-base HEAD main) --run`: exit 0. GitHub Actions run openai-preparedness-cases-repair-40210482-t700287:
+  shard 1/2 17 units, 17 passed; shard 2/2 14 units, 14 passed; tree f3bf51508a.
+- Pre-existing failures (main-known-red.txt): none in this selection.
