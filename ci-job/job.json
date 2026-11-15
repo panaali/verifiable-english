@@ -1,0 +1,12 @@
+{
+ "job": "testmap-10e2bfb1-t710094-s4",
+ "head": "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+ "argv": [
+  "testmap-10e2bfb1-t710094-s4",
+  "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+  "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-27e318903a28.tar.zst",
+  "0efe49ea365c8dccf55b4dd8c6b49b4a79b300995e09b63c74f63b2f9ade0bd9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s4.json.gz\" tests/test_english_statement_blocks.py tests/test_wire_gate_corpus.py tests/test_b16e_rights_document.py tests/test_precommit_hook.py tests/test_p1_amendment13.py tests/test_properties.py tests/test_discourse_answer.py tests/test_p1.py tests/test_wire_contract_s5_lean.py tests/test_rd9_statements.py tests/test_rights_three_way.py tests/test_gate.py tests/test_run_cache.py tests/test_test_chunks.py tests/test_defaults_english.py tests/test_gate_shards.py tests/test_readings_sup_verdicts.py tests/test_defaults_zone_cli.py tests/test_readings_s1_pilot_rebuild.py tests/test_p1_history.py tests/test_norm_defaults_contract.py tests/test_readings_budget_zero.py tests/test_discourse.py tests/test_lineage_lint.py tests/test_ask_null_free.py tests/test_stage2_graph.py tests/test_lean_first_b13b.py tests/test_readings_defaults_english.py tests/test_rd9_docroute.py tests/test_p0_three_way.py tests/test_slot_premises.py tests/test_english_unambiguity.py tests/test_w6a_citations.py tests/test_scope_rights_reach.py tests/test_wire_contract_s4_lean.py tests/test_right_clauses_lean.py tests/test_acts_readings_answer.py tests/test_package_facade.py tests/test_pc3_statements.py tests/test_rd9_chain_relay.py tests/test_readings_s1_integration.py tests/test_rights_render_status.py tests/test_w1_delta_suite.py tests/test_surface_registry.py tests/test_ap3cb_adapt_report.py tests/test_architecture_docs.py tests/test_lean_first_b3b_report.py tests/test_trust_mutants_max_errors.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
