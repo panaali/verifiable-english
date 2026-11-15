@@ -138,4 +138,29 @@ def contradiction : String :=
 #guard verdictOf (slotCase "slot-certificate" (some contradiction) (certificateFields ++ [factsModel true false])) ==
   "error: InvalidModel(facts): the model violates a fact"
 
+/-! ## slot-admission (kb-2a-b): the document mode's kernel row -/
+
+/-- The whole answer, or the refusal. -/
+def admissionOf (facts : Option String) : String :=
+  match runCase (slotCase "slot-admission" facts []) with
+  | .ok a => a.compress
+  | .error e => "error: " ++ e
+
+-- A core document with one fact: its two rules and one fact read back; no verdict word in the answer.
+#guard admissionOf (some ("[" ++ fact ++ "]")) == r#"{"facts":1,"id":"c","rules":2,"status":"ok"}"#
+#guard admissionOf (some "[]") == r#"{"facts":0,"id":"c","rules":2,"status":"ok"}"#
+-- Facts that cannot hold together are admitted: the admission decides nothing about consistency (kb-3a's kinds
+-- refuse them, T5 above).
+#guard admissionOf (some contradiction) == r#"{"facts":2,"id":"c","rules":2,"status":"ok"}"#
+-- Every fact is decoded, exactly as the other slot kinds decode it, and `facts` is required.
+#guard admissionOf (some r#"[["forall", "assistant", ["unary", "x_required", ["var", 0]]]]"#) ==
+  "error: ill-typed or unbound formula"
+#guard admissionOf (some ("[" ++ fact ++ ", 7]")) == "error: array expected"
+#guard admissionOf (some "7") == "error: InvalidInput: facts must be an array"
+#guard admissionOf none == "error: InvalidInput: a slot case needs a facts array"
+-- A source the soft decoder refuses is refused.
+#guard match runCase ((slotCase "slot-admission" (some "[]") []).setObjVal! "norms" (parsed "[{\"norm\": 7}]")) with
+  | .error _ => true
+  | .ok _ => false
+
 end VE.SoftNorms.SlotExamples
