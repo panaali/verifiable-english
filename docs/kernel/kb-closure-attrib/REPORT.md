@@ -85,6 +85,7 @@ Each planted alone, its test run, the file restored (`git status` clean after). 
 - Light lane: `NOT` (10,037 changed lines, almost all the evidence JSON). No trust_mutants sweep: the task asks for none and no trusted Lean grew (checklist 13a applies to R16 growth only; trust_map +0).
 - No `lake build` or `lean/audit.py` run after the edits: no file under `lean/` changed (the tool file is compiled by every `kernel_closure.py` run and by the Lean-half tests).
 - Dedupe probe (`/tmp/kbca_dedupe.py`): for all 30 spec and wrap requests, the distinct lines of the `decls` rows equal the Lean half's `lines`, so the wrap figure computed from the rows loses nothing to the rows' (module, first line) dedupe.
+- Selected run on the committed tree 2a79768f5 (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): exit 0, 3 shards on GitHub Actions (run kb-closure-attrib-2a79768f-t774247), 30 units, 30 passed. Nothing in it is listed in main-known-red.txt for these files.
 - `uv run python tools/select_tests.py --base $(git merge-base HEAD main)`: selects `tests/test_kernel_closure.py`. `uv run python tools/gate_collection.py --check --prebuilt`: 4 added, 0 refused, 0 stale, 0 malformed.
 
 ## Findings (not fixed here)
