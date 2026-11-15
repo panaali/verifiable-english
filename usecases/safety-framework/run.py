@@ -22,11 +22,12 @@ bear on an item (its cone):
    VE's prover certifies that the premises and the case facts are inconsistent
    (the certificate is replayed). Neither is UNKNOWN.
 4. An item is a selection question (`NormDocument.selected_rules`), a completed
-   outcome under both defaults (`NormDocument.outcome`), a conflict check
-   (`ve.soft_route.decide_soft_conflict` on a cluster's document, decided by Lean's
-   soft route: a witness from a generic search over situations, or tableau
-   certificates of conflict-freedom, each replayed by Lean), or an
-   entailment with a replayed certificate (family N).
+   outcome under both defaults (`NormDocument.outcome`), a conflict check on a
+   cluster's document (Lean's `soft-conflict` confirms a CONFLICT witness; keyed
+   CONFLICT-FREE uses `refute` over `T.facts()` premises and Lean's entailment
+   certificate replay), or an entailment with a replayed certificate (family N).
+   The plain soft-route conflict answer is recorded beside the keyed result as
+   `w1_without_premises`.
 
 ALL / SOME(c) / NONE combine the per-choice answers. The SOME condition is the
 set of choices, compared with the key's condition as a set.
