@@ -25,10 +25,12 @@ bear on an item (its cone):
    VE's prover certifies that the premises and the case facts are inconsistent
    (the certificate is replayed). Neither is UNKNOWN.
 4. An item is a selection question (`NormDocument.selected_rules`), a completed
-   outcome under both defaults (`NormDocument.outcome`), a conflict check
-   (`check_conflict` on a cluster's document: a witness from a generic search
-   over situations, or tableau certificates of conflict-freedom), or an
-   entailment with a replayed certificate (family N).
+   outcome under both defaults (`NormDocument.outcome`), a conflict check on a
+   cluster's document (Lean's `soft-conflict` confirms a CONFLICT witness; keyed
+   CONFLICT-FREE uses `refute` over `T.facts()` premises and Lean's entailment
+   certificate replay), or an entailment with a replayed certificate (family N).
+   The plain soft-route conflict answer is recorded beside the keyed result as
+   `w1_without_premises`.
 
 ALL / SOME(c) / NONE combine the per-choice answers. The SOME condition is the
 set of choices, compared with the key's condition as a set.
@@ -54,7 +56,8 @@ from ve.ast import _Decoder  # noqa: E402
 from ve.entailment import check_entailment_certificate, prove_entailment  # noqa: E402
 from ve.evaluate import evaluate  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve.norms import _instantiate, check_conflict  # noqa: E402
+from ve.norms import _instantiate  # noqa: E402
+from ve.soft_route import decide_soft_conflict  # noqa: E402
 
 RESULTS = HERE / "results.json"
 SETS = T.READING_SETS
@@ -613,7 +616,8 @@ def cluster_conflict(rule_ids, choice, variant=(), item=None):
     """The conflict status of the sub-document of `rule_ids` at one choice.
 
     CONFLICT: a situation that satisfies every premise, on which VE's W1 check
-    finds two rules of opposite sign selected (`check_conflict` with that model).
+    finds two rules of opposite sign selected (`decide_soft_conflict` with that
+    model: Python's search proposes the witness, Lean's soft route confirms it).
     CONFLICT-FREE: for every W1 conflict target, VE's prover certifies (replayed)
     that no situation satisfying the premises makes it true. The plain W1 check
     over all base structures, without the premises, is recorded beside it.
@@ -634,11 +638,11 @@ def cluster_conflict(rule_ids, choice, variant=(), item=None):
         if premise_status(atoms, item)[0] != "model":
             continue
         model = case_model(sub, atoms)
-        report = check_conflict(sub.elaborated, model=model)
+        report = decide_soft_conflict(sub, model=model)  # kb-10c: Lean's soft route confirms the witness
         if report.status == "CONFLICT":
             return {"status": "CONFLICT", "witness": situation["id"], "situation": report.situation,
                     "rules": sorted(keep)}
-    plain = check_conflict(sub.elaborated, prove=True).status
+    plain = decide_soft_conflict(sub, prove=True).status
     env = sub.elaborated.base_environment()
     premises = tuple(PREMISES(item))
     for target, sorts, formula in sub.elaborated.conflict_targets():

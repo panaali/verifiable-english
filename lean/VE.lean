@@ -408,10 +408,15 @@ import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.SelectedSound
 import VE.SoftNorms.SelectedExamples
 import VE.SoftNorms.SlotSound
+import VE.SoftNorms.ConflictSound
 import VE.SoftNorms.SlotExamples
 import VE.Kernel.Carry
 import VE.Kernel.CarryChecks
 import VE.Route.CodecRoundTrip
 import VE.Time.WireSound
-import VE.Experimental.CoreDocument
-import VE.Experimental.CoreDocumentExamples
+import VE.Service.CoreDocument
+import VE.Service.CoreDocumentExamples
+import VE.Service.CoreCheck
+import VE.Service.CoreCheckExamples
+import VE.Kernel.DocumentFold
+import VE.Kernel.DocumentFoldExamples

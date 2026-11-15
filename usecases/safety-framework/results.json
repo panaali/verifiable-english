@@ -1268,16 +1268,16 @@
    "ve": "ALL"
   },
   {
-   "agree": true,
+   "agree": false,
    "id": "K2-L1/PROXIMITY",
    "key": "NONE",
-   "ve": "NONE"
+   "ve": "ALL"
   },
   {
-   "agree": true,
+   "agree": false,
    "id": "K2-L5/PROXIMITY",
    "key": "NONE",
-   "ve": "NONE"
+   "ve": "ALL"
   },
   {
    "agree": true,
@@ -1475,10 +1475,10 @@
    "ve": "ALL"
   },
   {
-   "agree": true,
+   "agree": false,
    "id": "G3",
    "key": "ALL",
-   "ve": "ALL"
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -1645,7 +1645,7 @@
   "documents_built": 87,
   "premises": 35,
   "prover_calls": 1732,
-  "rule_candidates": 44
+  "rule_candidates": 45
  },
  "d2_d3": {
   "S": {
@@ -2802,13 +2802,13 @@
    "choices": 1,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 1
+   "sensitive_choices": 0
   },
   "K2-L5/PROXIMITY": {
    "choices": 1,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 1
+   "sensitive_choices": 0
   },
   "K3/FURTHER_CCA": {
    "choices": 2,
@@ -3275,7 +3275,8 @@
    "details": {
     "-": {
      "rules": [
-      "f6"
+      "f6",
+      "f6-tcl"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
@@ -9013,25 +9014,25 @@
      "cone": [],
      "details": {
       "-": {
-       "holds": true,
-       "rules": []
+       "holds": false,
+       "rules": [
+        "f6-tcl"
+       ]
       }
      },
-     "true": [
-      {}
-     ]
+     "true": []
     },
     "G3-APPROACH-L5": {
      "cone": [],
      "details": {
       "-": {
-       "holds": true,
-       "rules": []
+       "holds": false,
+       "rules": [
+        "f6-tcl"
+       ]
       }
      },
-     "true": [
-      {}
-     ]
+     "true": []
     },
     "G3-REACH-L1": {
      "cone": [],
@@ -9060,9 +9061,7 @@
    },
    "cone": [],
    "premises": "model",
-   "true": [
-    {}
-   ]
+   "true": []
   },
   "G4": {
    "cone": [
@@ -9717,23 +9716,31 @@
    "cone": [],
    "details": {
     "-": {
-     "holds": false,
-     "rules": []
+     "holds": true,
+     "rules": [
+      "f6-tcl"
+     ]
     }
    },
    "premises": "model",
-   "true": []
+   "true": [
+    {}
+   ]
   },
   "K2-L5/PROXIMITY": {
    "cone": [],
    "details": {
     "-": {
-     "holds": false,
-     "rules": []
+     "holds": true,
+     "rules": [
+      "f6-tcl"
+     ]
     }
    },
    "premises": "model",
-   "true": []
+   "true": [
+    {}
+   ]
   },
   "K3/FURTHER_CCA": {
    "cone": [
@@ -9981,7 +9988,7 @@
    "verdict": "NOT_CERTIFIABLE"
   },
   "N3": {
-   "rules": 44,
+   "rules": 45,
    "verdict": "NONE",
    "without_witness": [],
    "witnesses": {
@@ -10022,6 +10029,7 @@
     "f4-need-r": "K3",
     "f5": "K4",
     "f6": "K1-L2",
+    "f6-tcl": "K2-L1",
     "f7-rra": "A-L1-DEV",
     "f7-sc": "A-L2-DEV",
     "f8": "A-L0-DEV",
@@ -10270,7 +10278,8 @@
     "f5"
    ],
    "F6": [
-    "f6"
+    "f6",
+    "f6-tcl"
    ],
    "F7": [
     "f7-rra",

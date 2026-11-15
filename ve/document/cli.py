@@ -28,6 +28,8 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("check", "render", "coverage", "readings"):
         sub.add_parser(name, description=CHECKED_MEANS if name == "check" else None).add_argument("path")
+    sub.choices["check"].add_argument("--json", action="store_true",
+                                      help="print Lean's document answer verbatim, bound to the document")
     sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
     sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
     sub.choices["readings"].add_argument("--under", action="append", metavar="SET:INDEX",
@@ -41,6 +43,10 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
+        return 0
+    if args.command == "check" and args.json:
+        from .load import lean_answer
+        print(json.dumps(lean_answer(args.path), ensure_ascii=False, indent=2))
         return 0
     if args.command == "check":
         data = check_document(args.path)
