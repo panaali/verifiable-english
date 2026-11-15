@@ -11,8 +11,10 @@ including `Flagged.replayWitnessIn`. Before the fix, the review probe and
 `tests/test_stage2_norms.py::test_family_norms_fol_witness_uses_the_acts_decoder` failed on `acts@0` witnesses;
 after the fix, the exact probe and all four regression cases pass. The regression includes both `CONFLICT`
 and `UNKNOWN` witnesses with and without `acts@0`. No Python or Rust product code changed. The base-main
-known-red tests remain separate and were not edited. The final selected run, Lean build and audit are recorded
-in the fix handoff; the merge train owns the full gate.
+known-red tests remain separate and were not edited. `lake build`, `python3 lean/audit.py`, the kernel closure check,
+and the trust check passed. The selected Mac run on `e014b4e776` failed only three test IDs: two assurance manifest
+pin checks for the edited file, and one composed-path count still naming the decoder replaced by kb-4a. The whole-file
+pin and count name were updated; all three failed IDs passed on rerun. The full gate is the merge train's.
 
 SIZE: 535 product, 316 tests, 805 other hand-written lines (product: 304 of them are the proof modules
 `VE.Acts.HookToday` and `VE.Acts.HookTwins`; tests: the #guard modules and tests/test_kernel_closure.py; other: 506
