@@ -207,11 +207,13 @@ def test_the_recorder_restores_what_it_patches():
     assert (evaluate._Evaluator.__init__, entailment._check_certificate_lean, evaluate._evaluate_lean) == before
 
 
-def test_the_harnesses_conflicts_are_leans_soft_conflict():
+def test_the_harnesses_conflicts_are_leans_soft_conflict(monkeypatch):
     """kb-10c: `decide_soft_conflict` (the harnesses' conflict call) asks Lean's `soft-conflict` for both answers;
     Python's search and prover only propose, and `_check_conflict_python` does not run."""
     from ve.norm_english import parse_english
+    from ve import soft_route
     from ve.soft_route import decide_soft_conflict
+    monkeypatch.setattr(soft_route, "_CONFLICTS", {})  # no answer kept by an earlier test
     witnessed = parse_english(_soft_env(), "Rule 1. Every act should be done.\n"
                                            "Rule 2. Every act must be done.\nRule 3. No act may be done.")
     free = parse_english(_soft_env(), "Rule 1. Every act should be done.\nRule 2. No act may be done.")

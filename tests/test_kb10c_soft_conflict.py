@@ -22,6 +22,12 @@ def delta_document():
     return SoftNormDocument(SoftEnvironment(env()), [should("a", "x_required", True), should("b", "x_permitted", False)])
 
 
+@pytest.fixture(autouse=True)
+def fresh_answers(monkeypatch):
+    """Each test starts with no kept Lean answers, so an earlier test's answer cannot stand in for a call."""
+    monkeypatch.setattr(soft_route, "_CONFLICTS", {})
+
+
 @pytest.fixture
 def sent(monkeypatch):
     """The cases the soft route is sent, with Lean's real answers."""
@@ -113,3 +119,19 @@ def test_an_unbound_packages_answer_is_checker_unavailable(monkeypatch, change):
     answering(monkeypatch, edited)
     with pytest.raises(CheckerUnavailable, match="not bound to the request"):
         soft_route.decide_soft_conflict(delta_document(), prove=True)
+
+
+def test_a_repeated_request_is_answered_once_and_a_different_one_is_asked(sent):
+    """The kept answers are keyed by the whole request: the same document, model and certificates are sent once;
+    another document, or another model, is sent again (and keeps its own answer)."""
+    delta, strict = delta_document(), strict_document()
+    first = soft_route.decide_soft_conflict(delta, prove=True)
+    again = soft_route.decide_soft_conflict(delta_document(), prove=True)
+    assert (first.status, again.status, len(sent)) == ("CONFLICT-FREE", "CONFLICT-FREE", 1)
+    witnessed = soft_route.decide_soft_conflict(strict, model=EXCLUDED)
+    assert witnessed.status == "CONFLICT" and len(sent) == 2
+    assert soft_route.decide_soft_conflict(strict, model=EXCLUDED).status == "CONFLICT" and len(sent) == 2
+    other = {**EXCLUDED, "domains": {"assistant": ["a", "b"], "user": []},
+             "relations": {"v": [["a"]], "w": [["a"]]}}
+    assert soft_route.decide_soft_conflict(strict, model=other).status == "CONFLICT" and len(sent) == 3
+    assert [set(case) for case in sent] == [{"packages"}, {"witness"}, {"witness"}]

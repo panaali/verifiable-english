@@ -109,6 +109,29 @@ def bind_conflict(row, case, elaborated, budget=None):
     bind_facts(row, case)
 
 
+# Lean's `soft-conflict` answers, kept per request (`_kept_conflict`); a test starts from an empty store.
+_CONFLICTS: dict = {}
+_KEPT_AT_MOST = 10_000
+
+
+def _kept_conflict(soft_document: SoftNormDocument, **case):
+    """`check_soft_conflict(soft_document, **case)`, asked once per process for each request: the key is the
+    canonical JSON of everything the case sends (the soft source's environment and norms, and the witness or the
+    packages), so a repeated question is answered by Lean's earlier answer to the same request, never by Python.
+    A request that is not JSON is sent unkept (the relay refuses it)."""
+    from .wire import canonical_json
+    try:
+        key = canonical_json({"environment": soft_document.env.to_dict(),
+                              "norms": [rule.to_dict() for rule in soft_document.rules], **case})
+    except (VEError, TypeError, ValueError):
+        return check_soft_conflict(soft_document, **case)
+    if key not in _CONFLICTS:
+        if len(_CONFLICTS) >= _KEPT_AT_MOST:
+            _CONFLICTS.clear()
+        _CONFLICTS[key] = check_soft_conflict(soft_document, **case)
+    return _CONFLICTS[key]
+
+
 def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=False,
                          max_evaluations=1_000_000, tableau_steps=10_000):
     """`ve.norms.check_conflict(soft_document.elaborated, ...)` decided by Lean's soft route (kb-10c).
@@ -120,7 +143,8 @@ def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=F
     `packages` case, bound to the soft source's environment id and document hash. CONFLICT-FREE is Lean's
     (`VE.SoftNorms.Run.soft_wire_conflict_free`); its `detail` is Lean's status text, which names the condition:
     among rules on the same act, conditional on the open coherence premises. An exhausted generator is UNKNOWN
-    without a Lean call; UNKNOWN asserts nothing."""
+    without a Lean call; UNKNOWN asserts nothing. A request already answered in this process is not sent again
+    (`_kept_conflict`)."""
     from . import norms
     from .evaluate import _Exhausted
     document = soft_document.elaborated
@@ -138,8 +162,8 @@ def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=F
             return norms.ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
         if found is not None:
             target, sorts, values = found
-            row = check_soft_conflict(soft_document,
-                                      witness={"target": target, "model": model.to_dict(), "tuple": list(values)})
+            row = _kept_conflict(soft_document,
+                                 witness={"target": target, "model": model.to_dict(), "tuple": list(values)})
             if row["verdict"] != "CONFLICT" or row.get("target") != target:
                 raise CheckerUnavailable("CheckerUnavailable: Lean's soft route does not confirm the conflict "
                                          "witness Python's search found")
@@ -152,7 +176,7 @@ def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=F
     packages = {target: {"environment_id": soft_document.env.environment_id,
                          "document_hash": soft_document.document_hash, "target": target,
                          "certificate": package["certificate"]} for target, package in certificates.items()}
-    row = check_soft_conflict(soft_document, packages=packages)
+    row = _kept_conflict(soft_document, packages=packages)
     if row["verdict"] == "CONFLICT-FREE":
         return norms.ConflictReport("CONFLICT-FREE", detail=row["status_text"])
     detail = row.get("detail")
