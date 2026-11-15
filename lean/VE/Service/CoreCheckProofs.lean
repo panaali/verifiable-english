@@ -109,6 +109,61 @@ theorem routed_iff (j : Json) :
         cases hx
         exact ⟨⟨⟨hs, hp⟩, hj⟩, hr⟩
 
+/-- On a lowering profile list, the earlier `environmentOf` refusal site is reached precisely when a judgment
+document has a soft rule with an exception condition. The helper is called at that site in `environmentOf`. -/
+theorem judgmentSoftRefusal_site (listed : List String) (units : Json)
+    (hr : ∀ p ∈ listed, p ∈ rowProfiles) (hj : "judgments@0" ∈ listed) :
+    judgmentSoftRefusal listed units false = .error (routedRefusals[0]'(by decide)) ↔
+      exceptionConditioned units = true ∧ "soft-norms@0" ∈ listed := by
+  have hrights : "rights@0" ∉ listed := fun h => by
+    have := hr "rights@0" h
+    simp [rowProfiles] at this
+  by_cases hc : exceptionConditioned units = true
+  · by_cases hs : "soft-norms@0" ∈ listed
+    · simp [judgmentSoftRefusal, VE.Compose.layersApart, VE.Compose.documentLayers,
+        hj, hrights, hc, hs, routedRefusals, unavailable, throw]
+      rfl
+    · simp [judgmentSoftRefusal, VE.Compose.layersApart, VE.Compose.documentLayers,
+        hj, hrights, hc, hs, routedRefusals, unavailable, pure, Except.pure]
+  · simp [judgmentSoftRefusal, hc, pure, Except.pure, routedRefusals]
+
+/-- On the same profile list, the later `environmentOf` refusal site is reached precisely for soft norms with
+`readings@1`. Its other two alternatives are outside the lowering profile list. -/
+theorem softReadingsRefusal_site (listed : List String)
+    (hr : ∀ p ∈ listed, p ∈ rowProfiles) :
+    softReadingsRefusal listed false = some (routedRefusals[1]'(by decide)) ↔
+      "soft-norms@0" ∈ listed ∧ "readings@1" ∈ listed := by
+  have hrights : "rights@0" ∉ listed := fun h => by
+    have := hr "rights@0" h
+    simp [rowProfiles] at this
+  have hrisk : "risk@0" ∉ listed := fun h => by
+    have := hr "risk@0" h
+    simp [rowProfiles] at this
+  have halt : "alternatives@0" ∉ listed := fun h => by
+    have := hr "alternatives@0" h
+    simp [rowProfiles] at this
+  simp [softReadingsRefusal, blockOf, hrights, hrisk, halt, routedRefusals, unavailable]
+
+/-- The routing decision and both refusal sites, together. `environmentOf` calls the two site helpers in its
+fault order; on a lowering profile list their results are exactly the exception-conditioned judgment/soft case and
+the soft/readings case. Earlier faults still have their own precedence in `environmentOf`. -/
+theorem routed_sites (j : Json) :
+    (routed j = true ↔ ∃ front body e, frontOf j = some (front, body) ∧
+      (front.getObjVal? "senses").isOk = false ∧
+      (∀ p ∈ listedProfiles (front.getObjValD "environment"), p ∈ rowProfiles) ∧
+      "judgments@0" ∈ listedProfiles (front.getObjValD "environment") ∧
+      environmentOf (front.getObjValD "environment") (front.getObjValD "units") false
+        (some (VE.Discourse.Loader.optionalList front "open_terms")) = .error e ∧
+      e ∈ routedRefusals) ∧
+    (∀ listed units, (∀ p ∈ listed, p ∈ rowProfiles) → "judgments@0" ∈ listed →
+      (judgmentSoftRefusal listed units false = .error (routedRefusals[0]'(by decide)) ↔
+        exceptionConditioned units = true ∧ "soft-norms@0" ∈ listed)) ∧
+    (∀ listed, (∀ p ∈ listed, p ∈ rowProfiles) →
+      (softReadingsRefusal listed false = some (routedRefusals[1]'(by decide)) ↔
+        "soft-norms@0" ∈ listed ∧ "readings@1" ∈ listed)) := by
+  exact ⟨routed_iff j, fun listed units hr hj => judgmentSoftRefusal_site listed units hr hj,
+    fun listed hr => softReadingsRefusal_site listed hr⟩
+
 /-! ## The mode's entry -/
 
 theorem setObjVal_mkObj (l : List (String × Json)) (k : String) (v : Json) :

@@ -8958,6 +8958,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.CoreCheck.getObjValD_mkObj
 #print axioms VE.Service.CoreCheck.inputs_reads
 #print axioms VE.Service.CoreCheck.judgedViews_get
+#print axioms VE.Service.CoreCheck.judgmentSoftRefusal_site
 #print axioms VE.Service.CoreCheck.locatedRow_marked
 #print axioms VE.Service.CoreCheck.mapM_get
 #print axioms VE.Service.CoreCheck.marked_row
@@ -8965,9 +8966,11 @@ import VE.WireContract.Engine
 #print axioms VE.Service.CoreCheck.reads_status
 #print axioms VE.Service.CoreCheck.routedRefusals_sites
 #print axioms VE.Service.CoreCheck.routed_iff
+#print axioms VE.Service.CoreCheck.routed_sites
 #print axioms VE.Service.CoreCheck.runCaseReported_routes
 #print axioms VE.Service.CoreCheck.setObjVal_mkObj
 #print axioms VE.Service.CoreCheck.sets_eq
+#print axioms VE.Service.CoreCheck.softReadingsRefusal_site
 #print axioms VE.Service.CoreCheck.statement_shown
 #print axioms VE.Service.CoreCheck.statuses_lookup
 #print axioms VE.Service.CoreCheck.tableOf_opens

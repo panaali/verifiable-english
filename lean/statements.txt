@@ -64205,6 +64205,15 @@ theorem VE.Service.CoreCheck.judgedViews_get
                         (List.find? (fun x => x.fst.unit == units[k].id) active)
   -- uses VE.Discourse.FrontSet.status@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.instDecidableEqFrontSet@VE.Discourse.Manifest VE.Judgments.ActiveSet.mk@VE.Judgments.Status VE.Judgments.ActiveSet@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.own@VE.Judgments.Status VE.Judgments.UnitView.set@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.SourceUnit.content@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent@VE.Service.Document VE.Service.Document.judgedViews@VE.Service.Document VE.Service.Document.setCandidates@VE.Service.Document VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
   -- expr 910623834
+theorem VE.Service.CoreCheck.judgmentSoftRefusal_site
+  ∀ (listed : List String) (units : Lean.Json),
+    (∀ (p : String), p ∈ listed → p ∈ VE.Service.CoreDocument.rowProfiles) →
+      "judgments@0" ∈ listed →
+        (VE.Service.Document.judgmentSoftRefusal listed units Bool.false =
+            Except.error VE.Service.CoreCheck.routedRefusals[0] ↔
+          VE.Service.Document.exceptionConditioned units = Bool.true ∧ "soft-norms@0" ∈ listed)
+  -- uses VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.CoreDocument.rowProfiles@VE.Service.CoreDocument VE.Service.Document.exceptionConditioned@VE.Service.Document VE.Service.Document.judgmentSoftRefusal@VE.Service.Document
+  -- expr 3238067165
 theorem VE.Service.CoreCheck.locatedRow_marked
   ∀ (j : Lean.Json) (m : String) (at_ : VE.Service.Document.Located),
     ((VE.Service.Document.locatedRow j m at_).setObjVal! "lowering" (Lean.Json.bool Bool.true)).getObjValD "status" =
@@ -64300,6 +64309,33 @@ theorem VE.Service.CoreCheck.routed_iff
                   e ∈ VE.Service.CoreCheck.routedRefusals
   -- uses VE.Discourse.Loader.optionalList@VE.Discourse.Loader VE.Service.CoreCheck.routed@VE.Service.CoreCheck VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.CoreDocument.rowProfiles@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.environmentOf@VE.Service.Document VE.Service.Document.frontOf@VE.Service.Document VE.Service.Document.listedProfiles@VE.Service.Document
   -- expr 2708018789
+theorem VE.Service.CoreCheck.routed_sites
+  ∀ (j : Lean.Json),
+    (VE.Service.CoreCheck.routed j = Bool.true ↔
+        ∃ front body e,
+          VE.Service.Document.frontOf j = Option.some (front, body) ∧
+            (front.getObjVal? "senses").isOk = Bool.false ∧
+              (∀ (p : String),
+                  p ∈ VE.Service.Document.listedProfiles (front.getObjValD "environment") →
+                    p ∈ VE.Service.CoreDocument.rowProfiles) ∧
+                "judgments@0" ∈ VE.Service.Document.listedProfiles (front.getObjValD "environment") ∧
+                  VE.Service.Document.environmentOf (front.getObjValD "environment") (front.getObjValD "units") Bool.false
+                        (Option.some (VE.Discourse.Loader.optionalList front "open_terms")) =
+                      Except.error e ∧
+                    e ∈ VE.Service.CoreCheck.routedRefusals) ∧
+      (∀ (listed : List String) (units : Lean.Json),
+          (∀ (p : String), p ∈ listed → p ∈ VE.Service.CoreDocument.rowProfiles) →
+            "judgments@0" ∈ listed →
+              (VE.Service.Document.judgmentSoftRefusal listed units Bool.false =
+                  Except.error VE.Service.CoreCheck.routedRefusals[0] ↔
+                VE.Service.Document.exceptionConditioned units = Bool.true ∧ "soft-norms@0" ∈ listed)) ∧
+        ∀ (listed : List String),
+          (∀ (p : String), p ∈ listed → p ∈ VE.Service.CoreDocument.rowProfiles) →
+            (VE.Service.Document.softReadingsRefusal listed Bool.false =
+                Option.some VE.Service.CoreCheck.routedRefusals[1] ↔
+              "soft-norms@0" ∈ listed ∧ "readings@1" ∈ listed)
+  -- uses VE.Discourse.Loader.optionalList@VE.Discourse.Loader VE.Service.CoreCheck.routed@VE.Service.CoreCheck VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.CoreDocument.rowProfiles@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.environmentOf@VE.Service.Document VE.Service.Document.exceptionConditioned@VE.Service.Document VE.Service.Document.frontOf@VE.Service.Document VE.Service.Document.judgmentSoftRefusal@VE.Service.Document VE.Service.Document.listedProfiles@VE.Service.Document VE.Service.Document.softReadingsRefusal@VE.Service.Document
+  -- expr 3082573401
 theorem VE.Service.CoreCheck.runCaseReported_routes
   ∀ (j : Lean.Json),
     (VE.Service.CoreCheck.routed j = Bool.false →
@@ -64338,6 +64374,13 @@ theorem VE.Service.CoreCheck.sets_eq
         A = B
   -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Judgments.Content@VE.Judgments.Status
   -- expr 1904208736
+theorem VE.Service.CoreCheck.softReadingsRefusal_site
+  ∀ (listed : List String),
+    (∀ (p : String), p ∈ listed → p ∈ VE.Service.CoreDocument.rowProfiles) →
+      (VE.Service.Document.softReadingsRefusal listed Bool.false = Option.some VE.Service.CoreCheck.routedRefusals[1] ↔
+        "soft-norms@0" ∈ listed ∧ "readings@1" ∈ listed)
+  -- uses VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.CoreDocument.rowProfiles@VE.Service.CoreDocument VE.Service.Document.softReadingsRefusal@VE.Service.Document
+  -- expr 813188743
 theorem VE.Service.CoreCheck.statement_shown
   ∀ (st : VE.Service.CoreDocument.Statement),
     (VE.Service.CoreCheck.statementJson st).getObjValD "feature" = Lean.Json.str st.origin.feature ∧

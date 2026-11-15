@@ -58,6 +58,25 @@ def test_formula_and_report_encoders_are_verdict_bearing():
     assert {document[f"VE.Cardinality.Document.{name}"] for name in ("CNode", "Entry", "Graph", "Entries")} == {"G[V]"}
 
 
+def test_core_routing_ties_name_both_environment_refusal_sites():
+    """kb-2a-b-cutback F1: a routing tie must prove the two site conditions, not only restate the route's body."""
+    table = trust_map.load_table(ROOT / "tools/trust-classes.json")["VE/Service/CoreCheck.lean"]
+    names = ("VE.Service.CoreCheck.routed", "VE.Service.CoreCheck.routedRefusals")
+    tied = [set(table[name]["tied"]) for name in names]
+    assert all(tied)
+    statements = inventory_path("lean/statements.txt").read_text()
+
+    def statement(name):
+        return statements.split(f"theorem {name}\n", 1)[1].split("\ntheorem ", 1)[0]
+
+    assert any(all(token in statement(name) for token in (
+        "environmentOf", "routedRefusals", "judgmentSoftRefusal", "softReadingsRefusal",
+        "exceptionConditioned", '"soft-norms@0"', '"readings@1"')) for name in tied[0] & tied[1])
+    source = (ROOT / "lean/VE/Service/Document.lean").read_text().split("def environmentOf ", 1)[1]
+    assert "judgmentSoftRefusal listed units core" in source
+    assert "softReadingsRefusal listed core" in source
+
+
 def test_arith_lookup_and_fixture_helpers_are_classified(live):
     """me-12nc F2: the table implementation and all fixture helpers have their intended classes.
 
