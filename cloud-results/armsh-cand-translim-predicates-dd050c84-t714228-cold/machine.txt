@@ -1,0 +1,8 @@
+job=armsh-cand-translim-predicates-dd050c84-t714228-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T03:46:47Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 03:46:47 up 22 min,  0 user,  load average: 1.15, 0.47, 0.22
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=1c63b7401260
+seed: lake 1464.4 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 612 s)
