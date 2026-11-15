@@ -37,7 +37,9 @@ def recording():
 
     Python's evaluator (`ve.evaluate._Evaluator`) is counted under the function that builds it. A
     Python certificate replay is the prover's check of its own trace (`_background=False`, untrusted and
-    never reported) or a public replay. Lean's soft elaboration is counted per relayed `soft-elaborate`.
+    never reported) or a public replay. Lean's soft elaboration is counted per relayed `soft-elaborate`, and
+    Lean's selected rules and completed outcomes per `soft-selected` call of a soft document
+    (`ve.softnorms.selected_at`, kb-10b).
     """
     # `ve.evaluate` is also the name of a function `ve` re-exports, so the modules are looked up by name.
     modules = {"evaluate": importlib.import_module("ve.evaluate"),
@@ -71,6 +73,13 @@ def recording():
                else "python _check_certificate_python"] += 1
         return python_replay(*args, **kwargs)
 
+    softnorms = importlib.import_module("ve.softnorms")
+    selected_at = softnorms.selected_at
+
+    def soft_selected(*args, **kwargs):
+        counts["lean soft-selected"] += 1
+        return selected_at(*args, **kwargs)
+
     relay_run = soft_relay.run
 
     def soft(request, *args, **kwargs):
@@ -82,6 +91,7 @@ def recording():
         patch(evaluate._Evaluator, "__init__", evaluator_init)
         patch(entailment, "_check_certificate_python", replay)
         patch(soft_relay, "run", soft)
+        patch(softnorms, "selected_at", soft_selected)
         for module_name, name, owner in _CALLS:
             patch(modules[module_name], name, counted(name, owner, getattr(modules[module_name], name)))
         yield counts
