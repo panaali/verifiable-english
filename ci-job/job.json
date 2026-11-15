@@ -1,0 +1,12 @@
+{
+ "job": "testmap-10e2bfb1-t710094-s0",
+ "head": "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+ "argv": [
+  "testmap-10e2bfb1-t710094-s0",
+  "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+  "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-27e318903a28.tar.zst",
+  "0efe49ea365c8dccf55b4dd8c6b49b4a79b300995e09b63c74f63b2f9ade0bd9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_trust_mutants_probe_scope.py tests/test_readings_s2_document.py tests/test_gate_collection_renumber.py tests/test_norm_defaults_three_way.py tests/test_relay_binding_inventory.py tests/test_b16d_norm_roles.py tests/test_sa_checked_view.py tests/test_rust_reproducible.py tests/test_defaults_lean.py tests/test_scope_readings_document.py tests/test_relay.py tests/test_stage2_standalone.py tests/test_single_owner.py tests/test_numeral_conversion.py tests/test_order_round2.py tests/test_batch_evidence.py tests/test_right_clauses.py tests/test_english_e2_ledger_sites.py tests/test_commands_steps.py tests/test_cardinality_exercised.py tests/test_wire_contract_s5_admission.py tests/test_keyed_answers_authority.py tests/test_wire_contract_lean.py tests/test_pinned_sources.py tests/test_b16c_evidence.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
