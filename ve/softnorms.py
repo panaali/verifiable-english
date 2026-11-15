@@ -237,8 +237,18 @@ def facts_wire(facts):
     sent as given for Lean to decode or refuse; a Python formula AST is written by `encoded_formula`, the
     encoder of every formula a case sends."""
     from .backends.lean_runner import encoded_formula
-    return [f if f is None or isinstance(f, (list, dict, str, int, float, bool)) else encoded_formula(f)
-            for f in facts]
+    if type(facts) not in (list, tuple):
+        raise VEError("InvalidInput: facts must be a list")
+    out = []
+    for index, f in enumerate(facts):
+        if f is None or isinstance(f, (list, dict, str, int, float, bool)):
+            out.append(f)  # JSON, for Lean to decode or refuse
+            continue
+        try:
+            out.append(encoded_formula(f))
+        except (TypeError, ValueError, KeyError, AttributeError, RecursionError) as error:
+            raise VEError(f"InvalidInput: facts item {index} is not a formula") from error
+    return out
 
 
 def selected_at(soft_document, model, queries, *, run=None, facts=None):
