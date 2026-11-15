@@ -5795,6 +5795,7 @@
         "VE.Norms.Run.usesNormsPath"
       ],
       "G[V]": [
+        "VE.Norms.Run.decidesActs",
         "VE.Norms.Run.decoderOf",
         "VE.Norms.Run.reportDomain",
         "VE.Norms.Run.reportJson",
@@ -5802,6 +5803,8 @@
         "VE.Norms.Run.runAdmission",
         "VE.Norms.Run.runAdmissionIn",
         "VE.Norms.Run.runCase",
+        "VE.Norms.Run.runCaseActs",
+        "VE.Norms.Run.runCaseActsRouted",
         "VE.Norms.Run.runCaseIn",
         "VE.Norms.Run.runCaseReported",
         "VE.Norms.Run.runCaseRouted",
@@ -5895,6 +5898,8 @@
     },
     "VE/Norms/Wire.lean": {
       "D[V]": [
+        "VE.Norms.Wire.ActsHook",
+        "VE.Norms.Wire.ActsHook.plain",
         "VE.Norms.Wire.NormsEnvironment",
         "VE.Norms.Wire.Source",
         "VE.Norms.Wire.SourceDecoder",
@@ -5911,7 +5916,7 @@
         "VE.Norms.Wire.decodeBudgeted",
         "VE.Norms.Wire.decodeFlagged",
         "VE.Norms.Wire.decodeNorm",
-        "VE.Norms.Wire.decodeNormsEnvironment",
+        "VE.Norms.Wire.decodeNormsEnvironmentWith",
         "VE.Norms.Wire.decodeRegulated",
         "VE.Norms.Wire.decodeRegulatedIn",
         "VE.Norms.Wire.decodeRegulatedShape",
@@ -5931,7 +5936,8 @@
         "VE.Norms.Wire.canonicalEnvironmentJson"
       ],
       "D[R]": [
-        "VE.Norms.Wire.actsFamilyRefusal"
+        "VE.Norms.Wire.actsFamilyRefusal",
+        "VE.Norms.Wire.actsHookRefusal"
       ]
     },
     "VE/Norms/WitnessKind.lean": {
@@ -17610,6 +17616,7 @@
         "VE.WireContract.Hooks.Acts.around",
         "VE.WireContract.Hooks.Acts.caseOf",
         "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.joinedEnv",
         "VE.WireContract.Hooks.Acts.memberOf",
         "VE.WireContract.Hooks.Acts.phraseOf",
         "VE.WireContract.Hooks.Acts.phrasesOf",
@@ -22552,6 +22559,87 @@
         "ResponseShape.SlotExamples.witness",
         "ResponseShape.SlotExamples.witnessAt",
         "ResponseShape.SlotExamples.witnesses"
+      ]
+    },
+    "VE/Acts/Hook.lean": {
+      "D[V]": [
+        "VE.Norms.Wire.ActsHook.acts",
+        "VE.Norms.Wire.ActsHook.lexical",
+        "VE.Norms.Wire.decodeFlaggedActs",
+        "VE.Norms.Wire.decodeNormsEnvironment"
+      ]
+    },
+    "VE/Acts/HookToday.lean": {
+      "P": [
+        "VE.Acts.HookToday.Today.decodeFlagged",
+        "VE.Acts.HookToday.Today.decodeNormsEnvironment",
+        "VE.Acts.HookToday.Today.decodeSource"
+      ]
+    },
+    "VE/Acts/HookTwins.lean": {
+      "P": [
+        "VE.Acts.HookTwins.Today.decoderOf",
+        "VE.Acts.HookTwins.Today.runAdmission",
+        "VE.Acts.HookTwins.Today.runCase",
+        "VE.Acts.HookTwins.Today.runCaseRouted"
+      ]
+    },
+    "VE/Acts/HookExamples.lean": {
+      "T": [
+        "VE.Acts.HookExamples.a1",
+        "VE.Acts.HookExamples.a2",
+        "VE.Acts.HookExamples.a3",
+        "VE.Acts.HookExamples.acts",
+        "VE.Acts.HookExamples.actsP",
+        "VE.Acts.HookExamples.block",
+        "VE.Acts.HookExamples.caseOf",
+        "VE.Acts.HookExamples.d4",
+        "VE.Acts.HookExamples.desc",
+        "VE.Acts.HookExamples.doc0",
+        "VE.Acts.HookExamples.elabCase",
+        "VE.Acts.HookExamples.env",
+        "VE.Acts.HookExamples.envA",
+        "VE.Acts.HookExamples.err",
+        "VE.Acts.HookExamples.flagRefusal",
+        "VE.Acts.HookExamples.flaggedPlain",
+        "VE.Acts.HookExamples.fxs",
+        "VE.Acts.HookExamples.joinedE",
+        "VE.Acts.HookExamples.judgedA",
+        "VE.Acts.HookExamples.lexical",
+        "VE.Acts.HookExamples.perm",
+        "VE.Acts.HookExamples.plainCase",
+        "VE.Acts.HookExamples.plainD",
+        "VE.Acts.HookExamples.plainEnv",
+        "VE.Acts.HookExamples.plainReg",
+        "VE.Acts.HookExamples.pred",
+        "VE.Acts.HookExamples.rule",
+        "VE.Acts.HookExamples.seek",
+        "VE.Acts.HookExamples.shown",
+        "VE.Acts.HookExamples.sortedRefusal",
+        "VE.Acts.HookExamples.unsorted",
+        "VE.Acts.HookExamples.view"
+      ]
+    },
+    "VE/Alternatives/HookExamples.lean": {
+      "T": [
+        "VE.Alternatives.HookExamples.desc",
+        "VE.Alternatives.HookExamples.flaggedEnv"
+      ]
+    },
+    "VE/NormDefaults/HookExamples.lean": {
+      "T": [
+        "VE.NormDefaults.HookExamples.desc",
+        "VE.NormDefaults.HookExamples.err",
+        "VE.NormDefaults.HookExamples.ndEnv"
+      ]
+    },
+    "VE/Service/HookExamples.lean": {
+      "T": [
+        "VE.Service.HookExamples.caseOf",
+        "VE.Service.HookExamples.desc",
+        "VE.Service.HookExamples.err",
+        "VE.Service.HookExamples.flagRefusal",
+        "VE.Service.HookExamples.flaggedEnv"
       ]
     }
   }

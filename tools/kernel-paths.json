@@ -189,11 +189,6 @@
     "VE.Norms.Run.norms_wire_acceptance",
     "VE.Norms.RunSound.norms_wire_certificate_acceptance",
     "VE.Norms.RunSound.runCase_certificate",
-    "VE.Acts.Decode.norms_wire_acceptance_elaborated",
-    "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
@@ -205,14 +200,10 @@
     "VE.Norms.Run.runAdmission_soundIn"
    ],
    "delegates": [
-    "VE.Route.Run.runCaseReported"
+    "VE.Route.Run.runCaseReported",
+    "VE.Norms.Run.runCaseActsRouted"
    ],
-   "nonverdict": [
-    {
-     "name": "VE.Acts.Run.runElaborate",
-     "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
-    }
-   ],
+   "nonverdict": [],
    "uncovered": [
     {
      "name": "VE.Norms.Plain.run",
@@ -256,6 +247,36 @@
      "nonverdict": "a background dump (Norms.Plain.run): the encoded background premises, no verdict field"
     }
    }
+  },
+  {
+   "name": "normsActs",
+   "tier": "candidate",
+   "note": "runner theorems complete; outside the kernel tier by the architect seat (D14): a lowering no frozen key uses",
+   "modes": [
+    "norms"
+   ],
+   "entry": [
+    "VE.Norms.Run.runCaseActsRouted"
+   ],
+   "subject": [
+    "VE.Norms.Run.runCaseIn",
+    "VE.Norms.Run.runAdmissionIn"
+   ],
+   "theorems": [
+    "VE.Acts.Decode.norms_wire_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
+    "VE.Norms.Run.runAdmission_soundIn"
+   ],
+   "delegates": [],
+   "nonverdict": [
+    {
+     "name": "VE.Acts.Run.runElaborate",
+     "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
+    }
+   ]
   },
   {
    "name": "softNorms",

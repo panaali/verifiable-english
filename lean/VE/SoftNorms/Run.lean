@@ -480,7 +480,7 @@ def runCase (j : Json) : Except String Json := do
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     return ← runAdmission id environment document
-  if !usesSoftPath j then return ← Norms.Run.runCase j
+  if !usesSoftPath j then return ← Norms.Run.runCaseActs j
   runSoftKind id kind j
 
 open VE.Order.ProfileGate (bind_ok) in

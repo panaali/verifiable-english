@@ -96,6 +96,6 @@ cyb-high | omits: nothing
 cyb-critical | omits: nothing
 ais-high | omits: nothing
 ais-critical | omits: nothing
-rs2-nest | omits: "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development" reading RS2
+rs2-nest | omits: "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development" rule f3-reminder
 no-critical-models | omits: "We do not currently possess any models that have Critical levels of capability" restates ; "and we expect to further update this Preparedness Framework before reaching such a level with any model" exposition
 CASES | omits: nothing

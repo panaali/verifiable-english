@@ -166,7 +166,7 @@ def pairNames (case : Json) : Except String (List (String × String)) := do
 
 /-- `Norms.Replay.targets` of the request's source, by the runners' Lean functions. -/
 def sourceTargets (case : Json) : Except String (List String) := do
-  let src ← VE.Norms.Wire.decodeSource (← field case "environment") (case.getObjValD "norms")
+  let src ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (← field case "environment") (case.getObjValD "norms")
   pure ((VE.Norms.targets src.D).map (·.1))
 
 /-- Conflict target names: distinct, one per regulated predicate (in the layer order),

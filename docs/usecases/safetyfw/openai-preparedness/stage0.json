@@ -27,7 +27,7 @@
   "premises": "UNKNOWN",
   "route": null,
   "units": {
-   "p6-u70": "OPEN"
+   "p6-u74": "OPEN"
   },
   "unresolved_reading_sets": 1
  },
@@ -89,11 +89,11 @@
   "bytes_by_status": {
    "CHECKED": 170,
    "LABELLED": 5327,
-   "OPEN": 9300,
-   "UNFORMALISED": 52621
+   "OPEN": 9335,
+   "UNFORMALISED": 52586
   },
   "total": 67418,
-  "units": 389
+  "units": 393
  },
  "P6": {
   "contiguous": true,
