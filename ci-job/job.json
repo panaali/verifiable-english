@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-safety-framework-fidelity-fix-3-f7c342d8-t709456-s4",
+ "head": "bcb74fd9f4f6fce4933a2f7dd9a619ec0781d4b5",
+ "argv": [
+  "armsh-cand-safety-framework-fidelity-fix-3-f7c342d8-t709456-s4",
+  "bcb74fd9f4f6fce4933a2f7dd9a619ec0781d4b5",
+  "cae0b16aa6651e5dab4d0e3d1422c615dc4b7411",
+  "-",
+  "-",
+  "4",
+  "4/7"
+ ]
+}
