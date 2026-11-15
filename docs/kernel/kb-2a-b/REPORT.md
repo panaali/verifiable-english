@@ -337,7 +337,9 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
   - `uv run pytest -q tests/test_kb2a_document.py`: "29 passed";
   - the F3 trial: `tests/test_readings_s2_document.py tests/test_kb2a_document.py`, "13 failed, 95 passed" with the
     condition removed (reverted);
-  - selected tests: the final selected run, on the committed review-round HEAD.
+  - selected tests, the final run, on the committed tree 45bcbfb3f0 (`MAC_PYTEST_NO_DEFER=1 zsh
+    manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-cloud-2, 10,761 s):
+    "recorded 556 units for tree 290015619e; ... 0 failed", exit 0.
 - Tests while iterating: `tests/test_kb2a_document.py` (10 passed), `tests/test_judgments_chain.py` (46 passed),
   `tests/test_kernel_closure.py` (after fixes), `tests/test_relay_binding_inventory.py::test_every_schema_field_is_classified`
   (19 passed).
@@ -418,7 +420,7 @@ FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final H
    (over 100 members shifted, rows dropped, added, reversed, refused);
    `::test_core_answer_coordinated_omissions_are_unavailable` (review F1: 14 coordinated omissions, repeats and extra
    bodies); `::test_core_answer_binds_explicit_soft_defaults` (review F2: a genuine answer is bound).
-6. Gate evidence matches the final HEAD: PASS for the selected run (on 2b39f8ac99, its failures fixed and rerun); the
+6. Gate evidence matches the final HEAD: PASS for the selected run (on 45bcbfb3f0: 0 failed; the commit after it is docs only); the
    full gate is the chain's.
 7. No unsigned item: one reserved, DELTA row 5 (trust +283, above R16), the stop reason on the first line.
 8. Every user-visible change in DELTA: PASS. Rows 1 to 4 (the kind, the core answer, its refusals and today's path for
