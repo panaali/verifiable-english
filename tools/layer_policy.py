@@ -398,7 +398,8 @@ def lean_name_layer(module: str) -> int | None:
                   "VE.SoftNorms.ElaborateSound",  # with MeteredWire: kernel boundary KB-7
                   "VE.SoftNorms.SelectedSound", "VE.SoftNorms.SelectedExamples",  # kb-10a: soft-selected
                   "VE.SoftNorms.Prepared",  # kb-10e: states runCaseReportedP_eq on SoftNorms.Run.runCaseReported
-                  "VE.SoftNorms.SlotSound", "VE.SoftNorms.SlotExamples"}:  # kb-3: slot-certificate, slot-conflict
+                  "VE.SoftNorms.SlotSound", "VE.SoftNorms.SlotExamples",  # kb-3: slot-certificate, slot-conflict
+                  "VE.SoftNorms.ConflictSound"}:  # kb-10c: soft-conflict
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Calc.Ties"}:
         return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)

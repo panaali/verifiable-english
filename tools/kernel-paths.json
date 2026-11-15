@@ -283,6 +283,9 @@
     "VE.SoftNorms.Run.soft_wire_selected_prepared",
     "VE.SoftNorms.Run.slot_wire_certificate",
     "VE.SoftNorms.Run.slot_wire_conflict",
+    "VE.SoftNorms.Run.soft_wire_conflict_free",
+    "VE.SoftNorms.Run.soft_wire_conflict_witness",
+    "VE.SoftNorms.Run.soft_wire_conflict_exclusive",
     "VE.Compose.SlotWire.slot_wire_acceptance",
     "VE.Compose.SlotWire.slot_wire_conflict_sound",
     "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
@@ -312,10 +315,9 @@
       "soft-rules",
       "soft-elaborate",
       "soft-pairs",
-      "soft-certificate",
-      "soft-conflict"
+      "soft-certificate"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), and soft_wire_conflict_free, soft_wire_conflict_witness and soft_wire_conflict_exclusive cover soft-conflict (its CONFLICT-FREE and CONFLICT verdicts, read by key, from the package and witness replays; kb-10c; its status_text, conditional_on and other fields are not stated), which are therefore not listed here"
     }
    ],
    "kinds": {
@@ -333,6 +335,9 @@
     },
     "slot-conflict": {
      "theorem": "VE.SoftNorms.Run.slot_wire_conflict"
+    },
+    "soft-conflict": {
+     "theorem": "VE.SoftNorms.Run.soft_wire_conflict_free"
     }
    }
   },
@@ -729,15 +734,6 @@
     "VE.SoftNorms.Wire.soft_wire_acceptance"
    ],
    "why": "the answer carries `valid` and `conditional_on`; the replay's theorem is about VE.SoftNorms.Wire.replaySoftEntailment, not about a subject's answer"
-  },
-  {
-   "path": "softNorms",
-   "kind": "soft-conflict",
-   "near": [
-    "VE.SoftNorms.Wire.soft_wire_conflict_sound",
-    "VE.SoftNorms.Wire.soft_wire_conflict_witness_sound"
-   ],
-   "why": "the answer carries `verdict` (CONFLICT, CONFLICT-FREE, UNKNOWN) and `status_text`; the replays' theorems are about VE.SoftNorms.Wire.replaySoftConflict and replaySoftWitness, not about a subject's answer"
   },
   {
    "path": "metered",

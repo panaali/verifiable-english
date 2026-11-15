@@ -5744,7 +5744,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 26aa1cd6551eb976365d207c6cd1be0c3613a6229b3227c51f4e334f99508748
+module VE.Audit 131a368d9a4d6f3b601f8294a5a2b563c8844f1aefafb595b933c0acf77f2fd2
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -28703,6 +28703,12 @@ module VE.SoftNorms.Coherence 2929f822284150d24dcb15ef857678330a5ecdd963e8dfce6b
 805:0-826:96 theorem VE.SoftNorms.soft_route_acceptance@VE.SoftNorms.Coherence
 828:0-847:18 theorem VE.SoftNorms.soft_route_countermodel@VE.SoftNorms.Coherence
 849:0-860:99 theorem VE.SoftNorms.soft_route_entails_iff@VE.SoftNorms.Coherence
+module VE.SoftNorms.ConflictSound 6d02dc30eea98a7b20e8d6a122d52940a31ebca1cdb9fc4ea501effba78094f2
+24:0-36:5 theorem VE.SoftNorms.Run.ok_verdict@VE.SoftNorms.ConflictSound
+38:0-92:29 theorem VE.SoftNorms.Run.soft_conflict_verdict@VE.SoftNorms.ConflictSound
+94:0-112:65 theorem VE.SoftNorms.Run.soft_wire_conflict_free@VE.SoftNorms.ConflictSound
+114:0-133:29 theorem VE.SoftNorms.Run.soft_wire_conflict_witness@VE.SoftNorms.ConflictSound
+135:0-166:15 theorem VE.SoftNorms.Run.soft_wire_conflict_exclusive@VE.SoftNorms.ConflictSound
 module VE.SoftNorms.ElaborateSound 36d5000aaa1d8249d3af46585fe70a44a7f8d8eff14ec47ba94c2f14f55e6de8
 20:0-29:47 theorem VE.SoftNorms.Run.excLabels_length@VE.SoftNorms.ElaborateSound
 31:0-36:65 theorem VE.SoftNorms.Run.softLabelled_formulas@VE.SoftNorms.ElaborateSound
@@ -31305,4 +31311,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 0459c5fe73425b3b3eec878b8a5b2eb8436ee59458b882a12561b1c623cac0d5
+module VE d66a2117af8fbc225b208eb8e9567b74f9ae4b2fff3ac8cb2b21cd97c7108954

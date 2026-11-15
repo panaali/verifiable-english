@@ -20,7 +20,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 22 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
-- [docs/kernel/](docs__kernel.md) — 13 modules — -
+- [docs/kernel/](docs__kernel.md) — 17 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -129,7 +129,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 17 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 32 modules — -
-- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 20 modules — -
+- [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 21 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 9 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -

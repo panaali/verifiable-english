@@ -6,7 +6,7 @@ It may fall freely. It may rise only with a line in the table below, added in th
 raises it and signed by the architect seat (`manage-agents/fable-team/architect/HANDOFF.md`).
 `tests/test_kernel_closure.py` reads the figure after the words "signed total:".
 
-signed total: 11,119 lines
+signed total: 11,121 lines
 
 | Date | Change | Door | Lines | Total after | Signed |
 |---|---|---|---:|---:|---|
@@ -19,6 +19,7 @@ signed total: 11,119 lines
 | 2026-11-13 | kb-validators part 1: the norms profile condition enforced and stated on the metered path (`VE.Route.MeteredRun.profiled` on every family, `ProfileAdmits` in `EvaluationAnswer`, the bridge `VE.Norms.Plain.profileOkOn_holds`, the pin `prepare_profile`; up to +80) | C | +68 | 10,015 | architect seat, round 4 (entered after kb-3 at the merge with ve-integration: the two signed rises are disjoint, 9,552 + 395 + 68 measured as 10,015) |
 | 2026-11-13 | kb-10e prepared soft documents: softNorms path up to +60 lines (the `Prepared` structure and `prepare` where a theorem statement mentions them); architect seat, round 4. Used: `VE.SoftNorms.Run.soft_wire_selected_prepared` listed on `softNorms` (subjects `prepare` and `runSelectedP`; its spec adds the `Prepared` structure; path spec 4,912 to 4,920 lines, distinct kernel lines +8). The service's prepared path (`VE.Service.runSoftRequest`, `softResult`) is not on a measured entry | C | +8 | 10,023 | architect seat, round 4 (task kb-10e, signed 2026-11-13; entered after kb-3 and kb-validators at the merge with ve-integration: the rises are disjoint, measured on the merged tree as 10,015 + 8 = 10,023, softNorms path spec 5,360 to 5,368) |
 | 2026-11-14 | kb-8c: `quantity` promoted to the kernel after kb-8's runner theorems on `VE.Time.Wire.runCase` (under eligibility's keyed calls), its admission theorem restated as two closed answers (`VE.Time.Wire.quantity_admission_wire_sound_plain`, `quantity_admission_wire_sound_valued`; KB-7 F1); quantity path 2,274 lines, distinct kernel lines +1,096 (kb-8b measured +1,121 on 9,552; measured here on 10,023 after kb-3, kb-validators and kb-10e) | C | +1,096 | 11,119 | architect seat, round 4 (signed up to +1,300, decision D11; passed from kb-8b to kb-8c, round 5) |
+| 2026-11-15 | kb-10c: the `soft-conflict` kind's verdicts on the wire. `VE.SoftNorms.Run.soft_wire_conflict_free`, `soft_wire_conflict_witness` and `soft_wire_conflict_exclusive` (`lean/VE/SoftNorms/ConflictSound.lean`) listed on `softNorms`; their statements read the replays `replaySoftConflict` and `replaySoftWitness` and the conclusions of `Wire.soft_wire_conflict_sound` and `soft_wire_conflict_witness_sound` (softNorms path spec 5,368 to 5,370 lines: `VE.SoftNorms.Coherence` 26 to 28, read by the witness theorem's collision and pair-conflict conclusion; distinct kernel lines +2) | C | +2 | 11,121 | kb-10c, pre-signed by the architect seat up to +150 lines |
 
 Pre-signed, to be entered by the change that uses it:
 
