@@ -101,7 +101,7 @@ From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit 
 
 ## Result: agreement with the answer key
 
-**How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
+**How these answers are computed today.** Lean elaborates the soft rules, decides which rules a case selects and the completed outcome there (`soft-selected`), and gives each CONFLICT and CONFLICT-FREE verdict (`soft-conflict`). The per-answer trace of this key ([docs/kernel/ownership.md](../../docs/kernel/ownership.md), kb-10d) finds no Python decision function under the selection, outcome, date and never answers. Under every conflict answer Python's conflict search still runs: the witness search and prover that propose what `soft-conflict` checks build the conflict targets and selection formulas in `ve/norms.py` and evaluate them with Python's evaluator, so no conflict answer counts as Lean's yet. The severity answers come from the risk route, which has no runner theorem yet. In all, 241 of the key's 262 answers pass the per-answer ownership test. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for each path.
 
 VE agrees with the answer key on **257 of 262** items. The five others are key cells that PLAN section 12 records
 beside the key: item 23 corrects C3 and C-doc to NONE, and item 27 gives K2-L1, K2-L5 and G3 the answers of 1.2's

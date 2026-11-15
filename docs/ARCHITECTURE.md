@@ -36,11 +36,15 @@ Every table between `numbers` markers is rendered from that file; to bring them 
 
 Lean decides meaning and acceptance; Python reads files, relays requests to Lean and displays Lean's answers; Rust
 proposes search candidates (models, proofs) that Lean checks before anything is reported (lean-first rule 3,
-decision A of 2026-10-08). That is the rule, and section 4 lists where it does not hold yet. The exception
-that matters most is a norm document with soft rules, which covers every safety-framework use case. There, Python builds the rule
-formulas and evaluates them on each case model, so it decides selection, completed outcomes and conflicts
-found on a model. Lean elaborates the soft rules and replays every certificate (section 4, *Norm documents
-with soft rules*; work item `kb-10`).
+decision A of 2026-10-08). That is the rule, and section 4 lists where it does not hold yet. For a norm document
+with soft rules, which covers every safety-framework use case, Lean now decides selection and completed outcomes
+(`soft-selected`, kb-10b) and gives each conflict verdict (`soft-conflict`, kb-10c); the exception left there is
+the conflict search: the search and prover that propose what Lean checks still build the conflict targets and
+selection formulas in Python and evaluate them with Python's evaluator (section 4, *Norm documents with soft
+rules*). The per-answer ownership test ([docs/kernel/ownership.md](kernel/ownership.md), kb-10d) counts the keyed
+answers Lean decides: 100 of the RSP key's 126, 228 of Preparedness's 239, 241 of the safety framework's 262,
+269 of eligibility's 269 and 0 of agent-policy's 42 (its harness reads a hard norm document's selection from
+Python).
 
 <!-- numbers:sizes -->
 | Part | Where | Size | Notes |
@@ -147,12 +151,16 @@ inward. A package's row places every module under it; a module no row places fai
   "yes" is replayed through Lean (lf-17).
 - **Norm documents with soft rules** (the safety-framework use cases): Lean's `soft-elaborate` mode elaborates
   the soft rules (`ve/softnorms.py` → `ve/backends/soft_relay.py`). The result is a `SoftenedNormDocument`, and
-  `_lean_route` sends it to no Lean norms route because it is not exactly a `NormDocument`. Python's
-  `ve/norms.py` builds the selection, outcome and conflict-target formulas and evaluates them with
-  `ve.evaluate._Evaluator`: `selected_rules`, the harnesses' completed outcomes and `_check_conflict_python`'s
-  witness search (`_find_conflict`) are Python's answers. Lean replays every certificate (conflict-freedom,
-  entailments), and the public `evaluate()` is Lean's. [Who computes the keyed answers](usecases/keyed-answers.md)
-  has the per-answer table and the saved harness counts; work item `kb-10` moves it onto Lean.
+  `_lean_route` sends it to no Lean norms route because it is not exactly a `NormDocument`. Which rules a case
+  selects and the completed outcome there are Lean's `soft-selected` answers (`SoftenedNormDocument.selected_rules`
+  and `outcome_at`, kb-10b), and the harnesses' conflicts go through `ve.soft_route.decide_soft_conflict`, whose
+  CONFLICT and CONFLICT-FREE are Lean's `soft-conflict` answers (kb-10c). What still runs in Python is the conflict
+  search: `decide_soft_conflict`'s witness search (`norms._find_conflict`) and prover (`norms._prove_targets`)
+  build the conflict-target and selection formulas in `ve/norms.py` and evaluate them with
+  `ve.evaluate._Evaluator` to propose what Lean checks. The per-answer trace of the five keys
+  ([docs/kernel/ownership.md](kernel/ownership.md), kb-10d) finds those decision functions under every conflict
+  answer and under no selection, outcome, threshold, date or gap answer. The public `evaluate()` is Lean's.
+  [Who computes the keyed answers](usecases/keyed-answers.md) has the path table and the saved harness counts.
 
 ## 5. The trusted base
 
