@@ -1,8 +1,61 @@
 # kb-2a-b: the document mode on the core document (build report)
 
-**STOPS for one DRI signature: DELTA.md row 5, trusted Lean growth +283 (K +0, S +48, V +235), above R16's 150
-lines; requested in `manage-agents/inbox/dri/20261114T185627Z-builder-kb-2a-b-76207.md`.** Everything else is
-built; no status differs (part 4); every Python/Lean difference on the acceptance document has a cause (part 4b).
+**Open for the DRI: review findings F3 (routing of soft-norms@0 with readings@1 documents that do not list
+`judgments@0`) and F4 (acceptance items (iii) and (v) against W2).** One message asks both, with a recommendation for
+each: `manage-agents/inbox/dri/20261115T092655Z-builder-kb-2a-b-3213654.md`. Review findings F1, F2 and F5 are fixed
+(section "Review findings" below). DELTA row 5 (trusted growth) is SIGNED by the DRI
+(reviews/dri-decisions-20261114-kb-2a-b.md item 1). The final figure is +281, inside the signed +290. No status differs
+(part 4). Every Python/Lean difference on the acceptance document has a cause (part 4b).
+
+## Review findings (independent review of f6302acc, `kb-2a-b-review-ov.final.md`)
+
+- **F1 (B, R8 binding): fixed.** `ve/document/core.py::bind_core_answer` used to check that each statement was one of
+  the request's. It now requires the exact list the request gives:
+  - the choices are every choice of one reading per active set, in order (`CoreDocument.allChoices`);
+  - a document with a member the lowering has no row for (couplings, narrowings, graph, completions) has no core answer;
+  - each unit's statements per choice are exactly `_statements`' list: its judgment declarations in its `open` order,
+    then its chosen reading's body or its own content's (`CoreDocument.UnitPlan.statements`), with no statement left
+    out, repeated or extra;
+  - a unit has an entry exactly when it has a statement.
+
+  Regression tests: `tests/test_kb2a_document.py::test_core_answer_coordinated_omissions_are_unavailable`, 14 cases,
+  each with every case and count rebuilt to match (`_consistent`). The cases are:
+  - the probe's choice omission, and the choices reordered;
+  - a premise unit, a reading-only unit or a soft rule unit left out;
+  - a reading's rule or a judgment declaration left out;
+  - a rule, a premise or a judgment repeated;
+  - a reading moved to another choice;
+  - a rule, premise or reading origin added to a judgment statement.
+
+  On the old binder 9 of the 14 are accepted (seeded bug (h) is the choices requirement).
+- **F2 (B, genuine answers refused): fixed.** A soft rule of a unit's own content is bound with `_soft_bound`, the
+  binder of the plain answer's soft units, which reads Lean's canonical form (`Service.Document.softCanonical`). It is
+  no longer compared with the written rule. A reading's rule is still compared exactly: the W1 decoder accepts exactly
+  the six members (`name, predicate, sign, guard, unless, over`), and its encoding reproduces them. The probe's
+  `mode`/`hard`/`alterable`/`rank`/`exception` variants of a reading are refused by Lean itself ("fields do not match").
+  Regression test: `::test_core_answer_binds_explicit_soft_defaults`, the five variants, through `check` and
+  `check --json` (seeded bug (i)).
+- **F3 (B, routing): open, DRI question 1.** Removing the `judgments@0` condition from `CoreCheck.routed` was tried on
+  this branch (lake build, pinned binary). 13 tests of `tests/test_readings_s2_document.py` then fail:
+  - `ve document check` loses the readings verdicts Python's path gives these documents today (for example
+    `test_m8_enumerated_conflict_under_one_reading`: "CONFLICT under rs1@1:0", from Lean's certificates);
+  - the readings commands get `CheckerUnavailable`.
+
+  The task puts conflict verdicts in the document answer out of scope, and losing a verdict is never covered by a
+  standing ruling. So the conservative option stands: those documents keep today's path and today's bytes. The
+  `#guard !routed` example in `CoreCheckExamples.lean` and `CoreCheck.routed`'s docstring record this. The reviewer's
+  probe F3 still fails by design until the DRI rules.
+- **F4 (B, acceptance requirements): open, DRI question 2.** W2 refuses an `authored` set unless it has exactly one
+  signed reading (`ve/readings.py:197`: "authored reading needs one signed choice"). Item (iii)'s "authored two-reading
+  set" therefore cannot be built as written. The aspiration is UNFORMALISED in the RSP translation D1; making it
+  LABELLED would mean re-marking a translated unit. Recommendations: (iii) an open set of real RSP readings (RS1 as it
+  is, or RS1 without its pending reading if the count of two matters); (v) the aspiration as D1 marks it. The fixture
+  and the probe stay as they are until the DRI rules.
+- **F5 (A, theorem statement): fixed, no DRI decision needed.** `fold_checked_iff` is now the approved statement
+  (`u.statements ≠ [] ∧ opens u = false ∧ ∀ r ∈ rows, r.result.isOk = true`). The meaning-class rule moved from the
+  kernel fold into the shell's unit table (`CoreCheck.tableOf`; section Theorems). Every table keeps its status, the
+  golden file is unchanged, and the kernel fold lost `asserted` (DocumentFold trusted +36 to +34). Seeded bugs (g) and
+  (a2).
 
 Code: worktree `ve-kb-2a-b`, branch `feature/kb-2a-b`, base `4a5d3460d3`. What changed: the document mode's entry is
 `VE.Service.CoreCheck.runCaseReported`; documents that reached the refusals of `Document.lean` 1198-1199 or 1207-1208,
@@ -57,7 +110,7 @@ theorem replaySlotAdmission_sound (j : Json) (r : SlotAdmission) (h : replaySlot
 ```lean
 theorem fold_checked_iff (u : UnitRow) (rows : List Row) :
     status u rows = .checked ↔
-      u.statements ≠ [] ∧ opens u = false ∧ asserted u = true ∧ ∀ r ∈ rows, r.result.isOk = true
+      u.statements ≠ [] ∧ opens u = false ∧ ∀ r ∈ rows, r.result.isOk = true
 ```
 
 `lean/VE/Kernel/DocumentFold.lean`:
@@ -109,26 +162,36 @@ The fold's rule (DESIGN 2.3), `lean/VE/Kernel/DocumentFold.lean`:
 ```lean
 def opens (u : UnitRow) : Bool := u.statements.any (!·.reads.isEmpty) || u.set == some false || u.rightsOpen
 
-/-- The unit asserts its statements: its active set decides it, or, with none, its meaning is specified. -/
-def asserted (u : UnitRow) : Bool := u.set == some true || (u.set.isNone && u.meaning == "specified")
-
 /-- A status that no core statement decides, as today (`Loader.w2Status` without content). -/
 def baseless (meaning : String) : Status :=
   if meaning == "open" then .opened else if meaning == "unformalised" then .unformalised else .labelled
 
 def status (u : UnitRow) (rows : List Row) : Status :=
   if opens u then .opened
-  else if u.statements.isEmpty || !asserted u then baseless u.meaning
+  else if u.statements.isEmpty then baseless u.meaning
   else if rows.all Row.ok then .checked else .opened
 ```
 
-`fold_checked_iff` has one conjunct more than the task's wording: `asserted u = true` (the unit's meaning class
-asserts its statements: its active set decides it, or with none its meaning is `specified`). DESIGN 2.3 keeps
-"LABELLED / UNFORMALISED exactly as today", and today an `open`-meaning unit with content and no set is OPEN
-(`Loader.w2Status`), so the meaning class is part of the rule; without the conjunct such a unit would be CHECKED.
+`fold_checked_iff` is the statement the task gives (review F5: an earlier draft had a fourth conjunct, `asserted u =
+true`; it is gone). The meaning class is still part of the rule, because DESIGN 2.3 keeps "LABELLED / UNFORMALISED exactly
+as today". The rule now lives in the shell's unit table (`CoreCheck.tableOf`), not in the kernel. A unit that does not
+assert its content (its active set is not authored with every reading asserted; or, with no set, its meaning is not
+`specified`) keeps only the statements that read a judgment term, which is the first OPEN condition. So it has a core
+statement exactly when one opens it, and otherwise the fold gives it `baseless` of its meaning, as `Loader.w2Status` does.
+For every table this gives the same status as the earlier draft. Each case:
+- an asserting unit is unchanged;
+- a non-asserting unit with a judgment read is OPEN either way;
+- a non-asserting unit without one has no statement and gets the same `opens`, then `baseless`.
 
-`python3 lean/audit.py`: "PASS: 884 source files; 10058 named theorem declarations audited (headline results and helper
-lemmas); only the declared standard axiom allowlist." (/tmp/kb2ab/audit2.log; no new axiom.)
+The `#guard`s in `CoreCheckExamples.lean`:
+- a `contextual` unit with content is LABELLED;
+- an `open` meaning whose term the content does not read is refused `JudgmentListedUnused`.
+
+Seeded bug (g) shows the table's filter is needed. The golden file and the four fixtures of the status comparison are
+byte-identical.
+
+`python3 lean/audit.py`: "PASS: 887 source files; 10058 named theorem declarations audited (headline results and helper
+lemmas); only the declared standard axiom allowlist." (/tmp/kb2ab-audit.log, after the review round; no new axiom.)
 
 ## Decisions taken (conservative, recorded here; not asked)
 
@@ -228,6 +291,10 @@ after them.
 | (d) Python falls back when Lean refuses | ve/document/lean.py | `tests/test_kb2a_document.py::test_document_lowering_never_falls_back_to_python` |
 | (e) the carried rows omit `facts` | lean/VE/Kernel/DocumentFold.lean | the build (`ResponseShape.Encoders.CoreCheck.fold_eq`), and with that proof stubbed `::test_document_lowered_facts_inconsistent_no_verdict` |
 | (f) the judgment condition ignores exceptions | lean/VE/Service/CoreCheck.lean | `tests/test_judgments_chain.py::test_a_judgment_term_read_only_in_an_exception_makes_the_unit_open` |
+| (g) review round: the shell's table keeps every statement of a unit that does not assert its content | lean/VE/Service/CoreCheck.lean | `CoreCheckExamples.lean:242` (`#guard`: a contextual unit with content is LABELLED) fails to build |
+| (a2) review round: bug (a) again on the fold without `asserted` | lean/VE/Kernel/DocumentFold.lean | `fold_checked_iff` fails to build (DocumentFold.lean:54) |
+| (h) review round: the choices are not bound to every choice of the active sets | ve/document/core.py | `tests/test_kb2a_document.py::test_core_answer_coordinated_omissions_are_unavailable[a choice, its row and its statements omitted]` |
+| (i) review round: a unit's own soft rule compared with the written rule exactly | ve/document/core.py | `tests/test_kb2a_document.py::test_core_answer_binds_explicit_soft_defaults` (5 failed) |
 
 ## Trust mutants
 
@@ -255,8 +322,22 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
 - `uv run python tools/regen_generated.py --write`: "wrote 41 entries", last at e9dcebbd2a.
 - `uv run python tools/kernel_closure.py --check docs/kernel/closure-baseline.json`: "PASS: kernel 10041 <= 10041",
   "PASS: verdict writers outside the kernel 56 <= 56".
-- `uv run python tools/trust_map.py --check`: exit 1 only on the budget (row 5, awaiting the DRI's signature): "against
-  4a5d3460d36c: K +0, S +48, D +86, G +290, tied +80, unclassified +0, trusted +283".
+- `uv run python tools/trust_map.py --check`: before the DRI's signature, exit 1 only on the budget: "against
+  4a5d3460d36c: K +0, S +48, D +86, G +290, tied +80, unclassified +0, trusted +283". After the review round: "K +0,
+  S +46, D +86, G +290, tied +80, unclassified +0, trusted +281" and "PASS: K, S and untied [V] within 4a5d3460d36c and
+  the allowances introduced since".
+- Review round (after f6302acc / 2a564aec):
+  - `lake build` of the edited modules and `ve_service`, with the binary pinned by `regen_generated.py --only
+    checker-pins`;
+  - `uv run python tools/lean_statements.py`: the one changed statement is `fold_checked_iff`;
+  - `python3 lean/audit.py`: "PASS: 887 source files; 10058 named theorem declarations audited ...";
+  - `tools/kernel_closure.py --check`: "PASS: kernel 10041 <= 10041", "PASS: verdict writers outside the kernel
+    56 <= 56";
+  - `regen_generated.py --check` (Rust skipped, no Rust change): rc 0, 41 entries;
+  - `uv run pytest -q tests/test_kb2a_document.py`: "29 passed";
+  - the F3 trial: `tests/test_readings_s2_document.py tests/test_kb2a_document.py`, "13 failed, 95 passed" with the
+    condition removed (reverted);
+  - selected tests: the final selected run, on the committed review-round HEAD.
 - Tests while iterating: `tests/test_kb2a_document.py` (10 passed), `tests/test_judgments_chain.py` (46 passed),
   `tests/test_kernel_closure.py` (after fixes), `tests/test_relay_binding_inventory.py::test_every_schema_field_is_classified`
   (19 passed).
@@ -310,15 +391,16 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
 ## Notes for the DRI
 
 - Part (4)'s routing is narrower than "exactly the documents that reach the refusals" in three ways (Decisions,
-  above); each keeps a document on the path that answers it today. The soft-norms-with-readings documents without
-  `judgments@0` move with a step C row that gives the core path the readings queries.
+  above). Each keeps a document on the path that answers it today. Narrowing (b), the soft-norms-with-readings
+  documents without `judgments@0`, is review finding F3 and DRI question 1: routing them removes the readings conflict
+  verdicts `ve document check` gives them today.
 - `CoreCheck.lean` is 421 lines (the task said at most 300; standing override 1): about 150 are its theorems.
 - The kernel fold is not in `kernel_lines` while the `document` path is a candidate; it enters when the architect seat
   makes the path a kernel path.
 - kb-2a's own ties pass (its FOLLOW-UPS.md) is still open: the module was promoted, not tied.
-- The signature request (inbox/dri 20261114T185627Z) quoted trusted +268; the final figure is +283 (K +0, S +48, V +235):
-  `statementJson` is verdict-bearing (test_trust_budget), and `routed` and the closed vocabulary shape grew. DELTA row 5
-  itemises the final figure.
+- The signature request (inbox/dri 20261114T185627Z) quoted trusted +268. The DRI signed up to +290
+  (reviews/dri-decisions-20261114-kb-2a-b.md item 1). The final figure is +281 (K +0, S +46, V +235), which DELTA row 5
+  itemises. It was +283 before the review round moved `asserted` out of the kernel fold.
 
 FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final HEAD (1,022 mutants; partial record docs/kernel/kb-2a-b/trust-mutants-part1.json, 169 judged) until it exits 0, on a pool that shards it
 
@@ -329,11 +411,13 @@ FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final H
    `tests/test_kb2a_document.py::test_core_answer_retyped_fields_are_unavailable`; `lean/ResponseShape/CoreCheckExamples.lean`.
 2. Deliverables built, no rule broken: PASS for (1) to (7) and (4b); the trust-mutants sweep is partial (FOLLOW-UP
    kb-2a-b-tm); DESIGN 3 item 3's audit is the DRI's, its packet is `audit-packet.md`.
-3. Tests and gates can fail: PASS. Seeded bugs (a) to (f) (`seeded-bugs.json`); the partial sweep: 124 KILLED.
+3. Tests and gates can fail: PASS. Seeded bugs (a) to (i) and (a2) (`seeded-bugs.json`); the partial sweep: 124 KILLED.
 4. Python, Lean and Rust agree: PASS for Python and Lean (`python-vs-lean.md`, the golden file, status-compare.json);
    Rust: N.A. (no Rust code changed; the pinned binary is unchanged).
 5. R8 binding: PASS. `ve/document/core.py::bind_core_answer`; `::test_core_answer_rebound_fields_are_unavailable`
-   (over 100 members shifted, rows dropped, added, reversed, refused).
+   (over 100 members shifted, rows dropped, added, reversed, refused);
+   `::test_core_answer_coordinated_omissions_are_unavailable` (review F1: 14 coordinated omissions, repeats and extra
+   bodies); `::test_core_answer_binds_explicit_soft_defaults` (review F2: a genuine answer is bound).
 6. Gate evidence matches the final HEAD: PASS for the selected run (on 2b39f8ac99, its failures fixed and rerun); the
    full gate is the chain's.
 7. No unsigned item: one reserved, DELTA row 5 (trust +283, above R16), the stop reason on the first line.
@@ -353,7 +437,7 @@ FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final H
 14. Both directions, cited evidence, spec re-read: PASS. Each refusal test has its accepted twin (a Lean refusal vs the
     answered document; an exception read OPEN vs no term CHECKED; routed vs not routed for each narrowing; roundTrips
     true at 63/10,000, false at 64/10,001). Spec re-read: `slot_wire_admission` against DESIGN.md:55-60 (2.2); the fold
-    against DESIGN.md:62-68 (2.3), which led to the `asserted` conjunct; the answer against DESIGN.md:70-74 (2.4); no
+    against DESIGN.md:62-68 (2.3), which led to the shell's meaning-class filter (review F5); the answer against DESIGN.md:70-74 (2.4); no
     Python decision against DESIGN.md:76-77 (2.5); routing against DESIGN.md:79-87 (2.6) and the task's part (4); the
     tests' names against DESIGN.md:106-113.
 15. No overclaim, no silent cut, checks can fail, limits charged first: PASS with one open item (the sweep, a

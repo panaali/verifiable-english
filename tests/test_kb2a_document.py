@@ -291,3 +291,103 @@ def test_core_answer_rebound_fields_are_unavailable():
     for changed in ({**GOLDEN_ROW, "rows": rows[:-1]}, {**GOLDEN_ROW, "rows": rows + rows[:1]},
                     {**GOLDEN_ROW, "rows": rows[::-1]}, {**GOLDEN_ROW, "rows": [{**rows[0], "refused": "x"}] + rows[1:]}):
         assert _refused(changed)
+
+
+def _consistent(row):
+    """The row with each case and each answer rebuilt from its own choices and statements, so that only the binding
+    of the choices and statements to the request can refuse it (review F1: coordinated tampering)."""
+    out = copy.deepcopy(row)
+    case = out["rows"][0]["case"]
+    out["rows"] = []
+    for k in range(len(out["view"]["choices"])):
+        statements = [st for e in out["view"]["statements"] for st in (e["choices"][k:k + 1] or [[]])[0]
+                      if "judgment" not in st]  # a judgment declaration is no rule or premise of the case
+        norms = [st["rule"] for st in statements if "rule" in st and "premise" not in st]
+        facts = [st["premise"] for st in statements if "premise" in st]
+        out["rows"].append({"case": {**case, "id": f"choice-{k}", "norms": norms, "facts": facts},
+                            "answer": {"id": f"choice-{k}", "status": "ok", "rules": len(norms), "facts": len(facts)}})
+    return out
+
+
+def _entry(row, uid):
+    return next(e for e in row["view"]["statements"] if e["id"] == uid)
+
+
+def _drop_choice(r):
+    r["view"]["choices"].pop()
+    for e in r["view"]["statements"]:
+        e["choices"].pop()
+
+
+def _drop_entry(uid):
+    return lambda r: r["view"]["statements"].remove(_entry(r, uid))
+
+
+def _drop_feature(uid, feature):
+    def edit(r):
+        for statements in _entry(r, uid)["choices"]:
+            statements[:] = [st for st in statements if st["feature"] != feature]
+    return edit
+
+
+def _repeat(uid, index):
+    def edit(r):
+        statements = _entry(r, uid)["choices"][0]
+        statements.insert(index, copy.deepcopy(statements[index]))
+    return edit
+
+
+def _judgment_body(member, value):
+    def edit(r):
+        _entry(r, "s36-full-review")["choices"][0][0][member] = value
+    return edit
+
+
+def _swap_readings(r):
+    entry = _entry(r, "t1-plan")
+    entry["choices"][0], entry["choices"][1] = entry["choices"][1], entry["choices"][0]
+
+
+RULE = {"norm": {"guard": ["top"], "name": "f13-disclose", "over": [], "predicate": "redactions_disclosed",
+                 "sign": True, "unless": []}}
+COORDINATED = {
+    "a choice, its row and its statements omitted": _drop_choice,
+    "the choices reordered": lambda r: r["view"]["choices"].reverse(),
+    "a premise unit's statements omitted": _drop_entry("t4-name"),
+    "a reading-only unit's statements omitted": _drop_entry("t1-plan"),
+    "a soft rule unit's statements omitted": _drop_entry("s35-disclose"),
+    "a reading's rule omitted in every choice": _drop_feature("t1-plan", "norms@0"),
+    "a judgment declaration omitted": _drop_feature("s36-full-review", "judgments@0"),
+    "a rule repeated": _repeat("s35-disclose", 0),
+    "a premise repeated": _repeat("t4-name", 0),
+    "a judgment declaration repeated": _repeat("s36-full-review", 0),
+    "a reading's statements moved to another choice": _swap_readings,
+    "a rule body on a judgment statement": _judgment_body("rule", RULE),
+    "a premise body on a judgment statement": _judgment_body("premise", ["top"]),
+    "a reading origin on a judgment statement": _judgment_body("reading", {"set": "rs1-t1", "index": 0}),
+}
+
+
+@pytest.mark.parametrize("name", sorted(COORDINATED))
+def test_core_answer_coordinated_omissions_are_unavailable(name):
+    """Review F1 (R8, each a class): a choice, a unit's statements, a reading's or a judgment's statement left out,
+    repeated or given another body, with every case and count adjusted to match, is not the request's lowering:
+    `CheckerUnavailable`."""
+    assert not _refused(_consistent(GOLDEN_ROW))
+    changed = copy.deepcopy(GOLDEN_ROW)
+    COORDINATED[name](changed)
+    assert _refused(_consistent(changed)), name
+
+
+@pytest.mark.parametrize("member, value", [("mode", "strict"), ("hard", False), ("alterable", []), ("rank", None),
+                                           ("exception", None)])
+def test_core_answer_binds_explicit_soft_defaults(tmp_path, lean_only, capsys, member, value):
+    """Review F2: a soft rule written with a default member explicit (`mode` strict, `hard` false, no alterable party,
+    no rank, no exception) is the same rule to Lean, whose answer carries its canonical form; Python binds that answer
+    (as the plain answer's soft units, `_soft_bound`) and shows it, for `check` and for `check --json`."""
+    path = variation(tmp_path, lambda m: unit(m, "s35-disclose")["content"]["norm"].__setitem__(member, value))
+    assert document_main(["check", str(path)]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert {u["id"]: u["status"] for u in report["units"]} == STATUSES
+    assert document_main(["check", "--json", str(path)]) == 0
+    assert json.loads(capsys.readouterr().out)["view"]["statements"] == GOLDEN_ROW["view"]["statements"]

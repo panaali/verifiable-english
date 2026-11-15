@@ -25,6 +25,22 @@
     {"id": "f", "file": "lean/VE/Service/CoreCheck.lean",
      "bug": "(found while building, kept as a check) the fold's judgment condition reads a soft rule through softContent only (guard and carve-outs), not its exception conditions: reads without exceptionFormulas",
      "test": "tests/test_judgments_chain.py::test_a_judgment_term_read_only_in_an_exception_makes_the_unit_open",
-     "result": "killed: with `++ exceptionFormulas rules u.content` removed from reads (service rebuilt and repinned), both parametrisations fail: ['CHECKED'] == ['OPEN'] (2 failed, 22 passed)"}
+     "result": "killed: with `++ exceptionFormulas rules u.content` removed from reads (service rebuilt and repinned), both parametrisations fail: ['CHECKED'] == ['OPEN'] (2 failed, 22 passed)"},
+    {"id": "g", "file": "lean/VE/Service/CoreCheck.lean",
+     "bug": "(review F5 round) the shell's table keeps every statement of a unit that does not assert its content: tableOf's `statements := if set == some true || (set.isNone && m == \"specified\") then all else all.filter (!·.reads.isEmpty)` became `statements := all`",
+     "test": "lean/VE/Service/CoreCheckExamples.lean:242 (#guard: a contextual unit with content is LABELLED)",
+     "result": "killed: lake build VE.Service.CoreCheckExamples exit 1 (CoreCheckExamples.lean:242:0, Expression); restored"},
+    {"id": "a2", "file": "lean/VE/Kernel/DocumentFold.lean",
+     "bug": "(review F5 round: bug (a) again on the fold without `asserted`) status's last branch `else if rows.all Row.ok then .checked else .opened` became `else if true then .checked else .opened`",
+     "test": "lean/VE/Kernel/DocumentFold.lean: theorem fold_checked_iff",
+     "result": "killed: lake build VE.Kernel.DocumentFold exit 1 (DocumentFold.lean:54:80, unsolved goals); restored"},
+    {"id": "h", "file": "ve/document/core.py",
+     "bug": "(review F1) the choices are not bound to every choice of the active sets: `_same(choices, expected)` dropped from bind_core_answer's choices requirement",
+     "test": "tests/test_kb2a_document.py::test_core_answer_coordinated_omissions_are_unavailable[a choice, its row and its statements omitted]",
+     "result": "killed: 1 failed, 13 passed; restored"},
+    {"id": "i", "file": "ve/document/core.py",
+     "bug": "(review F2) a soft rule of a unit's own content compared with the written rule exactly: `_soft_bound(st[\"rule\"], written, _same)` became `_same(st[\"rule\"], written)`",
+     "test": "tests/test_kb2a_document.py::test_core_answer_binds_explicit_soft_defaults",
+     "result": "killed: 5 failed (mode-strict, hard-False, alterable, rank-None, exception-None); restored"}
   ]
 }

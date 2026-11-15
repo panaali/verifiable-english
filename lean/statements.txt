@@ -24915,10 +24915,9 @@ theorem VE.Kernel.DocumentFold.fold_checked_iff
   ∀ (u : VE.Kernel.DocumentFold.UnitRow) (rows : List VE.Kernel.Row),
     VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.checked ↔
       u.statements ≠ [] ∧
-        VE.Kernel.DocumentFold.opens u = Bool.false ∧
-          VE.Kernel.DocumentFold.asserted u = Bool.true ∧ ∀ (r : VE.Kernel.Row), r ∈ rows → r.result.isOk = Bool.true
-  -- uses VE.Kernel.DocumentFold.Status.checked@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Stmt@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.statements@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.asserted@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
-  -- expr 3453371948
+        VE.Kernel.DocumentFold.opens u = Bool.false ∧ ∀ (r : VE.Kernel.Row), r ∈ rows → r.result.isOk = Bool.true
+  -- uses VE.Kernel.DocumentFold.Status.checked@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Stmt@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.statements@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
+  -- expr 372898948
 theorem VE.Kernel.DocumentFold.fold_reads_rows_only
   ∀ (p : VE.Kernel.Path) (elaborate : Lean.Json → Except String (List Lean.Json))
     (view : List (String × VE.Kernel.DocumentFold.Status) → Lean.Json) (table : List VE.Kernel.DocumentFold.UnitRow)
