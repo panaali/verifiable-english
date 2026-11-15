@@ -11,6 +11,7 @@ import unicodedata
 import pytest
 
 import test_safetyfw_usecases as base
+from tests.pinned_source import pinned_source
 
 RSP, LEAN_SERVICE = base.RSP, base.LEAN_SERVICE
 rsp_run, rsp_translation, rsp_vocabulary, rsp_stage0 = (base.rsp_run, base.rsp_translation, base.rsp_vocabulary,
@@ -1089,8 +1090,12 @@ def test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier():
 @pytest.mark.parametrize("predicate", sorted(FACTS_LEGEND_QUOTES))
 def test_facts_repair_legend_quote_is_verbatim_in_the_pinned_source(predicate):
     """(b) Each new legend wording is one double-quoted quote of the pinned source: its start and end pins and the
-    SHA-256 of the whole quote as measured on rsp-3.4.txt. A cut, a moved pin or one changed word fails."""
+    SHA-256 of the whole quote as measured on rsp-3.4.txt. A cut, a moved pin or one changed word fails. When the
+    pinned source is stored, the quote is also found in it (NFKC, the apostrophe written ')."""
     start, end, digest = FACTS_LEGEND_QUOTES[predicate]
     quotes = [q for q in re.findall(r'"([^"]+)"', _legend(predicate)) if q.startswith(start)]
     assert len(quotes) == 1 and quotes[0].endswith(end), (predicate, quotes)
     assert hashlib.sha256(quotes[0].encode()).hexdigest() == digest, (predicate, quotes[0])
+    if pinned_source("anthropic-rsp", skip=False) is not None:
+        source = unicodedata.normalize("NFKC", base.rsp_build.DEFAULT_SOURCE.read_text()).replace("’", "'")
+        assert quotes[0] in source, (predicate, quotes[0])
