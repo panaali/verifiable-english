@@ -316,6 +316,9 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
 - The kernel fold is not in `kernel_lines` while the `document` path is a candidate; it enters when the architect seat
   makes the path a kernel path.
 - kb-2a's own ties pass (its FOLLOW-UPS.md) is still open: the module was promoted, not tied.
+- The signature request (inbox/dri 20261114T185627Z) quoted trusted +268; the final figure is +283 (K +0, S +48, V +235):
+  `statementJson` is verdict-bearing (test_trust_budget), and `routed` and the closed vocabulary shape grew. DELTA row 5
+  itemises the final figure.
 
 FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final HEAD (1,022 mutants; partial record docs/kernel/kb-2a-b/trust-mutants-part1.json, 169 judged) until it exits 0, on a pool that shards it
 
