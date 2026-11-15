@@ -1,0 +1,14 @@
+{
+ "item": "translim-predicates",
+ "note": "PART 1 changes no product code (no Lean, Python or Rust product file). Each bug was planted locally, its test run and seen to fail, then restored: (a) and (b) are Lean builds of ve_service from a seeded source (git checkout -- lean/ afterwards, the shared build restored by lean-prep.sh, sha 068a6676 again), run with VE_LEAN_SERVICE=<seeded binary> and the seeded hash added to lean/checkers.lock for that run only (restored with git checkout); (c) is the restructure recipe, shown on the case's own run.py --check in a scratch copy and on the recipe's unit tests (file restored from a saved copy). Session 2026-11-15.",
+ "seeded_bugs": [
+  {"id": "a", "file": "lean/VE/Norms/Plain.lean", "change": "decodeRegulatedAllIn: `regs.length > 64` -> `regs.length >= 64` (off by one: the limit itself refused)",
+   "test": "tests/test_regulated_limit.py::test_plain_decoder_takes_the_limit_and_refuses_one_more[64-None]", "result": "1 failed, 15 passed"},
+  {"id": "b", "file": "lean/VE/Norms/Tree.lean", "change": "check: `T.regulated.length > 64` -> `> 65` (the 65th accepted), with its definitional twin lean/VE/NormDefaults/Check.lean checkSteps, CheckOK and check_iff moved to 65 so the build still proves",
+   "test": "tests/test_regulated_limit.py::test_elaborated_document_takes_the_limit_and_refuses_one_more[32-1-ResourceLimit: regulated predicates]", "result": "1 failed, 15 passed"},
+  {"id": "c1", "file": "docs/translim/translim-predicates/rsp_split.py", "change": "--leak: a split that moves assessed_in_report out of frame A without in_scope, the guard predicate of its rule f11-assess",
+   "test": "usecases/anthropic-rsp/run.py --check on a scratch copy (rsp_split.py <copy> --leak)", "result": "exit 1: UnknownSymbol: Unknown predicate 'in_scope'"},
+  {"id": "c2", "file": "docs/translim/translim-predicates/rsp_split.py", "change": "links(): a guard's regulated predicate no longer links it to the rule's predicate",
+   "test": "tests/test_regulated_limit.py::test_split_recipe_refuses_a_split_that_breaks_a_link[moved0-the split separates b from c]", "result": "2 failed, 3 passed (with test_split_recipe_moves_whole_components_only)"}
+ ]
+}
