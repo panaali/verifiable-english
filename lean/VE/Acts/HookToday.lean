@@ -1,3 +1,4 @@
+-- ve-layer: 2 (the equality theorems of the layer-2 norms decoders' acts hook: it imports only VE.Acts.Hook)
 import VE.Acts.Hook
 
 /-! The decoders' equality theorems of the acts hook (kb-4a; docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4).

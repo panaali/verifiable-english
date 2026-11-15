@@ -13,7 +13,7 @@
   {
    "definition": "VE.Norms.Wire.decodeNormsEnvironment",
    "operator": "bool-flip",
-   "reason": "the default arguments of today's name (`displayConstants := true`, `acts := false`, `joined := false`, lean/VE/Acts/Hook.lean:39-40): Lean elaborates a default into every call that omits it, so each check that refutes a flip changes its own term and the tool counts it as UNKNOWN ('Lean elaborates it otherwise'); the guards of lean/VE/Acts/HookExamples.lean on `decodeNormsEnvironment envA`, `decodeNormsEnvironment joinedE (acts := true)` and `decodeNormsEnvironment shown` refute the three flips"
+   "reason": "the default arguments of today's name (`displayConstants := true`, `acts := false`, `joined := false`, lean/VE/Acts/Hook.lean:40-41): Lean elaborates a default into every call that omits it, so each check that refutes a flip changes its own term and the tool counts it as UNKNOWN ('Lean elaborates it otherwise'); the guards of lean/VE/Acts/HookExamples.lean on `decodeNormsEnvironment envA`, `decodeNormsEnvironment joinedE (acts := true)` and `decodeNormsEnvironment shown` refute the three flips"
   },
   {
    "definition": "VE.Norms.Wire.decodeSource",

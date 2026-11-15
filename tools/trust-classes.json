@@ -17616,6 +17616,7 @@
         "VE.WireContract.Hooks.Acts.around",
         "VE.WireContract.Hooks.Acts.caseOf",
         "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.joinedEnv",
         "VE.WireContract.Hooks.Acts.memberOf",
         "VE.WireContract.Hooks.Acts.phraseOf",
         "VE.WireContract.Hooks.Acts.phrasesOf",
@@ -22639,12 +22640,6 @@
         "VE.Service.HookExamples.err",
         "VE.Service.HookExamples.flagRefusal",
         "VE.Service.HookExamples.flaggedEnv"
-      ]
-    },
-    "VE/WireContract/Hooks/HookExamples.lean": {
-      "T": [
-        "VE.WireContract.Hooks.HookExamples.actsEnv",
-        "VE.WireContract.Hooks.HookExamples.desc"
       ]
     }
   }

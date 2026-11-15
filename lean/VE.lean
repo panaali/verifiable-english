@@ -277,7 +277,6 @@ import VE.Acts.HookExamples
 import VE.Alternatives.HookExamples
 import VE.NormDefaults.HookExamples
 import VE.Service.HookExamples
-import VE.WireContract.Hooks.HookExamples
 import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
