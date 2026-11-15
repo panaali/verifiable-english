@@ -7,7 +7,7 @@
     "D": 50,
     "G": 183,
     "C": 0,
-    "P": 142,
+    "P": 155,
     "T": 0,
     "o": 40,
     "D[V]": 38,
@@ -19,7 +19,7 @@
     "tied": 199,
     "unclassified": 0,
     "trusted": 6,
-    "lines": 421
+    "lines": 434
    },
    "declarations": [
     {
@@ -261,11 +261,18 @@
      "lines": 13
     },
     {
+     "name": "VE.Service.CoreCheck.facts_round_trip",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 29
+    },
+    {
      "name": "VE.Service.CoreCheck.core_facts_round_trip",
      "class": "P",
      "tied": false,
      "trusted": false,
-     "lines": 42
+     "lines": 26
     },
     {
      "name": "VE.Service.CoreCheck.document_core_sound",
