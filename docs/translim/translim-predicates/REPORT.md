@@ -331,7 +331,9 @@ note and the seeded-bug record.
 4. PASS: Lean and Rust agree at 64 and 65 (`test_rust_mirror_takes_the_limit_and_refuses_one_more` against the
    Lean site tests). No Python mirror exists.
 5. N.A.: no field is read from a new Lean answer.
-6. PASS, pending: the final selected run is on committed HEAD (below). The chain runs the gate.
+6. PASS: the final selected run, `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, ran on committed HEAD
+   `4b4c8c664e`: GitHub Actions run `translim-predicates-4b4c8c66-t706198`, 3 shards, exit 0, 717 s. The chain
+   runs the gate; only this report changed after the run.
 7. PASS: no DELTA row (RESTRUCTURE has none, DRI item 2) and no trust growth (no Lean change).
 8. N.A.: no user-visible output changes. Every changed path is docs/ or tests/ (`git diff --numstat` above).
 9. PASS: `tools/select_tests.py --base <merge-base>` selects `tests/test_regulated_limit.py` and 31 others, not
