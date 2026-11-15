@@ -2756,6 +2756,20 @@
    "reason": "kb-3 (kb-3a): the premise slot of the soft route on the wire (new Lean-owned behaviour): S +3 (VE/Compose/SlotWire.lean: NoFacts), V +62 (ResponseShape/Schemas/SoftNorms.lean +37: the slot_certificate, slot_witness and slot_packages shapes, their shared field lists and factsCount; VE/SoftNorms/Run.lean +25: the slot-certificate and slot-conflict branches of runSoftKind), K +0; the decoders, the replays' verdict fields and the answers are tied (decodeFacts_ok, factsModel_sat, decodeSlotPackage_nil, slot_wire_conflict_sound, slot_wire_acceptance, slot_wire_conflict_witness_sound, slot_wire_empty, slot_wire_certificate, slot_wire_conflict)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-3a, 2026-11-13",
    "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
+  },
+  {
+   "class": "V",
+   "lines": 99,
+   "reason": "kb-4a: the acts hook of the norms decoder (decisions 2 and 5, row KB-4; Lean-owned behaviour: the plain decoder's own refusal of an environment from which acts@0 is read, and the norms mode's dispatch of such cases, including the deciding view, to today's runner): V +99, K +0, S +0 (VE/Acts/Hook.lean +37: ActsHook.acts, ActsHook.lexical, decodeNormsEnvironment, decodeFlaggedActs; VE/Norms/Wire.lean +36: ActsHook, ActsHook.plain and the hook's uses in decodeNormsEnvironmentWith, decodeSource and decodeFlagged; VE/Norms/Run.lean +26: runCaseActs, decidesActs, decoderOf, runCaseActsRouted, runCaseRouted); the equality theorems are VE.Acts.HookToday and VE.Acts.HookTwins, a ties pass is asked in docs/kernel/kb-4a/FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-4a, 2026-11-14",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "kb-4a F1: VE/Service/FamilyNorms.lean +1 V line in existing folCase, making FOL-view witness replay use the same acts decoder as source decoding; exercised by tests/test_stage2_norms.py::test_family_norms_fol_witness_uses_the_acts_decoder (pre-fix acts cases failed); ties pass already requested in docs/kernel/kb-4a/FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-4a F1, 2026-11-15",
+   "commit": "e51bec73017c5ff8214b4784b6a6c7d00e58c6ba"
   }
  ]
 }

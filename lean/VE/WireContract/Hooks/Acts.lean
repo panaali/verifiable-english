@@ -1,3 +1,4 @@
+import VE.Acts.Hook
 import VE.Norms.Wire
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Tables.Acts
@@ -22,7 +23,7 @@ open VE.WireContract.Hooks.Norms (environmentOf message)
 /-- 1.1d: the norms route's environment decoder reading `acts@0`, then `decodeSource`'s `definitions@0` check; a joined
 act is read by the act check, as the environment row reads it (ap-3dc). -/
 def decoded (environment : Json) : Except String Unit := do
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment environment (acts := true) (joined := true)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts environment (acts := true) (joined := true)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
 
@@ -129,6 +130,17 @@ def around : List String := ["anna", "zora"]
 -- a limit that is none of the three, and `definitions@0`
 #guard memberOf (envOf (phrasesOf maxPhrases ++ [phraseOf (maxPhraseBytes + 1)]) (actOf 20)) == some "1.1a"
 #guard memberOf (envOf [] ("enjoy " ++ actOf maxActBytes)) == some "1.1d"
+-- kb-4a: the hook reads `acts@0` (`ActsHook.acts`, `acts := true`) and admits a joined act under its frames
+-- (`joined := true`): A6 of act-phrases 11.1 with the frame `subjected … to`, which splits at `to`
+def joinedEnv : Json :=
+  let fx := ["cruel, inhuman or degrading treatment or punishment"]
+  let j := envOf fx "{0} be subjected to torture or to cruel, inhuman or degrading treatment or punishment"
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "acts" (Json.mkObj [("fixed", toJson fx),
+    ("frames", Json.arr #[Json.mkObj [("head", "subjected"), ("markers", toJson ["to"]), ("split", toJson ["to"]),
+      ("modifiers", toJson ([] : List String))]]), ("adverbs", toJson ([] : List String))]))
+#guard (decoded joinedEnv).isOk
+#guard (decoded (envOf [] "{0} enjoy a fair hearing")).isOk
 #guard memberOf (envOf ["seek and"] (actOf (maxActBytes + 1))) == some "1.1d"
 #guard memberOf (envOf [] "{0} seek and enjoy asylum") == some "1.1d"
 #guard memberOf (envOf ["equal pay"] (actOf 20) (others := (List.range 64).map (s!"q{·}"))) == some "1.1d"

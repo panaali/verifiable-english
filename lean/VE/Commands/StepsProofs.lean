@@ -416,7 +416,8 @@ theorem decoded_actIn {j : Lean.Json} {se : SpeechEnvironment} (hd : decodeSpeec
     ∃ ps fx k raw, VE.Norms.Wire.canonicalActIn ps fx g.name k raw = .ok a := by
   obtain ⟨s, -, -, -, -, hne, -⟩ := VE.SpeechActs.Wire.decode_steps hd
   generalize se.ne = ne at hne hg
-  unfold VE.Norms.Wire.decodeNormsEnvironment at hne
+  rw [VE.Acts.HookToday.decodeNormsEnvironment_acts] at hne
+  unfold VE.Acts.HookToday.Today.decodeNormsEnvironment at hne
   repeat' (first
     | (cases hne; done)
     | (have h' := VE.Order.ProfileGate.bind_ok hne; clear hne; obtain ⟨_, _, hne⟩ := h')

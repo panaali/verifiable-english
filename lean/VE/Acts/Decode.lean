@@ -1,5 +1,6 @@
 import VE.Acts.Elaborate
 import VE.Acts.Wire
+import VE.Acts.Hook
 
 /-! The decoder after AP-3 (docs/spec/act-phrases.md 6.4): the decoded source, unchanged, and beside it the elaborated
 document and its map.
@@ -50,7 +51,7 @@ def plainU (src : VE.Norms.Wire.Source) : VE.NormDefaults.Wire.SourceU :=
 /-- `decodeElaboratedU` on the norms route, which admits `data@0` flags; `decodeSourceU`'s second branch does not
     and takes no parameter (6.4). -/
 def decodeElaboratedFlagged (environment norms : Json) : Except String ElaboratedU :=
-  VE.Norms.Wire.decodeSource environment norms (flags := true) >>= (elaborateSource environment <| plainU ·)
+  VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms (flags := true) >>= (elaborateSource environment <| plainU ·)
 
 /-- A vocabulary's predicates with each part declared, and no split source. -/
 def splitPredicates (P : List (String × List String)) (M : SplitMap) : List (String × List String) :=
