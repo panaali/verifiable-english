@@ -1,0 +1,51 @@
+{
+ "item": "kb-9",
+ "note": "Each bug was planted in the committed code, shown to fail the named check, and removed (git status clean after each). Lean bugs fail the build of the theorem's module; Python bugs fail the named tests.",
+ "mutants": [
+  {
+   "id": "a",
+   "language": "lean",
+   "file": "lean/VE/SoftNorms/Selected.lean",
+   "behaviour": "the runner reports facts: true unconditionally",
+   "edit": "runSelected: factsFields (factsSent j) (factsAt P M) ... -> factsFields (factsSent j) true ...",
+   "test": "lake build VE.SoftNorms.SelectedSound",
+   "result": "error: VE/SoftNorms/SelectedSound.lean:128:112: unsolved goals (runSelected_answer, the step of soft_wire_selected_facts that states facts = factsAt P M)"
+  },
+  {
+   "id": "b",
+   "language": "lean",
+   "file": "lean/VE/SoftNorms/Selected.lean",
+   "behaviour": "the runner evaluates the facts in a model decoded a second time over the source predicates' vocabulary instead of M",
+   "edit": "runSelected: let M2 <- (j.getObjVal? \"model\" >>= VE.Bridge.decodeModelData src.se.ne.rv.modelVocabulary).map (.toModel); factsAt P M2",
+   "test": "lake build VE.SoftNorms.SelectedSound",
+   "result": "error: VE/SoftNorms/SelectedSound.lean:136:2: Tactic `subst` failed (runSelected_answer: the answer is no longer SelectedAnswerWith ... (factsAt P M))"
+  },
+  {
+   "id": "c",
+   "language": "python",
+   "file": "ve/softnorms.py",
+   "behaviour": "Python drops the last fact before sending",
+   "edit": "facts_wire: for f in facts -> for f in list(facts)[:-1]",
+   "test": "tests/test_kb9_selected_facts.py::test_the_last_fact_is_sent_and_read",
+   "result": "10 failed, including test_the_last_fact_is_sent_and_read (a planted false last fact no longer makes the flag false) and test_the_genuine_answer_with_facts_is_bound_and_every_fact_is_sent"
+  },
+  {
+   "id": "d",
+   "language": "python",
+   "file": "ve/softnorms.py",
+   "behaviour": "bind_selected accepts an answer without the facts field when facts were sent",
+   "edit": "bind_selected: flags = tuple(flag for flag in flags if flag in row) before the field-set check",
+   "test": "tests/test_kb9_selected_facts.py::test_a_forged_flag_is_unavailable[facts dropped]",
+   "result": "4 failed: [facts dropped], [coherent dropped], [both dropped], [facts dropped beside empty facts]"
+  },
+  {
+   "id": "e",
+   "language": "python",
+   "file": "usecases/anthropic-rsp/run.py",
+   "behaviour": "the switched premise check ignores a false facts flag",
+   "edit": "check_premises: selection_flags(...)[\"facts\"] is not True -> is None",
+   "test": "tests/test_kb9_selected_facts.py::test_a_harness_premise_check_reads_the_flag_of_the_selection_case[anthropic-rsp]",
+   "result": "1 failed (no AssertionError for the false premise block b2)"
+  }
+ ]
+}
