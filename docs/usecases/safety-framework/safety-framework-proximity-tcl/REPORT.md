@@ -89,7 +89,24 @@ Existing tests changed to follow the three moves (the moves are this item's subj
   same, and no test was taken out.
 
 Runs while iterating: the new file, test_fsf_case_alternatives.py, and the three touched test_safety_framework ids
-gave 15 passed. Also `run.py --check` and `build_document.py --check`. The final selected run is at the end.
+gave 15 passed. Also `run.py --check` and `build_document.py --check`.
+
+### Selected run and its one failure
+
+The first selected run (`mac-pytest.sh --select`, on 77c640ffea, committed, on GitHub Actions in 4 shards, 980 s)
+had one failure: `tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[fsf]`. The
+pinned FSF norm blocks (`tests/data/norm-blocks/fsf.jsonl`) hold every rule block of rules.d1.ve, and f6-tcl was not
+there yet. The fix follows fsf-fidelity-fix (429e7c0192, 15b7da9ada) and fix-2 (0cadd1f6c7):
+- `capture_blocks.capture` for FSF only, keeping the numbered-rule blocks: 45 rows at d255cbd9f4's parent
+  (77c640ffea). f6-tcl is new, Python reads it with no refusal, and every other row is unchanged apart from its
+  commit. tests/test_english_statement_blocks.py now pins fsf 45, and the Lean-side totals are 122 (with f21)
+  and 105 strict. `-k pinned` (4 tests, Lean included) passed: Lean reads f6-tcl as Python does.
+- The saved W1 delta evidence pinned the old block list, so `docs/en-e3-norm/en-2/w1_delta.py --workers 8` was
+  rerun at d255cbd9f4 on a clean tree (29 min). All 121 pinned blocks agree. Suite counts and every non-agree row
+  are unchanged. Soft-rights has 1 more record, which agrees, and 65 suite units are derived from the map at
+  e51bec7301. The en-2c REPORT cites the new numbers and says why it was rerun.
+  `tests/test_english_statement_shadow.py -k "delta or report"` gave 7 passed.
+- After that, the failed id and the tests of that change were rerun on the Mac runner (result below).
 
 ## Seeded bugs (each planted alone, shown failing, restored)
 
@@ -110,9 +127,10 @@ Lean and Rust: no product code changed. The changed Python is use-case code (bui
   results/spans/coverage). Checklist 13a applies to trusted Lean growth, and this item changes no Lean file and no
   trusted-core file. The task does not ask for a trust_mutants record.
 
-SIZE: 5 product (build_document.py 3, rules.d1.ve 2), 130 tests, 40 other hand-written lines (PLAN 17, README 23),
-plus this REPORT. Generated: results.json, spans.json, coverage.json (git diff --numstat against e51bec7301, added
-plus deleted).
+SIZE: 5 product (build_document.py 3, rules.d1.ve 2), 144 tests, 59 other hand-written lines (PLAN 17, README 23,
+en-2c REPORT 19), plus this REPORT. Generated or captured: results.json, spans.json, coverage.json,
+tests/data/norm-blocks/fsf.jsonl, docs/en-e3-norm/en-2/delta.json and DELTA.md (git diff --numstat against
+e51bec7301, added plus deleted).
 
 ## Notes for the DRI
 
