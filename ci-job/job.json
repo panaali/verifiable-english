@@ -1,0 +1,15 @@
+{
+ "job": "armsh-cand-safety-framework-proximity-tcl-da0822ae-t749469-cold",
+ "head": "7cbec4b340b804cc41f3dcd8345dd7a8f5695941",
+ "argv": [
+  "armsh-cand-safety-framework-proximity-tcl-da0822ae-t749469-cold",
+  "7cbec4b340b804cc41f3dcd8345dd7a8f5695941",
+  "fe02c47af28e6575a4e5705c66ce495f62e45a70",
+  "-",
+  "-",
+  "4",
+  "-",
+  "-"
+ ],
+ "shadow_of": "armsh-cand-safety-framework-proximity-tcl-da0822ae-t749469"
+}
