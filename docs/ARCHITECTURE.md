@@ -38,11 +38,13 @@ Lean decides meaning and acceptance; Python reads files, relays requests to Lean
 proposes search candidates (models, proofs) that Lean checks before anything is reported (lean-first rule 3,
 decision A of 2026-10-08). That is the rule, and section 4 lists where it does not hold yet. For a norm document
 with soft rules, which covers every safety-framework use case, Lean now decides selection and completed outcomes
-(`soft-selected`, kb-10b) and gives each conflict verdict (`soft-conflict`, kb-10c); the exception left there is
-the conflict search: the search and prover that propose what Lean checks still build the conflict targets and
+(`soft-selected`, kb-10b). Lean's `soft-conflict` (kb-10c) gives the RSP and Preparedness conflict verdicts; the
+safety-framework harness uses it to confirm CONFLICT and takes CONFLICT-FREE from `refute`'s replayed entailment
+certificates (a cluster with no rules left is CONFLICT-FREE with no Lean call). The exception left there is the
+conflict search: the search and prover that propose what Lean checks still build the conflict targets and
 selection formulas in Python and evaluate them with Python's evaluator (section 4, *Norm documents with soft
 rules*). The per-answer ownership test ([docs/kernel/ownership.md](kernel/ownership.md), kb-10d) counts the keyed
-answers Lean decides: 100 of the RSP key's 126, 228 of Preparedness's 239, 241 of the safety framework's 262,
+answers Lean decides: 100 of the RSP key's 126, 228 of Preparedness's 239, 244 of the safety framework's 262,
 269 of eligibility's 269 and 0 of agent-policy's 42 (its harness reads a hard norm document's selection from
 Python).
 
@@ -153,12 +155,16 @@ inward. A package's row places every module under it; a module no row places fai
   the soft rules (`ve/softnorms.py` → `ve/backends/soft_relay.py`). The result is a `SoftenedNormDocument`, and
   `_lean_route` sends it to no Lean norms route because it is not exactly a `NormDocument`. Which rules a case
   selects and the completed outcome there are Lean's `soft-selected` answers (`SoftenedNormDocument.selected_rules`
-  and `outcome_at`, kb-10b), and the harnesses' conflicts go through `ve.soft_route.decide_soft_conflict`, whose
-  CONFLICT and CONFLICT-FREE are Lean's `soft-conflict` answers (kb-10c). What still runs in Python is the conflict
-  search: `decide_soft_conflict`'s witness search (`norms._find_conflict`) and prover (`norms._prove_targets`)
-  build the conflict-target and selection formulas in `ve/norms.py` and evaluate them with
-  `ve.evaluate._Evaluator` to propose what Lean checks. The per-answer trace of the five keys
-  ([docs/kernel/ownership.md](kernel/ownership.md), kb-10d) finds those decision functions under every conflict
+  and `outcome_at`, kb-10b). The RSP and Preparedness harnesses' conflicts go through
+  `ve.soft_route.decide_soft_conflict` with `prove=True`; there both conflict answers, CONFLICT and CONFLICT-FREE,
+  come from Lean's `soft-conflict` replay (kb-10c). The safety-framework harness (`cluster_conflict`) uses `decide_soft_conflict` to confirm CONFLICT
+  and to fill the side field `w1_without_premises`; its CONFLICT-FREE is `refute`'s, a replayed entailment
+  certificate over goals Python builds from `conflict_targets` and the harness's premises, and a cluster with no
+  rules left is CONFLICT-FREE with no Lean call. What still runs in Python is the conflict search:
+  `decide_soft_conflict`'s witness search (`norms._find_conflict`) and prover (`norms._prove_targets`) build the
+  conflict-target and selection formulas in `ve/norms.py` and evaluate them with `ve.evaluate._Evaluator` to
+  propose what Lean checks, and the safety-framework harness builds its `refute` goals from the same targets.
+  The per-answer trace of the five keys ([docs/kernel/ownership.md](kernel/ownership.md), kb-10d) finds those decision functions under every conflict
   answer and under no selection, outcome, threshold, date or gap answer. The public `evaluate()` is Lean's.
   [Who computes the keyed answers](usecases/keyed-answers.md) has the path table and the saved harness counts.
 
