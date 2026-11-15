@@ -1,0 +1,200 @@
+........................................................................ [ 32%]
+........................................................................ [ 33%]
+........................................................................ [ 33%]
+........................................................................ [ 34%]
+........................................................................ [ 35%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+........................................................................ [ 37%]
+........................................................................ [ 38%]
+........................................................................ [ 39%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 41%]
+........................................................................ [ 42%]
+........................................................................ [ 42%]
+........................................................................ [ 43%]
+........................................................................ [ 44%]
+........................................................................ [ 44%]
+........................................................................ [ 45%]
+........................................................................ [ 45%]
+........................................................................ [ 46%]
+........................................................................ [ 46%]
+........................................................................ [ 47%]
+........................................................................ [ 48%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 52%]
+........................................................................ [ 52%]
+........................................................................ [ 53%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 61%]
+........................................................................ [ 62%]
+........................................................................ [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 71%]
+........................................................................ [ 72%]
+........................................................................ [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 78%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 84%]
+........................................................................ [ 85%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+.......................................F..........................       [100%]
+ve: English comparator: {"records": 3798, "excluded": 0, "planted": 0, "classes": {"agree": 3797, "diagnostic-code": 1}} (/tmp/ve-gate-rib_9miu/tmp/ve-english-comparator-0a0xnvlt)
+
+=================================== FAILURES ===================================
+____ test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses ____
+[gw0] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses():
+        """A module whose listed theorem's statement uses a path's subject imports the subject's module,
+        so its layer (`tools/layer_policy.py`) is at least the subject's: KB-7's `VE.Route.MeteredWire`
+        and `VE.SoftNorms.ElaborateSound` are layer 4, like `VE.Route.RunSound`. Seeded for review kb-7
+        F-ready1: without ElaborateSound's entry the module falls to layer 2 under its layer-4 runner."""
+        import layer_policy
+        module_of = dict(re.findall(r"^\S+ \w+ (\S+)@(\S+)$", inventory_path("lean/declarations.txt").read_text(), re.M))
+        pairs = {(path["name"], t, s) for path in REGISTRY["paths"] for t in path["theorems"] for s in path.get("subject", [])
+                 if f" {s}@{module_of[s]}" in STATEMENTS[t]}
+        assert ("softNorms", "VE.SoftNorms.Run.soft_wire_elaborate", "VE.SoftNorms.Run.runCase") in pairs
+        assert ("metered", "VE.Route.MeteredRun.runWith_sound", "VE.Route.MeteredRun.runWith") in pairs
+        low = sorted((name, module_of[t], layer_policy.lean_layer(module_of[t]), module_of[s], layer_policy.lean_layer(module_of[s]))
+                     for name, t, s in pairs if layer_policy.lean_layer(module_of[t]) < layer_policy.lean_layer(module_of[s]))
+>       assert low == []
+E       AssertionError: assert [('risk', 'VE...Risk.Run', 4)] == []
+E         
+E         Left contains 2 more items, first extra item: ('risk', 'VE.Risk.WireSound', 2, 'VE.Risk.Run', 4)
+E         Use -v to get more diff
+
+tests/test_kernel_closure.py:210: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_kernel_closure.py::test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses
+1 failed, 12737 passed in 1086.08s (0:18:06)
+[gate] slowest:    472.2 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+[gate] slowest:    385.1 s tests/test_stage2_standalone.py::test_every_corpus_model_and_environment_node_matches_frozen_python
+[gate] slowest:    233.4 s tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents
+[gate] slowest:    206.7 s tests/test_difffuzz.py::test_ci_run
+[gate] slowest:    164.8 s tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree
+[gate] slowest:    117.1 s tests/test_readings_s1_differential.py::test_all_generated_sets_lean_answers
+[gate] slowest:    105.6 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+[gate] slowest:     62.3 s tests/test_difffuzz.py::test_builtin_argument_sort_truth_table_agrees_on_every_profile_list
+[gate] slowest:     45.7 s tests/test_data_surface.py::test_1000_attribute_english_round_trips
+[gate] slowest:     31.4 s tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed
+[gate] slowest:     30.1 s tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh
+[gate] slowest:     23.5 s tests/test_readings_s1_differential.py::test_generated_sets_lean_answers
+[gate] slowest:     22.7 s tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+[gate] slowest:     21.5 s tests/test_df_e1.py::test_saved_item_bytes_equal_checked_renderers
+[gate] slowest:     21.4 s tests/test_speech_polar_lean.py::test_parse_speech_relays_every_routed_corpus_and_hunted_wording_unchanged[8]
+[gate] slowest:     20.7 s tests/test_speech_polar_lean.py::test_the_hunt_recording_is_the_generators_fixed_seed_sample
+[gate] slowest:     20.5 s tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after
+[gate] slowest:     20.4 s tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents
+[gate] slowest:     19.3 s tests/test_speech_polar_lean.py::test_parse_speech_relays_every_routed_corpus_and_hunted_wording_unchanged[12]
+[gate] slowest:     18.9 s tests/test_e1_prompts.py::test_candidates_are_valid_and_blind
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+e3631b07b20f68e715f6985f61cc2282557ce074
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree e3631b07b20f68e715f6985f61cc2282557ce074
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob a19366f7dabd49f99bd9c978ff256c3d03b7d2cd, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 12737 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_kernel_closure.py::test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses def test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses():
+        """A module whose listed theorem's statement uses a path's subject imports the subject's module,
+        so its layer (`tools/layer_policy.py`) is at least the subject's: KB-7's `VE.Route.MeteredWire`
+        and `VE.SoftNorms.ElaborateSound` are layer 4, like `VE.Route.RunSound`. Seeded for review kb-7
+        F-ready1: without ElaborateSound's entry the module falls to layer 2 under its layer-4 runner."""
+        import layer_policy
+        module_of = dict(re.findall(r"^\S+ \w+ (\S+)@(\S+)$", inventory_path("lean/declarations.txt").read_text(), re.M))
+        pairs = {(path["name"], t, s) for path in REGISTRY["paths"] for t in path["theorems"] for s in path.get("subject", [])
+                 if f" {s}@{module_of[s]}" in STATEMENTS[t]}
+        assert ("softNorms", "VE.SoftNorms.Run.soft_wire_elaborate", "VE.SoftNorms.Run.runCase") in pairs
+        assert ("metered", "VE.Route.MeteredRun.runWith_sound", "VE.Route.MeteredRun.runWith") in pairs
+        low = sorted((name, module_of[t], layer_policy.lean_layer(module_of[t]), module_of[s], layer_policy.lean_layer(module_of[s]))
+                     for name, t, s in pairs if layer_policy.lean_layer(module_of[t]) < layer_policy.lean_layer(module_of[s]))
+>       assert low == []
+E       AssertionError: assert [('risk', 'VE...Risk.Run', 4)] == []
+E         
+E         Left contains 2 more items, first extra item: ('risk', 'VE.Risk.WireSound', 2, 'VE.Risk.Run', 4)
+E         Use -v to get more diff
+
+tests/test_kernel_closure.py:210: AssertionError
