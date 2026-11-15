@@ -25,6 +25,10 @@ Each distinct (document, model, prove) question is asked once; every call is lis
 The report (docs/usecases/safetyfw/<case>/kb10-conflict-shadow.json) is saved evidence that no test recomputes.
 
     uv run python usecases/safetyfw_conflict_shadow.py anthropic-rsp docs/usecases/safetyfw/anthropic-rsp/kb10-conflict-shadow.json
+
+Since kb-10c step (5) the harnesses call `ve.soft_route.decide_soft_conflict` and no longer `check_conflict`, so
+a run on a later commit has nothing to wrap; the script is kept as the record of how the saved evidence was made
+(on 26358508f, before the switch).
 """
 from __future__ import annotations
 
