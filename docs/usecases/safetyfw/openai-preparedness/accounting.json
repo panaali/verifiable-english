@@ -1136,11 +1136,7 @@
     "risk_paths",
     "safeguard_selection"
    ],
-   "unaccounted": [
-    "proces",
-    "select",
-    "use"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We use the following process to select safeguards for a deployment",
@@ -1442,17 +1438,7 @@
     "third_party_available",
     "third_party_evaluation"
    ],
-   "unaccounted": [
-    "3",
-    "based",
-    "deploy",
-    "describ",
-    "example",
-    "present",
-    "report",
-    "result",
-    "work"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "(as described in Section 3.1)",
@@ -2965,6 +2951,13 @@
    "problems": []
   }
  ],
+ "collections": [
+  {
+   "id": "CASES",
+   "entries": [],
+   "problems": []
+  }
+ ],
  "totals": {
   "blocks": 100,
   "blocks_with_loss": 15,
@@ -2980,8 +2973,8 @@
    "restates": 93,
    "rule": 20
   },
-  "unaccounted_words": 539,
-  "blocks_with_unaccounted_words": 75,
+  "unaccounted_words": 527,
+  "blocks_with_unaccounted_words": 73,
   "quotes": 117,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
