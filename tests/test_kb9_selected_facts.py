@@ -174,3 +174,54 @@ def test_flags_need_the_soft_source():
     hand = SoftenedNormDocument.__new__(SoftenedNormDocument)
     with pytest.raises(CheckerUnavailable, match="soft source"):
         hand.selection_flags(MODEL, facts=[])
+
+
+# ---------------------------------------------------------------------------------------------------
+# The harnesses' premise check (anthropic-rsp, openai-preparedness): Lean's flag, the text as before.
+
+def _harness(name):
+    import importlib.util
+    import sys
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[1] / "usecases" / name / "run.py"
+    sys.path.insert(0, str(path.parent))
+    spec = importlib.util.spec_from_file_location(f"kb9_{name.replace('-', '_')}", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class _Block:
+    def __init__(self, id_):
+        self.id = id_
+
+
+@pytest.mark.parametrize("name", ["anthropic-rsp", "openai-preparedness"])
+def test_a_harness_premise_check_reads_the_flag_of_the_selection_case(lean, monkeypatch, name):
+    import importlib
+    import ve.softnorms as softnorms
+    evaluation = importlib.import_module("ve.evaluate")  # the module (`ve.evaluate` the attribute is the function)
+    harness = _harness(name)
+    # Kept answers are per process: facts no other test keys on, one list per harness.
+    first = (SOME_V, NOT_V_AND_W) if name == "anthropic-rsp" else (NOT_V_AND_W, SOME_V)
+    blocks = [(_Block("b1"), first), (_Block("b2"), (NOT_V_AND_W, EVERY_W))]
+    monkeypatch.setattr(harness, "selected_facts", lambda choice: blocks if choice.get("RS3o") == "bad" else blocks[:1])
+    monkeypatch.setattr(harness, "model", lambda doc, case: MODEL)
+    monkeypatch.setattr(harness, "atoms", lambda *args: frozenset())
+    monkeypatch.setattr(evaluation, "evaluate", lambda *args, **kw: pytest.fail("a per-formula evaluation"))
+    calls = []
+    relay = softnorms._relay_run
+    monkeypatch.setattr(softnorms, "_relay_run", lambda request: calls.append(request) or relay(request))
+    doc = document()
+    good, bad = {"RS3o": "good", "RS3i": "x", "RS2": "good"}, {"RS3o": "bad", "RS3i": "x", "RS2": "bad"}
+    case_ = {"id": "c"} if name == "anthropic-rsp" else frozenset({("v", "b")})
+    facts = harness.check_premises(doc, case_, good)
+    assert facts == first
+    elaborated_rules = doc.elaborated.selected_rules("x_required", MODEL, ("c",), facts=facts)
+    assert [r.name for r in elaborated_rules] == ["d"]
+    assert [c["kind"] for c in calls if c["kind"] == "soft-selected"] == ["soft-selected"]  # one case: both answers
+    case_bad = {"id": "c2"} if name == "anthropic-rsp" else frozenset({("w", "a")})
+    text = ("case c2 does not satisfy premise b2: Violated" if name == "anthropic-rsp"
+            else "case model does not satisfy premise b2: Violated")
+    with pytest.raises(AssertionError, match=f"^{text}$"):
+        harness.check_premises(doc, case_bad, bad)
