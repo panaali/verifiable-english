@@ -25,7 +25,6 @@
 - `tests/test_kb10b_switch.py` — kb-10b steps (2)-(4): a soft document's selected rules and completed outcomes are Lean's `soft-selected` answers.
 - `tests/test_kb10c_conflict_shadow.py` — The kb-10c conflict shadow (`usecases/safetyfw_conflict_shadow.py`): it records Python's `check_conflict` status unchanged and pairs it with the soft route's a…
 - `tests/test_kb10c_soft_conflict.py` — `ve.soft_route.decide_soft_conflict` (kb-10c): `check_conflict` on a soft document decided by Lean's soft route.
-- `tests/test_kb2a_document.py` — kb-2a-b: the document mode on the core document (the architect seat's design for kb-2a, section 3; DRI item 6).
 - `tests/test_kernel_closure.py` — The kernel boundary's measuring tool (docs/spec/kernel-boundary.md, sections 2 and 6).
 - `tests/test_keyed_answers_authority.py` — keyed-wording F1: docs say who computes the keyed answers of a soft-rule norm document, and that is true.
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
@@ -82,3 +81,5 @@
 - `tests/test_metered_profile.py` — The `metered` mode checks the norms profile of its model itself (kb-validators part 1, decision D13).
 - `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
 - `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
+- `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
+- `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
