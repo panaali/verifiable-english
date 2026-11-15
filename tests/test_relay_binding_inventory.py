@@ -314,6 +314,10 @@ INVENTORY = {
         "results[].selected": lean("the rules whose expanded selection formula holds (selectedAt)"),
         "results[].selected[]": lean("a rule Lean selects; bound to the document's rules on the predicate"),
         "results[].outcome": lean("the completed outcome (outcomeAt)"),
+        # kb-9: present exactly when the case sent `facts` (bound: `bind_selected`); their values are Lean's
+        # (`soft_wire_selected_facts`); retyped, dropped and added in tests/test_kb9_selected_facts.py.
+        "facts": lean("whether every fact sent is true in the model (factsAt)"),
+        "coherent": lean("whether every coherence conjunct is true in the model (coherentAt)"),
     },
     "rights-admission": _ADMISSION,
 }

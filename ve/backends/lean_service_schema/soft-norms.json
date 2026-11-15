@@ -372,10 +372,14 @@
       "type": "object"
     },
     "selected": {
-      "$comment": "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt).",
+      "$comment": "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt). Exactly when the case sent facts (kb-9): facts, whether every fact is true in the model (factsAt), and coherent, whether every coherence conjunct is (coherentAt); both reported, never a refusal.",
       "additionalProperties": false,
+      "else": {"not": {"anyOf": [{"required": ["facts"]}, {"required": ["coherent"]}]}},
+      "if": {"x-case": {"required": ["facts"]}},
       "properties": {
         "background": {"type": "boolean"},
+        "coherent": {"type": "boolean"},
+        "facts": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "results": {
           "minItems": 1,
@@ -398,6 +402,7 @@
         "status": {"const": "ok"}
       },
       "required": ["id", "status", "background", "results"],
+      "then": {"required": ["facts", "coherent"]},
       "type": "object"
     },
     "slot_certificate": {

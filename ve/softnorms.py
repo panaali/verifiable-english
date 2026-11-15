@@ -232,9 +232,21 @@ def base_predicate_declaration(declaration):
             if key not in ("regulated", "instruction_of")}
 
 
-def selected_at(soft_document, model, queries, *, run=None):
+def facts_wire(facts):
+    """The `facts` member of a case (kb-3, kb-9): closed formulas over the regenerated base vocabulary, a list
+    sent as given for Lean to decode or refuse; a Python formula AST is written by `encoded_formula`, the
+    encoder of every formula a case sends."""
+    from .backends.lean_runner import encoded_formula
+    return [f if f is None or isinstance(f, (list, dict, str, int, float, bool)) else encoded_formula(f)
+            for f in facts]
+
+
+def selected_at(soft_document, model, queries, *, run=None, facts=None):
     """Lean's `soft-selected` answer: for each query `(predicate, tuple)` of the base `model`, the rules
     selected there (in rule order) and the completed outcome, with the model's soft `background` flag.
+    With `facts` (a list, possibly empty; `facts_wire`), the answer also has `facts` (every fact is true in the
+    model) and `coherent` (no colliding pair of default rules is selected at one tuple), read in the same model
+    as the rules (kb-9: one case, so the flags and the rules are about one model by Lean's theorem).
 
     `model` is a finite model or its wire dictionary over the regenerated base vocabulary; `queries` is
     a non-empty list of `{"predicate": p, "tuple": [ids]}` objects or `(p, ids)` tuples, sent as given. The answer is checked
@@ -247,6 +259,8 @@ def selected_at(soft_document, model, queries, *, run=None):
     case = {"id": "soft-selected", "kind": "soft-selected", "environment": soft_document.env.to_dict(),
             "norms": norms, "model": model.to_dict() if hasattr(model, "to_dict") else model,
             "queries": sent}
+    if facts is not None:
+        case["facts"] = facts_wire(facts)
     row = (run or _relay_run)(case)
     try:
         return bind_selected(row, case)
@@ -263,12 +277,16 @@ def _query(query):
 
 
 def bind_selected(row, case):
-    """The `soft-selected` row bound to the `case` it answers: its id, its queries and its rules."""
+    """The `soft-selected` row bound to the `case` it answers: its id, its queries and its rules; `facts` and
+    `coherent` exactly when the case sent `facts`, each a bool."""
     sent, norms = case["queries"], case["norms"]
-    if type(row) is not dict or set(row) != {"id", "status", "background", "results"}:
+    flags = ("facts", "coherent") if "facts" in case else ()
+    if type(row) is not dict or set(row) != {"id", "status", "background", "results", *flags}:
         raise ValueError('unexpected soft selection fields')
     if row["id"] != case["id"] or row["status"] != "ok" or type(row["background"]) is not bool:
         raise ValueError('mistyped soft selection')
+    if any(type(row[flag]) is not bool for flag in flags):
+        raise ValueError('mistyped facts or coherent flag')
     results = row["results"]
     if type(results) is not list or len(results) != len(sent):
         raise ValueError('not one result per query')
@@ -291,7 +309,7 @@ def bind_selected(row, case):
             raise ValueError('mistyped outcome')
         bound.append({"predicate": query["predicate"], "tuple": list(query["tuple"]),
                       "selected": list(selected), "outcome": result["outcome"]})
-    return {"background": row["background"], "results": bound}
+    return {"background": row["background"], **{flag: row[flag] for flag in flags}, "results": bound}
 
 
 
@@ -302,31 +320,58 @@ class SoftenedNormDocument(NormDocument):
     there (`outcome_at`) are Lean's answers (`soft-selected`, relayed by `selected_at` below)
     when the document was built by `SoftNormDocument`, which keeps its soft source as `_soft_source`.
     One Lean call per document and model answers every query that pair can be asked (`_selection_queries`)
-    and the bound answers are kept per model, identified by its `to_dict` JSON. A query over Lean's query
+    and the bound answers are kept per model, identified by its `to_dict` JSON, and per `facts` (kb-9), identified
+    by their encoded bytes: the facts are sent in the same case, so `selection_flags` reads `facts` and `coherent`
+    from the answer the rules were read from. A query over Lean's query
     limit (`ResourceLimit`) is asked again per predicate, then alone; nothing is truncated or answered by
     Python. A SoftenedNormDocument built by hand, without its soft source, keeps Python's path
     (`NormDocument.selected_rules`, and `outcome` under Python's evaluator); no keyed harness builds one."""
 
-    def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000, nary_atoms=False):
+    def selected_rules(self, predicate, model, values, *, max_evaluations=1_000_000, nary_atoms=False, facts=None):
         """The rules selected at `values` of `predicate` in the base `model`, in rule order: Lean's answer,
-        or Python's for a document without its soft source (see the class)."""
+        or Python's for a document without its soft source (see the class). `facts` selects the kept answer
+        whose case sent them (`selection_flags`)."""
         source = self.__dict__.get("_soft_source")
         if source is None:
+            self._no_facts(facts)
             return super().selected_rules(predicate, model, values, max_evaluations=max_evaluations,
                                           nary_atoms=nary_atoms)
-        return tuple(self.by_name[name] for name in self._selected_row(source, predicate, model, values)["selected"])
+        return tuple(self.by_name[name]
+                     for name in self._selected_row(source, predicate, model, values, facts)["selected"])
 
-    def outcome_at(self, predicate, model, values):
+    def selection_flags(self, model, *, facts=None):
+        """Lean's flags for the base `model`, from the `soft-selected` answer the rules are read from: `background`,
+        and with `facts` (a list, possibly empty) `facts` (every fact is true in the model) and `coherent` (every
+        coherence conjunct is). A false flag is reported, never raised. Needs the soft source (see the class)."""
+        source = self.__dict__.get("_soft_source")
+        if source is None:
+            raise CheckerUnavailable("CheckerUnavailable: soft selection flags need the document's soft source")
+        data, pair = self._selection_pair(source, model, facts)
+        with pair["lock"]:
+            if pair["flags"] is None:
+                queries = self._selection_queries(data)
+                if not queries:
+                    raise VEError("InvalidInput: soft-selected needs at least one query")
+                self._ask_selection(source, data, pair, queries[0])
+            return dict(pair["flags"])
+
+    def _no_facts(self, facts):
+        if facts is not None:
+            raise CheckerUnavailable("CheckerUnavailable: facts are read by Lean's soft-selected, which needs the "
+                                     "document's soft source")
+
+    def outcome_at(self, predicate, model, values, *, facts=None):
         """The completed outcome of `predicate` at `values` in the base `model`: Lean's answer, or Python's
         evaluation of `outcome(predicate, base=True)` for a document without its soft source."""
         source = self.__dict__.get("_soft_source")
         if source is None:
+            self._no_facts(facts)
             from .evaluate import _Evaluator
             sorts = self._query_sorts(predicate, model, values)
             env, formula = self.base_environment(), self.outcome(predicate, base=True)
             return _Evaluator(env, model, 1_000_000, trace=False).formula(
                 formula, tuple(zip(reversed(sorts), reversed(values))))[0]
-        return self._selected_row(source, predicate, model, values)["outcome"]
+        return self._selected_row(source, predicate, model, values, facts)["outcome"]
 
     def _query_sorts(self, predicate, model, values):
         """The argument sorts of `predicate`, refusing what `NormDocument.selected_rules` refuses before it asks:
@@ -339,18 +384,19 @@ class SoftenedNormDocument(NormDocument):
             raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
         return sorts
 
-    def _selected_row(self, source, predicate, model, values):
-        """Lean's bound result row for `(predicate, values)` in `model`."""
+    def _selected_row(self, source, predicate, model, values, facts=None):
+        """Lean's bound result row for `(predicate, values)` in `model`, from the case that sent `facts`."""
         self._query_sorts(predicate, model, values)
-        data, pair = self._selection_pair(source, model)
+        data, pair = self._selection_pair(source, model, facts)
         query = (predicate, tuple(values))
         with pair["lock"]:
             if query not in pair["rows"]:
                 self._ask_selection(source, data, pair, query)
             return pair["rows"][query]
 
-    def _selection_pair(self, source, model):
-        """The model's wire dictionary and the kept answers of (this document, the model). A document is
+    def _selection_pair(self, source, model, facts=None):
+        """The model's wire dictionary and the kept answers of (this document, the model, the facts' encoded bytes;
+        `None` and `[]` differ: only a case that sent `facts` is answered with the flags). A document is
         identified by the request it sends (its soft source's environment and rules), so a rebuilt copy
         reuses the answers; at most `SELECTION_DOCUMENTS` documents are kept per Lean pool, least recently
         used first out."""
@@ -379,8 +425,12 @@ class SoftenedNormDocument(NormDocument):
                     documents.popitem(last=False)
             else:
                 documents.move_to_end(state["identity"])
+            if facts is not None:
+                facts = facts_wire(facts)
+                key += "\x00facts:" + json.dumps(facts, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             # "whole": None until the pair's first question, then whether Lean answered its whole query list.
-            pair = pairs.setdefault(key, {"lock": threading.Lock(), "rows": {}, "whole": None, "predicates": set()})
+            pair = pairs.setdefault(key, {"lock": threading.Lock(), "rows": {}, "whole": None, "predicates": set(),
+                                          "flags": None, "facts": facts})
         return data, pair
 
     def _selection_queries(self, data, predicates=None):
@@ -411,11 +461,16 @@ class SoftenedNormDocument(NormDocument):
         if not queries:
             return {}
         try:
-            answer = selected_at(source, data, queries)
+            answer = selected_at(source, data, queries, facts=pair["facts"])
         except VEError as error:
             if limit and isinstance(error, ResourceLimit):  # by its class: the relay sets Lean's wire code
                 return None
             raise
+        flags = {key: answer[key] for key in ("background", "facts", "coherent") if key in answer}
+        if pair["flags"] is None:
+            pair["flags"] = flags
+        elif pair["flags"] != flags:  # flags are the model's: two of Lean's answers for one pair cannot differ
+            raise CheckerUnavailable("CheckerUnavailable: Lean soft selection flags differ for one document and model")
         for query, row in zip(queries, answer["results"]):
             pair["rows"][query] = row
         return answer
