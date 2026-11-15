@@ -1,0 +1,7 @@
+job=x86sh-pinsrc-da0822ae-da0822ae-t756965-s2 shard=2/2 nproc=4 arch=x86_64 host=runnervm8axu0 date=2026-11-15T15:37:31Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   64G   81G  44% /
+ 15:37:31 up 1 min,  0 user,  load average: 1.37, 0.41, 0.14
+pilot/codex branches: 98
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
