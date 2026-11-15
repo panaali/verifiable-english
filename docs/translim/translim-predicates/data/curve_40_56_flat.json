@@ -1,0 +1,173 @@
+{
+ "executable": "/home/seyran/code/ve-translim-predicates/lean/.lake/build/bin/ve_service",
+ "rows": [
+  {
+   "n": 40,
+   "shape": "flat",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    1.504394378978759
+   ],
+   "cpu": [
+    1.48
+   ],
+   "deadline_cpu": 5.726957321166992,
+   "answer": "ok"
+  },
+  {
+   "n": 40,
+   "shape": "flat",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    1.0697383639635518
+   ],
+   "cpu": [
+    1.06
+   ],
+   "deadline_cpu": 5.727329254150391,
+   "answer": "ok"
+  },
+  {
+   "n": 40,
+   "shape": "flat",
+   "kind": "norm-defaults-elaborate",
+   "mode": "norm-defaults",
+   "wall": [
+    13.623208140023053
+   ],
+   "cpu": [
+    13.5
+   ],
+   "deadline_cpu": 122.9428482055664,
+   "answer": "ok"
+  },
+  {
+   "n": 40,
+   "shape": "flat",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    1.425028256024234
+   ],
+   "cpu": [
+    1.41
+   ],
+   "deadline_cpu": 5.788984298706055,
+   "answer": "ok"
+  },
+  {
+   "n": 48,
+   "shape": "flat",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    3.4877577000297606
+   ],
+   "cpu": [
+    3.4699999999999998
+   ],
+   "deadline_cpu": 5.794076919555664,
+   "answer": "ok"
+  },
+  {
+   "n": 48,
+   "shape": "flat",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    1.3453083320055157
+   ],
+   "cpu": [
+    1.3299999999999998
+   ],
+   "deadline_cpu": 5.7944488525390625,
+   "answer": "ok"
+  },
+  {
+   "n": 48,
+   "shape": "flat",
+   "kind": "norm-defaults-elaborate",
+   "mode": "norm-defaults",
+   "wall": [
+    32.58192245301325
+   ],
+   "cpu": [
+    32.42
+   ],
+   "deadline_cpu": 123.21773529052734,
+   "answer": "ok"
+  },
+  {
+   "n": 48,
+   "shape": "flat",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    3.643889139057137
+   ],
+   "cpu": [
+    3.62
+   ],
+   "deadline_cpu": 5.867776870727539,
+   "answer": "ok"
+  },
+  {
+   "n": 56,
+   "shape": "flat",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    5.902790426975116
+   ],
+   "cpu": [
+    null
+   ],
+   "deadline_cpu": 5.861196517944336,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 56,
+   "shape": "flat",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    1.8711350999074057
+   ],
+   "cpu": [
+    1.8499999999999999
+   ],
+   "deadline_cpu": 5.861568450927734,
+   "answer": "ok"
+  },
+  {
+   "n": 56,
+   "shape": "flat",
+   "kind": "norm-defaults-elaborate",
+   "mode": "norm-defaults",
+   "wall": [
+    73.5951824199874
+   ],
+   "cpu": [
+    73.3
+   ],
+   "deadline_cpu": 123.49262237548828,
+   "answer": "ok"
+  },
+  {
+   "n": 56,
+   "shape": "flat",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    5.996667559957132
+   ],
+   "cpu": [
+    null
+   ],
+   "deadline_cpu": 5.946569442749023,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  }
+ ]
+}

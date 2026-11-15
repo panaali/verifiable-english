@@ -125,14 +125,14 @@
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is an internal deployment: a release restricted to Google employees for internal use",
+        "description": "{0} is an internal deployment (Glossary: Internal Deployments \"represent model releases restricted to Google employees for internal use\")",
         "verbalisation": "{0} is internal"
       },
       "high_risk": {
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is a high-risk internal deployment: for use cases with the potential to enable severe threat scenarios. Open term OT7, decided by no one the text names (unstated)"
+        "description": "{0} is a high-risk internal deployment (Glossary: High-Risk Internal Deployments \"represent model releases restricted to Google employees for use cases with the potential to enable severe threat scenarios (e.g. building internal security infrastructure or automating ML R&D)\"). Open term OT7, decided by no one the text names (unstated)"
       },
       "external": {
         "arguments": [
@@ -341,7 +341,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the residual risk assessment for {0} is informed by a supplemental safety case (1.3.4)",
+        "description": "the residual risk assessment for {0} is informed by a supplemental safety case (1.3.4); safety cases \"are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level\" (Glossary)",
         "regulated": {
           "role": "obligation",
           "default": "deny",

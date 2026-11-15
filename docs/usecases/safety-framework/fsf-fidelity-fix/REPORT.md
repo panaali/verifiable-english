@@ -158,8 +158,9 @@ merge). Its C1, C3 and C-doc rows should agree with PLAN section 12 item 23 (NON
 ## Spec re-read
 
 - (a) "remove RS9 = same and RS6 = same, and the rules only they select (f10-dm-same, f10-rel-same, f15-same)" against
-  reviews/dri-decisions-20261029-uc-audit2.md item 1: the three ids are exactly the deleted blocks; f10-dm-diff,
-  f10-rel-diff and f15-diff stay (selected by "different").
+  reviews/dri-decisions-20261029-uc-audit2.md item 1: RS9 and RS6 keep the one reading "different", and the blocks
+  f10-dm-same, f10-rel-same and f15-same no longer exist. The blocks f10-dm-diff, f10-rel-diff and f15-diff stay,
+  selected by "different".
 - (c) "Record PLAN section-12 deviation entries giving NONE for C1, C3 and C-doc" against the same item: PLAN 12 item
   23, three entries, answer NONE each; answer-key.json hash unchanged.
 - Condition "the case's run selects no rule under RS9 = same or RS6 = same, and a test or fixture fails if either
