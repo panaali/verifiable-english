@@ -19,6 +19,16 @@
    "definition": "VE.Norms.Wire.decodeSource",
    "operator": "bool-flip",
    "reason": "only the default `flags := false` of lean/VE/Norms/Wire.lean:454 (the flip of line 456's `acts := true` is killed): a default is elaborated into each call that omits it, so its refuting checks change their own terms and count as UNKNOWN; the guard `err (decodeSource ActsHook.plain flaggedPlain (Json.arr #[])) == flagRefusal` (lean/VE/Acts/HookExamples.lean) and DecodeExamples.lean:252 refute it"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironmentWith",
+   "operator": "list-first",
+   "reason": "equivalent on every input that reaches lean/VE/Norms/Wire.lean:282-283: there the envelope has admitted the list read from (`decodeEnvelope (actsView environment ps)` and the `norms@0` test come first), so a non-empty `ps` is sorted, holds `acts@0`, `norms@0` and `relational-fol@0`, and every other name in it is a `known` profile of `Route.Gate.registry`, each greater than \"acts@0\"; `ps` is therefore `\"acts@0\" :: rest` with at least two more names, and these lines read it only through `contains \"acts@0\"` (`decodeRegulatedWith`'s flag, `canonicalActIn`, `canonicalShape`; the plain hook ignores it), which `ps.take 1` keeps; the other list mutants of the decoder (`[]`, `drop 1`, `reverse.take 1`, and line 287's) are killed by lean/VE/Acts/HookExamples.lean"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironmentWith",
+   "operator": "list-drop-last",
+   "reason": "equivalent on every input that reaches lean/VE/Norms/Wire.lean:282-283: there the envelope has admitted the list read from (`decodeEnvelope (actsView environment ps)` and the `norms@0` test come first), so a non-empty `ps` is sorted, holds `acts@0`, `norms@0` and `relational-fol@0`, and every other name in it is a `known` profile of `Route.Gate.registry`, each greater than \"acts@0\"; `ps` is therefore `\"acts@0\" :: rest` with at least two more names, and these lines read it only through `contains \"acts@0\"` (`decodeRegulatedWith`'s flag, `canonicalActIn`, `canonicalShape`; the plain hook ignores it), which `ps.dropLast` keeps (it drops a name after `acts@0`)"
   }
  ]
 }
