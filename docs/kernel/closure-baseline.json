@@ -1,9 +1,85 @@
 {
- "kernel_lines": 10101,
- "keyed_kernel_lines": 10101,
- "keyed_lines": 16563,
+ "kernel_lines": 9966,
+ "keyed_kernel_lines": 9966,
+ "keyed_lines": 16244,
  "paths": [
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Core.Formula.denote",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Paths.Reachable",
+      "lines": 1,
+      "module": "VE.Paths",
+      "name": "VE.Paths.instReprKind.repr.match_1",
+      "prefix": "VE.Paths.instReprKind.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     }
+    ]
+   },
    "axioms": [],
    "lines": 1377,
    "modes": [
@@ -46,7 +122,7 @@
    },
    "theorems": 4,
    "tier": "candidate",
-   "wrap_lines": 637,
+   "wrap_lines": 5,
    "wrap_modules": {
     "VE.Bridge": 173,
     "VE.CertificateWire": 225,
@@ -59,19 +135,179 @@
     "VE.Core.TableauExtendedExtra": 3,
     "VE.Limits": 4,
     "VE.Paths": 3,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 13
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Order.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_3",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_7",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_9",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Core.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Core.TableauExtended",
+      "name": "VE.Core.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Core.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Core.Formula.reach",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprEdge.repr.match_1",
+      "prefix": "VE.Core.instReprEdge.repr"
+     },
+     {
+      "by": "VE.Core.Edge.shift",
+      "lines": 3,
+      "module": "VE.Core.Substitution",
+      "name": "VE.Core.Edge.denote.match_1",
+      "prefix": "VE.Core.Edge.denote"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Paths.Reachable",
+      "lines": 1,
+      "module": "VE.Paths",
+      "name": "VE.Paths.instReprKind.repr.match_1",
+      "prefix": "VE.Paths.instReprKind.repr"
+     },
+     {
+      "by": "VE.Closure.CoreEquiv.embedTrace",
+      "lines": 1,
+      "module": "VE.Closure.Tableau",
+      "name": "VE.Closure.Tableau.instReprTrace.repr.match_1",
+      "prefix": "VE.Closure.Tableau.instReprTrace.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Gate.AllowedFamily",
+      "lines": 1,
+      "module": "VE.Route.Gate",
+      "name": "VE.Route.Gate.instReprFamily.repr.match_1",
+      "prefix": "VE.Route.Gate.instReprFamily.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Route.Run.runCaseReported",
+      "lines": 4,
+      "module": "VE.Route.Run",
+      "name": "VE.Route.Run.caseKind.match_1",
+      "prefix": "VE.Route.Run.caseKind"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 4265,
+   "lines": 4205,
    "modes": [
     "route"
    ],
    "name": "route",
-   "spec_lines": 4254,
+   "spec_lines": 4194,
    "spec_modules": {
     "VE.Bridge": 116,
     "VE.CertificateWire": 154,
@@ -87,7 +323,7 @@
     "VE.Core.Layers": 247,
     "VE.Core.PathRules": 6,
     "VE.Core.Paths": 7,
-    "VE.Core.Substitution": 40,
+    "VE.Core.Substitution": 37,
     "VE.Core.Syntax": 101,
     "VE.Core.TableauExtended": 72,
     "VE.Core.TableauExtendedChecker": 56,
@@ -97,13 +333,13 @@
     "VE.Core.TableauExtendedRules": 20,
     "VE.Core.Wire": 108,
     "VE.Data.Background": 28,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 120,
     "VE.Definitions.Route": 9,
     "VE.Finite": 33,
     "VE.Limits": 18,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 50,
     "VE.Order.Syntax": 65,
@@ -113,7 +349,7 @@
     "VE.Route.Admission": 60,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 33,
-    "VE.Route.Budget": 210,
+    "VE.Route.Budget": 162,
     "VE.Route.Checker": 71,
     "VE.Route.Closure": 63,
     "VE.Route.Decode": 155,
@@ -129,7 +365,7 @@
     "VE.Route.Wire": 374,
     "VE.Route.WireSound": 241,
     "VE.Semantics": 40,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -170,21 +406,97 @@
    },
    "theorems": 26,
    "tier": "kernel",
-   "wrap_lines": 15,
+   "wrap_lines": 11,
    "wrap_modules": {
-    "VE.Route.Run": 15
+    "VE.Route.Run": 11
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     }
+    ]
+   },
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 3461,
+   "lines": 3409,
    "modes": [
     "norms"
    ],
    "name": "norms",
-   "spec_lines": 3217,
+   "spec_lines": 3207,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
@@ -196,14 +508,14 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Finite": 36,
     "VE.Limits": 14,
     "VE.Norms.Admission": 196,
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 20,
-    "VE.Norms.Elaborate": 64,
+    "VE.Norms.Elaborate": 60,
     "VE.Norms.Flagged": 142,
     "VE.Norms.Layer": 2,
     "VE.Norms.Prefix": 15,
@@ -224,7 +536,7 @@
     "VE.Route.Steps": 2,
     "VE.Route.Wire": 229,
     "VE.Semantics": 49,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -258,12 +570,12 @@
    },
    "theorems": 16,
    "tier": "kernel",
-   "wrap_lines": 276,
+   "wrap_lines": 202,
    "wrap_modules": {
     "VE.Acts.Run": 4,
     "VE.Bridge": 2,
     "VE.Cardinality.Wire": 9,
-    "VE.Compose.Dispatch": 194,
+    "VE.Compose.Dispatch": 152,
     "VE.Norms.Plain": 11,
     "VE.Norms.Run": 36,
     "VE.Norms.Wire": 11,
@@ -272,15 +584,189 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.declaredNames",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_5",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.declaredNames",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_5",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     }
+    ]
+   },
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 4083,
+   "lines": 4069,
    "modes": [
     "norms"
    ],
    "name": "normsActs",
-   "spec_lines": 4060,
+   "spec_lines": 4046,
    "spec_modules": {
     "VE.Acts.Decode": 70,
     "VE.Acts.Elaborate": 137,
@@ -311,11 +797,11 @@
     "VE.Grammar.Table": 197,
     "VE.Limits": 14,
     "VE.NormDefaults.Tree": 65,
-    "VE.NormDefaults.Wire": 36,
+    "VE.NormDefaults.Wire": 29,
     "VE.Norms.Admission": 196,
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 17,
-    "VE.Norms.Elaborate": 64,
+    "VE.Norms.Elaborate": 60,
     "VE.Norms.Flagged": 20,
     "VE.Norms.Layer": 2,
     "VE.Norms.Prefix": 15,
@@ -335,7 +821,7 @@
     "VE.Route.Steps": 2,
     "VE.Route.Wire": 219,
     "VE.Semantics": 49,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -355,7 +841,7 @@
    },
    "theorems": 6,
    "tier": "candidate",
-   "wrap_lines": 2702,
+   "wrap_lines": 23,
    "wrap_modules": {
     "VE.Acts.Decode": 66,
     "VE.Acts.Elaborate": 137,
@@ -385,7 +871,7 @@
     "VE.Grammar.Table": 197,
     "VE.Limits": 14,
     "VE.NormDefaults.Tree": 65,
-    "VE.NormDefaults.Wire": 36,
+    "VE.NormDefaults.Wire": 29,
     "VE.Norms.Basic": 9,
     "VE.Norms.Elaborate": 1,
     "VE.Norms.Run": 12,
@@ -398,20 +884,116 @@
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Wire": 152,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.SoftNorms.Run.openAfterClassification",
+      "lines": 11,
+      "module": "VE.SoftNorms.Run",
+      "name": "VE.SoftNorms.Run.pairsResult.match_3",
+      "prefix": "VE.SoftNorms.Run.pairsResult"
+     },
+     {
+      "by": "VE.SoftNorms.Run.openAfterClassification",
+      "lines": 11,
+      "module": "VE.SoftNorms.Run",
+      "name": "VE.SoftNorms.Run.pairsResult.match_1",
+      "prefix": "VE.SoftNorms.Run.pairsResult"
+     },
+     {
+      "by": "VE.SoftNorms.Run.slotConflictValidWithout",
+      "lines": 6,
+      "module": "VE.SoftNorms.Run",
+      "name": "VE.SoftNorms.Run.conflictValidWithout.match_1",
+      "prefix": "VE.SoftNorms.Run.conflictValidWithout"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     }
+    ],
+    "wrap": []
+   },
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 4710,
+   "lines": 4672,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4702,
+   "spec_lines": 4664,
    "spec_modules": {
     "VE.Acts.Hook": 11,
     "VE.Acts.Lexical": 121,
@@ -428,14 +1010,14 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Finite": 36,
     "VE.Limits": 14,
     "VE.Norms.Admission": 70,
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 20,
-    "VE.Norms.Elaborate": 45,
+    "VE.Norms.Elaborate": 41,
     "VE.Norms.Layer": 2,
     "VE.Norms.LayersOnce": 32,
     "VE.Norms.Prefix": 15,
@@ -460,9 +1042,9 @@
     "VE.SoftNorms.Coherence": 28,
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
-    "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Prepared": 8,
-    "VE.SoftNorms.Run": 182,
+    "VE.SoftNorms.Run": 165,
     "VE.SoftNorms.Selected": 15,
     "VE.SoftNorms.SelectedSound": 15,
     "VE.SoftNorms.Semantics": 47,
@@ -470,7 +1052,7 @@
     "VE.SoftNorms.Status": 5,
     "VE.SoftNorms.Tree": 151,
     "VE.SoftNorms.Wire": 198,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -515,7 +1097,7 @@
    },
    "theorems": 19,
    "tier": "kernel",
-   "wrap_lines": 35,
+   "wrap_lines": 8,
    "wrap_modules": {
     "VE.SoftNorms.Phases": 2,
     "VE.SoftNorms.Run": 31,
@@ -523,13 +1105,208 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.Legacy.profiles",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.Legacy.version.match_1",
+      "prefix": "VE.Service.Standalone.Legacy.version"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.placeholderJson",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_3",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.placeholderJson",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_1",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     },
+     {
+      "by": "VE.Time.Wire.eraseEnvironment",
+      "lines": 12,
+      "module": "VE.Time.Wire",
+      "name": "VE.Time.Wire.checkVerbalisations.match_5",
+      "prefix": "VE.Time.Wire.checkVerbalisations"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_3",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_7",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_9",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Route.MeteredRun.reportedWith",
+      "lines": 15,
+      "module": "VE.Route.MeteredRun",
+      "name": "VE.Route.MeteredRun.query.match_1",
+      "prefix": "VE.Route.MeteredRun.query"
+     },
+     {
+      "by": "VE.Service.Standalone.Legacy.profiles",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.Legacy.version.match_1",
+      "prefix": "VE.Service.Standalone.Legacy.version"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.placeholderJson",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_3",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.placeholderJson",
+      "lines": 7,
+      "module": "VE.NormDefaults.Wire",
+      "name": "VE.NormDefaults.Wire.unspecifiedNames.match_1",
+      "prefix": "VE.NormDefaults.Wire.unspecifiedNames"
+     },
+     {
+      "by": "VE.Time.Wire.eraseEnvironment",
+      "lines": 12,
+      "module": "VE.Time.Wire",
+      "name": "VE.Time.Wire.checkVerbalisations.match_5",
+      "prefix": "VE.Time.Wire.checkVerbalisations"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 3358,
+   "lines": 3238,
    "modes": [
     "metered"
    ],
    "name": "metered",
-   "spec_lines": 3352,
+   "spec_lines": 3232,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
@@ -540,7 +1317,7 @@
     "VE.Closure.Finite": 4,
     "VE.Closure.Paths": 3,
     "VE.Closure.Syntax": 35,
-    "VE.Compose.Dispatch": 194,
+    "VE.Compose.Dispatch": 152,
     "VE.Core.Bridge": 107,
     "VE.Core.Finite": 36,
     "VE.Core.Layers": 189,
@@ -548,11 +1325,11 @@
     "VE.Core.Syntax": 41,
     "VE.Core.Wire": 36,
     "VE.Data.Background": 7,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 45,
     "VE.Finite": 33,
     "VE.Limits": 16,
-    "VE.NormDefaults.Wire": 25,
+    "VE.NormDefaults.Wire": 18,
     "VE.Norms.Plain": 21,
     "VE.Norms.Tree": 80,
     "VE.Norms.Wire": 84,
@@ -566,7 +1343,7 @@
     "VE.Risk.Wire": 32,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 20,
-    "VE.Route.Budget": 194,
+    "VE.Route.Budget": 146,
     "VE.Route.Closure": 63,
     "VE.Route.Decode": 155,
     "VE.Route.Flags": 23,
@@ -580,12 +1357,12 @@
     "VE.Route.Typed": 18,
     "VE.Route.Wire": 315,
     "VE.Semantics": 14,
-    "VE.Service.Standalone": 281,
+    "VE.Service.Standalone": 276,
     "VE.SoftNorms.Phases": 18,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Time.Budget": 21,
-    "VE.Time.Wire": 28
+    "VE.Time.Wire": 16
    },
    "stated": {
     "VE.Route.MeteredRun.runWith": [
@@ -594,7 +1371,7 @@
    },
    "theorems": 2,
    "tier": "kernel",
-   "wrap_lines": 2154,
+   "wrap_lines": 6,
    "wrap_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
@@ -602,17 +1379,17 @@
     "VE.Bridge": 159,
     "VE.Cardinality.Wire": 9,
     "VE.Closure.Bridge": 10,
-    "VE.Compose.Dispatch": 194,
+    "VE.Compose.Dispatch": 152,
     "VE.Core.Bridge": 84,
     "VE.Core.Layers": 133,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 41,
     "VE.Core.Wire": 21,
     "VE.Data.Background": 7,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Limits": 10,
-    "VE.NormDefaults.Wire": 25,
+    "VE.NormDefaults.Wire": 18,
     "VE.Norms.Plain": 17,
     "VE.Norms.Tree": 61,
     "VE.Norms.Wire": 84,
@@ -625,33 +1402,123 @@
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 1,
     "VE.Route.Gate": 72,
-    "VE.Route.MeteredRun": 44,
+    "VE.Route.MeteredRun": 29,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Run": 3,
     "VE.Route.Typed": 18,
     "VE.Route.Wire": 186,
-    "VE.Service.Standalone": 281,
+    "VE.Service.Standalone": 276,
     "VE.SoftNorms.Phases": 18,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
-    "VE.Time.Wire": 28
+    "VE.Time.Wire": 16
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Time.QFormula.admits",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQFormula.repr.match_1",
+      "prefix": "VE.Time.instReprQFormula.repr"
+     },
+     {
+      "by": "VE.Time.QTerm.typeOf",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQTerm.repr.match_1",
+      "prefix": "VE.Time.instReprQTerm.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Time.QType.erase",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQType.repr.match_1",
+      "prefix": "VE.Time.instReprQType.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Route.Wire.decodeOrderVocabulary",
+      "lines": 78,
+      "module": "VE.Route.Wire",
+      "name": "VE.Route.Wire.decodeVocabulary.match_1",
+      "prefix": "VE.Route.Wire.decodeVocabulary"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Time.Wire.runCaseReported",
+      "lines": 40,
+      "module": "VE.Time.Wire",
+      "name": "VE.Time.Wire.decodeUnit.match_1",
+      "prefix": "VE.Time.Wire.decodeUnit"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 2274,
+   "lines": 2190,
    "modes": [
     "quantity"
    ],
    "name": "quantity",
-   "spec_lines": 2267,
+   "spec_lines": 2183,
    "spec_modules": {
     "VE.Bridge": 64,
     "VE.CertificateWire": 94,
     "VE.Limits": 12,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
     "VE.Order.Syntax": 65,
@@ -661,8 +1528,8 @@
     "VE.Route.Background": 3,
     "VE.Route.Decode": 99,
     "VE.Route.Steps": 11,
-    "VE.Route.Wire": 128,
-    "VE.Surface": 16,
+    "VE.Route.Wire": 50,
+    "VE.Surface": 13,
     "VE.Time.Calendar": 57,
     "VE.Time.Decimal": 40,
     "VE.Time.Document": 210,
@@ -684,20 +1551,117 @@
    },
    "theorems": 6,
    "tier": "kernel",
-   "wrap_lines": 75,
+   "wrap_lines": 7,
    "wrap_modules": {
     "VE.Time.Syntax": 4,
-    "VE.Time.Wire": 71
+    "VE.Time.Wire": 31
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Rights.Wire.decodeRightsBlock",
+      "lines": 21,
+      "module": "VE.Rights.Wire",
+      "name": "VE.Rights.Wire.rightsNormalForm.match_1",
+      "prefix": "VE.Rights.Wire.rightsNormalForm"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Rights.Run.runCaseReported",
+      "lines": 9,
+      "module": "VE.Rights.Run",
+      "name": "VE.Rights.Run.exhibit.match_1",
+      "prefix": "VE.Rights.Run.exhibit"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 4950,
+   "lines": 4899,
    "modes": [
     "rights"
    ],
    "name": "rights",
-   "spec_lines": 4934,
+   "spec_lines": 4892,
    "spec_modules": {
     "VE.Acts.Hook": 11,
     "VE.Acts.Lexical": 121,
@@ -712,13 +1676,13 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Limits": 14,
     "VE.Norms.Admission": 18,
     "VE.Norms.Basic": 35,
     "VE.Norms.Conflict": 11,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.LayersOnce": 32,
     "VE.Norms.Prefix": 12,
     "VE.Norms.Replay": 8,
@@ -731,7 +1695,7 @@
     "VE.Rights.Correlate": 360,
     "VE.Rights.Run": 45,
     "VE.Rights.Tree": 200,
-    "VE.Rights.Wire": 277,
+    "VE.Rights.Wire": 256,
     "VE.Route.Admission": 336,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 14,
@@ -744,11 +1708,11 @@
     "VE.Semantics": 49,
     "VE.SoftNorms.Coherence": 1,
     "VE.SoftNorms.Once": 95,
-    "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Soften": 511,
     "VE.SoftNorms.Tree": 148,
     "VE.SoftNorms.Wire": 26,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -764,20 +1728,250 @@
    },
    "theorems": 2,
    "tier": "candidate",
-   "wrap_lines": 35,
+   "wrap_lines": 7,
    "wrap_modules": {
-    "VE.Rights.Run": 34,
+    "VE.Rights.Run": 25,
     "VE.Rights.Wire": 1
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Formula.check",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.ownPrefixIn",
+      "lines": 2,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.reserved.match_1",
+      "prefix": "VE.NormDefaults.Packs.reserved"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.SoftNorms.Wire.openCoherence",
+      "lines": 2,
+      "module": "VE.SoftNorms.Wire",
+      "name": "VE.SoftNorms.Wire.softLabelled.match_1",
+      "prefix": "VE.SoftNorms.Wire.softLabelled"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.NormDefaults.Run.runGated",
+      "lines": 68,
+      "module": "VE.NormDefaults.Run",
+      "name": "VE.NormDefaults.Run.runOtherCaseIn.match_7",
+      "prefix": "VE.NormDefaults.Run.runOtherCaseIn"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Events.linkWording",
+      "lines": 1,
+      "module": "VE.Events.Decl",
+      "name": "VE.Events.instReprLinkForm.repr.match_1",
+      "prefix": "VE.Events.instReprLinkForm.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.ownPrefixIn",
+      "lines": 2,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.reserved.match_1",
+      "prefix": "VE.NormDefaults.Packs.reserved"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 6502,
+   "lines": 6370,
    "modes": [
     "normDefaults"
    ],
    "name": "normDefaults",
-   "spec_lines": 5739,
+   "spec_lines": 5717,
    "spec_modules": {
     "VE.Acts.Decode": 63,
     "VE.Acts.Elaborate": 137,
@@ -814,7 +2008,7 @@
     "VE.NormDefaults.Admission": 138,
     "VE.NormDefaults.Layered": 72,
     "VE.NormDefaults.LayeredAdmission": 96,
-    "VE.NormDefaults.Packs": 66,
+    "VE.NormDefaults.Packs": 64,
     "VE.NormDefaults.Premises": 9,
     "VE.NormDefaults.Run": 53,
     "VE.NormDefaults.Tree": 68,
@@ -822,7 +2016,7 @@
     "VE.Norms.Admission": 76,
     "VE.Norms.Basic": 35,
     "VE.Norms.Conflict": 11,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.LayersOnce": 32,
     "VE.Norms.Prefix": 12,
     "VE.Norms.Replay": 19,
@@ -843,11 +2037,11 @@
     "VE.Semantics": 49,
     "VE.SoftNorms.Admission": 6,
     "VE.SoftNorms.Once": 95,
-    "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Tree": 152,
-    "VE.SoftNorms.Wire": 101,
-    "VE.Surface": 18,
+    "VE.SoftNorms.Wire": 99,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -875,7 +2069,7 @@
    },
    "theorems": 7,
    "tier": "candidate",
-   "wrap_lines": 5572,
+   "wrap_lines": 657,
    "wrap_modules": {
     "VE.Acts.Decode": 63,
     "VE.Acts.Elaborate": 137,
@@ -895,7 +2089,7 @@
     "VE.Bridge": 79,
     "VE.Cardinality.Wire": 9,
     "VE.CertificateWire": 111,
-    "VE.Compose.Dispatch": 209,
+    "VE.Compose.Dispatch": 167,
     "VE.Core.Bridge": 37,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
@@ -917,14 +2111,14 @@
     "VE.NormDefaults.Layered": 75,
     "VE.NormDefaults.LayeredAdmission": 22,
     "VE.NormDefaults.LayeredEntail": 10,
-    "VE.NormDefaults.Packs": 63,
+    "VE.NormDefaults.Packs": 61,
     "VE.NormDefaults.Premises": 9,
-    "VE.NormDefaults.Run": 142,
+    "VE.NormDefaults.Run": 74,
     "VE.NormDefaults.Tree": 72,
     "VE.NormDefaults.Wire": 103,
     "VE.Norms.Basic": 35,
     "VE.Norms.Conflict": 11,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.LayersOnce": 32,
     "VE.Norms.Prefix": 10,
     "VE.Norms.Replay": 19,
@@ -942,11 +2136,11 @@
     "VE.Route.Wire": 227,
     "VE.Semantics": 21,
     "VE.SoftNorms.Once": 95,
-    "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Tree": 152,
     "VE.SoftNorms.Wire": 85,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -956,13 +2150,117 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Alternatives.fulfilmentOk",
+      "lines": 5,
+      "module": "VE.Alternatives.Decl",
+      "name": "VE.Alternatives.restSorts.match_1",
+      "prefix": "VE.Alternatives.restSorts"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Alternatives.Run.runCaseReported",
+      "lines": 7,
+      "module": "VE.Alternatives.Run",
+      "name": "VE.Alternatives.Run.runElaborate.match_1",
+      "prefix": "VE.Alternatives.Run.runElaborate"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 3960,
+   "lines": 3938,
    "modes": [
     "alternatives"
    ],
    "name": "alternatives",
-   "spec_lines": 3947,
+   "spec_lines": 3932,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 10,
@@ -978,7 +2276,7 @@
     "VE.Acts.Wire": 37,
     "VE.Alternatives.Admission": 95,
     "VE.Alternatives.Background": 32,
-    "VE.Alternatives.Decl": 191,
+    "VE.Alternatives.Decl": 186,
     "VE.Alternatives.Replay": 2,
     "VE.Alternatives.Run": 28,
     "VE.Alternatives.Wire": 212,
@@ -990,7 +2288,7 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Grammar.Basic": 19,
     "VE.Grammar.Derives": 47,
@@ -999,7 +2297,7 @@
     "VE.Limits": 14,
     "VE.Norms.Admission": 54,
     "VE.Norms.Basic": 35,
-    "VE.Norms.Elaborate": 37,
+    "VE.Norms.Elaborate": 33,
     "VE.Norms.Prefix": 12,
     "VE.Norms.Run": 10,
     "VE.Norms.Tree": 269,
@@ -1016,7 +2314,7 @@
     "VE.Route.Wire": 198,
     "VE.Semantics": 49,
     "VE.SpeechActs.Tree": 3,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1032,19 +2330,228 @@
    },
    "theorems": 2,
    "tier": "candidate",
-   "wrap_lines": 22,
+   "wrap_lines": 6,
    "wrap_modules": {
-    "VE.Alternatives.Run": 22
+    "VE.Alternatives.Run": 15
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Risk.EntryKind.name",
+      "lines": 1,
+      "module": "VE.Risk.Record",
+      "name": "VE.Risk.instReprEntryKind.repr.match_1",
+      "prefix": "VE.Risk.instReprEntryKind.repr"
+     },
+     {
+      "by": "VE.Risk.Cond.atomNames",
+      "lines": 5,
+      "module": "VE.Risk.Cond",
+      "name": "VE.Risk.Cond.NotFree.match_1",
+      "prefix": "VE.Risk.Cond.NotFree"
+     },
+     {
+      "by": "VE.Risk.Support.name",
+      "lines": 1,
+      "module": "VE.Risk.Record",
+      "name": "VE.Risk.instReprSupport.repr.match_1",
+      "prefix": "VE.Risk.instReprSupport.repr"
+     },
+     {
+      "by": "VE.Risk.negAtom",
+      "lines": 1,
+      "module": "VE.Risk.Cond",
+      "name": "VE.Risk.instReprRel.repr.match_1",
+      "prefix": "VE.Risk.instReprRel.repr"
+     },
+     {
+      "by": "VE.Risk.Estimate.side",
+      "lines": 1,
+      "module": "VE.Risk.Report",
+      "name": "VE.Risk.instReprSide.repr.match_1",
+      "prefix": "VE.Risk.instReprSide.repr"
+     },
+     {
+      "by": "VE.Risk.Run.risk_decision_wire_sound",
+      "lines": 111,
+      "module": "VE.Risk.WireSound",
+      "name": "VE.Risk.Run.risk_decision_wire_sound.match_1",
+      "prefix": "VE.Risk.Run.risk_decision_wire_sound"
+     },
+     {
+      "by": "VE.Risk.Beyond",
+      "lines": 1,
+      "module": "VE.Risk.Report",
+      "name": "VE.Risk.instReprDir.repr.match_1",
+      "prefix": "VE.Risk.instReprDir.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Risk.Run.runCaseReported",
+      "lines": 7,
+      "module": "VE.Risk.Run",
+      "name": "VE.Risk.Run.runElaborate.match_1",
+      "prefix": "VE.Risk.Run.runElaborate"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 8028,
+   "lines": 7895,
    "modes": [
     "risk"
    ],
    "name": "risk",
-   "spec_lines": 5530,
+   "spec_lines": 5404,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
@@ -1063,14 +2570,14 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Finite": 33,
     "VE.Limits": 14,
     "VE.Norms.Admission": 54,
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 25,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 8,
     "VE.Norms.Run": 10,
@@ -1082,14 +2589,13 @@
     "VE.Risk.Admission": 87,
     "VE.Risk.Audit": 90,
     "VE.Risk.Background": 46,
-    "VE.Risk.Cond": 132,
+    "VE.Risk.Cond": 127,
     "VE.Risk.Decl": 214,
     "VE.Risk.Derive": 55,
     "VE.Risk.Record": 763,
     "VE.Risk.Report": 112,
     "VE.Risk.Run": 76,
     "VE.Risk.Wire": 349,
-    "VE.Risk.WireSound": 111,
     "VE.Route.Admission": 369,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 14,
@@ -1101,7 +2607,7 @@
     "VE.Route.Wire": 200,
     "VE.Semantics": 49,
     "VE.SpeechActs.Tree": 3,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1135,7 +2641,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 5709,
+   "wrap_lines": 2504,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 10,
@@ -1166,7 +2672,7 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Finite": 36,
     "VE.Grammar.Basic": 19,
@@ -1183,7 +2689,7 @@
     "VE.Norms.Admission": 54,
     "VE.Norms.Basic": 38,
     "VE.Norms.Conflict": 14,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 24,
     "VE.Norms.Run": 10,
@@ -1192,7 +2698,7 @@
     "VE.Norms.Tree": 273,
     "VE.Norms.Wire": 343,
     "VE.Paths": 3,
-    "VE.Risk.Run": 22,
+    "VE.Risk.Run": 15,
     "VE.Route.Admission": 369,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 14,
@@ -1203,7 +2709,7 @@
     "VE.Route.Steps": 2,
     "VE.Route.Wire": 229,
     "VE.Semantics": 49,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1211,13 +2717,173 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Reports.Content.isStatement",
+      "lines": 7,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.Content.Statement.match_1",
+      "prefix": "VE.Reports.Content.Statement"
+     },
+     {
+      "by": "VE.Reports.Act.name",
+      "lines": 1,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.instReprAct.repr.match_1",
+      "prefix": "VE.Reports.instReprAct.repr"
+     },
+     {
+      "by": "VE.Reports.Tense.name",
+      "lines": 1,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.instReprTense.repr.match_1",
+      "prefix": "VE.Reports.instReprTense.repr"
+     },
+     {
+      "by": "VE.Reports.Judgment.name",
+      "lines": 1,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.instReprJudgment.repr.match_1",
+      "prefix": "VE.Reports.instReprJudgment.repr"
+     },
+     {
+      "by": "VE.Reports.Run.countermodelAnswer",
+      "lines": 26,
+      "module": "VE.Attribution.Run",
+      "name": "VE.Reports.Run.elaborated.match_1",
+      "prefix": "VE.Reports.Run.elaborated"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Reports.meaningObject",
+      "lines": 1,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.instReprMeaning.repr.match_1",
+      "prefix": "VE.Reports.instReprMeaning.repr"
+     },
+     {
+      "by": "VE.Route.Admission.decodeNode",
+      "lines": 13,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.decodeUnit.match_3",
+      "prefix": "VE.Route.Admission.decodeUnit"
+     },
+     {
+      "by": "VE.Reports.BridgeLabel.path",
+      "lines": 1,
+      "module": "VE.Attribution.Bridge",
+      "name": "VE.Reports.instReprBridgeLabel.repr.match_1",
+      "prefix": "VE.Reports.instReprBridgeLabel.repr"
+     },
+     {
+      "by": "VE.Reports.nodeB",
+      "lines": 4,
+      "module": "VE.Attribution.Admission",
+      "name": "VE.Reports.ReportsNodeAdmitted.match_1",
+      "prefix": "VE.Reports.ReportsNodeAdmitted"
+     },
+     {
+      "by": "VE.Route.Admission.checkGraph",
+      "lines": 6,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.NodeAdmitted.match_1",
+      "prefix": "VE.Route.Admission.NodeAdmitted"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Reports.Run.runCaseReported",
+      "lines": 15,
+      "module": "VE.Attribution.Run",
+      "name": "VE.Reports.Run.manifestUnknown.match_3",
+      "prefix": "VE.Reports.Run.manifestUnknown"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 4444,
+   "lines": 4367,
    "modes": [
     "reports"
    ],
    "name": "reports",
-   "spec_lines": 4422,
+   "spec_lines": 4360,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 10,
@@ -1231,10 +2897,10 @@
     "VE.Acts.Table": 26,
     "VE.Acts.Tree": 23,
     "VE.Acts.Wire": 37,
-    "VE.Attribution.Admission": 123,
+    "VE.Attribution.Admission": 119,
     "VE.Attribution.Bridge": 45,
-    "VE.Attribution.Content": 489,
-    "VE.Attribution.Run": 78,
+    "VE.Attribution.Content": 482,
+    "VE.Attribution.Run": 52,
     "VE.Attribution.Wire": 432,
     "VE.Bridge": 139,
     "VE.CertificateWire": 120,
@@ -1244,7 +2910,7 @@
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
     "VE.Data.Background": 17,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 45,
     "VE.Definitions.Route": 2,
     "VE.Finite": 33,
@@ -1257,7 +2923,7 @@
     "VE.Norms.Tree": 269,
     "VE.Norms.Wire": 311,
     "VE.Paths": 3,
-    "VE.Route.Admission": 332,
+    "VE.Route.Admission": 313,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 19,
     "VE.Route.Gate": 72,
@@ -1267,7 +2933,7 @@
     "VE.Route.Steps": 2,
     "VE.Route.Wire": 229,
     "VE.Semantics": 14,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1286,20 +2952,600 @@
    },
    "theorems": 3,
    "tier": "candidate",
-   "wrap_lines": 32,
+   "wrap_lines": 7,
    "wrap_modules": {
     "VE.Attribution.Content": 1,
-    "VE.Attribution.Run": 31
+    "VE.Attribution.Run": 16
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Readings.reservedFree",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprItem.repr.match_1",
+      "prefix": "VE.Readings.instReprItem.repr"
+     },
+     {
+      "by": "VE.Compose.Content.declared",
+      "lines": 1,
+      "module": "VE.Compose.Content",
+      "name": "VE.Compose.instReprContent.repr.match_1",
+      "prefix": "VE.Compose.instReprContent.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Service.Document.strayNull",
+      "lines": 8,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.wireJson.match_1",
+      "prefix": "VE.Service.Document.wireJson"
+     },
+     {
+      "by": "VE.Rights.Wire.decodeRightsBlock",
+      "lines": 21,
+      "module": "VE.Rights.Wire",
+      "name": "VE.Rights.Wire.rightsNormalForm.match_1",
+      "prefix": "VE.Rights.Wire.rightsNormalForm"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.matchPattern",
+      "lines": 1,
+      "module": "VE.EnglishGrammar.Policy",
+      "name": "VE.EnglishGrammar.instReprPatWord.repr.match_1",
+      "prefix": "VE.EnglishGrammar.instReprPatWord.repr"
+     },
+     {
+      "by": "VE.Grammar.Rule.wf",
+      "lines": 1,
+      "module": "VE.Grammar.Basic",
+      "name": "VE.Grammar.instReprSym.repr.match_1",
+      "prefix": "VE.Grammar.instReprSym.repr"
+     },
+     {
+      "by": "VE.Grammar.verdict",
+      "lines": 7,
+      "module": "VE.Grammar.Table",
+      "name": "VE.Grammar.Prepared.verdict.match_1",
+      "prefix": "VE.Grammar.Prepared.verdict"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Question.candidates",
+      "lines": 4,
+      "module": "VE.Question.Basic",
+      "name": "VE.Question.Shape.body.match_1",
+      "prefix": "VE.Question.Shape.body"
+     },
+     {
+      "by": "VE.Readings.Holds",
+      "lines": 1,
+      "module": "VE.Readings.Verdicts",
+      "name": "VE.Readings.instReprChoiceResult.repr.match_1",
+      "prefix": "VE.Readings.instReprChoiceResult.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Rights.Wire.decodeRightsBlock",
+      "lines": 21,
+      "module": "VE.Rights.Wire",
+      "name": "VE.Rights.Wire.rightsNormalForm.match_1",
+      "prefix": "VE.Rights.Wire.rightsNormalForm"
+     },
+     {
+      "by": "VE.SoftNorms.Phases.envelope",
+      "lines": 11,
+      "module": "VE.SoftNorms.Phases",
+      "name": "VE.SoftNorms.Phases.frameView.match_3",
+      "prefix": "VE.SoftNorms.Phases.frameView"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Discourse.Loader.openTermNames",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_5",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Discourse.Loader.openTermNames",
+      "lines": 9,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.checkMetadata.match_1",
+      "prefix": "VE.Discourse.Loader.checkMetadata"
+     },
+     {
+      "by": "VE.Readings.reservedFree",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprItem.repr.match_1",
+      "prefix": "VE.Readings.instReprItem.repr"
+     },
+     {
+      "by": "VE.Compose.Content.declared",
+      "lines": 1,
+      "module": "VE.Compose.Content",
+      "name": "VE.Compose.instReprContent.repr.match_1",
+      "prefix": "VE.Compose.instReprContent.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Readings.Wire.chainText",
+      "lines": 28,
+      "module": "VE.Readings.Wire",
+      "name": "VE.Readings.Wire.chainTextSpec.match_1",
+      "prefix": "VE.Readings.Wire.chainTextSpec"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.Rights.Wire.canonicalRaw",
+      "lines": 21,
+      "module": "VE.Rights.Wire",
+      "name": "VE.Rights.Wire.rightsNormalForm.match_3",
+      "prefix": "VE.Rights.Wire.rightsNormalForm"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Reached.label",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprReached.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprReached.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Grounding.line",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprGrounding.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprGrounding.repr"
+     },
+     {
+      "by": "VE.Readings.Route.text",
+      "lines": 1,
+      "module": "VE.Readings.Route",
+      "name": "VE.Readings.instReprRoute.repr.match_1",
+      "prefix": "VE.Readings.instReprRoute.repr"
+     },
+     {
+      "by": "VE.Readings.Chain.text",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprChain.repr.match_1",
+      "prefix": "VE.Readings.instReprChain.repr"
+     },
+     {
+      "by": "VE.Readings.Run.runChoiceSD",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_1",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Rights.mechText",
+      "lines": 12,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.NarrowsAt.match_1",
+      "prefix": "VE.Rights.NarrowsAt"
+     },
+     {
+      "by": "VE.Rights.Ground.text",
+      "lines": 1,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.instReprGround.repr.match_1",
+      "prefix": "VE.Rights.instReprGround.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.SoftNorms.PairStatus.text",
+      "lines": 1,
+      "module": "VE.SoftNorms.Status",
+      "name": "VE.SoftNorms.instReprPairStatus.repr.match_1",
+      "prefix": "VE.SoftNorms.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Core.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Core.TableauExtended",
+      "name": "VE.Core.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Core.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Core.Formula.reach",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprEdge.repr.match_1",
+      "prefix": "VE.Core.instReprEdge.repr"
+     },
+     {
+      "by": "VE.Core.Edge.shift",
+      "lines": 3,
+      "module": "VE.Core.Substitution",
+      "name": "VE.Core.Edge.denote.match_1",
+      "prefix": "VE.Core.Edge.denote"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Closure.CoreEquiv.embedTrace",
+      "lines": 1,
+      "module": "VE.Closure.Tableau",
+      "name": "VE.Closure.Tableau.instReprTrace.repr.match_1",
+      "prefix": "VE.Closure.Tableau.instReprTrace.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.Events.linkWording",
+      "lines": 1,
+      "module": "VE.Events.Decl",
+      "name": "VE.Events.instReprLinkForm.repr.match_1",
+      "prefix": "VE.Events.instReprLinkForm.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.ownPrefixIn",
+      "lines": 2,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.reserved.match_1",
+      "prefix": "VE.NormDefaults.Packs.reserved"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.dispatch",
+      "lines": 6,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.extendEnv.match_3",
+      "prefix": "VE.NormDefaults.Packs.extendEnv"
+     },
+     {
+      "by": "VE.Defaults.Wire.PairStatus.label",
+      "lines": 1,
+      "module": "VE.Defaults.Wire",
+      "name": "VE.Defaults.Wire.instReprPairStatus.repr.match_1",
+      "prefix": "VE.Defaults.Wire.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Readings.Run.pairFactsIn",
+      "lines": 12,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.pairFactsSpec.match_1",
+      "prefix": "VE.Readings.Run.pairFactsSpec"
+     },
+     {
+      "by": "VE.Readings.tablesModelOn",
+      "lines": 5,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.withTables.match_1",
+      "prefix": "VE.Readings.withTables"
+     },
+     {
+      "by": "VE.Readings.observeOn",
+      "lines": 10,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.observe.match_1",
+      "prefix": "VE.Readings.observe"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_3",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_1",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_9",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_7",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_5",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_3",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 24497,
+   "lines": 24238,
    "modes": [
     "readingsRoute"
    ],
    "name": "readingsRoute",
-   "spec_lines": 9443,
+   "spec_lines": 9343,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 21,
@@ -1322,13 +3568,13 @@
     "VE.Closure.Paths": 3,
     "VE.Closure.Syntax": 35,
     "VE.Compose.Content": 17,
-    "VE.Compose.Dispatch": 170,
+    "VE.Compose.Dispatch": 128,
     "VE.Core.Bridge": 107,
     "VE.Core.Layers": 1,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 41,
     "VE.Data.Background": 7,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 42,
     "VE.Discourse.Loader": 78,
     "VE.EnglishGrammar.Actions": 528,
@@ -1351,7 +3597,7 @@
     "VE.Grammar.Derives": 49,
     "VE.Grammar.Meaning": 55,
     "VE.Grammar.Reading": 42,
-    "VE.Grammar.Table": 217,
+    "VE.Grammar.Table": 210,
     "VE.Limits": 16,
     "VE.NormDefaults.Evidence": 20,
     "VE.NormDefaults.Layered": 2,
@@ -1362,7 +3608,7 @@
     "VE.NormDefaults.Wire": 4,
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 25,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Plain": 17,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 8,
@@ -1373,7 +3619,7 @@
     "VE.Order.Syntax": 54,
     "VE.Order.Wire": 110,
     "VE.Paths": 3,
-    "VE.Question.Basic": 54,
+    "VE.Question.Basic": 50,
     "VE.Question.Properties": 17,
     "VE.Readings.Choice": 90,
     "VE.Readings.Doc": 170,
@@ -1385,7 +3631,7 @@
     "VE.Readings.Wire": 135,
     "VE.Rights.Correlate": 348,
     "VE.Rights.Tree": 200,
-    "VE.Rights.Wire": 93,
+    "VE.Rights.Wire": 72,
     "VE.Risk.Wire": 32,
     "VE.Route.Admission": 3,
     "VE.Route.AstLimit": 70,
@@ -1396,8 +3642,8 @@
     "VE.Route.Typed": 75,
     "VE.Route.Wire": 237,
     "VE.Semantics": 40,
-    "VE.Service.Document": 196,
-    "VE.SoftNorms.Phases": 333,
+    "VE.Service.Document": 188,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Tree": 148,
     "VE.SoftNorms.Wire": 8,
@@ -1421,7 +3667,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 20805,
+   "wrap_lines": 14955,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1449,7 +3695,7 @@
     "VE.Closure.Syntax": 48,
     "VE.Closure.Tableau": 37,
     "VE.Compose.Content": 24,
-    "VE.Compose.Dispatch": 209,
+    "VE.Compose.Dispatch": 167,
     "VE.Compose.Slot": 16,
     "VE.Compose.SlotWire": 132,
     "VE.Core.Bridge": 107,
@@ -1460,7 +3706,7 @@
     "VE.Core.Layers": 247,
     "VE.Core.PathRules": 6,
     "VE.Core.Paths": 6,
-    "VE.Core.Substitution": 40,
+    "VE.Core.Substitution": 37,
     "VE.Core.Syntax": 64,
     "VE.Core.TableauExtended": 72,
     "VE.Core.TableauExtendedChecker": 56,
@@ -1479,7 +3725,7 @@
     "VE.Definitions.Bundle": 163,
     "VE.Definitions.Elaborate": 52,
     "VE.Definitions.Layer": 45,
-    "VE.Discourse.Loader": 105,
+    "VE.Discourse.Loader": 50,
     "VE.Events.Anchor": 2,
     "VE.Events.Chain": 37,
     "VE.Events.Decl": 81,
@@ -1498,7 +3744,7 @@
     "VE.NormDefaults.Layered": 328,
     "VE.NormDefaults.LayeredAdmission": 89,
     "VE.NormDefaults.LayeredEntail": 20,
-    "VE.NormDefaults.Packs": 114,
+    "VE.NormDefaults.Packs": 106,
     "VE.NormDefaults.Premises": 24,
     "VE.NormDefaults.Replay": 229,
     "VE.NormDefaults.Report": 330,
@@ -1509,7 +3755,7 @@
     "VE.Norms.Admission": 136,
     "VE.Norms.Basic": 38,
     "VE.Norms.Conflict": 20,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
     "VE.Norms.Plain": 204,
@@ -1523,7 +3769,7 @@
     "VE.Norms.WitnessKind": 2,
     "VE.Order.Conservativity": 15,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
     "VE.Order.Syntax": 54,
@@ -1539,9 +3785,9 @@
     "VE.Readings.Doc": 175,
     "VE.Readings.Lines": 12,
     "VE.Readings.Route": 212,
-    "VE.Readings.Run": 522,
+    "VE.Readings.Run": 475,
     "VE.Readings.Scan": 50,
-    "VE.Readings.Separate": 299,
+    "VE.Readings.Separate": 284,
     "VE.Readings.SoftDefaults": 20,
     "VE.Readings.SoftSeparate": 4,
     "VE.Readings.SoftVerdicts": 67,
@@ -1558,15 +3804,15 @@
     "VE.Readings.UnspecifiedWire": 384,
     "VE.Readings.Verdicts": 62,
     "VE.Readings.VerdictsWire": 830,
-    "VE.Readings.Wire": 646,
+    "VE.Readings.Wire": 618,
     "VE.Rights.Admission": 297,
     "VE.Rights.Correlate": 366,
     "VE.Rights.Distinction": 22,
     "VE.Rights.Route": 9,
     "VE.Rights.Run": 386,
-    "VE.Rights.Scope": 143,
+    "VE.Rights.Scope": 131,
     "VE.Rights.Tree": 202,
-    "VE.Rights.Wire": 438,
+    "VE.Rights.Wire": 417,
     "VE.Route.Admission": 415,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 22,
@@ -1585,7 +3831,7 @@
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
     "VE.SoftNorms.Once": 100,
-    "VE.SoftNorms.Phases": 333,
+    "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Run": 435,
     "VE.SoftNorms.Selected": 72,
     "VE.SoftNorms.Semantics": 26,
@@ -1593,7 +3839,7 @@
     "VE.SoftNorms.Status": 10,
     "VE.SoftNorms.Tree": 157,
     "VE.SoftNorms.Wire": 289,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1605,13 +3851,733 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Discourse.slotsOf",
+      "lines": 1,
+      "module": "VE.Discourse.Grammar",
+      "name": "VE.Discourse.instReprSTree.repr.match_1",
+      "prefix": "VE.Discourse.instReprSTree.repr"
+     },
+     {
+      "by": "VE.Discourse.coreSlots",
+      "lines": 1,
+      "module": "VE.Discourse.Grammar",
+      "name": "VE.Discourse.instReprCore.repr.match_1",
+      "prefix": "VE.Discourse.instReprCore.repr"
+     },
+     {
+      "by": "VE.Discourse.modEnd",
+      "lines": 1,
+      "module": "VE.Discourse.Grammar",
+      "name": "VE.Discourse.instReprMod.repr.match_1",
+      "prefix": "VE.Discourse.instReprMod.repr"
+     },
+     {
+      "by": "VE.Discourse.verdictOf",
+      "lines": 1,
+      "module": "VE.Discourse.Documents",
+      "name": "VE.Discourse.instReprImportOutcome.repr.match_1",
+      "prefix": "VE.Discourse.instReprImportOutcome.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reported",
+      "lines": 43,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.identityCase.match_1",
+      "prefix": "VE.Service.Standalone.identityCase"
+     },
+     {
+      "by": "VE.Alternatives.fulfilmentOk",
+      "lines": 5,
+      "module": "VE.Alternatives.Decl",
+      "name": "VE.Alternatives.restSorts.match_1",
+      "prefix": "VE.Alternatives.restSorts"
+     },
+     {
+      "by": "VE.Reports.reportsGate",
+      "lines": 4,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.holderSort.match_1",
+      "prefix": "VE.Reports.holderSort"
+     },
+     {
+      "by": "VE.Service.Standalone.validated",
+      "lines": 7,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.profileTree.match_1",
+      "prefix": "VE.Service.Standalone.profileTree"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Route.Gate.Family.name",
+      "lines": 1,
+      "module": "VE.Route.Gate",
+      "name": "VE.Route.Gate.instReprFamily.repr.match_1",
+      "prefix": "VE.Route.Gate.instReprFamily.repr"
+     },
+     {
+      "by": "_private.VE.Service.Standalone.0.VE.Service.Standalone.environmentFields",
+      "lines": 21,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.legacyModelCase.match_1",
+      "prefix": "VE.Service.Standalone.legacyModelCase"
+     },
+     {
+      "by": "_private.VE.Service.Standalone.0.VE.Service.Standalone.locatedEnvironmentFields",
+      "lines": 17,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.legacyCheckCase.match_1",
+      "prefix": "VE.Service.Standalone.legacyCheckCase"
+     },
+     {
+      "by": "VE.Service.Standalone.Pointer.resolves",
+      "lines": 1,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.instReprPointerSegment.repr.match_1",
+      "prefix": "VE.Service.Standalone.instReprPointerSegment.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reportedEnvironment",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.checkedModelTablesPathResolves.match_1",
+      "prefix": "VE.Service.Standalone.checkedModelTablesPathResolves"
+     },
+     {
+      "by": "VE.Events.linkWording",
+      "lines": 1,
+      "module": "VE.Events.Decl",
+      "name": "VE.Events.instReprLinkForm.repr.match_1",
+      "prefix": "VE.Events.instReprLinkForm.repr"
+     },
+     {
+      "by": "VE.Service.Document.describedBy",
+      "lines": 15,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.exchangeSet.match_3",
+      "prefix": "VE.Service.Document.exchangeSet"
+     },
+     {
+      "by": "VE.Service.Document.RightsKind.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprRightsKind.repr.match_1",
+      "prefix": "VE.Service.Document.instReprRightsKind.repr"
+     },
+     {
+      "by": "VE.Service.Document.rightsContentOf",
+      "lines": 3,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.RowKind.json.match_1",
+      "prefix": "VE.Service.Document.RowKind.json"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.matchPattern",
+      "lines": 1,
+      "module": "VE.EnglishGrammar.Policy",
+      "name": "VE.EnglishGrammar.instReprPatWord.repr.match_1",
+      "prefix": "VE.EnglishGrammar.instReprPatWord.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.admit",
+      "lines": 5,
+      "module": "VE.EnglishGrammar.Read",
+      "name": "VE.EnglishGrammar.checkRendering.match_1",
+      "prefix": "VE.EnglishGrammar.checkRendering"
+     },
+     {
+      "by": "VE.Grammar.Rule.wf",
+      "lines": 1,
+      "module": "VE.Grammar.Basic",
+      "name": "VE.Grammar.instReprSym.repr.match_1",
+      "prefix": "VE.Grammar.instReprSym.repr"
+     },
+     {
+      "by": "VE.Grammar.verdict",
+      "lines": 7,
+      "module": "VE.Grammar.Table",
+      "name": "VE.Grammar.Prepared.verdict.match_1",
+      "prefix": "VE.Grammar.Prepared.verdict"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.Reject.code",
+      "lines": 1,
+      "module": "VE.EnglishGrammar.Syntax",
+      "name": "VE.EnglishGrammar.instReprReject.repr.match_1",
+      "prefix": "VE.EnglishGrammar.instReprReject.repr"
+     },
+     {
+      "by": "VE.Cardinality.CFormula.admits",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprCFormula.repr.match_1",
+      "prefix": "VE.Cardinality.instReprCFormula.repr"
+     },
+     {
+      "by": "VE.Time.QFormula.admits",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQFormula.repr.match_1",
+      "prefix": "VE.Time.instReprQFormula.repr"
+     },
+     {
+      "by": "VE.Time.QTerm.typeOf",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQTerm.repr.match_1",
+      "prefix": "VE.Time.instReprQTerm.repr"
+     },
+     {
+      "by": "VE.Cardinality.bodyCheck",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprBody.repr.match_1",
+      "prefix": "VE.Cardinality.instReprBody.repr"
+     },
+     {
+      "by": "VE.Cardinality.CTerm.tagOf",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprCTerm.repr.match_1",
+      "prefix": "VE.Cardinality.instReprCTerm.repr"
+     },
+     {
+      "by": "VE.Cardinality.Body.atoms",
+      "lines": 1,
+      "module": "VE.Cardinality.Regions",
+      "name": "VE.Cardinality.instHashableBody.hash.match_1",
+      "prefix": "VE.Cardinality.instHashableBody.hash"
+     },
+     {
+      "by": "VE.Readings.reservedFree",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprItem.repr.match_1",
+      "prefix": "VE.Readings.instReprItem.repr"
+     },
+     {
+      "by": "VE.Compose.Content.declared",
+      "lines": 1,
+      "module": "VE.Compose.Content",
+      "name": "VE.Compose.instReprContent.repr.match_1",
+      "prefix": "VE.Compose.instReprContent.repr"
+     },
+     {
+      "by": "VE.Readings.Wire.chainText",
+      "lines": 28,
+      "module": "VE.Readings.Wire",
+      "name": "VE.Readings.Wire.chainTextSpec.match_1",
+      "prefix": "VE.Readings.Wire.chainTextSpec"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Reached.label",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprReached.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprReached.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Grounding.line",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprGrounding.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprGrounding.repr"
+     },
+     {
+      "by": "VE.Readings.Route.text",
+      "lines": 1,
+      "module": "VE.Readings.Route",
+      "name": "VE.Readings.instReprRoute.repr.match_1",
+      "prefix": "VE.Readings.instReprRoute.repr"
+     },
+     {
+      "by": "VE.Readings.Chain.text",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprChain.repr.match_1",
+      "prefix": "VE.Readings.instReprChain.repr"
+     },
+     {
+      "by": "VE.Readings.Run.runChoiceSD",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_1",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.runLowerWith",
+      "lines": 14,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.runLower.match_1",
+      "prefix": "VE.Readings.Run.runLower"
+     },
+     {
+      "by": "VE.Rights.mechText",
+      "lines": 12,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.NarrowsAt.match_1",
+      "prefix": "VE.Rights.NarrowsAt"
+     },
+     {
+      "by": "VE.Rights.Ground.text",
+      "lines": 1,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.instReprGround.repr.match_1",
+      "prefix": "VE.Rights.instReprGround.repr"
+     },
+     {
+      "by": "VE.SoftNorms.PairStatus.text",
+      "lines": 1,
+      "module": "VE.SoftNorms.Status",
+      "name": "VE.SoftNorms.instReprPairStatus.repr.match_1",
+      "prefix": "VE.SoftNorms.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Core.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Core.TableauExtended",
+      "name": "VE.Core.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Core.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Core.Formula.reach",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprEdge.repr.match_1",
+      "prefix": "VE.Core.instReprEdge.repr"
+     },
+     {
+      "by": "VE.Core.Edge.shift",
+      "lines": 3,
+      "module": "VE.Core.Substitution",
+      "name": "VE.Core.Edge.denote.match_1",
+      "prefix": "VE.Core.Edge.denote"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Closure.CoreEquiv.embedTrace",
+      "lines": 1,
+      "module": "VE.Closure.Tableau",
+      "name": "VE.Closure.Tableau.instReprTrace.repr.match_1",
+      "prefix": "VE.Closure.Tableau.instReprTrace.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.ownPrefixIn",
+      "lines": 2,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.reserved.match_1",
+      "prefix": "VE.NormDefaults.Packs.reserved"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.dispatch",
+      "lines": 6,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.extendEnv.match_3",
+      "prefix": "VE.NormDefaults.Packs.extendEnv"
+     },
+     {
+      "by": "VE.Defaults.Wire.PairStatus.label",
+      "lines": 1,
+      "module": "VE.Defaults.Wire",
+      "name": "VE.Defaults.Wire.instReprPairStatus.repr.match_1",
+      "prefix": "VE.Defaults.Wire.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Readings.Run.pairFactsIn",
+      "lines": 12,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.pairFactsSpec.match_1",
+      "prefix": "VE.Readings.Run.pairFactsSpec"
+     },
+     {
+      "by": "VE.Readings.tablesModelOn",
+      "lines": 5,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.withTables.match_1",
+      "prefix": "VE.Readings.withTables"
+     },
+     {
+      "by": "VE.Readings.observeOn",
+      "lines": 10,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.observe.match_1",
+      "prefix": "VE.Readings.observe"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_3",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_1",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_9",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_7",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_5",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_3",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Senses.SenseText.sents",
+      "lines": 1,
+      "module": "VE.Senses.Document",
+      "name": "VE.Senses.instReprSenseText.repr.match_1",
+      "prefix": "VE.Senses.instReprSenseText.repr"
+     },
+     {
+      "by": "VE.Senses.Assignment.lines",
+      "lines": 4,
+      "module": "VE.Senses.Assignment",
+      "name": "VE.Senses.Assignment.wf.match_1",
+      "prefix": "VE.Senses.Assignment.wf"
+     },
+     {
+      "by": "VE.Service.Document.Support.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprSupport.repr.match_1",
+      "prefix": "VE.Service.Document.instReprSupport.repr"
+     },
+     {
+      "by": "VE.Service.Document.UnitStatus.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprUnitStatus.repr.match_1",
+      "prefix": "VE.Service.Document.instReprUnitStatus.repr"
+     },
+     {
+      "by": "VE.Judgments.Content.formulas",
+      "lines": 1,
+      "module": "VE.Judgments.Status",
+      "name": "VE.Judgments.instReprContent.repr.match_1",
+      "prefix": "VE.Judgments.instReprContent.repr"
+     },
+     {
+      "by": "VE.Service.Document.Env.basePredicates",
+      "lines": 5,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.usageJson.match_1",
+      "prefix": "VE.Service.Document.usageJson"
+     },
+     {
+      "by": "VE.Time.QType.erase",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQType.repr.match_1",
+      "prefix": "VE.Time.instReprQType.repr"
+     },
+     {
+      "by": "VE.Discourse.conditionalOnOf",
+      "lines": 4,
+      "module": "VE.Discourse.Compose",
+      "name": "VE.Discourse.editArr.match_1",
+      "prefix": "VE.Discourse.editArr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Discourse.Run.runCaseReported",
+      "lines": 13,
+      "module": "VE.Discourse.Run",
+      "name": "VE.Discourse.Run.loadCase.match_3",
+      "prefix": "VE.Discourse.Run.loadCase"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Core.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Core.TableauExtended",
+      "name": "VE.Core.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Core.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Core.Formula.reach",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprEdge.repr.match_1",
+      "prefix": "VE.Core.instReprEdge.repr"
+     },
+     {
+      "by": "VE.Core.Edge.shift",
+      "lines": 3,
+      "module": "VE.Core.Substitution",
+      "name": "VE.Core.Edge.denote.match_1",
+      "prefix": "VE.Core.Edge.denote"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Closure.CoreEquiv.embedTrace",
+      "lines": 1,
+      "module": "VE.Closure.Tableau",
+      "name": "VE.Closure.Tableau.instReprTrace.repr.match_1",
+      "prefix": "VE.Closure.Tableau.instReprTrace.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 36485,
+   "lines": 36205,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36479,
+   "spec_lines": 36199,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1630,18 +4596,18 @@
     "VE.Acts.Wire": 40,
     "VE.Alternatives.Admission": 87,
     "VE.Alternatives.Background": 34,
-    "VE.Alternatives.Decl": 191,
+    "VE.Alternatives.Decl": 186,
     "VE.Alternatives.FillWire": 19,
     "VE.Alternatives.Replay": 12,
     "VE.Alternatives.Run": 11,
     "VE.Alternatives.Wire": 216,
-    "VE.Attribution.Content": 22,
+    "VE.Attribution.Content": 18,
     "VE.Attribution.Wire": 55,
     "VE.Bridge": 231,
     "VE.Cardinality.Document": 83,
     "VE.Cardinality.Erase": 54,
     "VE.Cardinality.Ratio": 10,
-    "VE.Cardinality.Regions": 128,
+    "VE.Cardinality.Regions": 127,
     "VE.Cardinality.Run": 83,
     "VE.Cardinality.Syntax": 89,
     "VE.Cardinality.Wire": 236,
@@ -1665,7 +4631,7 @@
     "VE.Core.Layers": 247,
     "VE.Core.PathRules": 6,
     "VE.Core.Paths": 7,
-    "VE.Core.Substitution": 40,
+    "VE.Core.Substitution": 37,
     "VE.Core.Surface": 193,
     "VE.Core.Syntax": 64,
     "VE.Core.TableauExtended": 72,
@@ -1687,7 +4653,7 @@
     "VE.Definitions.Layer": 45,
     "VE.Discourse.Access": 241,
     "VE.Discourse.Admission": 628,
-    "VE.Discourse.Compose": 218,
+    "VE.Discourse.Compose": 214,
     "VE.Discourse.Descriptions": 18,
     "VE.Discourse.Documents": 7,
     "VE.Discourse.Elaborate": 76,
@@ -1719,7 +4685,7 @@
     "VE.EnglishGrammar.Lexicon": 422,
     "VE.EnglishGrammar.Norm.Value": 59,
     "VE.EnglishGrammar.Policy": 555,
-    "VE.EnglishGrammar.Read": 72,
+    "VE.EnglishGrammar.Read": 67,
     "VE.EnglishGrammar.Rules": 312,
     "VE.EnglishGrammar.Run": 454,
     "VE.EnglishGrammar.SourceWords": 141,
@@ -1736,7 +4702,7 @@
     "VE.Grammar.Expect": 60,
     "VE.Grammar.Meaning": 55,
     "VE.Grammar.Reading": 38,
-    "VE.Grammar.Table": 217,
+    "VE.Grammar.Table": 210,
     "VE.Json": 81,
     "VE.Judgments.Chain": 37,
     "VE.Judgments.Decl": 45,
@@ -1751,7 +4717,7 @@
     "VE.NormDefaults.Layered": 328,
     "VE.NormDefaults.LayeredAdmission": 89,
     "VE.NormDefaults.LayeredEntail": 20,
-    "VE.NormDefaults.Packs": 114,
+    "VE.NormDefaults.Packs": 106,
     "VE.NormDefaults.Premises": 24,
     "VE.NormDefaults.Replay": 229,
     "VE.NormDefaults.Report": 330,
@@ -1762,7 +4728,7 @@
     "VE.Norms.Admission": 136,
     "VE.Norms.Basic": 38,
     "VE.Norms.Conflict": 20,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
     "VE.Norms.Plain": 204,
@@ -1777,7 +4743,7 @@
     "VE.Numbers.Round": 3,
     "VE.Order.Conservativity": 15,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
     "VE.Order.Surface": 207,
@@ -1794,9 +4760,9 @@
     "VE.Readings.Doc": 175,
     "VE.Readings.Lines": 12,
     "VE.Readings.Route": 212,
-    "VE.Readings.Run": 513,
+    "VE.Readings.Run": 452,
     "VE.Readings.Scan": 50,
-    "VE.Readings.Separate": 299,
+    "VE.Readings.Separate": 284,
     "VE.Readings.SoftDefaults": 20,
     "VE.Readings.SoftSeparate": 4,
     "VE.Readings.SoftVerdicts": 67,
@@ -1813,13 +4779,13 @@
     "VE.Readings.UnspecifiedWire": 384,
     "VE.Readings.Verdicts": 62,
     "VE.Readings.VerdictsWire": 830,
-    "VE.Readings.Wire": 646,
+    "VE.Readings.Wire": 618,
     "VE.Rights.Admission": 297,
     "VE.Rights.Correlate": 366,
     "VE.Rights.Distinction": 22,
     "VE.Rights.Route": 9,
     "VE.Rights.Run": 386,
-    "VE.Rights.Scope": 143,
+    "VE.Rights.Scope": 131,
     "VE.Rights.Tree": 202,
     "VE.Rights.Wire": 445,
     "VE.Risk.Admission": 78,
@@ -1842,7 +4808,7 @@
     "VE.Route.Typed": 75,
     "VE.Route.Wire": 496,
     "VE.Semantics": 49,
-    "VE.Senses.Assignment": 24,
+    "VE.Senses.Assignment": 20,
     "VE.Senses.Decode": 58,
     "VE.Senses.Dictionary": 295,
     "VE.Senses.Document": 129,
@@ -1854,9 +4820,9 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1880,
+    "VE.Service.Document": 1857,
     "VE.Service.ParseDiagnostic": 7,
-    "VE.Service.Standalone": 848,
+    "VE.Service.Standalone": 755,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
@@ -1892,7 +4858,7 @@
    },
    "theorems": 6,
    "tier": "candidate",
-   "wrap_lines": 4541,
+   "wrap_lines": 11,
    "wrap_modules": {
     "VE.Bridge": 116,
     "VE.CertificateWire": 167,
@@ -1910,7 +4876,7 @@
     "VE.Core.Layers": 247,
     "VE.Core.PathRules": 6,
     "VE.Core.Paths": 6,
-    "VE.Core.Substitution": 40,
+    "VE.Core.Substitution": 37,
     "VE.Core.Syntax": 64,
     "VE.Core.TableauExtended": 72,
     "VE.Core.TableauExtendedChecker": 56,
@@ -1921,14 +4887,14 @@
     "VE.Core.Wire": 108,
     "VE.Data.Background": 17,
     "VE.Definitions.Bundle": 163,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 45,
     "VE.Discourse.Admission": 1,
-    "VE.Discourse.Run": 29,
+    "VE.Discourse.Run": 16,
     "VE.Finite": 33,
     "VE.Limits": 18,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
     "VE.Order.Syntax": 54,
@@ -1950,7 +4916,7 @@
     "VE.Route.Typed": 6,
     "VE.Route.Wire": 496,
     "VE.Semantics": 14,
-    "VE.Surface": 18,
+    "VE.Surface": 15,
     "VE.Syntax": 49,
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
@@ -1959,13 +4925,873 @@
    }
   },
   {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reported",
+      "lines": 43,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.identityCase.match_1",
+      "prefix": "VE.Service.Standalone.identityCase"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Alternatives.fulfilmentOk",
+      "lines": 5,
+      "module": "VE.Alternatives.Decl",
+      "name": "VE.Alternatives.restSorts.match_1",
+      "prefix": "VE.Alternatives.restSorts"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Reports.reportsGate",
+      "lines": 4,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.holderSort.match_1",
+      "prefix": "VE.Reports.holderSort"
+     },
+     {
+      "by": "VE.Service.Standalone.validated",
+      "lines": 7,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.profileTree.match_1",
+      "prefix": "VE.Service.Standalone.profileTree"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Route.Gate.Family.name",
+      "lines": 1,
+      "module": "VE.Route.Gate",
+      "name": "VE.Route.Gate.instReprFamily.repr.match_1",
+      "prefix": "VE.Route.Gate.instReprFamily.repr"
+     },
+     {
+      "by": "_private.VE.Service.Standalone.0.VE.Service.Standalone.environmentFields",
+      "lines": 21,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.legacyModelCase.match_1",
+      "prefix": "VE.Service.Standalone.legacyModelCase"
+     },
+     {
+      "by": "_private.VE.Service.Standalone.0.VE.Service.Standalone.locatedEnvironmentFields",
+      "lines": 17,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.legacyCheckCase.match_1",
+      "prefix": "VE.Service.Standalone.legacyCheckCase"
+     },
+     {
+      "by": "VE.Service.Standalone.Pointer.resolves",
+      "lines": 1,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.instReprPointerSegment.repr.match_1",
+      "prefix": "VE.Service.Standalone.instReprPointerSegment.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reportedEnvironment",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.checkedModelTablesPathResolves.match_1",
+      "prefix": "VE.Service.Standalone.checkedModelTablesPathResolves"
+     },
+     {
+      "by": "VE.Events.linkWording",
+      "lines": 1,
+      "module": "VE.Events.Decl",
+      "name": "VE.Events.instReprLinkForm.repr.match_1",
+      "prefix": "VE.Events.instReprLinkForm.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Discourse.Loader.mixedOf",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_11",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Discourse.Loader.mixedOf",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_5",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Discourse.Loader.optionalList",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_7",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Service.Document.RightsKind.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprRightsKind.repr.match_1",
+      "prefix": "VE.Service.Document.instReprRightsKind.repr"
+     },
+     {
+      "by": "VE.Acts.Lexical.Form.text",
+      "lines": 1,
+      "module": "VE.Acts.Lexical",
+      "name": "VE.Acts.Lexical.instReprForm.repr.match_1",
+      "prefix": "VE.Acts.Lexical.instReprForm.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.matchPattern",
+      "lines": 1,
+      "module": "VE.EnglishGrammar.Policy",
+      "name": "VE.EnglishGrammar.instReprPatWord.repr.match_1",
+      "prefix": "VE.EnglishGrammar.instReprPatWord.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.admit",
+      "lines": 5,
+      "module": "VE.EnglishGrammar.Read",
+      "name": "VE.EnglishGrammar.checkRendering.match_1",
+      "prefix": "VE.EnglishGrammar.checkRendering"
+     },
+     {
+      "by": "VE.Grammar.Rule.wf",
+      "lines": 1,
+      "module": "VE.Grammar.Basic",
+      "name": "VE.Grammar.instReprSym.repr.match_1",
+      "prefix": "VE.Grammar.instReprSym.repr"
+     },
+     {
+      "by": "VE.Grammar.verdict",
+      "lines": 7,
+      "module": "VE.Grammar.Table",
+      "name": "VE.Grammar.Prepared.verdict.match_1",
+      "prefix": "VE.Grammar.Prepared.verdict"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.EnglishGrammar.Reject.code",
+      "lines": 1,
+      "module": "VE.EnglishGrammar.Syntax",
+      "name": "VE.EnglishGrammar.instReprReject.repr.match_1",
+      "prefix": "VE.EnglishGrammar.instReprReject.repr"
+     },
+     {
+      "by": "VE.Cardinality.CFormula.admits",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprCFormula.repr.match_1",
+      "prefix": "VE.Cardinality.instReprCFormula.repr"
+     },
+     {
+      "by": "VE.Time.QFormula.admits",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQFormula.repr.match_1",
+      "prefix": "VE.Time.instReprQFormula.repr"
+     },
+     {
+      "by": "VE.Time.QTerm.typeOf",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQTerm.repr.match_1",
+      "prefix": "VE.Time.instReprQTerm.repr"
+     },
+     {
+      "by": "VE.Cardinality.bodyCheck",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprBody.repr.match_1",
+      "prefix": "VE.Cardinality.instReprBody.repr"
+     },
+     {
+      "by": "VE.Cardinality.CTerm.tagOf",
+      "lines": 1,
+      "module": "VE.Cardinality.Syntax",
+      "name": "VE.Cardinality.instReprCTerm.repr.match_1",
+      "prefix": "VE.Cardinality.instReprCTerm.repr"
+     },
+     {
+      "by": "VE.Cardinality.Body.atoms",
+      "lines": 1,
+      "module": "VE.Cardinality.Regions",
+      "name": "VE.Cardinality.instHashableBody.hash.match_1",
+      "prefix": "VE.Cardinality.instHashableBody.hash"
+     },
+     {
+      "by": "VE.Discourse.Loader.compileSets",
+      "lines": 7,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.splitTextWith.match_3",
+      "prefix": "VE.Discourse.Loader.splitTextWith"
+     },
+     {
+      "by": "VE.Discourse.Loader.compileSets",
+      "lines": 4,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.filesOf.match_1",
+      "prefix": "VE.Discourse.Loader.filesOf"
+     },
+     {
+      "by": "VE.Readings.reservedFree",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprItem.repr.match_1",
+      "prefix": "VE.Readings.instReprItem.repr"
+     },
+     {
+      "by": "VE.Compose.Content.declared",
+      "lines": 1,
+      "module": "VE.Compose.Content",
+      "name": "VE.Compose.instReprContent.repr.match_1",
+      "prefix": "VE.Compose.instReprContent.repr"
+     },
+     {
+      "by": "VE.Readings.Wire.chainText",
+      "lines": 28,
+      "module": "VE.Readings.Wire",
+      "name": "VE.Readings.Wire.chainTextSpec.match_1",
+      "prefix": "VE.Readings.Wire.chainTextSpec"
+     },
+     {
+      "by": "VE.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Tableau",
+      "name": "VE.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Norms.elaborate",
+      "lines": 4,
+      "module": "VE.Norms.Elaborate",
+      "name": "VE.Norms.Sym.premise.match_1",
+      "prefix": "VE.Norms.Sym.premise"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Reached.label",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprReached.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprReached.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Wire.Grounding.line",
+      "lines": 1,
+      "module": "VE.NormDefaults.Report",
+      "name": "VE.NormDefaults.Wire.instReprGrounding.repr.match_1",
+      "prefix": "VE.NormDefaults.Wire.instReprGrounding.repr"
+     },
+     {
+      "by": "VE.Readings.Route.text",
+      "lines": 1,
+      "module": "VE.Readings.Route",
+      "name": "VE.Readings.instReprRoute.repr.match_1",
+      "prefix": "VE.Readings.instReprRoute.repr"
+     },
+     {
+      "by": "VE.Readings.Chain.text",
+      "lines": 1,
+      "module": "VE.Readings.Doc",
+      "name": "VE.Readings.instReprChain.repr.match_1",
+      "prefix": "VE.Readings.instReprChain.repr"
+     },
+     {
+      "by": "VE.Readings.Run.runChoiceSD",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_1",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.runLowerWith",
+      "lines": 14,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.runLower.match_1",
+      "prefix": "VE.Readings.Run.runLower"
+     },
+     {
+      "by": "VE.Rights.mechText",
+      "lines": 12,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.NarrowsAt.match_1",
+      "prefix": "VE.Rights.NarrowsAt"
+     },
+     {
+      "by": "VE.Rights.Ground.text",
+      "lines": 1,
+      "module": "VE.Rights.Scope",
+      "name": "VE.Rights.instReprGround.repr.match_1",
+      "prefix": "VE.Rights.instReprGround.repr"
+     },
+     {
+      "by": "VE.Route.Admission.Label.render",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprLabel.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprLabel.repr"
+     },
+     {
+      "by": "VE.SoftNorms.PairStatus.text",
+      "lines": 1,
+      "module": "VE.SoftNorms.Status",
+      "name": "VE.SoftNorms.instReprPairStatus.repr.match_1",
+      "prefix": "VE.SoftNorms.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Core.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Core.TableauExtended",
+      "name": "VE.Core.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Core.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Core.Formula.reach",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprEdge.repr.match_1",
+      "prefix": "VE.Core.instReprEdge.repr"
+     },
+     {
+      "by": "VE.Core.Edge.shift",
+      "lines": 3,
+      "module": "VE.Core.Substitution",
+      "name": "VE.Core.Edge.denote.match_1",
+      "prefix": "VE.Core.Edge.denote"
+     },
+     {
+      "by": "VE.Order.Tableau.Token.scoped",
+      "lines": 1,
+      "module": "VE.Order.Tableau",
+      "name": "VE.Order.Tableau.instReprToken.repr.match_1",
+      "prefix": "VE.Order.Tableau.instReprToken.repr"
+     },
+     {
+      "by": "VE.Order.collect",
+      "lines": 3,
+      "module": "VE.Order.Linear",
+      "name": "VE.Order.sumTerms.match_1",
+      "prefix": "VE.Order.sumTerms"
+     },
+     {
+      "by": "VE.Closure.CoreEquiv.embedTrace",
+      "lines": 1,
+      "module": "VE.Closure.Tableau",
+      "name": "VE.Closure.Tableau.instReprTrace.repr.match_1",
+      "prefix": "VE.Closure.Tableau.instReprTrace.repr"
+     },
+     {
+      "by": "VE.Route.Admission.renderKind",
+      "lines": 1,
+      "module": "VE.Route.Admission",
+      "name": "VE.Route.Admission.instReprKind.repr.match_1",
+      "prefix": "VE.Route.Admission.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Simple.text",
+      "lines": 1,
+      "module": "VE.Acts.Table",
+      "name": "VE.Acts.instReprSimple.repr.match_1",
+      "prefix": "VE.Acts.instReprSimple.repr"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.ownPrefixIn",
+      "lines": 2,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.reserved.match_1",
+      "prefix": "VE.NormDefaults.Packs.reserved"
+     },
+     {
+      "by": "VE.NormDefaults.Packs.dispatch",
+      "lines": 6,
+      "module": "VE.NormDefaults.Packs",
+      "name": "VE.NormDefaults.Packs.extendEnv.match_3",
+      "prefix": "VE.NormDefaults.Packs.extendEnv"
+     },
+     {
+      "by": "VE.Defaults.Wire.PairStatus.label",
+      "lines": 1,
+      "module": "VE.Defaults.Wire",
+      "name": "VE.Defaults.Wire.instReprPairStatus.repr.match_1",
+      "prefix": "VE.Defaults.Wire.instReprPairStatus.repr"
+     },
+     {
+      "by": "VE.Readings.Run.pairFactsIn",
+      "lines": 12,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.pairFactsSpec.match_1",
+      "prefix": "VE.Readings.Run.pairFactsSpec"
+     },
+     {
+      "by": "VE.Readings.tablesModelOn",
+      "lines": 5,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.withTables.match_1",
+      "prefix": "VE.Readings.withTables"
+     },
+     {
+      "by": "VE.Readings.observeOn",
+      "lines": 10,
+      "module": "VE.Readings.Separate",
+      "name": "VE.Readings.observe.match_1",
+      "prefix": "VE.Readings.observe"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_3",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.candidateJson",
+      "lines": 13,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.candidateJsonSpec.match_1",
+      "prefix": "VE.Readings.Run.candidateJsonSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_9",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_7",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_5",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Readings.Run.setPairsBy",
+      "lines": 22,
+      "module": "VE.Readings.Run",
+      "name": "VE.Readings.Run.setPairsSpec.match_3",
+      "prefix": "VE.Readings.Run.setPairsSpec"
+     },
+     {
+      "by": "VE.Senses.SenseText.sents",
+      "lines": 1,
+      "module": "VE.Senses.Document",
+      "name": "VE.Senses.instReprSenseText.repr.match_1",
+      "prefix": "VE.Senses.instReprSenseText.repr"
+     },
+     {
+      "by": "VE.Senses.Assignment.lines",
+      "lines": 4,
+      "module": "VE.Senses.Assignment",
+      "name": "VE.Senses.Assignment.wf.match_1",
+      "prefix": "VE.Senses.Assignment.wf"
+     },
+     {
+      "by": "VE.Service.Document.Support.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprSupport.repr.match_1",
+      "prefix": "VE.Service.Document.instReprSupport.repr"
+     },
+     {
+      "by": "VE.Service.Document.UnitStatus.name",
+      "lines": 1,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.instReprUnitStatus.repr.match_1",
+      "prefix": "VE.Service.Document.instReprUnitStatus.repr"
+     },
+     {
+      "by": "VE.Judgments.Content.formulas",
+      "lines": 1,
+      "module": "VE.Judgments.Status",
+      "name": "VE.Judgments.instReprContent.repr.match_1",
+      "prefix": "VE.Judgments.instReprContent.repr"
+     },
+     {
+      "by": "VE.Time.QType.erase",
+      "lines": 1,
+      "module": "VE.Time.Syntax",
+      "name": "VE.Time.instReprQType.repr.match_1",
+      "prefix": "VE.Time.instReprQType.repr"
+     },
+     {
+      "by": "VE.Service.Document.checkCore",
+      "lines": 8,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.injStep.match_1",
+      "prefix": "VE.Service.Document.injStep"
+     },
+     {
+      "by": "VE.Reports.Status.render",
+      "lines": 1,
+      "module": "VE.Attribution.Status",
+      "name": "VE.Reports.instReprStatus.repr.match_1",
+      "prefix": "VE.Reports.instReprStatus.repr"
+     },
+     {
+      "by": "VE.Service.Document.activeKinds",
+      "lines": 8,
+      "module": "VE.Service.DocumentView",
+      "name": "VE.Service.Document.checkDocSetsView.match_3",
+      "prefix": "VE.Service.Document.checkDocSetsView"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reported",
+      "lines": 43,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.identityCase.match_1",
+      "prefix": "VE.Service.Standalone.identityCase"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Norms.Sym.formulas",
+      "lines": 1,
+      "module": "VE.Norms.Tree",
+      "name": "VE.Norms.instReprSym.repr.match_1",
+      "prefix": "VE.Norms.instReprSym.repr"
+     },
+     {
+      "by": "VE.Alternatives.fulfilmentOk",
+      "lines": 5,
+      "module": "VE.Alternatives.Decl",
+      "name": "VE.Alternatives.restSorts.match_1",
+      "prefix": "VE.Alternatives.restSorts"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Grammar.Tree.yield",
+      "lines": 1,
+      "module": "VE.Grammar.Derives",
+      "name": "VE.Grammar.instReprTree.repr.match_1",
+      "prefix": "VE.Grammar.instReprTree.repr"
+     },
+     {
+      "by": "VE.Acts.attachOf",
+      "lines": 1,
+      "module": "VE.Acts.Grammar",
+      "name": "VE.Acts.instReprKind.repr.match_1",
+      "prefix": "VE.Acts.instReprKind.repr"
+     },
+     {
+      "by": "VE.Acts.Atom.add",
+      "lines": 1,
+      "module": "VE.Acts.Meaning",
+      "name": "VE.Acts.instReprElt.repr.match_1",
+      "prefix": "VE.Acts.instReprElt.repr"
+     },
+     {
+      "by": "VE.Reports.reportsGate",
+      "lines": 4,
+      "module": "VE.Attribution.Content",
+      "name": "VE.Reports.holderSort.match_1",
+      "prefix": "VE.Reports.holderSort"
+     },
+     {
+      "by": "VE.Rights.Wire.decodeRightsBlock",
+      "lines": 21,
+      "module": "VE.Rights.Wire",
+      "name": "VE.Rights.Wire.rightsNormalForm.match_1",
+      "prefix": "VE.Rights.Wire.rightsNormalForm"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Route.Gate.Family.name",
+      "lines": 1,
+      "module": "VE.Route.Gate",
+      "name": "VE.Route.Gate.instReprFamily.repr.match_1",
+      "prefix": "VE.Route.Gate.instReprFamily.repr"
+     },
+     {
+      "by": "_private.VE.Service.Standalone.0.VE.Service.Standalone.locatedEnvironmentFields",
+      "lines": 17,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.legacyCheckCase.match_1",
+      "prefix": "VE.Service.Standalone.legacyCheckCase"
+     },
+     {
+      "by": "VE.Service.Standalone.Pointer.resolves",
+      "lines": 1,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.instReprPointerSegment.repr.match_1",
+      "prefix": "VE.Service.Standalone.instReprPointerSegment.repr"
+     },
+     {
+      "by": "VE.Service.Standalone.reportedEnvironment",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.checkedModelTablesPathResolves.match_1",
+      "prefix": "VE.Service.Standalone.checkedModelTablesPathResolves"
+     },
+     {
+      "by": "VE.Events.linkWording",
+      "lines": 1,
+      "module": "VE.Events.Decl",
+      "name": "VE.Events.instReprLinkForm.repr.match_1",
+      "prefix": "VE.Events.instReprLinkForm.repr"
+     },
+     {
+      "by": "VE.Rights.ikindOf",
+      "lines": 1,
+      "module": "VE.Rights.Tree",
+      "name": "VE.Rights.instReprKind.repr.match_1",
+      "prefix": "VE.Rights.instReprKind.repr"
+     },
+     {
+      "by": "VE.Rights.condF",
+      "lines": 1,
+      "module": "VE.Rights.Correlate",
+      "name": "VE.Rights.instReprNarrowing.repr.match_1",
+      "prefix": "VE.Rights.instReprNarrowing.repr"
+     },
+     {
+      "by": "VE.Service.Document.describedBy",
+      "lines": 15,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.exchangeSet.match_3",
+      "prefix": "VE.Service.Document.exchangeSet"
+     },
+     {
+      "by": "VE.Discourse.Loader.mixedOf",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_11",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Discourse.Loader.mixedOf",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_5",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Discourse.Loader.optionalList",
+      "lines": 46,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.compileUnit.match_7",
+      "prefix": "VE.Discourse.Loader.compileUnit"
+     },
+     {
+      "by": "VE.Scope.edgesOfF",
+      "lines": 10,
+      "module": "VE.Scope.Govern",
+      "name": "VE.Scope.edgesOf.match_1",
+      "prefix": "VE.Scope.edgesOf"
+     },
+     {
+      "by": "VE.Scope.governBody",
+      "lines": 14,
+      "module": "VE.Scope.Govern",
+      "name": "VE.Scope.govern.match_1",
+      "prefix": "VE.Scope.govern"
+     },
+     {
+      "by": "VE.Scope.governBody",
+      "lines": 2,
+      "module": "VE.Scope.Govern",
+      "name": "VE.Scope.edgesInto.match_1",
+      "prefix": "VE.Scope.edgesInto"
+     },
+     {
+      "by": "VE.Service.Document.composedSetRow",
+      "lines": 10,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.sensesContentOf.match_1",
+      "prefix": "VE.Service.Document.sensesContentOf"
+     },
+     {
+      "by": "VE.Discourse.Loader.normalizedModel",
+      "lines": 4,
+      "module": "VE.Discourse.Loader",
+      "name": "VE.Discourse.Loader.filesOf.match_1",
+      "prefix": "VE.Discourse.Loader.filesOf"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_3",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_7",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_9",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Service.Document.locatedOf",
+      "lines": 8,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.injStep.match_1",
+      "prefix": "VE.Service.Document.injStep"
+     },
+     {
+      "by": "VE.Service.Document.locatedFence",
+      "lines": 82,
+      "module": "VE.Service.Document",
+      "name": "VE.Service.Document.decode.match_1",
+      "prefix": "VE.Service.Document.decode"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     }
+    ]
+   },
    "axioms": [],
-   "lines": 36510,
+   "lines": 36170,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35650,
+   "spec_lines": 35282,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -1984,19 +5810,19 @@
     "VE.Acts.Wire": 40,
     "VE.Alternatives.Admission": 87,
     "VE.Alternatives.Background": 34,
-    "VE.Alternatives.Decl": 191,
+    "VE.Alternatives.Decl": 186,
     "VE.Alternatives.FillWire": 19,
     "VE.Alternatives.Replay": 12,
     "VE.Alternatives.Run": 11,
     "VE.Alternatives.Wire": 296,
-    "VE.Attribution.Content": 22,
+    "VE.Attribution.Content": 18,
     "VE.Attribution.Status": 22,
     "VE.Attribution.Wire": 55,
     "VE.Bridge": 231,
     "VE.Cardinality.Document": 83,
     "VE.Cardinality.Erase": 54,
     "VE.Cardinality.Ratio": 10,
-    "VE.Cardinality.Regions": 128,
+    "VE.Cardinality.Regions": 127,
     "VE.Cardinality.Run": 83,
     "VE.Cardinality.Syntax": 89,
     "VE.Cardinality.Wire": 236,
@@ -2009,7 +5835,7 @@
     "VE.Closure.Syntax": 48,
     "VE.Closure.Tableau": 37,
     "VE.Compose.Content": 24,
-    "VE.Compose.Dispatch": 221,
+    "VE.Compose.Dispatch": 179,
     "VE.Compose.Slot": 18,
     "VE.Compose.SlotWire": 140,
     "VE.Core.Bridge": 107,
@@ -2020,7 +5846,7 @@
     "VE.Core.Layers": 247,
     "VE.Core.PathRules": 6,
     "VE.Core.Paths": 7,
-    "VE.Core.Substitution": 40,
+    "VE.Core.Substitution": 37,
     "VE.Core.Surface": 193,
     "VE.Core.Syntax": 64,
     "VE.Core.TableauExtended": 72,
@@ -2043,7 +5869,7 @@
     "VE.Discourse.Access": 4,
     "VE.Discourse.Admission": 1,
     "VE.Discourse.Joint": 7,
-    "VE.Discourse.Loader": 502,
+    "VE.Discourse.Loader": 445,
     "VE.Discourse.Manifest": 24,
     "VE.Discourse.Wire": 31,
     "VE.EnglishGrammar.Actions": 528,
@@ -2063,7 +5889,7 @@
     "VE.EnglishGrammar.Lexicon": 422,
     "VE.EnglishGrammar.Norm.Value": 59,
     "VE.EnglishGrammar.Policy": 555,
-    "VE.EnglishGrammar.Read": 72,
+    "VE.EnglishGrammar.Read": 67,
     "VE.EnglishGrammar.Rules": 312,
     "VE.EnglishGrammar.Run": 454,
     "VE.EnglishGrammar.SourceWords": 141,
@@ -2080,7 +5906,7 @@
     "VE.Grammar.Expect": 60,
     "VE.Grammar.Meaning": 55,
     "VE.Grammar.Reading": 38,
-    "VE.Grammar.Table": 217,
+    "VE.Grammar.Table": 210,
     "VE.Json": 81,
     "VE.Judgments.Chain": 37,
     "VE.Judgments.Decl": 45,
@@ -2098,7 +5924,7 @@
     "VE.NormDefaults.Layered": 328,
     "VE.NormDefaults.LayeredAdmission": 89,
     "VE.NormDefaults.LayeredEntail": 20,
-    "VE.NormDefaults.Packs": 114,
+    "VE.NormDefaults.Packs": 106,
     "VE.NormDefaults.Premises": 24,
     "VE.NormDefaults.Replay": 229,
     "VE.NormDefaults.Report": 330,
@@ -2109,7 +5935,7 @@
     "VE.Norms.Admission": 136,
     "VE.Norms.Basic": 38,
     "VE.Norms.Conflict": 20,
-    "VE.Norms.Elaborate": 40,
+    "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
     "VE.Norms.Plain": 204,
@@ -2124,7 +5950,7 @@
     "VE.Numbers.Round": 3,
     "VE.Order.Conservativity": 15,
     "VE.Order.Finite": 41,
-    "VE.Order.Linear": 33,
+    "VE.Order.Linear": 30,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
     "VE.Order.Surface": 207,
@@ -2141,9 +5967,9 @@
     "VE.Readings.Doc": 175,
     "VE.Readings.Lines": 12,
     "VE.Readings.Route": 212,
-    "VE.Readings.Run": 513,
+    "VE.Readings.Run": 452,
     "VE.Readings.Scan": 50,
-    "VE.Readings.Separate": 299,
+    "VE.Readings.Separate": 284,
     "VE.Readings.SoftDefaults": 20,
     "VE.Readings.SoftSeparate": 4,
     "VE.Readings.SoftVerdicts": 67,
@@ -2160,13 +5986,13 @@
     "VE.Readings.UnspecifiedWire": 384,
     "VE.Readings.Verdicts": 62,
     "VE.Readings.VerdictsWire": 830,
-    "VE.Readings.Wire": 646,
+    "VE.Readings.Wire": 618,
     "VE.Rights.Admission": 297,
     "VE.Rights.Correlate": 366,
     "VE.Rights.Distinction": 22,
     "VE.Rights.Route": 9,
     "VE.Rights.Run": 386,
-    "VE.Rights.Scope": 143,
+    "VE.Rights.Scope": 131,
     "VE.Rights.Tree": 202,
     "VE.Rights.Wire": 445,
     "VE.Risk.Admission": 78,
@@ -2194,7 +6020,7 @@
     "VE.Scope.Readings": 97,
     "VE.Scope.Wire": 135,
     "VE.Semantics": 49,
-    "VE.Senses.Assignment": 24,
+    "VE.Senses.Assignment": 20,
     "VE.Senses.Decode": 58,
     "VE.Senses.Dictionary": 295,
     "VE.Senses.Document": 129,
@@ -2208,11 +6034,11 @@
     "VE.Senses.Version": 3,
     "VE.Service.CoreCheck": 154,
     "VE.Service.CoreDocument": 265,
-    "VE.Service.Document": 2148,
-    "VE.Service.DocumentView": 75,
+    "VE.Service.Document": 2140,
+    "VE.Service.DocumentView": 67,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
-    "VE.Service.Standalone": 848,
+    "VE.Service.Standalone": 755,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
@@ -2254,7 +6080,7 @@
    },
    "theorems": 9,
    "tier": "candidate",
-   "wrap_lines": 12876,
+   "wrap_lines": 895,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 21,
@@ -2269,11 +6095,11 @@
     "VE.Acts.Tree": 23,
     "VE.Acts.Wire": 40,
     "VE.Alternatives.Background": 8,
-    "VE.Alternatives.Decl": 191,
+    "VE.Alternatives.Decl": 186,
     "VE.Alternatives.FillWire": 19,
     "VE.Alternatives.Replay": 9,
     "VE.Alternatives.Wire": 212,
-    "VE.Attribution.Content": 22,
+    "VE.Attribution.Content": 18,
     "VE.Attribution.Wire": 55,
     "VE.Bridge": 228,
     "VE.Cardinality.Syntax": 10,
@@ -2283,7 +6109,7 @@
     "VE.Closure.Paths": 4,
     "VE.Closure.Surface": 177,
     "VE.Closure.Syntax": 35,
-    "VE.Compose.Dispatch": 221,
+    "VE.Compose.Dispatch": 179,
     "VE.Core.Bridge": 84,
     "VE.Core.Finite": 36,
     "VE.Core.Layers": 189,
@@ -2292,12 +6118,12 @@
     "VE.Core.Syntax": 41,
     "VE.Core.Wire": 36,
     "VE.Data.Background": 7,
-    "VE.Definitions.Elaborate": 52,
+    "VE.Definitions.Elaborate": 49,
     "VE.Definitions.Layer": 45,
     "VE.Discourse.Access": 4,
     "VE.Discourse.Admission": 1,
     "VE.Discourse.Joint": 7,
-    "VE.Discourse.Loader": 185,
+    "VE.Discourse.Loader": 135,
     "VE.Discourse.Manifest": 14,
     "VE.Discourse.Wire": 31,
     "VE.Events.Anchor": 2,
@@ -2337,13 +6163,13 @@
     "VE.Readings.Wire": 90,
     "VE.Rights.Correlate": 359,
     "VE.Rights.Tree": 200,
-    "VE.Rights.Wire": 248,
+    "VE.Rights.Wire": 227,
     "VE.Risk.Decl": 211,
     "VE.Risk.Wire": 288,
     "VE.Route.Admission": 10,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 20,
-    "VE.Route.Budget": 194,
+    "VE.Route.Budget": 146,
     "VE.Route.Closure": 63,
     "VE.Route.Decode": 155,
     "VE.Route.Flags": 23,
@@ -2354,15 +6180,15 @@
     "VE.Route.Typed": 18,
     "VE.Route.Wire": 304,
     "VE.Scope.Effects": 61,
-    "VE.Scope.Govern": 304,
+    "VE.Scope.Govern": 278,
     "VE.Scope.Readings": 96,
     "VE.Scope.Wire": 94,
     "VE.Semantics": 14,
     "VE.Service.CoreCheck": 34,
     "VE.Service.CoreDocument": 3,
-    "VE.Service.Document": 878,
+    "VE.Service.Document": 763,
     "VE.Service.ParseDiagnostic": 337,
-    "VE.Service.Standalone": 1141,
+    "VE.Service.Standalone": 1076,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
