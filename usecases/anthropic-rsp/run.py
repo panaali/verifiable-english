@@ -222,13 +222,18 @@ def selected(doc, case, predicate, sign, values=None, *, facts=None):
     for args in itertools.product(*domains):
         if args[0] != "s" or (values is not None and tuple(args) != tuple(values)):
             continue
-        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args, facts=facts) if r.sign == sign)
+        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args, **_with(facts)) if r.sign == sign)
     return sorted(names)
 
 
 def completed(doc, case, predicate, values, *, facts=None):
     """The completed outcome of `predicate` at `values` in the case model: Lean's `soft-selected` answer."""
-    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values), facts=facts)
+    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values), **_with(facts))
+
+
+def _with(facts):
+    """The `facts` argument of a selection on the checked document; none for any other (asked as before kb-9)."""
+    return {} if facts is None else {"facts": facts}
 
 
 def cone(predicate):

@@ -478,7 +478,9 @@ class SoftenedNormDocument(NormDocument):
         if not queries:
             return {}
         try:
-            answer = selected_at(source, data, queries, facts=pair["facts"])
+            # A case without facts is asked exactly as before kb-9 (no `facts` argument).
+            answer = selected_at(source, data, queries,
+                                 **({} if pair["facts"] is None else {"facts": pair["facts"]}))
         except VEError as error:
             if limit and isinstance(error, ResourceLimit):  # by its class: the relay sets Lean's wire code
                 return None
