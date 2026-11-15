@@ -106,7 +106,8 @@ there yet. The fix follows fsf-fidelity-fix (429e7c0192, 15b7da9ada) and fix-2 (
   are unchanged. Soft-rights has 1 more record, which agrees, and 65 suite units are derived from the map at
   e51bec7301. The en-2c REPORT cites the new numbers and says why it was rerun.
   `tests/test_english_statement_shadow.py -k "delta or report"` gave 7 passed.
-- After that, the failed id and the tests of that change were rerun on the Mac runner (result below).
+- Then the failed id, test_english_statement_shadow.py and test_fsf_proximity_tcl.py were rerun with
+  `mac-pytest.sh` on 4f34d584c4 (it ran on the VM): 27 passed.
 
 ## Seeded bugs (each planted alone, shown failing, restored)
 
@@ -157,7 +158,7 @@ e51bec7301, added plus deleted).
 3. Tests can fail: PASS. Seeded bugs (a), (b) and (c) above.
 4. Python, Lean and Rust agree: N.A. (no product path changed; `run.py --check` passes).
 5. R8 binding: N.A. (no relayed answer).
-6. Gate evidence matches the final HEAD: PASS. The selected run is on the committed final tree (below), and the chain runs the gate.
+6. Gate evidence matches the final HEAD: PASS. The selected run was on committed code; its one failure was fixed and that id rerun (27 passed). The chain runs the gate on the final HEAD.
 7. No unsigned item: PASS. No DELTA row and no reserved signature.
 8. Every user-visible change is in DELTA: PASS. There is no ve/lean/rust change. The keyed answers move under DRI item 2 and are recorded in PLAN section 12 item 27.
 9. Test selection finds the tests: PASS. select_tests picks test_fsf_proximity_tcl.py, test_safety_framework.py and test_fsf_case_alternatives.py.
