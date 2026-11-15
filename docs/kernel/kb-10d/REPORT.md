@@ -1,12 +1,12 @@
 # kb-10d: the per-answer Lean ownership test in the repo, its floor, the measure and the words
 
-Status: built; no DRI signature needed (no DELTA row). Head: see `git log -1` of feature/kb-10d (this file is committed with it).
+Status: built, review F1 and F2 fixed (section 13); no DRI signature needed (no DELTA row). Head: see `git log -1` of feature/kb-10d (this file is committed with it).
 What changed: `tools/ownership_trace.py` traces every item of the five frozen keys in its own process and writes
-docs/kernel/ownership.json (RSP 100/126, Preparedness 228/239, safety framework 241/262, agent-policy 0/42,
+docs/kernel/ownership.json (RSP 100/126, Preparedness 228/239, safety framework 244/262, agent-policy 0/42,
 eligibility 269/269 answers pass); `tests/test_ownership_floor.py` makes those counts a floor; the public wording
 now says what the trace shows. Open: every conflict answer, agent-policy, and the risk route's answers (below). No Lean change.
 
-SIZE: 849 product (tools/ownership_trace.py 837, tools/ownership-decision-functions.json 12), 294 tests, about 160 other hand-written lines (this report, ALLOWANCES.md's table, the six wording edits).
+SIZE: 922 product (tools/ownership_trace.py 910, tools/ownership-decision-functions.json 12), 405 + 37 tests (tests/test_ownership_floor.py; the F2 test in tests/test_keyed_answers_authority.py), about 160 other hand-written lines (this report, ALLOWANCES.md's table, the six wording edits).
 
 ## 1. What was built (task file, step by step)
 
@@ -15,8 +15,8 @@ SIZE: 849 product (tools/ownership_trace.py 837, tools/ownership-decision-functi
 | Step 1: `tools/ownership_trace.py`, one FRESH process per item, `sys.setprofile`, every ve/ function, every Lean kind and mode, value, equals the frozen key | `trace <key> <unit> <out>` (the harness is imported under the profile too); `run <key> --out DIR --jobs N` (at most 4; refuses more) | the five runs below, each `zsh manage-agents/iso.sh own-<key> 8G -- uv run python tools/ownership_trace.py run <key> --out /tmp/own/full2 --jobs 4`: 126, 42, 80, 246 and 239 units, `fails=0` each (/tmp/own/full2.log) |
 | the single relay | `LeanServicePool.run_bound` and `LeanService.run_bound` (`ve/backends/relay.py`'s `rows`, `decide`, `answer`, `decide_once` all reach Lean through them); each case's mode, kind, environment profiles and sending harness function are counted. A call of `ve/backends/lean.py`'s one-shot `run`, `run_route_cases` or `run_english_cases` fails criterion 2 (none ran) | `Recorder.wrap`, `UNRELAYED` |
 | Harnesses without a per-item answer function | eligibility: no per-item function; its unit is one profile (`main --profiles P --no-single-shot --no-mutants --no-write`), 80 units for 269 scored questions. safety framework: `run` answers in a loop; the unit of an item is that loop's body for it; N1-N3 (`family_n` reads every item's evaluation) are one unit, the whole loop; S is `family_s(d2())`, D is `d3()`. Preparedness: N3 (`dead_rules`) reads every other answer, so its unit runs them all. agent-policy: `check.run(actions={a}, level=False)` per action (the harness's own selection); its 42 scored actions (M1/M2) are its items, its policy section is not scored per item by the harness and is not counted. No harness was changed | adapters in tools/ownership_trace.py |
-| Step 2: three criteria, the decision functions in ONE place with a reason each | tools/ownership-decision-functions.json (`NormDocument.selection`, `outcome`, `_expand`, `selected_rules`, `conflict_targets`, `_check_conflict_python`, every method of `_Evaluator`; ve/softnorms.py has no status function of its own on the Lean path since kb-10b: its two Python fallbacks run listed functions); criterion 2 reads tools/kernel-paths.json (kinds, `uncovered`, `nonverdict`, `untied_kinds`, tier, theorem listed); criterion 3 reads the harness's own comparison and PLAN.md section 12 | `tests/test_ownership_floor.py::test_each_listed_decision_function_exists_and_has_a_reason`, `::test_criterion_two_reads_kinds_families_and_the_relay`, `::test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records` |
-| docs/kernel/ownership.json, ownership.md | `verdict --traces /tmp/own/full2 --out docs/kernel` | `::test_every_item_of_the_five_keys_is_accounted_for`, `::test_the_totals_are_the_items_that_pass` |
+| Step 2: three criteria, the decision functions in ONE place with a reason each | tools/ownership-decision-functions.json (`NormDocument.selection`, `outcome`, `_expand`, `selected_rules`, `conflict_targets`, `_check_conflict_python`, every method of `_Evaluator`; ve/softnorms.py has no status function of its own on the Lean path since kb-10b: its two Python fallbacks run listed functions); criterion 2 reads tools/kernel-paths.json (kinds, `uncovered`, `nonverdict`, `untied_kinds`, tier, theorem listed); criterion 3 reads the harness's own comparison and PLAN.md section 12's entries (`plan12_entries`, one reader of both forms a plan writes) | `tests/test_ownership_floor.py::test_each_listed_decision_function_exists_and_has_a_reason`, `::test_criterion_two_reads_kinds_families_and_the_relay`, `::test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records` |
+| docs/kernel/ownership.json, ownership.md | `verdict --traces /tmp/own/full3 --out docs/kernel` (/tmp/own/full2 with the five units section 13 traced again) | `::test_every_item_of_the_five_keys_is_accounted_for`, `::test_the_totals_are_the_items_that_pass` |
 | Step 3: the floor test, the stale check by tree hash, the fast re-trace | docs/kernel/ownership-floor.json; `::test_no_key_falls_below_its_floor`, `::test_the_floor_falls_only_with_a_signed_allowance`, `::test_ownership_json_is_of_the_traced_inputs` (git blob ids of ve/norms.py, ve/evaluate.py, ve/softnorms.py, ve/soft_route.py and the five harness run files, agent-policy's being check.py), `::test_three_passing_items_per_key_still_pass` (12 units, about 2 minutes) | `uv run pytest -q tests/test_ownership_floor.py` on the final tool: 19 passed in 104.09 s (/tmp/own/floor-test2.log) |
 | The floor falls only with a signed ALLOWANCES.md line | docs/kernel/ALLOWANCES.md, new "Ownership floor" table; the test reads each key's last row | `::test_a_fall_without_the_architect_seat_is_refused_and_a_rise_needs_no_signature` |
 | Seeded bugs (a) and (b), docs/kernel/kb-10d/seeded-bugs.json | (a) RSP's `selected` through `NormDocument.selected_rules`: `::test_ownership_json_is_of_the_traced_inputs` and `::test_three_passing_items_per_key_still_pass` fail (A-T0/ARG1 fails criterion 1); (b) soft-selected `uncovered` in a scratch registry: criterion 2 fails exactly the 537 passing items whose value is a soft-selected answer | seeded-bugs.json; section 6 |
@@ -29,7 +29,7 @@ SIZE: 849 product (tools/ownership_trace.py 837, tools/ownership-decision-functi
 |---|---:|---:|---:|---:|---:|
 | anthropic-rsp | 126 | 100 | 8 | 15 | 3 |
 | openai-preparedness | 239 | 228 | 8 | 3 | 0 |
-| safety-framework | 262 | 241 | 6 | 12 | 3 |
+| safety-framework | 262 | 244 | 6 | 12 | 0 |
 | agent-policy | 42 | 0 | 42 | 0 | 0 |
 | eligibility | 269 | 269 | 0 | 0 | 0 |
 
@@ -44,8 +44,11 @@ an item whose trace differed would fail criterion 3.
 The conflict answers fail criterion 1 through Python's conflict search, not through a verdict Python reports:
 `ve.soft_route.decide_soft_conflict` calls `norms._find_conflict` (which evaluates the conflict targets with
 `_Evaluator`) and `norms._prove_targets` → `_generator_targets` → `NormDocument.conflict_targets` (which builds
-`selection`, `_expand` and, in Preparedness, `outcome`). Lean's `soft-conflict` gives the verdict; the test counts
-any run of a decision function, so these stay Python's until the search stops building them (first callers are in
+`selection`, `_expand` and, in Preparedness, `outcome`). In RSP and Preparedness Lean's `soft-conflict` gives the
+verdict. In the safety framework `soft-conflict` only confirms CONFLICT and fills the side field
+`w1_without_premises`: CONFLICT-FREE comes from `refute`'s replayed entailment certificates over goals Python builds
+from `conflict_targets`, and a cluster with no rules left is CONFLICT-FREE with no Lean call (`cluster_conflict`).
+The test counts any run of a decision function, so these stay Python's until the search stops building them (first callers are in
 each item's `criteria.1.first_callers`).
 <!-- the tables below are ownership.json's failing items, grouped by reason -->
 
@@ -54,8 +57,8 @@ each item's `criteria.1.first_callers`).
 | items | criterion | function, kind or value that fails it |
 |---|---:|---|
 | C-doc, C1, C2, C3, C4, C5, C6, C7 | 1 | decision functions ran: NormDocument._expand, NormDocument.conflict_targets, NormDocument.selection, _Evaluator.* |
-| D6a, D7 | 3 | value "UNDECIDED" differs from the key "NONE"; no PLAN.md section 12 entry |
-| D6b | 3 | value "UNDECIDED" differs from the key "SOME(bound)"; no PLAN.md section 12 entry |
+| D6a, D7 | 3 | value "UNDECIDED" differs from the key "NONE"; no PLAN.md section 12 entry gives it as the item's answer (item 17 names them faithful UNDECIDED, not an answer) |
+| D6b | 3 | value "UNDECIDED" differs from the key "SOME(bound)"; no PLAN.md section 12 entry gives it as the item's answer |
 | G4, G5, G6, K10, K9, N4, N5 | 2 | no Lean answer gives the value (the harness answers UNDECIDED itself) |
 | S1-T1, S1-T2, S1-T3, S1-T4, S2, S3, S4, S5 | 2 | no kernel path lists a theorem for risk kind risk-decision (paths: risk (candidate)), sent by d2 |
 
@@ -66,14 +69,12 @@ each item's `criteria.1.first_callers`).
 | C-doc, C1, C2, C3, C4, C5, C6, N3 | 1 | decision functions ran: NormDocument._expand, NormDocument.conflict_targets, NormDocument.outcome, NormDocument.selection, _Evaluator.* (N3's unit answers every item, the conflicts included) |
 | S6, S7, S8 | 2 | no kernel path lists a theorem for risk kind risk-decision (paths: risk (candidate)), sent by risk_probe |
 
-**safety-framework** (21 fail):
+**safety-framework** (18 fail):
 
 | items | criterion | function, kind or value that fails it |
 |---|---:|---|
 | C-doc, C2, C3 | 1 | decision functions ran: NormDocument._expand, NormDocument.conflict_targets, NormDocument.selection, _Evaluator.* |
 | C1, C4, C5 | 1 | decision functions ran: NormDocument._expand, NormDocument.conflict_targets, NormDocument.selection |
-| G3 | 3 | value "NONE" differs from the key "ALL"; no PLAN.md section 12 entry |
-| K2-L1/PROXIMITY, K2-L5/PROXIMITY | 3 | value "ALL" differs from the key "NONE"; no PLAN.md section 12 entry |
 | S1-L1 … S1-L7, S2, S3, S4, S5, S6 | 2 | no kernel path lists a theorem for risk kind risk-decision (paths: risk (candidate)), sent by risk_run |
 
 **agent-policy** (42 fail): every action, criterion 1. The harness calls `NormDocument.selection` and
@@ -110,7 +111,9 @@ The whole-harness figures include each harness's mutants and narrowing reruns (n
 Replaced: README.md ("Python decides which rules a case selects, a completed outcome and every conflict"),
 docs/ARCHITECTURE.md section 1 and section 4 (*Norm documents with soft rules*), the "How these answers are computed
 today" paragraph of the three safety-framework READMEs. Each now says Lean decides selection and completed
-outcomes and gives each conflict verdict, and that the conflict search still runs Python's conflict targets,
+outcomes, says which Lean answer gives each harness's conflict verdicts (`soft-conflict` in RSP and Preparedness;
+in the safety framework `soft-conflict` for CONFLICT and `refute` for CONFLICT-FREE, with no Lean call for a
+cluster with no rules left; section 13, F2), and that the conflict search still runs Python's conflict targets,
 selection formulas and evaluator (the C family fails criterion 1 in every key, so that part of the sentence stays,
 restated); each quotes only ownership.json's per-answer counts. AGENTS.md's "Not yet true for soft-rule norm
 documents" stays as a caveat, narrowed to "soft-rule conflicts and agent-policy" and pointing at ownership.md (it
@@ -128,6 +131,13 @@ still passes (each page links keyed-answers.md).
 | S3 | tools/ownership_trace.py | a family-qualified untied kind never fails | `test_criterion_two_reads_kinds_families_and_the_relay` |
 | S4 | tools/ownership_trace.py | `blob_id` ignores the content | `test_a_changed_traced_input_makes_ownership_json_stale` |
 | S5 | tools/ownership_trace.py | criterion 3 accepts any deviation text | `test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records` |
+| S6 | tools/ownership_trace.py | `plan12_entries` reads no "Key: … Entry: **…**" bullet (review F1's class) | `test_plan12_entries_reads_the_table_and_the_bullet_forms`, `test_the_real_plans_entries_are_read`, `test_every_plan12_entry_the_value_equals_is_recorded`, `test_the_safety_framework_adapter_records_plan_12_item_27` (4 failed) |
+| S7 | tools/ownership_trace.py | `same_key` byte for byte (`∧` against `&`) | `test_plan12_entries_reads_the_table_and_the_bullet_forms`, `test_every_plan12_entry_the_value_equals_is_recorded` (2 failed) |
+| S8 | tools/ownership_trace.py | an entry recorded although the case's premises fail on the model | `test_the_safety_framework_adapter_records_plan_12_item_27` |
+| S9 | docs/kernel/ownership.json | the ownership.json of 30973716f3 | `test_every_plan12_entry_the_value_equals_is_recorded`, `test_the_safety_framework_adapter_records_plan_12_item_27` (2 failed) |
+| S10 | docs/kernel/kb-10d/functions-under-passing.json | the file of 30973716f3 (a function counted once per code object) | `test_functions_under_passing_count_each_passing_item_at_most_once` |
+| S11 | usecases/safety-framework/README.md | the README of 30973716f3 | `tests/test_keyed_answers_authority.py::test_no_document_says_soft_conflict_gives_a_conflict_free_it_does_not_give` |
+| S12 | tests/test_ownership_floor.py | `lowest_floors` accepts a second "-" row for a key | `test_a_fall_without_the_architect_seat_is_refused_and_a_rise_needs_no_signature` |
 
 Test selection: a seeded change to ve/norms.py and one to usecases/anthropic-rsp/run.py each select
 tests/test_ownership_floor.py (`tools/select_tests.py --paths … --explain`: "imports … (static); names … (static)").
@@ -169,8 +179,10 @@ keys and item counts. The ones that compute something:
   each kind passes. A family-qualified untied kind (route's closureNary) fails a case unless the case's profiles rule
   the family out (`nary@0` absent: `VE.Route.Run.route_gate` and `Gate.AllowedFamily`).
 - Criterion 1 counts any run of a listed function, the conflict search's proposals included; that is the baseline's
-  rule ("no call on its path"), so the conflict answers fail even though `soft-conflict` gives their verdict.
-- The trace records were made by `run` in /tmp/own/full2 (not committed: about 30 MB); ownership.json keeps each
+  rule ("no call on its path"), so the conflict answers fail even where Lean checks the verdict (`soft-conflict`;
+  `refute` for the safety framework's CONFLICT-FREE).
+- The trace records were made by `run` in /tmp/own/full2 (not committed: about 30 MB), five safety-framework units
+  traced again into a copy, /tmp/own/full3, for section 13; ownership.json keeps each
   item's value calls and decision hits, which is what the Lean-free tests re-judge.
 - The traces' import of each harness runs under the profile, as py_under.py counts it.
 
@@ -184,7 +196,9 @@ keys and item counts. The ones that compute something:
   fails": `kind_problem` returns a failure for both before it looks for a theorem; "do not hard-code the list of
   kinds": no kind name is in the verdict code (the adapters' `VALUE` say where each harness reads its value; the
   registry decides). (3) "or the difference is recorded in that key's PLAN.md section 12 (cite the entry)": the
-  citation is kept in `criteria.3.recorded` and checked against section 12's text (`plan12_cites`).
+  citation is kept in `criteria.3.recorded` and checked against section 12's text (`plan12_cites`); every adapter
+  that reads section 12 reads it through `plan12_entries` (the RSP table rows and the safety framework's
+  "Key: … Entry: **…**" bullets), and Preparedness through its harness's `classify` citations.
 - Step 3 against "compare a recorded tree hash of those files, not dates": git blob ids of the nine files; "first,
   middle, last of the passing ones": `_chosen`; "falls only with a line in docs/kernel/ALLOWANCES.md signed by the
   architect seat": `lowest_floors`.
@@ -203,6 +217,21 @@ No DELTA.md; no DRI signature is needed.
 - tools/gate.py (the chain runs it on the final HEAD); trust_mutants (no Lean change).
 - The eligibility harness's 32 mutants under the profile (they take hours in one process; the per-unit traces do not
   run them either).
+
+## 13. Review fix (manage-agents kb-10d-review.final.md, commit 30973716f3)
+
+| Finding | Fix | Regression tests |
+|---|---|---|
+| F1 (B): criterion 3 missed differences PLAN.md section 12 records (safety framework item 27: K2-L1/PROXIMITY, K2-L5/PROXIMITY ALL, G3 NONE), so the count was 241, not 244 | The class: an adapter read only a harness-specific subset of section 12 (the safety framework only run.py's `DEVIATIONS`, item 23). `plan12_entries` is now the one reader of section 12's entries in both forms a plan writes (a "Key deviation" table row, a "- **id.** Key: k. Entry: **a**." bullet), and the RSP and safety-framework adapters judge against it (`same_key` binds an entry to the frozen key; the safety framework's also needs the case's premises to hold on the model and a release condition to agree, as its `compare` does). Preparedness keeps its harness's `classify` citations; agent-policy and eligibility have no entry. The five safety-framework units with an entry (G3, K2-L1/PROXIMITY, K2-L5/PROXIMITY, C3, C-doc) were traced again (their functions and Lean calls are unchanged; only the recorded entry is); ownership.json, ownership.md, functions-under-passing.json regenerated; the floor rises to 244 (ALLOWANCES.md row, a rise, no signature). The failing reason now reads "no PLAN.md section 12 entry gives it as the item's answer" (true for RSP D6a, D6b, D7: item 17 names them faithful UNDECIDED, not an answer). Every place that quoted 241 now quotes 244 | `tests/test_ownership_floor.py::test_plan12_entries_reads_the_table_and_the_bullet_forms`, `::test_the_real_plans_entries_are_read`, `::test_every_plan12_entry_the_value_equals_is_recorded` (all five keys), `::test_the_safety_framework_adapter_records_plan_12_item_27` (PROBE F1) |
+| F2 (A, text only): the wording said `soft-conflict` gives every CONFLICT-FREE answer, false for the safety framework (`refute`, or no Lean call for an empty cluster) | README.md, docs/ARCHITECTURE.md (sections 1 and 4), usecases/safety-framework/README.md and this report (sections 3, 5, 9) say which Lean answer gives each harness's conflict verdicts. The RSP and Preparedness READMEs were right and are unchanged | `tests/test_keyed_answers_authority.py::test_no_document_says_soft_conflict_gives_a_conflict_free_it_does_not_give` (PROBE F2 over every describing document, AGENTS.md and docs/kernel; the exempt READMEs are derived from each harness's `decide_soft_conflict(prove=True)` calls without `refute`) |
+
+Also fixed from the review's notes: the module docstring cited a missing `ownership_verdict.py`; `lowest_floors`
+refused no second "-" row for a key (an unsigned fall); `passing_functions` counted a function once per code object
+of one qualified name (1,904 safety-framework items under one function, more than the key has). Not changed from the
+notes: `check_premises` in the RSP value sources (no passing item depends on it alone, per the review),
+`differs_from_results_json: null` in trust-measure.json, the staleness check's nine files, criterion 2 per unit.
+Seeded bugs S6 to S12 (section 6). No DELTA row: no ve/, lean/, rust/ or harness code changed; the outputs that
+changed are this tool's measurement (R10: a wrong number on the real tree, fixed) and documentation.
 
 ## Self-review against BUILDER-CHECKLIST
 

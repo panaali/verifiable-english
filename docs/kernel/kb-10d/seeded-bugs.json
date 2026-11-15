@@ -56,6 +56,62 @@
    "bug": "criterion 3 accepts any deviation text without reading PLAN.md section 12",
    "test": "tests/test_ownership_floor.py::test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records",
    "result": "1 failed in 0.42s"
+  },
+  {
+   "id": "S6",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "plan12_entries reads no \"Key: ... Entry: **...**\" bullet (the review F1 class: only one form of section 12 read)",
+   "test": "tests/test_ownership_floor.py::test_plan12_entries_reads_the_table_and_the_bullet_forms, ::test_the_real_plans_entries_are_read, ::test_every_plan12_entry_the_value_equals_is_recorded, ::test_the_safety_framework_adapter_records_plan_12_item_27",
+   "result": "4 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S7",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "same_key compares the written key and the frozen key byte for byte (C3, C-doc's `∧`/`RS9 same` against `&`/`RS9=same`)",
+   "test": "tests/test_ownership_floor.py::test_plan12_entries_reads_the_table_and_the_bullet_forms, ::test_every_plan12_entry_the_value_equals_is_recorded",
+   "result": "2 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S8",
+   "file": "tools/ownership_trace.py",
+   "language": "Python",
+   "bug": "SafetyFramework.deviation records an entry when the case's premises fail on the model",
+   "test": "tests/test_ownership_floor.py::test_the_safety_framework_adapter_records_plan_12_item_27",
+   "result": "1 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S9",
+   "file": "docs/kernel/ownership.json",
+   "language": "evidence",
+   "bug": "the committed ownership.json of 30973716f3 (G3, K2-L1/PROXIMITY, K2-L5/PROXIMITY failing criterion 3; C3, C-doc citing run.py DEVIATIONS)",
+   "test": "tests/test_ownership_floor.py::test_every_plan12_entry_the_value_equals_is_recorded, ::test_the_safety_framework_adapter_records_plan_12_item_27",
+   "result": "2 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S10",
+   "file": "docs/kernel/kb-10d/functions-under-passing.json",
+   "language": "evidence",
+   "bug": "the committed file of 30973716f3 (passing_functions counted one qualified name once per code object: 1904 safety-framework items)",
+   "test": "tests/test_ownership_floor.py::test_functions_under_passing_count_each_passing_item_at_most_once",
+   "result": "1 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S11",
+   "file": "usecases/safety-framework/README.md",
+   "language": "evidence",
+   "bug": "the README of 30973716f3 (\"gives each CONFLICT and CONFLICT-FREE verdict (`soft-conflict`)\")",
+   "test": "tests/test_keyed_answers_authority.py::test_no_document_says_soft_conflict_gives_a_conflict_free_it_does_not_give",
+   "result": "1 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
+  },
+  {
+   "id": "S12",
+   "file": "tests/test_ownership_floor.py",
+   "language": "Python",
+   "bug": "lowest_floors accepts a second \"-\" (no floor before) row for a key, an unsigned way to lower its floor",
+   "test": "tests/test_ownership_floor.py::test_a_fall_without_the_architect_seat_is_refused_and_a_rise_needs_no_signature",
+   "result": "1 failed; restored (review fix of kb-10d-review.final.md F1/F2: each planted from a copy in /tmp/own/seed, then copied back; cmp equal)"
   }
  ]
 }
