@@ -1,0 +1,21 @@
+# RSP run.py --check on a scratch copy (rsp_split.py), 2026-11-15; key lines of each run's log
+## rsp-base
+110 / 126 (372.5 s)
+real	6m14.181s
+exit: 0
+## rsp-split
+components 60 (56 of size 1, 4 of size 2); frame A 61 regulated, frame B 3: ['advance_recommendations', 'argument_required', 'board_approved']
+110 / 126 (324.5 s)
+real	5m38.037s
+exit: 0
+## rsp-split32
+components 60 (56 of size 1, 4 of size 2); frame A 32 regulated, frame B 32: ['advance_recommendations', 'argument_required', 'board_approved', 'board_member_recipient', 'board_notified', 'candid_reports', 'candidate_selected', 'change_approved', 'clause_allows_concerns', 'commentary_asked', 'compli
+110 / 126 (354.1 s)
+real	6m12.967s
+exit: 0
+## rsp-leak
+leak: moved ['assessed_in_report'] without ['in_scope'] (guard of f11-assess)
+components 60 (56 of size 1, 4 of size 2); frame A 63 regulated, frame B 1: ['assessed_in_report']
+ve.errors.UnknownSymbol: UnknownSymbol: Unknown predicate 'in_scope'
+real	0m24.230s
+exit: 1
