@@ -10244,6 +10244,8 @@
         "VE.Service.Document.clashRefusalIn",
         "VE.Service.Document.clashRefusalFast",
         "VE.Service.Document.exceptionConditioned",
+        "VE.Service.Document.judgmentSoftRefusal",
+        "VE.Service.Document.softReadingsRefusal",
         "VE.Service.Document.ruleExceptionConditioned",
         "VE.Service.Document.rightsBlockRules",
         "VE.Service.Document.unitRules"
@@ -22694,13 +22696,15 @@
           "name": "VE.Service.CoreCheck.routedRefusals",
           "tied": [
             "VE.Service.CoreCheck.routed_iff",
-            "VE.Service.CoreCheck.routedRefusals_sites"
+            "VE.Service.CoreCheck.routedRefusals_sites",
+            "VE.Service.CoreCheck.routed_sites"
           ]
         },
         {
           "name": "VE.Service.CoreCheck.routed",
           "tied": [
-            "VE.Service.CoreCheck.routed_iff"
+            "VE.Service.CoreCheck.routed_iff",
+            "VE.Service.CoreCheck.routed_sites"
           ]
         },
         {

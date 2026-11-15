@@ -1167,6 +1167,18 @@ def eventsView (environment : Json) (senses : Bool) (terms : Option Json) :
   | some H => pure (H.view, some (environment, H))
   | none => throw refusal
 
+/-- The judgment/soft refusal site, including the exception condition that makes it active. -/
+def judgmentSoftRefusal (listed : List String) (units : Json) (core : Bool) : Except String Unit := do
+  if exceptionConditioned units && !core then
+    VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
+
+/-- The later soft refusal site, after the judgment and defaults checks. -/
+def softReadingsRefusal (listed : List String) (core : Bool) : Option String :=
+  let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
+  if soft && (blockOf listed != .none || listed.contains "readings@1") && !core then
+    some (unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route")
+  else none
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
@@ -1196,8 +1208,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
     VE.Compose.layersApart listed judgmentsApart
     -- Keep the base's rights refusal for a conditioned rights rule, and the soft refusal for a standalone norm.
     -- Under `core` (kb-2a-b), a document the core path reads (`Service.CoreCheck.routed`) goes on to its lowering.
-    if exceptionConditioned units && !core then
-      VE.Compose.layersApart listed [if listed.contains "rights@0" then "rights@0" else "soft-norms@0"]
+    judgmentSoftRefusal listed units core
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
@@ -1205,8 +1216,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
   let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
-  if soft && (block != .none || listed.contains "readings@1") && !core then
-    throw (unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route")
+  if let some refusal := softReadingsRefusal listed core then throw refusal
   if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
     throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
