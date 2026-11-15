@@ -1,0 +1,5 @@
+job=translim-predicates-31757ef6-t712708-s1 nproc=4 host=ip-10-0-136-58 date=2026-11-15T03:19:55Z
+Mem:              15           1           8           0           5          13
+/dev/mapper/cow-root  145G   60G   85G  42% /
+ 03:19:55 up 1 min,  0 user,  load average: 1.65, 0.53, 0.19
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
