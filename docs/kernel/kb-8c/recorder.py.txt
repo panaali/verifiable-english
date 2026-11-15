@@ -1,0 +1,114 @@
+"""kb-8c throwaway recorder (not committed). Counts the cases of modes `check` and `quantity` per kind
+(LeanService.run_bound and LeanServicePool.run_bound: every relayed chunk goes through one of them) and,
+with KB8C_SHADOW=1, asks the `quantity` mode's admission kind beside every `ve.units._checked_quantity`
+call and compares environment_id, Q, core and meaning_id. Shadow requests are not counted."""
+import importlib.abc, importlib.machinery, json, os, sys, threading, traceback
+
+OUT = os.environ.get("KB8C_OUT")
+SHADOW = os.environ.get("KB8C_SHADOW") == "1"
+_local = threading.local()
+FIELDS = ("environment_id", "Q", "core", "meaning_id")
+
+
+def _log(record):
+    if not OUT:
+        return
+    with open(os.path.join(OUT, f"rec-{os.getpid()}.jsonl"), "a") as f:
+        f.write(json.dumps(record, sort_keys=True) + "\n")
+
+
+def _kind(case):
+    if isinstance(case, dict):
+        if "quantity" in case and "kind" not in case:
+            return "<quantity-member>"
+        k = case.get("kind")
+        return k if isinstance(k, str) else ("<none>" if k is None else repr(k))
+    return "<" + type(case).__name__ + ">"
+
+
+def _counting(original, where):
+    def run_bound(self, mode, cases, *a, **k):
+        if mode in ("check", "quantity") and not getattr(_local, "shadow", False):
+            counts = {}
+            for c in cases:
+                counts[_kind(c)] = counts.get(_kind(c), 0) + 1
+            _log({"t": "calls", "where": where, "mode": mode, "kinds": counts})
+        return original(self, mode, cases, *a, **k)
+    return run_bound
+
+
+def _patch_service(mod):
+    mod.LeanService.run_bound = _counting(mod.LeanService.run_bound, "service")
+    mod.LeanServicePool.run_bound = _counting(mod.LeanServicePool.run_bound, "pool")
+
+
+def _patch_units(mod):
+    original = mod._checked_quantity
+
+    def wrapper(env, payload):
+        try:
+            return _inner(env, payload)
+        except BaseException:
+            raise
+
+    def _inner(env, payload):
+        try:
+            row = original(env, payload)
+            exc = None
+        except Exception as e:  # noqa: BLE001
+            row, exc = None, e
+        if SHADOW:
+            _shadow(env, payload, row, exc)
+        if exc is not None:
+            raise exc
+        return row
+
+    def _shadow(env, payload, row, exc):
+        from ve.backends.relay import decide
+        err = None if exc is None else f"{type(exc).__name__}: {exc}"
+        _local.shadow = True
+        try:
+            [srow], serr = decide("quantity", [{"id": "quantity", "environment": env.to_dict(),
+                                                "quantity": payload}]), None
+        except Exception as e:  # noqa: BLE001
+            srow, serr = None, f"{type(e).__name__}: {e}"
+        finally:
+            _local.shadow = False
+        if err is None and serr is None:
+            diff = [f for f in FIELDS if row.get(f) != srow.get(f)]
+            _log({"t": "shadow", "ok": True, "diff": diff,
+                  **({"payload": payload, "check": {f: row.get(f) for f in FIELDS},
+                      "quantity": {f: srow.get(f) for f in FIELDS}} if diff else {})})
+        else:
+            _log({"t": "shadow", "ok": False, "check_error": err, "quantity_error": serr,
+                  "same": err == serr, **({} if err == serr else {"payload": payload})})
+
+    _log({"t": "patched", "module": "ve.units"})
+    mod._checked_quantity = wrapper
+
+
+PATCHES = {"ve.backends.lean_service": _patch_service, "ve.units": _patch_units}
+
+
+class _Finder(importlib.abc.MetaPathFinder):
+    def find_spec(self, name, path, target=None):
+        if name not in PATCHES:
+            return None
+        for finder in sys.meta_path:
+            if finder is self:
+                continue
+            spec = finder.find_spec(name, path, target) if hasattr(finder, "find_spec") else None
+            if spec is not None:
+                loader = spec.loader
+                exec_module = loader.exec_module
+
+                def patched(module, _exec=exec_module, _name=name):
+                    _exec(module)
+                    PATCHES[_name](module)
+                spec.loader.exec_module = patched
+                return spec
+        return None
+
+
+if OUT:
+    sys.meta_path.insert(0, _Finder())
