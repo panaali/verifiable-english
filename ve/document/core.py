@@ -10,8 +10,8 @@ from ..backends.lean_service import CheckerUnavailable
 from ..environment import listed_profiles
 from ..readings import active_reading_sets
 
-# The features a core statement's origin names (`CoreDocument.lowerContent`, `declarations`).
-FEATURES = ("facts", "soft-norms@0", "norms@0", "judgments@0")
+# The front matter members the lowering has no row for (`CoreCheck.inputs`): no core answer has one.
+UNLOWERED = ("couplings", "narrowings", "graph", "completions")
 # The profiles the cases' environment drops (`Document.decodedEnvironment`: the document layers, then `lowerReadings`).
 LOWERED = ("judgments@0", "readings@1")
 
@@ -26,14 +26,40 @@ def _same(a, b) -> bool:
             json.dumps(b, sort_keys=True, ensure_ascii=False, allow_nan=False))
 
 
+def _statements(unit: dict, sets: list, choice: list, terms: set) -> list:
+    """The core statements the request gives a unit under a choice (`CoreDocument.UnitPlan.statements`), each as
+    `(statement, written)`: its judgment declarations (the terms its `open` meaning lists that are open terms, in its
+    order), then the body of the reading the choice takes in its active set, or else of its own content: a formula as a
+    premise, a reading's rule as a strict norm, its own rule as a soft norm. `written` is the authored soft rule a
+    statement's rule is bound to (`_soft_bound`), or None when the statement is the request's exactly."""
+    listed = unit["meaning"].get("open", []) if type(unit.get("meaning")) is dict else []
+    out = [({"feature": "judgments@0", "judgment": t}, None) for t in listed if t in terms]
+    unit_set = next((s for s in sets if s["unit"] == unit["id"]), None)
+    origin = {}
+    if unit_set is not None:
+        index = next(e["reading"] for e in choice if e["set"] == unit_set["id"])
+        content = unit_set["readings"][index].get("content")
+        origin = {"reading": {"set": unit_set["id"], "index": index}}
+    else:
+        content = unit.get("content")
+    if content is None:
+        return out
+    if type(content) is dict and "ast" in content:
+        return out + [({"feature": "facts", **origin, "premise": content["ast"]}, None)]
+    if origin:
+        return out + [({"feature": "norms@0", **origin, "rule": content}, None)]
+    return out + [({"feature": "soft-norms@0", "rule": content}, content)]
+
+
 def bind_core_answer(meta: dict, body: str, declared: list, row: dict) -> None:
-    """R8 for the core answer: every id, choice, statement and row it names is the request's, and nothing is empty or
-    extra. The view's answer fields are bound as the plain answer's are (`_bind_document_answer`); the choices name
-    the active reading sets and an index inside each; each unit's statements are its own content, its reading's
-    content, or a judgment term its meaning lists; each row's case is the core document of its choice (the written
-    environment without `judgments@0` and `readings@1`, that choice's rules and premises in order) and its answer the
-    kernel's admission of exactly that case. A row that is not is `CheckerUnavailable`."""
-    from .lean import _bind_document_answer
+    """R8 for the core answer: every id, choice, statement and row it names is the request's, and nothing is empty,
+    missing, repeated or extra. The view's answer fields are bound as the plain answer's are (`_bind_document_answer`);
+    the choices are exactly every choice of one reading per active set, in order; each unit's statements per choice
+    are exactly the ones the request gives it (`_statements`: its judgment declarations, then its chosen reading's or
+    its own content), and a unit has an entry exactly when it has a statement; each row's case is the core document of
+    its choice (the written environment without `judgments@0` and `readings@1`, that choice's rules and premises in
+    order) and its answer the kernel's admission of exactly that case. A row that is not is `CheckerUnavailable`."""
+    from .lean import _bind_document_answer, _soft_bound
 
     def require(condition):
         if not condition:
@@ -49,45 +75,42 @@ def bind_core_answer(meta: dict, body: str, declared: list, row: dict) -> None:
     except (ValueError, KeyError, TypeError) as exc:
         raise CheckerUnavailable("CheckerUnavailable: the Lean core document answer is not bound to the document "
                                  "sent") from exc
+    # The lowering refuses these members (`CoreCheck.inputs`: no row), so a core answer never has them.
+    require(not any(key in meta for key in UNLOWERED))
     units = {u["id"]: u for u, _ in declared}
-    sets = {s["id"]: s for s in active_reading_sets(meta.get("reading_sets", []))}
+    sets = active_reading_sets(meta.get("reading_sets", []))
+    # Every choice of one reading per active set, in the order of the sets, the first set's index slowest
+    # (`CoreDocument.allChoices`); no coupling filters it (refused above).
+    expected = [[]]
+    for reading_set in sets:
+        expected = [c + [{"set": reading_set["id"], "reading": i}] for c in expected
+                    for i in range(len(reading_set["readings"]))]
     choices = view["choices"]
-    require(len(choices) == len(rows) >= 1 and len({json.dumps(c, sort_keys=True) for c in choices}) == len(choices))
-    for choice in choices:
-        require(sorted(e["set"] for e in choice) == sorted(sets) and
-                all(e["reading"] < len(sets[e["set"]]["readings"]) for e in choice))
+    require(type(choices) is list and len(rows) >= 1 and _same(choices, expected) and len(rows) == len(choices))
     terms = {t.get("name") for t in meta.get("open_terms", [])}
-    order = [u["id"] for u, _ in declared]
     entries = view["statements"]
-    ids = [e["id"] for e in entries]
-    require(len(set(ids)) == len(ids) and all(i in units for i in ids) and
-            ids == [i for i in order if i in ids] and
-            all(i in ids for i, u in units.items() if u.get("content") is not None))
+    require(type(entries) is list)
+    plan = [(u["id"], [_statements(u, sets, choice, terms) for choice in choices]) for u, _ in declared]
+    plan = [(uid, per) for uid, per in plan if any(per)]
+    require([e.get("id") for e in entries] == [uid for uid, _ in plan])
     norms = [[] for _ in choices]
     facts = [[] for _ in choices]
-    for entry in entries:
-        unit = units[entry["id"]]
-        require(len(entry["choices"]) == len(choices))
-        unit_set = next((s for s in sets.values() if s["unit"] == entry["id"]), None)
-        listed = unit["meaning"].get("open", []) if type(unit["meaning"]) is dict else []
-        for k, statements in enumerate(entry["choices"]):
-            for st in statements:
-                require(st["feature"] in FEATURES)
-                reading = st.get("reading")
-                if reading is not None:
-                    require(unit_set is not None and reading["set"] == unit_set["id"] and
-                            {"set": reading["set"], "reading": reading["index"]} in choices[k])
-                    source = unit_set["readings"][reading["index"]].get("content")
+    for entry, (uid, per) in zip(entries, plan, strict=True):
+        require(set(entry) == {"id", "choices"} and type(entry["choices"]) is list and
+                len(entry["choices"]) == len(per))
+        for k, (statements, wanted) in enumerate(zip(entry["choices"], per, strict=True)):
+            require(type(statements) is list and len(statements) == len(wanted))
+            for st, (want, written) in zip(statements, wanted, strict=True):
+                if written is None:
+                    require(_same(st, want))
                 else:
-                    source = unit.get("content")
-                if "judgment" in st:
-                    require(reading is None and st["feature"] == "judgments@0" and st["judgment"] in terms and
-                            st["judgment"] in listed)
-                elif "premise" in st:
-                    require(st["feature"] == "facts" and type(source) is dict and _same(st["premise"], source.get("ast")))
+                    # A soft rule of the unit's own content: in the form Lean's soft route holds it, as the plain
+                    # answer's soft units are bound (`_soft_bound`, `Service.Document.softCanonical`).
+                    require(type(st) is dict and set(st) == set(want) and _same(st["feature"], want["feature"]) and
+                            _soft_bound(st["rule"], written, _same))
+                if "premise" in st:
                     facts[k].append(st["premise"])
-                else:
-                    require(st["feature"] != "facts" and _same(st["rule"], source))
+                elif "rule" in st:
                     norms[k].append(st["rule"])
     profiles = listed_profiles(meta.get("environment"))
     environment = {**meta["environment"], "profiles": [p for p in profiles if p not in LOWERED]}

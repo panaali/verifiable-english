@@ -13,7 +13,7 @@ def unit (meaning : String) (reads : List (List String)) (set : Option Bool := n
 
 -- A row is `ok` exactly when the kernel accepted its case.
 #guard DocumentFold.Row.ok ok && !DocumentFold.Row.ok refused
--- CHECKED: a core statement, not open, asserted, every row ok (an empty row list included).
+-- CHECKED: a core statement, not open, every row ok (an empty row list included).
 #guard status (unit "specified" [[]]) [ok, ok] == .checked
 #guard status (unit "specified" [[], []]) [] == .checked
 -- One refused row: no unit is CHECKED.
@@ -27,14 +27,13 @@ def unit (meaning : String) (reads : List (List String)) (set : Option Bool := n
 #guard !opens (unit "specified" [[], []]) && !opens (unit "specified" [[]] (some true))
 -- An authored set with every reading asserted decides the unit, whatever its meaning class.
 #guard status (unit "open" [[]] (some true)) [ok] == .checked
-#guard asserted (unit "open" [] (some true)) && asserted (unit "specified" []) && !asserted (unit "open" [])
-#guard !asserted (unit "specified" [] (some false)) && !asserted (unit "unformalised" [])
--- No core statement, or a meaning that does not assert it: the meaning class decides, as W2 does without content.
+-- No core statement: the meaning class decides, as W2 does without content (the shell's table gives a unit that does
+-- not assert its content no statement that reads no judgment term: `CoreCheck.tableOf`).
 #guard status (unit "specified" []) [ok] == .labelled
 #guard status (unit "specified" [] (some true)) [ok] == .labelled
-#guard status (unit "open" [[]]) [ok] == .opened
+#guard status (unit "open" []) [ok] == .opened
 #guard status (unit "unformalised" []) [ok] == .unformalised
-#guard status (unit "unformalised" [[]]) [ok] == .unformalised
+#guard status (unit "unformalised" [["t"]]) [ok] == .opened
 #guard status (unit "none" []) [ok] == .labelled
 #guard baseless "open" == .opened && baseless "unformalised" == .unformalised && baseless "specified" == .labelled
 -- Each unit of the table, in order, with its own status.

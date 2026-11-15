@@ -145,13 +145,14 @@ def reads (I : Inputs) (u : SourceUnit) (st : Statement) : List String :=
   VE.Judgments.dependsOn I.d.E.rv.definitions I.d.J formulas
 
 /-- The unit table of the fold: each unit's meaning class, its core statements over every choice with what they
-read, its active set's flag and the rights route's opening. -/
+read (a unit that does not assert its content, `Loader.w2Status`, keeps only those that read a judgment term), its
+active set's flag and the rights route's opening. -/
 def tableOf (I : Inputs) (docs : List (Choice × CoreDoc)) : List UnitRow :=
   (I.d.units.zip I.meanings).map fun (u, m) =>
-    { id := u.id, meaning := m,
-      statements := docs.flatMap fun (_, c) => (c.statements.filter fun (st : Statement) => st.origin.unit == u.id).map fun st => ⟨reads I u st⟩,
-      set := (I.active.find? (·.1.unit == u.id)).map fun (rs, kinds) => rs.status == "authored" && kinds.all id,
-      rightsOpen := (I.d.R.bind fun R => R.opens.lookup u.id) == some true }
+    let set := (I.active.find? (·.1.unit == u.id)).map fun (rs, kinds) => rs.status == "authored" && kinds.all id
+    let all : List Stmt := docs.flatMap fun (_, c) => (c.statements.filter (·.origin.unit == u.id)).map (⟨reads I u ·⟩)
+    { id := u.id, meaning := m, set, rightsOpen := (I.d.R.bind fun R => R.opens.lookup u.id) == some true,
+      statements := if set == some true || (set.isNone && m == "specified") then all else all.filter (!·.reads.isEmpty) }
 
 def statementJson (st : Statement) : Json :=
   Json.mkObj ([("feature", .str st.origin.feature)] ++
@@ -241,9 +242,8 @@ def routedRefusals : List String :=
    unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route"]
 
 /-- A document the core path reads: one that `environmentOf` refuses with one of the two refusals, whose profiles all
-have a row of the lowering, that lists `judgments@0` and that has no senses. A document without `judgments@0` is
-answered today by Python's own path, whose document `ve document readings` and the readings queries read; the core path
-has no such reading yet, so it keeps that path (its step C row moves it). -/
+have a row of the lowering, that lists `judgments@0` and that has no senses. A document without `judgments@0` keeps
+Python's path, which gives its readings conflict verdicts; the core path carries none (REPORT, open question F3). -/
 def routed (j : Json) : Bool :=
   match frontOf j with
   | none => false

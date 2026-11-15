@@ -237,6 +237,14 @@ def authoredWith (meaning : Json) (reading : Json) : String :=
 #guard (statuses (run (authoredWith (Json.mkObj [("open", toJson ["t"])]) (asserted "r0" tAll [])))).lookup "u4" ==
   some "OPEN"
 
+-- A unit that does not assert its content keeps, in the fold's table, only statements that read a judgment term
+-- (`tableOf`): with content and no set, its meaning class decides, as W2 does (`Loader.w2Status`).
+#guard (statuses (run (edit "\"id\":\"u3\",\"span\":[13,19],\"kind\":\"norm\",\"meaning\":\"specified\"" "\"id\":\"u3\",\"span\":[13,19],\"kind\":\"norm\",\"meaning\":{\"contextual\":\"d\"}"))).lookup "u3" ==
+  some "LABELLED"
+-- An open meaning whose terms the content does not read is refused; one it reads opens the unit by its first condition.
+#guard refusal (run (edit "\"id\":\"u3\",\"span\":[13,19],\"kind\":\"norm\",\"meaning\":\"specified\"" "\"id\":\"u3\",\"span\":[13,19],\"kind\":\"norm\",\"meaning\":{\"open\":[\"t\"]}")) ==
+  ("JudgmentListedUnused: u3 t", .bool true)
+
 -- The shell's pieces at their boundaries: several facts, the base level, the node limit (each `top` one node).
 #guard factsJson [qAll, notQ] == Json.arr #[ast qAll, ast notQ]
 #guard VE.Bridge.formulaNodes .top == 1
@@ -261,7 +269,8 @@ def envWith (ps : List String) : Json := (frontJ.getObjValD "environment").setOb
   "soft-norms@0"]) (frontJ.getObjValD "units") false none false).toOption.isNone
 #guard (VE.Service.Document.environmentOf (envWith ["documents@1", "norms@0", "readings@1", "relational-fol@0",
   "soft-norms@0"]) (frontJ.getObjValD "units") false none true).toOption.isSome
--- A document without judgments@0 (soft-norms@0 with readings@1) keeps Python's path today: not routed.
+-- A document without judgments@0 (soft-norms@0 with readings@1) keeps Python's path and its readings verdicts: not
+-- routed (REPORT, open question F3).
 #guard !routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++ (edit "\"judgments@0\"," "") ++
   "\n---\n" ++ body))])
 -- The facts are read at the base level: a level-1 symbol (the permission of a regulated predicate) is no fact.
