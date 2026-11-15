@@ -86,13 +86,19 @@ def evaluates(root: Path, sources: list[Path]) -> str | None:
 
 def code_files(code_root: Path) -> list[str]:
     """`CODE_STARTS` and every repository Python file their imports reach (`tools/source_graph.py`'s import edges,
-    without the files their strings name: the dump runs no script), as paths under `code_root`."""
-    tools = str(code_root / "tools")
-    sys.path.insert(0, tools)
+    without the files their strings name: the dump runs no script), as paths under `code_root`. The graph code is
+    this checkout's own (`tools/`, beside this module), never `code_root`'s copy: a module imported is kept in
+    `sys.modules`, so importing another tree's `source_graph` would leave its `layer_policy`, whose ROOT is that
+    tree, for every later `import layer_policy` in the process. `source_graph.load` reads the tree it is given."""
+    tools = str(Path(__file__).resolve().parent)
+    added = tools not in sys.path
+    if added:
+        sys.path.insert(0, tools)
     try:
         import source_graph
     finally:
-        sys.path.remove(tools)
+        if added:
+            sys.path.remove(tools)
     edges = source_graph.load(code_root).edges
     found, stack = set(CODE_STARTS), list(CODE_STARTS)
     while stack:

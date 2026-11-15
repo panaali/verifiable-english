@@ -1,0 +1,36 @@
+import VE.Time.Document
+/-! Scratch (kb-8c seed b, not committed): with a runner that appends `("Q", a.core)` after the seven
+fields, the open-tail form (`answer = ok id ([seven] ++ value)` for some `value`) is still provable:
+the tail overrides `Q`. The closed `_plain` statement is not (WireSound.lean:67). -/
+namespace VE.Time.Wire
+open Lean
+open VE.Bridge (stringField)
+open VE.Order.ProfileGate (bind_ok)
+
+theorem open_tail_admits_the_override (j answer : Json) (more : Extension)
+    (h : runCase j more = .ok answer)
+    (hk : j.getObjVal? "kind" = .ok (.str "admission") ∨ ∃ e, j.getObjVal? "kind" = .error e)
+    (hm : ∃ e, j.getObjVal? "model" = .error e) :
+    ∃ (id : String) (w : W6Env) (a : Admission w) (value : List (String × Json)),
+      answer = ok id ([("assurance", .str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+        ("meaning_id", .str a.meaningId), ("core_meaning_id", .str a.coreId),
+        ("environment_id", .str w.environmentId), ("target_environment_id", .str w.targetId)] ++
+        value) := by
+  obtain ⟨_, hm⟩ := hm
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := bind_ok h
+  rcases hk with hk | ⟨e, hk⟩ <;> simp only [hk, Json.getStr?, pure_bind] at h
+  all_goals
+    rw [if_neg (by decide)] at h
+    obtain ⟨env, henv, h⟩ := bind_ok h
+    obtain ⟨w, hw, h⟩ := bind_ok h
+    split at h
+    · rename_i hmj
+      rw [hm] at hmj
+      cases hmj
+    · obtain ⟨quantity, hqj, h⟩ := bind_ok h
+      obtain ⟨a, ha, h⟩ := bind_ok h
+      cases h
+      exact ⟨id, w, a, [("Q", a.core)], rfl⟩
+
+end VE.Time.Wire

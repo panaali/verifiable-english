@@ -189,11 +189,6 @@
     "VE.Norms.Run.norms_wire_acceptance",
     "VE.Norms.RunSound.norms_wire_certificate_acceptance",
     "VE.Norms.RunSound.runCase_certificate",
-    "VE.Acts.Decode.norms_wire_acceptance_elaborated",
-    "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
-    "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
     "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
@@ -205,14 +200,10 @@
     "VE.Norms.Run.runAdmission_soundIn"
    ],
    "delegates": [
-    "VE.Route.Run.runCaseReported"
+    "VE.Route.Run.runCaseReported",
+    "VE.Norms.Run.runCaseActsRouted"
    ],
-   "nonverdict": [
-    {
-     "name": "VE.Acts.Run.runElaborate",
-     "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
-    }
-   ],
+   "nonverdict": [],
    "uncovered": [
     {
      "name": "VE.Norms.Plain.run",
@@ -258,6 +249,36 @@
    }
   },
   {
+   "name": "normsActs",
+   "tier": "candidate",
+   "note": "runner theorems complete; outside the kernel tier by the architect seat (D14): a lowering no frozen key uses",
+   "modes": [
+    "norms"
+   ],
+   "entry": [
+    "VE.Norms.Run.runCaseActsRouted"
+   ],
+   "subject": [
+    "VE.Norms.Run.runCaseIn",
+    "VE.Norms.Run.runAdmissionIn"
+   ],
+   "theorems": [
+    "VE.Acts.Decode.norms_wire_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
+    "VE.Norms.Run.runAdmission_soundIn"
+   ],
+   "delegates": [],
+   "nonverdict": [
+    {
+     "name": "VE.Acts.Run.runElaborate",
+     "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
+    }
+   ]
+  },
+  {
    "name": "softNorms",
    "tier": "kernel",
    "modes": [
@@ -284,6 +305,9 @@
     "VE.SoftNorms.Run.soft_wire_selected_prepared",
     "VE.SoftNorms.Run.slot_wire_certificate",
     "VE.SoftNorms.Run.slot_wire_conflict",
+    "VE.SoftNorms.Run.soft_wire_conflict_free",
+    "VE.SoftNorms.Run.soft_wire_conflict_witness",
+    "VE.SoftNorms.Run.soft_wire_conflict_exclusive",
     "VE.Compose.SlotWire.slot_wire_acceptance",
     "VE.Compose.SlotWire.slot_wire_conflict_sound",
     "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
@@ -315,10 +339,9 @@
       "soft-rules",
       "soft-elaborate",
       "soft-pairs",
-      "soft-certificate",
-      "soft-conflict"
+      "soft-certificate"
      ],
-     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), and slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), which are therefore not listed here; slot_wire_admission covers slot-admission (its whole answer, the document mode's kernel row; kb-2a-b), not listed either"
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-elaborate a `soft_status` of CHECKED (residualStatus); soft_wire_acceptance and runAdmission_sound cover admission, soft_wire_elaborate states only the background and premises fields of soft-elaborate, not its soft_status (KB-3), soft_wire_selected covers soft-selected (its whole answer; kb-10a), slot_wire_certificate and slot_wire_conflict cover slot-certificate and slot-conflict (their whole answers over the slot replays; kb-3), and soft_wire_conflict_free, soft_wire_conflict_witness and soft_wire_conflict_exclusive cover soft-conflict (its CONFLICT-FREE and CONFLICT verdicts, read by key, from the package and witness replays; kb-10c; its status_text, conditional_on and other fields are not stated), which are therefore not listed here; slot_wire_admission covers slot-admission (its whole answer, the document mode's kernel row; kb-2a-b), not listed either"
     }
    ],
    "kinds": {
@@ -339,6 +362,9 @@
     },
     "slot-admission": {
      "theorem": "VE.SoftNorms.Run.slot_wire_admission"
+    },
+    "soft-conflict": {
+     "theorem": "VE.SoftNorms.Run.soft_wire_conflict_free"
     }
    }
   },
@@ -389,7 +415,7 @@
   },
   {
    "name": "quantity",
-   "tier": "candidate",
+   "tier": "kernel",
    "modes": [
     "quantity"
    ],
@@ -402,7 +428,8 @@
     "VE.Time.Document.extension"
    ],
    "theorems": [
-    "VE.Time.Wire.quantity_admission_wire_sound",
+    "VE.Time.Wire.quantity_admission_wire_sound_plain",
+    "VE.Time.Wire.quantity_admission_wire_sound_valued",
     "VE.Time.Wire.quantity_countermodel_wire_sound",
     "VE.Time.Wire.quantity_certificate_wire_sound",
     "VE.Time.Wire.quantity_document_wire_sound",
@@ -418,7 +445,36 @@
      "name": "VE.Time.Wire.runConversion",
      "why": "answers the conversion kinds `day`, `civil`, `lower` and `render` with a day number, an ISO date, a lowered coordinate or a rendered amount; none is a verdict"
     }
-   ]
+   ],
+   "kinds": {
+    "admission": {
+     "theorem": "VE.Time.Wire.quantity_admission_wire_sound_valued"
+    },
+    "countermodel": {
+     "theorem": "VE.Time.Wire.quantity_countermodel_wire_sound"
+    },
+    "certificate": {
+     "theorem": "VE.Time.Wire.quantity_certificate_wire_sound"
+    },
+    "document": {
+     "theorem": "VE.Time.Wire.quantity_document_wire_sound"
+    },
+    "count": {
+     "nonverdict": "the canonical counting expansion of a formula (VE.Time.Wire.runCount, listed nonverdict): an `expansion` field, no truth value, entailment or admission"
+    },
+    "day": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "civil": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "lower": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    },
+    "render": {
+     "nonverdict": "a conversion kind (VE.Time.Wire.runConversion, listed nonverdict): the answer is a day number, an ISO date, a lowered coordinate or a rendered amount, no verdict field"
+    }
+   }
   },
   {
    "name": "rights",
@@ -717,15 +773,6 @@
     "VE.SoftNorms.Wire.soft_wire_acceptance"
    ],
    "why": "the answer carries `valid` and `conditional_on`; the replay's theorem is about VE.SoftNorms.Wire.replaySoftEntailment, not about a subject's answer"
-  },
-  {
-   "path": "softNorms",
-   "kind": "soft-conflict",
-   "near": [
-    "VE.SoftNorms.Wire.soft_wire_conflict_sound",
-    "VE.SoftNorms.Wire.soft_wire_conflict_witness_sound"
-   ],
-   "why": "the answer carries `verdict` (CONFLICT, CONFLICT-FREE, UNKNOWN) and `status_text`; the replays' theorems are about VE.SoftNorms.Wire.replaySoftConflict and replaySoftWitness, not about a subject's answer"
   },
   {
    "path": "metered",

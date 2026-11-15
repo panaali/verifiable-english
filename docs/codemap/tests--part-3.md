@@ -72,6 +72,7 @@
 - `tests/test_fol_names.py` — (no module docstring)
 - `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
+- `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
 - `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
@@ -83,5 +84,3 @@
 - `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
 - `tests/test_gatekeeper_adapter.py` — (no module docstring)
 - `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
-- `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
-- `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.

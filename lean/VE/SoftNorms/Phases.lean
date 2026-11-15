@@ -1,3 +1,4 @@
+import VE.Acts.Hook
 import VE.SoftNorms.Status
 import VE.Limits
 
@@ -175,7 +176,7 @@ def declarations (environment : Json) (profiles : List String) :
       ("predicates", Json.mkObj (preds.map (fun (p, e) => (p, stripEntry e))))] ++
       (if acts then (vocab.getObjVal? "acts").toOption.toList.map (("acts", ·)) else [])))
   -- A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19).
-  let ne ← inherited (Norms.Wire.decodeNormsEnvironment stripped (displayConstants := true) (acts := acts))
+  let ne ← inherited (Norms.Wire.decodeNormsEnvironmentWith Norms.Wire.ActsHook.lexical stripped (displayConstants := true) (acts := acts))
   let some block := (vocab.getObjVal? "soft").toOption | pure (ne, noBlock io)
   unless (VE.Bridge.displayFields block ["outranking"]
       ["parties", "ranks", "outranks", "ties", "exception_decider"]).isOk do

@@ -1,0 +1,5 @@
+{"harness": "anthropic-rsp", "rc": null, "wall": 673.3, "first_calls": 81, "first_s": 69.9, "later_calls": 377, "later_s": 309.1, "rest_s": 294.4}
+{"harness": "safety-framework", "rc": 0, "wall": 202.1, "first_calls": 28, "first_s": 1.9, "later_calls": 614, "later_s": 42.2, "rest_s": 158.0}
+{"harness": "anthropic-rsp", "rc": null, "wall": 575.8, "first_calls": 81, "first_s": 58.7, "later_calls": 377, "later_s": 275.7, "rest_s": 241.4, "max_call_s": 1.423, "calls_over_1s": 25, "calls_over_2s": 0}
+{"harness": "safety-framework", "rc": 0, "wall": 188.6, "first_calls": 28, "first_s": 1.7, "later_calls": 614, "later_s": 40.1, "rest_s": 146.7, "max_call_s": 0.263, "calls_over_1s": 0, "calls_over_2s": 0}
+{"harness": "anthropic-rsp", "rc": null, "wall": 680.2, "first_calls": 81, "first_s": 67.4, "later_calls": 377, "later_s": 295.6, "rest_s": 317.2, "max_call_s": 1.755, "calls_over_1s": 41, "calls_over_2s": 0, "lean_cpu_s": 358.1, "max_call_cpu_s": 1.73, "calls_over_1s_cpu": 37}

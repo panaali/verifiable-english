@@ -118,6 +118,10 @@ module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
+module VE.Acts.Hook
+module VE.Acts.HookExamples
+module VE.Acts.HookToday
+module VE.Acts.HookTwins
 module VE.Acts.Index
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
@@ -155,6 +159,7 @@ module VE.Alternatives.Examples
 module VE.Alternatives.FillExamples
 module VE.Alternatives.FillWire
 module VE.Alternatives.Followable
+module VE.Alternatives.HookExamples
 module VE.Alternatives.Inline
 module VE.Alternatives.Replay
 module VE.Alternatives.Route
@@ -471,6 +476,7 @@ module VE.NormDefaults.Examples
 module VE.NormDefaults.Explain
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
+module VE.NormDefaults.HookExamples
 module VE.NormDefaults.Layered
 module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
@@ -804,6 +810,7 @@ module VE.Service.FamilyNorms
 module VE.Service.GenericGraph
 module VE.Service.GenericReadings
 module VE.Service.Graph
+module VE.Service.HookExamples
 module VE.Service.MemoExamples
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
@@ -821,6 +828,7 @@ module VE.Service.UndeclaredExamples
 module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
+module VE.SoftNorms.ConflictSound
 module VE.SoftNorms.ElaborateSound
 module VE.SoftNorms.Once
 module VE.SoftNorms.Phases

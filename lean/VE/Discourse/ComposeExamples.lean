@@ -161,7 +161,7 @@ def grouped (spans : List String) : Option Bool :=
 -- `documentSortOk` (shared with `admitCore`): every constant of the document sort is a document name
 def docName (n : String) : DocName := ⟨n, [n], .self, 1, none, [], none, none, none⟩
 def sortOk (sort : String) (names : List String) : String :=
-  match VE.Norms.Wire.decodeNormsEnvironment (baseEnvironment (loaded doc).1) with
+  match VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain (baseEnvironment (loaded doc).1) with
   | .ok ne => ok? (documentSortOk ne.rv { emptyManifest with documentSort := sort, documents := names.map docName })
   | .error e => e
 #guard sortOk "service" [] == "InvalidInput: document sort service has other constants"

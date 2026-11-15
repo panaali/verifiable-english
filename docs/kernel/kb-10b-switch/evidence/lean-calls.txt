@@ -1,0 +1,4 @@
+anthropic-rsp {"rc": null, "wall": 630.8, "lean_s": 352.2, "calls": 458, "queries": 32072, "documents": 81, "document_objects": 80, "pairs": 458, "pairs_asked_more_than_once": 0}
+safety-framework {"rc": 0, "wall": 229.8, "lean_s": 59.0, "calls": 642, "queries": 23754, "documents": 28, "document_objects": 28, "pairs": 642, "pairs_asked_more_than_once": 0}
+agent-policy base {"rc": 0, "wall": 121.5}
+eligibility --no-write --no-mutants {"rc": 0, "wall": 222.9}

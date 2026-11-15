@@ -11,6 +11,8 @@ import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
+import VE.Acts.HookToday
+import VE.Acts.HookTwins
 import VE.Acts.Index
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
@@ -497,6 +499,7 @@ import VE.Service.ScopeAdmission
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
+import VE.SoftNorms.ConflictSound
 import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.Once
 import VE.SoftNorms.Prepared
@@ -628,6 +631,34 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.FaithfulExamples.value_eq
 #print axioms VE.Acts.FaithfulExamples.value_forget
 #print axioms VE.Acts.FaithfulExamples.yieldsB_iff
+#print axioms VE.Acts.HookToday.actsProfiles_eq_nil
+#print axioms VE.Acts.HookToday.canonicalShape_nil
+#print axioms VE.Acts.HookToday.decodeFlaggedActs_today
+#print axioms VE.Acts.HookToday.decodeFlagged_plain
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_acts
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_lexical
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_plain
+#print axioms VE.Acts.HookToday.decodeNormsEnvironment_plain_refuses
+#print axioms VE.Acts.HookToday.decodeSource_acts
+#print axioms VE.Acts.HookToday.decodeSource_plain
+#print axioms VE.Acts.HookTwins.actsProfiles_nil_of_underActs
+#print axioms VE.Acts.HookTwins.admitDocumentIn_congr
+#print axioms VE.Acts.HookTwins.bind_congr_ok
+#print axioms VE.Acts.HookTwins.envelopeGate_actsProfiles
+#print axioms VE.Acts.HookTwins.error_bind
+#print axioms VE.Acts.HookTwins.getObjValD_of_ok
+#print axioms VE.Acts.HookTwins.ok_bind
+#print axioms VE.Acts.HookTwins.replayConflictIn_congr
+#print axioms VE.Acts.HookTwins.replayEntailmentIn_congr
+#print axioms VE.Acts.HookTwins.replayWitnessIn_congr
+#print axioms VE.Acts.HookTwins.runAdmissionIn_congr
+#print axioms VE.Acts.HookTwins.runAdmission_plain
+#print axioms VE.Acts.HookTwins.runAdmission_today
+#print axioms VE.Acts.HookTwins.runCaseActsRouted_today
+#print axioms VE.Acts.HookTwins.runCaseActs_today
+#print axioms VE.Acts.HookTwins.runCaseIn_congr
+#print axioms VE.Acts.HookTwins.runCaseRouted_today
+#print axioms VE.Acts.HookTwins.runCase_plain
 #print axioms VE.Acts.Lexical.actWord_chars
 #print axioms VE.Acts.Lexical.check_extends
 #print axioms VE.Acts.Lexical.check_iff
@@ -9162,6 +9193,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.mkObj_get_append
 #print axioms VE.SoftNorms.Run.needFacts_ok
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
+#print axioms VE.SoftNorms.Run.ok_verdict
 #print axioms VE.SoftNorms.Run.outcomeAt_iff
 #print axioms VE.SoftNorms.Run.prepare_eq
 #print axioms VE.SoftNorms.Run.prepare_ok
@@ -9180,7 +9212,11 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.slot_wire_certificate
 #print axioms VE.SoftNorms.Run.slot_wire_conflict
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
+#print axioms VE.SoftNorms.Run.soft_conflict_verdict
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
+#print axioms VE.SoftNorms.Run.soft_wire_conflict_exclusive
+#print axioms VE.SoftNorms.Run.soft_wire_conflict_free
+#print axioms VE.SoftNorms.Run.soft_wire_conflict_witness
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate
 #print axioms VE.SoftNorms.Run.soft_wire_selected
 #print axioms VE.SoftNorms.Run.soft_wire_selected_prepared
@@ -9704,7 +9740,8 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.checkW6Certificate_sound
 #print axioms VE.Time.Wire.evalB_sorted_sound
 #print axioms VE.Time.Wire.extension_document_sound
-#print axioms VE.Time.Wire.quantity_admission_wire_sound
+#print axioms VE.Time.Wire.quantity_admission_wire_sound_plain
+#print axioms VE.Time.Wire.quantity_admission_wire_sound_valued
 #print axioms VE.Time.Wire.quantity_certificate_wire_sound
 #print axioms VE.Time.Wire.quantity_countermodel_wire_sound
 #print axioms VE.Time.Wire.quantity_document_wire_sound

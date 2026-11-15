@@ -199,9 +199,9 @@ theorem VE.Acts.Decode.admission_elaborated
 theorem VE.Acts.Decode.decodeElaboratedFlagged_source
   ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
     VE.Acts.Decode.decodeElaboratedFlagged environment norms = Except.ok e →
-      VE.Norms.Wire.decodeSource environment norms Bool.true = Except.ok e.s.src
-  -- uses VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedFlagged@VE.Acts.Decode VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 907575729
+      VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms Bool.true = Except.ok e.s.src
+  -- uses VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedFlagged@VE.Acts.Decode VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 1454214170
 theorem VE.Acts.Decode.decodeElaboratedU_faithful
   ∀ {environment norms : Lean.Json} {e : VE.Acts.Decode.ElaboratedU},
     VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e →
@@ -610,6 +610,166 @@ theorem VE.Acts.FaithfulExamples.yieldsB_iff
     VE.Acts.FaithfulExamples.yieldsB T M ρ f N = Bool.true ↔ VE.Norms.YieldsD T (VE.FiniteModel.asStructure M) ρ f N
   -- uses VE.Acts.FaithfulExamples.Model@VE.Acts.FaithfulExamples VE.Acts.FaithfulExamples.yieldsB@VE.Acts.FaithfulExamples VE.FiniteModel.asStructure@VE.Finite VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate
   -- expr 22504897
+theorem VE.Acts.HookToday.actsProfiles_eq_nil
+  ∀ (acts : Bool) (environment : Lean.Json),
+    (∀ (ps : List String), VE.Route.Gate.profilesOf environment = Except.ok ps → ¬"acts@0" ∈ ps) →
+      VE.Norms.Wire.actsProfiles acts environment = []
+  -- uses VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Route.Gate.profilesOf@VE.Route.Gate
+  -- expr 3739479375
+theorem VE.Acts.HookToday.canonicalShape_nil
+  ∀ (fx : List String), VE.Norms.Wire.canonicalShape [] fx = VE.Norms.Wire.canonicalAct
+  -- uses VE.Norms.Wire.canonicalAct@VE.Norms.Wire VE.Norms.Wire.canonicalShape@VE.Norms.Wire
+  -- expr 2337512994
+theorem VE.Acts.HookToday.decodeFlaggedActs_today
+  ∀ (environment norms : Lean.Json),
+    VE.Norms.Wire.decodeFlaggedActs environment norms = VE.Acts.HookToday.Today.decodeFlagged environment norms
+  -- uses VE.Acts.HookToday.Today.decodeFlagged@VE.Acts.HookToday VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeFlaggedActs@VE.Acts.Hook
+  -- expr 1118845156
+theorem VE.Acts.HookToday.decodeFlagged_plain
+  ∀ (environment norms : Lean.Json),
+    VE.Norms.Wire.actsProfiles Bool.true environment = [] →
+      VE.Norms.Wire.decodeFlagged environment norms = VE.Acts.HookToday.Today.decodeFlagged environment norms
+  -- uses VE.Acts.HookToday.Today.decodeFlagged@VE.Acts.HookToday VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeFlagged@VE.Norms.Wire
+  -- expr 3950379095
+theorem VE.Acts.HookToday.decodeNormsEnvironment_acts
+  ∀ (environment : Lean.Json) (displayConstants acts joined : Bool),
+    VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts environment displayConstants acts joined =
+      VE.Acts.HookToday.Today.decodeNormsEnvironment environment displayConstants acts joined
+  -- uses VE.Acts.HookToday.Today.decodeNormsEnvironment@VE.Acts.HookToday VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire
+  -- expr 2796001361
+theorem VE.Acts.HookToday.decodeNormsEnvironment_lexical
+  ∀ (environment : Lean.Json) (displayConstants acts : Bool),
+    VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.lexical environment displayConstants acts =
+      VE.Acts.HookToday.Today.decodeNormsEnvironment environment displayConstants acts
+  -- uses VE.Acts.HookToday.Today.decodeNormsEnvironment@VE.Acts.HookToday VE.Norms.Wire.ActsHook.lexical@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire
+  -- expr 1549209961
+theorem VE.Acts.HookToday.decodeNormsEnvironment_plain
+  ∀ (environment : Lean.Json) (displayConstants acts joined : Bool),
+    VE.Norms.Wire.actsProfiles acts environment = [] →
+      VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain environment displayConstants acts joined =
+        VE.Acts.HookToday.Today.decodeNormsEnvironment environment displayConstants acts joined
+  -- uses VE.Acts.HookToday.Today.decodeNormsEnvironment@VE.Acts.HookToday VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire
+  -- expr 1228125399
+theorem VE.Acts.HookToday.decodeNormsEnvironment_plain_refuses
+  ∀ (environment : Lean.Json) (displayConstants acts joined : Bool),
+    VE.Norms.Wire.actsProfiles acts environment ≠ [] →
+      VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain environment displayConstants acts joined =
+        Except.error VE.Norms.Wire.actsHookRefusal
+  -- uses VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.actsHookRefusal@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire
+  -- expr 3192613853
+theorem VE.Acts.HookToday.decodeSource_acts
+  ∀ (environment norms : Lean.Json) (flags displayConstants joined : Bool),
+    VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms flags displayConstants joined =
+      VE.Acts.HookToday.Today.decodeSource environment norms flags displayConstants joined
+  -- uses VE.Acts.HookToday.Today.decodeSource@VE.Acts.HookToday VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 3147189187
+theorem VE.Acts.HookToday.decodeSource_plain
+  ∀ (environment norms : Lean.Json) (flags displayConstants joined : Bool),
+    VE.Norms.Wire.actsProfiles Bool.true environment = [] →
+      VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain environment norms flags displayConstants joined =
+        VE.Acts.HookToday.Today.decodeSource environment norms flags displayConstants joined
+  -- uses VE.Acts.HookToday.Today.decodeSource@VE.Acts.HookToday VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 4092086013
+theorem VE.Acts.HookTwins.actsProfiles_nil_of_underActs
+  ∀ {environment : Lean.Json},
+    VE.Norms.Run.underActs environment = Bool.false → VE.Norms.Wire.actsProfiles Bool.true environment = []
+  -- uses VE.Norms.Run.underActs@VE.Norms.Run VE.Norms.Wire.actsProfiles@VE.Norms.Wire
+  -- expr 2577272010
+theorem VE.Acts.HookTwins.admitDocumentIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {environment : Lean.Json},
+    (∀ (n : Lean.Json), d₁ environment n = d₂ environment n) →
+      ∀ (document : Lean.Json),
+        VE.Norms.Admission.admitDocumentIn d₁ environment document =
+          VE.Norms.Admission.admitDocumentIn d₂ environment document
+  -- uses VE.Norms.Admission.Admitted@VE.Norms.Admission VE.Norms.Admission.admitDocumentIn@VE.Norms.Admission VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 2173099661
+theorem VE.Acts.HookTwins.bind_congr_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f g : α → Except ε β}, (∀ (a : α), x = Except.ok a → f a = g a) → x >>= f = x >>= g
+  -- uses
+  -- expr 368345413
+theorem VE.Acts.HookTwins.envelopeGate_actsProfiles
+  ∀ {environment : Lean.Json},
+    VE.Norms.Admission.envelopeGate environment = Except.ok () → VE.Norms.Wire.actsProfiles Bool.true environment = []
+  -- uses VE.Norms.Admission.envelopeGate@VE.Norms.Admission VE.Norms.Wire.actsProfiles@VE.Norms.Wire
+  -- expr 2582444845
+theorem VE.Acts.HookTwins.error_bind
+  ∀ {ε α β : Type} (e : ε) (f : α → Except ε β), Except.error e >>= f = Except.error e
+  -- uses
+  -- expr 3312730945
+theorem VE.Acts.HookTwins.getObjValD_of_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses
+  -- expr 2586305039
+theorem VE.Acts.HookTwins.ok_bind
+  ∀ {ε α β : Type} (a : α) (f : α → Except ε β), Except.ok a >>= f = f a
+  -- uses
+  -- expr 3193208867
+theorem VE.Acts.HookTwins.replayConflictIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {j : Lean.Json},
+    (∀ (n : Lean.Json), d₁ (j.getObjValD "environment") n = d₂ (j.getObjValD "environment") n) →
+      VE.Norms.Flagged.replayConflictIn d₁ j = VE.Norms.Flagged.replayConflictIn d₂ j
+  -- uses VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.replayConflictIn@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 2365656272
+theorem VE.Acts.HookTwins.replayEntailmentIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {j : Lean.Json},
+    (∀ (n : Lean.Json), d₁ (j.getObjValD "environment") n = d₂ (j.getObjValD "environment") n) →
+      VE.Norms.Flagged.replayEntailmentIn d₁ j = VE.Norms.Flagged.replayEntailmentIn d₂ j
+  -- uses VE.Norms.Flagged.replayEntailmentIn@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 4198090585
+theorem VE.Acts.HookTwins.replayWitnessIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {j : Lean.Json},
+    (∀ (n : Lean.Json), d₁ (j.getObjValD "environment") n = d₂ (j.getObjValD "environment") n) →
+      VE.Norms.Flagged.replayWitnessIn d₁ j = VE.Norms.Flagged.replayWitnessIn d₂ j
+  -- uses VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.replayWitnessIn@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 844167425
+theorem VE.Acts.HookTwins.runAdmissionIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {environment : Lean.Json},
+    (∀ (n : Lean.Json), d₁ environment n = d₂ environment n) →
+      ∀ (id : String) (document : Lean.Json),
+        VE.Norms.Run.runAdmissionIn d₁ id environment document = VE.Norms.Run.runAdmissionIn d₂ id environment document
+  -- uses VE.Norms.Run.runAdmissionIn@VE.Norms.Run VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 4178473215
+theorem VE.Acts.HookTwins.runAdmission_plain
+  ∀ (id : String) (environment document : Lean.Json),
+    VE.Norms.Wire.actsProfiles Bool.true environment = [] →
+      VE.Norms.Run.runAdmission id environment document = VE.Acts.HookTwins.Today.runAdmission id environment document
+  -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmission@VE.Norms.Run VE.Norms.Wire.actsProfiles@VE.Norms.Wire
+  -- expr 160287859
+theorem VE.Acts.HookTwins.runAdmission_today
+  ∀ (id : String) (environment document : Lean.Json),
+    VE.Norms.Run.runAdmission id environment document = VE.Acts.HookTwins.Today.runAdmission id environment document
+  -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmission@VE.Norms.Run
+  -- expr 2436381116
+theorem VE.Acts.HookTwins.runCaseActsRouted_today
+  ∀ (j : Lean.Json), VE.Norms.Run.runCaseActsRouted j = VE.Acts.HookTwins.Today.runCaseRouted j
+  -- uses VE.Acts.HookTwins.Today.runCaseRouted@VE.Acts.HookTwins VE.Norms.Run.runCaseActsRouted@VE.Norms.Run
+  -- expr 4244469265
+theorem VE.Acts.HookTwins.runCaseActs_today
+  ∀ (j : Lean.Json), VE.Norms.Run.runCaseActs j = VE.Acts.HookTwins.Today.runCase j
+  -- uses VE.Acts.HookTwins.Today.runCase@VE.Acts.HookTwins VE.Norms.Run.runCaseActs@VE.Norms.Run
+  -- expr 2102953174
+theorem VE.Acts.HookTwins.runCaseIn_congr
+  ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {j : Lean.Json},
+    (∀ (n : Lean.Json), d₁ (j.getObjValD "environment") n = d₂ (j.getObjValD "environment") n) →
+      (∀ (e : Lean.Json),
+          VE.Compose.decidingEnvironment (j.getObjValD "environment") = Except.ok e →
+            ∀ (n : Lean.Json), d₁ e n = d₂ e n) →
+        VE.Norms.Run.runCaseIn d₁ j = VE.Norms.Run.runCaseIn d₂ j
+  -- uses VE.Compose.decidingEnvironment@VE.Compose.Dispatch VE.Norms.Run.runCaseIn@VE.Norms.Run VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.SourceDecoder@VE.Norms.Wire
+  -- expr 2509112138
+theorem VE.Acts.HookTwins.runCaseRouted_today
+  ∀ (j : Lean.Json), VE.Norms.Run.runCaseRouted j = VE.Acts.HookTwins.Today.runCaseRouted j
+  -- uses VE.Acts.HookTwins.Today.runCaseRouted@VE.Acts.HookTwins VE.Norms.Run.runCaseRouted@VE.Norms.Run
+  -- expr 355315416
+theorem VE.Acts.HookTwins.runCase_plain
+  ∀ (j : Lean.Json),
+    VE.Norms.Wire.actsProfiles Bool.true (j.getObjValD "environment") = [] →
+      (∀ (e : Lean.Json),
+          VE.Compose.decidingEnvironment (j.getObjValD "environment") = Except.ok e →
+            VE.Norms.Wire.actsProfiles Bool.true e = []) →
+        VE.Norms.Run.runCase j = VE.Acts.HookTwins.Today.runCase j
+  -- uses VE.Acts.HookTwins.Today.runCase@VE.Acts.HookTwins VE.Compose.decidingEnvironment@VE.Compose.Dispatch VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Wire.actsProfiles@VE.Norms.Wire
+  -- expr 2034868294
 theorem VE.Acts.Lexical.actWord_chars
   ∀ {w : String},
     VE.Norms.Wire.actWord w = Bool.true →
@@ -13468,12 +13628,12 @@ theorem VE.Commands.nodup_of_eraseDups
   -- expr 3738076891
 theorem VE.Commands.norms_facts
   ∀ {env : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment} {acts : Bool},
-    VE.Norms.Wire.decodeNormsEnvironment env Bool.true acts = Except.ok ne →
+    VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts env Bool.true acts = Except.ok ne →
       VE.Scope.JsonWF env →
         (∀ (g : VE.Norms.Regulated), g ∈ ne.regulated → ne.rv.environment.predicates g.name = Option.some g.sorts) ∧
           (List.map (fun x => x.name) ne.regulated).Nodup ∧ (List.map (fun x => x.fst) ne.rv.vocabulary.constants).Nodup
-  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Environment.predicates@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern
-  -- expr 3072107644
+  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Environment.predicates@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 3177023331
 theorem VE.Commands.not_if_then
   ∀ {body : String}, body.startsWith "If " = Bool.true → body.startsWith "Then " = Bool.false
   -- uses
@@ -26238,18 +26398,20 @@ theorem VE.NormDefaults.Wire.decodeSourceU_plain
   ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
     VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok s →
       VE.NormDefaults.Wire.hasProfile environment = Bool.false →
-        VE.Norms.Wire.decodeSource environment norms = Except.ok s.src ∧ s.U = { D := s.src.D, unspec := [] }
-  -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 3912613985
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms = Except.ok s.src ∧
+          s.U = { D := s.src.D, unspec := [] }
+  -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 3817590178
 theorem VE.NormDefaults.Wire.decode_conservative
   ∀ (environment norms : Lean.Json),
     VE.NormDefaults.Wire.hasProfile environment = Bool.false →
       VE.NormDefaults.Wire.unspecifiedNames environment = [] →
         Except.map (fun s => (s.src, s.U)) (VE.NormDefaults.Wire.decodeSourceU environment norms) =
-            Except.map (fun s => (s, { D := s.D, unspec := [] })) (VE.Norms.Wire.decodeSource environment norms) ∧
+            Except.map (fun s => (s, { D := s.D, unspec := [] }))
+              (VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms) ∧
           VE.NormDefaults.Wire.canonicalEnvironmentJsonU environment = VE.Norms.Wire.canonicalEnvironmentJson environment
-  -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.canonicalEnvironmentJsonU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.unspecifiedNames@VE.NormDefaults.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.canonicalEnvironmentJson@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 4237995287
+  -- uses VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.canonicalEnvironmentJsonU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.hasProfile@VE.NormDefaults.Wire VE.NormDefaults.Wire.unspecifiedNames@VE.NormDefaults.Wire VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.canonicalEnvironmentJson@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 457907470
 theorem VE.NormDefaults.Wire.fillPremises_wellFormed
   ∀ {U : VE.NormDefaults.UDoc},
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -29422,7 +29584,9 @@ theorem VE.Norms.Flagged.norms_flagged_acceptance
   ∀ (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailment j = Except.ok r →
       VE.Norms.Flagged.valid r = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+              Bool.true =
+            Except.ok r.src ∧
           (∀ (S : VE.Structure),
               S.Admissible (VE.Norms.envAt r.src.D (VE.Norms.size r.src.D)) →
                 VE.Norms.Sat S (VE.Norms.Flagged.flagPremises r.src) →
@@ -29437,8 +29601,8 @@ theorem VE.Norms.Flagged.norms_flagged_acceptance
                   VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] r.conclusion →
                     ∀ (B : VE.Structure),
                       VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
-  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 2361726276
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2906268507
 theorem VE.Norms.Flagged.norms_flagged_acceptanceIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailmentIn dec j = Except.ok r →
@@ -29464,15 +29628,17 @@ theorem VE.Norms.Flagged.norms_flagged_conflict_sound
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
       r.conflictFree = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+              Bool.true =
+            Except.ok r.src ∧
           (r.plain = Bool.true →
               ∀ (B : VE.Structure), VE.Norms.BaseAdmissible r.src.D B → VE.Norms.ConflictFree r.src.D B) ∧
             (r.plain = Bool.false →
               ∀ (S : VE.Structure),
                 S.Admissible (VE.Norms.Flagged.baseEnv r.src.D) →
                   VE.Norms.Sat S (VE.Norms.Flagged.baseBackground r.src) → VE.Norms.Flagged.BaseConflictFree r.src S)
-  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.BaseConflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.plain@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.baseBackground@VE.Norms.Flagged VE.Norms.Flagged.baseEnv@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 2497446803
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.BaseConflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.plain@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.baseBackground@VE.Norms.Flagged VE.Norms.Flagged.baseEnv@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2575771112
 theorem VE.Norms.Flagged.norms_flagged_conflict_soundIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflictIn dec j = Except.ok r →
@@ -29490,15 +29656,17 @@ theorem VE.Norms.Flagged.norms_flagged_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Flagged.Witness src),
     VE.Norms.Flagged.replayWitness j = Except.ok ⟨src, w⟩ →
       w.conflict = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+              Bool.true =
+            Except.ok src ∧
           VE.Norms.BaseAdmissible src.D w.M.asStructure ∧
             VE.Norms.Sat w.M.asStructure (VE.Norms.Flagged.flagPremises src) ∧
               ¬VE.Norms.ConflictFree src.D w.M.asStructure ∧
                 ¬∀ (B : VE.Structure),
                     VE.Norms.BaseAdmissible src.D B →
                       VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
-  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.Witness.toWitnessData@VE.Norms.Flagged VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayWitness@VE.Norms.Flagged VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 1742475876
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.Witness.toWitnessData@VE.Norms.Flagged VE.Norms.Flagged.Witness@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayWitness@VE.Norms.Flagged VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
+  -- expr 94729557
 theorem VE.Norms.Flagged.norms_flagged_witness_soundIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Flagged.Witness src),
     VE.Norms.Flagged.replayWitnessIn dec j = Except.ok ⟨src, w⟩ →
@@ -29521,9 +29689,11 @@ theorem VE.Norms.Flagged.replayConflictIn_source
 theorem VE.Norms.Flagged.replayConflict_source
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
-      VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
-  -- uses VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 213791906
+      VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+          Bool.true =
+        Except.ok r.src
+  -- uses VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 3945080984
 theorem VE.Norms.Flagged.replayEntailmentIn_source
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailmentIn dec j = Except.ok r →
@@ -29533,9 +29703,11 @@ theorem VE.Norms.Flagged.replayEntailmentIn_source
 theorem VE.Norms.Flagged.replayEntailment_source
   ∀ (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Flagged.replayEntailment j = Except.ok r →
-      VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
-  -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
-  -- expr 1818816401
+      VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+          Bool.true =
+        Except.ok r.src
+  -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire
+  -- expr 1507172724
 theorem VE.Norms.FlaggedSpec.baseEnv_hidden
   ∀ (D : VE.Norms.Doc) (n : String),
     n ∈ VE.Norms.FlaggedSpec.regNames D → (VE.Norms.Flagged.baseEnv D).predicates n = Option.none
@@ -29607,12 +29779,12 @@ theorem VE.Norms.FlaggedSpec.decodeFlagged_flag_not_defined
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeFlagged@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
   -- expr 2945042650
 theorem VE.Norms.FlaggedSpec.decodeSource_flag_not_defined
-  ∀ (environment norms : Lean.Json) (flags : Bool) (src : VE.Norms.Wire.Source),
-    VE.Norms.Wire.decodeSource environment norms flags = Except.ok src →
+  ∀ (H : VE.Norms.Wire.ActsHook) (environment norms : Lean.Json) (flags : Bool) (src : VE.Norms.Wire.Source),
+    VE.Norms.Wire.decodeSource H environment norms flags = Except.ok src →
       ∀ (f : VE.Data.Background.Flag),
         f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name
-  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 222593807
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.ActsHook@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source.ne@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 120164956
 theorem VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined
   ∀ (profiles : List String) (v : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
     VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
@@ -29737,35 +29909,37 @@ theorem VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
   -- expr 142684592
 theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
   ∀ (environment : Lean.Json) (ne : VE.Norms.Wire.NormsEnvironment),
-    VE.Norms.Wire.decodeNormsEnvironment environment = Except.ok ne →
+    VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain environment = Except.ok ne →
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
-  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 1953643462
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 264996516
 theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
-  ∀ (environment : Lean.Json) (acts : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
-    VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts = Except.ok ne →
+  ∀ (H : VE.Norms.Wire.ActsHook) (environment : Lean.Json) (acts : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironmentWith H environment Bool.true acts = Except.ok ne →
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
-  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 2693756424
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.ActsHook@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 466724107
 theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_joined
-  ∀ (environment : Lean.Json) (acts joined : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
-    VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts joined = Except.ok ne →
+  ∀ (H : VE.Norms.Wire.ActsHook) (environment : Lean.Json) (acts joined : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironmentWith H environment Bool.true acts joined = Except.ok ne →
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
-  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 2500740368
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.ActsHook@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 466842237
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
       r.conflictFree = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+              Bool.true =
+            Except.ok r.src ∧
           ∀ (B : VE.Structure),
             VE.Norms.BaseAdmissible r.src.D B →
               VE.Norms.Sat B (VE.Norms.Flagged.flagPremises r.src) → VE.Norms.ConflictFree r.src.D B
-  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 3574567521
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.ConflictReplay.conflictFree@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay.src@VE.Norms.Flagged VE.Norms.Flagged.ConflictReplay@VE.Norms.Flagged VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayConflict@VE.Norms.Flagged VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
+  -- expr 744508484
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_freeIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder),
     (∀ (e n : Lean.Json) (s : VE.Norms.Wire.Source),
@@ -29816,12 +29990,14 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_free
       VE.Route.Run.caseKind j = Except.ok "norms-conflict" →
         answer.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
           ∃ src,
-            VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok src ∧
+            VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+                  Bool.true =
+                Except.ok src ∧
               ∀ (B : VE.Structure),
                 VE.Norms.BaseAdmissible src.D B →
                   VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
-  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 369298332
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
+  -- expr 1426000206
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder),
     (∀ (e n : Lean.Json) (s : VE.Norms.Wire.Source),
@@ -29845,12 +30021,14 @@ theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
       VE.Route.Run.caseKind j = Except.ok "norms-conflict" →
         answer.getObjValD "verdict" = Lean.Json.str "CONFLICT" →
           ∃ src,
-            VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok src ∧
+            VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+                  Bool.true =
+                Except.ok src ∧
               ¬∀ (B : VE.Structure),
                   VE.Norms.BaseAdmissible src.D B →
                     VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
-  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
-  -- expr 1194584348
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Run.caseKind@VE.Route.Run VE.Structure@VE.Semantics
+  -- expr 3973305598
 theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j answer : Lean.Json),
     VE.Norms.Run.runCaseIn dec j = Except.ok answer →
@@ -30122,7 +30300,8 @@ theorem VE.Norms.Replay.norms_wire_acceptance
   ∀ (j : Lean.Json) (r : VE.Norms.Replay.EntailmentReplay),
     VE.Norms.Replay.replayEntailment j = Except.ok r →
       r.valid = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok r.src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") =
+            Except.ok r.src ∧
           (∀ (S : VE.Structure),
               S.Admissible (VE.Norms.envAt r.src.D (VE.Norms.size r.src.D)) →
                 VE.Norms.holdsCatala r.src.D.T S →
@@ -30135,8 +30314,8 @@ theorem VE.Norms.Replay.norms_wire_acceptance
                 VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] r.conclusion →
                   ∀ (B : VE.Structure),
                     VE.Norms.BaseAdmissible r.src.D B → VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
-  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.valid@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Replay.replayEntailment@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 2164864574
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.valid@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Replay.replayEntailment@VE.Norms.Replay VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3553191155
 theorem VE.Norms.Replay.norms_wire_conflict_free_expands
   ∀ (j : Lean.Json) (res : VE.Norms.Replay.ConflictReplay),
     VE.Norms.Replay.replayConflict j = Except.ok res →
@@ -30149,20 +30328,22 @@ theorem VE.Norms.Replay.norms_wire_conflict_sound
   ∀ (j : Lean.Json) (res : VE.Norms.Replay.ConflictReplay),
     VE.Norms.Replay.replayConflict j = Except.ok res →
       res.conflictFree = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok res.src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") =
+            Except.ok res.src ∧
           ∀ (B : VE.Structure), VE.Norms.BaseAdmissible res.src.D B → VE.Norms.ConflictFree res.src.D B
-  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Replay.ConflictReplay.conflictFree@VE.Norms.Replay VE.Norms.Replay.ConflictReplay.src@VE.Norms.Replay VE.Norms.Replay.ConflictReplay@VE.Norms.Replay VE.Norms.Replay.replayConflict@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
-  -- expr 3521655002
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Replay.ConflictReplay.conflictFree@VE.Norms.Replay VE.Norms.Replay.ConflictReplay.src@VE.Norms.Replay VE.Norms.Replay.ConflictReplay@VE.Norms.Replay VE.Norms.Replay.replayConflict@VE.Norms.Replay VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Structure@VE.Semantics
+  -- expr 3603827038
 theorem VE.Norms.Replay.norms_wire_conflict_witness_sound
   ∀ (j : Lean.Json) (src : VE.Norms.Wire.Source) (w : VE.Norms.Replay.WitnessData src),
     VE.Norms.Replay.replayWitness j = Except.ok ⟨src, w⟩ →
       w.conflict = Bool.true →
-        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = Except.ok src ∧
+        VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") =
+            Except.ok src ∧
           ¬VE.Norms.ConflictFree src.D w.M.asStructure ∧
             ¬VE.Route.Unique (VE.Norms.DocumentExpansion src.D w.M.asStructure) ∧
               ¬∀ (B : VE.Structure), VE.Norms.BaseAdmissible src.D B → VE.Norms.ConflictFree src.D B
-  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Replay.WitnessData@VE.Norms.Replay VE.Norms.Replay.replayWitness@VE.Norms.Replay VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Unique@VE.Route.Layer VE.Structure@VE.Semantics
-  -- expr 4265936268
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Replay.WitnessData.M@VE.Norms.Replay VE.Norms.Replay.WitnessData.conflict@VE.Norms.Replay VE.Norms.Replay.WitnessData@VE.Norms.Replay VE.Norms.Replay.replayWitness@VE.Norms.Replay VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Route.Unique@VE.Route.Layer VE.Structure@VE.Semantics
+  -- expr 3467138430
 theorem VE.Norms.Replay.target_refutes
   ∀ (D : VE.Norms.Doc),
     VE.Norms.WellFormed D = Bool.true →
@@ -30217,7 +30398,9 @@ theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
         answer.getObjValD "valid" = Lean.Json.bool Bool.true →
           ∃ r,
             VE.Norms.Flagged.replayEntailment j = Except.ok r ∧
-              VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+              VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms")
+                    Bool.true =
+                  Except.ok r.src ∧
                 (∀ (S : VE.Structure),
                     S.Admissible (VE.Norms.envAt r.src.D (VE.Norms.size r.src.D)) →
                       VE.Norms.Sat S (VE.Norms.Flagged.flagPremises r.src) →
@@ -30233,8 +30416,8 @@ theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
                           ∀ (B : VE.Structure),
                             VE.Norms.BaseAdmissible r.src.D B →
                               VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
-  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 545609136
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1466310104
 theorem VE.Norms.RunSound.norms_wire_certificate_acceptanceIn
   ∀ (dec : VE.Norms.Wire.SourceDecoder) (j answer : Lean.Json),
     VE.Norms.Run.runCaseIn dec j = Except.ok answer →
@@ -65749,6 +65932,12 @@ theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
     answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
   -- uses VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 1875777254
+theorem VE.SoftNorms.Run.ok_verdict
+  ∀ (id v : String) (rest : List (String × Lean.Json)),
+    ¬"verdict" ∈ List.map (fun x => x.fst) rest →
+      (VE.Route.Wire.ok id (("verdict", Lean.Json.str v) :: rest)).getObjValD "verdict" = Lean.Json.str v
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3679161013
 theorem VE.SoftNorms.Run.outcomeAt_iff
   ∀ (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (p : String) (vs : List VE.Bridge.Entity),
     VE.SoftNorms.Run.outcomeAt D M p vs = Bool.true ↔
@@ -65970,6 +66159,23 @@ theorem VE.SoftNorms.Run.softLabelled_formulas
   ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften
   -- expr 2529973739
+theorem VE.SoftNorms.Run.soft_conflict_verdict
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ((j.getObjVal? "witness").toBool = Bool.true ∧
+              ∃ src w,
+                VE.SoftNorms.Wire.replaySoftWitness j = Except.ok ⟨src, w⟩ ∧
+                  answer.getObjValD "verdict" =
+                    Lean.Json.str (if w.conflict = Bool.true then "CONFLICT" else "UNKNOWN")) ∨
+            (j.getObjVal? "witness").toBool = Bool.false ∧
+              ∃ res,
+                VE.SoftNorms.Wire.replaySoftConflict j = Except.ok res ∧
+                  answer.getObjValD "verdict" =
+                    Lean.Json.str (if res.conflictFree = Bool.true then "CONFLICT-FREE" else "UNKNOWN")
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire
+  -- expr 3023849634
 theorem VE.SoftNorms.Run.soft_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →
@@ -65980,6 +66186,53 @@ theorem VE.SoftNorms.Run.soft_wire_acceptance
               VE.SoftNorms.Run.SoftAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
   -- expr 3819520681
+theorem VE.SoftNorms.Run.soft_wire_conflict_exclusive
+  ∀ (j₁ j₂ a₁ a₂ : Lean.Json),
+    VE.SoftNorms.Run.runCase j₁ = Except.ok a₁ →
+      VE.Route.Run.caseKind j₁ = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j₁ = Bool.true →
+          VE.SoftNorms.Run.runCase j₂ = Except.ok a₂ →
+            VE.Route.Run.caseKind j₂ = Except.ok "soft-conflict" →
+              VE.SoftNorms.Run.usesSoftPath j₂ = Bool.true →
+                j₁.getObjValD "environment" = j₂.getObjValD "environment" →
+                  j₁.getObjValD "norms" = j₂.getObjValD "norms" →
+                    a₁.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+                      a₂.getObjValD "verdict" ≠ Lean.Json.str "CONFLICT"
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
+  -- expr 900473672
+theorem VE.SoftNorms.Run.soft_wire_conflict_free
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          (j.getObjVal? "witness").toBool = Bool.false →
+            answer.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+              ∃ res,
+                VE.SoftNorms.Wire.replaySoftConflict j = Except.ok res ∧
+                  res.conflictFree = Bool.true ∧
+                    VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") =
+                        Except.ok res.src ∧
+                      VE.SoftNorms.WellFormedSoft res.src.D = Bool.true ∧ VE.SoftNorms.SoftConflictFree res.src.D
+  -- uses VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.Wire.SoftConflictReplay.conflictFree@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay.src@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftConflictReplay@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftConflict@VE.SoftNorms.Wire
+  -- expr 1954699145
+theorem VE.SoftNorms.Run.soft_wire_conflict_witness
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-conflict" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          (j.getObjVal? "witness").toBool = Bool.true →
+            answer.getObjValD "verdict" = Lean.Json.str "CONFLICT" →
+              ∃ src w,
+                VE.SoftNorms.Wire.replaySoftWitness j = Except.ok ⟨src, w⟩ ∧
+                  w.conflict = Bool.true ∧
+                    VE.SoftNorms.Wire.decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") =
+                        Except.ok src ∧
+                      ¬VE.Norms.ConflictFree (VE.SoftNorms.soften src.D) w.M.asStructure ∧
+                        ¬VE.SoftNorms.SoftConflictFree src.D ∧
+                          (¬VE.SoftNorms.NoStrictCollision src.D w.M.asStructure ∨
+                            ¬VE.SoftNorms.NoHardPairConflict src.D w.M.asStructure)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Norms.ConflictFree@VE.Norms.Conflict VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.NoHardPairConflict@VE.SoftNorms.Coherence VE.SoftNorms.NoStrictCollision@VE.SoftNorms.Coherence VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.M@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData.conflict@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftWitnessData@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.replaySoftWitness@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3470644586
 theorem VE.SoftNorms.Run.soft_wire_elaborate
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →
@@ -68369,14 +68622,14 @@ theorem VE.SpeechActs.Wire.canonical_scope
 theorem VE.SpeechActs.Wire.decodeNorms_acts
   ∀ {s : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment},
     (VE.Norms.Wire.actsProfiles Bool.true s).contains "acts@0" = Bool.true →
-      VE.Norms.Wire.decodeNormsEnvironment s Bool.true Bool.true = Except.ok ne →
+      VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts s Bool.true Bool.true = Except.ok ne →
         ∃ fx,
           VE.Norms.Wire.actsFixed (VE.Norms.Wire.actsProfiles Bool.true s) s = Except.ok fx ∧
             ∀ (g : VE.Norms.Regulated),
               g ∈ ne.regulated →
                 ∀ (a : String), g.act = Option.some a → ∃ k raw, VE.Acts.Lexical.check fx g.name k raw = Except.ok a
-  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire
-  -- expr 565205700
+  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire
+  -- expr 105865934
 theorem VE.SpeechActs.Wire.decodeRegulatedIn_act
   ∀ {ps fx : List String} {p : String} {args : List String} {raw : Lean.Json} {g : VE.Norms.Regulated} {a : String},
     ps.contains "acts@0" = Bool.true →
@@ -68396,9 +68649,9 @@ theorem VE.SpeechActs.Wire.decode_acts_compatible
     VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
       ∃ j',
         VE.SpeechActs.Wire.stripSpeech j = Except.ok j' ∧
-          VE.Norms.Wire.decodeNormsEnvironment j' Bool.true Bool.true = Except.ok se.ne
-  -- uses VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
-  -- expr 1844239535
+          VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts j' Bool.true Bool.true = Except.ok se.ne
+  -- uses VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 3310005307
 theorem VE.SpeechActs.Wire.decode_steps
   ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
     VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
@@ -68407,10 +68660,11 @@ theorem VE.SpeechActs.Wire.decode_steps
           VE.SpeechActs.Wire.profileGate se.profiles = Except.ok () ∧
             se.json = j ∧
               VE.SpeechActs.Wire.stripSpeech j = Except.ok s ∧
-                VE.Norms.Wire.decodeNormsEnvironment s Bool.true Bool.true = Except.ok se.ne ∧
+                VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts s Bool.true Bool.true =
+                    Except.ok se.ne ∧
                   VE.SpeechActs.Wire.checkActsBlock se.profiles j s = Except.ok ()
-  -- uses VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.json@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.checkActsBlock@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire VE.SpeechActs.Wire.profilesField@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
-  -- expr 4195307390
+  -- uses VE.Norms.Wire.ActsHook.acts@VE.Acts.Hook VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironmentWith@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.json@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.checkActsBlock@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire VE.SpeechActs.Wire.profilesField@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 3781911335
 theorem VE.SpeechActs.Wire.decode_without_acts
   ∀ (j : Lean.Json) (ps : List String),
     VE.SpeechActs.Wire.profilesField j = Except.ok ps →
@@ -69886,33 +70140,51 @@ theorem VE.Time.Wire.extension_document_sound
                             Lean.Json.arr (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
   -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire
   -- expr 945645095
-theorem VE.Time.Wire.quantity_admission_wire_sound
+theorem VE.Time.Wire.quantity_admission_wire_sound_plain
   ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
     VE.Time.Wire.runCase j more = Except.ok answer →
       (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
-        ∃ id env w quantity a value,
-          VE.Bridge.stringField j "id" = Except.ok id ∧
-            j.getObjVal? "environment" = Except.ok env ∧
-              VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
-                j.getObjVal? "quantity" = Except.ok quantity ∧
-                  VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
-                    answer =
-                        VE.Time.Wire.ok id
-                          ([("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+        (∃ e, j.getObjVal? "model" = Except.error e) →
+          ∃ id env w quantity a,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              j.getObjVal? "environment" = Except.ok env ∧
+                VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                  j.getObjVal? "quantity" = Except.ok quantity ∧
+                    VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                      answer =
+                          VE.Time.Wire.ok id
+                            [("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
                               ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
                               ("environment_id", Lean.Json.str w.environmentId),
-                              ("target_environment_id", Lean.Json.str w.targetId)] ++
-                            value) ∧
-                      VE.Time.Admitted w.vocab.env [] a.formula ∧
-                        VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
-                          ((∃ e, j.getObjVal? "model" = Except.error e) ∧ value = [] ∨
-                            ∃ model d b work,
-                              j.getObjVal? "model" = Except.ok model ∧
-                                VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
-                                  value = [("value", Lean.Json.bool b), ("evaluations", Lean.ToJson.toJson work)] ∧
-                                    b = VE.Order.Formula.eval d.toModel [] a.formula.erase)
+                              ("target_environment_id", Lean.Json.str w.targetId)] ∧
+                        VE.Time.Admitted w.vocab.env [] a.formula ∧
+                          VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.SortName@VE.Order.Syntax VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
+  -- expr 195127907
+theorem VE.Time.Wire.quantity_admission_wire_sound_valued
+  ∀ (j answer model : Lean.Json) (more : VE.Time.Wire.Extension),
+    VE.Time.Wire.runCase j more = Except.ok answer →
+      (j.getObjVal? "kind" = Except.ok (Lean.Json.str "admission") ∨ ∃ e, j.getObjVal? "kind" = Except.error e) →
+        j.getObjVal? "model" = Except.ok model →
+          ∃ id env w quantity a d b work,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              j.getObjVal? "environment" = Except.ok env ∧
+                VE.Time.Wire.decodeEnvironment env = Except.ok w ∧
+                  j.getObjVal? "quantity" = Except.ok quantity ∧
+                    VE.Time.Wire.decodeQuantity w quantity = Except.ok a ∧
+                      VE.Route.Decode.decodeOrderModel w.vocab.core model = Except.ok d ∧
+                        answer =
+                            VE.Time.Wire.ok id
+                              [("assurance", Lean.Json.str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+                                ("meaning_id", Lean.Json.str a.meaningId), ("core_meaning_id", Lean.Json.str a.coreId),
+                                ("environment_id", Lean.Json.str w.environmentId),
+                                ("target_environment_id", Lean.Json.str w.targetId), ("value", Lean.Json.bool b),
+                                ("evaluations", Lean.ToJson.toJson work)] ∧
+                          VE.Time.Admitted w.vocab.env [] a.formula ∧
+                            VE.Order.Formula.WellFormed w.vocab.env.erase [] a.formula.erase ∧
+                              b = VE.Order.Formula.eval d.toModel [] a.formula.erase
   -- uses VE.Bridge.stringField@VE.Bridge VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.eval@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.SortName@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.Wire.Admission.Q@VE.Time.Wire VE.Time.Wire.Admission.core@VE.Time.Wire VE.Time.Wire.Admission.coreId@VE.Time.Wire VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.targetId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire VE.Time.Wire.decodeQuantity@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire
-  -- expr 424148063
+  -- expr 1940952525
 theorem VE.Time.Wire.quantity_certificate_wire_sound
   ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
     VE.Time.Wire.runCase j more = Except.ok answer →

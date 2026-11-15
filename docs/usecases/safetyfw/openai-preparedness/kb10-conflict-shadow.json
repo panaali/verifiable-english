@@ -1,0 +1,480 @@
+{
+ "harness": "usecases/openai-preparedness/run.py",
+ "command": "uv run python usecases/safetyfw_conflict_shadow.py openai-preparedness OUT",
+ "harness_args": [
+  "--check"
+ ],
+ "harness_outcome": "exit 0",
+ "commit": "26358508f563930f37d0f31f53dddae581fe1508",
+ "seconds": 1546.2,
+ "calls_compared": 472,
+ "questions": 101,
+ "status_pairs": {
+  "CONFLICT / CONFLICT": 8,
+  "CONFLICT-FREE / CONFLICT-FREE": 458,
+  "UNKNOWN / UNKNOWN": 6
+ },
+ "classes": {
+  "identical": 472
+ },
+ "unexplained_calls": 0,
+ "targets_disagree": 0,
+ "conflict_free_questions": 89,
+ "conflict_free_conditional": {
+  "questions": 0,
+  "labels": [],
+  "note": "the soft route's CONFLICT-FREE holds among rules on the same act, conditional on these open coherence premises; the harness's W1 CONFLICT-FREE reads the same soft premises (SoftBaseEnvironment's Background) but states no condition"
+ },
+ "calls_without_soft_source": {},
+ "items": {
+  "C-doc": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 32
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m1]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 26,
+    "UNKNOWN / UNKNOWN": 6
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m2]": {
+   "calls": 36,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 34,
+    "CONFLICT / CONFLICT": 2
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m3]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 32
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m4]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 32
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m5]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 32
+   },
+   "differ": []
+  },
+  "C-doc [MUTANT=m6]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 31,
+    "CONFLICT / CONFLICT": 1
+   },
+   "differ": []
+  },
+  "C-doc [WITHOUT_NARROWING=N1]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 32
+   },
+   "differ": []
+  },
+  "C-doc [WITHOUT_NARROWING=N2]": {
+   "calls": 32,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 31,
+    "CONFLICT / CONFLICT": 1
+   },
+   "differ": []
+  },
+  "C1": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2,
+    "CONFLICT / CONFLICT": 2
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m3]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m4]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m5]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [MUTANT=m6]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [WITHOUT_NARROWING=N1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C1 [WITHOUT_NARROWING=N2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m3]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m4]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m5]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [MUTANT=m6]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT / CONFLICT": 1,
+    "CONFLICT-FREE / CONFLICT-FREE": 3
+   },
+   "differ": []
+  },
+  "C2 [WITHOUT_NARROWING=N1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C2 [WITHOUT_NARROWING=N2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT / CONFLICT": 1,
+    "CONFLICT-FREE / CONFLICT-FREE": 3
+   },
+   "differ": []
+  },
+  "C3": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m3]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m4]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m5]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [MUTANT=m6]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [WITHOUT_NARROWING=N1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C3 [WITHOUT_NARROWING=N2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C4": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m1]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m2]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m3]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m4]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m5]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [MUTANT=m6]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [WITHOUT_NARROWING=N1]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C4 [WITHOUT_NARROWING=N2]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C5": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m3]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m4]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m5]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [MUTANT=m6]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [WITHOUT_NARROWING=N1]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C5 [WITHOUT_NARROWING=N2]": {
+   "calls": 4,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 4
+   },
+   "differ": []
+  },
+  "C6": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m1]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m2]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m3]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m4]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m5]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [MUTANT=m6]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [WITHOUT_NARROWING=N1]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  },
+  "C6 [WITHOUT_NARROWING=N2]": {
+   "calls": 2,
+   "pairs": {
+    "CONFLICT-FREE / CONFLICT-FREE": 2
+   },
+   "differ": []
+  }
+ },
+ "differences": []
+}

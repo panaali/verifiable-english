@@ -1,0 +1,36 @@
+{
+ "item": "kb-4a",
+ "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from a copy saved before the plant (git status clean against the commit afterwards). S1-S3 are the task's seeded bugs (a)-(c). No Python or Rust product code changed in this item (tools/kernel-paths.json and tools/trust-classes.json are data; the Python change is tests/test_kernel_closure.py), so every seed is Lean. The trust mutants (docs/kernel/kb-4a/trust-mutants.json) are the per-definition record beyond these three.",
+ "seeds": [
+  {
+   "id": "S1",
+   "task_seed": "a",
+   "language": "lean",
+   "file": "lean/VE/Norms/Wire.lean",
+   "claim": "ActsHook.plain refuses an environment from which acts@0 is read (actsHookRefusal), so the plain decoder never reads the acts profile",
+   "mutation": "ActsHook.plain's `profiles` returns `pure (actsProfiles acts environment)` (accepts the acts@0 profiles; its `joined` stays `pure []`, so the joined-act check is skipped)",
+   "failing": "cd lean && lake build VE.Acts.HookToday",
+   "result": "VE.Acts.HookToday.decodeNormsEnvironment_plain_refuses does not build (HookToday.lean:126, `rfl` failed: the left-hand side goes on to `Route.Gate.decodeEnvelope` instead of `.error actsHookRefusal`); the theorem of deliverable (1) catches it, and the #guards `err (plainD envA) == actsHookRefusal` of lean/VE/Acts/HookExamples.lean state the same refusal"
+  },
+  {
+   "id": "S2",
+   "task_seed": "b",
+   "language": "lean",
+   "file": "lean/VE/Norms/Run.lean",
+   "claim": "the norms mode's dispatch (runCaseRouted) hands every case that reads acts@0 to today's runner and answers every input as before",
+   "mutation": "runCaseRouted's test is `VE.Acts.Run.isElaborate j` only (the `underActs` and `decidesActs` tests dropped), so an acts@0 environment reaches the plain runner",
+   "failing": "cd lean && lake build VE.Acts.HookTwins",
+   "result": "VE.Acts.HookTwins.runCaseRouted_today does not build (HookTwins.lean:157, `cases` failed: the hypotheses it destructures, `underActs … = false` and `decidesActs … = false`, are no longer in the branch condition)"
+  },
+  {
+   "id": "S3",
+   "task_seed": "c",
+   "language": "lean",
+   "file": "lean/VE/Norms/Wire.lean",
+   "claim": "no kernel-tier path counts VE.Acts.Grammar, VE.Grammar.Table or VE.Acts.Elaborate (ActsHook.plain references no acts decoding)",
+   "mutation": "ActsHook.plain's `joined` is `fun j ps fx _ regs => joinedActs j ps fx ⟨[], []⟩ regs` (behaviour unchanged, since the plain profiles are always empty, but it references actsOf and through it the act grammar)",
+   "failing": "cd lean && lake build && python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json",
+   "result": "exit 1: `FAIL: the kernel grew from 8985 to 9698 lines (docs/spec/kernel-boundary.md, section 6: shrink it, or have the architect sign the new total)`; `python3 tools/kernel_closure.py --why VE.Acts.Grammar` printed `norms spec: 159 lines in 39 definitions; chain: VE.Norms.FlaggedSpec.norms_wire_conflict_free -> VE.Norms.Wire.ActsHook.plain -> VE.Norms.Wire.joinedActs -> VE.Norms.Wire.actsOf -> VE.Acts.RuleS`. tests/test_kernel_closure.py::test_no_kernel_path_counts_the_act_grammar_or_the_elaboration asserts the same absence; it was not run under this seed (the statement inventory was stale at that point, so the module did not collect)"
+  }
+ ]
+}

@@ -46,8 +46,11 @@ def blocks(name: str) -> list[dict]:
 
 
 def source_blocks(case: str) -> list[tuple[str, str]]:
+    """The rule blocks of the case's rules.d1.ve; a block whose text is no numbered rule is one item's own premise
+    (safety-framework: N1's bridge, headed `item N1`), not a statement block."""
     lines = (ROOT / "usecases" / case / "rules.d1.ve").read_text().splitlines()
-    return [(re.match(r"## ([a-z0-9-]+) \|", h)[1], t) for h, t in zip(lines[::2], lines[1::2])]
+    return [(re.match(r"## ([a-z0-9-]+) \|", h)[1], t) for h, t in zip(lines[::2], lines[1::2])
+            if t.startswith("Rule ")]
 
 
 def case_of(env) -> dict:
