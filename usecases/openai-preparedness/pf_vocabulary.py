@@ -193,7 +193,9 @@ ACTS = {
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
     "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
-    "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment", "3.3: Scalable Evaluations before deployment"),
+    "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment",
+                                      "3.3: \u201cPrior to deployment, every covered model undergoes the suite of "
+                                      "Scalable Evaluations.\u201d"),
     "capabilities_report": ("{0} have SAG review the Capabilities Report as well as decide on next steps",
                             "3.3: the SAG reviews the Capabilities Report and decides on next steps"),
     "capabilities_report_submitted": ("{0} have results compiled into a Capabilities Report submitted to the SAG",
