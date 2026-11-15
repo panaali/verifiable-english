@@ -115,7 +115,15 @@ New in tests/test_pf_fidelity_fix.py:
 - test_table_1_header_is_five_units_and_the_fourth_title_is_rs1_open (above).
 
 Runs: `uv run pytest -q tests/test_pf_fidelity_fix.py tests/test_safetyfw_usecases.py -k "test_pf or fidelity_fix"`:
-111 passed (28:30). The selected run is in the hand-off note (final HEAD).
+111 passed (28:30).
+
+Selected run: `MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+The first run (commit cfe1cfa649, before the lexicon report) failed one test in its fast stage,
+`tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`. The committed
+`conformance/english-lean/lexicon-report.json` pins each corpus environment's lexicon id, and the new legend moves the
+PF environment's id. `uv run python -m conformance.english_lean_lexicon` rewrote that one id (`{"valid": 43, "invalid": 0,
+"failures_by_condition": {}}`), commit 3f56fc5ff6. The second run, on 3f56fc5ff6 (tree 4f32fdd17d, clean), exit 0:
+"recorded 255 units for tree 4f32fdd17d; ... 0 failed" (ran on ve-cloud-2, 11,711 s). No test of main-known-red.txt was hit.
 
 ## Seeded bugs (each planted, the named test failed, restored with `git checkout`)
 
@@ -159,7 +167,7 @@ None moved. results.json `items` and `comparison` are identical to main's (above
 
 - Files beyond the task's list, each because a test pins it: usecases/openai-preparedness/README.md (coverage numbers,
   one sentence, the two moved ids), docs/usecases/safetyfw/REPORT.md (the PF coverage row), tests/test_safetyfw_usecases.py
-  (unit ids). `tools/regen_generated.py --write` also refreshed docs/codemap/ (two files that lagged main's own changes).
+  (unit ids), conformance/english-lean/lexicon-report.json (the PF lexicon id, from its own generator). `tools/regen_generated.py --write` also refreshed docs/codemap/ (two files that lagged main's own changes).
 - Every UNFORMALISED residual name after the header holds its unit id, so those names moved with the ids. Reads bound to
   old ids or residual names (reviews/uc-audit-omission/*-pf.tsv) need the new ids. They are commit-bound and must be
   redone anyway.
@@ -174,7 +182,7 @@ None moved. results.json `items` and `comparison` are identical to main's (above
 3. Tests and gates can fail: PASS, seeded bugs a-e above, each with its failing test.
 4. Python, Lean and Rust agree: N.A., no checker change; results.json answers equal main's (comparison above).
 5. R8 binding: N.A., no relay.
-6. Gate evidence matches final HEAD: PASS, the selected run is on the committed final HEAD (hand-off note); the gate runs on it.
+6. Gate evidence matches final HEAD: PASS, the selected run passed on tree 4f32fdd17d (commit 3f56fc5ff6); later commits touch only this REPORT.
 7. No unsigned item: PASS, no DELTA row and no reserved signature.
 8. Every user-visible change in DELTA: N.A., no VE behaviour change (trust_map --check +0; answers identical).
 9. Test selection finds the tests: PASS, `tools/select_tests.py --base <merge-base>` lists test_pf_fidelity_fix.py and test_safetyfw_usecases.py.
