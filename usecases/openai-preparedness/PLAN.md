@@ -669,6 +669,16 @@ Section 6 and `answer-key.json` are not edited.**
     D1 has no relation that orders two duties. Each block's header and its spans.json entry (p11-u161, p11-u162, an
     `event_order` record on the word and ET among its waits) say so. The per-item scope of `f9-specific` (SC) is as
     it was. No predicate is new (61 of 64 regulated), and no answer moved (236 of 239 agree, as before).
+28. **Table 1's column titles are units of their own (architect ruling pf-table1-header-20261115).** The source span
+    that held the four column titles and the Biological and Chemical definition is now five units. The fourth title,
+    “Risk-specific safeguard guidelines”, is the source of RS1: its word “guidelines” sets how binding every
+    column-4 bullet is, and the modal of the seven RS1 block pairs (must under strict, should under default) carries
+    it. Its unit is the OPEN reading-set unit `rs1-header`, whose two choices list those pairs. The second title,
+    “Capability threshold that could lead to the risk”, keeps its hedge and waits for AT, as before. The first and
+    third titles and the category definition state no claim D1 carries, so each is an `unmapped_claim` unit. The
+    accounting's `reading RS1` tags are as they were, and no legend quotes the title. Every unit id from page 6 on
+    is four higher than in the items above (the old p6-u66 to p22-u389 are p6-u70 to p22-u393); those items keep the
+    ids of their own date. The rules, the key and every answer are as they were (236 of 239 agree).
 
 ## 13. Files for the implementation round (not this commit)
 

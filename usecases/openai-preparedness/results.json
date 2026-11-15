@@ -25806,7 +25806,7 @@
    "documents_built": 352,
    "prover_calls": 13,
    "rules": 90,
-   "units": 389,
+   "units": 393,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
   "M2": {
@@ -25822,14 +25822,14 @@
    "bytes_by_kind": {
     "asserted": 48,
     "exposition": 5327,
-    "norm": 9422,
-    "unformalised": 52621
+    "norm": 9457,
+    "unformalised": 52586
    },
    "bytes_by_status": {
     "CHECKED": 170,
     "LABELLED": 5327,
-    "OPEN": 9300,
-    "UNFORMALISED": 52621
+    "OPEN": 9335,
+    "UNFORMALISED": 52586
    },
    "residual": {
     "assumptions": 0,
@@ -25838,7 +25838,7 @@
     "holistic_overrides": 0,
     "instruction_switches": 0,
     "open_terms": 21,
-    "unresolved_reading_sets": 31,
+    "unresolved_reading_sets": 32,
     "weighing_points": 0
    }
   },
