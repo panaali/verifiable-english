@@ -66,17 +66,17 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 47319,
+    "total_lines": 47411,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
         "file": "lean/VE/Acts/Decode.lean",
-        "lines": 300,
-        "sha256": "c0babad9b2bdf1edd175d8e1dc548ea725ea2b08acafd37bd33e23d1ee60c46c",
+        "lines": 301,
+        "sha256": "a235db9dc055f333d1860d67b3eee6b88b649a999d3d4ec8de50d75816e0e096",
         "ranges": [
           [
             1,
-            300
+            301
           ]
         ],
         "declarations": [
@@ -194,7 +194,7 @@
       {
         "file": "lean/VE/Alternatives/Wire.lean",
         "lines": 423,
-        "sha256": "77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566461d95177e4d",
+        "sha256": "92707f88353766daff2d0bcb483fba6221d962d99c1aebf767eca825aedc0d5e",
         "ranges": [
           [
             1,
@@ -448,7 +448,7 @@
       {
         "file": "lean/VE/Attribution/Wire.lean",
         "lines": 515,
-        "sha256": "5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bcee707ca2cc29",
+        "sha256": "c2a458e55dc14f974f8ae361e3a3dfb01bae4f850f4937623b458c5ea176df72",
         "ranges": [
           [
             1,
@@ -1001,7 +1001,7 @@
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
         "lines": 516,
-        "sha256": "9876241865b796462eaea9a12f113bd4fc955f8489e9cbd31ef747c18e232334",
+        "sha256": "2ad8dafe87fe0f98be96e42430038675702648fe97e85f01376568852a149b5a",
         "ranges": [
           [
             1,
@@ -1061,7 +1061,7 @@
       {
         "file": "lean/VE/Norms/Flagged.lean",
         "lines": 436,
-        "sha256": "49bfe6c1255bc4fd551dc1f3c0bc84438d09d3df670499ecf56210bd952d458b",
+        "sha256": "37b02a5dc19039474337426e1dc2d2a4ace4048ca8538fe99345126ff899c51e",
         "ranges": [
           [
             1,
@@ -1081,7 +1081,7 @@
       {
         "file": "lean/VE/Norms/Replay.lean",
         "lines": 406,
-        "sha256": "1540ad633e87de376efb2166c9567a32984952147a219ca01ff3eaf7ff010a9a",
+        "sha256": "5ad231a614f584fe6c41c0246197f1a1424c7be1b5154c5935538d2e4a5ce2bc",
         "ranges": [
           [
             103,
@@ -1101,12 +1101,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 463,
-        "sha256": "513d722778ece5c27d1c5e722055a96b59d3252fb648b648a34fae8deafd6144",
+        "lines": 502,
+        "sha256": "9ca5ee8254d30598716b5e33d55daa2bee31bf647bf1a610b1cfb6013a2c45a1",
         "ranges": [
           [
             29,
-            461
+            500
           ]
         ],
         "declarations": [
@@ -1122,7 +1122,7 @@
           "actsView",
           "canonicalEnvironmentJson",
           "canonicalActs",
-          "decodeNormsEnvironment",
+          "decodeNormsEnvironmentWith",
           "normFields",
           "decodeNorm",
           "decodeSource",
@@ -1131,7 +1131,10 @@
           "decodeRegulatedShape",
           "actsVocab",
           "actsOf",
-          "joinedActs"
+          "joinedActs",
+          "ActsHook",
+          "actsHookRefusal",
+          "ActsHook.plain"
         ]
       },
       {
@@ -1429,7 +1432,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1059,
-        "sha256": "59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61552e87c1",
+        "sha256": "72942c51e2aac98a6eb4494879dd2ef216120465f413a1e36f2b7ca7f3e81903",
         "ranges": [
           [
             1,
@@ -1572,7 +1575,7 @@
       {
         "file": "lean/VE/Risk/Wire.lean",
         "lines": 492,
-        "sha256": "2ec792a1681039c48a6f76ca7106230122d6aabcf0c84be43c62d5671bd94acc",
+        "sha256": "73851afb74d8d453c7b4cc73137bcc141507db568587634e29fae94e7a993fbe",
         "ranges": [
           [
             1,
@@ -1810,7 +1813,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 3081,
-        "sha256": "966c864cee1f380f0ea725dfc27b7ab4a5c41c8880b20ca51ea8005aeca9d765",
+        "sha256": "f589dcf583314499b0db04d77d180d5a1091c4602ffe565bafbc4dab458cd542",
         "ranges": [
           [
             1,
@@ -1928,7 +1931,7 @@
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
         "lines": 393,
-        "sha256": "418076df3e0aaf7c4194110db9e9bd055eb4b832a0b2beabea4fcfc5af14b8df",
+        "sha256": "2de076c8290574e6357cb068370b11a176245e21bcfdbe832a49bef846fba52e",
         "ranges": [
           [
             1,
@@ -2023,12 +2026,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 397,
-        "sha256": "af73ebb4abf9be5f66fba02071c3d35292f3a59c09c364acd0ff00e9b6f6813b",
+        "lines": 398,
+        "sha256": "fe67d79fc547e7bab99f7bfab99d16afad8bdf5ec51d3c9e398daa317438a1d6",
         "ranges": [
           [
             1,
-            397
+            398
           ]
         ],
         "declarations": [
@@ -2115,12 +2118,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1352,
-        "sha256": "fa75cf01db0f321834da06bda5da471c8d66195497e700f2e7e99e0890768c98",
+        "lines": 1354,
+        "sha256": "23ca46241b68cb4f7993fcd2a02c8fdaf21217ac97d8011e91bc82b40bd71673",
         "ranges": [
           [
             1,
-            1352
+            1354
           ]
         ],
         "declarations": [
@@ -2389,6 +2392,24 @@
           "replaySlotEntailment"
         ],
         "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Acts/Hook.lean",
+        "lines": 49,
+        "sha256": "f92669169438f533ee436a2cb920c0e83bbde7924ac86d38aa02a2e0c19924f9",
+        "ranges": [
+          [
+            1,
+            49
+          ]
+        ],
+        "declarations": [
+          "ActsHook.acts",
+          "ActsHook.lexical",
+          "decodeNormsEnvironment",
+          "decodeFlaggedActs"
+        ],
+        "reason": "kb-4a: the acts hook's instances that read acts@0 (today's actsProfiles, actsFixed, actsVocab, canonicalActIn, canonicalShape and joinedActs, packaged for decodeNormsEnvironmentWith) and today's decoders by name (decodeNormsEnvironment, decodeFlaggedActs); the file is pinned whole"
       }
     ],
     "other_json": {
@@ -2619,7 +2640,13 @@
       "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path",
       "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Experimental/CoreDocument.lean": "experimental: the lowering of a document to its core documents builds the core document's environment and norm objects as JSON (`wireJson` of `E.lower` and of a unit's canonical soft rule, `encodeNode` of a strict norm) and reads a strict norm back only through the soft route's own decoder (`decodeSoftSource`, `decodeSoftNorm`); it decodes no field itself, and no service mode imports it (kb-2a step A; tools/check_lean_imports.py)",
-      "lean/VE/Experimental/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it"
+      "lean/VE/Experimental/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it",
+      "lean/VE/Acts/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the acts hook's instances and the norms mode's dispatch) on environments built with Json.mkObj",
+      "lean/VE/Acts/HookToday.lean": "kb-4a proofs only: frozen copies of today's norms decoders (proof helpers) and the equality theorems of the acts hook over them; no product code reads it",
+      "lean/VE/Acts/HookTwins.lean": "kb-4a proofs only: frozen copies of today's norms runners (proof helpers) and the equality theorems of the norms mode's dispatch over them; no product code reads it",
+      "lean/VE/Alternatives/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the alternatives route's declarations through the acts hook) on environments built with Json.mkObj",
+      "lean/VE/NormDefaults/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the norm-defaults decoders through the acts hook) on environments built with Json.mkObj",
+      "lean/VE/Service/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the family norms route's FOL view through the acts hook) on environments built with Json.mkObj"
     }
   },
   "plan_operations": {
