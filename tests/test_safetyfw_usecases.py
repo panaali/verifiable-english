@@ -638,7 +638,9 @@ def test_pf_checked_norms_keep_their_source_scope(pf_modules):
     assert units["p16-u275"]["reason"] == "unmapped_clause"
     guard = json.loads(pf_translation.parsed_rule("f16-sag-recommend"))["guard"]
     assert "framework_deployment" in json.dumps(guard)
-    assert "covered" in json.dumps(guard)
+    # "For each deployment under the Preparedness Framework" is one condition: the guard has no `covered` conjunct
+    # (pf-split-units-20261115 section 2, P4; PLAN 12 item 29)
+    assert "covered" not in json.dumps(guard)
 
 
 def test_pf_appendix_c2_should_is_a_pending_norm_reading(pf_modules):

@@ -680,6 +680,22 @@ Section 6 and `answer-key.json` are not edited.**
     is four higher than in the items above (the old p6-u66 to p22-u389 are p6-u70 to p22-u393); those items keep the
     ids of their own date. The rules, the key and every answer are as they were (236 of 239 agree).
 
+**`pf-f7-timed-act` (2026-11-15): the signed split-unit wording (architect ruling pf-split-units-20261115, section 2;
+DRI decision 2026-11-15, arch-round6 items 1 and 2).**
+
+29. **Legends and one guard of the signed split units (translation-fidelity checklist classes 2 and 7).** The legend
+    of `critical_standard_unspecified` names what Table 1's row leaves unspecified, “safeguards and security
+    controls that would meet a Critical standard” (CYB-C: “safeguards and security controls standards”), not “the
+    Critical standard”. The legend of `deeper_testing_warranted` keeps 5.2's “a deployment” and “of capability”.
+    The legend of `board_finds_necessary` is the open-term form: “Where necessary” names no judge of necessity, so
+    the decider is unstated, as for OT13, and the predicate keeps its name. The legend of
+    `efficacy_methods_per_safeguard` quotes its 4.1 sentence instead of a bare pointer. The legend of `risk_paths`
+    and its block header say that the order of 4.1's two selection steps follows from the second step's “each of
+    those”. `f9-specific` records its limit in one line: per-path facts are not classified. `f9-efficacy` records its
+    limit in one line: per-safeguard facts are not classified. `f16-sag-recommend`: the rule no longer tests
+    `covered`, as “For each deployment under the Preparedness Framework” is its one condition. No predicate is new
+    (61 of 64 regulated), the coverage counts are as they were, and no answer moved (236 of 239 agree, as before).
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
