@@ -3,7 +3,7 @@
 **DRI signature needed: DELTA row 2.** This is the reason the item stops (L52). Lean CPU per conflict check exceeds
 R4 on RSP and Preparedness. Requested 2026-11-15 in `manage-agents/inbox/dri/20261115T050510Z-kb-10c-3111473.md`;
 recommended: sign on the 2.0x-per-harness rule of the kb-10b-switch decision (1.07x, 0.97x, 1.04x here).
-Status: every deliverable (1)-(5) is built. HEAD: branch `feature/kb-10c`; the last product commit is cbcdad48b.
+Status: every deliverable (1)-(5) is built. HEAD: the last commit of `feature/kb-10c`; product code last changed in a2905d1c1.
 What changed: three Lean theorems on `soft-conflict`'s answer; a three-harness shadow (0 differences in 2,039 calls);
 the harnesses' conflicts are now decided on Lean's soft route; no keyed answer changed.
 Open: only the row-2 signature. The full gate is the chain's.
@@ -147,11 +147,22 @@ Each was restored after its run (`git status --short` empty).
   `tools/layer_policy.py` listed the new module; after that, `check_lean_imports.py` printed "Lean layer graph kept".
 - `tests/test_kernel_closure.py` 37 passed; `tests/test_kb10c_conflict_shadow.py` 5 passed;
   `tests/test_kb10c_soft_conflict.py` 14 passed; `tests/test_keyed_answers_authority.py` 12 passed.
-- The final selected run on the committed HEAD: SELECTED-RUN (filled in below after it ends).
+- Selected tests (`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`):
+  - On cbcdad48b it stopped at `--maxfail 5`. `tests/test_safetyfw_usecases.py::test_rsp_unknown_w1_is_neither_false_nor_a_scored_answer[C1-C5]`
+    still patched the harness's `check_conflict`; fixed in edd1e86a5, along with `test_pf_unknown_w1_is_undecided_not_false`.
+    After the fix, 12 passed (`-k "rsp_unknown_w1 or pf_unknown_w1"`).
+  - On edd1e86a5: 348 units, 3 failed test ids. `tests/test_history_tests.py::test_the_tree_passes` and
+    `::test_the_command_line_lint_passes_on_the_tree` failed because the shadow self-test was not listed as history-reading.
+    `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` failed because
+    `ConflictSound.lean` was not classified. Both were fixed in a2905d1c1.
+  - The three ids plus `tests/test_kb10c_conflict_shadow.py`, rerun with `mac-pytest.sh -- <ids>`: 8 passed.
+  - No test of `manage-agents/main-known-red.txt` appeared.
+- `uv run python tools/gate_collection.py --check --prebuilt`: "19 added, 0 removed by a trailer, 0 refused, 0 stale
+  and 0 malformed trailers".
 - **Not run:** the full gate (the chain runs it), and a base-worktree pair. The "before" side is the head with the
   one call swapped back; no shared Lean build of the merge base existed.
 
-SIZE: 285 product, 315 tests, 560 other hand-written lines. Product: `ConflictSound.lean` 168, `ve/soft_route.py`
+SIZE: 286 product, 317 tests, 564 other hand-written lines. Product: `ConflictSound.lean` 168, `ve/soft_route.py`
 79, harnesses 14, `keyed_paths.py` 13, registry, layer and root 11. Other: the shadow script 256, `pair.py` 90,
 docs and evidence about 214. Generated files are not counted.
 
@@ -167,6 +178,9 @@ docs and evidence about 214. Generated files are not counted.
 - An idea for later, not filed as work: Lean CPU per check would fall if the service's prepared soft-document
   handles (kb-10e) also accepted `soft-conflict`. Today they accept only `soft-selected`, and widening them is a Lean
   service change.
+- The shadow script wraps the harness's `check_conflict`, which the switch removed. It records the evidence made on
+  26358508f and cannot be rerun on a later commit (its docstring says so).
+- A non-docs commit (a2905d1c1) followed the last full selected run, so the chain gate cannot reuse that run.
 - `ve-mac-1` did not resolve, so trust mutants ran on the VM. The paired rounds ran at VM load 45 to 93; the ratios
   are same-hour pairs.
 
