@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib
 import importlib.util
+import ast
 import json
 import re
 from pathlib import Path
@@ -65,6 +66,20 @@ def test_no_describing_document_says_lean_evaluates_pythons_models():
              for pattern in DESCRIBING for path in sorted(ROOT.glob(pattern))
              for phrase in OVERCLAIMS if phrase in path.read_text()]
     assert found == []
+
+
+def test_fsf_keyed_conflict_freedom_is_attributed_to_refute():
+    """The page distinguishes FSF's keyed result from its plain W1 side answer."""
+    source = (ROOT / "usecases" / "safety-framework" / "run.py").read_text()
+    cluster = next(node for node in ast.parse(source).body
+                   if isinstance(node, ast.FunctionDef) and node.name == "cluster_conflict")
+    calls = {ast.unparse(node.func) for node in ast.walk(cluster) if isinstance(node, ast.Call)}
+    assert {"refute", "T.facts", "decide_soft_conflict"} <= calls
+    page = PAGE.read_text()
+    assert "A CONFLICT or a CONFLICT-FREE answer is Lean's `soft-conflict` replay" not in page
+    assert "FSF" in page and "keyed CONFLICT-FREE" in page
+    assert "`refute`" in page and "`T.facts()`" in page and "`w1_without_premises`" in page
+    assert re.search(r"keyed\s+CONFLICT-FREE uses `refute` over `T\.facts\(\)` premises", source)
 
 
 def test_the_wording_has_one_owner():
@@ -207,9 +222,8 @@ def test_the_recorder_restores_what_it_patches():
     assert (evaluate._Evaluator.__init__, entailment._check_certificate_lean, evaluate._evaluate_lean) == before
 
 
-def test_the_harnesses_conflicts_are_leans_soft_conflict(monkeypatch):
-    """kb-10c: `decide_soft_conflict` (the harnesses' conflict call) asks Lean's `soft-conflict` for both answers;
-    Python's search and prover only propose, and `_check_conflict_python` does not run."""
+def test_soft_route_replays_both_conflict_answers(monkeypatch):
+    """The API asks Lean for both answers; FSF uses its CONFLICT-FREE result only as a side field."""
     from ve.norm_english import parse_english
     from ve import soft_route
     from ve.soft_route import decide_soft_conflict
