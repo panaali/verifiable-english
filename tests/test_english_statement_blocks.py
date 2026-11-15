@@ -1,6 +1,6 @@
-"""The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
+"""The 121 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
 
-`tests/data/norm-blocks/rsp.jsonl` (76) and `fsf.jsonl` (44) hold each block's id and text, the commit it was read
+`tests/data/norm-blocks/rsp.jsonl` (76) and `fsf.jsonl` (45) hold each block's id and text, the commit it was read
 at and Python's `norm` object (`docs/english-lean/en-s6/capture_blocks.py`). Lean reads each block with
 `VE.EnglishGrammar.Norm.readNorm` in its use case's environment, with the lexicon Python selects, and gives its node
 through `toNodes` (the one decoder, `decodeNorm`); both nodes are compared in Lean. A block headed by `should` is
@@ -31,7 +31,7 @@ from ve.norm_english import _words, parse_english
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "tests/data/norm-blocks"
-CASES = {"rsp": ("anthropic-rsp", "rsp_translation", 76), "fsf": ("safety-framework", "translation", 44)}
+CASES = {"rsp": ("anthropic-rsp", "rsp_translation", 76), "fsf": ("safety-framework", "translation", 45)}
 W1 = {"name", "predicate", "sign", "guard", "unless", "over"}
 SOFT = W1 | {"mode", "exception"}
 # Blocks whose Lean node differs from Python's, with the reason (EN-2's delta); none today.
@@ -154,11 +154,11 @@ def test_lean_reads_each_pinned_block_as_python(lake, tmp_path):
     groups.append((constitution(), [("f21", *F21)]))
     out = readings(lake, tmp_path, groups)
     soft = {r["id"] for name in CASES for r in blocks(name) if " should " in r["text"]}
-    assert len(out) == 121 and len(soft) == 17
+    assert len(out) == 122 and len(soft) == 17
     assert {i: v for i, v in out.items() if i in soft and v != "stopped 1 noDerivation"} == {}
     different = {i: v for i, v in out.items() if i not in soft and v != "same"}
     assert set(different) == set(DIFFERENT), "\n".join(f"{i}: {v}" for i, v in different.items())
-    assert sum(v == "same" for v in out.values()) == 104 - len(DIFFERENT)
+    assert sum(v == "same" for v in out.values()) == 105 - len(DIFFERENT)
 
 
 def header(targets: tuple[int, ...]) -> str:
@@ -232,7 +232,7 @@ def answers(lake: str, tmp_path: Path, groups: list[tuple[dict, list[tuple[str, 
 
 
 def test_each_pinned_block_through_the_mode(lake, tmp_path):
-    """The 120 pinned blocks and f21 through `english.statement` kind `blocks` (EN-2; en-e3a REPORT, R-pinned): a block
+    """The 121 pinned blocks and f21 through `english.statement` kind `blocks` (EN-2; en-e3a REPORT, R-pinned): a block
     headed by `should` is `none` at its rule sentence; every other block is `one`, with Python's node and the block's
     byte span. Through the whole mode: a block of each kind, and a request whose lexicon was selected for another
     environment, which `decodeCase` refuses (R-stale)."""
@@ -257,7 +257,7 @@ def test_each_pinned_block_through_the_mode(lake, tmp_path):
         assert [statement["node"]["norm"]] == nodes[ident], ident
         assert statement["span"] == [0, len(texts[ident].encode())], ident
     statuses = [row["result"]["status"] for row in out.values()]
-    assert (len(out), statuses.count("one"), statuses.count("none")) == (121, 104, 17)
+    assert (len(out), statuses.count("one"), statuses.count("none")) == (122, 105, 17)
 
 
 TAG_CASES = {"one": "(.ok [.rule ⟨1, []⟩ cPub])", "none": "(.stopped 1 .noDerivation)", "rejected": "(.ok [.source []])",
