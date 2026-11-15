@@ -246,7 +246,7 @@ UNITS = [
     ("We consider a wide range of risks", "s131-consider", label()),
     ("As explained above, we have identified risk domains", "s131-domains", label()),
     ("As part of our broader research", "s131-continue", unformalised("as_appropriate")),
-    # Not a closure: the text never states that the domains exclude each other (N1's own bridge, facts.d1.ve).
+    # Not a closure: the text never states that the domains exclude each other (N1's own bridge, rules.d1.ve `item N1`).
     ("For each of the four identified domains", "s131-four-domains", label()),
     ("1.3.2 Inherent Risk Assessment", "s132-heading", meta()),
     ("To understand whether a model may, without appropriate mitigations", "s132-purpose", label()),
@@ -634,7 +634,7 @@ def hint(case_id, predicates=None):
     case facts, every other table empty."""
     import run as R
     relations = {p: [] for p in (T.base_environment().predicates if predicates is None else predicates)}
-    for atom in R.fact_atoms() | R.case_atoms(R.CASES[case_id]):
+    for atom in R.document_atoms() | R.case_atoms(R.CASES[case_id]):
         if atom[0] in relations:
             relations[atom[0]].append(list(atom[1:]))
     return {"domains": R.DOMAINS, "constants": {c: c for c in T.base_environment().constants},
@@ -666,7 +666,7 @@ def unit_meanings():
     """Every unit's meaning as the builder writes it: derived for premise and rule units, as specified otherwise."""
     from ve.softnorms import SoftEnvironment
     env = SoftEnvironment(environment())
-    facts = {block_id: formulas for block_id, _, formulas in T.facts()}
+    facts = T.fact_formulas()
     return {uid: derived_meaning(uid, spec, unit_content(env, facts, spec)) if "facts" in spec or "rule" in spec
             else spec["meaning"] for _, uid, spec in UNITS}
 
@@ -675,7 +675,7 @@ def build(source):
     from ve.softnorms import SoftEnvironment
     raw_env = environment()
     env = SoftEnvironment(raw_env)
-    facts = {block_id: formulas for block_id, _, formulas in T.facts()}
+    facts = T.fact_formulas()
     used_rules, units, reading_sets, records = set(), [], [], []
     for (anchor, uid, spec), span in zip(UNITS, spans(source)):
         content = unit_content(env, facts, spec)
