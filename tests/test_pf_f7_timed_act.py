@@ -1,16 +1,21 @@
-"""pf-f7-timed-act: the condition tests of the PF split-unit wording round (architect ruling pf-split-units-20261115,
-section 2; DRI decision 2026-11-15, arch-round6 items 1 and 2; PLAN 12 item 29).
+"""pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings
+et-5c-5d-coverage-20261115 section 3 and pf-split-units-20261115 section 2; DRI decisions 2026-11-15 arch-round6
+items 1 and 2 and pf-f7-timed-act items 1 to 3; PLAN 12 item 29).
 
-The round is wording only: no answer may move against the snapshot of results.json taken at the merge base
-(saved with the batch), and each signed fix is pinned in the case's own files. Parts A (f7-evaluations), B1
-(f1-misuse-bio's own act) and B4 (f16-without's guard) are not in this round: each needs a DRI ruling (REPORT).
+The round is wording only: no answer may move against the snapshot of results.json taken at the merge base (saved
+with the batch), and each signed fix is pinned in the case's own files. f16-without keeps its guard
+`decided_without_sag` (DRI decision pf-f7-timed-act item 3): the tests below pin that dropping it moves N3.
 """
 import json
 import re
 from pathlib import Path
 
+import pytest
+
 import tests.omission_rule as omission
-from tests.test_pf_fidelity_fix import T, V
+from tests.test_pf_fidelity_fix import LEAN_SERVICE, B, R, T, V, key_item, pf  # noqa: F401 (pf is a fixture)
+
+needs_lean = pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
 
 REPO = Path(__file__).resolve().parents[1]
 PF = REPO / "usecases" / "openai-preparedness"
@@ -48,6 +53,75 @@ def test_no_pf_answer_moved_against_the_merge_base_snapshot():
     assert moved == []
 
 
+@needs_lean
+@pytest.mark.parametrize("item_id", ["A-BIO-H-EXT/MIS", "A-BIO-C-EXT/MIS", "A-CYB-H-EXT/MIS", "C2", "C4"])
+def test_touched_answers_on_a_live_query_equal_the_snapshot(pf, item_id):
+    """The answers that read the changed rules, recomputed live (not from results.json): BIO-H's own act is a
+    misuse-safeguard atom (ATOMS["MIS"]), and C2 and C4 read the f16 and f7 rules."""
+    R.MUTANT = R.WITHOUT_NARROWING = None
+    snapshot = json.loads(SNAPSHOT.read_text())["answers"][item_id]
+    assert R.verdict(R.answer(key_item(item_id))) == snapshot["ve"]
+
+
+@needs_lean
+@pytest.mark.parametrize("block_id", ["f7-evaluations", "f7-evaluations-any", "f1-misuse-bio-strict",
+                                      "f1-misuse-bio-default", "f16-sag-recommend", "f16-informed",
+                                      "f16-without-noinput", "f16-without-nodelib"])
+def test_touched_rules_keep_a_witness_model(pf, block_id):
+    """N3 stays NONE for the rules this round touches: VE selects each on a model built from its own guard. With
+    `decided_without_sag` dropped, f16-without-noinput would override f16-informed on every leadership decision
+    (N2) and f16-informed would have no witness (the measured stop, DRI decision pf-f7-timed-act item 3)."""
+    R.MUTANT = R.WITHOUT_NARROWING = None
+    blocks = {b.id: b for b in T.rule_blocks()}
+    assert R.witness_for(blocks[block_id]) is not None
+
+
+# --- (b) f7-evaluations: the timed act --------------------------------------------------------------------------
+
+def test_f7_evaluations_names_its_timing_in_the_act_and_deployment_in_the_guard():
+    """et-5c-5d section 3, both conditions: the act phrase of the Rule line is the source's "undergo the suite of
+    Scalable Evaluations prior to deployment", and the guard names the reference event, external deployment under
+    RS3=ext and any deployment under RS3=any, as f2-deploy does. The record line is in each header."""
+    timed = "undergo the suite of Scalable Evaluations prior to deployment"
+    assert V.ACTS["evaluations_before_deployment"][0] == "{0} " + timed
+    assert timed not in legend("evaluations_before_deployment")
+    expected = {"f7-evaluations": ((("RS3", "ext"),), {"covered", "external_deployment"}),
+                "f7-evaluations-any": ((("RS3", "any"),), {"covered", "external_deployment", "internal_deployment"})}
+    for block_id, (when, atoms) in expected.items():
+        rule, b = json.loads(T.parsed_rule(block_id)), block(block_id)
+        assert rule["predicate"] == "evaluations_before_deployment" and b.when == when
+        assert f"must {timed}, if " in b.text and guard_atoms(block_id) == atoms
+        assert "order against deployment is inside the act; dated facts are not classified" in b.source
+    assert [b.id for b in T.rule_blocks() if b.id.startswith("f7-evaluations")] == list(expected)
+
+
+def test_f7_evaluations_any_is_listed_with_its_ext_twin():
+    """The second block is in every harness list its twin is in (DRI decision pf-f7-timed-act item 1): N3's F7
+    part, C4's cluster, the RS0 statements, and RS3's reading set."""
+    assert R.COMMITMENTS["F7"][0] == ("f7-evaluations", "f7-evaluations-any")
+    assert {"f7-evaluations", "f7-evaluations-any"} <= set(R.CLUSTERS["C4"])
+    assert {"f7-evaluations", "f7-evaluations-any"} <= set(T.RS0_STATEMENTS)
+    harness, choices = B.READINGS["rs3-deploy"]
+    assert harness == "RS3" and "f7-evaluations" in choices["ext"] and "f7-evaluations-any" in choices["any"]
+
+
+# --- B1: BIO-H's own act -------------------------------------------------------------------------------------------
+
+def test_bio_h_misuse_bullet_has_its_own_timed_act():
+    """Table 1 BIO-H's "before external deployment" is in the act of both RS1 blocks (CYB-H's "for external
+    deployment" keeps the shared act); the MIS question and the threshold rules read the new act."""
+    timed = "{0} have misuse safeguards meeting the High standard before external deployment"
+    assert V.ACTS["misuse_safeguards_before_external"][0] == timed and len(timed) <= 80
+    assert "before external deployment" not in legend("misuse_safeguards_before_external")
+    for block_id in ("f1-misuse-bio-strict", "f1-misuse-bio-default"):
+        assert json.loads(T.parsed_rule(block_id))["predicate"] == "misuse_safeguards_before_external"
+        assert "meeting the High standard before external deployment, if" in block(block_id).text
+    for block_id in ("f1-misuse-cyb-strict", "f1-misuse-cyb-default"):
+        assert json.loads(T.parsed_rule(block_id))["predicate"] == "misuse_safeguards"
+    assert R.ATOMS["MIS"] == ("misuse_safeguards", "misuse_safeguards_before_external")
+    assert "misuse_safeguards_before_external" in R.THRESHOLD_PREDICATES
+
+
 # --- (c) the dropped conjunct --------------------------------------------------------------------------------------
 
 def test_f16_sag_recommend_tests_only_its_own_condition():
@@ -55,6 +129,14 @@ def test_f16_sag_recommend_tests_only_its_own_condition():
     rule's guard is `framework_deployment` alone, with no `covered` conjunct (P4)."""
     assert guard_atoms("f16-sag-recommend") == {"framework_deployment"}
     assert "is covered" not in block("f16-sag-recommend").text
+
+
+def test_f16_without_keeps_its_guard_until_n2_is_ruled():
+    """DRI decision pf-f7-timed-act item 3: both f16-without rules keep `decided_without_sag` (follow-up row
+    pf-f16-without-n2); the guard's legend is what carries "without the SAG's participation"."""
+    for block_id in ("f16-without-noinput", "f16-without-nodelib"):
+        assert guard_atoms(block_id) == {"leadership_decision", "decided_without_sag"}
+    assert "without the SAG's participation" in legend("decided_without_sag")
 
 
 # --- the legends of the signed units -------------------------------------------------------------------------------
@@ -115,10 +197,10 @@ def test_f9_record_lines_and_kept_legend_words():
 
 def test_plan12_item_29_names_only_the_units_it_records():
     """The wording fixes add no record to the units they repair: item 29 names a unit only where it records one (the
-    two f9 limits and the dropped conjunct), and the other repaired units keep the record paths they had."""
+    f7 and f9 limits and the dropped conjunct), and the other repaired units keep the record paths they had."""
     item = plan12_item(29)
     named = set(re.findall(r"\b(f\d+-[a-z0-9-]*[a-z0-9])\b", item))
-    assert named == {"f9-specific", "f9-efficacy", "f16-sag-recommend"}
+    assert named == {"f7-evaluations", "f7-evaluations-any", "f9-specific", "f9-efficacy", "f16-sag-recommend"}
     repaired = ("f1-halt-strict", "f1-halt-default", "f15-third-party", "f16-board-reverse", "f16-board-mandate",
                 "f9-risk-paths")
     records = omission.record_paths("openai-preparedness", repaired)

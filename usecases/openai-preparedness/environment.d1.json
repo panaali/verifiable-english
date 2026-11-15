@@ -615,7 +615,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.3: Scalable Evaluations before deployment",
+        "description": "3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”",
         "regulated": {
           "role": "obligation",
           "default": "deny",

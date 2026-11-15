@@ -84,8 +84,8 @@ def test_the_cell_comparison_catches_one_changed_cell(id_, field, value):
 
 # --- The corrected acts and the questions that ask them ---------------------------------------------------------
 
-STANDARD = {"misuse_safeguards": "(Appendix C.1)", "alignment_safeguards": "(Appendix C.2)",
-            "security_controls": "(Appendix C.3)"}
+STANDARD = {"misuse_safeguards": "(Appendix C.1)", "misuse_safeguards_before_external": "(Appendix C.1)",
+            "alignment_safeguards": "(Appendix C.2)", "security_controls": "(Appendix C.3)"}
 
 
 def test_table_1_acts_name_the_high_standard(pf):
@@ -477,8 +477,9 @@ def test_premise_units_follow_the_goal(pf):
 def test_regulated_predicates_stay_within_64():
     stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
     count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
-    # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26)
-    assert stage0["P7"]["regulated_predicates"] == count == 61 <= 64
+    # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26); pf-f7-timed-act adds
+    # misuse_safeguards_before_external, BIO-H's own act (PLAN 12 item 29)
+    assert stage0["P7"]["regulated_predicates"] == count == 62 <= 64
 
 
 # --- openai-preparedness-fidelity-fix-3: the six round-B units both adjudicators judged REAL ---------------------
@@ -520,7 +521,7 @@ def test_f4_security_reads_no_coverage_condition(pf):
     # tests only its own condition (pf-split-units-20261115 section 2, P4; PLAN 12 item 29)
     assert {b.id for b in T.rule_blocks() if "covered" in predicates_read(b.id)} == {
         "f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any", "f2-security-developed", "f7-evaluations",
-        "f7-report", "f7-compile", "f8-start", "f9-report"}
+        "f7-evaluations-any", "f7-report", "f7-compile", "f8-start", "f9-report"}
 
 
 def test_f9_report_act_states_the_compilation_and_its_legend_quotes_4_2(pf):
