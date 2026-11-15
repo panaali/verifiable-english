@@ -1,0 +1,6 @@
+counter sha256 28966da1  case safety-framework  commit 0498caff73  state run
+FACTS <- measures-sl2plus     plan12       | - **Facts.** `measures-sl2plus` states 2.1.1 as written:
+FACTS <- FACTS                report       | After merge, the production checklist pass re-reads ONLY the changed units (f3, f12-p, f12-u, f13-p, f13-u, f16-ds, f16-ds-strict, f6, f7-rra, f14, th
+CASES <- CASES                report       | After merge, the production checklist pass re-reads ONLY the changed units (f3, f12-p, f12-u, f13-p, f13-u, f16-ds, f16-ds-strict, f6, f7-rra, f14, th
+D2D3  <- D2D3                 report       | After merge, the production checklist pass re-reads ONLY the changed units (f3, f12-p, f12-u, f13-p, f13-u, f16-ds, f16-ds-strict, f6, f7-rra, f14, th
+3 exposures on FACTS/CASES

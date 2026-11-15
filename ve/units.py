@@ -315,10 +315,12 @@ def render_coordinate(tag, coordinate, env):
 
 
 def _checked_quantity(env, payload):
-    """Lean's W6 typing and erasure answer for one annotated statement."""
+    """Lean's W6 typing and erasure answer for one annotated statement: the `quantity` mode's
+    admission kind (no `kind`, no `model`), whose `Q`, `core`, `meaning_id` and `environment_id`
+    `VE.Time.Wire.quantity_admission_wire_sound_plain` states."""
     from .backends.relay import decide
-    [row] = decide("check", [{"id": "quantity", "environment": env.to_dict(),
-                              "quantity": payload}])
+    [row] = decide("quantity", [{"id": "quantity", "environment": env.to_dict(),
+                                 "quantity": payload}])
     if row["environment_id"] != env.environment_id:
         from .errors import CheckerUnavailable
         raise CheckerUnavailable("CheckerUnavailable: W6 environment identity mismatch")

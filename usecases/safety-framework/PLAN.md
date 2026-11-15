@@ -652,6 +652,12 @@ the disagreements with the key are findings and are listed in [README.md](README
     - **D2.** The catastrophic `might` cell is stated of its own alternative, whose label carries src 3.2.2's
       conditions: unrestricted access, an actor "with adequate computational resources", and "no effective way of
       defending". The S and D answers are unchanged; D2's derived tables gain that alternative (might cells 64 to 72).
+26. **N1's bridge and the 4.1 closure (safety-framework-fidelity-fix-3).** N1's bridge is the block of rules.d1.ve
+    headed `item N1`: N1's own assumption, loaded for N1 alone, and no premise of the document.
+    The 4.1 closure alone does not certify N1. From the document's premises N1 is UNKNOWN, with a countermodel in
+    which `cbrn_uplift_tcl` also concerns cyber (findings astra.md:320 and :364, opus.md:398 and :790). VE answers
+    ALL only with that bridge, which results.json records as N1's own premise and in its invention audit. The key
+    cell (6.6, "a certificate from the closure in 4.1") is unchanged.
 
 ## 13. Files for the implementation round (not this commit)
 

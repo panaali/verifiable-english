@@ -20,7 +20,7 @@ sys.path.insert(0, str(HERE))
 import rsp_translation as T  # noqa: E402
 import rsp_vocabulary as V  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve.norms import check_conflict  # noqa: E402
+from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
@@ -215,13 +215,8 @@ def selected(doc, case, predicate, sign, values=None):
 
 
 def completed(doc, case, predicate, values):
-    from ve.evaluate import _Evaluator
-    env = doc.elaborated.base_environment()
-    formula = doc.elaborated.outcome(predicate, base=True)
-    sorts = V.environment()["vocabulary"]["predicates"][predicate]["arguments"]
-    A._Checker(env).formula(formula, tuple(reversed(sorts)))
-    return _Evaluator(env, model(doc, case), 1_000_000, trace=False).formula(
-        formula, tuple(zip(reversed(sorts), reversed(values))))[0]
+    """The completed outcome of `predicate` at `values` in the case model: Lean's `soft-selected` answer."""
+    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values))
 
 
 def cone(predicate):
@@ -398,8 +393,8 @@ def _conflict(id_, context):
             present = (target, tuple(b.id for b in T.rule_blocks() if b.id in pair and applies(b, choice)))
             if present not in statuses:
                 doc = document(tuple(sorted(choice.items())), "deny", pair)
-                statuses[present] = check_conflict(doc.elaborated, model=model(doc, witness(target)),
-                                                   prove=True).status
+                # kb-10c: Lean's soft route decides (Python's search and prover only propose).
+                statuses[present] = decide_soft_conflict(doc, model=model(doc, witness(target)), prove=True).status
             checks.append(statuses[present])
         rows.append({"choice": assignment, "holds": True if "CONFLICT" in checks else
                      False if all(status == "CONFLICT-FREE" for status in checks) else None,

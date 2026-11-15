@@ -118,6 +118,21 @@ def test_the_code_digest_follows_imports_to_the_helpers(dump):
     assert "tools/gate.py" not in files
 
 
+def test_reading_another_trees_code_loads_none_of_its_modules(dump, monkeypatch):
+    """The digest of a scratch tree's code imports this checkout's graph code, not the scratch copy: a module
+    imported stays in `sys.modules`, and a scratch `layer_policy` (ROOT the scratch tree) left there made a later
+    `import layer_policy` place modules by the scratch tree's absent sources (candidate gate 583546de, shard 6:
+    tests/test_kernel_closure.py's VE.Risk.WireSound at layer 2 after this file's tests)."""
+    graph = ("source_graph", "layer_policy", "check_lean_imports", "change_units")
+    for name in graph:
+        monkeypatch.delitem(sys.modules, name, raising=False)
+    C.code_files(dump.root)
+    loaded = {name: Path(sys.modules[name].__file__).resolve() for name in graph if name in sys.modules}
+    assert "source_graph" in loaded and "layer_policy" in loaded
+    assert {name: path for name, path in loaded.items() if path.parent != ROOT / "tools"} == {}
+    assert sys.modules["layer_policy"].ROOT == ROOT
+
+
 def _edit(name, text=None):
     def change(dump, monkeypatch):
         path = dump.root / name

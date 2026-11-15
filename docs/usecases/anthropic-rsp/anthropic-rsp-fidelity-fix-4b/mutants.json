@@ -1,0 +1,62 @@
+{
+ "item": "anthropic-rsp-fidelity-fix-4b",
+ "command": "uv run pytest -q tests/test_rsp_fidelity_fix.py -k 'fix_4b or fix_4_' (each mutant planted alone, environment.d1.json rewritten by rsp_vocabulary.py where the mutant is in it, then git checkout)",
+ "mutants": [
+  {
+   "id": "a",
+   "language": "Python",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "mutation": "strong_argument's legend back to the base's pointer legend (\"the strong argument of the right column's row of {1} is made at {0} (section 1, ARGk)\")",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[non_novel_chem_bio_weapons]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[novel_chem_bio_weapons]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[misaligned_high_stakes]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[automated_rd]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4_accounting_records_no_loss_on_the_row_blocks_and_carries_t4s_bullets"
+   ]
+  },
+  {
+   "id": "b",
+   "language": "data (.ve)",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "mutation": "row T3's argument (lead and four bullets) dropped from f5-default's header only",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[misaligned_high_stakes]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word"
+   ]
+  },
+  {
+   "id": "c",
+   "language": "data (.ve)",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "mutation": "\"...\" back into f5-strict's header in place of T2's last sentence",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[non_novel_chem_bio_weapons]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[novel_chem_bio_weapons]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[misaligned_high_stakes]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[automated_rd]",
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word"
+   ]
+  },
+  {
+   "id": "d",
+   "language": "data (accounting)",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "mutation": "f5-default | omits: \"individual users and relatively small teams\" loss 1 (a loss entry back on row T1's argument)",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word"
+   ]
+  },
+  {
+   "id": "e",
+   "language": "Python + data (.ve)",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py, usecases/anthropic-rsp/rules.d1.ve",
+   "mutation": "a consistent cut inside T1's first bullet (\", and/or measures for quickly detecting and acting on Usage Policy violations\") in ROW_ARGUMENTS and both headers, the legend following",
+   "test": [
+    "tests/test_rsp_fidelity_fix.py::test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend[non_novel_chem_bio_weapons]"
+   ]
+  }
+ ],
+ "survivors": []
+}

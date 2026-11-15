@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib
 import importlib.util
+import ast
 import json
 import re
 from pathlib import Path
@@ -67,6 +68,26 @@ def test_no_describing_document_says_lean_evaluates_pythons_models():
     assert found == []
 
 
+def test_fsf_keyed_conflict_freedom_is_attributed_to_refute():
+    """The page distinguishes FSF's keyed result from its plain W1 side answer."""
+    source = (ROOT / "usecases" / "safety-framework" / "run.py").read_text()
+    cluster = next(node for node in ast.parse(source).body
+                   if isinstance(node, ast.FunctionDef) and node.name == "cluster_conflict")
+    calls = {ast.unparse(node.func) for node in ast.walk(cluster) if isinstance(node, ast.Call)}
+    assert {"refute", "decide_soft_conflict"} <= calls
+    # The refute premises are `T.facts()`: read directly, or through `PREMISES(item)`, which adds an item's own
+    # fact blocks (rules.d1.ve, `item <id>, ...`) to the document's.
+    premises = next(node for node in ast.parse(source).body
+                    if isinstance(node, ast.FunctionDef) and node.name == "PREMISES")
+    reads = {ast.unparse(node.func) for node in ast.walk(premises) if isinstance(node, ast.Call)}
+    assert "T.facts" in calls or ("PREMISES" in calls and "T.facts" in reads)
+    page = PAGE.read_text()
+    assert "A CONFLICT or a CONFLICT-FREE answer is Lean's `soft-conflict` replay" not in page
+    assert "FSF" in page and "keyed CONFLICT-FREE" in page
+    assert "`refute`" in page and "`T.facts()`" in page and "`w1_without_premises`" in page
+    assert re.search(r"keyed\s+CONFLICT-FREE uses `refute` over `T\.facts\(\)` premises", source)
+
+
 def test_the_wording_has_one_owner():
     """Each describing document links the page instead of keeping its own copy of the table."""
     for name in LINKING:
@@ -76,14 +97,17 @@ def test_the_wording_has_one_owner():
 
 
 def test_saved_harness_paths_match_the_table():
-    """Every path the three keyed harnesses took (saved 2026-11-11) is in the table with its true owner."""
+    """Every path the three keyed harnesses took (saved 2026-11-15) is in the table with its true owner."""
     evidence = json.loads(keyed_paths.EVIDENCE.read_text())
     assert sorted(evidence) == sorted(keyed_paths.HARNESSES)
     for harness, counts in evidence.items():
         assert counts, harness
         _check_against_table(counts)
-        # The claims the review found overstated: selection and conflicts are Python's in every harness.
-        assert counts["python selected_rules"] > 0 and counts["python _find_conflict"] > 0, harness
+        # Selection and outcomes are Lean's in every harness (kb-10b); so are conflicts (kb-10c): Python's search
+        # only proposes the witness Lean's `soft-conflict` replays, and `check_conflict` is no longer called.
+        assert counts["lean soft-selected"] > 0 and counts["python _find_conflict"] > 0, harness
+        assert counts["lean soft-conflict"] > 0 and "python _check_conflict_python" not in counts, harness
+        assert "python selected_rules" not in counts and "python completed" not in counts, harness
         assert "lean _check_conflict_lean" not in counts, harness
 
 
@@ -128,11 +152,33 @@ def test_a_soft_document_takes_no_lean_norms_route(soft_document):
     assert not norms._lean_route(soft_document)
 
 
-def test_selection_is_pythons_evaluation(soft_document):
+@pytest.mark.parametrize("first", ["selected_rules", "outcome_at"])
+def test_selection_and_outcome_are_leans_soft_selected(soft_document, monkeypatch, first):
+    """kb-10b: a document built from its soft source asks Lean's `soft-selected`, once per document and model,
+    whichever question comes first. The process-wide kept answers start empty, so an earlier test that asked the
+    same pair (here: the other parameter, on the same module-scoped document) cannot hide the call."""
+    from ve import softnorms
+    monkeypatch.setattr(softnorms, "_SELECTIONS", type(softnorms._SELECTIONS)())
+    model = _case(soft_document)
     with keyed_paths.recording() as counts:
-        selected = soft_document.selected_rules("required", _case(soft_document), ("a",))
-    assert [rule.name for rule in selected] == ["rule-2"]
-    assert dict(counts) == {"python selected_rules": 1}
+        answers = {name: getattr(soft_document, name)("required", model, ("a",))
+                   for name in (first, *{"selected_rules", "outcome_at"} - {first})}
+        selected, outcome = answers["selected_rules"], answers["outcome_at"]
+    assert [rule.name for rule in selected] == ["rule-2"] and outcome is True
+    assert dict(counts) == {"lean soft-selected": 1}
+    _check_against_table(counts)
+
+
+def test_a_hand_built_document_keeps_pythons_selection(soft_document):
+    """A SoftenedNormDocument without its soft source is Python's evaluation, and the page says so."""
+    from ve.softnorms import SoftenedNormDocument
+    bare = SoftenedNormDocument(soft_document.env, list(soft_document.rules))
+    model = _case(soft_document)
+    with keyed_paths.recording() as counts:
+        selected = bare.selected_rules("required", model, ("a",))
+        outcome = bare.outcome_at("required", model, ("a",))
+    assert [rule.name for rule in selected] == ["rule-2"] and outcome is True
+    assert dict(counts) == {"python selected_rules": 1, "python outcome_at": 1}
     _check_against_table(counts)
 
 
@@ -180,3 +226,21 @@ def test_the_recorder_restores_what_it_patches():
         with keyed_paths.recording():
             raise RuntimeError
     assert (evaluate._Evaluator.__init__, entailment._check_certificate_lean, evaluate._evaluate_lean) == before
+
+
+def test_soft_route_replays_both_conflict_answers(monkeypatch):
+    """The API asks Lean for both answers; FSF uses its CONFLICT-FREE result only as a side field."""
+    from ve.norm_english import parse_english
+    from ve import soft_route
+    from ve.soft_route import decide_soft_conflict
+    monkeypatch.setattr(soft_route, "_CONFLICTS", {})  # no answer kept by an earlier test
+    witnessed = parse_english(_soft_env(), "Rule 1. Every act should be done.\n"
+                                           "Rule 2. Every act must be done.\nRule 3. No act may be done.")
+    free = parse_english(_soft_env(), "Rule 1. Every act should be done.\nRule 2. No act may be done.")
+    with keyed_paths.recording() as counts:
+        conflict = decide_soft_conflict(witnessed, model=_case(witnessed.elaborated))
+        freedom = decide_soft_conflict(free, prove=True)
+    assert (conflict.status, conflict.target, freedom.status) == ("CONFLICT", "required->permitted", "CONFLICT-FREE")
+    assert counts["lean soft-conflict"] == 2 and counts["python _find_conflict"] == 1
+    assert "python _check_conflict_python" not in counts and "lean _check_certificate_lean" not in counts
+    _check_against_table(counts)

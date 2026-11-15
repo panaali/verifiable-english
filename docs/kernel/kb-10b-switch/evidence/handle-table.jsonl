@@ -1,0 +1,7 @@
+{"harness": "openai-preparedness", "calls": 6366, "documents": 1125, "runs_of_one_document": 6355}
+{"bound": 64, "emptied_when_full": 1381, "per_document": 1.23, "lru": 1275, "lru_per_document": 1.13}
+{"bound": 128, "emptied_when_full": 1263, "per_document": 1.12, "lru": 1207, "lru_per_document": 1.07}
+{"bound": 256, "emptied_when_full": 1200, "per_document": 1.07, "lru": 1125, "lru_per_document": 1.0}
+{"bound": 512, "emptied_when_full": 1147, "per_document": 1.02, "lru": 1125, "lru_per_document": 1.0}
+{"bound": 1024, "emptied_when_full": 1147, "per_document": 1.02, "lru": 1125, "lru_per_document": 1.0}
+{"bound": 2048, "emptied_when_full": 1125, "per_document": 1.0, "lru": 1125, "lru_per_document": 1.0}

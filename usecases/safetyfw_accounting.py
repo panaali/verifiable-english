@@ -10,6 +10,12 @@ uses: the UNACCOUNTED words. The sidecar `accounting.d1.txt` has one line per bl
 of its block's line, every entry says only what the span says, and every reason's argument resolves. A `loss` entry
 is the translator's statement that the rule does not carry those words: it is a finding, not a failure.
 
+A collection unit (`COLLECTIONS`: a unit the omission audit names that is not one block) may have one line after the
+block lines, in the same form. It has no header quote, so the tool has no span to compare it with: `--check` reads the
+line's form and resolves each reason as for a block, and refuses `restates` (no rule text of its own restates words).
+Whether the line is true (for example, that the case records transcribe no source words they leave part of) is the
+case's own test.
+
 The method is the architect's experiment (fable-team/architect/experiments/source-accounting/account.py); the stop
 list and the stemmer are copied from it unchanged and pinned by hash in tests/test_safetyfw_accounting.py, because a
 change to either changes every case's result.
@@ -50,6 +56,9 @@ MIN_QUOTE = 12
 DECIDER = re.compile(r"\bdecided by\b|\bdecides\b")
 SIDECAR = "accounting.d1.txt"
 BLOCK_FILES = ("rules.d1.ve", "facts.d1.ve")
+# The omission audit's units that are not one block (tools-local/uc-audit.py LOCAL_UNITS less FACTS, whose blocks have
+# their own lines): the case records of cases.json, and the D2 and D3 documents run.py builds.
+COLLECTIONS = ("CASES", "D2D3")
 
 
 def table_digest(table) -> str:
@@ -291,9 +300,10 @@ def read_sidecar(path: Path):
     if not path.exists():
         return out
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-        match = re.fullmatch(r"([a-z0-9-]+) \| omits: (.+)", line)
+        match = re.fullmatch(r"([a-z0-9-]+|[A-Z][A-Z0-9]*) \| omits: (.+)", line)
         if match is None:
-            out.append((number, None, None, f"line {number}: not '<block id> | omits: ...': {line[:80]!r}"))
+            out.append((number, None, None, f"line {number}: not '<block id or collection> | omits: ...': "
+                                            f"{line[:80]!r}"))
             continue
         body = match[2]
         if body == "nothing":
@@ -363,14 +373,22 @@ def account(case: Path, source_text: str | None = None, sidecar: Path | None = N
     if not lines:
         problems.append(f"{SIDECAR}: missing or empty")
     order = [b["id"] for b in blocks]
-    seen = {}
+    seen, collections = {}, {}
     named = {block_id for _, block_id, _, _ in lines if block_id}
+    last_block_line = max((n for n, block_id, _, _ in lines if block_id in by_id), default=0)
     for number, block_id, entries, problem in lines:
         if problem:
             problems.append(problem)
             continue
-        if block_id not in by_id:
-            problems.append(f"line {number}: {block_id}: no such block")
+        if block_id in COLLECTIONS and block_id not in by_id:
+            if block_id in collections:
+                problems.append(f"line {number}: {block_id}: a second line for this collection")
+            elif number < last_block_line:
+                problems.append(f"line {number}: {block_id}: a collection's line follows every block line")
+            else:
+                collections[block_id] = entries
+        elif block_id not in by_id:
+            problems.append(f"line {number}: {block_id}: no such block or collection")
         elif block_id in seen:
             problems.append(f"line {number}: {block_id}: a second line for this block")
         else:
@@ -400,6 +418,20 @@ def account(case: Path, source_text: str | None = None, sidecar: Path | None = N
             block["problems"].extend(resolve(entry, block, by_id, legend, reading_sets, limits))
         problems.extend(f"{block['id']}: {p}" for p in block["problems"])
 
+    collection_report = []
+    for name, entries in collections.items():
+        found = []
+        unit = {"id": name, "sets": set()}   # no header: no when field, no span, no rule text of its own
+        for entry in entries:
+            if not words(entry["words"]):
+                found.append(f"entry {entry['words']!r} has no content word")
+            if entry["reason"] == "restates":
+                found.append(f"entry {entry['words']!r}: a collection has no rule text that restates it")
+            else:
+                found.extend(resolve(entry, unit, by_id, legend, reading_sets, limits))
+        problems.extend(f"{name}: {p}" for p in found)
+        collection_report.append({"id": name, "entries": entries, "problems": found})
+
     losses = {}
     for block in blocks:
         for entry in block["entries"]:
@@ -424,6 +456,7 @@ def account(case: Path, source_text: str | None = None, sidecar: Path | None = N
             "blocks": [{"id": b["id"], "file": b["file"], "span_length": len(b["span"]), "used": b["used"],
                         "unaccounted": b["unaccounted"], "entries": b["entries"], "problems": b["problems"],
                         **({"elided_needs_source": b["elided"]} if b["elided"] else {})} for b in blocks],
+            **({"collections": collection_report} if collection_report else {}),
             "totals": totals, "problems": problems}
 
 

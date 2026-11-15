@@ -1,3 +1,9 @@
+- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
+- `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
+- `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
+- `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
+- `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
+- `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
 - `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
 - `tests/test_stage2_parse.py` — Parsing on the Lean authority: Lean's surface parsers decide acceptance.
 - `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
@@ -58,4 +64,5 @@
 - `tests/test_wire_contract_three_way.py` — One submission compared with the spec record, Python and Lean engines.
 - `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
 - `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
+- `tests/usecase_scope.py` — Load a use case's script with its own sibling modules, apart from every other use case's.
 - `tests/wire_contract_l8.lean` — L8 of docs/spec/wire-contract-s5.md 8.6, over the corpus: the syntax walk of `VE.WireContract.Hooks.Norms` (`synFormula`) and `Norms.Wire.budgetFormula`, on ev…

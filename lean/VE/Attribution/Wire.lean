@@ -1,5 +1,5 @@
 import VE.Attribution.Bridge
-import VE.Norms.Wire
+import VE.Acts.Hook
 import VE.Limits
 
 /-! The `reports@0` wire decoder (spec 3, 4.1, 9.4). Nothing on the wire
@@ -136,7 +136,7 @@ def decodeNormNode (j : Json) : Except String Content := do
   let env ← j.getObjVal? "environment"
   let envelope ← VE.Route.Gate.decodeEnvelope env
   require (envelope.profiles.contains "norms@0") "UnsupportedProfile: quoted norm needs norms@0 locally"
-  let src ← VE.Norms.Wire.decodeSource env (← j.getObjVal? "norms")
+  let src ← VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts env (← j.getObjVal? "norms")
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson env
   let id ← VE.Route.Wire.environmentId src.ne.profiles canonical
   pure (.norm ⟨src.D.E, id, VE.Route.Background.literals src.D.lits, src.ne.profiles⟩ src.D)

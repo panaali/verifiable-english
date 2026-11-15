@@ -1,8 +1,11 @@
 """Python entry point for the proved soft-norm admission route."""
 from __future__ import annotations
 
+import re
+
 from .errors import CheckerUnavailable, VEError
-from .softnorms import SoftEnvironment, SoftNormDocument, bind_soft_elaboration
+from .softnorms import (SoftEnvironment, SoftNormDocument, bind_selected, bind_soft_elaboration,  # noqa: F401
+                        selected_at as _selected_at)
 from .backends.soft_relay import run as _run, wire as _wire
 
 
@@ -106,6 +109,83 @@ def bind_conflict(row, case, elaborated, budget=None):
     bind_facts(row, case)
 
 
+# Lean's `soft-conflict` answers, kept per request (`_kept_conflict`); a test starts from an empty store.
+_CONFLICTS: dict = {}
+_KEPT_AT_MOST = 10_000
+
+
+def _kept_conflict(soft_document: SoftNormDocument, **case):
+    """`check_soft_conflict(soft_document, **case)`, asked once per process for each request: the key is the
+    canonical JSON of everything the case sends (the soft source's environment and norms, and the witness or the
+    packages), so a repeated question is answered by Lean's earlier answer to the same request, never by Python.
+    A request that is not JSON is sent unkept (the relay refuses it)."""
+    from .wire import canonical_json
+    try:
+        key = canonical_json({"environment": soft_document.env.to_dict(),
+                              "norms": [rule.to_dict() for rule in soft_document.rules], **case})
+    except (VEError, TypeError, ValueError):
+        return check_soft_conflict(soft_document, **case)
+    if key not in _CONFLICTS:
+        if len(_CONFLICTS) >= _KEPT_AT_MOST:
+            _CONFLICTS.clear()
+        _CONFLICTS[key] = check_soft_conflict(soft_document, **case)
+    return _CONFLICTS[key]
+
+
+def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=False,
+                         max_evaluations=1_000_000, tableau_steps=10_000):
+    """`ve.norms.check_conflict(soft_document.elaborated, ...)` decided by Lean's soft route (kb-10c).
+
+    The arguments and the `ConflictReport` are `check_conflict`'s. Python's witness search and prover are untrusted
+    generators, as on the W1 Lean route: a witness Python finds in `model` is replayed by the soft route's `witness`
+    case (CONFLICT; a witness Lean does not confirm is CheckerUnavailable), and the certificates Python's prover
+    makes over the soft base (`SoftBaseEnvironment`, whose Background holds the soft premises) are replayed by its
+    `packages` case, bound to the soft source's environment id and document hash. CONFLICT-FREE is Lean's
+    (`VE.SoftNorms.Run.soft_wire_conflict_free`); its `detail` is Lean's status text, which names the condition:
+    among rules on the same act, conditional on the open coherence premises. An exhausted generator is UNKNOWN
+    without a Lean call; UNKNOWN asserts nothing. A request already answered in this process is not sent again
+    (`_kept_conflict`)."""
+    from . import norms
+    from .evaluate import _Exhausted
+    document = soft_document.elaborated
+    if not isinstance(document, norms.NormDocument):
+        raise VEError("UnsupportedProfile: soft rules require the soft route")
+    document._require_completion()
+    norms._reject_filling(document, model)
+    norms._reject_split(document, model)
+    env = document.base_environment()
+    if model is not None:
+        model = norms._base_model(document, env, model)
+        try:
+            found = norms._find_conflict(document, env, model, max_evaluations)
+        except _Exhausted:
+            return norms.ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
+        if found is not None:
+            target, sorts, values = found
+            row = _kept_conflict(soft_document,
+                                 witness={"target": target, "model": model.to_dict(), "tuple": list(values)})
+            if row["verdict"] != "CONFLICT" or row.get("target") != target:
+                raise CheckerUnavailable("CheckerUnavailable: Lean's soft route does not confirm the conflict "
+                                         "witness Python's search found")
+            return norms._conflict_report(document, target, sorts, model, values)
+    if not prove:
+        return norms.ConflictReport("UNKNOWN", detail="tableau budget or search bound")
+    certificates = norms._prove_targets(document, env, tableau_steps)
+    if isinstance(certificates, norms.ConflictReport):
+        return certificates
+    packages = {target: {"environment_id": soft_document.env.environment_id,
+                         "document_hash": soft_document.document_hash, "target": target,
+                         "certificate": package["certificate"]} for target, package in certificates.items()}
+    row = _kept_conflict(soft_document, packages=packages)
+    if row["verdict"] == "CONFLICT-FREE":
+        return norms.ConflictReport("CONFLICT-FREE", detail=row["status_text"])
+    detail = row.get("detail")
+    named = re.fullmatch(r"(?:missing|invalid) certificate for (.+)", detail) if type(detail) is str else None
+    if row["verdict"] != "UNKNOWN" or named is None or named.group(1) not in row["targets"]:
+        raise CheckerUnavailable("CheckerUnavailable: Lean soft conflict result is not bound to the request")
+    return norms.ConflictReport("UNKNOWN", detail=detail)
+
+
 def check_soft_certificate(soft_document: SoftNormDocument, *, premises, conclusion, certificate, pairs=None,
                            facts=None, facts_model=None):
     """Lean's `soft-certificate` answer for `certificate`, a certificate of `conclusion` from `background′`, the layer
@@ -154,64 +234,9 @@ def bind_certificate(row, case, elaborated):
 
 
 def selected_at(soft_document: SoftNormDocument, model, queries):
-    """Lean's `soft-selected` answer: for each query `(predicate, tuple)` of the base `model`, the rules
-    selected there (in rule order) and the completed outcome, with the model's soft `background` flag.
-
-    `model` is a finite model or its wire dictionary over the regenerated base vocabulary; `queries` is
-    a non-empty list of `{"predicate": p, "tuple": [ids]}` objects or `(p, ids)` tuples, sent as given. The answer is checked
-    for its schema and its binding only (one result per query sent, in order, with its predicate and
-    tuple; each selected name a rule of the document on that predicate, once, in the document's order);
-    anything else is CheckerUnavailable. Lean's refusal of a query is raised as its diagnostic."""
-    sent = [_query(q) for q in queries] if type(queries) in (list, tuple) else queries
-    norms = [rule.to_dict() for rule in soft_document.rules]
-    case = {"id": "soft-selected", "kind": "soft-selected", "environment": soft_document.env.to_dict(),
-            "norms": norms, "model": model.to_dict() if hasattr(model, "to_dict") else model,
-            "queries": sent}
-    row = _run(case)
-    try:
-        return bind_selected(row, case)
-    except (KeyError, TypeError, ValueError) as error:
-        raise CheckerUnavailable(f'CheckerUnavailable: Lean soft selection is not bound to the request: {error}') from error
-
-
-def _query(query):
-    """A `(predicate, ids)` pair as the wire's query object; anything else is sent as given, for Lean to decode
-    or refuse with its diagnostic."""
-    if type(query) is tuple and len(query) == 2 and type(query[1]) in (list, tuple):
-        return {"predicate": query[0], "tuple": list(query[1])}
-    return query
-
-
-def bind_selected(row, case):
-    """The `soft-selected` row bound to the `case` it answers: its id, its queries and its rules."""
-    sent, norms = case["queries"], case["norms"]
-    if type(row) is not dict or set(row) != {"id", "status", "background", "results"}:
-        raise ValueError('unexpected soft selection fields')
-    if row["id"] != case["id"] or row["status"] != "ok" or type(row["background"]) is not bool:
-        raise ValueError('mistyped soft selection')
-    results = row["results"]
-    if type(results) is not list or len(results) != len(sent):
-        raise ValueError('not one result per query')
-    rules = [(n["norm"]["name"], n["norm"]["predicate"]) for n in norms]
-    bound = []
-    for query, result in zip(sent, results):
-        if type(result) is not dict or set(result) != {"predicate", "tuple", "selected", "outcome"}:
-            raise ValueError('unexpected result fields')
-        if (type(result["predicate"]) is not str or result["predicate"] != query["predicate"]
-                or type(result["tuple"]) is not list or result["tuple"] != query["tuple"]
-                or not all(type(x) is str for x in result["tuple"])):
-            raise ValueError('result names a query that was not sent at its position')
-        selected = result["selected"]
-        if type(selected) is not list or not all(type(x) is str for x in selected):
-            raise ValueError('mistyped selected rules')
-        on_predicate = [name for name, predicate in rules if predicate == query["predicate"]]
-        if selected != [name for name in on_predicate if name in selected] or len(set(selected)) != len(selected):
-            raise ValueError('selected names are not rules of the document on the predicate, once, in order')
-        if type(result["outcome"]) is not bool:
-            raise ValueError('mistyped outcome')
-        bound.append({"predicate": query["predicate"], "tuple": list(query["tuple"]),
-                      "selected": list(selected), "outcome": result["outcome"]})
-    return {"background": row["background"], "results": bound}
+    """Lean's `soft-selected` answer for `queries` of the base `model` (`ve.softnorms.selected_at`, the one owner
+    of the request and its binding), sent through this route's runner."""
+    return _selected_at(soft_document, model, queries, run=_run)
 
 
 def admit_soft_document(environment, document, *, soft_document=None):

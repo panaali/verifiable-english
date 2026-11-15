@@ -1,0 +1,11 @@
+counter sha256 1c7cc4f7  case anthropic-rsp  commit a84c072d76  state run
+FACTS <- highly-capable-t4    loss         | described in Section 1 (exposition)
+FACTS <- s2-suff-third        mistag       | We would consider scenario (2) to have occurred where (restates)
+FACTS <- s2-suff-third        mistag       | in the absence of (restates)
+FACTS <- s2-suff-third        plan12       | (j) RS3c is no longer a reading set: "result" is excluded (S:10's "such that continuation of the trend in AI progress seems likely to lead to even gre
+FACTS <- t4-suff              plan12       | The formulas of `t4-suff` and `t4-only-if` are unchanged.
+FACTS <- t4-only-if           plan12       | The formulas of `t4-suff` and `t4-only-if` are unchanged.
+FACTS <- s2-only-if-third     report       | `s2-only-if-third` lost its `RS3c=third` tag (RS3c is no reading set).
+CASES <- CASES                no-record    | no accounting line
+D2D3  <- D2D3                 no-record    | no accounting line
+8 exposures on FACTS/CASES

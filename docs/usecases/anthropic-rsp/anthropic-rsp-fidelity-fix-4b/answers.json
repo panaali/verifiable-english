@@ -1,0 +1,200 @@
+{
+ "base": "4a5d3460d36c50b626b74cb324674c45f0f3254e",
+ "head_results": "usecases/anthropic-rsp/results.json",
+ "command": "git show <base>:usecases/anthropic-rsp/results.json against the branch's results.json (run.py; run.py --check exits 0)",
+ "items": 126,
+ "agree_old": 110,
+ "agree_new": 110,
+ "moved": [],
+ "reading_f5_or_strong_argument": [
+  "A-T0/ARG1",
+  "A-T0/ARG2",
+  "A-T0/ARG3",
+  "A-T0/ARG4",
+  "A-T1/ARG1",
+  "A-T1/ARG2",
+  "A-T1/ARG3",
+  "A-T1/ARG4",
+  "A-T2/ARG1",
+  "A-T2/ARG2",
+  "A-T2/ARG3",
+  "A-T2/ARG4",
+  "A-T3/ARG1",
+  "A-T3/ARG2",
+  "A-T3/ARG3",
+  "A-T3/ARG4",
+  "A-T4/ARG1",
+  "A-T4/ARG2",
+  "A-T4/ARG3",
+  "A-T4/ARG4"
+ ],
+ "rows": [
+  {
+   "id": "A-T0/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T0/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T0/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T0/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T1/ARG1",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T1/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T1/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T1/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T2/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T2/ARG2",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T2/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T2/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T3/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T3/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T3/ARG3",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T3/ARG4",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T4/ARG1",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T4/ARG2",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T4/ARG3",
+   "key": "NONE",
+   "old": "NONE",
+   "new": "NONE",
+   "agree_old": true,
+   "agree_new": true
+  },
+  {
+   "id": "A-T4/ARG4",
+   "key": "SOME(Ds)",
+   "old": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "new": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)",
+   "agree_old": true,
+   "agree_new": true
+  }
+ ],
+ "naming_f5_rules": [
+  "A-T1/ARG1",
+  "A-T2/ARG2",
+  "A-T3/ARG3",
+  "A-T4/ARG4"
+ ],
+ "reading_f5_or_strong_argument_note": "the 20 ARG items query strong_argument (run.py answer(): A-*/ARG*); no other item of run.py's query map reads f5-strict, f5-default or strong_argument; results.json names f5-strict/f5-default only under naming_f5_rules"
+}

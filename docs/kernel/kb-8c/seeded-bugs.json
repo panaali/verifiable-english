@@ -1,0 +1,66 @@
+{
+  "item": "kb-8c",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from a saved copy (git diff --quiet against the commit, then a rebuild). S1-S3 are the task's seeded bugs (a)-(c).",
+  "seeds": [
+    {
+      "id": "S1",
+      "task_seed": "a",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "the valued admission answer's `value` is the core's truth in the decoded model (quantity_admission_wire_sound_valued)",
+      "mutation": "runCase's admission branch answers `(\"value\", Json.bool true)` whatever evalB returns",
+      "failing": "lake build VE.Time.WireSound",
+      "result": "quantity_admission_wire_sound_valued does not build (WireSound.lean:89, 98 and 107: deterministic heartbeat timeout unifying `true` with the evaluation, at the `exact` that closes `b = a.formula.erase.eval d.toModel []`); quantity_admission_wire_sound_plain builds"
+    },
+    {
+      "id": "S2",
+      "task_seed": "b",
+      "language": "lean",
+      "file": "lean/VE/Time/Wire.lean",
+      "claim": "both admission statements fix every answer field by key: a runner that appends a field after the seven is not covered (the override the open-field rule, KB-7 F1, exists for)",
+      "mutation": "runCase's admission branch answers `[...] ++ ids ++ [(\"Q\", a.core)] ++ value` (a second `Q` after the seven, overriding the first in Json.mkObj)",
+      "failing": "lake build VE.Time.WireSound",
+      "result": "both fail: quantity_admission_wire_sound_plain at WireSound.lean:67 (application type mismatch, in both kind branches) and quantity_admission_wire_sound_valued at 89-107. With the same seed, the old open-tail form (`answer = ok id ([seven] ++ value)` for some `value`) is still proved, with value := [(\"Q\", a.core)]: docs/kernel/kb-8c/open-tail-seed-b.lean.txt, `lake env lean` exit 0. A second `(\"Q\", a.Q)` (the same value) builds: Json.mkObj keeps one entry per key, so that answer is the same object and nothing is wrong"
+    },
+    {
+      "id": "S3",
+      "task_seed": "c",
+      "language": "python",
+      "file": "ve/units.py",
+      "claim": "_checked_quantity binds the admission row's environment_id to the request's environment",
+      "mutation": "`if False and row[\"environment_id\"] != env.environment_id:` (the comparison skipped)",
+      "failing": "uv run pytest -q tests/test_units_relay_w6a.py",
+      "test": "tests/test_units_relay_w6a.py::test_an_admission_row_of_another_environment_is_refused",
+      "result": "3 failed (elaborate_quantity, quantity_meaning_id, core_formula), 18 passed"
+    },
+    {
+      "id": "S4",
+      "language": "python",
+      "file": "ve/units.py",
+      "claim": "_checked_quantity asks the quantity mode's admission kind (no kind, no model), whose fields a theorem states",
+      "mutation": "`decide(\"check\", ...)` restored in _checked_quantity",
+      "failing": "uv run pytest -q tests/test_units_relay_w6a.py",
+      "test": "tests/test_units_relay_w6a.py::test_the_shown_values_are_the_quantity_admission_rows",
+      "result": "1 failed, 20 passed"
+    },
+    {
+      "id": "S5",
+      "language": "lean",
+      "file": "lean/VE/Time/WireSound.lean",
+      "claim": "the plain statement names exactly the answer's seven fields",
+      "mutation": "`(\"target_environment_id\", .str w.targetId)` dropped from quantity_admission_wire_sound_plain's answer list",
+      "failing": "lake build VE.Time.WireSound",
+      "result": "quantity_admission_wire_sound_plain does not build (WireSound.lean:67:62, application type mismatch, both kind branches)"
+    },
+    {
+      "id": "S6",
+      "language": "json registry (tests)",
+      "file": "tools/kernel-paths.json",
+      "claim": "every case kind quantity's runners dispatch on has a kinds entry",
+      "mutation": "the `count` entry removed from quantity's kinds",
+      "failing": "uv run pytest -q tests/test_kernel_closure.py -k every_case_kind",
+      "test": "tests/test_kernel_closure.py::test_every_case_kind_of_a_kernel_runner_has_an_entry_and_every_entry_a_kind",
+      "result": "1 failed"
+    }
+  ]
+}

@@ -25,7 +25,7 @@ import pf_vocabulary as V  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve.norms import check_conflict  # noqa: E402
+from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
 
 
@@ -381,12 +381,8 @@ def selected(doc, found, predicate, sign):
 
 
 def completed(doc, found, predicate):
-    from ve.evaluate import _Evaluator
-    env = doc.elaborated.base_environment()
-    formula = doc.elaborated.outcome(predicate, base=True)
-    sort, element = subject(predicate)
-    A._Checker(env).formula(formula, (sort,))
-    return _Evaluator(env, model(doc, found), 1_000_000, trace=False).formula(formula, ((sort, element),))[0]
+    """The completed outcome of `predicate` at its subject in the case model: Lean's `soft-selected` answer."""
+    return doc.elaborated.outcome_at(predicate, model(doc, found), (subject(predicate)[1],))
 
 
 @lru_cache(maxsize=None)
@@ -608,7 +604,7 @@ def w1(choice, include, case):
     doc = document(names, None, include)
     found = atoms(case, choice)
     check_premises(doc, found, choice)
-    return check_conflict(doc.elaborated, model=model(doc, found), prove=True).status
+    return decide_soft_conflict(doc, model=model(doc, found), prove=True).status  # kb-10c: Lean's soft route
 
 
 @lru_cache(maxsize=None)

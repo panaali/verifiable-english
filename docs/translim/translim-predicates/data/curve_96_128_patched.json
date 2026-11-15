@@ -1,0 +1,437 @@
+{
+ "executable": "/tmp/translim/ve_service_128",
+ "rows": [
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    6.217883656965569,
+    6.228011477040127,
+    6.232214965973981
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.196794509887695,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    3.1339438259601593,
+    3.361366028082557,
+    2.8321523510385305
+   ],
+   "cpu": [
+    3.12,
+    3.3600000000000003,
+    2.83
+   ],
+   "deadline_cpu": 6.197166442871094,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "soft-rules",
+   "mode": "soft-norms",
+   "wall": [
+    0.1543023680569604,
+    0.11911864997819066,
+    0.15512417699210346
+   ],
+   "cpu": [
+    0.15,
+    0.10999999999999999,
+    0.15
+   ],
+   "deadline_cpu": 125.88695526123047,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "soft-elaborate",
+   "mode": "soft-norms",
+   "wall": [
+    1.1637926260009408,
+    1.1610434260219336,
+    1.2263503710273653
+   ],
+   "cpu": [
+    1.1199999999999999,
+    1.1199999999999999,
+    1.2
+   ],
+   "deadline_cpu": 125.88741302490234,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    6.376987793948501,
+    6.37685554404743,
+    6.376732254051603
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.340532302856445,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 96,
+   "shape": "flat",
+   "kind": "document check",
+   "mode": "document",
+   "wall": [
+    3.5436390640679747,
+    3.2198453600285575,
+    3.3734812970506027
+   ],
+   "cpu": [
+    3.1924180000000035,
+    2.9518799999999956,
+    3.0497299999999967
+   ],
+   "deadline_cpu": 120.0,
+   "answer": "ResourceLimit: ResourceLimit: AST exceeds 10,000 nodes"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    3.8723894970025867,
+    3.627057795994915,
+    3.744121717987582
+   ],
+   "cpu": [
+    3.85,
+    3.6100000000000003,
+    3.73
+   ],
+   "deadline_cpu": 6.185235977172852,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    3.074669210938737,
+    2.9221876229858026,
+    2.8084584129974246
+   ],
+   "cpu": [
+    3.0700000000000003,
+    2.91,
+    2.79
+   ],
+   "deadline_cpu": 6.18560791015625,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "soft-rules",
+   "mode": "soft-norms",
+   "wall": [
+    0.1254627601010725,
+    0.12470516003668308,
+    0.12565006001386791
+   ],
+   "cpu": [
+    0.12,
+    0.12,
+    0.12
+   ],
+   "deadline_cpu": 125.8407211303711,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "soft-elaborate",
+   "mode": "soft-norms",
+   "wall": [
+    1.0911101319361478,
+    1.3700820190133527,
+    1.6830302340677008
+   ],
+   "cpu": [
+    1.05,
+    1.31,
+    1.6199999999999999
+   ],
+   "deadline_cpu": 125.84117889404297,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    5.847248015925288,
+    6.307023600093089,
+    6.357022755895741
+   ],
+   "cpu": [
+    5.8100000000000005,
+    6.26,
+    6.31
+   ],
+   "deadline_cpu": 6.328973770141602,
+   "answer": "ok"
+  },
+  {
+   "n": 96,
+   "shape": "cone",
+   "kind": "document check",
+   "mode": "document",
+   "wall": [
+    5.554607120924629,
+    5.888860253035091,
+    5.51925997401122
+   ],
+   "cpu": [
+    4.9999699999999905,
+    5.207934000000009,
+    5.033119999999997
+   ],
+   "deadline_cpu": 120.0,
+   "answer": "ResourceLimit: ResourceLimit: AST exceeds 10,000 nodes"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    6.507532903924584,
+    6.507271863985807,
+    6.504460043972358
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.466073989868164,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    6.4688601170200855,
+    6.494905474013649,
+    6.504606003058143
+   ],
+   "cpu": [
+    6.46,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.4664459228515625,
+   "answer": "ok"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "soft-rules",
+   "mode": "soft-norms",
+   "wall": [
+    0.3944306479534134,
+    0.37119258008897305,
+    0.4186123770195991
+   ],
+   "cpu": [
+    0.39,
+    0.36,
+    0.41000000000000003
+   ],
+   "deadline_cpu": 127.33028411865234,
+   "answer": "ok"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "soft-elaborate",
+   "mode": "soft-norms",
+   "wall": [
+    0.022766359033994377,
+    0.01874437800142914,
+    0.01871867896988988
+   ],
+   "cpu": [
+    0.020000000000000004,
+    0.010000000000000002,
+    0.009999999999999995
+   ],
+   "deadline_cpu": 127.33074188232422,
+   "answer": "ResourceLimit: extended vocabulary"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    6.695636857999489,
+    6.694464338943362,
+    6.694161579012871
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.656503677368164,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 128,
+   "shape": "flat",
+   "kind": "document check",
+   "mode": "document",
+   "wall": [
+    0.9355728039517999,
+    0.8514295419445261,
+    0.885417778044939
+   ],
+   "cpu": [
+    0.8860620000000097,
+    0.8158650000000023,
+    0.8543439999999975
+   ],
+   "deadline_cpu": 120.0,
+   "answer": "ResourceLimit: ResourceLimit: extended vocabulary"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "norms-elaborate",
+   "mode": "norms",
+   "wall": [
+    6.489080086001195,
+    6.488983926014043,
+    6.49204953503795
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.450624465942383,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "norms-conflict",
+   "mode": "norms",
+   "wall": [
+    6.4892371750902385,
+    6.493516886024736,
+    6.492037455085665
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.450996398925781,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "soft-rules",
+   "mode": "soft-norms",
+   "wall": [
+    0.4409895339049399,
+    0.437959223985672,
+    0.43151078501250595
+   ],
+   "cpu": [
+    0.42,
+    0.43,
+    0.42
+   ],
+   "deadline_cpu": 127.26848602294922,
+   "answer": "ok"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "soft-elaborate",
+   "mode": "soft-norms",
+   "wall": [
+    0.025586007977835834,
+    0.02644273708574474,
+    0.03259953705128282
+   ],
+   "cpu": [
+    0.010000000000000009,
+    0.020000000000000004,
+    0.020000000000000004
+   ],
+   "deadline_cpu": 127.2689437866211,
+   "answer": "ResourceLimit: extended vocabulary"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "acts-parse (joined, acts@0)",
+   "mode": "norms",
+   "wall": [
+    6.684843468945473,
+    6.672235739999451,
+    6.679872368928045
+   ],
+   "cpu": [
+    null,
+    null,
+    null
+   ],
+   "deadline_cpu": 6.641054153442383,
+   "answer": "DEADLINE: CheckerUnavailable: the Lean service mode norms us"
+  },
+  {
+   "n": 128,
+   "shape": "cone",
+   "kind": "document check",
+   "mode": "document",
+   "wall": [
+    1.2279074810212478,
+    1.2210352000547573,
+    1.135210998938419
+   ],
+   "cpu": [
+    1.1818570000000364,
+    1.1368289999999774,
+    1.0815980000000138
+   ],
+   "deadline_cpu": 120.0,
+   "answer": "ResourceLimit: ResourceLimit: extended vocabulary"
+  }
+ ]
+}

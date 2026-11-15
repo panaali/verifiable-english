@@ -3,12 +3,15 @@
 The frozen key is compared cell by cell with PLAN section 6; the Appendix A, F9, F13/F16 and G1/N3/C-doc repairs are
 checked on the translation and on the saved results, each in the direction it was written for and the opposite one.
 """
+import hashlib
 import json
 import re
+import unicodedata
 
 import pytest
 
 import test_safetyfw_usecases as base
+from tests.pinned_source import pinned_source
 
 RSP, LEAN_SERVICE = base.RSP, base.LEAN_SERVICE
 rsp_run, rsp_translation, rsp_vocabulary, rsp_stage0 = (base.rsp_run, base.rsp_translation, base.rsp_vocabulary,
@@ -719,3 +722,380 @@ def test_fix_4_c3_and_prot_units_carry_no_omission_record():
     spans = json.loads((RSP / "spans.json").read_text())["units"]
     rs1 = [u for u in spans if u.get("reading_set", "").startswith("rs1_") or re.match(r"t[1-4]-plan", u["id"])]
     assert len(rs1) == 10 and [u["id"] for u in rs1 if u["status"] == "UNFORMALISED"] == []
+
+
+# --- anthropic-rsp-fidelity-fix-4b: no ARG answer rests on the merge of the rows' arguments (PLAN section 12, item 24)
+
+F5_BLOCKS = ("f5-strict", "f5-default")
+# Independent pins, from the pinned source (PLAN 1): each row's right column, part by part (the lead, then each bullet;
+# a part the page layout splits is two pieces). A part cut short, dropped or moved fails its row's pins.
+ROW_ARGUMENT_PINS = {
+    "non_novel_chem_bio_weapons": (
+        (("A frontier developer should make a strong argument that individual users and relatively small teams",
+          "via theft of model weights. This will likely require:"),),
+        (("Restrictions on model behavior, and/or measures", "sustainably circumvent via jailbreaking."),),
+        (("Precautions against opportunistic theft of model weights", "third-party applications and software "
+                                                                      "updates."),)),
+    "novel_chem_bio_weapons": (
+        (("A frontier developer should make a strong argument that threat actors will not become significantly",
+          "a credible governance regime enforcing the recommendations for industry-wide safety outlined here."),),),
+    "misaligned_high_stakes": (
+        (("A frontier developer should make a strong argument that AI systems will not carry out sabotage",
+          "As risk becomes harder to rule out, this case will likely include some combination"), ("of:", "of:")),
+        (("Internal compartmentalization, restriction, and code review", "sabotage opportunities for AI models."),),
+        (("Capability assessments demonstrating", "(which would generally mean unnoticed) sabotage."),),
+        (("Monitoring and/or restricting AI behavior", "and usage internally."),),
+        (("Evidence that AI models lack the propensity", "to deceive, manipulate, or sabotage users."),)),
+    "automated_rd": (
+        (("A frontier developer should make a strong argument that:", "a strong argument that:"),),
+        (("No user or team of users (including those backed by top-tier states)",
+          "Actors subject to such a regime would not need"),
+         ("to be treated as threats to each other's model weights.", "each other's model weights.")),
+        (("Even malicious employees and other insiders with maximal levels of access",
+          "(up to and including the company's CEO as well as its most privileged technical employees) to circumvent "
+          "the Usage Policy."),),
+        (("AI models have not been deliberately or inadvertently trained with dangerous goals",
+          "much of the key evidence is suspect due to the possibility of manipulation by AI systems."),)),
+}
+# Each row's pieces, joined by newlines (SHA-256), measured on the pinned rsp-3.4.txt (NFKC, the apostrophe written '):
+# a cut inside a piece that the pins' ends do not see, made consistently in the dict, headers and legend, fails here.
+ROW_ARGUMENT_SHA256 = {
+    "non_novel_chem_bio_weapons": "6affc1ab20e15608ba57fa4721b8914ae7108c56396724f1c8280d4eb1da0b6a",
+    "novel_chem_bio_weapons": "43d09fd091c073ff48115e1f7096e41a0d4748db052dec2423e24f1d9dedd1a4",
+    "misaligned_high_stakes": "44421eb5b29f83ab82846d1afde3f43a3ef1714f95611ee0a766ae5d68f01bb1",
+    "automated_rd": "c83c7bd769513d359405a48e25650216377e80dc0ea388adb4bb3b3dd5f2c9be",
+}
+BASE_ARGUMENT_LEGEND = "the strong argument of the right column's row of {1} is made at {0} (section 1, ARGk)"
+
+
+def _row_segment(text, name):
+    """The part of a header or legend that speaks for one row: from its label to the next row's label."""
+    start = text.find(f"({name}): ")
+    if start < 0:
+        return ""
+    end = text.find("; row T", start)
+    return text[start:end if end >= 0 else len(text)]
+
+
+def _argument_rows_missing(legend=None, headers=None):
+    """The rows whose argument the legend, or any of the headers, does not carry whole under the row's own label:
+    the headers quote every piece verbatim, the legend each part with its pieces joined, the bullets numbered."""
+    missing = []
+    for name, parts in rsp_vocabulary.ROW_ARGUMENTS.items():
+        lead, *bullets = parts
+        ok = True
+        for text in headers or ():
+            segment = _row_segment(text, name)
+            ok &= "..." not in text and "…" not in text and all(
+                f'"{piece}"' in segment for part in parts for piece in part)
+        if legend is not None:
+            segment = _row_segment(legend, name)
+            ok &= "..." not in legend and segment.startswith(f'({name}): "{" ".join(lead)}"') and all(
+                f'({k}) "{" ".join(bullet)}"' in segment for k, bullet in enumerate(bullets, 1))
+        if not ok:
+            missing.append(name)
+    return missing
+
+
+@pytest.mark.parametrize("name", list(ROW_ARGUMENT_PINS))
+def test_fix_4b_row_argument_is_whole_in_both_f5_headers_and_in_the_act_legend(name):
+    """(a) The right column's argument of the row of `name` (T1..T4): whole (each part's start and end pins), quoted
+    verbatim in f5-strict's and f5-default's headers under the row's label, and carried by `strong_argument`'s legend
+    under the row's threshold; the base's pointer legend, and a header or legend that lost this row's last part, are
+    refused for this row."""
+    arguments = rsp_vocabulary.ROW_ARGUMENTS
+    assert list(arguments) == list(rsp_vocabulary.THRESHOLDS)
+    parts = arguments[name]
+    assert [[(piece[:len(s)], piece[-len(e):]) for piece, (s, e) in zip(part, pins)] for part, pins in
+            zip(parts, ROW_ARGUMENT_PINS[name])] == [list(pins) for pins in ROW_ARGUMENT_PINS[name]]
+    assert [len(part) for part in parts] == [len(pins) for pins in ROW_ARGUMENT_PINS[name]]
+    pieces = "\n".join(piece for part in parts for piece in part)
+    assert hashlib.sha256(pieces.encode()).hexdigest() == ROW_ARGUMENT_SHA256[name]
+    headers = [_block("rules.d1.ve", block_id).source for block_id in F5_BLOCKS]
+    for block_id in F5_BLOCKS:
+        assert _rule(block_id)["predicate"] == "strong_argument", block_id
+    legend = _legend("strong_argument")
+    assert name not in _argument_rows_missing(legend, headers)
+    # The other direction.
+    assert _argument_rows_missing(BASE_ARGUMENT_LEGEND) == list(arguments)
+    last = parts[-1][-1]
+    assert name in _argument_rows_missing(legend.replace(last, ""))
+    for k in range(len(headers)):
+        cut = [h.replace(f'"{last}"', "") if i == k else h for i, h in enumerate(headers)]
+        assert name in _argument_rows_missing(headers=cut), (name, F5_BLOCKS[k])
+
+
+def test_fix_4b_f5_accounting_records_no_loss_and_no_unaccounted_word():
+    """(b) accounting.d1.txt: f5-strict and f5-default omit nothing (no entry: no "loss", no "reading"), every word of
+    their quoted spans is carried, every piece of every row's argument is one of their quotes, and no omission record
+    path shows on them; the saved --source report agrees, with every quote anchored."""
+    acc = _accounting()
+    result = acc.account(RSP)
+    assert result["problems"] == []
+    blocks = {b["id"]: b for b in result["blocks"]}
+    saved_report = json.loads((base.REPO / "docs/usecases/safetyfw/anthropic-rsp/accounting.json").read_text())
+    saved = {b["id"]: b for b in saved_report["blocks"]}
+    pieces = [piece for parts in rsp_vocabulary.ROW_ARGUMENTS.values() for part in parts for piece in part]
+    for block_id in F5_BLOCKS:
+        for report in (blocks, saved):
+            assert report[block_id]["entries"] == [] and report[block_id]["unaccounted"] == [], block_id
+        assert saved[block_id]["problems"] == [], block_id
+        assert saved[block_id]["span_length"] > sum(len(p) for p in pieces if len(p) >= acc.MIN_QUOTE), block_id
+        quotes = acc.quotes(_block("rules.d1.ve", block_id).source)
+        assert [p for p in pieces if len(p) >= acc.MIN_QUOTE and acc.norm(p) not in quotes] == [], block_id
+    assert saved_report["source_sha256"] is not None and saved_report["totals"]["unanchored_quotes"] == 0
+    sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
+    assert _omission_records(sidecar, set(F5_BLOCKS)) == []
+    planted = {**sidecar, "f5-strict": [{"words": "A frontier developer", "reason": "reading", "arg": "RS2"}],
+               "f5-default": [{"words": "threat actors", "reason": "loss", "arg": "1"}]}
+    assert _omission_records(planted, set(F5_BLOCKS)) == [("f5-default", "loss"), ("f5-strict", "reading")]
+
+
+# --- anthropic-rsp-cases-repair: the case records (the audit's CASES unit) have an accounting line ------------------
+
+def _plan_sections_5_and_6():
+    """PLAN 5 (the case-facts sentence) and PLAN 6 (each case's situation, in its key row), whitespace collapsed."""
+    plan = (RSP / "PLAN.md").read_text(encoding="utf-8")
+    start, end = plan.index("\n## 5. "), plan.index("\n## 7. ")
+    return " ".join(plan[start:end].split())
+
+
+# The situations that are not PLAN text verbatim, each with the PLAN text it transcribes and how (checked below).
+SITUATION_ALLOWED = {
+    **{f"A-T{k}": "PLAN 5's case-facts sentence for PLAN 6's row A-Tk, k = 1 … 4" for k in range(1, 5)},
+    **{case_id: "PLAN 6's row with the sign × written x; quantities.cost_factor carries the factor"
+       for case_id in ("T1", "T2", "T5")},
+}
+CASE_FIELDS = {"id", "family", "thresholds", "situation", "findings", "quantities", "source_sentence"}
+
+
+def _cases():
+    return json.loads((RSP / "cases.json").read_text(encoding="utf-8"))["cases"]
+
+
+def _situation_mismatches(cases, plan):
+    """The cases whose situation is neither PLAN 5-6 text nor an allowed transcription of it."""
+    out = []
+    for case in cases:
+        situation = " ".join(case["situation"].split())
+        verbatim = situation in plan
+        if verbatim:
+            ok = case["id"] not in SITUATION_ALLOWED   # a stale allowance is a mismatch too
+        elif case["id"].startswith("A-T"):
+            k = case["id"][3:]
+            ok = (case["id"] in SITUATION_ALLOWED and situation == f"T{k} crossed, no other threshold"
+                  and case["thresholds"] == [f"T{k}"]
+                  and "The model has crossed the thresholds named (T0: none) and no others" in plan
+                  and "| A-Tk, k = 1 … 4 |" in plan)
+        else:
+            factor = re.search(r"(\d+(?:\.\d+)?)x\b", situation)
+            ok = (case["id"] in SITUATION_ALLOWED and factor is not None
+                  and re.sub(r"(\d)x\b", r"\1×", situation) in plan
+                  and case.get("quantities", {}).get("cost_factor") == float(factor[1]))
+        if not ok:
+            out.append(case["id"])
+    return out
+
+
+def test_cases_accounting_line_exists_and_parses():
+    """(a) accounting.d1.txt has one CASES line, after every block line, "omits: nothing"; the accounting tool reads
+    it as the CASES collection with no problem, and the saved --source report agrees."""
+    acc = _accounting()
+    lines = acc.read_sidecar(RSP / "accounting.d1.txt")
+    cases_lines = [line for line in lines if line[1] == "CASES"]
+    assert [(entries, problem) for _, _, entries, problem in cases_lines] == [([], None)]
+    assert cases_lines[0][0] > max(n for n, block_id, _, _ in lines if block_id not in acc.COLLECTIONS)
+    result = acc.account(RSP)
+    assert result["problems"] == []
+    saved = json.loads((base.REPO / "docs/usecases/safetyfw/anthropic-rsp/accounting.json").read_text())
+    for report in (result, saved):
+        assert [c for c in report["collections"] if c["id"] == "CASES"] == [
+            {"id": "CASES", "entries": [], "problems": []}]
+    assert saved["problems"] == [] and saved["source_sha256"] is not None
+
+
+def test_every_case_situation_is_plan_text_or_an_allowed_transcription():
+    """(b) Each case's situation is PLAN 5-6 text verbatim, or on SITUATION_ALLOWED with the transcription its reason
+    names: A-T1..A-T4 from PLAN 5's case-facts sentence; T1, T2 and T5 with "x" for "×" and the factor carried."""
+    plan = _plan_sections_5_and_6()
+    cases = _cases()
+    assert len(cases) == 49 and {c["id"] for c in cases} >= set(SITUATION_ALLOWED)
+    assert _situation_mismatches(cases, plan) == []
+    # The other direction: a changed situation, a stale allowance and a wrong carried factor are each caught.
+    changed = [{**c, "situation": c["situation"] + " in the morning"} if c["id"] == "K7" else c for c in cases]
+    assert _situation_mismatches(changed, plan) == ["K7"]
+    t1 = [{**c, "quantities": {"cost_factor": 5}} if c["id"] == "T1" else c for c in cases]
+    assert _situation_mismatches(t1, plan) == ["T1"]
+    stale = [{**c, "situation": "T1 crossed"} if c["id"] == "A-T1" else c for c in cases]
+    assert _situation_mismatches(stale, plan) == ["A-T1"]
+
+
+def _finding_predicates(case):
+    """The predicates a case's findings set (run.py's OT and scenario maps own the names)."""
+    out = set()
+    for term in case["findings"]:
+        names = [rsp_run.SCENARIO_TERMS[s][term] for s in rsp_run.SCENARIOS.get(case["id"], ())
+                 if term in rsp_run.SCENARIO_TERMS[s]]
+        out.update(names or [rsp_run.OT.get(term, term)])
+    return out
+
+
+def _whole_sentence_of(sentence, quote):
+    """`sentence` is one or more whole sentences of `quote`: it ends a sentence and starts the quote or a sentence."""
+    at = quote.find(sentence)
+    return (at >= 0 and sentence.endswith(".") and (at == 0 or quote[:at].rstrip().endswith(".")) and
+            quote[at + len(sentence):][:1] in ("", " "))
+
+
+def test_transcribed_source_sentences_are_whole_quotes_the_rules_account_and_the_findings_carry():
+    """(c) The only source words the case records hold are two `source_sentence` fields (K21, T2; PLAN 12 item 15).
+    Each is inside a header quote of a block whose accounting line omits nothing, and every word of it is in the legend
+    of a predicate the case's findings set: the records leave out no word of what they transcribe."""
+    acc = _accounting()
+    cases = _cases()
+    assert set().union(*map(set, cases)) == CASE_FIELDS
+    legend = acc.legends(json.loads((RSP / "environment.d1.json").read_text()))
+    sidecar = {block_id: entries for _, block_id, entries, _ in acc.read_sidecar(RSP / "accounting.d1.txt")}
+    blocks = [b for name in acc.BLOCK_FILES for b in acc.read_blocks(RSP / name)]
+    quoted = {c["id"]: c["source_sentence"] for c in cases if "source_sentence" in c}
+    assert sorted(quoted) == ["K21", "T2"]
+    by_id = {c["id"]: c for c in cases}
+    for case_id, sentence in quoted.items():
+        holders = [b["id"] for b in blocks if any(_whole_sentence_of(acc.norm(sentence), q)
+                                                  for q in acc.quotes(b["source"]))]
+        assert [h for h in holders if sidecar[h] == []], (case_id, holders)
+        predicates = _finding_predicates(by_id[case_id])
+        assert predicates <= set(legend), (case_id, predicates)
+        carried = set().union(*(legend[p]["legend"] for p in predicates))
+        assert acc.words(acc.norm(sentence)) - carried == set(), case_id
+
+
+# --- anthropic-rsp-facts-repair: the FACTS entries the omission counter scored as loss or mistag (ruling A3) ----------
+
+FACTS_IDS = [b.id for b in rsp_translation.read_blocks("facts.d1.ve")]
+# Every entry of a FACTS block's accounting line, and the predicate whose legend carries it.
+FACTS_ENTRIES = {("highly-capable-t4", "described in Section 1", "restates"): "highly_capable",
+                 ("s2-suff-third", "We would consider scenario (2) to have occurred where", "restates"): "scenario_2",
+                 ("s2-suff-third", "in the absence of", "restates"): "double_rate"}
+# Each legend's description before this item: with it, its entry is a mistag (or a loss) again.
+FACTS_LEGENDS_BEFORE = {
+    "highly_capable": "the model of {0} is highly capable (3.6: it crosses the threshold for automated AI R&D)",
+    "scenario_2": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons "
+                  "that likely relate to the automation of AI R&D (T4 (2): \"We will consider this threshold to be met "
+                  "if we determine that either (1) our models would be able to fully substitute for our entire set of "
+                  "Research Scientists and Research Engineers, at competitive costs (i.e., within a factor of 5); or "
+                  "(2) there is 'dramatic acceleration' of the pace of AI progress for reasons that likely relate to "
+                  "the automation of AI R&D.\")",
+    "double_rate": "at {0} we observe or expect double the rate of progress in AI aggregate capabilities compared to "
+                   "both the rate we'd expect and the fastest rate of extended progress we've observed without "
+                   "significant AI contributions (T4 (2)(a), footnotes 8 and 9)",
+}
+# Independent pins, from the pinned source (PLAN 1): each legend quote's start, end and SHA-256, measured on the
+# pinned rsp-3.4.txt (NFKC, the apostrophe written '). A changed word between the pins fails the hash.
+FACTS_LEGEND_QUOTES = {
+    "highly_capable": ("the threshold for", "described in Section 1",
+                       "6a25906cd08c9b2c2892d560414897d4c0e597f0079477aeef9f5f040672ddfb"),
+    "scenario_2": ("We would consider", "to have occurred where",
+                   "091f9e3385248ef3ef93d42382b36f3f6c4551c23c23b3bda9ba325b859a8cba"),
+    "double_rate": ("in the absence of", "contributions to AI R&D",
+                    "1b66334d036274e87fec89f63726b8dd028fa9e6a024b87e9409fbde45c0d3b1"),
+}
+COMMENT_STARTS = ("#", "--", "//")
+
+
+def _counter_norm(text):
+    """The counter's normalisation: NFKC, curly quotes and dashes, case, whitespace, line-break hyphenation."""
+    text = unicodedata.normalize("NFKC", text)
+    for a, b in (("’", "'"), ("‘", "'"), ("“", '"'), ("”", '"'), ("—", "-"), ("–", "-")):
+        text = text.replace(a, b)
+    return re.sub(r"(?<=[a-z])- (?=[a-z])", "", re.sub(r"\s+", " ", text.lower()).strip())
+
+
+def _omitted_words(words):
+    """The counter's tag rule reads every whole token of the omitted words but the articles."""
+    return set(re.findall(r"[a-z0-9]+", _counter_norm(words))) - {"a", "an", "the"}
+
+
+def _legend_entry_lines(key, lines):
+    """A predicate's entry in the vocabulary file: its key line, then every line until its brackets close."""
+    start = next((i for i, line in enumerate(lines) if re.match(rf'\s*"{re.escape(key)}"\s*:', line)), None)
+    if start is None:
+        return []
+    out, depth = [lines[start]], lines[start].count("(") - lines[start].count(")")
+    for line in lines[start + 1:]:
+        if depth <= 0 and not (line.lstrip().startswith('"') and not re.match(r'\s*"[a-z0-9_]+"\s*:', line)):
+            break
+        out.append(line)
+        depth += line.count("(") - line.count(")")
+    return out
+
+
+def _used_predicates(body, environment):
+    """The predicates a block's text uses: `classified as "<name>"`, or its verbalisation or act template."""
+    used = []
+    for key, entry in environment["vocabulary"]["predicates"].items():
+        templates = [t for t in (entry.get("verbalisation"), (entry.get("regulated") or {}).get("act")) if t]
+        patterns = [re.sub(r"\\\{\d\\\}", ".+?", re.escape(re.sub(r"^\{0\}\s*", "", t))) for t in templates]
+        if f'classified as "{key}"' in body or any(re.search(rf"(?<![A-Za-z]){p}(?![A-Za-z])", body)
+                                                   for p in patterns):
+            used.append(key)
+    return used
+
+
+def _carrier(block_id, legends=None):
+    """The counter's carrier of a block: one token set per body statement (comments and quoted literals stripped) and
+    one per legend of a predicate the block uses (its vocabulary entry, comments stripped); the header is not in it.
+    `legends` replaces a predicate's entry with a description (the other direction)."""
+    body = _block("facts.d1.ve", block_id).text
+    environment = json.loads((RSP / "environment.d1.json").read_text())
+    lines = (RSP / "rsp_vocabulary.py").read_text().splitlines()
+    statements = [re.sub(r"\s*(#|--|//).*$", "", re.sub(r'"[^"]*"', " ", line)) for line in body.splitlines()
+                  if not line.lstrip().startswith(COMMENT_STARTS)]
+    entries = [(legends or {}).get(key) or "\n".join(re.sub(r"\s#.*$", "", line) for line in
+                                                     _legend_entry_lines(key, lines)
+                                                     if not line.lstrip().startswith(COMMENT_STARTS))
+               for key in _used_predicates(body, environment)]
+    return [set(re.findall(r"[a-z0-9_]+", _counter_norm(s))) for s in statements + entries if s.strip()]
+
+
+def _facts_entries():
+    """Every `"<words>" <tag>` entry of a FACTS block's accounting line (the counter's parse)."""
+    out = set()
+    for line in (RSP / "accounting.d1.txt").read_text().splitlines():
+        block_id, sep, rest = line.partition(" | omits:")
+        if sep and block_id.strip() in FACTS_IDS:
+            out |= {(block_id.strip(), words, tag.strip()) for words, tag in re.findall(r'"([^"]*)"\s*([^;"]*)', rest)}
+    return out
+
+
+def test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier():
+    """(a) The counter's tag rule, on every FACTS entry: `restates` resolves only when every whole token of the
+    omitted words but the articles is in ONE segment of the block's own carrier (a body statement or one legend).
+    The legends before this item leave each entry unresolved: removing the legend's wording fails here."""
+    assert set(_facts_entries()) == set(FACTS_ENTRIES)
+    for (block_id, words, tag), predicate in FACTS_ENTRIES.items():
+        assert tag == "restates"
+        words_needed = _omitted_words(words)
+        assert words_needed and any(words_needed <= segment for segment in _carrier(block_id)), (block_id, words)
+        before = _carrier(block_id, {predicate: FACTS_LEGENDS_BEFORE[predicate]})
+        assert not any(words_needed <= segment for segment in before), (block_id, words, predicate)
+    # The carrying predicates are the blocks' own (no predicate added or renamed for them).
+    environment = json.loads((RSP / "environment.d1.json").read_text())
+    assert set(_used_predicates(_block("facts.d1.ve", "highly-capable-t4").text, environment)) == {
+        "crossed", "highly_capable"}
+    assert set(_used_predicates(_block("facts.d1.ve", "s2-suff-third").text, environment)) == {
+        "double_rate", "automation_attributable", "continuation_accelerates", "scenario_2"}
+
+
+@pytest.mark.parametrize("predicate", sorted(FACTS_LEGEND_QUOTES))
+def test_facts_repair_legend_quote_is_verbatim_in_the_pinned_source(predicate):
+    """(b) Each new legend wording is one double-quoted quote of the pinned source: its start and end pins and the
+    SHA-256 of the whole quote as measured on rsp-3.4.txt. A cut, a moved pin or one changed word fails. When the
+    pinned source is stored, the quote is also found in it (NFKC, the apostrophe written ')."""
+    start, end, digest = FACTS_LEGEND_QUOTES[predicate]
+    quotes = [q for q in re.findall(r'"([^"]+)"', _legend(predicate)) if q.startswith(start)]
+    assert len(quotes) == 1 and quotes[0].endswith(end), (predicate, quotes)
+    assert hashlib.sha256(quotes[0].encode()).hexdigest() == digest, (predicate, quotes[0])
+    if pinned_source("anthropic-rsp", skip=False) is not None:
+        source = unicodedata.normalize("NFKC", base.rsp_build.DEFAULT_SOURCE.read_text()).replace("’", "'")
+        assert quotes[0] in source, (predicate, quotes[0])

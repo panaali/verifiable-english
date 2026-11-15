@@ -33,8 +33,8 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 
 | File | Contents |
 |---|---|
-| [rules.d1.ve](rules.d1.ve) | 44 VE rules: one per commitment and per reading of it, each with the sentence it translates |
-| [facts.d1.ve](facts.d1.ve) | 37 VE premises: the level tables, the closure sentences and the Glossary definitions; and N1's own bridge |
+| [rules.d1.ve](rules.d1.ve) | 44 VE rules: one per commitment and per reading of it, each with the sentence it translates; and two fact blocks headed with the items that read them: N1's own bridge, and the Security Level 2+ facts (2.1.1) of the items on F16 |
+| [facts.d1.ve](facts.d1.ve) | 35 VE premises of every item: the level tables, the closure sentences and the Glossary definitions |
 | [vocabulary.py](vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary; each predicate's description is its legend |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | the 85 cases and the 262 answers of PLAN sections 5 and 6, transcribed before VE ran |
 | [run.py](run.py), [translation.py](translation.py), [severity_and_dates.py](severity_and_dates.py) | the harness that runs VE on every case and compares with the key |
@@ -196,7 +196,7 @@ under "Excluded readings". The whole document (C-doc) is now CONFLICT-FREE at ev
 | G3 | an alert threshold for a TCL | silent: no rule mentions it |
 | G4, G5 | significant cyber or manipulation risk, or a risk outside the four domains | only the catch-all "deemed acceptable" applies; no safeguard is required |
 | G6 | the first external deployment of a model that is not a frontier model | no capability assessment is required; governance review only if F12 covers every model |
-| G7 | disclosure for a TCL | silent: disclosure needs a CCL |
+| G7 | disclosure for a TCL, or for a CCL whose risk is mitigated | silent: disclosure needs a CCL with an unmitigated, material risk |
 | G8 | evidence after deployment that safeguards are circumvented | silent: no rule mentions it |
 | G9 | the governance function does not find a deployment acceptable | covered for a model at a level; for a model at no level, only if F12 covers every model |
 

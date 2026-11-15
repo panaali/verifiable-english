@@ -22,9 +22,9 @@ theorem elaborated_definitions (e : ElaboratedU) : e.U'.D.T.definitions = e.s.sr
 
 theorem decodeElaboratedFlagged_source {environment norms : Json} {e : ElaboratedU}
     (h : decodeElaboratedFlagged environment norms = .ok e) :
-    Wire.decodeSource environment norms (flags := true) = .ok e.s.src := by
+    Wire.decodeSource Wire.ActsHook.acts environment norms (flags := true) = .ok e.s.src := by
   unfold decodeElaboratedFlagged at h
-  cases hd : Wire.decodeSource environment norms (flags := true) with
+  cases hd : Wire.decodeSource Wire.ActsHook.acts environment norms (flags := true) with
   | error err => simp [hd, bind, Except.bind] at h
   | ok src =>
     rw [hd] at h
@@ -37,7 +37,7 @@ theorem flaggedSource_flag_not_defined (environment norms : Json) (s : Wire.Sour
     ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name := by
   obtain ⟨e, he, hD, hf⟩ := flaggedSource_elaborated h
   rw [hf, hD, elaborated_definitions]
-  exact VE.Norms.FlaggedSpec.decodeSource_flag_not_defined _ _ _ _ (decodeElaboratedFlagged_source he)
+  exact VE.Norms.FlaggedSpec.decodeSource_flag_not_defined _ _ _ _ _ (decodeElaboratedFlagged_source he)
 
 /-- `s` reads the elaborated document of `environment` and `norms` on the norm-defaults route. -/
 def ElaboratedDoc (environment norms : Json) (s : Wire.SourceU) : Prop :=
