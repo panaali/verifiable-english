@@ -1,28 +1,28 @@
 {
  "anthropic-rsp": {
-  "lean _check_certificate_lean": 1675,
+  "lean _check_certificate_lean": 11,
   "lean _evaluate_lean": 492,
-  "lean soft-elaborate": 279,
+  "lean soft-conflict": 14,
+  "lean soft-elaborate": 293,
   "lean soft-selected": 122,
-  "python _check_conflict_python": 26,
   "python _find_conflict": 26,
   "python prover-self-replay": 1692
  },
  "openai-preparedness": {
-  "lean _check_certificate_lean": 3237,
+  "lean _check_certificate_lean": 13,
   "lean _evaluate_lean": 1768,
-  "lean soft-elaborate": 1243,
+  "lean soft-conflict": 38,
+  "lean soft-elaborate": 1281,
   "lean soft-selected": 1182,
-  "python _check_conflict_python": 52,
   "python _find_conflict": 52,
   "python prover-self-replay": 3257
  },
  "safety-framework": {
-  "lean _check_certificate_lean": 3325,
+  "lean _check_certificate_lean": 1732,
   "lean _evaluate_lean": 8193,
-  "lean soft-elaborate": 273,
+  "lean soft-conflict": 48,
+  "lean soft-elaborate": 321,
   "lean soft-selected": 642,
-  "python _check_conflict_python": 1463,
   "python _find_conflict": 1399,
   "python prover-self-replay": 3413
  }
