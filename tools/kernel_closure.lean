@@ -16,6 +16,12 @@ what is trusted:
 * a theorem reached from inside a definition contributes nothing (a proof does not change what
   the definition computes);
 * a constant named `opaque` for the path (the runner the theorem is about) is not followed.
+* an auxiliary with no range of its own and none of its prefix's code (a matcher `f.match_1`, its
+  `splitter`, a `proof_<n>`: `codeless`) is charged the range of its name prefix `f` only when the
+  closure reaches `f` itself; otherwise it is charged to the constant that reached it, with no lines
+  (Lean shares a matcher between declarations), and is listed under `attributed` (name, `by`,
+  `prefix`, module, the prefix's lines not charged). `f._unary` and `f._mutual` hold `f`'s body and
+  keep `f`'s range.
 
 With `"mode": "run"` the roots are definitions and the closure is the code that executes.
 
@@ -60,10 +66,13 @@ def readDeps (info : ConstantInfo) : List Name :=
 structure Reached where
   consts : Array Name := #[]
   axioms : Array Name := #[]
+  /-- For each constant, the one it was reached from: `none` for a root of a run, the root theorem
+  for a constant a statement mentions. -/
+  reacher : Std.HashMap Name (Option Name) := {}
 
 /-- The closure of `roots`. `statement = true`: a root contributes its type only. -/
 def closure (env : Lean.Environment) (roots opaqueNames : List Name) (statement : Bool) : Reached := Id.run do
-  let mut pending : List Name := []
+  let mut pending : List (Name × Option Name) := []
   let mut seen : Std.HashSet Name := {}
   for o in opaqueNames do seen := seen.insert o
   for r in roots do
@@ -71,12 +80,12 @@ def closure (env : Lean.Environment) (roots opaqueNames : List Name) (statement 
     | none => pure ()
     | some info =>
       if statement then
-        pending := info.type.getUsedConstants.toList ++ pending
+        pending := info.type.getUsedConstants.toList.map (·, some r) ++ pending
       else
-        pending := r :: pending
+        pending := (r, none) :: pending
   let mut out : Reached := {}
   while !pending.isEmpty do
-    let n := pending.head!
+    let (n, p) := pending.head!
     pending := pending.tail!
     if seen.contains n then continue
     seen := seen.insert n
@@ -85,8 +94,8 @@ def closure (env : Lean.Environment) (roots opaqueNames : List Name) (statement 
     | .thmInfo _ => continue
     | .axiomInfo _ => out := { out with axioms := out.axioms.push n }
     | _ => pure ()
-    out := { out with consts := out.consts.push n }
-    pending := readDeps info ++ pending
+    out := { out with consts := out.consts.push n, reacher := out.reacher.insert n p }
+    pending := (readDeps info).map (·, some n) ++ pending
   return out
 
 /-- `closure`'s constants walked breadth-first with the same reading rules, each with the constant it was
@@ -132,7 +141,8 @@ def coveredLines (ranges : Array (Nat × Nat)) : Nat := Id.run do
 
 /-- The source range that holds a constant: its own, or that of the nearest name prefix that
 has one (`f.match_1`, `f._unary` and the like sit inside `f`). A private auxiliary
-(`_private.M.0.f.match_1.splitter`, made by `unfold` in a proof) is looked up by its user name. -/
+(`_private.M.0.f.match_1.splitter`, made by `unfold` in a proof) is looked up by its user name.
+A closure charges a prefix's range only when it reaches the prefix itself (`attributedTo?`). -/
 partial def rangeOf (n : Name) : CommandElabM (Option (Name × Nat × Nat)) := do
   match ← findDeclarationRanges? n with
   | some r => return some (n, r.range.pos.line, r.range.endPos.line)
@@ -144,6 +154,50 @@ partial def rangeOf (n : Name) : CommandElabM (Option (Name × Nat × Nat)) := d
     | .str p _ => if p.isAnonymous then return none else rangeOf p
     | .num p _ => if p.isAnonymous then return none else rangeOf p
     | .anonymous => return none
+
+/-- The user name of a constant (`f` for `_private.M.0.f`). -/
+def userName (n : Name) : Name := (privateToUserName? n).getD n
+
+/-- An auxiliary that holds none of its prefix's code: a matcher (`f.match_1`, which Lean shares
+between declarations with the same match), a matcher's `splitter`, or a `proof_<n>` or `eq_<n>`. An
+auxiliary that holds the prefix's body (`f._unary`, `f._mutual`) is not one: whoever reaches it runs
+`f`'s code. -/
+def codeless (env : Lean.Environment) (c : Name) : Bool :=
+  Meta.isMatcherCore env c || match (userName c) with
+    | .str p s => s == "splitter" && Meta.isMatcherCore env p ||
+        s.startsWith "proof_" || s.startsWith "eq_"
+    | _ => false
+
+/-- A codeless auxiliary (`codeless`) with no range of its own, which `rangeOf` found through its name
+prefix `f`, when `f` is not among `reachedUsers` (`chargedUsers`: the closure reaches `f` or code
+that holds `f`'s body): it is charged to the constant that reached it, with no lines, since another declaration can
+reuse `f`'s matcher (`decodeUnit.match_1`, used by `runCaseReported`). Answers that constant; `none`
+when the range is charged: the constant's own, a reached `f`'s, a non-codeless auxiliary's, or a root's
+(which has no reacher). -/
+def attributedTo? (env : Lean.Environment) (reached : Reached) (reachedUsers : Std.HashSet Name)
+    (c decl : Name) : Option Name :=
+  if userName decl == userName c || reachedUsers.contains (userName decl) || !codeless env c then none
+  else reached.reacher.getD c none
+
+/-- The user names whose range a closure of `consts` charges anyway: each constant's own, every member of
+its mutual block (a structurally recursive `sizeT` holds its partner `sizeL`'s body and matchers without
+naming `sizeL`), and the prefix `f` of each auxiliary that holds `f`'s code (`f._mutual`). -/
+def chargedUsers (env : Lean.Environment) (consts : Array Name) : CommandElabM (Std.HashSet Name) := do
+  let mut users : Std.HashSet Name := {}
+  for c in consts do
+    users := users.insert (userName c)
+    if let some info := env.find? c then
+      for m in info.all do users := users.insert (userName m)
+    unless codeless env c do
+      if let some (decl, _, _) ← rangeOf c then users := users.insert (userName decl)
+  return users
+
+/-- The module a constant sits in, for counting: its own, or the file being run for a constant this
+file defines (the fixtures of this tool), which has no module index. -/
+def countedModule (env : Lean.Environment) (n : Name) : Option Name :=
+  match moduleOf env n with
+  | some m => some m
+  | none => if env.contains n then some env.mainModule else none
 
 /-- The value of an accepted answer: `v` in `Except.ok v` or `some v`. -/
 def acceptedValue? (e : Expr) : Option Expr :=
@@ -204,6 +258,64 @@ theorem openTailFixture_stated (answer : Json) (h : openTailFixture answer) : op
 
 theorem keyedFixture_stated (answer : Json) (h : keyedFixture answer) : keyedFixture answer := h
 
+/-- The charge rule's fixtures (tests/test_kernel_closure.py). Lean shares identical matchers, so
+`reuseG` runs `reuseF.match_1`: a run of `reuseG` does not reach `reuseF` and is charged none of its
+lines (the matcher is listed as attributed to `reuseG`); a run of `reuseBoth` reaches `reuseF`, whose
+lines count once. -/
+def reuseF (s : String) : Nat :=
+  match s with
+  | "a" => 1
+  | "b" => 2
+  | _ => 0
+
+def reuseG (s : String) : Nat :=
+  match s with
+  | "a" => 10
+  | "b" => 20
+  | _ => 0
+
+def reuseBoth (s : String) : Nat := reuseF s + reuseG s
+
+-- `sizeFixture` holds `sizeListFixture`'s body and matcher without naming it (structural mutual
+-- recursion), and `oddFixture` runs `evenFixture`'s code through `evenFixture._mutual` without
+-- reaching `evenFixture`: both keep the partner's range.
+inductive TreeFixture where
+  | leaf : TreeFixture
+  | node : List TreeFixture → TreeFixture
+
+mutual
+def sizeFixture : TreeFixture → Nat
+  | .leaf => 1
+  | .node ts => sizeListFixture ts + 1
+def sizeListFixture : List TreeFixture → Nat
+  | [] => 0
+  | t :: ts => sizeFixture t + sizeListFixture ts
+end
+
+mutual
+def evenFixture : Nat → Bool
+  | 0 => true
+  | n + 1 => oddFixture n
+termination_by n => n
+def oddFixture : Nat → Bool
+  | 0 => false
+  | n + 1 => evenFixture n
+termination_by n => n
+end
+
+/-- A path whose wrap (`wrapFixtureEntry`) builds the type its spec (`wrapFixture_sound`) reads. -/
+structure WrapFixtureEnv where
+  first : Nat
+  second : Nat
+
+def wrapFixtureRun (e : WrapFixtureEnv) : Except String Nat := .ok (e.first + e.second)
+
+def wrapFixtureEntry (n : Nat) : Except String Nat :=
+  wrapFixtureRun { first := n, second := n }
+
+theorem wrapFixture_sound (e : WrapFixtureEnv) (v : Nat) (h : wrapFixtureRun e = .ok v) :
+    wrapFixtureRun e = .ok v := h
+
 def strList (j : Json) (key : String) : List Name :=
   match j.getObjValD key with
   | .arr xs => xs.toList.filterMap fun x => x.getStr?.toOption.map String.toName
@@ -216,11 +328,14 @@ def whyChains (env : Lean.Environment) (reached : Array (Name × Option Name)) (
     CommandElabM (List (String × Json)) := do
   if targets.isEmpty then return []
   let parent : Std.HashMap Name (Option Name) := reached.foldl (fun m (n, p) => m.insert n p) {}
+  let users ← chargedUsers env (reached.map (·.1))
+  let asReached : Reached := { reacher := parent }
   let mut counted : Array (Name × Name × Name) := #[]  -- constant, its module, its declaration
   for (c, _) in reached do
-    let some m := moduleOf env c | continue
+    let some m := countedModule env c | continue
     unless projectModule m do continue
-    if let some (decl, _, _) ← rangeOf c then counted := counted.push (c, m, decl)
+    if let some (decl, _, _) ← rangeOf c then
+      if (attributedTo? env asReached users c decl).isNone then counted := counted.push (c, m, decl)
   let mut out : List (String × Json) := []
   for t in targets do
     let some (c, _, _) := counted.find? fun (c, m, decl) => c == t || decl == t || m == t | continue
@@ -246,8 +361,10 @@ def measure (path : Json) : CommandElabM Json := do
   let mut flagged : Array Json := #[]
   let mut unranged : Array Json := #[]
   let mut seenDecl : Std.HashSet (Name × Nat) := {}
+  let mut attributed : Array Json := #[]
+  let users ← chargedUsers env reached.consts
   for c in reached.consts do
-    let some m := moduleOf env c | continue
+    let some m := countedModule env c | continue
     unless projectModule m do continue
     if let some impl := Compiler.getImplementedBy? env c then
       flagged := flagged.push (Json.mkObj [("name", toString c), ("why", s!"implemented_by {impl}")])
@@ -258,6 +375,10 @@ def measure (path : Json) : CommandElabM Json := do
     match ← rangeOf c with
     | none => unranged := unranged.push (toString c)
     | some (decl, a, b) =>
+      if let some user := attributedTo? env reached users c decl then
+        attributed := attributed.push (Json.mkObj [("name", toString c), ("by", toString user),
+          ("prefix", toString decl), ("module", toString m), ("lines", b + 1 - a)])
+        continue
       byModule := byModule.insert m ((byModule.getD m #[]).push (a, b))
       unless seenDecl.contains (m, a) do
         seenDecl := seenDecl.insert (m, a)
@@ -290,7 +411,7 @@ def measure (path : Json) : CommandElabM Json := do
     ("lines", total), ("declarations", rows.size),
     ("modules", Json.mkObj (sortedModules.toList.map fun (m, k) => (m, toJson k))),
     ("axioms", toJson (reached.axioms.map toString)),
-    ("flagged", Json.arr flagged), ("unranged", Json.arr unranged),
+    ("flagged", Json.arr flagged), ("unranged", Json.arr unranged), ("attributed", Json.arr attributed),
     ("stated", Json.mkObj stated.toList),
     ("decls", Json.arr rows)]
 
