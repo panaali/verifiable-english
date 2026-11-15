@@ -12,7 +12,11 @@ compiled Lean environment (`tools/kernel_closure.lean`):
   computes) and no proof read;
 * **wrap**: the lines that run between the service entry and the subject, which no listed theorem
   covers: every definition the entry reaches without passing through a subject, a path this path
-  delegates to (`delegates`), or a reviewed non-verdict exit (`nonverdict`).
+  delegates to (`delegates`), or a reviewed non-verdict exit (`nonverdict`). A declaration the spec
+  already reads is not counted again in the wrap figure; a path's `lines` are the distinct lines of both.
+
+A matcher Lean shares between declarations (`f.match_1` run by `g`) is charged `f`'s lines only where
+the closure reaches `f`; elsewhere the Lean half lists it under `attributed`, charged to its user.
 
 A subject is what the theorems are about only if some listed theorem states its answer (a hypothesis
 `subject … = .ok answer` whose answer the theorem uses again, or `subject … = true`); the tool reports
@@ -343,13 +347,17 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
         problems += uncovered_problems(path, {"spec": spec, "wrap": wrap}, uncovered)
         ranges = [(d["module"], d["from"], d["to"]) for part in (spec, wrap) for d in part["decls"]]
         ranges_of[path["name"]] = ranges
+        # kb-closure-attrib: a declaration the spec already reads is not counted again in the wrap figure
+        read = {(d["module"], d["name"]) for d in spec["decls"]}
+        wrap_own = [(d["module"], d["from"], d["to"]) for d in wrap["decls"] if (d["module"], d["name"]) not in read]
         if path.get("tier") == "kernel":
             kernel_ranges += ranges
             body_starts |= {(d["module"], d["from"]) for d in raw["body:" + path["name"]]["decls"]}
         rows.append({"name": path["name"], "tier": path.get("tier", "candidate"), "modes": path.get("modes", []),
-                     "theorems": len(path["theorems"]), "spec_lines": spec["lines"], "wrap_lines": wrap["lines"],
+                     "theorems": len(path["theorems"]), "spec_lines": spec["lines"], "wrap_lines": covered(wrap_own),
                      "lines": covered(ranges), "axioms": sorted(set(spec["axioms"]) | set(wrap["axioms"])),
-                     "stated": {s: spec["stated"].get(s, []) for s in path.get("subject", [])}, "spec_modules": spec["modules"], "wrap_modules": wrap["modules"]})
+                     "stated": {s: spec["stated"].get(s, []) for s in path.get("subject", [])}, "spec_modules": spec["modules"], "wrap_modules": wrap["modules"],
+                     "attributed": {"spec": spec.get("attributed", []), "wrap": wrap.get("attributed", [])}})
     covered_writers = {x["name"] for path in registry["paths"] if path.get("tier") == "kernel"
                        for x in path.get("covered_writers", [])}
     writers, census_problems = classify_writers(census, {(module, first) for module, first, _ in kernel_ranges},
