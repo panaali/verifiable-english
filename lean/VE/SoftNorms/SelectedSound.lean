@@ -257,11 +257,10 @@ theorem coherentAt_iff (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) :
   exact ⟨fun hb a ha => (VE.eval_iff_denote M [] a).mp (hb a ha),
     fun hd a ha => (VE.eval_iff_denote M [] a).mpr (hd a ha)⟩
 
-/-- (kb-9, b) A case model whose `background`, `coherent` and `facts` are all true is a base structure
-admissible for the slot `P` of the case's facts (`BaseAdmissibleP`): one of the structures
-`VE.Compose.slot_route_acceptance` quantifies over, so what the slot route proves from the document and
-these facts holds in the model the selected rules were read in. -/
-theorem selected_model_admissible (D : SoftDoc) (P : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
+/-- The step of `selected_model_admissible`: a model whose `background`, `coherent` and `facts` flags are all true
+is a base structure admissible for the slot `P` (`backgroundValid'` is `background` and `coherent`, since
+`softPremises = excPremises ++ cohPremises`; then `baseAdmissibleP_of_valid`, the check `factsModel` uses). -/
+theorem model_admissible_of_flags (D : SoftDoc) (P : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
     (hM : M.Valid (envAt (soften D) 0)) (hb : classificationBackgroundValid D M = true)
     (hc : coherentAt D M = true) (hf : factsAt P M = true) :
     VE.Compose.BaseAdmissibleP D P M.asStructure := by
@@ -269,5 +268,42 @@ theorem selected_model_admissible (D : SoftDoc) (P : List VE.Formula) (M : VE.Fi
   simp only [VE.Compose.backgroundValidP, backgroundValid', softPremises, List.all_append, Bool.and_eq_true]
   simp only [classificationBackgroundValid, Bool.and_eq_true] at hb
   exact ⟨⟨hb.1, hb.2, hc⟩, hf⟩
+
+/-- (kb-9, b) A `soft-selected` answer whose `background`, `coherent` and `facts` are all `true`: the case model,
+read by the case's own decoders, is a base structure admissible for the slot `P` of the case's own facts
+(`BaseAdmissibleP`), one of the structures `VE.Compose.slot_route_acceptance` quantifies over. So what the slot
+route proves from the document and these facts holds in the model the selected rules were read in. -/
+theorem selected_model_admissible (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "soft-selected") (hn : usesSoftPath j = true)
+    (hb : answer.getObjVal? "background" = .ok (.bool true))
+    (hc : answer.getObjVal? "coherent" = .ok (.bool true))
+    (hf : answer.getObjVal? "facts" = .ok (.bool true)) :
+    ∃ (environment : Json) (src : SoftSource) (M : VE.FiniteModel VE.Bridge.Entity)
+      (hM : M.Valid (envAt (soften src.D) 0)) (P : List VE.Formula) (items : List Json),
+      j.getObjVal? "environment" = .ok environment ∧
+      decodeSoftSource environment (j.getObjValD "norms") = .ok src ∧
+      decodeModel src j = .ok ⟨M, hM⟩ ∧
+      VE.Compose.SlotWire.decodeFacts src j = .ok (P, items) ∧
+      VE.Compose.BaseAdmissibleP src.D P M.asStructure := by
+  obtain ⟨id, _, hrun⟩ := runCase_selected_run j answer h hk hn
+  obtain ⟨environment, src, P, items, M, hM, _, _, h₁, h₂, hfd, h₃, _, _, _, _, h₈⟩ :=
+    runSelected_answer id j answer hrun
+  have hs : factsSent j = true := by
+    cases hsj : factsSent j
+    · obtain ⟨⟨e, he⟩, _⟩ := (selectedAnswer_flags h₈).2 hsj
+      rw [he] at hf
+      cases hf
+    · rfl
+  rw [hs] at h₈
+  obtain ⟨hfv, hcv⟩ := (selectedAnswer_flags h₈).1 rfl
+  have hbv : answer.getObjVal? "background" = .ok (.bool (classificationBackgroundValid src.D M)) := by
+    unfold SelectedAnswerWith VE.Route.Wire.ok at h₈
+    subst h₈
+    exact mkObj_getObjVal_mem (by simp [factsFields]) (by simp [factsFields])
+  rw [hbv] at hb
+  rw [hcv] at hc
+  rw [hfv] at hf
+  simp only [Except.ok.injEq, Json.bool.injEq] at hb hc hf
+  exact ⟨environment, src, M, hM, P, items, h₁, h₂, h₃, hfd, model_admissible_of_flags src.D P M hM hb hc hf⟩
 
 end VE.SoftNorms.Run

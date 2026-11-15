@@ -8646,6 +8646,7 @@
 'VE.SoftNorms.Run.mkObj_getObjVal_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.mkObj_getObjVal_not_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.mkObj_get_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.SoftNorms.Run.model_admissible_of_flags' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.needFacts_ok' does not depend on any axioms
 'VE.SoftNorms.Run.not_elaborationAnswer_of_null_background' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.ok_verdict' depends on axioms: [propext, Classical.choice, Quot.sound]
