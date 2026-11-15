@@ -1,6 +1,8 @@
 """Python entry point for the proved soft-norm admission route."""
 from __future__ import annotations
 
+import re
+
 from .errors import CheckerUnavailable, VEError
 from .softnorms import (SoftEnvironment, SoftNormDocument, bind_selected, bind_soft_elaboration,  # noqa: F401
                         selected_at as _selected_at)
@@ -105,6 +107,59 @@ def bind_conflict(row, case, elaborated, budget=None):
     if budget is not None and row['budget'] != budget:
         raise ValueError('unbound conflict budget')
     bind_facts(row, case)
+
+
+def decide_soft_conflict(soft_document: SoftNormDocument, *, model=None, prove=False,
+                         max_evaluations=1_000_000, tableau_steps=10_000):
+    """`ve.norms.check_conflict(soft_document.elaborated, ...)` decided by Lean's soft route (kb-10c).
+
+    The arguments and the `ConflictReport` are `check_conflict`'s. Python's witness search and prover are untrusted
+    generators, as on the W1 Lean route: a witness Python finds in `model` is replayed by the soft route's `witness`
+    case (CONFLICT; a witness Lean does not confirm is CheckerUnavailable), and the certificates Python's prover
+    makes over the soft base (`SoftBaseEnvironment`, whose Background holds the soft premises) are replayed by its
+    `packages` case, bound to the soft source's environment id and document hash. CONFLICT-FREE is Lean's
+    (`VE.SoftNorms.Run.soft_wire_conflict_free`); its `detail` is Lean's status text, which names the condition:
+    among rules on the same act, conditional on the open coherence premises. An exhausted generator is UNKNOWN
+    without a Lean call; UNKNOWN asserts nothing."""
+    from . import norms
+    from .evaluate import _Exhausted
+    document = soft_document.elaborated
+    if not isinstance(document, norms.NormDocument):
+        raise VEError("UnsupportedProfile: soft rules require the soft route")
+    document._require_completion()
+    norms._reject_filling(document, model)
+    norms._reject_split(document, model)
+    env = document.base_environment()
+    if model is not None:
+        model = norms._base_model(document, env, model)
+        try:
+            found = norms._find_conflict(document, env, model, max_evaluations)
+        except _Exhausted:
+            return norms.ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
+        if found is not None:
+            target, sorts, values = found
+            row = check_soft_conflict(soft_document,
+                                      witness={"target": target, "model": model.to_dict(), "tuple": list(values)})
+            if row["verdict"] != "CONFLICT" or row.get("target") != target:
+                raise CheckerUnavailable("CheckerUnavailable: Lean's soft route does not confirm the conflict "
+                                         "witness Python's search found")
+            return norms._conflict_report(document, target, sorts, model, values)
+    if not prove:
+        return norms.ConflictReport("UNKNOWN", detail="tableau budget or search bound")
+    certificates = norms._prove_targets(document, env, tableau_steps)
+    if isinstance(certificates, norms.ConflictReport):
+        return certificates
+    packages = {target: {"environment_id": soft_document.env.environment_id,
+                         "document_hash": soft_document.document_hash, "target": target,
+                         "certificate": package["certificate"]} for target, package in certificates.items()}
+    row = check_soft_conflict(soft_document, packages=packages)
+    if row["verdict"] == "CONFLICT-FREE":
+        return norms.ConflictReport("CONFLICT-FREE", detail=row["status_text"])
+    detail = row.get("detail")
+    named = re.fullmatch(r"(?:missing|invalid) certificate for (.+)", detail) if type(detail) is str else None
+    if row["verdict"] != "UNKNOWN" or named is None or named.group(1) not in row["targets"]:
+        raise CheckerUnavailable("CheckerUnavailable: Lean soft conflict result is not bound to the request")
+    return norms.ConflictReport("UNKNOWN", detail=detail)
 
 
 def check_soft_certificate(soft_document: SoftNormDocument, *, premises, conclusion, certificate, pairs=None,

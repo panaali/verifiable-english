@@ -76,14 +76,16 @@ def test_the_wording_has_one_owner():
 
 
 def test_saved_harness_paths_match_the_table():
-    """Every path the three keyed harnesses took (saved 2026-11-14) is in the table with its true owner."""
+    """Every path the three keyed harnesses took (saved 2026-11-15) is in the table with its true owner."""
     evidence = json.loads(keyed_paths.EVIDENCE.read_text())
     assert sorted(evidence) == sorted(keyed_paths.HARNESSES)
     for harness, counts in evidence.items():
         assert counts, harness
         _check_against_table(counts)
-        # Selection and outcomes are Lean's in every harness (kb-10b); conflicts are still Python's (kb-10c).
+        # Selection and outcomes are Lean's in every harness (kb-10b); so are conflicts (kb-10c): Python's search
+        # only proposes the witness Lean's `soft-conflict` replays, and `check_conflict` is no longer called.
         assert counts["lean soft-selected"] > 0 and counts["python _find_conflict"] > 0, harness
+        assert counts["lean soft-conflict"] > 0 and "python _check_conflict_python" not in counts, harness
         assert "python selected_rules" not in counts and "python completed" not in counts, harness
         assert "lean _check_conflict_lean" not in counts, harness
 
@@ -203,3 +205,20 @@ def test_the_recorder_restores_what_it_patches():
         with keyed_paths.recording():
             raise RuntimeError
     assert (evaluate._Evaluator.__init__, entailment._check_certificate_lean, evaluate._evaluate_lean) == before
+
+
+def test_the_harnesses_conflicts_are_leans_soft_conflict():
+    """kb-10c: `decide_soft_conflict` (the harnesses' conflict call) asks Lean's `soft-conflict` for both answers;
+    Python's search and prover only propose, and `_check_conflict_python` does not run."""
+    from ve.norm_english import parse_english
+    from ve.soft_route import decide_soft_conflict
+    witnessed = parse_english(_soft_env(), "Rule 1. Every act should be done.\n"
+                                           "Rule 2. Every act must be done.\nRule 3. No act may be done.")
+    free = parse_english(_soft_env(), "Rule 1. Every act should be done.\nRule 2. No act may be done.")
+    with keyed_paths.recording() as counts:
+        conflict = decide_soft_conflict(witnessed, model=_case(witnessed.elaborated))
+        freedom = decide_soft_conflict(free, prove=True)
+    assert (conflict.status, conflict.target, freedom.status) == ("CONFLICT", "required->permitted", "CONFLICT-FREE")
+    assert counts["lean soft-conflict"] == 2 and counts["python _find_conflict"] == 1
+    assert "python _check_conflict_python" not in counts and "lean _check_certificate_lean" not in counts
+    _check_against_table(counts)
