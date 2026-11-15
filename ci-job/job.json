@@ -1,0 +1,12 @@
+{
+ "job": "arm-cmp-kb-2a-b-cutback-d68272ce-t781826",
+ "head": "52ca36d82f097bdfb1e04db14e8720649c66bfe1",
+ "argv": [
+  "arm-cmp-kb-2a-b-cutback-d68272ce-t781826",
+  "52ca36d82f097bdfb1e04db14e8720649c66bfe1",
+  "c29d37f087d2d00c39e22a4c7cd3acccb6b1396d",
+  "-",
+  "-",
+  "4"
+ ]
+}
