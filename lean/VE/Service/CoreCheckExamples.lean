@@ -261,6 +261,11 @@ def envWith (ps : List String) : Json := (frontJ.getObjValD "environment").setOb
   "soft-norms@0"]) (frontJ.getObjValD "units") false none false).toOption.isNone
 #guard (VE.Service.Document.environmentOf (envWith ["documents@1", "norms@0", "readings@1", "relational-fol@0",
   "soft-norms@0"]) (frontJ.getObjValD "units") false none true).toOption.isSome
+-- A document without judgments@0 (soft-norms@0 with readings@1) keeps Python's path today: not routed.
+#guard !routed (Json.mkObj [("id", .str "d"), ("document", .str ("---\n" ++ (edit "\"judgments@0\"," "") ++
+  "\n---\n" ++ body))])
+-- The facts are read at the base level: a level-1 symbol (the permission of a regulated predicate) is no fact.
+#guard (src [ruleH]).any fun s => !roundTrips s [.all "assistant" (.unary "x_permitted" (.var 0))]
 -- No front matter: not routed; today's answer.
 #guard !routed (Json.mkObj [("id", .str "d"), ("document", .str "no front matter")])
 -- `check` admits a claim graph unless asked not to (`withGraph`); a graph rooted nowhere is refused.

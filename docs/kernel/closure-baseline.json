@@ -1903,7 +1903,7 @@
   },
   {
    "axioms": [],
-   "lines": 36427,
+   "lines": 36430,
    "modes": [
     "document"
    ],
@@ -2196,7 +2196,7 @@
    },
    "theorems": 9,
    "tier": "candidate",
-   "wrap_lines": 12821,
+   "wrap_lines": 12824,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Lexical": 121,
@@ -2299,7 +2299,7 @@
     "VE.Scope.Readings": 96,
     "VE.Scope.Wire": 94,
     "VE.Semantics": 14,
-    "VE.Service.CoreCheck": 32,
+    "VE.Service.CoreCheck": 35,
     "VE.Service.CoreDocument": 3,
     "VE.Service.Document": 878,
     "VE.Service.ParseDiagnostic": 337,

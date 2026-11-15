@@ -316,7 +316,12 @@ def core_row : Shape :=
           ("id", str), ("kind", constS "slot-admission"),
           ("environment", n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [
             ("language", str), ("profiles", ref "common.json#/$defs/strings"), ("spec_revision", str),
-            ("vocabulary", n [obj])]]),
+            ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"], closed [
+              ("sorts", n [obj, .object [] (some (.bool true))]),
+              ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
+              ("constants", n [obj, .object [] (some (n [obj, .required ["sort", "description"],
+                closed [("sort", str), ("description", str), ("verbalisation", .bool true)]]))]),
+              ("soft", .bool true), ("rights", .bool true), ("acts", .bool true)]])]]),
           ("norms", n [arr, .items (ref "#/$defs/soft_content")]),
           ("facts", n [arr, .items (ref "common.json#/$defs/fol_formula")])]]),
       ("answer", copied "SoftNorms.Run.slotAdmissionAnswer: the kernel's answer to the case, verbatim (carry)" <|
@@ -355,6 +360,6 @@ def file : File where
 -- The document protocol includes every composed-reading field and every existing row, `events_view` (et-5b), and the
 -- core path's row and refusal mark (kb-2a-b). Its rendered fingerprint is fixed with this wire change; changing the
 -- shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 6294539892942463016
+#guard (file.render.toOption.map (hash ·.compress)) == some 15525308337080227148
 
 end ResponseShape.Schemas.Document

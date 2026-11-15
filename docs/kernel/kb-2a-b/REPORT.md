@@ -1,12 +1,12 @@
 # kb-2a-b: the document mode on the core document (build report)
 
-**STOPS for one DRI signature: DELTA.md row 5, trusted Lean growth +268 (K +0, S +48, V +220), above R16's 150
+**STOPS for one DRI signature: DELTA.md row 5, trusted Lean growth +267 (K +0, S +48, V +219), above R16's 150
 lines; requested in `manage-agents/inbox/dri/20261114T185627Z-builder-kb-2a-b-76207.md`.** Everything else is
 built; no status differs (part 4); every Python/Lean difference on the acceptance document has a cause (part 4b).
 
 Code: worktree `ve-kb-2a-b`, branch `feature/kb-2a-b`, base `4a5d3460d3`. What changed: the document mode's entry is
 `VE.Service.CoreCheck.runCaseReported`; documents that reached the refusals of `Document.lean` 1198-1199 or 1207-1208,
-every profile with a lowering row and no senses, are lowered (`VE.Service.CoreDocument`, promoted from the
+every profile with a lowering row, `judgments@0` listed and no senses, are lowered (`VE.Service.CoreDocument`, promoted from the
 experimental tier), admitted by the soft route's new `slot-admission` kind one row per choice, and answered by the
 kernel fold `VE.Kernel.DocumentFold` through `VE.Kernel.shell`; a lowering refusal for a feature with no row keeps
 today's path; Python binds and renders the answer and never falls back for such a document.
@@ -137,14 +137,19 @@ lemmas); only the declared standard axiom allowlist." (/tmp/kb2ab/audit2.log; no
   one. Its theorem states the source part of `runAdmission_sound`'s conclusion (`SourceDecoded`: decoded,
   `WellFormedSoft`, vocabulary and literals) plus `decodeFacts src j = .ok (P, items)` and `SlotWellFormed src.D P`, as
   DESIGN 2.2 words it. The answer is `{id, status, rules, facts}`: no verdict word.
-- **Routing.** The task routes "exactly the documents that today reach" the two refusals. Two narrowings, both from
-  DESIGN 2 ("one path for every document whose features have a lowering") and 5 (norm-defaults leaves the fallback in
-  step C row 2): (a) every profile must have a lowering row and the document no senses (`CoreCheck.routed`), so
-  `norm-defaults@0`, `scope@0`, rights and the like keep today's code; (b) a routed document whose lowering refuses
+- **Routing.** The task routes "exactly the documents that today reach" the two refusals. Three narrowings, from
+  DESIGN 2 ("one path for every document whose features have a lowering"), 2.5 and 5 (norm-defaults leaves the
+  fallback in step C row 2), each keeping a document on the path that answers it today rather than taking its answer
+  away: (a) every profile must have a lowering row and the document no senses, so `norm-defaults@0`, `scope@0`,
+  rights and the like keep today's code; (b) the document lists `judgments@0` (`CoreCheck.routed`): a document without
+  it that reaches 1207-1208 (`soft-norms@0` with `readings@1`) is decided today by Python's fallback, whose document
+  `ve document readings` and the readings queries read, and the core path has no reading query yet (found by the
+  selected run: five tests of `tests/test_readings_s2_document.py` lost their documents); Python's loader refuses every
+  `judgments@0` document, so routing those takes nothing away; (c) a routed document whose lowering refuses
   `UnsupportedLowering` (a feature with no row: a soft reading, couplings, narrowings, a claim graph, completions)
-  keeps today's answer (`noRow`). (b) was found on the FSF D1 translation (292 units, soft default readings): without
-  it Lean refused the document that Python decided before. With both, the task's four fixtures and FSF D1 keep every
-  status. Neither refusal text could be deleted: both still fire for the documents (a) and (b) keep on today's path.
+  keeps today's answer (`noRow`; found on the FSF D1 translation, 292 units with soft default readings, before (b)
+  existed). The task's four fixtures and FSF D1 keep every status. Neither refusal text could be deleted: both still
+  fire for the documents (a) to (c) keep on today's path.
 - **The judgment condition reads a soft rule's exception conditions** (`CoreCheck.exceptionFormulas`): DESIGN 2.3 says
   OPEN "if a statement of the unit reads a judgment term", and a rule reads its exception; `Judgments.softContent`
   reads only the guard and carve-outs (pc-1 review F1). `Judgments.status`'s own refusals run unchanged in the
@@ -201,7 +206,7 @@ one):
 |---|---:|---:|
 | `kernel_lines` | 10,023 | 10,041 (+18) |
 | softNorms path: spec / wrap / lines | 5,368 / 35 / 5,376 | 5,386 / 35 / 5,394 |
-| `document` path: spec / wrap / lines | 35,023 / 12,826 / 35,849 | 35,567 / 12,816 / 36,420 |
+| `document` path: spec / wrap / lines | 35,023 / 12,826 / 35,849 | 35,569 / 12,824 / 36,430 |
 | verdict writers outside the kernel (`verdict_writers`) | 56 | 56 |
 | keyed lines (frozen keys) | 16,777 | 16,795 |
 
@@ -237,7 +242,7 @@ TRUSTMUT_PLACEHOLDER
 - `uv run python tools/kernel_closure.py --check docs/kernel/closure-baseline.json`: "PASS: kernel 10041 <= 10041",
   "PASS: verdict writers outside the kernel 56 <= 56".
 - `uv run python tools/trust_map.py --check`: exit 1 only on the budget (row 5, awaiting the DRI's signature): "against
-  4a5d3460d36c: K +0, S +48, D +86, G +283, tied +80, unclassified +0, trusted +268".
+  4a5d3460d36c: K +0, S +48, D +86, G +282, tied +80, unclassified +0, trusted +267".
 - Tests while iterating: `tests/test_kb2a_document.py` (10 passed), `tests/test_judgments_chain.py` (46 passed),
   `tests/test_kernel_closure.py` (after fixes), `tests/test_relay_binding_inventory.py::test_every_schema_field_is_classified`
   (19 passed).
@@ -271,8 +276,9 @@ TRUSTMUT_PLACEHOLDER
 
 ## Notes for the DRI
 
-- Part (4)'s routing is narrower than "exactly the documents that reach the refusals" in two ways (Decisions, above);
-  both keep a document Python decided on Python's path rather than refuse it.
+- Part (4)'s routing is narrower than "exactly the documents that reach the refusals" in three ways (Decisions,
+  above); each keeps a document on the path that answers it today. The soft-norms-with-readings documents without
+  `judgments@0` move with a step C row that gives the core path the readings queries.
 - `CoreCheck.lean` is 419 lines (the task said at most 300; standing override 1): about 150 are its theorems.
 - The kernel fold is not in `kernel_lines` while the `document` path is a candidate; it enters when the architect seat
   makes the path a kernel path.
