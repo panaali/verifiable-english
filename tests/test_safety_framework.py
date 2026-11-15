@@ -55,9 +55,6 @@ RECORDED_DISAGREEMENTS = {
     # Key cells both uc-auditors found wrong (PLAN 12 item 23, fsf-fidelity-fix): they name RS9 = same, a reading
     # the text excludes (footnote 5), so they describe no admissible choice; the section-12 answer is NONE.
     "C3", "C-doc",
-    # src:4's TCL proximity commitment (PLAN 12 item 27, safety-framework-proximity-tcl; pinned beside the entry in
-    # tests/test_fsf_proximity_tcl.py).
-    "K2-L1/PROXIMITY", "K2-L5/PROXIMITY", "G3",
 }
 # The rules only an excluded reading selected (PLAN 12 "Excluded readings").
 EXCLUDED_RULES = {"f10-dm-same", "f10-rel-same", "f15-same"}
@@ -89,7 +86,10 @@ def test_every_rule_and_premise_parses_with_one_reading():
 def test_results_agree_with_the_key_except_the_recorded_findings():
     rows = RESULTS["comparison"]
     assert len(rows) == 262
-    assert {r["id"] for r in rows if not r["agree"]} == RECORDED_DISAGREEMENTS
+    # With the findings, src:4's TCL proximity commitment (PLAN 12 item 27, safety-framework-proximity-tcl; the moves
+    # are pinned beside the entry in tests/test_fsf_proximity_tcl.py MOVES).
+    proximity_tcl = {"K2-L1/PROXIMITY", "K2-L5/PROXIMITY", "G3"}
+    assert {r["id"] for r in rows if not r["agree"]} == RECORDED_DISAGREEMENTS | proximity_tcl
     assert sum(r["agree"] for r in rows) == 257
     # The section-12 deviation entries (key untouched): C1, C3 and C-doc are NONE, and the run agrees with each.
     deviations = {r["id"]: r["deviation"] for r in rows if "deviation" in r}
