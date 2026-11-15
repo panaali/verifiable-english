@@ -25,7 +25,7 @@ import pf_vocabulary as V  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve.norms import check_conflict  # noqa: E402
+from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
 
 
@@ -604,7 +604,7 @@ def w1(choice, include, case):
     doc = document(names, None, include)
     found = atoms(case, choice)
     check_premises(doc, found, choice)
-    return check_conflict(doc.elaborated, model=model(doc, found), prove=True).status
+    return decide_soft_conflict(doc, model=model(doc, found), prove=True).status  # kb-10c: Lean's soft route
 
 
 @lru_cache(maxsize=None)
