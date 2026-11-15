@@ -1,3 +1,4 @@
+- `tests/test_risk_english.py` — Fixture k19 (risk.md 2.1 to 2.3, 8.2): the gate of the risk English surface.
 - `tests/test_risk_every_diagnostic.py` — Every diagnostic of risk.md 6 from the Lean route on a hand-written input (docs/spec/risk.md 8.3).
 - `tests/test_risk_fixtures.py` — risk@0 fixtures of docs/spec/risk.md 8.1 checked against the expectations of 8.2 on the Lean route.
 - `tests/test_risk_generated_policies.py` — risk@0 on 1,000 generated policies (docs/spec/risk.md 8.3, second item).
@@ -79,4 +80,3 @@
 - `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
 - `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
 - `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
-- `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
