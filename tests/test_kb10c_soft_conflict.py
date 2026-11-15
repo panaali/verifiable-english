@@ -135,3 +135,20 @@ def test_a_repeated_request_is_answered_once_and_a_different_one_is_asked(sent):
              "relations": {"v": [["a"]], "w": [["a"]]}}
     assert soft_route.decide_soft_conflict(strict, model=other).status == "CONFLICT" and len(sent) == 3
     assert [set(case) for case in sent] == [{"packages"}, {"witness"}, {"witness"}]
+
+
+def test_kept_answer_includes_the_rules_with_the_same_environment_and_case(sent):
+    """A certificate accepted for one soft source cannot supply another source's kept answer."""
+    first = delta_document()
+    second = SoftNormDocument(SoftEnvironment(env()), [should("a", "x_required", True)])
+    assert first.env.to_dict() == second.env.to_dict()
+    assert first.document_hash != second.document_hash
+    assert soft_route.decide_soft_conflict(first, prove=True).status == "CONFLICT-FREE"
+    [case] = sent
+    assert set(case) == {"packages"}
+    assert soft_route._kept_conflict(first, **case)["verdict"] == "CONFLICT-FREE"
+    assert len(sent) == 1
+    other = soft_route._kept_conflict(second, **case)
+    assert other["verdict"] == "UNKNOWN"
+    assert other["detail"].startswith("missing certificate for ")
+    assert len(sent) == 2
