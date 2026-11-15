@@ -732,12 +732,12 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
 
 
 /-- `normsEnvironment_flag_not_defined` with or without the decoder's `acts@0` reading. -/
-theorem normsEnvironment_flag_not_defined_joined (environment : Json) (acts joined : Bool)
-    (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts joined = .ok ne) :
+theorem normsEnvironment_flag_not_defined_joined (H : VE.Norms.Wire.ActsHook) (environment : Json)
+    (acts joined : Bool) (ne : VE.Norms.Wire.NormsEnvironment)
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith H environment true acts joined = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name := by
-  unfold VE.Norms.Wire.decodeNormsEnvironment at h
-  extract_lets ps at h
+  unfold VE.Norms.Wire.decodeNormsEnvironmentWith at h
+  obtain ⟨ps, _, h⟩ := bind_ok h
   obtain ⟨e, _, h⟩ := bind_ok h
   extract_lets vocab jpX jpY at h
   split at h
@@ -766,20 +766,20 @@ theorem normsEnvironment_flag_not_defined_joined (environment : Json) (acts join
   obtain rfl := Except.ok.inj h
   exact decodeVocabulary_flag_not_defined _ _ rv hrv
 
-theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
+theorem normsEnvironment_flag_not_defined_in (H : VE.Norms.Wire.ActsHook) (environment : Json) (acts : Bool)
     (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith H environment true acts = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
-  normsEnvironment_flag_not_defined_joined environment acts false ne h
+  normsEnvironment_flag_not_defined_joined H environment acts false ne h
 
 theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment = .ok ne) :
+    (h : VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.plain environment = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
-  normsEnvironment_flag_not_defined_in environment false ne h
+  normsEnvironment_flag_not_defined_in VE.Norms.Wire.ActsHook.plain environment false ne h
 
 /-- Rejection (a) for a decoded norm source: no flag names one of its definitions. -/
-theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) (src : VE.Norms.Wire.Source)
-    (h : VE.Norms.Wire.decodeSource environment norms flags = .ok src) :
+theorem decodeSource_flag_not_defined (H : VE.Norms.Wire.ActsHook) (environment norms : Json) (flags : Bool)
+    (src : VE.Norms.Wire.Source) (h : VE.Norms.Wire.decodeSource H environment norms flags = .ok src) :
     ∀ f ∈ src.ne.rv.flags, ∀ d ∈ src.D.T.definitions, f.name ≠ d.name := by
   unfold VE.Norms.Wire.decodeSource at h
   obtain ⟨ne, hne, h⟩ := bind_ok h
@@ -808,7 +808,7 @@ theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) 
   · cases h
     intro f hf d hd
     obtain ⟨d', hd', rfl⟩ := List.mem_map.mp hd
-    exact normsEnvironment_flag_not_defined_joined _ _ _ ne hne f hf d' hd'
+    exact normsEnvironment_flag_not_defined_joined _ _ _ _ ne hne f hf d' hd'
 
 /-! ## Rejection (b) and the empty-target case -/
 
@@ -977,11 +977,11 @@ theorem norms_wire_conflict_exclusiveIn (dec : Wire.SourceDecoder) (hdec : ∀ e
 /-- `decodeFlagged` keeps a flag from naming a definition. -/
 theorem decodeFlagged_flag_not_defined (e n : Json) (s : Wire.Source) (h : Wire.decodeFlagged e n = .ok s) :
     ∀ f ∈ s.ne.rv.flags, ∀ d ∈ s.D.T.definitions, f.name ≠ d.name :=
-  decodeSource_flag_not_defined e n true s h
+  decodeSource_flag_not_defined Wire.ActsHook.plain e n true s h
 
 theorem norms_flagged_conflict_free (j : Json) (r : ConflictReplay)
     (h : replayConflict j = .ok r) (hv : r.conflictFree = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
     ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B (flagPremises r.src) → ConflictFree r.src.D B :=
   norms_flagged_conflict_freeIn.{u} Wire.decodeFlagged decodeFlagged_flag_not_defined j r h hv
 
@@ -997,7 +997,7 @@ theorem norms_wire_conflict_free (j answer : Json) (h : Run.runCase j = .ok answ
     (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
     (hverdict : answer.getObjValD "verdict" = .str "CONFLICT-FREE") :
     ∃ src : Wire.Source,
-      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
       ∀ B : VE.Structure.{u}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B :=
   norms_wire_conflict_freeIn.{u} Wire.decodeFlagged decodeFlagged_flag_not_defined j answer h hk hverdict
 
@@ -1005,7 +1005,7 @@ theorem norms_wire_conflict_refuted (j answer : Json) (h : Run.runCase j = .ok a
     (hk : VE.Route.Run.caseKind j = .ok "norms-conflict")
     (hverdict : answer.getObjValD "verdict" = .str "CONFLICT") :
     ∃ src : Wire.Source,
-      Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+      Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
       ¬ ∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B :=
   norms_wire_conflict_refutedIn Wire.decodeFlagged j answer h hk hverdict
 
