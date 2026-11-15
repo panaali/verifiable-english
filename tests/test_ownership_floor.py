@@ -292,3 +292,7 @@ def test_a_decision_function_that_ran_fails_criterion_one_first():
     verdict = _judge(record)
     assert verdict["criterion"] == 1 and verdict["reason"] == "ve/norms.py:NormDocument.selection"
     assert verdict["criteria"]["1"]["first_callers"] == {"ve/norms.py:NormDocument.selection": "ve/x.py:f"}
+
+
+def test_ownership_md_is_generated_from_ownership_json():
+    assert (KERNEL / "ownership.md").read_text() == OT.markdown(ownership())

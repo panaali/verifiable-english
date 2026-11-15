@@ -145,11 +145,11 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 85 modules — -
 - [tests/ part 5](tests--part-5.md) — 87 modules — -
 - [tests/ part 6](tests--part-6.md) — 79 modules — -
-- [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 67 modules — -
+- [tests/ part 7](tests--part-7.md) — 81 modules — -
+- [tests/ part 8](tests--part-8.md) — 70 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
-- [tools/ part 1](tools--part-1.md) — 96 modules — -
-- [tools/ part 2](tools--part-2.md) — 22 modules — -
+- [tools/ part 1](tools--part-1.md) — 95 modules — -
+- [tools/ part 2](tools--part-2.md) — 24 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 4 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.

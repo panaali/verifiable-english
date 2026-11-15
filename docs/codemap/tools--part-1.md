@@ -67,6 +67,7 @@
 - `tools/mutation_check.py` — Prove excluded tests stay green for one detectable fault per layer.
 - `tools/nested_pytest.py` — The one builder of a pytest command that another process runs: a test, the gate, or a tool.
 - `tools/numbers_phrases.py` — Write the shared comparison phrase table from its Lean owner.
+- `tools/ownership_trace.py` — Per-answer Lean ownership trace of the five frozen keys (kb-10d; test: manage-agents reviews/lean-ownership-baseline-20261112.md section 2; method of reviews/l…
 - `tools/path_expressions.py` — The path a Python expression builds, as far as its own file says: the one evaluator of path expressions.
 - `tools/platform_contract.py` — The x86 platform contract suite (test-architecture plan, rank 2, section 3.3).
 - `tools/presupposition_table.py` — Write or check `lean/VE/Presupposition/Table.lean`, PS-E1's candidate table as Lean's `candidateTable`.
@@ -92,5 +93,3 @@
 - `tools/response_schemas.py` — Write or check the client's response schemas from their one source, the Lean shapes.
 - `tools/run_cache.py` — A cache for a nested pytest run whose output is a function of what it reads: `cached_run`.
 - `tools/run_order.py` — The order an agent's run takes its test units in, and what it remembers of the last run.
-- `tools/rust_build.py` — Reproducible Rust checker builds: the same source gives the same binary in any checkout.
-- `tools/rust_output_diff.py` — Rust output differential (bundle D of docs/ARCHITECTURE-LAYERS-PLAN2.md).

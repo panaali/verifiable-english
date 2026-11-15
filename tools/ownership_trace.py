@@ -345,13 +345,15 @@ class Eligibility(Adapter):
                 "deviation": None}
 
     def run_harness(self):
-        """`run.py --no-write` in this process (its process pools replaced by a map), compared with the committed
-        results.json except `seconds`, a timing."""
+        """`run.py --no-write --no-mutants` in this process (its process pool replaced by a map), compared with the
+        committed results.json except `seconds`, a timing, and `mutants`: the 32 mutants rerun every profile and
+        are a check of the harness, not keyed answers (in one profiled process they take hours)."""
         self.mod.pool_map = lambda function, items, workers: list(map(function, items))
-        results = json.loads(json.dumps(self.mod.main(["--no-write"]), sort_keys=True))
+        results = json.loads(json.dumps(self.mod.main(["--no-write", "--no-mutants"]), sort_keys=True))
         stored = self.stored()
-        results.pop("seconds", None)
-        stored.pop("seconds", None)
+        for field in ("seconds", "mutants"):
+            results.pop(field, None)
+            stored.pop(field, None)
         return [k for k in sorted(set(results) | set(stored)) if results.get(k) != stored.get(k)]
 
     def stored_value(self, item):
@@ -641,8 +643,7 @@ def trace(key: str, unit: str, out: Path) -> dict:
         else:
             judged[item] = {"family": adapter.family(item), "key": None, "value": None, "agrees": False,
                             "deviation": None, "reproduces": False}
-    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    record = {"key": key, "unit": unit, "error": error, "items": judged, "commit": head, "inputs": input_ids(),
+    record = {"key": key, "unit": unit, "error": error, "items": judged, "inputs": input_ids(),
               "functions": sorted([list(v) for v in recorder.functions.values()]),
               "lean_calls": sorted(recorder.calls.values(), key=lambda c: _canonical(c))}
     out.write_text(json.dumps(record, indent=1, sort_keys=True, default=str) + "\n")
@@ -726,7 +727,8 @@ def markdown(data: dict) -> str:
              "a Lean answer of a kind whose theorem tools/kernel-paths.json lists on a kernel path (not `uncovered`, "
              "`nonverdict` or untied), and (3) the value equals the frozen key or PLAN.md section 12 records the "
              "difference. The counts are per answer; quote them, never a family tally.", "",
-             f"Traced at {', '.join(c[:10] for c in data['commits'])}.", "",
+             f"Traced on the inputs whose git blob ids ownership.json records"
+             + (f" (at {', '.join(c[:10] for c in data['commits'])})." if data["commits"] else "."), "",
              "| key | items | passes | fails 1 | fails 2 | fails 3 |", "|---|---:|---:|---:|---:|---:|"]
     for key, t in data["totals"].items():
         lines.append(f"| {key} | {t['items']} | **{t['pass']}** | {t['fail_criterion_1']} | {t['fail_criterion_2']} "
@@ -749,9 +751,10 @@ def markdown(data: dict) -> str:
 
 
 def write_verdict(traces: Path, out: Path) -> dict:
-    data = verdict(traces)
-    (out / "ownership.json").write_text(json.dumps(data, indent=1, sort_keys=True, default=str) + "\n")
-    (out / "ownership.md").write_text(markdown(data))
+    text = json.dumps(verdict(traces), indent=1, sort_keys=True, default=str) + "\n"
+    data = json.loads(text)
+    (out / "ownership.json").write_text(text)
+    (out / "ownership.md").write_text(markdown(data))  # from the JSON as written (its sorted order)
     return data
 
 
