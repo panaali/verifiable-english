@@ -312,7 +312,7 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
 - Part (4)'s routing is narrower than "exactly the documents that reach the refusals" in three ways (Decisions,
   above); each keeps a document on the path that answers it today. The soft-norms-with-readings documents without
   `judgments@0` move with a step C row that gives the core path the readings queries.
-- `CoreCheck.lean` is 419 lines (the task said at most 300; standing override 1): about 150 are its theorems.
+- `CoreCheck.lean` is 421 lines (the task said at most 300; standing override 1): about 150 are its theorems.
 - The kernel fold is not in `kernel_lines` while the `document` path is a candidate; it enters when the architect seat
   makes the path a kernel path.
 - kb-2a's own ties pass (its FOLLOW-UPS.md) is still open: the module was promoted, not tied.
