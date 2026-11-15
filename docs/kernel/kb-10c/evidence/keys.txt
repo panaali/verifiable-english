@@ -1,0 +1,18 @@
+# kb-10c: the two keys that do not reach ve.soft_route, run on the head (commit 8439138c4 product code), 2026-11-15 ~05:05Z
+$ uv run python usecases/agent-policy/check.py base   -> exit 0
+  "verdict_disagreements": {},
+  "rule_disagreements": {},
+  "outcome_disagreements": {},
+  "rule_25_disagreements": {},
+  "finite_model_disagreements": {},
+  "reference_disagreements": {}
+   "agree": 87,
+seconds 131.1
+$ uv run python usecases/eligibility/run.py --no-write --no-mutants   -> exit 0
+12: "correct_answered": 269,
+13: "disagreements": [],
+18:   "correct": 226,
+19:   "scored": 226
+24:   "correct": 131,
+25:   "scored": 131
+$ grep -rn soft_route usecases/agent-policy usecases/eligibility --include=*.py   -> 0 matches

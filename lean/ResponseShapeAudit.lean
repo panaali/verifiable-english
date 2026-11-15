@@ -11,6 +11,7 @@ import ResponseShape.Encoders.ClausesElaborate
 import ResponseShape.Encoders.Command
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
+import ResponseShape.Encoders.CoreCheck
 import ResponseShape.Encoders.Discourse
 import ResponseShape.Encoders.Document
 import ResponseShape.Encoders.English
@@ -154,6 +155,14 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Conformance.evaluationCase_fits
 #print axioms ResponseShape.Encoders.Conformance.orderCase_fits
 #print axioms ResponseShape.Encoders.Conformance.order_fits
+#print axioms ResponseShape.Encoders.CoreCheck.answer_fits
+#print axioms ResponseShape.Encoders.CoreCheck.choices_fits
+#print axioms ResponseShape.Encoders.CoreCheck.fold_eq
+#print axioms ResponseShape.Encoders.CoreCheck.fold_get
+#print axioms ResponseShape.Encoders.CoreCheck.runCaseReported_fits
+#print axioms ResponseShape.Encoders.CoreCheck.statement_fits
+#print axioms ResponseShape.Encoders.CoreCheck.statements_fits
+#print axioms ResponseShape.Encoders.CoreCheck.view_fits
 #print axioms ResponseShape.Encoders.Discourse.admit1_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_kinds
 #print axioms ResponseShape.Encoders.Discourse.admit2_status
