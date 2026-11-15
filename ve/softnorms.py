@@ -426,8 +426,15 @@ class SoftenedNormDocument(NormDocument):
             else:
                 documents.move_to_end(state["identity"])
             if facts is not None:
-                facts = facts_wire(facts)
-                key += "\x00facts:" + json.dumps(facts, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                held = state.setdefault("facts", {}).get(id(facts))
+                if held is not None and held[0] is facts:
+                    _, suffix, facts = held
+                else:
+                    given, facts = facts, facts_wire(facts)
+                    suffix = "\x00facts:" + json.dumps(facts, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                    if type(given) is tuple:  # immutable: held so that its id is not reused
+                        state["facts"][id(given)] = (given, suffix, facts)
+                key += suffix
             # "whole": None until the pair's first question, then whether Lean answered its whole query list.
             pair = pairs.setdefault(key, {"lock": threading.Lock(), "rows": {}, "whole": None, "predicates": set(),
                                           "flags": None, "facts": facts})
