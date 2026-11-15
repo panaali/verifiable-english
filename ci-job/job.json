@@ -1,0 +1,15 @@
+{
+ "job": "armsh-cand-anthropic-rsp-facts-repair-71be37db-t724115-cold",
+ "head": "a3e20b9d0a5b5670ba057b10c0e694cdb341da31",
+ "argv": [
+  "armsh-cand-anthropic-rsp-facts-repair-71be37db-t724115-cold",
+  "a3e20b9d0a5b5670ba057b10c0e694cdb341da31",
+  "aeb6ad96ff3c00acf6f34b2c8a6739a3b877cce8",
+  "-",
+  "-",
+  "4",
+  "-",
+  "-"
+ ],
+ "shadow_of": "armsh-cand-anthropic-rsp-facts-repair-71be37db-t724115"
+}
