@@ -302,6 +302,8 @@
     "VE.SoftNorms.Run.soft_wire_elaborate",
     "VE.SoftNorms.Run.soft_wire_selected",
     "VE.SoftNorms.Run.soft_wire_selected_prepared",
+    "VE.SoftNorms.Run.soft_wire_selected_facts",
+    "VE.SoftNorms.Run.selected_model_admissible",
     "VE.SoftNorms.Run.slot_wire_certificate",
     "VE.SoftNorms.Run.slot_wire_conflict",
     "VE.SoftNorms.Run.soft_wire_conflict_free",
