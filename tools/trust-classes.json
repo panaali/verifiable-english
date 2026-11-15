@@ -22083,6 +22083,10 @@
     "VE/SoftNorms/Selected.lean": {
       "S": [
         "VE.SoftNorms.Run.SelectedQuery",
+        "VE.SoftNorms.Run.coherentAt",
+        "VE.SoftNorms.Run.factsAt",
+        "VE.SoftNorms.Run.factsFields",
+        "VE.SoftNorms.Run.factsSent",
         "VE.SoftNorms.Run.fullOver",
         "VE.SoftNorms.Run.outcomeAt",
         "VE.SoftNorms.Run.selectedAt"
@@ -22143,20 +22147,35 @@
     "VE/SoftNorms/SelectedSound.lean": {
       "S": [
         "VE.SoftNorms.Run.QueryDecoded",
-        "VE.SoftNorms.Run.SelectedAnswer"
+        "VE.SoftNorms.Run.SelectedAnswer",
+        "VE.SoftNorms.Run.SelectedAnswerWith"
       ]
     },
     "VE/SoftNorms/SelectedExamples.lean": {
       "T": [
         "VE.SoftNorms.SelectedExamples.answerOf",
+        "VE.SoftNorms.SelectedExamples.answerOfP",
+        "VE.SoftNorms.SelectedExamples.atA",
+        "VE.SoftNorms.SelectedExamples.collidingModel",
+        "VE.SoftNorms.SelectedExamples.collidingText",
+        "VE.SoftNorms.SelectedExamples.decisionFact",
         "VE.SoftNorms.SelectedExamples.environmentText",
+        "VE.SoftNorms.SelectedExamples.exceptionText",
+        "VE.SoftNorms.SelectedExamples.factFalse",
+        "VE.SoftNorms.SelectedExamples.factTrue",
+        "VE.SoftNorms.SelectedExamples.factsCase",
+        "VE.SoftNorms.SelectedExamples.firstFails",
+        "VE.SoftNorms.SelectedExamples.lastFails",
         "VE.SoftNorms.SelectedExamples.modelText",
+        "VE.SoftNorms.SelectedExamples.noneFails",
         "VE.SoftNorms.SelectedExamples.normsText",
         "VE.SoftNorms.SelectedExamples.parsed",
         "VE.SoftNorms.SelectedExamples.queriesText",
         "VE.SoftNorms.SelectedExamples.resultsText",
         "VE.SoftNorms.SelectedExamples.selectedCase",
         "VE.SoftNorms.SelectedExamples.specAt",
+        "VE.SoftNorms.SelectedExamples.threeModel",
+        "VE.SoftNorms.SelectedExamples.threeText",
         "VE.SoftNorms.SelectedExamples.twoStrictModel",
         "VE.SoftNorms.SelectedExamples.twoStrictText"
       ]
@@ -22165,11 +22184,13 @@
       "T": [
         "ResponseShape.SoftSelectedExamples.accepts",
         "ResponseShape.SoftSelectedExamples.allow",
+        "ResponseShape.SoftSelectedExamples.colliding",
         "ResponseShape.SoftSelectedExamples.deny",
         "ResponseShape.SoftSelectedExamples.refused",
         "ResponseShape.SoftSelectedExamples.run",
         "ResponseShape.SoftSelectedExamples.setResult",
-        "ResponseShape.SoftSelectedExamples.violating"
+        "ResponseShape.SoftSelectedExamples.violating",
+        "ResponseShape.SoftSelectedExamples.withFacts"
       ]
     },
     "VE/Kernel/Carry.lean": {
@@ -22199,9 +22220,15 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.vocabularyIn",
+          "name": "VE.SoftNorms.Run.backgroundIn",
           "tied": [
-            "VE.SoftNorms.Run.vocabularyIn_eq"
+            "VE.SoftNorms.Run.backgroundIn_valid"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.cohPremisesIn",
+          "tied": [
+            "VE.SoftNorms.Run.cohPremisesIn_eq"
           ]
         },
         {
@@ -22217,9 +22244,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.backgroundIn",
+          "name": "VE.SoftNorms.Run.prepare",
           "tied": [
-            "VE.SoftNorms.Run.backgroundIn_valid"
+            "VE.SoftNorms.Run.prepare_ok"
           ]
         },
         {
@@ -22229,9 +22256,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.prepare",
+          "name": "VE.SoftNorms.Run.runCaseReportedP",
           "tied": [
-            "VE.SoftNorms.Run.prepare_ok"
+            "VE.SoftNorms.Run.runCaseReportedP_eq"
           ]
         },
         {
@@ -22241,9 +22268,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.runCaseReportedP",
+          "name": "VE.SoftNorms.Run.vocabularyIn",
           "tied": [
-            "VE.SoftNorms.Run.runCaseReportedP_eq"
+            "VE.SoftNorms.Run.vocabularyIn_eq"
           ]
         }
       ],
@@ -22460,6 +22487,7 @@
             "VE.Compose.SlotWire.decodeFacts_ok"
           ]
         },
+        "VE.Compose.SlotWire.decodeFactsIn",
         {
           "name": "VE.Compose.SlotWire.decodeSlotPackage",
           "tied": [
