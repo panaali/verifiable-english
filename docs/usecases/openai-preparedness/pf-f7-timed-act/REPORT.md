@@ -406,3 +406,13 @@ quote-hashes.json, accounting.json, lexicon-report.json, answers-at-merge-base.j
 13. Test-removed trailers: N.A., no test removed or renamed.
 14. Both directions: PASS. f16-sag-recommend has no `covered` (and f7's blocks keep it: `test_f4_security_reads_no_coverage_condition`); f16-without keeps its guard (`test_f16_without_keeps_its_guard_until_n2_is_ruled`); the CYB-H rules keep the shared act (`test_bio_h_misuse_bullet_has_its_own_timed_act`).
 15. No overclaim: PASS ("every answer": the moved test; "unchanged" exposure: the empty diff of the two outputs). No silent cut: B4 is stopped by DRI ruling. New checks can fail: S1 to S8. Limits: N.A.
+
+## Selected run (final, on committed code)
+
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 26916f7349 --run` on 6c81e2f4a7 (tree clean): exit 0.
+Fast stage passed in 131 s; GitHub Actions run pf-f7-timed-act-6c81e2f4-t750585: SHARD 1/3 17 units 17 passed, SHARD
+2/3 16 units 16 passed, SHARD 3/3 17 units 17 passed (log /tmp/pf7-select-run2.log). The first run, on 9be7968419, failed
+one test, `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`: the
+committed lexicon report still had PF's old environment lexicon. 6c81e2f4a7 regenerated that report with
+conformance/english_lean_lexicon.py, and the test then passed alone (`uv run pytest -q <id>`: 1 passed). Nothing is
+committed after this run except this section.
