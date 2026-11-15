@@ -1640,10 +1640,10 @@
   }
  ],
  "cost": {
-  "case_models": 300,
+  "case_models": 315,
   "cases": 85,
   "documents_built": 87,
-  "premises": 39,
+  "premises": 35,
   "prover_calls": 1732,
   "rule_candidates": 44
  },
@@ -7990,18 +7990,22 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=Ds,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
@@ -8066,18 +8070,22 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=Ds,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
@@ -8146,25 +8154,40 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds"
      ]
     },
     "RS3=Ds,RS3force=strict": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds-strict"
      ]
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "premises": "model",
    "true": [
     {
@@ -8243,25 +8266,40 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds"
      ]
     },
     "RS3=Ds,RS3force=strict": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds-strict"
      ]
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "premises": "model",
    "true": [
     {
@@ -8340,25 +8378,40 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds"
      ]
     },
     "RS3=Ds,RS3force=strict": {
      "holds": true,
+     "measures": [
+      "rand_security_level_2",
+      "security_level_2_plus",
+      "sl2_plus_additional_measures"
+     ],
      "rules": [
       "f16-ds-strict"
      ]
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "premises": "model",
    "true": [
     {
@@ -8442,18 +8495,22 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=Ds,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
@@ -8522,25 +8579,36 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": true,
+     "measures": [
+      "security_level_3"
+     ],
      "rules": [
       "f16-ds"
      ]
     },
     "RS3=Ds,RS3force=strict": {
      "holds": true,
+     "measures": [
+      "security_level_3"
+     ],
      "rules": [
       "f16-ds-strict"
      ]
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "premises": "model",
    "true": [
     {
@@ -8619,25 +8687,36 @@
    "details": {
     "RS3=Ds,RS3force=default": {
      "holds": true,
+     "measures": [
+      "security_level_4"
+     ],
      "rules": [
       "f16-ds"
      ]
     },
     "RS3=Ds,RS3force=strict": {
      "holds": true,
+     "measures": [
+      "security_level_4"
+     ],
      "rules": [
       "f16-ds-strict"
      ]
     },
     "RS3=F,RS3force=default": {
      "holds": false,
+     "measures": [],
      "rules": []
     },
     "RS3=F,RS3force=strict": {
      "holds": false,
+     "measures": [],
      "rules": []
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "premises": "model",
    "true": [
     {
@@ -8722,6 +8801,9 @@
      "w1_without_premises": "CONFLICT-FREE"
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "true": []
   },
   "C2": {
@@ -8847,6 +8929,9 @@
      "status": "CONFLICT-FREE"
     }
    },
+   "own_premises": [
+    "measures-sl2plus"
+   ],
    "true": []
   },
   "C5": {
@@ -8923,13 +9008,57 @@
    ]
   },
   "G3": {
-   "cone": [],
-   "details": {
-    "-": {
-     "holds": true,
-     "rules": []
+   "alternatives": {
+    "G3-APPROACH-L1": {
+     "cone": [],
+     "details": {
+      "-": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {}
+     ]
+    },
+    "G3-APPROACH-L5": {
+     "cone": [],
+     "details": {
+      "-": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {}
+     ]
+    },
+    "G3-REACH-L1": {
+     "cone": [],
+     "details": {
+      "-": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {}
+     ]
+    },
+    "G3-REACH-L5": {
+     "cone": [],
+     "details": {
+      "-": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {}
+     ]
     }
    },
+   "cone": [],
    "premises": "model",
    "true": [
     {}
@@ -9099,27 +9228,173 @@
    "premises": "model"
   },
   "G7": {
-   "cone": [
-    "RS4aim"
-   ],
-   "details": {
-    "RS4aim=default": {
-     "holds": true,
-     "rules": []
+   "alternatives": {
+    "G7-CCL-L2": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
     },
-    "RS4aim=intent": {
-     "holds": true,
-     "rules": []
+    "G7-CCL-L3": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
+    },
+    "G7-CCL-L4": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
+    },
+    "G7-CCL-L6": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
+    },
+    "G7-CCL-L7": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
+    },
+    "G7-TCL-L1": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
+    },
+    "G7-TCL-L5": {
+     "cone": [
+      "RS4aim"
+     ],
+     "details": {
+      "RS4aim=default": {
+       "holds": true,
+       "rules": []
+      },
+      "RS4aim=intent": {
+       "holds": true,
+       "rules": []
+      }
+     },
+     "true": [
+      {
+       "RS4aim": "default"
+      },
+      {
+       "RS4aim": "intent"
+      }
+     ]
     }
    },
+   "cone": [],
    "premises": "model",
    "true": [
-    {
-     "RS4aim": "default"
-    },
-    {
-     "RS4aim": "intent"
-    }
+    {}
    ]
   },
   "G8": {
@@ -9134,31 +9409,207 @@
   "G9": {
    "parts": {
     "FORBIDS": {
-     "cone": [
-      "RS2"
-     ],
-     "details": {
-      "RS2=P": {
-       "holds": true,
-       "rules": [
-        "f12-p"
+     "alternatives": {
+      "G9-TCCL-L1": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f12-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
        ]
       },
-      "RS2=U": {
-       "holds": true,
-       "rules": [
-        "f12-u",
-        "f13-u"
+      "G9-TCCL-L2": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f12-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
+       ]
+      },
+      "G9-TCCL-L3": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f12-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
+       ]
+      },
+      "G9-TCCL-L4": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f12-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
+       ]
+      },
+      "G9-TCCL-L5": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f13-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
+       ]
+      },
+      "G9-TCCL-L6": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f13-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
+       ]
+      },
+      "G9-TCCL-L7": {
+       "cone": [
+        "RS2"
+       ],
+       "details": {
+        "RS2=P": {
+         "holds": true,
+         "rules": [
+          "f13-p"
+         ]
+        },
+        "RS2=U": {
+         "holds": true,
+         "rules": [
+          "f12-u",
+          "f13-u"
+         ]
+        }
+       },
+       "true": [
+        {
+         "RS2": "P"
+        },
+        {
+         "RS2": "U"
+        }
        ]
       }
      },
+     "cone": [],
      "true": [
-      {
-       "RS2": "P"
-      },
-      {
-       "RS2": "U"
-      }
+      {}
      ]
     },
     "FORBIDS@G9-L0": {
@@ -10282,22 +10733,34 @@
     "details": {
      "RS3=Ds,RS3force=default": {
       "holds": true,
+      "measures": [
+       "rand_security_level_2",
+       "security_level_2_plus",
+       "sl2_plus_additional_measures"
+      ],
       "rules": [
        "f16-ds"
       ]
      },
      "RS3=Ds,RS3force=strict": {
       "holds": true,
+      "measures": [
+       "rand_security_level_2",
+       "security_level_2_plus",
+       "sl2_plus_additional_measures"
+      ],
       "rules": [
        "f16-ds-n2"
       ]
      },
      "RS3=F,RS3force=default": {
       "holds": false,
+      "measures": [],
       "rules": []
      },
      "RS3=F,RS3force=strict": {
       "holds": false,
+      "measures": [],
       "rules": []
      }
     },
