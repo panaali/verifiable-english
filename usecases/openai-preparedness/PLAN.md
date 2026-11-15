@@ -656,6 +656,19 @@ Section 6 and `answer-key.json` are not edited.**
     sentence. A rule block holds one rule, so the permission has its own block, placed on the sentence's own source
     unit (p16-u291, now OPEN). The new regulated predicate `fast_track_request` makes 61 of 64. K13 keeps its answer
     (ALL, soft under RS9 = default), and no other answer moved (236 of 239 agree, as before).
+27. **5.2's third-party evaluation and 4.1's two ordered selection steps (translation-fidelity checklist classes 1,
+    5, 11).** "OpenAI will work with third-parties to independently evaluate models" is OpenAI's undertaking, not a
+    result it must secure: the act of `f15-third-party` is "work with third parties to independently evaluate the
+    model" (it was "have third parties independently evaluate the model"), and its legend quotes 5.2's sentence in
+    full. The guards are as they were: `deeper_testing_warranted` carries the deeming about a deployment (OT14) and
+    `third_party_available` carries "when available and feasible". 4.1's "We first identify the plausible ways ..."
+    and "For each of those, we then identify specific safeguards ..." state an order between two steps. The legends
+    of `risk_paths` and `specific_safeguards_per_path` quote each sentence in full, so "first" and "then" are in the
+    words of the translation. The acts keep their wording: "then" is a reserved word an act may not use, and the act
+    with "first" would be 82 characters, over the limit of 80. The order itself is event order (ET), as O7 expects:
+    D1 has no relation that orders two duties. Each block's header and its spans.json entry (p11-u161, p11-u162, an
+    `event_order` record on the word and ET among its waits) say so. The per-item scope of `f9-specific` (SC) is as
+    it was. No predicate is new (61 of 64 regulated), and no answer moved (236 of 239 agree, as before).
 
 ## 13. Files for the implementation round (not this commit)
 

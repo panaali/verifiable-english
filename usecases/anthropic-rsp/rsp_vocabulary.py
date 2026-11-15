@@ -250,11 +250,103 @@ def _row_plans_legend():
             "{0} (section 1, PROTk); the plans of each row are: " + "; ".join(rows + [t4]))
 
 
+# Section 1's right column ("Mitigations—ambitious industry-wide recommendations"), row by row, verbatim (NFKC, the
+# apostrophe written ' as for ROW_PLANS; PLAN 1): the argument `strong_argument` carries for the row of each threshold
+# (F5, ARGk). Each row is its lead and then its bullets; each part is one quote, or two where the page layout splits it
+# (ARGUMENT_CONTINUED: row T3's lead continues on p. 8 after its footnotes, row T4's first bullet on p. 9).
+ROW_ARGUMENTS = {
+    "non_novel_chem_bio_weapons": (
+        ("A frontier developer should make a strong argument that individual users and relatively small teams will not "
+         "become significantly more likely to cause catastrophic harm via their usage of product surfaces or via theft "
+         "of model weights. This will likely require:",),
+        ("Restrictions on model behavior, and/or measures for quickly detecting and acting on Usage Policy violations, "
+         "accompanied by a strong case that these measures are difficult to reliably, sustainably circumvent via "
+         "jailbreaking.",),
+        ("Precautions against opportunistic theft of model weights, such as centralized controls on third-party "
+         "applications and software updates.",)),
+    "novel_chem_bio_weapons": (
+        ("A frontier developer should make a strong argument that threat actors will not become significantly more "
+         "likely to cause the sort of catastrophic harm discussed in the lefthand column via their usage of product "
+         "surfaces or via theft of model weights. This will likely require similar measures to those from the previous "
+         "row, but to a higher standard—to the point where even well-resourced and -staffed threat actors would be "
+         "unlikely to reliably jailbreak models or cause catastrophic harm via unauthorized access to or modification "
+         "of models (including via stolen or modified model weights). This would likely mean security roughly in line "
+         "with RAND SL4, but it depends on the capabilities of the strongest and most plausible threat actors that are "
+         "not bound by a credible governance regime enforcing the recommendations for industry-wide safety outlined "
+         "here.",),),
+    "misaligned_high_stakes": (
+        ("A frontier developer should make a strong argument that AI systems will not carry out sabotage leading to "
+         "irreversibly and substantially higher odds of a later global catastrophe. This case may initially be "
+         "relatively simple and rely heavily on capability limitations, if it is first required when the risk is "
+         "merely plausible. As risk becomes harder to rule out, this case will likely include some combination",
+         "of:"),
+        ("Internal compartmentalization, restriction, and code review to prevent excessive sabotage opportunities for "
+         "AI models.",),
+        ("Capability assessments demonstrating that AI models lack the ability to carry out irreversible (which would "
+         "generally mean unnoticed) sabotage.",),
+        ("Monitoring and/or restricting AI behavior and usage internally.",),
+        ("Evidence that AI models lack the propensity to deceive, manipulate, or sabotage users.",)),
+    "automated_rd": (
+        ("A frontier developer should make a strong argument that:",),
+        ("No user or team of users (including those backed by top-tier states) will become significantly more likely "
+         "to cause catastrophic harm via their usage of product surfaces or via theft of model weights. This will "
+         "likely require similar measures to those listed in row 1, but to a higher standard‚ to the point where even "
+         "well-resourced and -staffed threat actors would be unlikely to reliably jailbreak models or cause "
+         "catastrophic harm via unauthorized access to or modification of models (including via stolen or modified "
+         "model weights). Accomplishing this would likely mean security roughly in line with RAND SL4. Security "
+         "requirements would be calibrated to defend against the strongest plausible threat actors who are not bound "
+         "by a credible industry-wide safety regime. Actors subject to such a regime would not need",
+         "to be treated as threats to each other's model weights."),
+        ("Even malicious employees and other insiders with maximal levels of access will not be significantly enabled "
+         "to cause catastrophic harm. This requires (among other things) accounting for internal tools that are less "
+         "restricted than product surfaces, and for the possibility of unauthorized modification of models. This will "
+         "likely require an internal Usage Policy and strong internal compartmentalization, controls and/or "
+         "monitoring to restrict the ability of employees and contractors (up to and including the company's CEO as "
+         "well as its most privileged technical employees) to circumvent the Usage Policy.",),
+        ("AI models have not been deliberately or inadvertently trained with dangerous goals, or are otherwise "
+         "unlikely to autonomously cause catastrophic harm. This will likely require similar measures to those listed "
+         "above under “Misaligned AI systems in high-stakes settings” (some combination of internal "
+         "compartmentalization, restriction and code review; monitoring AI behavior; and evidence that AI models lack "
+         "the propensity to deceive and manipulate users), but to a greater degree. In particular, at this point AI "
+         "systems might be responsible for much of the research and analysis that underpins risk assessment, and "
+         "might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case "
+         "analyses of threats from AIs should follow very high evidentiary standards with thorough and careful "
+         "analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation "
+         "by AI systems.",)),
+}
+ARGUMENT_CONTINUED = {"misaligned_high_stakes": 8, "automated_rd": 9}
+_COUNTS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
+
+
+def _row_argument(name, join):
+    """One row's argument: its lead and numbered bullets, each part's pieces joined by `join(name)`."""
+    lead, *bullets = ROW_ARGUMENTS[name]
+    text = join(name, lead)
+    if bullets:
+        text += f" and its {_COUNTS[len(bullets)]} bullets: " + "; ".join(
+            f"({k}) {join(name, bullet)}" for k, bullet in enumerate(bullets, 1))
+    return f"row {THRESHOLDS[name].split(':')[0]} ({name}): {text}"
+
+
+def row_arguments_header():
+    """The quotes the f5-strict and f5-default headers carry: every row's argument, the page-split parts as two quotes."""
+    return "; ".join(_row_argument(name, lambda row, part: f" (continued on p. {ARGUMENT_CONTINUED.get(row)}) "
+                                   .join(f'"{piece}"' for piece in part)) for name in ROW_ARGUMENTS)
+
+
+def _row_arguments_legend():
+    """`strong_argument`'s legend: what "a strong argument about {1}" must show, for each row, in the source's words."""
+    rows = [_row_argument(name, lambda row, part: '"' + " ".join(part) + '"') for name in ROW_ARGUMENTS]
+    return ("the strong argument of the right column (\"Mitigations—ambitious industry-wide recommendations\") of the "
+            "row of {1} is made at {0} (section 1, ARGk; under RS2 Ds the company is the frontier developer); the "
+            "argument of each row is: " + "; ".join(rows))
+
+
 REGULATED = {
     "plans_in_place": _duty("{0} have the plans of the company about {1} in place", _row_plans_legend(),
                             ("situation", "threshold")),
-    "strong_argument": _duty("{0} make a strong argument about {1}", "the strong argument of the right column's row "
-                             "of {1} is made at {0} (section 1, ARGk)", ("situation", "threshold")),
+    "strong_argument": _duty("{0} make a strong argument about {1}", _row_arguments_legend(),
+                             ("situation", "threshold")),
     "advance_recommendations": _duty("{0} advance the industry-wide recommendations", "section 1 at {0}: \"We will "
                                      "strive to advance these recommendations through a mixture of example-setting, "
                                      "addressing unsolved technical problems, advocacy through industry groups, and "
