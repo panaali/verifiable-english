@@ -78,6 +78,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-speed-b3/](docs__test-speed-b3.md) — 2 modules — -
 - [docs/test-speed-b5/](docs__test-speed-b5.md) — 2 modules — -
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
+- [docs/translim/](docs__translim.md) — 4 modules — -
 - [docs/weighing/](docs__weighing.md) — 1 modules — -
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
@@ -140,12 +141,12 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 89 modules — -
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
-- [tests/ part 3](tests--part-3.md) — 87 modules — -
+- [tests/ part 3](tests--part-3.md) — 86 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
 - [tests/ part 5](tests--part-5.md) — 86 modules — -
-- [tests/ part 6](tests--part-6.md) — 79 modules — -
+- [tests/ part 6](tests--part-6.md) — 78 modules — -
 - [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 62 modules — -
+- [tests/ part 8](tests--part-8.md) — 66 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 96 modules — -
 - [tools/ part 2](tools--part-2.md) — 22 modules — -
