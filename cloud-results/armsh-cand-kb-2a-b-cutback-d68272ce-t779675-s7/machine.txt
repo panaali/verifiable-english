@@ -1,0 +1,7 @@
+job=armsh-cand-kb-2a-b-cutback-d68272ce-t779675-s7 shard=7/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T21:56:39Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 21:56:39 up 3 min,  0 user,  load average: 1.49, 0.49, 0.18
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
