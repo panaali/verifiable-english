@@ -1,3 +1,5 @@
+- `tests/test_rd9_statements.py` — RD-9's Lean declarations against the approved blocks of docs/spec/rd-9-soft-chain.md 6 (checklist 17).
+- `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).
 - `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
 - `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
 - `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
@@ -74,6 +76,3 @@
 - `tests/test_rights_open_act_is_open.py` — rights-cfr-4: a right whose act is a declared open term is OPEN (docs/spec/rights.md 7.2).
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
 - `tests/test_rights_report_parts.py` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): a CONFLICT-FREE answer gives rights.md 7.3's report parts (the spec's line, read from the spec file, and t…
-- `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
-- `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
-- `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.

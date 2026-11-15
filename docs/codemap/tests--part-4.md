@@ -1,3 +1,5 @@
+- `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
+- `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
 - `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
 - `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
@@ -82,5 +84,3 @@
 - `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
 - `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
 - `tests/test_nested_pytest.py` — Nested pytest runs do not depend on the outer run's plugin settings (testperf review B).
-- `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
-- `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.

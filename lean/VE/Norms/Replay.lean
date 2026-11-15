@@ -1,4 +1,4 @@
-import VE.Norms.Wire
+import VE.Acts.Hook
 import VE.Norms.Layer
 
 /-! Conflict-package replay on the norms route (docs/spec/norms.md 5.2 and
@@ -163,7 +163,7 @@ target's package. -/
 def replayConflict (j : Json) : Except String ConflictReplay := do
   let environment ← j.getObjVal? "environment"
   let norms := j.getObjValD "norms"
-  let src ← Wire.decodeSource environment norms
+  let src ← Wire.decodeSource Wire.ActsHook.acts environment norms
   let packages := j.getObjValD "packages"
   pure ⟨src, (targets src.D).map (decodePackage src.D src.ne.profiles environment norms packages),
     (targets src.D).map (fun t => outerBound src.ne.profiles environment norms packages t.1)⟩
@@ -173,7 +173,7 @@ whose every target certificate is accepted proves, for the document decoded
 from that very input, that every base-admissible structure is conflict-free. -/
 theorem norms_wire_conflict_sound (j : Json) (res : ConflictReplay) (h : replayConflict j = .ok res)
     (hv : res.conflictFree = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok res.src ∧
+    Wire.decodeSource Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") = .ok res.src ∧
       ∀ B : VE.Structure.{u}, BaseAdmissible res.src.D B → ConflictFree res.src.D B := by
   unfold replayConflict at h
   obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
@@ -304,7 +304,7 @@ def witnessFrom (src : Wire.Source) (w : Json) : Except String (WitnessData src)
 
 def replayWitness (j : Json) : Except String ((src : Wire.Source) × WitnessData src) := do
   let environment ← j.getObjVal? "environment"
-  let src ← Wire.decodeSource environment (j.getObjValD "norms")
+  let src ← Wire.decodeSource Wire.ActsHook.acts environment (j.getObjValD "norms")
   let wd ← witnessFrom src (← j.getObjVal? "witness")
   pure ⟨src, wd⟩
 
@@ -314,7 +314,7 @@ for the document decoded from that very input, base conflict-freedom of the
 model, its unique expansion and the document property. -/
 theorem norms_wire_conflict_witness_sound (j : Json) (src : Wire.Source) (w : WitnessData src)
     (h : replayWitness j = .ok ⟨src, w⟩) (hw : w.conflict = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok src ∧
+    Wire.decodeSource Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") = .ok src ∧
     ¬ ConflictFree src.D w.M.asStructure ∧ ¬ VE.Route.Unique (DocumentExpansion src.D w.M.asStructure) ∧
       ¬ (∀ B : VE.Structure.{0}, BaseAdmissible src.D B → ConflictFree src.D B) := by
   unfold replayWitness at h
@@ -351,7 +351,7 @@ Background and layer premise followed by the case's premises, and the
 conclusion (P0 meaning ids). A supplied elaboration is never read. -/
 def replayEntailment (j : Json) : Except String EntailmentReplay := do
   let environment ← j.getObjVal? "environment"
-  let src ← Wire.decodeSource environment (j.getObjValD "norms")
+  let src ← Wire.decodeSource Wire.ActsHook.acts environment (j.getObjValD "norms")
   let E := envAt src.D (size src.D)
   let premisesJson ← j.getObjVal? "premises"
   let ps ← VE.Route.Wire.decodeFormulas E premisesJson
@@ -373,14 +373,14 @@ and conclusion are base formulas, the conclusion holds in every base-admissible
 structure satisfying the premises. -/
 theorem norms_wire_acceptance (j : Json) (r : EntailmentReplay) (h : replayEntailment j = .ok r)
     (hv : r.valid = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
+    Wire.decodeSource Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
     (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) → holdsCatala r.src.D.T S →
       definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
       Sat S r.premises → r.conclusion.denote S []) ∧
     ((∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) →
       (∀ a ∈ r.premises, a.WellFormed (envAt r.src.D 0) []) → r.conclusion.WellFormed (envAt r.src.D 0) [] →
       ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → Sat B r.premises → r.conclusion.denote B []) := by
-  have hdec : Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src := by
+  have hdec : Wire.decodeSource Wire.ActsHook.acts (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src := by
     unfold replayEntailment at h
     obtain ⟨env, henv, h⟩ := VE.Order.ProfileGate.bind_ok h
     obtain ⟨src, hd, h⟩ := VE.Order.ProfileGate.bind_ok h

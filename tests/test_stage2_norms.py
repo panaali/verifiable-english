@@ -24,7 +24,7 @@ from ve.model import FiniteModel
 from ve.norms import (NormDocument, check_conflict, check_norm_entailment_certificate,
                       prove_norm_entailment)
 from ve.profiles import LANGUAGE, SPEC_REVISION
-from tests.test_norms import obligation, permission, rule
+from tests.test_norms import environment, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.skipif(not (ROOT / "lean/.lake/build/bin/ve_service").exists(),
@@ -64,6 +64,23 @@ def routed(monkeypatch, authority):
     monkeypatch.setattr(dispatch, "observers", [lambda op, auth: ops.append((op, auth))])
     monkeypatch.setenv("VE_AUTHORITY", authority)
     return ops
+
+
+@pytest.mark.parametrize("acts", [False, True])
+@pytest.mark.parametrize("permission_default, expected", [("deny", "CONFLICT"), ("allow", "UNKNOWN")])
+def test_family_norms_fol_witness_uses_the_acts_decoder(acts, permission_default, expected):
+    """The family FOL view must replay witnesses with the same decoder used for its source."""
+    raw = environment({"permitted": permission(permission_default),
+                       "required": obligation("allow")}).to_dict()
+    if acts:
+        raw["profiles"].insert(0, "acts@0")
+    case = {"id": "witness", "kind": "norms-conflict", "environment": raw, "norms": [],
+            "witness": {"target": "required->permitted", "tuple": ["act0"],
+                        "model": {"complete": True, "domains": {"act": ["act0"]},
+                                  "constants": {}, "relations": {}}}}
+    row = relay.decide("family-norms", [case])[0]
+    assert row["verdict"] == expected
+    assert row["target"] == "required->permitted"
 
 
 def outcomes(doc):

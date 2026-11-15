@@ -539,7 +539,7 @@ def runCase (j : Json) : Except String Json := do
       ("targets", toJson ((VE.Norms.targets (policy dec.D)).map (·.1)))]
   if usesSpeechPath j then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the speech-acts route"
-  VE.Norms.Run.runCase j
+  VE.Norms.Run.runCaseActs j
 
 def runCaseReported (j : Json) : Json :=
   if usesSpeechPath j then
