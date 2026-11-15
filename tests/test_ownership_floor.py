@@ -261,3 +261,34 @@ def test_three_passing_items_per_key_still_pass(tmp_path):
                 assert verdict["pass"], (key, item, verdict["criterion"], verdict["reason"])
                 assert OT._canonical(verdict["value"]) == OT._canonical(data["keys"][key]["items"][item]["value"]), \
                     (key, item)
+
+
+def _record(**item):
+    info = {"family": "C", "agrees": False, "value": "NONE", "key": "SOME(rel)", "reproduces": True,
+            "deviation": None, **item}
+    return {"unit": "C1", "error": None, "items": {"C1": info}, "functions": [],
+            "lean_calls": [{"caller": "_conflict", "mode": "soft-norms", "kind": "soft-conflict",
+                            "profiles": ["norms@0", "relational-fol@0", "soft-norms@0"], "count": 1, "stack": []}]}
+
+
+def _judge(record):
+    listed, registry, names = OT.decision_functions(), json.loads(OT.REGISTRY_FILE.read_text()), OT.mode_names()
+    return OT.judge(record, "C1", OT.ADAPTERS["anthropic-rsp"](), listed, registry, names)
+
+
+def test_criterion_three_accepts_an_agreeing_value_or_a_difference_plan_12_records():
+    assert _judge(_record(agrees=True))["pass"]
+    cited = "PLAN.md section 12, Key deviation C1: NONE (a ruling)"
+    verdict = _judge(_record(deviation=cited))
+    assert verdict["pass"] and verdict["criteria"]["3"]["recorded"] == cited
+    for refused in (_record(), _record(deviation="PLAN.md section 12, Key deviation Z99: NONE (a ruling)"),
+                    _record(agrees=True, reproduces=False), {**_record(agrees=True), "error": "VEError: x"}):
+        verdict = _judge(refused)
+        assert not verdict["pass"] and verdict["criterion"] == 3, refused
+
+
+def test_a_decision_function_that_ran_fails_criterion_one_first():
+    record = {**_record(agrees=True), "functions": [["norms.py", "NormDocument.selection", 1, 2, "ve/x.py:f"]]}
+    verdict = _judge(record)
+    assert verdict["criterion"] == 1 and verdict["reason"] == "ve/norms.py:NormDocument.selection"
+    assert verdict["criteria"]["1"]["first_callers"] == {"ve/norms.py:NormDocument.selection": "ve/x.py:f"}
