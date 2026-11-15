@@ -157,7 +157,7 @@ keys and item counts. The ones that compute something:
 | five harnesses pass, results.json byte-identical | AGENT | RSP, Preparedness, safety framework: their own `run.py --check` passes (in `under`, before and now). agent-policy: `inputs`, `actions`, `policy`, `policy_summary`, `comparison`, `M8` equal results.json (as tests/test_agent_policy_rerun.py compares; M10 holds timings). eligibility: see section 9 (pre-existing) |
 | ownership.json for five keys, every item accounted for | AGENT | `test_every_item_of_the_five_keys_is_accounted_for` |
 | the two tests pass; each seeded bug fails the test named | AGENT | section 6 |
-| selected tests and the kernel check pass unchanged | AGENT | kernel check: section 4; selected tests: the final run on the committed HEAD (the chain gate) |
+| selected tests and the kernel check pass unchanged | AGENT | kernel check: section 4; selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base da0822ae80 --run` on the committed HEAD 1d619233cd: exit 0, 2 shards on GitHub Actions (run kb-10d-1d619233-t780201, 1190 s; /tmp/own/select.start) |
 
 ## 9. Notes for the DRI
 
