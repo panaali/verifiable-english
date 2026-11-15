@@ -237,11 +237,11 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/EnglishGrammar/Norm/Run.lean` | 312 | 312 | 1–312 | `e6b2e54e1f18…` |
 | `lean/VE/Events/Anchor.lean` | 41 | 41 | 1–41 | `5654820c03ae…` |
 | `lean/VE/Readings/SoftSupRun.lean` | 436 | 436 | 1–436 | `30963e3cd469…` |
-| `lean/VE/SoftNorms/Selected.lean` | 279 | 279 | 1–279 | `44d1fd142c83…` |
-| `lean/VE/SoftNorms/Prepared.lean` | 262 | 262 | 1–262 | `f8f5f6d8fe08…` |
-| `lean/VE/Compose/SlotWire.lean` | 437 | 437 | 1–437 | `069c0e8168d2…` |
+| `lean/VE/SoftNorms/Selected.lean` | 305 | 305 | 1–305 | `56f63f115615…` |
+| `lean/VE/SoftNorms/Prepared.lean` | 300 | 300 | 1–300 | `42f7cdb2718a…` |
+| `lean/VE/Compose/SlotWire.lean` | 441 | 441 | 1–441 | `ca6a87077916…` |
 | `lean/VE/Acts/Hook.lean` | 49 | 49 | 1–49 | `f92669169438…` |
-| **total** | | **47,413** | | |
+| **total** | | **47,481** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

@@ -16,3 +16,4 @@
 - `docs/kernel/kb-10e/bench_relay.py` — `soft-selected` through the Python relay (kb-10e, deliverable 4): the call `ve.soft_route.selected_at` makes.
 - `docs/kernel/kb-10e/registrations.py` — (no module docstring)
 - `docs/kernel/kb-10e/trace_order.py` — Trace the order of Lean soft-selected calls a harness would make (kb-10e registrations estimate).
+- `docs/kernel/kb-9/measure_item.py` — kb-9 measurement aid (changes no product code): one RSP item through the ownership trace, with the Lean case kinds it sends and those sent from inside `check_p…
