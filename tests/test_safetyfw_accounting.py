@@ -296,6 +296,42 @@ def test_reason_arguments_resolve(tmp_path, entry, ok):
     assert (found == []) is ok, found
 
 
+@pytest.mark.parametrize("lines, expected", [
+    ([AUDIT_LINE, "CASES | omits: nothing"], None),
+    ([AUDIT_LINE, "CASES | omits: nothing", "D2D3 | omits: nothing"], None),
+    ([AUDIT_LINE, 'CASES | omits: "every year" loss 8'], None),
+    ([AUDIT_LINE, 'CASES | omits: "every year" reading RS1'], None),   # PLAN 3.1's table
+    ([AUDIT_LINE, 'CASES | omits: "every year" open material'], None),
+    ([AUDIT_LINE, 'CASES | omits: "ledger audited" rule r-audit'], None),
+    (["CASES | omits: nothing", AUDIT_LINE], "a collection's line follows every block line"),
+    ([AUDIT_LINE, "CASES | omits: nothing", "CASES | omits: nothing"], "a second line for this collection"),
+    ([AUDIT_LINE, "FACTS | omits: nothing"], "FACTS: no such block or collection"),
+    ([AUDIT_LINE, "Cases | omits: nothing"], "not '<block id or collection> | omits: ...'"),
+    ([AUDIT_LINE, 'CASES | omits: "every year"'], "unreadable entry"),   # a quoted phrase with no reason
+    ([AUDIT_LINE, 'CASES | omits: "every year" restates'], "a collection has no rule text that restates it"),
+    ([AUDIT_LINE, 'CASES | omits: "every" exposition'], "has no content word"),
+    ([AUDIT_LINE, 'CASES | omits: "every year" loss 12'], "loss 12: no such fidelity class"),
+    ([AUDIT_LINE, 'CASES | omits: "every year" reading RS9'], "reading RS9: neither"),
+    ([AUDIT_LINE, 'CASES | omits: "every year" rule r-audit'], "are not among its accounted words"),
+])
+def test_a_collection_unit_has_one_line_after_the_blocks(tmp_path, lines, expected):
+    """CASES and D2D3 are units the omission audit names that are not blocks: one line each, after the block lines,
+    in the block form; the reasons resolve as for a block, and `restates` (no rule text of their own) is refused."""
+    case = make_case(tmp_path, [AUDIT], sidecar=lines)
+    result = A.account(case, SOURCE)
+    if expected is None:
+        assert result["problems"] == []
+        assert [c["id"] for c in result["collections"]] == [line.split(" | ")[0] for line in lines[1:]]
+        assert [b["id"] for b in result["blocks"]] == ["r-audit"] and result["totals"]["blocks"] == 1
+    else:
+        assert any(expected in p for p in result["problems"]), result["problems"]
+
+
+def test_a_report_without_a_collection_line_has_no_collections_key(tmp_path):
+    """A case with no collection line keeps its saved report's shape (openai-preparedness's report is unchanged)."""
+    assert "collections" not in A.account(make_case(tmp_path, [AUDIT], sidecar=[AUDIT_LINE]), SOURCE)
+
+
 def test_rule_reason_passes_when_the_target_accounts_the_words(tmp_path):
     audit = ("r-audit", "always", '"will have the ledger audited every year ... for seven years"',
              "Rule 1. Every situation must have the ledger audited.")
@@ -346,7 +382,9 @@ def test_case_sidecar_passes_in_form(case):
     result = A.account(REPO / "usecases" / case)
     assert result["problems"] == []
     lines = (REPO / "usecases" / case / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
-    assert [line.split(" | ")[0] for line in lines] == case_blocks(case)
+    ids = [line.split(" | ")[0] for line in lines]
+    blocks = case_blocks(case)
+    assert ids[:len(blocks)] == blocks and set(ids[len(blocks):]) <= set(A.COLLECTIONS)
 
 
 @pytest.mark.parametrize("case", CASES)
