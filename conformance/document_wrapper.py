@@ -225,6 +225,10 @@ UNMUTATED = {
     "usecases/question-answering/": "large question vocabulary fixtures; seed answers are compared separately",
     "tests/data/premise-scale/": "readings@1 premise-check fixtures, which Lean's document mode refuses (fail-closed) "
                                  "whatever the mutation; seed answers are compared separately",
+    "tests/data/kb2a/": "the core path's acceptance document (kb-2a-b): Lean answers it and Python's own path has none "
+                        "(its loader refuses judgments@0), so a mutant has nothing to compare; its one-edit variations "
+                        "and the R8 fuzz of its answer are tests/test_kb2a_document.py's, its seed answer "
+                        "tests/test_lean_document_wrapper.py's (LEAN_CORE)",
 }
 
 

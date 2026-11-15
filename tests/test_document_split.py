@@ -21,7 +21,7 @@ import ve.document as D
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "ve/document"
 # The modules in their order: each imports only modules before it (the package `__init__` imports them all).
-MODULES = ("source", "containers", "lean", "load", "report", "render", "cli")
+MODULES = ("source", "containers", "lean", "load", "report", "render", "cli", "core")
 # The names other modules, tests, tools and scripts import from `ve.document` (an `ast` scan of the repository at the
 # split): the public names, the private ones they read, and three names the module imported.
 EXPORTED = (

@@ -22655,7 +22655,8 @@
           ]
         },
         "VE.Service.CoreCheck.unitStatus",
-        "VE.Service.CoreCheck.viewOf"
+        "VE.Service.CoreCheck.viewOf",
+        "VE.Service.CoreCheck.statementJson"
       ],
       "G[R]": [
         "VE.Service.CoreCheck.factsRefusal",
@@ -22665,7 +22666,6 @@
         "VE.Service.CoreCheck.noRow"
       ],
       "D[I]": [
-        "VE.Service.CoreCheck.statementJson",
         "VE.Service.CoreCheck.statementsJson",
         "VE.Service.CoreCheck.choicesJson"
       ]
