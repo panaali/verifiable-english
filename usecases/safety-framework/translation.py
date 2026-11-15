@@ -8,8 +8,9 @@ of any reading choice is assembled from parsed rules without parsing again.
 the rule belongs to the document of every complete choice that satisfies it.
 A fact block is one paragraph of VE English sentences, parsed with VE's
 one-reading check (`ve.english.parse_english`). `facts.d1.ve` holds the premises
-of every item; a fact block in `rules.d1.ve`, headed `item <id>`, is the premise
-of that one item only (a bridge no other item uses).
+of every item; a fact block in `rules.d1.ve`, headed `item <id>` or `item <id>, <id>, ...`,
+is a premise of the items it names only (a bridge no other item uses, or a fact only
+those items' proofs read).
 
 The reading sets (PLAN 3.1) are `READING_SETS`. RS0 and RS10 are not here:
 under the N1 narrowing every rule from a "will" sentence is a commitment, and
@@ -130,13 +131,13 @@ def read_blocks(name):
         m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (.+)", header)
         if m is None or text.startswith("## "):
             raise SystemExit(f"{name}: malformed header {header!r}")
-        item = re.fullmatch(r"item ([A-Z0-9-]+)", m[2].strip())
+        item = re.fullmatch(r"item ([A-Z0-9/-]+(?:, [A-Z0-9/-]+)*)", m[2].strip())
         if item and name == "facts.d1.ve":
             raise SystemExit(f"{name}: {m[1]} is the premise of item {item[1]} only: it belongs in rules.d1.ve")
         if item and text.startswith("Rule "):
             raise SystemExit(f"{name}: {m[1]}: a rule block is selected by readings, not by an item")
         if item:
-            when = (("item", item[1]),)  # a premise of that item only (checklist class 7)
+            when = tuple(("item", i) for i in item[1].split(", "))  # a premise of those items only (checklist class 7)
         else:
             when = () if m[2].strip() == "always" else tuple(
                 tuple(part.strip().split("=")) for part in m[2].split("&"))
@@ -169,7 +170,7 @@ def rule_fact_blocks():
     """The fact blocks of rules.d1.ve, each headed `item <id>`: one item's own premise, no premise of the document."""
     blocks = tuple(b for b in read_blocks("rules.d1.ve") if not is_rule(b))
     for block in blocks:
-        if dict(block.when).get("item") is None:
+        if not block.when or any(set_id != "item" for set_id, _ in block.when):
             raise SystemExit(f"rules.d1.ve: {block.id}: a premise of every item belongs in facts.d1.ve")
     return blocks
 
@@ -230,12 +231,23 @@ def document(choice, *, default="deny", drop=(), extra=(), precedence=None):
 @lru_cache(maxsize=None)
 def facts(item=None):
     """The fixed premises, as (block id, source, formulas): facts.d1.ve's blocks, then, for `item=<id>`, the fact
-    blocks of rules.d1.ve headed `item <id>` (a bridge only that item needs)."""
+    blocks of rules.d1.ve whose header names that item (a premise only those items need)."""
     base = base_environment()
     result = []
-    for block in read_blocks("facts.d1.ve") + [b for b in rule_fact_blocks() if dict(b.when)["item"] == item]:
+    for block in read_blocks("facts.d1.ve") + [b for b in rule_fact_blocks() if ("item", item) in b.when]:
         result.append((block.id, block.source, tuple(parse_sentences(base, block.text).formulas)))
     return tuple(result)
+
+
+def fact_items():
+    """The items that the item-scoped fact blocks of rules.d1.ve name."""
+    return sorted({i for b in rule_fact_blocks() for _, i in b.when})
+
+
+def fact_formulas():
+    """Every fact block's formulas by block id, item-scoped blocks included: the premise units of the source document
+    (`build_document.py`), which states every fact whichever items read it."""
+    return {block_id: formulas for item in [None] + fact_items() for block_id, _, formulas in facts(item)}
 
 
 @lru_cache(maxsize=None)
