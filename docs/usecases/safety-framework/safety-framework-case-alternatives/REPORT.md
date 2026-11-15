@@ -140,7 +140,7 @@ D2D3  <- D2D3                 report       | <the sentence at safety-framework-f
 - Kept and selected: `tests/test_safety_framework.py`, which has the frozen key, the transcription pin and fix-3's
   bridge tests. I changed three of its tests, and only where they pinned the old place of the block:
   - `test_security_level_2_plus_...` now reads `run.document_atoms()`.
-  - `FACTS_BLOCKS` no longer lists the block.
+  - `FACTS_BLOCKS` remains the protected inventory; the test checks its exact split between facts.d1.ve and item-scoped rules.d1.ve.
   - `test_facts_holds_...` now expects two item-scoped blocks, and N1's header is unchanged.
   - Command: `uv run pytest -q tests/test_safety_framework.py -k "security_level_2_plus or facts_holds or refused or n1_alone or g8_stipulates"`: 6 passed.
 - New file: `uv run pytest -q tests/test_fsf_case_alternatives.py`: 9 passed.

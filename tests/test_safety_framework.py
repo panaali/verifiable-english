@@ -599,11 +599,10 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
 
 
-# facts.d1.ve's blocks: PLAN 4.1's level table, the 1.2 closures and the activity facts, with tcl-not-ccl (section 12,
-# item 4). measures-sl2plus is a block of rules.d1.ve headed with the items that read it
-# (tests/test_fsf_case_alternatives.py).
+# Named fact blocks in source order. measures-sl2plus now lives in rules.d1.ve with its item scope;
+# tests/test_fsf_case_alternatives.py checks the items that read it.
 FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-stealth", "levels-ml-rd-acceleration",
-                "levels-ml-rd-automation", "closure-misuse-ccls", "closure-ccl-kinds",
+                "levels-ml-rd-automation", "measures-sl2plus", "closure-misuse-ccls", "closure-ccl-kinds",
                 "closure-tcls", "tcl-not-ccl", "activities-internal-external", "activities-development",
                 "activities-high-risk", "activities-low-risk"]
 
@@ -611,7 +610,9 @@ FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-st
 def test_facts_holds_the_premises_of_every_item_and_no_item_s_own_bridge():
     """No block of facts.d1.ve is an item's own premise; N1's bridge is a block of rules.d1.ve headed `item N1`, and
     a facts.d1.ve block headed `item <id>` is refused."""
-    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == FACTS_BLOCKS
+    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == [
+        block_id for block_id in FACTS_BLOCKS if block_id != "measures-sl2plus"
+    ]
     assert all(b.when == () for b in translation.read_blocks("facts.d1.ve"))
     assert [b.id for b in translation.rule_fact_blocks()] == ["bridge-one-domain", "measures-sl2plus"]
     assert translation.rule_fact_blocks()[0].when == (("item", "N1"),)
