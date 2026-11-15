@@ -22598,6 +22598,8 @@
         "VE.Acts.HookExamples.env",
         "VE.Acts.HookExamples.envA",
         "VE.Acts.HookExamples.err",
+        "VE.Acts.HookExamples.flagRefusal",
+        "VE.Acts.HookExamples.flaggedPlain",
         "VE.Acts.HookExamples.fxs",
         "VE.Acts.HookExamples.joinedE",
         "VE.Acts.HookExamples.judgedA",
@@ -22636,6 +22638,12 @@
         "VE.Service.HookExamples.err",
         "VE.Service.HookExamples.flagRefusal",
         "VE.Service.HookExamples.flaggedEnv"
+      ]
+    },
+    "VE/WireContract/Hooks/HookExamples.lean": {
+      "T": [
+        "VE.WireContract.Hooks.HookExamples.actsEnv",
+        "VE.WireContract.Hooks.HookExamples.desc"
       ]
     }
   }

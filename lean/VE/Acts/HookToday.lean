@@ -80,7 +80,8 @@ theorem decodeSource_acts (environment norms : Json) (flags displayConstants joi
     decodeSource ActsHook.acts environment norms flags displayConstants joined =
       Today.decodeSource environment norms flags displayConstants joined := rfl
 
-theorem decodeFlaggedActs_today : decodeFlaggedActs = Today.decodeFlagged := rfl
+theorem decodeFlaggedActs_today (environment norms : Json) :
+    decodeFlaggedActs environment norms = Today.decodeFlagged environment norms := rfl
 
 /-! ## With `ActsHook.lexical`: today's decoder wherever no joined act is admitted -/
 

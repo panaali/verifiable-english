@@ -27,4 +27,9 @@ def err {α} (e : Except String α) : String := match e with | .error m => m | .
 #guard err (VE.NormDefaults.Wire.decodeSourceUWith false (ndEnv ["data@0", "norms@0", "relational-fol@0"])
   (Json.arr #[])) == "UnsupportedProfile: norms route with data flags is not implemented"
 
+-- the environment decoder reads `acts@0` (`decodeEnvironmentU`, either branch)
+#guard err (VE.NormDefaults.Wire.decodeEnvironmentU (ndEnv ["acts@0", "data@0", "norms@0", "relational-fol@0"])) == "ok"
+#guard err (VE.NormDefaults.Wire.decodeEnvironmentU (ndEnv ["acts@0", "data@0", "norm-defaults@0", "norms@0",
+  "relational-fol@0"])) == "ok"
+
 end VE.NormDefaults.HookExamples
