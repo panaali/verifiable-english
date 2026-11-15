@@ -9165,6 +9165,8 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.RanksValid.declared
 #print axioms VE.SoftNorms.RanksValid.order
 #print axioms VE.SoftNorms.Run.backgroundIn_valid
+#print axioms VE.SoftNorms.Run.cohPremisesIn_eq
+#print axioms VE.SoftNorms.Run.coherentAt_iff
 #print axioms VE.SoftNorms.Run.decodeModelIn_prime
 #print axioms VE.SoftNorms.Run.decodeQueries_ok
 #print axioms VE.SoftNorms.Run.decodeSelectedQuery_ok
@@ -9179,6 +9181,8 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.fullOver_restrict
 #print axioms VE.SoftNorms.Run.getStr_ok
 #print axioms VE.SoftNorms.Run.mem_selectedAt
+#print axioms VE.SoftNorms.Run.mkObj_getObjVal_mem
+#print axioms VE.SoftNorms.Run.mkObj_getObjVal_not_mem
 #print axioms VE.SoftNorms.Run.mkObj_get_append
 #print axioms VE.SoftNorms.Run.needFacts_ok
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
@@ -9190,11 +9194,14 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.runAdmission_sound
 #print axioms VE.SoftNorms.Run.runCaseReportedP_eq
 #print axioms VE.SoftNorms.Run.runCase_selected
+#print axioms VE.SoftNorms.Run.runCase_selected_run
 #print axioms VE.SoftNorms.Run.runSelectedP_prepareFrom
 #print axioms VE.SoftNorms.Run.runSelected_answer
 #print axioms VE.SoftNorms.Run.runSelected_eq_prepared
+#print axioms VE.SoftNorms.Run.selectedAnswer_flags
 #print axioms VE.SoftNorms.Run.selectedQueries_ok
 #print axioms VE.SoftNorms.Run.selectedRow_eq
+#print axioms VE.SoftNorms.Run.selected_model_admissible
 #print axioms VE.SoftNorms.Run.selected_semantics
 #print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
 #print axioms VE.SoftNorms.Run.slot_wire_certificate
@@ -9207,6 +9214,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.soft_wire_conflict_witness
 #print axioms VE.SoftNorms.Run.soft_wire_elaborate
 #print axioms VE.SoftNorms.Run.soft_wire_selected
+#print axioms VE.SoftNorms.Run.soft_wire_selected_facts
 #print axioms VE.SoftNorms.Run.soft_wire_selected_prepared
 #print axioms VE.SoftNorms.Run.vocabularyIn_eq
 #print axioms VE.SoftNorms.SoftChain.A_in

@@ -543,6 +543,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.SoftNorms.envelope_ok
 #print axioms ResponseShape.Encoders.SoftNorms.environmentReferences_ok
 #print axioms ResponseShape.Encoders.SoftNorms.exceptionFields_ok
+#print axioms ResponseShape.Encoders.SoftNorms.factsSent_holds
 #print axioms ResponseShape.Encoders.SoftNorms.fail_ok
 #print axioms ResponseShape.Encoders.SoftNorms.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.SoftNorms.inherited_ok

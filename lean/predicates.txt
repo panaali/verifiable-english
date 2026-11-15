@@ -1671,6 +1671,7 @@ VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound
 VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound
+VE.SoftNorms.Run.SelectedAnswerWith@VE.SoftNorms.SelectedSound
 VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run
 VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics
 VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence
