@@ -1,0 +1,169 @@
+{
+ "rule": "tests/omission_rule.record_paths (omission-2 port); REPORT.md of this item not present when measured",
+ "base_commit": "26916f7349",
+ "head_commit": "1a4f7b90fe",
+ "units": {
+  "f7-evaluations": {
+   "base": [
+    "mistag",
+    "mistag",
+    "unformalised"
+   ],
+   "head": [
+    "plan12",
+    "unformalised"
+   ]
+  },
+  "f7-evaluations-any": {
+   "base": [
+    "no-record"
+   ],
+   "head": [
+    "plan12"
+   ]
+  },
+  "f9-specific": {
+   "base": [
+    "plan12",
+    "report",
+    "unformalised"
+   ],
+   "head": [
+    "plan12",
+    "plan12",
+    "report",
+    "unformalised"
+   ]
+  },
+  "f9-efficacy": {
+   "base": [
+    "mistag",
+    "unformalised"
+   ],
+   "head": [
+    "mistag",
+    "plan12",
+    "unformalised"
+   ]
+  },
+  "f16-sag-recommend": {
+   "base": [
+    "plan12",
+    "report",
+    "unformalised"
+   ],
+   "head": [
+    "plan12",
+    "plan12",
+    "report",
+    "unformalised"
+   ]
+  },
+  "f1-halt-strict": {
+   "base": [
+    "mistag",
+    "loss"
+   ],
+   "head": [
+    "mistag",
+    "loss"
+   ]
+  },
+  "f1-halt-default": {
+   "base": [
+    "mistag"
+   ],
+   "head": [
+    "mistag"
+   ]
+  },
+  "f15-third-party": {
+   "base": [
+    "loss",
+    "loss",
+    "plan12",
+    "report",
+    "report"
+   ],
+   "head": [
+    "loss",
+    "loss",
+    "plan12",
+    "report",
+    "report"
+   ]
+  },
+  "f16-board-reverse": {
+   "base": [
+    "mistag",
+    "plan12",
+    "report"
+   ],
+   "head": [
+    "mistag",
+    "plan12",
+    "report"
+   ]
+  },
+  "f16-board-mandate": {
+   "base": [
+    "plan12",
+    "report",
+    "report"
+   ],
+   "head": [
+    "plan12",
+    "report",
+    "report"
+   ]
+  },
+  "f9-risk-paths": {
+   "base": [
+    "report",
+    "report"
+   ],
+   "head": [
+    "report",
+    "report"
+   ]
+  },
+  "f1-misuse-bio-strict": {
+   "base": [
+    "mistag"
+   ],
+   "head": [
+    "mistag"
+   ]
+  },
+  "f1-misuse-bio-default": {
+   "base": [
+    "mistag",
+    "mistag"
+   ],
+   "head": [
+    "mistag",
+    "mistag"
+   ]
+  },
+  "f16-without-noinput": {
+   "base": [
+    "mistag",
+    "mistag"
+   ],
+   "head": [
+    "mistag",
+    "mistag"
+   ]
+  },
+  "f16-without-nodelib": {
+   "base": [
+    "mistag",
+    "mistag"
+   ],
+   "head": [
+    "mistag",
+    "mistag"
+   ]
+  }
+ }
+}
