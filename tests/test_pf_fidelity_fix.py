@@ -1127,3 +1127,4 @@ def test_table_1_header_is_five_units_and_the_fourth_title_is_rs1_open(pf):
         assert source[13557:13592] == b"Risk-specific safeguard guidelines "
         _, rebuilt = B.build(source)
         assert [(r["id"], r["span"]) for r in rebuilt[64:69]] == [(u, s) for u, s, _r, _s in HEADER_UNITS]
+        assert rebuilt[64:69] == [{k: v for k, v in units[u].items() if k != "status"} for u, *_ in HEADER_UNITS]
