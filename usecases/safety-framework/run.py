@@ -279,7 +279,7 @@ def invention_audit():
     """M6: every premise and rule is traced to a source span (its header), and every forced
     choice the translation makes is listed."""
     untraced = [b.id for b in T.read_blocks("facts.d1.ve") + T.rule_blocks() if not b.source.strip()]
-    bridges = [b.id for b in T.read_blocks("facts.d1.ve") if "bridge" in b.source]
+    bridges = [b.id for b in T.read_blocks("facts.d1.ve") + list(T.rule_fact_blocks()) if "bridge" in b.source]
     return {"untraced": untraced, "bridges": bridges,
             "forced_choices": [
                 "completion defaults: every regulated predicate is run under deny and under allow (M7)",

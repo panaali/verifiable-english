@@ -902,7 +902,7 @@
    "id": "G4",
    "family": "G",
    "levels": [],
-   "activity": "EXT",
+   "activity": null,
    "findings": [],
    "note": "significant but not severe cyber or manipulation risk: no level is reached"
   },
@@ -910,7 +910,7 @@
    "id": "G5",
    "family": "G",
    "levels": [],
-   "activity": "EXT",
+   "activity": null,
    "findings": [],
    "note": "a capability in a domain outside the four: no level is reached"
   },
