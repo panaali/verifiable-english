@@ -225,3 +225,15 @@ def test_a_harness_premise_check_reads_the_flag_of_the_selection_case(lean, monk
             else "case model does not satisfy premise b2: Violated")
     with pytest.raises(AssertionError, match=f"^{text}$"):
         harness.check_premises(doc, case_bad, bad)
+
+
+@pytest.mark.parametrize("value", BAD + [object(), "abc", 7.5], ids=BAD_IDS + ["object", "string", "number"])
+def test_a_malformed_facts_value_or_item_is_refused_with_a_diagnostic(lean, value):
+    """`facts` itself, or one item of it, replaced by a malformed value: only VEError (Lean's refusal, or the relay's
+    for a value no case can carry) or CheckerUnavailable leaves the relay, never a TypeError."""
+    for facts in ([value], [SOME_V, value]):
+        with pytest.raises((VEError, CheckerUnavailable)):
+            soft_route.selected_at(document(), MODEL, QUERIES[:1], facts=facts)
+    if value is not None and type(value) not in (list, tuple):  # None: no facts (the default)
+        with pytest.raises(VEError, match="facts must be a list"):
+            soft_route.selected_at(document(), MODEL, QUERIES[:1], facts=value)

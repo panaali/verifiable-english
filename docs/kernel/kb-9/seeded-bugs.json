@@ -46,6 +46,15 @@
    "edit": "check_premises: selection_flags(...)[\"facts\"] is not True -> is None",
    "test": "tests/test_kb9_selected_facts.py::test_a_harness_premise_check_reads_the_flag_of_the_selection_case[anthropic-rsp]",
    "result": "1 failed (no AssertionError for the false premise block b2)"
+  },
+  {
+   "id": "f",
+   "language": "python",
+   "file": "ve/softnorms.py",
+   "behaviour": "facts_wire accepts a facts value that is not a list (a TypeError escapes the relay)",
+   "edit": "facts_wire: the `type(facts) not in (list, tuple)` refusal removed",
+   "test": "tests/test_kb9_selected_facts.py::test_a_malformed_facts_value_or_item_is_refused_with_a_diagnostic[7]",
+   "result": "8 failed ([7], [true], [object0], [float], ...: TypeError instead of VEError)"
   }
  ]
 }
