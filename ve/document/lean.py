@@ -115,6 +115,10 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
         return None
     from ..backends.relay import answer
     row, error = answer("document", case)
+    if error is not None and getattr(error, "lowering", False):
+        # kb-2a-b (DESIGN kb-2a 2.5): a document Lean reads on its core path is answered or refused by Lean; its
+        # refusal is the document's answer, whatever its code, and Python's own path never decides it.
+        raise error
     if chain_of is not None and isinstance(error, (CheckerUnavailable, ResourceLimit)):
         raise error
     if isinstance(error, ResourceLimit) and _lean_only(raw):

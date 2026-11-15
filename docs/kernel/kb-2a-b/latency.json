@@ -1,0 +1,101 @@
+{
+ "bound": {
+  "existing_documents_at_most_1.25x_and_120s": false
+ },
+ "documents": {
+  "tests/data/kb2a/rsp-mixed.ve.md": {
+   "after": {
+    "exits": [
+     0
+    ],
+    "median_peak_mb": 107.5,
+    "median_seconds": 2.26,
+    "seconds": [
+     2.18,
+     2.2,
+     2.26,
+     2.52,
+     2.59
+    ]
+   },
+   "before": {
+    "exits": [
+     5
+    ],
+    "median_peak_mb": 104.6,
+    "median_seconds": 0.61,
+    "seconds": [
+     2.55,
+     0.59,
+     0.59,
+     0.73,
+     0.61
+    ]
+   },
+   "ratio": 3.705
+  },
+  "usecases/question-answering/agent-policy/a-rules.ve.md": {
+   "after": {
+    "exits": [
+     0
+    ],
+    "median_peak_mb": 109.3,
+    "median_seconds": 133.86,
+    "seconds": [
+     122.89,
+     151.98,
+     133.86,
+     116.8,
+     174.43
+    ]
+   },
+   "before": {
+    "exits": [
+     0
+    ],
+    "median_peak_mb": 105.3,
+    "median_seconds": 143.58,
+    "seconds": [
+     119.06,
+     143.57999999999998,
+     156.06,
+     150.78,
+     110.08
+    ]
+   },
+   "ratio": 0.932
+  },
+  "usecases/question-answering/udhr-part07.ve.md": {
+   "after": {
+    "exits": [
+     0
+    ],
+    "median_peak_mb": 109.2,
+    "median_seconds": 7.47,
+    "seconds": [
+     7.73,
+     7.24,
+     7.29,
+     7.47,
+     7.52
+    ]
+   },
+   "before": {
+    "exits": [
+     0
+    ],
+    "median_peak_mb": 105.8,
+    "median_seconds": 8.19,
+    "seconds": [
+     10.39,
+     8.88,
+     8.19,
+     7.74,
+     7.47
+    ]
+   },
+   "ratio": 0.912
+  }
+ },
+ "runs": 5
+}

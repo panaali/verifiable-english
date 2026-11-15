@@ -86,8 +86,11 @@ def test_every_rule_and_premise_parses_with_one_reading():
 def test_results_agree_with_the_key_except_the_recorded_findings():
     rows = RESULTS["comparison"]
     assert len(rows) == 262
-    assert {r["id"] for r in rows if not r["agree"]} == RECORDED_DISAGREEMENTS
-    assert sum(r["agree"] for r in rows) == 260
+    # With the findings, src:4's TCL proximity commitment (PLAN 12 item 27, safety-framework-proximity-tcl; the moves
+    # are pinned beside the entry in tests/test_fsf_proximity_tcl.py MOVES).
+    proximity_tcl = {"K2-L1/PROXIMITY", "K2-L5/PROXIMITY", "G3"}
+    assert {r["id"] for r in rows if not r["agree"]} == RECORDED_DISAGREEMENTS | proximity_tcl
+    assert sum(r["agree"] for r in rows) == 257
     # The section-12 deviation entries (key untouched): C1, C3 and C-doc are NONE, and the run agrees with each.
     deviations = {r["id"]: r["deviation"] for r in rows if "deviation" in r}
     assert deviations == {i: {"plan_12": 23, "answer": "NONE", "agree": True} for i in ("C1", "C3", "C-doc")}
@@ -162,7 +165,9 @@ def test_premises_leave_every_level_open_to_its_decider():
     for case_id in ("K2-L1", "K2-L5", "G3"):
         assert RESULTS["premises"][case_id]["status"] == "model"
     rows = {r["id"]: r for r in RESULTS["comparison"]}
-    assert rows["K2-L1/PROXIMITY"]["agree"] and rows["K2-L5/PROXIMITY"]["agree"] and rows["G3"]["agree"]
+    # The answers are those of PLAN 12 item 27 (src:4's rule), no longer the key's.
+    assert {i: rows[i]["ve"] for i in ("K2-L1/PROXIMITY", "K2-L5/PROXIMITY", "G3")} == {
+        "K2-L1/PROXIMITY": "ALL", "K2-L5/PROXIMITY": "ALL", "G3": "NONE"}
 
 
 def test_every_should_keeps_its_strict_reading():

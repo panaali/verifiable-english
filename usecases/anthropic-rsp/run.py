@@ -20,7 +20,7 @@ sys.path.insert(0, str(HERE))
 import rsp_translation as T  # noqa: E402
 import rsp_vocabulary as V  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
-from ve.norms import check_conflict  # noqa: E402
+from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
@@ -393,8 +393,8 @@ def _conflict(id_, context):
             present = (target, tuple(b.id for b in T.rule_blocks() if b.id in pair and applies(b, choice)))
             if present not in statuses:
                 doc = document(tuple(sorted(choice.items())), "deny", pair)
-                statuses[present] = check_conflict(doc.elaborated, model=model(doc, witness(target)),
-                                                   prove=True).status
+                # kb-10c: Lean's soft route decides (Python's search and prover only propose).
+                statuses[present] = decide_soft_conflict(doc, model=model(doc, witness(target)), prove=True).status
             checks.append(statuses[present])
         rows.append({"choice": assignment, "holds": True if "CONFLICT" in checks else
                      False if all(status == "CONFLICT-FREE" for status in checks) else None,

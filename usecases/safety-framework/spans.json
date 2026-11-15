@@ -414,9 +414,12 @@
     7521,
     7702
    ],
-   "kind": "unformalised",
-   "reason": "no_trigger_stated",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "rule": "f6-tcl",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p4-footer",
