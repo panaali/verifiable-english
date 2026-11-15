@@ -621,9 +621,10 @@ theorem VE.Acts.HookToday.canonicalShape_nil
   -- uses VE.Norms.Wire.canonicalAct@VE.Norms.Wire VE.Norms.Wire.canonicalShape@VE.Norms.Wire
   -- expr 2337512994
 theorem VE.Acts.HookToday.decodeFlaggedActs_today
-  VE.Norms.Wire.decodeFlaggedActs = VE.Acts.HookToday.Today.decodeFlagged
-  -- uses VE.Acts.HookToday.Today.decodeFlagged@VE.Acts.HookToday VE.Norms.Wire.SourceDecoder@VE.Norms.Wire VE.Norms.Wire.decodeFlaggedActs@VE.Acts.Hook
-  -- expr 4038249073
+  ∀ (environment norms : Lean.Json),
+    VE.Norms.Wire.decodeFlaggedActs environment norms = VE.Acts.HookToday.Today.decodeFlagged environment norms
+  -- uses VE.Acts.HookToday.Today.decodeFlagged@VE.Acts.HookToday VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeFlaggedActs@VE.Acts.Hook
+  -- expr 1118845156
 theorem VE.Acts.HookToday.decodeFlagged_plain
   ∀ (environment norms : Lean.Json),
     VE.Norms.Wire.actsProfiles Bool.true environment = [] →
@@ -740,13 +741,13 @@ theorem VE.Acts.HookTwins.runAdmission_today
   -- uses VE.Acts.HookTwins.Today.runAdmission@VE.Acts.HookTwins VE.Norms.Run.runAdmission@VE.Norms.Run
   -- expr 2436381116
 theorem VE.Acts.HookTwins.runCaseActsRouted_today
-  VE.Norms.Run.runCaseActsRouted = VE.Acts.HookTwins.Today.runCaseRouted
+  ∀ (j : Lean.Json), VE.Norms.Run.runCaseActsRouted j = VE.Acts.HookTwins.Today.runCaseRouted j
   -- uses VE.Acts.HookTwins.Today.runCaseRouted@VE.Acts.HookTwins VE.Norms.Run.runCaseActsRouted@VE.Norms.Run
-  -- expr 1581530561
+  -- expr 4244469265
 theorem VE.Acts.HookTwins.runCaseActs_today
-  VE.Norms.Run.runCaseActs = VE.Acts.HookTwins.Today.runCase
+  ∀ (j : Lean.Json), VE.Norms.Run.runCaseActs j = VE.Acts.HookTwins.Today.runCase j
   -- uses VE.Acts.HookTwins.Today.runCase@VE.Acts.HookTwins VE.Norms.Run.runCaseActs@VE.Norms.Run
-  -- expr 2566023453
+  -- expr 2102953174
 theorem VE.Acts.HookTwins.runCaseIn_congr
   ∀ {d₁ d₂ : VE.Norms.Wire.SourceDecoder} {j : Lean.Json},
     (∀ (n : Lean.Json), d₁ (j.getObjValD "environment") n = d₂ (j.getObjValD "environment") n) →

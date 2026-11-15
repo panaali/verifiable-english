@@ -8,7 +8,7 @@ behaviours they relate. The fixtures are those of `VE.Service.ActsExamples` (A1-
 
 namespace VE.Acts.HookExamples
 open Lean VE.Norms.Wire
-open VE.Acts.DecodeExamples (norms27 manyEnv manyRules envOf plain6 block6)
+open VE.Acts.DecodeExamples (norms27 manyEnv manyRules envOf plain6 block6 flagged)
 
 def a1 := "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}"
 def a2 := "{0} to equal pay for equal work without any discrimination"
@@ -78,6 +78,10 @@ def view (e : Except String NormsEnvironment) : Option (List (Option String) × 
   err (acts (env ["norms@0", "relational-fol@0"] [("p", pred ["person"] (perm "{0}"))]))
 #guard err (plainD (env ["norms@0", "relational-fol@0"] [("p", pred ["person"] (perm "{0}"))])) != "ok"
 
+-- `acts@0` alone is read from (a one-profile list): refused by the hook, before the envelope
+#guard err (plainD (env ["acts@0"] seek)) == actsHookRefusal
+#guard err (acts (env ["acts@0"] seek)) == "UnsupportedProfile: Missing profile relational-fol@0"
+
 /-! ### `ActsHook.lexical`: the acts instance without its joined-act reader -/
 
 -- without joined acts it is the acts instance: a lexical act read under `acts@0`, a joined one refused with D-4
@@ -105,6 +109,19 @@ def shown : Json := env ["norms@0", "relational-fol@0"] seek
 #guard err (decodeFlagged plainEnv (Json.arr #[rule "p"])) == "ok"
 #guard ((decodeFlagged plainEnv (Json.arr #[rule "p"])).toOption.map (·.ne.profiles)) ==
   ((decodeFlaggedActs plainEnv (Json.arr #[rule "p"])).toOption.map (·.ne.profiles))
+
+-- with a `data@0` flag: the route's decoders admit it, `decodeSource` refuses it unless asked
+def flaggedPlain : Json := env ["data@0", "norms@0", "relational-fol@0"] (seek ++ [("dept", Json.mkObj
+  [("arguments", toJson ["person", "person"]), ("description", .str "d"), ("functional", .bool true)])])
+def flagRefusal : String := "UnsupportedProfile: norms route with data flags is not implemented"
+#guard err (decodeFlagged flaggedPlain (Json.arr #[])) == "ok"
+#guard err (decodeFlaggedActs flaggedPlain (Json.arr #[])) == "ok"
+#guard err (decodeSource ActsHook.plain flaggedPlain (Json.arr #[])) == flagRefusal
+#guard err (decodeSource ActsHook.acts flaggedPlain (Json.arr #[]) (flags := true)) == "ok"
+-- the elaborating exit reads its source with the flags (`Acts.Run.normsSource`)
+#guard ((VE.Acts.Run.runElaborate VE.Acts.Run.normsSource (elabCase (flagged VE.Acts.DecodeExamples.a6) norms27)).toOption.map
+  (·.getObjValD "verdict")) == some (.str "ELABORATED")
+#guard err (VE.Acts.Run.normsSource flaggedPlain (Json.arr #[])) == "ok"
 
 /-! ### The norms mode's dispatch -/
 

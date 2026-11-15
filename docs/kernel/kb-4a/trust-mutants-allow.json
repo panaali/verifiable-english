@@ -1,0 +1,24 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Norms.Wire.ActsHook.plain",
+   "operator": "list-first",
+   "reason": "equivalent: the plain hook only tests whether the profiles read are empty, and `(l.take 1).isEmpty = l.isEmpty` for every list; the line's other list mutants (`drop 1`, `dropLast`) are killed by the one-profile guard of lean/VE/Acts/HookExamples.lean (`err (plainD (env [\"acts@0\"] seek)) == actsHookRefusal`)"
+  },
+  {
+   "definition": "VE.Norms.Wire.ActsHook.plain",
+   "operator": "list-last",
+   "reason": "equivalent: `(l.reverse.take 1).isEmpty = l.isEmpty` for every list, and the plain hook only tests emptiness (as list-first)"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeNormsEnvironment",
+   "operator": "bool-flip",
+   "reason": "the default arguments of today's name (`displayConstants := true`, `acts := false`, `joined := false`, lean/VE/Acts/Hook.lean:39-40): Lean elaborates a default into every call that omits it, so each check that refutes a flip changes its own term and the tool counts it as UNKNOWN ('Lean elaborates it otherwise'); the guards of lean/VE/Acts/HookExamples.lean on `decodeNormsEnvironment envA`, `decodeNormsEnvironment joinedE (acts := true)` and `decodeNormsEnvironment shown` refute the three flips"
+  },
+  {
+   "definition": "VE.Norms.Wire.decodeSource",
+   "operator": "bool-flip",
+   "reason": "only the default `flags := false` of lean/VE/Norms/Wire.lean:454 (the flip of line 456's `acts := true` is killed): a default is elaborated into each call that omits it, so its refuting checks change their own terms and count as UNKNOWN; the guard `err (decodeSource ActsHook.plain flaggedPlain (Json.arr #[])) == flagRefusal` (lean/VE/Acts/HookExamples.lean) and DecodeExamples.lean:252 refute it"
+  }
+ ]
+}

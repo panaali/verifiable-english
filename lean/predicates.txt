@@ -873,6 +873,7 @@ module VE.WireContract.Diagnose
 module VE.WireContract.Engine
 module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
+module VE.WireContract.Hooks.HookExamples
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
 module VE.WireContract.Hooks.Purposes

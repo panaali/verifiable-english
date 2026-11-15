@@ -37,8 +37,8 @@ end Today
 
 /-! ## With `ActsHook.acts`: today's runners, on every input -/
 
-theorem runCaseActsRouted_today : VE.Norms.Run.runCaseActsRouted = Today.runCaseRouted := rfl
-theorem runCaseActs_today : VE.Norms.Run.runCaseActs = Today.runCase := rfl
+theorem runCaseActsRouted_today (j : Json) : VE.Norms.Run.runCaseActsRouted j = Today.runCaseRouted j := rfl
+theorem runCaseActs_today (j : Json) : VE.Norms.Run.runCaseActs j = Today.runCase j := rfl
 
 /-! ## Two decoders that agree where a runner reads give the same answer -/
 
