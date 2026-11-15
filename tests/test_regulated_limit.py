@@ -190,3 +190,63 @@ def test_split_recipe_links_rules_checked_together():
     recipe = split_recipe()
     assert recipe.closed_split({"a", "a_ok"}, RULES, REGULATED, together=[("ra", "rc")]) == \
         "the split separates a from c"
+
+
+# The recipe end to end on a soft document (design note docs/usecases/safetyfw/regulated-limit.md): split into the
+# frames of its components, every predicate's selected rules are those of the unsplit document, and a frame that
+# lacks a rule's guard predicate is refused, never answered.
+
+SPLIT_RULES = [("ra", "a", ["unary", "f", ["var", 0]], True), ("rb", "b", ["unary", "a", ["var", 0]], True),
+               ("rc", "c", ["unary", "g", ["var", 0]], True), ("rd", "d", ["not", ["unary", "f", ["var", 0]]], False)]
+
+
+def soft_frame(regulated):
+    """The frame (`f`, `g`) with the regulated permissions `regulated` and the rules on them."""
+    from ve.softnorms import SoftEnvironment, SoftNormDocument
+    predicates = {"f": {"arguments": ["person"], "description": "{0} is f"},
+                  "g": {"arguments": ["person"], "description": "{0} is g"}}
+    for p in regulated:
+        predicates[p] = {"arguments": ["person"], "description": f"{{0}} may {p}",
+                         "regulated": {"role": "permission", "default": "deny", "act": f"{{0}} do {p}"}}
+    raw = {"language": "ve.core@0.2", "profiles": ["norms@0", "relational-fol@0", "soft-norms@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {"person": {"description": "a person"}}, "constants": {}, "predicates": predicates}}
+    rules = [{"norm": {"name": n, "predicate": p, "sign": s, "guard": g, "unless": [], "over": [], "mode": "default",
+                       "exception": dict(DECIDER)}} for n, p, g, s in SPLIT_RULES if p in regulated]
+    return SoftNormDocument(SoftEnvironment(raw), rules)
+
+
+def selected(doc, predicate, f, g):
+    from ve.model import FiniteModel
+    env = doc.elaborated.base_environment()
+    model = FiniteModel.from_dict(env, {"complete": True, "domains": {"person": ["p1", "p2"]}, "constants": {},
+                                        "relations": {**{p: [] for p in env.predicates}, "f": f, "g": g}})
+    return [sorted((r.name, r.sign) for r in doc.elaborated.selected_rules(predicate, model, (x,)))
+            for x in ("p1", "p2")]
+
+
+@service
+def test_a_split_into_component_frames_selects_the_same_rules():
+    recipe = split_recipe()
+    rules = [{"name": n, "predicate": p, "guard": g, "unless": [], "over": []} for n, p, g, _ in SPLIT_RULES]
+    regulated = {p: {"role": "permission"} for p in "abcd"}
+    groups = recipe.components(sorted(regulated), recipe.links(rules, regulated))
+    assert groups == [["c"], ["d"], ["a", "b"]]
+    moved = {"c", "d"}
+    assert recipe.closed_split(moved, rules, regulated) is None
+    whole, frames = soft_frame("abcd"), {"A": soft_frame("ab"), "B": soft_frame("cd")}
+    for f, g in (([], []), ([["p1"]], [["p2"]]), ([["p1"], ["p2"]], [["p1"]])):
+        for p in "abcd":
+            assert selected(frames["B" if p in moved else "A"], p, f, g) == selected(whole, p, f, g), (p, f, g)
+    assert selected(frames["A"], "b", [["p1"]], []) == [[("rb", True)], []]  # rb's guard reads a, in its frame
+
+
+@service
+def test_a_frame_without_a_rules_guard_predicate_is_refused():
+    """Seeded bug (c) as a split: b moves without a, the predicate its rule's guard reads."""
+    from ve.errors import UnknownSymbol
+    assert split_recipe().closed_split({"b", "c", "d"}, [{"name": n, "predicate": p, "guard": g, "unless": [],
+                                                          "over": []} for n, p, g, _ in SPLIT_RULES],
+                                       {p: {"role": "permission"} for p in "abcd"}) == "the split separates b from a"
+    with pytest.raises(UnknownSymbol, match="Unknown predicate 'a'"):
+        soft_frame("bcd")
