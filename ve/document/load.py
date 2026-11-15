@@ -29,10 +29,7 @@ def load_document(path: str | Path):
     `ve-document@2` document's admission is Lean's (`ve_discourse_route` on the same bytes,
     docs/spec/discourse.md 3.4): a document Lean rejects raises Lean's diagnostic before any Python check runs,
     and a document Lean admits that Python cannot load is `CheckerUnavailable`, never a Python-only verdict."""
-    doc = _load(Path(path), admit=False)
-    if "core" in doc:
-        raise CheckerUnavailable(CORE_ONLY)
-    return doc
+    return _load(Path(path), admit=False)
 
 
 # kb-2a-b: a document Lean answers on its core path has no Python document object; only its answer is shown.
@@ -57,7 +54,7 @@ def lean_answer(path: str | Path) -> dict:
     return row
 
 
-def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes | None = None):
+def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes | None = None, core: bool = False):
     """`load_document`; `admit`: also `_report`'s claim-graph checks, which `check_document` asks Lean for; `raw`:
     the text read in place of the file's, as the document at `path` (its senses packs beside it); `chain_of`: the chain
     list document whose chain reading `raw` is (`ve.document.lean._chain_document`)."""
@@ -70,6 +67,9 @@ def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes 
             return _load_document(raw, path, None)
         from .core import is_core
         if is_core(row):
+            if not core:
+                # kb-2a-b: the core path builds no Python document; only `ve document check` shows its answer.
+                raise CheckerUnavailable(CORE_ONLY)
             return _core_document(raw, row)
         return _lean_document(raw, path, row, admitted=admit, prepared=prepared)
     lean = lean_admission(raw, Path(path).parent)

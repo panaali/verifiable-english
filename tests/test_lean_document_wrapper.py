@@ -597,7 +597,7 @@ def test_large_question_fixtures_are_compared_as_seeds_without_mutants():
     from conformance import document_wrapper as dw
     names = [name for name, _ in dw.seeds()]
     unmutated = [name for name in names if any(name.startswith(p) for p in dw.UNMUTATED)]
-    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK
+    assert unmutated and set(unmutated) <= DECIDED | set(FAIL_CLOSED) | PYTHON_FALLBACK | set(LEAN_CORE)
     for prefix in dw.UNMUTATED:
         assert any(name.startswith(prefix) for name in names), prefix
     for name, doc in dw.seeds():

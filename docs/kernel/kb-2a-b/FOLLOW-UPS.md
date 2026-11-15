@@ -1,6 +1,6 @@
 # kb-2a-b: follow-ups
 
-- **R16 ties pass** (kb-2a-b, DELTA.md row 5; trusted +267: K +0, S +48, V +219, `tools/trust_map.py --check` against
+- **R16 ties pass** (kb-2a-b, DELTA.md row 5; trusted +283: K +0, S +48, V +235, `tools/trust_map.py --check` against
   4a5d3460d36c): tie the untied shell definitions of `lean/VE/Service/CoreCheck.lean` (`inputs`, `Inputs`, `reads`,
   `exceptionFormulas`, `tableOf`, `viewOf`, `unitStatus`, `routed`, `routedRefusals`, `runCaseReported`, `factsJson`,
   `roundTrips`), `VE.Kernel.DocumentFold.statuses` and `VE.Service.Document.decode` to theorems: the unit table's
