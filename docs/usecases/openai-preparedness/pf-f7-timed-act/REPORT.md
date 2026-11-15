@@ -28,7 +28,7 @@ reviews/dri-decisions-20261115-arch-round6.md items 1 and 2; reviews/dri-decisio
 | B6 f15 legend | `deeper_testing_warranted`: "OpenAI ('we') deems that the deployment at {0} warrants deeper testing of Tracked Categories of capability" | 94167f21d4 | `test_deeper_testing_legend_keeps_a_deployment`; `test_f15_third_party_act_is_openais_work_with_third_parties` |
 | B7 f9-efficacy legend | quotes “For each identified safeguard, we identify methods to measure their efficacy” | 94167f21d4 | `test_efficacy_legend_quotes_its_sentence` |
 | B8 f9 record lines | the f9-risk-paths header and the `risk_paths` legend: "the order follows from the second step's 'each of those'"; f9-specific and f9-efficacy: one line each in the header and in PLAN 12 item 29; f9-specific's legend keeps "that either exist or should be implemented" | 94167f21d4, aaa8dc9ecf | `test_risk_paths_order_follows_from_each_of_those`; `test_f9_record_lines_and_kept_legend_words`; `test_f9_selection_steps_carry_their_order_word_and_record_the_order_as_et` |
-| C regenerate, `moved` | pf_vocabulary.py, build_document.py, stage0.py, measure.py, source/quote_evidence.py, run.py, safetyfw_accounting.py --report | 94167f21d4, 58f1b0d260, 1a4f7b90fe | `test_no_pf_answer_moved_against_the_merge_base_snapshot` |
+| C regenerate, `moved` | pf_vocabulary.py, build_document.py, stage0.py, measure.py, source/quote_evidence.py, run.py, safetyfw_accounting.py --report; conformance/english_lean_lexicon.py for lexicon-report.json (PF's environment lexicon: 138 -> 139 symbols; 43 valid, 0 invalid) | 94167f21d4, 58f1b0d260, 1a4f7b90fe, the commit after 9be7968419 | `test_no_pf_answer_moved_against_the_merge_base_snapshot`; `test_every_corpus_environment_has_a_valid_selected_lexicon` |
 
 f7-compile: no change, as the task says. The three f9 rulings are provisional. No record, test or fixture on this
 branch cites their rule, and this report does not count them as cleared.
@@ -387,7 +387,7 @@ DRI decision items 1 and 2 ask for (S5 shows the live moved check failing).
 
 SIZE: 67 product (usecases/openai-preparedness case files: +43 -24), 260 tests (+243 -17), 27 other hand-written
 (PLAN 12) plus this report. Generated or saved evidence: results.json, coverage.json, environment.d1.json, stage0.json,
-quote-hashes.json, accounting.json, answers-at-merge-base.json (`git diff --numstat 26916f7349 HEAD`).
+quote-hashes.json, accounting.json, lexicon-report.json, answers-at-merge-base.json (`git diff --numstat 26916f7349 HEAD`).
 
 ## Self-review against BUILDER-CHECKLIST
 
