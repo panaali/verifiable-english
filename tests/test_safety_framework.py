@@ -580,10 +580,10 @@ def test_the_f20_legends_keep_the_source_s_subject_qualification_and_conservatis
 
 
 def test_security_level_2_plus_is_its_baseline_and_one_group_of_measures_against_both_threats():
-    """facts.d1.ve measures-sl2plus, 2.1.1: "Security Level 2+," "uses RAND Security Level 2 (SL2) as a baseline, with
+    """rules.d1.ve measures-sl2plus, 2.1.1: "Security Level 2+," "uses RAND Security Level 2 (SL2) as a baseline, with
     additional security measures designed to address risks from insider threats and well-resourced non-state external
     actors": the baseline and one group of additional measures, addressing both threats; no insider-only group."""
-    atoms = {a for a in run.fact_atoms() if a[0] in ("includes", "addresses")}
+    atoms = {a for a in run.document_atoms() if a[0] in ("includes", "addresses")}
     assert atoms == {("includes", "security_level_2_plus", "rand_security_level_2"),
                      ("includes", "security_level_2_plus", "sl2_plus_additional_measures"),
                      ("addresses", "sl2_plus_additional_measures", "insiders"),
@@ -599,9 +599,8 @@ def test_g8_stipulates_only_the_circumvention_evidence():
     assert next(r for r in RESULTS["comparison"] if r["id"] == "G8")["ve"] == "ALL"
 
 
-# facts.d1.ve's blocks: PLAN 4.1's level table, the 1.2 closures and the activity facts, with tcl-not-ccl (section 12,
-# item 4) and measures-sl2plus (section 12, item 25; its own item-scoped move waits for row
-# safety-framework-case-alternatives, reviews/dri-decisions-20261114-safety-framework-fidelity-fix-3.md item 5).
+# Named fact blocks in source order. measures-sl2plus now lives in rules.d1.ve with its item scope;
+# tests/test_fsf_case_alternatives.py checks the items that read it.
 FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-stealth", "levels-ml-rd-acceleration",
                 "levels-ml-rd-automation", "measures-sl2plus", "closure-misuse-ccls", "closure-ccl-kinds",
                 "closure-tcls", "tcl-not-ccl", "activities-internal-external", "activities-development",
@@ -611,9 +610,12 @@ FACTS_BLOCKS = ["levels-cbrn", "levels-cyber", "levels-manipulation", "levels-st
 def test_facts_holds_the_premises_of_every_item_and_no_item_s_own_bridge():
     """No block of facts.d1.ve is an item's own premise; N1's bridge is a block of rules.d1.ve headed `item N1`, and
     a facts.d1.ve block headed `item <id>` is refused."""
-    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == FACTS_BLOCKS
+    assert [b.id for b in translation.read_blocks("facts.d1.ve")] == [
+        block_id for block_id in FACTS_BLOCKS if block_id != "measures-sl2plus"
+    ]
     assert all(b.when == () for b in translation.read_blocks("facts.d1.ve"))
-    assert [(b.id, b.when) for b in translation.rule_fact_blocks()] == [("bridge-one-domain", (("item", "N1"),))]
+    assert [b.id for b in translation.rule_fact_blocks()] == ["bridge-one-domain", "measures-sl2plus"]
+    assert translation.rule_fact_blocks()[0].when == (("item", "N1"),)
     assert "bridge-one-domain" not in {b.id for b in translation.rule_blocks()}
 
 
