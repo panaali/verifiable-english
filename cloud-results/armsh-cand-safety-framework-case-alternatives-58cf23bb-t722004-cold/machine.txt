@@ -1,0 +1,8 @@
+job=armsh-cand-safety-framework-case-alternatives-58cf23bb-t722004-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T05:55:17Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 05:55:17 up 2 min,  0 user,  load average: 1.38, 0.58, 0.22
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=aeb6ad96ff3c
+seed: lake 1262.3 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 561 s)
