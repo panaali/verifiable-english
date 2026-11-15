@@ -84,8 +84,8 @@ def test_the_cell_comparison_catches_one_changed_cell(id_, field, value):
 
 # --- The corrected acts and the questions that ask them ---------------------------------------------------------
 
-STANDARD = {"misuse_safeguards": "(Appendix C.1)", "alignment_safeguards": "(Appendix C.2)",
-            "security_controls": "(Appendix C.3)"}
+STANDARD = {"misuse_safeguards": "(Appendix C.1)", "misuse_safeguards_before_external": "(Appendix C.1)",
+            "alignment_safeguards": "(Appendix C.2)", "security_controls": "(Appendix C.3)"}
 
 
 def test_table_1_acts_name_the_high_standard(pf):
@@ -477,8 +477,9 @@ def test_premise_units_follow_the_goal(pf):
 def test_regulated_predicates_stay_within_64():
     stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
     count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
-    # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26)
-    assert stage0["P7"]["regulated_predicates"] == count == 61 <= 64
+    # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26); pf-f7-timed-act adds
+    # misuse_safeguards_before_external, BIO-H's own act (PLAN 12 item 29)
+    assert stage0["P7"]["regulated_predicates"] == count == 62 <= 64
 
 
 # --- openai-preparedness-fidelity-fix-3: the six round-B units both adjudicators judged REAL ---------------------
@@ -516,10 +517,11 @@ def test_f4_security_reads_no_coverage_condition(pf):
     for name in predicates_read("f4-security"):
         assert "covered" not in legend(name), name
     assert "no coverage condition" in block("f4-security").source
-    # the fix-2 builder's survey the ruling names: F2, F7, F8, F9 and f16-sag-recommend, whose source states coverage
+    # the fix-2 builder's survey the ruling names: F2, F7, F8 and F9, whose source states coverage; f16-sag-recommend
+    # tests only its own condition (pf-split-units-20261115 section 2, P4; PLAN 12 item 29)
     assert {b.id for b in T.rule_blocks() if "covered" in predicates_read(b.id)} == {
         "f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any", "f2-security-developed", "f7-evaluations",
-        "f7-report", "f7-compile", "f8-start", "f9-report", "f16-sag-recommend"}
+        "f7-evaluations-any", "f7-report", "f7-compile", "f8-start", "f9-report"}
 
 
 def test_f9_report_act_states_the_compilation_and_its_legend_quotes_4_2(pf):
@@ -858,7 +860,8 @@ def test_f15_third_party_act_is_openais_work_with_third_parties(pf):
     assert SENTENCE_5_2 in block("f15-third-party").source
     assert predicates_read("f15-third-party") == {"third_party_evaluation", "deeper_testing_warranted",
                                                    "third_party_available"}
-    assert legend("deeper_testing_warranted") == "OpenAI deems that {0} warrants deeper testing of Tracked Categories"
+    assert legend("deeper_testing_warranted") == ("OpenAI ('we') deems that the deployment at {0} warrants deeper "
+                                                  "testing of Tracked Categories of capability")
     assert legend("third_party_available") == "third-party evaluation is available and feasible at {0}"
     assert R.K_ITEMS["THIRD_PARTY_EVALUATION"] == ("third_party_evaluation",)
     k14 = next(c for c in json.loads((PF / "results.json").read_text())["comparison"] if c["id"] == "K14")
@@ -870,14 +873,21 @@ def test_f9_selection_steps_carry_their_order_word_and_record_the_order_as_et(pf
                                                                               key):
     """f9-risk-paths and f9-specific (pf-relay4 Q14, Q15, (iv) by both): each legend quotes its 4.1 sentence in full,
     so "first" and "then" are in the translation's words (the act cannot hold them: 82 characters with "first";
-    "then" is reserved); the header and the spans.json entry both say the order between the two steps is event
-    order (ET, PLAN O7), not formalised, and the entry's record spans exactly the order word."""
+    "then" is reserved); f9-specific's header and both spans.json entries say the order between the two steps is
+    event order (ET, PLAN O7), and each entry's record spans exactly the order word. f9-risk-paths' header and legend
+    say the order follows from the second step's 'each of those' (pf-split-units-20261115 section 2)."""
     assert legend_quotes(predicate) == [sentence]
     assert word in sentence.split() and sentence in block(unit).source
     assert word not in act(predicate).split()
     header = block(unit).source
-    assert f"event order (ET, as PLAN O7): the order the word {word} states" in header
-    assert "is not formalised" in header and "so the legend carries it" in header
+    if unit == "f9-risk-paths":
+        assert "the order follows from the second step's 'each of those'" in header
+        assert "the order follows from the second step's 'each of those'" in legend(predicate)
+        assert "not formalised" not in header and "not formalised" not in legend(predicate)
+        assert "so the legend carries the word" in header
+    else:
+        assert f"event order (ET, as PLAN O7): the order the word {word} states" in header
+        assert "is not formalised" in header and "so the legend carries it" in header
     record = span_record(unit, key)
     assert "ET" in record["waits"]
     (clause,) = record["untranslated"]
@@ -909,22 +919,24 @@ def test_f9_specific_keeps_its_per_item_scope_record(pf):
 def test_fix6_units_carry_only_their_recorded_exposures():
     """Under the installed omission rule (tests/omission_rule.py: any tag but restates / rule / reading is a loss)
     the three units carry exactly these exposures: f15-third-party the two `exposition` entries of its accounting
-    line (as on main; a read must clear them before K14 counts as audited) and PLAN 12 item 27; f9-specific item 27
-    and its UNFORMALISED unit (SC); f9-risk-paths none. No `mistag` is left (main had three: the full-sentence
+    line (as on main; a read must clear them before K14 counts as audited) and PLAN 12 item 27; f9-specific item 27,
+    item 29's one-line limit record (pf-f7-timed-act) and its UNFORMALISED unit (SC); f9-risk-paths none. No `mistag` is left (main had three: the full-sentence
     legends now carry the words the accounting says each rule restates). The `report` path (sentences of a docs
     REPORT.md) is left out here: it reads batch reports, which no permanent test pins (D4)."""
     exposures = {u: [(p, d) for p, d in rows if p != "report"] for u, rows in omission_exposures(FIX6_UNITS).items()}
     records = {u: [p for p in paths if p != "report"] for u, paths in omission_records(FIX6_UNITS).items()}
     assert {u: paths for u, paths in records.items() if paths} == {"f15-third-party": ["loss", "loss", "plan12"],
-                                                                  "f9-specific": ["plan12", "unformalised"]}
+                                                                  "f9-specific": ["plan12", "plan12", "unformalised"]}
     assert [d for p, d in exposures["f15-third-party"] if p == "loss"] == [
         "(as described in Section 3.1) (exposition)",
         "for example based on results of Capabilities Report presented to them (exposition)"]
-    item27 = plan12_item(27)
+    item27, item29 = plan12_item(27), plan12_item(29)
     assert item27.startswith("27. **5.2's third-party evaluation and 4.1's two ordered selection steps")
+    assert [d for p, d in exposures["f9-specific"] if p == "plan12" and d.rstrip(".") in item29] == [
+        "`f9-specific` records its limit in one line: per-path facts are not classified."]
     for name, rows in exposures.items():
         for path, detail in rows:
-            assert path in ("loss", "unformalised") or detail.rstrip(".") in item27, (name, path, detail)
+            assert path in ("loss", "unformalised") or detail.rstrip(".") in item27 + item29, (name, path, detail)
 
 
 # openai-preparedness-cases-repair: the case records (cases.json, the unit CASES of the omission audit) have an accounting
