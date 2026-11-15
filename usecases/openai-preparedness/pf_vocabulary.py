@@ -162,7 +162,11 @@ BASE = {
 
 ACTS = {
     "misuse_safeguards": ("{0} have misuse safeguards meeting the High standard",
-                          "Table 1 BIO-H and CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"),
+                          "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"),
+    "misuse_safeguards_before_external": ("{0} have misuse safeguards meeting the High standard before external "
+                                          "deployment",
+                                          "Table 1 BIO-H: safeguards against misuse meeting High standard (Appendix "
+                                          "C.1)"),
     "security_controls": ("{0} have security controls meeting the High standard",
                           "Table 1: security controls meeting High standard (Appendix C.3)"),
     "alignment_safeguards": ("{0} have misalignment safeguards meeting the High standard",
@@ -189,7 +193,7 @@ ACTS = {
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
     "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
-    "evaluations_before_deployment": ("{0} undergo evaluations before deployment", "3.3: Scalable Evaluations before deployment"),
+    "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment", "3.3: Scalable Evaluations before deployment"),
     "capabilities_report": ("{0} have SAG review the Capabilities Report as well as decide on next steps",
                             "3.3: the SAG reviews the Capabilities Report and decides on next steps"),
     "capabilities_report_submitted": ("{0} have results compiled into a Capabilities Report submitted to the SAG",

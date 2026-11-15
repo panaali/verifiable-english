@@ -2253,7 +2253,7 @@
   }
  ],
  "cost": {
-  "documents_built": 352,
+  "documents_built": 354,
   "prover_calls": 13
  },
  "items": {
@@ -2429,10 +2429,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -2446,10 +2448,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -2463,10 +2467,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -2480,10 +2486,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -3169,10 +3177,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3186,10 +3196,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3203,10 +3215,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3220,10 +3234,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -3907,10 +3923,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3924,10 +3942,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3941,10 +3961,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -3958,10 +3980,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -4638,10 +4662,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -4655,10 +4681,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -4672,10 +4700,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -4689,10 +4719,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -5294,10 +5326,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -5310,10 +5344,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -5665,10 +5701,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -5681,10 +5719,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -6054,10 +6094,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -6070,10 +6112,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -6437,10 +6481,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -6453,10 +6499,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -6890,10 +6938,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -6907,10 +6957,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -6924,10 +6976,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -6941,10 +6995,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -7625,14 +7681,18 @@
       "RS1": "strict",
       "RS2": "nest"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-bio-strict"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards"
+     ],
      "soft": false
     },
     {
@@ -7645,10 +7705,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -7657,14 +7719,18 @@
       "RS1": "default",
       "RS2": "nest"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-bio-default"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards"
+     ],
      "soft": true
     },
     {
@@ -7677,10 +7743,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -8367,10 +8435,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -8384,10 +8454,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -8401,10 +8473,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -8418,10 +8492,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -9098,10 +9174,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -9115,10 +9193,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -9132,10 +9212,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -9149,10 +9231,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -9754,10 +9838,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -9770,10 +9856,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -10120,28 +10208,36 @@
      "choice": {
       "RS1": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-bio-strict"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards"
+     ],
      "soft": false
     },
     {
      "choice": {
       "RS1": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-bio-default"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards"
+     ],
      "soft": true
     }
    ],
@@ -10513,10 +10609,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -10529,10 +10627,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -10896,10 +10996,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -10912,10 +11014,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -11349,10 +11453,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -11366,10 +11472,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -11383,10 +11491,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -11400,10 +11510,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -12084,14 +12196,18 @@
       "RS1": "strict",
       "RS2": "nest"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-cyb-strict"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards_before_external"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards_before_external"
+     ],
      "soft": false
     },
     {
@@ -12104,10 +12220,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -12116,14 +12234,18 @@
       "RS1": "default",
       "RS2": "nest"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-cyb-default"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards_before_external"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards_before_external"
+     ],
      "soft": true
     },
     {
@@ -12136,10 +12258,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -12826,10 +12950,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -12843,10 +12969,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -12860,10 +12988,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -12877,10 +13007,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -13556,10 +13688,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -13573,10 +13707,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -13590,10 +13726,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -13607,10 +13745,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -14212,10 +14352,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -14228,10 +14370,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -14578,28 +14722,36 @@
      "choice": {
       "RS1": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-cyb-strict"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards_before_external"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards_before_external"
+     ],
      "soft": false
     },
     {
      "choice": {
       "RS1": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f1-misuse-cyb-default"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "misuse_safeguards_before_external"
+     ],
+     "silent_predicates": [
+      "misuse_safeguards_before_external"
+     ],
      "soft": true
     }
    ],
@@ -14971,10 +15123,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -14987,10 +15141,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -15353,10 +15509,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -15369,10 +15527,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -15736,10 +15896,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -15752,10 +15914,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -16110,10 +16274,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -16126,10 +16292,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -16484,10 +16652,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -16500,10 +16670,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -16858,10 +17030,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     },
@@ -16874,10 +17048,12 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "silent_predicates": [
-      "misuse_safeguards"
+      "misuse_safeguards",
+      "misuse_safeguards_before_external"
      ],
      "soft": false
     }
@@ -20017,12 +20193,14 @@
    "choices": [
     {
      "choice": {
+      "RS3": "ext",
       "RS8": "rel"
      },
      "holds": false,
      "rules": [
       "f6-rel",
       "f7-evaluations",
+      "f7-evaluations-any",
       "f7-report"
      ],
      "w1": [
@@ -20031,12 +20209,46 @@
     },
     {
      "choice": {
+      "RS3": "ext",
       "RS8": "pred"
      },
      "holds": false,
      "rules": [
       "f6-rel",
       "f7-evaluations",
+      "f7-evaluations-any",
+      "f7-report"
+     ],
+     "w1": [
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS3": "any",
+      "RS8": "rel"
+     },
+     "holds": false,
+     "rules": [
+      "f6-rel",
+      "f7-evaluations",
+      "f7-evaluations-any",
+      "f7-report"
+     ],
+     "w1": [
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS3": "any",
+      "RS8": "pred"
+     },
+     "holds": false,
+     "rules": [
+      "f6-rel",
+      "f7-evaluations",
+      "f7-evaluations-any",
       "f7-report"
      ],
      "w1": [
@@ -20045,6 +20257,7 @@
     }
    ],
    "cone": [
+    "RS3",
     "RS8"
    ],
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
@@ -24335,7 +24548,8 @@
     ],
     "F7": [
      [
-      "f7-evaluations"
+      "f7-evaluations",
+      "f7-evaluations-any"
      ],
      [
       "f7-compile"
@@ -24399,6 +24613,7 @@
     "f3-inuse-forecast",
     "f5-checkpoint",
     "f7-evaluations",
+    "f7-evaluations-any",
     "f7-report",
     "f9-efficacy",
     "f9-risk-paths",
@@ -25264,6 +25479,54 @@
       "s"
      ],
      [
+      "external_deployment",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
+    "f7-evaluations-any": [
+     [
+      "covered",
+      "s"
+     ],
+     [
+      "external_deployment",
+      "s"
+     ],
+     [
+      "internal_deployment",
+      "s"
+     ],
+     [
       "reached",
       "s",
       "ai_self_improvement_critical"
@@ -25798,10 +26061,10 @@
   },
   "M10": {
    "cases": 67,
-   "choices": 1043,
-   "documents_built": 352,
+   "choices": 1045,
+   "documents_built": 354,
    "prover_calls": 13,
-   "rules": 90,
+   "rules": 91,
    "units": 393,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
@@ -25848,7 +26111,7 @@
    }
   },
   "M5": {
-   "regulated_predicates": 61,
+   "regulated_predicates": 62,
    "violations": []
   },
   "M6": {
@@ -25857,8 +26120,8 @@
    "untraced": []
   },
   "M7": {
-   "insensitive_choices": 112,
-   "sensitive_choices": 681,
+   "insensitive_choices": 104,
+   "sensitive_choices": 689,
    "sensitive_exactly_where_silent": true,
    "soft_key_items": 14,
    "soft_key_items_matched": 14,
@@ -25881,7 +26144,7 @@
     "T2"
    ],
    "unknown_items": [],
-   "w1_conflict_free": 52,
+   "w1_conflict_free": 54,
    "w1_conflict_witnesses": 0
   },
   "M9": {

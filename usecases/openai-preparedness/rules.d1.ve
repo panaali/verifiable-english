@@ -1,7 +1,7 @@
 ## f1-misuse-bio-strict | RS1=strict | Table 1 BIO-H: “Require safeguards against misuse meeting High standard (Appendix C.1) before external deployment”
-Rule 1. Every situation must have misuse safeguards meeting the High standard, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+Rule 1. Every situation must have misuse safeguards meeting the High standard before external deployment, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
 ## f1-misuse-bio-default | RS1=default | Table 1 BIO-H: “Require safeguards against misuse meeting High standard (Appendix C.1) before external deployment”, read under the column header “Risk-specific safeguard guidelines”
-Rule 1. Every situation should have misuse safeguards meeting the High standard, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+Rule 1. Every situation should have misuse safeguards meeting the High standard before external deployment, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
 ## f1-misuse-cyb-strict | RS1=strict | Table 1 CYB-H: “Require safeguards against misuse meeting High standard (Appendix C.1) for external deployment”
 Rule 1. Every situation must have misuse safeguards meeting the High standard, if both that situation has reached "cybersecurity_high" and that situation is classified as "external_deployment".
 ## f1-misuse-cyb-default | RS1=default | Table 1 CYB-H: “Require safeguards against misuse meeting High standard (Appendix C.1) for external deployment”, read under the column header “Risk-specific safeguard guidelines”
@@ -56,8 +56,10 @@ Rule 1. Every situation must have additional safety as well as security controls
 Rule 1. Every situation must have sufficient additional safety plus security controls during development, if all of the following hold: (a) there is a level such that both that situation has reached that level and that level is critical; (b) that situation is classified as "further_development".
 ## f4-security | always | C.3: “We will require the following practices for High capability models”; no coverage condition
 Rule 1. Every situation must have security practices, if there is a level such that both that situation has reached that level and that level is high.
-## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”; temporal relation remains ET-blocked
-Rule 1. Every situation must undergo evaluations before deployment, if that situation is covered.
+## f7-evaluations | RS3=ext | 3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”; “deployment” read as external deployment (RS3=ext); order against deployment is inside the act; dated facts are not classified
+Rule 1. Every situation must undergo the suite of Scalable Evaluations prior to deployment, if both that situation is covered and that situation is classified as "external_deployment".
+## f7-evaluations-any | RS3=any | 3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”; “deployment” read as every deployment (RS3=any); order against deployment is inside the act; dated facts are not classified
+Rule 1. Every situation must undergo the suite of Scalable Evaluations prior to deployment, if all of the following hold: (a) that situation is covered; (b) either that situation is classified as "external_deployment" or that situation is classified as "internal_deployment", or both.
 ## f7-report | always | 3.3: “The SAG reviews the Capabilities Report and decides on next steps.”
 Rule 1. Every situation must have SAG review the Capabilities Report as well as decide on next steps, if that situation is covered.
 ## f7-compile | always | 3.3: “The results of these evaluations, and any noteworthy observations that should affect interpretation of the results, are compiled into a Capabilities Report that is submitted to the SAG.” (after “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”)

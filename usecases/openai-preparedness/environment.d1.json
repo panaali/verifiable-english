@@ -505,11 +505,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 1 BIO-H and CYB-H: safeguards against misuse meeting High standard (Appendix C.1)",
+        "description": "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
           "act": "{0} have misuse safeguards meeting the High standard"
+        }
+      },
+      "misuse_safeguards_before_external": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1 BIO-H: safeguards against misuse meeting High standard (Appendix C.1)",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have misuse safeguards meeting the High standard before external deployment"
         }
       },
       "security_controls": {
@@ -608,7 +619,7 @@
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} undergo evaluations before deployment"
+          "act": "{0} undergo the suite of Scalable Evaluations prior to deployment"
         }
       },
       "capabilities_report": {
