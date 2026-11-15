@@ -7810,7 +7810,7 @@
        ]
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -7818,7 +7818,7 @@
      "family": "D",
      "key": "NONE",
      "pass": false,
-     "reason": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+     "reason": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
      "unit": "D6a",
      "value": "UNDECIDED"
     },
@@ -7851,7 +7851,7 @@
        ]
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(bound)\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(bound)\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -7859,7 +7859,7 @@
      "family": "D",
      "key": "SOME(bound)",
      "pass": false,
-     "reason": "value \"UNDECIDED\" differs from the key \"SOME(bound)\", no PLAN.md section 12 entry",
+     "reason": "value \"UNDECIDED\" differs from the key \"SOME(bound)\"; no PLAN.md section 12 entry gives it as the item's answer",
      "unit": "D6b",
      "value": "UNDECIDED"
     },
@@ -7892,7 +7892,7 @@
        ]
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -7900,7 +7900,7 @@
      "family": "D",
      "key": "NONE",
      "pass": false,
-     "reason": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+     "reason": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
      "unit": "D7",
      "value": "UNDECIDED"
     },
@@ -8054,7 +8054,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(trigger)\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(trigger)\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -8083,7 +8083,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -8112,7 +8112,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -8300,7 +8300,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(uncond)\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(uncond)\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -9554,7 +9554,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(cond | uncond)\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"SOME(cond | uncond)\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -9736,7 +9736,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -9765,7 +9765,7 @@
        "value_kinds": []
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"ALL\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -10055,7 +10055,7 @@
        ]
       },
       "3": {
-       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+       "failed_by": "value \"UNDECIDED\" differs from the key \"NONE\"; no PLAN.md section 12 entry gives it as the item's answer",
        "ok": false
       }
      },
@@ -34451,16 +34451,16 @@
     "G": {
      "c1": 9,
      "c2": 9,
-     "c3": 8,
+     "c3": 9,
      "items": 9,
-     "pass": 8
+     "pass": 9
     },
     "K": {
      "c1": 18,
      "c2": 18,
-     "c3": 16,
+     "c3": 18,
      "items": 18,
-     "pass": 16
+     "pass": 18
     },
     "N": {
      "c1": 3,
@@ -44760,7 +44760,7 @@
       "3": {
        "failed_by": null,
        "ok": true,
-       "recorded": "PLAN.md section 12, item 23: NONE (run.py DEVIATIONS)"
+       "recorded": "PLAN.md section 12, item 23: C-doc NONE"
       }
      },
      "criterion": 1,
@@ -44988,7 +44988,7 @@
       "3": {
        "failed_by": null,
        "ok": true,
-       "recorded": "PLAN.md section 12, item 23: NONE (run.py DEVIATIONS)"
+       "recorded": "PLAN.md section 12, item 23: C3 NONE"
       }
      },
      "criterion": 1,
@@ -45421,15 +45421,16 @@
        ]
       },
       "3": {
-       "failed_by": "value \"NONE\" differs from the key \"ALL\", no PLAN.md section 12 entry",
-       "ok": false
+       "failed_by": null,
+       "ok": true,
+       "recorded": "PLAN.md section 12, item 27: G3 NONE"
       }
      },
-     "criterion": 3,
+     "criterion": null,
      "family": "G",
      "key": "ALL",
-     "pass": false,
-     "reason": "value \"NONE\" differs from the key \"ALL\", no PLAN.md section 12 entry",
+     "pass": true,
+     "reason": null,
      "unit": "G3",
      "value": "NONE"
     },
@@ -46045,15 +46046,16 @@
        ]
       },
       "3": {
-       "failed_by": "value \"ALL\" differs from the key \"NONE\", no PLAN.md section 12 entry",
-       "ok": false
+       "failed_by": null,
+       "ok": true,
+       "recorded": "PLAN.md section 12, item 27: K2-L1/PROXIMITY ALL"
       }
      },
-     "criterion": 3,
+     "criterion": null,
      "family": "K",
      "key": "NONE",
-     "pass": false,
-     "reason": "value \"ALL\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+     "pass": true,
+     "reason": null,
      "unit": "K2-L1/PROXIMITY",
      "value": "ALL"
     },
@@ -46096,15 +46098,16 @@
        ]
       },
       "3": {
-       "failed_by": "value \"ALL\" differs from the key \"NONE\", no PLAN.md section 12 entry",
-       "ok": false
+       "failed_by": null,
+       "ok": true,
+       "recorded": "PLAN.md section 12, item 27: K2-L5/PROXIMITY ALL"
       }
      },
-     "criterion": 3,
+     "criterion": null,
      "family": "K",
      "key": "NONE",
-     "pass": false,
-     "reason": "value \"ALL\" differs from the key \"NONE\", no PLAN.md section 12 entry",
+     "pass": true,
+     "reason": null,
      "unit": "K2-L5/PROXIMITY",
      "value": "ALL"
     },
@@ -48233,10 +48236,10 @@
    "totals": {
     "fail_criterion_1": 6,
     "fail_criterion_2": 12,
-    "fail_criterion_3": 3,
+    "fail_criterion_3": 0,
     "items": 262,
     "not_traced": 0,
-    "pass": 241
+    "pass": 244
    }
   }
  },
@@ -48277,10 +48280,10 @@
   "safety-framework": {
    "fail_criterion_1": 6,
    "fail_criterion_2": 12,
-   "fail_criterion_3": 3,
+   "fail_criterion_3": 0,
    "items": 262,
    "not_traced": 0,
-   "pass": 241
+   "pass": 244
   }
  }
 }

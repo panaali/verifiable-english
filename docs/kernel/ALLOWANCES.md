@@ -44,3 +44,4 @@ seat; the test reads each key's last row as its lowest permitted floor.
 | 2026-11-15 | `safety-framework` | - | 241 | kb-10d: the first measurement (docs/kernel/ownership.json, 262 items) | not needed (the first measurement) |
 | 2026-11-15 | `agent-policy` | - | 0 | kb-10d: the first measurement (docs/kernel/ownership.json, 42 items) | not needed (the first measurement) |
 | 2026-11-15 | `eligibility` | - | 269 | kb-10d: the first measurement (docs/kernel/ownership.json, 269 items) | not needed (the first measurement) |
+| 2026-11-15 | `safety-framework` | 241 | 244 | kb-10d review F1: criterion 3 reads PLAN.md section 12's entries (`plan12_entries`), so item 27's G3, K2-L1/PROXIMITY and K2-L5/PROXIMITY count | not needed (a rise) |
