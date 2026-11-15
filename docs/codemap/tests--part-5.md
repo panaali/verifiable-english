@@ -1,3 +1,5 @@
+- `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
+- `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
 - `tests/test_nary_folio.py` — Pinned FOLIO witness accounting, with the large corpus optional in CI.
 - `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
 - `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
@@ -84,4 +86,3 @@
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
 - `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
-- `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
