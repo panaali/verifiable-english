@@ -362,14 +362,18 @@ def slot_packages : Shape :=
 
 def selected : Shape :=
   c
-    "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt)."
+    "SoftNorms.Run.runSelected (soft-selected): the model's soft background (reported, never a refusal) and one result per query, in order: the query's predicate and tuple, the rules selected there in rule order (selectedAt) and the completed outcome (outcomeAt). Exactly when the case sent facts (kb-9): facts, whether every fact is true in the model (factsAt), and coherent, whether every coherence conjunct is (coherentAt); both reported, never a refusal."
     [
       obj,
       .required ["id", "status", "background", "results"],
+      .ite (.onCase (.required ["facts"])) (.required ["facts", "coherent"])
+        (.not (.anyOf [.required ["facts"], .required ["coherent"]])),
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("background", .type ["boolean"]),
+        ("facts", .type ["boolean"]),
+        ("coherent", .type ["boolean"]),
         ("results", n [arr, .minItems 1, .zip "/queries" (n [
           obj,
           .required ["predicate", "tuple", "selected", "outcome"],
