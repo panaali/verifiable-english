@@ -1,0 +1,6 @@
+{
+"rsp": {"command": "usecases/anthropic-rsp/run.py --check", "exit": 0, "seconds": 323, "tree_changed_files": 0},
+"preparedness": {"command": "usecases/openai-preparedness/run.py --check --base-only", "exit": 0, "seconds": 232, "tree_changed_files": 0},
+"fsf": {"command": "usecases/safety-framework/run.py --check", "exit": 0, "seconds": 192, "tree_changed_files": 0},
+"agent-policy": {"command": "usecases/agent-policy/check.py base", "exit": 0, "seconds": 197, "tree_changed_files": 0},
+"eligibility": {"command": "usecases/eligibility/run.py --no-write --no-mutants", "exit": 0, "seconds": 261, "tree_changed_files": 0}}
