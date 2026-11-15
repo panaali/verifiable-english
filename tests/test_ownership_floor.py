@@ -61,6 +61,9 @@ def lowest_floors(rows: list[dict]) -> dict:
     for row in rows:
         after = int(row["after"].replace(",", ""))
         before = None if row["before"] in ("-", "") else int(row["before"].replace(",", ""))
+        if before is None and row["key"] in out:
+            raise AssertionError(f"{row['key']}: a row with no floor before after its first measurement; a later row "
+                                 f"states the floor it changes ({out[row['key']]})")
         if before is not None and after < before and "architect seat" not in row["signed"]:
             raise AssertionError(f"the floor of {row['key']} falls ({before} to {after}) without the architect "
                                  f"seat's signature: {row['signed']!r}")
@@ -111,6 +114,8 @@ def test_a_fall_without_the_architect_seat_is_refused_and_a_rise_needs_no_signat
         {"k": 9}
     with pytest.raises(AssertionError, match="without the architect seat"):
         lowest_floors(rows + [{"key": "k", "before": "12", "after": "9", "signed": "the builder"}])
+    with pytest.raises(AssertionError, match="no floor before after its first measurement"):
+        lowest_floors(rows + [{"key": "k", "before": "-", "after": "9", "signed": "not needed"}])
 
 
 def test_ownership_json_is_of_the_traced_inputs():
@@ -296,3 +301,105 @@ def test_a_decision_function_that_ran_fails_criterion_one_first():
 
 def test_ownership_md_is_generated_from_ownership_json():
     assert (KERNEL / "ownership.md").read_text() == OT.markdown(ownership())
+
+
+# --- kb-10d review F1: criterion 3 reads every entry PLAN.md section 12 records, in either form -------------------
+
+_PLAN = """# Plan
+
+## 12. Deviations
+
+20. **An item with prose only.** C1 = SOME(x) under item 21; no entry form.
+21. **Key deviations.** The table:
+
+    | Key deviation | Frozen key | Answer | Source sentence | Ruling |
+    |---|---|---|---|---|
+    | T7 | SOME(result) | NONE | src:3 | ruling-a.md item 2 |
+
+27. **Section 6.3 (a ruling).** The entries:
+    - **K2-L1/PROXIMITY.** Key: NONE. Entry: **ALL**. Why.
+    - **C3.** Key: SOME(G ∧ rel ∧ RS9 same). Entry: **NONE**. Why.
+    - **G3.** The key cell is no entry: no "Entry:".
+
+## 13. Files
+
+    - **G9.** Key: ALL. Entry: **NONE**. Section 13 is not section 12.
+"""
+
+
+def test_plan12_entries_reads_the_table_and_the_bullet_forms(tmp_path):
+    (tmp_path / "PLAN.md").write_text(_PLAN)
+    entries = OT.plan12_entries(tmp_path)
+    assert entries == {
+        "T7": [{"key": "SOME(result)", "answer": "NONE",
+                "citation": "PLAN.md section 12, Key deviation T7: NONE (ruling-a.md item 2)"}],
+        "K2-L1/PROXIMITY": [{"key": "NONE", "answer": "ALL",
+                             "citation": "PLAN.md section 12, item 27: K2-L1/PROXIMITY ALL"}],
+        "C3": [{"key": "SOME(G ∧ rel ∧ RS9 same)", "answer": "NONE", "citation": "PLAN.md section 12, item 27: C3 NONE"}]}
+    for entry in (e for rows in entries.values() for e in rows):
+        assert OT.plan12_cites(tmp_path, entry["citation"]), entry
+    assert OT.same_key("SOME(G ∧ rel ∧ RS9 same)", "SOME(G & rel & RS9=same)")
+    assert not OT.same_key("SOME(G ∧ rel ∧ RS9 same)", "SOME(G & rel & RS9=different)")
+    assert OT.plan12_entries(tmp_path / "absent") == {}
+
+
+def test_the_real_plans_entries_are_read():
+    """The safety framework's items 23 and 27 and RSP's Key deviation table (which its harness reads too)."""
+    fsf = OT.plan12_entries(OT.ROOT / OT.KEYS["safety-framework"])
+    assert {item: [(e["key"], e["answer"], e["citation"].split(":")[0]) for e in rows] for item, rows in fsf.items()} == {
+        "C1": [("NONE", "NONE", "PLAN.md section 12, item 23")],
+        "C3": [("SOME(G ∧ rel ∧ RS9 same)", "NONE", "PLAN.md section 12, item 23")],
+        "C-doc": [("SOME(G ∧ rel ∧ RS9 same)", "NONE", "PLAN.md section 12, item 23")],
+        "K2-L1/PROXIMITY": [("NONE", "ALL", "PLAN.md section 12, item 27")],
+        "K2-L5/PROXIMITY": [("NONE", "ALL", "PLAN.md section 12, item 27")],
+        "G3": [("ALL", "NONE", "PLAN.md section 12, item 27")]}
+    rsp = OT.ADAPTERS["anthropic-rsp"]().load()
+    assert {item: (rows[0]["key"], rows[0]["answer"]) for item, rows in OT.plan12_entries(rsp.dir).items()} == \
+        {item: (row["key"], row["answer"]) for item, row in rsp.mod.key_deviations().items()}
+
+
+def test_every_plan12_entry_the_value_equals_is_recorded():
+    """The class of F1, over the five keys: an item whose value differs from its frozen key but equals the answer a
+    PLAN.md section 12 entry of that key gives never fails criterion 3."""
+    data, checked = ownership(), []
+    for key in OT.KEYS:
+        entries = OT.plan12_entries(OT.ROOT / OT.KEYS[key])
+        for item, verdict in data["keys"][key]["items"].items():
+            matching = [e for e in entries.get(item, []) if OT.same_key(e["key"], verdict.get("key") or "")
+                        and verdict.get("value") == e["answer"] != verdict.get("key")]
+            if matching:
+                checked.append((key, item))
+                c3 = verdict["criteria"]["3"]
+                assert c3["ok"] and c3["recorded"] in [e["citation"] for e in matching], (key, item, c3)
+    assert {("safety-framework", i) for i in ("G3", "K2-L1/PROXIMITY", "K2-L5/PROXIMITY", "C3", "C-doc")} | \
+        {("anthropic-rsp", i) for i in ("K18", "T7", "C1", "C7", "C-doc")} <= set(checked)
+
+
+def test_the_safety_framework_adapter_records_plan_12_item_27(monkeypatch):
+    """PROBE F1: the adapter, on the committed results' values, cites item 27 for G3, K2-L1/PROXIMITY and
+    K2-L5/PROXIMITY, and all three pass. An entry of another answer or another key, or a case whose premises fail on
+    the model, is not recorded."""
+    adapter = OT.ADAPTERS["safety-framework"]().load()
+    stored = adapter.stored()["items"]
+    data = ownership()["keys"]["safety-framework"]["items"]
+    for item, answer in (("G3", "NONE"), ("K2-L1/PROXIMITY", "ALL"), ("K2-L5/PROXIMITY", "ALL")):
+        judged = adapter.judge(item, stored[item])
+        assert not judged["agrees"] and judged["value"] == answer
+        assert judged["deviation"] == f"PLAN.md section 12, item 27: {item} {answer}"
+        assert data[item]["pass"] and data[item]["criteria"]["3"]["recorded"] == judged["deviation"]
+    unmodelled = {**stored["K2-L1/PROXIMITY"], "premises": "inconsistent"}
+    assert adapter.judge("K2-L1/PROXIMITY", unmodelled)["deviation"] is None
+    for wrong in ({"key": "ALL", "answer": "ALL"}, {"key": "NONE", "answer": "NONE"}):
+        monkeypatch.setattr(OT, "plan12_entries", lambda case_dir, wrong=wrong: {
+            "G3": [{**wrong, "citation": "PLAN.md section 12, item 27: G3 " + wrong["answer"]}]})
+        assert adapter.judge("G3", stored["G3"])["deviation"] is None, wrong
+
+
+def test_functions_under_passing_count_each_passing_item_at_most_once():
+    """docs/kernel/kb-10d/functions-under-passing.json is of ownership.json's passing items: no function runs under
+    more passing items of a key than the key has, and the harness import runs under every one of them."""
+    functions = json.loads((KERNEL / "kb-10d/functions-under-passing.json").read_text())["functions"]
+    totals = ownership()["totals"]
+    for key, total in totals.items():
+        counts = [row["items"].get(key, 0) for row in functions.values()]
+        assert max(counts, default=0) == total["pass"], key

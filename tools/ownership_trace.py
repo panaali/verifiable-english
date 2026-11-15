@@ -11,9 +11,9 @@ the calls an earlier unit made.
 
 `run <key> --out DIR [--jobs N]` runs `trace` for every unit of a key, one fresh process each, at most 4 at a time.
 `units <key>` lists a key's units. `verdict --traces DIR --out docs/kernel` judges every item (three criteria,
-`ownership_verdict.py`) and writes docs/kernel/ownership.json and ownership.md.
+`judge` below) and writes docs/kernel/ownership.json and ownership.md.
 
-A measurement aid (R10): it reports what ran; the verdict is `ownership_verdict.py`'s.
+A measurement aid (R10): it reports what ran; the verdict per item is `judge`'s.
 """
 from __future__ import annotations
 
@@ -140,10 +140,11 @@ class Rsp(RspLike):
     )
 
     def deviation(self, entry, value):
-        """PLAN 12's "Key deviation" row for the item, when the value equals the row's answer (`compare`)."""
-        row = self.mod.key_deviations().get(entry["id"])
-        if row and row["key"] == entry["key"] and self.mod.same_set(row["answer"], value):
-            return f"PLAN.md section 12, Key deviation {entry['id']}: {row['answer']} ({row['ruling']})"
+        """PLAN 12's entry for the item (`plan12_entries`: its "Key deviation" row), when the row is of the frozen key
+        and the value equals the row's answer (the harness's `same_set`, as `compare` judges it)."""
+        for row in plan12_entries(self.dir).get(entry["id"], []):
+            if same_key(row["key"], entry["key"]) and self.mod.same_set(row["answer"], value):
+                return row["citation"]
         return None
 
 
@@ -263,11 +264,25 @@ class SafetyFramework(Adapter):
         else:
             rows = self.mod.compare({"items": {item: value}})
         row = next(r for r in rows if r["id"] == item)
-        deviation = row.get("deviation")
-        recorded = None
-        if not row["agree"] and deviation and deviation["agree"]:
-            recorded = f"PLAN.md section 12, item {deviation['plan_12']}: {deviation['answer']} (run.py DEVIATIONS)"
+        recorded = None if row["agree"] else self.deviation(row, value)
         return {"key": row["key"], "value": row["ve"], "agrees": bool(row["agree"]), "deviation": recorded}
+
+    def deviation(self, row, value):
+        """The PLAN.md section 12 entry (`plan12_entries`; run.py's DEVIATIONS holds only item 23's) whose key is the
+        item's frozen key and whose answer the value equals, judged as the harness's `compare` judges a key: the
+        answer equals the result over its cone (`same_set`), the case's premises hold on the model, and a release
+        condition the key names agrees. Only a single verdict over a cone has such an entry."""
+        if not isinstance(value, dict) or "cone" not in value or "parts" in value:
+            return None
+        if row.get("premises") not in (None, "model"):
+            return None
+        if "key_rel" in row and not self.mod.same_set(row["key_rel"], {"cone": value["cone"],
+                                                                        "true": value.get("release_true", [])}):
+            return None
+        for entry in plan12_entries(self.dir).get(row["id"], []):
+            if same_key(entry["key"], row["key"]) and self.mod.same_set(entry["answer"], value):
+                return entry["citation"]
+        return None
 
 
 class AgentPolicy(Adapter):
@@ -447,12 +462,61 @@ def kind_problem(registry: dict, mode: str, kind, profiles) -> str | None:
     return f"no kernel path lists a theorem for {mode} kind {kind} (paths: {tiers})"
 
 
+def plan12_section(case_dir: Path) -> str:
+    """PLAN.md section 12 of a use case (its text up to section 13), or "" when the plan has none."""
+    path = case_dir / "PLAN.md"
+    text = path.read_text() if path.exists() else ""
+    if "\n## 12." not in text:
+        return ""
+    return text.split("\n## 12.", 1)[1].split("\n## 13.", 1)[0]
+
+
+_NUMBERED = re.compile(r"(?:\*\*)?(\d+)\.\s")
+_ENTRY = re.compile(r"\s*- \*\*(?P<id>[^*\s]+)\.\*\* Key: (?P<key>.+?)\. Entry: \*\*(?P<answer>[^*]+)\*\*")
+
+
+def plan12_entries(case_dir: Path) -> dict:
+    """Every answer PLAN.md section 12 records for a key item, in either form a plan writes one: a row of a
+    "Key deviation" table (`| <id> | <key> | <answer> | <source> | <ruling> |`) or a bullet of a numbered item
+    (`- **<id>.** Key: <key>. Entry: **<answer>**.`). Item id -> list of {key, answer, citation}. The one reader of
+    section 12's entries for every key (criterion 3 and its test)."""
+    out, number, table = {}, None, False
+    for line in plan12_section(case_dir).split("\n"):
+        stripped = line.strip()
+        numbered = _NUMBERED.match(line)
+        if numbered:
+            number = numbered.group(1)
+        if stripped.startswith("| Key deviation |"):
+            table = True
+            continue
+        if table and stripped.startswith("|"):
+            cols = [col.strip() for col in stripped.strip("|").split("|")]
+            if not set(cols[0]) <= {"-", ":"} and len(cols) == 5:
+                out.setdefault(cols[0], []).append({
+                    "key": cols[1], "answer": cols[2],
+                    "citation": f"PLAN.md section 12, Key deviation {cols[0]}: {cols[2]} ({cols[4]})"})
+            continue
+        table = False
+        entry = _ENTRY.match(line)
+        if entry:
+            out.setdefault(entry["id"], []).append({
+                "key": entry["key"], "answer": entry["answer"],
+                "citation": f"PLAN.md section 12, item {number}: {entry['id']} {entry['answer']}"})
+    return out
+
+
+def same_key(written: str, frozen: str) -> bool:
+    """A key as section 12 writes it (`SOME(G ∧ rel ∧ RS9 same)`) is the frozen key (`SOME(G & rel & RS9=same)`)."""
+    def norm(text):
+        return re.sub(r"[\s=]", "", text).replace("∧", "&")
+    return norm(written) == norm(frozen)
+
+
 def plan12_cites(case_dir: Path, citation: str) -> bool:
     """The citation names an entry that PLAN.md section 12 has: a Key deviation row of the item, or a numbered item."""
-    text = (case_dir / "PLAN.md").read_text()
-    if "\n## 12." not in text:
+    section = plan12_section(case_dir)
+    if not section:
         return False
-    section = text.split("\n## 12.", 1)[1].split("\n## 13.", 1)[0]
     row = re.search(r"Key deviation (\S+):", citation)
     if row:
         return any(line.strip().startswith(f"| {row.group(1)} |") for line in section.split("\n"))
@@ -498,7 +562,8 @@ def judge(record: dict, item: str, adapter: Adapter, listed: list, registry: dic
         c3 = {"ok": True, "failed_by": None, "recorded": info["deviation"]}
     else:
         c3 = {"ok": False, "failed_by": f"value {json.dumps(info['value'], default=str)} differs from the key "
-                                        f"{json.dumps(info['key'], default=str)}, no PLAN.md section 12 entry"}
+                                        f"{json.dumps(info['key'], default=str)}; no PLAN.md section 12 entry "
+                                        "gives it as the item's answer"}
     first = next((n for n, c in ((1, c1), (2, c2), (3, c3)) if not c["ok"]), None)
     reason = None if first is None else {1: lambda: c1["failed_by"][0], 2: lambda: c2["failed_by"][0],
                                          3: lambda: c3["failed_by"]}[first]()
@@ -709,10 +774,17 @@ def passing_functions(traces: Path, ownership: dict) -> dict:
                 units.setdefault(verdict["unit"], []).append(item)
         for unit, items in units.items():
             record = json.loads((traces / key / f"{_safe(unit)}.json").read_text())
+            seen = set()
             for file, qualname, first, last, *_ in record["functions"]:
-                row = rows.setdefault(f"ve/{file}:{qualname}", {"file": f"ve/{file}", "qualname": qualname,
-                                                                "lines": [first, last], "items": {}})
-                row["items"][key] = row["items"].get(key, 0) + len(items)
+                # One qualified name can be several code objects (two genexprs of one function, one per caller):
+                # the row spans them all, and a unit's items count once per function.
+                name = f"ve/{file}:{qualname}"
+                row = rows.setdefault(name, {"file": f"ve/{file}", "qualname": qualname, "lines": [first, last],
+                                             "items": {}})
+                row["lines"] = [min(row["lines"][0], first), max(row["lines"][1], last)]
+                if name not in seen:
+                    seen.add(name)
+                    row["items"][key] = row["items"].get(key, 0) + len(items)
     return {"comment": "ve/ functions that ran under a passing item of ownership.json (tools/ownership_trace.py "
                        "passing-functions); items: key -> passing items it ran under.",
             "functions": dict(sorted(rows.items()))}

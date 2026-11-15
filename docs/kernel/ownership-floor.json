@@ -3,7 +3,7 @@
  "floor": {
   "anthropic-rsp": 100,
   "openai-preparedness": 228,
-  "safety-framework": 241,
+  "safety-framework": 244,
   "agent-policy": 0,
   "eligibility": 269
  }
