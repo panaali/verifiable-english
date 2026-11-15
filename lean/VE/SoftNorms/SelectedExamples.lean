@@ -95,4 +95,50 @@ def twoStrictModel : String :=
 -- No rule on `x_permitted`: nothing selected, its default (allow) decides.
 #guard specAt "deny" r#"[["a"], ["e"]]"# "x_permitted" "a" == some ([], true)
 
+/-! ## Facts and coherence (kb-9)
+
+The same document and model with a `facts` member: `v(b)` makes the first fact true, and `w` fails
+at `b`, so the second is false. The answer reports `facts: false` and still reports every selected
+rule; `coherent` is reported beside it. -/
+
+def factTrue : String := r#"["exists", "assistant", ["unary", "v", ["var", 0]]]"#
+def factFalse : String := r#"["forall", "assistant", ["unary", "w", ["var", 0]]]"#
+
+def factsCase (facts : String) (norms : String := normsText) (model : String := modelText r#"[["a"], ["e"]]"#)
+    (queries : String := queriesText) : Json :=
+  Json.mkObj [("id", .str "s"), ("kind", .str "soft-selected"), ("environment", parsed (environmentText "deny")),
+    ("norms", parsed norms), ("model", parsed model), ("queries", parsed queries), ("facts", parsed facts)]
+
+-- One true and one false fact: `facts: false`, the selected rules unchanged.
+#guard answerOf (factsCase ("[" ++ factTrue ++ ", " ++ factFalse ++ "]")) ==
+  "{\"background\":true,\"coherent\":true,\"facts\":false,\"id\":\"s\",\"results\":" ++ resultsText "false" ++
+    ",\"status\":\"ok\"}"
+-- The true fact alone: `facts: true`; with `background` and `coherent` true, `selected_model_admissible` applies.
+#guard answerOf (factsCase ("[" ++ factTrue ++ "]")) ==
+  "{\"background\":true,\"coherent\":true,\"facts\":true,\"id\":\"s\",\"results\":" ++ resultsText "false" ++
+    ",\"status\":\"ok\"}"
+-- An empty `facts` was sent: both fields are reported.
+#guard answerOf (factsCase "[]") ==
+  "{\"background\":true,\"coherent\":true,\"facts\":true,\"id\":\"s\",\"results\":" ++ resultsText "false" ++
+    ",\"status\":\"ok\"}"
+-- The slot kinds' refusals: an open or ill-typed fact, a decision predicate, a non-array.
+#guard answerOf (factsCase r#"[["unary", "v", ["var", 0]]]"#) == "error: ill-typed or unbound formula"
+#guard answerOf (factsCase r#"[["exists", "assistant", ["unary", "x_required", ["var", 0]]]]"#) ==
+  "error: ill-typed or unbound formula"
+#guard answerOf (factsCase r#"[["exists", "assistant", ["unary", "soft__excepted__d", ["var", 0]]]]"#) ==
+  "error: InvalidInput: facts: soft__excepted__d is a soft decision predicate; its decider decides it, not a fact"
+#guard answerOf (factsCase r#"{"a": 1}"#) == "error: InvalidInput: facts must be an array"
+
+/-- Two unranked default rules of opposite sign: a colliding pair, one coherence conjunct. -/
+def collidingText : String :=
+  r#"[{"norm": {"name": "p", "predicate": "x_required", "sign": true, "guard": ["unary", "v", ["var", 0]], "unless": [], "over": [], "mode": "default", "exception": {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": []}}}, {"norm": {"name": "q", "predicate": "x_required", "sign": false, "guard": ["unary", "w", ["var", 0]], "unless": [], "over": [], "mode": "default", "exception": {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": []}}}]"#
+
+def collidingModel : String :=
+  r#"{"complete": true, "domains": {"assistant": ["a", "b"], "user": []}, "constants": {}, "relations": {"v": [["a"], ["b"]], "w": [["a"]], "s": [], "soft__excepted__p": [], "soft__excepted__q": []}}"#
+
+-- Both rules select at `a`: `coherent: false`, and both are still reported (kb-10/SPEC.md 4.1).
+#guard answerOf (factsCase "[]" collidingText collidingModel
+    r#"[{"predicate": "x_required", "tuple": ["a"]}, {"predicate": "x_required", "tuple": ["b"]}]"#) ==
+  "{\"background\":true,\"coherent\":false,\"facts\":true,\"id\":\"s\",\"results\":[{\"outcome\":true,\"predicate\":\"x_required\",\"selected\":[\"p\",\"q\"],\"tuple\":[\"a\"]},{\"outcome\":true,\"predicate\":\"x_required\",\"selected\":[\"p\"],\"tuple\":[\"b\"]}],\"status\":\"ok\"}"
+
 end VE.SoftNorms.SelectedExamples
