@@ -50,9 +50,9 @@ mutant and narrowing) from the repository root. Without the pinned source, sourc
 reruns in the fidelity-fix tests use saved evidence and short synthetic source units in the gate;
 other saved evidence invariants remain tested.
 
-## Coverage, 2026-11-11
+## Coverage, 2026-11-15
 
-VE classified 389 contiguous units covering all 67,418 bytes. The master map equals the D1 map.
+VE classified 393 contiguous units covering all 67,418 bytes. The master map equals the D1 map.
 CHECKED covers six Table 1 level markers and the SSC visibility clause. Change log item 2's removal of "low" and
 "medium" (`cl-levels`) stays UNFORMALISED as a blocked unit: its facts translate the removal, not the "because"
 clause, so not every word of the unit is mapped. Three formerly CHECKED rule
@@ -62,9 +62,9 @@ sections remain visible whenever the whole source unit contains a duty or hedge.
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
 | CHECKED | 7 | 170 | 0.3% |
-| OPEN | 45 | 9,300 | 13.8% |
+| OPEN | 46 | 9,335 | 13.8% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 289 | 52,621 | 78.1% |
+| UNFORMALISED | 292 | 52,586 | 78.0% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or
@@ -74,8 +74,8 @@ counts under each. “Alone” means exactly one recorded blocker.
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
 | AP | 118 | 21,327 | 110, 19,451 | D1 has no act or complete rule for these duties |
-| AT | 57 | 12,623 | 53, 11,750 | hedges, beliefs and expectations |
-| DF | 12 | 2,098 | 0, 0 | default readings |
+| AT | 57 | 12,311 | 53, 11,438 | hedges, beliefs and expectations |
+| DF | 13 | 2,133 | 1, 35 | default readings |
 | ET | 31 | 8,466 | 17, 5,914 | event order and deadlines |
 | JT | 35 | 6,509 | 11, 2,059 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
@@ -83,18 +83,21 @@ counts under each. “Alone” means exactly one recorded blocker.
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
-| readings | 95 | 14,325 | 82, 11,019 | unselected source readings |
+| readings | 98 | 14,602 | 85, 11,296 | unselected source readings |
 
-The 289 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
-`not_translated`. VE reports 21 declared open terms and 31 unresolved reading sets as
+The 292 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
+`not_translated`. VE reports 21 declared open terms and 32 unresolved reading sets as
 residual. `usecase-pf-run` moved ten units from UNFORMALISED to OPEN (2,021 bytes): each now carries the reading
 set or rule the key needs (section 1's deployment sentence, the two Table 1 contribution bullets, 3.3's first next
 step, the residual-risk bullet, 5.2's third-party evaluation, Appendix B's decisions without the SAG, the Board's
 reversal and the fast track, and C.3's access practice). In openai-preparedness-fidelity-fix-5 Appendix B's
 fast-track sentence ("we can request a fast track for the SAG to process the report urgently") became a permission
 rule, f16-fast-track, so its unit is OPEN as well (227 bytes; PLAN 12 item 26). In openai-preparedness-fidelity-fix-6 the two
-4.1 safeguard-selection units (p11-u161, p11-u162) also record ET: their legends carry "first" and "then", and the
+4.1 safeguard-selection units (p11-u165, p11-u166) also record ET: their legends carry "first" and "then", and the
 order between the two steps stays event order (PLAN 12 item 27). No assumption, bridge leaf or exception is represented as certified.
+In openai-preparedness-facts-repair Table 1's four column titles and its first category definition became five
+units: the fourth title, “Risk-specific safeguard guidelines”, is RS1's own OPEN unit (35 bytes; PLAN 12 item 28),
+and every unit id from page 6 on moved up by four.
 
 ## Stage 0
 

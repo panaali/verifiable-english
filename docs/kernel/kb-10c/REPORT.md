@@ -60,7 +60,9 @@ G +0, tied +0, unclassified +0, trusted +0"). Trust mutants: 0 definitions, 0 mu
 
 Kernel measure: softNorms path spec 5,368 → 5,370. The two lines are in `VE.SoftNorms.Coherence` (26 → 28), which
 the witness theorem's collision and pair-conflict conclusion reads. Distinct kernel lines: 11,119 → 11,121. This is
-entered in ALLOWANCES as "kb-10c, pre-signed by the architect seat up to +150 lines". The spec's tables and the
+entered in ALLOWANCES as "kb-10c, pre-signed by the architect seat up to +150 lines". After the merge with
+ve-integration (kb-4a's acts hook, -1,038) the same +2 measures as softNorms spec 4,682 → 4,684 and distinct kernel
+lines 10,081 → 10,083 (keyed lines 16,543 → 16,545). The spec's tables and the
 frozen-keys figures are updated (`tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement`).
 `runSoftKind` stays an `uncovered` writer, because it still serves `soft-rule`, `soft-rules`, `soft-elaborate`,
 `soft-pairs` and `soft-certificate`. `soft-conflict` moved from `untied_kinds` to the path's `kinds` (theorem

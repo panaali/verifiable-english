@@ -89,7 +89,9 @@ BASE = {
     "further_development": base(["situation"], "{0} is further development of the model"),
     "internal_deployment": base(["situation"], "{0} is an internal deployment"),
     "forecast_critical": base(["situation"], "the model at {0} is forecasted to reach Critical capability; OpenAI decides this"),
-    "existing_at_publication": base(["situation"], "the model at {0} is one OpenAI possessed at publication (2025-04-15)"),
+    "existing_at_publication": base(["situation"], "the model at {0} is one OpenAI possessed at publication (2025-04-15), "
+                                    "the time of 4.4's “We do not currently possess any models that have Critical "
+                                    "levels of capability”"),
     "threshold_determined": base(["situation"], "the SAG determines at {0} that a capability threshold has been crossed"),
     "safeguards_already_assessed": base(["situation"], "the corresponding safeguards at {0} have already been implemented and assessed"),
     "rapid_risk": base(["situation"], "a risk of severe harm rapidly develops at {0}"),

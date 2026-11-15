@@ -11,6 +11,7 @@
 - `docs/kernel/kb-10b-switch/evidence/scripts/split.py` — The ruling's split of a harness --check run: Lean time of each document's first soft-selected call, of later calls, and the rest (Python and other Lean kinds).
 - `docs/kernel/kb-10b-switch/ownership/summarize.py` — Summarize the per-item ownership trace (run_all.sh) into per-item.tsv and called-from.json, and print the criterion-1 (no Python decision call) and agreement c…
 - `docs/kernel/kb-10b-switch/ownership/trace_item_callers.py` — reviews/lean-ownership-20261112/trace_item.py with one addition: for each Python decision function called, the distinct call chains from the harness (usecases/…
+- `docs/kernel/kb-10c/evidence/scripts/pair.py` — One side of kb-10c's paired wall-time run of a safety-framework harness's `--check`.
 - `docs/kernel/kb-10e/bench.py` — Stage timings of one `soft-selected` case in the persistent Lean service (kb-10e, deliverable 1).
 - `docs/kernel/kb-10e/bench_relay.py` — `soft-selected` through the Python relay (kb-10e, deliverable 4): the call `ve.soft_route.selected_at` makes.
 - `docs/kernel/kb-10e/registrations.py` — (no module docstring)

@@ -74,7 +74,13 @@ def test_fsf_keyed_conflict_freedom_is_attributed_to_refute():
     cluster = next(node for node in ast.parse(source).body
                    if isinstance(node, ast.FunctionDef) and node.name == "cluster_conflict")
     calls = {ast.unparse(node.func) for node in ast.walk(cluster) if isinstance(node, ast.Call)}
-    assert {"refute", "T.facts", "decide_soft_conflict"} <= calls
+    assert {"refute", "decide_soft_conflict"} <= calls
+    # The refute premises are `T.facts()`: read directly, or through `PREMISES(item)`, which adds an item's own
+    # fact blocks (rules.d1.ve, `item <id>, ...`) to the document's.
+    premises = next(node for node in ast.parse(source).body
+                    if isinstance(node, ast.FunctionDef) and node.name == "PREMISES")
+    reads = {ast.unparse(node.func) for node in ast.walk(premises) if isinstance(node, ast.Call)}
+    assert "T.facts" in calls or ("PREMISES" in calls and "T.facts" in reads)
     page = PAGE.read_text()
     assert "A CONFLICT or a CONFLICT-FREE answer is Lean's `soft-conflict` replay" not in page
     assert "FSF" in page and "keyed CONFLICT-FREE" in page
