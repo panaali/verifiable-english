@@ -65862,6 +65862,14 @@ theorem VE.SoftNorms.Run.mkObj_get_append
       (k, v) ∈ pre → ¬k ∈ List.map (fun x => x.fst) rest → (Lean.Json.mkObj (pre ++ rest)).getObjVal? k = Except.ok v
   -- uses
   -- expr 3129764167
+theorem VE.SoftNorms.Run.model_admissible_of_flags
+  ∀ (D : VE.SoftNorms.SoftDoc) (P : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+    M.Valid (VE.Norms.envAt (VE.SoftNorms.soften D) 0) →
+      VE.SoftNorms.classificationBackgroundValid D M = Bool.true →
+        VE.SoftNorms.Run.coherentAt D M = Bool.true →
+          VE.SoftNorms.Run.factsAt P M = Bool.true → VE.Compose.BaseAdmissibleP D P M.asStructure
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Run.coherentAt@VE.SoftNorms.Selected VE.SoftNorms.Run.factsAt@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.classificationBackgroundValid@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1557254954
 theorem VE.SoftNorms.Run.needFacts_ok
   ∀ {j : Lean.Json} {u : Unit}, VE.SoftNorms.Run.needFacts j = Except.ok u → (j.getObjVal? "facts").toBool = Bool.true
   -- uses VE.SoftNorms.Run.needFacts@VE.SoftNorms.Run
@@ -66025,13 +66033,21 @@ theorem VE.SoftNorms.Run.selectedRow_eq
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.SoftNorms.Run.SelectedQuery.ids@VE.SoftNorms.Selected VE.SoftNorms.Run.SelectedQuery.pred@VE.SoftNorms.Selected VE.SoftNorms.Run.SelectedQuery.tuple@VE.SoftNorms.Selected VE.SoftNorms.Run.SelectedQuery@VE.SoftNorms.Selected VE.SoftNorms.Run.expanded@VE.SoftNorms.Selected VE.SoftNorms.Run.outcomeAt@VE.SoftNorms.Selected VE.SoftNorms.Run.selectedAt@VE.SoftNorms.Selected VE.SoftNorms.Run.selectedRow@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree
   -- expr 922810750
 theorem VE.SoftNorms.Run.selected_model_admissible
-  ∀ (D : VE.SoftNorms.SoftDoc) (P : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
-    M.Valid (VE.Norms.envAt (VE.SoftNorms.soften D) 0) →
-      VE.SoftNorms.classificationBackgroundValid D M = Bool.true →
-        VE.SoftNorms.Run.coherentAt D M = Bool.true →
-          VE.SoftNorms.Run.factsAt P M = Bool.true → VE.Compose.BaseAdmissibleP D P M.asStructure
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Run.coherentAt@VE.SoftNorms.Selected VE.SoftNorms.Run.factsAt@VE.SoftNorms.Selected VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.classificationBackgroundValid@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften
-  -- expr 1557254954
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-selected" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          answer.getObjVal? "background" = Except.ok (Lean.Json.bool Bool.true) →
+            answer.getObjVal? "coherent" = Except.ok (Lean.Json.bool Bool.true) →
+              answer.getObjVal? "facts" = Except.ok (Lean.Json.bool Bool.true) →
+                ∃ environment src M hM P items,
+                  j.getObjVal? "environment" = Except.ok environment ∧
+                    VE.SoftNorms.Wire.decodeSoftSource environment (j.getObjValD "norms") = Except.ok src ∧
+                      VE.SoftNorms.Wire.decodeModel src j = Except.ok ⟨M, hM⟩ ∧
+                        VE.Compose.SlotWire.decodeFacts src j = Except.ok (P, items) ∧
+                          VE.Compose.BaseAdmissibleP src.D P M.asStructure
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeModel@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1873868619
 theorem VE.SoftNorms.Run.selected_semantics
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →

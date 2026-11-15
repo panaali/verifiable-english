@@ -5825,7 +5825,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 784b4ee4a3bca9f1262642d85fcc7e5a07046d81cf349ebefa26c5fa63edc85d
+module VE.Audit 82a77c2369ada53a7ce5a4d3adf668bd6708a23c8425018d1dcfe9f26adb7394
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -29027,7 +29027,7 @@ module VE.SoftNorms.SelectedExamples d0d6204e4dd39dfc986403fa45b26ed178ee843c8fb
 178:0-178:96 def VE.SoftNorms.SelectedExamples.lastFails@VE.SoftNorms.SelectedExamples
 179:0-179:88 def VE.SoftNorms.SelectedExamples.noneFails@VE.SoftNorms.SelectedExamples
 192:0-192:121 def VE.SoftNorms.SelectedExamples.decisionFact@VE.SoftNorms.SelectedExamples
-module VE.SoftNorms.SelectedSound 6aa06e385a313ee18f9c93f054028900a19a49ec6871700376bc38d8dd70e7b1
+module VE.SoftNorms.SelectedSound 0e4a16eebdc0029414ed5c5e0f2e489f1bf6f5e87c5e608d48af30c0fecb0efb
 25:0-31:56 def VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound
 33:0-40:77 def VE.SoftNorms.Run.SelectedAnswerWith@VE.SoftNorms.SelectedSound
 42:0-47:93 def VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound
@@ -29043,7 +29043,8 @@ module VE.SoftNorms.SelectedSound 6aa06e385a313ee18f9c93f054028900a19a49ec687170
 199:0-215:118 theorem VE.SoftNorms.Run.selectedAnswer_flags@VE.SoftNorms.SelectedSound
 217:0-251:63 theorem VE.SoftNorms.Run.soft_wire_selected_facts@VE.SoftNorms.SelectedSound
 253:0-258:61 theorem VE.SoftNorms.Run.coherentAt_iff@VE.SoftNorms.SelectedSound
-260:0-271:30 theorem VE.SoftNorms.Run.selected_model_admissible@VE.SoftNorms.SelectedSound
+260:0-270:30 theorem VE.SoftNorms.Run.model_admissible_of_flags@VE.SoftNorms.SelectedSound
+272:0-307:109 theorem VE.SoftNorms.Run.selected_model_admissible@VE.SoftNorms.SelectedSound
 module VE.SoftNorms.Semantics 0690ee8e731ad70940f8252dc9572d03f43e22c42b45cbc0be253c8fcdf6edad
 24:0-26:54 def VE.SoftNorms.LiveD@VE.SoftNorms.Semantics
 28:0-30:90 def VE.SoftNorms.StrictYieldsD@VE.SoftNorms.Semantics

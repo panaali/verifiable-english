@@ -9184,6 +9184,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.mkObj_getObjVal_mem
 #print axioms VE.SoftNorms.Run.mkObj_getObjVal_not_mem
 #print axioms VE.SoftNorms.Run.mkObj_get_append
+#print axioms VE.SoftNorms.Run.model_admissible_of_flags
 #print axioms VE.SoftNorms.Run.needFacts_ok
 #print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
 #print axioms VE.SoftNorms.Run.ok_verdict
