@@ -1,3 +1,4 @@
+-- ve-layer: 2 (the acts instances of the layer-2 norms decoder's hook, kb-4a: it imports only VE.Norms.Wire)
 import VE.Norms.Wire
 
 /-! The `acts@0` hook of the norms decoder (docs/spec/kernel-boundary.md decisions 2 and 5, row KB-4; kb-4a): today's

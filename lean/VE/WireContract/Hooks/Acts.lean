@@ -130,6 +130,17 @@ def around : List String := ["anna", "zora"]
 -- a limit that is none of the three, and `definitions@0`
 #guard memberOf (envOf (phrasesOf maxPhrases ++ [phraseOf (maxPhraseBytes + 1)]) (actOf 20)) == some "1.1a"
 #guard memberOf (envOf [] ("enjoy " ++ actOf maxActBytes)) == some "1.1d"
+-- kb-4a: the hook reads `acts@0` (`ActsHook.acts`, `acts := true`) and admits a joined act under its frames
+-- (`joined := true`): A6 of act-phrases 11.1 with the frame `subjected … to`, which splits at `to`
+def joinedEnv : Json :=
+  let fx := ["cruel, inhuman or degrading treatment or punishment"]
+  let j := envOf fx "{0} be subjected to torture or to cruel, inhuman or degrading treatment or punishment"
+  let v := j.getObjValD "vocabulary"
+  j.setObjVal! "vocabulary" (v.setObjVal! "acts" (Json.mkObj [("fixed", toJson fx),
+    ("frames", Json.arr #[Json.mkObj [("head", "subjected"), ("markers", toJson ["to"]), ("split", toJson ["to"]),
+      ("modifiers", toJson ([] : List String))]]), ("adverbs", toJson ([] : List String))]))
+#guard (decoded joinedEnv).isOk
+#guard (decoded (envOf [] "{0} enjoy a fair hearing")).isOk
 #guard memberOf (envOf ["seek and"] (actOf (maxActBytes + 1))) == some "1.1d"
 #guard memberOf (envOf [] "{0} seek and enjoy asylum") == some "1.1d"
 #guard memberOf (envOf ["equal pay"] (actOf 20) (others := (List.range 64).map (s!"q{·}"))) == some "1.1d"

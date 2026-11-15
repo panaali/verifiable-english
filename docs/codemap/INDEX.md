@@ -133,7 +133,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 9 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
-- [lean/VE/WireContract/](lean__VE__WireContract.md) — 18 modules — -
+- [lean/VE/WireContract/](lean__VE__WireContract.md) — 17 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
