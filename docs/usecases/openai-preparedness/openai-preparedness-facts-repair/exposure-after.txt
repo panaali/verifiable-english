@@ -1,0 +1,9 @@
+counter sha256 f4345f44  case openai-preparedness  commit 97abb9a860  state run
+FACTS <- no-critical-models   loss         | and we expect to further update this Preparedness Framework before reaching such a level with any model (exposition)
+FACTS <- rs2-nest             plan12       | RS2 is a premise (`rs2-nest`) read under RS2 = nest;
+FACTS <- no-critical-models   plan12       | `facts.d1.ve` holds exactly 4.1's six levels, `rs2-nest` and `no-critical-models`;
+FACTS <- rs2-nest             plan12       | `facts.d1.ve` holds exactly 4.1's six levels, `rs2-nest` and `no-critical-models`;
+FACTS <- FACTS                report       | After merge, the production checklist pass re-reads ONLY the changed units (addendum 8 item 56; addendum 6 item 41): f3-develop-inuse, f3-develop-inus
+FACTS <- no-critical-models   unformalised | p13-u216
+D2D3  <- D2D3                 no-record    | no accounting line
+6 exposures on FACTS/CASES

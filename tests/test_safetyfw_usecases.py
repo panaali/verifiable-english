@@ -611,15 +611,15 @@ def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
         assert criterion in json.dumps(negative["guard"])
 
     units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
-    assert {units[key]["blocked_rule"] for key in ("p10-u147", "p10-u148", "p8-u104", "p8-u105")} == {
+    assert {units[key]["blocked_rule"] for key in ("p10-u151", "p10-u152", "p8-u108", "p8-u109")} == {
         "f5-checkpoint", "f5-ambiguous", "f13-review", "f13-results"}
-    assert all(units[key]["status"] == "UNFORMALISED" for key in ("p10-u147", "p10-u148"))
-    for row, unit_id in {"lra": "p8-u106", "sandbagging": "p8-u109", "ara": "p8-u110",
-                         "undermining": "p8-u111", "nuclear": "p8-u112"}.items():
+    assert all(units[key]["status"] == "UNFORMALISED" for key in ("p10-u151", "p10-u152"))
+    for row, unit_id in {"lra": "p8-u110", "sandbagging": "p8-u113", "ara": "p8-u114",
+                         "undermining": "p8-u115", "nuclear": "p8-u116"}.items():
         assert units[unit_id]["status"] == "OPEN"
         assert units[unit_id]["reading_set"] == f"rs4-{row}"
-    assert units["p8-u109"]["waits"][-1] == "AP"
-    assert units["p8-u112"]["waits"][-1] == "AP"
+    assert units["p8-u113"]["waits"][-1] == "AP"
+    assert units["p8-u116"]["waits"][-1] == "AP"
 
 
 def test_pf_reading_blocks_match_the_choice_that_selects_them(pf_modules, monkeypatch):
@@ -634,8 +634,8 @@ def test_pf_reading_blocks_match_the_choice_that_selects_them(pf_modules, monkey
 
 def test_pf_checked_norms_keep_their_source_scope(pf_modules):
     units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
-    assert units["p16-u271"]["status"] == "UNFORMALISED"
-    assert units["p16-u271"]["reason"] == "unmapped_clause"
+    assert units["p16-u275"]["status"] == "UNFORMALISED"
+    assert units["p16-u275"]["reason"] == "unmapped_clause"
     guard = json.loads(pf_translation.parsed_rule("f16-sag-recommend"))["guard"]
     assert "framework_deployment" in json.dumps(guard)
     assert "covered" in json.dumps(guard)
@@ -643,7 +643,7 @@ def test_pf_checked_norms_keep_their_source_scope(pf_modules):
 
 def test_pf_appendix_c2_should_is_a_pending_norm_reading(pf_modules):
     units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
-    unit = units["p19-u328"]
+    unit = units["p19-u332"]
     assert unit["status"] == "OPEN" and unit["reading_set"] == "rs9-c2-misalignment"
     _, choices = pf_build.READINGS[unit["reading_set"]]
     assert set(choices) == {"strict", "default"}
@@ -691,10 +691,10 @@ def test_pf_one_fifth_time_bound_distinguishes_the_two_frozen_cases(pf_modules):
 
 def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_modules):
     units = json.loads((PF / "spans.json").read_text())["units"]
-    blocked = {"p10-u149": ("event_order", "ET"),
-               "p11-u162": ("quantifier_scope", "SC"),
-               "p11-u164": ("quantifier_scope", "SC"),
-               "p11-u165": ("quantifier_scope", "SC")}
+    blocked = {"p10-u153": ("event_order", "ET"),
+               "p11-u166": ("quantifier_scope", "SC"),
+               "p11-u168": ("quantifier_scope", "SC"),
+               "p11-u169": ("quantifier_scope", "SC")}
     by_id = {unit["id"]: unit for unit in units}
     assert {k: pf_build.BLOCKED_RULE_REASONS[k] for k in (
         "f7-evaluations", "f9-specific", "f9-efficacy", "f9-threshold")} == {
@@ -720,13 +720,13 @@ def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_
 
 def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
     units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
-    assert {units[unit_id]["reading_set"] for unit_id in ("p15-u249", "p15-u252")} == {
+    assert {units[unit_id]["reading_set"] for unit_id in ("p15-u253", "p15-u256")} == {
         "rs15-persuasion", "rs15-threat-models"}
     assert pf_build.PLACEMENTS["Going forward we will handle risks related to persuasion"][0] == "readings"
     assert pf_build.PLACEMENTS["For these areas, in collaboration with external experts, we commit"][0] == "readings"
     assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "readings"
     assert pf_build.PLACEMENTS["Systems that reach Critical capability also require sufficient safeguards"][0] == "rule"
-    for unit_id in ("p15-u249", "p15-u252", "p17-u296", "p17-u297"):
+    for unit_id in ("p15-u253", "p15-u256", "p17-u300", "p17-u301"):
         assert units[unit_id]["status"] == "OPEN"
     for page in (15, 17):
         spec, _ = pf_build._fallback(page, 0, b"A substantive claim about safeguards.")
@@ -765,24 +765,24 @@ def test_pf_checked_has_no_wait_or_unmapped_source_clause(pf_modules):
     assert not [r["id"] for r in units.values() if r["status"] == "CHECKED" and r["waits"]]
     assert all(r["rule"] in pf_build.CHECKED_CLAUSES for r in units.values()
                if r["status"] == "CHECKED" and "rule" in r)
-    for uid, rule_id in {"p10-u152": "f7-report", "p13-u218": "f14-document",
-                         "p16-u271": "f16-sag-recommend"}.items():
+    for uid, rule_id in {"p10-u156": "f7-report", "p13-u222": "f14-document",
+                         "p16-u275": "f16-sag-recommend"}.items():
         assert units[uid]["status"] == "UNFORMALISED"
         assert units[uid]["blocked_rule"] == rule_id
         assert rule_id not in pf_build.CHECKED_CLAUSES
     assert json.loads(pf_translation.parsed_rule("f14-document"))["predicate"] == "decision_documented"
     assert "applicable_risks" not in pf_translation.parsed_rule("f16-sag-recommend")
-    assert units["p16-u283"]["status"] == "CHECKED"
+    assert units["p16-u287"]["status"] == "CHECKED"
     assert not pf_build._complete_clause_map("f16-ssc-visibility", b"The SSC will be given visibility into processes and reports")
     if pinned_source("openai-preparedness", skip=False) is not None:
-        source = pf_build.DEFAULT_SOURCE.read_bytes()[slice(*units["p16-u283"]["span"])]
+        source = pf_build.DEFAULT_SOURCE.read_bytes()[slice(*units["p16-u287"]["span"])]
         assert pf_build._complete_clause_map("f16-ssc-visibility", source)
         assert pf_build.main(["--check"]) == 0
 
 
 def test_pf_label_requires_positive_exposition_without_claim_marker(pf_modules):
     units = {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
-    for uid in ("p11-u169", "p19-u327", "p19-u335", "p19-u336"):
+    for uid in ("p11-u173", "p19-u331", "p19-u339", "p19-u340"):
         assert units[uid]["status"] != "LABELLED"
     if pinned_source("openai-preparedness", skip=False) is not None:
         source = pf_build.DEFAULT_SOURCE.read_bytes()
