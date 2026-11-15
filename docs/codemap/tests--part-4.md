@@ -19,6 +19,7 @@
 - `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
 - `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
 - `tests/test_kb10_shadow.py` — The kb-10b shadow (`usecases/safetyfw_shadow.py`): it records Python's answers unchanged and compares them with Lean's `soft-selected`, not with Python's own.
+- `tests/test_kb10b_switch.py` — kb-10b steps (2)-(4): a soft document's selected rules and completed outcomes are Lean's `soft-selected` answers.
 - `tests/test_kernel_closure.py` — The kernel boundary's measuring tool (docs/spec/kernel-boundary.md, sections 2 and 6).
 - `tests/test_keyed_answers_authority.py` — keyed-wording F1: docs say who computes the keyed answers of a soft-rule norm document, and that is true.
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
@@ -83,4 +84,3 @@
 - `tests/test_nested_pytest.py` — Nested pytest runs do not depend on the outer run's plugin settings (testperf review B).
 - `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
 - `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
-- `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
