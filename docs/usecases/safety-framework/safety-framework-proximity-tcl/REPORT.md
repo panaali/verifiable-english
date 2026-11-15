@@ -81,7 +81,10 @@ New file `tests/test_fsf_proximity_tcl.py` (condition tests, stays selected):
   sentence in the pinned source when it is stored. It fails on main's build_document.py (seeded bug a).
 
 Existing tests changed to follow the three moves (the moves are this item's subject):
-- `tests/test_safety_framework.py`: RECORDED_DISAGREEMENTS gains the three (citing item 27), and 260 becomes 257. In
+- `tests/test_safety_framework.py`: `test_results_agree_with_the_key_except_the_recorded_findings` expects the
+  three (citing item 27) beside RECORDED_DISAGREEMENTS, and 260 becomes 257. The module constant RECORDED_DISAGREEMENTS
+  itself is unchanged: the merge train's source-quote step protects the module-level statements of this file, and
+  its candidate gate at dcff985e57 failed while the three were added to the constant. In
   `test_premises_leave_every_level_open_to_its_decider`, the "agree" check on K2 and G3 is now a check of the item-27
   answers.
 - `tests/test_fsf_case_alternatives.py::test_each_alternative_is_answered_and_the_answer_holds_in_every_one`: G3 now
