@@ -1,0 +1,11 @@
+{
+ "harness": "safety-framework",
+ "exit": 0,
+ "switch_calls": 642,
+ "switch_pairs": 642,
+ "shadow_pairs": 642,
+ "shadow_questions": 5722,
+ "pairs_not_in_shadow": [],
+ "calls_of_repeated_pairs": [],
+ "shadow_pairs_not_asked": 0
+}

@@ -1642,6 +1642,13 @@
    "problems": []
   }
  ],
+ "collections": [
+  {
+   "id": "CASES",
+   "entries": [],
+   "problems": []
+  }
+ ],
  "totals": {
   "blocks": 85,
   "blocks_with_loss": 3,
