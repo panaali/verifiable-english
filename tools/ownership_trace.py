@@ -80,9 +80,15 @@ class Adapter:
     def family(self, item):
         return _family(item)
 
-    def run_harness(self):
-        """The whole harness, in this process, checked against its committed results.json (`run.py --check`)."""
-        self.mod.main(["--check"])
+    def run_harness(self) -> list:
+        """The whole harness, in this process, checked against its committed results.json (`run.py --check`): the
+        fields that differ (none, or the whole file)."""
+        try:
+            self.mod.main(["--check"])
+        except SystemExit as exit_:
+            if exit_.code not in (None, 0):
+                return ["results.json"]
+        return []
 
     def stored(self):
         """The harness's committed results.json (the run the frozen key was compared with)."""
@@ -301,9 +307,8 @@ class AgentPolicy(Adapter):
         m = self.mod
         base = m.run(evidence=m.Evidence(keep=False), pool=None)
         summary = json.loads(json.dumps(m.base_summary(base), ensure_ascii=False, sort_keys=True))
-        for field in ("inputs", "actions", "policy", "policy_summary", "comparison", "M8"):
-            if summary[field] != self.stored()[field]:
-                raise SystemExit(f"agent-policy: {field} differs from results.json")
+        return [field for field in ("inputs", "actions", "policy", "policy_summary", "comparison", "M8")
+                if summary[field] != self.stored()[field]]
 
 
 class Eligibility(Adapter):
@@ -347,9 +352,7 @@ class Eligibility(Adapter):
         stored = self.stored()
         results.pop("seconds", None)
         stored.pop("seconds", None)
-        if results != stored:
-            raise SystemExit("eligibility: results differ from results.json: "
-                             + ", ".join(k for k in sorted(set(results) | set(stored)) if results.get(k) != stored.get(k)))
+        return [k for k in sorted(set(results) | set(stored)) if results.get(k) != stored.get(k)]
 
     def stored_value(self, item):
         profile, question = item.split("/")
@@ -652,7 +655,7 @@ def _canonical(value) -> str:
 
 def under(out: Path, key: str) -> dict:
     """manage-agents fable-team/architect/experiments/py_under.py's measure of a whole harness run (`run_harness`:
-    the harness's own check against its committed results.json; it raises if they differ) (functions of ve/
+    the harness's own check against its committed results.json; the fields that differ are recorded) (functions of ve/
     whose code ran, CO_OPTIMIZED code only, and the lines their bodies span, overlaps counted once), with the names
     kept, so the decision functions among them can be counted (py_under.py keeps only norms.py's and softnorms.py's)."""
     import collections
@@ -670,10 +673,7 @@ def under(out: Path, key: str) -> dict:
     threading.setprofile(profile)
     try:
         adapter.load()
-        adapter.run_harness()
-    except SystemExit as exit_:
-        if exit_.code not in (None, 0):
-            raise
+        differs = adapter.run_harness()
     finally:
         sys.setprofile(None)
         threading.setprofile(None)
@@ -690,11 +690,31 @@ def under(out: Path, key: str) -> dict:
             high = last
         return total
     functions = sorted([list(row) for row in seen.values()])
-    data = {"key": key, "total_functions": len(seen),
+    data = {"key": key, "differs_from_results_json": differs, "total_functions": len(seen),
             "total_lines": sum(covered(spans) for spans in by.values()),
             "decision_functions": decision_hits(functions, decision_functions()), "functions": functions}
     out.write_text(json.dumps(data, indent=1) + "\n")
     return data
+
+
+def passing_functions(traces: Path, ownership: dict) -> dict:
+    """Every ve/ function that ran while a passing item was answered: per function (file, qualified name, lines)
+    the keys and the number of passing items it ran under (the input of the kernel-boundary plan's next step)."""
+    rows: dict = {}
+    for key, block in ownership["keys"].items():
+        units = {}
+        for item, verdict in block["items"].items():
+            if verdict["pass"]:
+                units.setdefault(verdict["unit"], []).append(item)
+        for unit, items in units.items():
+            record = json.loads((traces / key / f"{_safe(unit)}.json").read_text())
+            for file, qualname, first, last, *_ in record["functions"]:
+                row = rows.setdefault(f"ve/{file}:{qualname}", {"file": f"ve/{file}", "qualname": qualname,
+                                                                "lines": [first, last], "items": {}})
+                row["items"][key] = row["items"].get(key, 0) + len(items)
+    return {"comment": "ve/ functions that ran under a passing item of ownership.json (tools/ownership_trace.py "
+                       "passing-functions); items: key -> passing items it ran under.",
+            "functions": dict(sorted(rows.items()))}
 
 
 def markdown(data: dict) -> str:
@@ -778,6 +798,9 @@ def main(argv=None) -> int:
     measured = sub.add_parser("under")
     measured.add_argument("key", choices=sorted(KEYS))
     measured.add_argument("out", type=Path)
+    passing = sub.add_parser("passing-functions")
+    passing.add_argument("--traces", type=Path, required=True)
+    passing.add_argument("--out", type=Path, required=True)
     judged = sub.add_parser("verdict")
     judged.add_argument("--traces", type=Path, required=True)
     judged.add_argument("--out", type=Path, default=ROOT / "docs/kernel")
@@ -785,7 +808,13 @@ def main(argv=None) -> int:
     if args.command == "under":
         data = under(args.out, args.key)
         print(data["total_functions"], "functions", data["total_lines"], "lines", len(data["decision_functions"]),
-              "decision functions")
+              "decision functions; differs from results.json:", ", ".join(differs := data["differs_from_results_json"])
+              or "nothing")
+        return 0
+    if args.command == "passing-functions":
+        data = passing_functions(args.traces, json.loads((ROOT / "docs/kernel/ownership.json").read_text()))
+        args.out.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
+        print(len(data["functions"]), "functions")
         return 0
     if args.command == "verdict":
         data = write_verdict(args.traces, args.out)

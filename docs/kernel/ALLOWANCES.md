@@ -27,3 +27,20 @@ Pre-signed, to be entered by the change that uses it:
 | Change | Door | At most |
 |---|---|---:|
 | KB-1: `lean/VE/Kernel/Carry.lean` as in the specification's section 3 (it is counted only once a kernel path's fold uses it) | C | 80 |
+
+## Ownership floor
+
+The count of a frozen key's answers that pass the per-answer Lean ownership test (manage-agents
+reviews/lean-ownership-baseline-20261112.md section 2) is measured by `tools/ownership_trace.py` into
+[ownership.json](ownership.json) ([ownership.md](ownership.md)). [ownership-floor.json](ownership-floor.json) holds
+each key's floor; `tests/test_ownership_floor.py` fails when a count falls below it. The floor may rise in any
+change. It falls only with a row below whose floor after is lower than its floor before, signed by the architect
+seat; the test reads each key's last row as its lowest permitted floor.
+
+| Date | Key | Floor before | Floor after | Change | Signed |
+|---|---|---:|---:|---|---|
+| 2026-11-15 | `anthropic-rsp` | - | 100 | kb-10d: the first measurement (docs/kernel/ownership.json, 126 items) | not needed (the first measurement) |
+| 2026-11-15 | `openai-preparedness` | - | 228 | kb-10d: the first measurement (docs/kernel/ownership.json, 239 items) | not needed (the first measurement) |
+| 2026-11-15 | `safety-framework` | - | 241 | kb-10d: the first measurement (docs/kernel/ownership.json, 262 items) | not needed (the first measurement) |
+| 2026-11-15 | `agent-policy` | - | 0 | kb-10d: the first measurement (docs/kernel/ownership.json, 42 items) | not needed (the first measurement) |
+| 2026-11-15 | `eligibility` | - | 269 | kb-10d: the first measurement (docs/kernel/ownership.json, 269 items) | not needed (the first measurement) |
