@@ -55,6 +55,10 @@ The four remaining FACTS rows are the true records the task names (PLAN.md:628, 
 
 Every unit: a read-only script (`/tmp/facts-repair/expall/expall.py`, not committed) loads the installed counter and runs `omit_exposure` on the RSP manifest (reviews/audit-c2-rspbase/rspbase/union/manifest.json) at main and at HEAD. Output at 079f2e099: "units 79; states run/run; exposures 124 -> 121". The three rows that left are the three targeted rows above, and no row is new. The same script was run again on the commit holding this REPORT (section "Re-run on the REPORT commit").
 
+## Re-run on the REPORT commit
+
+At 7069c87b3, the commit that adds this REPORT, the every-unit script printed "units 79; states run/run; exposures 124 -> 121". The same three targeted rows left and no row was new, so this REPORT is no new record. exposure.py at 7069c87b3 ends "4 exposures on FACTS/CASES".
+
 ## Answers
 
 None moved. `uv run python usecases/anthropic-rsp/run.py --check` exit 0, "110 / 126", at d0bac2b4d's tree and again at 079f2e099's tree. `git diff --stat main -- usecases/anthropic-rsp/results.json` is empty. The legends change only descriptions (`environment.d1.json`: three description strings) and the built document's hash in coverage.json.
