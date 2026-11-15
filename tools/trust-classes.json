@@ -22601,7 +22601,12 @@
             "VE.Service.CoreCheck.document_core_sound"
           ]
         },
-        "VE.Service.CoreCheck.roundTrips",
+        {
+          "name": "VE.Service.CoreCheck.roundTrips",
+          "tied": [
+            "VE.Service.CoreCheck.facts_round_trip"
+          ]
+        },
         {
           "name": "VE.Service.CoreCheck.caseFault",
           "tied": [
@@ -22620,11 +22625,39 @@
             "VE.Service.CoreCheck.casesOf_ok"
           ]
         },
-        "VE.Service.CoreCheck.Inputs",
-        "VE.Service.CoreCheck.inputs",
-        "VE.Service.CoreCheck.exceptionFormulas",
-        "VE.Service.CoreCheck.reads",
-        "VE.Service.CoreCheck.tableOf",
+        {
+          "name": "VE.Service.CoreCheck.Inputs",
+          "tied": [
+            "VE.Service.CoreCheck.inputs_reads",
+            "VE.Service.CoreCheck.reads_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.inputs",
+          "tied": [
+            "VE.Service.CoreCheck.inputs_reads",
+            "VE.Service.CoreCheck.reads_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.exceptionFormulas",
+          "tied": [
+            "VE.Service.CoreCheck.reads_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.reads",
+          "tied": [
+            "VE.Service.CoreCheck.reads_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.tableOf",
+          "tied": [
+            "VE.Service.CoreCheck.tableOf_opens",
+            "VE.Service.CoreCheck.document_core_sound"
+          ]
+        },
         {
           "name": "VE.Service.CoreCheck.Prepared",
           "tied": [
@@ -22649,12 +22682,33 @@
             "VE.Service.CoreCheck.document_core_sound"
           ]
         },
-        "VE.Service.CoreCheck.routedRefusals",
-        "VE.Service.CoreCheck.routed",
-        "VE.Service.CoreCheck.runCaseReported"
+        {
+          "name": "VE.Service.CoreCheck.routedRefusals",
+          "tied": [
+            "VE.Service.CoreCheck.routed_iff",
+            "VE.Service.CoreCheck.routedRefusals_sites"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.routed",
+          "tied": [
+            "VE.Service.CoreCheck.routed_iff"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.runCaseReported",
+          "tied": [
+            "VE.Service.CoreCheck.runCaseReported_routes"
+          ]
+        }
       ],
       "D[V]": [
-        "VE.Service.CoreCheck.factsJson",
+        {
+          "name": "VE.Service.CoreCheck.factsJson",
+          "tied": [
+            "VE.Service.CoreCheck.facts_round_trip"
+          ]
+        },
         {
           "name": "VE.Service.CoreCheck.caseOf",
           "tied": [
@@ -22662,9 +22716,24 @@
             "VE.Service.CoreCheck.casesOf_ok"
           ]
         },
-        "VE.Service.CoreCheck.unitStatus",
-        "VE.Service.CoreCheck.viewOf",
-        "VE.Service.CoreCheck.statementJson"
+        {
+          "name": "VE.Service.CoreCheck.unitStatus",
+          "tied": [
+            "VE.Service.CoreCheck.view_unit_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.viewOf",
+          "tied": [
+            "VE.Service.CoreCheck.view_unit_status"
+          ]
+        },
+        {
+          "name": "VE.Service.CoreCheck.statementJson",
+          "tied": [
+            "VE.Service.CoreCheck.statement_shown"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Service.CoreCheck.factsRefusal",
@@ -22694,7 +22763,13 @@
             "VE.Kernel.DocumentFold.fold_checked_iff"
           ]
         },
-        "VE.Kernel.DocumentFold.statuses",
+        {
+          "name": "VE.Kernel.DocumentFold.statuses",
+          "tied": [
+            "VE.Service.CoreCheck.statuses_lookup",
+            "VE.Service.CoreCheck.view_unit_status"
+          ]
+        },
         {
           "name": "VE.Kernel.DocumentFold.fold",
           "tied": [
