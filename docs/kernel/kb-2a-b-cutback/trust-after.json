@@ -388,22 +388,22 @@
    "counts": {
     "K": 0,
     "S": 76,
-    "D": 1627,
-    "G": 972,
+    "D": 1625,
+    "G": 984,
     "C": 0,
     "P": 240,
     "T": 60,
     "o": 145,
-    "D[V]": 1228,
+    "D[V]": 1226,
     "D[R]": 372,
     "D[I]": 27,
     "G[V]": 540,
-    "G[R]": 417,
+    "G[R]": 429,
     "G[I]": 15,
     "tied": 119,
     "unclassified": 0,
-    "trusted": 1725,
-    "lines": 3120
+    "trusted": 1723,
+    "lines": 3130
    },
    "declarations": [
     {
@@ -1296,11 +1296,25 @@
      "lines": 17
     },
     {
+     "name": "VE.Service.Document.judgmentSoftRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.softReadingsRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
      "name": "VE.Service.Document.environmentOf",
      "class": "D[V]",
      "tied": false,
      "trusted": true,
-     "lines": 63
+     "lines": 61
     },
     {
      "name": "VE.Service.Document.typedFormula",
@@ -3906,7 +3920,7 @@
  "total": {
   "K": 0,
   "S": 186,
-  "trusted": 2906,
+  "trusted": 2904,
   "tied": 513
  },
  "problems": []
