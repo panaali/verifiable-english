@@ -125,8 +125,11 @@ def lean_answers(service, texts) -> list:
     for entry in entries:
         row = entry["result"]
         if row.get("status") == "ok":
-            out.append({"outcome": "ok", "value": projection_of(row["units"], row["coverage"], row["document_id"],
-                                                                 row["source_id"])})
+            # kb-2a-b: a document of the core path answers its fields under `view`, beside the kernel's rows.
+            fields = row["view"] if "view" in row else row
+            out.append({"outcome": "ok", "value": projection_of(fields["units"], fields["coverage"],
+                                                                 fields["document_id"], fields["source_id"]),
+                        **({"core": True} if "view" in row else {})})
         else:
             out.append({"outcome": "error", "code": entry.get("code") or "InvalidInput", "text": row["error"],
                         **_location(row)})
@@ -222,6 +225,10 @@ UNMUTATED = {
     "usecases/question-answering/": "large question vocabulary fixtures; seed answers are compared separately",
     "tests/data/premise-scale/": "readings@1 premise-check fixtures, which Lean's document mode refuses (fail-closed) "
                                  "whatever the mutation; seed answers are compared separately",
+    "tests/data/kb2a/": "the core path's acceptance document (kb-2a-b): Lean answers it and Python's own path has none "
+                        "(its loader refuses judgments@0), so a mutant has nothing to compare; its one-edit variations "
+                        "and the R8 fuzz of its answer are tests/test_kb2a_document.py's, its seed answer "
+                        "tests/test_lean_document_wrapper.py's (LEAN_CORE)",
 }
 
 

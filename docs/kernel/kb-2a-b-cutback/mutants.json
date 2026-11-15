@@ -1,0 +1,267 @@
+[
+ {
+  "id": "a",
+  "definition": "VE.Service.CoreCheck.reads",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "reads drops the exception formulas",
+  "killer": "VE.Service.CoreCheck.reads_status",
+  "seeded": true,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.reads_status",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "b",
+  "definition": "VE.Service.CoreCheck.unitStatus",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "unitStatus renders the fold's labelled as UNFORMALISED",
+  "killer": "VE.Service.CoreCheck.view_unit_status",
+  "seeded": true,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.view_unit_status",
+   "lean/VE/Service/CoreCheckExamples.lean:143 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:159 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:245 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:47 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "c",
+  "definition": "VE.Service.CoreCheck.routed",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "routed also accepts a soft-norms@0 document with alternatives@0",
+  "killer": "VE.Service.CoreCheck.routed_iff",
+  "seeded": true,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.routed_iff"
+  ],
+  "killed": true
+ },
+ {
+  "id": "d",
+  "definition": "VE.Service.CoreCheck.factsJson",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "factsJson drops the last formula",
+  "killer": "VE.Service.CoreCheck.facts_round_trip",
+  "seeded": true,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.facts_round_trip"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-roundTrips",
+  "definition": "VE.Service.CoreCheck.roundTrips",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "roundTrips no longer refuses a soft decision predicate among the premises",
+  "killer": "VE.Service.CoreCheck.facts_round_trip",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.facts_round_trip"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-viewOf",
+  "definition": "VE.Service.CoreCheck.viewOf",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "viewOf renders each unit's own status, not the fold's",
+  "killer": "VE.Service.CoreCheck.view_unit_status",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.view_unit_status",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:235 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:239 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:47 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-statuses",
+  "definition": "VE.Kernel.DocumentFold.statuses",
+  "file": "lean/VE/Kernel/DocumentFold.lean",
+  "what": "statuses folds every unit over no rows",
+  "killer": "VE.Service.CoreCheck.statuses_lookup",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.statuses_lookup"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-routedRefusals",
+  "definition": "VE.Service.CoreCheck.routedRefusals",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "the first refusal loses a word of environmentOf's text",
+  "killer": "VE.Service.CoreCheck.routedRefusals_sites",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.routedRefusals_sites",
+   "lean/VE/Service/CoreCheckExamples.lean:140 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:221 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:222 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:223 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-runCaseReported",
+  "definition": "VE.Service.CoreCheck.runCaseReported",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "a routed refusal is no longer marked lowering",
+  "killer": "VE.Service.CoreCheck.runCaseReported_routes",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.runCaseReported_routes",
+   "lean/VE/Service/CoreCheckExamples.lean:162 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:248 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:68 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:69 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:72 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:75 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-Inputs",
+  "definition": "VE.Service.CoreCheck.Inputs",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "Inputs' first and third fields swap (the request id and the document id trade places)",
+  "killer": "lean/VE/Service/CoreCheckExamples.lean #guard answer id",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "lean/VE/Service/CoreCheckExamples.lean:63 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-inputs",
+  "definition": "VE.Service.CoreCheck.inputs",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "inputs reads no judgment views",
+  "killer": "VE.Service.CoreCheck.inputs_reads",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.inputs_reads",
+   "lean/VE/Service/CoreCheckExamples.lean:159 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:221 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:222 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:223 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:235 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:239 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:240 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:245 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:248 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:47 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:50 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:56 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:61 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:63 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:69 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:72 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-exceptionFormulas",
+  "definition": "VE.Service.CoreCheck.exceptionFormulas",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "exceptionFormulas drops the sufficient conditions",
+  "killer": "lean/VE/Service/CoreCheckExamples.lean #guard exception OPEN",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:260 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-tableOf",
+  "definition": "VE.Service.CoreCheck.tableOf",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "tableOf keeps, for a unit that does not assert its content, the statements that read nothing",
+  "killer": "VE.Service.CoreCheck.tableOf_opens",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.tableOf_opens",
+   "lean/VE/Service/CoreCheckExamples.lean:159 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:245 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:47 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-statementJson",
+  "definition": "VE.Service.CoreCheck.statementJson",
+  "file": "lean/VE/Service/CoreCheck.lean",
+  "what": "statementJson shows a premise as null",
+  "killer": "VE.Service.CoreCheck.statement_shown",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.statement_shown",
+   "lean/VE/Service/CoreCheckExamples.lean:146 #guard"
+  ],
+  "killed": true
+ },
+ {
+  "id": "m-decode",
+  "definition": "VE.Service.Document.decode",
+  "file": "lean/VE/Service/Document.lean",
+  "what": "decode reads its environment without the core flag",
+  "killer": "VE.Service.CoreCheck.decode_reads",
+  "seeded": false,
+  "build_rc": 1,
+  "failing": [
+   "VE.Service.CoreCheck.decode_reads",
+   "lean/VE/Service/CoreCheckExamples.lean:159 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:162 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:221 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:222 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:223 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:235 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:239 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:240 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:245 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:248 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:47 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:50 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:56 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:61 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:63 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:66 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:68 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:69 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:72 #guard",
+   "lean/VE/Service/CoreCheckExamples.lean:77 #guard"
+  ],
+  "killed": true
+ }
+]
