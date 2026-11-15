@@ -10068,7 +10068,12 @@
         "VE.Service.Document.bridgeAdmitted",
         "VE.Service.DocumentChain.chainLayeredOf",
         "VE.Service.Document.Decoded",
-        "VE.Service.Document.decode"
+        {
+          "name": "VE.Service.Document.decode",
+          "tied": [
+            "VE.Service.CoreCheck.decode_reads"
+          ]
+        }
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -22629,14 +22634,16 @@
           "name": "VE.Service.CoreCheck.Inputs",
           "tied": [
             "VE.Service.CoreCheck.inputs_reads",
-            "VE.Service.CoreCheck.reads_status"
+            "VE.Service.CoreCheck.reads_status",
+            "VE.Service.CoreCheck.reads_reading"
           ]
         },
         {
           "name": "VE.Service.CoreCheck.inputs",
           "tied": [
             "VE.Service.CoreCheck.inputs_reads",
-            "VE.Service.CoreCheck.reads_status"
+            "VE.Service.CoreCheck.reads_status",
+            "VE.Service.CoreCheck.reads_reading"
           ]
         },
         {
@@ -22648,7 +22655,8 @@
         {
           "name": "VE.Service.CoreCheck.reads",
           "tied": [
-            "VE.Service.CoreCheck.reads_status"
+            "VE.Service.CoreCheck.reads_status",
+            "VE.Service.CoreCheck.reads_reading"
           ]
         },
         {
