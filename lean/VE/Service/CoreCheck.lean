@@ -335,6 +335,35 @@ theorem caseOf_get (i : Nat) (d : CoreDoc) :
   · simp only [Json.getObjValD, g "environment" d.environment (by simp)]; rfl
   · simp only [Json.getObjValD, g "norms" d.norms (by simp)]; rfl
 
+/-- The facts the shell sends read back as themselves: when `roundTrips` holds of the premises `P` over the source the
+kernel decodes, the kernel's facts decoder reads `factsJson P` as exactly `P` (and their encodings). `roundTrips` is the
+round trip's hypotheses; `factsJson` is the encoding that reads back. -/
+theorem facts_round_trip (src : VE.SoftNorms.Wire.SoftSource) (P : List VE.Formula) (h : roundTrips src P = true) :
+    VE.Compose.SlotWire.decodeFacts src (Json.mkObj [("facts", factsJson P)]) =
+      .ok (P, P.map VE.Route.Wire.encodeFormula) := by
+  simp only [roundTrips, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at h
+  obtain ⟨⟨⟨hC, hD⟩, hNo⟩, hDec⟩ := h
+  have hF : (Json.mkObj [("facts", factsJson P)]).getObjVal? "facts" = .ok (factsJson P) :=
+    VE.Calc.Run.mkObj_get _ "facts" _ (by simp) (by simp)
+  unfold VE.Compose.SlotWire.decodeFacts
+  rw [hF]
+  simp only [factsJson, Json.getArr?, pure, Except.pure]
+  split
+  · rename_i he
+    have : P = [] := by simpa using he
+    subst this
+    rfl
+  · rw [VE.Route.Wire.decodeFormulas_encode _ P false hC hD hNo (fun h => absurd h (by decide))]
+    have hnone : P.findSome? (fun x => (VE.Norms.preds x).find? fun p => decide (p ∈ VE.SoftNorms.decisionNames src.D)) =
+        none := by
+      rw [List.findSome?_eq_none_iff]
+      intro x hx
+      rw [List.find?_eq_none]
+      intro p hp
+      simpa using hDec p (List.mem_flatMap.mpr ⟨x, hx, hp⟩)
+    simp [bind, Except.bind]
+    rw [hnone]
+
 /-- The round trip: for every case the shell builds from a core document `(X, P)`, the facts `decodeFacts` reads from
 it, over the source the kernel decodes from the same case, are exactly `P` (`decodeFormulas_encode`); the shell refused
 every core document for which a hypothesis of the round trip fails, with the decoder's own diagnostic (`caseFault`). -/
@@ -354,27 +383,11 @@ theorem core_facts_round_trip {docs : List (Choice × CoreDoc)} {cases : List Js
   simp only at hf
   split at hf
   · rename_i hr
-    simp only [roundTrips, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hr
-    obtain ⟨⟨⟨hC, hD⟩, hNo⟩, hDec⟩ := hr
-    generalize docs[k].2.premises = P at *
+    have hF' : (Json.mkObj [("facts", factsJson docs[k].2.premises)]).getObjVal? "facts" =
+        .ok (factsJson docs[k].2.premises) := VE.Calc.Run.mkObj_get _ "facts" _ (by simp) (by simp)
+    rw [← facts_round_trip src _ hr]
     unfold decodeFacts
-    rw [hF]
-    simp only [factsJson, Json.getArr?, pure, Except.pure]
-    split
-    · rename_i he
-      have : P = [] := by simpa using he
-      subst this
-      rfl
-    · rw [VE.Route.Wire.decodeFormulas_encode _ P false hC hD hNo (fun h => absurd h (by decide))]
-      have hnone : P.findSome? (fun x => (VE.Norms.preds x).find? fun p => decide (p ∈ VE.SoftNorms.decisionNames src.D)) =
-          none := by
-        rw [List.findSome?_eq_none_iff]
-        intro x hx
-        rw [List.find?_eq_none]
-        intro p hp
-        simpa using hDec p (List.mem_flatMap.mpr ⟨x, hx, hp⟩)
-      simp [bind, Except.bind]
-      rw [hnone]
+    rw [hF, hF']
   · cases hf
 
 /-- `document_core_sound`, the instance of `shell_sound`: a document answer of the core path is the fold of the rows
