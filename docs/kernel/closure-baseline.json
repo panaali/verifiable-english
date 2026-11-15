@@ -1,7 +1,7 @@
 {
- "kernel_lines": 10081,
- "keyed_kernel_lines": 10081,
- "keyed_lines": 16543,
+ "kernel_lines": 10083,
+ "keyed_kernel_lines": 10083,
+ "keyed_lines": 16545,
  "paths": [
   {
    "axioms": [],
@@ -406,12 +406,12 @@
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 4690,
+   "lines": 4692,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4682,
+   "spec_lines": 4684,
    "spec_modules": {
     "VE.Acts.Hook": 11,
     "VE.Acts.Lexical": 121,
@@ -457,7 +457,7 @@
     "VE.Route.Wire": 229,
     "VE.Semantics": 49,
     "VE.SoftNorms.Admission": 112,
-    "VE.SoftNorms.Coherence": 26,
+    "VE.SoftNorms.Coherence": 28,
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,
@@ -500,13 +500,16 @@
      "VE.SoftNorms.Run.soft_wire_elaborate",
      "VE.SoftNorms.Run.soft_wire_selected",
      "VE.SoftNorms.Run.slot_wire_certificate",
-     "VE.SoftNorms.Run.slot_wire_conflict"
+     "VE.SoftNorms.Run.slot_wire_conflict",
+     "VE.SoftNorms.Run.soft_wire_conflict_free",
+     "VE.SoftNorms.Run.soft_wire_conflict_witness",
+     "VE.SoftNorms.Run.soft_wire_conflict_exclusive"
     ],
     "VE.SoftNorms.Run.runSelectedP": [
      "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ]
    },
-   "theorems": 14,
+   "theorems": 17,
    "tier": "kernel",
    "wrap_lines": 35,
    "wrap_modules": {
