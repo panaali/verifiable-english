@@ -24882,10 +24882,6 @@
     ],
     "f16-sag-recommend": [
      [
-      "covered",
-      "s"
-     ],
-     [
       "framework_deployment",
       "s"
      ],
