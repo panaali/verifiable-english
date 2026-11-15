@@ -481,6 +481,7 @@ import VE.Senses.Project
 import VE.Senses.Read
 import VE.Senses.Request
 import VE.Service.CoreCheck
+import VE.Service.CoreCheckProofs
 import VE.Service.CoreDocument
 import VE.Service.Diagnose
 import VE.Service.Document
@@ -8949,8 +8950,32 @@ import VE.WireContract.Engine
 #print axioms VE.Service.CoreCheck.casesFrom_ok
 #print axioms VE.Service.CoreCheck.casesOf_ok
 #print axioms VE.Service.CoreCheck.core_facts_round_trip
+#print axioms VE.Service.CoreCheck.decode_reads
 #print axioms VE.Service.CoreCheck.document_core_sound
+#print axioms VE.Service.CoreCheck.facts_round_trip
+#print axioms VE.Service.CoreCheck.find?_of_stronger
 #print axioms VE.Service.CoreCheck.firstRefused_none
+#print axioms VE.Service.CoreCheck.getObjValD_mkObj
+#print axioms VE.Service.CoreCheck.inputs_reads
+#print axioms VE.Service.CoreCheck.judgedViews_get
+#print axioms VE.Service.CoreCheck.judgmentSoftRefusal_site
+#print axioms VE.Service.CoreCheck.locatedRow_marked
+#print axioms VE.Service.CoreCheck.mapM_get
+#print axioms VE.Service.CoreCheck.marked_row
+#print axioms VE.Service.CoreCheck.reads_reading
+#print axioms VE.Service.CoreCheck.reads_status
+#print axioms VE.Service.CoreCheck.routedRefusals_sites
+#print axioms VE.Service.CoreCheck.routed_iff
+#print axioms VE.Service.CoreCheck.routed_sites
+#print axioms VE.Service.CoreCheck.runCaseReported_routes
+#print axioms VE.Service.CoreCheck.setObjVal_mkObj
+#print axioms VE.Service.CoreCheck.sets_eq
+#print axioms VE.Service.CoreCheck.softReadingsRefusal_site
+#print axioms VE.Service.CoreCheck.statement_shown
+#print axioms VE.Service.CoreCheck.statuses_lookup
+#print axioms VE.Service.CoreCheck.tableOf_opens
+#print axioms VE.Service.CoreCheck.unitJson_status
+#print axioms VE.Service.CoreCheck.view_unit_status
 #print axioms VE.Service.CoreDocument.allChoices_mem
 #print axioms VE.Service.CoreDocument.allChoices_nodup
 #print axioms VE.Service.CoreDocument.choicesOf_ok

@@ -418,5 +418,6 @@ import VE.Service.CoreDocument
 import VE.Service.CoreDocumentExamples
 import VE.Service.CoreCheck
 import VE.Service.CoreCheckExamples
+import VE.Service.CoreCheckProofs
 import VE.Kernel.DocumentFold
 import VE.Kernel.DocumentFoldExamples
