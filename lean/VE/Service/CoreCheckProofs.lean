@@ -12,37 +12,6 @@ open VE.Kernel
 open VE.Kernel.DocumentFold (UnitRow Stmt)
 open VE.Kit.Except (bind_ok)
 
-/-! ## The premises a case carries read back -/
-
-/-- The facts the shell sends read back as themselves: when `roundTrips` holds of the premises `P` over the source the
-kernel decodes, the kernel's facts decoder reads `factsJson P` as exactly `P` (and their encodings). `roundTrips` is the
-round trip's hypotheses; `factsJson` is the encoding that reads back. -/
-theorem facts_round_trip (src : VE.SoftNorms.Wire.SoftSource) (P : List VE.Formula) (h : roundTrips src P = true) :
-    VE.Compose.SlotWire.decodeFacts src (Json.mkObj [("facts", factsJson P)]) =
-      .ok (P, P.map VE.Route.Wire.encodeFormula) := by
-  simp only [roundTrips, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at h
-  obtain ⟨⟨⟨hC, hD⟩, hNo⟩, hDec⟩ := h
-  have hF : (Json.mkObj [("facts", factsJson P)]).getObjVal? "facts" = .ok (factsJson P) :=
-    VE.Calc.Run.mkObj_get _ "facts" _ (by simp) (by simp)
-  unfold VE.Compose.SlotWire.decodeFacts
-  rw [hF]
-  simp only [factsJson, Json.getArr?, pure, Except.pure]
-  split
-  · rename_i he
-    have : P = [] := by simpa using he
-    subst this
-    rfl
-  · rw [VE.Route.Wire.decodeFormulas_encode _ P false hC hD hNo (fun h => absurd h (by decide))]
-    have hnone : P.findSome? (fun x => (VE.Norms.preds x).find? fun p => decide (p ∈ VE.SoftNorms.decisionNames src.D)) =
-        none := by
-      rw [List.findSome?_eq_none_iff]
-      intro x hx
-      rw [List.find?_eq_none]
-      intro p hp
-      simpa using hDec p (List.mem_flatMap.mpr ⟨x, hx, hp⟩)
-    simp [bind, Except.bind]
-    rw [hnone]
-
 /-! ## Each unit's rendered status is the fold's -/
 
 /-- `statuses` gives each unit row of the table its fold status, keyed by its id: the status of a unit is the status of

@@ -59,6 +59,9 @@ def edit (old new : String) : String := front.replace old new
    ("u4", [[("norms@0", some 0)], []]),
    ("u5", [[("judgments@0", none), ("soft-norms@0", none)], [("judgments@0", none), ("soft-norms@0", none)]])]
 #guard (run front).getObjValD "status" == .str "ok" && (run front).getObjValD "lowering" == .null
+-- The answer carries the request's id; its view, the document's own id (kb-2a-b-cutback: a mutant of `Inputs`).
+#guard (run front).getObjValD "id" == .str "d" &&
+  ((((run front).getObjValD "view").getObjValD "document_id").getStr?.toOption.map (· != "d")) == some true
 -- A soft rule whose exception reads the judgment term reads it: u3 is OPEN.
 #guard (statuses (run (edit "\"sufficient\":[],\"necessary\":[]" "\"sufficient\":[[\"unary\",\"t\",[\"var\",0]]],\"necessary\":[]"))).lookup "u3" == some "OPEN"
 -- A refusal of the decoding before the lowering is Lean's, marked; a set naming a unit the document lacks is UnknownPart.
