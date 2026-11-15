@@ -393,7 +393,7 @@ def test_rsp_unknown_w1_is_neither_false_nor_a_scored_answer(rsp_modules, monkey
     assert all(row["holds"] is not False for row in result["choices"] if "UNKNOWN" in row["w1"])
     assert all("UNKNOWN" not in row["w1"] for row in result["choices"])
     from types import SimpleNamespace
-    monkeypatch.setattr(rsp_run, "check_conflict", lambda *args, **kwargs: SimpleNamespace(status="UNKNOWN"))
+    monkeypatch.setattr(rsp_run, "decide_soft_conflict", lambda *args, **kwargs: SimpleNamespace(status="UNKNOWN"))
     rsp_run._conflict.cache_clear()
     unresolved = rsp_run.conflict(id_)
     assert unresolved["undecided"] and all(row["holds"] is None for row in unresolved["choices"])
@@ -951,7 +951,7 @@ def test_pf_unknown_w1_is_undecided_not_false(pf_clean, monkeypatch, id_):
     from types import SimpleNamespace
     saved = json.loads((PF / "results.json").read_text())["items"][id_]
     assert all("UNKNOWN" not in row["w1"] for row in saved["choices"])
-    monkeypatch.setattr(pf_run, "check_conflict", lambda *a, **k: SimpleNamespace(status="UNKNOWN"))
+    monkeypatch.setattr(pf_run, "decide_soft_conflict", lambda *a, **k: SimpleNamespace(status="UNKNOWN"))
     unresolved = pf_run.conflict(id_)
     assert unresolved["undecided"].startswith("resource limit")
     assert all(row["holds"] is None for row in unresolved["choices"])
