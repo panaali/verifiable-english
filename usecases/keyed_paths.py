@@ -37,9 +37,9 @@ def recording():
 
     Python's evaluator (`ve.evaluate._Evaluator`) is counted under the function that builds it. A
     Python certificate replay is the prover's check of its own trace (`_background=False`, untrusted and
-    never reported) or a public replay. Lean's soft elaboration is counted per relayed `soft-elaborate`, and
-    Lean's selected rules and completed outcomes per `soft-selected` call of a soft document
-    (`ve.softnorms.selected_at`, kb-10b).
+    never reported) or a public replay. Lean's soft elaboration is counted per relayed `soft-elaborate`, Lean's
+    soft conflict replays per relayed `soft-conflict` (kb-10c), and Lean's selected rules and completed outcomes
+    per `soft-selected` call of a soft document (`ve.softnorms.selected_at`, kb-10b).
     """
     # `ve.evaluate` is also the name of a function `ve` re-exports, so the modules are looked up by name.
     modules = {"evaluate": importlib.import_module("ve.evaluate"),
@@ -80,17 +80,21 @@ def recording():
         counts["lean soft-selected"] += 1
         return selected_at(*args, **kwargs)
 
-    relay_run = soft_relay.run
+    soft_route = importlib.import_module("ve.soft_route")
 
-    def soft(request, *args, **kwargs):
-        if type(request) is dict and request.get("kind") == "soft-elaborate":
-            counts["lean soft-elaborate"] += 1
-        return relay_run(request, *args, **kwargs)
+    def relayed(relay_run):
+        def soft(request, *args, **kwargs):
+            if type(request) is dict and request.get("kind") in ("soft-elaborate", "soft-conflict"):
+                counts[f"lean {request['kind']}"] += 1
+            return relay_run(request, *args, **kwargs)
+        return soft
 
     try:
         patch(evaluate._Evaluator, "__init__", evaluator_init)
         patch(entailment, "_check_certificate_python", replay)
-        patch(soft_relay, "run", soft)
+        patch(soft_relay, "run", relayed(soft_relay.run))
+        # `ve.soft_route` holds its own reference to the relay (kb-10c: `decide_soft_conflict` sends through it).
+        patch(soft_route, "_run", relayed(soft_route._run))
         patch(softnorms, "selected_at", soft_selected)
         for module_name, name, owner in _CALLS:
             patch(modules[module_name], name, counted(name, owner, getattr(modules[module_name], name)))

@@ -22,6 +22,8 @@
 - `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
 - `tests/test_kb10_shadow.py` — The kb-10b shadow (`usecases/safetyfw_shadow.py`): it records Python's answers unchanged and compares them with Lean's `soft-selected`, not with Python's own.
 - `tests/test_kb10b_switch.py` — kb-10b steps (2)-(4): a soft document's selected rules and completed outcomes are Lean's `soft-selected` answers.
+- `tests/test_kb10c_conflict_shadow.py` — The kb-10c conflict shadow (`usecases/safetyfw_conflict_shadow.py`): it records Python's `check_conflict` status unchanged and pairs it with the soft route's a…
+- `tests/test_kb10c_soft_conflict.py` — `ve.soft_route.decide_soft_conflict` (kb-10c): `check_conflict` on a soft document decided by Lean's soft route.
 - `tests/test_kernel_closure.py` — The kernel boundary's measuring tool (docs/spec/kernel-boundary.md, sections 2 and 6).
 - `tests/test_keyed_answers_authority.py` — keyed-wording F1: docs say who computes the keyed answers of a soft-rule norm document, and that is true.
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
@@ -81,6 +83,3 @@
 - `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
 - `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
 - `tests/test_nary_folio.py` — Pinned FOLIO witness accounting, with the large corpus optional in CI.
-- `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
-- `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
-- `tests/test_nested_pytest.py` — Nested pytest runs do not depend on the outer run's plugin settings (testperf review B).
