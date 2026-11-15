@@ -104,7 +104,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the Critical standard has not yet been specified at {0}"
+        "description": "OpenAI ('we') has not yet specified, at {0}, safeguards and security controls that would meet a Critical standard (Table 1 BIO-C, AIS-C: “Until we have specified safeguards and security controls that would meet a Critical standard”; CYB-C: “safeguards and security controls standards that would meet a Critical standard”)"
       },
       "in_category": {
         "arguments": [
@@ -309,7 +309,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "OpenAI deems that {0} warrants deeper testing of Tracked Categories"
+        "description": "OpenAI ('we') deems that the deployment at {0} warrants deeper testing of Tracked Categories of capability"
       },
       "third_party_available": {
         "arguments": [
@@ -357,7 +357,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the Board finds it necessary at {0} to act on the decision (Appendix B)"
+        "description": "it is necessary at {0} to act on the decision (Appendix B: “Where necessary”); the source names no decider: the decider is unstated (an open term, as OT13)"
       },
       "decided_without_sag": {
         "arguments": [
@@ -659,7 +659,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1: “We use the following process to select safeguards for a deployment: • We first identify the plausible ways in which the associated risk of severe harm can come to fruition in the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it would pass the 80-character limit; the order it states before the next step is event order, not formalised: ET, as PLAN O7)",
+        "description": "4.1: “We use the following process to select safeguards for a deployment: • We first identify the plausible ways in which the associated risk of severe harm can come to fruition in the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it would pass the 80-character limit; the order follows from the second step's 'each of those')",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -681,7 +681,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1: third safeguard-selection step",
+        "description": "4.1: “For each identified safeguard, we identify methods to measure their efficacy” (the third safeguard-selection step)",
         "regulated": {
           "role": "obligation",
           "default": "deny",

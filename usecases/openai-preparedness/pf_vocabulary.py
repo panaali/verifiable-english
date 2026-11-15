@@ -53,7 +53,11 @@ BASE = {
     "external_deployment": base(["situation"], "{0} is an external deployment"),
     "framework_deployment": base(["situation"], "{0} is a deployment under the Preparedness Framework"),
     "large_scale_internal": base(["situation"], "{0} is a large-scale internal deployment"),
-    "critical_standard_unspecified": base(["situation"], "the Critical standard has not yet been specified at {0}"),
+    "critical_standard_unspecified": base(["situation"], "OpenAI ('we') has not yet specified, at {0}, safeguards and "
+                                          "security controls that would meet a Critical standard (Table 1 BIO-C, AIS-C: "
+                                          "\u201cUntil we have specified safeguards and security controls that would "
+                                          "meet a Critical standard\u201d; CYB-C: \u201csafeguards and security "
+                                          "controls standards that would meet a Critical standard\u201d)"),
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
     "high": base(["level"], "{0} is a High level", "{0} is high"),
     "critical": base(["level"], "{0} is a Critical level", "{0} is critical"),
@@ -97,7 +101,8 @@ BASE = {
     "rapid_risk": base(["situation"], "a risk of severe harm rapidly develops at {0}"),
     "fast_track_requested": base(["situation"], "a fast track for the SAG is requested at {0}"),
     "immediate_reaction_needed": base(["situation"], "immediate reaction is needed to address the risk at {0}"),
-    "deeper_testing_warranted": base(["situation"], "OpenAI deems that {0} warrants deeper testing of Tracked Categories"),
+    "deeper_testing_warranted": base(["situation"], "OpenAI ('we') deems that the deployment at {0} warrants deeper "
+                                                     "testing of Tracked Categories of capability"),
     "third_party_available": base(["situation"], "third-party evaluation is available and feasible at {0}"),
     "safeguards_report_compiled": base(["situation"], "{0} is the compilation of a Safeguards Report"),
     "employee_request": base(["situation"], "an employee requests a summary of the testing results and SAG recommendation at {0}"),
@@ -107,7 +112,9 @@ BASE = {
                                                    "noncompliance with the Framework (5.1)"),
     "persuasion_risk": base(["situation"], "{0} concerns risks related to persuasion"),
     "leadership_decision": base(["situation"], "{0} is a final decision of OpenAI Leadership"),
-    "board_finds_necessary": base(["situation"], "the Board finds it necessary at {0} to act on the decision (Appendix B)"),
+    "board_finds_necessary": base(["situation"], "it is necessary at {0} to act on the decision (Appendix B: "
+                                                  "\u201cWhere necessary\u201d); the source names no decider: the "
+                                                  "decider is unstated (an open term, as OT13)"),
     "decided_without_sag": base(["situation"], "OpenAI Leadership makes the decision at {0} without the SAG's participation"),
     "research_category_review": base(["situation"], "{0} is a Research Category review"),
     "plausible": base(["capability"], "{0} meets the plausible-pathway criterion"),
@@ -199,15 +206,17 @@ ACTS = {
                    "4.1: “We use the following process to select safeguards for a deployment: • We first "
                    "identify the plausible ways in which the associated risk of severe harm can come to fruition in "
                    "the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it "
-                   "would pass the 80-character limit; the order it states before the next step is event order, "
-                   "not formalised: ET, as PLAN O7)"),
+                   "would pass the 80-character limit; the order follows from the second step's 'each of "
+                   "those')"),
     "specific_safeguards_per_path": ("{0} identify specific safeguards that would address each risk path",
                                      "4.1: “• For each of those, we then identify specific safeguards that "
                                      "either exist or should be implemented that would address the risk.” (the "
                                      "second step; 'then' is in this legend only, a word an act may not use; the "
                                      "order it states after the first step is event order, not formalised: ET, as "
                                      "PLAN O7; the per-item scope stays SC-blocked)"),
-    "efficacy_methods_per_safeguard": ("{0} identify efficacy methods per safeguard", "4.1: third safeguard-selection step"),
+    "efficacy_methods_per_safeguard": ("{0} identify efficacy methods per safeguard",
+                                       "4.1: \u201cFor each identified safeguard, we identify methods to measure "
+                                       "their efficacy\u201d (the third safeguard-selection step)"),
     "efficacy_threshold_per_safeguard": ("{0} identify an efficacy threshold per safeguard", "4.1: third safeguard-selection step"),
     "validate_evidence": ("{0} validate the evidence", "4.2: evidence safeguards fail"),
     "review_sufficiency": ("{0} review safeguard sufficiency", "4.2: review sufficiency"),
