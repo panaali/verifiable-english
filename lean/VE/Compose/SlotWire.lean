@@ -376,6 +376,43 @@ theorem slot_wire_entailment_facts (j : Json) (r : SlotEntailmentReplay) (h : re
   obtain ⟨_, hf, hm⟩ := replaySlotEntailment_parts j r h
   exact ⟨hf, factsModel_sat hm⟩
 
+/-! ## The admission of a core document (kb-2a-b, the document mode's kernel row) -/
+
+/-- A core document `(X, P)` read back from a `slot-admission` case: the soft source of its `environment` and
+`norms`, and the slot `P` of its `facts` with their raw items. -/
+structure SlotAdmission where
+  src : SoftSource
+  facts : List VE.Formula
+  items : List Json
+
+/-- The `slot-admission` case: the source decoded as every soft kind decodes it (`decodeSoftSource`, so
+`WellFormedSoft`), then its facts (`decodeFacts`). Nothing about consistency is decided here: facts that cannot hold
+together are admitted, and the kinds that read them refuse them (`factsModel`, kb-3a T5). -/
+def replaySlotAdmission (j : Json) : Except String SlotAdmission := do
+  let environment ← j.getObjVal? "environment"
+  let src ← decodeSoftSource environment (j.getObjValD "norms")
+  let (P, items) ← decodeFacts src j
+  pure ⟨src, P, items⟩
+
+/-- What an admitted core document is: the source part of `runAdmission_sound`'s conclusion for the case's own
+`environment` and `norms` (`SourceDecoded`: decoded, `WellFormedSoft`, its vocabulary and literals the decoded
+environment's), and its facts decoded to a well-formed slot over that source. -/
+def SlotAdmitted (j : Json) (r : SlotAdmission) : Prop :=
+  decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
+    WellFormedSoft r.src.D = true ∧ r.src.D.E = r.src.se.ne.rv.environment ∧
+    r.src.D.lits = r.src.se.ne.rv.literals ∧
+    decodeFacts r.src j = .ok (r.facts, r.items) ∧ SlotWellFormed r.src.D r.facts
+
+theorem replaySlotAdmission_sound (j : Json) (r : SlotAdmission) (h : replaySlotAdmission j = .ok r) :
+    SlotAdmitted j r := by
+  unfold replaySlotAdmission at h
+  obtain ⟨environment, he, h⟩ := bind_ok h
+  obtain ⟨src, hs, h⟩ := bind_ok h
+  obtain ⟨⟨P, items⟩, hf, h⟩ := bind_ok h
+  cases h
+  have he' : j.getObjValD "environment" = environment := by simp only [Json.getObjValD, he]; rfl
+  exact ⟨he' ▸ hs, src.wf, src.env, src.lits, hf, (decodeFacts_ok hf).1⟩
+
 /-! ## No facts: each slot replay is its soft twin -/
 
 theorem map_bind_congr {ε α β γ δ : Type} (x : Except ε α) {f : α → Except ε β} {g : α → Except ε γ}
