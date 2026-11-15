@@ -157,6 +157,7 @@ def lean_answer(lake):
         {"name": "reuse-g", "roots": [FX + "reuseG"], "opaque": [], "mode": "run", "why": [FX + "reuseF"]},
         {"name": "reuse-both", "roots": [FX + "reuseBoth"], "opaque": [], "mode": "run"},
         {"name": "odd", "roots": [FX + "oddFixture"], "opaque": [], "mode": "run"},
+        {"name": "size", "roots": [FX + "sizeFixture"], "opaque": [], "mode": "run"},
         *kernel_closure.requests(FIXTURE_REGISTRY),
         *measured,
     ], [], [], HANG_TIMEOUT)
@@ -207,8 +208,10 @@ def test_a_matcher_reused_from_an_unreached_declaration_is_charged_to_its_user(l
 
 def test_a_reached_declaration_is_still_charged_its_lines_once(lean_answer):
     """The conservative direction: where the closure reaches `reuseF` itself, its matcher is charged
-    `reuseF`'s range (counted once, nothing attributed); and `evenFixture._mutual`, which holds
-    `evenFixture`'s code, charges `evenFixture`'s lines to `oddFixture`, which runs it."""
+    `reuseF`'s range (counted once, nothing attributed); `evenFixture._mutual`, which holds
+    `evenFixture`'s code, charges `evenFixture`'s lines to `oddFixture`, which runs it; and
+    `sizeFixture`, whose structural mutual recursion holds `sizeListFixture`'s body and matcher
+    without naming it, is charged `sizeListFixture`'s lines."""
     raw, _ = lean_answer
     both = raw["reuse-both"]
     assert sorted(d["name"] for d in both["decls"]) == [FX + "reuseBoth", FX + "reuseF", FX + "reuseG"]
@@ -217,6 +220,9 @@ def test_a_reached_declaration_is_still_charged_its_lines_once(lean_answer):
     odd = raw["odd"]
     assert sorted(d["name"] for d in odd["decls"]) == [FX + "evenFixture", FX + "oddFixture"]
     assert odd["lines"] == sum(span(d) for d in odd["decls"]) and odd["attributed"] == []
+    size = raw["size"]
+    assert {FX + "sizeFixture", FX + "sizeListFixture"} <= {d["name"] for d in size["decls"]}
+    assert size["attributed"] == []
 
 
 def test_the_wrap_figure_leaves_out_what_the_spec_reads(lean_answer, monkeypatch):
