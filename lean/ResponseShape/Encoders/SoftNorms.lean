@@ -136,20 +136,30 @@ theorem slotFirstFailure_of_not_free (j : Json) (res : VE.Compose.SlotWire.SlotC
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-/-- A `soft-selected` answer: the background flag and one typed row per decoded query. -/
+/-- A `soft-selected` answer: the background flag, one typed row per decoded query, and the `facts`
+and `coherent` flags exactly when the case has `facts`. -/
 theorem selected_fits (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
-    (E : List (SoftNode × VE.Formula) × List (String × VE.Formula)) (qs : List SelectedQuery) :
+    (E : List (SoftNode × VE.Formula) × List (String × VE.Formula)) (qs : List SelectedQuery)
+    (sent b c : Bool) (hs : (CaseCond.path ["facts"]).holds req = sent) :
     Fits req (skel% "soft-norms.json#/$defs/selected") (VE.Route.Wire.ok id
-      [("background", .bool (classificationBackgroundValid D M)),
-        ("results", Json.arr (qs.map (selectedRow E M)).toArray)]) := by
-  unfold VE.Route.Wire.ok selectedRow
-  fits
+      ([("background", .bool (classificationBackgroundValid D M)),
+        ("results", Json.arr (qs.map (selectedRow E M)).toArray)] ++ factsFields sent b c)) := by
+  cases sent <;> unfold VE.Route.Wire.ok selectedRow factsFields <;>
+    simp only [Bool.false_eq_true, ↓reduceIte, List.append_nil, List.cons_append, List.nil_append] <;> fits
 
-theorem runSelected_fits (id : String) (j : Json) :
-    OkP (Fits req (skel% "soft-norms.json#/$defs/selected")) (runSelected id j) := by
+/-- In an object case, `factsSent` is whether the case has `facts`. -/
+theorem factsSent_holds {j w : Json} (hobj : j.getObjVal? "id" = .ok w) :
+    (CaseCond.path ["facts"]).holds j = factsSent j := by
+  unfold factsSent
+  cases h : j.getObjVal? "facts" with
+  | ok v => exact CaseCond.path_ok h
+  | error e => exact CaseCond.path_error hobj h
+
+theorem runSelected_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w) :
+    OkP (Fits j (skel% "soft-norms.json#/$defs/selected")) (runSelected id j) := by
   unfold runSelected
   okfits
-  all_goals fits_from selected_fits _ _ _ _ _
+  all_goals fits_from selected_fits (req := j) _ _ _ _ _ _ _ _ (factsSent_holds hobj)
 
 set_option maxHeartbeats 1000000 in
 theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
@@ -164,7 +174,7 @@ theorem runSoftKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getO
   all_goals first
     | fits_from elaborate_fits _ _ _ _ _ _
     | fits_from pairs_fits _ _ _ _ _ _ ‹_›
-    | (intro v hv; fits_from runSelected_fits _ _ _ hv)
+    | (intro v hv; fits_from runSelected_fits _ _ hobj _ hv)
     | (simp only [slotCertificateAnswer, slotWitnessAnswer, slotConflictAnswer, VE.Route.Wire.ok]; fits)
     | (try simp only [VE.Route.Wire.ok]); fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
