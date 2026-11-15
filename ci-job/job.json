@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-kb-10b-switch-583546de-t703471-s1",
+ "head": "e3631b07b20f68e715f6985f61cc2282557ce074",
+ "argv": [
+  "armsh-cand-kb-10b-switch-583546de-t703471-s1",
+  "e3631b07b20f68e715f6985f61cc2282557ce074",
+  "aca5c73b3ed21f9a4cb54d5fccf818667a2c9ff5",
+  "-",
+  "-",
+  "4",
+  "1/7"
+ ]
+}
