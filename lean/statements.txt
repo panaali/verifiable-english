@@ -64086,6 +64086,30 @@ theorem VE.Service.CoreCheck.core_facts_round_trip
               Except.ok (docs[k].snd.premises, List.map VE.Route.Wire.encodeFormula docs[k].snd.premises)
   -- uses VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.casesOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.premises@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
   -- expr 1212600074
+theorem VE.Service.CoreCheck.decode_reads
+  ∀ (text : String) (lexicon packs governed governedSets parent : Option Lean.Json) (core : Bool)
+    (d : VE.Service.Document.Decoded),
+    VE.Service.Document.decode text lexicon packs governed governedSets parent core = Except.ok d →
+      ∃ E,
+        VE.Service.Document.environmentOf (d.whole.getObjValD "environment") (d.whole.getObjValD "units") d.senses
+              (if (d.whole == d.doc.front) = Bool.true then
+                Option.some (VE.Discourse.Loader.optionalList d.whole "open_terms")
+              else Option.none)
+              core =
+            Except.ok E ∧
+          d.senses = (d.whole.getObjVal? "senses").isOk ∧
+            d.judged = E.profiles.contains "judgments@0" ∧
+              (d.E =
+                  if d.judged = Bool.true then
+                    { json := E.json, checked := E.checked, rv := E.rv, profiles := E.profiles, envId := E.envId,
+                      block := E.block, generated := E.generated, legacy := E.legacy, cardinality := E.cardinality,
+                      boundNames := Option.some (Lean.ToJson.toJson d.J), events := E.events }
+                  else E) ∧
+                ∃ raw,
+                  VE.Service.Document.unitsOf d.E d.R d.S d.N d.doc.source d.doc.fences lexicon d.names raw =
+                    Except.ok d.units
+  -- uses VE.Discourse.Loader.Split.fences@VE.Discourse.Loader VE.Discourse.Loader.Split.front@VE.Discourse.Loader VE.Discourse.Loader.Split.source@VE.Discourse.Loader VE.Discourse.Loader.optionalList@VE.Discourse.Loader VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.J@VE.Service.Document VE.Service.Document.Decoded.N@VE.Service.Document VE.Service.Document.Decoded.R@VE.Service.Document VE.Service.Document.Decoded.S@VE.Service.Document VE.Service.Document.Decoded.doc@VE.Service.Document VE.Service.Document.Decoded.judged@VE.Service.Document VE.Service.Document.Decoded.names@VE.Service.Document VE.Service.Document.Decoded.senses@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document VE.Service.Document.Decoded.whole@VE.Service.Document VE.Service.Document.Decoded@VE.Service.Document VE.Service.Document.Env.block@VE.Service.Document VE.Service.Document.Env.cardinality@VE.Service.Document VE.Service.Document.Env.checked@VE.Service.Document VE.Service.Document.Env.envId@VE.Service.Document VE.Service.Document.Env.events@VE.Service.Document VE.Service.Document.Env.generated@VE.Service.Document VE.Service.Document.Env.json@VE.Service.Document VE.Service.Document.Env.legacy@VE.Service.Document VE.Service.Document.Env.mk@VE.Service.Document VE.Service.Document.Env.profiles@VE.Service.Document VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.decode@VE.Service.Document VE.Service.Document.environmentOf@VE.Service.Document VE.Service.Document.unitsOf@VE.Service.Document
+  -- expr 769967289
 theorem VE.Service.CoreCheck.document_core_sound
   ∀ (j row : Lean.Json),
     VE.Service.CoreCheck.answer j = Except.ok row →
@@ -64114,11 +64138,275 @@ theorem VE.Service.CoreCheck.document_core_sound
                                 "rows")]
   -- uses VE.Kernel.DocumentFold.fold@VE.Kernel.DocumentFold VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path.row@VE.Kernel.Carry VE.Kernel.Row.case@VE.Kernel.Carry VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Route.Wire.ok@VE.Route.Wire VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.id@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.sets@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.views@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.I@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.cases@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared.docs@VE.Service.CoreCheck VE.Service.CoreCheck.Prepared@VE.Service.CoreCheck VE.Service.CoreCheck.answer@VE.Service.CoreCheck VE.Service.CoreCheck.caseOf@VE.Service.CoreCheck VE.Service.CoreCheck.prepare@VE.Service.CoreCheck VE.Service.CoreCheck.softNormsPath@VE.Service.CoreCheck VE.Service.CoreCheck.tableOf@VE.Service.CoreCheck VE.Service.CoreCheck.viewOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Coupling@VE.Service.CoreDocument VE.Service.CoreDocument.lower@VE.Service.CoreDocument VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.records@VE.Service.Document VE.Service.Document.Decoded.senses@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document
   -- expr 52129990
+theorem VE.Service.CoreCheck.facts_round_trip
+  ∀ (src : VE.SoftNorms.Wire.SoftSource) (P : List VE.Formula),
+    VE.Service.CoreCheck.roundTrips src P = Bool.true →
+      VE.Compose.SlotWire.decodeFacts src (Lean.Json.mkObj [("facts", VE.Service.CoreCheck.factsJson P)]) =
+        Except.ok (P, List.map VE.Route.Wire.encodeFormula P)
+  -- uses VE.Compose.SlotWire.decodeFacts@VE.Compose.SlotWire VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Service.CoreCheck.factsJson@VE.Service.CoreCheck VE.Service.CoreCheck.roundTrips@VE.Service.CoreCheck VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire
+  -- expr 3385327865
+theorem VE.Service.CoreCheck.find?_of_stronger
+  ∀ {α : Type} {p q : α → Bool} {x : α},
+    q x = Bool.true →
+      (∀ (y : α), q y = Bool.true → p y = Bool.true) →
+        ∀ {l : List α}, List.find? p l = Option.some x → List.find? q l = Option.some x
+  -- uses
+  -- expr 3157516208
 theorem VE.Service.CoreCheck.firstRefused_none
   ∀ (rows : List VE.Kernel.Row) (i : Nat),
     VE.Service.CoreCheck.firstRefused rows i = Option.none → ∀ (r : VE.Kernel.Row), r ∈ rows → ∃ x, r.result = Except.ok x
   -- uses VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Service.CoreCheck.firstRefused@VE.Service.CoreCheck
   -- expr 1882872169
+theorem VE.Service.CoreCheck.getObjValD_mkObj
+  ∀ (l : List (String × Lean.Json)) (k : String) (v : Lean.Json),
+    (List.map (fun x => x.fst) l).Nodup → (k, v) ∈ l → (Lean.Json.mkObj l).getObjValD k = v
+  -- uses
+  -- expr 4106228607
+theorem VE.Service.CoreCheck.inputs_reads
+  ∀ {j : Lean.Json} {I : VE.Service.CoreCheck.Inputs},
+    VE.Service.CoreCheck.inputs j = Except.ok I →
+      I.active = VE.Discourse.Loader.activeOf I.d.all ∧
+        (I.d.judged = Bool.true →
+            VE.Service.Document.judgedViews I.d.E I.d.front I.d.names I.active I.d.units
+                ((I.d.S.bind fun x => x.rules) <|> I.d.R.bind fun x => x.rules) I.d.R =
+              Except.ok I.views) ∧
+          I.meanings.length = I.d.units.length ∧
+            I.sets.length = I.active.length ∧
+              ∀ (k : Nat) (hk : k < I.active.length),
+                ∃ c,
+                  I.sets[k]? = Option.some (I.active[k].fst, c) ∧
+                    VE.Service.Document.setCandidates I.d.E I.d.front I.active[k].fst = Except.ok c
+  -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.activeOf@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Service.CoreCheck.Inputs.active@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.meanings@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.sets@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.views@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs@VE.Service.CoreCheck VE.Service.CoreCheck.inputs@VE.Service.CoreCheck VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.R@VE.Service.Document VE.Service.Document.Decoded.S@VE.Service.Document VE.Service.Document.Decoded.all@VE.Service.Document VE.Service.Document.Decoded.front@VE.Service.Document VE.Service.Document.Decoded.judged@VE.Service.Document VE.Service.Document.Decoded.names@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document VE.Service.Document.RightsDoc.rules@VE.Service.Document VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.SoftLayer.rules@VE.Service.Document VE.Service.Document.SoftLayer@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.judgedViews@VE.Service.Document VE.Service.Document.setCandidates@VE.Service.Document VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1882941286
+theorem VE.Service.CoreCheck.judgedViews_get
+  ∀ {E : VE.Service.Document.Env} {front : Lean.Json} {names : List String}
+    {active : List (VE.Discourse.FrontSet × List Bool)} {units : List VE.Service.Document.SourceUnit}
+    {S : Option VE.SoftNorms.Wire.SoftEnvironment} {R : Option VE.Service.Document.RightsDoc}
+    {vs : List VE.Judgments.UnitView},
+    VE.Service.Document.judgedViews E front names active units S R = Except.ok vs →
+      ∃ sets,
+        (sets.length = active.length ∧
+            ∀ (k : Nat) (hk : k < active.length),
+              ∃ c,
+                sets[k]? = Option.some (active[k].fst, c) ∧
+                  VE.Service.Document.setCandidates E front active[k].fst = Except.ok c) ∧
+          ∀ (k : Nat) (hk : k < units.length),
+            ∃ v,
+              vs[k]? = Option.some v ∧
+                v.id = units[k].id ∧
+                  (units[k].content.bind fun c => (VE.Service.Document.UnitContent.judgedIn S R c).toOption).join =
+                      v.own ∧
+                    v.set =
+                      Option.map
+                        (fun x =>
+                          { authored := x.fst.status == "authored", allAsserted := x.snd.all id,
+                            candidates :=
+                              (Option.map (fun x => x.snd) (List.find? (fun x_1 => x_1.fst == x.fst) sets)).getD [] })
+                        (List.find? (fun x => x.fst.unit == units[k].id) active)
+  -- uses VE.Discourse.FrontSet.status@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.instDecidableEqFrontSet@VE.Discourse.Manifest VE.Judgments.ActiveSet.mk@VE.Judgments.Status VE.Judgments.ActiveSet@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.own@VE.Judgments.Status VE.Judgments.UnitView.set@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Service.Document.Env@VE.Service.Document VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.SourceUnit.content@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent@VE.Service.Document VE.Service.Document.judgedViews@VE.Service.Document VE.Service.Document.setCandidates@VE.Service.Document VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 910623834
+theorem VE.Service.CoreCheck.locatedRow_marked
+  ∀ (j : Lean.Json) (m : String) (at_ : VE.Service.Document.Located),
+    ((VE.Service.Document.locatedRow j m at_).setObjVal! "lowering" (Lean.Json.bool Bool.true)).getObjValD "status" =
+        Lean.Json.str "error" ∧
+      ((VE.Service.Document.locatedRow j m at_).setObjVal! "lowering" (Lean.Json.bool Bool.true)).getObjValD "lowering" =
+        Lean.Json.bool Bool.true
+  -- uses VE.Service.Document.Located@VE.Service.Document VE.Service.Document.locatedRow@VE.Service.Document
+  -- expr 3839016900
+theorem VE.Service.CoreCheck.mapM_get
+  ∀ {α β ε : Type} {f : α → Except ε β} {xs : List α} {ys : List β},
+    List.mapM f xs = Except.ok ys →
+      ys.length = xs.length ∧ ∀ (k : Nat) (hk : k < xs.length), ∃ y, ys[k]? = Option.some y ∧ f xs[k] = Except.ok y
+  -- uses
+  -- expr 156965288
+theorem VE.Service.CoreCheck.marked_row
+  ∀ (l : List (String × Lean.Json)) (id : Lean.Json) (m : String),
+    (l = [] ∨ (∃ v, l = [("path", v)]) ∨ ∃ v, l = [("span", v)]) →
+      ((Lean.Json.mkObj ([("id", id), ("status", Lean.Json.str "error"), ("error", Lean.Json.str m)] ++ l)).setObjVal!
+                "lowering" (Lean.Json.bool Bool.true)).getObjValD
+            "status" =
+          Lean.Json.str "error" ∧
+        ((Lean.Json.mkObj ([("id", id), ("status", Lean.Json.str "error"), ("error", Lean.Json.str m)] ++ l)).setObjVal!
+                "lowering" (Lean.Json.bool Bool.true)).getObjValD
+            "lowering" =
+          Lean.Json.bool Bool.true
+  -- uses
+  -- expr 4149921059
+theorem VE.Service.CoreCheck.reads_reading
+  ∀ {j : Lean.Json} {I : VE.Service.CoreCheck.Inputs},
+    VE.Service.CoreCheck.inputs j = Except.ok I →
+      I.d.judged = Bool.true →
+        ∀ (k : Nat) (hk : k < I.d.units.length) (st : VE.Service.CoreDocument.Statement) (rs : VE.Discourse.FrontSet)
+          (kinds : List Bool) (i : Nat),
+          List.find? (fun x => x.fst.unit == I.d.units[k].id) I.active = Option.some (rs, kinds) →
+            Option.map (fun x => x.fst) (List.find? (fun x => x.fst.id == rs.id) I.sets) = Option.some rs →
+              st.origin.reading = Option.some (rs.id, i) →
+                (∀ (t : VE.Judgments.Judgment), st.body ≠ VE.Service.CoreDocument.Body.judgment t) →
+                  ∃ v,
+                    I.views[k]? = Option.some v ∧
+                      v.id = I.d.units[k].id ∧
+                        v.set.isSome = Bool.true ∧
+                          ∀ (x : String),
+                            x ∈ VE.Service.CoreCheck.reads I I.d.units[k] st →
+                              x ∈ VE.Judgments.dependsOnC I.d.E.rv.definitions I.d.J v.reads
+  -- uses VE.Discourse.FrontSet.id@VE.Discourse.Manifest VE.Discourse.FrontSet.unit@VE.Discourse.Manifest VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Judgments.ActiveSet@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView.set@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Service.CoreCheck.Inputs.active@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.sets@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.views@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs@VE.Service.CoreCheck VE.Service.CoreCheck.inputs@VE.Service.CoreCheck VE.Service.CoreCheck.reads@VE.Service.CoreCheck VE.Service.CoreDocument.ActiveSet@VE.Service.CoreDocument VE.Service.CoreDocument.Body.judgment@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.reading@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.body@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.J@VE.Service.Document VE.Service.Document.Decoded.judged@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 3901361313
+theorem VE.Service.CoreCheck.reads_status
+  ∀ {j : Lean.Json} {I : VE.Service.CoreCheck.Inputs},
+    VE.Service.CoreCheck.inputs j = Except.ok I →
+      I.d.judged = Bool.true →
+        ∀ (k : Nat) (hk : k < I.d.units.length) (st : VE.Service.CoreDocument.Statement),
+          st.origin.reading = Option.none →
+            (∀ (t : VE.Judgments.Judgment), st.body ≠ VE.Service.CoreDocument.Body.judgment t) →
+              ∃ v,
+                I.views[k]? = Option.some v ∧
+                  v.id = I.d.units[k].id ∧
+                    VE.Service.CoreCheck.reads I I.d.units[k] st =
+                        VE.Judgments.dependsOnC I.d.E.rv.definitions I.d.J
+                          (v.own.toList ++
+                            List.map VE.Judgments.Content.formula
+                              (VE.Service.CoreCheck.exceptionFormulas
+                                ((I.d.S.bind fun x => x.rules) <|> I.d.R.bind fun x => x.rules) I.d.units[k].content)) ∧
+                      (v.set = Option.none →
+                        VE.Service.CoreCheck.reads I I.d.units[k] st =
+                          VE.Judgments.dependsOnC I.d.E.rv.definitions I.d.J
+                            (v.reads ++
+                              List.map VE.Judgments.Content.formula
+                                (VE.Service.CoreCheck.exceptionFormulas
+                                  ((I.d.S.bind fun x => x.rules) <|> I.d.R.bind fun x => x.rules) I.d.units[k].content)))
+  -- uses VE.Formula@VE.Syntax VE.Judgments.ActiveSet@VE.Judgments.Status VE.Judgments.Content.formula@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.own@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView.set@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.views@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs@VE.Service.CoreCheck VE.Service.CoreCheck.exceptionFormulas@VE.Service.CoreCheck VE.Service.CoreCheck.inputs@VE.Service.CoreCheck VE.Service.CoreCheck.reads@VE.Service.CoreCheck VE.Service.CoreDocument.Body.judgment@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.reading@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.body@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.Document.Decoded.E@VE.Service.Document VE.Service.Document.Decoded.J@VE.Service.Document VE.Service.Document.Decoded.R@VE.Service.Document VE.Service.Document.Decoded.S@VE.Service.Document VE.Service.Document.Decoded.judged@VE.Service.Document VE.Service.Document.Decoded.units@VE.Service.Document VE.Service.Document.Env.rv@VE.Service.Document VE.Service.Document.RightsDoc.rules@VE.Service.Document VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.SoftLayer.rules@VE.Service.Document VE.Service.Document.SoftLayer@VE.Service.Document VE.Service.Document.SourceUnit.content@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 4009687736
+theorem VE.Service.CoreCheck.routedRefusals_sites
+  VE.Compose.layersApart ["judgments@0", "soft-norms@0"] ["soft-norms@0"] =
+      Except.error VE.Service.CoreCheck.routedRefusals[0] ∧
+    VE.Service.CoreCheck.routedRefusals[1] =
+        VE.Service.Document.unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route" ∧
+      VE.Service.CoreCheck.routedRefusals.length = 2
+  -- uses VE.Compose.layersApart@VE.Compose.Dispatch VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.Document.unavailable@VE.Service.Document
+  -- expr 986625216
+theorem VE.Service.CoreCheck.routed_iff
+  ∀ (j : Lean.Json),
+    VE.Service.CoreCheck.routed j = Bool.true ↔
+      ∃ front body e,
+        VE.Service.Document.frontOf j = Option.some (front, body) ∧
+          (front.getObjVal? "senses").isOk = Bool.false ∧
+            (∀ (p : String),
+                p ∈ VE.Service.Document.listedProfiles (front.getObjValD "environment") →
+                  p ∈ VE.Service.CoreDocument.rowProfiles) ∧
+              "judgments@0" ∈ VE.Service.Document.listedProfiles (front.getObjValD "environment") ∧
+                VE.Service.Document.environmentOf (front.getObjValD "environment") (front.getObjValD "units") Bool.false
+                      (Option.some (VE.Discourse.Loader.optionalList front "open_terms")) =
+                    Except.error e ∧
+                  e ∈ VE.Service.CoreCheck.routedRefusals
+  -- uses VE.Discourse.Loader.optionalList@VE.Discourse.Loader VE.Service.CoreCheck.routed@VE.Service.CoreCheck VE.Service.CoreCheck.routedRefusals@VE.Service.CoreCheck VE.Service.CoreDocument.rowProfiles@VE.Service.CoreDocument VE.Service.Document.Env@VE.Service.Document VE.Service.Document.environmentOf@VE.Service.Document VE.Service.Document.frontOf@VE.Service.Document VE.Service.Document.listedProfiles@VE.Service.Document
+  -- expr 2708018789
+theorem VE.Service.CoreCheck.runCaseReported_routes
+  ∀ (j : Lean.Json),
+    (VE.Service.CoreCheck.routed j = Bool.false →
+        VE.Service.CoreCheck.runCaseReported j = VE.Service.Document.runCaseReported j) ∧
+      (∀ (a : Lean.Json),
+          VE.Service.CoreCheck.routed j = Bool.true →
+            VE.Service.CoreCheck.answer j = Except.ok a → VE.Service.CoreCheck.runCaseReported j = a) ∧
+        (∀ (m : String),
+            VE.Service.CoreCheck.routed j = Bool.true →
+              VE.Service.CoreCheck.answer j = Except.error m →
+                VE.Service.CoreCheck.noRow m = Bool.true →
+                  VE.Service.CoreCheck.runCaseReported j = VE.Service.Document.runCaseReported j) ∧
+          ∀ (m : String),
+            VE.Service.CoreCheck.routed j = Bool.true →
+              VE.Service.CoreCheck.answer j = Except.error m →
+                VE.Service.CoreCheck.noRow m = Bool.false →
+                  (VE.Service.CoreCheck.runCaseReported j).getObjValD "status" = Lean.Json.str "error" ∧
+                    (VE.Service.CoreCheck.runCaseReported j).getObjValD "lowering" = Lean.Json.bool Bool.true
+  -- uses VE.Service.CoreCheck.answer@VE.Service.CoreCheck VE.Service.CoreCheck.noRow@VE.Service.CoreCheck VE.Service.CoreCheck.routed@VE.Service.CoreCheck VE.Service.CoreCheck.runCaseReported@VE.Service.CoreCheck VE.Service.Document.runCaseReported@VE.Service.Document
+  -- expr 28748382
+theorem VE.Service.CoreCheck.setObjVal_mkObj
+  ∀ (l : List (String × Lean.Json)) (k : String) (v : Lean.Json),
+    (Lean.Json.mkObj l).setObjVal! k v = Lean.Json.mkObj (l ++ [(k, v)])
+  -- uses
+  -- expr 2716877732
+theorem VE.Service.CoreCheck.sets_eq
+  ∀ {active : List (VE.Discourse.FrontSet × List Bool)}
+    {f : VE.Discourse.FrontSet → Except String (List (Option VE.Judgments.Content))}
+    {A B : List (VE.Discourse.FrontSet × List (Option VE.Judgments.Content))},
+    (A.length = active.length ∧
+        ∀ (k : Nat) (hk : k < active.length),
+          ∃ c, A[k]? = Option.some (active[k].fst, c) ∧ f active[k].fst = Except.ok c) →
+      (B.length = active.length ∧
+          ∀ (k : Nat) (hk : k < active.length),
+            ∃ c, B[k]? = Option.some (active[k].fst, c) ∧ f active[k].fst = Except.ok c) →
+        A = B
+  -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Judgments.Content@VE.Judgments.Status
+  -- expr 1904208736
+theorem VE.Service.CoreCheck.statement_shown
+  ∀ (st : VE.Service.CoreDocument.Statement),
+    (VE.Service.CoreCheck.statementJson st).getObjValD "feature" = Lean.Json.str st.origin.feature ∧
+      (∀ (φ : VE.Formula),
+          st.body = VE.Service.CoreDocument.Body.premise φ →
+            (VE.Service.CoreCheck.statementJson st).getObjValD "premise" = VE.Route.Wire.encodeFormula φ ∧
+              Lean.Json.arr #[(VE.Service.CoreCheck.statementJson st).getObjValD "premise"] =
+                VE.Service.CoreCheck.factsJson [φ]) ∧
+        (∀ (r : Lean.Json),
+            st.body = VE.Service.CoreDocument.Body.soft r →
+              (VE.Service.CoreCheck.statementJson st).getObjValD "rule" = r) ∧
+          (∀ (t : VE.Judgments.Judgment),
+              st.body = VE.Service.CoreDocument.Body.judgment t →
+                (VE.Service.CoreCheck.statementJson st).getObjValD "judgment" = Lean.Json.str t.name) ∧
+            ∀ (s : String) (i : Nat),
+              st.origin.reading = Option.some (s, i) →
+                (VE.Service.CoreCheck.statementJson st).getObjValD "reading" =
+                  Lean.Json.mkObj [("set", Lean.Json.str s), ("index", Lean.ToJson.toJson i)]
+  -- uses VE.Formula@VE.Syntax VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Route.Wire.encodeFormula@VE.Route.Wire VE.Service.CoreCheck.factsJson@VE.Service.CoreCheck VE.Service.CoreCheck.statementJson@VE.Service.CoreCheck VE.Service.CoreDocument.Body.judgment@VE.Service.CoreDocument VE.Service.CoreDocument.Body.premise@VE.Service.CoreDocument VE.Service.CoreDocument.Body.soft@VE.Service.CoreDocument VE.Service.CoreDocument.Body@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.feature@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.reading@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.body@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument
+  -- expr 1752478575
+theorem VE.Service.CoreCheck.statuses_lookup
+  ∀ (table : List VE.Kernel.DocumentFold.UnitRow) (rows : List VE.Kernel.Row) (id : String),
+    List.lookup id (VE.Kernel.DocumentFold.statuses table rows) =
+      Option.map (fun x => VE.Kernel.DocumentFold.status x rows) (List.find? (fun x => x.id == id) table)
+  -- uses VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.id@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.statuses@VE.Kernel.DocumentFold VE.Kernel.Row@VE.Kernel.Carry
+  -- expr 2384031362
+theorem VE.Service.CoreCheck.tableOf_opens
+  ∀ (I : VE.Service.CoreCheck.Inputs) (docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc))
+    (k : Nat) (hk : k < I.d.units.length) (hm : k < I.meanings.length)
+    (c : VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc),
+    c ∈ docs →
+      ∀ (st : VE.Service.CoreDocument.Statement),
+        st ∈ c.snd.statements →
+          st.origin.unit = I.d.units[k].id →
+            VE.Service.CoreCheck.reads I I.d.units[k] st ≠ [] →
+              ∃ row,
+                (VE.Service.CoreCheck.tableOf I docs)[k]? = Option.some row ∧
+                  row.id = I.d.units[k].id ∧
+                    row.meaning = I.meanings[k] ∧
+                      VE.Kernel.DocumentFold.opens row = Bool.true ∧
+                        ∀ (rows : List VE.Kernel.Row),
+                          VE.Kernel.DocumentFold.status row rows = VE.Kernel.DocumentFold.Status.opened
+  -- uses VE.Kernel.DocumentFold.Status.opened@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.id@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.meaning@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.opens@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.Row@VE.Kernel.Carry VE.Service.CoreCheck.Inputs.d@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs.meanings@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs@VE.Service.CoreCheck VE.Service.CoreCheck.reads@VE.Service.CoreCheck VE.Service.CoreCheck.tableOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc.statements@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.CoreDocument.Origin.unit@VE.Service.CoreDocument VE.Service.CoreDocument.Statement.origin@VE.Service.CoreDocument VE.Service.CoreDocument.Statement@VE.Service.CoreDocument VE.Service.Document.Decoded.units@VE.Service.Document VE.Service.Document.SourceUnit.id@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document
+  -- expr 752541058
+theorem VE.Service.CoreCheck.unitJson_status
+  ∀ (r : VE.Service.Document.RowUnit), (VE.Service.Document.unitJson r).getObjValD "status" = Lean.Json.str r.status.name
+  -- uses VE.Service.Document.RowUnit.status@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 2320882750
+theorem VE.Service.CoreCheck.view_unit_status
+  ∀ (I : VE.Service.CoreCheck.Inputs) (docs : List (VE.Service.CoreDocument.Choice × VE.Service.CoreDocument.CoreDoc))
+    (table : List VE.Kernel.DocumentFold.UnitRow) (rows : List VE.Kernel.Row) (k : Nat) (hk : k < I.rows.length)
+    (u : VE.Kernel.DocumentFold.UnitRow),
+    List.find? (fun x => x.id == I.rows[k].id) table = Option.some u →
+      ∃ x,
+        ((VE.Service.CoreCheck.viewOf I docs (VE.Kernel.DocumentFold.statuses table rows)).getObjValD "units").getArrVal?
+              k =
+            Except.ok x ∧
+          x.getObjValD "status" =
+              Lean.Json.str (VE.Service.CoreCheck.unitStatus (VE.Kernel.DocumentFold.status u rows)).name ∧
+            (x.getObjValD "status" = Lean.Json.str "CHECKED" ↔
+                VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.checked) ∧
+              (x.getObjValD "status" = Lean.Json.str "OPEN" ↔
+                  VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.opened) ∧
+                (x.getObjValD "status" = Lean.Json.str "LABELLED" ↔
+                    VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.labelled) ∧
+                  (x.getObjValD "status" = Lean.Json.str "UNFORMALISED" ↔
+                    VE.Kernel.DocumentFold.status u rows = VE.Kernel.DocumentFold.Status.unformalised)
+  -- uses VE.Kernel.DocumentFold.Status.checked@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status.labelled@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status.opened@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status.unformalised@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.Status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow.id@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.UnitRow@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.status@VE.Kernel.DocumentFold VE.Kernel.DocumentFold.statuses@VE.Kernel.DocumentFold VE.Kernel.Row@VE.Kernel.Carry VE.Service.CoreCheck.Inputs.rows@VE.Service.CoreCheck VE.Service.CoreCheck.Inputs@VE.Service.CoreCheck VE.Service.CoreCheck.unitStatus@VE.Service.CoreCheck VE.Service.CoreCheck.viewOf@VE.Service.CoreCheck VE.Service.CoreDocument.Choice@VE.Service.CoreDocument VE.Service.CoreDocument.CoreDoc@VE.Service.CoreDocument VE.Service.Document.RowUnit.id@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document
+  -- expr 2477053362
 theorem VE.Service.CoreDocument.allChoices_mem
   ∀ (L : List (String × Nat)) (c : VE.Service.CoreDocument.Choice),
     c ∈ VE.Service.CoreDocument.allChoices L → ∀ (p : String × Nat), p ∈ c → ∃ q, q ∈ L ∧ q.fst = p.fst ∧ p.snd < q.snd
