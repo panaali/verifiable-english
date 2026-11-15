@@ -27,7 +27,8 @@ f3-inuse | omits: "present severe dangers" exposition ; "and should be treated w
 f3-inuse-forecast | omits: "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "regardless of whether or when they are externally deployed" exposition
 f3-reminder | omits: "Systems that reach Critical capability also require" restates
 f4-security | omits: "We will require the following practices for High capability models" restates
-f7-evaluations | omits: "every covered model undergoes the suite of" restates ; "Prior to" restates
+f7-evaluations | omits: "every covered model undergoes the suite of" restates
+f7-evaluations-any | omits: "every covered model undergoes the suite of" restates
 f7-report | omits: nothing
 f7-compile | omits: "Prior to deployment, every covered model undergoes the suite of Scalable Evaluations" exposition
 f7-recommend | omits: "The SAG reviews the Capabilities Report and decides on next steps" rule f7-report ; "These can include" reading RS16 ; "Determine that the capability threshold has been crossed, and therefore" reading RS16

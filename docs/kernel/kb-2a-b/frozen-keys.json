@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "agent-policy": {
+   "command": "usecases/agent-policy/check.py base",
+   "exit": 0,
+   "seconds": 137,
+   "tree_changed_files": 6
+  },
+  "eligibility": {
+   "command": "usecases/eligibility/run.py --no-write --no-mutants",
+   "exit": 0,
+   "seconds": 243,
+   "tree_changed_files": 0
+  },
+  "fsf": {
+   "command": "usecases/safety-framework/run.py --check",
+   "exit": 0,
+   "seconds": 165,
+   "tree_changed_files": 6
+  },
+  "preparedness": {
+   "command": "usecases/openai-preparedness/run.py --check --base-only",
+   "exit": 0,
+   "seconds": 312,
+   "tree_changed_files": 6
+  },
+  "rsp": {
+   "command": "usecases/anthropic-rsp/run.py --check",
+   "exit": 0,
+   "seconds": 498,
+   "tree_changed_files": 4
+  }
+ },
+ "note": "tree_changed_files counts `git status --porcelain` after each harness; the non-zero counts were the builder's own uncommitted edits during the run (examples being written); after the last harness the tree was clean, so no harness wrote a tracked file",
+ "what": "kb-2a-b acceptance: the five frozen keys' harnesses (docs/kernel/frozen-keys-20261111.md) in their check modes, which recompute every saved result and fail on a changed byte; run once by docs/kernel/kb-2a-b/frozen_keys.sh on this branch between a0919b3834 and e9dcebbd2a (the soft route's code, under the keys, was final from ecb9d54318 on; later commits added examples and shell code no key calls)"
+}
