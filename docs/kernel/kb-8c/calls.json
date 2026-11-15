@@ -1,0 +1,134 @@
+{
+ "item": "kb-8c",
+ "measured_on": "branch feature/kb-8c, main 4a5d3460d3; before = ve/units.py of main (458bc5a8c0's Lean, same ve_service binary), after = 30965b84aa; 2026-11-14",
+ "method": "a throwaway sitecustomize on PYTHONPATH (not committed) wraps LeanService.run_bound and LeanServicePool.run_bound (every relayed chunk goes through one of them; the forkserver workers load it too) and counts the cases of modes check and quantity by kind; 'with a quantity member' are cases with a `quantity` member and no `kind`. With KB8C_SHADOW=1 (the before run) it also asks, beside every ve.units._checked_quantity call, the quantity mode's admission kind for the same environment and payload (not counted) and compares environment_id, Q, core and meaning_id. Each harness ran once per side, in parallel, under manage-agents/iso.sh (16G).",
+ "keys": {
+  "eligibility (usecases/eligibility/run.py --no-write)": {
+   "before": {
+    "check, with a quantity member (_checked_quantity)": 52829,
+    "check, other (typing)": 9804,
+    "quantity, by kind": {
+     "admission (no kind)": 6781,
+     "certificate": 2353,
+     "document": 269
+    }
+   },
+   "after": {
+    "check, with a quantity member": 0,
+    "check, other (typing)": 9803,
+    "quantity, by kind": {
+     "admission (no kind)": 59610,
+     "certificate": 2353,
+     "document": 269
+    }
+   },
+   "shadow": {
+    "compared": 52828,
+    "differ": 0,
+    "rejected by both modes with the same text": 1,
+    "rejected differently": 0,
+    "rejections": [
+     "VEError: DateRange(1960-06-27)"
+    ]
+   }
+  },
+  "Anthropic RSP (usecases/anthropic-rsp/run.py --check)": {
+   "before": {
+    "check, with a quantity member (_checked_quantity)": 145,
+    "check, other (typing)": 20255,
+    "quantity, by kind": {
+     "certificate": 26
+    }
+   },
+   "after": {
+    "check, with a quantity member": 0,
+    "check, other (typing)": 20255,
+    "quantity, by kind": {
+     "admission (no kind)": 145,
+     "certificate": 26
+    }
+   },
+   "shadow": {
+    "compared": 145,
+    "differ": 0,
+    "rejected by both modes with the same text": 0,
+    "rejected differently": 0,
+    "rejections": []
+   }
+  },
+  "OpenAI Preparedness (usecases/openai-preparedness/run.py --check)": {
+   "before": {
+    "check, with a quantity member (_checked_quantity)": 45,
+    "check, other (typing)": 86275,
+    "quantity, by kind": {
+     "certificate": 30
+    }
+   },
+   "after": {
+    "check, with a quantity member": 0,
+    "check, other (typing)": 86275,
+    "quantity, by kind": {
+     "admission (no kind)": 45,
+     "certificate": 30
+    }
+   },
+   "shadow": {
+    "compared": 45,
+    "differ": 0,
+    "rejected by both modes with the same text": 0,
+    "rejected differently": 0,
+    "rejections": []
+   }
+  },
+  "DeepMind FSF (usecases/safety-framework/run.py --check)": {
+   "before": {
+    "check, with a quantity member (_checked_quantity)": 20,
+    "check, other (typing)": 10357,
+    "quantity, by kind": {
+     "certificate": 3,
+     "countermodel": 1
+    }
+   },
+   "after": {
+    "check, with a quantity member": 0,
+    "check, other (typing)": 10357,
+    "quantity, by kind": {
+     "admission (no kind)": 20,
+     "certificate": 3,
+     "countermodel": 1
+    }
+   },
+   "shadow": {
+    "compared": 20,
+    "differ": 0,
+    "rejected by both modes with the same text": 0,
+    "rejected differently": 0,
+    "rejections": []
+   }
+  },
+  "agent policy (usecases/agent-policy/check.py base)": {
+   "before": {
+    "check, with a quantity member (_checked_quantity)": 0,
+    "check, other (typing)": 17715,
+    "quantity, by kind": {}
+   },
+   "after": {
+    "check, with a quantity member": 0,
+    "check, other (typing)": 17715,
+    "quantity, by kind": {}
+   },
+   "shadow": {
+    "compared": 0,
+    "differ": 0,
+    "rejected by both modes with the same text": 0,
+    "rejected differently": 0,
+    "rejections": []
+   }
+  }
+ },
+ "notes": [
+  "before: 'check, with a quantity member' is the number of _checked_quantity calls the shadow saw (each sends exactly one check case); the before run's recorder did not yet tag such cases, so 'check, other' is the check total (eligibility 62,633; RSP 20,400; Preparedness 86,320; FSF 10,377; agent policy 17,715) minus that number. The after run tagged them directly (recorder.py.txt is the after version).",
+  "eligibility's typing check cases are 9,804 before and 9,803 after: one case, in the path this item does not change (ve/ast.py typing). That path asks through relay.decide_once, whose per-pool memo is shared by the harness's threads; a race there would explain one case. This was not proved.",
+  "after: 'admission (no kind)' counts every quantity case with a quantity member and no kind: eligibility's own admission cases (6,781, which also carry a model) plus the 52,829 _checked_quantity cases moved from check."
+ ]
+}

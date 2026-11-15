@@ -9,9 +9,11 @@ a verdict there is one theorem here, with the hypothesis that the runner accepte
 exactly a fixed list of fields over them (no open tail: every key is named), and ends in the proved
 checker's soundness theorem:
 
-* `admission` (also a case with no `kind`): the statement is `Admitted` and its core well formed
-  (`Admission.sound`); with a model, the reported `value` is the core's truth in the decoded model
-  (`evalB_sorted_sound`). The `evaluations` count is the evaluator's work: nothing is stated about it.
+* `admission` (also a case with no `kind`), in two theorems, one per shape of the answer: the
+  statement is `Admitted` and its core well formed (`Admission.sound`); without a `model` member the
+  answer is the seven fields (`_plain`), and with one it adds the reported `value`, the core's truth in
+  the decoded model (`evalB_sorted_sound`), and `evaluations`, the evaluator's work, of which nothing
+  is stated (`_valued`).
 * `countermodel`: `refutes` is whether the decoded model makes every premise core true and the
   conclusion core false (`refutesB_sorted_sound`).
 * `certificate`: `valid = true` means the certificate is bound to the statements and they are
@@ -32,28 +34,22 @@ open Lean
 open VE.Bridge (stringField)
 open VE.Order.ProfileGate (bind_ok)
 
-/-- KB-8, `admission` (the default kind): an answer reports the decoded statement's regenerated
-artifacts and identities; the statement is admitted and its core well formed; with a `model` field,
-the reported `value` is the core's truth in the decoded model, and without one there is no value. -/
-theorem quantity_admission_wire_sound (j answer : Json) (more : Extension)
+/-- KB-8, `admission` (the default kind) without a `model` member: an answer reports the decoded
+statement's regenerated artifacts and identities, exactly seven fields and no value; the statement is
+admitted and its core well formed. -/
+theorem quantity_admission_wire_sound_plain (j answer : Json) (more : Extension)
     (h : runCase j more = .ok answer)
-    (hk : j.getObjVal? "kind" = .ok (.str "admission") ∨ ∃ e, j.getObjVal? "kind" = .error e) :
-    ∃ (id : String) (env : Json) (w : W6Env) (quantity : Json) (a : Admission w)
-      (value : List (String × Json)),
+    (hk : j.getObjVal? "kind" = .ok (.str "admission") ∨ ∃ e, j.getObjVal? "kind" = .error e)
+    (hm : ∃ e, j.getObjVal? "model" = .error e) :
+    ∃ (id : String) (env : Json) (w : W6Env) (quantity : Json) (a : Admission w),
       stringField j "id" = .ok id ∧
       j.getObjVal? "environment" = .ok env ∧ decodeEnvironment env = .ok w ∧
       j.getObjVal? "quantity" = .ok quantity ∧ decodeQuantity w quantity = .ok a ∧
-      answer = ok id ([("assurance", .str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+      answer = ok id [("assurance", .str "lean-admitted"), ("Q", a.Q), ("core", a.core),
         ("meaning_id", .str a.meaningId), ("core_meaning_id", .str a.coreId),
-        ("environment_id", .str w.environmentId), ("target_environment_id", .str w.targetId)] ++
-        value) ∧
-      Admitted w.vocab.env [] a.formula ∧ a.formula.erase.WellFormed w.vocab.env.erase [] ∧
-      ((∃ e, j.getObjVal? "model" = .error e) ∧ value = [] ∨
-        ∃ (model : Json) (d : VE.Order.ModelData VE.Order.Wire.Entity) (b : Bool) (work : Nat),
-          j.getObjVal? "model" = .ok model ∧
-          VE.Route.Decode.decodeOrderModel w.vocab.core model = .ok d ∧
-          value = [("value", .bool b), ("evaluations", toJson work)] ∧
-          b = a.formula.erase.eval d.toModel []) := by
+        ("environment_id", .str w.environmentId), ("target_environment_id", .str w.targetId)] ∧
+      Admitted w.vocab.env [] a.formula ∧ a.formula.erase.WellFormed w.vocab.env.erase [] := by
+  obtain ⟨_, hm⟩ := hm
   unfold runCase at h
   obtain ⟨id, hid, h⟩ := bind_ok h
   rcases hk with hk | ⟨e, hk⟩ <;> simp only [hk, Json.getStr?, pure_bind] at h
@@ -62,23 +58,59 @@ theorem quantity_admission_wire_sound (j answer : Json) (more : Extension)
     obtain ⟨env, henv, h⟩ := bind_ok h
     obtain ⟨w, hw, h⟩ := bind_ok h
     split at h
-    · rename_i model hmj
+    · rename_i hmj
+      rw [hm] at hmj
+      cases hmj
+    · obtain ⟨quantity, hqj, h⟩ := bind_ok h
+      obtain ⟨a, ha, h⟩ := bind_ok h
+      cases h
+      exact ⟨id, env, w, quantity, a, hid, henv, hw, hqj, ha, rfl, (Admission.sound a).1,
+        (Admission.sound a).2⟩
+
+/-- KB-8, `admission` (the default kind) with a `model` member: the model decodes, and an answer
+reports the decoded statement's regenerated artifacts and identities, then the core's truth in the
+decoded model (`value`) and the evaluator's work (`evaluations`, of which nothing is stated): exactly
+nine fields. The statement is admitted and its core well formed. -/
+theorem quantity_admission_wire_sound_valued (j answer model : Json) (more : Extension)
+    (h : runCase j more = .ok answer)
+    (hk : j.getObjVal? "kind" = .ok (.str "admission") ∨ ∃ e, j.getObjVal? "kind" = .error e)
+    (hm : j.getObjVal? "model" = .ok model) :
+    ∃ (id : String) (env : Json) (w : W6Env) (quantity : Json) (a : Admission w)
+      (d : VE.Order.ModelData VE.Order.Wire.Entity) (b : Bool) (work : Nat),
+      stringField j "id" = .ok id ∧
+      j.getObjVal? "environment" = .ok env ∧ decodeEnvironment env = .ok w ∧
+      j.getObjVal? "quantity" = .ok quantity ∧ decodeQuantity w quantity = .ok a ∧
+      VE.Route.Decode.decodeOrderModel w.vocab.core model = .ok d ∧
+      answer = ok id [("assurance", .str "lean-admitted"), ("Q", a.Q), ("core", a.core),
+        ("meaning_id", .str a.meaningId), ("core_meaning_id", .str a.coreId),
+        ("environment_id", .str w.environmentId), ("target_environment_id", .str w.targetId),
+        ("value", .bool b), ("evaluations", toJson work)] ∧
+      Admitted w.vocab.env [] a.formula ∧ a.formula.erase.WellFormed w.vocab.env.erase [] ∧
+      b = a.formula.erase.eval d.toModel [] := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := bind_ok h
+  rcases hk with hk | ⟨e, hk⟩ <;> simp only [hk, Json.getStr?, pure_bind] at h
+  all_goals
+    rw [if_neg (by decide)] at h
+    obtain ⟨env, henv, h⟩ := bind_ok h
+    obtain ⟨w, hw, h⟩ := bind_ok h
+    split at h
+    · rename_i model' hmj
+      rw [hm] at hmj
+      cases hmj
       obtain ⟨quantity, hqj, h⟩ := bind_ok h
       obtain ⟨a, ha, h⟩ := bind_ok h
       obtain ⟨d, hd, h⟩ := bind_ok h
       split at h
       · rename_i b work hb
         cases h
-        exact ⟨id, env, w, quantity, a, _, hid, henv, hw, hqj, ha, rfl, (Admission.sound a).1,
-          (Admission.sound a).2,
-          .inr ⟨model, d, b, work, hmj, hd, rfl, evalB_sorted_sound d (predicateNames w) _ _ _ _ hb⟩⟩
+        exact ⟨id, env, w, quantity, a, d, b, work, hid, henv, hw, hqj, ha, hd, rfl,
+          (Admission.sound a).1, (Admission.sound a).2,
+          evalB_sorted_sound d (predicateNames w) _ _ _ _ hb⟩
       · cases h
-    · rename_i e' hmj
-      obtain ⟨quantity, hqj, h⟩ := bind_ok h
-      obtain ⟨a, ha, h⟩ := bind_ok h
-      cases h
-      exact ⟨id, env, w, quantity, a, _, hid, henv, hw, hqj, ha, rfl, (Admission.sound a).1,
-        (Admission.sound a).2, .inl ⟨⟨e', hmj⟩, rfl⟩⟩
+    · rename_i hmj
+      rw [hm] at hmj
+      cases hmj
 
 /-- KB-8, `countermodel`: an answer echoes the decoded statements' identities, the statements are
 admitted, and `refutes` is whether the decoded model makes every premise's core true and the
