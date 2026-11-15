@@ -20,7 +20,11 @@ atom, and the background formulas; `runSelectedP` then reads only the case's `mo
 
 The faster computations share `soften D` and its layer symbols, and each is proved equal to the
 definition it stands for (`vocabularyIn`, `expandedIn_eq`, `backgroundIn_valid`), so `prepare_ok`
-states every field as the existing definition. The unprepared runner `runSelected` is unchanged. -/
+states every field as the existing definition. The unprepared runner `runSelected` is unchanged.
+
+kb-9: a prepared document also holds the base vocabulary the case's `facts` are decoded over
+(`decodeFactsIn`, the body of `decodeFacts`) and the coherence conjuncts the `coherent` flag evaluates
+(`cohPremisesIn`, `cohPremises` from the softened document already built). -/
 namespace VE.SoftNorms.Run
 open Lean
 open VE.Norms
@@ -82,6 +86,23 @@ theorem backgroundIn_valid (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) :
     (backgroundIn D (soften D)).all (fun a => a.eval M []) = classificationBackgroundValid D M := by
   simp only [backgroundIn, List.all_append, classificationBackgroundValid, VE.Norms.backgroundValid]
 
+/-- The coherence conjuncts from the softened document `S` and its layer symbols `ls` (`cohPremises`
+recomputed `soften D` and the layer order once per colliding pair). -/
+def cohPremisesIn (D : SoftDoc) (S : Doc) (ls : List Sym) : List VE.Formula :=
+  let tbl := listTable (expListOf S.T ls [])
+  let f := VE.Norms.fuel S.T
+  (collidingPairs D).map fun (M, N) => bindAll (actSorts D M)
+    (.not (.and (substWith tbl (VE.Norms.selects S.T f (primeNode D M)))
+      (substWith tbl (VE.Norms.selects S.T f (primeNode D N)))))
+
+theorem cohPremisesIn_eq (D : SoftDoc) : cohPremisesIn D (soften D) (syms (soften D).T) = cohPremises D := by
+  have h : ∀ φ, substWith (listTable (expListOf (soften D).T (syms (soften D).T) [])) φ =
+      subst (soften D).T (size (soften D)) φ := fun φ => by
+    rw [← List.take_length (l := syms (soften D).T), ← expList_eq_of]
+    exact expanded_circ D φ
+  simp only [cohPremisesIn, cohPremises, cohPremise, h]
+  rfl
+
 /-! ## The prepared document -/
 
 /-- A decoded soft source and what `runSelected` computes from the source alone. -/
@@ -92,13 +113,16 @@ structure Prepared where
   vocabulary : VE.Bridge.Vocabulary
   expanded : List (SoftNode × VE.Formula) × List (String × VE.Formula)
   background : List VE.Formula
+  baseEnv : VE.Environment
+  coherence : List VE.Formula
 
 /-- The prepared document of a decoded source: `soften` once, its layer symbols once. -/
 def prepareFrom (src : SoftSource) : Prepared :=
   let S := soften src.D
   let ls := syms S.T
   { src, softened := S, layers := ls, vocabulary := vocabularyIn src.se src.D (ls.map Sym.name),
-    expanded := expandedIn src.D S ls, background := backgroundIn src.D S }
+    expanded := expandedIn src.D S ls, background := backgroundIn src.D S, baseEnv := envAt S 0,
+    coherence := cohPremisesIn src.D S ls }
 
 /-- Decode a soft document and prepare it. It fails exactly when `decodeSoftSource` fails, with
 its message. -/
@@ -112,12 +136,14 @@ def decodeModelIn (v : VE.Bridge.Vocabulary) (j : Json) : Except String (VE.Fini
   if data.valid v = true then pure data.toModel
   else throw "model is not semantically admissible"
 
-/-- `runSelected` on a prepared document: it reads only `model` and `queries` from the case. -/
+/-- `runSelected` on a prepared document: it reads only `facts`, `model` and `queries` from the case. -/
 def runSelectedP (p : Prepared) (id : String) (j : Json) : Except String Json := do
+  let (P, _) ← VE.Compose.SlotWire.decodeFactsIn p.baseEnv p.src.D j
   let M ← decodeModelIn p.vocabulary j
   let qs ← selectedQueries p.src.D M j
-  pure (VE.Route.Wire.ok id [("background", .bool (p.background.all fun a => a.eval M [])),
-    ("results", Json.arr (qs.map (selectedRow p.expanded M)).toArray)])
+  pure (VE.Route.Wire.ok id ([("background", .bool (p.background.all fun a => a.eval M [])),
+    ("results", Json.arr (qs.map (selectedRow p.expanded M)).toArray)] ++
+    factsFields (factsSent j) (factsAt P M) (p.coherence.all fun a => a.eval M [])))
 
 /-! ## Theorems -/
 
@@ -137,10 +163,11 @@ theorem prepare_eq {e n : Json} {p : Prepared} (h : prepare e n = .ok p) :
 theorem prepare_ok {e n : Json} {p : Prepared} (h : prepare e n = .ok p) :
     decodeSoftSource e n = .ok p.src ∧ p.softened = soften p.src.D ∧ p.layers = syms (soften p.src.D).T ∧
       p.vocabulary = primeModelVocabulary p.src.se p.src.D ∧ p.expanded = expanded p.src.D ∧
-      p.background = VE.Norms.backgroundBase (soften p.src.D) ++ excPremises p.src.D := by
+      p.background = VE.Norms.backgroundBase (soften p.src.D) ++ excPremises p.src.D ∧
+      p.baseEnv = envAt (soften p.src.D) 0 ∧ p.coherence = cohPremises p.src.D := by
   obtain ⟨hs, hp⟩ := prepare_eq h
   rw [hp]
-  exact ⟨hs, rfl, rfl, rfl, expandedIn_eq p.src.D, rfl⟩
+  exact ⟨hs, rfl, rfl, rfl, expandedIn_eq p.src.D, rfl, rfl, cohPremisesIn_eq p.src.D⟩
 
 /-- Over the prime model vocabulary, `decodeModelIn` is `decodeModel` without its proof. -/
 theorem decodeModelIn_prime (src : SoftSource) (j : Json) :
@@ -161,21 +188,31 @@ theorem decodeModelIn_prime (src : SoftSource) (j : Json) :
 /-- `runSelectedP` on a decoded source's prepared document, written with `decodeModel`. -/
 theorem runSelectedP_prepareFrom (src : SoftSource) (id : String) (j : Json) :
     runSelectedP (prepareFrom src) id j = (do
+      let (P, _) ← VE.Compose.SlotWire.decodeFacts src j
       let ⟨M, _⟩ ← decodeModel src j
       let qs ← selectedQueries src.D M j
-      pure (VE.Route.Wire.ok id [("background", .bool (classificationBackgroundValid src.D M)),
-        ("results", Json.arr (qs.map (selectedRow (expanded src.D) M)).toArray)])) := by
+      pure (VE.Route.Wire.ok id ([("background", .bool (classificationBackgroundValid src.D M)),
+        ("results", Json.arr (qs.map (selectedRow (expanded src.D) M)).toArray)] ++
+        factsFields (factsSent j) (factsAt P M) (coherentAt src.D M)))) := by
   have hv : (prepareFrom src).vocabulary = primeModelVocabulary src.se src.D := rfl
   have he : (prepareFrom src).expanded = expanded src.D := expandedIn_eq src.D
+  have hc : (prepareFrom src).coherence = cohPremises src.D := cohPremisesIn_eq src.D
+  have hf : VE.Compose.SlotWire.decodeFactsIn (prepareFrom src).baseEnv (prepareFrom src).src.D j =
+      VE.Compose.SlotWire.decodeFacts src j := rfl
   unfold runSelectedP
-  rw [hv, he, decodeModelIn_prime]
-  cases decodeModel src j with
+  rw [hf, hv, he, hc, decodeModelIn_prime]
+  cases VE.Compose.SlotWire.decodeFacts src j with
   | error m => rfl
-  | ok x =>
-    obtain ⟨M, hM⟩ := x
-    show (do let qs ← selectedQueries (prepareFrom src).src.D M j; _) = _
-    simp only [prepareFrom, backgroundIn_valid]
-    rfl
+  | ok F =>
+    obtain ⟨P, items⟩ := F
+    show (do let M ← Subtype.val <$> decodeModel src j; _) = (do let ⟨M, _⟩ ← decodeModel src j; _)
+    cases decodeModel src j with
+    | error m => rfl
+    | ok x =>
+      obtain ⟨M, hM⟩ := x
+      show (do let qs ← selectedQueries (prepareFrom src).src.D M j; _) = _
+      simp only [prepareFrom, backgroundIn_valid]
+      rfl
 
 /-- (a) The unprepared runner is `prepare` followed by `runSelectedP`. -/
 theorem runSelected_eq_prepared (id : String) (j : Json) :
@@ -208,13 +245,14 @@ theorem soft_wire_selected_prepared (e n : Json) (p : Prepared) (id : String) (j
       SelectedAnswer id src.D M qs answer := by
   obtain ⟨hsrc, hpf⟩ := prepare_eq hp
   rw [hpf, runSelectedP_prepareFrom] at h
+  obtain ⟨⟨P, items⟩, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨⟨M, hM⟩, hmod, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨qs, hqs, h⟩ := VE.Order.ProfileGate.bind_ok h
   simp only [pure, Except.pure, Except.ok.injEq] at h
   subst h
   obtain ⟨raws, hq, hne, hl, hall, hreg⟩ := selectedQueries_ok hqs
-  refine ⟨p.src, M, hM, raws, qs, hsrc, hmod, hq, hne, hl, hall, ?_⟩
-  unfold SelectedAnswer
+  refine ⟨p.src, M, hM, raws, qs, hsrc, hmod, hq, hne, hl, hall, factsSent j, factsAt P M, ?_⟩
+  unfold SelectedAnswerWith
   rw [List.map_congr_left (fun q hq => selectedRow_eq p.src.D M q (hreg q hq))]
 
 /-! ## The reported answer -/
