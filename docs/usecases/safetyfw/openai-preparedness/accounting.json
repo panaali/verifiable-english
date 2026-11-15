@@ -2911,8 +2911,8 @@
    "entries": [
     {
      "words": "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development",
-     "reason": "reading",
-     "arg": "RS2"
+     "reason": "rule",
+     "arg": "f3-reminder"
     }
    ],
    "problems": []
@@ -2927,12 +2927,9 @@
     "reached"
    ],
    "unaccounted": [
-    "capabil",
-    "current",
     "expect",
     "framework",
     "further",
-    "posses",
     "preparednes",
     "update"
    ],
@@ -2969,11 +2966,11 @@
   "entries_by_reason": {
    "exposition": 39,
    "loss": 19,
-   "reading": 30,
+   "reading": 29,
    "restates": 93,
-   "rule": 20
+   "rule": 21
   },
-  "unaccounted_words": 527,
+  "unaccounted_words": 524,
   "blocks_with_unaccounted_words": 73,
   "quotes": 117,
   "unanchored_quotes": 0,

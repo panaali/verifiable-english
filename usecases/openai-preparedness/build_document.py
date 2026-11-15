@@ -33,6 +33,14 @@ PLACEMENTS = {
     "By “severe harm” in this document": ("unformalised", "quantity", ("QT",)),
     "1/5th the wall-clock time": ("unformalised", "quantity", ("QT", "ET")),
     "We treat a frontier capability as a Tracked Category": ("readings", "rs12-category", ("SC",)),
+    # Table 1's column titles. The fourth, "guidelines", is the source of RS1: the force of every column-4 bullet,
+    # carried by the modal of the f1 blocks. The second keeps its hedge ("could"). The other two titles and the
+    # category definition state no claim D1 carries.
+    "Tracked Category Capability threshold": ("unformalised", "unmapped_claim", ("readings",)),
+    "Capability threshold that could lead to the risk": ("unformalised", "hedged_claim", ("AT",)),
+    "Associated risk of severe harm Risk-specific": ("unformalised", "unmapped_claim", ("readings",)),
+    "Risk-specific safeguard guidelines": ("readings", "rs1-header", ()),
+    "Biological and Chemical5:": ("unformalised", "unmapped_claim", ("readings",)),
     "Require safeguards against misuse meet- ing": ("readings", "rs1-misuse-bio", ("JT", "ET")),
     "Require safeguards against misuse meeting": ("readings", "rs1-misuse-cyb", ("JT", "ET")),
     "Require safeguards meeting High standard against misalignment": ("readings", "rs1-alignment-cyb", ("JT", "ET")),
@@ -96,7 +104,11 @@ PLACEMENTS = {
     "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
 }
 
+F1_UNITS = ("f1-misuse-bio", "f1-misuse-cyb", "f1-alignment-cyb", "f1-security", "f1-halt", "f1-contrib-bio",
+            "f1-contrib-cyb")
 READINGS = {
+    # Table 1's fourth column title: RS1 is the force of the seven column-4 bullets.
+    "rs1-header": ("RS1", {"strict": [f"{u}-strict" for u in F1_UNITS], "default": [f"{u}-default" for u in F1_UNITS]}),
     "rs1-misuse-bio": ("RS1", {"strict": ["f1-misuse-bio-strict"], "default": ["f1-misuse-bio-default"]}),
     "rs1-misuse-cyb": ("RS1", {"strict": ["f1-misuse-cyb-strict"], "default": ["f1-misuse-cyb-default"]}),
     "rs1-alignment-cyb": ("RS1", {"strict": ["f1-alignment-cyb-strict"], "default": ["f1-alignment-cyb-default"]}),
@@ -113,8 +125,8 @@ READINGS = {
     "rs18-develop": ("RS18", {"devonly": ["f3-develop", "f3-develop-forecast"],
                               "inuse": ["f3-develop-inuse", "f3-develop-inuse-forecast", "f3-inuse",
                                         "f3-inuse-forecast"]}),
-    # RS2 is 4.2's "also" (p12-u195, which stays UNFORMALISED for its "during development" order); RS11 shares
-    # p16-u281 with RS6. Neither has a unit of its own, so neither is placed.
+    # RS2 is 4.2's "also" (p12-u199, which stays UNFORMALISED for its "during development" order); RS11 shares
+    # p16-u285 with RS6. Neither has a unit of its own, so neither is placed.
     "rs2-nest": ("RS2", {"nest": ["rs2-nest"], "sep": []}),
     # RS11 = final is excluded (PLAN 12 item 18); under process the sentence assigns a role and states no norm.
     "rs11-final": ("RS11", {"process": []}),
@@ -247,7 +259,11 @@ def check_source(source):
 def segments(source):
     """Byte partition at page boundaries, sentence stops and bullets, retaining every separator."""
     starts = [0]
-    for match in re.finditer(rb"\n|(?<=[.!?]) (?=[A-Z])| \xe2\x80\xa2 | and review the 11|(?=\[Critical\])|(?=\[High\])|(?<=\[Critical\])|(?<=\[High\])|(?=Prior to deployment, every covered model)|(?=and decides on next steps)|(?=and where reports are substantiated)|(?=and an efficacy threshold)|(?=and can review decisions)|(?=that either exist or should)|(?=as well as rationale)", source):
+    for match in re.finditer(rb"\n|(?<=[.!?]) (?=[A-Z])| \xe2\x80\xa2 | and review the 11|(?=\[Critical\])|(?=\[High\])|(?<=\[Critical\])|(?<=\[High\])|(?=Prior to deployment, every covered model)|(?=and decides on next steps)|(?=and where reports are substantiated)|(?=and an efficacy threshold)|(?=and can review decisions)|(?=that either exist or should)|(?=as well as rationale)"
+                             # Table 1's four column titles and the first category definition (architect ruling
+                             # pf-table1-header-20261115 section 5): five units, not one
+                             rb"|(?=Capability threshold that could lead to the risk)|(?=Associated risk of severe harm)"
+                             rb"|(?=Risk-specific safeguard guidelines)|(?=Biological and Chemical5:)", source):
         at = match.end() if match.group() == b"\n" else (match.start() if not match.group() else match.start() + 1)
         if starts[-1] < at < len(source):
             starts.append(at)
