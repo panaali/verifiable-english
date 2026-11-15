@@ -1,6 +1,6 @@
 # kb-2a-b: the document mode on the core document (build report)
 
-**STOPS for one DRI signature: DELTA.md row 5, trusted Lean growth +267 (K +0, S +48, V +219), above R16's 150
+**STOPS for one DRI signature: DELTA.md row 5, trusted Lean growth +283 (K +0, S +48, V +235), above R16's 150
 lines; requested in `manage-agents/inbox/dri/20261114T185627Z-builder-kb-2a-b-76207.md`.** Everything else is
 built; no status differs (part 4); every Python/Lean difference on the acceptance document has a cause (part 4b).
 
@@ -11,8 +11,8 @@ experimental tier), admitted by the soft route's new `slot-admission` kind one r
 kernel fold `VE.Kernel.DocumentFold` through `VE.Kernel.shell`; a lowering refusal for a feature with no row keeps
 today's path; Python binds and renders the answer and never falls back for such a document.
 
-SIZE: 1008 product, 2200 tests, 5369 other hand-written lines (`git diff --numstat 4a5d3460d3 HEAD`, generated files
-excluded: 6670 lines; "tests" includes the 2,000-line acceptance document and its generator's output, "other" the
+SIZE: 1025 product, 2330 tests, 5709 other hand-written lines (`git diff --numstat 4a5d3460d3`, generated files and
+the trust-mutants records excluded: 8857 lines; "tests" includes the 2,000-line acceptance document and its generator's output, "other" the
 docs, records, probes (JT-a, SC-a: 1,400 lines), status comparison, trust classes and registry).
 
 ## Deliverables
@@ -231,7 +231,21 @@ after them.
 
 ## Trust mutants
 
-TRUSTMUT_PLACEHOLDER
+`zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --budget 9300 --json
+docs/kernel/kb-2a-b/trust-mutants.json --allow docs/kernel/kb-2a-b/trust-mutants-allow.json --test
+lean/VE/Service/CoreCheckExamples.lean --test lean/VE/Kernel/DocumentFoldExamples.lean --test
+lean/ResponseShape/CoreCheckExamples.lean --test lean/VE/Service/CoreDocumentExamples.lean --test
+lean/VE/SoftNorms/SlotExamples.lean --test lean/ResponseShape/SlotExamples.lean` on 3d02a576a6 (VM, 8 jobs): **PARTIAL**,
+the budget stopped it with 169 of 940 mutants judged: 124 KILLED, 40 ALLOWED, 2 INVALID, 1 SURVIVOR, 2 UNKNOWN, 771 NOT
+RUN (`docs/kernel/kb-2a-b/trust-mutants-part1.json`, also `trust-mutants.json`). The survivor (`roundTrips`' level
+`0 -> 1`) is killed since by the `x_permitted` guard of CoreCheckExamples.lean; the unknowns are `environmentOf`'s
+`!= -> ==` at Document.lean:1208 (the tool reads ComposeExamples.lean:245 as unreadable; the `envWith` guards of
+CoreCheckExamples.lean fail on it) and one more of the same definition. History: a first sweep on ve-cloud-2 (e9dcebbd2a,
+no allow file, before most guards) was cut by the host at 11,399 s without a record; its log listed 109 SURVIVOR or
+UNKNOWN, which the guards of e9dcebbd2a..d75a2686b6 and the allow file (40 entries, each with its one-line reason:
+S propositions, mutants that do not elaborate, equivalents, default-argument flips) address. A continuation from the
+partial record was a full rerun (inputs changed; 1,022 mutants since `noRow`), more than ten hours on the VM at the
+measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (FOLLOW-UP below).
 
 ## Runs (each once on the code as committed, unless noted)
 
@@ -242,11 +256,26 @@ TRUSTMUT_PLACEHOLDER
 - `uv run python tools/kernel_closure.py --check docs/kernel/closure-baseline.json`: "PASS: kernel 10041 <= 10041",
   "PASS: verdict writers outside the kernel 56 <= 56".
 - `uv run python tools/trust_map.py --check`: exit 1 only on the budget (row 5, awaiting the DRI's signature): "against
-  4a5d3460d36c: K +0, S +48, D +86, G +282, tied +80, unclassified +0, trusted +267".
+  4a5d3460d36c: K +0, S +48, D +86, G +290, tied +80, unclassified +0, trusted +283".
 - Tests while iterating: `tests/test_kb2a_document.py` (10 passed), `tests/test_judgments_chain.py` (46 passed),
   `tests/test_kernel_closure.py` (after fixes), `tests/test_relay_binding_inventory.py::test_every_schema_field_is_classified`
   (19 passed).
-- SELECTED_PLACEHOLDER
+- Selected tests, on the committed tree 2b39f8ac99 (`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select --
+  --base $(git merge-base HEAD main) --run`, ve-cloud-2, 8,288 s): "recorded 555 units ...; 4 failed":
+  `tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree` and
+  `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` (the trust budget: they pass once the DRI signs
+  DELTA row 5 and the allowance is recorded; the stop reason), `tests/test_b16b_evidence.py::test_every_seeded_fault_still_applies_to_the_tree`
+  (b16b's seeded fault `load_admits` reads `load_document`'s line, which the core refusal had changed: the refusal moved
+  into `_load`) and `tests/test_lean_document_wrapper.py::test_large_question_fixtures_are_compared_as_seeds_without_mutants`
+  (the unmutated seeds include `LEAN_CORE`). The two fixed ids, rerun with the loader's tests
+  (`uv run pytest -q` on them, `tests/test_document_lean_switch.py::test_load_does_not_admit_the_graph_and_check_does` and
+  `tests/test_kb2a_document.py`): "13 passed". Earlier selected runs on this branch (each stopped at 5 failures) found
+  what the commits 2b1f154ef9..ba73c845d3 fix: the enum-domain inventory, the conformance harness's core answer, the
+  readings S2 documents (routing narrowed), the open vocabulary object, the route corpus, the fuzzer's seeds, the
+  package module list and `statementJson`'s class.
+- `uv run python tools/gate_collection.py --check --prebuilt`: "21 added, 8 removed by a trailer, 0 refused, 0 stale and
+  0 malformed trailers".
+- `uv run python tools/regen_generated.py --check`: only `trust-tables` fails (the unsigned budget).
 - Not run by me: the full gate (the chain runs it on the final HEAD).
 
 ## For each step C group (DESIGN section 5): what the code shows
@@ -269,7 +298,11 @@ TRUSTMUT_PLACEHOLDER
 6. **alternatives and risk.** `environmentOf` refuses them beside `judgments@0` (`judgmentsApart`) and at 1207-1208; the
    view already writes a block's coverage line (`blockCoverage`).
 7. **cardinality and events.** `environmentOf` returns early for `cardinality@0`; `eventsView` refuses `readings@1`.
-8. **The matrix.** The two refusal texts still fire (part 4); tests and examples pinning them read `Document.*` functions
+8. **Soft-norms with readings, without judgments@0.** They reach 1207-1208 today and keep Python's fallback here
+   (routing (b)): `ve document readings` and the readings queries (`ve/readings_verdicts.py`, the S2 components) read
+   Python's document object, which the core path does not build; their row needs those queries on the core answer
+   (the carried rows are the cases they would ask). FSF D1 is one, and also needs group 2's soft readings.
+9. **The matrix.** The two refusal texts still fire (part 4); tests and examples pinning them read `Document.*` functions
    directly (Lean: DocumentChainExamples.lean:173, DocumentChainChecks.lean:83-88, Compose/Examples.lean:736,
    Judgments/ChainExamples.lean:178) or saved evidence (`test_safety_framework.py`), or documents with
    `norm-defaults@0` (`test_document_chain.py`).
@@ -284,8 +317,42 @@ TRUSTMUT_PLACEHOLDER
   makes the path a kernel path.
 - kb-2a's own ties pass (its FOLLOW-UPS.md) is still open: the module was promoted, not tied.
 
-FOLLOWUP_PLACEHOLDER
+FOLLOW-UP: kb-2a-b-tm complete the trust-mutants sweep of kb-2a-b on its final HEAD (1,022 mutants; partial record docs/kernel/kb-2a-b/trust-mutants-part1.json, 169 judged) until it exits 0, on a pool that shards it
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELFREVIEW_PLACEHOLDER
+1. Typed and contained Lean answers: PASS. `document.json` `core_view`, `core_row`, `core_statement`, `core_choices`,
+   `core_statements`, `lowering`; `soft-norms.json` `slot_admission`; `ResponseShape.Encoders.CoreCheck.runCaseReported_fits`;
+   `tests/test_kb2a_document.py::test_core_answer_retyped_fields_are_unavailable`; `lean/ResponseShape/CoreCheckExamples.lean`.
+2. Deliverables built, no rule broken: PASS for (1) to (7) and (4b); the trust-mutants sweep is partial (FOLLOW-UP
+   kb-2a-b-tm); DESIGN 3 item 3's audit is the DRI's, its packet is `audit-packet.md`.
+3. Tests and gates can fail: PASS. Seeded bugs (a) to (f) (`seeded-bugs.json`); the partial sweep: 124 KILLED.
+4. Python, Lean and Rust agree: PASS for Python and Lean (`python-vs-lean.md`, the golden file, status-compare.json);
+   Rust: N.A. (no Rust code changed; the pinned binary is unchanged).
+5. R8 binding: PASS. `ve/document/core.py::bind_core_answer`; `::test_core_answer_rebound_fields_are_unavailable`
+   (over 100 members shifted, rows dropped, added, reversed, refused).
+6. Gate evidence matches the final HEAD: PASS for the selected run (on 2b39f8ac99, its failures fixed and rerun); the
+   full gate is the chain's.
+7. No unsigned item: one reserved, DELTA row 5 (trust +283, above R16), the stop reason on the first line.
+8. Every user-visible change in DELTA: PASS. Rows 1 to 4 (the kind, the core answer, its refusals and today's path for
+   no-row features, `--json`), 6 (generated files).
+9. Test selection: PASS. The selected runs selected `tests/test_kb2a_document.py`, `test_judgments_chain.py`,
+   `test_readings_s2_document.py`, `test_lean_document_wrapper.py`, `test_difffuzz.py`, `test_trust_budget.py`.
+10. Lean statements say what is claimed: PASS. Statements quoted from the source above; seeded (a), (b), (c) break
+    `fold_checked_iff`, `casesFrom_ok`, `replaySlotAdmission_sound`.
+11. Budgets fail closed: PASS. The lowering refuses more than 64 choices before enumerating (step A); the round trip's
+    gates (depth 64, 10,000 nodes) are checked before a case is built (`roundTrips` #guards at 63/64 levels and
+    10,000/10,001 nodes).
+12. No CPU or memory regression: PASS. `latency.json`: 0.91x and 0.93x on the two existing documents (a-rules over
+    120 s before and after on the loaded VM).
+13. Removed tests have a trailer: PASS. `Test-removed:` in ba73c845d3; `gate_collection.py --check --prebuilt` 0 refused,
+    0 stale, 0 malformed.
+14. Both directions, cited evidence, spec re-read: PASS. Each refusal test has its accepted twin (a Lean refusal vs the
+    answered document; an exception read OPEN vs no term CHECKED; routed vs not routed for each narrowing; roundTrips
+    true at 63/10,000, false at 64/10,001). Spec re-read: `slot_wire_admission` against DESIGN.md:55-60 (2.2); the fold
+    against DESIGN.md:62-68 (2.3), which led to the `asserted` conjunct; the answer against DESIGN.md:70-74 (2.4); no
+    Python decision against DESIGN.md:76-77 (2.5); routing against DESIGN.md:79-87 (2.6) and the task's part (4); the
+    tests' names against DESIGN.md:106-113.
+15. No overclaim, no silent cut, checks can fail, limits charged first: PASS with one open item (the sweep, a
+    FOLLOW-UP, not a cut deliverable: it ran and its record is committed); "every" and "none" in this report name their
+    command or test.

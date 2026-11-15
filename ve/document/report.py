@@ -457,7 +457,7 @@ def check_document(path, *, raw=None):
 
 
 def _check_document(path, *, raw=None):
-    doc = _load(Path(path), admit=True, raw=raw)
+    doc = _load(Path(path), admit=True, raw=raw, core=True)
     if "core" in doc:
         # kb-2a-b: Lean's core document answer, rendered; Python computes no status.
         from .core import core_report
