@@ -1,3 +1,4 @@
+- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
@@ -81,5 +82,3 @@
 - `tests/test_metered_profile.py` — The `metered` mode checks the norms profile of its model itself (kb-validators part 1, decision D13).
 - `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
 - `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
-- `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
-- `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.

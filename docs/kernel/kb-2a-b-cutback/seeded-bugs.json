@@ -1,0 +1,58 @@
+{
+ "item": "kb-2a-b-cutback",
+ "command": "uv run python docs/kernel/kb-2a-b-cutback/run_mutants.py OUT.json a b c d",
+ "language": "Lean",
+ "seeded": [
+  {
+   "id": "a",
+   "file": "lean/VE/Service/CoreCheck.lean",
+   "definition": "VE.Service.CoreCheck.reads",
+   "bug": "reads drops the exception formulas",
+   "test": "VE.Service.CoreCheck.reads_status",
+   "failing": [
+    "VE.Service.CoreCheck.reads_status",
+    "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+    "lean/VE/Service/CoreCheckExamples.lean:66 #guard"
+   ],
+   "restored": true
+  },
+  {
+   "id": "b",
+   "file": "lean/VE/Service/CoreCheck.lean",
+   "definition": "VE.Service.CoreCheck.unitStatus",
+   "bug": "unitStatus renders the fold's labelled as UNFORMALISED",
+   "test": "VE.Service.CoreCheck.view_unit_status",
+   "failing": [
+    "VE.Service.CoreCheck.view_unit_status",
+    "lean/VE/Service/CoreCheckExamples.lean:143 #guard",
+    "lean/VE/Service/CoreCheckExamples.lean:159 #guard",
+    "lean/VE/Service/CoreCheckExamples.lean:219 #guard",
+    "lean/VE/Service/CoreCheckExamples.lean:245 #guard",
+    "lean/VE/Service/CoreCheckExamples.lean:47 #guard"
+   ],
+   "restored": true
+  },
+  {
+   "id": "c",
+   "file": "lean/VE/Service/CoreCheck.lean",
+   "definition": "VE.Service.CoreCheck.routed",
+   "bug": "routed also accepts a soft-norms@0 document with alternatives@0",
+   "test": "VE.Service.CoreCheck.routed_iff",
+   "failing": [
+    "VE.Service.CoreCheck.routed_iff"
+   ],
+   "restored": true
+  },
+  {
+   "id": "d",
+   "file": "lean/VE/Service/CoreCheck.lean",
+   "definition": "VE.Service.CoreCheck.factsJson",
+   "bug": "factsJson drops the last formula",
+   "test": "VE.Service.CoreCheck.facts_round_trip",
+   "failing": [
+    "VE.Service.CoreCheck.facts_round_trip"
+   ],
+   "restored": true
+  }
+ ]
+}
