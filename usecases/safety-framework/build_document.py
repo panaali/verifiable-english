@@ -234,8 +234,9 @@ UNITS = [
     ("TCLs are meant to capture significant risks", "s12-tcl-purpose", label()),
     ("We identify TCLs for CBRN", "s12-tcl-domains", facts("closure-tcls")),
     ("We may include TCLs for additional risks", "s12-may-include", hedged()),
+    # "Similarly to CCLs": 1.3.3's trigger, an alert threshold reached (OT1), carried to TCLs (rules.d1.ve f6-tcl).
     ("Similarly to CCLs, early warning evaluations will be used", "s12-tcl-proximity",
-     unformalised("no_trigger_stated")),
+     rule("f6-tcl", "ot1_level_reached")),
     ("Frontier Safety Framework | 4", "p4-footer", meta()),
     # Page 5: 1.3 to 1.3.2
     ("Frontier Safety Framework 1.3 Risk Management Process", "s13-heading", meta()),
