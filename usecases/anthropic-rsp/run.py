@@ -215,13 +215,8 @@ def selected(doc, case, predicate, sign, values=None):
 
 
 def completed(doc, case, predicate, values):
-    from ve.evaluate import _Evaluator
-    env = doc.elaborated.base_environment()
-    formula = doc.elaborated.outcome(predicate, base=True)
-    sorts = V.environment()["vocabulary"]["predicates"][predicate]["arguments"]
-    A._Checker(env).formula(formula, tuple(reversed(sorts)))
-    return _Evaluator(env, model(doc, case), 1_000_000, trace=False).formula(
-        formula, tuple(zip(reversed(sorts), reversed(values))))[0]
+    """The completed outcome of `predicate` at `values` in the case model: Lean's `soft-selected` answer."""
+    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values))
 
 
 def cone(predicate):
