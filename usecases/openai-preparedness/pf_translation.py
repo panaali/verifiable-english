@@ -32,7 +32,7 @@ PRECEDENCE = {"f11-exception": ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2
 N2_PRECEDENCE = ("f16-without-noinput", "f16-informed")
 # RS0 (PLAN 3.1): process statements in the future or present tense ("we will", "we compile", "we do not
 # deploy", "every covered model undergoes"). N1 narrows each to a commitment; without N1 they are predictions.
-RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluations", "f7-report", "f7-compile",
+RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluations", "f7-evaluations-any", "f7-report", "f7-compile",
                   "f8-start",
                   "f9-report", "f9-risk-paths", "f9-specific", "f9-efficacy", "f9-threshold", "f10-validate",
                   "f10-review", "f13-review", "f13-results", "f14-document", "f14-investigate", "f14-corrective",
