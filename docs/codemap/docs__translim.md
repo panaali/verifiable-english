@@ -1,0 +1,4 @@
+- `docs/translim/translim-predicates/cost_curve.py` — translim-predicates PART 1b: the cost of each request kind that reads the regulated list, at N regulated predicates.
+- `docs/translim/translim-predicates/decompose.py` — PART 1a probe: norms-elaborate cost by rule shape at 32 and 48 regulated (REPORT 1a).
+- `docs/translim/translim-predicates/probe_split_acts.py` — PART 1a/3 probe: the post-split limit through `norms`, and the soft route's refusal of an acts@0 vocabulary (REPORT 3).
+- `docs/translim/translim-predicates/rsp_split.py` — translim-predicates PART 1d: carry part of a keyed document's regulated predicates in a second frame.
