@@ -122,16 +122,16 @@ BASE = {
     # T4's "if we determine that either (1) ... or (2)" governs both branches: (2) is the company's determination, as
     # (1) is (OT15); it is OT1's T4 determination, met through scenario (2).
     "scenario_2": _open(["situation"], "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI "
-                        "progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will "
-                        "consider this threshold to be met if we determine that either (1) our models would be able "
-                        "to fully substitute for our entire set of Research Scientists and Research Engineers, at "
-                        "competitive costs (i.e., within a factor of 5); or (2) there is 'dramatic acceleration' of "
-                        "the pace of AI progress for reasons that likely relate to the "
-                        "automation of AI R&D.\"; row T4 says when we make it: \"We would consider scenario (2) to "
-                        "have occurred where\" its conditions hold)", WE + " (\"if we determine\")", "OT1"),
+                        "progress for reasons that likely relate to the automation of AI R&D; row T4 says when we "
+                        "make it: \"We would consider scenario (2) to have occurred where\" its conditions hold (T4 "
+                        "(2): \"We will consider this threshold to be met if we determine that either (1) our models "
+                        "would be able to fully substitute for our entire set of Research Scientists and Research "
+                        "Engineers, at competitive costs (i.e., within a factor of 5); or (2) there is 'dramatic "
+                        "acceleration' of the pace of AI progress for reasons that likely relate to the "
+                        "automation of AI R&D.\")", WE + " (\"if we determine\")", "OT1"),
     # Open terms (PLAN 3.2): the decider is the text's own.
-    "highly_capable": _open(["situation"], "the model of {0} is highly capable (3.6: it crosses \"the threshold for "
-                            "automated AI R&D described in Section 1\")", WE + " (\"if we conclude\")", "OT5"),
+    "highly_capable": _open(["situation"], "the model of {0} is highly capable: it crosses \"the threshold for "
+                            "automated AI R&D described in Section 1\" (3.6)", WE + " (\"if we conclude\")", "OT5"),
     "more_capable_than_analyzed": _open(["situation"], "the model of {0} is significantly more capable than all "
                                         "models for which we have publicly analyzed the named risks (3.1, off-cycle "
                                         "bullet 1)", WE, "OT2"),
