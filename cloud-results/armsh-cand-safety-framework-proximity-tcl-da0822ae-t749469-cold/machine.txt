@@ -1,0 +1,8 @@
+job=armsh-cand-safety-framework-proximity-tcl-da0822ae-t749469-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T13:33:07Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 13:33:07 up 3 min,  0 user,  load average: 1.09, 0.42, 0.17
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=fe02c47af28e
+seed: lake 1351.2 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 590 s)
