@@ -75,7 +75,7 @@ theorem norms_wire_certificate_acceptance (j answer : Json) (h : Run.runCase j =
     (hk : VE.Route.Run.caseKind j = .ok "norms-certificate")
     (hv : answer.getObjValD "valid" = .bool true) :
     ∃ r : Replay.EntailmentReplay, replayEntailment j = .ok r ∧
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
     (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) →
       Sat S (flagPremises r.src) → holdsCatala r.src.D.T S →
       definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →

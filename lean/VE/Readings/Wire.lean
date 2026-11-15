@@ -102,7 +102,7 @@ def decodeFrame (environment : Json) : Except String ReadingsEnvironment := do
       environment, lowerJson⟩
   | .norms =>
     let names := ((frameJson.getObjValD "vocabulary").getObjValD "predicates" |> fields).toOption.getD []
-    let ne ← (VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false) (acts := true)).mapError
+    let ne ← (VE.Norms.Wire.decodeNormsEnvironmentWith VE.Norms.Wire.ActsHook.acts frameJson (displayConstants := false) (acts := true)).mapError
       (singleActsOnly (names.map Prod.fst))
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
 

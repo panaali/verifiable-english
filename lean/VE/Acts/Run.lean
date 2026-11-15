@@ -82,7 +82,7 @@ def runElaborate (decode : Json → Json → Except String VE.NormDefaults.Wire.
 
 /-- The norms route's decoder before elaboration (`Acts.Decode.decodeElaboratedFlagged`'s first step). -/
 def normsSource (environment norms : Json) : Except String VE.NormDefaults.Wire.SourceU :=
-  VE.Acts.Decode.plainU <$> VE.Norms.Wire.decodeSource environment norms (flags := true)
+  VE.Acts.Decode.plainU <$> VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts environment norms (flags := true)
 
 def isElaborate (j : Json) : Bool :=
   match j.getObjValD "kind" with

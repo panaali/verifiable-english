@@ -175,7 +175,7 @@ def same (a b : Except String (List VE.Norms.Node)) : Bool :=
 /-- The W1 document of the rules read (section 4, "not claimed"): `decodeSource` on their wire objects. -/
 def document (E : Env) (o : NormOutcome) : Bool :=
   match o with
-  | .ok rs => (VE.Norms.Wire.decodeSource E.source (.arr ((rs.filterMap fun | .rule h c => some (h, c) | _ => none).map
+  | .ok rs => (VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts E.source (.arr ((rs.filterMap fun | .rule h c => some (h, c) | _ => none).map
       fun (h, c) => Json.mkObj [("norm", (c.wire (ruleName h.number) ((overOf rs h.number).map ruleName)).getObjValD "norm")]).toArray)).toBool
   | _ => false
 
