@@ -179,12 +179,15 @@ def attributedTo? (env : Lean.Environment) (reached : Reached) (reachedUsers : S
   if userName decl == userName c || reachedUsers.contains (userName decl) || !codeless env c then none
   else reached.reacher.getD c none
 
-/-- The user names whose range a closure of `consts` charges anyway: each constant's own, and the prefix
-`f` of each auxiliary that holds `f`'s code (`f._mutual` reached from `f`'s mutual partner). -/
+/-- The user names whose range a closure of `consts` charges anyway: each constant's own, every member of
+its mutual block (a structurally recursive `sizeT` holds its partner `sizeL`'s body and matchers without
+naming `sizeL`), and the prefix `f` of each auxiliary that holds `f`'s code (`f._mutual`). -/
 def chargedUsers (env : Lean.Environment) (consts : Array Name) : CommandElabM (Std.HashSet Name) := do
   let mut users : Std.HashSet Name := {}
   for c in consts do
     users := users.insert (userName c)
+    if let some info := env.find? c then
+      for m in info.all do users := users.insert (userName m)
     unless codeless env c do
       if let some (decl, _, _) ← rangeOf c then users := users.insert (userName decl)
   return users
@@ -273,8 +276,22 @@ def reuseG (s : String) : Nat :=
 
 def reuseBoth (s : String) : Nat := reuseF s + reuseG s
 
--- `oddFixture` runs `evenFixture`'s code through `evenFixture._mutual` without reaching
--- `evenFixture`: an auxiliary that holds code keeps its prefix's range.
+-- `sizeFixture` holds `sizeListFixture`'s body and matcher without naming it (structural mutual
+-- recursion), and `oddFixture` runs `evenFixture`'s code through `evenFixture._mutual` without
+-- reaching `evenFixture`: both keep the partner's range.
+inductive TreeFixture where
+  | leaf : TreeFixture
+  | node : List TreeFixture → TreeFixture
+
+mutual
+def sizeFixture : TreeFixture → Nat
+  | .leaf => 1
+  | .node ts => sizeListFixture ts + 1
+def sizeListFixture : List TreeFixture → Nat
+  | [] => 0
+  | t :: ts => sizeFixture t + sizeListFixture ts
+end
+
 mutual
 def evenFixture : Nat → Bool
   | 0 => true
