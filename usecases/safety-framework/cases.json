@@ -1,5 +1,5 @@
 {
- "source": "PLAN.md section 5 case facts: one proposal p; the levels named and no others; the activity named; every open term not listed is unset (false in the case model)",
+ "source": "PLAN.md section 5 case facts: one proposal p; the levels named and no others; the activity named; every open term not listed is unset (false in the case model); a case with \"alternatives\" is a row that names a branch \"or\" another (G3: approaching or reaching a TCL; G7: a TCL or a mitigated CCL risk) or a class of levels (G9: T/CCL models): one situation per level of the class each branch names, and the item holds where it holds in every one",
  "activities": {
   "DEV": [
    "further_development"
@@ -888,21 +888,54 @@
   {
    "id": "G3",
    "family": "G",
-   "levels": [],
-   "activity": null,
-   "findings": [
-    [
-     "approaches",
-     "p",
-     "cbrn_uplift_tcl"
-    ]
+   "alternatives": [
+    {
+     "id": "G3-APPROACH-L1",
+     "levels": [],
+     "activity": null,
+     "findings": [
+      [
+       "approaches",
+       "p",
+       "cbrn_uplift_tcl"
+      ]
+     ]
+    },
+    {
+     "id": "G3-APPROACH-L5",
+     "levels": [],
+     "activity": null,
+     "findings": [
+      [
+       "approaches",
+       "p",
+       "stealth_and_situational_awareness_tcl"
+      ]
+     ]
+    },
+    {
+     "id": "G3-REACH-L1",
+     "levels": [
+      "cbrn_uplift_tcl"
+     ],
+     "activity": null,
+     "findings": []
+    },
+    {
+     "id": "G3-REACH-L5",
+     "levels": [
+      "stealth_and_situational_awareness_tcl"
+     ],
+     "activity": null,
+     "findings": []
+    }
    ]
   },
   {
    "id": "G4",
    "family": "G",
    "levels": [],
-   "activity": "EXT",
+   "activity": null,
    "findings": [],
    "note": "significant but not severe cyber or manipulation risk: no level is reached"
   },
@@ -910,7 +943,7 @@
    "id": "G5",
    "family": "G",
    "levels": [],
-   "activity": "EXT",
+   "activity": null,
    "findings": [],
    "note": "a capability in a domain outside the four: no level is reached"
   },
@@ -924,11 +957,94 @@
   {
    "id": "G7",
    "family": "G",
-   "levels": [
-    "cbrn_uplift_tcl"
-   ],
-   "activity": null,
-   "findings": []
+   "alternatives": [
+    {
+     "id": "G7-TCL-L1",
+     "levels": [
+      "cbrn_uplift_tcl"
+     ],
+     "activity": null,
+     "findings": []
+    },
+    {
+     "id": "G7-TCL-L5",
+     "levels": [
+      "stealth_and_situational_awareness_tcl"
+     ],
+     "activity": null,
+     "findings": []
+    },
+    {
+     "id": "G7-CCL-L2",
+     "levels": [
+      "cbrn_uplift_level_1"
+     ],
+     "activity": null,
+     "findings": [
+      [
+       "mitigates",
+       "p",
+       "cbrn_uplift_level_1"
+      ]
+     ]
+    },
+    {
+     "id": "G7-CCL-L3",
+     "levels": [
+      "cyber_uplift_level_1"
+     ],
+     "activity": null,
+     "findings": [
+      [
+       "mitigates",
+       "p",
+       "cyber_uplift_level_1"
+      ]
+     ]
+    },
+    {
+     "id": "G7-CCL-L4",
+     "levels": [
+      "harmful_manipulation_level_1"
+     ],
+     "activity": null,
+     "findings": [
+      [
+       "mitigates",
+       "p",
+       "harmful_manipulation_level_1"
+      ]
+     ]
+    },
+    {
+     "id": "G7-CCL-L6",
+     "levels": [
+      "ml_rd_acceleration_level_1"
+     ],
+     "activity": null,
+     "findings": [
+      [
+       "mitigates",
+       "p",
+       "ml_rd_acceleration_level_1"
+      ]
+     ]
+    },
+    {
+     "id": "G7-CCL-L7",
+     "levels": [
+      "ml_rd_automation_level_1"
+     ],
+     "activity": null,
+     "findings": [
+      [
+       "mitigates",
+       "p",
+       "ml_rd_automation_level_1"
+      ]
+     ]
+    }
+   ]
   },
   {
    "id": "G8",
@@ -945,11 +1061,64 @@
   {
    "id": "G9-TCCL",
    "family": "G",
-   "levels": [
-    "cbrn_uplift_level_1"
-   ],
-   "activity": "EXT-NOGOV",
-   "findings": []
+   "alternatives": [
+    {
+     "id": "G9-TCCL-L1",
+     "levels": [
+      "cbrn_uplift_tcl"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L2",
+     "levels": [
+      "cbrn_uplift_level_1"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L3",
+     "levels": [
+      "cyber_uplift_level_1"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L4",
+     "levels": [
+      "harmful_manipulation_level_1"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L5",
+     "levels": [
+      "stealth_and_situational_awareness_tcl"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L6",
+     "levels": [
+      "ml_rd_acceleration_level_1"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    },
+    {
+     "id": "G9-TCCL-L7",
+     "levels": [
+      "ml_rd_automation_level_1"
+     ],
+     "activity": "EXT-NOGOV",
+     "findings": []
+    }
+   ]
   },
   {
    "id": "G9-L0",

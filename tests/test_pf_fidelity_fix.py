@@ -206,7 +206,7 @@ def test_a_cut_altered_or_missing_quote_is_a_fault():
 
 # Review F1: an anchored fact block made its whole source unit CHECKED without the word map a CHECKED rule needs.
 # The class: no placement kind (rule or fact) reaches CHECKED unless CHECKED_CLAUSES maps every word of its unit.
-CL_LEVELS_UNIT = "p15-u245"
+CL_LEVELS_UNIT = "p15-u249"
 
 
 def _spans():
@@ -225,7 +225,7 @@ def test_every_checked_unit_is_a_rule_or_fact_with_a_complete_word_map(pf):
 def test_change_log_removal_of_low_and_medium_is_a_blocked_unit(pf):
     unit = _spans()[CL_LEVELS_UNIT]
     assert unit["status"] == "UNFORMALISED" and unit["blocked_rule"] == "cl-levels", unit
-    assert unit["residual"] == "unmapped_duty-p15-u245-b1881efef95f"  # main's residual id is kept
+    assert unit["residual"] == "unmapped_duty-p15-u249-b1881efef95f"  # the same bytes; the id moved up by four with the Table 1 titles
     assert "cl-levels" not in B.FACT_ANCHORS and "cl-levels" not in B.CHECKED_CLAUSES
     # The block's own header quotes the sentence; its "because" clause has no element in the facts.
     header = next(b.source for b in T.fact_blocks() if b.id == "cl-levels")
@@ -925,3 +925,206 @@ def test_fix6_units_carry_only_their_recorded_exposures():
     for name, rows in exposures.items():
         for path, detail in rows:
             assert path in ("loss", "unformalised") or detail.rstrip(".") in item27, (name, path, detail)
+
+
+# openai-preparedness-cases-repair: the case records (cases.json, the unit CASES of the omission audit) have an accounting
+# line. It says "nothing" because the records hold PLAN's case facts and PLAN 6's situations, not Preparedness source text.
+CASE_KEYS = {"id", "family", "levels", "activity", "situation", "findings", "quantities"}
+# Situations that are not a PLAN 6 Situation cell word for word, each with the PLAN cell and the reason.
+SITUATION_ALLOWED = {
+    "K8": ("the same", "the same (as K7)", "PLAN 6.3's 'the same' names K7's row above it"),
+    "T2": ("5 weeks against 20", "a generational improvement in 5 weeks; the equivalent 2024 progress took 20 weeks",
+           "PLAN 6.4's short cell written in T1's form; quantities holds 5 and 20"),
+}
+
+
+def _accounting_tool():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("safetyfw_accounting", REPO / "usecases" / "safetyfw_accounting.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    return tool
+
+
+def _plan_section(number):
+    plan = (PF / "PLAN.md").read_text(encoding="utf-8")
+    return re.search(rf"^## {number}\. .*?(?=^## \d+\. |\Z)", plan, re.M | re.S).group(0)
+
+
+def test_cases_accounting_line_exists_and_parses():
+    """The last line of accounting.d1.txt is the case records' line, "nothing". The accounting tool reads it as a
+    collection unit with no problem, and the installed omission rule (tests/omission_rule.py) gives CASES no
+    no-record, loss or mistag exposure. Its report path is left out: it reads batch reports, which no permanent
+    test pins (D4)."""
+    lines = (PF / "accounting.d1.txt").read_text(encoding="utf-8").splitlines()
+    assert [line for line in lines if line.startswith("CASES ")] == [lines[-1]]
+    result = _accounting_tool().account(PF)
+    assert result["problems"] == []
+    assert [p for p, _ in omission_exposures(["CASES"]).get("CASES", []) if p != "report"] == []
+    assert result["collections"] == [{"id": "CASES", "entries": [], "problems": []}]
+    assert lines[-1] == "CASES | omits: nothing"
+
+
+def test_every_case_text_is_plan_text_or_an_allowed_transcription():
+    """Every text field of cases.json is PLAN wording. Families A and B are PLAN 5's table read with its case-facts
+    sentence (one case per level, and per activity for A); K, T and G situations are their PLAN 6 Situation cells,
+    except SITUATION_ALLOWED, each with its reason. `source` is PLAN 5's case-facts sentence and the activity names
+    are PLAN 2's four activities. No record has a field beyond CASE_KEYS: a transcribed source sentence would need
+    a field of its own and its own accounting entry."""
+    cases = json.loads((PF / "cases.json").read_text(encoding="utf-8"))
+    plan5, plan6 = _plan_section(5), _plan_section(6)
+    norm = lambda text: " ".join(text.replace("*", "").split())
+    facts = norm(re.search(r"\*\*Case facts\.\*\* (.*?)\n\n", plan5, re.S).group(1))
+    assert cases["source"] == ("PLAN.md section 5 case facts: " + facts[0].lower() + facts[1:-1]
+                               + " (findings: true found, false found not to hold); transcribed, not changed")
+    assert set(cases["activities"].values()) <= set(norm(_plan_section(2).split("the four activities the text "
+                                                     "distinguishes: ")[1].split(";")[0]).split(", "))
+    levels = re.search(r"\*L\* ∈ \{([^}]*)\}", plan5).group(1).split(", ")
+    activities = re.search(r"\*X\* ∈ \{([^}]*)\}", plan5).group(1).split(", ")
+    assert sorted(activities) == sorted(cases["activities"])
+    cells = {}   # one case scored as several items (K6a, K6b, K6c): its first row states it, the rest say "the same"
+    for case_id, item, cell in re.findall(r"^\| ([KTG]\d+)([a-z]?) \| ([^|]*?) \|", plan6, re.M):
+        assert cells.setdefault(case_id, cell) == cell or item > "a" and cell == "the same", (case_id, item)
+    seen = set()
+    for case in cases["cases"]:
+        assert set(case) <= CASE_KEYS, case["id"]
+        reached = "no threshold reached" if not case["levels"] else f"{case['levels'][0]} reached"
+        if case["family"] == "A":
+            level, activity = case["id"][2:].rsplit("-", 1)
+            assert level in levels and activity in activities and case["activity"] == activity, case["id"]
+            assert case["levels"] == ([] if level == "L0" else [level]) and case["findings"] == {}, case["id"]
+            assert case["situation"] == f"{reached}; activity {activity}", case["id"]
+        elif case["family"] == "B":
+            level = case["id"][2:]
+            assert level in levels and case["levels"] == ([] if level == "L0" else [level]), case["id"]
+            assert case["findings"] == {"OT13": True}, case["id"]
+            assert case["situation"] == f"{reached}; a major deployment (OT13)", case["id"]
+        elif case["id"] in SITUATION_ALLOWED:
+            cell, situation, _reason = SITUATION_ALLOWED[case["id"]]
+            assert cells[case["id"]] == cell and case["situation"] == situation, case["id"]
+        else:
+            assert case["situation"] == cells[case["id"]], case["id"]
+        seen.add(case["id"])
+    assert set(cells) <= seen   # every K, T and G case of PLAN 6 has its record, and no record is extra
+    assert len(seen) == len(cases["cases"]) == len(levels) * len(activities) + len(levels) + len(cells)
+    assert {c["id"]: c.get("quantities") for c in cases["cases"] if c["family"] == "T"} == {
+        "T1": {"weeks": 4, "weeks_2024": 20}, "T2": {"weeks": 5, "weeks_2024": 20}}
+
+
+# openai-preparedness-facts-repair (reviews/facts-cases-diag-20261114.md section 1): two accounting entries of the fact
+# blocks named a carrier whose words did not hold the omitted sentence. The 4.2 sentence is now tagged with the rule
+# whose act legend quotes it, and 4.4's sentence is quoted in the legend of the predicate its formula reads.
+SENTENCE_4_2_CRITICAL = ("Systems that reach Critical capability also require safeguards that sufficiently minimize "
+                         "associated risks during development")
+SENTENCE_4_4_NONE = "We do not currently possess any models that have Critical levels of capability"
+# accounting unit: (omitted words, tag, the block whose carrier must hold them, the predicate whose legend holds them)
+RETAGGED = {"rs2-nest": (SENTENCE_4_2_CRITICAL, "rule f3-reminder", "f3-reminder", "safeguards_during_development"),
+            "no-critical-models": (SENTENCE_4_4_NONE, "restates", "no-critical-models", "existing_at_publication")}
+
+
+def tag_carrier(block_id):
+    """The counter's tag carrier (TAG CHECK #3) of a rule or fact block, read from the working tree: one token set per
+    formal body statement and one per legend of a predicate the body uses, with the header, comments and quoted
+    literals stripped, as {segment name: tokens}. The helpers are tests/omission_rule.py's port of the counter."""
+    import tests.omission_rule as O
+    blocks = {**O.rule_blocks((PF / "facts.d1.ve").read_text(encoding="utf-8")),
+              **O.rule_blocks((PF / "rules.d1.ve").read_text(encoding="utf-8"))}
+    env = json.loads((PF / "environment.d1.json").read_text(encoding="utf-8"))
+    vlines = (PF / "pf_vocabulary.py").read_text(encoding="utf-8").splitlines()
+    body = blocks[block_id][1]
+    segments = {f"body {i}": line for i, line in enumerate(O.strip_comments(body.splitlines(), body=True))}
+    segments.update({f"legend {k}": "\n".join(O.strip_comments(O.legend_raw(k, vlines)))
+                     for k in O.used_predicates(body, env)})
+    return {name: set(re.findall(r"[a-z0-9_]+", O.omit_norm(text))) for name, text in segments.items() if text.strip()}
+
+
+def carrying_segments(words, block_id):
+    """The carrier segments that hold every whole token of `words` but the articles (the counter's tag rule)."""
+    import tests.omission_rule as O
+    tokens = set(O.content_words(words))
+    assert tokens
+    return sorted(name for name, segment in tag_carrier(block_id).items() if tokens <= segment)
+
+
+def test_retagged_facts_entries_are_carried_by_the_block_their_tag_names(pf):
+    """Each entry's tag names a block whose carrier holds every word: the legend of the predicate the block's formula
+    reads, and nothing else. The rule really means the sentence: f3-reminder (always on) requires the development
+    safeguards of any situation that has reached a Critical level, and no-critical-models denies a Critical level to
+    every model possessed at publication. The counter's port then finds no mistag on the fact blocks."""
+    entries = accounting_entries()
+    for unit, (words, tag, carrier, predicate) in RETAGGED.items():
+        assert (words, tag) in entries[unit], unit
+        assert carrying_segments(words, carrier) == [f"legend {predicate}"], unit
+    norm = rule("f3-reminder")
+    assert norm["predicate"] == "safeguards_during_development" and norm["sign"] is True
+    assert block("f3-reminder").when == () and {"reached", "critical"} <= predicates_read("f3-reminder")
+    facts = next(b for b in T.fact_blocks() if b.id == "no-critical-models")
+    assert facts.text == ('For every situation, if that situation is classified as "existing_at_publication", then it '
+                          'is not the case that there is a level such that both that situation has reached that level '
+                          'and that level is critical.')
+    mistags = [d for p, d in omission_exposures(["FACTS"]).get("FACTS", []) if p == "mistag"]
+    assert mistags == []
+
+
+def test_a_carrier_without_the_words_does_not_hold_the_entry(pf, monkeypatch):
+    """The tag rule fails closed: with the 4.4 quote cut from the legend, or with the 4.2 entry tagged against the
+    block it used to name, no segment holds the words."""
+    assert carrying_segments(SENTENCE_4_2_CRITICAL, "rs2-nest") == []
+    vocabulary = (PF / "pf_vocabulary.py").read_text(encoding="utf-8")
+    cut = vocabulary.replace("We do not currently possess any models that have Critical ", "")
+    assert cut != vocabulary
+    real = Path.read_text
+    monkeypatch.setattr(Path, "read_text", lambda self, *a, **k: cut if self.name == "pf_vocabulary.py"
+                        else real(self, *a, **k))
+    assert carrying_segments(SENTENCE_4_4_NONE, "no-critical-models") == []
+
+
+def test_retagged_legend_quotes_are_verbatim_source_text(pf):
+    """The two legends quote their sentence word for word: each quote is the whole sentence (no cut, no change), it is
+    part of its block's header quote (pinned by quote-hashes.json), and with the pinned source present it is source
+    text."""
+    for unit, (words, _tag, carrier, predicate) in RETAGGED.items():
+        assert words in legend_quotes(predicate) or words + "." in legend_quotes(predicate), (unit, predicate)
+        quoted = [q for q in legend_quotes(predicate) if q.rstrip(".") == words]
+        assert len(quoted) == 1, (unit, predicate)
+        assert any(words in q for q in Q.quotes(next(b for b in Q.blocks() if b.id == unit))), unit
+    assert legend("existing_at_publication") == (
+        "the model at {0} is one OpenAI possessed at publication (2025-04-15), the time of 4.4's “We do not currently "
+        "possess any models that have Critical levels of capability”")
+    if pinned_source("openai-preparedness", skip=False) is not None:
+        source = B.DEFAULT_SOURCE.read_bytes()
+        B.check_source(source)
+        quoted = [T.Block(p, (), "legend: " + "".join(f"“{q}”" for q in legend_quotes(p)), "")
+                  for _u, (_w, _t, _c, p) in RETAGGED.items()]
+        assert Q.quote_faults(quoted, source.decode()) == []
+
+
+# The Table 1 header (architect ruling pf-table1-header-20261115 section 5): the four column titles and the first
+# category definition are five units; the fourth title is RS1's own reading-set unit, OPEN.
+HEADER_UNITS = (("p6-u65", [13460, 13477], "unmapped_claim", None),
+                ("p6-u66", [13477, 13526], "hedged_claim", None),
+                ("p6-u67", [13526, 13557], "unmapped_claim", None),
+                ("p6-u68", [13557, 13592], None, "rs1-header"),
+                ("p6-u69", [13592, 13821], "unmapped_claim", None))
+F1_PAIRS = ("f1-misuse-bio", "f1-misuse-cyb", "f1-alignment-cyb", "f1-security", "f1-halt", "f1-contrib-bio",
+            "f1-contrib-cyb")
+
+
+def test_table_1_header_is_five_units_and_the_fourth_title_is_rs1_open(pf):
+    units = _spans()
+    for uid, span, reason, reading_set in HEADER_UNITS:
+        unit = units[uid]
+        assert unit["span"] == span and unit.get("reason") == reason and unit.get("reading_set") == reading_set, uid
+        assert unit["status"] == ("OPEN" if reading_set else "UNFORMALISED"), uid
+    assert units["p6-u66"]["waits"] == ["AT"] and units["p6-u70"]["premises"] == ["bio-high"]
+    assert B.READINGS["rs1-header"] == ("RS1", {"strict": [f"{u}-strict" for u in F1_PAIRS],
+                                                "default": [f"{u}-default" for u in F1_PAIRS]})
+    assert B.SET_FAMILIES["RS1"] == "DF"
+    # The title is carried by the modal of the f1 blocks, never pasted into a legend.
+    assert not [k for k, p in V.environment()["vocabulary"]["predicates"].items() if "guidelines" in p["description"]]
+    if pinned_source("openai-preparedness", skip=False) is not None:
+        source = B.DEFAULT_SOURCE.read_bytes()
+        assert source[13557:13592] == b"Risk-specific safeguard guidelines "
+        _, rebuilt = B.build(source)
+        assert [(r["id"], r["span"]) for r in rebuilt[64:69]] == [(u, s) for u, s, _r, _s in HEADER_UNITS]
+        assert rebuilt[64:69] == [{k: v for k, v in units[u].items() if k != "status"} for u, *_ in HEADER_UNITS]

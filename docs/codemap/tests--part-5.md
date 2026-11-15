@@ -1,3 +1,8 @@
+- `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
+- `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
+- `tests/test_nested_pytest.py` — Nested pytest runs do not depend on the outer run's plugin settings (testperf review B).
+- `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
+- `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
 - `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
@@ -80,7 +85,3 @@
 - `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
 - `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
 - `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
-- `tests/test_rd9_sc11_charge_wording.py` — sc-11 review F1: every text about `routeSD`'s limits says `sdSuperposable` is read before the work limit, uncharged.
-- `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
-- `tests/test_rd9_statements.py` — RD-9's Lean declarations against the approved blocks of docs/spec/rd-9-soft-chain.md 6 (checklist 17).
-- `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).

@@ -275,11 +275,11 @@ def manyRules (n : Nat) : Json := Json.arr ((List.range n).flatMap fun i => (Lis
 #guard errText (decodeElaboratedU (manyEnv 33) (manyRules 33)) == "ResourceLimit: regulated predicates"
 #guard errText (decodeElaboratedU (manyEnv 65) (Json.arr #[])) == "ResourceLimit: regulated predicates"
 -- A lexical decoder reads no tree: `joined := false` keeps D-4, and a lexical act gives none.
-#guard errText (VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1) (joined := false)) ==
+#guard errText (VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (manyEnv 1) (manyRules 1) (joined := false)) ==
   "InvalidInput: act phrase for p0 joins acts with 'or' outside a fixed phrase"
-#guard ((VE.Norms.Wire.decodeSource (envOf plain6 block6 (act := "{0} be held") (default := "deny")) norms27).toOption.map
+#guard ((VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (envOf plain6 block6 (act := "{0} be held") (default := "deny")) norms27).toOption.map
   (·.ne.joined.length)) == some 0
-#guard ((VE.Norms.Wire.decodeSource (manyEnv 1) (manyRules 1)).toOption.map (·.ne.joined.map (·.1))) == some ["p0"]
+#guard ((VE.Norms.Wire.decodeSource VE.Norms.Wire.ActsHook.acts (manyEnv 1) (manyRules 1)).toOption.map (·.ne.joined.map (·.1))) == some ["p0"]
 -- `joinedActs`: under `acts@0` only, and only when asked.
 #guard (VE.Norms.Wire.joinedActs true ["norms@0"] [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []
 #guard (VE.Norms.Wire.joinedActs false plain6 [] V6 [⟨"p", ["person"], false, .permission, some a6, none⟩]).toOption == some []

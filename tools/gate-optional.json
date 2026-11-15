@@ -12,6 +12,7 @@
     {"nodeid": "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_safety_framework.py::test_readings_rerun_equals_committed_readings", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_safety_framework.py::test_every_will_quote_is_the_pinned_source_text", "reason": "the pinned source is not stored on this machine"},
+    {"nodeid": "tests/test_safety_framework.py::test_every_glossary_definition_is_the_pinned_source_text", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_fidmech_segment.py::test_the_frozen_boundaries_fit_the_pinned_source[anthropic-rsp]", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_fidmech_segment.py::test_the_frozen_boundaries_fit_the_pinned_source[safety-framework]", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_fidmech_segment.py::test_the_frozen_boundaries_fit_the_pinned_source[openai-preparedness]", "reason": "the pinned source is not stored on this machine"},

@@ -397,12 +397,12 @@ def replayWitness : Json → Except String ((src : Wire.Source) × Witness src) 
 
 theorem replayEntailment_source (j : Json) (r : Replay.EntailmentReplay)
     (h : replayEntailment j = .ok r) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
   replayEntailmentIn_source Wire.decodeFlagged j r h
 
 theorem norms_flagged_acceptance (j : Json) (r : Replay.EntailmentReplay)
     (h : replayEntailment j = .ok r) (hv : valid r = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
     (∀ S : VE.Structure.{u}, S.Admissible (envAt r.src.D (size r.src.D)) →
       Sat S (flagPremises r.src) → holdsCatala r.src.D.T S →
       definitionsHold r.src.D S → profileHold r.src.D S → Sat S (backgroundBase r.src.D) →
@@ -414,12 +414,12 @@ theorem norms_flagged_acceptance (j : Json) (r : Replay.EntailmentReplay)
   norms_flagged_acceptanceIn.{u} Wire.decodeFlagged j r h hv
 
 theorem replayConflict_source (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src :=
   replayConflictIn_source Wire.decodeFlagged j r h
 
 theorem norms_flagged_conflict_sound (j : Json) (r : ConflictReplay) (h : replayConflict j = .ok r)
     (hv : r.conflictFree = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok r.src ∧
     (r.plain = true → ∀ B : VE.Structure.{u}, BaseAdmissible r.src.D B → ConflictFree r.src.D B) ∧
     (r.plain = false → ∀ S : VE.Structure.{u}, S.Admissible (baseEnv r.src.D) →
       Sat S (baseBackground r.src) → BaseConflictFree r.src S)  :=
@@ -427,7 +427,7 @@ theorem norms_flagged_conflict_sound (j : Json) (r : ConflictReplay) (h : replay
 
 theorem norms_flagged_witness_sound (j : Json) (src : Wire.Source) (w : Witness src)
     (h : replayWitness j = .ok ⟨src, w⟩) (hw : w.conflict = true) :
-    Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
+    Wire.decodeSource Wire.ActsHook.plain (j.getObjValD "environment") (j.getObjValD "norms") (flags := true) = .ok src ∧
     BaseAdmissible src.D w.M.asStructure ∧ Sat w.M.asStructure (flagPremises src) ∧
     ¬ ConflictFree src.D w.M.asStructure ∧
       ¬ (∀ B : VE.Structure.{0}, BaseAdmissible src.D B → Sat B (flagPremises src) → ConflictFree src.D B)  :=

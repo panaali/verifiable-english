@@ -125,11 +125,13 @@ theorem of_elaborate {v : Json} (hp : (usesNormsPath req || Plain.layered (req.g
   all_goals fits_from h
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.norms (runCaseReported j) := by
-  unfold runCaseReported runCaseRouted
+  unfold runCaseReported runCaseRouted runCaseActsRouted runCase
   split
   · split
     · split at *
-      · exact OkP.of (runElaborate_fits _ j) (fun _ h => of_elaborate ‹_› ‹_› h) _ ‹_›
+      · split at *
+        · exact OkP.of (runElaborate_fits _ j) (fun _ h => of_elaborate ‹_› ‹_› h) _ ‹_›
+        · exact runCase_fits _ j hj ‹_› _ ‹_›
       · exact runCase_fits _ j hj ‹_› _ ‹_›
     · fits
   · exact of_route (Bool.eq_false_iff.mpr ‹_›) (Route.runCaseReported_fits j)

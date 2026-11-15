@@ -273,7 +273,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the model at {0} is one OpenAI possessed at publication (2025-04-15)"
+        "description": "the model at {0} is one OpenAI possessed at publication (2025-04-15), the time of 4.4's “We do not currently possess any models that have Critical levels of capability”"
       },
       "threshold_determined": {
         "arguments": [

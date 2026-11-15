@@ -848,7 +848,6 @@
     "anytime",
     "complete",
     "cover",
-    "describ",
     "minimum",
     "proces"
    ],
@@ -1559,13 +1558,11 @@
     "crossed",
     "highly_capable"
    ],
-   "unaccounted": [
-    "describ"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "described in Section 1",
-     "reason": "exposition",
+     "reason": "restates",
      "arg": ""
     }
    ],
@@ -1609,10 +1606,7 @@
     "double_rate",
     "scenario_2"
    ],
-   "unaccounted": [
-    "absence",
-    "occurr"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We would consider scenario (2) to have occurred where",
@@ -1657,15 +1651,15 @@
    "limit 9": 1
   },
   "entries_by_reason": {
-   "exposition": 11,
+   "exposition": 10,
    "loss": 3,
    "open": 5,
    "reading": 6,
-   "restates": 45,
+   "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 164,
-  "blocks_with_unaccounted_words": 36,
+  "unaccounted_words": 160,
+  "blocks_with_unaccounted_words": 34,
   "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
