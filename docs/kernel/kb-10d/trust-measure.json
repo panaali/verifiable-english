@@ -1,0 +1,345 @@
+{
+ "comment": "kb-10d step 4: the trust measure of the ownership baseline (section 3) before kb-10 (b3431f71df, the parent of the kb-10a merge bb2c8d4604) and now (feature/kb-10d). Whole-harness figures: tools/ownership_trace.py under <key> (py_under.py's method; the harness's own check against its committed results.json, in one process; eligibility without its 32 mutants). per_answer_now: the listed decision functions that ran under some item's trace (ownership.json).",
+ "closure_baseline": {
+  "before": {
+   "keyed_lines": 16150,
+   "kernel_lines": 9504,
+   "keyed_kernel_lines": 9504
+  },
+  "now": {
+   "keyed_lines": 16545,
+   "kernel_lines": 10083,
+   "keyed_kernel_lines": 10083
+  }
+ },
+ "keys": {
+  "anthropic-rsp": {
+   "before": {
+    "functions": 693,
+    "lines": 7066,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick",
+     "_check_conflict_python"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selection",
+     "_Evaluator (methods)",
+     "_check_conflict_python"
+    ],
+    "differs_from_results_json": null
+   },
+   "now": {
+    "functions": 708,
+    "lines": 7265,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "_Evaluator (methods)"
+    ],
+    "differs_from_results_json": null
+   },
+   "per_answer_now": {
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "items_with_one": 8
+   }
+  },
+  "openai-preparedness": {
+   "before": {
+    "functions": 688,
+    "lines": 7024,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick",
+     "_check_conflict_python"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selection",
+     "_Evaluator (methods)",
+     "_check_conflict_python"
+    ],
+    "differs_from_results_json": null
+   },
+   "now": {
+    "functions": 708,
+    "lines": 7284,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selection",
+     "_Evaluator (methods)"
+    ],
+    "differs_from_results_json": null
+   },
+   "per_answer_now": {
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "items_with_one": 8
+   }
+  },
+  "safety-framework": {
+   "before": {
+    "functions": 693,
+    "lines": 7037,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick",
+     "_check_conflict_python"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selection",
+     "_Evaluator (methods)",
+     "_check_conflict_python"
+    ],
+    "differs_from_results_json": null
+   },
+   "now": {
+    "functions": 710,
+    "lines": 7255,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "_Evaluator (methods)"
+    ],
+    "differs_from_results_json": null
+   },
+   "per_answer_now": {
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "items_with_one": 6
+   }
+  },
+  "agent-policy": {
+   "before": {
+    "functions": 583,
+    "lines": 5799,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selection",
+     "_Evaluator (methods)"
+    ],
+    "differs_from_results_json": null
+   },
+   "now": {
+    "functions": 583,
+    "lines": 5828,
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "listed_entries": [
+     "NormDocument._expand",
+     "NormDocument.conflict_targets",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selection",
+     "_Evaluator (methods)"
+    ],
+    "differs_from_results_json": null
+   },
+   "per_answer_now": {
+    "decision_functions": [
+     "NormDocument._expand",
+     "NormDocument.outcome",
+     "NormDocument.selected_rules",
+     "NormDocument.selected_rules.<locals>.<genexpr>",
+     "NormDocument.selection",
+     "NormDocument.selection.<locals>.<genexpr>",
+     "NormDocument.selection.<locals>.subtree",
+     "NormDocument.selection.<locals>.subtree.<locals>.<genexpr>",
+     "_Evaluator.__init__",
+     "_Evaluator.explanation",
+     "_Evaluator.formula",
+     "_Evaluator.term",
+     "_Evaluator.tick"
+    ],
+    "items_with_one": 42
+   }
+  },
+  "eligibility": {
+   "before": {
+    "functions": 446,
+    "lines": 4218,
+    "decision_functions": [],
+    "listed_entries": [],
+    "differs_from_results_json": [
+     "english",
+     "probes",
+     "summary"
+    ]
+   },
+   "now": {
+    "functions": 446,
+    "lines": 4249,
+    "decision_functions": [],
+    "listed_entries": [],
+    "differs_from_results_json": [
+     "english",
+     "probes",
+     "summary"
+    ]
+   },
+   "per_answer_now": {
+    "decision_functions": [],
+    "items_with_one": 0
+   }
+  }
+ }
+}
