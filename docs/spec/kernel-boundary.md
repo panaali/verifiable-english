@@ -84,7 +84,7 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | risk | candidate | 8 | 6,309 | 5,670 | 7,989 |
 | readingsRoute | candidate | 8 | 9,403 | 20,729 | 24,421 |
 | discourse | candidate | 6 | 36,398 | 4,541 | 36,404 |
-| document | candidate | 9 | 35,567 | 12,816 | 36,420 |
+| document | candidate | 9 | 35,569 | 12,824 | 36,430 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
 candidate rows moved with main's code, the kernel rows did not). Other measurements (the census and keyed figures are the saved file's):

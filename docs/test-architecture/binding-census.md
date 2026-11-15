@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 306 |
 | leaves:closed domain | 346 |
-| leaves:none | 1846 |
+| leaves:none | 1851 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1444 |
+| today:not probed | 1449 |
 | today:shape | 652 |
 | today:unbound | 137 |
 | answers | 606 |
@@ -3159,6 +3159,11 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/rows/*/case/environment/language` | string | none |  |  | 0 | not probed |
 | `/rows/*/case/environment/profiles/*` | string | none |  |  | 0 | not probed |
 | `/rows/*/case/environment/spec_revision` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/vocabulary/predicates/@key` | key | none |  |  | 0 | not probed |
+| `/rows/*/case/environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 0 | not probed |
 | `/rows/*/case/id` | string | none |  |  | 0 | not probed |
 | `/rows/*/case/kind` | string | closed domain | const |  | 0 | shape |
 | `/rows/*/case/norms/*/cites/@key` | key | none |  |  | 0 | not probed |
@@ -3590,6 +3595,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/judgments/used/*/units` |  |  |  |  |
 | `/rows` |  |  |  |  |
 | `/rows/*/case/environment/profiles` |  |  |  |  |
+| `/rows/*/case/environment/vocabulary/predicates/{}/arguments` |  |  |  |  |
 | `/rows/*/case/facts` |  |  |  |  |
 | `/rows/*/case/norms` |  |  |  |  |
 | `/rows/*/case/norms/*/cites/{}` |  |  |  |  |

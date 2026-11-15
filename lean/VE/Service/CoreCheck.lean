@@ -241,13 +241,16 @@ def routedRefusals : List String :=
    unavailable "soft-norms with readings, alternatives or risk needs its composed Lean route"]
 
 /-- A document the core path reads: one that `environmentOf` refuses with one of the two refusals, whose profiles all
-have a row of the lowering, and that has no senses. -/
+have a row of the lowering, that lists `judgments@0` and that has no senses. A document without `judgments@0` is
+answered today by Python's own path, whose document `ve document readings` and the readings queries read; the core path
+has no such reading yet, so it keeps that path (its step C row moves it). -/
 def routed (j : Json) : Bool :=
   match frontOf j with
   | none => false
   | some (front, _) =>
     let env := front.getObjValD "environment"
     !(front.getObjVal? "senses").isOk && (listedProfiles env).all rowProfiles.contains &&
+      (listedProfiles env).contains "judgments@0" &&
       match environmentOf env (front.getObjValD "units") false (some (VE.Discourse.Loader.optionalList front "open_terms")) with
       | .error e => routedRefusals.contains e
       | .ok _ => false

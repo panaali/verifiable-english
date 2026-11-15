@@ -1,6 +1,6 @@
 {
  "after": {
-  "commit": "final code (kb-2a-b, after the no-row fallback)",
+  "commit": "final code (kb-2a-b: routing for documents listing judgments@0)",
   "fixtures": {
    "JT-a": {
     "admitted": false,
