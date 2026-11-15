@@ -2,6 +2,7 @@
 - `lean/VE/WireContract/Engine.lean` — The wire contract engine (docs/spec/wire-contract.md 2 and 5.2).
 - `lean/VE/WireContract/Hooks/Acts.lean` — The hand-written classifier and adapter of the contract `acts@0`, in shadow (ap-1bf; act-phrases-PLAN.md 2.8, edit 2 of plan synthesis round 2): it reports and…
 - `lean/VE/WireContract/Hooks/Corpus.lean` — The hand-written hooks, classifier and view of the engine corpus (docs/spec/wire-contract.md 8.1).
+- `lean/VE/WireContract/Hooks/HookExamples.lean` — kb-4a: the wire contract's acts hook (1.1d) reads its environment through `ActsHook.acts`, with `acts@0` read and a joined act admitted, as before the hook.
 - `lean/VE/WireContract/Hooks/NormDefaults.lean` — The hand-written hooks and adapter of the contract `norm-defaults@0` (docs/spec/wire-contract-s5.md 2.4 and 2.5).
 - `lean/VE/WireContract/Hooks/Norms.lean` — The hand-written hooks, classifiers and adapter of the contract `norms@0` (docs/spec/wire-contract-s5.md 2.3 and 2.5).
 - `lean/VE/WireContract/Hooks/Purposes.lean` — The classifiers and adapter of the contract `purposes@0`, in shadow (sa-wire-purposes0; purpose-explanation.md 5.4 and 7): they report and refuse nothing.
