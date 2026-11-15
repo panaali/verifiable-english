@@ -6,7 +6,7 @@ It may fall freely. It may rise only with a line in the table below, added in th
 raises it and signed by the architect seat (`manage-agents/fable-team/architect/HANDOFF.md`).
 `tests/test_kernel_closure.py` reads the figure after the words "signed total:".
 
-signed total: 10,101 lines
+signed total: 9,966 lines
 
 | Date | Change | Door | Lines | Total after | Signed |
 |---|---|---|---:|---:|---|
@@ -23,6 +23,7 @@ signed total: 10,101 lines
 | 2026-11-15 | kb-10c: the `soft-conflict` kind's verdicts on the wire. `VE.SoftNorms.Run.soft_wire_conflict_free`, `soft_wire_conflict_witness` and `soft_wire_conflict_exclusive` (`lean/VE/SoftNorms/ConflictSound.lean`) listed on `softNorms`; their statements read the replays `replaySoftConflict` and `replaySoftWitness` and the conclusions of `Wire.soft_wire_conflict_sound` and `soft_wire_conflict_witness_sound` (softNorms path spec 5,368 to 5,370 lines before the merge with kb-4a, 4,682 to 4,684 after it: `VE.SoftNorms.Coherence` 26 to 28, read by the witness theorem's collision and pair-conflict conclusion; distinct kernel lines +2) | C | +2 | 10,083 | kb-10c, pre-signed by the architect seat up to +150 lines (measured 11,119 to 11,121 before the merge with kb-4a; entered after kb-4a at the merge with ve-integration: the fall and the rise are disjoint, measured on the merged tree as 10,081 + 2 = 10,083) |
 | 2026-11-14 | kb-2a-b: the document mode's kernel row. `VE.SoftNorms.Run.slot_wire_admission` (the `slot-admission` kind's whole answer) and `VE.Compose.SlotWire.replaySlotAdmission_sound` listed on `softNorms`, with `replaySlotAdmission` as a subject (softNorms path spec 5,368 to 5,386 lines, distinct kernel lines +18) | C | +18 | 10,101 | architect seat, round 4 (DESIGN kb-2a section 4: `slot-admission` up to +60 lines; measured 10,023 to 10,041 before the merge with kb-8c, kb-4a and kb-10c; entered after them at the merge with ve-integration: the rises and the fall are disjoint, measured on the merged tree as 10,083 + 18 = 10,101, softNorms path spec 4,684 to 4,702) |
 | 2026-11-14 | kb-2a-b: the document mode's fold, `VE.Kernel.DocumentFold` (44 code lines), registered as the `document` path's fold (`tools/kernel-paths.json`). The `document` path is a candidate, so no kernel path reads the fold and `kernel_lines` does not change; the fold enters the total when the architect seat makes the path a kernel path | C | +0 | 10,101 | architect seat, round 4 (DESIGN kb-2a section 4: the status fold up to +60) |
+| 2026-11-15 | kb-closure-attrib: the measuring tool's charge (DRI kb-8 item 1; reviews/dri-decisions-20261115-kb-closure-attrib.md). `rangeOf` charged a matcher Lean shares between declarations (`f.match_1` run by `g`) the whole range of `f` even where the closure never reaches `f`; such an auxiliary is now charged to its user with no lines and listed under `attributed` (a mutual block's members and `f._unary`, `f._mutual` keep `f`'s range). The wrap figure leaves out declarations the spec already reads (`quantity` wrap 75 to 7). No Lean code changed; every path's figure falls or stays (docs/kernel/kb-closure-attrib/REPORT.md) | none | -135 | 9,966 | not needed (a fall, section 6.2) |
 
 Pre-signed, to be entered by the change that uses it:
 
