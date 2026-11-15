@@ -205,7 +205,15 @@ the b6 CPU-deadline test, and the RSP `run.py --check` (section 1d baseline).
 
 ## 4. Seeded bugs
 
-See section 4 of the final report below. They are filled in after the runs.
+All four are recorded in `seeded-bugs.json`. Each was planted, seen to fail, and restored. No product code is
+changed by this item: PART 1 adds docs and tests only.
+
+| id | file | bug | caught by |
+|---|---|---|---|
+| a | lean/VE/Norms/Plain.lean | `decodeRegulatedAllIn` refuses exactly 64 (`>= 64`, off by one) | `test_plain_decoder_takes_the_limit_and_refuses_one_more[64-None]` (1 failed) |
+| b | lean/VE/Norms/Tree.lean (+ twin NormDefaults/Check.lean) | `check` accepts the 65th (`> 65`) | `test_elaborated_document_takes_the_limit_and_refuses_one_more[32-1-...]` (1 failed) |
+| c1 | rsp_split.py `--leak` | a split moves `assessed_in_report` without its rule's guard predicate `in_scope` | RSP `run.py --check` on the scratch copy: exit 1, `UnknownSymbol: Unknown predicate 'in_scope'` |
+| c2 | rsp_split.py `links()` | a guard no longer links its predicate | `test_split_recipe_refuses_a_split_that_breaks_a_link[moved0-...]` and `test_split_recipe_moves_whole_components_only` (2 failed) |
 
 ## 5. DRI question and answer
 
