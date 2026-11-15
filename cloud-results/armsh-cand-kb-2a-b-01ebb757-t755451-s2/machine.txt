@@ -1,0 +1,10 @@
+job=armsh-cand-kb-2a-b-01ebb757-t755451-s2 shard=2/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T15:12:24Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 15:12:24 up 5 min,  0 user,  load average: 1.45, 0.56, 0.23
+pilot/codex branches: 98
+ve-cache: lean-build seed-base key d820b947a44d asset lean-build-01c754bab66a-linux-aarch64.tar.zst sha256 217168e3ad60 ok, seal ok, from download, 15.3 s
+seed: mode=seed match=seed-base asset=lean-build-01c754bab66a-linux-aarch64.tar.zst pruned=16 base=7cbec4b340b8
+seed: 123 modules rebuilt over the seed (traces), none stale
+seed: lake 438.7 s (rc 0, match seed-base)
+p1-tokenizers: 443909a61d42 fetched
