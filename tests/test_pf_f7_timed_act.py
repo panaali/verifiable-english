@@ -116,6 +116,8 @@ def test_bio_h_misuse_bullet_has_its_own_timed_act():
     for block_id in ("f1-misuse-bio-strict", "f1-misuse-bio-default"):
         assert json.loads(T.parsed_rule(block_id))["predicate"] == "misuse_safeguards_before_external"
         assert "meeting the High standard before external deployment, if" in block(block_id).text
+        assert "meeting High standard" in block(block_id).source
+        assert "(Appendix C.1)" in block(block_id).source
     for block_id in ("f1-misuse-cyb-strict", "f1-misuse-cyb-default"):
         assert json.loads(T.parsed_rule(block_id))["predicate"] == "misuse_safeguards"
     assert R.ATOMS["MIS"] == ("misuse_safeguards", "misuse_safeguards_before_external")
