@@ -659,6 +659,23 @@ the disagreements with the key are findings and are listed in [README.md](README
     ALL only with that bridge, which results.json records as N1's own premise and in its invention audit. The key
     cell (6.6, "a certificate from the closure in 4.1") is unchanged.
 
+27. **Section 6.3 K2 and section 6.5 G3: the TCL proximity commitment (safety-framework-proximity-tcl; findings
+    opus.md:318 and astra.md round 2; DRI decision reviews/dri-decisions-20261114-safety-framework-fidelity-fix-3.md
+    item 2).** Source, 1.2 (src:4): "Similarly to CCLs, early warning evaluations will be used to assess the proximity
+    of a model to a TCL and analyze the risk posed, involving internal and external experts as needed." It is a "will"
+    about the developer's own process (RS0, narrowed by N1 as F6 is), so rule `f6-tcl` states it with F6's act:
+    "Similarly to CCLs" carries 1.3.3's trigger, an alert threshold reached (OT1), to a TCL. Section 4.2 lists only
+    1.3.3 as F6's source; the rule is F6's TCL half. The means, "early warning evaluations will be used", is not in
+    the act. The key file is unchanged; these entries give the answer the translation is measured against beside it.
+    - **K2-L1/PROXIMITY.** Key: NONE. Entry: **ALL**. The key cell (6.3, "alert thresholds are defined 'For CCLs'
+      only (gap G3)") reads 1.3.2's definition as an exclusion, which item 20 withdrew; src:4 requires the proximity
+      assessment and risk analysis when the model approaches L1, the CBRN uplift TCL.
+    - **K2-L5/PROXIMITY.** Key: NONE. Entry: **ALL**. The same sentence, for L5, the Stealth and Situational
+      Awareness TCL.
+    - **G3.** Key: ALL. Entry: **NONE**. The key cell (6.5, "silent: ALL", "No alert thresholds for TCLs (K2)") is
+      no longer silent: in both approaching branches src:4's rule requires the proximity assessment. The reaching
+      branches stay silent, and the item holds only where it holds in every branch.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `fsf.d1.ve.md`, `fsf.d2.ve.md`,

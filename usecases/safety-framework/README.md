@@ -103,17 +103,18 @@ From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit 
 
 **How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
 
-VE agrees with the answer key on **260 of 262** items. The two others are key cells that PLAN section 12 (item 23)
-corrects to NONE, and VE agrees with each correction.
+VE agrees with the answer key on **257 of 262** items. The five others are key cells that PLAN section 12 records
+beside the key: item 23 corrects C3 and C-doc to NONE, and item 27 gives K2-L1, K2-L5 and G3 the answers of 1.2's
+TCL proximity commitment. VE agrees with each entry.
 
 | Family | What it asks | Agreement |
 |---|---|---|
 | A | what each level requires, for each of five activities | 160 / 160 |
 | B | what each level requires whatever the activity | 40 / 40 |
-| K | what the process triggers require | 18 / 18 |
+| K | what the process triggers require | 16 / 18 (18 / 18 with the section-12 entries) |
 | R | when the text deems a model's risk acceptable | 11 / 11 |
 | C | conflicts | 4 / 6 (6 / 6 with the section-12 entries) |
-| G | gaps | 9 / 9 |
+| G | gaps | 8 / 9 (9 / 9 with the section-12 entries) |
 | N | commitments that can never apply | 3 / 3 |
 | S | severity and causation | 12 / 12 |
 | D | dates | 3 / 3 |
@@ -133,10 +134,12 @@ found 18 of 47 translation units unfaithful; the fix and every answer it moved a
 
 The first run also missed K2-L1, K2-L5 and G3, which ask about an alert threshold for a Tracked Capability Level.
 The translation had read "For CCLs, we define alert thresholds" (1.3.2) as a closure, so that only a CCL could have
-an alert threshold. The sentence does not say that, and the results review removed the premise. These cases now
-agree with the key: no rule speaks about an alert threshold for a TCL. Section 1.2 does say that "early warning
-evaluations will be used to assess the proximity of a model to a TCL", but it names no trigger, so it stays
-unformalised.
+an alert threshold. The sentence does not say that, and the results review removed the premise. Section 1.2 also
+says "Similarly to CCLs, early warning evaluations will be used to assess the proximity of a model to a TCL and
+analyze the risk posed". Since safety-framework-proximity-tcl a rule states it, with 1.3.3's trigger (an alert
+threshold reached) carried to TCLs by "Similarly to CCLs": the proximity assessment is required at K2-L1 and K2-L5,
+and G3 is no longer silent when the model approaches a TCL. The key cells say otherwise; PLAN section 12 item 27
+records the three answers beside them.
 
 ## The rules and their check status
 
@@ -193,7 +196,7 @@ under "Excluded readings". The whole document (C-doc) is now CONFLICT-FREE at ev
 |---|---|---|
 | G1 | further development of a CCL model whose security condition fails | silent unless the conditions are read as a gate |
 | G2 | an ordinary internal deployment of an ML R&D CCL model | no governance review is required |
-| G3 | an alert threshold for a TCL | silent: no rule mentions it |
+| G3 | approaching or reaching a TCL | not silent: approaching a TCL requires the proximity assessment (1.2; PLAN 12 item 27) |
 | G4, G5 | significant cyber or manipulation risk, or a risk outside the four domains | only the catch-all "deemed acceptable" applies; no safeguard is required |
 | G6 | the first external deployment of a model that is not a frontier model | no capability assessment is required; governance review only if F12 covers every model |
 | G7 | disclosure for a TCL, or for a CCL whose risk is mitigated | silent: disclosure needs a CCL with an unmitigated, material risk |
@@ -267,7 +270,7 @@ a document in which a CHECKED unit uses an open predicate.
 
 | Metric | Result | Expected |
 |---|---|---|
-| M1 agreement with the key | 260/262; 262/262 with the PLAN 12 entries for C3 and C-doc | 262/262, every miss explained |
+| M1 agreement with the key | 257/262; 262/262 with the PLAN 12 entries for C3 and C-doc (item 23) and K2-L1, K2-L5 and G3 (item 27) | 262/262, every miss explained |
 | M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act. Oct 1: VE's own readings query is UNKNOWN on every norm set. Oct 18: 7 of the 18 placed sets carry content, and VE answers CONFLICT-FREE with a model on each part document; the whole document stays UNKNOWN | as found |
 | M3 CHECKED share | 7.4% (8.5% before fsf-fidelity-fix) | under 10% |
 | M4 how each answer is backed | each per-choice answer rests on a case model that VE validated, a replayed certificate, or the Lean risk route | reported |

@@ -44,16 +44,20 @@ def test_g9_states_every_tcl_and_ccl_model():
     assert _situations("G9-TCCL") == sorted(((level,), "EXT-NOGOV", ()) for level in levels)
 
 
-@pytest.mark.parametrize("item_id,record", [("G3", None), ("G7", None), ("G9", "FORBIDS")])
-def test_each_alternative_is_answered_and_the_answer_holds_in_every_one(item_id, record):
+# G3's approaching branches fail since src:4's TCL proximity rule (PLAN 12 item 27, safety-framework-proximity-tcl).
+@pytest.mark.parametrize("item_id,record,failing", [("G3", None, {"G3-APPROACH-L1", "G3-APPROACH-L5"}),
+                                                    ("G7", None, set()), ("G9", "FORBIDS", set())],
+                         ids=["G3-None", "G7-None", "G9-FORBIDS"])
+def test_each_alternative_is_answered_and_the_answer_holds_in_every_one(item_id, record, failing):
     """The saved results answer every alternative of the case, and the item's answer is the per-choice conjunction."""
     result = RESULTS["items"][item_id] if record is None else RESULTS["items"][item_id]["parts"][record]
     case = run.CASES[next(k["case"] for k in run.json.loads((run.HERE / "answer-key.json").read_text())["items"]
                           if k["id"] == item_id)]
     assert sorted(result["alternatives"]) == sorted(a["id"] for a in case["alternatives"])
-    assert all(run.describe(r) == "ALL" for r in result["alternatives"].values())
-    assert run.describe(result) == "ALL"
-    assert next(r for r in RESULTS["comparison"] if r["id"] == item_id)["agree"]
+    answers = {a: run.describe(r) for a, r in result["alternatives"].items()}
+    assert answers == {a: "NONE" if a in failing else "ALL" for a in answers}
+    assert run.describe(result) == ("NONE" if failing else "ALL")
+    assert next(r for r in RESULTS["comparison"] if r["id"] == item_id)["agree"] == (not failing)
 
 
 def test_an_alternative_that_fails_makes_the_item_fail():
