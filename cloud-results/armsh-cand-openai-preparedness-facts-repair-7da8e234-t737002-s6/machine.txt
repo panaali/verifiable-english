@@ -1,0 +1,10 @@
+job=armsh-cand-openai-preparedness-facts-repair-7da8e234-t737002-s6 shard=6/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T10:08:22Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 10:08:22 up 4 min,  0 user,  load average: 1.60, 0.54, 0.21
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key ab1c54e5cc02 asset lean-build-27e318903a28-linux-aarch64.tar.zst sha256 3b1213c1fb06 ok, seal ok, from download, 11.3 s
+seed: mode=seed match=seed-ancestor asset=lean-build-27e318903a28-linux-aarch64.tar.zst pruned=0 base=923c5aab23fb
+seed: 493 modules rebuilt over the seed (traces), none stale
+seed: lake 1022.9 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
