@@ -1,16 +1,17 @@
 # translim-predicates: the limit of 64 regulated predicates per environment
 
-Branch `feature/translim-predicates`, base main `a84c072d76`. Task: measure what raising the limit costs, then RAISE
-(if the cost is bounded and the DRI says yes) or RESTRUCTURE (if a structure inside today's limits carries the use
-cases). Labels: **MEASURED** (run here, data file named) and **ESTIMATE** (derived, the method given).
+- **Status:** done, the RESTRUCTURE route, by DRI ruling (reviews/dri-decisions-20261115-translim-predicates.md):
+  no raise. The limit stays 64; there is no Lean, spec or use-case change. HEAD: see `git log -1`.
+- **Why not raise:** above 64 the cost is not bounded. At 96 and 128 the norms route overruns its 6 s CPU
+  deadline, and the soft document hits other limits (AST 10,000 nodes, a 256-predicate vocabulary).
+- **Restructure works:** a split into frames of at most 64 keeps every RSP answer byte-identical (3 and 32
+  predicates moved).
+- **What changed:** new tests (`tests/test_regulated_limit.py`, 18), a design note, measurement scripts and data,
+  and 2 backlog rows.
+- **Open:** nothing. No DRI signature is needed; ap-parse-indexb is not needed.
 
-**Outcome: RESTRUCTURE recommended; RAISE is not bounded.**
-- Above 64 the cost is not bounded. At 96 and 128 the norms route overruns its 6 s CPU deadline. The soft
-  document's AST limit refuses at 96, and the 256-predicate vocabulary limit refuses at 128.
-- Today's limit already carries the problem. At 64, one worst-case request shape overruns its deadline.
-- A split into two frames, each within 64, leaves every RSP answer unchanged.
-
-DRI question 1 was sent with these numbers (section 5). PART 2 waits for the answer.
+Branch `feature/translim-predicates`, base main `a84c072d76`. Labels: **MEASURED** (run here, data file named) and
+**ESTIMATE** (derived, the method given).
 
 ## 1a. Why 64: the limit sites and what grows with the count (MEASURED by reading the code)
 
@@ -36,8 +37,8 @@ DRI question 1 was sent with these numbers (section 5). PART 2 waits for the ans
     obligation/permission `pairs`.
   - NormDefaults' elaboration.
 
-Decomposition on `norms-elaborate` (MEASURED, one run each, frame of 55 predicates; script
-`/tmp`-only, numbers here):
+Decomposition on `norms-elaborate` (MEASURED, one run each, frame of 55 predicates; `decompose.py` in this
+directory):
 
 | 32 / 48 regulated | CPU s |
 |---|---|
@@ -176,14 +177,23 @@ Each 4 more predicates multiply the cost by about 8: it grows exponentially with
 
 **Restructure answers DRI question 3:** no route refuses the split.
 
-## 2. PART 2
+## 2. PART 2: RESTRUCTURE (DRI answer: no to the spec-limit addendum)
 
-Waiting for DRI question 1's answer (section 5). Until it is answered, PART 1 and the tests are the deliverable.
-Nothing in Lean, the spec or a use case was changed.
+- **Design note** `docs/usecases/safetyfw/regulated-limit.md`. It covers the recipe (link, split, parse, route,
+  account for units), the measured RSP runs (`data/rsp_split_runs.txt`) and the tests.
+- **No change** to Lean, the spec, Python product code, Rust or any use case: `git diff --numstat` is in the SIZE
+  section, and every changed path is under docs/ or tests/.
+- **Backlog rows,** filed with `backlog.sh add`: kind feature, owner "feature planner", blocked by nothing, status
+  proposed.
+  - `anthropic-rsp-regulated-split`: needs 68. It un-merges PLAN 12 item 4 and adds s33-evidence.
+  - `openai-preparedness-regulated-split`: needs 62 to 171. Its first step is the per-span act count (DRI item 2).
+  - None for FSF (27) or blind R2 (no case directory; its R3 already runs as a partition).
 
 ## 3. Tests
 
-`tests/test_regulated_limit.py` (new, 16 tests, all pass on main's code, 4.3 s):
+`tests/test_regulated_limit.py` (new, 18 tests). Run: `VE_RUST_JSONL=<pinned Rust> uv run pytest -q
+tests/test_regulated_limit.py` gave 16 passed in 4.34 s for the limit tests, and `-k split` gave 6 passed in
+0.63 s. Logs: /tmp/translim/t1.log and t3.log.
 
 - **Sites** (accept exactly 64, refuse 65 with `ResourceLimit: regulated predicates`), one test per site through
   the service route that reaches it:
@@ -192,16 +202,28 @@ Nothing in Lean, the spec or a use case was changed.
   - the soft route's decoder;
   - `norm-defaults`;
   - `Tree.check` on the elaborated document: 33 declarations, 64 parts accepted and 65 refused;
-  - the Rust mirror.
-- **Shadowed site.** `SoftNorms.checkW1` is not reachable with 65: the soft route refuses `acts@0` vocabularies
-  (`InvalidInput: invalid vocabulary`, MEASURED), so its decoder refuses first. The docstring says so.
-- **The split recipe.**
-  - It moves whole components: dual, guard and precedence links.
-  - It refuses a split that breaks a guard, dual or precedence link, and one that separates a conflict pair.
+  - the Rust mirror (`check` case).
+- **Shadowed site.** `SoftNorms.checkW1` (and its twin `checkW1Steps`) is not reachable with 65: the soft route
+  refuses `acts@0` vocabularies (`InvalidInput: invalid vocabulary`, MEASURED by `probe_split_acts.py` in this directory), so its
+  decoder refuses first. The module docstring says so.
+- **Recipe:**
+  - `test_split_recipe_moves_whole_components_only` (dual, guard and precedence links);
+  - `test_split_recipe_refuses_a_split_that_breaks_a_link` (3 cases);
+  - `test_split_recipe_links_rules_checked_together`.
+- **End to end:**
+  - `test_a_split_into_component_frames_selects_the_same_rules`: every predicate's selected rules in its frame
+    equal the unsplit document's, over 3 models.
+  - `test_a_frame_without_a_rules_guard_predicate_is_refused`: `UnknownSymbol`.
+- **Python mirror:** none exists; the grep of ve/ for the message and for 64 next to "regulated" found none.
+  Lean owns the limit.
 - **Not added (RAISE only):** "the 65th is accepted" and the grep test for a literal 64.
-
-Unchanged and still passing: `tests/test_rsp_fidelity_fix.py::test_regulated_predicates_stay_within_lean_limit`,
-the b6 CPU-deadline test, and the RSP `run.py --check` (section 1d baseline).
+- **Condition tests, unchanged, each run once by id:** 2 passed in 4.83 s (/tmp/translim/cond.log).
+  - `tests/test_rsp_fidelity_fix.py::test_regulated_predicates_stay_within_lean_limit`;
+  - the b6 CPU-deadline test
+    `tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline`.
+- **Keyed cases.** The RSP `run.py --check` passed on the scratch copy (110 / 126, `data/rsp_split_runs.txt`).
+  PF's and FSF's `run.py --check` were not run: this item changes no code they read, and the selected run covers
+  the tests `select_tests.py` ties to the diff.
 
 ## 4. Seeded bugs
 
@@ -227,7 +249,14 @@ Sent once with `msg.sh dri translim-predicates`:
 > RSP 68, PF 62-171 (ESTIMATE), blind R2 78, FSF 27. Recommendation: NO to a spec-limit addendum; RESTRUCTURE (design
 > note + one follow-up row per case). Yes to a spec-limit addendum raising regulated predicates to <N>?
 
-The answer is quoted here when it comes. It had not come when the report was written.
+**The DRI's answer** (reviews/dri-decisions-20261115-translim-predicates.md, dri-decider, wake 20261115T0111Z):
+
+> DRI ANSWER TO translim-predicates QUESTION 1: **NO to a spec-limit addendum. RESTRUCTURE.** The limit stays 64
+> regulated predicates per environment/frame. [...] 2. SIGNED (route): RESTRUCTURE, as the task's PART 2 RESTRUCTURE
+> route: no Lean or spec change; design note docs/usecases/safetyfw/regulated-limit.md with the measured split recipe
+> [...] then one backlog row per case (anthropic-rsp, openai-preparedness, blind R2 if it has a case dir; FSF at 27
+> needs none) [...] No DELTA row (task: RESTRUCTURE has none). [...] 3. ANSWERED: ap-parse-indexb stays held (not
+> released): the builder measured no need.
 
 ## 6. ap-parse-indexb
 
@@ -252,7 +281,71 @@ The answer is quoted here when it comes. It had not come when the report was wri
 - **Act splits.** The elaborated document (act split) counts parts against the same 64. A case with joined acts
   reaches the limit at half the declarations, and the recipe applies to it unchanged.
 
-FOLLOW-UP: none filed by this item for defects. The restructure adoption is a backlog row (kind feature, owner
-"feature planner"), filed after the DRI's answer if the answer is RESTRUCTURE.
+No FOLLOW-UP line: every deliverable is built, and no defect makes a verdict, binding or keyed answer wrong.
+The adoption rows are the backlog rows of section 2.
 
-SIZE: see the final section.
+## Line count
+
+`git diff --numstat $(git merge-base HEAD main)`, all additions, no deletions:
+
+| lines | file |
+|---|---|
+| 252 | tests/test_regulated_limit.py |
+| 207 | docs/translim/translim-predicates/rsp_split.py |
+| 190 | docs/translim/translim-predicates/cost_curve.py |
+| about 280 | docs/translim/translim-predicates/REPORT.md |
+| 70 | docs/usecases/safetyfw/regulated-limit.md |
+| 41 | docs/translim/translim-predicates/seeded-bugs.json |
+| 1,241 | data/*.json, generated by cost_curve.py |
+| 21 | data/rsp_split_runs.txt |
+
+SIZE: 0 product, 252 tests, 397 other hand-written lines (the two measurement scripts) plus the report, the design
+note and the seeded-bug record.
+
+## Spec re-read
+
+- "regulated predicates ≤ 64" against docs/spec/soft-norms.md:1521.
+- "64 regulated predicates per environment (the main frame and each merged frame)" against
+  docs/spec/readings-defaults.md:1192. The recipe's frames are separate environments, each within 64.
+- "`ResourceLimit: regulated predicates` (more than 64)" against docs/spec/norms.md:1054. The tests assert that
+  exact text at 65 and acceptance at 64.
+- "steps 5 and 6 raise the existing texts (`ResourceLimit: regulated predicates`, …)" against
+  docs/spec/act-phrases.md:1522 and the E12 row at 1763 ("63 regulated predicates (so 64 after the split) …
+  accepted; … 65 after … refused"). The elaborated-document test is that row through the service.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no relayed answer, schema or relay is added or changed (no ve/ or lean/ file in the diff).
+2. PASS: each task deliverable maps to its section.
+   - PART 1a-d: REPORT 1a-1d.
+   - PART 2 RESTRUCTURE: the design note, plus rows `anthropic-rsp-regulated-split` and
+     `openai-preparedness-regulated-split`.
+   - Condition tests: `tests/test_regulated_limit.py`.
+   - Seeded bugs (a)-(c): `seeded-bugs.json`.
+   - The DRI's answer: section 5.
+   - ap-parse-indexb: section 6.
+   - The rule-break grep of the diff found no Python copy of a Lean decision, no permanent report test, and no
+     edit to lean/VE/Norms/Wire.lean or to a file of the anthropic-rsp-cases-repair overlap.
+3. PASS: seeded bugs a, b, c1, c2 and c3 each fail a named test (`seeded-bugs.json`). The Lean ones were built
+   binaries asked through the service, not a hash or build failure.
+4. PASS: Lean and Rust agree at 64 and 65 (`test_rust_mirror_takes_the_limit_and_refuses_one_more` against the
+   Lean site tests). No Python mirror exists.
+5. N.A.: no field is read from a new Lean answer.
+6. PASS, pending: the final selected run is on committed HEAD (below). The chain runs the gate.
+7. PASS: no DELTA row (RESTRUCTURE has none, DRI item 2) and no trust growth (no Lean change).
+8. N.A.: no user-visible output changes. Every changed path is docs/ or tests/ (`git diff --numstat` above).
+9. PASS: `tools/select_tests.py --base <merge-base>` selects `tests/test_regulated_limit.py` and 31 others, not
+   every unit (/tmp/translim/select.log).
+10. N.A.: no Lean statement or proof changed.
+11. PASS: every over-limit fixture ends in `ResourceLimit` (the six `[65...]` cases). The tests use
+    `HANG_TIMEOUT`, no sleep, no fixed deadline (`tests/test_hang_guards.py` is selected).
+12. N.A.: no product code changed. The measured CPU curve is REPORT 1b, an evidence file and not a suite test.
+13. N.A.: no test removed or renamed.
+14. PASS: both directions in each site test (64 accepted, 65 refused) and in each recipe test (a closed split
+    accepted, a broken one refused). Each REPORT number names its data file or log. Spec re-read above.
+15. PASS:
+    - No overclaim: "no route refuses the split" is scoped to the routes RSP uses (soft-norms@0, norms@0); "no
+      measurable cost" is single runs within the spread; "no bitmask" cites the grep of lean/VE.
+    - No silent cut: every deliverable was built.
+    - Every new check can fail: c2 and c3.
+    - Limits are charged before work: N.A., no limit code changed.
