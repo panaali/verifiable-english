@@ -1,0 +1,7 @@
+counter sha256 f4345f44  case anthropic-rsp  commit 079f2e0995  state run
+FACTS <- s2-suff-third        plan12       | (j) RS3c is no longer a reading set: "result" is excluded (S:10's "such that continuation of the trend in AI progress seems likely to lead to even gre
+FACTS <- t4-only-if           plan12       | The formulas of `t4-suff` and `t4-only-if` are unchanged.
+FACTS <- t4-suff              plan12       | The formulas of `t4-suff` and `t4-only-if` are unchanged.
+FACTS <- s2-only-if-third     report       | `s2-only-if-third` lost its `RS3c=third` tag (RS3c is no reading set).
+D2D3  <- D2D3                 no-record    | no accounting line
+4 exposures on FACTS/CASES

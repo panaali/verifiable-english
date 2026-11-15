@@ -6,6 +6,7 @@ checked on the translation and on the saved results, each in the direction it wa
 import hashlib
 import json
 import re
+import unicodedata
 
 import pytest
 
@@ -966,3 +967,130 @@ def test_transcribed_source_sentences_are_whole_quotes_the_rules_account_and_the
         assert predicates <= set(legend), (case_id, predicates)
         carried = set().union(*(legend[p]["legend"] for p in predicates))
         assert acc.words(acc.norm(sentence)) - carried == set(), case_id
+
+
+# --- anthropic-rsp-facts-repair: the FACTS entries the omission counter scored as loss or mistag (ruling A3) ----------
+
+FACTS_IDS = [b.id for b in rsp_translation.read_blocks("facts.d1.ve")]
+# Every entry of a FACTS block's accounting line, and the predicate whose legend carries it.
+FACTS_ENTRIES = {("highly-capable-t4", "described in Section 1", "restates"): "highly_capable",
+                 ("s2-suff-third", "We would consider scenario (2) to have occurred where", "restates"): "scenario_2",
+                 ("s2-suff-third", "in the absence of", "restates"): "double_rate"}
+# Each legend's description before this item: with it, its entry is a mistag (or a loss) again.
+FACTS_LEGENDS_BEFORE = {
+    "highly_capable": "the model of {0} is highly capable (3.6: it crosses the threshold for automated AI R&D)",
+    "scenario_2": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons "
+                  "that likely relate to the automation of AI R&D (T4 (2): \"We will consider this threshold to be met "
+                  "if we determine that either (1) our models would be able to fully substitute for our entire set of "
+                  "Research Scientists and Research Engineers, at competitive costs (i.e., within a factor of 5); or "
+                  "(2) there is 'dramatic acceleration' of the pace of AI progress for reasons that likely relate to "
+                  "the automation of AI R&D.\")",
+    "double_rate": "at {0} we observe or expect double the rate of progress in AI aggregate capabilities compared to "
+                   "both the rate we'd expect and the fastest rate of extended progress we've observed without "
+                   "significant AI contributions (T4 (2)(a), footnotes 8 and 9)",
+}
+# Independent pins, from the pinned source (PLAN 1): each legend quote's start, end and SHA-256, measured on the
+# pinned rsp-3.4.txt (NFKC, the apostrophe written '). A changed word between the pins fails the hash.
+FACTS_LEGEND_QUOTES = {
+    "highly_capable": ("the threshold for", "described in Section 1",
+                       "6a25906cd08c9b2c2892d560414897d4c0e597f0079477aeef9f5f040672ddfb"),
+    "scenario_2": ("We would consider", "to have occurred where",
+                   "091f9e3385248ef3ef93d42382b36f3f6c4551c23c23b3bda9ba325b859a8cba"),
+    "double_rate": ("in the absence of", "contributions to AI R&D",
+                    "1b66334d036274e87fec89f63726b8dd028fa9e6a024b87e9409fbde45c0d3b1"),
+}
+COMMENT_STARTS = ("#", "--", "//")
+
+
+def _counter_norm(text):
+    """The counter's normalisation: NFKC, curly quotes and dashes, case, whitespace, line-break hyphenation."""
+    text = unicodedata.normalize("NFKC", text)
+    for a, b in (("’", "'"), ("‘", "'"), ("“", '"'), ("”", '"'), ("—", "-"), ("–", "-")):
+        text = text.replace(a, b)
+    return re.sub(r"(?<=[a-z])- (?=[a-z])", "", re.sub(r"\s+", " ", text.lower()).strip())
+
+
+def _omitted_words(words):
+    """The counter's tag rule reads every whole token of the omitted words but the articles."""
+    return set(re.findall(r"[a-z0-9]+", _counter_norm(words))) - {"a", "an", "the"}
+
+
+def _legend_entry_lines(key, lines):
+    """A predicate's entry in the vocabulary file: its key line, then every line until its brackets close."""
+    start = next((i for i, line in enumerate(lines) if re.match(rf'\s*"{re.escape(key)}"\s*:', line)), None)
+    if start is None:
+        return []
+    out, depth = [lines[start]], lines[start].count("(") - lines[start].count(")")
+    for line in lines[start + 1:]:
+        if depth <= 0 and not (line.lstrip().startswith('"') and not re.match(r'\s*"[a-z0-9_]+"\s*:', line)):
+            break
+        out.append(line)
+        depth += line.count("(") - line.count(")")
+    return out
+
+
+def _used_predicates(body, environment):
+    """The predicates a block's text uses: `classified as "<name>"`, or its verbalisation or act template."""
+    used = []
+    for key, entry in environment["vocabulary"]["predicates"].items():
+        templates = [t for t in (entry.get("verbalisation"), (entry.get("regulated") or {}).get("act")) if t]
+        patterns = [re.sub(r"\\\{\d\\\}", ".+?", re.escape(re.sub(r"^\{0\}\s*", "", t))) for t in templates]
+        if f'classified as "{key}"' in body or any(re.search(rf"(?<![A-Za-z]){p}(?![A-Za-z])", body)
+                                                   for p in patterns):
+            used.append(key)
+    return used
+
+
+def _carrier(block_id, legends=None):
+    """The counter's carrier of a block: one token set per body statement (comments and quoted literals stripped) and
+    one per legend of a predicate the block uses (its vocabulary entry, comments stripped); the header is not in it.
+    `legends` replaces a predicate's entry with a description (the other direction)."""
+    body = _block("facts.d1.ve", block_id).text
+    environment = json.loads((RSP / "environment.d1.json").read_text())
+    lines = (RSP / "rsp_vocabulary.py").read_text().splitlines()
+    statements = [re.sub(r"\s*(#|--|//).*$", "", re.sub(r'"[^"]*"', " ", line)) for line in body.splitlines()
+                  if not line.lstrip().startswith(COMMENT_STARTS)]
+    entries = [(legends or {}).get(key) or "\n".join(re.sub(r"\s#.*$", "", line) for line in
+                                                     _legend_entry_lines(key, lines)
+                                                     if not line.lstrip().startswith(COMMENT_STARTS))
+               for key in _used_predicates(body, environment)]
+    return [set(re.findall(r"[a-z0-9_]+", _counter_norm(s))) for s in statements + entries if s.strip()]
+
+
+def _facts_entries():
+    """Every `"<words>" <tag>` entry of a FACTS block's accounting line (the counter's parse)."""
+    out = set()
+    for line in (RSP / "accounting.d1.txt").read_text().splitlines():
+        block_id, sep, rest = line.partition(" | omits:")
+        if sep and block_id.strip() in FACTS_IDS:
+            out |= {(block_id.strip(), words, tag.strip()) for words, tag in re.findall(r'"([^"]*)"\s*([^;"]*)', rest)}
+    return out
+
+
+def test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier():
+    """(a) The counter's tag rule, on every FACTS entry: `restates` resolves only when every whole token of the
+    omitted words but the articles is in ONE segment of the block's own carrier (a body statement or one legend).
+    The legends before this item leave each entry unresolved: removing the legend's wording fails here."""
+    assert set(_facts_entries()) == set(FACTS_ENTRIES)
+    for (block_id, words, tag), predicate in FACTS_ENTRIES.items():
+        assert tag == "restates"
+        words_needed = _omitted_words(words)
+        assert words_needed and any(words_needed <= segment for segment in _carrier(block_id)), (block_id, words)
+        before = _carrier(block_id, {predicate: FACTS_LEGENDS_BEFORE[predicate]})
+        assert not any(words_needed <= segment for segment in before), (block_id, words, predicate)
+    # The carrying predicates are the blocks' own (no predicate added or renamed for them).
+    environment = json.loads((RSP / "environment.d1.json").read_text())
+    assert set(_used_predicates(_block("facts.d1.ve", "highly-capable-t4").text, environment)) == {
+        "crossed", "highly_capable"}
+    assert set(_used_predicates(_block("facts.d1.ve", "s2-suff-third").text, environment)) == {
+        "double_rate", "automation_attributable", "continuation_accelerates", "scenario_2"}
+
+
+@pytest.mark.parametrize("predicate", sorted(FACTS_LEGEND_QUOTES))
+def test_facts_repair_legend_quote_is_verbatim_in_the_pinned_source(predicate):
+    """(b) Each new legend wording is one double-quoted quote of the pinned source: its start and end pins and the
+    SHA-256 of the whole quote as measured on rsp-3.4.txt. A cut, a moved pin or one changed word fails."""
+    start, end, digest = FACTS_LEGEND_QUOTES[predicate]
+    quotes = [q for q in re.findall(r'"([^"]+)"', _legend(predicate)) if q.startswith(start)]
+    assert len(quotes) == 1 and quotes[0].endswith(end), (predicate, quotes)
+    assert hashlib.sha256(quotes[0].encode()).hexdigest() == digest, (predicate, quotes[0])
