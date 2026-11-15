@@ -1,4 +1,5 @@
 import VE.SoftNorms.SelectedSound
+import VE.SoftNorms.Prepared
 
 /-! Examples of the `soft-selected` kind (kb-10a) on the three-rule document of
 tests/test_soft_selected.py: a strict rule `h` (guard `v`), a default rule `d` whose exception
@@ -140,5 +141,60 @@ def collidingModel : String :=
 #guard answerOf (factsCase "[]" collidingText collidingModel
     r#"[{"predicate": "x_required", "tuple": ["a"]}, {"predicate": "x_required", "tuple": ["b"]}]"#) ==
   "{\"background\":true,\"coherent\":false,\"facts\":true,\"id\":\"s\",\"results\":[{\"outcome\":true,\"predicate\":\"x_required\",\"selected\":[\"p\",\"q\"],\"tuple\":[\"a\"]},{\"outcome\":true,\"predicate\":\"x_required\",\"selected\":[\"p\"],\"tuple\":[\"b\"]}],\"status\":\"ok\"}"
+
+/-! Each flag reads every fact and every conjunct, in any position, and the prepared runner answers as the
+runner does (the checks the trust mutants of `factsAt`, `coherentAt`, `cohPremisesIn` and `decodeFactsIn`
+are refuted by). -/
+
+/-- The prepared path's answer (`prepare` then `runSelectedP`), compressed, or the refusal. -/
+def answerOfP (j : Json) : String :=
+  match prepare (j.getObjValD "environment") (j.getObjValD "norms") with
+  | .error e => "error: " ++ e
+  | .ok p => match runSelectedP p "s" j with
+    | .ok a => a.compress
+    | .error e => "error: " ++ e
+
+-- The false fact first: `facts: false` (and last, above).
+#guard (answerOf (factsCase ("[" ++ factFalse ++ ", " ++ factTrue ++ "]"))).startsWith
+  "{\"background\":true,\"coherent\":true,\"facts\":false,"
+
+def exceptionText : String :=
+  r#""mode": "default", "exception": {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": []}"#
+
+/-- Three unranked default rules: `p` (guard `v`) collides with `q` (guard `w`) and with `r` (guard `s`): two
+coherence conjuncts, for the pairs (p, q) and (p, r) in that order. -/
+def threeText : String :=
+  "[{\"norm\": {\"name\": \"p\", \"predicate\": \"x_required\", \"sign\": true, \"guard\": [\"unary\", \"v\", [\"var\", 0]], \"unless\": [], \"over\": [], " ++ exceptionText ++ "}}, " ++
+  "{\"norm\": {\"name\": \"q\", \"predicate\": \"x_required\", \"sign\": false, \"guard\": [\"unary\", \"w\", [\"var\", 0]], \"unless\": [], \"over\": [], " ++ exceptionText ++ "}}, " ++
+  "{\"norm\": {\"name\": \"r\", \"predicate\": \"x_required\", \"sign\": false, \"guard\": [\"unary\", \"s\", [\"var\", 0]], \"unless\": [], \"over\": [], " ++ exceptionText ++ "}}]"
+
+def threeModel (v w s : String) : String :=
+  "{\"complete\": true, \"domains\": {\"assistant\": [\"a\"], \"user\": []}, \"constants\": {}, \"relations\": {\"v\": " ++ v ++ ", \"w\": " ++ w ++ ", \"s\": " ++ s ++ ", \"soft__excepted__p\": [], \"soft__excepted__q\": [], \"soft__excepted__r\": []}}"
+
+def atA : String := r#"[{"predicate": "x_required", "tuple": ["a"]}]"#
+
+/-- The (p, q) conjunct alone fails, the (p, r) conjunct alone fails, or neither. -/
+def firstFails : Json := factsCase "[]" threeText (threeModel r#"[["a"]]"# r#"[["a"]]"# "[]") atA
+def lastFails : Json := factsCase "[]" threeText (threeModel r#"[["a"]]"# "[]" r#"[["a"]]"#) atA
+def noneFails : Json := factsCase "[]" threeText (threeModel r#"[["a"]]"# "[]" "[]") atA
+
+#guard (answerOf firstFails).startsWith "{\"background\":true,\"coherent\":false,"
+#guard (answerOf lastFails).startsWith "{\"background\":true,\"coherent\":false,"
+#guard (answerOf noneFails).startsWith "{\"background\":true,\"coherent\":true,"
+
+-- The prepared runner: the same answers, refusals included.
+#guard [firstFails, lastFails, noneFails, factsCase ("[" ++ factFalse ++ ", " ++ factTrue ++ "]"),
+    factsCase ("[" ++ factTrue ++ ", " ++ factFalse ++ "]"), factsCase "[]", selectedCase "deny" r#"[["a"], ["e"]]"# queriesText,
+    factsCase r#"[["exists", "assistant", ["unary", "soft__excepted__o", ["var", 0]]]]"#].all
+  fun j => answerOfP j == answerOf j
+
+-- A decision predicate is refused wherever it is: the last decision name, and either position in the list.
+def decisionFact (name : String) : String := "[\"exists\", \"assistant\", [\"unary\", \"" ++ name ++ "\", [\"var\", 0]]]"
+#guard answerOf (factsCase ("[" ++ decisionFact "soft__excepted__o" ++ "]")) ==
+  "error: InvalidInput: facts: soft__excepted__o is a soft decision predicate; its decider decides it, not a fact"
+#guard answerOf (factsCase ("[" ++ factTrue ++ ", " ++ decisionFact "soft__excepted__d" ++ "]")) ==
+  "error: InvalidInput: facts: soft__excepted__d is a soft decision predicate; its decider decides it, not a fact"
+#guard answerOf (factsCase ("[" ++ decisionFact "soft__excepted__d" ++ ", " ++ factTrue ++ "]")) ==
+  "error: InvalidInput: facts: soft__excepted__d is a soft decision predicate; its decider decides it, not a fact"
 
 end VE.SoftNorms.SelectedExamples
