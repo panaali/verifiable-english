@@ -22109,6 +22109,10 @@
     "VE/SoftNorms/Selected.lean": {
       "S": [
         "VE.SoftNorms.Run.SelectedQuery",
+        "VE.SoftNorms.Run.coherentAt",
+        "VE.SoftNorms.Run.factsAt",
+        "VE.SoftNorms.Run.factsFields",
+        "VE.SoftNorms.Run.factsSent",
         "VE.SoftNorms.Run.fullOver",
         "VE.SoftNorms.Run.outcomeAt",
         "VE.SoftNorms.Run.selectedAt"
@@ -22169,20 +22173,35 @@
     "VE/SoftNorms/SelectedSound.lean": {
       "S": [
         "VE.SoftNorms.Run.QueryDecoded",
-        "VE.SoftNorms.Run.SelectedAnswer"
+        "VE.SoftNorms.Run.SelectedAnswer",
+        "VE.SoftNorms.Run.SelectedAnswerWith"
       ]
     },
     "VE/SoftNorms/SelectedExamples.lean": {
       "T": [
         "VE.SoftNorms.SelectedExamples.answerOf",
+        "VE.SoftNorms.SelectedExamples.answerOfP",
+        "VE.SoftNorms.SelectedExamples.atA",
+        "VE.SoftNorms.SelectedExamples.collidingModel",
+        "VE.SoftNorms.SelectedExamples.collidingText",
+        "VE.SoftNorms.SelectedExamples.decisionFact",
         "VE.SoftNorms.SelectedExamples.environmentText",
+        "VE.SoftNorms.SelectedExamples.exceptionText",
+        "VE.SoftNorms.SelectedExamples.factFalse",
+        "VE.SoftNorms.SelectedExamples.factTrue",
+        "VE.SoftNorms.SelectedExamples.factsCase",
+        "VE.SoftNorms.SelectedExamples.firstFails",
+        "VE.SoftNorms.SelectedExamples.lastFails",
         "VE.SoftNorms.SelectedExamples.modelText",
+        "VE.SoftNorms.SelectedExamples.noneFails",
         "VE.SoftNorms.SelectedExamples.normsText",
         "VE.SoftNorms.SelectedExamples.parsed",
         "VE.SoftNorms.SelectedExamples.queriesText",
         "VE.SoftNorms.SelectedExamples.resultsText",
         "VE.SoftNorms.SelectedExamples.selectedCase",
         "VE.SoftNorms.SelectedExamples.specAt",
+        "VE.SoftNorms.SelectedExamples.threeModel",
+        "VE.SoftNorms.SelectedExamples.threeText",
         "VE.SoftNorms.SelectedExamples.twoStrictModel",
         "VE.SoftNorms.SelectedExamples.twoStrictText"
       ]
@@ -22191,11 +22210,13 @@
       "T": [
         "ResponseShape.SoftSelectedExamples.accepts",
         "ResponseShape.SoftSelectedExamples.allow",
+        "ResponseShape.SoftSelectedExamples.colliding",
         "ResponseShape.SoftSelectedExamples.deny",
         "ResponseShape.SoftSelectedExamples.refused",
         "ResponseShape.SoftSelectedExamples.run",
         "ResponseShape.SoftSelectedExamples.setResult",
-        "ResponseShape.SoftSelectedExamples.violating"
+        "ResponseShape.SoftSelectedExamples.violating",
+        "ResponseShape.SoftSelectedExamples.withFacts"
       ]
     },
     "VE/Kernel/Carry.lean": {
@@ -22225,9 +22246,15 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.vocabularyIn",
+          "name": "VE.SoftNorms.Run.backgroundIn",
           "tied": [
-            "VE.SoftNorms.Run.vocabularyIn_eq"
+            "VE.SoftNorms.Run.backgroundIn_valid"
+          ]
+        },
+        {
+          "name": "VE.SoftNorms.Run.cohPremisesIn",
+          "tied": [
+            "VE.SoftNorms.Run.cohPremisesIn_eq"
           ]
         },
         {
@@ -22243,9 +22270,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.backgroundIn",
+          "name": "VE.SoftNorms.Run.prepare",
           "tied": [
-            "VE.SoftNorms.Run.backgroundIn_valid"
+            "VE.SoftNorms.Run.prepare_ok"
           ]
         },
         {
@@ -22255,9 +22282,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.prepare",
+          "name": "VE.SoftNorms.Run.runCaseReportedP",
           "tied": [
-            "VE.SoftNorms.Run.prepare_ok"
+            "VE.SoftNorms.Run.runCaseReportedP_eq"
           ]
         },
         {
@@ -22267,9 +22294,9 @@
           ]
         },
         {
-          "name": "VE.SoftNorms.Run.runCaseReportedP",
+          "name": "VE.SoftNorms.Run.vocabularyIn",
           "tied": [
-            "VE.SoftNorms.Run.runCaseReportedP_eq"
+            "VE.SoftNorms.Run.vocabularyIn_eq"
           ]
         }
       ],
@@ -22311,6 +22338,229 @@
         "VE.Route.MeteredProfileExamples.treeOf",
         "VE.Route.MeteredProfileExamples.value",
         "VE.Route.MeteredProfileExamples.within"
+      ]
+    },
+    "VE/Compose/SlotWire.lean": {
+      "S": [
+        "VE.Compose.SlotWire.NoFacts",
+        "VE.Compose.SlotWire.SlotAdmitted"
+      ],
+      "C": [
+        "VE.Compose.SlotWire.SlotWitnessData",
+        "VE.Compose.SlotWire.replaySlotConflict",
+        "VE.Compose.SlotWire.replaySlotEntailment",
+        "VE.Compose.SlotWire.replaySlotWitness",
+        "VE.Compose.SlotWire.slotWitnessFrom",
+        "VE.Compose.SlotWire.replaySlotAdmission"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Compose.SlotWire.SlotConflictReplay.conflictFree",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_conflict_sound"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotEntailmentReplay.valid",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_acceptance"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.decodeFacts",
+          "tied": [
+            "VE.Compose.SlotWire.decodeFacts_ok"
+          ]
+        },
+        "VE.Compose.SlotWire.decodeFactsIn",
+        {
+          "name": "VE.Compose.SlotWire.decodeSlotPackage",
+          "tied": [
+            "VE.Compose.SlotWire.decodeSlotPackage_nil"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.factsModel",
+          "tied": [
+            "VE.Compose.SlotWire.factsModel_sat"
+          ]
+        }
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Compose.SlotWire.SlotConflictReplay",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_conflict_sound"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotEntailmentReplay",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_acceptance"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotWitnessData.M",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotWitnessData.conflict",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotWitnessData.target",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_empty"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotWitnessData.tuple",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_empty"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotWitnessReplay",
+          "tied": [
+            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
+          ]
+        },
+        {
+          "name": "VE.Compose.SlotWire.SlotAdmission",
+          "tied": [
+            "VE.Compose.SlotWire.replaySlotAdmission_sound"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Compose.SlotWire.slotFirstFailure",
+        "VE.Compose.SlotWire.slotModelFault"
+      ]
+    },
+    "VE/SoftNorms/SlotExamples.lean": {
+      "T": [
+        "VE.SoftNorms.SlotExamples.certificateCase",
+        "VE.SoftNorms.SlotExamples.certificateFields",
+        "VE.SoftNorms.SlotExamples.claim",
+        "VE.SoftNorms.SlotExamples.contradiction",
+        "VE.SoftNorms.SlotExamples.environmentText",
+        "VE.SoftNorms.SlotExamples.fact",
+        "VE.SoftNorms.SlotExamples.factCertificateText",
+        "VE.SoftNorms.SlotExamples.factsModel",
+        "VE.SoftNorms.SlotExamples.normsText",
+        "VE.SoftNorms.SlotExamples.packagesField",
+        "VE.SoftNorms.SlotExamples.packagesText",
+        "VE.SoftNorms.SlotExamples.parsed",
+        "VE.SoftNorms.SlotExamples.refusals",
+        "VE.SoftNorms.SlotExamples.situation",
+        "VE.SoftNorms.SlotExamples.slotCase",
+        "VE.SoftNorms.SlotExamples.topCertificateText",
+        "VE.SoftNorms.SlotExamples.validOf",
+        "VE.SoftNorms.SlotExamples.verdictOf",
+        "VE.SoftNorms.SlotExamples.witnessField",
+        "VE.SoftNorms.SlotExamples.admissionOf"
+      ]
+    },
+    "ResponseShape/SlotExamples.lean": {
+      "T": [
+        "ResponseShape.SlotExamples.accepts",
+        "ResponseShape.SlotExamples.certificate",
+        "ResponseShape.SlotExamples.conflictFree",
+        "ResponseShape.SlotExamples.oneFact",
+        "ResponseShape.SlotExamples.pairNorms",
+        "ResponseShape.SlotExamples.refused",
+        "ResponseShape.SlotExamples.run",
+        "ResponseShape.SlotExamples.soft",
+        "ResponseShape.SlotExamples.unknown",
+        "ResponseShape.SlotExamples.witness",
+        "ResponseShape.SlotExamples.witnessAt",
+        "ResponseShape.SlotExamples.witnesses",
+        "ResponseShape.SlotExamples.admissions"
+      ]
+    },
+    "VE/Acts/Hook.lean": {
+      "D[V]": [
+        "VE.Norms.Wire.ActsHook.acts",
+        "VE.Norms.Wire.ActsHook.lexical",
+        "VE.Norms.Wire.decodeFlaggedActs",
+        "VE.Norms.Wire.decodeNormsEnvironment"
+      ]
+    },
+    "VE/Acts/HookToday.lean": {
+      "P": [
+        "VE.Acts.HookToday.Today.decodeFlagged",
+        "VE.Acts.HookToday.Today.decodeNormsEnvironment",
+        "VE.Acts.HookToday.Today.decodeSource"
+      ]
+    },
+    "VE/Acts/HookTwins.lean": {
+      "P": [
+        "VE.Acts.HookTwins.Today.decoderOf",
+        "VE.Acts.HookTwins.Today.runAdmission",
+        "VE.Acts.HookTwins.Today.runCase",
+        "VE.Acts.HookTwins.Today.runCaseRouted"
+      ]
+    },
+    "VE/Acts/HookExamples.lean": {
+      "T": [
+        "VE.Acts.HookExamples.a1",
+        "VE.Acts.HookExamples.a2",
+        "VE.Acts.HookExamples.a3",
+        "VE.Acts.HookExamples.acts",
+        "VE.Acts.HookExamples.actsP",
+        "VE.Acts.HookExamples.block",
+        "VE.Acts.HookExamples.caseOf",
+        "VE.Acts.HookExamples.d4",
+        "VE.Acts.HookExamples.desc",
+        "VE.Acts.HookExamples.doc0",
+        "VE.Acts.HookExamples.elabCase",
+        "VE.Acts.HookExamples.env",
+        "VE.Acts.HookExamples.envA",
+        "VE.Acts.HookExamples.err",
+        "VE.Acts.HookExamples.flagRefusal",
+        "VE.Acts.HookExamples.flaggedPlain",
+        "VE.Acts.HookExamples.fxs",
+        "VE.Acts.HookExamples.joinedE",
+        "VE.Acts.HookExamples.judgedA",
+        "VE.Acts.HookExamples.lexical",
+        "VE.Acts.HookExamples.perm",
+        "VE.Acts.HookExamples.plainCase",
+        "VE.Acts.HookExamples.plainD",
+        "VE.Acts.HookExamples.plainEnv",
+        "VE.Acts.HookExamples.plainReg",
+        "VE.Acts.HookExamples.pred",
+        "VE.Acts.HookExamples.rule",
+        "VE.Acts.HookExamples.seek",
+        "VE.Acts.HookExamples.shown",
+        "VE.Acts.HookExamples.sortedRefusal",
+        "VE.Acts.HookExamples.unsorted",
+        "VE.Acts.HookExamples.view"
+      ]
+    },
+    "VE/Alternatives/HookExamples.lean": {
+      "T": [
+        "VE.Alternatives.HookExamples.desc",
+        "VE.Alternatives.HookExamples.flaggedEnv"
+      ]
+    },
+    "VE/NormDefaults/HookExamples.lean": {
+      "T": [
+        "VE.NormDefaults.HookExamples.desc",
+        "VE.NormDefaults.HookExamples.err",
+        "VE.NormDefaults.HookExamples.ndEnv"
+      ]
+    },
+    "VE/Service/HookExamples.lean": {
+      "T": [
+        "VE.Service.HookExamples.caseOf",
+        "VE.Service.HookExamples.desc",
+        "VE.Service.HookExamples.err",
+        "VE.Service.HookExamples.flagRefusal",
+        "VE.Service.HookExamples.flaggedEnv"
       ]
     },
     "VE/Service/CoreDocument.lean": {
@@ -22454,147 +22704,6 @@
         "VE.Service.CoreDocumentExamples.unitOf",
         "VE.Service.CoreDocumentExamples.viewOf",
         "VE.Service.CoreDocumentExamples.withNull"
-      ]
-    },
-    "VE/Compose/SlotWire.lean": {
-      "S": [
-        "VE.Compose.SlotWire.NoFacts",
-        "VE.Compose.SlotWire.SlotAdmitted"
-      ],
-      "C": [
-        "VE.Compose.SlotWire.SlotWitnessData",
-        "VE.Compose.SlotWire.replaySlotConflict",
-        "VE.Compose.SlotWire.replaySlotEntailment",
-        "VE.Compose.SlotWire.replaySlotWitness",
-        "VE.Compose.SlotWire.slotWitnessFrom",
-        "VE.Compose.SlotWire.replaySlotAdmission"
-      ],
-      "D[V]": [
-        {
-          "name": "VE.Compose.SlotWire.SlotConflictReplay.conflictFree",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_conflict_sound"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotEntailmentReplay.valid",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_acceptance"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.decodeFacts",
-          "tied": [
-            "VE.Compose.SlotWire.decodeFacts_ok"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.decodeSlotPackage",
-          "tied": [
-            "VE.Compose.SlotWire.decodeSlotPackage_nil"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.factsModel",
-          "tied": [
-            "VE.Compose.SlotWire.factsModel_sat"
-          ]
-        }
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Compose.SlotWire.SlotConflictReplay",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_conflict_sound"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotEntailmentReplay",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_acceptance"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotWitnessData.M",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotWitnessData.conflict",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotWitnessData.target",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_empty"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotWitnessData.tuple",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_empty"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotWitnessReplay",
-          "tied": [
-            "VE.Compose.SlotWire.slot_wire_conflict_witness_sound"
-          ]
-        },
-        {
-          "name": "VE.Compose.SlotWire.SlotAdmission",
-          "tied": [
-            "VE.Compose.SlotWire.replaySlotAdmission_sound"
-          ]
-        }
-      ],
-      "G[R]": [
-        "VE.Compose.SlotWire.slotFirstFailure",
-        "VE.Compose.SlotWire.slotModelFault"
-      ]
-    },
-    "VE/SoftNorms/SlotExamples.lean": {
-      "T": [
-        "VE.SoftNorms.SlotExamples.certificateCase",
-        "VE.SoftNorms.SlotExamples.certificateFields",
-        "VE.SoftNorms.SlotExamples.claim",
-        "VE.SoftNorms.SlotExamples.contradiction",
-        "VE.SoftNorms.SlotExamples.environmentText",
-        "VE.SoftNorms.SlotExamples.fact",
-        "VE.SoftNorms.SlotExamples.factCertificateText",
-        "VE.SoftNorms.SlotExamples.factsModel",
-        "VE.SoftNorms.SlotExamples.normsText",
-        "VE.SoftNorms.SlotExamples.packagesField",
-        "VE.SoftNorms.SlotExamples.packagesText",
-        "VE.SoftNorms.SlotExamples.parsed",
-        "VE.SoftNorms.SlotExamples.refusals",
-        "VE.SoftNorms.SlotExamples.situation",
-        "VE.SoftNorms.SlotExamples.slotCase",
-        "VE.SoftNorms.SlotExamples.topCertificateText",
-        "VE.SoftNorms.SlotExamples.validOf",
-        "VE.SoftNorms.SlotExamples.verdictOf",
-        "VE.SoftNorms.SlotExamples.witnessField",
-        "VE.SoftNorms.SlotExamples.admissionOf"
-      ]
-    },
-    "ResponseShape/SlotExamples.lean": {
-      "T": [
-        "ResponseShape.SlotExamples.accepts",
-        "ResponseShape.SlotExamples.certificate",
-        "ResponseShape.SlotExamples.conflictFree",
-        "ResponseShape.SlotExamples.oneFact",
-        "ResponseShape.SlotExamples.pairNorms",
-        "ResponseShape.SlotExamples.refused",
-        "ResponseShape.SlotExamples.run",
-        "ResponseShape.SlotExamples.soft",
-        "ResponseShape.SlotExamples.unknown",
-        "ResponseShape.SlotExamples.witness",
-        "ResponseShape.SlotExamples.witnessAt",
-        "ResponseShape.SlotExamples.witnesses",
-        "ResponseShape.SlotExamples.admissions"
       ]
     },
     "VE/Service/CoreCheck.lean": {
@@ -22858,87 +22967,6 @@
         "ResponseShape.CoreCheckExamples.setAt",
         "ResponseShape.CoreCheckExamples.getAt",
         "ResponseShape.CoreCheckExamples.refusedAt"
-      ]
-    },
-    "VE/Acts/Hook.lean": {
-      "D[V]": [
-        "VE.Norms.Wire.ActsHook.acts",
-        "VE.Norms.Wire.ActsHook.lexical",
-        "VE.Norms.Wire.decodeFlaggedActs",
-        "VE.Norms.Wire.decodeNormsEnvironment"
-      ]
-    },
-    "VE/Acts/HookToday.lean": {
-      "P": [
-        "VE.Acts.HookToday.Today.decodeFlagged",
-        "VE.Acts.HookToday.Today.decodeNormsEnvironment",
-        "VE.Acts.HookToday.Today.decodeSource"
-      ]
-    },
-    "VE/Acts/HookTwins.lean": {
-      "P": [
-        "VE.Acts.HookTwins.Today.decoderOf",
-        "VE.Acts.HookTwins.Today.runAdmission",
-        "VE.Acts.HookTwins.Today.runCase",
-        "VE.Acts.HookTwins.Today.runCaseRouted"
-      ]
-    },
-    "VE/Acts/HookExamples.lean": {
-      "T": [
-        "VE.Acts.HookExamples.a1",
-        "VE.Acts.HookExamples.a2",
-        "VE.Acts.HookExamples.a3",
-        "VE.Acts.HookExamples.acts",
-        "VE.Acts.HookExamples.actsP",
-        "VE.Acts.HookExamples.block",
-        "VE.Acts.HookExamples.caseOf",
-        "VE.Acts.HookExamples.d4",
-        "VE.Acts.HookExamples.desc",
-        "VE.Acts.HookExamples.doc0",
-        "VE.Acts.HookExamples.elabCase",
-        "VE.Acts.HookExamples.env",
-        "VE.Acts.HookExamples.envA",
-        "VE.Acts.HookExamples.err",
-        "VE.Acts.HookExamples.flagRefusal",
-        "VE.Acts.HookExamples.flaggedPlain",
-        "VE.Acts.HookExamples.fxs",
-        "VE.Acts.HookExamples.joinedE",
-        "VE.Acts.HookExamples.judgedA",
-        "VE.Acts.HookExamples.lexical",
-        "VE.Acts.HookExamples.perm",
-        "VE.Acts.HookExamples.plainCase",
-        "VE.Acts.HookExamples.plainD",
-        "VE.Acts.HookExamples.plainEnv",
-        "VE.Acts.HookExamples.plainReg",
-        "VE.Acts.HookExamples.pred",
-        "VE.Acts.HookExamples.rule",
-        "VE.Acts.HookExamples.seek",
-        "VE.Acts.HookExamples.shown",
-        "VE.Acts.HookExamples.sortedRefusal",
-        "VE.Acts.HookExamples.unsorted",
-        "VE.Acts.HookExamples.view"
-      ]
-    },
-    "VE/Alternatives/HookExamples.lean": {
-      "T": [
-        "VE.Alternatives.HookExamples.desc",
-        "VE.Alternatives.HookExamples.flaggedEnv"
-      ]
-    },
-    "VE/NormDefaults/HookExamples.lean": {
-      "T": [
-        "VE.NormDefaults.HookExamples.desc",
-        "VE.NormDefaults.HookExamples.err",
-        "VE.NormDefaults.HookExamples.ndEnv"
-      ]
-    },
-    "VE/Service/HookExamples.lean": {
-      "T": [
-        "VE.Service.HookExamples.caseOf",
-        "VE.Service.HookExamples.desc",
-        "VE.Service.HookExamples.err",
-        "VE.Service.HookExamples.flagRefusal",
-        "VE.Service.HookExamples.flaggedEnv"
       ]
     }
   }

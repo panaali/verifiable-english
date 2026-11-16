@@ -471,33 +471,108 @@ def figure(n: int) -> str:
     return f"{n:,}"
 
 
-def test_the_records_quote_the_saved_measurement():
-    """The specification's table and figures, the frozen keys' figures and the signed total are those of
-    `closure-baseline.json` (review kb-0 F1: they kept 9,565 and 17,355 after the measure changed)."""
-    spec = (ROOT / "docs/spec/kernel-boundary.md").read_text()
-    prose = " ".join(spec.split())
-    rows = {row["name"]: row for row in BASELINE["paths"]}
+def record_figure_problems(spec: str, frozen: str, allowances: str, baseline: dict) -> list[str]:
+    """Every place the records quote a figure of `baseline`, each wrong one listed (none stops the rest:
+    review kb-9 F1 found a regenerated baseline behind eleven stale figures, shown one per rerun)."""
+    problems = []
+
+    def need(found: bool, what: str) -> None:
+        if not found:
+            problems.append(what)
+
+    prose, frozen = " ".join(spec.split()), " ".join(frozen.split())
+    rows = {row["name"]: row for row in baseline["paths"]}
     table = re.findall(r"^\| (\w+)(?: \(`[^`]*`\))? \| (kernel|candidate) \| (\d+) \| ([\d,]+) \| ([\d,]+) \| ([\d,]+) \|$",
                        spec, flags=re.MULTILINE)
-    assert sorted(name for name, *_ in table) == sorted(rows)
+    need(sorted(name for name, *_ in table) == sorted(rows),
+         f"table paths {sorted(name for name, *_ in table)} are not the baseline's {sorted(rows)}")
     for name, tier, theorems, spec_lines, wrap_lines, lines in table:
+        if name not in rows:
+            continue
         row = rows[name]
-        assert (tier, int(theorems), spec_lines, wrap_lines, lines) == (
-            row["tier"], row["theorems"], figure(row["spec_lines"]), figure(row["wrap_lines"]), figure(row["lines"])), name
-    kernel = figure(BASELINE["kernel_lines"])
-    assert f"| **kernel, distinct lines** | | | | | **{kernel}** |" in spec
-    assert f"**{kernel} lines (M)**" in prose and f"kernel at most {kernel} now" in prose
-    writers = BASELINE["verdict_writers"]
+        quoted = (tier, int(theorems), spec_lines, wrap_lines, lines)
+        saved = (row["tier"], row["theorems"], figure(row["spec_lines"]), figure(row["wrap_lines"]), figure(row["lines"]))
+        need(quoted == saved, f"table row {name}: {quoted} where the baseline has {saved}")
+    kernel = figure(baseline["kernel_lines"])
+    over = baseline["kernel_lines"] - 10_000
+    keyed, keyed_kernel = figure(baseline["keyed_lines"]), figure(baseline["keyed_kernel_lines"])
+    writers = baseline["verdict_writers"]
     outside = [w for w in writers if not w["in_kernel"]]
     modules = len({w["module"] for w in outside})
-    assert f"| {len(writers)}, of them {len(outside)} in {modules} modules outside the kernel (M) |" in spec
-    assert f"Today {len(writers)} definitions write a verdict token and {len(outside)} of them, in {modules} modules" in prose
-    keyed, keyed_kernel = figure(BASELINE["keyed_lines"]), figure(BASELINE["keyed_kernel_lines"])
-    assert f"validators in full) | {keyed} |" in spec and f"| of which in the proved kernel | {keyed_kernel} |" in spec
-    frozen = " ".join((ROOT / "docs/kernel/frozen-keys-20261111.md").read_text().split())
-    assert f"**{keyed} distinct lines**" in frozen and f"The proved kernel is {keyed_kernel} of them" in frozen
-    allowances = (ROOT / "docs/kernel/ALLOWANCES.md").read_text()
-    assert f"signed total: {kernel} lines" in allowances
+    for text, where, place in (
+            (f"| **kernel, distinct lines** | | | | | **{kernel}** |", spec, "spec table total"),
+            (f"**{kernel} lines (M)**", prose, "spec section 1 kernel total"),
+            (f"{over:,} over the 10,000-line target" if over > 0 else "", prose, "spec section 1 excess"),
+            (f"kernel at most {kernel} now", prose, "spec section 6 target"),
+            (f"{keyed} lines (M): the five kernel paths", prose, "spec section 1 keyed total"),
+            (f"| {keyed}, of them {keyed_kernel} in the kernel (M) |", spec, "spec measurement table keyed row"),
+            (f"| {len(writers)}, of them {len(outside)} in {modules} modules outside the kernel (M) |", spec,
+             "spec measurement table writers row"),
+            (f"Today {len(writers)} definitions write a verdict token and {len(outside)} of them, in {modules} modules",
+             prose, "spec writers sentence"),
+            (f"validators in full) | {keyed} |", spec, "spec section 1.3 keyed row"),
+            (f"| of which in the proved kernel | {keyed_kernel} |", spec, "spec section 1.3 kernel row"),
+            (f"**{keyed} distinct lines**", frozen, "frozen keys keyed total"),
+            (f"The proved kernel is {keyed_kernel} of them", frozen, "frozen keys kernel total"),
+            (f"signed total: {kernel} lines", allowances, "ALLOWANCES signed total")):
+        need(text in where, f"{place}: no {text!r}")
+    return problems
+
+
+def test_the_records_quote_the_saved_measurement():
+    """The specification's table and figures, the frozen keys' figures and the signed total are those of
+    `closure-baseline.json` (review kb-0 F1: they kept 9,565 and 17,355 after the measure changed; review
+    kb-9 F1: 10,083 and 16,545 after kb-9 regenerated it), all wrong ones in one failure."""
+    problems = record_figure_problems((ROOT / "docs/spec/kernel-boundary.md").read_text(),
+                                      (ROOT / "docs/kernel/frozen-keys-20261111.md").read_text(),
+                                      (ROOT / "docs/kernel/ALLOWANCES.md").read_text(), BASELINE)
+    assert problems == []
+
+
+def synthetic_records(b: dict) -> tuple[str, str, str]:
+    """The spec, frozen-keys and ALLOWANCES sentences that quote a baseline, written from `b`."""
+    rows = "\n".join(f"| {r['name']} | {r['tier']} | {r['theorems']} | {figure(r['spec_lines'])} | "
+                     f"{figure(r['wrap_lines'])} | {figure(r['lines'])} |" for r in b["paths"])
+    kernel, keyed, keyed_kernel = figure(b["kernel_lines"]), figure(b["keyed_lines"]), figure(b["keyed_kernel_lines"])
+    over = f"{b['kernel_lines'] - 10_000:,}"
+    spec = (f"Together they are **{kernel} lines (M)**, {over} over the 10,000-line target. The keys rest on\n"
+            f"{keyed} lines (M): the five kernel paths.\n\n{rows}\n| **kernel, distinct lines** | | | | | **{kernel}** |\n\n"
+            f"| keys | {keyed}, of them {keyed_kernel} in the kernel (M) |\n"
+            "| writers | 1, of them 1 in 1 modules outside the kernel (M) |\n\n"
+            "Today 1 definitions write a verdict token and 1 of them, in 1 modules.\n\n"
+            f"| Lean lines (validators in full) | {keyed} |\n| of which in the proved kernel | {keyed_kernel} |\n\n"
+            f"Targets: kernel at most {kernel} now.\n")
+    frozen = f"All code is **{keyed} distinct lines**. The proved kernel is {keyed_kernel} of them."
+    return spec, frozen, f"signed total: {kernel} lines"
+
+
+def test_the_records_check_lists_every_stale_figure_at_once():
+    """Review kb-9 F1 on synthetic records: after a regenerated baseline moves four rows and every total,
+    the check names each stale figure (four rows, the table total, both section totals, the excess, the
+    target, the three keyed rows, the frozen keys' two and the signed total), not the first one only."""
+    def row(name, tier, theorems, lines):
+        return {"name": name, "tier": tier, "theorems": theorems, "spec_lines": lines - 8, "wrap_lines": 35,
+                "lines": lines}
+    writers = [{"name": "W", "module": "M", "tokens": ["CONFLICT"], "in_kernel": False, "inside": None}]
+    before = {"kernel_lines": 10_083, "keyed_lines": 16_545, "keyed_kernel_lines": 10_083, "verdict_writers": writers,
+              "paths": [row("softNorms", "kernel", 17, 4_692), row("route", "kernel", 26, 4_265),
+                        row("discourse", "candidate", 6, 36_430), row("document", "candidate", 7, 35_930),
+                        row("readingsRoute", "candidate", 8, 24_476)]}
+    assert record_figure_problems(*synthetic_records(before), before) == []
+    after = {**before, "kernel_lines": 10_108, "keyed_lines": 16_570, "keyed_kernel_lines": 10_108,
+             "paths": [before["paths"][0] | {"theorems": 19, "lines": 4_717}, before["paths"][1]]
+             + [r | {"lines": r["lines"] + 19} for r in before["paths"][2:]]}
+    problems = record_figure_problems(*synthetic_records(before), after)
+    assert sorted(p.split(":")[0] for p in problems) == sorted(
+        ["table row softNorms", "table row discourse", "table row document", "table row readingsRoute",
+         "spec table total", "spec section 1 kernel total", "spec section 1 excess", "spec section 6 target",
+         "spec section 1 keyed total", "spec measurement table keyed row", "spec section 1.3 keyed row",
+         "spec section 1.3 kernel row", "frozen keys keyed total", "frozen keys kernel total",
+         "ALLOWANCES signed total"]), problems
+    spec, frozen, allowances = synthetic_records(after)
+    assert record_figure_problems(spec, frozen, allowances, after) == []
+    assert record_figure_problems(spec.replace("| route |", "| routeX |"), frozen, allowances, after)[0].startswith(
+        "table paths")
 
 
 KINDS = {"x": {"theorem": "T"}}  # a synthetic kernel path's kind table
