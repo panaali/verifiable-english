@@ -4,6 +4,9 @@
                                            [--json OUT]
   uv run python -m tools.fidmech furniture --doc anthropic-rsp
   uv run python -m tools.fidmech boundaries --doc anthropic-rsp [--check | --write]
+  uv run python -m tools.fidmech mutants --doc anthropic-rsp [--kinds structural,wording] [--no-parse-wording]
+                                         [--jsonl OUT]   (counts per op, stillborn listed; needs the Lean service)
+  uv run python -m tools.fidmech actors --doc anthropic-rsp [--check | --write]   (actors.json's generated list)
 
 --doc is a use-case name under usecases/ or a case directory; --source overrides the case's pinned source path.
 Exit 0 on a report, 1 when `boundaries --check` finds the frozen pairs stale, 2 on an input error.
@@ -88,10 +91,56 @@ def boundaries(args) -> int:
     return 0
 
 
+def mutants(args) -> int:
+    from tools.fidmech import mutants as M
+    kinds = tuple(k for arg in args.kinds for k in arg.split(",") if k)
+    if set(kinds) - {"structural", "wording"}:
+        raise ValueError(f"unknown kinds {kinds} (structural, wording)")
+    from tools.fidmech.worker import REPO
+    records, report = M.document_mutants(REPO if args.worktree is None else Path(args.worktree), args.doc,
+                                         kinds=kinds, parse_wording=not args.no_parse_wording)
+    print(f"{args.doc}: {len(records)} mutants, generator {M.S.GENERATOR}, inputs_sha256 "
+          f"{records[0]['inputs_sha256'] if records else None}")
+    print(f"{'op':18} {'mutants':>7} {'ok':>5} {'stillborn':>9} {'syntactic':>9} {'duplicates':>10}")
+    for op, row in M.counts(records, {"duplicates": {k: v for part in ("structural", "wording") if part in report
+                                                     for k, v in report[part]["duplicates"].items()}}).items():
+        print(f"{op:18} {row['mutants']:>7} {row['ok']:>5} {row['stillborn']:>9} {row['syntactic']:>9} "
+              f"{row['duplicates']:>10}")
+    for part in ("structural", "wording"):
+        for key, value in report.get(part, {}).items():
+            if key not in ("duplicates",) and value:
+                print(f"{part} {key}: {json.dumps(value, ensure_ascii=False)}")
+    print("declarations: " + json.dumps({k: len(v) for k, v in report["declarations"].items()}))
+    if args.jsonl:
+        Path(args.jsonl).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records),
+                                    encoding="utf-8")
+    return 0
+
+
+def actors(args) -> int:
+    from tools.fidmech import mutants as M
+    from tools.fidmech import wording as W
+    case = S.accounting.case_dir(args.doc)
+    path = case / "fidmech" / "actors.json"
+    generated = W.propose_actors(M.case_files(case))
+    print(json.dumps(generated, indent=1, ensure_ascii=False))
+    if args.write:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        data["generated"] = generated
+        removed, added = [r["phrase"] for r in data["removed"]], [r["phrase"] for r in data["added"]]
+        data["actors"] = sorted((set(generated) - set(removed)) | set(added), key=lambda a: (-len(a), a))
+        path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    elif args.check and json.loads(path.read_text(encoding="utf-8"))["generated"] != generated:
+        print("stale: actors.json's generated list differs from the generator's", file=sys.stderr)
+        return 1
+    W.load_actors(path)
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tools.fidmech", description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("textcheck", "furniture", "boundaries"):
+    for name in ("textcheck", "furniture", "boundaries", "mutants", "actors"):
         p = sub.add_parser(name)
         p.add_argument("--doc", required=True)
         p.add_argument("--source")
@@ -100,13 +149,19 @@ def main(argv=None) -> int:
             p.add_argument("--span", choices=("sentence",), default="sentence",
                            help="D's span: the full source sentences of each block's quotes (plan 3.6)")
             p.add_argument("--json")
-        if name == "boundaries":
+        if name == "mutants":
+            p.add_argument("--kinds", nargs="+", default=["structural,wording"])
+            p.add_argument("--no-parse-wording", action="store_true")
+            p.add_argument("--worktree")
+            p.add_argument("--jsonl")
+        if name in ("boundaries", "actors"):
             g = p.add_mutually_exclusive_group()
             g.add_argument("--check", action="store_true")
             g.add_argument("--write", action="store_true")
     args = ap.parse_args(argv)
     try:
-        return {"textcheck": textcheck, "furniture": furniture, "boundaries": boundaries}[args.cmd](args)
+        return {"textcheck": textcheck, "furniture": furniture, "boundaries": boundaries, "mutants": mutants,
+                "actors": actors}[args.cmd](args)
     except (S.BoundariesError, OSError, ValueError) as e:
         print(f"fidmech: {e}", file=sys.stderr)
         return 2

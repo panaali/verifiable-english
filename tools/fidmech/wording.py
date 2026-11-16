@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-"""wording-mutants.py: mechanical wording mutants for the RECALL GATE of the per-unit checklist pass (2026-11-12
-dri-uc-audit-union-rule-2; reviews/dri-decisions-20261112-audit-stability.md item 47, mutant kinds of item 46).
+"""Mechanical wording mutants (moved from manage-agents tools-local/wording-mutants.py, item 47: VE owns it now).
 
-OWNER: one owner. Row fid-mech-harness (the mechanical mutation harness of items 32 and 46) takes this file over; until
-then it changes only with the production audit bundle (uc-audit.sh, tools-local/uc-audit-blind.py), and a change of it is
-a change of the recall gate, so it needs the same install read.
+Origin: the RECALL GATE of the per-unit checklist pass (2026-11-12 dri-uc-audit-union-rule-2;
+reviews/dri-decisions-20261112-audit-stability.md item 47, mutant kinds of item 46). plan() and apply() are the
+bundle's, byte for byte in output (tests/test_fidmech_wording.py: frozen inputs, tests/data/fidmech/wording-golden.json);
+ACTORS is unchanged. The bundle's uc-audit-blind.py loads this file from its pinned VE checkout after the install read.
 
 No model, no network: text in, text out. A mutant changes ONE rule-block unit of a case's VE text so that the unit no
 longer says what its source says, in one of these kinds (about two in three are wording, the rest structural):
@@ -19,8 +18,14 @@ longer says what its source says, in one of these kinds (about two in three are 
     negation    the first condition of the guard negated
 Selection is deterministic for a seed: units shuffled by the seed, wording kinds round robin (act and legend alternating),
 one mutant per unit.
-  wording-mutants.py plan <tree> <case> <n> <seed>        print the plan (JSON), write nothing
+  python -m tools.fidmech.wording plan <tree> <case> <n> <seed>        print the plan (JSON), write nothing
 Python use (uc-audit-blind.py): plan(files, units, n, seed) -> [mutant]; apply(files, [mutant]) -> {name: new text}.
+
+Harness mode (plan 5.2; the fidmech mutant records are tools/fidmech/mutants.py's): harness_candidates() gives every
+wording candidate of a unit, with the case's own actors (usecases/<doc>/fidmech/actors.json, load_actors) matched by
+actor_pattern (a phrase's first letter in either case: "The SAG" at a sentence start is "the SAG"). ACTORS is
+RSP-centred and case_actor_list only filters it, so it cannot find a PF or FSF actor. propose_actors() lists the
+capitalised and role noun phrases of a case's acts and legends, the generated part of actors.json.
 """
 import json
 import random
@@ -47,8 +52,15 @@ def _wb(word):
     return re.compile(r'(?<![\w-])' + re.escape(word) + r'(?![\w-])')
 
 
-def actor_cands(s, case_actors):
-    found = sorted({(mm.start(), mm.end(), a) for a in ACTORS for mm in _wb(a).finditer(s)})
+def actor_pattern(phrase):
+    """The harness's actor matcher: `phrase` at word bounds, its first letter in either case."""
+    head = phrase[:1]
+    first = '[' + re.escape(head.lower() + head.upper()) + ']' if head.isalpha() else re.escape(head)
+    return re.compile(r'(?<![\w-])' + first + re.escape(phrase[1:]) + r'(?![\w-])')
+
+
+def actor_cands(s, case_actors, actors=ACTORS, pattern=_wb):
+    found = sorted({(mm.start(), mm.end(), a) for a in actors for mm in pattern(a).finditer(s)})
     keep, last = [], -1   # longest first at a position, no overlaps
     for st, en, a in sorted(found, key=lambda x: (x[0], -(x[1] - x[0]))):
         if st >= last:
@@ -58,14 +70,14 @@ def actor_cands(s, case_actors):
     for k in range(len(distinct) - 1):   # two actors in different roles (not a plain list: "A, B and C" keeps its meaning)
         (a0, b0, x0), (a1, b1, x1) = distinct[k:k + 2]
         if not re.fullmatch(r'\s*(?:,|and|or|/|, and|, or|as well as)?\s*(?:all )?', s[b0:a1]):
-            return [(s[a0:b1], x1 + s[b0:a1] + x0)]
+            return [(s[a0:b1], s[a1:b1] + s[b0:a1] + s[a0:b0])]   # the matched texts: x1 and x0 for ACTORS
     if len(distinct) >= 2:
         return []
     if len(distinct) == 1:
         st, en, a = distinct[0]
         other = next((x for x in case_actors if x != a and x.lower() not in a.lower() and a.lower() not in x.lower()), None)
         if other:
-            return [(a, other)]
+            return [(s[st:en], other)]
     return []
 
 
@@ -199,8 +211,9 @@ def _strings(line):
     return [mm.group(1) for mm in re.finditer(r'"((?:[^"\\]|\\.)*)"', line)]
 
 
-def candidates(files, unit, case_actors):
-    """[(kind, where, pred or None, old, new)] for one rule-block unit."""
+def candidates(files, unit, case_actors, actors=ACTORS, pattern=_wb, structural=True):
+    """[(kind, where, pred or None, old, new)] for one rule-block unit. The defaults are plan()'s; the harness passes
+    the case's actors, actor_pattern and structural=False (harness_candidates)."""
     env, vname = _ctx(files)
     preds = (env.get('vocabulary') or {}).get('predicates') or {}
     blocks, lines = _blocks(files.get('rules.d1.ve', ''))
@@ -210,7 +223,7 @@ def candidates(files, unit, case_actors):
     body = '\n'.join(lines[i + 1:e])
     out = []
     rule_lines = [l for l in lines[i + 1:e] if re.match(r'\s*Rule \d+\.', l)]
-    for kind in STRUCTURAL:
+    for kind in STRUCTURAL if structural else ():
         for l in rule_lines[:1]:
             for old, new in structural_cands(kind, l):
                 out.append((kind, 'rule', None, old, new))
@@ -224,7 +237,7 @@ def candidates(files, unit, case_actors):
         lit = [s for l in vlines[sp[0]:sp[1]] for s in _strings(l)]
         if act and act in lit:   # the act template is one literal: mutate it (and every rule that uses it)
             phrase = re.sub(r'^\{0\}\s*', '', act)
-            for kind, fn in (('actor', lambda s: actor_cands(s, case_actors)), ('qualifier', qualifier_cands),
+            for kind, fn in (('actor', lambda s: actor_cands(s, case_actors, actors, pattern)), ('qualifier', qualifier_cands),
                              ('quantity', quantity_cands), ('attachment', attachment_cands)):
                 for old, new in fn(phrase):
                     if '{' not in old and '{' not in new and old != new:
@@ -233,7 +246,7 @@ def candidates(files, unit, case_actors):
         for s in lit:
             if s == act or s == key or not s.strip() or s not in desc.replace('\\"', '"'):
                 continue
-            for kind, fn in (('actor', lambda s: actor_cands(s, case_actors)), ('qualifier', qualifier_cands),
+            for kind, fn in (('actor', lambda s: actor_cands(s, case_actors, actors, pattern)), ('qualifier', qualifier_cands),
                              ('quantity', quantity_cands), ('attachment', attachment_cands)):
                 for old, new in fn(s):
                     if '{' not in old and old != new and '\\' not in old:
@@ -338,6 +351,66 @@ def apply(files, mutants):
         ind = 2 if '\n  "' in files.get('environment.d1.json', '') else None
         new['environment.d1.json'] = json.dumps(env, indent=ind, ensure_ascii=False) + ('\n' if files.get('environment.d1.json', '').endswith('\n') else '')
     return new
+
+
+# ---- harness mode (fidmech, plan 5.2) ------------------------------------------------------------------------------
+
+ROLE_HEADS = ('officer', 'board', 'reviewer', 'employee', 'staff', 'team', 'group', 'council', 'committee', 'company',
+              'developer', 'government', 'public', 'auditor', 'expert', 'leadership', 'partner', 'user', 'tester',
+              'researcher', 'customer', 'function', 'party', 'parties', 'regulator', 'authority', 'authorities',
+              'organization', 'organisation', 'chair', 'directors', 'competitor', 'actor', 'stakeholder')
+ROLE_STOP = STOP | {'a', 'an', 'the', 'any', 'its', 'our', 'their', 'his', 'her', 'have', 'has', 'not', 'no', 'so',
+                    'such', 'other', 'each', 'every', 'all', 'one', 'is', 'decision', 'use', 'act', 'step'}
+
+
+def actor_texts(files):
+    """The act phrases and legends (descriptions) of a case's predicates, in environment.d1.json order."""
+    env, _ = _ctx(files)
+    out = []
+    for p in ((env.get('vocabulary') or {}).get('predicates') or {}).values():
+        out += [t for t in ((p.get('regulated') or {}).get('act'), p.get('description')) if t]
+    return out
+
+
+def propose_actors(files):
+    """The generated part of actors.json, longest first; a builder reviews it. Capitalised phrases whose last word is an
+    acronym (2-5 capitals), a role head or a CamelCase name, and every ACTORS phrase the texts hold; role noun phrases:
+    a role head with at most one lower-case modifier right before it, and "the" when it comes first."""
+    heads = r'(?:' + '|'.join(re.escape(h) for h in ROLE_HEADS) + r')s?'
+    found = set()
+    for t in actor_texts(files):
+        for mm in re.finditer(r'(?<![\w-])(?:the )?[A-Z][\w-]*(?: (?:of |and |for )?[A-Z][\w-]*)*', t):
+            last = mm.group(0).split()[-1]
+            if (re.fullmatch(r'[A-Z]{2,5}|[A-Z][a-z]+[A-Z][A-Za-z]*', last) or re.fullmatch(heads, last.lower())) \
+                    and not re.search(r'\d', mm.group(0)):
+                found.add(mm.group(0))
+        found.update(a for a in ACTORS if _wb(a).search(t))
+        toks = list(re.finditer(r'[\w-]+', t))
+        for k, tok in enumerate(toks):
+            if not re.fullmatch(heads, tok.group(0)):
+                continue
+            j = k
+            if k and t[toks[k - 1].end():tok.start()] == ' ' and toks[k - 1].group(0).islower() \
+                    and toks[k - 1].group(0) not in ROLE_STOP:
+                j = k - 1
+            the = j and toks[j - 1].group(0) == 'the' and t[toks[j - 1].end():toks[j].start()] == ' '
+            found.add(('the ' if the else '') + t[toks[j].start():tok.end()])
+    return sorted(found, key=lambda a: (-len(a), a))
+
+
+def load_actors(path):
+    """The reviewed actor list of an actors.json: `actors` (the generated list less `removed`, plus `added`)."""
+    data = json.loads(Path(path).read_text(encoding='utf-8'))
+    removed, added = [r['phrase'] for r in data['removed']], [r['phrase'] for r in data['added']]
+    expected = sorted((set(data['generated']) - set(removed)) | set(added), key=lambda a: (-len(a), a))
+    if data['actors'] != expected or not set(removed) <= set(data['generated']):
+        raise ValueError(f'{path}: actors is not generated - removed + added')
+    return data['actors']
+
+
+def harness_candidates(files, unit, actors):
+    """Every wording candidate of one rule-block unit, the case's actors matched by actor_pattern."""
+    return candidates(files, unit, actors, actors, actor_pattern, structural=False)
 
 
 def read_case(tree, case):
