@@ -1,0 +1,7 @@
+job=armsh-cand-oseq-pf-d2d3-unit-b00f97f5-t859378-s8 shard=8/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-16T20:08:38Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 20:08:38 up 1 min,  0 user,  load average: 1.92, 0.71, 0.26
+pilot/codex branches: 98
+ve-cache: lean-build exact key f73cacbe6bd8 asset lean-build-f73cacbe6bd8-linux-aarch64.tar.zst sha256 b8fea06f2b78 ok, seal ok, from download, 12.0 s
+p1-tokenizers: 443909a61d42 fetched
