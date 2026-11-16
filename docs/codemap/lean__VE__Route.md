@@ -16,6 +16,8 @@
 - `lean/VE/Route/MeteredProfileExamples.lean` — Examples of the norms profile check on the `metered` path (kb-validators, decision D13), on the environment of tests/test_metered_profile.py: one obligation `r…
 - `lean/VE/Route/MeteredProofs.lean` — A completed metered document has the value of the total evaluator, hence by each family's `eval_iff_denote` it has its finite-model denotation.
 - `lean/VE/Route/MeteredRun.lean` — The batch-15a Lean entry point.
+- `lean/VE/Route/MeteredSplit.lean` — The `metered` mode's three runners (kb-4b; docs/kernel/kb-4b/REPORT.md).
+- `lean/VE/Route/MeteredSplitExamples.lean` — Examples of the `metered` mode's three runners (kb-4b): which runner each environment's case goes to, and that the mode's entry answers each as before (`runCas…
 - `lean/VE/Route/MeteredTrace.lean` — Explanations are display data.
 - `lean/VE/Route/MeteredWire.lean` — Wire theorems of the `metered` mode's `evaluate-budgeted` kind (kernel boundary, KB-7).
 - `lean/VE/Route/NonVacuity.lean` — Python's conservative search-side non-vacuity condition, expressed once for the four Lean formula families.

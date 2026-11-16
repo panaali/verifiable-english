@@ -384,9 +384,12 @@
    ],
    "theorems": [
     "VE.Route.MeteredRun.runWith_sound",
-    "VE.Route.MeteredRun.metered_wire_sound"
+    "VE.Route.MeteredRun.metered_wire_sound_current"
    ],
-   "delegates": [],
+   "delegates": [
+    "VE.Route.MeteredRun.runCaseReportedLegacy",
+    "VE.Route.MeteredRun.runCaseReportedActs"
+   ],
    "nonverdict": [
     {
      "name": "VE.Route.MeteredTrace.document",
@@ -414,6 +417,56 @@
      "theorem": "VE.Route.MeteredRun.runWith_sound"
     }
    }
+  },
+  {
+   "name": "meteredLegacy",
+   "tier": "candidate",
+   "note": "runner theorems complete; outside the kernel tier by the architect seat (D14): the frozen ve.core@0 and ve.core@0.1 envelopes, read by their frozen decoders, which no frozen key sends (kb-4b)",
+   "modes": [
+    "metered"
+   ],
+   "entry": [
+    "VE.Route.MeteredRun.runCaseReportedLegacy"
+   ],
+   "subject": [
+    "VE.Route.MeteredRun.runWith"
+   ],
+   "theorems": [
+    "VE.Route.MeteredRun.runWith_sound",
+    "VE.Route.MeteredRun.metered_wire_sound_legacy"
+   ],
+   "delegates": [],
+   "nonverdict": [
+    {
+     "name": "VE.Route.MeteredTrace.document",
+     "why": "builds the optional `explanation` trace of an evaluation; runWith_sound leaves that field unconstrained and no verdict is read from it"
+    }
+   ]
+  },
+  {
+   "name": "meteredActs",
+   "tier": "candidate",
+   "note": "runner theorems complete; outside the kernel tier by the architect seat (D14): an environment whose deciding view reads acts@0 (Standalone.readsApart), which no frozen key sends (kb-4b)",
+   "modes": [
+    "metered"
+   ],
+   "entry": [
+    "VE.Route.MeteredRun.runCaseReportedActs"
+   ],
+   "subject": [
+    "VE.Route.MeteredRun.runWith"
+   ],
+   "theorems": [
+    "VE.Route.MeteredRun.runWith_sound",
+    "VE.Route.MeteredRun.metered_wire_sound_acts"
+   ],
+   "delegates": [],
+   "nonverdict": [
+    {
+     "name": "VE.Route.MeteredTrace.document",
+     "why": "builds the optional `explanation` trace of an evaluation; runWith_sound leaves that field unconstrained and no verdict is read from it"
+    }
+   ]
   },
   {
    "name": "quantity",

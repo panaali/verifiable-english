@@ -124,7 +124,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 24 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 15 modules — -
-- [lean/VE/Route/](lean__VE__Route.md) — 33 modules — -
+- [lean/VE/Route/](lean__VE__Route.md) — 35 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
 - [lean/VE/Scope/](lean__VE__Scope.md) — 20 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
