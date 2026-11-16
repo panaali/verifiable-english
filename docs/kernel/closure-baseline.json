@@ -4572,12 +4572,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36205,
+   "lines": 36213,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36199,
+   "spec_lines": 36207,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -4820,7 +4820,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1857,
+    "VE.Service.Document": 1865,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.Standalone": 755,
     "VE.Service.TypingDiagnostic": 201,
@@ -5786,12 +5786,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36170,
+   "lines": 36178,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35282,
+   "spec_lines": 35290,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -6034,7 +6034,7 @@
     "VE.Senses.Version": 3,
     "VE.Service.CoreCheck": 154,
     "VE.Service.CoreDocument": 265,
-    "VE.Service.Document": 2140,
+    "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 67,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
@@ -6186,7 +6186,7 @@
     "VE.Semantics": 14,
     "VE.Service.CoreCheck": 34,
     "VE.Service.CoreDocument": 3,
-    "VE.Service.Document": 763,
+    "VE.Service.Document": 771,
     "VE.Service.ParseDiagnostic": 337,
     "VE.Service.Standalone": 1076,
     "VE.Service.TypingDiagnostic": 201,
