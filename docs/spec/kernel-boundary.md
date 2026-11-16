@@ -405,6 +405,8 @@ verifier's amendment (an import boundary, not a flag; an expiry).
    when the kernel total exceeds the saved one, or when more verdict writers are outside the kernel
    than the saved measurement has. The baseline is generated (`tools/regen_generated.py`, entry
    `kernel-closure`), and `--out` refuses a kernel total above `docs/kernel/ALLOWANCES.md`'s signed total.
+   That entry's check adds `--fresh` to the same measurement: a baseline that differs by any byte from
+   what `--out` writes now is stale, even with equal totals, so a merge's regeneration rewrites it.
 2. A change that raises the total updates the baseline in the same change and carries, in
    `docs/kernel/ALLOWANCES.md`, one line: lines added, door (B or C), reason, the architect's
    signature. A change that lowers it updates the baseline with no signature.
