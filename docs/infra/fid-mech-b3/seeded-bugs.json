@@ -6,7 +6,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_bindings.py::test_each_bindings_file_has_its_pinned_sha256[anthropic-rsp]",
-   "1 failed in 0.29s"
+   "1 failed in 0.27s"
   ]
  },
  {
@@ -16,7 +16,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_bindings.py::test_the_loader_rebuilds_the_exact_python_types_of_the_literals",
-   "1 failed in 0.29s"
+   "1 failed in 0.27s"
   ]
  },
  {
@@ -26,7 +26,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_bindings.py::test_a_value_of_the_wrong_shape_is_refused_with_its_path[set[str]-data4-twice]",
-   "1 failed, 4 passed in 0.34s"
+   "1 failed, 4 passed in 0.27s"
   ]
  },
  {
@@ -36,7 +36,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_adapters.py::test_the_answer_fields_follow_the_plans_table",
-   "1 failed in 0.33s"
+   "1 failed in 0.24s"
   ]
  },
  {
@@ -46,7 +46,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_adapters.py::test_the_selected_rule_ids_are_read_from_each_documents_own_place",
-   "1 failed in 0.26s"
+   "1 failed in 0.23s"
   ]
  },
  {
@@ -66,7 +66,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_worker.py::test_a_mutant_runs_in_a_scratch_copy_and_the_module_is_purged_after",
-   "1 failed in 0.40s"
+   "1 failed in 0.28s"
   ]
  },
  {
@@ -76,7 +76,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_worker.py::test_a_leaked_module_global_makes_the_batch_invalid",
-   "1 failed in 0.61s"
+   "1 failed in 0.58s"
   ]
  },
  {
@@ -86,7 +86,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_worker.py::test_a_sentinel_failure_requeues_each_result_since_the_last_good_one_once",
-   "1 failed in 0.37s"
+   "1 failed in 0.26s"
   ]
  },
  {
@@ -96,7 +96,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
-   "1 failed in 0.35s"
+   "1 failed in 0.26s"
   ]
  },
  {
@@ -106,7 +106,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
-   "1 failed in 0.28s"
+   "1 failed in 0.26s"
   ]
  },
  {
@@ -116,7 +116,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes[actors.json created]",
-   "1 failed, 1 passed in 0.40s"
+   "1 failed, 1 passed in 0.35s"
   ]
  },
  {
@@ -126,7 +126,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes[actors.json created]",
-   "1 failed, 1 passed in 0.38s"
+   "1 failed, 1 passed in 0.35s"
   ]
  },
  {
@@ -136,7 +136,7 @@
   "killed": true,
   "output": [
    "FAILED tests/test_fidmech_records.py::test_k_kills_on_a_decided_answer_that_differs_and_a_move_to_or_from_undecided_is_inconclusive[mutant2-expected2]",
-   "1 failed, 2 passed in 0.34s"
+   "1 failed, 2 passed in 0.26s"
   ]
  },
  {
