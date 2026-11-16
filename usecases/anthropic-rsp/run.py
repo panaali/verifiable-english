@@ -152,23 +152,35 @@ def selected_facts(choice):
             if applies(block, choice) and not (WITHOUT_NARROWING == "N1" and block.narrowing == "RS0"))
 
 
+@lru_cache(maxsize=None)
+def _premise_facts(choice, narrowing):
+    return tuple(f for _, formulas in selected_facts(dict(choice)) for f in formulas)
+
+
+def premise_facts(choice):
+    """Every premise the choice selects (`selected_facts`), one tuple per choice: the `facts` of its cases."""
+    return _premise_facts(tuple(sorted(choice.items())), WITHOUT_NARROWING)
+
+
 def check_premises(doc, case, choice):
-    from ve.evaluate import evaluate
+    """Every premise the choice selects is true in the case model: Lean's `facts` flag, from the `soft-selected`
+    case that also answers this document's selected rules in that model (kb-9; pass the returned facts to
+    `selected` and `completed`). A false flag names its first premise block, as each block's own flag finds it."""
+    facts = premise_facts(choice)
     key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i")),
            WITHOUT_NARROWING == "N1")
     if key in _PREMISES_CHECKED:
-        return
-    env = doc.elaborated.base_environment()
+        return facts
     witness = model(doc, case)
-    for block, formulas in selected_facts(choice):
-        for formula in formulas:
-            result = evaluate(env, formula, witness, trace=False)
-            if result.value is not True:
-                raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: {result.status}")
+    if doc.elaborated.selection_flags(witness, facts=facts)["facts"] is not True:
+        for block, formulas in selected_facts(choice):
+            if doc.elaborated.selection_flags(witness, facts=list(formulas))["facts"] is not True:
+                raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: Violated")
     _PREMISES_CHECKED.add(key)
+    return facts
 
 
-def selected(doc, case, predicate, sign, values=None):
+def selected(doc, case, predicate, sign, values=None, *, facts=None):
     m = model(doc, case)
     sorts = vocabulary()["vocabulary"]["predicates"][predicate]["arguments"]
     domains = [m.domains[s] for s in sorts]
@@ -176,13 +188,18 @@ def selected(doc, case, predicate, sign, values=None):
     for args in itertools.product(*domains):
         if args[0] != "s" or (values is not None and tuple(args) != tuple(values)):
             continue
-        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args) if r.sign == sign)
+        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args, **_with(facts)) if r.sign == sign)
     return sorted(names)
 
 
-def completed(doc, case, predicate, values):
+def completed(doc, case, predicate, values, *, facts=None):
     """The completed outcome of `predicate` at `values` in the case model: Lean's `soft-selected` answer."""
-    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values))
+    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values), **_with(facts))
+
+
+def _with(facts):
+    """The `facts` argument of a selection on the checked document; none for any other (asked as before kb-9)."""
+    return {} if facts is None else {"facts": facts}
 
 
 def cone(predicate):
@@ -202,15 +219,15 @@ def query(case, predicate, sign=True, values=None, *, extra_sets=(), requirement
         choice = {**BASE, **assignment}
         deny = document(tuple(sorted(choice.items())), "deny")
         allow = document(tuple(sorted(choice.items())), "allow")
-        check_premises(deny, case, choice)
-        left = selected(deny, case, predicate, sign, values)
+        facts = check_premises(deny, case, choice)
+        left = selected(deny, case, predicate, sign, values, facts=facts)
         right = selected(allow, case, predicate, sign, values)
         if requirement and V.REGULATED[predicate]["regulated"]["role"] != "obligation":
             left = right = []
         outcome_values = values or (("s",) if len(V.environment()["vocabulary"]["predicates"][predicate]["arguments"]) == 1 else None)
         rows.append({"choice": assignment, "holds": bool(left and right),
                      "rules": sorted(set(left) & set(right)),
-                     "default_sensitive": (completed(deny, case, predicate, outcome_values) !=
+                     "default_sensitive": (completed(deny, case, predicate, outcome_values, facts=facts) !=
                                            completed(allow, case, predicate, outcome_values))
                      if outcome_values and predicate != "in_scope" else None})
     return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion",
@@ -623,9 +640,9 @@ def lead_without_competitors():
                 "extra": ("in_the_lead",), "scenarios": scenarios}
         choice = {**BASE, **assignment}
         docs = [document(tuple(sorted(choice.items())), default) for default in ("deny", "allow")]
-        check_premises(docs[0], case, choice)
+        facts = check_premises(docs[0], case, choice)
         names = sorted({name for doc in docs for predicate in ("posture_matched", "delay")
-                        for name in selected(doc, case, predicate, True)})
+                        for name in selected(doc, case, predicate, True, facts=facts if doc is docs[0] else None)})
         rows.append({"choice": assignment, "holds": not any(name.startswith("f25-") for name in names),
                      "rules": names, "reason": "no F25 rule selects on posture_matched or delay"})
     return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation",
