@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-kb-regen-closure-check-b5e5b1c5-t856665-s2",
+ "head": "50fdb31b76e770015c13004c83a12a4d020cccaa",
+ "argv": [
+  "armsh-cand-kb-regen-closure-check-b5e5b1c5-t856665-s2",
+  "50fdb31b76e770015c13004c83a12a4d020cccaa",
+  "1f99cedcdbd18805bc124275d49095f0c54d8f83",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
