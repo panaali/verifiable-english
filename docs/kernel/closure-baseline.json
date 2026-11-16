@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9966,
- "keyed_kernel_lines": 9966,
- "keyed_lines": 16244,
+ "kernel_lines": 9991,
+ "keyed_kernel_lines": 9991,
+ "keyed_lines": 16269,
  "paths": [
   {
    "attributed": {
@@ -988,12 +988,12 @@
    "axioms": [
     "Classical.choice"
    ],
-   "lines": 4672,
+   "lines": 4697,
    "modes": [
     "softNorms"
    ],
    "name": "softNorms",
-   "spec_lines": 4664,
+   "spec_lines": 4689,
    "spec_modules": {
     "VE.Acts.Hook": 11,
     "VE.Acts.Lexical": 121,
@@ -1005,7 +1005,7 @@
     "VE.CertificateWire": 120,
     "VE.ClaimGraph": 103,
     "VE.Compose.Slot": 19,
-    "VE.Compose.SlotWire": 72,
+    "VE.Compose.SlotWire": 75,
     "VE.Core.Bridge": 37,
     "VE.Core.Paths": 3,
     "VE.Core.Syntax": 16,
@@ -1043,10 +1043,10 @@
     "VE.SoftNorms.ElaborateSound": 19,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 322,
-    "VE.SoftNorms.Prepared": 8,
+    "VE.SoftNorms.Prepared": 10,
     "VE.SoftNorms.Run": 165,
-    "VE.SoftNorms.Selected": 15,
-    "VE.SoftNorms.SelectedSound": 15,
+    "VE.SoftNorms.Selected": 29,
+    "VE.SoftNorms.SelectedSound": 21,
     "VE.SoftNorms.Semantics": 47,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 5,
@@ -1084,6 +1084,8 @@
      "VE.SoftNorms.Run.soft_wire_acceptance",
      "VE.SoftNorms.Run.soft_wire_elaborate",
      "VE.SoftNorms.Run.soft_wire_selected",
+     "VE.SoftNorms.Run.soft_wire_selected_facts",
+     "VE.SoftNorms.Run.selected_model_admissible",
      "VE.SoftNorms.Run.slot_wire_certificate",
      "VE.SoftNorms.Run.slot_wire_conflict",
      "VE.SoftNorms.Run.soft_wire_conflict_free",
@@ -1095,7 +1097,7 @@
      "VE.SoftNorms.Run.soft_wire_selected_prepared"
     ]
    },
-   "theorems": 19,
+   "theorems": 21,
    "tier": "kernel",
    "wrap_lines": 8,
    "wrap_modules": {
@@ -3540,7 +3542,7 @@
     ]
    },
    "axioms": [],
-   "lines": 24238,
+   "lines": 24257,
    "modes": [
     "readingsRoute"
    ],
@@ -3667,7 +3669,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 14955,
+   "wrap_lines": 14974,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -3697,7 +3699,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 167,
     "VE.Compose.Slot": 16,
-    "VE.Compose.SlotWire": 132,
+    "VE.Compose.SlotWire": 135,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -3833,7 +3835,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 322,
     "VE.SoftNorms.Run": 435,
-    "VE.SoftNorms.Selected": 72,
+    "VE.SoftNorms.Selected": 88,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -4572,12 +4574,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36205,
+   "lines": 36232,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36199,
+   "spec_lines": 36226,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -4622,7 +4624,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 261,
     "VE.Compose.Slot": 16,
-    "VE.Compose.SlotWire": 132,
+    "VE.Compose.SlotWire": 135,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -4820,7 +4822,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1857,
+    "VE.Service.Document": 1865,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.Standalone": 755,
     "VE.Service.TypingDiagnostic": 201,
@@ -4829,7 +4831,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 435,
-    "VE.SoftNorms.Selected": 72,
+    "VE.SoftNorms.Selected": 88,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -5786,12 +5788,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36170,
+   "lines": 36197,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35282,
+   "spec_lines": 35309,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -5837,7 +5839,7 @@
     "VE.Compose.Content": 24,
     "VE.Compose.Dispatch": 179,
     "VE.Compose.Slot": 18,
-    "VE.Compose.SlotWire": 140,
+    "VE.Compose.SlotWire": 143,
     "VE.Core.Bridge": 107,
     "VE.Core.Congruence": 29,
     "VE.Core.Conservativity": 3,
@@ -6034,7 +6036,7 @@
     "VE.Senses.Version": 3,
     "VE.Service.CoreCheck": 154,
     "VE.Service.CoreDocument": 265,
-    "VE.Service.Document": 2140,
+    "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 67,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
@@ -6045,7 +6047,7 @@
     "VE.SoftNorms.Once": 100,
     "VE.SoftNorms.Phases": 333,
     "VE.SoftNorms.Run": 435,
-    "VE.SoftNorms.Selected": 72,
+    "VE.SoftNorms.Selected": 88,
     "VE.SoftNorms.Semantics": 26,
     "VE.SoftNorms.Soften": 516,
     "VE.SoftNorms.Status": 10,
@@ -6186,7 +6188,7 @@
     "VE.Semantics": 14,
     "VE.Service.CoreCheck": 34,
     "VE.Service.CoreDocument": 3,
-    "VE.Service.Document": 763,
+    "VE.Service.Document": 771,
     "VE.Service.ParseDiagnostic": 337,
     "VE.Service.Standalone": 1076,
     "VE.Service.TypingDiagnostic": 201,
