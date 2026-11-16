@@ -7,7 +7,7 @@ anthropic-rsp and openai-preparedness assert that flag instead of per-formula `m
 in 1,470 premise evaluations; `results.json` byte-identical). Open: safety-framework's premise check is not switched
 (it has no `check_premises`, see Notes 2); one note for the DRI on `SelectedAnswer` (Notes 1).
 
-Review fixes (kb-9-review.final.md, row `kb-9-text-1`): F1 and F2 correct records only; see section 10.
+Review fixes (kb-9-review.final.md, row `kb-9-text-1`): F1 and F2 correct records only; see section 11.
 
 SIZE: 481 product, 369 tests, about 650 other hand-written lines (`git diff --numstat` against the merge base;
 generated inventories, schemas, evidence JSON and the code map excluded). No deliverable was cut.
@@ -283,7 +283,7 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
     cite their command (sections 3, 4, 9); no cut; every new `#guard` is a trust-mutant killer (run 2/3 counts); the
     facts list is decoded by kb-3a's decoder under its limits.
 
-## 10. Review fixes (text only: row `kb-9-text-1`)
+## 11. Review fixes (text only: row `kb-9-text-1`)
 
 | Finding | Fix | Regression test | Commit |
 |---|---|---|---|
