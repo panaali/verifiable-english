@@ -1,0 +1,172 @@
+shard 1/2: 32 units; commands: ['python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Ca', 'python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded quote v1.0.47
+  Downloaded cfg-if v1.0.5
+  Downloaded num-integer v0.1.47
+  Downloaded crypto-common v0.1.7
+  Downloaded block-buffer v0.10.4
+  Downloaded generic-array v0.14.7
+  Downloaded cpufeatures v0.2.17
+  Downloaded digest v0.10.7
+  Downloaded autocfg v1.5.1
+  Downloaded sha2 v0.10.9
+... (161 lines cut; full output in shard-full.txt)
+test a_unit_without_hooks_is_clean_or_gives_lean_s_record ... ok
+test engine_corpus_equals_the_golden ... ok
+test every_deferred_outcome_names_what_rust_lacks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.16s
+
+     Running tests/contract_tables.rs (rust/target/debug/deps/contract_tables-61dff7ecc35830ad)
+
+running 3 tests
+test dump_rows ... ok
+test embedded_hashes_equal_their_lock_entries ... ok
+test the_keys_table_hash_equals_its_file ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/environment_definition_order.rs (rust/target/debug/deps/environment_definition_order-daf7e52f1dde5cdf)
+
+running 7 tests
+test builtin_argument_sort_follows_display_and_definition_faults ... ok
+test builtin_argument_sort_follows_literal_limit_and_regulated_blocks ... ok
+test builtin_argument_sort_probes_take_lean_codes ... ok
+test composed_order_rejects_string_predicate_sort_before_constants ... ok
+test legacy_undeclared_builtin_sorts_are_unknown_symbols ... ok
+test malformed_nested_definition_precedes_unsupported_field ... ok
+test predicate_signature_and_constant_fault_order ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_profile-39d349572b160587)
+
+running 3 tests
+test search::domain_size_tests::lazy_sizes_are_the_eager_order ... ok
+test search::domain_size_tests::many_sorts_hold_one_vector ... ok
+test search::domain_size_tests::per_sort_maxima_are_the_eager_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ve_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.23s
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/runner/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in /home/runner/work/verifiable-english/verifiable-english/lean/checkers.lock
++ python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.67s
+    Finished `release` profile [optimized] target(s) in 0.01s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+order: failed last time []; changed ['tests/test_rsp_b_repair_1115.py']; then the rest; --maxfail 5
+recording 32 units with 4 jobs in /tmp/ve-select-run-a0taif11
+  tests/test_ownership_floor.py: exit 1 in 167.9 s, 1341 functions
+  tests/test_english_statement_blocks.py: exit 1 in 562.2 s, 626 functions
+FAILED tests/test_english_statement_blocks.py (exit 1): tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[rsp], tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded; log /tmp/ve-select-run-a0taif11/tests__test_english_statement_blocks.py.log
+                        '"security_level_3"',
+                    ],
+                    [
+                        'security_level_4',
+                        '"security_level_4"',
+                    ],
+                    [
+                        'sl2_plus_additional_measures',
+                        '"sl2_plus_additional_measures"',
+                    ],
+                    [
+                        'stealth_and_situational_awareness_tcl',
+                        '"stealth_and_situational_awareness_tcl"',
+                    ],
+                    [
+                        'well_resourced_non_state_external_actors',
+                        '"well_resourced_non_state_external_actors"',
+                    ],
+                ],
+            },
+            'kind': 'blocks',
+            'source': 'Rule 1. Every instance of Claude must not directly deny being Claude.',
+        },
+    ]
+2 failed, 7 passed in 560.65s (0:09:20)
+FAILED tests/test_ownership_floor.py (exit 1): tests/test_ownership_floor.py::test_ownership_json_is_of_the_traced_inputs; log /tmp/ve-select-run-a0taif11/tests__test_ownership_floor.py.log
+  
+  Omitting 8 identical items, use -vv to show
+  Differing items:
+  {'usecases/anthropic-rsp/run.py': '9ba10263cef4a8ed7a58417a2898f7c8bade55eb'} != {'usecases/anthropic-rsp/run.py': 'fdb589c32ab584eccaa5398c53d45bb507a66342'}
+  
+  Full diff:
+    {
+  +     'usecases/agent-policy/check.py': 'c59483ac65c478ee5f6ebf09d0db99c148ace6c2',
+  +     'usecases/anthropic-rsp/run.py': '9ba10263cef4a8ed7a58417a2898f7c8bade55eb',
+  +     'usecases/eligibility/run.py': '6fe02ae9a5524c27a0f6f58cf8df59f366dd3d75',
+  -     've/norms.py': 'c6d565c271e515a745acb0431a4bfb25c1f80830',
+  -     've/evaluate.py': 'e0c37d8ccf1b905d40d19869a35011e806e91aa1',
+  -     've/softnorms.py': '4d0b1b8b0bfe68fb58ab4d0fc62bb5823804f2ec',
+  -     've/soft_route.py': '0f838903b14f60972694a792759a1a560cda0fca',
+  -     'usecases/anthropic-rsp/run.py': 'fdb589c32ab584eccaa5398c53d45bb507a66342',
+        'usecases/openai-preparedness/run.py': '52fc35f09cd89d52e8be90103948d1e4e26eb2ec',
+        'usecases/safety-framework/run.py': 'fc5d4c01862710c0cf8a1954fff7f3874930013d',
+  -     'usecases/agent-policy/check.py': 'c59483ac65c478ee5f6ebf09d0db99c148ace6c2',
+  -     'usecases/eligibility/run.py': '6fe02ae9a5524c27a0f6f58cf8df59f366dd3d75',
+  +     've/evaluate.py': 'e0c37d8ccf1b905d40d19869a35011e806e91aa1',
+  +     've/norms.py': 'c6d565c271e515a745acb0431a4bfb25c1f80830',
+  +     've/soft_route.py': '0f838903b14f60972694a792759a1a560cda0fca',
+  +     've/softnorms.py': '4d0b1b8b0bfe68fb58ab4d0fc62bb5823804f2ec',
+    }
+1 failed, 23 passed in 167.41s (0:02:47)
+recorded 32 units for tree 3df1fdc2a0; 0 others left to the static graph until they run; 2 failed
+SHARD 1/2: exit 1 in 612.5 s; 32 units, 30 passed
