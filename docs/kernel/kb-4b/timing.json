@@ -1,0 +1,33 @@
+{
+ "agent-policy": {
+  "profiles": [
+   "data@0",
+   "relational-fol@0"
+  ],
+  "regulated": false,
+  "cases_per_run": 200,
+  "runs": 15,
+  "median_s": {
+   "before": 0.7404001350514591,
+   "after": 0.7430232940241694
+  },
+  "ratio": 1.0035428936983217,
+  "answers_identical": true,
+  "status": "ok"
+ },
+ "anthropic-rsp": {
+  "profiles": [
+   "relational-fol@0"
+  ],
+  "regulated": false,
+  "cases_per_run": 200,
+  "runs": 15,
+  "median_s": {
+   "before": 1.0630392109742388,
+   "after": 1.0337564549408853
+  },
+  "ratio": 0.9724537385535226,
+  "answers_identical": true,
+  "status": "ok"
+ }
+}
