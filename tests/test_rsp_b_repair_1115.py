@@ -170,3 +170,19 @@ def test_g8_keeps_its_keyed_answer(rsp_modules):
     """G8's case states the cause ("because it was not achieved"): its keyed answer SOME(intent) does not move."""
     key = fix.KEY["G8"]["key"]
     assert key == "SOME(intent)" and rsp_run.same_set(key, fix._answer("G8"))
+
+
+# --- PLAN 3.1's RS3c row agrees with section 12, item 20(j), and the facts header -----------------------------------
+
+def test_plan_31_does_not_list_rs3c_as_a_reading_set():
+    """The row says RS3c is not a reading set and cites 20(j); the accounting tool's PLAN 3.1 parse no longer lists it,
+    as neither READING_SETS nor any facts.d1.ve header does."""
+    acc = fix._accounting()
+    sets, limits = acc.plan_tables(RSP / "PLAN.md")
+    assert "RS3c" not in sets and {"RS3i", "RS3o"} <= sets and 20 in limits
+    assert "RS3c" not in rsp_translation.READING_SETS
+    assert not any(name == "RS3c" for block in rsp_translation.read_blocks("facts.d1.ve") for name, _ in block.when)
+    plan = (RSP / "PLAN.md").read_text(encoding="utf-8")
+    [row] = [line for line in plan.splitlines() if line.startswith("| RS3c")]
+    assert "RS3c is not a reading set (section 12, item 20(j))" in row and "always a third condition" in row
+    assert "(j) RS3c is no longer a reading set" in plan
