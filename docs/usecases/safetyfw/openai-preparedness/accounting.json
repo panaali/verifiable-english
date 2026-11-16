@@ -1675,15 +1675,13 @@
    "file": "rules.d1.ve",
    "span_length": 157,
    "used": [
-    "decided_without_sag",
     "leadership_decision",
-    "recommendation_informed"
+    "recommendation_informed",
+    "sag_recommendations_given"
    ],
    "unaccounted": [
-    "abil",
     "avoidance",
-    "doubt",
-    "filibuster"
+    "doubt"
    ],
    "entries": [
     {
@@ -1704,15 +1702,12 @@
    "file": "rules.d1.ve",
    "span_length": 157,
    "used": [
-    "decided_without_sag",
     "leadership_decision",
     "sag_participation"
    ],
    "unaccounted": [
-    "abil",
     "avoidance",
-    "doubt",
-    "filibuster"
+    "doubt"
    ],
    "entries": [
     {
@@ -2973,7 +2968,7 @@
    "restates": 93,
    "rule": 21
   },
-  "unaccounted_words": 513,
+  "unaccounted_words": 509,
   "blocks_with_unaccounted_words": 70,
   "quotes": 118,
   "unanchored_quotes": 0,
