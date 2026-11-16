@@ -16,9 +16,9 @@ from tools.fidmech import bindings as B
 
 ROOT = Path(__file__).resolve().parents[1]
 PINNED = {
-    "anthropic-rsp": "f79cf23543cbe73e7c0366be762e6dcc622f1a2f6e5d38745d298e49045fcdf2",
-    "openai-preparedness": "f01f5d9d2e57d5d3d1c4f509514ed04075e8c4668d5504d87fd835c478ea8a23",
-    "safety-framework": "de864ee3fc44778a709f42ba41925fc9c7c267a088efab387fd53d227454fc91",
+    "anthropic-rsp": "58a8cc43d30b51fa52cbec8325755246e2b27181445409f1275574fbf43f28d9",
+    "openai-preparedness": "f6155b130d91414abe2400202130dfafcae2a5e01185b8c8ba5c14e756b3920b",
+    "safety-framework": "bfccca31e1df9d322ae37a0e7596ae0b8ae7d663cc341f89cd2187ce9360b7b0",
 }
 # Plan 2a's lists; FSF DM and SEC are read from SELECTION_ITEMS, SILENT_ITEMS keeps SEC by reference in run.py,
 # and item_predicates()'s inline kinds are INLINE_ITEMS and CATCH_ALL_OWN (REPORT section 1).
@@ -54,10 +54,10 @@ def test_each_file_is_the_canonical_dump_of_its_tables_and_names_plan_2as_tables
     data = json.loads(path(document).read_text())
     tables = B.load_bindings(path(document), document)
     assert list(tables) == TABLES[document]
-    text = B.dump_bindings(document, data["frozen_from"],
+    text = B.dump_bindings(document, data["frozen_from"], data["run_py_blob"],
                            {name: (data["tables"][name]["type"], value) for name, value in tables.items()})
     assert text == path(document).read_text()
-    assert len(data["frozen_from"]) == 40
+    assert len(data["frozen_from"]) == len(data["run_py_blob"]) == 40
 
 
 def deep_types(value):
@@ -130,7 +130,7 @@ def test_an_unknown_or_malformed_type_is_refused(type_):
 
 def test_a_type_that_loses_the_value_is_refused_at_dump():
     with pytest.raises(B.BindingsError, match="does not rebuild"):
-        B.dump_bindings("d", "c", {"T": ("tuple[str,...]", ["a"])})
+        B.dump_bindings("d", "c", "b", {"T": ("tuple[str,...]", ["a"])})
 
 
 @pytest.mark.parametrize("change, message", [
@@ -138,6 +138,8 @@ def test_a_type_that_loses_the_value_is_refused_at_dump():
     (lambda d: d.update(extra=1), "keys"),
     (lambda d: d.update(document="other"), "document"),
     (lambda d: d.update(tables={}), "non-empty"),
+    (lambda d: d.pop("run_py_blob"), "keys"),
+    (lambda d: d.update(run_py_blob=7), "run_py_blob a blob"),
     (lambda d: d["tables"]["OT"].update(note="x"), "OT is not"),
     (lambda d: d["tables"]["SITUATIONS"]["value"].update(K2="x"), r"SITUATIONS\.K2: expected tuple"),
 ])
@@ -169,7 +171,7 @@ INLINE = _B["INLINE"]
 def write_bindings(tmp_path, tables):
     case = tmp_path / "usecases" / "toy" / "fidmech"
     case.mkdir(parents=True)
-    (case / "bindings.json").write_text(B.dump_bindings("toy", "abc", tables))
+    (case / "bindings.json").write_text(B.dump_bindings("toy", "abc", "def", tables))
     return case / "bindings.json"
 
 
