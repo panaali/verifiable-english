@@ -1,0 +1,200 @@
+NOT RUN lean/VE/Readings/SoftSupRun.lean:429 VE.Readings.Run.sdScope (G[V], trusted) list-drop-first: [(name, jchoice (answer.getObjValD "choice"))] -> ([(name, jchoice (answer.getObjValD "choice"))].drop 1)
+NOT RUN lean/VE/Rights/Run.lean:451 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: (targets (soften (correlate D))) -> ((targets (soften (correlate D))).drop 1)
+NOT RUN lean/VE/Rights/Wire.lean:62 VE.Rights.Wire.rightsNormalForm (D[V], trusted) list-drop-first: ls.map line -> ((ls.map line).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:208 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("anchor", Json.mkObj [("section", .str s)])] -> ([("anchor", Json.mkObj [("section", .str s)])].drop 1)
+NOT RUN lean/VE/Senses/Run.lean:465 VE.Senses.Run.readCase (G[V], trusted) list-drop-first: line.toList -> (line.toList.drop 1)
+NOT RUN lean/VE/Service/Document.lean:2346 VE.Service.Document.chainFront (D[V], trusted) list-drop-first: units.toList.map -> (units.toList.map.drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:851 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: dec.units.filterMap -> (dec.units.filterMap.drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [.lit "InvalidPurposes: link ", .arg "link" .raw, .lit " has share ", .arg "share" .raw, .lit "; ... -> ([.lit "InvalidPurposes: link ", .arg "link" .raw, .lit " has share ", .arg "share" .raw, .lit ";...
+NOT RUN lean/ResponseShape/Schemas/Document.lean:279 ResponseShape.Schemas.Document.file (G[V], trusted) list-drop-middle: ("composed_set", .schema composedSet), -> 
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:206 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-drop-middle: ("sources", n [arr, .items (n [obj, .required ["rule", "source"], closed [("rule", str), ("source... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:148 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("verdict", enumS ["ELABORATED", "REFUSED"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "narrowings", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-middle: "budget", -> 
+NOT RUN lean/VE/Compose/Dispatch.lean:777 VE.Compose.cardinalityOthers (G[V], trusted) list-drop-middle: "scope@0", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .lit " has polarity ", -> 
+NOT RUN lean/ResponseShape/Schemas/Document.lean:185 ResponseShape.Schemas.Document.judgmentLines (G[V], trusted) list-last: [("unit", ref "common.json#/$defs/token"), ("line", str)] -> ([("unit", ref "common.json#/$defs/token"), ("line", str)].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [str, .type ["null"]] -> ([str, .type ["null"]].reverse.take 1)
+NOT RUN lean/VE/Commands/Run.lean:250 VE.Commands.Run.outcomeFields (D[V], trusted) list-last: ps.flatMap (·.2) -> ((ps.flatMap (·.2)).reverse.take 1)
+NOT RUN lean/VE/Commands/Steps.lean:40 VE.Commands.shapes (G[V], trusted) list-last: body.drop 5 -> ((body.drop 5).reverse.take 1)
+NOT RUN lean/VE/EnglishGrammar/Norm/Run.lean:130 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-last: f.sentence?.toList.map -> (f.sentence?.toList.map.reverse.take 1)
+NOT RUN lean/VE/Presupposition/Admit.lean:87 VE.Presupposition.baseOf (G[V], trusted) list-last: (allSame (fun r => match r.content with | .rule M => peelRule (nc r.cand.root) M | .claim _ => no... -> (((allSame (fun r => match r.content with | .rule M => peelRule (nc r.cand.root) M | .claim _ => ...
+NOT RUN lean/VE/Presupposition/Admit.lean:249 VE.Presupposition.separated (G[V], trusted) list-last: ss -> (ss.reverse.take 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-last: g.members -> (g.members.reverse.take 1)
+NOT RUN lean/VE/Rights/Run.lean:451 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: (targets (soften (correlate D))).map (·.1) -> (((targets (soften (correlate D))).map (·.1)).reverse.take 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:852 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: neededIds -> (neededIds.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Common.lean:445 ResponseShape.Schemas.Common.request_block (G[V], trusted) list-drop-first: [obj, .required ["events"]] -> ([obj, .required ["events"]].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Document.lean:185 ResponseShape.Schemas.Document.judgmentLines (G[V], trusted) list-drop-first: [("unit", ref "common.json#/$defs/token"), ("line", str)] -> ([("unit", ref "common.json#/$defs/token"), ("line", str)].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:153 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common.... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("sorts", ref "common...
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: ["situation"] -> (["situation"].drop 1)
+NOT RUN lean/VE/Commands/Run.lean:250 VE.Commands.Run.outcomeFields (D[V], trusted) list-drop-first: ps.flatMap (·.2) -> ((ps.flatMap (·.2)).drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:40 VE.Commands.shapes (G[V], trusted) list-drop-first: [.after (body.drop 5)] -> ([.after (body.drop 5)].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:112 VE.Commands.shapeOutcome (G[V], trusted) list-drop-first: alts -> (alts.drop 1)
+NOT RUN lean/VE/EnglishGrammar/Norm/Run.lean:130 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-drop-first: (f.sentence?.toList.map fun i => ("sentence", toJson i)) -> ((f.sentence?.toList.map fun i => ("sentence", toJson i)).drop 1)
+NOT RUN lean/VE/Presupposition/Admit.lean:87 VE.Presupposition.baseOf (G[V], trusted) list-drop-first: (allSame (fun r => match r.content with | .rule M => peelRule (nc r.cand.root) M | .claim _ => no... -> (((allSame (fun r => match r.content with | .rule M => peelRule (nc r.cand.root) M | .claim _ => ...
+NOT RUN lean/VE/Presupposition/Admit.lean:249 VE.Presupposition.separated (G[V], trusted) list-drop-first: ss -> (ss.drop 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-drop-first: (opens.foldl step []) -> ((opens.foldl step []).drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:22 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/Readings/SoftSupRun.lean:430 VE.Readings.Run.sdScope (G[V], trusted) list-drop-first: st -> (st.drop 1)
+NOT RUN lean/VE/Rights/Run.lean:451 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: (targets (soften (correlate D))).map (·.1) -> (((targets (soften (correlate D))).map (·.1)).drop 1)
+NOT RUN lean/VE/Scope/Authoring.lean:208 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("section", .str s)] -> ([("section", .str s)].drop 1)
+NOT RUN lean/VE/Senses/Run.lean:465 VE.Senses.Run.readCase (G[V], trusted) list-drop-first: line.toList.map -> (line.toList.map.drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:852 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: neededIds -> (neededIds.drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [.lit "InvalidPurposes: link ", .arg "link" .raw, .lit " has a side that is not a list of parts o... -> ([.lit "InvalidPurposes: link ", .arg "link" .raw, .lit " has a side that is not a list of parts ...
+NOT RUN lean/ResponseShape/Schemas/Document.lean:279 ResponseShape.Schemas.Document.file (G[V], trusted) list-drop-middle: ("composed_readings", .schema composedReadings), -> 
+NOT RUN lean/ResponseShape/Schemas/NormDefaults.lean:207 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-drop-middle: .required ["rule", "source"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:149 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("diagnostic", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "rule_narrowings", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-middle: .ite (props [("situation_exhibited", .const (.bool true))]) (props [("situation", ref "#/$defs/si... -> 
+NOT RUN lean/VE/Compose/Dispatch.lean:777 VE.Compose.cardinalityOthers (G[V], trusted) list-drop-middle: "soft-norms@0", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .arg "polarity" .raw, -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [str, .type ["null"]] -> ([str, .type ["null"]].reverse.take 1)
+NOT RUN lean/VE/Commands/Run.lean:255 VE.Commands.Run.outcomeFields (D[V], trusted) list-last: [("outcome", .str "mixed"), ("reading", readingJson q none r), ("purpose", .str p)] -> ([("outcome", .str "mixed"), ("reading", readingJson q none r), ("purpose", .str p)].reverse.take 1)
+NOT RUN lean/VE/Commands/Steps.lean:42 VE.Commands.shapes (G[V], trusted) list-last: xs -> (xs.reverse.take 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-last: g.cands -> (g.cands.reverse.take 1)
+NOT RUN lean/VE/Rights/Run.lean:453 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome), ("budget", toJson... -> ([("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome), ("budget", toJso...
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:854 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: commands -> (commands.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Common.lean:445 ResponseShape.Schemas.Common.request_block (G[V], trusted) list-drop-first: ["events"] -> (["events"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["permission", "obligation", "plain"] -> (["permission", "obligation", "plain"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["missi... -> ([ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["miss...
+NOT RUN lean/VE/Commands/Run.lean:255 VE.Commands.Run.outcomeFields (D[V], trusted) list-drop-first: [("outcome", .str "mixed"), ("reading", readingJson q none r), ("purpose", .str p)] -> ([("outcome", .str "mixed"), ("reading", readingJson q none r), ("purpose", .str p)].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:40 VE.Commands.shapes (G[V], trusted) list-drop-first: body -> (body.drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:112 VE.Commands.shapeOutcome (G[V], trusted) list-drop-first: alts.map -> (alts.map.drop 1)
+NOT RUN lean/VE/EnglishGrammar/Norm/Run.lean:130 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-drop-first: f.sentence?.toList -> (f.sentence?.toList.drop 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-drop-first: (opens.foldl step []).filter (fun g => decide (2 ≤ g.members.length) && g.cands.all Candidate.core) -> (((opens.foldl step []).filter (fun g => decide (2 ≤ g.members.length) && g.cands.all Candidate.c...
+NOT RUN lean/VE/Presupposition/Table.lean:23 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/Rights/Run.lean:453 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome), ("budget", toJson... -> ([("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome), ("budget", toJso...
+NOT RUN lean/VE/Scope/Authoring.lean:214 VE.Scope.Pinned.readings (D[V], trusted) list-drop-first: [("reach", .str "frontier"), ("effect", narrowing c)] -> ([("reach", .str "frontier"), ("effect", narrowing c)].drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:854 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: commands -> (commands.drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [.check { id := "2.1", loc := ⟨.root, [.tok "purposes"]⟩, guard := [], kind := .classifier "purpo... -> ([.check { id := "2.1", loc := ⟨.root, [.tok "purposes"]⟩, guard := [], kind := .classifier "purp...
+NOT RUN lean/ResponseShape/Schemas/Document.lean:279 ResponseShape.Schemas.Document.file (G[V], trusted) list-drop-middle: ("cells", .schema cells), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:150 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("predicates", n [arr, .items (n [obj, .required ["name", "source", "index", "sorts", "role", "de... -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "distinction", -> 
+NOT RUN lean/VE/Compose/Dispatch.lean:777 VE.Compose.cardinalityOthers (G[V], trusted) list-drop-middle: "speech-acts@0", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: { id := "1.1h", code := "PURPOSES_INVALID_LINK", cls := "InvalidInput", text := [.lit "InvalidPur... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "o... -> ([arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "...
+NOT RUN lean/VE/Commands/Steps.lean:42 VE.Commands.shapes (G[V], trusted) list-last: xs -> (xs.reverse.take 1)
+NOT RUN lean/VE/Rights/Run.lean:454 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: M -> (M.reverse.take 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:856 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: fences -> (fences.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["allow", "deny", "unspecified"] -> (["allow", "deny", "unspecified"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [.not (.required ["detail"]), .required ["weighing_points", "situation_exhibited", "budget", "sit... -> ([.not (.required ["detail"]), .required ["weighing_points", "situation_exhibited", "budget", "si...
+NOT RUN lean/VE/Commands/Steps.lean:40 VE.Commands.shapes (G[V], trusted) list-drop-first: body.drop 5 -> ((body.drop 5).drop 1)
+NOT RUN lean/VE/EnglishGrammar/Norm/Run.lean:130 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-drop-first: f.sentence?.toList.map -> (f.sentence?.toList.map.drop 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-drop-first: opens -> (opens.drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:24 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/Rights/Run.lean:454 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: M -> (M.drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:856 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: fences -> (fences.drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [.tok "purposes"] -> ([.tok "purposes"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Document.lean:279 ResponseShape.Schemas.Document.file (G[V], trusted) list-drop-middle: ("block_coverage", .schema blockCoverage), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:151 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["name", "source", "index", "sorts", "role", "default", "act", "permission"], -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "findings", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .arg "link" .raw, -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [ ... -> ([obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [...
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-last: pre -> (pre.reverse.take 1)
+NOT RUN lean/VE/Rights/Run.lean:454 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: M.map (situationTables D) -> ((M.map (situationTables D)).reverse.take 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:856 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: fences.reverse -> (fences.reverse.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .type ["null"]] -> ([str, .type ["null"]].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: ["detail"] -> (["detail"].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:42 VE.Commands.shapes (G[V], trusted) list-drop-first: xs -> (xs.drop 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-drop-first: g.members -> (g.members.drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:25 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/Rights/Run.lean:454 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: M.map (situationTables D) -> ((M.map (situationTables D)).drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:856 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: fences.reverse -> (fences.reverse.drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [{ id := "2.1b", code := "PURPOSES_DUPLICATE_LINK", cls := "InvalidInput", text := [.lit "Invalid... -> ([{ id := "2.1b", code := "PURPOSES_DUPLICATE_LINK", cls := "InvalidInput", text := [.lit "Invali...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "source", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "located_findings", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .lit " has share ", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["name", "source", "index", "pred", "sign", "guard", "unless", "over"] -> (["name", "source", "index", "pred", "sign", "guard", "unless", "over"].reverse.take 1)
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-last: aft -> (aft.reverse.take 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: (dec.units.find? (·.id == u.id)) -> ((dec.units.find? (·.id == u.id)).reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: ["weighing_points", "situation_exhibited", "budget", "situation"] -> (["weighing_points", "situation_exhibited", "budget", "situation"].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:42 VE.Commands.shapes (G[V], trusted) list-drop-first: xs -> (xs.drop 1)
+NOT RUN lean/VE/Presupposition/Couple.lean:39 VE.Presupposition.groups (S, trusted) list-drop-first: g.cands -> (g.cands.drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:26 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed, .unconditional] -> ([.assumed, .unconditional].drop 1)
+NOT RUN lean/VE/Rights/Run.lean:456 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: [("detail", .str d)] -> ([("detail", .str d)].drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: (dec.units.find? (·.id == u.id)) -> ((dec.units.find? (·.id == u.id)).drop 1)
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-first: [.lit "InvalidPurposes: two links have the same id"] -> ([.lit "InvalidPurposes: two links have the same id"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "index", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "decisions", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .arg "share" .raw, -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign"... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign...
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-last: sq -> (sq.reverse.take 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: (dec.units.find? (·.id == u.id)).map (·.role) -> (((dec.units.find? (·.id == u.id)).map (·.role)).reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [str, .type ["null"]] -> ([str, .type ["null"]].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:401 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [("situation_exhibited", .const (.bool true))] -> ([("situation_exhibited", .const (.bool true))].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:42 VE.Commands.shapes (G[V], trusted) list-drop-first: [.seq xs] -> ([.seq xs].drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:27 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: (dec.units.find? (·.id == u.id)).map (·.role) -> (((dec.units.find? (·.id == u.id)).map (·.role)).drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "sorts", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "derived", -> 
+NOT RUN lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) list-drop-middle: .arg "link" .raw, -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", r... -> ([arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ...
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-last: dec.units -> (dec.units.reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:401 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [("situation", ref "#/$defs/situation")] -> ([("situation", ref "#/$defs/situation")].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-drop-first: pre -> (pre.drop 1)
+NOT RUN lean/VE/Presupposition/Table.lean:28 VE.Presupposition.candidateTable (S, trusted) list-drop-first: [.assumed] -> ([.assumed].drop 1)
+NOT RUN lean/VE/SpeechActs/Source/Run.lean:867 VE.SpeechActs.Source.readSource (D[V], trusted) list-drop-first: dec.units -> (dec.units.drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "role", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "order", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json#... -> ([obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "o... -> ([arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "...
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:402 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [("situation", .type ["null"])] -> ([("situation", .type ["null"])].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-drop-first: aft -> (aft.drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "default", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "background", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: ["source", "parts", "text"] -> (["source", "parts", "text"].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [ ... -> ([obj, .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], closed [...
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:402 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+NOT RUN lean/VE/Commands/Steps.lean:43 VE.Commands.shapes (G[V], trusted) list-drop-first: sq -> (sq.drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:152 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "act", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "premises", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:168 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-last: [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)] -> ([("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)].reverse.take 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["name", "source", "index", "pred", "sign", "guard", "unless", "over"] -> (["name", "source", "index", "pred", "sign", "guard", "unless", "over"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:403 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [ ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional ... -> ([ ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional...
+NOT RUN lean/VE/Commands/Steps.lean:44 VE.Commands.shapes (G[V], trusted) list-drop-first: [.core s] -> ([.core s].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("source", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "colliding_pairs", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:161 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign"... -> ([ ("name", str), ("source", str), ("index", ref "common.json#/$defs/nat"), ("pred", str), ("sign...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("index", ref "common.json#/$defs/nat"), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "conflict_targets", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:163 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["boolean"] -> (["boolean"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:154 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("sorts", ref "common.json#/$defs/strings"), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "conditional_on", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", r... -> ([arr, .items (n [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:155 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("role", enumS ["permission", "obligation", "plain"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:203 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: "fragment", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json#... -> ([obj, .required ["source", "parts", "text"], closed [("source", str), ("parts", ref "common.json...
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "obligation", -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:284 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: ("located_findings", ref "#/$defs/located_findings"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: ["source", "parts", "text"] -> (["source", "parts", "text"].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:156 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("default", enumS ["allow", "deny", "unspecified"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Rights.lean:285 ResponseShape.Schemas.Rights.elaborate (G[V], trusted) list-drop-middle: ("decisions", ref "soft-norms.json#/$defs/elaborated/decisions"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:168 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-first: [("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)] -> ([("source", str), ("parts", ref "common.json#/$defs/strings"), ("text", str)].drop 1)
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "deny", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:157 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("act", .anyOf [str, .type ["null"]]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:158 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("rules", n [arr, .items (n [obj, .required ["name", "source", "index", "pred", "sign", "guard", ... -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:159 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["name", "source", "index", "pred", "sign", "guard", "unless", "over"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "source", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "index", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "pred", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "sign", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "guard", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:160 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "unless", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("source", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("index", ref "common.json#/$defs/nat"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("pred", str), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:162 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("sign", .type ["boolean"]), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:163 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("guard", ref "common.json#/$defs/generated_formula"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:163 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("unless", ref "common.json#/$defs/generated_formulas"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:165 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("kept", ref "common.json#/$defs/strings"), -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: .required ["source", "parts", "text"], -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:167 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: "parts", -> 
+NOT RUN lean/ResponseShape/Schemas/Norms.lean:168 ResponseShape.Schemas.Norms.«acts-elaborate» (G[V], trusted) list-drop-middle: ("parts", ref "common.json#/$defs/strings"), -> 
+trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 7035 NOT RUN in 72 s
+trust_mutants: D[V], trusted: 2100 NOT RUN
+trust_mutants: G[V], trusted: 1 KILLED, 3411 NOT RUN
+trust_mutants: K, trusted: 18 NOT RUN
+trust_mutants: S, trusted: 2 KILLED, 1506 NOT RUN
+trust_mutants: steps: wall plan 12.4 s, scratch 1.8 s, control_build 0.1 s, probe_install 1 s, mutants 56 s, cleanup 0.4 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 10.8 s (3), mutant_builds 3.7 s (3), mutant_checks 19.6 s (6), stage_controls 4.2 s (3), mutant_probes 13.2 s (3)
