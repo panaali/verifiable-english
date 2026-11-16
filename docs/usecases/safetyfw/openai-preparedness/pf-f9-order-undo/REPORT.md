@@ -13,7 +13,7 @@ Rulings: reviews/dri-ruling-record-void-astra-20261115.md section C (finding 1.1
 reviews/dri-decisions-20261115-record-void-ruling.md, reviews/dri-decisions-20261116-adv0244.md item 2. The three f9
 units stay UNRESOLVED; this item only undoes the record correction.
 
-SIZE: 4 product, 69 tests (+15 removed, of which 8 in test_pf_fidelity_fix.py), 34 other hand-written lines (moved_check.py 28, moved-check.json 6), plus this
+SIZE: 4 product, 72 tests added and 18 removed (test_pf_fidelity_fix.py +6 -11, test_pf_f7_timed_act.py -7), 34 other hand-written lines (moved_check.py 28, moved-check.json 6), plus this
 report; coverage.json, environment.d1.json and conformance/english-lean/lexicon-report.json are generated (1 line each).
 
 ## 1. Hunks of 94167f21d4 (`git show 94167f21d4 -- usecases/openai-preparedness/`)
