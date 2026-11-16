@@ -1,0 +1,80 @@
+{
+ "schema": "fidmech-actors/1",
+ "document": "safety-framework",
+ "generated": [
+  "appropriate government",
+  "government authorities",
+  "governance function",
+  "external experts",
+  "external groups",
+  "overall public",
+  "the developer",
+  "the experts",
+  "government",
+  "employees",
+  "the CBRN",
+  "the CCL",
+  "actors",
+  "CCA",
+  "CCL",
+  "SEC",
+  "TCL",
+  "AI"
+ ],
+ "removed": [
+  {
+   "phrase": "the CBRN",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "the CCL",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "CCA",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "CCL",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "SEC",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "TCL",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "AI",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "appropriate government",
+   "reason": "an adjective of \"appropriate government authorities\", which is covered by \"government authorities\""
+  },
+  {
+   "phrase": "overall public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  }
+ ],
+ "added": [
+  {
+   "phrase": "Google",
+   "reason": "the developer named in the legends (\"restricted to Google\", \"entities outside Google\"); a plain capitalised word, which the generator does not take"
+  }
+ ],
+ "actors": [
+  "government authorities",
+  "governance function",
+  "external experts",
+  "external groups",
+  "the developer",
+  "the experts",
+  "government",
+  "employees",
+  "Google",
+  "actors"
+ ]
+}

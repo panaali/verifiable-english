@@ -1,0 +1,10 @@
+## rows-cond | RS1=cond | RS0 | fixture: a rule over a second variable ("each threshold")
+Rule 1. Every situation must have the plans of the company about each threshold in place, if both that threshold is listed and that situation has crossed that threshold.
+## f16-only-legal | always | RS0 | fixture: an unless clause of two disjuncts
+Rule 1. Every situation must not have material redacted from the version given to external reviewers, if that situation is classified as "external_review_process", unless either that situation is classified as "legal_prohibition_redaction" or that situation is classified as "legal_rights_redaction", or both.
+## f12-final | RS7=final | RS0 | fixture: no guard
+Rule 1. Every situation need not have its Risk Report approved by the Board as well as the LTBT.
+## f12-board-approval | always | RS0 | fixture: takes precedence over f12-final (PRECEDENCE)
+Rule 1. Every situation must have its Risk Report approved by the Board as well as the LTBT, if that situation is classified as "marginal_major_role".
+## f18-either | always | RS0 | fixture: a guard of two disjuncts
+Rule 1. Every situation must have the position of RSO maintained, if either that situation is classified as "highly_capable" or that situation is noteworthy, or both.

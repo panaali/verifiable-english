@@ -1,0 +1,1 @@
+PRECEDENCE = {"f12-board-approval": ("f12-final",)}
