@@ -579,6 +579,18 @@
    ]
   },
   {
+   "test": "tests/test_fidmech_wording.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
    "test": "tests/test_fidmech_worker.py",
    "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
    "recorded": [

@@ -119,3 +119,25 @@ def test_wording_mutants_are_scored_never_equivalent_and_stillborn_ones_are_list
     for rec in records:
         for edit in rec["edits"]:
             assert files[edit["file"]].count(edit["find"]) == 1
+
+
+def test_the_actors_command_checks_and_rewrites_the_generated_list(tmp_path, capsys):
+    """`actors --check` passes when actors.json's generated list is the generator's, fails (1) when it is not;
+    `--write` rewrites it and keeps the reviewed removals and additions."""
+    from tools.fidmech.__main__ import main
+    case = tmp_path / "safety-framework"
+    (case / "fidmech").mkdir(parents=True)
+    for name, text in inputs("safety-framework").items():
+        (case / name).write_text(text, encoding="utf-8")
+    data = json.loads((ROOT / "usecases" / "safety-framework" / "fidmech" / "actors.json").read_text())
+    data["generated"] = W.propose_actors(inputs("safety-framework"))
+    data["actors"] = sorted((set(data["generated"]) - {r["phrase"] for r in data["removed"]})
+                            | {r["phrase"] for r in data["added"]}, key=lambda a: (-len(a), a))
+    path = case / "fidmech" / "actors.json"
+    path.write_text(json.dumps(data))
+    assert main(["actors", "--doc", str(case), "--check"]) == 0
+    path.write_text(json.dumps({**data, "generated": data["generated"][1:], "actors": data["actors"]}))
+    assert main(["actors", "--doc", str(case), "--check"]) == 1
+    assert main(["actors", "--doc", str(case), "--write"]) == 0
+    assert json.loads(path.read_text()) == data
+    capsys.readouterr()
