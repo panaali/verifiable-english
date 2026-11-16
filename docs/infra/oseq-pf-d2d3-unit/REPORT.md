@@ -122,8 +122,14 @@ Seeded bugs (`seeded-bugs.json`, temp copies in /tmp, staged files untouched): 1
 makes at least one test fail. One mutant (m11, class body without the global fallback) survived the first run, and a
 synthetic class case was added that kills it.
 
-VE checks (docs-only change): the selected tests, `lake build` and `python3 lean/audit.py` were run on this HEAD; the results
-are in the commit that records them. Not run: the full gate (the merge train runs it).
+VE checks (docs-only change), all on 424fed4ed7:
+- the selected tests (`mac-pytest.sh --select`, GitHub Actions run oseq-pf-d2d3-unit-424fed4e-t843380, 2 shards) exit 0.
+  Two slow files selected only for weak reasons were deferred to the chain gate: tests/test_select_tests.py and
+  tests/test_wire_gate_corpus.py.
+- `lake build` passed (1475 jobs).
+- `python3 lean/audit.py` passed (896 files, 10116 theorems, standard axioms only).
+
+Not run: the full gate (the merge train runs it). No test in main-known-red.txt was touched.
 
 ## Install (decider)
 
