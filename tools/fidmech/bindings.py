@@ -190,7 +190,7 @@ def frozen_diff(path, *, new_source=None, old_source=None):
     data = json.loads(path.read_text(encoding="utf-8"))
     tables = load_bindings(path, data.get("document"))
     run_py = path.parent.parent / "run.py"
-    rel = run_py.resolve().relative_to(REPO).as_posix()
+    rel = run_py.resolve().relative_to(REPO).as_posix() if run_py.resolve().is_relative_to(REPO) else str(run_py)
     if new_source is None:
         new_source = run_py.read_text(encoding="utf-8")
     if old_source is None:
