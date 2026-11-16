@@ -2,9 +2,9 @@ safety-framework: 61 blocks, 57 quotes checked, 3 note quotes, 0 empty (info, ou
 L1+L1a+L2+L3+L4+D hits: L1m 17, L1n 0, L1u 0, L1c 38, L1e 1, L1a 4, L2b 26, L2q 1, L2a 0, L3w 24, L4u 18, L4l 50, D 386, L4g 0
   L1a: {"linked_blocks": 14, "unlinked_blocks": 47}
   L2: {"regulated": 27, "passages_unlinked": 0, "not_checked": {"base_predicates": 35, "base_bare": 35, "open_terms": 15}}
-  L3: {"rule_blocks_without_quote": 11, "from_header_quote": 0}
+  L3: {"rule_blocks_without_quote": 11, "from_header_quote": 0, "partly_from_header_quote": 0}
   L4: {"sentences": 313, "obligation_bearing": 131, "by_cue": 96, "ruled_out": 0}
-  D: {"sidecar": false, "span": "sentence", "unaccounted": 386, "outside_quote": 209}
+  D: {"sidecar": false, "span": "sentence", "from_header_quote": 0, "partly_from_header_quote": 0, "unaccounted": 386, "outside_quote": 209}
   extra off: L1m 17, L1n 0, L1u 0, L1c 38, L1e 1, L1a 4, L2b 26, L2q 1, L2a 0, L3w 24, L4u 18, L4l 50, D 386, L4g 0 (the lever clears 0 hits and adds 0)
   suppress off: L1m 17, L1n 0, L1u 0, L1c 38, L1e 1, L1a 4, L2b 26, L2q 1, L2a 0, L3w 24, L4u 18, L4l 50, D 386, L4g 0 (the lever clears 0 hits and adds 0)
   abbrev off: L1m 17, L1n 0, L1u 0, L1c 38, L1e 1, L1a 4, L2b 26, L2q 1, L2a 0, L3w 24, L4u 18, L4l 50, D 386, L4g 0 (the lever clears 0 hits and adds 0)

@@ -1,11 +1,11 @@
 # fid-mech-b2: cues and logic words pinned; L1a, L2, L3, L4, D; the first FSF and PF run (build report)
 
-**Status:** built; the selected run is in section 9. **HEAD:** the commit carrying this report (branch infra/fid-mech-b2).
-**What changed:** new `tools/fidmech/sentchecks.py` (L1a, L2, L3, L4, D), `cues.json` and `logic_words.json` (frozen on RSP, sha256-pinned), `ruled_out.json` x3 (`[]`), `textcheck --checks L1a,L2,L3,L4,D|all --span sentence`; a fixture case and three test files; the first FSF/PF run saved.
+**Status:** built, and review F1 fixed (section 12); the selected runs are in sections 9 and 12. **HEAD:** the commit carrying this report (branch infra/fid-mech-b2).
+**What changed:** new `tools/fidmech/sentchecks.py` (L1a, L2, L3, L4, D), `cues.json` and `logic_words.json` (frozen on RSP, sha256-pinned), `ruled_out.json` x3 (`[]`), `textcheck --checks L1a,L2,L3,L4,D|all --span sentence`; a fixture case and three test files; the FSF/PF run saved (rerun after F1; FSF and PF are in-sample for L3 and D by plan 3.0 rule 5, section 2).
 **Open:** none. **DRI signature:** none reserved; DELTA none (Python tooling and data; no trusted Lean line, no decision path replaced; trust +0).
-**First run (measured output, not a gate; section 4):** RSP L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1227; FSF L1a 4, L2b 26, L2q 1, L3w 24, L4u 18, L4l 50, D 386 (no sidecar); PF L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, D 661.
+**Run after F1 (measured output, not a gate; section 4):** RSP L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1233; FSF L1a 4, L2b 26, L2q 1, L3w 24, L4u 18, L4l 50, D 386 (no sidecar); PF L1a 1, L2b 45, L2q 8, L2a 2, L3w 13, L4u 12, D 661.
 
-SIZE: 678 product, 458 tests, 260 other hand-written lines (224 fixture data, 36 data files). The saved run outputs in this directory are command output, not hand-written.
+SIZE: 712 product, 514 tests, 260 other hand-written lines (224 fixture data, 36 data files). The saved run outputs in this directory are command output, not hand-written.
 
 ## 1. Deliverables (task DO list; plan sections 2c, 3.0, 3.2 L1a, 3.3-3.6, 10, 11; Opus round-2 points 2, 3, 7, 9)
 
@@ -19,7 +19,7 @@ SIZE: 678 product, 458 tests, 260 other hand-written lines (224 fixture data, 36
 | (3) L2q includes L1e (point 9) | sentchecks.l2 (every L1 class of a passage) | 9d42ed27c8 | test_l2q_includes_an_elided_legend_passage |
 | (3) a legend's bracketed quote is a note (point 2) | textchecks.header_quotes, used for legends too | 9d42ed27c8 | test_a_legend_passage_inside_brackets_is_a_note_and_the_l2b_detail_says_so |
 | (3) L3w per rule block, own words less the VE template | sentchecks.own_words, l3 | 9d42ed27c8 | [L3w-after], [L3w-within], test_the_rule_line_less_the_ve_template_keeps_no_guard_if |
-| (3) L3 falls back to the header quote, marked | sentchecks.block_sentences | 9d42ed27c8 | test_l3_uses_the_header_quote_when_l1_locates_no_sentence_and_says_so |
+| (3) L3 and D fall back to the header quote, marked, quote by quote: every unlocated quote's text joins the located sentences (review F1) | sentchecks.block_sentences, BlockSource | 9d42ed27c8, 00bcdca04f | test_l3_uses_the_header_quote_when_l1_locates_no_sentence_and_says_so, test_l3_reads_an_unlocated_quote_beside_located_ones, test_l3_marks_a_hit_whose_block_has_some_quotes_unlocated, test_d_counts_and_marks_the_words_of_an_unlocated_quote_beside_located_ones, test_block_sentences_keeps_the_text_of_every_quote_l1_did_not_locate |
 | (3) L4u/L4l per sentence; legend-only coverage its own class L4g (point 9) | sentchecks.l4 | 9d42ed27c8 | [L4u], [L4l], [L4g] |
 | (3) UNFORMALISED-coverage rule and ruled_out are levers | CASE_LEVERS | 9d42ed27c8 | test_l4_coverage_by_unformalised_units_and_ruled_out_entries_are_levers |
 | (3) D `--span sentence`: legend quotes do not account; (i) total, (ii) outside the quote; hit = uncovered word + every loss entry; sidecar a lever (point 3) | sentchecks.d | 9d42ed27c8 | [D-final], test_d_counts_what_lies_outside_the_header_quote, test_every_loss_entry_is_a_d_hit, test_d_lists_the_word_a_legend_quote_alone_carries_and_the_sidecar_can_cover_it |
@@ -43,8 +43,10 @@ Fixture tests: no new test file contains the text the fidq step selects on (`gre
   - Added after RSP's first output: the L2b detail names a legend's bracketed passages. candid_reports quotes its sentence inside "(3.2: "...")", which B1's frozen note rule reads as a translator's note.
   - Bug found by a test before the freeze: multi-word logic words ("prior to", "at least") never matched. The fix did not change RSP's L3w count (12).
 - **First FSF and PF check run:** 2026-11-16T03:49:26Z to 03:50:00Z, at HEAD 9d42ed27c8. Command: `uv run python -m tools.fidmech textcheck --doc <doc> --checks all --span sentence --json docs/infra/fid-mech-b2/<doc>.json`, one per document. Its stdout is saved beside the JSON as `<doc>.txt`.
-- **Changes after that run:** only commit 2550499ce9. It refuses malformed and empty inputs and binds spans.json to the source sha. No segmentation, matching or cue rule changed. Rerunning all three documents at 2550499ce9 gave byte-identical JSON and stdout: `cmp` exit 0 on all six files ("identical" x3 in the build log). No generic rule changed after the first run, so FSF and PF are not relabelled by plan 3.0 rule 5.
+- **Changes after that run:** only commit 2550499ce9. It refuses malformed and empty inputs and binds spans.json to the source sha. No segmentation, matching or cue rule changed. Rerunning all three documents at 2550499ce9 gave byte-identical JSON and stdout: `cmp` exit 0 on all six files ("identical" x3 in the build log). No generic rule changed in that commit.
+- **Review fix F1 (commit 00bcdca04f), a generic rule changed after the first run:** L3's and D's block source now keeps the text of every quote L1 located no sentence for, beside the located sentences. Before, a block with some quotes located dropped the others' text. This is a generic rule, and PF's output is what showed the bug (the review's false L3w on f1-misuse-bio-default). So by plan 3.0 rule 5, **FSF and PF are in-sample for L3 and D from this change**. FSF's hits did not change: it has no partly located block. The three documents were rerun after the fix, and the saved `<doc>.{json,txt}` are that rerun (section 12).
 - **In-sample labels to carry into every FSF/PF report** (Opus point 7):
+  - L3 and D on FSF and PF: the F1 block-source fix (above);
   - L1m, shaped by FSF f8 (B1);
   - the footnote stream, from FSF f3 (B1);
   - the first-person present-tense cue of L4 and L1a, from FSF ("We conduct ...");
@@ -77,15 +79,15 @@ Fixture tests: no new test file contains the text the fidq step selects on (`gre
 9. **spans.json** must carry the source's sha256, or the run is refused.
 10. **D.** "Accounted" means the block's VE text plus, for each name it uses, the unquoted legend: description less its quoted passages, verbalisation and act. A word is one hit; a loss entry is one hit.
 
-## 4. The first run: RSP (in-sample), FSF and PF (out-of-sample except the labels in section 2)
+## 4. The run: RSP (in-sample), FSF and PF (out-of-sample except the labels in section 2; L3 and D in-sample since F1)
 
-Measured output, not a gate. Source: `docs/infra/fid-mech-b2/<doc>.txt` (stdout) and `<doc>.json`.
+Measured output, not a gate. Source: `docs/infra/fid-mech-b2/<doc>.txt` (stdout) and `<doc>.json`, rerun after the F1 fix (section 12). The first run differed in RSP D (1227; unaccounted 1399), PF L3w (14; unaccounted 1188) and RSP's furniture lever (clears 93), and had no fallback counts; nothing else changed.
 
 | doc | L1m | L1n | L1u | L1c | L1e | L1a | L2b | L2q | L2a | L3w | L4u | L4l | D | L4g |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| RSP | 2 | 0 | 4 | 39 | 1 | 9 | 28 | 17 | 1 | 12 | 20 | 72 | 1227 | 0 |
+| RSP | 2 | 0 | 4 | 39 | 1 | 9 | 28 | 17 | 1 | 12 | 20 | 72 | 1233 | 0 |
 | FSF | 17 | 0 | 0 | 38 | 1 | 4 | 26 | 1 | 0 | 24 | 18 | 50 | 386 | 0 |
-| PF | 0 | 0 | 14 | 64 | 0 | 1 | 45 | 8 | 2 | 14 | 12 | 0 | 661 | 0 |
+| PF | 0 | 0 | 14 | 64 | 0 | 1 | 45 | 8 | 2 | 13 | 12 | 0 | 661 | 0 |
 
 Info lines, from `<doc>.txt`:
 - **L1a, linked and unlinked blocks** (printed on every L1a line, plan 3.2):
@@ -97,9 +99,10 @@ Info lines, from `<doc>.txt`:
   - open terms RSP 28, FSF 15, PF 18.
 - **L4, obligation-bearing sentences:** RSP 268 of 488, FSF 131 of 313, PF 337 of 435.
 - **D, unaccounted words** (total, outside the quote):
-  - RSP 1399 and 334;
+  - RSP 1405 and 334;
   - FSF 386 and 209, with no sidecar: every unaccounted word is listed, and D is its own class, so the headline can be read without it (Opus point 3; the headline itself is B5's report);
-  - PF 1188 and 605.
+  - PF 1191 and 605.
+  - Blocks whose source is all header quote, or partly (some quotes unlocated, F1): RSP 0 and 4, FSF 0 and 0, PF 11 and 3 (the L3 and D info lines).
   - Loss entries counted as D hits: RSP 3, PF 19.
 
 Lever reruns (clears / adds), from `<doc>.txt`:
@@ -107,7 +110,7 @@ Lever reruns (clears / adds), from `<doc>.txt`:
 | lever | RSP | FSF | PF |
 |---|---|---|---|
 | extra | 64 / 5 | 0 / 0 | 0 / 0 |
-| furniture | 93 / 87 | 5 / 27 | 68 / 44 |
+| furniture | 87 / 87 | 5 / 27 | 68 / 44 |
 | footnotes | 163 / 85 | 48 / 10 | 0 / 0 |
 | hand-footnotes | 16 / 1 | 0 / 0 | 14 / 20 |
 | suppress, abbrev | 0 / 0 | 0 / 0 | 0 / 0 |
@@ -181,7 +184,7 @@ Each plant edits one copy of the clean fixture under tmp_path. The test asserts 
 
 ## 7. Seeded bugs (Python, the only changed product language; `docs/infra/fid-mech-b2/seeded-bugs.json`)
 
-All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch script. For each, the named test failed (rc 1), and the file was restored (`git status` showed only the new JSON afterwards).
+All 21 were planted one at a time (S19-S21 for review F1, by /tmp/f1seed.py, the same way) in tools/fidmech/sentchecks.py by a scratch script. For each, the named test failed (rc 1), and the file was restored (`git status` showed only the new JSON afterwards).
 
 1. S1 L1a, the outside-linked-span check off -> test_each_plant_gives_exactly_its_class[L1a-other-span]
 2. S2 L1a, a duplicate must occur 3 times -> [L1a-unlinked-twice]
@@ -201,6 +204,9 @@ All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch sc
 16. S16 ruled_out, the sentence text not compared -> test_a_ruled_out_entry_without_a_reason_or_outside_the_source_is_refused
 17. S17 cues, the hedge check off -> test_the_obligation_cues
 18. S18 spans.json bound to no source -> test_a_malformed_node_in_any_input_is_refused_by_name
+19. S19 L3/D, an unlocated quote's text left out when another quote is located (F1) -> test_l3_reads_an_unlocated_quote_beside_located_ones
+20. S20 L3, a block with some quotes unlocated not marked (F1) -> test_l3_marks_a_hit_whose_block_has_some_quotes_unlocated
+21. S21 D, the mark dropped for a partly located block (F1) -> test_d_counts_and_marks_the_words_of_an_unlocated_quote_beside_located_ones
 
 ## 8. Spec re-read
 
@@ -211,7 +217,7 @@ All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch sc
   - Precedence: last, so only on quotes with no other L1 class.
 - **Plan 3.3:** "L2b no quoted passage of 12 characters or more (MIN_QUOTE)", which is accounting.MIN_QUOTE. "L2q fails as an L1u, L1c or L1n quote would", plus L1e by point 9. "L2a ... Only linked rules are checked; unlinked ones are counted": info `passages_unlinked`. "Not checked: base predicates and open terms, counted": info `not_checked`.
 - **Plan 3.4:** "the rule line minus the VE template; the act phrases of the predicates the rule uses; the unquoted parts of their legends". Built as `own_words`.
-  - "When L1 cannot locate them, the header quote is used and the hit is marked": built.
+  - "When L1 cannot locate them, the header quote is used and the hit is marked": built quote by quote (review F1). Each quote L1 locates no sentence for adds its own text to the located sentences. A block with any such quote is marked, in L3w and in D, as all from the header quote or as partly so ("1 of 2 quotes").
   - The 10 frozen classes are the plan's.
   - "in" and "following" are in no class: tests/test_fidmech_data.py::test_the_logic_word_classes_are_the_frozen_ones_and_the_quantifiers_stay_out.
 - **Plan 3.5:** obligation-bearing by unit kind (norm, hedged, unformalised) or by cues.
@@ -295,3 +301,24 @@ All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch sc
     - No deliverable was cut, and nothing moved to fid-mech-b3.
     - Each check has a seeded bug.
     - No new limit.
+
+## 12. Review fix F1 (fid-mech-b2-review.final.md, the only A/B finding)
+
+- **The finding (B):** `block_sentences` returned one flag per block: located sentences when any quote was located, else the quotes' text. A block with some quotes located dropped the text of the unlocated ones, so L3 and D read too little source, and nothing marked it. On PF this gave a false L3w "before" on f1-misuse-bio-default. Its own unlocated header quote says "...before external deployment".
+- **The class, removed by one shared value:** `block_sentences` now returns a `BlockSource`: the touched sentences plus the text of each quote L1 located no sentence for, with the quote counts. Both L3 and D read the source and their mark from it, through `where()` and `mark()`, and both report `from_header_quote` / `partly_from_header_quote` through `fallback_counts`. L1a, L2 and L4 work quote by quote, and they do not call it (the review checked the same).
+- **Evidence rerun** (same command as section 2, on 00bcdca04f's code; `<doc>.{json,txt}` replaced), compared hit by hit with the first run:
+  - RSP: 6 D hits added: "mitig" on rows-cond, rows-uncond, f5-strict and f5-default, and "ambitiou" on f5-strict and f5-default. D 1227 -> 1233; unaccounted 1399 -> 1405. 811 D details on those four blocks now carry the partial mark. No hit removed.
+  - PF: L3w f1-misuse-bio-default "before" removed (L3w 14 -> 13). Unaccounted 1188 -> 1191, all covered by the sidecar, so D stays 661. 31 D details on the three f1-*-default blocks now carry the mark.
+  - FSF: no hit or detail changed; only the two new counts (0, 0) appear.
+  - The affected blocks are exactly the review's list (RSP rows-cond, rows-uncond, f5-strict, f5-default; PF's three f1-*-default).
+- **Freeze (plan 3.0 rule 5):** FSF and PF are in-sample for L3 and D from this change (section 2).
+- **PROBE F1:** before the fix it failed with an AssertionError (r-publish L3w "after" ... "in the full source sentences"). After the fix it passes (no L3w; `partly_from_header_quote` 1). It is now tests/test_fidmech_b2.py::test_l3_reads_an_unlocated_quote_beside_located_ones.
+- **Regression tests** (all 4 fail with 0e787a6958's sentchecks.py swapped in, rc 1, "4 failed"; all pass after):
+  - test_l3_reads_an_unlocated_quote_beside_located_ones (the probe);
+  - test_l3_marks_a_hit_whose_block_has_some_quotes_unlocated;
+  - test_d_counts_and_marks_the_words_of_an_unlocated_quote_beside_located_ones;
+  - test_block_sentences_keeps_the_text_of_every_quote_l1_did_not_locate (all, none and some located; where/mark agree).
+- **Seeded bugs S19-S21** (section 7; seeded-bugs.json): each failed its named test (rc 1), and the file was restored.
+- **DELTA:** none. No Lean or Rust changed, and no decision path changed. The fix is report-only Python tooling, as before.
+- **Runs:** see below.
+

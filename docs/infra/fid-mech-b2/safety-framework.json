@@ -5830,7 +5830,8 @@
   },
   "L3": {
    "rule_blocks_without_quote": 11,
-   "from_header_quote": 0
+   "from_header_quote": 0,
+   "partly_from_header_quote": 0
   },
   "L4": {
    "sentences": 313,
@@ -5841,6 +5842,8 @@
   "D": {
    "sidecar": false,
    "span": "sentence",
+   "from_header_quote": 0,
+   "partly_from_header_quote": 0,
    "unaccounted": 386,
    "outside_quote": 209,
    "per_block": [
