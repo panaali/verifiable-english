@@ -12,12 +12,17 @@ oracle (build checklist 11): a generated file states every approved theorem as `
 opens, and `lake env lean` must elaborate it. A text difference Lean accepts (a binder written as an arrow, a term
 proof) is listed as such; one it rejects fails. The approved definitions that changed are listed with their
 reasons in `DIFFERENCES` (each a DRI item of the batch's DELTA.md); any other change fails.
+
+Both sides are read by the shared declaration scanner of the statement gates (`scan`), the spec from its ```lean
+blocks: a declaration runs to the next Lean command at column 0, so a line after a blank line or a column-0 doc
+comment inside it is compared (review sc-2d-f1, "Outside this item"; item qa-stmt-scanner).
 """
 
 import argparse
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 
 
@@ -31,49 +36,45 @@ open Lean VE.Readings VE.NormDefaults
 open VE.Norms (Sat restrictAll DocumentExpansion)
 universe u
 """
+sys.path.insert(0, str(ROOT / "tools"))
+from check_readings_defaults_statements import declarations  # noqa: E402
 
 
-def statements(text: str, source: bool, proof: str = ":= by") -> dict[str, str]:
-    """`proof` ends a source statement: Q1's proofs are tactic blocks; Q2's may be terms (`:=` then).
-    A spec statement ends at a blank line or the next declaration."""
-    found = {}
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
-        match = re.match(r"^theorem (\w+)(?:\s|:)", line)
-        if not match:
-            continue
-        name = match.group(1)
-        parts = [line]
-        for following in lines[i + 1 :]:
-            if source and proof in parts[-1]:
-                break
-            if not source and (not following or following.startswith(("theorem ", "/--", "end "))):
-                break
-            parts.append(following)
-        statement = " ".join(parts).split(proof, 1)[0]
-        found[name] = re.sub(r"\s+", " ", statement).strip()
+def lean_blocks(text: str) -> list[str]:
+    """The Lean code of `text`: each ```lean block of a spec section, or `text` itself when it has none (a source)."""
+    return re.findall(r"```lean\n(.*?)```", text, re.S) or [text]
+
+
+def scan(text: str, kinds: tuple[str, ...], statements_only: bool = False) -> dict[str, str]:
+    """Name → normalized text of every declaration of a kind in `kinds` in `text`, read by the shared scanner of the
+    statement gates (`check_readings_defaults_statements.declarations`): a declaration runs to the next Lean command
+    at column 0, so a blank line or a comment inside it, a column-0 doc comment too, never ends it, and comments are
+    left out. A name read more than once keeps every text, one per line, so it equals no single approved text."""
+    found: dict[str, list[str]] = {}
+    for code in lean_blocks(text):
+        for (_, name), texts in declarations(code, statements_only, kinds).items():
+            found.setdefault(name, []).extend(texts)
+    return {name: "\n".join(texts) for name, texts in found.items()}
+
+
+def across(read, sources) -> dict[str, str]:
+    """`read` over several files, merged as `scan` merges one (a name read twice keeps both texts)."""
+    found: dict[str, str] = {}
+    for source in sources:
+        for name, text in read(Path(source).read_text()).items():
+            found[name] = f"{found[name]}\n{text}" if name in found else text
     return found
 
 
-def definitions(text: str, name: str = r"\w+") -> dict[str, str]:
-    """Every `def` of `text`, signature and body, whitespace collapsed: up to a blank line or the next declaration
-    or doc comment."""
-    found = {}
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
-        match = re.match(rf"^def ({name})(?:\s|:)", line)
-        if not match:
-            continue
-        parts = [line]
-        for following in lines[i + 1:]:
-            if not following.strip() or following.startswith(("theorem ", "def ", "/--", "end ", "```")):
-                break
-            parts.append(following)
-        found[match.group(1)] = re.sub(r"\s+", " ", " ".join(parts)).strip()
-    return found
+def statements(text: str) -> dict[str, str]:
+    """Every `theorem` of `text`, up to its proof's `:=` (`proof_cut`: the first `:=` outside every bracket)."""
+    return scan(text, ("theorem",), statements_only=True)
 
 
-DEF_NAME = r"[\w.]+"
+def definitions(text: str) -> dict[str, str]:
+    """Every `def` of `text`, signature and body."""
+    return scan(text, ("def",))
+
 
 # Approved Q2 definitions whose implementation differs from the approved text, each with its reason; every entry is
 # a DRI item of docs/spec/question-answering-q2/DELTA.md. A signature-only approved `def` is not listed: Lean checks
@@ -82,32 +83,16 @@ DIFFERENCES = {}
 
 
 def types(text: str) -> dict[str, str]:
-    """Every `structure` and `inductive` of `text`, whitespace collapsed, without `--` comments and `deriving`
-    clauses: up to a blank line or the next declaration or doc comment."""
-    found = {}
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
-        match = re.match(rf"^(?:structure|inductive) ({DEF_NAME})(?:\s|$)", line)
-        if not match:
-            continue
-        parts = [line]
-        for following in lines[i + 1:]:
-            if not following.strip() or following.startswith(
-                    ("theorem ", "def ", "structure ", "inductive ", "instance ", "/--", "end ", "```")):
-                break
-            parts.append(following)
-        body = " ".join(part.split("--", 1)[0] for part in parts)
-        body = re.sub(r"\bderiving\b.*$", "", re.sub(r"\s+", " ", body)).strip()
-        found[match.group(1)] = body
-    return found
+    """Every `structure` and `inductive` of `text`, without its `deriving` clause."""
+    return {name: re.sub(r"\bderiving\b.*$", "", body).strip()
+            for name, body in scan(text, ("structure", "inductive")).items()}
 
 
 def signature(block: str) -> str | None:
-    """The type of a signature-only spec `def` (`def name : T -- comment`), or None for one with a body."""
-    head = block.split(" -- ", 1)[0]
-    if ":=" in head or "|" in head:
+    """The type of a signature-only spec `def` (`def name : T`, its comment left out), or None for one with a body."""
+    if ":=" in block or "|" in block:
         return None
-    match = re.match(rf"^def {DEF_NAME} : (.+)$", head.strip())
+    match = re.match(r"^def [\w'!?.]+ : (.+)$", block.strip())
     return match.group(1).strip() if match else None
 
 
@@ -131,16 +116,14 @@ def theorem_type(statement: str) -> str:
 
 def q2(lean: bool) -> int:
     spec = SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0]
-    approved = statements(spec, source=False)
-    actual = {name: stmt for source in Q2_SOURCES
-              for name, stmt in statements(source.read_text(), source=True, proof=":=").items() if name in approved}
+    approved = statements(spec)
+    actual = {name: stmt for name, stmt in across(statements, Q2_SOURCES).items() if name in approved}
     missing = [name for name in approved if name not in actual]
     differ = [name for name in actual if approved[name] != actual[name]]
     print(f"Q2 statements: {len(actual)} of {len(approved)} implemented; {len(missing)} missing; "
           f"{len(differ)} differ in text")
-    approved_defs = definitions(spec, DEF_NAME)
-    actual_defs = {name: text for source in Q2_SOURCES for name, text in definitions(source.read_text(), DEF_NAME).items()
-                   if name in approved_defs}
+    approved_defs = definitions(spec)
+    actual_defs = {name: text for name, text in across(definitions, Q2_SOURCES).items() if name in approved_defs}
     sigs = {name: signature(block) for name, block in approved_defs.items()}
     bodies = [name for name in approved_defs if sigs[name] is None]
     absent = [name for name in approved_defs if name not in actual_defs]
@@ -152,8 +135,7 @@ def q2(lean: bool) -> int:
     for name in changed:
         print(f"  changed {name}: {DIFFERENCES.get(name, 'NOT LISTED')}")
     approved_types = types(spec)
-    actual_types = {name: text for source in Q2_SOURCES for name, text in types(source.read_text()).items()
-                    if name in approved_types}
+    actual_types = {name: text for name, text in across(types, Q2_SOURCES).items() if name in approved_types}
     changed_types = [name for name in approved_types if actual_types.get(name) != approved_types[name]]
     unlisted += [name for name in changed_types if name not in DIFFERENCES]
     print(f"Q2 structures and inductives: {len(approved_types)} approved, "
@@ -193,9 +175,8 @@ def main() -> None:
     if options.q2:
         raise SystemExit(q2(not options.no_lean))
     spec = SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0]
-    approved = statements(spec, source=False)
-    actual = {name: stmt for source in SOURCES for name, stmt in statements(source.read_text(), source=True).items()
-              if name in approved}
+    approved = statements(spec)
+    actual = {name: stmt for name, stmt in across(statements, SOURCES).items() if name in approved}
     different = [name for name in actual if approved.get(name) != actual[name]]
     missing = [name for name in approved if name not in actual]
     print(f"Q1 statements: {len(actual)} of {len(approved)} implemented; {len(missing)} missing")
@@ -204,8 +185,7 @@ def main() -> None:
     if missing:
         print("Missing statements:", ", ".join(missing))
     approved_defs = definitions(spec)
-    actual_defs = {name: text for source in SOURCES for name, text in definitions(source.read_text()).items()
-                   if name in approved_defs}
+    actual_defs = {name: text for name, text in across(definitions, SOURCES).items() if name in approved_defs}
     changed = [name for name in approved_defs if actual_defs.get(name) != approved_defs[name]]
     print(f"Q1 predicates: {len(approved_defs) - len(changed)} of {len(approved_defs)} equal to the approved text")
     if changed:
