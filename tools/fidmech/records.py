@@ -3,7 +3,8 @@
 A record is `{"id", "verdict": {"K", "L1", "L2", "L3", "L4", "D", "CR"}, "kernel": {"changed", "inconclusive",
 "toward_key", "away_from_key"}, "seconds", "cpu_seconds", "worker", "sentinel_ok", "inputs_sha256"}`, each verdict in
 its vocabulary. `kernel_verdict` applies the K kill rule: an item's decided answer that differs from the batch
-baseline kills; a move to or from UNDECIDED is inconclusive, never a kill. Movement toward or away from the key is
+baseline kills; a move to or from UNDECIDED, UNKNOWN, NOT RUN or a resource limit (`UNDECIDED`) is inconclusive,
+never a kill. Movement toward or away from the key is
 read from the document's own comparison (its `agree` field), never recomputed here.
 
 `inputs_sha256` is the sha256 of a canonical JSON of the listed inputs. The B5 runner refuses a resume or a merge on
@@ -24,7 +25,13 @@ VOCABULARY = {
     "CR": ("found", "missed", "not-read"),
 }
 RECORD_KEYS = ("id", "verdict", "kernel", "seconds", "cpu_seconds", "worker", "sentinel_ok", "inputs_sha256")
-UNDECIDED = ("UNDECIDED", "NOT RUN")
+# Every spelling of the third value (plan 2e: UNDECIDED or a resource limit; build-checklist 6: UNKNOWN is never a
+# decided answer) a document writes into an answer field: RSP and PF `UNDECIDED` (`UNDECIDED-faithful`), FSF `UNKNOWN`
+# (N1, premises, S1, S4, D1, D3) and `NOT RUN`, the resource-limit reasons of RSP and PF. A string is undecided when it
+# is one of them or one of them followed by a separator; tests/test_fidmech_records.py reads every such spelling in
+# the documents' sources (ast) and fails on one this table does not recognise.
+UNDECIDED = ("UNDECIDED", "UNKNOWN", "NOT RUN", "resource limit", "resource-limit")
+UNDECIDED_SEPARATORS = ("-", ":", " ", "(")
 # usecases/<doc>/fidmech/ files named by plan 2e; any other file of that directory (actors.json, B4) enters too.
 CASE_FILES = ("boundaries.json", "ruled_out.json", "equivalents.json", "bindings.json")
 INPUT_KEYS = ("commit", "uncommitted", "sources", "case_files", "tools_fidmech", "generator_version", "mutants")
@@ -33,7 +40,8 @@ INPUT_KEYS = ("commit", "uncommitted", "sources", "case_files", "tools_fidmech",
 def _undecided(answer):
     """Whether an answer tuple carries an undecided value anywhere."""
     if isinstance(answer, str):
-        return answer in UNDECIDED or answer.startswith("UNDECIDED")
+        return any(answer == token or answer.startswith(tuple(token + s for s in UNDECIDED_SEPARATORS))
+                   for token in UNDECIDED)
     if isinstance(answer, (tuple, list)):
         return any(_undecided(a) for a in answer)
     return False
