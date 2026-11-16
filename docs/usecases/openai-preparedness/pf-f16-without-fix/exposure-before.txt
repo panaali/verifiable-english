@@ -1,0 +1,7 @@
+f16-informed f16-informed mistag | Making all final decisions (restates)
+f16-informed f16-informed loss | including accepting any residual risks and making deployment go/no-go decisions (exposition)
+f16-informed f16-informed mistag | SAG's (restates)
+f16-without-nodelib f16-without-nodelib mistag | For the avoidance of doubt (reading N2)
+f16-without-nodelib f16-without-nodelib mistag | i.e., the SAG does not have the ability to filibuster (restates)
+f16-without-noinput f16-without-noinput mistag | For the avoidance of doubt (reading N2)
+f16-without-noinput f16-without-noinput mistag | i.e., the SAG does not have the ability to filibuster (restates)

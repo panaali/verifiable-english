@@ -1,5 +1,5 @@
 """pf-f16-without-fix: the condition tests of the PF f16-without round (architect ruling pf-f16-without-n2-20261116,
-reading (c), signed by the DRI 2026-11-16; PLAN 12 item 30).
+reading (c), signed by the DRI 2026-11-16; PLAN 12 item 31).
 
 N2 decides which rule wins where RS6=req and RS7=noinput meet; the clause's own "i.e." limit decides where they meet:
 a decision with no SAG recommendation given. So f16-without-noinput reads "need not ... if leadership_decision,
@@ -233,3 +233,23 @@ def test_g_decided_without_sag_is_inert_in_the_c2_witness(fresh, monkeypatch):
     assert (live("C2"), live("C-doc")) == with_atom[None]
     use("m6")
     assert live("C2") == with_atom["m6"]
+
+
+# --- the records ---------------------------------------------------------------------------------------------------
+
+def test_plan_and_readme_record_the_reading_and_the_modelling_rule():
+    """PLAN 12 item 31 records the guard, noinput's `unless`, the witness_for attempt and the measured N3/C2/moved;
+    the N2 row says what the precedence decides and cites the ruling; the README states the modelling rule."""
+    from tests.test_pf_f7_timed_act import plan12_item
+    item = " ".join(plan12_item(31).split())
+    for words in ("`decided_without_sag` is dropped from both f16-without rules", '"sag_recommendations_given""',
+                  "run.py `witness_for` tries one more model", "N3 NONE, C2 NONE, C-doc NONE", "no answer moved",
+                  "a case that states SAG recommendations, findings or SAG participation for the decision sets "
+                  "`sag_recommendations_given`"):
+        assert words in item, words
+    plan = (PF / "PLAN.md").read_text()
+    n2 = next(line for line in plan.splitlines() if line.startswith("| N2 |"))
+    assert "the precedence decides the case where both rules apply" in n2 and "pf-f16-without-n2-20261116" in n2
+    readme = " ".join((PF / "README.md").read_text().split())
+    assert ("a case that states SAG recommendations, findings or SAG participation for the decision sets "
+            "`sag_recommendations_given`") in readme
