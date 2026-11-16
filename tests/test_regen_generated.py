@@ -677,6 +677,75 @@ def test_check_by_rewriting_restores_the_committed_files(tmp_path):
                                  tmp_path) == 0
 
 
+# The kernel closure baseline after a merge (kb-regen-closure-check). kb-1's candidate ebe0728d (11-13) kept its own
+# docs/kernel/closure-baseline.json over kb-8's re-measure: one path row stale, both totals equal, so the entry's
+# totals-only check passed and the train's regeneration (R12: check, then write what failed) left the file as it was.
+# Hermetic: the entry's own commands run in this process against a copy under tmp_path, with the Lean half replaced
+# by the committed measurement.
+
+
+CLOSURE = "docs/kernel/closure-baseline.json"
+
+
+def _closure_entry_in_process(tmp_path, monkeypatch, measured: dict):
+    """Run the kernel-closure entry's argv as `kernel_closure.main` on tmp_path's copy, measuring `measured`."""
+    import types
+    import kernel_closure
+    monkeypatch.setattr(kernel_closure, "measure", lambda registry, timeout=3600: json.loads(json.dumps(measured)))
+
+    def run(argv, cwd=None, **kwargs):
+        assert argv[:2] == [R.PY, "tools/kernel_closure.py"], argv
+        args = [str(tmp_path / part) if part == CLOSURE else part for part in argv[2:]]
+        return subprocess.CompletedProcess(argv, kernel_closure.main(args))
+
+    monkeypatch.setattr(R, "subprocess", types.SimpleNamespace(run=run))
+    monkeypatch.setattr(R, "_service_digest", lambda: None)
+    return kernel_closure
+
+
+def test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it(tmp_path, monkeypatch, capsys):
+    committed = (ROOT / CLOSURE).read_text()
+    fresh = json.loads(committed)
+    stale = json.loads(committed)
+    row = next(row for row in stale["paths"] if row["tier"] == "kernel")
+    row.update(theorems=row["theorems"] - 1, spec_lines=row["spec_lines"] + 1, wrap_lines=row["wrap_lines"] - 1)
+    assert {k: v for k, v in stale.items() if k != "paths"} == {k: v for k, v in fresh.items() if k != "paths"}
+    kernel_closure = _closure_entry_in_process(tmp_path, monkeypatch, fresh)
+    baseline = tmp_path / CLOSURE
+    baseline.parent.mkdir(parents=True)
+    stale_text = kernel_closure.render(stale)
+    baseline.write_text(stale_text)
+    assert kernel_closure.main(["--check", str(baseline)]) == 0  # the totals-only check this case got past
+    capsys.readouterr()
+    entry = R.entry_named("kernel-closure")
+    failed, unchecked = R.check([entry])
+    assert (failed, unchecked) == (["kernel-closure"], [])
+    out = capsys.readouterr().out
+    assert f"STALE: {baseline} is not what --out writes now (path rows {row['name']})" in out
+    assert "PASS: kernel" in out and "PASS: verdict writers" in out  # the section-6 limits still ran, and passed
+    assert baseline.read_text() == stale_text  # a check writes nothing
+    # R12: the train writes the entries whose check failed, with each entry's own writer.
+    assert R.write([e for e in (entry,) if e.name in failed]) == []
+    assert baseline.read_text() == committed
+    assert R.check([entry]) == ([], [])
+    assert f"PASS: {baseline} is what --out writes now" in capsys.readouterr().out
+
+
+def test_an_up_to_date_closure_baseline_is_not_stale_and_a_limit_still_fails_it(tmp_path, monkeypatch, capsys):
+    committed = (ROOT / CLOSURE).read_text()
+    fresh = json.loads(committed)
+    _closure_entry_in_process(tmp_path, monkeypatch, fresh)
+    (tmp_path / CLOSURE).parent.mkdir(parents=True)
+    (tmp_path / CLOSURE).write_text(committed)
+    entry = R.entry_named("kernel-closure")
+    assert R.check([entry]) == ([], [])
+    # The section-6 guard stays in the entry's check: a measured rise of the kernel total fails it by name.
+    _closure_entry_in_process(tmp_path, monkeypatch, dict(fresh, kernel_lines=fresh["kernel_lines"] + 1))
+    capsys.readouterr()
+    assert R.check([entry]) == (["kernel-closure"], [])
+    assert "FAIL: the kernel grew from" in capsys.readouterr().out
+
+
 # The Lean service before the entries that start it (eff-20261019-1, PIPELINE-LIMITS L58)
 #
 # Hermetic: a fake Lake (`lake.py`) builds `bin/ve_service` as the text "built from <lean/Source.lean>" and answers

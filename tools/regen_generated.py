@@ -187,10 +187,14 @@ GENERATED = (
                    "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("kernel-closure", ("docs/kernel/closure-baseline.json",),
               ((PY, "tools/kernel_closure.py", "--out", "docs/kernel/closure-baseline.json"),),
-              ((PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json"),),
+              # One measurement, two checks: the section-6 limits (--check) and the bytes --out writes now (--fresh),
+              # since a stale per-path row can leave both totals equal (kb-regen-closure-check).
+              ((PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json",
+                "--fresh", "docs/kernel/closure-baseline.json"),),
               note="the kernel measure (docs/spec/kernel-boundary.md section 6): a rise of kernel_lines needs a "
                    "signed line in docs/kernel/ALLOWANCES.md (the write refuses a total above its `signed total:`); "
-                   "verdict writers outside the kernel never rise (the write refuses a rise over the file it replaces)",
+                   "verdict writers outside the kernel never rise (the write refuses a rise over the file it replaces); "
+                   "the check also fails on any byte the write would change",
               fresh="gate:Kernel check"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary", writer="train"),

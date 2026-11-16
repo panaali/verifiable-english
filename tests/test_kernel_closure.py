@@ -704,6 +704,40 @@ def test_the_check_command_fails_on_kernel_growth_and_on_a_new_writer_outside(mo
     assert "FAIL: verdict writers outside the kernel rose from 1 to 2: leak" in capsys.readouterr().out
 
 
+def test_fresh_fails_on_any_byte_the_write_would_change_and_check_alone_does_not(monkeypatch, tmp_path, capsys):
+    """kb-regen-closure-check: `--fresh` compares the file with what `--out` writes for the same measurement. A
+    per-path row that changed with both totals equal passes `--check` (its limits) and fails `--fresh`, by name."""
+    measured = {"kernel_lines": 100, "problems": [], **writers("A"),
+                "paths": [{"name": "p", "tier": "kernel", "theorems": 5, "spec_lines": 60, "wrap_lines": 40, "lines": 100,
+                           "modes": ["m"]},
+                          {"name": "q", "tier": "candidate", "theorems": 1, "spec_lines": 7, "wrap_lines": 0, "lines": 7,
+                           "modes": ["n"]}]}
+    saved = tmp_path / "baseline.json"
+    saved.write_text(kernel_closure.render(measured))
+    assert run_main(monkeypatch, tmp_path, measured, "--check", str(saved), "--fresh", str(saved)) == 0
+    assert f"PASS: {saved} is what --out writes now" in capsys.readouterr().out
+    stale = json.loads(saved.read_text())
+    stale["paths"][0]["theorems"] = 4
+    saved.write_text(kernel_closure.render(stale))
+    assert run_main(monkeypatch, tmp_path, measured, "--check", str(saved)) == 0
+    capsys.readouterr()
+    assert run_main(monkeypatch, tmp_path, measured, "--check", str(saved), "--fresh", str(saved)) == 1
+    out = capsys.readouterr().out
+    assert f"STALE: {saved} is not what --out writes now (path rows p)" in out and "PASS: kernel 100 <= 100" in out
+    saved.write_text(json.dumps(measured, indent=2, sort_keys=True) + "\n")  # same values, another layout
+    assert run_main(monkeypatch, tmp_path, measured, "--fresh", str(saved)) == 1
+    assert "(layout)" in capsys.readouterr().out
+    saved.write_text(kernel_closure.render(dict(measured, keyed_lines=1)))
+    assert run_main(monkeypatch, tmp_path, measured, "--fresh", str(saved)) == 1
+    assert "(fields keyed_lines)" in capsys.readouterr().out
+    out_file = tmp_path / "written.json"
+    assert run_main(monkeypatch, tmp_path, measured, "--out", str(out_file)) == 0
+    assert out_file.read_text() == kernel_closure.render(measured)
+    entry = next(g for g in regen_generated.GENERATED if g.name == "kernel-closure")
+    assert entry.check == ((regen_generated.PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json",
+                            "--fresh", "docs/kernel/closure-baseline.json"),)
+
+
 def test_the_write_refuses_a_kernel_total_above_the_signed_one(monkeypatch, tmp_path, capsys):
     """Section 6.2: `--out` saves at most the signed total of docs/kernel/ALLOWANCES.md, and nothing above it."""
     out = tmp_path / "baseline.json"
