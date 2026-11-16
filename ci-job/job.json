@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-p1-path-hold-alert-828449f6-t838331-s1",
+ "head": "6aec42ff7e307bcacbe3c8b1571e98da19824c1b",
+ "argv": [
+  "armsh-cand-p1-path-hold-alert-828449f6-t838331-s1",
+  "6aec42ff7e307bcacbe3c8b1571e98da19824c1b",
+  "f577b81d9ad175f2299cadc329fb59f13ed1d752",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
