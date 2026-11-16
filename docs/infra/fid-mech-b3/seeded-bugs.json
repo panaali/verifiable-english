@@ -148,5 +148,55 @@
    "FAILED tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework]",
    "1 failed in 363.13s (0:06:03)"
   ]
+ },
+ {
+  "bug": "review F1: UNKNOWN left out of records.UNDECIDED (an FSF move to UNKNOWN is a kill)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive",
+   "FAILED tests/test_fidmech_records.py::test_fsfs_own_undecided_answers_on_its_committed_results_are_inconclusive",
+   "FAILED tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+   "9 failed, 50 passed in 1.73s"
+  ]
+ },
+ {
+  "bug": "review F1 class: a third-value spelling with a suffix (UNDECIDED-faithful, 'resource limit: ...', 'UNKNOWN (budget)') not recognised (exact match only)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+   "10 failed, 49 passed in 1.82s"
+  ]
+ },
+ {
+  "bug": "review F1 class, the other side: a decided string containing a third-value word (UNKNOWN_ACTOR, NOT RUNNING) read as undecided (substring match)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[UNKNOWN_ACTOR]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[SOME(UNKNOWN=x)]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[UNKNOWNS]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[NOT RUNNING]",
+   "4 failed, 55 passed in 1.64s"
+  ]
  }
 ]

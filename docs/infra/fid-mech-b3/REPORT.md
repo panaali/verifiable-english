@@ -112,7 +112,7 @@ Measured on VM1 (load average about 11), `python -m tools.fidmech.worker measure
 - **Vocabulary:** K is killed, survived, inconclusive, error or not-run; L1-L4 and D are killed or survived; CR is found, missed or not-read. Anything else is refused.
 - **`kernel_verdict`:**
   - A decided answer that differs from the batch baseline kills.
-  - A move to or from UNDECIDED (or FSF's "NOT RUN") is inconclusive, never a kill.
+  - A move to or from the third value is inconclusive, never a kill. `records.UNDECIDED` is the one table of its spellings: UNDECIDED (RSP, PF; `UNDECIDED-faithful`), UNKNOWN (FSF: N1, premises, S1, S4, D1, D3), NOT RUN (FSF) and a resource limit (`resource limit: ...`, `resource-limit`), each alone or followed by `-`, `:`, a space or `(`. A decided string that only contains one of the words (UNKNOWN_ACTOR, NOT RUNNING) still kills. Review F1 (section 13).
   - An item set that differs from the baseline's is `error`.
 - **`collect_inputs` gathers each plan input:**
   - the commit, and every uncommitted change: the sha256 of `git diff --binary HEAD` and each untracked file's sha256;
@@ -137,7 +137,7 @@ Measured on VM1 (load average about 11), `python -m tools.fidmech.worker measure
 
 ## 7. Seeded bugs (Python is the only language changed; no Lean, no Rust)
 
-Each bug was planted in a copy of the named file, its test was run, and the file was restored with `git checkout` (script /tmp/b3/plants.py). The 15 records, with each test's FAILED line, are in docs/infra/fid-mech-b3/seeded-bugs.json (`killed: true` on all 15). The run was refreshed on the final code (f34eeea976; S15 at c01705f4e5, whose run.py and adapters equal the final ones).
+Each bug was planted in a copy of the named file, its test was run, and the file was restored with `git checkout` (script /tmp/b3/plants.py). The 18 records, with each test's FAILED line, are in docs/infra/fid-mech-b3/seeded-bugs.json (`killed: true` on all 18; S16-S18 are the review F1 fix's, section 13). The run was refreshed on the final code (f34eeea976; S15 at c01705f4e5, whose run.py and adapters equal the final ones).
 
 | # | file | bug | failing test |
 |---|---|---|---|
@@ -156,6 +156,9 @@ Each bug was planted in a copy of the named file, its test was run, and the file
 | S13 | tools/fidmech/records.py | a B4 case file (equivalents.json, actors.json) left out | test_inputs_sha256_changes_when_any_listed_input_changes[actors.json created] |
 | S14 | tools/fidmech/records.py | a move to UNDECIDED counted as a kill | test_k_kills_on_a_decided_answer_that_differs_and_a_move_to_or_from_undecided_is_inconclusive[...] |
 | S15 | usecases/safety-framework/run.py | with_comparison drops the D2/D3 rows | test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework] (Lean; 363 s) |
+| S16 | tools/fidmech/records.py | UNKNOWN left out of UNDECIDED (review F1) | test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive, test_fsfs_own_undecided_answers_on_its_committed_results_are_inconclusive, the source guard (9 failed) |
+| S17 | tools/fidmech/records.py | suffixed spellings not recognised (exact match only) | test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule, test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[*-UNDECIDED-faithful] (10 failed) |
+| S18 | tools/fidmech/records.py | substring match: a decided string with a third-value word read as undecided | test_a_decided_string_that_only_contains_a_third_value_word_still_kills (4 failed) |
 
 **trust_mutants:**
 - light-lane check: `NOT 1949 changed lines outside generated files > 150 (17 files)`, so the sweep runs as usual.
@@ -228,11 +231,30 @@ None. Python tooling and data only: no Lean line, no Rust line, no verdict, diag
 - **K on RSP f20-notify-board must→should reads `survived`** in the timing probe (section 4). This is a measured flip-force survivor of one mutant, not a plant figure.
 - **The code map (docs/codemap/tools__fidmech.md) is not regenerated in this branch.** It is advisory on branches and regenerated on merge (`regen_generated --check`: "WARN: codemap is stale (regenerated on merge)"), and a branch rewrite would also pick up areas already stale on main.
 
+## 13. Review fix (fid-mech-b3-review.final.md, reviewed b61bbd5db6)
+
+**F1 (B), `kernel_verdict` scored a move to FSF's UNKNOWN as a kill.** FSF writes its undecided answers as `UNKNOWN` (N1 `run.py:733`; premises `run.py:262` via the projection; S1-<level> `severity_and_dates.py:150`; S4 `:180`; D1 and D3 `:234`), which the old table (`UNDECIDED`, `NOT RUN`) did not know.
+
+- **Class:** a spelling of the third value that a document writes into an answer field and the kill rule does not recognise. That covers a new document, a new suffix (`UNDECIDED-faithful`, `resource limit: ...`) and a different word.
+- **Fix (one table):** `records.UNDECIDED` now lists every spelling: UNDECIDED, UNKNOWN, NOT RUN, `resource limit` and `resource-limit`. Each counts alone or followed by `-`, `:`, a space or `(`. No other file in tools/fidmech decides whether an answer is undecided.
+- **Guard for the class:** `test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule` checks the sources of every document in `adapters.DOCUMENTS`. It reads every string constant (Python's `ast`, docstrings left out) that names a third value: unknown, undecided, not run, resource limit, timeout, exhausted, budget, inconclusive, undetermined or unresolved. Each one must either be recognised by the kill rule or be listed in `NOT_ANSWERS` with its reason (result-dict and summary keys, reason texts beside an UNDECIDED answer, error-message fragments). A new adapter is read automatically.
+- **Regression tests (tests/test_fidmech_records.py):**
+  - `test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive` (PROBE F1: it fails before the fix, `killed`, and passes after it);
+  - `test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill` (7 spellings x flat, premises and parts shapes, both directions);
+  - `test_fsfs_own_undecided_answers_on_its_committed_results_are_inconclusive` (end to end through `adapters.project` on the committed FSF results.json: N1, S1-L1, S4, D1, D3, G6 premises, NOT RUN; a decided change still kills);
+  - `test_a_decided_string_that_only_contains_a_third_value_word_still_kills` (no over-matching);
+  - the source guard above.
+- **Seeded bugs:** S16-S18 (section 7).
+- **Languages:** Python only, so no Lean or Rust mirror applies. results.json is unchanged.
+- **DELTA:** still none. The K verdict is mutation-testing tooling that this batch adds; no VE verdict, diagnostic or answer changes.
+
+**Notes (C, not filed):** left as the review records them; none is changed in this fix.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed Lean answer, schema or route is added or changed; the worker calls the use cases' run() and reads only their Python output.
 2. PASS: section 1 maps every DO item and plan row to its commit and test. Grep of the diff: no Python copy of a Lean decision, no new report test (the evidence files are read by no test), no authority switch.
-3. PASS: 15 seeded bugs, each failing a named test (section 7, seeded-bugs.json). The hash, sentinel and timeout comparators each fail on a changed value: S1, S8, S10.
+3. PASS: 18 seeded bugs, each failing a named test (section 7, seeded-bugs.json). The hash, sentinel and timeout comparators each fail on a changed value: S1, S8, S10.
 4. PASS: no Lean or Rust changed. Python valid inputs still pass: the three live adapter tests equal results.json, and run.py --check is green on all three documents (section 2).
 5. PASS: inputs are refused by name. Malformed bindings: test_a_malformed_bindings_file_is_refused_by_name[8], test_a_value_of_the_wrong_shape_is_refused_with_its_path[7]. Wrong record fields: test_a_verdict_outside_its_vocabulary_or_a_missing_one_is_refused[5]. An edit outside the tree, a duplicate mutant id or an unknown document: test_an_edit_outside_the_tree_and_duplicate_mutant_ids_are_refused.
 6. PASS: the evidence is saved in this directory. The commit list is `git log --oneline --no-merges main..HEAD`; the scope base is `git merge-base HEAD main` (f97dd2d0c0). The full gate is the chain's, on the final HEAD.
