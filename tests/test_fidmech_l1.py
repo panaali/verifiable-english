@@ -181,16 +181,16 @@ def test_on_the_preparedness_case_the_classes_today_s_gate_enforces_are_marked(t
     assert "quote_evidence.py:39" in result["also_gated"]["L1m"]["by"]
 
 
-def test_the_textcheck_command_writes_the_report_and_refuses_checks_of_later_batches(tmp_path, capsys):
+def test_the_textcheck_command_writes_the_report_and_refuses_unknown_checks(tmp_path, capsys):
     out = tmp_path / "l1.json"
     args = ["textcheck", "--doc", str(DOC), "--source", str(TEXT)]
     assert main(args + ["--checks", "L1", "--json", str(out)]) == 0
     printed = capsys.readouterr().out
     assert "L1 hits: L1m 3, L1n 2, L1u 1, L1c 5, L1e 1" in printed
     assert json.loads(out.read_text(encoding="utf-8"))["counts"]["L1c"] == 5
-    for checks in (["L2"], ["L1,L1a"], ["L4"]):
+    for checks in (["L5"], ["L1,L1x"], ["l4"]):
         assert main(args + ["--checks", *checks]) == 2
-    assert "not built in this batch" in capsys.readouterr().err
+    assert "unknown checks" in capsys.readouterr().err
     assert main(["textcheck", "--doc", str(tmp_path / "absent"), "--source", str(TEXT)]) == 2
 
 
