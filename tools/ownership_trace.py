@@ -41,13 +41,21 @@ MAX_JOBS = 4
 
 
 def _load(case_dir: Path, name: str):
-    """The harness module `name` of `case_dir`, imported as the harness imports its siblings."""
+    """The harness module `name` of `case_dir`, imported as the harness imports its siblings. Its siblings (the
+    `*.py` beside it, imported by bare name: `translation`, `reference`, ...) are imported fresh from `case_dir`
+    whatever another use case left under those names in sys.modules; such an entry is put back afterwards. A name
+    nothing held before keeps this case's module, as before (the harness imports some siblings lazily)."""
     sys.path.insert(0, str(case_dir))
     sys.path.insert(0, str(ROOT))
     spec = importlib.util.spec_from_file_location(f"own_{case_dir.name.replace('-', '_')}_{name}",
                                                   case_dir / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    saved = {sibling.stem: sys.modules.pop(sibling.stem) for sibling in case_dir.glob("*.py")
+             if sibling.stem in sys.modules}
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.modules.update(saved)
     return module
 
 
