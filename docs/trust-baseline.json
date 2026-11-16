@@ -2758,20 +2758,6 @@
    "commit": "2114035c8ca089f6a0b4ad82839e5003f2b7996e"
   },
   {
-   "class": "S",
-   "lines": 48,
-   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
-   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
-   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
-  },
-  {
-   "class": "V",
-   "lines": 235,
-   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
-   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
-   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
-  },
-  {
    "class": "V",
    "lines": 99,
    "reason": "kb-4a: the acts hook of the norms decoder (decisions 2 and 5, row KB-4; Lean-owned behaviour: the plain decoder's own refusal of an environment from which acts@0 is read, and the norms mode's dispatch of such cases, including the deciding view, to today's runner): V +99, K +0, S +0 (VE/Acts/Hook.lean +37: ActsHook.acts, ActsHook.lexical, decodeNormsEnvironment, decodeFlaggedActs; VE/Norms/Wire.lean +36: ActsHook, ActsHook.plain and the hook's uses in decodeNormsEnvironmentWith, decodeSource and decodeFlagged; VE/Norms/Run.lean +26: runCaseActs, decidesActs, decoderOf, runCaseActsRouted, runCaseRouted); the equality theorems are VE.Acts.HookToday and VE.Acts.HookTwins, a ties pass is asked in docs/kernel/kb-4a/FOLLOW-UPS.md",
@@ -2784,6 +2770,34 @@
    "reason": "kb-4a F1: VE/Service/FamilyNorms.lean +1 V line in existing folCase, making FOL-view witness replay use the same acts decoder as source decoding; exercised by tests/test_stage2_norms.py::test_family_norms_fol_witness_uses_the_acts_decoder (pre-fix acts cases failed); ties pass already requested in docs/kernel/kb-4a/FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-4a F1, 2026-11-15",
    "commit": "e51bec73017c5ff8214b4784b6a6c7d00e58c6ba"
+  },
+  {
+   "class": "S",
+   "lines": 25,
+   "reason": "kb-9: facts and coherence on soft-selected (new Lean-owned behaviour): K +0, S +25 (VE/SoftNorms/Selected.lean +18: factsAt, coherentAt, factsSent, factsFields and the facts lines of runSelected; VE/SoftNorms/SelectedSound.lean +7: SelectedAnswerWith and SelectedAnswer's optional fields), V +17 (VE/Compose/SlotWire.lean +13: decodeFactsIn, the body of decodeFacts shared with the prepared path; ResponseShape/Schemas/SoftNorms.lean +4: the selected row's facts and coherent fields); every new trusted definition is exercised by a check that can fail (docs/kernel/kb-9/trust-mutants.json: 0 SURVIVOR, 0 UNKNOWN); ties pass requested in docs/kernel/kb-9/FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-9, 2026-11-15",
+   "commit": "da0822ae80b68e2fdbde4ff0933c5d92b3f734a0"
+  },
+  {
+   "class": "V",
+   "lines": 17,
+   "reason": "kb-9: facts and coherence on soft-selected (new Lean-owned behaviour): K +0, S +25 (VE/SoftNorms/Selected.lean +18: factsAt, coherentAt, factsSent, factsFields and the facts lines of runSelected; VE/SoftNorms/SelectedSound.lean +7: SelectedAnswerWith and SelectedAnswer's optional fields), V +17 (VE/Compose/SlotWire.lean +13: decodeFactsIn, the body of decodeFacts shared with the prepared path; ResponseShape/Schemas/SoftNorms.lean +4: the selected row's facts and coherent fields); every new trusted definition is exercised by a check that can fail (docs/kernel/kb-9/trust-mutants.json: 0 SURVIVOR, 0 UNKNOWN); ties pass requested in docs/kernel/kb-9/FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-9, 2026-11-15",
+   "commit": "da0822ae80b68e2fdbde4ff0933c5d92b3f734a0"
+  },
+  {
+   "class": "S",
+   "lines": 48,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
+  },
+  {
+   "class": "V",
+   "lines": 235,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
   }
  ]
 }

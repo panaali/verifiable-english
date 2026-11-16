@@ -1,0 +1,22 @@
+{
+ "id": "A-T0/PROT1",
+ "error": null,
+ "verdict": "SOME(RS1=uncond)",
+ "key": "SOME(uncond)",
+ "agree": true,
+ "python_decision_calls": [],
+ "lean_cases": {
+  "check|None": 20,
+  "english.read|None": 9,
+  "environment|None": 2,
+  "metered|evaluate-budgeted": 8,
+  "route|dependency-order": 480,
+  "soft-norms|soft-elaborate": 84,
+  "soft-norms|soft-selected": 6
+ },
+ "lean_cases_from_check_premises": {
+  "check|None": 8,
+  "environment|None": 1,
+  "metered|evaluate-budgeted": 8
+ }
+}
