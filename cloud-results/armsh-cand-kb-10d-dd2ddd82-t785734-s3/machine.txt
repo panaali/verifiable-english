@@ -1,0 +1,9 @@
+job=armsh-cand-kb-10d-dd2ddd82-t785734-s3 shard=3/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-15T23:37:15Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 23:37:15 up 2 min,  0 user,  load average: 1.27, 0.50, 0.19
+pilot/codex branches: 98
+ve-cache: lean-build exact key 547a9924ac50 asset lean-build-547a9924ac50-linux-aarch64.tar.zst sha256 703c52bdf8f9 ok, seal ok, from download, 19.3 s
+seed: mode=seed match=exact asset=lean-build-547a9924ac50-linux-aarch64.tar.zst pruned=0 base=3e3c0b2b8922
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
