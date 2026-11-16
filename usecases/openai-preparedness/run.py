@@ -236,8 +236,8 @@ def build(raw, rules, names, default):
 def pick(doc, found, predicate, args):
     """The one selection: the rules VE selects for the act on the case model, after the model is checked against
     every premise the document's choice selects."""
-    check_premises(doc, found, dict(doc.reading))
-    picked = doc.elaborated.selected_rules(predicate, model(doc, found), args)
+    facts = check_premises(doc, found, dict(doc.reading))
+    picked = doc.elaborated.selected_rules(predicate, model(doc, found), args, facts=facts)
     _merge({"built": set(), "selected": {(r.name, doc.reading, found): {doc.completion} for r in picked}})
     return picked
 
@@ -348,20 +348,32 @@ def model(doc, found):
     return _MODELS[key]
 
 
+@lru_cache(maxsize=None)
+def _premise_facts(choice):
+    return tuple(f for _, formulas in selected_facts(dict(choice)) for f in formulas)
+
+
+def premise_facts(choice):
+    """Every premise the choice selects (`selected_facts`), one tuple per choice: the `facts` of its cases."""
+    return _premise_facts(tuple(sorted(choice.items())))
+
+
 def check_premises(doc, found, choice):
-    """VE evaluates every premise the choice selects on the case model; a case that breaks one is an error."""
-    from ve.evaluate import evaluate
+    """Every premise the choice selects is true in the case model, or the case is an error: Lean's `facts` flag,
+    from the `soft-selected` case that also answers this document's selected rules in that model (kb-9; the
+    returned facts go with every selection on the document). A false flag names its first premise block, as each
+    block's own flag finds it."""
+    facts = premise_facts(choice)
     key = (found, choice.get("RS2"))
     if key in _PREMISES:
-        return
-    env = doc.elaborated.base_environment()
+        return facts
     witness = model(doc, found)
-    for block, formulas in selected_facts(choice):
-        for formula in formulas:
-            result = evaluate(env, formula, witness, trace=False)
-            if result.value is not True:
-                raise AssertionError(f"case model does not satisfy premise {block.id}: {result.status}")
+    if doc.elaborated.selection_flags(witness, facts=facts)["facts"] is not True:
+        for block, formulas in selected_facts(choice):
+            if doc.elaborated.selection_flags(witness, facts=list(formulas))["facts"] is not True:
+                raise AssertionError(f"case model does not satisfy premise {block.id}: Violated")
     _PREMISES.add(key)
+    return facts
 
 
 def regulated(predicate):
@@ -383,7 +395,8 @@ def selected(doc, found, predicate, sign):
 
 def completed(doc, found, predicate):
     """The completed outcome of `predicate` at its subject in the case model: Lean's `soft-selected` answer."""
-    return doc.elaborated.outcome_at(predicate, model(doc, found), (subject(predicate)[1],))
+    return doc.elaborated.outcome_at(predicate, model(doc, found), (subject(predicate)[1],),
+                                     facts=premise_facts(dict(doc.reading)))
 
 
 @lru_cache(maxsize=None)

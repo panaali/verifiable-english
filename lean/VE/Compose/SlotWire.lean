@@ -31,21 +31,25 @@ open VE.Order.ProfileGate (bind_ok)
 
 /-! ## The facts -/
 
-/-- The request's `facts`: absent, no facts; else an array whose every item decodes, by the route's
-formula decoder, to a closed formula over the base vocabulary (a rule's predicate or a layer symbol is not
-in it, so the decoder refuses it), and names no soft decision predicate (an open term: its decider decides
-it, docs/spec/kernel-boundary.md 4.1). The raw items are kept for the certificates' bindings. -/
-def decodeFacts (src : SoftSource) (j : Json) : Except String (List VE.Formula × List Json) :=
+/-- `decodeFacts` over the base vocabulary `E` given (a prepared document passes its own, `soften` once). -/
+def decodeFactsIn (E : VE.Environment) (D : SoftDoc) (j : Json) : Except String (List VE.Formula × List Json) :=
   match j.getObjVal? "facts" with
   | .error _ => pure ([], [])
   | .ok v => match v.getArr? with
     | .error _ => throw "InvalidInput: facts must be an array"
     | .ok items =>
       if items.isEmpty then pure ([], []) else do
-        let fs ← VE.Route.Wire.decodeFormulas (envAt (soften src.D) 0) v
-        match (fs.flatMap VE.Norms.preds).find? (fun p => (VE.SoftNorms.decisionNames src.D).contains p) with
+        let fs ← VE.Route.Wire.decodeFormulas E v
+        match (fs.flatMap VE.Norms.preds).find? (fun p => (VE.SoftNorms.decisionNames D).contains p) with
         | some p => throw s!"InvalidInput: facts: {p} is a soft decision predicate; its decider decides it, not a fact"
         | none => pure (fs, items.toList)
+
+/-- The request's `facts`: absent, no facts; else an array whose every item decodes, by the route's
+formula decoder, to a closed formula over the base vocabulary (a rule's predicate or a layer symbol is not
+in it, so the decoder refuses it), and names no soft decision predicate (an open term: its decider decides
+it, docs/spec/kernel-boundary.md 4.1). The raw items are kept for the certificates' bindings. -/
+def decodeFacts (src : SoftSource) (j : Json) : Except String (List VE.Formula × List Json) :=
+  decodeFactsIn (envAt (soften src.D) 0) src.D j
 
 /-- The diagnostic of a base model that fails the soft background or a fact. -/
 def slotModelFault (src : SoftSource) (M : VE.FiniteModel VE.Bridge.Entity) : String :=
@@ -83,7 +87,7 @@ theorem decodeFacts_ok {src : SoftSource} {j : Json} {P : List VE.Formula} {item
     SlotWellFormed src.D P ∧ P.length = items.length ∧
       (∀ a ∈ P, ∀ p ∈ VE.Norms.preds a, p ∉ VE.SoftNorms.decisionNames src.D) ∧
       ((∃ e, j.getObjVal? "facts" = .error e) ∧ items = [] ∨ j.getObjVal? "facts" = .ok (Json.arr items.toArray)) := by
-  unfold decodeFacts at h
+  unfold decodeFacts decodeFactsIn at h
   split at h
   · rename_i e he
     simp only [pure, Except.pure, Except.ok.injEq, Prod.mk.injEq] at h
@@ -121,7 +125,7 @@ theorem decodeFacts_ok {src : SoftSource} {j : Json} {P : List VE.Formula} {item
 def NoFacts (j : Json) : Prop := (∃ e, j.getObjVal? "facts" = .error e) ∨ j.getObjVal? "facts" = .ok (.arr #[])
 
 theorem decodeFacts_empty (src : SoftSource) {j : Json} (h : NoFacts j) : decodeFacts src j = .ok ([], []) := by
-  rcases h with ⟨e, he⟩ | he <;> simp [decodeFacts, he, Json.getArr?, pure, Except.pure]
+  rcases h with ⟨e, he⟩ | he <;> simp [decodeFacts, decodeFactsIn, he, Json.getArr?, pure, Except.pure]
 
 theorem factsModel_nil (src : SoftSource) (j : Json) : factsModel src [] j = .ok () := rfl
 

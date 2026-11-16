@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 47499,
+    "total_lines": 47567,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2342,12 +2342,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Selected.lean",
-        "lines": 279,
-        "sha256": "44d1fd142c838b0c2d451503770d82004d5831e28b623aac7e284fc2d33376a3",
+        "lines": 305,
+        "sha256": "56f63f1156153cdb56ff2039bdba2241b616fc40ca57692f36ad86260fc0843f",
         "ranges": [
           [
             1,
-            279
+            305
           ]
         ],
         "declarations": [
@@ -2356,16 +2356,16 @@
           "selectedQueries",
           "runSelected"
         ],
-        "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries, selectedQueries) and runner (runSelected); the full file is pinned conservatively"
+        "reason": "the soft-selected kind: its query decoder (decodeSelectedQuery, decodeQueries, selectedQueries) and runner (runSelected, which decodes the optional facts with decodeFacts, kb-9); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/SoftNorms/Prepared.lean",
-        "lines": 262,
-        "sha256": "f8f5f6d8fe08ec34fd222b031ee5d4a3a2fdc233848ceb75d3d1ffe937f349cd",
+        "lines": 300,
+        "sha256": "42f7cdb2718afe09561bdba7d5e534539df427dc42b15928b011ceffdcf913db",
         "ranges": [
           [
             1,
-            262
+            300
           ]
         ],
         "declarations": [
@@ -2373,19 +2373,20 @@
           "decodeModelIn",
           "runSelectedP"
         ],
-        "reason": "kb-10e prepared soft documents: prepare decodes a document's environment and norms once (prepare_ok), decodeModelIn and runSelectedP decode a case's model and queries against it (runSelected_eq_prepared); the full file is pinned conservatively"
+        "reason": "kb-10e prepared soft documents: prepare decodes a document's environment and norms once (prepare_ok), decodeModelIn and runSelectedP decode a case's facts (decodeFactsIn over the prepared base vocabulary, kb-9), model and queries against it (runSelected_eq_prepared); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Compose/SlotWire.lean",
-        "lines": 474,
-        "sha256": "722c7437e6c2cb99b35a908b0077c73ce3df092b96ec57ccabe47a81f5b46573",
+        "lines": 478,
+        "sha256": "4f3c3db9b813acbb3c70835b8b2b31e0595fa49252b56de0ae7b0d455125343a",
         "ranges": [
           [
             1,
-            474
+            478
           ]
         ],
         "declarations": [
+          "decodeFactsIn",
           "decodeFacts",
           "factsModel",
           "decodeSlotPackage",
@@ -2395,7 +2396,7 @@
           "replaySlotEntailment",
           "replaySlotAdmission"
         ],
-        "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively; kb-2a-b adds the slot-admission replay (replaySlotAdmission), the full file pinned again"
+        "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts over decodeFactsIn, its body, which kb-9's prepared soft-selected path shares) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively; kb-2a-b adds the slot-admission replay (replaySlotAdmission), the full file pinned again; kb-9 merge with ve-integration: both edits pinned whole (kb-9's decodeFactsIn; kb-2a-b's replaySlotAdmission)"
       },
       {
         "file": "lean/VE/Acts/Hook.lean",

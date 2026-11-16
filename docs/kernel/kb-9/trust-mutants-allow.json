@@ -1,0 +1,84 @@
+{
+ "allow": [
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "body-true",
+   "reason": "S, a Prop no check can evaluate (an existential over SelectedAnswerWith, Json equations): the conclusion soft_wire_selected and soft_wire_selected_prepared keep (lean/VE/SoftNorms/SelectedSound.lean), which this mutant breaks; soft_wire_selected_facts states the exact answer beside it"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswer",
+   "operator": "body-false",
+   "reason": "S, a Prop no check can evaluate (an existential over SelectedAnswerWith, Json equations): the conclusion soft_wire_selected and soft_wire_selected_prepared keep (lean/VE/SoftNorms/SelectedSound.lean), which this mutant breaks; soft_wire_selected_facts states the exact answer beside it"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "eq-le",
+   "reason": "the mutant does not elaborate (failed to synthesize at VE/SoftNorms/SelectedSound.lean:37): it is no program, so no check can run it"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "eq-ne",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.factsAt",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Invalid field notation: Type of at VE/SoftNorms/Selected.lean:274): it is no program, so no check can run it"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.coherentAt",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Invalid field notation: Type of at VE/SoftNorms/Selected.lean:279): it is no program, so no check can run it"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-empty",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "append-left",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "append-right",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-first",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-drop-last",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-last",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-drop-first",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  },
+  {
+   "definition": "VE.SoftNorms.Run.SelectedAnswerWith",
+   "operator": "list-drop-middle",
+   "reason": "S, a Prop no check can evaluate (an equation between Json values, which have no decidable equality here): the whole answer runSelected_answer and soft_wire_selected_facts state (lean/VE/SoftNorms/SelectedSound.lean) and soft_wire_selected_prepared (Prepared.lean); this mutant breaks those proofs, and the runner's answers it describes are pinned byte for byte by the #guards of lean/VE/SoftNorms/SelectedExamples.lean (seeded bugs a and b of docs/kernel/kb-9/seeded-bugs.json show the runner side)"
+  }
+ ]
+}
