@@ -150,7 +150,12 @@ def test_a_forged_flag_is_unavailable(monkeypatch, name):
 # SoftenedNormDocument: kept answers per document, model and facts; the flags from the same answer.
 
 def test_selected_rules_and_flags_come_from_one_case_per_document_model_and_facts(lean, monkeypatch):
+    import weakref
+
     import ve.softnorms as softnorms
+    # Kept answers are per process and a rebuilt copy reuses them: start from none, so the count below
+    # is this test's own cases whatever ran before it on the same worker.
+    monkeypatch.setattr(softnorms, "_SELECTIONS", weakref.WeakKeyDictionary())
     elaborated = document().elaborated
     calls = []
     relay = softnorms._relay_run
