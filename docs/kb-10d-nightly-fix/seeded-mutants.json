@@ -1,0 +1,36 @@
+{
+  "item": "kb-10d-nightly-fix",
+  "note": "Seeded bugs planted in the one changed product file, each shown to fail the test with -p no:xdist, then restored with git checkout. Logs and outputs: docs/kb-10d-nightly-fix/REPORT.md, section Seeded bugs.",
+  "mutants": [
+    {
+      "id": 1,
+      "language": "Python",
+      "file": "tools/ownership_trace.py",
+      "function": "_load",
+      "change": "no drop before exec_module (the saved-entries filter is made always false)",
+      "test": "tests/test_ownership_floor.py::test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys_modules",
+      "result": "exit=1, AttributeError: module 'translation' has no attribute 'READING_SETS'",
+      "restored": true
+    },
+    {
+      "id": 2,
+      "language": "Python",
+      "file": "tools/ownership_trace.py",
+      "function": "_load",
+      "change": "no restore (sys.modules.update(saved) replaced by pass)",
+      "test": "tests/test_ownership_floor.py::test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys_modules",
+      "result": "exit=1, the eligibility translation module is not put back in sys.modules",
+      "restored": true
+    },
+    {
+      "id": 3,
+      "language": "Python",
+      "file": "tools/ownership_trace.py",
+      "function": "_load",
+      "change": "the case's own siblings are popped after exec_module (the full-restore form)",
+      "test": "tests/test_ownership_floor.py::test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys_modules",
+      "result": "exit=1, assert None is <module 'vocabulary' from '.../safety-framework/vocabulary.py'>",
+      "restored": true
+    }
+  ]
+}
