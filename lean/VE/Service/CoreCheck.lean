@@ -345,7 +345,7 @@ theorem facts_round_trip (src : VE.SoftNorms.Wire.SoftSource) (P : List VE.Formu
   obtain ⟨⟨⟨hC, hD⟩, hNo⟩, hDec⟩ := h
   have hF : (Json.mkObj [("facts", factsJson P)]).getObjVal? "facts" = .ok (factsJson P) :=
     VE.Calc.Run.mkObj_get _ "facts" _ (by simp) (by simp)
-  unfold VE.Compose.SlotWire.decodeFacts
+  unfold VE.Compose.SlotWire.decodeFacts VE.Compose.SlotWire.decodeFactsIn
   rw [hF]
   simp only [factsJson, Json.getArr?, pure, Except.pure]
   split
@@ -386,7 +386,7 @@ theorem core_facts_round_trip {docs : List (Choice × CoreDoc)} {cases : List Js
     have hF' : (Json.mkObj [("facts", factsJson docs[k].2.premises)]).getObjVal? "facts" =
         .ok (factsJson docs[k].2.premises) := VE.Calc.Run.mkObj_get _ "facts" _ (by simp) (by simp)
     rw [← facts_round_trip src _ hr]
-    unfold decodeFacts
+    unfold decodeFacts VE.Compose.SlotWire.decodeFactsIn
     rw [hF, hF']
   · cases hf
 

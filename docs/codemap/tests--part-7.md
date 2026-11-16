@@ -1,3 +1,4 @@
+- `tests/test_right_clauses.py` — `right-clauses@0` on the service (docs/spec/right-clauses.md 8.1, 9.1, 9.3; cmp-s3-cfr-1): the registered profile's `clauses-elaborate` mode reads 9.1's docume…
 - `tests/test_right_clauses_duplicate.py` — cmp-s3a-cfr-2: a rule name on two structured lines gets rights' own `DuplicateDeclaration` text.
 - `tests/test_right_clauses_lean.py` — Source checks of `plain_wellFormed` (docs/spec/right-clauses.md 8.3; cmp-s3a-cfr-1).
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
@@ -77,5 +78,3 @@
 - `tests/test_soft_selected.py` — The soft route's `soft-selected` kind (kb-10a) and its relay `ve.soft_route.selected_at`.
 - `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.
 - `tests/test_softnorms_public_contract.py` — The public soft-source rejection boundary of wire-contract-s4.md item 1.
-- `tests/test_source_words.py` — The source-word table and every boundary fixture are checked by Lean.
-- `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).

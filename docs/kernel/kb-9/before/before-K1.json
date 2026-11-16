@@ -1,0 +1,22 @@
+{
+ "id": "K1",
+ "error": null,
+ "verdict": "ALL",
+ "key": "ALL",
+ "agree": true,
+ "python_decision_calls": [],
+ "lean_cases": {
+  "check|None": 20,
+  "english.read|None": 9,
+  "environment|None": 2,
+  "metered|evaluate-budgeted": 8,
+  "route|dependency-order": 464,
+  "soft-norms|soft-elaborate": 80,
+  "soft-norms|soft-selected": 2
+ },
+ "lean_cases_from_check_premises": {
+  "check|None": 8,
+  "environment|None": 1,
+  "metered|evaluate-budgeted": 8
+ }
+}
