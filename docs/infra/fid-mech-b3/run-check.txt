@@ -1,0 +1,7 @@
+run.py --check at the base f97dd2d0c0 (before the move) and at 8b0c2d3975 (after); exit code, wall seconds, last line
+base anthropic-rsp rc=0 261s | 110 / 126 (258.1 s)
+base openai-preparedness rc=0 1782s | 236 / 239 (1778.0 s)
+base safety-framework rc=0 152s | DISAGREE G3 key ALL VE NONE
+8b0c2d3975 anthropic-rsp rc=0 320s | 110 / 126 (318.1 s)
+8b0c2d3975 safety-framework rc=0 166s | DISAGREE G3 key ALL VE NONE
+8b0c2d3975 openai-preparedness rc=0 1502s | 236 / 239 (1498.9 s)

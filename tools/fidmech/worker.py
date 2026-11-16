@@ -20,6 +20,7 @@ import argparse
 import importlib.util
 import itertools
 import json
+import resource
 import shutil
 import signal
 import subprocess
@@ -157,6 +158,13 @@ def alarm(seconds):
         signal.signal(signal.SIGALRM, old)
 
 
+def cpu_seconds():
+    """CPU seconds of this process and of its reaped children: a fresh run's process and the Lean service it
+    stopped. A warm worker's long-lived Lean service is not reaped, so its CPU is not counted."""
+    own, children = resource.getrusage(resource.RUSAGE_SELF), resource.getrusage(resource.RUSAGE_CHILDREN)
+    return own.ru_utime + own.ru_stime + children.ru_utime + children.ru_stime
+
+
 def close_lean_pool():
     """Close the relay's service pools; the next Lean call starts a fresh service."""
     from ve.backends import relay
@@ -169,7 +177,7 @@ class Worker:
     injectable so tests need no Lean, no sleep and no short timeout."""
 
     def __init__(self, document, worktree, scratch, *, name="w0", fresh=DEFAULT_FRESH, evaluate=None,
-                 clock=time.monotonic, cpu_clock=time.process_time, deadline=alarm, reset=close_lean_pool):
+                 clock=time.monotonic, cpu_clock=cpu_seconds, deadline=alarm, reset=close_lean_pool):
         if document not in adapters.DOCUMENTS:
             raise ValueError(f"no adapter for document {document!r}")
         self.document, self.worktree, self.scratch, self.name = document, Path(worktree), Path(scratch), name
