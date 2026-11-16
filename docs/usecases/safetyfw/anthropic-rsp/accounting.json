@@ -186,14 +186,10 @@
    "span_length": 135,
    "used": [
     "goal_revised_less_ambitious",
-    "goals_kept"
+    "goals_kept",
+    "revised_because_unable"
    ],
-   "unaccounted": [
-    "achieve",
-    "revise",
-    "strive",
-    "unable"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "we will strive to",
@@ -1659,8 +1655,8 @@
    "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 146,
-  "blocks_with_unaccounted_words": 28,
+  "unaccounted_words": 142,
+  "blocks_with_unaccounted_words": 27,
   "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0

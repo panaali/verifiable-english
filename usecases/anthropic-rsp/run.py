@@ -64,7 +64,7 @@ SITUATIONS = {
     "K19a": ("in_the_lead",), "K19b": ("in_the_lead",),
     "K22": ("roadmap_goal_missed",), "G4": ("off_cycle_public_deployment",),
     "G7": ("noncompliance_report_received", "substantiated"),
-    "G8": ("goal_revised_less_ambitious",),
+    "G8": ("goal_revised_less_ambitious", "revised_because_unable"),
 }
 # K20: "with at least one such competitor" (PLAN 6).
 CASE_ATOMS = {"K20": (("develops_highly_capable", "c"),)}
