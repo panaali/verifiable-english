@@ -1,0 +1,322 @@
+{
+ "date": "2026-11-16",
+ "features": {
+  "a_legacy": "language ve.core@0 or ve.core@0.1 (Standalone.isLegacy)",
+  "b_judgments": "judgments@0 listed (Compose.decidingEnvironment's non-identity arm)",
+  "c_acts": "acts@0 listed (Norms.Wire.readsActs)",
+  "d_norms_regulated": "norms@0 listed and a predicate with a regulated field",
+  "e_layered_core": "closure@0 and nary@0 listed and a predicate with defined, functional or total (Core.Layers.usesLayers on the core family)",
+  "f_model_view_with_judgments": "judgments@0 listed beside risk@0, alternatives@0, readings@1 or norm-defaults@0 (the inputs Standalone.modelViewDropped could name)"
+ },
+ "item": "kb-4b",
+ "keys": {
+  "agent-policy": {
+   "a_legacy": 0,
+   "a_legacy_evaluate": 0,
+   "b_judgments": 0,
+   "b_judgments_evaluate": 0,
+   "c_acts": 0,
+   "c_acts_evaluate": 0,
+   "calls": 11829,
+   "d_norms_regulated": 480,
+   "d_norms_regulated_evaluate": 480,
+   "e_layered_core": 0,
+   "e_layered_core_evaluate": 0,
+   "f_model_view_with_judgments": 0,
+   "f_model_view_with_judgments_evaluate": 0,
+   "kinds": {
+    "evaluate-budgeted": 11829
+   },
+   "languages": {
+    "ve.core@0.2": 11829
+   },
+   "no_env": 0,
+   "profiles": {
+    "data@0,norms@0,relational-fol@0": 480,
+    "data@0,relational-fol@0": 11349
+   },
+   "status": {
+    "ok": 11829
+   }
+  },
+  "anthropic-rsp": {
+   "a_legacy": 0,
+   "a_legacy_evaluate": 0,
+   "b_judgments": 0,
+   "b_judgments_evaluate": 0,
+   "c_acts": 0,
+   "c_acts_evaluate": 0,
+   "calls": 2311,
+   "d_norms_regulated": 0,
+   "d_norms_regulated_evaluate": 0,
+   "e_layered_core": 0,
+   "e_layered_core_evaluate": 0,
+   "f_model_view_with_judgments": 0,
+   "f_model_view_with_judgments_evaluate": 0,
+   "kinds": {
+    "evaluate-budgeted": 2311
+   },
+   "languages": {
+    "ve.core@0.2": 2311
+   },
+   "no_env": 0,
+   "profiles": {
+    "relational-fol@0": 2311
+   },
+   "status": {
+    "ok": 2311
+   }
+  },
+  "openai-preparedness": {
+   "a_legacy": 0,
+   "a_legacy_evaluate": 0,
+   "b_judgments": 0,
+   "b_judgments_evaluate": 0,
+   "c_acts": 0,
+   "c_acts_evaluate": 0,
+   "calls": 36,
+   "d_norms_regulated": 0,
+   "d_norms_regulated_evaluate": 0,
+   "e_layered_core": 0,
+   "e_layered_core_evaluate": 0,
+   "f_model_view_with_judgments": 0,
+   "f_model_view_with_judgments_evaluate": 0,
+   "kinds": {
+    "evaluate-budgeted": 36
+   },
+   "languages": {
+    "ve.core@0.2": 36
+   },
+   "no_env": 0,
+   "profiles": {
+    "relational-fol@0": 36
+   },
+   "status": {
+    "ok": 36
+   }
+  },
+  "safety-framework": {
+   "a_legacy": 0,
+   "a_legacy_evaluate": 0,
+   "b_judgments": 0,
+   "b_judgments_evaluate": 0,
+   "c_acts": 0,
+   "c_acts_evaluate": 0,
+   "calls": 10209,
+   "d_norms_regulated": 0,
+   "d_norms_regulated_evaluate": 0,
+   "e_layered_core": 0,
+   "e_layered_core_evaluate": 0,
+   "f_model_view_with_judgments": 0,
+   "f_model_view_with_judgments_evaluate": 0,
+   "kinds": {
+    "evaluate-budgeted": 10209
+   },
+   "languages": {
+    "ve.core@0.2": 10209
+   },
+   "no_env": 0,
+   "profiles": {
+    "relational-fol@0": 10209
+   },
+   "status": {
+    "ok": 10209
+   }
+  }
+ },
+ "keys_not_calling_metered": [
+  "eligibility"
+ ],
+ "measured_on": "b8abce49e (feature/kb-4b before any change; tests in a detached worktree of the same commit)",
+ "tests": {
+  "evaluate": 137397,
+  "feature_files": {
+   "a_legacy": [
+    "",
+    "tests/test_assist_deadline.py",
+    "tests/test_assist_recovery.py",
+    "tests/test_assist_recovery_replay.py",
+    "tests/test_assurance_manifest.py",
+    "tests/test_attacks.py",
+    "tests/test_b17_evidence.py",
+    "tests/test_b17_owner.py",
+    "tests/test_cli.py",
+    "tests/test_closure.py",
+    "tests/test_closure_induction.py",
+    "tests/test_closure_witnesses.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_e1_core.py",
+    "tests/test_e1_prompts.py",
+    "tests/test_english.py",
+    "tests/test_equivalence.py",
+    "tests/test_equivalence_properties.py",
+    "tests/test_evaluate_search.py",
+    "tests/test_lean_authority_values.py",
+    "tests/test_lean_conformance.py",
+    "tests/test_lean_first_diff.py",
+    "tests/test_lean_service_schema.py",
+    "tests/test_order.py",
+    "tests/test_order_round2.py",
+    "tests/test_properties.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_search_options.py",
+    "tests/test_senses_contract_doc.py",
+    "tests/test_senses_display_cli.py",
+    "tests/test_senses_route.py",
+    "tests/test_single_owner.py",
+    "tests/test_stage0_probe_matrix.py",
+    "tests/test_t1c.py",
+    "tests/test_ve_iface.py",
+    "tests/test_views.py"
+   ],
+   "b_judgments": [],
+   "c_acts": [],
+   "d_norms_regulated": [
+    "tests/test_agent_policy_rerun.py",
+    "tests/test_assurance_manifest.py",
+    "tests/test_b17_evidence.py",
+    "tests/test_b17_owner.py",
+    "tests/test_cedar_norms.py",
+    "tests/test_compose_integration.py",
+    "tests/test_difffuzz.py",
+    "tests/test_document.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_safety_framework.py",
+    "tests/test_safetyfw_usecases.py",
+    "tests/test_soft_norms_conformance.py",
+    "tests/test_soft_norms_lean.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "e_layered_core": [
+    "tests/test_stage0_probe_matrix.py",
+    "tests/test_stage2_evaluation.py"
+   ],
+   "f_model_view_with_judgments": []
+  },
+  "features": {
+   "a_legacy": 66707,
+   "b_judgments": 0,
+   "c_acts": 0,
+   "d_norms_regulated": 8368,
+   "e_layered_core": 11,
+   "f_model_view_with_judgments": 0
+  },
+  "languages": {
+   "ve.core@0": 56539,
+   "ve.core@0.1": 10168,
+   "ve.core@0.2": 70690
+  },
+  "profiles": {
+   "": 56539,
+   "closure@0,data@0,definitions@0,nary@0,relational-fol@0": 3,
+   "closure@0,data@0,nary@0,relational-fol@0": 5,
+   "closure@0,definitions@0,nary@0,relational-fol@0": 3,
+   "closure@0,definitions@0,relational-fol@0": 37,
+   "closure@0,nary@0,relational-fol@0": 10826,
+   "closure@0,norms@0,relational-fol@0": 168,
+   "closure@0,relational-fol@0": 8968,
+   "data@0,definitions@0,relational-fol@0": 2,
+   "data@0,norms@0,relational-fol@0": 480,
+   "data@0,relational-fol@0": 11477,
+   "definitions@0,documents@1,relational-fol@0": 2,
+   "definitions@0,relational-fol@0": 53,
+   "documents@1,norms@0,relational-fol@0": 6486,
+   "documents@1,order@0,relational-fol@0,time@0": 1878,
+   "documents@1,relational-fol@0": 1044,
+   "norms@0,relational-fol@0": 1234,
+   "order@0,relational-fol@0": 1351,
+   "order@0,relational-fol@0,time@0": 185,
+   "relational-fol@0": 36656
+  },
+  "rows": 137484,
+  "status": {
+   "ok": 137397
+  },
+  "test_files": {
+   "": 13,
+   "tests/test_agent_policy.py": 84,
+   "tests/test_agent_policy_rerun.py": 11829,
+   "tests/test_alternatives_three_way.py": 135,
+   "tests/test_asimov_laws.py": 1288,
+   "tests/test_assist_deadline.py": 92,
+   "tests/test_assist_recovery.py": 356,
+   "tests/test_assist_recovery_replay.py": 4609,
+   "tests/test_assurance_manifest.py": 555,
+   "tests/test_attacks.py": 111,
+   "tests/test_b17_evidence.py": 12,
+   "tests/test_b17_owner.py": 5,
+   "tests/test_background.py": 5,
+   "tests/test_cedar_attributes.py": 1,
+   "tests/test_cedar_norms.py": 112,
+   "tests/test_cli.py": 3091,
+   "tests/test_closure.py": 2028,
+   "tests/test_closure_induction.py": 170,
+   "tests/test_closure_witnesses.py": 30,
+   "tests/test_compose_integration.py": 37,
+   "tests/test_consolidation_tools.py": 56,
+   "tests/test_constitution_w6a_controls.py": 2,
+   "tests/test_count_w6a.py": 6,
+   "tests/test_data_flags.py": 2,
+   "tests/test_difffuzz.py": 15449,
+   "tests/test_discourse.py": 284,
+   "tests/test_discourse_answer.py": 16585,
+   "tests/test_discourse_lean.py": 2478,
+   "tests/test_document.py": 248,
+   "tests/test_document_lean_switch.py": 168,
+   "tests/test_e1_core.py": 8,
+   "tests/test_e1_prompts.py": 5892,
+   "tests/test_eligibility_wfp.py": 506,
+   "tests/test_english.py": 22,
+   "tests/test_equivalence.py": 158,
+   "tests/test_equivalence_properties.py": 2155,
+   "tests/test_evaluate_search.py": 26,
+   "tests/test_keyed_answers_authority.py": 1,
+   "tests/test_lean_authority_values.py": 1055,
+   "tests/test_lean_conformance.py": 12442,
+   "tests/test_lean_document_wrapper.py": 7465,
+   "tests/test_lean_first_diff.py": 2670,
+   "tests/test_lean_service_schema.py": 168,
+   "tests/test_metered_answer.py": 5,
+   "tests/test_nary.py": 3,
+   "tests/test_nary_differential.py": 10780,
+   "tests/test_news_w6a_fixtures.py": 26,
+   "tests/test_norms_three_way.py": 168,
+   "tests/test_order.py": 764,
+   "tests/test_order_round2.py": 279,
+   "tests/test_ownership_floor.py": 149,
+   "tests/test_p0_three_way.py": 73,
+   "tests/test_properties.py": 254,
+   "tests/test_risk_fixtures.py": 3,
+   "tests/test_rsp_fidelity_fix.py": 132,
+   "tests/test_rust_conformance.py": 15413,
+   "tests/test_sa_checked_view.py": 8,
+   "tests/test_safety_framework.py": 10909,
+   "tests/test_safetyfw_usecases.py": 3149,
+   "tests/test_search_options.py": 45,
+   "tests/test_senses_contract_doc.py": 8,
+   "tests/test_senses_display_cli.py": 20,
+   "tests/test_senses_route.py": 10,
+   "tests/test_single_owner.py": 13,
+   "tests/test_soft_norms_conformance.py": 204,
+   "tests/test_soft_norms_lean.py": 28,
+   "tests/test_soft_review_regressions.py": 162,
+   "tests/test_stage0_probe_matrix.py": 394,
+   "tests/test_stage2_dispatch.py": 16,
+   "tests/test_stage2_evaluation.py": 63,
+   "tests/test_stage2_faults.py": 24,
+   "tests/test_t1c.py": 271,
+   "tests/test_time_w6a.py": 18,
+   "tests/test_units_lean_w6a.py": 17,
+   "tests/test_units_relay_w6a.py": 18,
+   "tests/test_ve_iface.py": 315,
+   "tests/test_views.py": 972,
+   "tests/test_w6a_documents.py": 44,
+   "tests/test_w6a_limit_generator.py": 102,
+   "tests/test_w6a_looprecheck1.py": 6,
+   "tests/test_w6a_looprecheck2.py": 74,
+   "tests/test_w6a_route_limits.py": 49
+  }
+ }
+}
