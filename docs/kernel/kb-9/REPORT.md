@@ -7,7 +7,8 @@ anthropic-rsp and openai-preparedness assert that flag instead of per-formula `m
 in 1,470 premise evaluations; `results.json` byte-identical). Open: safety-framework's premise check is not switched
 (it has no `check_premises`, see Notes 2); one note for the DRI on `SelectedAnswer` (Notes 1).
 
-SIZE: see the last section.
+SIZE: 481 product, 369 tests, about 650 other hand-written lines (`git diff --numstat` against the merge base;
+generated inventories, schemas, evidence JSON and the code map excluded). No deliverable was cut.
 
 ## 1. Theorems (`lean/VE/SoftNorms/SelectedSound.lean`), verbatim
 
@@ -194,10 +195,84 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
 
 ## 9. Tests and checks run
 
-- Lean: `lake build` (full, twice: after the Lean change and after (b) on the wire), exit 0; `python3 lean/audit.py`
-  PASS; `tools/check_*_statements.py` (8 tools) exit 0; trust mutants: see the last section.
+- Lean: `lake build` (full, twice: after the Lean change and after (b) on the wire; the `ve_service` binary is the
+  same pinned build, sha256 a4f52ad0dd43f709…), exit 0; `python3 lean/audit.py` PASS; `tools/check_*_statements.py`
+  (8 tools) exit 0.
+- Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/SoftNorms/SelectedExamples.lean
+  --test lean/ResponseShape/SoftSelectedExamples.lean --allow docs/kernel/kb-9/trust-mutants-allow.json`): run 1
+  (docs/kernel/kb-9/trust-mutants-run1.json) left 49 survivors; the `factsAt`, `coherentAt`, `cohPremisesIn` and
+  `decodeFactsIn` ones are killed by new `#guard`s (a false fact first; two colliding pairs failing first only, last
+  only, neither; the prepared runner equal to the runner; a decision predicate at either position and the last
+  decision name), the `SelectedAnswer`/`SelectedAnswerWith` ones (Prop definitions over Json, no decidable equality)
+  and two that do not elaborate are allowed with a reason each (kb-10a's precedent). Final run on 1d2df69240
+  (docs/kernel/kb-9/trust-mutants.json): 81 KILLED, 0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 32 ALLOWED, exit 0.
+- `uv run python tools/regen_generated.py --write`, then `--check`: 41 entries, exit 0. The `lean_decoders` pins of
+  `ve/assurance-manifest.json` for Selected.lean, Prepared.lean and SlotWire.lean were reviewed and repinned by hand
+  (`decodeFactsIn` added to SlotWire's declarations); `tests/test_assurance_manifest.py` 167 passed.
 - `uv run pytest -q tests/test_kb9_selected_facts.py` 53 passed; `tests/test_soft_selected.py tests/test_slot_premises.py`
   205 passed; `tests/test_relay_binding_inventory.py -k "soft-selected or classified"` 21 passed.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 53 added, 0 refused, 0 stale, 0 malformed.
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 508 of 628 test files, including every test file above.
+- Selected run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on
+  3e6e411262, ve-cloud-2): 325 units, 1 failed: `tests/test_kb10b_switch.py` (its fakes of `selected_at` and
+  `outcome_at` take no `facts`). Fixed at 08dad12cf6 (the relay and RSP pass `facts` only when facts are sent; kb-10b's
+  `completed` fake models the document's reading); rerun of that unit and the tests of the touched code
+  (`mac-pytest.sh -- tests/test_kb10b_switch.py tests/test_kb9_selected_facts.py tests/test_rsp_fidelity_fix.py
+  tests/test_kb10_shadow.py tests/test_safetyfw_usecases.py tests/test_soft_selected.py`): 412 passed.
+- On the final code (08dad12cf6): `usecases/anthropic-rsp/run.py --check` exit 0 (193 s) and
+  `usecases/openai-preparedness/run.py --check` exit 0 (1,096 s).
+- `tests/test_kb10b_switch.py::test_a_harness_loads_its_own_siblings_and_leaves_none_behind` fails when run alone,
+  on this branch's code as on its own (Preparedness's `run.py` loads RSP's at import, whose siblings the test
+  replaces); in its file it passes after `test_the_harnesses_completed_is_outcome_at` has loaded RSP. Not touched.
 - Not run: the agent-policy and eligibility harnesses (their code paths are unchanged; the gate runs their tests).
+
+## 10. Spec re-read
+
+- `facts` decoded by `decodeFacts src j`, closed and well-formed over `envAt (soften src.D) 0`, the slot kinds' limits
+  and refusals, absent means `P = []`: against the task's deliverable (1); `runSelected` (Selected.lean) and
+  `decodeFacts_ok` (SlotWire.lean:85).
+- `"facts": b` with `b = P.all (fun φ => φ.eval M [])` and `"coherent": c` with `c = (cohPremises src.D).all …`,
+  present exactly when the member was sent, a false value reported: `factsAt`, `coherentAt`, `factsFields`,
+  `factsSent` (Selected.lean); `selectedAnswer_flags`; the schema's `ite` on `facts`.
+- (2a) `soft_wire_selected`'s conclusion, `decodeFacts src j = .ok P` (here `.ok (P, items)`: kb-3a's decoder returns
+  the pair, as the task notes), well-formedness, `facts` read from the answer with `b = true ↔ ∀ φ ∈ P, φ.denote
+  M.asStructure []`: section 1 (a).
+- (2b) under (2a)'s hypotheses and the three flags true, `BaseAdmissibleP src.D P M.asStructure`, by the named route;
+  the converse for `coherent`: section 1 (b), `coherentAt_iff`.
+- (2c) kb-10a's three-rule document, one true and one false fact, `facts` false, rules reported: SelectedExamples.lean.
+- (3) both theorems under softNorms; baseline regenerated; +25 within +60; allowance text verbatim in ALLOWANCES.md.
+- (4) `selected_at(..., facts=None)` with kb-3a's encoder (`facts_wire`, used by `_slot_case` too); `bind_selected`
+  requires both flags exactly when facts were sent, bools; `selected_rules`/`outcome_at` take `facts=`, kept answers
+  keyed by document, model and the facts' encoded bytes; the flags exposed (`selection_flags`).
+- (5) shadow first, saved per case; zero mismatches, then the switch with the same AssertionError text and no
+  per-formula `evaluate`; `coherent` not asserted; pairs with `coherent: false` or `background: false` listed (none).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: PASS. `tests/test_kb9_selected_facts.py::test_a_forged_flag_is_unavailable`
+   (each flag dropped, added, set to 7, null, [], {}, 1.5, "\ud800", 10k-deep, 1, 0, "true"),
+   `::test_a_malformed_facts_value_or_item_is_refused_with_a_diagnostic` (request side), `SoftSelectedExamples` variants.
+2. Every deliverable built: PASS. Section 10 maps each numbered deliverable; FSF's switch is not made for the reason in
+   Notes 2 (no `check_premises`); no Python copy of a Lean decision (the harness reads Lean's flag).
+3. Tests can fail: PASS. Seeded bugs a-f (section 7); trust mutants 0 SURVIVOR, 0 UNKNOWN.
+4. Python, Lean and Rust agree; valid inputs still pass: PASS. Three harnesses' `--check` before and after
+   (byte-identical `results.json`), `test_a_case_without_facts_is_answered_as_before`; no Rust change.
+5. R8 binding: PASS. Flags present exactly when sent (`test_a_forged_flag_is_unavailable`: added when none sent,
+   dropped when sent, also beside empty facts); every fact sent (`test_the_genuine_answer_with_facts_is_bound_and_every_fact_is_sent`).
+6. Gate evidence matches the final HEAD: PASS for what I ran (section 9); the chain runs the gate on the final HEAD.
+7. No unsigned item: PASS. DELTA rows cite R8, R2, R16, R12; trusted growth under R16 with the FOLLOW-UPS row.
+8. Every user-visible change in DELTA: PASS. DELTA rows 1-2 (new fields, new refusals and their order).
+9. Test selection finds the tests: PASS. `tools/select_tests.py` selects tests/test_kb9_selected_facts.py,
+   test_soft_selected.py, test_slot_premises.py, test_kb10b_switch.py (the unit the selected run caught).
+10. Statements say what is claimed: PASS. Seeded bugs a and b break the build of (2a)'s proof; check_*_statements exit 0;
+    no hypothesis added to an approved statement (`soft_wire_selected` unchanged; Notes 1 on `SelectedAnswer`).
+11. Budgets fail closed: N.A. (the flags are total evaluations of decoded formulas; the facts decoder keeps the slot
+    kinds' limits; no budget is added).
+12. No CPU regression: PASS. Lean cases fall (section 4); prepared documents keep the coherence conjuncts and base
+    vocabulary (no `soften` per case); the facts key is computed once per held tuple.
+13. Test-removed trailers: PASS. `tools/gate_collection.py --check --prebuilt`: 53 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+14. Both directions, cited evidence, spec re-read: PASS. True and false facts, present and absent flags, accepted and
+    refused facts (tests above); section 10.
+15. No overclaim, no silent cut, every check can fail, limits before work: PASS. The universal words in this report
+    cite their command (sections 3, 4, 9); no cut; every new `#guard` is a trust-mutant killer (run 2/3 counts); the
+    facts list is decoded by kb-3a's decoder under its limits.
