@@ -1,0 +1,115 @@
+{
+ "item": "p1-path-hold-alert",
+ "note": "Python only, all in manage-agents (no Lean, Python or Rust of this VE repo changed). Each seed was applied by exact find/replace to a /tmp copy of the staged tools-local/decider-ready-alert.py.new-pha and run with P1RUA_ALERT=<copy> python3 -I tools-local/test_p1_ready_alert.py; the staged file was never edited, so nothing needed restoring. Run 2026-11-16: all 8 CAUGHT (rc 1, the listed tests fail).",
+ "mutants": [
+  {
+   "id": "S1",
+   "bug": "path hold never counted",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "return s.startswith(\"feed: path\") or PATH_HOLD.search(s) is not None",
+   "replace": "return False",
+   "rc": 1,
+   "failing_tests": [
+    "test_29_min_silent_30_min_alerts",
+    "test_31_min_alerts_names_branch_and_stage",
+    "test_chain_stage_by_branch_link_or_row_id",
+    "test_failed_send_records_nothing",
+    "test_held_and_not_startable_one_message",
+    "test_other_feed_holds_unchanged",
+    "test_p2_held_row_not_named",
+    "test_second_pass_within_4h_silent_then_again",
+    "test_stage_unknown_without_holder_row",
+    "test_unparsed_hold_named_raw"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_29_min_silent_30_min_alerts, PathHold.test_31_min_alerts_names_branch_and_stage, PathHold.test_chain_stage_by_branch_link_or_row_id, PathHold.test_failed_send_records_nothing, PathHold.test_held_and_not_startable_one_message, PathHold.test_other_feed_holds_unchanged, PathHold.test_p2_held_row_not_named, PathHold.test_second_pass_within_4h_silent_then_again, PathHold.test_stage_unknown_without_holder_row, PathHold.test_unparsed_hold_named_raw"
+  },
+  {
+   "id": "S2",
+   "bug": "stage never looked up",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "    return f\"path {m.group(1)} in flight on {m.group(2)} ({holder_stage(rows, m.group(2), r.get('id'))})\"",
+   "replace": "    return f\"path {m.group(1)} in flight on {m.group(2)} (stage unknown)\"",
+   "rc": 1,
+   "failing_tests": [
+    "test_31_min_alerts_names_branch_and_stage",
+    "test_chain_stage_by_branch_link_or_row_id",
+    "test_other_feed_holds_unchanged"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_31_min_alerts_names_branch_and_stage, PathHold.test_chain_stage_by_branch_link_or_row_id, PathHold.test_other_feed_holds_unchanged"
+  },
+  {
+   "id": "S3",
+   "bug": "any 'in flight on' counts (capacity holds too)",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "return s.startswith(\"feed: path\") or PATH_HOLD.search(s) is not None",
+   "replace": "return s.startswith(\"feed: path\") or \"in flight on \" in s",
+   "rc": 1,
+   "failing_tests": [
+    "test_other_feed_holds_unchanged"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_other_feed_holds_unchanged"
+  },
+  {
+   "id": "S4",
+   "bug": "unparsed hold silenced",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "        return s[:200]\n",
+   "replace": "        return \"\"\n",
+   "rc": 1,
+   "failing_tests": [
+    "test_unparsed_hold_named_raw"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_unparsed_hold_named_raw"
+  },
+  {
+   "id": "S5",
+   "bug": "held rows not recorded for dedup",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "            for x in p1all:\n",
+   "replace": "            for x in [(r, a) for r, a in p1]:\n",
+   "rc": 1,
+   "failing_tests": [
+    "test_held_and_not_startable_one_message",
+    "test_second_pass_within_4h_silent_then_again"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_held_and_not_startable_one_message, PathHold.test_second_pass_within_4h_silent_then_again"
+  },
+  {
+   "id": "S6",
+   "bug": "held rows skip the 30 min wait",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "        if t0 is None or now - t0 < P1_AFTER:\n",
+   "replace": "        if t0 is None or (held is None and now - t0 < P1_AFTER):\n",
+   "rc": 1,
+   "failing_tests": [
+    "test_29_min_silent_30_min_alerts"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_29_min_silent_30_min_alerts"
+  },
+  {
+   "id": "S7",
+   "bug": "priority not checked",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "        if r.get(\"status\") != \"ready\" or not prio_le_1(r):\n            continue\n        held = None",
+   "replace": "        if r.get(\"status\") != \"ready\":\n            continue\n        held = None",
+   "rc": 1,
+   "failing_tests": [
+    "test_non_matching_rows_silent",
+    "test_p2_held_row_not_named"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py Alert.test_non_matching_rows_silent, PathHold.test_p2_held_row_not_named"
+  },
+  {
+   "id": "S8",
+   "bug": "chain-stage preference dropped",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-pha",
+   "find": "best = [s for s in states if re.match(r\"chain stage |merge train\", s)] or [s for s in states if s]",
+   "replace": "best = [s for s in states if s]",
+   "rc": 1,
+   "failing_tests": [
+    "test_chain_stage_by_branch_link_or_row_id"
+   ],
+   "test": "tools-local/test_p1_ready_alert.py PathHold.test_chain_stage_by_branch_link_or_row_id"
+  }
+ ]
+}
