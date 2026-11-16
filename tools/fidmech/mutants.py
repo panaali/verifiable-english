@@ -131,12 +131,17 @@ def structural_mutants(document, files, env, selected, atoms):
     {item: rule ids} and {item: case-model atoms}."""
     blocks = S.rule_blocks(files[S.RULES])
     tname = S.translation_name(files)
-    found, report = [], {"unrenderable": [], "no-item": [], "no-guard-true": [], "duplicates": Counter(),
-                         "no-op": Counter()}
+    found, report = [], {"unrenderable": [], "undecided": [], "no-item": [], "no-guard-true": [],
+                         "duplicates": Counter(), "no-op": Counter()}
     for index, block in enumerate(blocks):
         prefix = S.RULE_LINE.match(block.text).group(1)
         rule = S.parse(env, block.text)
-        if not S.same_edit(rule, S.parse(env, S.render(rule, env, prefix))):
+        try:
+            renders = S.same_edit(rule, S.parse(env, S.render(rule, env, prefix)))
+        except S.REFUSED as error:
+            report["undecided" if isinstance(error, S.CheckerUnavailable) else "unrenderable"].append(block.id)
+            continue
+        if not renders:  # VE's renderer cannot write this rule back: no op of it is written
             report["unrenderable"].append(block.id)
             continue
         sort = env.predicates[rule.core.predicate].arguments[0]
@@ -171,7 +176,7 @@ def structural_mutants(document, files, env, selected, atoms):
             unit = block.id
             try:
                 line = S.render(edited, env, prefix)
-            except Exception as error:  # noqa: BLE001 - the renderer's refusal is the stillborn reason
+            except S.REFUSED as error:
                 report["unrenderable"].append(f"{unit}:{op}: {type(error).__name__}: {error}"[:300])
                 continue
             if line == block.text:
@@ -185,8 +190,8 @@ def structural_mutants(document, files, env, selected, atoms):
                     reason = "the written line parses to another rule than the edit"
                 elif S.syntactic(rule, parsed):
                     equivalent = "syntactic"
-            except Exception as error:  # noqa: BLE001 - VE's refusal of the line is the stillborn reason
-                reason = f"{type(error).__name__}: {error}"[:300]
+            except S.REFUSED as error:
+                reason = _refusal(error)
         key = canonical(edits)
         if key in seen:
             report["duplicates"][op] += 1
@@ -216,7 +221,7 @@ def rule_equivalence(files, env, edits):
         return None
     try:
         same = all(S.syntactic(S.parse(env, old[i]), S.parse(env, new[i])) for i in changed)
-    except Exception:  # noqa: BLE001 - a line VE refuses is no equivalent
+    except S.REFUSED:  # a line VE refuses, or does not answer, is no equivalent
         return None
     return "syntactic" if same else None
 
@@ -270,9 +275,16 @@ def _wording_stillborn(files, changed, parse_env, pred):
         for block in S.rule_blocks(files[S.RULES]):
             if new_rules.get(block.id) != block.text or pred in W._used(block.text, old_env):
                 S.parse(env, new_rules[block.id])
-    except Exception as error:  # noqa: BLE001 - VE's refusal of the mutated text is the stillborn reason
-        return f"{type(error).__name__}: {error}"[:300]
+    except S.REFUSED as error:
+        return _refusal(error)
     return None
+
+
+def _refusal(error):
+    """The stillborn reason of a refused (or unanswered) parse; an unanswered one is marked `undecided`: it is not
+    scored either way, and the report lists it apart from the lines VE refused."""
+    text = f"{type(error).__name__}: {error}"[:300]
+    return ("undecided: " + text) if isinstance(error, S.CheckerUnavailable) else text
 
 
 def counts(records, report):

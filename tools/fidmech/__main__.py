@@ -110,6 +110,9 @@ def mutants(args) -> int:
         for key, value in report.get(part, {}).items():
             if key not in ("duplicates",) and value:
                 print(f"{part} {key}: {json.dumps(value, ensure_ascii=False)}")
+    undecided = [s["id"] for part in ("structural", "wording") for s in report.get(part, {}).get("stillborn", ())
+                 if s["reason"].startswith("undecided: ")]
+    print(f"stillborn because VE gave no answer (undecided, never scored): {len(undecided)} {undecided}")
     print("declarations: " + json.dumps({k: len(v) for k, v in report["declarations"].items()}))
     if args.jsonl:
         Path(args.jsonl).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records),
