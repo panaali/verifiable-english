@@ -1,0 +1,24 @@
+{
+  "item": "p1-ready-unstartable-alert",
+  "note": "Python only, all in manage-agents (no Lean, Python or Rust of this repo changed). Each seed was applied to a temp copy of the staged file and run with P1RUA_ALERT=<copy> or P1RUA_BACKLOG=<copy> python3 -I tools-local/test_p1_ready_alert.py <test>; the staged files were never edited, so nothing needed restoring. Run 2026-11-16 ~03:06Z: all 6 CAUGHT (the named test fails).",
+  "mutants": [
+    {"id": "S1-threshold", "file": "manage-agents/tools-local/decider-ready-alert.py.new-p1rua",
+     "change": "now - t0 < P1_AFTER -> now - t0 < P1_AFTER - 120 (alerts at 28 min)",
+     "test": "tools-local/test_p1_ready_alert.py Alert.test_29_min_silent", "caught": true},
+    {"id": "S2-task-file-by-name", "file": "manage-agents/tools-local/decider-ready-alert.py.new-p1rua",
+     "change": "prompts/task-<id>.txt no longer counts as a task file",
+     "test": "tools-local/test_p1_ready_alert.py Alert.test_task_file_or_launch_link_silent", "caught": true},
+    {"id": "S3-dedupe-4h", "file": "manage-agents/tools-local/decider-ready-alert.py.new-p1rua",
+     "change": "P1_EVERY = 4 * 3600 -> 3 * 3600",
+     "test": "tools-local/test_p1_ready_alert.py Alert.test_second_run_within_4h_silent_then_again", "caught": true},
+    {"id": "S4-any-owner", "file": "manage-agents/tools-local/decider-ready-alert.py.new-p1rua",
+     "change": "only owner 'infra feed' rows are alerted",
+     "test": "tools-local/test_p1_ready_alert.py Alert.test_no_task_file_31_min_alerts_once", "caught": true},
+    {"id": "S5-filing-on-update", "file": "manage-agents/backlog.py.new-p1rua",
+     "change": "the filing check runs on add only, not update",
+     "test": "tools-local/test_p1_ready_alert.py Filing.test_update_to_p1_ready_warns", "caught": true},
+    {"id": "S6-writer-needs-time", "file": "manage-agents/backlog.py.new-p1rua",
+     "change": "WRITER_RE drops the 'by <UTC>' part (a bare 'writer: <name>' line satisfies the rule)",
+     "test": "tools-local/test_p1_ready_alert.py Filing.test_writer_line_needs_a_time", "caught": true}
+  ]
+}
