@@ -511,12 +511,12 @@
   },
   {
    "test": "tests/test_fidmech_bindings.py",
-   "why": "starts git (git show) in tools/fidmech/bindings.py",
+   "why": "starts git (git cat-file) in tools/fidmech/bindings.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "tools/fidmech/bindings.py:frozen_diff: git show"
+    "tools/fidmech/bindings.py:frozen_diff: git cat-file"
    ]
   },
   {
