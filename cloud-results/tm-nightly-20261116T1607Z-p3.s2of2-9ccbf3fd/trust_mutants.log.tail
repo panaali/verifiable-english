@@ -1,0 +1,8 @@
+trust_mutants: 25 definitions, 36 mutants (17 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/WireContract/Hooks/Purposes.lean:70 VE.WireContract.Hooks.Purposes.classifier (G[V], trusted) list-empty: B.links.map (·.id) -> [] (lean/VE/WireContract/Hooks/Purposes.lean:70: typeclass instance problem is stuck, it is often due...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) append-left: ++ environmentWrappers ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Acts/Lexical.lean:151 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-empty: ps -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: (baseRows.map (·.profile)).eraseDups -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-empty: VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) -> [] (its control: lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:97 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-le: = -> ≤ (lean/VE/EnglishGrammar/Norm/Owners.lean:97: failed to synthesize)
