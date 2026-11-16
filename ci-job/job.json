@@ -1,0 +1,12 @@
+{
+ "job": "testmap-f51d6831-t797127-s0",
+ "head": "ade8fd2977c1c4c92516ff75271f2b83d1f8ff3c",
+ "argv": [
+  "testmap-f51d6831-t797127-s0",
+  "ade8fd2977c1c4c92516ff75271f2b83d1f8ff3c",
+  "ade8fd2977c1c4c92516ff75271f2b83d1f8ff3c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-547a9924ac50.tar.zst",
+  "bb4164e7a80d6362337679eff2c8db7e0bea669b9b34636ad4d64403e4c109fa",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_safetyfw_usecases.py tests/test_wire_gate_corpus.py tests/test_judgments_answer.py tests/test_document_split.py tests/test_lean_first_b13b.py tests/test_w1_delta_suite.py tests/test_select_fast_stage.py tests/test_test_speed_b2.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
