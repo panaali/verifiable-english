@@ -134,7 +134,7 @@ def structural_mutants(document, files, env, selected, atoms):
     found, report = [], {"unrenderable": [], "no-item": [], "no-guard-true": [], "duplicates": Counter(),
                          "no-op": Counter()}
     for index, block in enumerate(blocks):
-        prefix = S._RULE.match(block.text).group(1)
+        prefix = S.RULE_LINE.match(block.text).group(1)
         rule = S.parse(env, block.text)
         if not S.same_edit(rule, S.parse(env, S.render(rule, env, prefix))):
             report["unrenderable"].append(block.id)

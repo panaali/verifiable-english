@@ -1,0 +1,22 @@
+safety-framework: 256 mutants, generator fidmech/1, inputs_sha256 a88ae2181b154ebf16f6e99cdc4ff461af5f443ff5e706f38449343a19613d78
+op                 mutants    ok stillborn syntactic duplicates
+drop-conjunct           60    60         0         0          2
+drop-unless              8     8         0         0          0
+drop-disjunct           18    18         0         0          0
+drop-exception           2     2         0         0          0
+flip-force              41    41         0         0          0
+add-guard-true          16    16         0         0          0
+rule-drop               44    44         0         0          1
+widen-quantifier         2     2         0         0          0
+actor                   14    14         0         0         22
+qualifier               23    23         0         0         40
+quantity                27    27         0         0         70
+attachment               1     1         0         0          5
+structural no-item: ["f4-check-d", "f4-need-d", "f4-check-r", "f4-need-r", "f11-rel", "f20-holistic-strict", "f20-holistic-default", "f20-within-strict", "f20-within-default", "f20-elicitation-strict", "f20-elicitation-default"]
+structural no-guard-true: ["f3", "f5", "f6", "f6-tcl", "f7-rra", "f7-sc", "f9-rel", "f10-rel-diff", "f14", "f15-diff", "f16-ds", "f16-ds-strict", "f17-pra", "f17-hri", "f17-add", "f18-yearly", "f18-frequent", "f19-default"]
+wording parse_checked: true
+declarations: {"applied": 0, "stale": 0, "unknown": 0, "not-structural": 0, "already-equivalent": 0}
+
+real	1m9.005s
+user	1m7.818s
+sys	0m1.342s
