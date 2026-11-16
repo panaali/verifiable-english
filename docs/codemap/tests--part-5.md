@@ -1,5 +1,3 @@
-- `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
-- `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
 - `tests/test_nary_folio.py` — Pinned FOLIO witness accounting, with the large corpus optional in CI.
 - `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
 - `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
@@ -30,6 +28,7 @@
 - `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
 - `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
 - `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
+- `tests/test_ownership_floor.py` — kb-10d step 3: the per-answer Lean ownership count of the five frozen keys is a floor.
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
