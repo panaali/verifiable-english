@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-oseq-pf-d2d3-unit-b00f97f5-t859378-s7",
+ "head": "90f0505d38a9d6b6017c477f3c269a90213523cb",
+ "argv": [
+  "armsh-cand-oseq-pf-d2d3-unit-b00f97f5-t859378-s7",
+  "90f0505d38a9d6b6017c477f3c269a90213523cb",
+  "ffe291f6506e956b3854aa3735d3e0081e2f9990",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
