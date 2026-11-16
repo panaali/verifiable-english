@@ -1,0 +1,21 @@
+"""Record today's manage-agents wording-mutants.py plan() (seeds 1-5, n = 10) and apply() of each planned mutant on
+the frozen inputs; apply() outputs are kept as sha256 per file."""
+import hashlib, importlib.util, json, sys
+from pathlib import Path
+src, inputs, out = map(Path, sys.argv[1:4])
+spec = importlib.util.spec_from_file_location("wm", src); wm = importlib.util.module_from_spec(spec); spec.loader.exec_module(wm)
+def files_of(d):
+    return {(p.name[:-4] if p.name.endswith(".py.txt") else p.name): p.read_text() for p in sorted(d.iterdir())}
+golden = {"generator": "manage-agents tools-local/wording-mutants.py", "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
+          "n": 10, "seeds": [1, 2, 3, 4, 5], "documents": {}}
+for d in sorted(inputs.iterdir()):
+    files = files_of(d)
+    units = list(wm._blocks(files.get("rules.d1.ve", ""))[0])
+    rows = {}
+    for seed in golden["seeds"]:
+        planned = wm.plan(files, units, 10, seed)
+        applied = [{name: hashlib.sha256(text.encode()).hexdigest() for name, text in sorted(wm.apply(files, [m]).items())} for m in planned]
+        rows[str(seed)] = {"plan": planned, "apply_sha256": applied}
+    golden["documents"][d.name] = {"input_sha256": {n: hashlib.sha256(t.encode()).hexdigest() for n, t in files.items()}, "seeds": rows}
+out.write_text(json.dumps(golden, indent=1, ensure_ascii=False) + "\n")
+print({k: [len(v["seeds"][s]["plan"]) for s in v["seeds"]] for k, v in golden["documents"].items()})
