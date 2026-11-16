@@ -415,16 +415,50 @@ def own_words(block: dict, data: CaseData, used) -> list[tuple[str, str]]:
     return out
 
 
-def block_sentences(seg, locs) -> tuple[str, bool]:
-    """The full sentences the block's located quotes touch (text), or its quotes' text when none is located."""
+@dataclass(frozen=True)
+class BlockSource:
+    """A rule block's source for L3 and D (plan 3.4, 3.6): the full sentences its located quotes touch, plus the
+    text of every quote L1 located no sentence for (plan 3.4: "the header quote is used and the hit is marked"),
+    quote by quote, so a block with some quotes located still keeps the text of the others."""
+    text: str
+    sentences: int
+    unlocated: int
+    quotes: int
+
+    @property
+    def fallback(self) -> str:
+        """'all', 'part' or '' : how much of the source is header-quote text L1 located no sentence for."""
+        return "" if not self.unlocated else "all" if not self.sentences else "part"
+
+    def where(self) -> str:
+        """L3's name for the source (every L3w detail ends with it)."""
+        return {"": "full source sentences", "all": "header quote (L1 located no sentence)",
+                "part": f"full source sentences and the header quote L1 located no sentence for "
+                        f"({self.unlocated} of {self.quotes} quotes)"}[self.fallback]
+
+    def mark(self) -> str:
+        """D's mark on each unaccounted word of the block (empty when every quote is located)."""
+        return {"": "", "all": " (from the header quote: L1 located no sentence)",
+                "part": f" (from the full sentences and the header quote L1 located no sentence for: "
+                        f"{self.unlocated} of {self.quotes} quotes)"}[self.fallback]
+
+
+def block_sentences(seg, locs) -> BlockSource:
+    """The full sentences the block's located quotes touch, plus the text of each quote that is not located."""
     touched = sorted({(loc.place.stream, i) for loc in locs if loc.place for i in loc.place.sentences})
-    if touched:
-        return " ".join(_sentence(seg, st, i)[1].text for st, i in touched), True
-    return " ".join(loc.text for loc in locs), False
+    loose = [loc.text for loc in locs if not loc.place]
+    text = " ".join([_sentence(seg, st, i)[1].text for st, i in touched] + loose)
+    return BlockSource(text, len(touched), len(loose), len(locs))
+
+
+def fallback_counts(sources) -> dict:
+    """How many blocks read every quote, or some quotes, from the header quote because L1 located no sentence."""
+    return {"from_header_quote": sum(s.fallback == "all" for s in sources),
+            "partly_from_header_quote": sum(s.fallback == "part" for s in sources)}
 
 
 def l3(seg, blocks, analyses, data) -> tuple[list[T.Hit], dict]:
-    hits, skipped, from_quote = [], 0, 0
+    hits, skipped, sources = [], 0, []
     for b in blocks:
         if b["file"] != "rules.d1.ve":
             continue
@@ -432,20 +466,19 @@ def l3(seg, blocks, analyses, data) -> tuple[list[T.Hit], dict]:
         if not locs:
             skipped += 1
             continue
-        source, located = block_sentences(seg, locs)
-        from_quote += not located
+        src = block_sentences(seg, locs)
+        sources.append(src)
         own = own_words(b, data, S.accounting.used_names(b["text"], data.legend))
         for cls in data.logic.classes:
-            if data.logic.members(source, cls):
+            if data.logic.members(src.text, cls):
                 continue
             where = [(w, place) for place, text in own for w in data.logic.members(text, cls)]
             if where:
                 words = sorted({w for w, _ in where})
                 hits.append(_hit("L3w", b["id"], b["file"], "/".join(words),
                                  f"{', '.join(words)} in {', '.join(sorted({p for _, p in where}))}; no member of "
-                                 f"{{{', '.join(w for w, _ in cls)}}} in the "
-                                 + ("full source sentences" if located else "header quote (L1 located no sentence)")))
-    return hits, {"rule_blocks_without_quote": skipped, "from_header_quote": from_quote}
+                                 f"{{{', '.join(w for w, _ in cls)}}} in the " + src.where()))
+    return hits, {"rule_blocks_without_quote": skipped, **fallback_counts(sources)}
 
 
 def l4(seg, blocks, analyses, data, legend_locs, used) -> tuple[list[T.Hit], dict]:
@@ -488,19 +521,20 @@ def d(seg, blocks, analyses, data) -> tuple[list[T.Hit], dict]:
     """D --span sentence (plan 3.6, Opus round 2 point 3): per block (i) the unaccounted words of its full sentences,
     (ii) those outside its header quotes; a hit per unaccounted word no sidecar entry covers, and per loss entry."""
     acc = S.accounting
-    hits, rows = [], []
+    hits, rows, sources = [], [], []
     for b in blocks:
         locs = analyses[b["id"]][2]
         if not locs:
             continue
-        source, located = block_sentences(seg, locs)
+        src = block_sentences(seg, locs)
+        sources.append(src)
         used = acc.used_names(b["text"], data.legend)
         accounted = acc.words(b["text"]).union(*(acc.words(own_legend(_entry(data, n))) for n in used))
-        unaccounted = sorted(acc.words(source) - accounted)
+        unaccounted = sorted(acc.words(src.text) - accounted)
         outside = sorted(set(unaccounted) - acc.words(" ".join(loc.text for loc in locs)))
         entries = (data.sidecar or {}).get(b["id"]) or []
         covered = set().union(*(acc.words(e["words"]) for e in entries)) if entries else set()
-        mark = "" if located else " (from the header quote: L1 located no sentence)"
+        mark = src.mark()
         for w in unaccounted:
             if w not in covered:
                 hits.append(_hit("D", b["id"], b["file"], w, "unaccounted, in no sidecar entry"
@@ -510,7 +544,7 @@ def d(seg, blocks, analyses, data) -> tuple[list[T.Hit], dict]:
                 hits.append(_hit("D", b["id"], b["file"], f"loss {e['arg']}: {e['words']}",
                                  "a loss entry: the translator says the rule does not carry these words"))
         rows.append({"block": b["id"], "unaccounted": len(unaccounted), "outside_quote": len(outside)})
-    return hits, {"sidecar": data.sidecar is not None, "span": "sentence",
+    return hits, {"sidecar": data.sidecar is not None, "span": "sentence", **fallback_counts(sources),
                   "unaccounted": sum(r["unaccounted"] for r in rows),
                   "outside_quote": sum(r["outside_quote"] for r in rows), "per_block": rows}
 
