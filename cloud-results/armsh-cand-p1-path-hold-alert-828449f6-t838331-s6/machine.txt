@@ -1,0 +1,9 @@
+job=armsh-cand-p1-path-hold-alert-828449f6-t838331-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-16T14:14:35Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 14:14:35 up 2 min,  0 user,  load average: 1.63, 0.56, 0.20
+pilot/codex branches: 98
+ve-cache: lean-build exact key 547a9924ac50 asset lean-build-547a9924ac50-linux-aarch64.tar.zst sha256 703c52bdf8f9 ok, seal ok, from download, 11.4 s
+seed: mode=seed-fp match=exact asset=lean-build-547a9924ac50-linux-aarch64.tar.zst pruned=0 base=f577b81d9ad1
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
