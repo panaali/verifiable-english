@@ -1,0 +1,31 @@
+{"schema": "fidmech-bindings/1", "document": "safety-framework", "frozen_from": "f97dd2d0c03689334abab42b0a6b5a3211b890db",
+ "tables": {
+  "SELECTION_ITEMS": {"type": "dict[str,tuple[tuple[str,...],bool]]", "value": {
+   "DM": [["harm_mitigated", "severe_harm_mitigated", "significant_harm_mitigated"], true],
+   "SEC": [["secured", "adequately_secured"], true],
+   "CCA": [["assessed"], true],
+   "RRA": [["residual_assessed"], true],
+   "SC": [["safety_case"], true],
+   "PRA": [["periodic_assessed", "periodic_covers_internal"], true],
+   "RECSEC": [["applied"], true],
+   "DISC": [["shared"], true],
+   "PROXIMITY": [["proximity_assessed"], true],
+   "FURTHER_CCA": [["further_assessed"], true],
+   "SUBMISSION": [["case_submitted"], true],
+   "YEARLY_REVIEW": [["yearly_review"], true],
+   "ADD": [["safeguards_added"], true],
+   "FREQUENT_REVIEW": [["frequent_review"], true],
+   "ACCEPTABLE": [["acceptable"], true],
+   "PERMITS": [["proceed"], true],
+   "FORBIDS": [["proceed"], false]}},
+  "SILENT_ITEMS": {"type": "dict[str,tuple[str,...]]", "value": {
+   "GOV": ["proceed"],
+   "PROXIMITY": ["proximity_assessed"],
+   "DISC": ["shared"],
+   "CCA": ["assessed"]}},
+  "INLINE_ITEMS": {"type": "dict[str,tuple[str,...]]", "value": {
+   "GOV": ["proceed"],
+   "SILENT:CCA+GOV": ["assessed", "proceed"],
+   "FORBIDS+L0": ["proceed"],
+   "CHECKPOINT_MCCA": ["change_assessed"]}},
+  "CATCH_ALL_OWN": {"type": "tuple[str,...]", "value": ["acceptable"]}}}
