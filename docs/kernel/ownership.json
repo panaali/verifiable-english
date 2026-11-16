@@ -1,15 +1,12 @@
 {
  "comment": "Per-answer Lean ownership of the five frozen keys (kb-10d; tools/ownership_trace.py; test: manage-agents reviews/lean-ownership-baseline-20261112.md section 2). Generated: never edit.",
- "commits": [
-  "7bb830b01b08544762101457734c1705768043fb",
-  "da0822ae80b68e2fdbde4ff0933c5d92b3f734a0"
- ],
+ "commits": [],
  "decision_functions": "e4f69dee7c3722e7aa3fb47c5345de99b0db9852",
  "inputs": {
   "usecases/agent-policy/check.py": "c59483ac65c478ee5f6ebf09d0db99c148ace6c2",
   "usecases/anthropic-rsp/run.py": "9ba10263cef4a8ed7a58417a2898f7c8bade55eb",
   "usecases/eligibility/run.py": "6fe02ae9a5524c27a0f6f58cf8df59f366dd3d75",
-  "usecases/openai-preparedness/run.py": "82b69766dc3f9cda66aa6b5586e224c5f695d71b",
+  "usecases/openai-preparedness/run.py": "52fc35f09cd89d52e8be90103948d1e4e26eb2ec",
   "usecases/safety-framework/run.py": "fc5d4c01862710c0cf8a1954fff7f3874930013d",
   "ve/evaluate.py": "e0c37d8ccf1b905d40d19869a35011e806e91aa1",
   "ve/norms.py": "c6d565c271e515a745acb0431a4bfb25c1f80830",
@@ -31700,7 +31697,7 @@
         },
         {
          "caller": "w1",
-         "count": 2,
+         "count": 4,
          "kind": "soft-conflict",
          "mode": "soft-norms",
          "profiles": [
@@ -33813,7 +33810,7 @@
         },
         {
          "caller": "check_premises",
-         "count": 1764,
+         "count": 1800,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33840,7 +33837,7 @@
         },
         {
          "caller": "pick",
-         "count": 1182,
+         "count": 1186,
          "kind": "soft-selected",
          "mode": "soft-norms",
          "profiles": [
@@ -33875,7 +33872,7 @@
         },
         {
          "caller": "w1",
-         "count": 38,
+         "count": 40,
          "kind": "soft-conflict",
          "mode": "soft-norms",
          "profiles": [
@@ -48243,7 +48240,7 @@
    }
   }
  },
- "registry": "87cd9de60f8d7d1a0c1bb1e5ff2628efb18b958b",
+ "registry": "c39d2a9a4f0d3dd6afd023c162fcc18a1ff0aa8d",
  "totals": {
   "agent-policy": {
    "fail_criterion_1": 42,

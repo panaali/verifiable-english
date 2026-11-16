@@ -2356,6 +2356,17 @@
    ],
    "qualname": "executable_sha256"
   },
+  "ve/backends/lean_service.py:executable_sha256.<locals>.<lambda>": {
+   "file": "ve/backends/lean_service.py",
+   "items": {
+    "openai-preparedness": 4
+   },
+   "lines": [
+    517,
+    517
+   ],
+   "qualname": "executable_sha256.<locals>.<lambda>"
+  },
   "ve/backends/lean_service.py:request_context": {
    "file": "ve/backends/lean_service.py",
    "items": {
@@ -2380,7 +2391,7 @@
    },
    "lines": [
     1,
-    195
+    199
    ],
    "qualname": "<module>"
   },
@@ -2405,7 +2416,7 @@
    },
    "lines": [
     121,
-    137
+    141
    ],
    "qualname": "_raised"
   },
@@ -2418,8 +2429,8 @@
     "safety-framework": 244
    },
    "lines": [
-    148,
-    151
+    152,
+    155
    ],
    "qualname": "decide"
   },
@@ -2432,8 +2443,8 @@
     "safety-framework": 244
    },
    "lines": [
-    171,
-    188
+    175,
+    192
    ],
    "qualname": "decide_once"
   },
@@ -2446,8 +2457,8 @@
     "safety-framework": 244
    },
    "lines": [
-    154,
-    160
+    158,
+    164
    ],
    "qualname": "decided"
   },
@@ -2485,8 +2496,8 @@
     "safety-framework": 241
    },
    "lines": [
-    140,
-    145
+    144,
+    149
    ],
    "qualname": "rows"
   },
