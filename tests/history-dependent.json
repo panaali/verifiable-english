@@ -598,13 +598,12 @@
   },
   {
    "test": "tests/test_gate_durations.py",
-   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_gate_durations.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git archive, git rev-parse, git show) in tests/test_gate_durations.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "tests/test_gate_durations.py:git: git",
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
@@ -619,13 +618,12 @@
   },
   {
    "test": "tests/test_gate_integrity.py",
-   "why": "starts git (git add, git archive, git config, git init, git rev-parse, git show, git status, git update-index) in conformance/frozen_norm_defaults.py, tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; reads .git in tests/test_gate_integrity.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git add, git archive, git config, git init, git rev-parse, git show, git status, git update-index) in tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; reads .git in tests/test_gate_integrity.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "tests/test_gate_integrity.py:committed_source: git, git add, git init",
     "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source: git, git add, git config, git status",
     "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder: git rev-parse",
@@ -667,13 +665,12 @@
   },
   {
    "test": "tests/test_gate_rerun.py",
-   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git archive, git rev-parse, git show) in tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
@@ -687,12 +684,11 @@
   },
   {
    "test": "tests/test_gate_shards.py",
-   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git archive, git rev-parse, git show) in tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
@@ -706,13 +702,12 @@
   },
   {
    "test": "tests/test_gate_trust.py",
-   "why": "starts git (git archive, git cat-file, git rev-parse, git show) in conformance/frozen_norm_defaults.py, docs/arch/AR-4/report.py, tools/batch_evidence.py, tools/batch_scope.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git archive, git cat-file, git rev-parse, git show) in docs/arch/AR-4/report.py, tools/batch_evidence.py, tools/batch_scope.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "docs/arch/AR-4/report.py:_git: git",
     "tools/batch_evidence.py:changed_since: git",
     "tools/batch_evidence.py:mutant_source_problems: git cat-file",
@@ -1241,13 +1236,12 @@
   },
   {
    "test": "tests/test_platform_contract.py",
-   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git archive, git rev-parse, git show) in tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show",
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
