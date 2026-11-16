@@ -24,28 +24,76 @@ decoders used by the route; successful model answers require a checked model. -/
 namespace VE.Service.Standalone
 open Lean
 
+/-- The `regulated` declarations `predicates`, read as `Norms.Wire.decodeNormsEnvironmentWith` reads them with an acts
+hook's operations (kb-4b): `profiles`, the profiles from which `acts@0` is read; `fixed`, the fixed phrases of the
+`acts` block under them; `check`, the act check under both. -/
+def regulatedBy (profiles : Except String (List String)) (fixed : List String → Except String (List String))
+    (check : List String → List String → String → Nat → Json → Except String String)
+    (predicates : List (String × Json)) : Except String (List VE.Norms.Regulated) := do
+  let ps ← profiles
+  let fx ← fixed ps
+  VE.Norms.Plain.decodeRegulatedAllBy (VE.Norms.Wire.decodeRegulatedWith (ps.contains "acts@0") (check ps fx))
+    predicates
+
+/-- The `regulated` declarations of `environment`'s predicates `predicates`, read through the acts hook `H` as
+`Norms.Wire.decodeNormsEnvironmentWith H` reads them (kb-4b). `ActsHook.plain` refuses an environment from which
+`acts@0` is read and references no acts decoding. -/
+def regulatedOfWith (H : VE.Norms.Wire.ActsHook) (environment : Json) (predicates : List (String × Json)) :
+    Except String (List VE.Norms.Regulated) :=
+  regulatedBy (H.profiles true environment) (H.fixed · environment) H.check predicates
+
 /-- The `regulated` declarations of `environment`'s predicates `predicates`, read as
 `Norms.Wire.decodeNormsEnvironment` reads them: with the act check of the profiles and fixed phrases from which it
-reads `acts@0` (`actsProfiles`, `actsFixed`; act-phrases 4.1, finding F1), as `decodeRegulatedAll` without them. -/
+reads `acts@0` (`actsProfiles`, `actsFixed`; act-phrases 4.1, finding F1), as `decodeRegulatedAll` without them.
+These are the operations of `ActsHook.lexical` (`regulatedOf_lexical`), passed one by one so that this reader
+references none of the hook's others. -/
 def regulatedOf (environment : Json) (predicates : List (String × Json)) :
-    Except String (List VE.Norms.Regulated) := do
-  let ps := VE.Norms.Wire.actsProfiles true environment
-  VE.Norms.Plain.decodeRegulatedAllIn ps (← VE.Norms.Wire.actsFixed ps environment) predicates
+    Except String (List VE.Norms.Regulated) :=
+  regulatedBy (pure (VE.Norms.Wire.actsProfiles true environment)) (VE.Norms.Wire.actsFixed · environment)
+    VE.Norms.Wire.canonicalActIn predicates
+
+/-- `regulatedOf` before kb-4b, by its body then. -/
+theorem regulatedOf_today (environment : Json) (predicates : List (String × Json)) :
+    regulatedOf environment predicates = (do
+      let ps := VE.Norms.Wire.actsProfiles true environment
+      VE.Norms.Plain.decodeRegulatedAllIn ps (← VE.Norms.Wire.actsFixed ps environment) predicates) :=
+  rfl
+
+/-- `regulatedOf` reads `acts@0` through kb-4a's lexical acts hook (`ActsHook.acts` without the joined-act check,
+which this reader never runs). -/
+theorem regulatedOf_lexical (environment : Json) :
+    regulatedOf environment = regulatedOfWith VE.Norms.Wire.ActsHook.lexical environment :=
+  rfl
+
+/-- The norms profile of a model environment, its `regulated` predicates read by `read` (kb-4b): the tree of its
+`regulated` predicates when it declares any. -/
+def profileTreeBy (read : List (String × Json) → Except String (List VE.Norms.Regulated)) (modelEnv : Json) :
+    Except String (Option VE.Norms.Tree) := do
+  let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
+  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+    return some ⟨← read predicates, [], []⟩
+  pure none
 
 /-- The norms profile of a model environment: the tree of its `regulated` predicates when it declares
 any. The `model` mode and the `metered` mode check a model against it (D13). -/
-def profileTree (modelEnv : Json) : Except String (Option VE.Norms.Tree) := do
-  let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
-  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    return some ⟨← regulatedOf modelEnv predicates, [], []⟩
-  pure none
+def profileTree (modelEnv : Json) : Except String (Option VE.Norms.Tree) :=
+  profileTreeBy (regulatedOf modelEnv) modelEnv
+
+/-- `profileTree` with the `regulated` predicates read through the acts hook `H` (kb-4b). -/
+def profileTreeWith (H : VE.Norms.Wire.ActsHook) (modelEnv : Json) : Except String (Option VE.Norms.Tree) :=
+  profileTreeBy (regulatedOfWith H modelEnv) modelEnv
+
+/-- The `regulated` extension checked by reading it with `read` (kb-4b). -/
+def checkRegulatedBy (read : List (String × Json) → Except String (List VE.Norms.Regulated))
+    (predicates : List (String × Json)) : Except String Unit := do
+  let _ ← read predicates
+  pure ()
 
 /-- The `regulated` extension checked as `Norms.Wire.decodeNormsEnvironment`
 checks it, on any family: Python validates it in the environment constructor,
 whichever checker family the envelope selects. -/
-def checkRegulated (environment : Json) (predicates : List (String × Json)) : Except String Unit := do
-  let _ ← regulatedOf environment predicates
-  pure ()
+def checkRegulated (environment : Json) (predicates : List (String × Json)) : Except String Unit :=
+  checkRegulatedBy (regulatedOf environment) predicates
 
 /-- What the envelope and family decoders read of `environment` (act-phrases 4.4): when it reads `acts@0`
 (`Norms.Wire.readsActs`), the base rows' refusals on the list as written first (`readings@1`, the one profile only
@@ -198,7 +246,7 @@ def environmentIdOf (profiles : List String) (environment : Json) : Except Strin
 which every family decoder checks) lacks: `no`, a definitions keyword. -/
 def pythonReserved : List String := ["no"]
 
-private def checkDataFlagFields (profiles : List String)
+def checkDataFlagFields (profiles : List String)
     (predicates : List (String × Json)) : Except String Unit := do
   for (_, entry) in predicates do
     if !profiles.contains "data@0" &&
@@ -208,15 +256,13 @@ private def checkDataFlagFields (profiles : List String)
       if let .ok value := entry.getObjVal? field then
         if !value.getBool?.isOk then throw s!"{field} must be a Boolean"
 
-/-- With `typing`, the core family's decoder, which has no `defined` or data
-flag fields, reads each predicate by its argument sorts alone, and a `reports@0`
-environment is read without its statement-layer profiles (`typingReduced`): typing
-depends on none of these, and Python has
-already validated them. Validation and model modes do not use these relaxations. -/
-def validated (environment : Json) (typing : Bool := false) : Except String Validated := do
-  -- Typing only: other modes keep the gate's refusal of these statement profiles.
-  let environment ← if typing then typingReduced environment else pure environment
-  let view ← actsRead environment
+/-- `validated`'s body after the acts view (kb-4b step 2 (1)): the gated envelope of `view`, the reserved words, the
+`regulated` extension checked by `check` and stripped, the data flags, on the core family the typing step `typing` when
+one is given (`validated` with `typing` passes `Typed.typingEnvironment`) or else a layered environment's layers set
+apart, and the family's vocabulary. It references no typing reduction itself. -/
+def validatedOver (check : List (String × Json) → Except String Unit)
+    (typing : Option (VE.Route.Gate.Envelope → Json → Except String (VE.Route.Gate.Envelope × Json)))
+    (view : Json) : Except String Validated := do
   let e ← VE.Route.Gate.decodeEnvelope view
   for kind in ["sorts", "predicates", "constants"] do
     for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
@@ -228,11 +274,11 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     -- Check the regulated extension, then strip it: the family decoders see
     -- regulated predicates as ordinary ones.
-    checkRegulated environment predicates
+    check predicates
     v ← stripPredicates v.envelope v.decodable ["regulated"]
   checkDataFlagFields e.profiles predicates
-  if typing && e.family == .closureNary then
-    let (envelope, decodable) ← VE.Route.Typed.typingEnvironment v.envelope v.decodable
+  if typing.isSome && e.family == .closureNary then
+    let (envelope, decodable) ← (typing.getD fun e d => pure (e, d)) v.envelope v.decodable
     v := { envelope, decodable }
   else if e.family == .closureNary && VE.Core.Layers.usesLayers v.decodable then
     -- The core decoder has neither layer: they are validated over the FOL
@@ -244,6 +290,31 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
     v := { v with layers := some layered }
   validateFamily v.envelope v.decodable
   pure v
+
+/-- `validated` without typing (`typing := false`; `validated_plain`, lean/VE/Route/MeteredSplit.lean): the acts view
+of `environment`, then `validatedOver` with its `regulated` extension checked as `checkRegulated` checks it. -/
+def validatedPlain (environment : Json) : Except String Validated := do
+  validatedOver (checkRegulated environment) none (← actsRead environment)
+
+/-- The validation of the `metered` mode's current runner (kb-4b): `validatedOver` of `view` with the `regulated`
+extension read through `ActsHook.plain`, which refuses a view from which `acts@0` is read; it references neither the
+acts view nor any typing reduction. On a view from which `acts@0` is not read it is `validatedPlain`
+(`validatedCurrent_eq`). -/
+def validatedCurrent (view : Json) : Except String Validated := do
+  let _ ← VE.Norms.Wire.ActsHook.plain.profiles true view
+  validatedOver (checkRegulatedBy (regulatedOfWith VE.Norms.Wire.ActsHook.plain view)) none view
+
+/-- With `typing`, the core family's decoder, which has no `defined` or data
+flag fields, reads each predicate by its argument sorts alone, and a `reports@0`
+environment is read without its statement-layer profiles (`typingReduced`): typing
+depends on none of these, and Python has
+already validated them. Validation and model modes do not use these relaxations.
+Its body after the acts view is `validatedOver`'s (kb-4b; `validated_today` states it is the body before). -/
+def validated (environment : Json) (typing : Bool := false) : Except String Validated := do
+  -- Typing only: other modes keep the gate's refusal of these statement profiles.
+  let environment ← if typing then typingReduced environment else pure environment
+  validatedOver (checkRegulated environment) (if typing then some VE.Route.Typed.typingEnvironment else none)
+    (← actsRead environment)
 
 def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope :=
   (·.envelope) <$> validated environment
@@ -348,6 +419,13 @@ def modelEnvironment (environment : Json) : Except String Json := do
   if ps.contains "norm-defaults@0" then view ← VE.NormDefaults.Wire.placeholderJson view
   typingReduced view
 
+/-- The model view of the `metered` mode's current runner (kb-4b): `modelEnvironment` where the current runner reads
+it, which reads no statement profile apart and reduces nothing for typing there (`modelEnvironment_current`): the
+deciding view, once the profile list reads. -/
+def modelEnvironmentCurrent (environment : Json) : Except String Json := do
+  let _ ← VE.Route.Gate.profilesOf environment
+  VE.Compose.decidingEnvironment environment
+
 def identityEnvironment (environment : Json) (profiles : List String) : Except String Json :=
   if profiles.contains "speech-acts@0" then
     VE.SpeechActs.Wire.canonicalEnvironmentJson environment
@@ -430,17 +508,47 @@ def Legacy.checker : Legacy → VE.Route.Gate.Family
   | .closure _ => .closure
   | .order _ => .order
 
+/-- A frozen envelope the evaluation modes read, checked by its frozen decoder and then read as the route envelope
+of its family (whose vocabulary decoders accept every frozen vocabulary). -/
+def evaluableLegacy (environment : Json) : Except String Validated := do
+  let l ← decodeLegacy environment
+  pure { envelope := ⟨l.profiles, l.checker, ← environment.getObjVal? "vocabulary"⟩,
+         decodable := environment }
+
+/-- A `ve.core@0.2` environment the evaluation modes read, checked: `validatedPlain` (`validated` without typing) of
+its deciding view, read without the document layers (jt-2c): no evaluation answer carries an identity. The
+`metered` mode's acts runner reads it. -/
+def evaluableActs (environment : Json) : Except String Validated := do
+  validatedPlain (← VE.Compose.decidingEnvironment environment)
+
 /-- An environment the evaluation modes read, checked: a frozen envelope by
-its frozen decoder and then read as the route envelope of its family (whose
-vocabulary decoders accept every frozen vocabulary), a `ve.core@0.2` one by
-`validated`. -/
-def evaluable (environment : Json) : Except String Validated := do
-  if isLegacy environment then
-    let l ← decodeLegacy environment
-    pure { envelope := ⟨l.profiles, l.checker, ← environment.getObjVal? "vocabulary"⟩,
-           decodable := environment }
-  -- Read without the document layers (jt-2c): no evaluation answer carries an identity.
-  else validated (← VE.Compose.decidingEnvironment environment)
+its frozen decoder (`evaluableLegacy`), a `ve.core@0.2` one by `validatedPlain` of its deciding view
+(`evaluableActs`). -/
+def evaluable (environment : Json) : Except String Validated :=
+  if isLegacy environment then evaluableLegacy environment else evaluableActs environment
+
+/-- The validation of the `metered` mode's current runner (kb-4b): `validatedCurrent` of the deciding view. -/
+def evaluableCurrent (environment : Json) : Except String Validated := do
+  validatedCurrent (← VE.Compose.decidingEnvironment environment)
+
+/-- The statement profiles `modelEnvironment` reads apart from the deciding view before `typingReduced`. -/
+def modelViewProfiles : List String := ["risk@0", "alternatives@0", "readings@1", "norm-defaults@0"]
+
+/-- Whether `environment` lists a profile of `modelViewProfiles` that its deciding view `view` does not.
+`withoutDocumentLayers` drops only `judgments@0`, so this never holds when `environment` is a well-formed JSON
+object (as every parsed one is); the runner split reads it because the lookup through `setObjVal!` is proved for
+well-formed objects only. -/
+def modelViewDropped (environment view : Json) : Bool :=
+  modelViewProfiles.any fun p => ((VE.Route.Gate.profilesOf environment).toOption.getD []).contains p &&
+    !((VE.Route.Gate.profilesOf view).toOption.getD []).contains p
+
+/-- Whether the `metered` mode answers `environment` with its acts runner (kb-4b): its deciding view reads `acts@0`,
+or `modelViewDropped` holds; on any other environment the current runner answers as today's
+(`MeteredRun.runCase_split`). -/
+def readsApart (environment : Json) : Bool :=
+  match VE.Compose.decidingEnvironment environment with
+  | .ok view => !(VE.Norms.Wire.actsProfiles true view).isEmpty || modelViewDropped environment view
+  | .error _ => false
 
 def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
   VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment

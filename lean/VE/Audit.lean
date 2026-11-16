@@ -448,7 +448,7 @@ import VE.Route.Inert
 import VE.Route.Layer
 import VE.Route.Metered
 import VE.Route.MeteredProofs
-import VE.Route.MeteredRun
+import VE.Route.MeteredSplit
 import VE.Route.MeteredWire
 import VE.Route.Readings
 import VE.Route.Route
@@ -8339,20 +8339,33 @@ import VE.WireContract.Engine
 #print axioms VE.Route.MeteredProofs.core_sound
 #print axioms VE.Route.MeteredProofs.fol_sound
 #print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredRun.actsCase_ok
 #print axioms VE.Route.MeteredRun.answer_evaluate
+#print axioms VE.Route.MeteredRun.legacyCase_ok
 #print axioms VE.Route.MeteredRun.metered_wire_sound
+#print axioms VE.Route.MeteredRun.metered_wire_sound_acts
+#print axioms VE.Route.MeteredRun.metered_wire_sound_current
+#print axioms VE.Route.MeteredRun.metered_wire_sound_legacy
+#print axioms VE.Route.MeteredRun.prepare_acts
+#print axioms VE.Route.MeteredRun.prepare_legacy
 #print axioms VE.Route.MeteredRun.prepare_profile
 #print axioms VE.Route.MeteredRun.profiled_admits
 #print axioms VE.Route.MeteredRun.query_evaluate
 #print axioms VE.Route.MeteredRun.reportedWith_ok
 #print axioms VE.Route.MeteredRun.reportedWith_prepare
 #print axioms VE.Route.MeteredRun.request_evaluate
+#print axioms VE.Route.MeteredRun.runCaseReported_today
+#print axioms VE.Route.MeteredRun.runCase_split
+#print axioms VE.Route.MeteredRun.runWith_congr
+#print axioms VE.Route.MeteredRun.runWith_prepare_current
 #print axioms VE.Route.MeteredRun.runWith_sound
+#print axioms VE.Route.MeteredRun.runWith_split
 #print axioms VE.Route.MeteredRun.run_closure_sound
 #print axioms VE.Route.MeteredRun.run_core_sound
 #print axioms VE.Route.MeteredRun.run_evaluation_sound
 #print axioms VE.Route.MeteredRun.run_fol_sound
 #print axioms VE.Route.MeteredRun.run_order_sound
+#print axioms VE.Route.MeteredRun.wire_sound_of
 #print axioms VE.Route.Run.route_gate
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
@@ -9110,7 +9123,21 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Readings.readings_some_sound
 #print axioms VE.Service.Readings.refutes_not_entails
 #print axioms VE.Service.Readings.resolve_choice
+#print axioms VE.Service.Standalone.actsRead_plain
+#print axioms VE.Service.Standalone.checkRegulated_today
 #print axioms VE.Service.Standalone.checkedModelTables_error_preserved
+#print axioms VE.Service.Standalone.decodeEnvelope_no_unit_schema
+#print axioms VE.Service.Standalone.evaluableActs_today
+#print axioms VE.Service.Standalone.modelEnvironment_current
+#print axioms VE.Service.Standalone.profileTreeWith_plain
+#print axioms VE.Service.Standalone.profileTree_today
+#print axioms VE.Service.Standalone.regulatedOfWith_plain
+#print axioms VE.Service.Standalone.regulatedOf_lexical
+#print axioms VE.Service.Standalone.regulatedOf_today
+#print axioms VE.Service.Standalone.typingReduced_inert
+#print axioms VE.Service.Standalone.validatedCurrent_eq
+#print axioms VE.Service.Standalone.validated_plain
+#print axioms VE.Service.Standalone.validated_today
 #print axioms VE.Service.boundResults_eq
 #print axioms VE.Service.bound_eq
 #print axioms VE.Service.caseResultWith_entry

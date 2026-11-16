@@ -729,6 +729,8 @@ module VE.Route.Metered
 module VE.Route.MeteredProfileExamples
 module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
+module VE.Route.MeteredSplit
+module VE.Route.MeteredSplitExamples
 module VE.Route.MeteredTrace
 module VE.Route.MeteredWire
 module VE.Route.NonVacuity

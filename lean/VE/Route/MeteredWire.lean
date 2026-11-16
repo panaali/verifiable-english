@@ -294,6 +294,28 @@ theorem runWith_sound (prepared : Except String Prepared) (j answer : Json)
     rw [hl]
     exact ⟨L, hL, hmodel⟩
 
+/-- KB-7 for a case answered with `prep` of its own environment, for any of the mode's preparations (kb-4b): the
+prepared environment is `prep` of the case's `environment` field, whose validation accepts. -/
+theorem wire_sound_of (prep : Json → Prepared) (j answer : Json)
+    (h : runWith (prep <$> j.getObjVal? "environment") j = .ok answer)
+    (hk : VE.Bridge.stringField j "kind" = .ok "evaluate-budgeted") :
+    ∃ (id : String) (environment : Json) (checked : VE.Service.Standalone.Validated) (model : Json)
+      (q : Query),
+      VE.Bridge.stringField j "id" = .ok id ∧
+      j.getObjVal? "environment" = .ok environment ∧
+      (prep environment).checked = .ok checked ∧
+      CaseModel j checked (prep environment) model ∧
+      query j id false = .ok q ∧ q.id = id ∧
+      EvaluationAnswer q checked (prep environment) model answer := by
+  obtain ⟨id, p, checked, model, q, hid, hp, hchecked, hmodel, hq, hqid, hs⟩ :=
+    runWith_sound _ j answer h hk
+  cases henv : j.getObjVal? "environment" with
+  | error e => rw [henv] at hp; cases hp
+  | ok environment =>
+    rw [henv] at hp
+    cases hp
+    exact ⟨id, environment, checked, model, q, hid, rfl, hchecked, hmodel, hq, hqid, hs⟩
+
 /-- KB-7, for a case answered with its own environment (`runCase`): the prepared environment
 is `prepare` of the case's `environment` field, which the service's validation accepts. -/
 theorem metered_wire_sound (j answer : Json) (h : runCase j = .ok answer)
@@ -305,15 +327,51 @@ theorem metered_wire_sound (j answer : Json) (h : runCase j = .ok answer)
       VE.Service.Standalone.evaluable environment = .ok checked ∧
       CaseModel j checked (prepare environment) model ∧
       query j id false = .ok q ∧ q.id = id ∧
-      EvaluationAnswer q checked (prepare environment) model answer := by
-  obtain ⟨id, p, checked, model, q, hid, hp, hchecked, hmodel, hq, hqid, hs⟩ :=
-    runWith_sound _ j answer h hk
-  cases henv : j.getObjVal? "environment" with
-  | error e => rw [henv] at hp; cases hp
-  | ok environment =>
-    rw [henv] at hp
-    cases hp
-    exact ⟨id, environment, checked, model, q, hid, rfl, hchecked, hmodel, hq, hqid, hs⟩
+      EvaluationAnswer q checked (prepare environment) model answer :=
+  wire_sound_of prepare j answer h hk
+
+/-- KB-7 on the current runner (kb-4b; the `metered` path): an answer of `runCaseCurrent` to an `evaluate-budgeted`
+case encodes a metered result over what the current runner's preparation of the case's own environment decodes,
+which `evaluableCurrent` accepts, and a completed value of it is the truth of every formula in the model. -/
+theorem metered_wire_sound_current (j answer : Json) (h : runCaseCurrent j = .ok answer)
+    (hk : VE.Bridge.stringField j "kind" = .ok "evaluate-budgeted") :
+    ∃ (id : String) (environment : Json) (checked : VE.Service.Standalone.Validated) (model : Json)
+      (q : Query),
+      VE.Bridge.stringField j "id" = .ok id ∧
+      j.getObjVal? "environment" = .ok environment ∧
+      VE.Service.Standalone.evaluableCurrent environment = .ok checked ∧
+      CaseModel j checked (prepareCurrent environment) model ∧
+      query j id false = .ok q ∧ q.id = id ∧
+      EvaluationAnswer q checked (prepareCurrent environment) model answer :=
+  wire_sound_of prepareCurrent j answer h hk
+
+/-- KB-7 on the frozen-envelope runner (kb-4b; the `meteredLegacy` path), as `metered_wire_sound_current`, with the
+frozen decoders' validation `evaluableLegacy`. -/
+theorem metered_wire_sound_legacy (j answer : Json) (h : runCaseLegacy j = .ok answer)
+    (hk : VE.Bridge.stringField j "kind" = .ok "evaluate-budgeted") :
+    ∃ (id : String) (environment : Json) (checked : VE.Service.Standalone.Validated) (model : Json)
+      (q : Query),
+      VE.Bridge.stringField j "id" = .ok id ∧
+      j.getObjVal? "environment" = .ok environment ∧
+      VE.Service.Standalone.evaluableLegacy environment = .ok checked ∧
+      CaseModel j checked (prepareLegacy environment) model ∧
+      query j id false = .ok q ∧ q.id = id ∧
+      EvaluationAnswer q checked (prepareLegacy environment) model answer :=
+  wire_sound_of prepareLegacy j answer h hk
+
+/-- KB-7 on the acts runner (kb-4b; the `meteredActs` path), as `metered_wire_sound_current`, with today's
+validation of a `ve.core@0.2` environment `evaluableActs`. -/
+theorem metered_wire_sound_acts (j answer : Json) (h : runCaseActs j = .ok answer)
+    (hk : VE.Bridge.stringField j "kind" = .ok "evaluate-budgeted") :
+    ∃ (id : String) (environment : Json) (checked : VE.Service.Standalone.Validated) (model : Json)
+      (q : Query),
+      VE.Bridge.stringField j "id" = .ok id ∧
+      j.getObjVal? "environment" = .ok environment ∧
+      VE.Service.Standalone.evaluableActs environment = .ok checked ∧
+      CaseModel j checked (prepareActs environment) model ∧
+      query j id false = .ok q ∧ q.id = id ∧
+      EvaluationAnswer q checked (prepareActs environment) model answer :=
+  wire_sound_of prepareActs j answer h hk
 
 /-- The mode's entry answers with the runner's answer whenever the runner accepts. -/
 theorem reportedWith_ok (prepared : Except String Prepared) (j answer : Json)
