@@ -320,5 +320,11 @@ All 21 were planted one at a time (S19-S21 for review F1, by /tmp/f1seed.py, the
   - test_block_sentences_keeps_the_text_of_every_quote_l1_did_not_locate (all, none and some located; where/mark agree).
 - **Seeded bugs S19-S21** (section 7; seeded-bugs.json): each failed its named test (rc 1), and the file was restored.
 - **DELTA:** none. No Lean or Rust changed, and no decision path changed. The fix is report-only Python tooling, as before.
-- **Runs:** see below.
+- **Runs (F1):**
+  - While iterating: `uv run pytest -q tests/test_fidmech_b2.py`, 118 passed (114 before plus the 4 new tests).
+  - `uv run python tools/regen_generated.py --check`: rc 0 (41 entries).
+  - `lake build`: rc 0, 1475 jobs (Lean unchanged). `python3 lean/audit.py`: PASS.
+  - **Selected run on committed tree 3c0176ac9b** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): GitHub Actions run fid-mech-b2-3c0176ac-t805958, 5 shards, **exit 0 after 744 s**. Shards passed 39, 39, 39, 38 and 37 units, including all four fidmech test files.
+  - Tests already red on main (main-known-red.txt): none in this selection.
+  - Not run: the full gate (the merge train's verify does it) and trust_mutants (no Lean change).
 
