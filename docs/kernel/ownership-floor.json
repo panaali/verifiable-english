@@ -1,0 +1,10 @@
+{
+ "comment": "Each frozen key's floor of answers that pass the per-answer Lean ownership test (docs/kernel/ownership.json, tools/ownership_trace.py; tests/test_ownership_floor.py). The floor may rise in any change; it falls only with a row of the \"Ownership floor\" table of docs/kernel/ALLOWANCES.md signed by the architect seat. First set by kb-10d to the counts it measured.",
+ "floor": {
+  "anthropic-rsp": 100,
+  "openai-preparedness": 228,
+  "safety-framework": 244,
+  "agent-policy": 0,
+  "eligibility": 269
+ }
+}

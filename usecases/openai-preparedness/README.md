@@ -112,7 +112,7 @@ refuses D1 with `judgments@0` plus `soft-norms@0`: the composed Lean route is un
 
 ## Answers to the frozen key (2026-11-12)
 
-**How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
+**How these answers are computed today.** Lean elaborates the soft rules, decides which rules a case selects and the completed outcome there (`soft-selected`), and gives each CONFLICT and CONFLICT-FREE verdict (`soft-conflict`). The per-answer trace of this key ([docs/kernel/ownership.md](../../docs/kernel/ownership.md), kb-10d) finds no Python decision function under the selection, outcome, threshold, date, gap and severity answers. Under every conflict answer Python's conflict search still runs: the witness search and prover that propose what `soft-conflict` checks build the conflict targets and selection formulas in `ve/norms.py` and evaluate them with Python's evaluator, so no conflict answer counts as Lean's yet. N3 reads every other answer, conflicts included, so it is not counted either, nor are the three answers the risk route gives (it has no runner theorem yet). In all, 228 of the key's 239 answers pass the per-answer ownership test. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for each path.
 
 `run.py` asks VE each of the 239 key questions through the document built from `rules.d1.ve` and `facts.d1.ve`
 (D1: soft-norms@0 rule selection under both completion defaults and every reading choice the question's rules

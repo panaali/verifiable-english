@@ -88,6 +88,48 @@ def test_fsf_keyed_conflict_freedom_is_attributed_to_refute():
     assert re.search(r"keyed\s+CONFLICT-FREE uses `refute` over `T\.facts\(\)` premises", source)
 
 
+# kb-10d review F2: a sentence that says Lean's `soft-conflict` gives every conflict verdict, CONFLICT-FREE included.
+SOFT_CONFLICT_GIVES_ALL = re.compile(r"gives each (CONFLICT and CONFLICT-FREE|conflict) verdict|CONFLICT-FREE are "
+                                     r"Lean.s .soft-conflict.|.soft-conflict. gives (the|their) verdict")
+# The kb-10d report and the other kernel pages describe the keyed answers too.
+DESCRIBING_ALL = DESCRIBING + ("AGENTS.md", "docs/kernel/**/*.md")
+
+
+def _conflict_free_is_soft_conflicts(case: Path) -> bool:
+    """The harness's keyed CONFLICT-FREE is `soft-conflict`'s: every function of its run.py that calls
+    `decide_soft_conflict` calls it with `prove=True` and calls no `refute` (the safety framework's `cluster_conflict`
+    answers CONFLICT-FREE from `refute`, or with no Lean call for an empty cluster)."""
+    path = case / "run.py"
+    if not path.exists():
+        return False
+    deciding = []
+    for node in ast.walk(ast.parse(path.read_text())):
+        if isinstance(node, ast.FunctionDef):
+            calls = [c for c in ast.walk(node) if isinstance(c, ast.Call)]
+            names = {ast.unparse(c.func) for c in calls}
+            if "decide_soft_conflict" in names:
+                proved = all(any(k.arg == "prove" and ast.unparse(k.value) == "True" for k in c.keywords)
+                             for c in calls if ast.unparse(c.func) == "decide_soft_conflict")
+                deciding.append(proved and "refute" not in names)
+    return bool(deciding) and all(deciding)
+
+
+def test_no_document_says_soft_conflict_gives_a_conflict_free_it_does_not_give():
+    """PROBE F2 of the kb-10d review, over every document that describes the keyed answers: only the README of a
+    use case whose harness takes both conflict answers from `soft-conflict` may say so."""
+    owned = {ROOT / "usecases" / case.name / "README.md" for case in (ROOT / "usecases").iterdir()
+             if case.is_dir() and _conflict_free_is_soft_conflicts(case)}
+    assert {path.parent.name for path in owned} == {"anthropic-rsp", "openai-preparedness"}
+    assert not _conflict_free_is_soft_conflicts(ROOT / "usecases" / "safety-framework")
+    found = sorted({str(path.relative_to(ROOT)) for pattern in DESCRIBING_ALL for path in ROOT.glob(pattern)
+                    if path not in owned and SOFT_CONFLICT_GIVES_ALL.search(path.read_text())})
+    assert found == []
+    for path in owned:  # the pattern still finds the true sentence it is scoped away from
+        assert SOFT_CONFLICT_GIVES_ALL.search(path.read_text()), path
+    readme = (ROOT / "usecases" / "safety-framework" / "README.md").read_text()
+    assert "a CONFLICT-FREE answer is `refute`'s" in readme and "with no Lean call" in readme
+
+
 def test_the_wording_has_one_owner():
     """Each describing document links the page instead of keeping its own copy of the table."""
     for name in LINKING:

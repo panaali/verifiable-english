@@ -1,0 +1,12 @@
+{
+ "comment": "The Python decision functions of the per-answer ownership test (kb-10d; manage-agents reviews/lean-ownership-baseline-20261112.md section 2, criterion 1): an answer of a frozen key counts as Lean-decided only if none of these ran while it was answered (tools/ownership_trace.py). One owner: this file is the only list. A Python function of ve/ that computes a verdict, a selection, an outcome or a conflict status and is not listed here is a review finding. `qualname` matches the function and every function nested in it (`<qualname>.<locals>.…`); `methods: true` matches every method of the class (`<qualname>.<name>`), not the class body that runs once at import. ve/softnorms.py: since kb-10b no function of its own computes a status on the Lean path; its two Python paths (`SoftenedNormDocument.selected_rules` and `outcome_at` for a document built without its soft source) run `NormDocument.selected_rules`, `NormDocument.outcome` and `_Evaluator`, listed here, so they are caught through them.",
+ "functions": [
+  {"file": "ve/norms.py", "qualname": "NormDocument.selection", "reason": "builds each rule's selection formula of a hard or softened norm document (the selection Lean's soft-selected now owns)"},
+  {"file": "ve/norms.py", "qualname": "NormDocument.outcome", "reason": "builds a regulated predicate's completed outcome formula"},
+  {"file": "ve/norms.py", "qualname": "NormDocument._expand", "reason": "expands derived predicates in selection and outcome formulas (the base-expanded formulas Lean's circ owns)"},
+  {"file": "ve/norms.py", "qualname": "NormDocument.selected_rules", "reason": "Python's path for which rules are selected at a tuple of a model (SoftenedNormDocument.selected_rules relays to Lean instead when it has its soft source)"},
+  {"file": "ve/norms.py", "qualname": "NormDocument.conflict_targets", "reason": "computes the conflict targets (which rule pairs and tuples a conflict check must cover)"},
+  {"file": "ve/norms.py", "qualname": "_check_conflict_python", "reason": "Python's conflict decision: targets, witness check and target proofs, with no Lean verdict"},
+  {"file": "ve/evaluate.py", "qualname": "_Evaluator", "methods": true, "reason": "Python's private formula evaluator: computes a formula's truth value in a finite model"}
+ ]
+}
