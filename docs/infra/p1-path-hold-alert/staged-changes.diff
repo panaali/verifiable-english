@@ -1,0 +1,269 @@
+--- tools-local/decider-ready-alert.py	2026-11-16 10:35:26.532192161 +0000
++++ tools-local/decider-ready-alert.py.new-pha	2026-11-16 13:16:42.482800807 +0000
+@@ -20,12 +20,21 @@
+ prompts/task-<id>.txt nor prompts/dri-task-<id>.txt exists). Deduped per row per 4 h (state: p1-unstartable-alert.sent, "<id>\t<epoch>\t<UTC>").
+ Both parts go in one message per pass; a failed send records neither, so the next pass retries.
+ 
++P1 HELD BY A PATH (2026-11-16 p1-path-hold-alert; orchestrator NOW(critical) 121946Z item 2): rsp-b-repair-1115 (p0) sat
++~9.5 h ready behind a feature/kb-9 path hold and nobody was told. A ready priority <= 1 row whose backlog state is a feed path
++hold (feed-features.sh: "feed: path <p> in flight on <branch>[ (...)]", written by backlog.py item_status) counts as not
++startable after the same 30 min, and is named as "p1 ready but held: <id>, <owner>, <age>, path <p> in flight on <branch>
++(<stage>)"; <stage> is the holding branch's backlog row state (the row whose links.branch is <branch>: "chain stage ...",
++"merge train since ...") or "stage unknown". A state that starts "feed: path" but does not parse is named with its raw text.
++Other feed holds (DRI hold, waits for, account room, and the capacity hold "queue items in flight on <host>") are unchanged.
++Same p1-unstartable-alert.sent 4 h dedup.
++
+ Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state files, prompts/, msg.sh); DRA_MSG = command run instead of
+ `zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds); DRA_BACKLOG_PY = the backlog.py whose launch_spec is used
+ (default ../backlog.py from this script). --dry-run prints the message and records nothing.
+ Tests: python3 -I tools-local/test_decider_ready_alert.py; python3 -I tools-local/test_p1_ready_alert.py
+ """
+-import json, os, shlex, subprocess, sys, time
++import json, os, re, shlex, subprocess, sys, time
+ from datetime import datetime, timezone
+ 
+ M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+@@ -104,16 +113,57 @@
+     return f"{m // 60}h{m % 60:02d}m" if m >= 60 else f"{m}m"
+ 
+ 
++# a feed path hold as feed-features.sh / queue-runner.sh / infra_feed.py write it: "path <p> in flight on <branch>". The
++# capacity hold "queue items in flight on <host>" has no "path <p>" and is not a path hold (item 3: other holds unchanged).
++PATH_HOLD = re.compile(r"\bpath (\S+) in flight on ([^\s;()]+)")
++
++
++def path_held(r):
++    """True when the row's backlog state is a feed path/serial hold: it starts "feed: path" or names "path <p> in flight on"."""
++    s = str(r.get("state") or "")
++    return s.startswith("feed: path") or PATH_HOLD.search(s) is not None
++
++
++def holder_stage(rows, branch, held_id):
++    """The holding branch's backlog row state ("chain stage ...", "merge train since ..."), else "stage unknown". The holder
++    is the row whose links.branch is the branch, else the row whose id is the branch without its "<kind>/" prefix."""
++    tail = branch.split("/", 1)[1] if "/" in branch else branch
++    cands = [x for x in rows if x.get("id") != held_id and isinstance(x.get("links"), dict) and x["links"].get("branch") == branch]
++    cands += [x for x in rows if x.get("id") == tail and x.get("id") != held_id and x not in cands]
++    states = [str(x.get("state") or "").strip() for x in cands]
++    best = [s for s in states if re.match(r"chain stage |merge train", s)] or [s for s in states if s]
++    return best[0][:100] if best else "stage unknown"
++
++
++def hold_text(rows, r):
++    """"path <p> in flight on <branch> (<stage>)"; a state that does not parse is named raw (never silence)."""
++    s = str(r.get("state") or "")
++    m = PATH_HOLD.search(s)
++    if not m:
++        return s[:200]
++    return f"path {m.group(1)} in flight on {m.group(2)} ({holder_stage(rows, m.group(2), r.get('id'))})"
++
++
+ def p1_unstartable(rows, now):
+-    """[(row, age seconds)]: p1 ready rows, any owner, not startable for >= 30 min."""
++    """[(row, age seconds, hold text or None)]: p1 ready rows, any owner, not startable for >= 30 min; a startable row held
++    by a feed path hold counts as not startable, with its hold text (a not-startable row is named as such, held or not)."""
+     out = []
+     for r in rows:
+-        if r.get("status") != "ready" or not prio_le_1(r) or startable(r):
++        if r.get("status") != "ready" or not prio_le_1(r):
+             continue
++        held = None
++        if startable(r):
++            if not path_held(r):
++                continue
++            held = hold_text(rows, r)
++        # Age of a hold: from ready_t (else status_t, else created), as for a not-startable row. The backlog keeps no stamp of
++        # when a row's state became a path hold (backlog.py item_status rewrites "state" on every seed pass), and no new state
++        # file is kept for it: ready_t is never later than the hold began, so the alert comes no later than 30 min into the
++        # hold (earlier only when the row had already been p1 ready and unstarted for 30 min).
+         t0 = next((t for t in (parse_t(r.get(k)) for k in ("ready_t", "status_t", "created")) if t is not None), None)
+         if t0 is None or now - t0 < P1_AFTER:
+             continue
+-        out.append((r, now - t0))
++        out.append((r, now - t0, held))
+     return out
+ 
+ 
+@@ -148,8 +198,10 @@
+                     p1_last[w[0]] = max(p1_last.get(w[0], 0.0), float(w[1]))
+                 except (IndexError, ValueError):
+                     continue
+-    p1 = [(r, a) for r, a in p1_unstartable(rows, now) if now - p1_last.get(r["id"], float("-inf")) >= P1_EVERY]
+-    if not new and not p1:
++    p1all = [x for x in p1_unstartable(rows, now) if now - p1_last.get(x[0]["id"], float("-inf")) >= P1_EVERY]
++    p1 = [(r, a) for r, a, h in p1all if h is None]
++    held = [(r, a, h) for r, a, h in p1all if h is not None]
++    if not new and not p1all:
+         return 0
+     msgs = []
+     if new:
+@@ -162,7 +214,11 @@
+                     + " task file), or no launch link and no task file (links.task, prompts/task-<id>.txt, prompts/dri-task-<id>.txt)"
+                     + " (reviews/dri-decisions-20261116-adv0244.md item 2): write the task file and start the row, or move it"
+                     + " to blocked with the reason.")
+-    msg = "NOW(critical): " + " | ".join(msgs)
++    if held:
++        msgs.append("p1 ready but held: " + "; ".join(f"{r['id']}, {r.get('owner') or '-'}, {age_s(a)}, {h}" for r, a, h in held)
++                    + ". Held = a feed path hold (backlog state 'feed: path <p> in flight on <branch>') for >= 30 min"
++                    + " (p1-path-hold-alert): land or release the holding branch, or start the row by hand.")
++    msg ="NOW(critical): " + " | ".join(msgs)
+     if dry:
+         print(msg)
+         return 0
+@@ -177,11 +233,11 @@
+         with open(STATE, "a", encoding="utf-8") as f:
+             for k, _ in new:
+                 f.write(f"{k[0]}\t{k[1]}\t{stamp}\n")
+-    if p1:
++    if p1all:
+         with open(P1_STATE, "a", encoding="utf-8") as f:
+-            for r, _ in p1:
+-                f.write(f"{r['id']}\t{int(now)}\t{stamp}\n")
+-    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [r['id'] for r, _ in p1])}")
++            for x in p1all:
++                f.write(f"{x[0]['id']}\t{int(now)}\t{stamp}\n")
++    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [x[0]['id'] for x in p1all])}")
+     return 0
+ 
+ 
+--- tools-local/test_p1_ready_alert.py.bak-20261116-pha	2026-11-16 05:37:17.127763890 +0000
++++ tools-local/test_p1_ready_alert.py	2026-11-16 13:17:22.841757472 +0000
+@@ -6,7 +6,9 @@
+ present, else the live file (the live files before the install fail these tests). The alert reads P1RUA_BACKLOG's launch_spec
+ (DRA_BACKLOG_PY), so both sides of LaunchSpecAgreement run the same backlog.py.
+ Fix round 1 (review F1, p1-ready-unstartable-alert-review.final.md): a launch link counts as startable only when backlog.py
+-launch_spec can start it (LaunchLink, LaunchSpecAgreement)."""
++launch_spec can start it (LaunchLink, LaunchSpecAgreement).
++Item p1-path-hold-alert (PathHold): a feed path hold (backlog state "feed: path <p> in flight on <branch>") on a ready p1
++row for >= 30 min counts as not startable; the alert names the holding branch and its stage. Staged copy: .new-pha."""
+ import importlib.util, json, os, subprocess, sys, tempfile, unittest
+ from datetime import datetime, timezone
+ 
+@@ -15,7 +17,7 @@
+ 
+ 
+ def pick(env, live):
+-    return os.environ.get(env) or next((p for p in (live + ".new-p1rua2", live + ".new-p1rua") if os.path.exists(p)), live)
++    return os.environ.get(env) or next((p for p in (live + ".new-pha", live + ".new-p1rua2", live + ".new-p1rua") if os.path.exists(p)), live)
+ 
+ 
+ ALERT = pick("P1RUA_ALERT", os.path.join(HERE, "decider-ready-alert.py"))
+@@ -186,6 +188,118 @@
+         self.assertIn("rw, infra feed, 31m", self.msgs()[0])
+ 
+ 
++HOLD = "feed: path docs/x in flight on feature/kb-9 (serial: unknown region (not on main: a new file))"
++TRAIN = "merge train since 2026-11-16T11:24Z"
++
++
++def held(i, state=HOLD, **kw):
++    """a startable p1 row (it has its task file) whose backlog state is a feed hold"""
++    return row(i, owner="feature planner", state=state, links={"task": "prompts/t-held.txt"}, **kw)
++
++
++def holder(i="kb-9", state=TRAIN, branch="feature/kb-9", **kw):
++    return row(i, priority=40, status="review", owner="train", state=state, links={"branch": branch} if branch else {}, **kw)
++
++
++class PathHold(Base):
++    """p1-path-hold-alert: a feed path hold on a ready p1 row for >= 30 min is named with its holding branch and stage.
++    Every test here fails on the installed script (before .new-pha), which counts held rows as startable."""
++
++    def setUp(self):
++        super().setUp()
++        self.touch("prompts/t-held.txt")
++
++    def held_part(self, m):
++        self.assertIn("p1 ready but held: ", m)
++        return m.split("p1 ready but held: ", 1)[1].split(". Held = ", 1)[0]
++
++    def test_31_min_alerts_names_branch_and_stage(self):
++        self.write([held("rsp"), holder()])
++        self.run_at(31 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertEqual(self.held_part(m[0]),
++                         f"rsp, feature planner, 31m, path docs/x in flight on feature/kb-9 ({TRAIN})")
++        self.assertNotIn("not startable: rsp", m[0])
++
++    def test_29_min_silent_30_min_alerts(self):
++        self.write([held("rsp"), holder()])
++        self.run_at(29 * MIN)
++        self.assertEqual(self.msgs(), [])
++        self.run_at(30 * MIN)
++        self.assertEqual(len(self.msgs()), 1)
++        self.assertIn("rsp, feature planner, 30m, path docs/x", self.msgs()[0])
++
++    def test_p2_held_row_not_named(self):
++        self.write([held("p2held", priority=2), held("p1held"), holder()])
++        self.run_at(5 * HOUR)
++        part = self.held_part(self.msgs()[0])
++        self.assertIn("p1held, feature planner, 5h00m", part)
++        self.assertNotIn("p2held", self.msgs()[0])
++
++    def test_other_feed_holds_unchanged(self):
++        others = ["feed: DRI hold: waits for x (backlog blocked_by)", "feed: waits for x", "feed: account room 0 of 2",
++                  "feed: queue items in flight on VM1 1 >= 1 (FEED_HOST_WIDTH)",
++                  "feed: queue items in flight on ve-cloud-3: live builders 1 >= 1 (FEED_HOST_WIDTH host cap)"]
++        self.write([held(f"o{n}", state=s) for n, s in enumerate(others)] + [held("ctl"), holder()])
++        self.run_at(5 * HOUR)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertEqual(self.held_part(m[0]), f"ctl, feature planner, 5h00m, path docs/x in flight on feature/kb-9 ({TRAIN})")
++        self.assertNotIn("not startable", m[0])
++
++    def test_second_pass_within_4h_silent_then_again(self):
++        self.write([held("rsp"), holder()])
++        self.run_at(31 * MIN)
++        self.run_at(31 * MIN + 4 * HOUR - MIN)
++        self.assertEqual(len(self.msgs()), 1, "a second pass within 4 h must not re-send")
++        sent = open(os.path.join(self.d, "p1-unstartable-alert.sent")).read().splitlines()
++        self.assertEqual([l.split("\t")[0] for l in sent], ["rsp"])
++        self.run_at(31 * MIN + 4 * HOUR)
++        self.assertEqual(len(self.msgs()), 2)
++        self.assertIn("rsp, feature planner, 4h31m, path docs/x", self.msgs()[1])
++
++    def test_stage_unknown_without_holder_row(self):
++        self.write([held("rsp")])
++        self.run_at(31 * MIN)
++        self.assertEqual(self.held_part(self.msgs()[0]),
++                         "rsp, feature planner, 31m, path docs/x in flight on feature/kb-9 (stage unknown)")
++
++    def test_chain_stage_by_branch_link_or_row_id(self):
++        chain = "chain stage build, chain started 2026-11-16T01:00Z"
++        self.write([held("a", state="feed: path lean/VE/X.lean in flight on feature/kb-10 (continue round)"),
++                    holder("plan-10", state="feed: an older note", branch="feature/kb-10"),
++                    holder("kb-10", state=chain, branch="feature/kb-10"),
++                    held("b", state="feed: path A.lean in flight on infra/fm-3"), holder("fm-3", state=chain, branch=None)])
++        self.run_at(31 * MIN)
++        self.assertEqual(self.held_part(self.msgs()[0]),
++                         f"a, feature planner, 31m, path lean/VE/X.lean in flight on feature/kb-10 ({chain}); "
++                         f"b, feature planner, 31m, path A.lean in flight on infra/fm-3 ({chain})")
++
++    def test_unparsed_hold_named_raw(self):
++        self.write([held("odd", state="feed: path ??? garbled")])
++        self.run_at(31 * MIN)
++        self.assertEqual(self.held_part(self.msgs()[0]), "odd, feature planner, 31m, feed: path ??? garbled")
++
++    def test_held_and_not_startable_one_message(self):
++        self.write([held("h"), holder(), row("none")])
++        self.run_at(31 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertIn("p1 ready but not startable: none, infra feed, 31m. Not startable", m[0])
++        self.assertIn("p1 ready but held: h, feature planner, 31m, path docs/x", m[0])
++        sent = open(os.path.join(self.d, "p1-unstartable-alert.sent")).read().splitlines()
++        self.assertEqual(sorted(l.split("\t")[0] for l in sent), ["h", "none"])
++
++    def test_failed_send_records_nothing(self):
++        self.write([held("h"), holder()])
++        self.run_at(31 * MIN, FAKE_RC="1")
++        self.assertFalse(os.path.exists(os.path.join(self.d, "p1-unstartable-alert.sent")))
++        self.run_at(32 * MIN)
++        self.assertEqual(len(self.msgs()), 2)
++        self.assertIn("p1 ready but held: h,", self.msgs()[1])
++
++
+ def load_backlog(m):
+     sp = importlib.util.spec_from_file_location("backlog_under_test", BACKLOG)
+     bl = importlib.util.module_from_spec(sp)
