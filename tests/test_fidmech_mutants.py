@@ -230,3 +230,26 @@ def test_a_record_turns_into_the_workers_mutant(tmp_path):
     mutant = M.to_worker(rec, files)
     assert mutant.id == rec["id"] and list(mutant.edits) == [f"{RSP}/{S.RULES}"]
     assert mutant.edits[f"{RSP}/{S.RULES}"].count("if this is impossible") == 1
+
+
+def test_an_unanswered_parse_is_undecided_and_unscored_and_any_other_error_propagates():
+    """A CheckerUnavailable parse is listed as `undecided` (stillborn: never scored); a VE refusal is plain
+    stillborn; an error that is neither (a bug) is not turned into a stillborn mutant."""
+    from tools.fidmech import wording as W
+    from ve.errors import CheckerUnavailable, SyntaxError as VESyntaxError
+    files = {p.name[:-4] if p.name.endswith(".py.txt") else p.name: p.read_text(encoding="utf-8")
+             for p in sorted((DATA / "wording-inputs" / RSP).iterdir())}
+    files["rules.d1.ve"] = (DATA / "structural" / RSP / "rules.d1.ve").read_text(encoding="utf-8")
+    actors = W.load_actors(Path(__file__).resolve().parents[1] / "usecases" / RSP / "fidmech" / "actors.json")
+
+    def raising(error):
+        def parse_env(text):
+            raise error
+        return parse_env
+    records, report = M.wording_mutants(RSP, files, actors, parse_env=raising(CheckerUnavailable("no answer")))
+    assert records and all(r["parse"] == "stillborn" for r in records) and M.scorable(records) == []
+    assert all(s["reason"].startswith("undecided: CheckerUnavailable") for s in report["stillborn"])
+    records, report = M.wording_mutants(RSP, files, actors, parse_env=raising(VESyntaxError("refused")))
+    assert all(s["reason"].startswith("SyntaxError") for s in report["stillborn"]) and len(report["stillborn"]) == len(records)
+    with pytest.raises(TypeError):
+        M.wording_mutants(RSP, files, actors, parse_env=raising(TypeError("a bug")))

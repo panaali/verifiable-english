@@ -34,6 +34,7 @@ import re
 from dataclasses import dataclass, replace
 
 from ve import ast
+from ve.errors import CheckerUnavailable
 
 GENERATOR = "fidmech/1"
 OPS = ("drop-conjunct", "drop-unless", "drop-disjunct", "drop-exception", "flip-force", "add-guard-true",
@@ -44,6 +45,9 @@ KEEP_FIRST = ("drop-exception", "widen-quantifier", "drop-unless", "drop-disjunc
               "add-guard-true", "rule-drop")
 RULES, ENVIRONMENT, FACTS, BINDINGS = "rules.d1.ve", "environment.d1.json", "facts.d1.ve", "fidmech/bindings.json"
 EXCEPTION_HEADER = re.compile(r"\bexception to\b", re.I)
+# What VE's parse or render may raise for a line it does not take: a refusal (VEError is a ValueError), or no answer
+# (CheckerUnavailable: the parse is undecided). Anything else is a bug here and propagates.
+REFUSED = (ValueError, CheckerUnavailable)
 RULE_LINE = re.compile(r"(Rule [1-9][0-9]*\. )(.*)\Z", re.S)
 
 
