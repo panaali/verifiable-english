@@ -1,0 +1,56 @@
+{
+ "method": "every metered case and its answer row digested (sha256 of sort_keys JSON) by the recorder, before (b8abce49e build) and after (968f450b2 build); the multiset of (case, answer) digests per key compared",
+ "keys": {
+  "agent-policy": {
+   "cases_before": 11829,
+   "cases_after": 11829,
+   "identical_multisets": true,
+   "distinct_pairs": 11543
+  },
+  "anthropic-rsp": {
+   "cases_before": 2311,
+   "cases_after": 2311,
+   "identical_multisets": true,
+   "distinct_pairs": 114
+  },
+  "openai-preparedness": {
+   "cases_before": 36,
+   "cases_after": 36,
+   "identical_multisets": true,
+   "distinct_pairs": 4
+  },
+  "safety-framework": {
+   "cases_before": 10209,
+   "cases_after": 10209,
+   "identical_multisets": true,
+   "distinct_pairs": 7654
+  },
+  "eligibility": {
+   "cases_before": 0,
+   "cases_after": 0,
+   "identical_multisets": true,
+   "distinct_pairs": 0
+  }
+ },
+ "exits_before": [
+  "safety-framework exit=0",
+  "agent-policy exit=0",
+  "anthropic-rsp exit=0",
+  "eligibility exit=0",
+  "openai-preparedness exit=0",
+  "sha rc=0",
+  "done",
+  ""
+ ],
+ "exits_after": [
+  "safety-framework exit=0",
+  "agent-policy exit=0",
+  "anthropic-rsp exit=0",
+  "eligibility exit=0",
+  "openai-preparedness exit=0",
+  "sha rc=0",
+  "?? docs/kernel/kb-4b/timing.json",
+  "done",
+  ""
+ ]
+}
