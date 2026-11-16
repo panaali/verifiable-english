@@ -1,0 +1,106 @@
+[
+ {
+  "id": "m1",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "an import inside a function is never followed (no import reads)",
+  "failing_tests": [
+   "test_closure_scope",
+   "test_fsf_fixed",
+   "test_fsf_route",
+   "test_reads_oracle",
+   "test_sweep"
+  ]
+ },
+ {
+  "id": "m2",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "a declared global is not a read",
+  "failing_tests": [
+   "test_closure_scope",
+   "test_reads_oracle"
+  ]
+ },
+ {
+  "id": "m3",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "the old blanket rule: a name bound in any function hides it everywhere",
+  "failing_tests": [
+   "test_closure_scope",
+   "test_reads_oracle"
+  ]
+ },
+ {
+  "id": "m4",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "a whole unit file is not followed through (shown files enqueue no reads)",
+  "failing_tests": [
+   "test_closure_scope"
+  ]
+ },
+ {
+  "id": "m5",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "an import nested in a top-level if/try is not followed",
+  "failing_tests": [
+   "test_closure_scope"
+  ]
+ },
+ {
+  "id": "m6",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "lines cut with str.splitlines (\\x0c, \\x85, \\u2028 shift statements)",
+  "failing_tests": [
+   "test_closure_scope"
+  ]
+ },
+ {
+  "id": "m7",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "the FSF hold is dropped silently (FSF hash moves without a DRI ruling)",
+  "failing_tests": [
+   "test_frozen",
+   "test_fsf_fixed",
+   "test_fsf_route"
+  ]
+ },
+ {
+  "id": "m8",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "RSP D2/D3 code not seeded (not closure-checked)",
+  "failing_tests": [
+   "test_sweep"
+  ]
+ },
+ {
+  "id": "m9",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "a file given whole for a bare module read is not followed through",
+  "failing_tests": [
+   "test_closure_scope"
+  ]
+ },
+ {
+  "id": "m10",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "a star-imported module is not given",
+  "failing_tests": [
+   "test_closure_rules"
+  ]
+ },
+ {
+  "id": "m11",
+  "file": "uc-audit.py.new-pfd3",
+  "bug": "a class body read resolves to the class only (no global fallback)",
+  "failing_tests": [
+   "test_reads_oracle"
+  ]
+ },
+ {
+  "id": "r1",
+  "file": "omission-seq-read.py.new-pfd3",
+  "bug": "the closure-version guard is removed",
+  "failing_tests": [
+   "test_reader_refuses_open_counter"
+  ]
+ }
+]
