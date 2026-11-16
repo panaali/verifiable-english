@@ -1,7 +1,9 @@
 # p1-ready-unstartable-alert: the decider is told when a p1 row is ready but nobody can start it
 
-- Status: built and staged as `.new-p1rua` in `/home/seyran/code/manage-agents`. INSTALL WAITS FOR DECIDER READ (message
-  `inbox/dri/20261116T030645Z-infra-p1-ready-unstartable-alert-3398579.md`). No DELTA rows, no DRI signature reserved, trust +0.
+- Status: built, staged as `.new-p1rua` in `/home/seyran/code/manage-agents`, and INSTALLED by the decider after the install
+  read (`inbox/dri/done/20261116T030645Z-infra-p1-ready-unstartable-alert-3398579.md`). The backups `*.bak-20261116-p1rua`
+  are in place. The live alert fired at 03:11Z for fid-mech-b2 and lw-allowances-shared (`p1-unstartable-alert.sent`).
+  No DELTA rows, no DRI signature reserved, trust +0.
 - What changed: (1) `decider-ready-alert.py` also reports any p1 ready row that has had no task file and no launch link for
   30 min or more, whatever its owner. It reports each row at most once per 4 h. (2) `backlog.sh add`/`update` warns and
   logs when it leaves a row at p1 + ready without a task file or a "writer: <name> by <UTC>" note line. It never refuses.
@@ -52,6 +54,7 @@ Readings I took (the conservative or narrower option each time; I did not ask):
 | Existing alert tests, staged script | `BACKLOG_SVC_SH=backlog-svc.sh python3 -I tools-local/test_decider_ready_alert.py.new-p1rua` | `OK` (8 tests) |
 | Existing alert tests, installed | `python3 -I tools-local/test_decider_ready_alert.py` | `OK` |
 | backlog.py tests, staged | `BL_SCRIPT=$PWD/backlog.py.new-p1rua python3 -I tools-local/test_backlog_{now,queue_gap,reject_not_done,seed_blocked}.py` | all exit 0: now `Ran 29 ... OK`, queue_gap `Ran 5 ... OK`, reject_not_done OK, seed_blocked OK |
+| Selected VE tests, committed HEAD 267d312b0f | `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` | exit 0: `8 units, 8 passed` (GitHub Actions, 2 shards) |
 | Dry run on the live backlog | `python3 -I tools-local/decider-ready-alert.py.new-p1rua --dry-run` | `NOW(critical): p1 ready but not startable: fid-mech-b2, infra feed, 51h43m; lw-allowances-shared, infra feed, 8h43m. ...` Nothing was recorded (`p1-unstartable-alert.sent` absent) |
 
 Change to an existing test: in `test_decider_ready_alert.py`, `test_non_matching_rows_silent` had a fixture row `feat`
@@ -74,7 +77,12 @@ Each bug went into a temp copy of the staged file, and the test that should catc
 | S5 | Python `manage-agents/backlog.py.new-p1rua` | filing check on `add` only | `Filing.test_update_to_p1_ready_warns` |
 | S6 | Python, same | a writer line without "by <UTC>" accepted | `Filing.test_writer_line_needs_a_time` |
 
-## Install (waits for the decider's read)
+## Install (done by the decider; the commands as sent)
+
+After install, `git diff --no-index --numstat <file>.bak-20261116-p1rua <file>` gives 89/20 (decider-ready-alert.py), 42/0
+(backlog.py) and 7/3 (test_decider_ready_alert.py), the same counts as the staged diff. `python3 -I
+tools-local/test_p1_ready_alert.py` on the installed files: `OK` (14 tests).
+
 
 ```
 cd /home/seyran/code/manage-agents
