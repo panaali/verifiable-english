@@ -206,3 +206,7 @@ mv test_decider_ready_alert.py.new-p1rua2 test_decider_ready_alert.py
 cd .. && python3 -I tools-local/test_p1_ready_alert.py && python3 -I tools-local/test_decider_ready_alert.py
 ```
 Restart: none (`backlog-svc.sh` starts a fresh `python3 -I tools-local/decider-ready-alert.py` every pass).
+
+Install read sent: `inbox/dri/20261116T054740Z-infra-p1-ready-unstartable-alert-1618430.md`. Checks on this branch: selected
+VE tests on 26e09c8240 exit 0 (GitHub Actions, 2 shards, 10 units passed; docs-only diff); `lake build` OK (1475 jobs);
+`python3 lean/audit.py` PASS.
