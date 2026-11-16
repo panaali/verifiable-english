@@ -194,7 +194,13 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} a Roadmap goal is revised in a less ambitious direction simply because it could not be achieved (section 2)"
+        "description": "at {0} a Roadmap goal is revised in a less ambitious direction (section 2), for whatever reason"
+      },
+      "revised_because_unable": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} the revision of the goal is made simply because we are unable to achieve it (section 2: \"simply because we are unable to achieve them\"); a revision that reflects \"our evolving understanding of how best to mitigate key risks\" is not"
       },
       "in_the_lead": {
         "arguments": [
@@ -447,7 +453,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the company avoids the revision of the goal at {0} (section 2)",
+        "description": "the company avoids the revision of the goal at {0} (section 2: \"we will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",

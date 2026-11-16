@@ -113,8 +113,11 @@ BASE = {
                                           "risk mitigations we have in place (or plan to implement shortly)\")",
         "roadmap_goal_missed": "at {0} a Frontier Safety Roadmap goal was not met (3.3)",
         "roadmap_goal_unachieved": "at {0} a Frontier Safety Roadmap goal could not be achieved (section 2)",
-        "goal_revised_less_ambitious": "at {0} a Roadmap goal is revised in a less ambitious direction simply "
-                                       "because it could not be achieved (section 2)",
+        "goal_revised_less_ambitious": "at {0} a Roadmap goal is revised in a less ambitious direction (section 2), "
+                                       "for whatever reason",
+        "revised_because_unable": "at {0} the revision of the goal is made simply because we are unable to achieve "
+                                  "it (section 2: \"simply because we are unable to achieve them\"); a revision that "
+                                  "reflects \"our evolving understanding of how best to mitigate key risks\" is not",
         "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, "
                        "Anthropic in the lead, the scenario's first conjunct)",
         "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists",
@@ -373,7 +376,9 @@ REGULATED = {
                                 "section 2 at {0}: \"Our current Frontier Safety Roadmap is available at "
                                 "anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps "
                                 "available at that link.\""),
-    "goals_kept": _duty("{0} avoid the revision", "the company avoids the revision of the goal at {0} (section 2)"),
+    "goals_kept": _duty("{0} avoid the revision", "the company avoids the revision of the goal at {0} (section 2: "
+                        "\"we will strive to avoid situations where we revise the goals in a less ambitious direction "
+                        "simply because we are unable to achieve them\")"),
     "risk_reports_published": _duty("{0} have Risk Reports on risks as well as continuation determinations published",
                                     "section 3 at {0}: \"We will publish Risk Reports discussing the risks of our "
                                     "systems and how we have made determinations about whether to continue AI "
