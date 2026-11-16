@@ -42,6 +42,7 @@ three f8-internal mistags (in_scope now quotes their sentence) and f8-public.
 - `usecases/anthropic-rsp/coverage.json`: `uv run python usecases/anthropic-rsp/build_document.py --source <pinned text>`;
   only `document_sha256` changed (the built document embeds the vocabulary). `spans.json` did not change.
 - `uv run python tools/regen_generated.py --check`: exit 0, 41 entries.
+- `conformance/english-lean/lexicon-report.json`: `uv run python -m conformance.english_lean_lexicon` (43 valid, 0 invalid); only the anthropic-rsp row changed (lexicon id, 126 to 127 symbols: the new predicate). The first selected run failed `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` on this stale file; `--lean-fixtures` left `lean/VE/EnglishGrammar/LexiconFixtures.lean` unchanged.
 - kb-9 had not merged when this was written; `kb9-shadow.json` and the rest of `run.py` were not touched.
 
 ## Trust, mutants and seeded bugs
