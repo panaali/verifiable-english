@@ -1,0 +1,116 @@
+{
+ "item": "kb-regen-closure-check",
+ "note": "Python only (no Lean or Rust product code changed). Each seed was applied at its commit by exact find/replace, its tests run with uv run pytest -q, and the file restored with git checkout; git status was clean after each. S1-S4: the first round (evidence.md); S5-S10: the fix round (review F2, F4, F-ready1).",
+ "mutants": [
+  {
+   "id": "S1",
+   "bug": "the kernel-closure entry's check is the old totals-only one (no --fresh)",
+   "file": "tools/regen_generated.py",
+   "find": "\"--check\", \"docs/kernel/closure-baseline.json\",\n                \"--fresh\", \"docs/kernel/closure-baseline.json\"),),",
+   "replace": "\"--check\", \"docs/kernel/closure-baseline.json\"),),",
+   "rc": 1,
+   "test": "tests/test_regen_generated.py::test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it",
+   "log": "evidence.md, section seed1.log",
+   "commit": "d649f241a"
+  },
+  {
+   "id": "S2",
+   "bug": "--fresh compares only the path names and the kernel total, not the bytes",
+   "file": "tools/kernel_closure.py",
+   "find": "    if saved_text == render(result):",
+   "replace": "    if [r.get(\"name\") for r in json.loads(saved_text).get(\"paths\", [])] == [r[\"name\"] for r in result[\"paths\"]] and json.loads(saved_text).get(\"kernel_lines\") == result[\"kernel_lines\"]:",
+   "rc": 1,
+   "test": "tests/test_regen_generated.py::test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it; tests/test_kernel_closure.py::test_fresh_fails_on_any_byte_the_write_would_change_and_check_alone_does_not",
+   "log": "evidence.md, section seed2.log",
+   "commit": "d649f241a"
+  },
+  {
+   "id": "S3",
+   "bug": "--out writes another layout than the one --fresh compares with (two owners of the bytes)",
+   "file": "tools/kernel_closure.py",
+   "find": "        args.out.write_text(render(result))",
+   "replace": "        args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + \"\\n\")",
+   "rc": 1,
+   "test": "tests/test_regen_generated.py::test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it; tests/test_kernel_closure.py::test_fresh_fails_on_any_byte_the_write_would_change_and_check_alone_does_not",
+   "log": "evidence.md, section seed3.log",
+   "commit": "d649f241a"
+  },
+  {
+   "id": "S4",
+   "bug": "the section-6 limits (--check) are skipped when --fresh is given",
+   "file": "tools/kernel_closure.py",
+   "find": "    if args.check:\n        saved",
+   "replace": "    if args.check and not args.fresh:\n        saved",
+   "rc": 1,
+   "test": "tests/test_regen_generated.py::test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it; tests/test_regen_generated.py::test_an_up_to_date_closure_baseline_is_not_stale_and_a_limit_still_fails_it; tests/test_kernel_closure.py::test_fresh_fails_on_any_byte_the_write_would_change_and_check_alone_does_not",
+   "log": "evidence.md, section seed4.log",
+   "commit": "d649f241a"
+  },
+  {
+   "id": "S5",
+   "bug": "the gate's Wire contract check runs only the entry's first command (the old one, no conformance directory)",
+   "file": "tools/gate.py",
+   "find": "for argv in regen_generated.gate_commands(\"Wire contract check\"):",
+   "replace": "for argv in regen_generated.gate_commands(\"Wire contract check\")[:1]:",
+   "test": "tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s5.log"
+  },
+  {
+   "id": "S6",
+   "bug": "the gate's Kernel check runs the old totals-only command (the --fresh half dropped, guard included)",
+   "file": "tools/gate.py",
+   "find": "                kernel_check = regen_generated.gate_commands(\"Kernel check\")\n                if not all(",
+   "replace": "                kernel_check = [regen_generated.gate_commands(\"Kernel check\")[0][:7]]\n                if False and not all(",
+   "test": "tests/test_gate_trust.py::test_every_gate_runs_the_kernel_check_after_the_lean_build; tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s6.log"
+  },
+  {
+   "id": "S7",
+   "bug": "the gate runs a Kernel check whose --fresh half the entry dropped (guard removed)",
+   "file": "tools/gate.py",
+   "find": "                if not all(flag in argv for flag in (\"--check\", \"--fresh\") for argv in kernel_check):",
+   "replace": "                if False:",
+   "test": "tests/test_gate_trust.py::test_the_gate_refuses_a_kernel_check_without_its_fresh_half",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s7.log"
+  },
+  {
+   "id": "S8",
+   "bug": "gate_commands keeps only each entry's first check command",
+   "file": "tools/regen_generated.py",
+   "find": "        commands.extend([*GATE_PY, *argv[1:]] for argv in entry.check)",
+   "replace": "        commands.extend([*GATE_PY, *argv[1:]] for argv in entry.check[:1])",
+   "test": "tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s8.log"
+  },
+  {
+   "id": "S9",
+   "bug": "gate_commands returns nothing for a stage no entry names, and runs an entry it cannot run",
+   "file": "tools/regen_generated.py",
+   "find": "        if entry.cwd != \".\" or not entry.check or not all(",
+   "replace": "        if False and not all(",
+   "test": "tests/test_gate_trust.py::test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s9.log"
+  },
+  {
+   "id": "S10",
+   "bug": "check_fresh reads a baseline of another JSON shape as an object (review F4's crash)",
+   "file": "tools/kernel_closure.py",
+   "find": "    if not isinstance(saved, dict):  # valid JSON of another shape is stale too, never a crash (review F4)\n        saved = {}\n",
+   "replace": "",
+   "test": "tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash",
+   "rc": 1,
+   "commit": "c968a5c4e5",
+   "log": "evidence.md, section s10.log"
+  }
+ ]
+}

@@ -22,7 +22,7 @@ item 2. Task written by dri-infra-taskwrite-1116.
 | # | Task line | Where | Test or evidence |
 |---|---|---|---|
 | 1 | The entry's check regenerates and compares bytes with the baseline; any difference = stale | `kernel_closure.render` (the one function `--out` writes with), `check_fresh`, `--fresh`; entry `kernel-closure` check argv in `tools/regen_generated.py` | `tests/test_regen_generated.py::test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it`, `tests/test_kernel_closure.py::test_fresh_fails_on_any_byte_the_write_would_change_and_check_alone_does_not` |
-| 1 | `--check`'s total/writer limits kept as they are, and both run | `main`: `--check` block unchanged except that it no longer returns before `--fresh`. Exit 1 if either fails. `tools/gate.py`'s "Kernel check" stage is unchanged (`--check` only) | `tests/test_regen_generated.py::test_an_up_to_date_closure_baseline_is_not_stale_and_a_limit_still_fails_it` ("FAIL: the kernel grew from"), seed S4 |
+| 1 | `--check`'s total/writer limits kept as they are, and both run | `main`: `--check` block unchanged except that it no longer returns before `--fresh`. Exit 1 if either fails. Fix round (F2): `tools/gate.py`'s "Kernel check" stage runs the entry's whole check (`regen_generated.gate_commands`), `--fresh` included | `tests/test_regen_generated.py::test_an_up_to_date_closure_baseline_is_not_stale_and_a_limit_still_fails_it` ("FAIL: the kernel grew from"), seed S4 |
 | 1 | So R12 rewrites the file with the entry's generator | Fixture: `R.check([entry])` fails `kernel-closure`, then `R.write` of the failed entries runs the entry's own `--out`, and the file becomes the fresh bytes. The train's own wiring is NOT done (FOLLOW-UP) | same R12 test. Train scripts: see Notes |
 | 2 | Measure the cost, old vs new (MEASURED) | below | `evidence.md` (Timing tails) |
 | 3 | Fails on the old check: a stale per-path row with equal totals is reported stale, and an up-to-date baseline is not | the two `test_regen_generated.py` tests above. Under the old argv the first one fails (seed S1). The test also asserts that `kernel_closure.main(["--check", stale])` returns 0 | `evidence.md`, seed1.log |
@@ -70,8 +70,8 @@ generated values: `test_the_records_quote_the_saved_measurement` requires that, 
 
 ## Seeded bugs (Python; no Lean or Rust product code changed)
 
-`evidence.md` (section Seeded bugs) gives file, find/replace, failing test and log. All four were caught and restored, and git status
-was clean after each.
+`seeded-bugs.json` (all ten) and `evidence.md` (section Seeded bugs, S1-S4; sections s5.log-s10.log) give file,
+find/replace, failing test and log. All were caught and restored, and git status was clean after each.
 
 - S1 `tools/regen_generated.py`: the entry's check back to `--check` only. This fails
   `test_a_stale_closure_row_with_equal_totals_is_stale_and_the_r12_write_rewrites_it` (`evidence.md`, seed1.log).
@@ -81,6 +81,19 @@ was clean after each.
   (`evidence.md`, seed3.log).
 - S4 `tools/kernel_closure.py`: `--check` limits skipped when `--fresh` is given. This fails all three new tests
   (`evidence.md`, seed4.log).
+
+Fix round, at c968a5c4e5 (`/tmp/kbrc-seeds/`):
+
+- S5 `tools/gate.py`: the Wire contract check runs only the entry's first command. Fails
+  `tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check`.
+- S6 `tools/gate.py`: the Kernel check runs the old `--check`-only command. Fails that test and
+  `test_every_gate_runs_the_kernel_check_after_the_lean_build`.
+- S7 `tools/gate.py`: the `--check`/`--fresh` guard removed. Fails `test_the_gate_refuses_a_kernel_check_without_its_fresh_half`.
+- S8 `tools/regen_generated.py`: `gate_commands` keeps each entry's first command only. Fails the class test.
+- S9 `tools/regen_generated.py`: `gate_commands` accepts an entry it cannot run. Fails
+  `test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run`.
+- S10 `tools/kernel_closure.py`: `check_fresh` without the object guard (review F4). Fails 4 cases of
+  `tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash`.
 
 Light lane / trust mutants: N.A. No Lean changed and nothing trusted changed. The task asks for no trust_mutants
 record.
@@ -121,13 +134,13 @@ registry unchanged.
   baseline; `test_the_records_quote_the_saved_measurement` catches it). That happened here: main's spec and baseline
   were stale together, so the test passed on main. Once the baseline is fresh, the test names the spec rows to update.
   In the kb-1 case the spec already quoted main's figures, so a rewrite alone would have passed.
-- `tools/gate.py`'s "Kernel check" stage still runs `--check` only (section 6.1, the release guard). Adding `--fresh`
-  there would make the gate fail on staleness as well. I left it unchanged, the narrower reading: the task scopes the
-  change to the regen entry.
-  As a result, the entry's `fresh="gate:Kernel check"` field (its automatic, unmocked run) now covers the limits half
-  of its check only. No automatic run covers the `--fresh` half on a branch: the two baseline tests catch registry
-  drift but not a Lean-only drift like main's. Adding `--fresh` to that gate stage would close it at no measured cost
-  (about 2 ms). It is a gate behaviour change, so I leave the decision to the DRI and do not file it.
+- Fix round (review F2): the gate stage now runs the entry's whole check. `tools/gate.py` reads the commands from
+  `regen_generated.gate_commands(stage)`, the check of every entry whose `fresh` is `gate:<stage>`, so the stage an
+  entry names cannot run part of its check. The same class held for the "Wire contract check" stage: it ran
+  `wire_contract.py --check` but not the entry's second command (`--directory conformance/wire-contract/contracts`);
+  it now runs both (the second passes on this tree with the built service, 0.11 s on ve-cloud-2, load 14.6).
+  A stale closure baseline now fails the full gate (main's included) until it is regenerated by hand; the train's
+  rewrite is the FOLLOW-UP above. The gate also refuses a Kernel check whose entry dropped `--check` or `--fresh`.
 
 ## Spec re-read
 
@@ -162,3 +175,14 @@ registry unchanged.
     test). Every figure above names its log.
 15. Overclaim, silent cut, new check can fail, limits: PASS (the train wiring is stated as not done; S1 to S4) and N.A.
     (limits, none added).
+
+## Fix round (review kb-regen-closure-check-review.final.md)
+
+- F1 (B, not fixed here): the train wiring lives in `manage-agents/merge-train.sh`; FOLLOW-UP kb-regen-closure-train-wiring above.
+- F2 (A): records corrected (`tools/kernel_closure.py` docstring, `docs/spec/kernel-boundary.md` 6.1) and the gate
+  runs the entry's check (`gate_commands`). PROBE F2 failed on c7193919's files and passes on c968a5c4e5. Tests:
+  `tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check`,
+  `::test_every_gate_runs_the_kernel_check_after_the_lean_build`, `::test_the_gate_refuses_a_kernel_check_without_its_fresh_half`,
+  `::test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run`.
+- F4 (C, fixed): `check_fresh` reports a baseline of another JSON shape as STALE.
+- F-ready1 (B): the seeds are committed as `seeded-bugs.json` (S1-S10, each with its `file`).

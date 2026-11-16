@@ -160,3 +160,49 @@ cmp docs/kernel/closure-baseline.json /tmp/kbrc-m/a.json: identical (rc 0) at 75
 1051:SHARD 1/6: exit 0 in 1767.6 s; 84 units, 84 passed
 1052:[gha-select 16:06:11Z] summary: selected tests ran on GitHub Actions (6 shards, run kb-regen-closure-check-75735543-t843180); exit=0; 1991s
 ```
+
+## s5.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check
+1 failed in 0.36s
+```
+
+## s6.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_gate_trust.py::test_every_gate_runs_the_kernel_check_after_the_lean_build
+FAILED tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check
+2 failed in 0.40s
+```
+
+## s7.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_gate_trust.py::test_the_gate_refuses_a_kernel_check_without_its_fresh_half
+1 failed in 0.37s
+```
+
+## s8.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_gate_trust.py::test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check
+1 failed in 0.38s
+```
+
+## s9.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_gate_trust.py::test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run
+1 failed in 0.31s
+```
+
+## s10.log (FAILED lines and summary, at c968a5c4e5)
+
+```
+FAILED tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash[[]]
+FAILED tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash[1]
+FAILED tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash[null]
+FAILED tests/test_kernel_closure.py::test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash["x"]
+4 failed, 3 passed in 0.73s
+```
