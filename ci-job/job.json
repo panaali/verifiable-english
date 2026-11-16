@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-p1-ready-unstartable-alert-f97dd2d0-t808670-s8",
+ "head": "f577b81d9ad175f2299cadc329fb59f13ed1d752",
+ "argv": [
+  "armsh-cand-p1-ready-unstartable-alert-f97dd2d0-t808670-s8",
+  "f577b81d9ad175f2299cadc329fb59f13ed1d752",
+  "676e9b49055d11d61e44d45fac8a321510f4c9b5",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
