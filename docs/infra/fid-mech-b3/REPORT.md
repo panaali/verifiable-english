@@ -1,6 +1,6 @@
 # fid-mech-b3: binding tables in bindings.json, execution adapters, the isolated worker, the result record (build report)
 
-**Status:** built; all four deliverables done, none cut. The final selected run on the committed code (89f865f36e) passed: 227 units in 6 shards, exit 0 (section 8b). **HEAD:** the commit carrying this report (branch infra/fid-mech-b3); after 89f865f36e it adds only this file.
+**Status:** built, and review F1 (B) is fixed (section 13). All four deliverables are done and none was cut. The selected run on the committed F1 fix (92f27d2740) passed: 201 units in 3 shards, exit 0. Before the fix, the run on 89f865f36e passed 227 units (section 8b). **HEAD:** the commit carrying this report (branch infra/fid-mech-b3); after 89f865f36e it adds this file, then the F1 fix (tools/fidmech/records.py, tests/test_fidmech_records.py, seeded-bugs.json S16-S18).
 **What changed:** the case-to-atom tables of the RSP, PF and FSF run.py files are now in `usecases/<doc>/fidmech/bindings.json`, sha256-pinned, and every results.json is byte for byte unchanged. New `tools/fidmech/{bindings,adapters,worker,records}.py`. FSF main()'s comparison is factored into `with_comparison()`. Four new test files.
 **Open:** none. **DRI signature:** none reserved. DELTA is none: Python tooling and data, no trusted Lean line, no decision path replaced, trust +0.
 **Seam:** none used. Operations override 1 withdraws the line cap, and no part waits on another item, so (3) and (4) stay in this item (plan 10's seam rule names no other reason).
@@ -248,7 +248,17 @@ None. Python tooling and data only: no Lean line, no Rust line, no verdict, diag
 - **Languages:** Python only, so no Lean or Rust mirror applies. results.json is unchanged.
 - **DELTA:** still none. The K verdict is mutation-testing tooling that this batch adds; no VE verdict, diagnostic or answer changes.
 
-**Notes (C, not filed):** left as the review records them; none is changed in this fix.
+**Test runs on the fix (92f27d2740):**
+- `zsh mac-pytest.sh --select -- --base f97dd2d0c0 --run` on GitHub Actions, run fid-mech-b3-92f27d27-t839059, log /tmp/fm_b3_select.log, exit 0:
+  - the cheap units ran first and passed in 174 s;
+  - 201 units ran in 3 shards (83, 62 and 56), all passed;
+  - 14 test files of more than 120 s, selected only for weak reasons, are deferred to the chain gate.
+- `lake build` passed (1475 jobs), and `python3 lean/audit.py` passed (896 files, 10116 theorems).
+- tests/test_fidmech_records.py: 59 passed.
+- Pre-existing failures (main-known-red.txt): none was selected, and none failed.
+- Not run here: the full gate and the trust_mutants sweep (no Lean change).
+
+**Notes (C, not filed):** they stay as the review records them; this fix changes none of them.
 
 ## Self-review against BUILDER-CHECKLIST
 
