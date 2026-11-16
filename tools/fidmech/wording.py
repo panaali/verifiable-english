@@ -409,8 +409,10 @@ def load_actors(path):
 
 
 def harness_candidates(files, unit, actors):
-    """Every wording candidate of one rule-block unit, the case's actors matched by actor_pattern."""
-    return candidates(files, unit, actors, actors, actor_pattern, structural=False)
+    """Every wording candidate of one rule-block unit, the case's actors matched by actor_pattern. A replacing actor
+    holds no "and" or "or": VE refuses an act phrase with a logic word, so such a mutant could only be stillborn."""
+    replacing = [a for a in actors if not re.search(r'(?<![\w-])(?:and|or)(?![\w-])', a)]
+    return candidates(files, unit, replacing, actors, actor_pattern, structural=False)
 
 
 def read_case(tree, case):
