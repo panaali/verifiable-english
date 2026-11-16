@@ -26,7 +26,7 @@
   "L2b": 45,
   "L2q": 8,
   "L2a": 2,
-  "L3w": 14,
+  "L3w": 13,
   "L4u": 12,
   "L4l": 0,
   "D": 661,
@@ -1426,14 +1426,6 @@
   },
   {
    "class": "L3w",
-   "block": "f1-misuse-bio-default",
-   "file": "rules.d1.ve",
-   "quote": "before",
-   "detail": "before in act of misuse_safeguards_before_external, legend of misuse_safeguards_before_external, rule line; no member of {before, prior to} in the full source sentences",
-   "at": null
-  },
-  {
-   "class": "L3w",
    "block": "f1-halt-strict",
    "file": "rules.d1.ve",
    "quote": "not",
@@ -1685,7 +1677,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "5",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1693,7 +1685,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "associat",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1701,7 +1693,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "capabil",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1709,7 +1701,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "category",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1717,7 +1709,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "harm",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1725,7 +1717,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "lead",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1733,7 +1725,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "severe",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1741,7 +1733,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "threshold",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1749,7 +1741,7 @@
    "block": "f1-misuse-bio-default",
    "file": "rules.d1.ve",
    "quote": "track",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1757,7 +1749,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "5",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1765,7 +1757,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "associat",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1773,7 +1765,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "biological",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1781,7 +1773,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "capabil",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1789,7 +1781,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "category",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1797,7 +1789,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "chemical",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1805,7 +1797,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "harm",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1813,7 +1805,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "lead",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1821,7 +1813,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "severe",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1829,7 +1821,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "threshold",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1837,7 +1829,7 @@
    "block": "f1-misuse-cyb-default",
    "file": "rules.d1.ve",
    "quote": "track",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1933,7 +1925,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "5",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1941,7 +1933,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "associat",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1949,7 +1941,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "biological",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1957,7 +1949,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "capabil",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1965,7 +1957,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "category",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1973,7 +1965,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "chemical",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1981,7 +1973,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "harm",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1989,7 +1981,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "lead",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -1997,7 +1989,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "severe",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -2005,7 +1997,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "threshold",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -2013,7 +2005,7 @@
    "block": "f1-security-default",
    "file": "rules.d1.ve",
    "quote": "track",
-   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote (from the full sentences and the header quote L1 located no sentence for: 1 of 2 quotes)",
    "at": null
   },
   {
@@ -6981,7 +6973,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 661,
@@ -7001,7 +6993,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 661,
@@ -7021,7 +7013,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 661,
@@ -7041,7 +7033,7 @@
     "L2b": 45,
     "L2q": 9,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 677,
@@ -7623,7 +7615,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 661,
@@ -7643,7 +7635,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 655,
@@ -7835,7 +7827,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
     "D": 661,
@@ -7855,7 +7847,7 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 273,
     "L4l": 0,
     "D": 661,
@@ -9186,10 +9178,10 @@
     "L2b": 45,
     "L2q": 8,
     "L2a": 2,
-    "L3w": 14,
+    "L3w": 13,
     "L4u": 12,
     "L4l": 0,
-    "D": 1188,
+    "D": 1191,
     "L4g": 0
    },
    "cleared": [
@@ -9436,6 +9428,11 @@
     [
      "D",
      "f1-misuse-bio-default",
+     "require"
+    ],
+    [
+     "D",
+     "f1-misuse-bio-default",
      "risk"
     ],
     [
@@ -9456,6 +9453,11 @@
     [
      "D",
      "f1-misuse-cyb-default",
+     "require"
+    ],
+    [
+     "D",
+     "f1-misuse-cyb-default",
      "risk"
     ],
     [
@@ -9472,6 +9474,11 @@
      "D",
      "f1-security-default",
      "guidelin"
+    ],
+    [
+     "D",
+     "f1-security-default",
+     "require"
     ],
     [
      "D",
@@ -12039,7 +12046,8 @@
   },
   "L3": {
    "rule_blocks_without_quote": 0,
-   "from_header_quote": 11
+   "from_header_quote": 11,
+   "partly_from_header_quote": 3
   },
   "L4": {
    "sentences": 435,
@@ -12050,7 +12058,9 @@
   "D": {
    "sidecar": true,
    "span": "sentence",
-   "unaccounted": 1188,
+   "from_header_quote": 11,
+   "partly_from_header_quote": 3,
+   "unaccounted": 1191,
    "outside_quote": 605,
    "per_block": [
     {
@@ -12060,7 +12070,7 @@
     },
     {
      "block": "f1-misuse-bio-default",
-     "unaccounted": 12,
+     "unaccounted": 13,
      "outside_quote": 9
     },
     {
@@ -12070,7 +12080,7 @@
     },
     {
      "block": "f1-misuse-cyb-default",
-     "unaccounted": 14,
+     "unaccounted": 15,
      "outside_quote": 11
     },
     {
@@ -12090,7 +12100,7 @@
     },
     {
      "block": "f1-security-default",
-     "unaccounted": 15,
+     "unaccounted": 16,
      "outside_quote": 11
     },
     {

@@ -124,5 +124,26 @@
   "behaviour": "spans.json bound to no source",
   "test": "tests/test_fidmech_b2.py::test_a_malformed_node_in_any_input_is_refused_by_name",
   "failed": true
+ },
+ {
+  "id": "S19",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "an unlocated quote's text left out when another quote is located",
+  "test": "tests/test_fidmech_b2.py::test_l3_reads_an_unlocated_quote_beside_located_ones",
+  "failed": true
+ },
+ {
+  "id": "S20",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "a block with some quotes unlocated not marked",
+  "test": "tests/test_fidmech_b2.py::test_l3_marks_a_hit_whose_block_has_some_quotes_unlocated",
+  "failed": true
+ },
+ {
+  "id": "S21",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "D's mark dropped for a partly located block",
+  "test": "tests/test_fidmech_b2.py::test_d_counts_and_marks_the_words_of_an_unlocated_quote_beside_located_ones",
+  "failed": true
  }
 ]
