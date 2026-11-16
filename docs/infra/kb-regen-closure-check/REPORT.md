@@ -92,7 +92,8 @@ record.
   Result: 5 passed after the fixture fix (`/tmp/kbrc-1.log`, `/tmp/kbrc-2.log`), and the 2 condition tests passed after
   the refresh (`/tmp/kbrc-3.log`).
 - Final selected run on committed 75735543 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, 487 units in 6 Actions
-  shards): RESULT-PENDING.
+  shards, run kb-regen-closure-check-75735543-t843180): exit 0 after 2003 s; shards 1-6 passed 84, 82, 85, 84, 86 and 66
+  units (487), 0 failed (`/tmp/kbrc-select.log`, SHARD lines; rc file 0). Only docs/*.md were committed after it.
 - Not run: the full gate (the chain runs it on the final HEAD), and the trust_mutants sweep (N.A., above).
 
 ## FOLLOW-UP
@@ -123,6 +124,10 @@ registry unchanged.
 - `tools/gate.py`'s "Kernel check" stage still runs `--check` only (section 6.1, the release guard). Adding `--fresh`
   there would make the gate fail on staleness as well. I left it unchanged, the narrower reading: the task scopes the
   change to the regen entry.
+  As a result, the entry's `fresh="gate:Kernel check"` field (its automatic, unmocked run) now covers the limits half
+  of its check only. No automatic run covers the `--fresh` half on a branch: the two baseline tests catch registry
+  drift but not a Lean-only drift like main's. Adding `--fresh` to that gate stage would close it at no measured cost
+  (about 2 ms). It is a gate behaviour change, so I leave the decision to the DRI and do not file it.
 
 ## Spec re-read
 
