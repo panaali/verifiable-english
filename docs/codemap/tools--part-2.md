@@ -1,3 +1,5 @@
+- `tools/rust_build.py` — Reproducible Rust checker builds: the same source gives the same binary in any checkout.
+- `tools/rust_output_diff.py` — Rust output differential (bundle D of docs/ARCHITECTURE-LAYERS-PLAN2.md).
 - `tools/select_tests.py` — Select the tests a change can affect, and the builds and checks they need.
 - `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
 - `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.

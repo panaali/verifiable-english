@@ -680,6 +680,47 @@ Section 6 and `answer-key.json` are not edited.**
     is four higher than in the items above (the old p6-u66 to p22-u389 are p6-u70 to p22-u393); those items keep the
     ids of their own date. The rules, the key and every answer are as they were (236 of 239 agree).
 
+**`pf-f7-timed-act` (2026-11-15): 3.3's timed act and the signed split-unit wording (architect rulings
+et-5c-5d-coverage-20261115, section 3, and pf-split-units-20261115, section 2; DRI decisions 2026-11-15, arch-round6
+items 1 and 2, and pf-f7-timed-act items 1 to 3).**
+
+29. **Two timed acts, and the legends and one guard of the signed split units (translation-fidelity checklist
+    classes 1, 2 and 7).** 3.3's “Prior to deployment, every covered model undergoes the suite of Scalable
+    Evaluations” is a timed act: the act of `evaluations_before_deployment` is now “undergo the suite of Scalable
+    Evaluations prior to deployment”, its legend quotes the sentence in full, and the guard names the reference
+    event, as F2's deployment rule does, in one block per RS3 choice (external deployment under ext, any deployment
+    under any). `f7-evaluations` and
+    `f7-evaluations-any` record their limit in one line: order against deployment is inside the act; dated facts are
+    not classified. Table 1 BIO-H's misuse bullet has its own act, `misuse_safeguards_before_external`: “have misuse
+    safeguards meeting the High standard before external deployment”, while CYB-H's bullet (“for external
+    deployment”) keeps the shared act. The MIS question and the threshold rules read both acts, and the new block's
+    name is in the harness lists its twin is in (names only, as the DRI decision signs). The legend
+    of `critical_standard_unspecified` names what Table 1's row leaves unspecified, “safeguards and security
+    controls that would meet a Critical standard” (CYB-C: “safeguards and security controls standards”), not “the
+    Critical standard”. The legend of `deeper_testing_warranted` keeps 5.2's “a deployment” and “of capability”.
+    The legend of `board_finds_necessary` is the open-term form: “Where necessary” names no judge of necessity, so
+    the decider is unstated, as for OT13, and the predicate keeps its name. The legend of
+    `efficacy_methods_per_safeguard` quotes its 4.1 sentence instead of a bare pointer. The legend of `risk_paths`
+    and its block header say that the order of 4.1's two selection steps follows from the second step's “each of
+    those”. `f9-specific` records its limit in one line: per-path facts are not classified. `f9-efficacy` records its
+    limit in one line: per-safeguard facts are not classified. `f16-sag-recommend`: the rule no longer tests
+    `covered`, as “For each deployment under the Preparedness Framework” is its one condition. One predicate is new
+    (62 of 64 regulated), the coverage counts are as they were, and no answer moved (236 of 239 agree, as before).
+
+**`pf-f9-order-undo` (2026-11-16): the record correction on 4.1's step order is undone (DRI ruling
+record-void-astra 2026-11-15, section C, finding 1.15: "if it was made, undo it"; DRI decisions 2026-11-15
+record-void-ruling and 2026-11-16 adv0244 item 2).**
+
+30. **4.1's step order is event order again, as item 27 records (supersedes item 29's sentence on the legend of
+    `risk_paths` and its block header).** That sentence of item 29 no longer holds: the correction it recorded is
+    undone. The legend of `risk_paths` and its block header are back to their text before that correction, word for
+    word: the order “first” states before the next step is event order, not formalised (ET, as O7), and the legend
+    carries the word because the act with it would pass 80 characters. They agree again with item 27 and with the
+    unit's spans.json record, an `event_order` gap that says the order is not formalised. The rest of item 29 stands:
+    the one-line limit records of the per-path and per-safeguard steps and the quoted legend of
+    `efficacy_methods_per_safeguard` are kept. The three 4.1 selection units stay unresolved. No guard, act or
+    predicate changed (62 of 64 regulated), and no answer moved (236 of 239 agree, as before).
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`

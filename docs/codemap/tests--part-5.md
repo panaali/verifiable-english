@@ -1,3 +1,7 @@
+- `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
+- `tests/test_metered_profile.py` — The `metered` mode checks the norms profile of its model itself (kb-validators part 1, decision D13).
+- `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
+- `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
 - `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
 - `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
 - `tests/test_nary_folio.py` — Pinned FOLIO witness accounting, with the large corpus optional in CI.
@@ -30,6 +34,7 @@
 - `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
 - `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
 - `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
+- `tests/test_ownership_floor.py` — kb-10d step 3: the per-answer Lean ownership count of the five frozen keys is a floor.
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
@@ -53,6 +58,8 @@
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
+- `tests/test_pf_f7_timed_act.py` — pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings et-5c-5d-coverage-20261115 section 3 and pf-split-unit…
+- `tests/test_pf_f9_order_undo.py` — pf-f9-order-undo: the order of 4.1's two safeguard-selection steps is again a self-declared ET gap.
 - `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
 - `tests/test_pinned_sources.py` — usecases/pinned_sources.json, tools/fetch_pinned_sources.py, the test helper tests/pinned_source.py and the gate's seeding of its fresh home (item actions-pinn…
 - `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
@@ -80,9 +87,3 @@
 - `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
 - `tests/test_question_lean_relay.py` — Request binding at the Python side of the Lean question reader.
 - `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
-- `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
-- `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
-- `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
-- `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
-- `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
-- `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).

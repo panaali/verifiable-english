@@ -13,7 +13,7 @@ and whether it holds; Python and Rust carry the files, the display and a fast pa
 
 - **Lean owns meaning.** Every verdict, diagnostic (code and text), limit, fault order and derived
   value is computed in Lean. A Lean answer is the answer; Python never recomputes it. Not yet true
-  for soft-rule norm documents: `docs/spec/kernel-boundary.md`.
+  for soft-rule conflicts and agent-policy: `docs/kernel/ownership.md`.
 - **Python** does the command line, files, display, the response schema and request binding only.
   A relayed answer is checked for (a) its schema, fully typed, and (b) its binding to the request:
   every id, span, count and choice it names exists in the request, and no row is empty or extra.

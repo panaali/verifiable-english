@@ -217,7 +217,6 @@ import VE.Events.Conservative
 import VE.Events.Premises
 import VE.Events.Wire
 import VE.Events.WireExamples
-import VE.Experimental.CoreDocument
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -234,6 +233,7 @@ import VE.Judgments.Scan
 import VE.Judgments.Status
 import VE.Judgments.Undeclared
 import VE.Kernel.Carry
+import VE.Kernel.DocumentFold
 import VE.Kit.Except
 import VE.Layout.Anchors
 import VE.Layout.Discourse
@@ -480,6 +480,9 @@ import VE.Senses.Preamble
 import VE.Senses.Project
 import VE.Senses.Read
 import VE.Senses.Request
+import VE.Service.CoreCheck
+import VE.Service.CoreCheckProofs
+import VE.Service.CoreDocument
 import VE.Service.Diagnose
 import VE.Service.Document
 import VE.Service.DocumentChain
@@ -2549,6 +2552,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.SlotWire.factsModel_sat
 #print axioms VE.Compose.SlotWire.map_bind_congr
 #print axioms VE.Compose.SlotWire.ok_bind
+#print axioms VE.Compose.SlotWire.replaySlotAdmission_sound
 #print axioms VE.Compose.SlotWire.replaySlotConflict_parts
 #print axioms VE.Compose.SlotWire.replaySlotEntailment_parts
 #print axioms VE.Compose.SlotWire.replaySlotWitness_parts
@@ -3738,18 +3742,6 @@ import VE.WireContract.Engine
 #print axioms VE.Events.unhooked_X_wellFormed
 #print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Events.wf_transfer
-#print axioms VE.Experimental.CoreDocument.allChoices_mem
-#print axioms VE.Experimental.CoreDocument.allChoices_nodup
-#print axioms VE.Experimental.CoreDocument.choicesOf_ok
-#print axioms VE.Experimental.CoreDocument.finish_ok
-#print axioms VE.Experimental.CoreDocument.lower_choices
-#print axioms VE.Experimental.CoreDocument.lower_names_bound
-#print axioms VE.Experimental.CoreDocument.lower_ok
-#print axioms VE.Experimental.CoreDocument.lower_origin_units
-#print axioms VE.Experimental.CoreDocument.lower_parts
-#print axioms VE.Experimental.CoreDocument.lower_readings_distinct
-#print axioms VE.Experimental.CoreDocument.preliminaries_sets
-#print axioms VE.Experimental.CoreDocument.statementFault_none
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
@@ -3975,6 +3967,8 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.usageMap_sound
 #print axioms VE.Judgments.usageMap_unused
 #print axioms VE.Judgments.viewOf_legacy
+#print axioms VE.Kernel.DocumentFold.fold_checked_iff
+#print axioms VE.Kernel.DocumentFold.fold_reads_rows_only
 #print axioms VE.Kernel.Path.sound
 #print axioms VE.Kernel.ran_meaning
 #print axioms VE.Kernel.shell_provenance
@@ -8952,6 +8946,48 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.tryChoice_none
 #print axioms VE.Senses.tryChoice_some
 #print axioms VE.Senses.wf_iff_no_failure
+#print axioms VE.Service.CoreCheck.caseOf_get
+#print axioms VE.Service.CoreCheck.casesFrom_ok
+#print axioms VE.Service.CoreCheck.casesOf_ok
+#print axioms VE.Service.CoreCheck.core_facts_round_trip
+#print axioms VE.Service.CoreCheck.decode_reads
+#print axioms VE.Service.CoreCheck.document_core_sound
+#print axioms VE.Service.CoreCheck.facts_round_trip
+#print axioms VE.Service.CoreCheck.find?_of_stronger
+#print axioms VE.Service.CoreCheck.firstRefused_none
+#print axioms VE.Service.CoreCheck.getObjValD_mkObj
+#print axioms VE.Service.CoreCheck.inputs_reads
+#print axioms VE.Service.CoreCheck.judgedViews_get
+#print axioms VE.Service.CoreCheck.judgmentSoftRefusal_site
+#print axioms VE.Service.CoreCheck.locatedRow_marked
+#print axioms VE.Service.CoreCheck.mapM_get
+#print axioms VE.Service.CoreCheck.marked_row
+#print axioms VE.Service.CoreCheck.reads_reading
+#print axioms VE.Service.CoreCheck.reads_status
+#print axioms VE.Service.CoreCheck.routedRefusals_sites
+#print axioms VE.Service.CoreCheck.routed_iff
+#print axioms VE.Service.CoreCheck.routed_sites
+#print axioms VE.Service.CoreCheck.runCaseReported_routes
+#print axioms VE.Service.CoreCheck.setObjVal_mkObj
+#print axioms VE.Service.CoreCheck.sets_eq
+#print axioms VE.Service.CoreCheck.softReadingsRefusal_site
+#print axioms VE.Service.CoreCheck.statement_shown
+#print axioms VE.Service.CoreCheck.statuses_lookup
+#print axioms VE.Service.CoreCheck.tableOf_opens
+#print axioms VE.Service.CoreCheck.unitJson_status
+#print axioms VE.Service.CoreCheck.view_unit_status
+#print axioms VE.Service.CoreDocument.allChoices_mem
+#print axioms VE.Service.CoreDocument.allChoices_nodup
+#print axioms VE.Service.CoreDocument.choicesOf_ok
+#print axioms VE.Service.CoreDocument.finish_ok
+#print axioms VE.Service.CoreDocument.lower_choices
+#print axioms VE.Service.CoreDocument.lower_names_bound
+#print axioms VE.Service.CoreDocument.lower_ok
+#print axioms VE.Service.CoreDocument.lower_origin_units
+#print axioms VE.Service.CoreDocument.lower_parts
+#print axioms VE.Service.CoreDocument.lower_readings_distinct
+#print axioms VE.Service.CoreDocument.preliminaries_sets
+#print axioms VE.Service.CoreDocument.statementFault_none
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.Document.checkBodyChecked_encode
 #print axioms VE.Service.Document.checkCoreChecked_encode
@@ -9205,6 +9241,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.Run.selected_model_admissible
 #print axioms VE.SoftNorms.Run.selected_semantics
 #print axioms VE.SoftNorms.Run.selected_semantics_nonvacuous
+#print axioms VE.SoftNorms.Run.slot_wire_admission
 #print axioms VE.SoftNorms.Run.slot_wire_certificate
 #print axioms VE.SoftNorms.Run.slot_wire_conflict
 #print axioms VE.SoftNorms.Run.softLabelled_formulas

@@ -1,0 +1,6079 @@
+{
+ "document": "safety-framework",
+ "checks": [
+  "L1",
+  "L1a",
+  "L2",
+  "L3",
+  "L4",
+  "D"
+ ],
+ "source_sha256": "18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946",
+ "boundaries_sha256": "683b5141329125409a6ad465edeb8a336c519745c1745fa3d8344e8b1e5f7ef6",
+ "blocks": 61,
+ "quotes": {
+  "note": 3,
+  "empty": 0,
+  "checked": 57
+ },
+ "counts": {
+  "L1m": 17,
+  "L1n": 0,
+  "L1u": 0,
+  "L1c": 38,
+  "L1e": 1,
+  "L1a": 4,
+  "L2b": 26,
+  "L2q": 1,
+  "L2a": 0,
+  "L3w": 24,
+  "L4u": 18,
+  "L4l": 50,
+  "D": 386,
+  "L4g": 0
+ },
+ "also_gated": {},
+ "sentences": {
+  "main": 294,
+  "footnote": 19
+ },
+ "footnote_pairs": {
+  "generator": 15,
+  "hand": 0
+ },
+ "unpaired_digit_runs": 35,
+ "hits": [
+  {
+   "class": "L1c",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "we determine whether a substantial modification has been made and whether a further critical capability assessment is required if (1) the model has meaningful new capabilities or material increases in performance; and (2) we believe such material capability increase could materially undermine the justification for why the risks stemming from the model are acceptable",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    9522,
+    9890
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "whether a further critical capability assessment is required",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    9588,
+    9648
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "we determine whether a substantial modification has been made and whether a further critical capability assessment is required if (1) the model has meaningful new capabilities or material increases in performance; and (2) we believe such material capability increase could materially undermine the justification for why the risks stemming from the model are acceptable",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    9522,
+    9890
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "whether a further critical capability assessment is required",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    9588,
+    9648
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f4-further-r",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "we conduct material capability change assessments on various checkpoints upon the completion of a post-training run",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    10089,
+    10204
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "as needed",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7691,
+    7700
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "Similarly to CCLs, early warning evaluations will be used to assess the proximity of a model to a TCL and analyze the risk posed, involving internal and external experts as needed",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7521,
+    7700
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "Similarly to CCLs",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7521,
+    7538
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "as needed",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7691,
+    7700
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "early warning evaluations will be used",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7540,
+    7578
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f8",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "for the T/CCLs the model has reached",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    27978,
+    28014
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f9-dm",
+   "file": "rules.d1.ve",
+   "quote": "This is required only for external deployment",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    17746,
+    17791
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f9-sec",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f9-rel",
+   "file": "rules.d1.ve",
+   "quote": "not internal deployment or further development",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    17793,
+    17839
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "for the T/CCLs the model has reached",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    27978,
+    28014
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "the residual risk of severe harm",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    18529,
+    18561
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "deployment mitigations for the ML R&D CCLs are different than those for the misuse CCLs",
+   "detail": "not a whole sentence run",
+   "at": [
+    "fn5@19280",
+    19292,
+    19379
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f10-sec",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "f11-acc",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "f11-dm",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "f11-sec",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f12-p",
+   "file": "rules.d1.ve",
+   "quote": "external deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable (including a safety case where a CCL has been reached)",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    27696,
+    27886
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f12-u",
+   "file": "rules.d1.ve",
+   "quote": "external deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable (including a safety case where a CCL has been reached)",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    27696,
+    27886
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f13-p",
+   "file": "rules.d1.ve",
+   "quote": "external deployments and high-risk internal deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable (including a safety case where a CCL has been reached)",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    37265,
+    37490
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f13-u",
+   "file": "rules.d1.ve",
+   "quote": "external deployments and high-risk internal deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable (including a safety case where a CCL has been reached)",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    37265,
+    37490
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "might result in updates",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    28464,
+    28487
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f15-diff",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "should",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    21209,
+    21215
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits of the open release of model weights outweigh the risks",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    17959,
+    18274
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "should",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    21209,
+    21215
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "or we otherwise assess that the level of security applied is adequate ... or we assess that the benefits of the open release of model weights outweigh the risks",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    17959,
+    18274
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "If the risk assessment deems the residual risk from internal deployment to be unacceptable without additional safeguards ..., these will be applied",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    40326,
+    40532
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "The Frontier Safety Framework will be reviewed at least once a year",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    43951,
+    44018
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "more frequently if we have reasonable grounds to believe the adequacy of the Framework or our adherence to it has been materially undermined",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    44021,
+    44161
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "we aim to share relevant information with appropriate government authorities",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    45035,
+    45111
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "The mitigation and the effects of such mitigation should also be assessed holistically and be proportionate with expected impact of a model's risk",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    21159,
+    21307
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "f20-holistic-default",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "f20-within-default",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "f20-elicitation-default",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "risk domains",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    6210,
+    6222
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "for CBRN risk, as well as ML R&D and misalignment risks",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    7375,
+    7430
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "measures-sl2plus",
+   "file": "rules.d1.ve",
+   "quote": "We also define and recommend",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    23849,
+    23877
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "measures-sl2plus",
+   "file": "rules.d1.ve",
+   "quote": "which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    23899,
+    24078
+   ]
+  },
+  {
+   "class": "L1m",
+   "block": "levels-cbrn",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "levels-cyber",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "levels-manipulation",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "levels-stealth",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "levels-ml-rd-acceleration",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "no quotation",
+   "at": null
+  },
+  {
+   "class": "L1m",
+   "block": "levels-ml-rd-automation",
+   "file": "facts.d1.ve",
+   "quote": null,
+   "detail": "only quotations in translator's notes",
+   "at": null
+  },
+  {
+   "class": "L1c",
+   "block": "closure-misuse-ccls",
+   "file": "facts.d1.ve",
+   "quote": "For misuse risk, we define CCLs in the following risk domains",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    6160,
+    6222
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "Internal Deployments: represent model releases restricted to Google employees",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    51884,
+    51961
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "further development or deployment",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    17217,
+    17250
+   ]
+  },
+  {
+   "class": "L1c",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "High-Risk Internal Deployments: represent model releases restricted to Google employees for use cases with the potential to enable severe threat scenarios",
+   "detail": "not a whole sentence run",
+   "at": [
+    "main",
+    51984,
+    52138
+   ]
+  },
+  {
+   "class": "L1e",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "External Deployments ... can include both low-risk external deployments as well as general purpose releases to the broader public",
+   "detail": "an elision",
+   "at": [
+    "main",
+    51554,
+    51741
+   ]
+  },
+  {
+   "class": "L1a",
+   "block": "f10-rel-diff",
+   "file": "rules.d1.ve",
+   "quote": "This is required only for external deployment and high-risk internal deployment, not further development",
+   "detail": "an unlinked block's quote that occurs 2 times in the source",
+   "at": [
+    "main",
+    18739,
+    18843
+   ]
+  },
+  {
+   "class": "L1a",
+   "block": "f11-rel",
+   "file": "rules.d1.ve",
+   "quote": "This is required only for external deployment and high-risk internal deployment, not further development",
+   "detail": "an unlinked block's quote that occurs 2 times in the source",
+   "at": [
+    "main",
+    18739,
+    18843
+   ]
+  },
+  {
+   "class": "L1a",
+   "block": "f15-diff",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "a cue sentence of a linked span ('required') that no block linked to it quotes: 'At this stage, additional mitigations beyond these established safeguards are no'",
+   "at": [
+    "main",
+    29530,
+    29815
+   ]
+  },
+  {
+   "class": "L1a",
+   "block": "f8",
+   "file": "rules.d1.ve",
+   "quote": null,
+   "detail": "a cue sentence of a linked span ('will') that no block linked to it quotes: '● A model for which inherent risk assessment indicates no T/CCL is reached will '",
+   "at": [
+    "main",
+    16767,
+    17059
+   ]
+  },
+  {
+   "class": "L2b",
+   "block": "assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "modification_checked",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "further_need_checked",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "further_assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "change_assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "proximity_assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters outside brackets (1 inside, read as translator's notes)",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "residual_assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters outside brackets (1 inside, read as translator's notes)",
+   "at": null
+  },
+  {
+   "class": "L2q",
+   "block": "safety_case",
+   "file": "environment.d1.json",
+   "quote": "are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level",
+   "detail": "fails as an L1c quote would",
+   "at": [
+    "main",
+    53454,
+    53577
+   ]
+  },
+  {
+   "class": "L2b",
+   "block": "periodic_assessed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "periodic_covers_internal",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "safeguards_added",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "harm_mitigated",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "severe_harm_mitigated",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "significant_harm_mitigated",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "secured",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "adequately_secured",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "proceed",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "acceptable",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "case_submitted",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "insider_mitigations_added",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "applied",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "yearly_review",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "frequent_review",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "shared",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "holistic",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters outside brackets (1 inside, read as translator's notes)",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "within_levels",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters outside brackets (1 inside, read as translator's notes)",
+   "at": null
+  },
+  {
+   "class": "L2b",
+   "block": "elicitation_considered",
+   "file": "environment.d1.json",
+   "quote": null,
+   "detail": "no quoted passage of 12 characters outside brackets (1 inside, read as translator's notes)",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "before",
+   "detail": "before in legend of assessed; no member of {before, prior to} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "before",
+   "detail": "before in legend of modification_checked; no member of {before, prior to} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "before",
+   "detail": "before in legend of further_need_checked; no member of {before, prior to} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "before",
+   "detail": "before in legend of modification_checked; no member of {before, prior to} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "before",
+   "detail": "before in legend of further_need_checked; no member of {before, prior to} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of change_assessed; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of proximity_assessed; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of proximity_assessed, legend of tracked; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f7-rra",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of tracked; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "never",
+   "detail": "never in legend of acceptable; no member of {never} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "never",
+   "detail": "never in legend of acceptable; no member of {never} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f10-rel-diff",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f11-rel",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f12-p",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of governance_found_acceptable_with_safety_case_where_ccl_reached; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f12-u",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of governance_found_acceptable_with_safety_case_where_ccl_reached; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f13-p",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of governance_found_acceptable_with_safety_case_where_ccl_reached; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f13-u",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of governance_found_acceptable_with_safety_case_where_ccl_reached; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "at least",
+   "detail": "at least in rule line; no member of {at least} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f17-pra",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of tracked; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f17-hri",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of tracked; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L3w",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "not",
+   "detail": "not in legend of tracked; no member of {not, nor} in the full source sentences",
+   "at": null
+  },
+  {
+   "class": "L4l",
+   "block": "main@550",
+   "file": "",
+   "quote": "The core components of such Frameworks are to:",
+   "detail": "uncovered, in LABELLED units ov-components (exposition) (cue 'are to')",
+   "at": [
+    "main",
+    550,
+    596
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@820",
+   "file": "",
+   "quote": "● Prepare and articulate proactive mitigation plans to ensur",
+   "detail": "uncovered, in LABELLED units ov-components (exposition) (cue 'ensure')",
+   "at": [
+    "main",
+    820,
+    963
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@964",
+   "file": "",
+   "quote": "● Where required or appropriate, involve external parties to",
+   "detail": "uncovered, in LABELLED units ov-components (exposition) (cue 'required')",
+   "at": [
+    "main",
+    964,
+    1062
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@1504",
+   "file": "",
+   "quote": "For each type of risk, we define a set of CCLs (and TCLs whe",
+   "detail": "uncovered, in LABELLED units ov-each-type (exposition) (cue 'we define')",
+   "at": [
+    "main",
+    1504,
+    1612
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@2501",
+   "file": "",
+   "quote": "We may change our approach over time as we gain experience a",
+   "detail": "uncovered, in LABELLED units ov-may-change (hedged) (unit ov-may-change)",
+   "at": [
+    "main",
+    2501,
+    2629
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@5758",
+   "file": "",
+   "quote": "CCLs are determined by identifying and analyzing the main fo",
+   "detail": "uncovered, in LABELLED units s12-determined (explanation) (cue 'must')",
+   "at": [
+    "main",
+    5758,
+    5974
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@6919",
+   "file": "",
+   "quote": "Such capabilities may serve as a substantial cross-cutting r",
+   "detail": "uncovered, in LABELLED units s12-cross-cutting (hedged) (unit s12-cross-cutting)",
+   "at": [
+    "main",
+    6919,
+    7082
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@7432",
+   "file": "",
+   "quote": "We may include TCLs for additional risks in the future, as o",
+   "detail": "uncovered, in LABELLED units s12-may-include (hedged) (unit s12-may-include)",
+   "at": [
+    "main",
+    7432,
+    7520
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@10345",
+   "file": "",
+   "quote": "To understand if such a change in capability in the subseque",
+   "detail": "uncovered, in LABELLED units s132-light-weight (hedged) (unit s132-light-weight)",
+   "at": [
+    "main",
+    10345,
+    10705
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@10706",
+   "file": "",
+   "quote": "We may also apply material capability change assessments to ",
+   "detail": "uncovered, in LABELLED units s132-non-frontier (hedged) (cue 'required')",
+   "at": [
+    "main",
+    10706,
+    10861
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@10862",
+   "file": "",
+   "quote": "Central to our critical capability assessments are \"early wa",
+   "detail": "uncovered, in LABELLED units s132-early-warning (definition) (cue 'we use')",
+   "at": [
+    "main",
+    10862,
+    11130
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@11654",
+   "file": "",
+   "quote": "We may run early warning evaluations more frequently or adju",
+   "detail": "uncovered, in LABELLED units s132-may-run (hedged), p6-header (meta), s132-may-run-continued (hedged) (unit s132-may-run)",
+   "at": [
+    "main",
+    11654,
+    12201
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@12683",
+   "file": "",
+   "quote": "Our approach to model evaluations and inherent risk assessme",
+   "detail": "uncovered, in LABELLED units s132-means (attributed) (cue 'ensure')",
+   "at": [
+    "main",
+    12683,
+    12950
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@12951",
+   "file": "",
+   "quote": "Where appropriate, we may engage relevant external actors, i",
+   "detail": "uncovered, in LABELLED units s132-engage (hedged) (unit s132-engage)",
+   "at": [
+    "main",
+    12951,
+    13096
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@13097",
+   "file": "",
+   "quote": "Note on Machine Learning R&D CCLs:",
+   "detail": "uncovered (unit note-ml-rd-must)",
+   "at": [
+    "main",
+    13097,
+    13131
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@14207",
+   "file": "",
+   "quote": "Central to most response plans will be the application of th",
+   "detail": "uncovered, in LABELLED units s133-central (exposition) (cue 'will')",
+   "at": [
+    "main",
+    14207,
+    14314
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@14315",
+   "file": "",
+   "quote": "However, if we assess that risks stemming from the model rem",
+   "detail": "uncovered, in LABELLED units s133-update-threshold (hedged) (cue 'ensure')",
+   "at": [
+    "main",
+    14315,
+    14547
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@14845",
+   "file": "",
+   "quote": "The mitigations described in this document are limited to th",
+   "detail": "uncovered, in LABELLED units s133-limited (exposition) (cue 'will')",
+   "at": [
+    "main",
+    14845,
+    15080
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@15081",
+   "file": "",
+   "quote": "Because we cannot always anticipate what security and deploy",
+   "detail": "uncovered, in LABELLED units s133-determined-later (hedged) (cue 'will')",
+   "at": [
+    "main",
+    15081,
+    15345
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@16767",
+   "file": "",
+   "quote": "● A model for which inherent risk assessment indicates no T/",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    16767,
+    17059
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@17256",
+   "file": "",
+   "quote": "○ We assess that the deployment mitigations have brought the",
+   "detail": "uncovered (unit s135-bullet2-dm)",
+   "at": [
+    "main",
+    17256,
+    17745
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@18276",
+   "file": "",
+   "quote": "● A model for which the inherent risk assessment indicates a",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    18276,
+    18469
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@18845",
+   "file": "",
+   "quote": "○ Security mitigations have been applied to the model weight",
+   "detail": "uncovered (cue 'we otherwise')",
+   "at": [
+    "main",
+    18845,
+    19279
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@19691",
+   "file": "",
+   "quote": "● A model for which the inherent risk assessment indicates t",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    19691,
+    19912
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@19913",
+   "file": "",
+   "quote": "○ We assess that the deployment mitigations have brought the",
+   "detail": "uncovered (cue 'required')",
+   "at": [
+    "main",
+    19913,
+    20348
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@20349",
+   "file": "",
+   "quote": "This is required only for external deployment and high-risk ",
+   "detail": "uncovered (cue 'required')",
+   "at": [
+    "main",
+    20349,
+    20454
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@20455",
+   "file": "",
+   "quote": "○ We assess that the level of security applied is adequate, ",
+   "detail": "uncovered (cue 'We assess')",
+   "at": [
+    "main",
+    20455,
+    20762
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@20872",
+   "file": "",
+   "quote": "Because the science of AI risk assessment is still developin",
+   "detail": "uncovered, in LABELLED units s135-note (exposition) (cue 'will')",
+   "at": [
+    "main",
+    20872,
+    21004
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@21415",
+   "file": "",
+   "quote": "Misuse This section describes our mitigation approach for mo",
+   "detail": "uncovered, in LABELLED units s2-heading (meta), s2-intro (exposition), s21-heading (meta), s21-categories (definition) (cue 'we assess')",
+   "at": [
+    "main",
+    21415,
+    22028
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@24566",
+   "file": "",
+   "quote": "Because AI security is an area of active research, we expect",
+   "detail": "uncovered, in LABELLED units s211-expect (attributed), s212-heading (meta), s212-applied (exposition) (cue 'will')",
+   "at": [
+    "main",
+    24566,
+    25665
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@27413",
+   "file": "",
+   "quote": "Mitigations would consequently have to be stronger (or would",
+   "detail": "uncovered (unit s212-step1c)",
+   "at": [
+    "main",
+    27413,
+    27536
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@27537",
+   "file": "",
+   "quote": "Where the model has reached a CCL, the residual risk assessm",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    27537,
+    27641
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@28133",
+   "file": "",
+   "quote": "Post-deployment processes: our residual risk assessments, sa",
+   "detail": "uncovered, in LABELLED units s212-step3 (hedged) (unit s212-step3)",
+   "at": [
+    "main",
+    28133,
+    28357
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@28544",
+   "file": "",
+   "quote": "This process is designed to ensure that residual risk remain",
+   "detail": "uncovered, in LABELLED units s212-designed (explanation) (cue 'will')",
+   "at": [
+    "main",
+    28544,
+    28856
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@29223",
+   "file": "",
+   "quote": "While we monitor for potential future risks related to insid",
+   "detail": "uncovered, in LABELLED units s22-insider-assessment (attributed) (cue 'we monitor')",
+   "at": [
+    "main",
+    29223,
+    29529
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@29530",
+   "file": "",
+   "quote": "At this stage, additional mitigations beyond these establish",
+   "detail": "uncovered (cue 'required')",
+   "at": [
+    "main",
+    29530,
+    29815
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@29853",
+   "file": "",
+   "quote": "We recommend a security level for each CCL, which reflects o",
+   "detail": "uncovered (cue 'should')",
+   "at": [
+    "main",
+    29853,
+    30038
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@30039",
+   "file": "",
+   "quote": "In practice, our overall security posture may commonly excee",
+   "detail": "uncovered, in LABELLED units s22-posture (hedged) (unit s22-posture)",
+   "at": [
+    "main",
+    30039,
+    30138
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@30621",
+   "file": "",
+   "quote": "Relatedly, we believe these recommendations will only be eff",
+   "detail": "uncovered, in LABELLED units s22-believe (attributed), s221-heading (meta), s221-focus (definition) (cue 'will')",
+   "at": [
+    "main",
+    30621,
+    30944
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@33903",
+   "file": "",
+   "quote": "Machine Learning R&D and Misalignment This section describes",
+   "detail": "uncovered, in LABELLED units s3-heading (meta), s3-intro (exposition), s31-heading (meta), s31-similar (exposition), s311-heading (meta), s311-important (exposition) (cue 'we provisionally assess')",
+   "at": [
+    "main",
+    33903,
+    34651
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@34652",
+   "file": "",
+   "quote": "In addition, exfiltration of highly capable models increases",
+   "detail": "uncovered, in LABELLED units s311-likelihood (causal) (cue 'will')",
+   "at": [
+    "main",
+    34652,
+    34840
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@34941",
+   "file": "",
+   "quote": "Security mitigations also protect against the risk of the mo",
+   "detail": "uncovered, in LABELLED units fn9-a (exposition), s312-heading (meta), s312-applied (exposition) (cue 'will')",
+   "at": [
+    "main",
+    34941,
+    35172
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@36535",
+   "file": "",
+   "quote": "Model propensity for, historical incidence of and severity o",
+   "detail": "uncovered (unit s312-step1c)",
+   "at": [
+    "main",
+    36535,
+    36838
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@36839",
+   "file": "",
+   "quote": "Where the model has reached a CCL, the residual risk assessm",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    36839,
+    36943
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@37728",
+   "file": "",
+   "quote": "Post-deployment processes: our residual risk assessments, sa",
+   "detail": "uncovered, in LABELLED units s312-step3 (hedged) (unit s312-step3)",
+   "at": [
+    "main",
+    37728,
+    37952
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@37953",
+   "file": "",
+   "quote": "Material updates to a safety case will be submitted to the a",
+   "detail": "uncovered, in LABELLED units s312-submitted (norm), s312-might-update (hedged) (cue 'will')",
+   "at": [
+    "main",
+    37953,
+    38138
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@38139",
+   "file": "",
+   "quote": "This process is designed to ensure that residual risk remain",
+   "detail": "uncovered, in LABELLED units s312-designed (explanation) (cue 'will')",
+   "at": [
+    "main",
+    38139,
+    38451
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@38978",
+   "file": "",
+   "quote": "At this capability level we apply a proportionate set of mit",
+   "detail": "uncovered, in LABELLED units s32-tiered (exposition) (cue 'we apply a')",
+   "at": [
+    "main",
+    38978,
+    39090
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@39249",
+   "file": "",
+   "quote": "At these capability levels we apply a stronger set of mitiga",
+   "detail": "uncovered (cue 'we apply a')",
+   "at": [
+    "main",
+    39249,
+    39526
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@40731",
+   "file": "",
+   "quote": "We recommend a security level for each of these CCLs, which ",
+   "detail": "uncovered (cue 'should')",
+   "at": [
+    "main",
+    40731,
+    40982
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@41710",
+   "file": "",
+   "quote": "However, we expect that acceleration will stem from systems ",
+   "detail": "uncovered, in LABELLED units s322-acceleration-rationale (explanation) (cue 'will')",
+   "at": [
+    "main",
+    41710,
+    41835
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@43365",
+   "file": "",
+   "quote": "Governance and Accountability 4.1 Governance structure We ha",
+   "detail": "uncovered, in LABELLED units s4-heading (meta), s41-structure (attributed) (cue 'ensure')",
+   "at": [
+    "main",
+    43365,
+    43609
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@43735",
+   "file": "",
+   "quote": "This includes legal, compliance, and safety reviews with esc",
+   "detail": "uncovered, in LABELLED units s41-reviews (exposition) (cue 'ensure')",
+   "at": [
+    "main",
+    43735,
+    43846
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@44543",
+   "file": "",
+   "quote": "Following this assessment, we may:",
+   "detail": "uncovered, in LABELLED units s51-may-update (hedged) (unit s51-may-update)",
+   "at": [
+    "main",
+    44543,
+    44577
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@44578",
+   "file": "",
+   "quote": "● Update our risk domains and T/CCLs, where necessary.",
+   "detail": "uncovered, in LABELLED units s51-may-update (hedged) (unit s51-may-update)",
+   "at": [
+    "main",
+    44578,
+    44634
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@44635",
+   "file": "",
+   "quote": "● Update our testing and mitigation approaches, where needed",
+   "detail": "uncovered, in LABELLED units s51-may-update (hedged) (cue 'ensure')",
+   "at": [
+    "main",
+    44635,
+    44794
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@45672",
+   "file": "",
+   "quote": "We may also consider disclosing information to other externa",
+   "detail": "uncovered, in LABELLED units s52-may-also (hedged) (unit s52-may-also)",
+   "at": [
+    "main",
+    45672,
+    45807
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@47007",
+   "file": "",
+   "quote": "There may be many different checkpoints and versions of the ",
+   "detail": "uncovered, in LABELLED units g-checkpoints (definition) (cue 'will')",
+   "at": [
+    "main",
+    47007,
+    47328
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@48743",
+   "file": "",
+   "quote": "Alert Thresholds: are thresholds which we set marginally ear",
+   "detail": "uncovered, in LABELLED units g-alert (definition) (cue 'we set')",
+   "at": [
+    "main",
+    48743,
+    48822
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@49883",
+   "file": "",
+   "quote": "Material Capability Change Assessments: indicate whether a c",
+   "detail": "uncovered, in LABELLED units g-mcca (definition) (cue 'required')",
+   "at": [
+    "main",
+    49883,
+    49985
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@50300",
+   "file": "",
+   "quote": "May also be used to assess whether a critical capability ass",
+   "detail": "uncovered, in LABELLED units g-mcca (definition) (cue 'required')",
+   "at": [
+    "main",
+    50300,
+    50406
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@50858",
+   "file": "",
+   "quote": "Central to most response plans will be the application of th",
+   "detail": "uncovered, in LABELLED units g-response-plans (definition) (cue 'will')",
+   "at": [
+    "main",
+    50858,
+    50967
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@50968",
+   "file": "",
+   "quote": "However, if we assess that risks stemming from the model rem",
+   "detail": "uncovered, in LABELLED units g-response-plans (definition) (cue 'ensure')",
+   "at": [
+    "main",
+    50968,
+    51200
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@51201",
+   "file": "",
+   "quote": "Deployment Mitigations: are safety measures we implement whi",
+   "detail": "uncovered, in LABELLED units g-deployment-mitigations (definition) (cue 'we implement')",
+   "at": [
+    "main",
+    51201,
+    51364
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "main@52210",
+   "file": "",
+   "quote": "Security Mitigations: are safety measures we implement which",
+   "detail": "uncovered, in LABELLED units g-security-mitigations (definition) (cue 'we implement')",
+   "at": [
+    "main",
+    52210,
+    52381
+   ]
+  },
+  {
+   "class": "L4u",
+   "block": "main@53579",
+   "file": "",
+   "quote": "Residual risk assessments will be supplemented with a safety",
+   "detail": "uncovered (cue 'will')",
+   "at": [
+    "main",
+    53579,
+    53726
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "fn13@42817@42820",
+   "file": "",
+   "quote": "This level may include mitigations aligned with SL 2+ and 3,",
+   "detail": "uncovered, in LABELLED units fn13 (hedged) (unit fn13)",
+   "at": [
+    "fn13@42817",
+    42820,
+    43048
+   ]
+  },
+  {
+   "class": "L4l",
+   "block": "fn12@43049@43052",
+   "file": "",
+   "quote": "This level may include mitigations aligned with SL 2+, plus ",
+   "detail": "uncovered, in LABELLED units fn12 (hedged) (unit fn12)",
+   "at": [
+    "fn12@43049",
+    43052,
+    43227
+   ]
+  },
+  {
+   "class": "D",
+   "block": "f2",
+   "file": "rules.d1.ve",
+   "quote": "conduct",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f2",
+   "file": "rules.d1.ve",
+   "quote": "prior",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "conduct",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "even",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "number",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "tester",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f3",
+   "file": "rules.d1.ve",
+   "quote": "trust",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "believe",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "critical",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "determine",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "further",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-d",
+   "file": "rules.d1.ve",
+   "quote": "stemm",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "believe",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "determine",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "made",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "modific",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "stemm",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-d",
+   "file": "rules.d1.ve",
+   "quote": "substantial",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "acceptable",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "believe",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "capabil",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "critical",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "determine",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "further",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "increas",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "increase",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "justific",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "material",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "meaningful",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "new",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "performance",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "stemm",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "undermine",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-check-r",
+   "file": "rules.d1.ve",
+   "quote": "why",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "acceptable",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "believe",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "determine",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "increas",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "increase",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "justific",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "made",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "material",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "meaningful",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "modific",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "new",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "performance",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "stemm",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "substantial",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "undermine",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f4-need-r",
+   "file": "rules.d1.ve",
+   "quote": "why",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "completion",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "conduct",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "critical",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "increas",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "last",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "meaningful",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "new",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "performance",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "relative",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "subject",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "subsequent",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "understand",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "upon",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f5",
+   "file": "rules.d1.ve",
+   "quote": "version",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "analyze",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "appropriate",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "checkpoint",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "conduct",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "deploy",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "develop",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "early",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "evalu",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "identific",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "manage",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "proces",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "similar",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "tcl",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "throughout",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "used",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "variou",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "version",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6",
+   "file": "rules.d1.ve",
+   "quote": "warn",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "analyze",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "appropriate",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "checkpoint",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "conduct",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "deploy",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "develop",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "early",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "evalu",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "identific",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "manage",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "proces",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "similar",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "throughout",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "used",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "variou",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "version",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f6-tcl",
+   "file": "rules.d1.ve",
+   "quote": "warn",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f7-rra",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f7-rra",
+   "file": "rules.d1.ve",
+   "quote": "tcls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f7-sc",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "evidence",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "increase",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "likelihood",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "particular",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "propos",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "reduc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-acc",
+   "file": "rules.d1.ve",
+   "quote": "suggest",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-dm",
+   "file": "rules.d1.ve",
+   "quote": "develop",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-dm",
+   "file": "rules.d1.ve",
+   "quote": "further",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-dm",
+   "file": "rules.d1.ve",
+   "quote": "internal",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-dm",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-rel",
+   "file": "rules.d1.ve",
+   "quote": "external",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f9-rel",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "evidence",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "increase",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "likelihood",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "particular",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "propos",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "reduc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-acc",
+   "file": "rules.d1.ve",
+   "quote": "suggest",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "based",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "because",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "brought",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "categor",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "consider",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "differenc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "different",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "effectivenes",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "event",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "inform",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "lead",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "misuse",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "note",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "pertain",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "propens",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "relat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "respective",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-dm-diff",
+   "file": "rules.d1.ve",
+   "quote": "sever",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-rel-diff",
+   "file": "rules.d1.ve",
+   "quote": "external",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f10-rel-diff",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f11-rel",
+   "file": "rules.d1.ve",
+   "quote": "external",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f11-rel",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f12-p",
+   "file": "rules.d1.ve",
+   "quote": "pre",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f12-p",
+   "file": "rules.d1.ve",
+   "quote": "review",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f12-u",
+   "file": "rules.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f12-u",
+   "file": "rules.d1.ve",
+   "quote": "pre",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f12-u",
+   "file": "rules.d1.ve",
+   "quote": "review",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f13-p",
+   "file": "rules.d1.ve",
+   "quote": "pre",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f13-p",
+   "file": "rules.d1.ve",
+   "quote": "review",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f13-u",
+   "file": "rules.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f13-u",
+   "file": "rules.d1.ve",
+   "quote": "pre",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f13-u",
+   "file": "rules.d1.ve",
+   "quote": "review",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "relat",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "residual",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "result",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f14",
+   "file": "rules.d1.ve",
+   "quote": "updat",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "adequate",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "adjust",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "already",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "available",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "balanc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "based",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "benefit",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "case",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "chang",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "current",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "different",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "effect",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "example",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "exce",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "expect",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "higher",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "holistical",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "impact",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "innov",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "limit",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "marginal",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "match",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "meaningful",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "mitig",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "occur",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "otherwise",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "outweigh",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "place",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "posed",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "posses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "profil",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "proportionate",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "public",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "reflect",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "release",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "safety",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "secur",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "similar",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "stat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "think",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "thus",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "understand",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds",
+   "file": "rules.d1.ve",
+   "quote": "weaker",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "adequate",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "adjust",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "already",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "available",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "balanc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "based",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "benefit",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "case",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "chang",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "current",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "different",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "effect",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "example",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "exce",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "expect",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "higher",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "holistical",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "impact",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "innov",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "limit",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "marginal",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "match",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "meaningful",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "mitig",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "occur",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "otherwise",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "outweigh",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "place",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "posed",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "posses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "profil",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "proportionate",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "public",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "reflect",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "release",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "safety",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "secur",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "similar",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "stat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "think",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "thus",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "understand",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f16-ds-strict",
+   "file": "rules.d1.ve",
+   "quote": "weaker",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-pra",
+   "file": "rules.d1.ve",
+   "quote": "carry",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-hri",
+   "file": "rules.d1.ve",
+   "quote": "manifest",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-hri",
+   "file": "rules.d1.ve",
+   "quote": "since",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-hri",
+   "file": "rules.d1.ve",
+   "quote": "use",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "chain",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "define",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "high",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "misuse",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "monitor",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "scale",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "structural",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f17-add",
+   "file": "rules.d1.ve",
+   "quote": "thought",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "adequacy",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "adherence",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "believe",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "disclosur",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "frequent",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "frontier",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "ground",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "material",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "reasonable",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "safety",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "undermin",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-yearly",
+   "file": "rules.d1.ve",
+   "quote": "updat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "disclosur",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "frontier",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "once",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "safety",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f18-frequent",
+   "file": "rules.d1.ve",
+   "quote": "updat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "aim",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "asses",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "bodi",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "corporate",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "disclosur",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "framework",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "governance",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "review",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "updat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f19-default",
+   "file": "rules.d1.ve",
+   "quote": "version",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "balanc",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "innov",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "model",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "safety",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-holistic-strict",
+   "file": "rules.d1.ve",
+   "quote": "thus",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-elicitation-strict",
+   "file": "rules.d1.ve",
+   "quote": "conservatism",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-elicitation-strict",
+   "file": "rules.d1.ve",
+   "quote": "form",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-elicitation-strict",
+   "file": "rules.d1.ve",
+   "quote": "requir",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "f20-elicitation-strict",
+   "file": "rules.d1.ve",
+   "quote": "thus",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "capabil",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "define",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "harm",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "identify",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "misuse",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "model",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "result",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "severe",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "tcls",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "bridge-one-domain",
+   "file": "rules.d1.ve",
+   "quote": "well",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "measures-sl2plus",
+   "file": "rules.d1.ve",
+   "quote": "define",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "measures-sl2plus",
+   "file": "rules.d1.ve",
+   "quote": "recommend",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "measures-sl2plus",
+   "file": "rules.d1.ve",
+   "quote": "uses",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-misuse-ccls",
+   "file": "facts.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-misuse-ccls",
+   "file": "facts.d1.ve",
+   "quote": "define",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-misuse-ccls",
+   "file": "facts.d1.ve",
+   "quote": "result",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "identify",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "kind",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "learn",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "machine",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-ccl-kinds",
+   "file": "facts.d1.ve",
+   "quote": "relat",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-tcls",
+   "file": "facts.d1.ve",
+   "quote": "identify",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-tcls",
+   "file": "facts.d1.ve",
+   "quote": "tcls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "closure-tcls",
+   "file": "facts.d1.ve",
+   "quote": "well",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "tcl-not-ccl",
+   "file": "facts.d1.ve",
+   "quote": "capture",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "tcl-not-ccl",
+   "file": "facts.d1.ve",
+   "quote": "ccls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "tcl-not-ccl",
+   "file": "facts.d1.ve",
+   "quote": "lower",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "tcl-not-ccl",
+   "file": "facts.d1.ve",
+   "quote": "tcls",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "tcl-not-ccl",
+   "file": "facts.d1.ve",
+   "quote": "threshold",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "employe",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "releas",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "represent",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "restrict",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-internal-external",
+   "file": "facts.d1.ve",
+   "quote": "use",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "acceptable",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "assess",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "ccl",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "deem",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "indicat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "inherent",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "level",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "misuse",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "pose",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "reach",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "residual",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-development",
+   "file": "facts.d1.ve",
+   "quote": "risk",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "automat",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "build",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "case",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "employe",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "enable",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "google",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "infrastructure",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "model",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "potential",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "releas",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "represent",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "restrict",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "scenario",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "secur",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "severe",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "threat",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-high-risk",
+   "file": "facts.d1.ve",
+   "quote": "use",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "broader",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "general",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "include",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "public",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "purpose",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "releas",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "represent",
+   "detail": "unaccounted, in no sidecar entry, outside the header quote",
+   "at": null
+  },
+  {
+   "class": "D",
+   "block": "activities-low-risk",
+   "file": "facts.d1.ve",
+   "quote": "well",
+   "detail": "unaccounted, in no sidecar entry",
+   "at": null
+  }
+ ],
+ "levers": {
+  "extra": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  },
+  "suppress": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  },
+  "abbrev": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  },
+  "furniture": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 37,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 19,
+    "L4l": 50,
+    "D": 364,
+    "L4g": 0
+   },
+   "cleared": [
+    [
+     "L4l",
+     "main@11654",
+     "We may run early warning evaluations more Frontier Safety Fr"
+    ],
+    [
+     "L4l",
+     "main@25384",
+     "Frontier Safety Framework | 9 Frontier Safety Framework 2.1."
+    ],
+    [
+     "L4l",
+     "main@29166",
+     "Frontier Safety Framework | 10 Frontier Safety Framework Whi"
+    ],
+    [
+     "L4u",
+     "main@37154",
+     "Frontier Safety Framework | 13 Frontier Safety Framework 2."
+    ],
+    [
+     "L4u",
+     "main@40731",
+     "We recommend a security level for each of these Frontier Saf"
+    ]
+   ],
+   "added": [
+    [
+     "D",
+     "f6",
+     "appropriate"
+    ],
+    [
+     "D",
+     "f6",
+     "checkpoint"
+    ],
+    [
+     "D",
+     "f6",
+     "conduct"
+    ],
+    [
+     "D",
+     "f6",
+     "deploy"
+    ],
+    [
+     "D",
+     "f6",
+     "develop"
+    ],
+    [
+     "D",
+     "f6",
+     "identific"
+    ],
+    [
+     "D",
+     "f6",
+     "manage"
+    ],
+    [
+     "D",
+     "f6",
+     "proces"
+    ],
+    [
+     "D",
+     "f6",
+     "throughout"
+    ],
+    [
+     "D",
+     "f6",
+     "variou"
+    ],
+    [
+     "D",
+     "f6",
+     "version"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "appropriate"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "checkpoint"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "conduct"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "deploy"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "develop"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "identific"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "manage"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "proces"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "throughout"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "variou"
+    ],
+    [
+     "D",
+     "f6-tcl",
+     "version"
+    ],
+    [
+     "L1c",
+     "f6-tcl",
+     "Similarly to CCLs, early warning evaluations will be used to assess the proximity of a model to a TCL and analyze the risk posed, involving internal and external experts as needed"
+    ],
+    [
+     "L4l",
+     "main@11654",
+     "We may run early warning evaluations more frequently or adju"
+    ],
+    [
+     "L4l",
+     "main@24566",
+     "Because AI security is an area of active research, we expect"
+    ],
+    [
+     "L4l",
+     "main@29223",
+     "While we monitor for potential future risks related to insid"
+    ],
+    [
+     "L4u",
+     "main@40731",
+     "We recommend a security level for each of these CCLs, which "
+    ]
+   ]
+  },
+  "footnotes": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 1,
+    "L1c": 39,
+    "L1e": 1,
+    "L1a": 5,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 16,
+    "L4l": 45,
+    "D": 428,
+    "L4g": 0
+   },
+   "cleared": [
+    [
+     "D",
+     "f10-dm-diff",
+     "adequate"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "already"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "appl"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "benefit"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "develop"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "exce"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "further"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "match"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "otherwise"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "outweigh"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "place"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "profil"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "recommend"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "requir"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "secur"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "similar"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "stat"
+    ],
+    [
+     "D",
+     "f10-dm-diff",
+     "weight"
+    ],
+    [
+     "D",
+     "f3",
+     "adequate"
+    ],
+    [
+     "D",
+     "f3",
+     "adjust"
+    ],
+    [
+     "D",
+     "f3",
+     "alert"
+    ],
+    [
+     "D",
+     "f3",
+     "buffer"
+    ],
+    [
+     "D",
+     "f3",
+     "early"
+    ],
+    [
+     "D",
+     "f3",
+     "evalu"
+    ],
+    [
+     "D",
+     "f3",
+     "frequent"
+    ],
+    [
+     "D",
+     "f3",
+     "longer"
+    ],
+    [
+     "D",
+     "f3",
+     "progres"
+    ],
+    [
+     "D",
+     "f3",
+     "rate"
+    ],
+    [
+     "D",
+     "f3",
+     "run"
+    ],
+    [
+     "D",
+     "f3",
+     "suggest"
+    ],
+    [
+     "D",
+     "f3",
+     "threshold"
+    ],
+    [
+     "D",
+     "f3",
+     "warn"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "6"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "correspond"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "framework"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "goal"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "indicate"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "line"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "model"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "principl"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "use"
+    ],
+    [
+     "D",
+     "measures-sl2plus",
+     "weight"
+    ],
+    [
+     "L1a",
+     "f2",
+     null
+    ],
+    [
+     "L1c",
+     "f3",
+     "A critical capability assessment may not be conducted for low-risk external deployments (e.g. to a small number of trusted testers) if the appropriate governance function determines the residual risk of such deployments to be acceptable even if the model has reached a T/CCL (including with a safety case where a CCL has been reached)"
+    ],
+    [
+     "L1u",
+     "f2",
+     "We conduct a critical capability assessment prior to the first external deployment of a new frontier AI model"
+    ],
+    [
+     "L4l",
+     "main@1379",
+     "The Framework addresses misuse risk 2 as well as machine lea"
+    ],
+    [
+     "L4l",
+     "main@447",
+     "The Framework is informed by the broader conversation on Fro"
+    ],
+    [
+     "L4u",
+     "main@9348",
+     "We conduct a critical capability assessment prior to the fir"
+    ]
+   ],
+   "added": [
+    [
+     "L4l",
+     "fn12@43049@43052",
+     "This level may include mitigations aligned with SL 2+, plus "
+    ],
+    [
+     "L4l",
+     "fn13@42817@42820",
+     "This level may include mitigations aligned with SL 2+ and 3,"
+    ],
+    [
+     "L4l",
+     "main@11654",
+     "We may run early warning evaluations more frequently or adju"
+    ],
+    [
+     "L4l",
+     "main@1504",
+     "For each type of risk, we define a set of CCLs (and TCLs whe"
+    ],
+    [
+     "L4l",
+     "main@24566",
+     "Because AI security is an area of active research, we expect"
+    ],
+    [
+     "L4l",
+     "main@34941",
+     "Security mitigations also protect against the risk of the mo"
+    ],
+    [
+     "L4l",
+     "main@550",
+     "The core components of such Frameworks are to:"
+    ],
+    [
+     "L4u",
+     "main@18845",
+     "○ Security mitigations have been applied to the model weight"
+    ],
+    [
+     "L4u",
+     "main@20349",
+     "This is required only for external deployment and high-risk "
+    ],
+    [
+     "L4u",
+     "main@36839",
+     "Where the model has reached a CCL, the residual risk assessm"
+    ]
+   ]
+  },
+  "hand-footnotes": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  },
+  "ruled_out": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  },
+  "unformalised": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 51,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [
+    [
+     "L4u",
+     "fn11@43228@43231",
+     "The same caveats regarding security levels for misuse CCLs a"
+    ],
+    [
+     "L4u",
+     "fn6@24718@24720",
+     "In other words, \"security level N\" indicates security contro"
+    ],
+    [
+     "L4u",
+     "fn6@24718@24849",
+     "See https://www.rand.org/pubs/research_reports/RRA2849-1.htm"
+    ],
+    [
+     "L4u",
+     "fn6@24718@24923",
+     "In aligning our security levels with RAND\"s, we are referrin"
+    ],
+    [
+     "L4u",
+     "fn6@24718@25134",
+     "As the authors point out, the \"security level benchmarks rep"
+    ],
+    [
+     "L4u",
+     "fn8@31869@31871",
+     "Here, and in other misuse T/CCLs, we intend this to mean rel"
+    ],
+    [
+     "L4u",
+     "fn9@36999@37001",
+     "While the RAND framework is not specifically designed to add"
+    ],
+    [
+     "L4u",
+     "main@11379",
+     "In our evaluations, we seek to apply appropriate scaffolding"
+    ],
+    [
+     "L4u",
+     "main@12202",
+     "We conduct further analysis, including reviewing model-indep"
+    ],
+    [
+     "L4u",
+     "main@12347",
+     "In particular, we strive to learn from our post-market monit"
+    ],
+    [
+     "L4u",
+     "main@13481",
+     "As a result, to assess the ML R&D CCLs, we may use sources o"
+    ],
+    [
+     "L4u",
+     "main@14138",
+     "This will inform the formulation and application of a respon"
+    ],
+    [
+     "L4u",
+     "main@15346",
+     "These mitigations also reflect considerations from the persp"
+    ],
+    [
+     "L4u",
+     "main@16018",
+     "● Deployment mitigations: we will use a combination of threa"
+    ],
+    [
+     "L4u",
+     "main@1613",
+     "Risk assessment will necessarily involve evaluating cross-cu"
+    ],
+    [
+     "L4u",
+     "main@23179",
+     "Using Google\"s Secure AI Framework (SAIF) and Google\"s commo"
+    ],
+    [
+     "L4u",
+     "main@23323",
+     "SAIF is a defense-in-depth approach that embeds security int"
+    ],
+    [
+     "L4u",
+     "main@23474",
+     "SAIF is premised on six core elements: strong security found"
+    ],
+    [
+     "L4u",
+     "main@23704",
+     "We use security levels to indicate security goals/principles"
+    ],
+    [
+     "L4u",
+     "main@25669",
+     "Development and assessment of mitigations: safeguards and an"
+    ],
+    [
+     "L4u",
+     "main@25816",
+     "Developing and improving a suite of safeguards targeting the"
+    ],
+    [
+     "L4u",
+     "main@2630",
+     "We will review the Framework periodically and we expect it t"
+    ],
+    [
+     "L4u",
+     "main@34841",
+     "Below, we rely again on security levels to articulate the se"
+    ],
+    [
+     "L4u",
+     "main@35289",
+     "Development and assessment of mitigations: safeguards and an"
+    ],
+    [
+     "L4u",
+     "main@35436",
+     "Developing and improving a suite of safeguards targeting the"
+    ],
+    [
+     "L4u",
+     "main@37492",
+     "In particular, we will deem deployment mitigations adequate "
+    ],
+    [
+     "L4u",
+     "main@42127",
+     "We recommend Security level 4 for this capability threshold,"
+    ],
+    [
+     "L4u",
+     "main@42676",
+     "Therefore, we recommend models at this level of capability h"
+    ],
+    [
+     "L4u",
+     "main@44163",
+     "The process will involve (i) an assessment of the Framework\""
+    ],
+    [
+     "L4u",
+     "main@45808",
+     "We will continue to review and evolve our disclosure process"
+    ],
+    [
+     "L4u",
+     "main@52526",
+     "We communicate the level of security we consider appropriate"
+    ],
+    [
+     "L4u",
+     "main@52672",
+     "● RAND Security Levels: indicate security goals and principl"
+    ],
+    [
+     "L4u",
+     "main@8789",
+     "As part of our broader research into and development of fron"
+    ]
+   ],
+   "added": []
+  },
+  "sidecar": {
+   "counts": {
+    "L1m": 17,
+    "L1n": 0,
+    "L1u": 0,
+    "L1c": 38,
+    "L1e": 1,
+    "L1a": 4,
+    "L2b": 26,
+    "L2q": 1,
+    "L2a": 0,
+    "L3w": 24,
+    "L4u": 18,
+    "L4l": 50,
+    "D": 386,
+    "L4g": 0
+   },
+   "cleared": [],
+   "added": []
+  }
+ },
+ "info": {
+  "L1a": {
+   "linked_blocks": 14,
+   "unlinked_blocks": 47
+  },
+  "L2": {
+   "regulated": 27,
+   "passages_unlinked": 0,
+   "not_checked": {
+    "base_predicates": 35,
+    "base_bare": 35,
+    "open_terms": 15
+   }
+  },
+  "L3": {
+   "rule_blocks_without_quote": 11,
+   "from_header_quote": 0,
+   "partly_from_header_quote": 0
+  },
+  "L4": {
+   "sentences": 313,
+   "obligation_bearing": 131,
+   "by_cue": 96,
+   "ruled_out": 0
+  },
+  "D": {
+   "sidecar": false,
+   "span": "sentence",
+   "from_header_quote": 0,
+   "partly_from_header_quote": 0,
+   "unaccounted": 386,
+   "outside_quote": 209,
+   "per_block": [
+    {
+     "block": "f2",
+     "unaccounted": 2,
+     "outside_quote": 0
+    },
+    {
+     "block": "f3",
+     "unaccounted": 5,
+     "outside_quote": 0
+    },
+    {
+     "block": "f4-check-d",
+     "unaccounted": 7,
+     "outside_quote": 0
+    },
+    {
+     "block": "f4-need-d",
+     "unaccounted": 6,
+     "outside_quote": 6
+    },
+    {
+     "block": "f4-check-r",
+     "unaccounted": 19,
+     "outside_quote": 0
+    },
+    {
+     "block": "f4-need-r",
+     "unaccounted": 17,
+     "outside_quote": 17
+    },
+    {
+     "block": "f5",
+     "unaccounted": 14,
+     "outside_quote": 11
+    },
+    {
+     "block": "f6",
+     "unaccounted": 20,
+     "outside_quote": 18
+    },
+    {
+     "block": "f6-tcl",
+     "unaccounted": 19,
+     "outside_quote": 11
+    },
+    {
+     "block": "f7-rra",
+     "unaccounted": 2,
+     "outside_quote": 0
+    },
+    {
+     "block": "f7-sc",
+     "unaccounted": 1,
+     "outside_quote": 0
+    },
+    {
+     "block": "f9-acc",
+     "unaccounted": 8,
+     "outside_quote": 7
+    },
+    {
+     "block": "f9-dm",
+     "unaccounted": 4,
+     "outside_quote": 3
+    },
+    {
+     "block": "f9-rel",
+     "unaccounted": 2,
+     "outside_quote": 2
+    },
+    {
+     "block": "f10-acc",
+     "unaccounted": 8,
+     "outside_quote": 7
+    },
+    {
+     "block": "f10-dm-diff",
+     "unaccounted": 20,
+     "outside_quote": 17
+    },
+    {
+     "block": "f10-rel-diff",
+     "unaccounted": 2,
+     "outside_quote": 0
+    },
+    {
+     "block": "f11-rel",
+     "unaccounted": 2,
+     "outside_quote": 0
+    },
+    {
+     "block": "f12-p",
+     "unaccounted": 2,
+     "outside_quote": 2
+    },
+    {
+     "block": "f12-u",
+     "unaccounted": 3,
+     "outside_quote": 3
+    },
+    {
+     "block": "f13-p",
+     "unaccounted": 2,
+     "outside_quote": 2
+    },
+    {
+     "block": "f13-u",
+     "unaccounted": 3,
+     "outside_quote": 3
+    },
+    {
+     "block": "f14",
+     "unaccounted": 6,
+     "outside_quote": 0
+    },
+    {
+     "block": "f16-ds",
+     "unaccounted": 45,
+     "outside_quote": 17
+    },
+    {
+     "block": "f16-ds-strict",
+     "unaccounted": 45,
+     "outside_quote": 17
+    },
+    {
+     "block": "f17-pra",
+     "unaccounted": 1,
+     "outside_quote": 0
+    },
+    {
+     "block": "f17-hri",
+     "unaccounted": 3,
+     "outside_quote": 0
+    },
+    {
+     "block": "f17-add",
+     "unaccounted": 9,
+     "outside_quote": 9
+    },
+    {
+     "block": "f18-yearly",
+     "unaccounted": 12,
+     "outside_quote": 10
+    },
+    {
+     "block": "f18-frequent",
+     "unaccounted": 5,
+     "outside_quote": 5
+    },
+    {
+     "block": "f19-default",
+     "unaccounted": 10,
+     "outside_quote": 9
+    },
+    {
+     "block": "f20-holistic-strict",
+     "unaccounted": 5,
+     "outside_quote": 4
+    },
+    {
+     "block": "f20-within-strict",
+     "unaccounted": 0,
+     "outside_quote": 0
+    },
+    {
+     "block": "f20-elicitation-strict",
+     "unaccounted": 4,
+     "outside_quote": 0
+    },
+    {
+     "block": "bridge-one-domain",
+     "unaccounted": 11,
+     "outside_quote": 10
+    },
+    {
+     "block": "measures-sl2plus",
+     "unaccounted": 3,
+     "outside_quote": 0
+    },
+    {
+     "block": "closure-misuse-ccls",
+     "unaccounted": 3,
+     "outside_quote": 1
+    },
+    {
+     "block": "closure-ccl-kinds",
+     "unaccounted": 6,
+     "outside_quote": 0
+    },
+    {
+     "block": "closure-tcls",
+     "unaccounted": 3,
+     "outside_quote": 0
+    },
+    {
+     "block": "tcl-not-ccl",
+     "unaccounted": 5,
+     "outside_quote": 0
+    },
+    {
+     "block": "activities-internal-external",
+     "unaccounted": 5,
+     "outside_quote": 1
+    },
+    {
+     "block": "activities-development",
+     "unaccounted": 12,
+     "outside_quote": 12
+    },
+    {
+     "block": "activities-high-risk",
+     "unaccounted": 17,
+     "outside_quote": 4
+    },
+    {
+     "block": "activities-low-risk",
+     "unaccounted": 8,
+     "outside_quote": 1
+    }
+   ]
+  }
+ },
+ "data_sha256": {
+  "cues.json": "1ab93331f16da521a1b8bacbb193f8a118f1060d391866510db66216e9feb926",
+  "logic_words.json": "1c7c6308e9e511af3e777e254b60a80a45467653eca6962e3ab126d42c40f389",
+  "ruled_out.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "accounting.d1.txt": null
+ }
+}

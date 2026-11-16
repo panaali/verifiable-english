@@ -1,0 +1,10 @@
+## r-records | always | section 1 "We will keep records of every review."
+Rule 1. Every situation must keep records of every review.
+## r-answer | always | section 1 "We will answer each request within 30 days of receipt."
+Rule 1. Every situation must answer each request within 30 days of receipt.
+## r-share | always | section 1 "We will share the final report with the Board."
+Rule 1. Every situation must share the final report with the Board.
+## r-select | always | section 2 "In selecting reviewers, we weigh their independence."
+Rule 1. Every situation must weigh the independence of reviewers in selecting, if that situation is classified as "selection".
+## r-publish | always | section 2 "We will publish a summary after each review."
+Rule 1. Every situation must publish a summary after each review.

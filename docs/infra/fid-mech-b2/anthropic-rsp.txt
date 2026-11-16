@@ -1,0 +1,17 @@
+anthropic-rsp: 85 blocks, 144 quotes checked, 16 note quotes, 0 empty (info, outside the headline)
+L1+L1a+L2+L3+L4+D hits: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1233, L4g 0
+  L1a: {"linked_blocks": 52, "unlinked_blocks": 33}
+  L2: {"regulated": 64, "passages_unlinked": 15, "not_checked": {"base_predicates": 55, "base_bare": 50, "open_terms": 28}}
+  L3: {"rule_blocks_without_quote": 0, "from_header_quote": 0, "partly_from_header_quote": 4}
+  L4: {"sentences": 488, "obligation_bearing": 214, "by_cue": 168, "ruled_out": 0}
+  D: {"sidecar": true, "span": "sentence", "from_header_quote": 0, "partly_from_header_quote": 4, "unaccounted": 1405, "outside_quote": 334}
+  extra off: L1m 2, L1n 0, L1u 4, L1c 51, L1e 1, L1a 6, L2b 28, L2q 22, L2a 1, L3w 12, L4u 19, L4l 71, D 1280, L4g 0 (the lever clears 64 hits and adds 5)
+  suppress off: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1233, L4g 0 (the lever clears 0 hits and adds 0)
+  abbrev off: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1233, L4g 0 (the lever clears 0 hits and adds 0)
+  furniture off: L1m 2, L1n 0, L1u 1, L1c 41, L1e 1, L1a 10, L2b 28, L2q 16, L2a 1, L3w 12, L4u 21, L4l 72, D 1233, L4g 0 (the lever clears 87 hits and adds 87)
+  footnotes off: L1m 2, L1n 0, L1u 7, L1c 45, L1e 1, L1a 8, L2b 28, L2q 20, L2a 1, L3w 12, L4u 22, L4l 66, D 1304, L4g 0 (the lever clears 163 hits and adds 85)
+  hand-footnotes off: L1m 2, L1n 0, L1u 4, L1c 41, L1e 1, L1a 9, L2b 28, L2q 18, L2a 1, L3w 12, L4u 20, L4l 72, D 1245, L4g 0 (the lever clears 16 hits and adds 1)
+  ruled_out off: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1233, L4g 0 (the lever clears 0 hits and adds 0)
+  unformalised off: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 35, L4l 72, D 1233, L4g 0 (the lever clears 15 hits and adds 0)
+  sidecar off: L1m 2, L1n 0, L1u 4, L1c 39, L1e 1, L1a 9, L2b 28, L2q 17, L2a 1, L3w 12, L4u 20, L4l 72, D 1405, L4g 0 (the lever clears 175 hits and adds 3)
+unpaired digit runs left as text: 6
