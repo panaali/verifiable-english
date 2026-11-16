@@ -141,6 +141,8 @@ def test_c_restates_entries_are_carried(block_id):
 def test_f6_guard_has_the_revision_and_its_cause():
     guard = fix._rule("f6-strive-default")["guard"]
     assert fix._unaries(guard) == {"goal_revised_less_ambitious", "revised_because_unable"}
+    # RS12strive's distinguishing situation (build_document) meets the whole guard, so default and intent differ on it.
+    assert {name for name, *_ in base.rsp_build.DISTINGUISHING["RS12strive"]} == fix._unaries(guard)
     assert "simply because we are unable to achieve them" in fix._legend("revised_because_unable")
     assert "simply because" not in fix._legend("goal_revised_less_ambitious")
     for words in ("we will strive to", "where we revise the goals in a less ambitious direction simply because we are "
