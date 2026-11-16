@@ -1,0 +1,8 @@
+job=armsh-cand-kb-10d-nightly-fix-1bd44797-t844872-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-16T16:03:30Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 16:03:30 up 2 min,  0 user,  load average: 1.71, 0.52, 0.18
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=27752700be3c
+seed: lake 1384.4 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 604 s)
