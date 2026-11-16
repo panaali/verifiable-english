@@ -499,6 +499,49 @@
    ]
   },
   {
+   "test": "tests/test_fidmech_adapters.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_bindings.py",
+   "why": "starts git (git show) in tools/fidmech/bindings.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/fidmech/bindings.py:frozen_diff: git show"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_records.py",
+   "why": "starts git in tests/test_fidmech_records.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_fidmech_records.py:git: git",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_worker.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status"
+   ]
+  },
+  {
    "test": "tests/test_frozen_sources.py",
    "why": "starts git (git archive, git ls-tree, git show) in tests/test_frozen_sources.py, tools/trust_changes.py, tools/trust_map.py",
    "recorded": [
