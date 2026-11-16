@@ -228,12 +228,18 @@ All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch sc
 - While iterating:
   - `uv run pytest -q tests/test_fidmech_b2.py tests/test_fidmech_data.py`, 129 passed;
   - `uv run pytest -q tests/test_fidmech_l1.py`, 44 passed.
-- Regen: `uv run python tools/regen_generated.py --write`, rc 0, committed in 2550499ce9. It also refreshed main's stale `docs/kernel/closure-baseline.json` and code-map lines (generator output, R12).
+- Regen: `uv run python tools/regen_generated.py --write`, rc 0, committed in 2550499ce9. It also refreshed main's stale code-map lines (generator output, R12). Its rewrite of docs/kernel/closure-baseline.json was reverted to main's version (next bullets).
 - Collection: `uv run python tools/gate_collection.py --check --prebuilt` after `lake build` (Lean unchanged; restored by lean-prep), rc 0: "130 added, 1 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 - trust_mutants: not run, and not required.
   - light-lane printed NOT. The count, 36588 changed lines, includes the saved run JSON.
   - No Lean file and no trusted-core file changed, so R16 (trusted Lean growth) does not apply, and the task asks for no record.
-- Selected run: SELECTED-RUN-PLACEHOLDER
+- First selected run, on committed tree b984aca3 (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): the fast stage failed one test after 259 s, and the shards were not waited for.
+  - The failure: `tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement` ("discourse ... '36,205' == '36,213'").
+  - The cause: my regen had rewritten `docs/kernel/closure-baseline.json`'s candidate-path line counts, against the hand-written table in docs/spec/kernel-boundary.md.
+  - The fix (commit 55341fd9bc): main's version is restored. That file is no output of this batch, and main's version passes its own check (`uv run python tools/kernel_closure.py --check <main's file>`: rc 0, "PASS: kernel 9966 <= 9966").
+  - The failed id rerun alone: 1 passed.
+- **Final selected run, on committed clean tree 55341fd9bc** (same command): GitHub Actions run fid-mech-b2-55341fd9-t802391, 6 shards, **exit 0 after 1675 s**. Shards 1-6 passed 39, 39, 39, 38, 36 and 28 units.
+- Tests already red on main (main-known-red.txt): none in this selection.
 
 ## 10. Known escapes (plan section 11, with this batch's additions)
 
@@ -270,7 +276,7 @@ All 18 were planted one at a time in tools/fidmech/sentchecks.py by a scratch sc
 ## Self-review against BUILDER-CHECKLIST
 
 1. Lean answers typed and contained: N.A. No Lean answer is read or relayed.
-2. Every deliverable built, no rule broken: PASS. Section 1 table. No protected file is touched: `git diff --stat main...HEAD` lists no quote_evidence.py, conftest, use-case test file, fidquote-gate.py or translation file.
+2. Every deliverable built, no rule broken: PASS. Section 1 table. No protected file is touched: `git diff --stat main...HEAD` lists no quote_evidence.py, conftest, use-case test file or fidquote-gate.py. Its only rules/facts/spans files are this batch's fixture under tests/data/fidmech/b2, not a translation.
 3. Tests can fail: PASS. 18 seeded bugs, section 7 and seeded-bugs.json.
 4. Valid inputs still pass: PASS. test_the_clean_fixture_has_no_hit_in_any_check. The B1 L1 output on RSP is unchanged: L1 counts in anthropic-rsp.txt equal the `--checks L1` run before the refactor (L1m 2, L1n 0, L1u 4, L1c 39, L1e 1). tests/test_fidmech_l1.py passes (44).
 5. R8 binding: N.A., no relayed answer. Inputs are bound instead: ruled_out entries to a sentence start and its text, spans.json to the source sha (test_a_ruled_out_entry_without_a_reason_or_outside_the_source_is_refused, test_a_malformed_node_in_any_input_is_refused_by_name[spans.json:source_sha256-*]).
