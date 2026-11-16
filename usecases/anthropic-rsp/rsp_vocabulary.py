@@ -377,9 +377,16 @@ REGULATED = {
     "risk_reports_published": _duty("{0} have Risk Reports on risks as well as continuation determinations published",
                                     "section 3 at {0}: \"We will publish Risk Reports discussing the risks of our "
                                     "systems and how we have made determinations about whether to continue AI "
-                                    "development and deployment in light of the risks.\""),
+                                    "development and deployment in light of the risks.\"; 3.5: \"We will publish a "
+                                    "public version of our Risk Report.\""),
     "in_scope": {"arguments": ["situation"], "description": "the model of {0} is "
-                 "an in-scope model of the Risk Report (3.1): a classification, never a duty",
+                 "an in-scope model of the Risk Report (3.1): a classification, never a duty. 3.1: \"It will cover "
+                 "all publicly deployed models as of the coverage date, as well as any internally deployed models as "
+                 "of the coverage date that, by the time of the report's publication, we have determined (1) could "
+                 "pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed "
+                 "those posed by models covered by a prior Risk Report. While there are a variety of reasons we "
+                 "might classify an internal model this way, this will—at a minimum—include any internal models "
+                 "that we are deploying for large-scale, fully autonomous research.\"",
                  "regulated": {"role": "plain", "default": "deny"}},
     "off_cycle_published": _duty("{0} have an off-cycle analysis of its model published", "an analysis of the "
                                  "model's relevant risks is published at {0} (3.1, off-cycle updates)"),
@@ -442,7 +449,9 @@ REGULATED = {
                       "limited to:\" (both versions; the four listed reasons do not close the class)"),
     "public_review_sought": _duty("{0} have comprehensive public external review sought", "3.6 at {0}"),
     "full_review": _duty("{0} have a full external review completed with at least one external reviewer", "3.6 at "
-                         "{0}"),
+                         "{0}: \"At a minimum, we will complete a full external review process (described below) "
+                         "with at least one external reviewer anytime a Risk Report covers highly capable models and "
+                         "is significantly redacted\" (F14; 3.6 defines the two terms next: OT5 and OT4)"),
     "ltbt_review": _duty("{0} have an external review conducted subject to the outlined procedures", "3.6 at {0}: "
                          "\"In addition, upon the LTBT's request, we will conduct a public or private external review "
                          "of our Risk Report or sections thereof, subject to the procedures outlined below.\" (the "
@@ -500,7 +509,8 @@ REGULATED = {
     "board_notified": _duty("{0} have the Board promptly notified", "4.4 at {0}: \"If we determine that a report is "
                             "(1) substantiated and (2) involves a material safety risk, we will promptly notify the "
                             "Board\" (\"promptly\" is OT12)"),
-    "public_notice": _may("{0} have public notice provided", "4.4 at {0}"),
+    "public_notice": _may("{0} have public notice provided", "4.4 at {0}: \"we will promptly notify the Board and "
+                          "we may provide public notice of the same\""),
     "retaliation_protection": _duty("{0} have reporters protected from retaliation", "4.4 at {0}"),
     "board_member_recipient": _duty("{0} have a member of the Board among the recipients", "4.4 at {0}"),
     "disparagement_obligation": _may("{0} impose a contractual non-disparagement obligation", "4.5 at {0}: \"We "
