@@ -212,8 +212,8 @@ ACTS = {
                    "4.1: “We use the following process to select safeguards for a deployment: • We first "
                    "identify the plausible ways in which the associated risk of severe harm can come to fruition in "
                    "the proposed deployment.” (the first step; 'first' is in this legend only, as the act with it "
-                   "would pass the 80-character limit; the order follows from the second step's 'each of "
-                   "those')"),
+                   "would pass the 80-character limit; the order it states before the next step is event order, "
+                   "not formalised: ET, as PLAN O7)"),
     "specific_safeguards_per_path": ("{0} identify specific safeguards that would address each risk path",
                                      "4.1: “• For each of those, we then identify specific safeguards that "
                                      "either exist or should be implemented that would address the risk.” (the "
