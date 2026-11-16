@@ -1,0 +1,200 @@
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Runs VE on every case of the safety-framework use case (PLAN sections 5, 9 and 10).
+    
+        python usecases/safety-framework/run.py            # compute, write results.json, print the comparison
+        python usecases/safety-framework/run.py --check    # compute and fail if results.json would change
+    
+    The harness never reads the answer key while it computes a result. `compare`
+    reads `answer-key.json` afterwards and lists every disagreement.
+    
+    What VE does here, per case and per complete choice of the reading sets that
+    bear on an item (its cone):
+    
+    1. The document of the choice is assembled from rules that VE parsed alone with
+       its one-reading check (`translation.py`) and admitted by `SoftNormDocument`,
+       which also builds the soft elaboration T' (a default rule gives way to a
+       strict rule on the same act).
+    2. The case is a finite model over T's base vocabulary: the level tables and
+       closure sentences of `facts.d1.ve` (closed world over the named levels),
+       the case facts of `cases.json`, an item's own fact blocks (`rules.d1.ve`,
+       headed `item <id>, ...`), and the minimal decision findings the soft
+       premises force (an exception is found only where a sufficient condition the
+       text states holds). VE validates the model, Background included. A case with
+       alternatives (a PLAN 5 row "X or Y") is one model per alternative, and the
+       item holds at a choice where it holds in every one.
+    3. The premises are checked on the case: the model satisfies every premise, or
+       VE's prover certifies that the premises and the case facts are inconsistent
+       (the certificate is replayed). Neither is UNKNOWN.
+    4. An item is a selection question (`NormDocument.selected_rules`), a completed
+       outcome under both defaults (`NormDocument.outcome`), a conflict check on a
+       cluster's document (Lean's `soft-conflict` confirms a CONFLICT witness; keyed
+       CONFLICT-FREE uses `refute` over `T.facts()` premises and Lean's entailment
+       certificate replay), or an entailment with a replayed certificate (family N).
+       The plain soft-route conflict answer is recorded beside the keyed result as
+       `w1_without_premises`.
+    
+    ALL / SOME(c) / NONE combine the per-choice answers. The SOME condition is the
+    set of choices, compared with the key's condition as a set.
+    """
+    from __future__ import annotations
+    
+    import argparse
+    import hashlib
+    import itertools
+    import json
+    import re
+    import sys
+    import time
+    from functools import lru_cache
+    from pathlib import Path
+    
+    HERE = Path(__file__).resolve().parent
+    sys.path.insert(0, str(HERE))
+    import translation as T  # noqa: E402
+    import vocabulary as V  # noqa: E402
+    from ve import ast as A  # noqa: E402
+    from ve.ast import _Decoder  # noqa: E402
+    from ve.entailment import check_entailment_certificate, prove_entailment  # noqa: E402
+    from ve.evaluate import evaluate  # noqa: E402
+    from ve.model import FiniteModel  # noqa: E402
+    from ve.norms import _instantiate  # noqa: E402
+    from ve.soft_route import decide_soft_conflict  # noqa: E402
+    
+    RESULTS = HERE / "results.json"
+>   SETS = T.READING_SETS
+           ^^^^^^^^^^^^^^
+E   AttributeError: module 'translation' has no attribute 'READING_SETS'
+
+usecases/safety-framework/run.py:63: AttributeError
+=============================== warnings summary ===============================
+tests/test_p1_infrastructure.py::test_vertex_status_code_classification
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_ownership_floor.py::test_the_safety_framework_adapter_records_plan_12_item_27
+1 failed, 3512 passed, 1 warning in 1149.26s (0:19:09)
+[gate] slowest:    517.0 s tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer
+[gate] slowest:    372.9 s tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks
+[gate] slowest:    117.0 s tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]
+[gate] slowest:    115.2 s tests/test_trust_mutants.py::test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same
+[gate] slowest:     99.7 s tests/test_ownership_floor.py::test_three_passing_items_per_key_still_pass
+[gate] slowest:     93.2 s tests/test_trust_mutants.py::test_the_truth_table_classes
+[gate] slowest:     78.7 s tests/test_trust_mutants.py::test_rescore_on_a_real_tree_carries_across_every_plan_only_input_and_agrees_with_a_full_run
+[gate] slowest:     70.8 s tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill
+[gate] slowest:     67.4 s tests/test_route_row_schemas.py::test_route_answer_mutations_agree_with_lean
+[gate] slowest:     65.0 s tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill
+[gate] slowest:     64.5 s tests/test_calc_answer.py::test_mutants_never_pass_as_answers[mixed]
+[gate] slowest:     62.1 s tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor
+[gate] slowest:     56.4 s tests/test_b16d_document.py::test_coupled_pilot_reading_plan_matches_prior_path
+[gate] slowest:     53.6 s tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant
+[gate] slowest:     53.2 s tests/test_repo_map.py::test_routes_lists_every_mode_exactly_once
+[gate] slowest:     46.9 s tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator
+[gate] slowest:     43.2 s tests/test_relay_binding_inventory.py::test_every_bound_field_mutant_is_unavailable[rights-elaborate]
+[gate] slowest:     40.1 s tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R3]
+[gate] slowest:     35.6 s tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]
+[gate] slowest:     34.2 s tests/test_eligibility_wfp.py::test_staged_answers_match_the_key_and_the_recorded_results
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+de12778b5c38d37f0b21df838411fd292bfc441c
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree de12778b5c38d37f0b21df838411fd292bfc441c
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 893069e225175a546e0a1f1ac64646c416d7b2ca, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3512 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_ownership_floor.py::test_the_safety_framework_adapter_records_plan_12_item_27 monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff4d81024ad0>
+
+    def test_the_safety_framework_adapter_records_plan_12_item_27(monkeypatch):
+        """PROBE F1: the adapter, on the committed results' values, cites item 27 for G3, K2-L1/PROXIMITY and
+        K2-L5/PROXIMITY, and all three pass. An entry of another answer or another key, or a case whose premises fail on
+        the model, is not recorded."""
+>       adapter = OT.ADAPTERS["safety-framework"]().load()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_ownership_floor.py:382: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/ownership_trace.py:77: in load
+    self.mod = _load(self.dir, self.module)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/ownership_trace.py:50: in _load
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Runs VE on every case of the safety-framework use case (PLAN sections 5, 9 and 10).
+    
+        python usecases/safety-framework/run.py            # compute, write results.json, print the comparison
+        python usecases/safety-framework/run.py --check    # compute and fail if results.json would change
+    
+    The harness never reads the answer key while it computes a result. `compare`
+    reads `answer-key.json` afterwards and lists every disagreement.
+    
+    What VE does here, per case and per complete choice of the reading sets that
+    bear on an item (its cone):
+    
+    1. The document of the choice is assembled from rules that VE parsed alone with
+       its one-reading check (`translation.py`) and admitted by `SoftNormDocument`,
+       which also builds the soft elaboration T' (a default rule gives way to a
+       strict rule on the same act).
+    2. The case is a finite model over T's base vocabulary: the level tables and
+       closure sentences of `facts.d1.ve` (closed world over the named levels),
+       the case facts of `cases.json`, an item's own fact blocks (`rules.d1.ve`,
+       headed `item <id>, ...`), and the minimal decision findings the soft
+       premises force (an exception is found only where a sufficient condition the
+       text states holds). VE validates the model, Background included. A case with
+       alternatives (a PLAN 5 row "X or Y") is one model per alternative, and the
+       item holds at a choice where it holds in every one.
+    3. The premises are checked on the case: the model satisfies every premise, or
+       VE's prover certifies that the premises and the case facts are inconsistent
+       (the certificate is replayed). Neither is UNKNOWN.
+    4. An item is a selection question (`NormDocument.selected_rules`), a completed
+       outcome under both defaults (`NormDocument.outcome`), a conflict check on a
+       cluster's document (Lean's `soft-conflict` confirms a CONFLICT witness; keyed
+       CONFLICT-FREE uses `refute` over `T.facts()` premises and Lean's entailment
+       certificate replay), or an entailment with a replayed certificate (family N).
+       The plain soft-route conflict answer is recorded beside the keyed result as
+       `w1_without_premises`.
+    
+    ALL / SOME(c) / NONE combine the per-choice answers. The SOME condition is the
+    set of choices, compared with the key's condition as a set.
+    """
+    from __future__ import annotations
+    
+    import argparse
+    import hashlib
+    import itertools
+    import json
+    import re
+    import sys
+    import time
+    from functools import lru_cache
+    from pathlib import Path
+    
+    HERE = Path(__file__).resolve().parent
+    sys.path.insert(0, str(HERE))
+    import translation as T  # noqa: E402
+    import vocabulary as V  # noqa: E402
+    from ve import ast as A  # noqa: E402
+    from ve.ast import _Decoder  # noqa: E402
+    from ve.entailment import check_entailment_certificate, prove_entailment  # noqa: E402
+    from ve.evaluate import evaluate  # noqa: E402
+    from ve.model import FiniteModel  # noqa: E402
+    from ve.norms import _instantiate  # noqa: E402
+    from ve.soft_route import decide_soft_conflict  # noqa: E402
+    
+    RESULTS = HERE / "results.json"
+>   SETS = T.READING_SETS
+           ^^^^^^^^^^^^^^
+E   AttributeError: module 'translation' has no attribute 'READING_SETS'
+
+usecases/safety-framework/run.py:63: AttributeError
