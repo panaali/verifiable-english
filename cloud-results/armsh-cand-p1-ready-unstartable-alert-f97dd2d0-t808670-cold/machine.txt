@@ -1,0 +1,8 @@
+job=armsh-cand-p1-ready-unstartable-alert-f97dd2d0-t808670-cold shard=- nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-16T06:00:18Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 06:00:18 up 11 min,  0 user,  load average: 1.57, 0.54, 0.23
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=676e9b49055d
+seed: lake 1405.6 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 598 s)
