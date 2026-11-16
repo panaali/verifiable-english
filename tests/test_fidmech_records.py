@@ -1,9 +1,12 @@
 """fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path."""
 from __future__ import annotations
 
+import ast
 import copy
 import json
+import re
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -129,6 +132,106 @@ BASE = {"Q1": (("ve", "ALL"),), "Q2": (("ve", "NONE"),), "Q3": (("ve", "UNDECIDE
 def test_k_kills_on_a_decided_answer_that_differs_and_a_move_to_or_from_undecided_is_inconclusive(mutant, expected):
     verdict, kernel = R.kernel_verdict(BASE, mutant)
     assert (verdict, kernel["changed"], kernel["inconclusive"]) == expected
+
+
+@pytest.mark.parametrize("undecided", ["UNKNOWN", "UNDECIDED", "UNDECIDED-faithful", "NOT RUN", "resource-limit",
+                                       "resource limit: no quantity certificate", "UNKNOWN (budget)"])
+@pytest.mark.parametrize("shape", ["flat", "premises", "parts"])
+def test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill(undecided, shape):
+    """fid-mech-b3 review F1: FSF writes UNKNOWN (N1, premises, S1, S4, D1, D3); it was scored a kill."""
+    def answer(value):
+        if shape == "premises":
+            return (("ve", "SOME(RS2=U)"), ("premises", (value, ("p(x)",)) if value != "model" else value))
+        if shape == "parts":
+            return (("ve", (("GOV", value), ("SILENT:CCA", "ALL"))),)
+        return (("ve", value),)
+    decided = "model" if shape == "premises" else "ALL"
+    for before, after in ((decided, undecided), (undecided, decided)):
+        verdict, kernel = R.kernel_verdict({"N1": answer(before)}, {"N1": answer(after)})
+        assert (verdict, kernel["changed"], kernel["inconclusive"]) == ("inconclusive", [], ["N1"]), (before, after)
+
+
+def test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive():
+    verdict, _ = R.kernel_verdict({"N1": (("ve", "ALL"),)}, {"N1": (("ve", "UNKNOWN"),)})
+    assert verdict == "inconclusive"
+
+
+@pytest.mark.parametrize("decided", ["UNKNOWN_ACTOR", "SOME(UNKNOWN=x)", "UNKNOWNS", "NOT RUNNING", "unknown"])
+def test_a_decided_string_that_only_contains_a_third_value_word_still_kills(decided):
+    verdict, kernel = R.kernel_verdict({"Q1": (("ve", "ALL"),)}, {"Q1": (("ve", decided),)})
+    assert (verdict, kernel["changed"]) == ("killed", ["Q1"])
+
+
+def test_fsfs_own_undecided_answers_on_its_committed_results_are_inconclusive():
+    """End to end on usecases/safety-framework/results.json through the adapter's projection: each FSF site that
+    writes UNKNOWN (and a missing item, NOT RUN) moves an answer to the third value; a decided change still kills."""
+    from tools.fidmech import adapters
+    root = Path(__file__).resolve().parents[1]
+    results = json.loads((root / "usecases" / "safety-framework" / "results.json").read_text(encoding="utf-8"))
+    base = adapters.project("safety-framework", results).answers
+    rows = {row["id"]: row for row in results["comparison"]}
+    edits = {"N1": ("ve", "UNKNOWN"), "S1-L1": ("ve", "UNKNOWN"), "S4": ("ve", "UNKNOWN"), "D1": ("ve", "UNKNOWN"),
+             "D3": ("ve", "UNKNOWN"), "G6": ("premises", ["UNKNOWN", ["p(x)"]]), "G9": ("ve", "NOT RUN")}
+    assert set(edits) <= set(rows)
+    for item, (field, value) in edits.items():
+        mutated = copy.deepcopy(results)
+        next(r for r in mutated["comparison"] if r["id"] == item)[field] = value
+        answers = adapters.project("safety-framework", mutated).answers
+        assert R.kernel_verdict(base, answers)[0] == "inconclusive", item
+        assert R.kernel_verdict(answers, base)[0] == "inconclusive", item
+    mutated = copy.deepcopy(results)
+    next(r for r in mutated["comparison"] if r["id"] == "S1-L1")["ve"] = "severe"
+    assert rows["S1-L1"]["ve"] != "severe"
+    assert R.kernel_verdict(base, adapters.project("safety-framework", mutated).answers)[0] == "killed"
+
+
+# Strings of the documents' sources that name the third value but are never an answer value: result-dict keys,
+# summary keys, reason texts kept beside an UNDECIDED answer and error-message fragments. Any other spelling must be
+# one `records.UNDECIDED` recognises.
+THIRD_VALUE_WORDS = re.compile(r"unknown|undecided|not.run|resource.limit|time.?out|timed.out|exhaust|budget|"
+                               r"inconclusive|undetermined|unresolved", re.I)
+NOT_ANSWERS = {
+    "undecided": "the key of a result's undecided reason; its answer is verdict()'s UNDECIDED",
+    "faithful_undecided": "a summary count key",
+    "unknown_items": "a summary list key",
+    "resource_limit": "a summary count key",
+    "unresolved_reading_sets": "a coverage-residual key of readings_r1's report",
+    ": unknown reading ": "a translation error-message fragment",
+    "conflict check UNKNOWN for ": "a SystemExit message: the run stops, the worker records an error",
+    "unknown": "measure_r1's measurement label, not run.py's answer",
+    "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate": "an undecided reason; the answer is UNDECIDED",
+    "comparison[].agree; comparison[].status == 'UNDECIDED-faithful' marks the rest": "a summary field description",
+}
+
+
+def _source_strings(path):
+    """Every string constant of a Python file except docstrings, read by the Python parser."""
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    docstrings = {id(node.body[0].value) for node in ast.walk(tree)
+                  if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and node.body and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant)}
+    return [(node.lineno, node.value) for node in ast.walk(tree) if isinstance(node, ast.Constant)
+            and isinstance(node.value, str) and id(node) not in docstrings]
+
+
+def test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule():
+    """The class of review F1: a document's spelling of the third value the K rule does not know scores a kill. Every
+    adapted document's sources are read (ast); a third-value string is either recognised or listed as no answer."""
+    from tools.fidmech import adapters
+    root = Path(__file__).resolve().parents[1]
+    unknown, seen = [], set()
+    for document in adapters.DOCUMENTS:
+        files = sorted((root / "usecases" / document).glob("*.py"))
+        assert files, document
+        for path in files:
+            for line, value in _source_strings(path):
+                if THIRD_VALUE_WORDS.search(value):
+                    seen.add(value)
+                    if not R._undecided(value) and value not in NOT_ANSWERS:
+                        unknown.append(f"{path.relative_to(root)}:{line}: {value!r}")
+    assert not unknown, unknown
+    assert {"UNKNOWN", "UNDECIDED", "NOT RUN", "resource-limit"} <= seen
+    assert set(NOT_ANSWERS) <= seen, sorted(set(NOT_ANSWERS) - seen)
 
 
 def test_the_movement_toward_and_away_from_the_key_reads_the_documents_agreement():
