@@ -1,0 +1,142 @@
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpnx_ka08d/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5izwgadn/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_bd59me_/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5wsy_im9/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpc9nvwuxz/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7ltar383/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpoldzxuql/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpboxqi9as/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmphz43v2n3/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpo3v6wte8/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwf7080hm/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpcm3nu1qn/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmphxw_dxox/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpigl0l_am/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp2nykjvxg/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpxgpy6h50/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.FFEF/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5nz49u_8/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FFEFEE
+======================================================================
+ERROR: test_chain_stage_by_branch_link_or_row_id (__main__.PathHold.test_chain_stage_by_branch_link_or_row_id)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 275, in test_chain_stage_by_branch_link_or_row_id
+    self.assertEqual(self.held_part(self.msgs()[0]),
+                                    ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_p2_held_row_not_named (__main__.PathHold.test_p2_held_row_not_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 236, in test_p2_held_row_not_named
+    part = self.held_part(self.msgs()[0])
+                          ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_stage_unknown_without_holder_row (__main__.PathHold.test_stage_unknown_without_holder_row)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 265, in test_stage_unknown_without_holder_row
+    self.assertEqual(self.held_part(self.msgs()[0]),
+                                    ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_unparsed_hold_named_raw (__main__.PathHold.test_unparsed_hold_named_raw)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 282, in test_unparsed_hold_named_raw
+    self.assertEqual(self.held_part(self.msgs()[0]), "odd, feature planner, 31m, feed: path ??? garbled")
+                                    ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_29_min_silent_30_min_alerts (__main__.PathHold.test_29_min_silent_30_min_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 230, in test_29_min_silent_30_min_alerts
+    self.assertEqual(len(self.msgs()), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_31_min_alerts_names_branch_and_stage (__main__.PathHold.test_31_min_alerts_names_branch_and_stage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 220, in test_31_min_alerts_names_branch_and_stage
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_failed_send_records_nothing (__main__.PathHold.test_failed_send_records_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 299, in test_failed_send_records_nothing
+    self.assertEqual(len(self.msgs()), 2)
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_held_and_not_startable_one_message (__main__.PathHold.test_held_and_not_startable_one_message)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 290, in test_held_and_not_startable_one_message
+    self.assertIn("p1 ready but held: h, feature planner, 31m, path docs/x", m[0])
+AssertionError: 'p1 ready but held: h, feature planner, 31m, path docs/x' not found in 'dri|decider-ready-alert|NOW(critical): p1 ready but not startable: none, infra feed, 31m. Not startable = a launch link backlog.py launch_spec cannot start (e.g. delegate/infra-item without an existing task file), or no launch link and no task file (links.task, prompts/task-<id>.txt, prompts/dri-task-<id>.txt) (reviews/dri-decisions-20261116-adv0244.md item 2): write the task file and start the row, or move it to blocked with the reason.'
+
+======================================================================
+FAIL: test_other_feed_holds_unchanged (__main__.PathHold.test_other_feed_holds_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 247, in test_other_feed_holds_unchanged
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_second_pass_within_4h_silent_then_again (__main__.PathHold.test_second_pass_within_4h_silent_then_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 255, in test_second_pass_within_4h_silent_then_again
+    self.assertEqual(len(self.msgs()), 1, "a second pass within 4 h must not re-send")
+AssertionError: 0 != 1 : a second pass within 4 h must not re-send
+
+----------------------------------------------------------------------
+Ran 33 tests in 4.267s
+
+FAILED (failures=6, errors=4)
+alert: /home/seyran/code/manage-agents/tools-local/decider-ready-alert.py
+backlog: /home/seyran/code/manage-agents/backlog.py
