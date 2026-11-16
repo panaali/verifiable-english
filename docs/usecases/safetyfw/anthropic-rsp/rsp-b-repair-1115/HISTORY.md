@@ -81,7 +81,9 @@ three f8-internal mistags (in_scope now quotes their sentence) and f8-public.
   (`uv run python usecases/kb9_facts_shadow.py anthropic-rsp /tmp/...`) on the merged tree gives the same 330 premise
   evaluations, 0 mismatches and 1326 keyed pairs; only its `commit` and `wall_seconds` fields differ, so the file is not
   stale and was left untouched.
-- The final selected run (`mac-pytest.sh --select`) on the committed HEAD is reported in the build report.
+- Main moved once more (1bd44797bc, kb-10d-nightly-fix: tools/ownership_trace.py and its test only) and was merged (709cd4887d); `verdict` and `passing-functions` rerun over the same traces left both kernel files byte-identical.
+- Final selected run on the committed, clean HEAD 709cd4887d (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): 80 units in 4 Actions shards, 80 passed, exit 0 (run rsp-b-repair-1115-709cd488-t855530). Two earlier selected runs failed on stale snapshots, each refreshed above: the lexicon report, then the pinned RSP blocks, the route fixtures and ownership.json.
+- Exposure list on 709cd4887d (`uc-audit.py prepare` + `omit_exposure`): identical to the head list saved in `exposure-diff.txt`.
 - Pre-existing red on main (main-known-red.txt), not touched here: the two test_lean_service sub-tick tests,
   test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target and
   test_ownership_floor.py::test_the_safety_framework_adapter_records_plan_12_item_27.
