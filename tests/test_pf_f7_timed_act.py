@@ -179,13 +179,6 @@ def test_efficacy_legend_quotes_its_sentence():
     assert text != "4.1: third safeguard-selection step"
 
 
-def test_risk_paths_order_follows_from_each_of_those():
-    """f9-risk-paths: header and legend give the order's ground, and neither declares it unformalised."""
-    for text in (block("f9-risk-paths").source, legend("risk_paths")):
-        assert "the order follows from the second step's 'each of those'" in text
-        assert "not formalised" not in text
-
-
 def test_f9_record_lines_and_kept_legend_words():
     """f9-specific and f9-efficacy each record their limit in one line (header and PLAN 12 item 29); f9-specific's
     legend keeps "that either exist or should be implemented"."""

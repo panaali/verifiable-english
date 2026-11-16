@@ -874,21 +874,16 @@ def test_f9_selection_steps_carry_their_order_word_and_record_the_order_as_et(pf
                                                                               key):
     """f9-risk-paths and f9-specific (pf-relay4 Q14, Q15, (iv) by both): each legend quotes its 4.1 sentence in full,
     so "first" and "then" are in the translation's words (the act cannot hold them: 82 characters with "first";
-    "then" is reserved); f9-specific's header and both spans.json entries say the order between the two steps is
-    event order (ET, PLAN O7), and each entry's record spans exactly the order word. f9-risk-paths' header and legend
-    say the order follows from the second step's 'each of those' (pf-split-units-20261115 section 2)."""
+    "then" is reserved); each header and spans.json entry says the order between the two steps is event order
+    (ET, PLAN O7), not formalised, and each entry's record spans exactly the order word (f9-risk-paths' "order
+    follows" wording is undone: pf-f9-order-undo, record-void-astra 1115 section C)."""
     assert legend_quotes(predicate) == [sentence]
     assert word in sentence.split() and sentence in block(unit).source
     assert word not in act(predicate).split()
     header = block(unit).source
-    if unit == "f9-risk-paths":
-        assert "the order follows from the second step's 'each of those'" in header
-        assert "the order follows from the second step's 'each of those'" in legend(predicate)
-        assert "not formalised" not in header and "not formalised" not in legend(predicate)
-        assert "so the legend carries the word" in header
-    else:
-        assert f"event order (ET, as PLAN O7): the order the word {word} states" in header
-        assert "is not formalised" in header and "so the legend carries it" in header
+    assert f"event order (ET, as PLAN O7): the order the word {word} states" in header
+    assert "is not formalised" in header and "so the legend carries it" in header
+    assert "order follows" not in header and "order follows" not in legend(predicate)
     record = span_record(unit, key)
     assert "ET" in record["waits"]
     (clause,) = record["untranslated"]
