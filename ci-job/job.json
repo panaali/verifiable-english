@@ -1,0 +1,12 @@
+{
+ "job": "testmap-b8abce49-t843216-s1",
+ "head": "27752700be3c34cc8b67701e1910af4df1a5e9d2",
+ "argv": [
+  "testmap-b8abce49-t843216-s1",
+  "27752700be3c34cc8b67701e1910af4df1a5e9d2",
+  "27752700be3c34cc8b67701e1910af4df1a5e9d2",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-547a9924ac50.tar.zst",
+  "bb4164e7a80d6362337679eff2c8db7e0bea669b9b34636ad4d64403e4c109fa",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_safetyfw_usecases.py tests/test_lean_document_wrapper.py tests/test_route_row_schemas.py tests/test_lean_dump_cache.py tests/test_events_wire_mutants.py tests/test_metered_differential.py tests/test_speech_acts_conformance.py tests/test_cli.py tests/test_lean_import_reader.py tests/test_b16d_norm_roles.py tests/test_scope_5_4_statements.py tests/test_lean_service.py tests/test_defaults_english.py tests/test_readings_nd_document.py tests/test_readings_sup_verdicts.py tests/test_question_fixture_sources.py tests/test_readings_defaults_names.py tests/test_readings_budget_zero.py tests/test_stage0_probe_matrix.py tests/test_stage2_norms.py tests/test_b15b_evidence.py tests/test_senses_display_cli.py tests/test_gen_inv_design.py tests/test_rd9_docroute.py tests/test_right_clauses.py tests/test_judgments_chain.py tests/test_regulated_limit.py tests/test_cedar_norms.py tests/test_risk_profile.py tests/test_readings_route_norm_defaults_binding.py tests/test_ve_iface.py tests/test_wire_contract_s5_admission.py tests/test_norm_admission.py tests/test_rights_lean.py tests/test_wire_contract_lean.py tests/test_vacuity.py tests/test_wire_contract_precondition.py tests/test_select_fast_stage.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
