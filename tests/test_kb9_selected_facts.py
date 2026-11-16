@@ -237,3 +237,27 @@ def test_a_malformed_facts_value_or_item_is_refused_with_a_diagnostic(lean, valu
     if value is not None and type(value) not in (list, tuple):  # None: no facts (the default)
         with pytest.raises(VEError, match="facts must be a list"):
             soft_route.selected_at(document(), MODEL, QUERIES[:1], facts=value)
+
+
+def test_the_records_say_what_soft_wire_selected_states_since_facts():
+    """Review kb-9 F2: since `SelectedAnswer` reads "∃ sent facts", `soft_wire_selected` and its prepared twin
+    admit the flag fields with any `facts` value for every case (the Lean examples at the end of
+    lean/VE/SoftNorms/SelectedExamples.lean check this); only `soft_wire_selected_facts` ties them to the case.
+    No record may say the theorem still rules them out or that its meaning is unchanged for a case without facts."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    spec = " ".join((root / "docs/spec/kernel-boundary.md").read_text().split())
+    report = " ".join((root / "docs/kernel/kb-9/REPORT.md").read_text().split())
+    lean = (root / "lean/VE/SoftNorms/SelectedSound.lean").read_text()
+    examples = (root / "lean/VE/SoftNorms/SelectedExamples.lean").read_text()
+    start = spec.index("Since kb-10a it also lists `VE.SoftNorms.Run.soft_wire_selected`")
+    paragraph = spec[start:spec.index("`selected_semantics`", start)]
+    assert "is exactly `Wire.ok`" not in paragraph
+    assert "`facts`" in paragraph and "`coherent`" in paragraph and "`soft_wire_selected_facts`" in paragraph
+    assert "its meaning is unchanged" not in report
+    header, _, rest = lean.partition("kb-9: a case that sends `facts`")
+    assert "no other field" not in header
+    doc = rest[:rest.index("def SelectedAnswer (")]
+    doc = doc[doc.rindex("/--"):]
+    assert "for a case that sent `facts`" not in doc and "cannot see the case" in doc
+    assert "SelectedAnswer id D M qs answer := ⟨true, b, h⟩" in examples

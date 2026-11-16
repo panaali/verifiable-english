@@ -177,8 +177,10 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
 
 1. `soft_wire_selected` keeps its statement text, as the task asks, so its spec `SelectedAnswer` had to admit the
    two new fields: it now reads "exactly `SelectedAnswerWith` `factsFields sent facts (coherentAt D M)` for some
-   `sent` and `facts`". For a case without `facts` its meaning is unchanged; for a case with facts it no longer pins
-   `facts` (only `soft_wire_selected_facts` does). The task's two requirements (the statement unchanged; the facts
+   `sent` and `facts`". So it is weaker for every case: it no longer rules out the two flag fields, even for a case
+   that sent no `facts`, and where they appear it does not pin `facts` (only `coherent = coherentAt`). Only
+   `soft_wire_selected_facts` pins them: both absent for a case without `facts`, both present with `facts = factsAt`
+   for a case with them (review kb-9 F2). The task's two requirements (the statement unchanged; the facts
    fields on the same kind) admit no other reading. `soft_wire_selected_prepared` likewise keeps its text.
 2. safety-framework is shadowed, not switched. It has no `check_premises`: `premise_status(atoms, item)` is a
    situation-level gate on the plain base model with no document, whose `failed` list and refutation are part of
