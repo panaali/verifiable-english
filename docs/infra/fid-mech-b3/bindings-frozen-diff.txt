@@ -1,0 +1,33 @@
+anthropic-rsp: run.py names read from bindings.json against usecases/anthropic-rsp/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+  OT: same
+  SCENARIO_TERMS: same
+  SCENARIOS: same
+  COMPETITORS: same
+  SITUATIONS: same
+  CASE_ATOMS: same
+  PREDICATES: same
+  K_LIMITS: same
+openai-preparedness: run.py names read from bindings.json against usecases/openai-preparedness/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+  LEVEL_IDS: same
+  ACTIVITY: same
+  OT: same
+  SITUATIONS: same
+  STATED_FALSE: same
+  SOME_HIGH_LEVEL: same
+  ATOMS: same
+  K_ITEMS: same
+  ALL_OF: same
+  THRESHOLD_PREDICATES: same
+  SAFEGUARD_PREDICATES: same
+  CRITICAL_PREDICATES: same
+  SUBJECT: same
+  WITNESS: same
+  WITNESS_LEVELS: same
+  WITNESS_RELATIONS: same
+safety-framework: run.py names read from bindings.json against usecases/safety-framework/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+  SELECTION_ITEMS: same
+  DM: same
+  SEC: same
+  SILENT_ITEMS: same
+  INLINE_ITEMS: new name (no literal at frozen_from)
+  CATCH_ALL_OWN: new name (no literal at frozen_from)
