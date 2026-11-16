@@ -1,0 +1,9 @@
+job=armsh-cand-pf-f9-order-undo-a6861ed3-t804712-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-16T04:54:17Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 04:54:17 up 8 min,  0 user,  load average: 1.53, 0.52, 0.22
+pilot/codex branches: 98
+ve-cache: lean-build exact key 547a9924ac50 asset lean-build-547a9924ac50-linux-aarch64.tar.zst sha256 703c52bdf8f9 ok, seal ok, from download, 11.8 s
+seed: mode=seed match=exact asset=lean-build-547a9924ac50-linux-aarch64.tar.zst pruned=0 base=ade8fd2977c1
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
