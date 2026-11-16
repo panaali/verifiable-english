@@ -186,3 +186,12 @@ registry unchanged.
   `::test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run`.
 - F4 (C, fixed): `check_fresh` reports a baseline of another JSON shape as STALE.
 - F-ready1 (B): the seeds are committed as `seeded-bugs.json` (S1-S10, each with its `file`).
+
+Fix-round tests: selected run on b69800bc (`mac-pytest.sh --select`, Actions run kb-regen-closure-check-b69800bc-t847137,
+496 units in 6 shards): 495 passed, 1 failed, `tests/test_history_tests.py` (`/tmp/kbrc-select2.log`). The cause
+was this change: `tests/history-dependent.json` records why each gate test reads history, and main's `gate.py`
+named `tools/wire_contract.py` literally, which the static lint followed to `conformance/frozen_norm_defaults.py`.
+With the command read from the registry that over-approximated edge is gone. The same six tests stay listed, and
+only their `why` text is shorter. Regenerated with `regen_generated.py --write --only history-tests`, and the file
+then passed alone (27 passed). Also run: `lake build` (1475 jobs, rc 0), `python3 lean/audit.py` (PASS), and both
+wire-contract check commands with the built service (rc 0).
