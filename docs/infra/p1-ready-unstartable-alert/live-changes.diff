@@ -1,0 +1,429 @@
+diff --git a/tools-local/decider-ready-alert.py b/tools-local/decider-ready-alert.py.new-p1rua
+index 4b820401..0f73efca 100644
+--- a/tools-local/decider-ready-alert.py
++++ b/tools-local/decider-ready-alert.py.new-p1rua
+@@ -11,33 +11,79 @@ A row matches when owner == "DRI decider", priority <= 1 and status == "ready" (
+ match not alerted before; a (row id, ready time) pair is alerted once (state: decider-ready-alert.sent, one tab-separated line
+ per pair), so a row that goes in-flight and back to ready alerts again. Never raises: any error prints one line and exits 0.
+ 
+-Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state file, msg.sh); DRA_MSG = command run instead of `zsh $M/msg.sh`.
+---dry-run prints the message and records nothing.
+-Tests: python3 -I tools-local/test_decider_ready_alert.py
++P1 NOT STARTABLE (2026-11-16 p1-ready-unstartable-alert; reviews/dri-decisions-20261116-adv0244.md item 2): four critical-path
++rows sat ready ~7.5 h with no task file and nobody was told. Any row, whatever its owner, with priority <= 1, status "ready" and
++not startable for >= 30 min since ready_t (else status_t, else created) is named in the same pass's message as
++"p1 ready but not startable: <id>, <owner>, <age>". Not startable = no task file (links.task names no existing file, and
++neither prompts/task-<id>.txt nor prompts/dri-task-<id>.txt exists) and no links.launch (the reason backlog.py launch_spec
++gives: "no task file and no launch link"). Deduped per row per 4 h (state: p1-unstartable-alert.sent, "<id>\t<epoch>\t<UTC>").
++Both parts go in one message per pass; a failed send records neither, so the next pass retries.
++
++Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state files, prompts/, msg.sh); DRA_MSG = command run instead of
++`zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds). --dry-run prints the message and records nothing.
++Tests: python3 -I tools-local/test_decider_ready_alert.py; python3 -I tools-local/test_p1_ready_alert.py
+ """
+ import json, os, shlex, subprocess, sys, time
++from datetime import datetime, timezone
+ 
+ M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+ STATE = os.path.join(M, "decider-ready-alert.sent")
++P1_STATE = os.path.join(M, "p1-unstartable-alert.sent")
++P1_AFTER = 30 * 60          # ready this long and not startable -> alert
++P1_EVERY = 4 * 3600         # one alert per row per 4 h
++
++
++def prio_le_1(r):
++    try:
++        return float(r.get("priority")) <= 1
++    except (TypeError, ValueError):
++        return False
+ 
+ 
+ def matches(rows):
+-    out = []
+-    for r in rows:
+-        if r.get("owner") != "DRI decider" or r.get("status") != "ready":
+-            continue
++    return [r for r in rows if r.get("owner") == "DRI decider" and r.get("status") == "ready" and prio_le_1(r)]
++
++
++def parse_t(s):
++    for fmt in ("%Y-%m-%dT%H:%MZ", "%Y-%m-%dT%H:%M:%SZ"):
+         try:
+-            p = float(r.get("priority"))
++            return datetime.strptime(str(s), fmt).replace(tzinfo=timezone.utc).timestamp()
+         except (TypeError, ValueError):
+             continue
+-        if p > 1:
++    return None
++
++
++def has_task_file(r):
++    i, task = r.get("id", ""), (r.get("links") or {}).get("task") or ""
++    paths = ([task] if task else []) + [f"prompts/task-{i}.txt", f"prompts/dri-task-{i}.txt"]
++    return any(os.path.isfile(p if p.startswith("/") else os.path.join(M, p)) for p in paths)
++
++
++def startable(r):
++    return has_task_file(r) or bool(((r.get("links") or {}).get("launch") or "").strip())
++
++
++def age_s(sec):
++    m = int(sec // 60)
++    return f"{m // 60}h{m % 60:02d}m" if m >= 60 else f"{m}m"
++
++
++def p1_unstartable(rows, now):
++    """[(row, age seconds)]: p1 ready rows, any owner, not startable for >= 30 min."""
++    out = []
++    for r in rows:
++        if r.get("status") != "ready" or not prio_le_1(r) or startable(r):
++            continue
++        t0 = next((t for t in (parse_t(r.get(k)) for k in ("ready_t", "status_t", "created")) if t is not None), None)
++        if t0 is None or now - t0 < P1_AFTER:
+             continue
+-        out.append(r)
++        out.append((r, now - t0))
+     return out
+ 
+ 
+ def main(argv):
+     dry = "--dry-run" in argv
++    now = float(os.environ.get("DRA_NOW") or time.time())
+     rows = []
+     with open(os.path.join(M, "BACKLOG.jsonl"), encoding="utf-8", newline="\n") as f:
+         for line in f:
+@@ -57,25 +103,48 @@ def main(argv):
+         key = (r["id"], str(r.get("ready_t") or r.get("status_t") or ""))
+         if key not in sent:
+             new.append((key, r))
+-    if not new:
++    p1_last = {}
++    if os.path.exists(P1_STATE):
++        with open(P1_STATE, encoding="utf-8") as f:
++            for l in f:
++                w = l.rstrip("\n").split("\t")
++                try:
++                    p1_last[w[0]] = max(p1_last.get(w[0], 0.0), float(w[1]))
++                except (IndexError, ValueError):
++                    continue
++    p1 = [(r, a) for r, a in p1_unstartable(rows, now) if now - p1_last.get(r["id"], float("-inf")) >= P1_EVERY]
++    if not new and not p1:
+         return 0
+-    parts = [f"{k[0]} (ready since {k[1] or '?'}; {r.get('kind', '?')}: {str(r.get('title', ''))[:120]})" for k, r in new]
+-    msg = ("NOW(critical): decider-owned p1 row(s) ready with no job in flight: " + "; ".join(parts)
+-           + ". Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.")
++    msgs = []
++    if new:
++        parts = [f"{k[0]} (ready since {k[1] or '?'}; {r.get('kind', '?')}: {str(r.get('title', ''))[:120]})" for k, r in new]
++        msgs.append("decider-owned p1 row(s) ready with no job in flight: " + "; ".join(parts)
++                    + ". Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.")
++    if p1:
++        msgs.append("p1 ready but not startable: " + "; ".join(f"{r['id']}, {r.get('owner') or '-'}, {age_s(a)}" for r, a in p1)
++                    + ". Not startable = no task file (links.task, prompts/task-<id>.txt, prompts/dri-task-<id>.txt) and no launch"
++                    + " link (reviews/dri-decisions-20261116-adv0244.md item 2): write the task file and start the row, or move it"
++                    + " to blocked with the reason.")
++    msg = "NOW(critical): " + " | ".join(msgs)
+     if dry:
+         print(msg)
+         return 0
+     cmd = shlex.split(os.environ["DRA_MSG"]) if os.environ.get("DRA_MSG") else ["zsh", os.path.join(M, "msg.sh")]
+     rc = subprocess.run(cmd + ["dri", "decider-ready-alert", msg], stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
++    stamp = time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime(now))
+     if rc != 0:
+-        print(f"{time.strftime('%H:%MZ', time.gmtime())} decider-ready-alert: msg.sh rc {rc}; will retry next pass")
++        print(f"{stamp} decider-ready-alert: msg.sh rc {rc}; will retry next pass")
+         return 0
+-    with open(STATE, "a", encoding="utf-8") as f:
+-        stamp = time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime())
+-        for k, _ in new:
+-            f.write(f"{k[0]}\t{k[1]}\t{stamp}\n")
+-    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join(k[0] for k, _ in new)}")
++    if new:
++        with open(STATE, "a", encoding="utf-8") as f:
++            for k, _ in new:
++                f.write(f"{k[0]}\t{k[1]}\t{stamp}\n")
++    if p1:
++        with open(P1_STATE, "a", encoding="utf-8") as f:
++            for r, _ in p1:
++                f.write(f"{r['id']}\t{int(now)}\t{stamp}\n")
++    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [r['id'] for r, _ in p1])}")
+     return 0
+ 
+ 
+diff --git a/backlog.py b/backlog.py.new-p1rua
+index 97397743..766bb1e4 100644
+--- a/backlog.py
++++ b/backlog.py.new-p1rua
+@@ -1575,6 +1575,46 @@ def split_limits(dry):
+ 
+ 
+ # ---------------------------------------------------------------- CLI
++# 2026-11-16 p1-ready-unstartable-alert (reviews/dri-decisions-20261116-adv0244.md item 2): a p1 row is filed with its task file,
++# or with a named writer and a time. `add` / `update` that leave a row at priority <= 1 and status ready without links.task naming
++# an existing file and without a note line "writer: <name> by <UTC>" print a warning and append one line to backlog-p1-filing.log
++# (UTC, id, command, reason). Never refused: rows are filed by many callers. tools-local/decider-ready-alert.py alerts the decider
++# if such a row is still not startable 30 min after ready. Test: python3 -I tools-local/test_p1_ready_alert.py
++WRITER_RE = re.compile(r"(?mi)^\s*writer:\s*\S.*\bby\s+\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?Z")
++P1_FILING_LOG = "backlog-p1-filing.log"
++
++
++def p1_filing_gap(r):
++    """"" when the row is not p1 ready, or names its task file or its writer; else the reason for the warning."""
++    try:
++        p1 = float(r.get("priority")) <= 1
++    except (TypeError, ValueError):
++        p1 = False
++    if not p1 or r.get("status") != "ready":
++        return ""
++    task = (r.get("links") or {}).get("task") or ""
++    if task and os.path.isfile(task if task.startswith("/") else f"{M}/{task}"):
++        return ""
++    if WRITER_RE.search(r.get("note") or ""):
++        return ""
++    why = f"task file missing ({task})" if task else "no --link task=<file>"
++    return f"p1 ready row with {why} and no note line 'writer: <name> by <UTC>'"
++
++
++def p1_filing_warn(cmd, r):
++    why = p1_filing_gap(r)
++    if not why:
++        return
++    print(f"WARNING {r['id']}: {why} (p1 filing rule, reviews/dri-decisions-20261116-adv0244.md item 2); recorded in "
++          f"{P1_FILING_LOG}. Fix: backlog.sh update {r['id']} --link task=prompts/task-{r['id']}.txt, or --note "
++          f"'writer: <name> by <UTC>'", file=sys.stderr)
++    try:
++        with open(f"{OUT}/{P1_FILING_LOG}", "a", encoding="utf-8") as f:
++            f.write(f"{utc_s(time.time())}\t{r['id']}\t{cmd}\t{why}\n")
++    except OSError as e:
++        print(f"WARNING: could not record in {P1_FILING_LOG}: {e}", file=sys.stderr)
++
++
+ def links_arg(vals):
+     d = {}
+     for v in vals or []:
+@@ -1733,6 +1773,8 @@ def main():
+         if r["status"] == "ready" and (a.cmd == "add" or getattr(a, "status", None) == "ready"):
+             r["ready_t"] = utc()
+         save(rows)
++    if a.cmd in ("add", "update"):
++        p1_filing_warn(a.cmd, r)
+     print(f"{a.cmd} {a.id}: {r['status']}")
+ 
+ 
+diff --git a/tools-local/test_decider_ready_alert.py b/tools-local/test_decider_ready_alert.py.new-p1rua
+index 748721cf..9142ae8d 100644
+--- a/tools-local/test_decider_ready_alert.py
++++ b/tools-local/test_decider_ready_alert.py.new-p1rua
+@@ -1,11 +1,13 @@
+ #!/usr/bin/env python3
+ """Tests for tools-local/decider-ready-alert.py and its call in backlog-svc.sh (orchestrator 20261115T140543Z item 1).
+ Run: python3 -I tools-local/test_decider_ready_alert.py   (BACKLOG_SVC_SH = the backlog-svc.sh copy to check; default the
+-staged backlog-svc.sh.new-dra if present, else the live one)."""
++staged backlog-svc.sh.new-dra if present, else the live one; DRA_SCRIPT = the alert script, default the staged
++decider-ready-alert.py.new-p1rua if present, else the live one)."""
+ import json, os, subprocess, sys, tempfile, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-SCRIPT = os.path.join(HERE, "decider-ready-alert.py")
++SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-p1rua"),
++                                                           os.path.join(HERE, "decider-ready-alert.py")) if os.path.exists(p))
+ M = os.path.dirname(HERE)
+ SVC = os.environ.get("BACKLOG_SVC_SH") or (os.path.join(M, "backlog-svc.sh.new-dra")
+                                             if os.path.exists(os.path.join(M, "backlog-svc.sh.new-dra"))
+@@ -60,7 +62,9 @@ class Alert(unittest.TestCase):
+ 
+     def test_non_matching_rows_silent(self):
+         self.write([row("blk", status="blocked"), row("fly", status="in-flight"), row("mrg", status="merged"),
+-                    row("p40", priority=40), row("feat", owner="feature planner"), row("nop", priority=None)])
++                    row("p40", priority=40), row("nop", priority=None),
++                    # p1-ready-unstartable-alert: a p1 ready row of another owner is silent only when startable (launch link)
++                    row("feat", owner="feature planner", links={"launch": "delegate"})])
+         self.assertEqual(self.run_it().returncode, 0)
+         self.assertEqual(self.msgs(), [])
+ 
+diff --git a/tools-local/test_p1_ready_alert.py b/tools-local/test_p1_ready_alert.py
+new file mode 100644
+index 00000000..1346b7a6
+--- /dev/null
++++ b/tools-local/test_p1_ready_alert.py
+@@ -0,0 +1,179 @@
++#!/usr/bin/env python3
++"""Tests for the p1 not-startable alert (tools-local/decider-ready-alert.py) and the p1 filing warning (backlog.py `add` /
++`update`); item p1-ready-unstartable-alert, reviews/dri-decisions-20261116-adv0244.md item 2.
++Run: python3 -I tools-local/test_p1_ready_alert.py
++Code under test: P1RUA_ALERT / P1RUA_BACKLOG name the files; default the staged .new-p1rua copy when present, else the live file
++(the live files before the install fail these tests)."""
++import json, os, subprocess, sys, tempfile, unittest
++from datetime import datetime, timezone
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++M = os.path.dirname(HERE)
++
++
++def pick(env, live):
++    staged = live + ".new-p1rua"
++    return os.environ.get(env) or (staged if os.path.exists(staged) else live)
++
++
++ALERT = pick("P1RUA_ALERT", os.path.join(HERE, "decider-ready-alert.py"))
++BACKLOG = pick("P1RUA_BACKLOG", os.path.join(M, "backlog.py"))
++READY = "2026-11-16T02:00Z"
++T0 = datetime(2026, 11, 16, 2, 0, tzinfo=timezone.utc).timestamp()
++MIN, HOUR = 60, 3600
++
++
++def row(i, **kw):
++    r = {"id": i, "kind": "infra", "title": f"title {i}", "owner": "infra feed", "priority": 1, "status": "ready",
++         "ready_t": READY, "links": {}}
++    r.update(kw)
++    return r
++
++
++class Alert(unittest.TestCase):
++    def setUp(self):
++        self.d = tempfile.mkdtemp()
++        os.makedirs(os.path.join(self.d, "prompts"))
++        self.log = os.path.join(self.d, "msgs.log")
++        fake = os.path.join(self.d, "fake-msg.sh")
++        with open(fake, "w") as f:
++            f.write('#!/bin/sh\nprintf "%s|%s|%s\\n" "$1" "$2" "$3" >> ' + self.log + "\nexit ${FAKE_RC:-0}\n")
++        self.env = dict(os.environ, DRA_M=self.d, DRA_MSG=f"sh {fake}")
++
++    def write(self, rows):
++        with open(os.path.join(self.d, "BACKLOG.jsonl"), "w") as f:
++            for r in rows:
++                f.write(json.dumps(r) + "\n")
++
++    def touch(self, rel):
++        open(os.path.join(self.d, rel), "w").close()
++
++    def run_at(self, after, **env):
++        e = dict(self.env, DRA_NOW=str(T0 + after), **env)
++        p = subprocess.run([sys.executable, "-I", ALERT], env=e, capture_output=True, text=True)
++        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
++        self.assertNotIn("error", p.stdout)
++        return p
++
++    def msgs(self):
++        return open(self.log).read().splitlines() if os.path.exists(self.log) else []
++
++    def test_no_task_file_31_min_alerts_once(self):
++        self.write([row("p1-none", owner="feature planner")])
++        self.run_at(31 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        to, frm, text = m[0].split("|", 2)
++        self.assertEqual((to, frm), ("dri", "decider-ready-alert"))
++        self.assertTrue(text.startswith("NOW(critical): p1 ready but not startable: p1-none, feature planner, 31m"), text)
++
++    def test_29_min_silent(self):
++        self.write([row("p1-none")])
++        self.run_at(29 * MIN)
++        self.assertEqual(self.msgs(), [])
++
++    def test_task_file_or_launch_link_silent(self):
++        self.touch("prompts/t-linked.txt")
++        self.touch("prompts/task-by-name.txt")
++        self.touch("prompts/dri-task-by-dri-name.txt")
++        self.write([row("linked", links={"task": "prompts/t-linked.txt"}), row("by-name"), row("by-dri-name"),
++                    row("launch", links={"launch": "research-wave w1 VE/Research"})])
++        self.run_at(5 * HOUR)
++        self.assertEqual(self.msgs(), [])
++
++    def test_task_link_to_missing_file_alerts(self):
++        self.write([row("dangling", links={"task": "prompts/task-gone.txt"})])
++        self.run_at(31 * MIN)
++        self.assertEqual(len(self.msgs()), 1)
++        self.assertIn("dangling, infra feed, 31m", self.msgs()[0])
++
++    def test_second_run_within_4h_silent_then_again(self):
++        self.write([row("p1-none")])
++        self.run_at(31 * MIN)
++        self.run_at(31 * MIN + 4 * HOUR - MIN)
++        self.assertEqual(len(self.msgs()), 1, "a second pass within 4 h must not re-send")
++        self.run_at(31 * MIN + 4 * HOUR)
++        self.assertEqual(len(self.msgs()), 2, "after 4 h the row is named again")
++        self.assertIn("p1-none, infra feed, 4h31m", self.msgs()[1])
++
++    def test_non_matching_rows_silent(self):
++        self.write([row("p2", priority=2), row("fly", status="in-flight"), row("blk", status="blocked"),
++                    row("nop", priority=None), row("not", ready_t=None, status_t=None)])
++        self.run_at(5 * HOUR)
++        self.assertEqual(self.msgs(), [])
++
++    def test_p0_and_status_t_fallback(self):
++        self.write([row("p0", priority=0, ready_t=None, status_t="2026-11-16T02:00:30Z")])
++        self.run_at(31 * MIN)
++        self.assertIn("p0, infra feed, 30m", self.msgs()[0])
++
++    def test_several_rows_one_message_with_decider_part(self):
++        self.write([row("a"), row("dec", owner="DRI decider")])
++        self.run_at(2 * HOUR + 5 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertIn("decider-owned p1 row(s) ready with no job in flight: dec (ready since", m[0])
++        self.assertIn("p1 ready but not startable: a, infra feed, 2h05m; dec, DRI decider, 2h05m", m[0])
++
++    def test_failed_send_retries(self):
++        self.write([row("a")])
++        self.run_at(31 * MIN, FAKE_RC="1")
++        self.assertFalse(os.path.exists(os.path.join(self.d, "p1-unstartable-alert.sent")))
++        self.run_at(32 * MIN)
++        self.assertEqual(len(self.msgs()), 2)
++
++
++class Filing(unittest.TestCase):
++    def setUp(self):
++        self.d = tempfile.mkdtemp()
++        os.makedirs(os.path.join(self.d, "prompts"))
++        open(os.path.join(self.d, "prompts", "task-has.txt"), "w").close()
++        self.env = dict(os.environ, BL_M=self.d, BL_OUT=self.d, BL_REPO=os.path.join(self.d, "repo"))
++        self.flog = os.path.join(self.d, "backlog-p1-filing.log")
++
++    def bl(self, *a):
++        p = subprocess.run([sys.executable, "-I", BACKLOG, *a], env=self.env, capture_output=True, text=True)
++        self.assertEqual(p.returncode, 0, p.stderr)   # warn, never refuse
++        return p
++
++    def logged(self):
++        return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
++
++    def test_add_p1_ready_without_task_or_writer_warns(self):
++        p = self.bl("add", "bare", "infra", "a bare p1 row", "--priority", "1", "--status", "ready")
++        self.assertIn("WARNING bare: p1 ready row with no --link task=<file>", p.stderr)
++        self.assertIn("add bare: ready", p.stdout)
++        lines = self.logged()
++        self.assertEqual(len(lines), 1)
++        self.assertEqual(lines[0].split("\t")[1:3], ["bare", "add"])
++
++    def test_add_with_missing_task_file_warns(self):
++        p = self.bl("add", "gone", "infra", "t", "--priority", "1", "--status", "ready", "--link", "task=prompts/task-gone.txt")
++        self.assertIn("task file missing (prompts/task-gone.txt)", p.stderr)
++        self.assertEqual(len(self.logged()), 1)
++
++    def test_update_to_p1_ready_warns(self):
++        self.bl("add", "later", "infra", "t", "--priority", "40", "--status", "ready")
++        self.assertEqual(self.logged(), [])
++        p = self.bl("update", "later", "--priority", "1")
++        self.assertIn("WARNING later:", p.stderr)
++        self.assertEqual(self.logged()[0].split("\t")[1:3], ["later", "update"])
++
++    def test_task_file_or_writer_silent(self):
++        for a in (["add", "has", "infra", "t", "--priority", "1", "--status", "ready", "--link", "task=prompts/task-has.txt"],
++                  ["add", "wr", "infra", "t", "--priority", "1", "--status", "ready", "--note",
++                   "raised by ADV-2\nwriter: dri-decider by 2026-11-16T03:00Z"],
++                  ["add", "prop", "infra", "t", "--priority", "1"],
++                  ["add", "p2", "infra", "t", "--priority", "2", "--status", "ready"]):
++            p = self.bl(*a)
++            self.assertNotIn("WARNING", p.stderr, a)
++        self.assertEqual(self.logged(), [])
++
++    def test_writer_line_needs_a_time(self):
++        p = self.bl("add", "wr2", "infra", "t", "--priority", "1", "--status", "ready", "--note", "writer: dri-decider")
++        self.assertIn("WARNING wr2:", p.stderr)
++
++
++if __name__ == "__main__":
++    print(f"alert: {ALERT}\nbacklog: {BACKLOG}")
++    unittest.main()
