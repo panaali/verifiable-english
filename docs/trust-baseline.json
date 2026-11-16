@@ -2,8 +2,8 @@
  "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
  "budget": {
   "K": 1018,
-  "S": 14954,
-  "V": 48155
+  "S": 15000,
+  "V": 48161
  },
  "allowances": [
   {
@@ -2784,6 +2784,20 @@
    "reason": "kb-9: facts and coherence on soft-selected (new Lean-owned behaviour): K +0, S +25 (VE/SoftNorms/Selected.lean +18: factsAt, coherentAt, factsSent, factsFields and the facts lines of runSelected; VE/SoftNorms/SelectedSound.lean +7: SelectedAnswerWith and SelectedAnswer's optional fields), V +17 (VE/Compose/SlotWire.lean +13: decodeFactsIn, the body of decodeFacts shared with the prepared path; ResponseShape/Schemas/SoftNorms.lean +4: the selected row's facts and coherent fields); every new trusted definition is exercised by a check that can fail (docs/kernel/kb-9/trust-mutants.json: 0 SURVIVOR, 0 UNKNOWN); ties pass requested in docs/kernel/kb-9/FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-9, 2026-11-15",
    "commit": "da0822ae80b68e2fdbde4ff0933c5d92b3f734a0"
+  },
+  {
+   "class": "S",
+   "lines": 48,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
+  },
+  {
+   "class": "V",
+   "lines": 235,
+   "reason": "kb-2a-b: Lean answers judgments@0 documents (CoreCheck case building + answer, DocumentFold fold, schemas); K +0, S +48, V +235, trusted +283; cut-back row kb-2a-b-cutback",
+   "signature": "SIGNED by the DRI 2026-11-14 (reviews/dri-decisions-20261114-kb-2a-b.md item 1)",
+   "commit": "4a5d3460d36c50b626b74cb324674c45f0f3254e"
   }
  ]
 }

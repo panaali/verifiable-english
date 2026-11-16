@@ -120,4 +120,44 @@ theorem slot_wire_conflict (j answer : Json) (h : runCase j = .ok answer)
     simp only [pure, Except.pure, Except.ok.injEq] at h
     exact ⟨needFacts_ok hf, .inl ⟨r, names, rfl, hr, hnames, h.symm⟩⟩
 
+/-- The `slot-admission` answer (kb-2a-b, the document mode's kernel row): from raw JSON, a successful answer is
+`slotAdmissionAnswer` of the case's id and a core document read back from the case itself, whose source is the case's
+`environment` and `norms` decoded and well formed (`SourceDecoded`'s source part, `runAdmission_sound`) and whose facts
+`P` are the case's `facts` decoded (`decodeFacts`) to a well-formed slot (`SlotWellFormed`). It states nothing about
+consistency, and the answer has no verdict word. -/
+theorem slot_wire_admission (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "slot-admission") (hn : usesSoftPath j = true) :
+    ∃ (id : String) (r : SlotAdmission),
+      VE.Bridge.stringField j "id" = .ok id ∧ (j.getObjVal? "facts").toBool = true ∧
+      replaySlotAdmission j = .ok r ∧
+      decodeSoftSource (j.getObjValD "environment") (j.getObjValD "norms") = .ok r.src ∧
+      WellFormedSoft r.src.D = true ∧ r.src.D.E = r.src.se.ne.rv.environment ∧
+      r.src.D.lits = r.src.se.ne.rv.literals ∧
+      decodeFacts r.src j = .ok (r.facts, r.items) ∧ VE.Compose.SlotWellFormed r.src.D r.facts ∧
+      answer = slotAdmissionAnswer id r := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := bind_ok h
+  obtain ⟨kind, hkind, h⟩ := bind_ok h
+  have heq : kind = "slot-admission" := by rw [hkind] at hk; cases hk; rfl
+  subst heq
+  simp only [hn, show ("slot-admission" == "admission") = false from by decide, Bool.false_and,
+    Bool.not_true, Bool.false_eq_true, ↓reduceIte] at h
+  unfold runSoftKind at h
+  simp only [show ("slot-admission" == "soft-selected") = false from by decide,
+    show ("slot-admission" == "soft-rule") = false from by decide,
+    show ("slot-admission" == "soft-rules") = false from by decide,
+    show ("slot-admission" == "soft-elaborate") = false from by decide,
+    show ("slot-admission" == "soft-pairs") = false from by decide,
+    show ("slot-admission" == "soft-certificate") = false from by decide,
+    show ("slot-admission" == "soft-conflict") = false from by decide,
+    show ("slot-admission" == "slot-certificate") = false from by decide,
+    show ("slot-admission" == "slot-conflict") = false from by decide,
+    show ("slot-admission" == "slot-admission") = true from by decide,
+    Bool.false_and, Bool.false_eq_true, ↓reduceIte, pure_bind] at h
+  obtain ⟨_, hf, h⟩ := bind_ok h
+  obtain ⟨r, hr, h⟩ := bind_ok h
+  simp only [pure, Except.pure, Except.ok.injEq] at h
+  obtain ⟨hs, hw, hE, hl, hd, hP⟩ := replaySlotAdmission_sound j r hr
+  exact ⟨id, r, hid, needFacts_ok hf, hr, hs, hw, hE, hl, hd, hP, h.symm⟩
+
 end VE.SoftNorms.Run

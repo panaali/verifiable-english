@@ -135,26 +135,49 @@ def test_the_layer_s_own_refusals_and_the_profiles_it_stays_apart_from(service, 
         assert answer(service, uid, twin(fm)).get("error") == expected
 
 
-APART = "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+# kb-2a-b (4): a document whose rule has exception conditions beside judgments@0 and soft-norms@0, every profile with
+# a row of the lowering, no longer ends in main's refusal "judgments@0 with soft-norms@0 needs its composed Lean
+# route": it is the core path's (`Service.CoreCheck`), answered or refused by Lean, its refusal marked `lowering`.
+# Python's fallback answered no status for any of these documents before (its loader refuses every judgments@0
+# document: ve/document/load.py "judgments@0 documents are checked by Lean's document mode"), so there is no status
+# to compare (docs/kernel/kb-2a-b/status-compare.json); the refusal text stays for the documents still refused.
+PYTHON_BEFORE = "CheckerUnavailable: judgments@0 documents are checked by Lean's document mode"
 
 
-@pytest.mark.parametrize("term", ["good_judgment", "evaluating_inputs"])
-@pytest.mark.parametrize("listed", [True, False], ids=["listed", "not listed"])
-@pytest.mark.parametrize("where", ["sufficient", "necessary"])
-def test_a_rule_with_exception_conditions_keeps_main_s_refusal_of_the_pairing(service, where, listed, term):
-    """pc-1 review F1 (PROBE F1): the soft route makes `exception.sufficient` and `exception.necessary` rules of its
-    theory, which `softContent` does not read, so a document with one keeps main's refusal of `judgments@0` beside
-    `soft-norms@0` (`exceptionConditioned`), whether the condition is a judgment and whether the term is listed. It
-    was CHECKED with the judgment reported unused, or refused `JudgmentListedUnused`. The twin is answered."""
-    fm = front("u0052.s01", listed=["good_judgment"] if listed else [])
+def exception_front(where, listed, term, declared=None):
+    fm = front("u0052.s01", listed=["good_judgment"] if listed or declared else [])
     norm = fm["units"][0]["content"]["norm"]
     norm["guard"] = ["unary", "evaluating_inputs", ["var", 0]]
     norm["exception"] = {**EXCEPTION, where: [["unary", term, ["var", 0]]]}
     if not listed:
         fm["units"][0]["meaning"] = "specified"
-    assert answer(service, "u0052.s01", fm).get("error") == APART
-    plain = answer(service, "u0052.s01", twin(fm))
+    return fm
+
+
+@pytest.mark.parametrize("term", ["good_judgment", "evaluating_inputs"])
+@pytest.mark.parametrize("listed", [True, False], ids=["listed", "not listed"])
+@pytest.mark.parametrize("where", ["sufficient", "necessary"])
+def test_a_rule_with_exception_conditions_is_answered_by_the_core_path(service, where, listed, term):
+    """pc-1 review F1 (PROBE F1) kept main's refusal of `judgments@0` beside `soft-norms@0` for a rule with exception
+    conditions, which `softContent` does not read. The core path reads them (`CoreCheck.exceptionFormulas`): a listed
+    term is Lean's own refusal (`Judgments.status`, unchanged), marked `lowering`; with no term declared the rule reads
+    none and is CHECKED. Never main's refusal, never the other path."""
+    row = answer(service, "u0052.s01", exception_front(where, listed, term))
+    if listed:
+        assert row.get("lowering") is True and row["error"] == "JudgmentListedUnused: u0052.s01 good_judgment"
+    else:
+        assert row["status"] == "ok" and [u["status"] for u in row["view"]["units"]] == ["CHECKED"]
+        assert len(row["rows"]) == 1 and row["rows"][0]["answer"]["status"] == "ok"
+    plain = answer(service, "u0052.s01", twin(exception_front(where, listed, term)))
     assert plain["status"] == "ok" and [u["status"] for u in plain["units"]] == ["OPEN" if listed else "CHECKED"]
+
+
+@pytest.mark.parametrize("where", ["sufficient", "necessary"])
+def test_a_judgment_term_read_only_in_an_exception_makes_the_unit_open(service, where):
+    """The judgment condition of the fold reads a soft rule's exception (DESIGN kb-2a 2.3): a declared term read only
+    there makes a specified unit OPEN; `softContent` alone would leave it CHECKED."""
+    row = answer(service, "u0052.s01", exception_front(where, False, "good_judgment", declared=True))
+    assert row["status"] == "ok" and [u["status"] for u in row["view"]["units"]] == ["OPEN"]
 
 
 def model_id(service, profiles, model):

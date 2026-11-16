@@ -53,7 +53,11 @@ BASE = {
     "external_deployment": base(["situation"], "{0} is an external deployment"),
     "framework_deployment": base(["situation"], "{0} is a deployment under the Preparedness Framework"),
     "large_scale_internal": base(["situation"], "{0} is a large-scale internal deployment"),
-    "critical_standard_unspecified": base(["situation"], "the Critical standard has not yet been specified at {0}"),
+    "critical_standard_unspecified": base(["situation"], "OpenAI ('we') has not yet specified, at {0}, safeguards and "
+                                          "security controls that would meet a Critical standard (Table 1 BIO-C, AIS-C: "
+                                          "\u201cUntil we have specified safeguards and security controls that would "
+                                          "meet a Critical standard\u201d; CYB-C: \u201csafeguards and security "
+                                          "controls standards that would meet a Critical standard\u201d)"),
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
     "high": base(["level"], "{0} is a High level", "{0} is high"),
     "critical": base(["level"], "{0} is a Critical level", "{0} is critical"),
@@ -97,7 +101,8 @@ BASE = {
     "rapid_risk": base(["situation"], "a risk of severe harm rapidly develops at {0}"),
     "fast_track_requested": base(["situation"], "a fast track for the SAG is requested at {0}"),
     "immediate_reaction_needed": base(["situation"], "immediate reaction is needed to address the risk at {0}"),
-    "deeper_testing_warranted": base(["situation"], "OpenAI deems that {0} warrants deeper testing of Tracked Categories"),
+    "deeper_testing_warranted": base(["situation"], "OpenAI ('we') deems that the deployment at {0} warrants deeper "
+                                                     "testing of Tracked Categories of capability"),
     "third_party_available": base(["situation"], "third-party evaluation is available and feasible at {0}"),
     "safeguards_report_compiled": base(["situation"], "{0} is the compilation of a Safeguards Report"),
     "employee_request": base(["situation"], "an employee requests a summary of the testing results and SAG recommendation at {0}"),
@@ -107,7 +112,9 @@ BASE = {
                                                    "noncompliance with the Framework (5.1)"),
     "persuasion_risk": base(["situation"], "{0} concerns risks related to persuasion"),
     "leadership_decision": base(["situation"], "{0} is a final decision of OpenAI Leadership"),
-    "board_finds_necessary": base(["situation"], "the Board finds it necessary at {0} to act on the decision (Appendix B)"),
+    "board_finds_necessary": base(["situation"], "it is necessary at {0} to act on the decision (Appendix B: "
+                                                  "\u201cWhere necessary\u201d); the source names no decider: the "
+                                                  "decider is unstated (an open term, as OT13)"),
     "decided_without_sag": base(["situation"], "OpenAI Leadership makes the decision at {0} without the SAG's participation"),
     "research_category_review": base(["situation"], "{0} is a Research Category review"),
     "plausible": base(["capability"], "{0} meets the plausible-pathway criterion"),
@@ -155,7 +162,11 @@ BASE = {
 
 ACTS = {
     "misuse_safeguards": ("{0} have misuse safeguards meeting the High standard",
-                          "Table 1 BIO-H and CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"),
+                          "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"),
+    "misuse_safeguards_before_external": ("{0} have misuse safeguards meeting the High standard before external "
+                                          "deployment",
+                                          "Table 1 BIO-H: safeguards against misuse meeting High standard (Appendix "
+                                          "C.1)"),
     "security_controls": ("{0} have security controls meeting the High standard",
                           "Table 1: security controls meeting High standard (Appendix C.3)"),
     "alignment_safeguards": ("{0} have misalignment safeguards meeting the High standard",
@@ -182,7 +193,9 @@ ACTS = {
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
     "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
-    "evaluations_before_deployment": ("{0} undergo evaluations before deployment", "3.3: Scalable Evaluations before deployment"),
+    "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment",
+                                      "3.3: \u201cPrior to deployment, every covered model undergoes the suite of "
+                                      "Scalable Evaluations.\u201d"),
     "capabilities_report": ("{0} have SAG review the Capabilities Report as well as decide on next steps",
                             "3.3: the SAG reviews the Capabilities Report and decides on next steps"),
     "capabilities_report_submitted": ("{0} have results compiled into a Capabilities Report submitted to the SAG",
@@ -207,7 +220,9 @@ ACTS = {
                                      "second step; 'then' is in this legend only, a word an act may not use; the "
                                      "order it states after the first step is event order, not formalised: ET, as "
                                      "PLAN O7; the per-item scope stays SC-blocked)"),
-    "efficacy_methods_per_safeguard": ("{0} identify efficacy methods per safeguard", "4.1: third safeguard-selection step"),
+    "efficacy_methods_per_safeguard": ("{0} identify efficacy methods per safeguard",
+                                       "4.1: \u201cFor each identified safeguard, we identify methods to measure "
+                                       "their efficacy\u201d (the third safeguard-selection step)"),
     "efficacy_threshold_per_safeguard": ("{0} identify an efficacy threshold per safeguard", "4.1: third safeguard-selection step"),
     "validate_evidence": ("{0} validate the evidence", "4.2: evidence safeguards fail"),
     "review_sufficiency": ("{0} review safeguard sufficiency", "4.2: review sufficiency"),

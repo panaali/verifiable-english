@@ -1,6 +1,7 @@
-"""The fidmech command line: textcheck (L1 report), furniture (every furniture match) and boundaries (footnote pairs).
+"""The fidmech command line: textcheck (the text-check report), furniture (every furniture match) and boundaries.
 
-  uv run python -m tools.fidmech textcheck --doc anthropic-rsp [--checks L1] [--json OUT]
+  uv run python -m tools.fidmech textcheck --doc anthropic-rsp [--checks L1,L1a,L2,L3,L4,D | all] [--span sentence]
+                                           [--json OUT]
   uv run python -m tools.fidmech furniture --doc anthropic-rsp
   uv run python -m tools.fidmech boundaries --doc anthropic-rsp [--check | --write]
 
@@ -15,9 +16,9 @@ import sys
 from pathlib import Path
 
 from tools.fidmech import segment as S
-from tools.fidmech import textchecks as T
+from tools.fidmech import sentchecks as C
 
-CHECKS = ("L1",)
+CHECKS = C.CHECKS
 
 
 def _case(args):
@@ -30,19 +31,24 @@ def _case(args):
 
 def textcheck(args) -> int:
     args.checks = [c for arg in args.checks for c in arg.split(",") if c]
+    if args.checks == ["all"]:
+        args.checks = list(CHECKS)
     unknown = set(args.checks) - set(CHECKS)
     if unknown:
-        raise S.BoundariesError(f"checks {sorted(unknown)} are not built in this batch (only {', '.join(CHECKS)})")
+        raise S.BoundariesError(f"unknown checks {sorted(unknown)} (the checks are {', '.join(CHECKS)}, or all)")
     case, data, bpath = _case(args)
-    result = T.report(case, data, bpath)
+    result = C.report(case, data, bpath, args.checks)
     print(f"{result['document']}: {result['blocks']} blocks, {result['quotes']['checked']} quotes checked, "
           f"{result['quotes']['note']} note quotes, {result['quotes']['empty']} empty (info, outside the headline)")
-    print("L1 hits: " + ", ".join(f"{c} {n}" for c, n in result["counts"].items()))
+    line = lambda counts: ", ".join(f"{c} {n}" for c, n in counts.items())  # noqa: E731
+    print(f"{'+'.join(result['checks'])} hits: " + line(result["counts"]))
+    for check, row in result.get("info", {}).items():
+        print(f"  {check}: " + json.dumps({k: v for k, v in row.items() if k != "per_block"}, ensure_ascii=False))
     for lever, row in result["levers"].items():
         if "error" in row:
             print(f"  {lever} off: not segmentable ({row['error']})")
             continue
-        print(f"  {lever} off: " + ", ".join(f"{c} {n}" for c, n in row["counts"].items())
+        print(f"  {lever} off: " + line(row["counts"])
               + f" (the lever clears {len(row['cleared'])} hits and adds {len(row['added'])})")
     print(f"unpaired digit runs left as text: {result['unpaired_digit_runs']}")
     if args.json:
@@ -90,7 +96,9 @@ def main(argv=None) -> int:
         p.add_argument("--doc", required=True)
         p.add_argument("--source")
         if name == "textcheck":
-            p.add_argument("--checks", nargs="+", default=list(CHECKS))
+            p.add_argument("--checks", nargs="+", default=["L1"])
+            p.add_argument("--span", choices=("sentence",), default="sentence",
+                           help="D's span: the full source sentences of each block's quotes (plan 3.6)")
             p.add_argument("--json")
         if name == "boundaries":
             g = p.add_mutually_exclusive_group()

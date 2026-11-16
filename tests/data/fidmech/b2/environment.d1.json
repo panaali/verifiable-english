@@ -1,0 +1,82 @@
+{
+ "language": "ve",
+ "profiles": [],
+ "spec_revision": 1,
+ "vocabulary": {
+  "sorts": [
+   "situation",
+   "class"
+  ],
+  "predicates": {
+   "records_kept": {
+    "arguments": [
+     "situation"
+    ],
+    "description": "records of every review are kept at {0}; section 1: \"We will keep records of every review.\"",
+    "regulated": {
+     "role": "obligation",
+     "default": "deny",
+     "act": "{0} keep records of every review"
+    }
+   },
+   "request_answered": {
+    "arguments": [
+     "situation"
+    ],
+    "description": "each request is answered within 30 days at {0}; section 1: \"We will answer each request within 30 days of receipt.\"",
+    "regulated": {
+     "role": "obligation",
+     "default": "deny",
+     "act": "{0} answer each request within 30 days of receipt"
+    }
+   },
+   "report_shared": {
+    "arguments": [
+     "situation"
+    ],
+    "description": "the report goes to the Board at {0}; section 1: \"We will share the final report with the Board.\"",
+    "regulated": {
+     "role": "obligation",
+     "default": "deny",
+     "act": "{0} share the final report with the Board"
+    }
+   },
+   "independence_weighed": {
+    "arguments": [
+     "situation"
+    ],
+    "description": "reviewer independence counts in selection at {0}; section 2: \"In selecting reviewers, we weigh their independence.\"",
+    "regulated": {
+     "role": "obligation",
+     "default": "deny",
+     "act": "{0} weigh the independence of reviewers in selecting"
+    }
+   },
+   "summary_published": {
+    "arguments": [
+     "situation"
+    ],
+    "description": "a summary follows each review at {0}; section 2: \"We will publish a summary after each review.\"",
+    "regulated": {
+     "role": "obligation",
+     "default": "deny",
+     "act": "{0} publish a summary after each review"
+    }
+   },
+   "classified_as": {
+    "arguments": [
+     "situation",
+     "class"
+    ],
+    "description": "{0} is classified as {1}",
+    "verbalisation": "{0} is classified as {1}"
+   }
+  },
+  "constants": {
+   "selection": {
+    "sort": "class",
+    "description": "a reviewer selection takes place"
+   }
+  }
+ }
+}

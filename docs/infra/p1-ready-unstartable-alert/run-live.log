@@ -1,0 +1,91 @@
+.FF.EF/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:59: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmphg6pinmj/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F.FFF.FF
+======================================================================
+ERROR: test_p0_and_status_t_fallback (__main__.Alert.test_p0_and_status_t_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 108, in test_p0_and_status_t_fallback
+    self.assertIn("p0, infra feed, 30m", self.msgs()[0])
+                                         ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_failed_send_retries (__main__.Alert.test_failed_send_retries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 123, in test_failed_send_retries
+    self.assertEqual(len(self.msgs()), 2)
+AssertionError: 0 != 2
+
+======================================================================
+FAIL: test_no_task_file_31_min_alerts_once (__main__.Alert.test_no_task_file_31_min_alerts_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 65, in test_no_task_file_31_min_alerts_once
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_second_run_within_4h_silent_then_again (__main__.Alert.test_second_run_within_4h_silent_then_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 94, in test_second_run_within_4h_silent_then_again
+    self.assertEqual(len(self.msgs()), 1, "a second pass within 4 h must not re-send")
+AssertionError: 0 != 1 : a second pass within 4 h must not re-send
+
+======================================================================
+FAIL: test_several_rows_one_message_with_decider_part (__main__.Alert.test_several_rows_one_message_with_decider_part)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 116, in test_several_rows_one_message_with_decider_part
+    self.assertIn("p1 ready but not startable: a, infra feed, 2h05m; dec, DRI decider, 2h05m", m[0])
+AssertionError: 'p1 ready but not startable: a, infra feed, 2h05m; dec, DRI decider, 2h05m' not found in 'dri|decider-ready-alert|NOW(critical): decider-owned p1 row(s) ready with no job in flight: dec (ready since 2026-11-16T02:00Z; infra: title dec). Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.'
+
+======================================================================
+FAIL: test_task_link_to_missing_file_alerts (__main__.Alert.test_task_link_to_missing_file_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 87, in test_task_link_to_missing_file_alerts
+    self.assertEqual(len(self.msgs()), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_add_p1_ready_without_task_or_writer_warns (__main__.Filing.test_add_p1_ready_without_task_or_writer_warns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 144, in test_add_p1_ready_without_task_or_writer_warns
+    self.assertIn("WARNING bare: p1 ready row with no --link task=<file>", p.stderr)
+AssertionError: 'WARNING bare: p1 ready row with no --link task=<file>' not found in ''
+
+======================================================================
+FAIL: test_add_with_missing_task_file_warns (__main__.Filing.test_add_with_missing_task_file_warns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 152, in test_add_with_missing_task_file_warns
+    self.assertIn("task file missing (prompts/task-gone.txt)", p.stderr)
+AssertionError: 'task file missing (prompts/task-gone.txt)' not found in ''
+
+======================================================================
+FAIL: test_update_to_p1_ready_warns (__main__.Filing.test_update_to_p1_ready_warns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 159, in test_update_to_p1_ready_warns
+    self.assertIn("WARNING later:", p.stderr)
+AssertionError: 'WARNING later:' not found in ''
+
+======================================================================
+FAIL: test_writer_line_needs_a_time (__main__.Filing.test_writer_line_needs_a_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py", line 174, in test_writer_line_needs_a_time
+    self.assertIn("WARNING wr2:", p.stderr)
+AssertionError: 'WARNING wr2:' not found in ''
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.075s
+
+FAILED (failures=9, errors=1)
+alert: tools-local/decider-ready-alert.py
+backlog: backlog.py

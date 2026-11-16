@@ -1,0 +1,3927 @@
+{
+ "files": {
+  "VE/Service/CoreCheck.lean": {
+   "counts": {
+    "K": 0,
+    "S": 6,
+    "D": 50,
+    "G": 183,
+    "C": 0,
+    "P": 155,
+    "T": 0,
+    "o": 40,
+    "D[V]": 38,
+    "D[R]": 0,
+    "D[I]": 12,
+    "G[V]": 161,
+    "G[R]": 22,
+    "G[I]": 0,
+    "tied": 199,
+    "unclassified": 0,
+    "trusted": 6,
+    "lines": 434
+   },
+   "declarations": [
+    {
+     "name": "VE.Service.CoreCheck.AdmissionMeaning",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreCheck.softNormsPath",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.CoreCheck.factsJson",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreCheck.caseOf",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreCheck.roundTrips",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreCheck.factsRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreCheck.caseFault",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreCheck.casesFrom",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreCheck.casesOf",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.CoreCheck.Inputs",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreCheck.unsupportedFeature",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreCheck.inputs",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 22
+    },
+    {
+     "name": "VE.Service.CoreCheck.exceptionFormulas",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.CoreCheck.reads",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.CoreCheck.tableOf",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.CoreCheck.statementJson",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreCheck.statementsJson",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreCheck.choicesJson",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreCheck.unitStatus",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreCheck.viewOf",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Service.CoreCheck.Prepared",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreCheck.prepare",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreCheck.firstRefused",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreCheck.refusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreCheck.contradicted",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreCheck.answer",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.CoreCheck.routedRefusals",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreCheck.routed",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.CoreCheck.noRow",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreCheck.runCaseReported",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.CoreCheck.casesFrom_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.CoreCheck.casesOf_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreCheck.firstRefused_none",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreCheck.caseOf_get",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.CoreCheck.facts_round_trip",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 29
+    },
+    {
+     "name": "VE.Service.CoreCheck.core_facts_round_trip",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.CoreCheck.document_core_sound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 41
+    }
+   ]
+  },
+  "VE/Kernel/DocumentFold.lean": {
+   "counts": {
+    "K": 0,
+    "S": 31,
+    "D": 0,
+    "G": 12,
+    "C": 0,
+    "P": 21,
+    "T": 0,
+    "o": 9,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 12,
+    "G[R]": 0,
+    "G[I]": 0,
+    "tied": 12,
+    "unclassified": 0,
+    "trusted": 31,
+    "lines": 73
+   },
+   "declarations": [
+    {
+     "name": "VE.Kernel.DocumentFold.Stmt",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.UnitRow",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.Status",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.Row.ok",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.opens",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.baseless",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.status",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.statuses",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.fold",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.fold_checked_iff",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Kernel.DocumentFold.fold_reads_rows_only",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    }
+   ]
+  },
+  "VE/Service/Document.lean": {
+   "counts": {
+    "K": 0,
+    "S": 76,
+    "D": 1625,
+    "G": 984,
+    "C": 0,
+    "P": 240,
+    "T": 60,
+    "o": 145,
+    "D[V]": 1226,
+    "D[R]": 372,
+    "D[I]": 27,
+    "G[V]": 540,
+    "G[R]": 429,
+    "G[I]": 15,
+    "tied": 119,
+    "unclassified": 0,
+    "trusted": 1723,
+    "lines": 3130
+   },
+   "declarations": [
+    {
+     "name": "VE.Service.Document.unavailable",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.ownedProfiles",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.RightsKind",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.RightsKind.all",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.RightsKind.name",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.RightsKind.names",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.RightsKind.ofName?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 1
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.Block",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.blockOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.envelopeKeys",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.listedProfiles",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.lowerReadings",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.lowerScope",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.wireJson",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.rightsWireJson",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 22
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 1
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.nullableMeaningId",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.pythonMayRead",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.maxNumber",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.hexDigit",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.hex4",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.numberChar",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.Foreign",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.loneSurrogate",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.foreignLexeme",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 30
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.nullableUnitKeys",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.hasNull",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.Nullable",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.Nullable.of",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.nullInside",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.partHasStrayNull",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.unitHasStrayNull",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.readingSetHasStrayNull",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.strayNull",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.frontDepth",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.Document.frontJson",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.Document.noLoneSurrogate",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.split",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 22
+    },
+    {
+     "name": "VE.Service.Document.frontOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.profilesOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.swap",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.plainProfiles",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.layerProfiles",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.readingSetsIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.readingSetsOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.setModels",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.setReferences",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.sizedIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.sizedSets",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.statedIdsIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.statedIds",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.statedPairsIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.Document.statedPairs",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.exchangeOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.exchange",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.swapInjectiveOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.swapInjective",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.pairIndex",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.exchangeIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.pairIndex_get",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.Document.exchangeIn_pairIndex",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.injStep",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.injectiveH",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.injStep_none",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.injectiveH_foldl",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 59
+    },
+    {
+     "name": "VE.Service.Document.injectiveH_eq",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.swapInjectiveH",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.swapInjectiveH_eq",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.Document.swapInjectiveIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.swapInjectiveFast",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.swapInjective_frontOf",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.swapInjective_eq_fast",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.exchangeSet",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.withoutJudgmentsIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.withoutJudgmentsOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.withoutJudgments",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.swapClash",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.clashRefusalOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.clashRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.clashRefusal_some",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.clashRefusalIn",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.clashRefusalFast",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.clashRefusal_eq_fast",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 21
+    },
+    {
+     "name": "VE.Service.Document.emptySource",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.documentId",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.Env",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 24
+    },
+    {
+     "name": "VE.Service.Document.Env.eventsView",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.Env.version",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.Env.data",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.Env.rights",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.Env.soft",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.Env.forModes",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.Env.lower",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.Walk",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.fault",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 1
+    },
+    {
+     "name": "VE.Service.Document.stop",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.walked",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.exactly",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.pyR",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.legacyEnvelopeFault",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Service.Document.describedBy",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.verbalisedBy",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.formulaFault",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.vocabularyFault",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 81
+    },
+    {
+     "name": "VE.Service.Document.decodedEnvironment",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 39
+    },
+    {
+     "name": "VE.Service.Document.yieldedParts",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.partsPrefix",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.Document.softSourceNorms",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.softFrame",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.softSource",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.environmentFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.undecided",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.frozenEnv",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.cardinalityEnv",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.judgmentsApart",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.ruleExceptionConditioned",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.rightsBlockRules",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.unitRules",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.exceptionConditioned",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.eventsView",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.Document.judgmentSoftRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.softReadingsRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.environmentOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 61
+    },
+    {
+     "name": "VE.Service.Document.typedFormula",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.formulaCheck",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.Env.meaningId",
+     "class": "D[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.formulaOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.modelRefused",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.strictRefused",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.UnitContent",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.UnitContent.json",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.RowKind",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.RowKind.json",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.decodeRowKind",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.decodeRowKind_json",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.SourceUnit",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.Support",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.Support.all",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.Support.name",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.Support.ofName?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.UnitStatus",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.UnitStatus.all",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.UnitStatus.name",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.UnitStatus.ofName?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.Meaning",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.Meaning.json",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.Meaning.ofJson?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.RowUnit",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.Document.kindName",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.RightsDoc.unowned",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.RightsDoc",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.softRules",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.rightsSourceUnit",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.rightsDoc",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 23
+    },
+    {
+     "name": "VE.Service.Document.RightsDoc.checkRule",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.softCanonical",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.rightsContentOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 39
+    },
+    {
+     "name": "VE.Service.Document.SoftLayer",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.extendedEnv",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.layeredIds",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.softLayer",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.contentOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 73
+    },
+    {
+     "name": "VE.Service.Document.softContentOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 24
+    },
+    {
+     "name": "VE.Service.Document.SensesLayer",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.sensesLayer",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 64
+    },
+    {
+     "name": "VE.Service.Document.sensesContentOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.sourceUnit",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 53
+    },
+    {
+     "name": "VE.Service.Document.unitsOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 33
+    },
+    {
+     "name": "VE.Service.Document.addCount",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.counts",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.reasons",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.countJson",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.graphLabels",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.residual",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.unitJson",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.rowOf",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.Document.BlockCoverage",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.BlockCoverage.line",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.BlockCoverage.residual",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.coverageUnits",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.blockCoverage",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.coverageJson",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.Env.regulates",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.Env.regulated",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.usesNorms",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.parsedLabels",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.formulaDecoderTexts",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.graphFault",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.admitGraph",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 78
+    },
+    {
+     "name": "VE.Service.Document.readingsSets",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 42
+    },
+    {
+     "name": "VE.Service.Document.companions",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.freeNorms",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.checkNormDefaults",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.checkNorms",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.Document.UnitContent.judged",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.UnitContent.judgedIn",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 22
+    },
+    {
+     "name": "VE.Service.Document.judgedIn_legacy",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.Document.judgedIn_soft",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.setCandidates",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.Document.listedOf",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.judgedViews",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.usageJson",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.legendRows",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.statusRows",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.linesJson",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.Env.basePredicates",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.DocumentChain.requestOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.DocumentChain.layeredOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.DocumentChain.eventsAnchorChecks",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Service.DocumentChain.eventsLayeredOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.DocumentChain.chainLayeredOf",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.countingUnit",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.elsewhere",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.countingFront",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.chainFront",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.readingText",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.chainDocument",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.chainBound",
+     "class": "D[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.graphLabelled",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.bridgeAdmitted",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.cardinalityReport",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 24
+    },
+    {
+     "name": "VE.Service.Document.composedJson",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.Document.Checked",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.Document.Decoded",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 23
+    },
+    {
+     "name": "VE.Service.Document.decode",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 83
+    },
+    {
+     "name": "VE.Service.Document.check",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 53
+    },
+    {
+     "name": "VE.Service.Document.encodeFields",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 15
+    },
+    {
+     "name": "VE.Service.Document.encode",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.Document.checkBody",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.checkCore",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.checkCoreFast",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.checkCore_eq_fast",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.Document.withUnits",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.withSets",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.Document.scopeReadings",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Scope.decodeScope",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.checkDoc",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.Document.composedReadingRow",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.composedSetRow",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.composedReadings",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.checkDocSets",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.checkDocSets_clashFirst",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.Document.checkDocSetsFast",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.Document.checkDocSets_eq_fast",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.Document.checkDocSetsAnswered",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.locatedModel",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 27
+    },
+    {
+     "name": "VE.Service.Document.Located",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.locatedFence",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 30
+    },
+    {
+     "name": "VE.Service.Document.locatedOf",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.Service.Document.locatedRow",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.Document.runCaseReported",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.dropKey",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.setVerdictFields",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.Document.verdictFields",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.Document.noUnitStatus",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.Document.withoutStatuses",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.Service.Document.unitStatuses",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.Document.judgmentCodes",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.judgmentGateTexts",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.Document.layerRefusal",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.Document.layerRelaxes",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    }
+   ]
+  },
+  "ResponseShape/Schemas/Document.lean": {
+   "counts": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 352,
+    "C": 0,
+    "P": 0,
+    "T": 2,
+    "o": 11,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 300,
+    "G[R]": 29,
+    "G[I]": 23,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 300,
+    "lines": 365
+   },
+   "declarations": [
+    {
+     "name": "ResponseShape.Schemas.Document.unit",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 21
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.nullable",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.soft_exception",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.soft_norm",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.cites",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.soft_content",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.rights_line",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.rights_condition",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.rights_block",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 19
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.meaning",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.narrowing",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.cells",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.blockCoverage",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.coverage",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.judgments",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.judgmentLines",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.undeclaredEvaluative",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.composedReading",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.composedSet",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.composedReadings",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.plain_error",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.model_error",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.fence_error",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.cardinalityReport",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.answerFields",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 29
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.lowering",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.core_statement",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.core_view",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.core_choices",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.core_statements",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.core_row",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 23
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.row",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 15
+    },
+    {
+     "name": "ResponseShape.Schemas.Document.file",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    }
+   ]
+  },
+  "ResponseShape/Schemas/SoftNorms.lean": {
+   "counts": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 438,
+    "C": 0,
+    "P": 0,
+    "T": 0,
+    "o": 9,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 389,
+    "G[R]": 39,
+    "G[I]": 10,
+    "tied": 0,
+    "unclassified": 0,
+    "trusted": 389,
+    "lines": 447
+   },
+   "declarations": [
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.soft_path",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 48
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.soft_field",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.kind",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.error",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 39
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.coherence_labels",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.witness_model",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.rule",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.rules",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.admission",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.background",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.decision_key",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.elaborated",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 31
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.elaborate",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 42
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.pairs",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 24
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.certificateFields",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.certificateRequired",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.witnessFields",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.witnessRequired",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 2
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.witnessKindBeside",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.packagesFields",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.packagesRequired",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.detailBeside",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.factsCount",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.certificate",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.witness",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.packages",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.slot_certificate",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.slot_witness",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.slot_packages",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.slot_admission",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.selected",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 19
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.row",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 21
+    },
+    {
+     "name": "ResponseShape.Schemas.SoftNorms.file",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 35
+    }
+   ]
+  },
+  "VE/Compose/SlotWire.lean": {
+   "counts": {
+    "K": 0,
+    "S": 12,
+    "D": 51,
+    "G": 50,
+    "C": 53,
+    "P": 264,
+    "T": 0,
+    "o": 44,
+    "D[V]": 51,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 36,
+    "G[R]": 14,
+    "G[I]": 0,
+    "tied": 87,
+    "unclassified": 0,
+    "trusted": 12,
+    "lines": 474
+   },
+   "declarations": [
+    {
+     "name": "VE.Compose.SlotWire.decodeFacts",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.Compose.SlotWire.slotModelFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Compose.SlotWire.factsModel",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Compose.SlotWire.decodeFormulas_check",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Compose.SlotWire.decodeFacts_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 41
+    },
+    {
+     "name": "VE.Compose.SlotWire.NoFacts",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Compose.SlotWire.decodeFacts_empty",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Compose.SlotWire.factsModel_nil",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.factsModel_sat",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Compose.SlotWire.decodeSlotPackage",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 19
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotConflictReplay",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotConflictReplay.conflictFree",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotConflict",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotConflict_parts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_conflict_sound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_conflict_facts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Compose.SlotWire.slotFirstFailure",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData.M",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData.target",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData.tuple",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData.conflict",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessData.background",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Compose.SlotWire.slotWitnessFrom",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotWitnessReplay",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotWitness",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotWitness_parts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_conflict_witness_sound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 15
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_witness_facts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotEntailmentReplay",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotEntailmentReplay.valid",
+     "class": "D[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotEntailment",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 18
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotEntailment_parts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 23
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_acceptance",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 20
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_entailment_facts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotAdmission",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotAdmission",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Compose.SlotWire.SlotAdmitted",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    },
+    {
+     "name": "VE.Compose.SlotWire.replaySlotAdmission_sound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.Compose.SlotWire.map_bind_congr",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Compose.SlotWire.ok_bind",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Compose.SlotWire.decodeSlotPackage_nil",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Compose.SlotWire.slotWitnessFrom_nil",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Compose.SlotWire.slot_wire_empty",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 33
+    }
+   ]
+  },
+  "VE/SoftNorms/Run.lean": {
+   "counts": {
+    "K": 0,
+    "S": 61,
+    "D": 58,
+    "G": 288,
+    "C": 96,
+    "P": 39,
+    "T": 3,
+    "o": 48,
+    "D[V]": 58,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 218,
+    "G[R]": 56,
+    "G[I]": 14,
+    "tied": 41,
+    "unclassified": 0,
+    "trusted": 296,
+    "lines": 593
+   },
+   "declarations": [
+    {
+     "name": "VE.SoftNorms.Run.usesSoftPath",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 24
+    },
+    {
+     "name": "VE.SoftNorms.Run.classificationPackage",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.SoftNorms.Run.weighingWitness",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.SoftNorms.Run.classify",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 16
+    },
+    {
+     "name": "VE.SoftNorms.Run.pairsResult",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.SoftNorms.Run.openAfterClassification",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.SoftNorms.Run.conflictFreeText",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 1
+    },
+    {
+     "name": null,
+     "class": "T",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.SoftNorms.Run.softWithout",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.SoftNorms.Run.conflictValidWithout",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.SoftNorms.Run.entailmentValidWithout",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.SoftNorms.Run.sufficientCoherence",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.SoftNorms.Run.encodeAdmitted",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.SoftNorms.Run.runAdmission",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.SoftNorms.Run.BindingsMatchSourceAndRegeneration",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 11
+    },
+    {
+     "name": "VE.SoftNorms.Run.SoftAdmissionAnswer",
+     "class": "S",
+     "tied": false,
+     "trusted": true,
+     "lines": 18
+    },
+    {
+     "name": "VE.SoftNorms.Run.runAdmission_sound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 16
+    },
+    {
+     "name": "VE.SoftNorms.Run.warningSituation",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.SoftNorms.Run.warningRule",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.SoftNorms.Run.overlapLine",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 15
+    },
+    {
+     "name": "VE.SoftNorms.Run.preferredAt",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.SoftNorms.Run.overrideCycleLine",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 21
+    },
+    {
+     "name": "VE.SoftNorms.Run.warningRows",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.SoftNorms.Run.documentIdentityEnvironment",
+     "class": "G[I]",
+     "tied": false,
+     "trusted": false,
+     "lines": 14
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotEntailmentValidWithout",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotConflictValidWithout",
+     "class": "C",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotCertificateAnswer",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotWitnessAnswer",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 10
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotConflictAnswer",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.SoftNorms.Run.slotAdmissionAnswer",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.SoftNorms.Run.needFacts",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.SoftNorms.Run.runSoftKind",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 105
+    },
+    {
+     "name": "VE.SoftNorms.Run.runCase",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.SoftNorms.Run.soft_wire_acceptance",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 23
+    },
+    {
+     "name": "VE.SoftNorms.Run.softDiagnosticCode",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 39
+    },
+    {
+     "name": "VE.SoftNorms.Run.reportedCode",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 13
+    },
+    {
+     "name": "VE.SoftNorms.Run.dualGuardCycle",
+     "class": "D[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.SoftNorms.Run.runCaseReported",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 9
+    }
+   ]
+  },
+  "VE/Service/CoreDocument.lean": {
+   "counts": {
+    "K": 0,
+    "S": 0,
+    "D": 0,
+    "G": 313,
+    "C": 0,
+    "P": 227,
+    "T": 0,
+    "o": 36,
+    "D[V]": 0,
+    "D[R]": 0,
+    "D[I]": 0,
+    "G[V]": 202,
+    "G[R]": 111,
+    "G[I]": 0,
+    "tied": 55,
+    "unclassified": 0,
+    "trusted": 147,
+    "lines": 576
+   },
+   "declarations": [
+    {
+     "name": "VE.Service.CoreDocument.Origin",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreDocument.Body",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.CoreDocument.Body.key",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.Body.rule?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.Body.premise?",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.Statement",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.CoreDoc",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreDocument.CoreDoc.of",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.Choice",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreDocument.ActiveSet",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.Coupling",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.unsupported",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreDocument.rowProfiles",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.documentFeature",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.CoreDocument.wire",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.strictRule",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.premise",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.lowerContent",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.lowerCandidate",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreDocument.declarations",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.setFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreDocument.setsFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.couplingFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.declared",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.CoreDocument.readingNamed",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreDocument.bodyFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.CoreDocument.statementFault",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.CoreDocument.Options",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreDocument.readingOptions",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreDocument.optionKeys",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 2
+    },
+    {
+     "name": "VE.Service.CoreDocument.collapsed",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.distinct",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.readingsOf",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.compatible",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreDocument.allChoices",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.compatibleChoices",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 4
+    },
+    {
+     "name": "VE.Service.CoreDocument.maxChoices",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 1
+    },
+    {
+     "name": "VE.Service.CoreDocument.maxCombinations",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 3
+    },
+    {
+     "name": "VE.Service.CoreDocument.firstUnit",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 5
+    },
+    {
+     "name": "VE.Service.CoreDocument.choicesOf",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 10
+    },
+    {
+     "name": "VE.Service.CoreDocument.UnitPlan",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 8
+    },
+    {
+     "name": "VE.Service.CoreDocument.UnitPlan.statements",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 14
+    },
+    {
+     "name": "VE.Service.CoreDocument.planOf",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.featureRefusal",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.judgments",
+     "class": "G[V]",
+     "tied": false,
+     "trusted": true,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.references",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 7
+    },
+    {
+     "name": "VE.Service.CoreDocument.preliminaries",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 9
+    },
+    {
+     "name": "VE.Service.CoreDocument.finish",
+     "class": "G[R]",
+     "tied": false,
+     "trusted": false,
+     "lines": 6
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower",
+     "class": "G[V]",
+     "tied": true,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.finish_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.statementFault_none",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 33
+    },
+    {
+     "name": "VE.Service.CoreDocument.allChoices_nodup",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 13
+    },
+    {
+     "name": "VE.Service.CoreDocument.allChoices_mem",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 12
+    },
+    {
+     "name": "VE.Service.CoreDocument.choicesOf_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.CoreDocument.preliminaries_sets",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_ok",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 19
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_origin_units",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 23
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_readings_distinct",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 26
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_choices",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 17
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_names_bound",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 18
+    },
+    {
+     "name": "VE.Service.CoreDocument.lower_parts",
+     "class": "P",
+     "tied": false,
+     "trusted": false,
+     "lines": 11
+    }
+   ]
+  }
+ },
+ "total": {
+  "K": 0,
+  "S": 186,
+  "trusted": 2904,
+  "tied": 513
+ },
+ "problems": []
+}

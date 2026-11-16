@@ -1,3 +1,9 @@
+- `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
+- `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
+- `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
+- `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
+- `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
+- `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
 - `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
 - `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
 - `tests/test_rd9_sc11_charge_wording.py` — sc-11 review F1: every text about `routeSD`'s limits says `sdSuperposable` is read before the work limit, uncharged.
@@ -70,10 +76,3 @@
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
-- `tests/test_right_clauses.py` — `right-clauses@0` on the service (docs/spec/right-clauses.md 8.1, 9.1, 9.3; cmp-s3-cfr-1): the registered profile's `clauses-elaborate` mode reads 9.1's docume…
-- `tests/test_right_clauses_duplicate.py` — cmp-s3a-cfr-2: a rule name on two structured lines gets rights' own `DuplicateDeclaration` text.
-- `tests/test_right_clauses_lean.py` — Source checks of `plain_wellFormed` (docs/spec/right-clauses.md 8.3; cmp-s3a-cfr-1).
-- `tests/test_rights.py` — Rights holder-side elaboration regressions.
-- `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
-- `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
-- `tests/test_rights_meaning_id.py` — Rights 3.5: a right unit's meaning id binds its normal form, every soft field at its default omitted.

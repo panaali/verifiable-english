@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 47481,
+    "total_lines": 47567,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1812,12 +1812,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 3081,
-        "sha256": "f589dcf583314499b0db04d77d180d5a1091c4602ffe565bafbc4dab458cd542",
+        "lines": 3130,
+        "sha256": "3fe809525d2c81f3e0853ac08fe66bcb5d20644a4434457cc18403f76ada2aab",
         "ranges": [
           [
             1,
-            3081
+            3130
           ]
         ],
         "declarations": [
@@ -1829,6 +1829,8 @@
           "ruleExceptionConditioned",
           "rightsBlockRules",
           "unitRules",
+          "judgmentSoftRefusal",
+          "softReadingsRefusal",
           "environmentOf",
           "rightsWireJson",
           "rightsDoc",
@@ -1881,9 +1883,10 @@
           "Env.eventsView",
           "eventsAnchorChecks",
           "eventsLayeredOf",
-          "chainLayeredOf"
+          "chainLayeredOf",
+          "decode"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`); pc-2a: `softFrame` reads a soft frame under norm-defaults@0 over the placeholder completions; `requestOf` and `layeredOf` (namespace VE.Service.DocumentChain) make the norm-defaults mode's case and run its own `decodeLayered`, then `validateCompletions`; `admitGraph` takes the layered route's admission on this chain; et-4b merge: `requestOf` makes no case for a list with `events@0` (refused by `ownedProfiles`), so the case's events hook is none (`layeredOf_soft`); jt-3b merge with et-4b: both edits pinned whole (jt-3b's `Env.boundNames`, `legendRows`, `statusRows` and `linesJson`; et-4b's `events@0` refusal in `requestOf`); qt-a4b merge with ve-integration 3395d65592: both edits pinned whole (qt-a4b's chain list reading: `cardinalityEnv`'s profiles, `chainBound`, `composedJson` and `check`'s `parent`; main's `boundNames`, `judgment_lines`, `active` and the rights rule readers); et-5b: an events@0 document's view and hook (`eventsView`, `Events.eventsHook` over the document's open terms), spec 2.9 item 8 (`eventsAnchorChecks`) and the soft branch through the hook (`eventsLayeredOf`, `chainLayeredOf`); et-5b review F1: the answer carries the view the mode read (Env.eventsView, Checked.eventsView, encode's events_view); et-5b merge with ve-integration e78b6d9499: both edits pinned whole (et-5b's events@0 view and hook; main's rights 3.5 binding, a rights block's id bound to `VE.Rights.Wire.rightsNormalForm` and `rightsChildContext` moved to `VE.Rights.Wire`)"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`); pc-2a: `softFrame` reads a soft frame under norm-defaults@0 over the placeholder completions; `requestOf` and `layeredOf` (namespace VE.Service.DocumentChain) make the norm-defaults mode's case and run its own `decodeLayered`, then `validateCompletions`; `admitGraph` takes the layered route's admission on this chain; et-4b merge: `requestOf` makes no case for a list with `events@0` (refused by `ownedProfiles`), so the case's events hook is none (`layeredOf_soft`); jt-3b merge with et-4b: both edits pinned whole (jt-3b's `Env.boundNames`, `legendRows`, `statusRows` and `linesJson`; et-4b's `events@0` refusal in `requestOf`); qt-a4b merge with ve-integration 3395d65592: both edits pinned whole (qt-a4b's chain list reading: `cardinalityEnv`'s profiles, `chainBound`, `composedJson` and `check`'s `parent`; main's `boundNames`, `judgment_lines`, `active` and the rights rule readers); et-5b: an events@0 document's view and hook (`eventsView`, `Events.eventsHook` over the document's open terms), spec 2.9 item 8 (`eventsAnchorChecks`) and the soft branch through the hook (`eventsLayeredOf`, `chainLayeredOf`); et-5b review F1: the answer carries the view the mode read (Env.eventsView, Checked.eventsView, encode's events_view); et-5b merge with ve-integration e78b6d9499: both edits pinned whole (et-5b's events@0 view and hook; main's rights 3.5 binding, a rights block's id bound to `VE.Rights.Wire.rightsNormalForm` and `rightsChildContext` moved to `VE.Rights.Wire`); kb-2a-b split check's decoding steps into decode (the core path's and check's), the full file pinned again"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -2374,12 +2377,12 @@
       },
       {
         "file": "lean/VE/Compose/SlotWire.lean",
-        "lines": 441,
-        "sha256": "ca6a87077916c23cb3cf41107c4eb38a80ff0edc2e0ddd91e4918cec04385559",
+        "lines": 478,
+        "sha256": "4f3c3db9b813acbb3c70835b8b2b31e0595fa49252b56de0ae7b0d455125343a",
         "ranges": [
           [
             1,
-            441
+            478
           ]
         ],
         "declarations": [
@@ -2390,9 +2393,10 @@
           "replaySlotConflict",
           "slotWitnessFrom",
           "replaySlotWitness",
-          "replaySlotEntailment"
+          "replaySlotEntailment",
+          "replaySlotAdmission"
         ],
-        "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts over decodeFactsIn, its body, which kb-9's prepared soft-selected path shares) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively"
+        "reason": "kb-3, the premise slot on the soft route: the facts decoder (decodeFacts over decodeFactsIn, its body, which kb-9's prepared soft-selected path shares) and facts model (factsModel), the slot conflict packages' binding (decodeSlotPackage) and the three slot replays; the full file is pinned conservatively; kb-2a-b adds the slot-admission replay (replaySlotAdmission), the full file pinned again; kb-9 merge with ve-integration: both edits pinned whole (kb-9's decodeFactsIn; kb-2a-b's replaySlotAdmission)"
       },
       {
         "file": "lean/VE/Acts/Hook.lean",
@@ -2638,11 +2642,18 @@
       "lean/VE/Route/MeteredProfileExamples.lean": "fixtures only: #guard checks of the metered norms profile check (kb-validators) on environments and models built with Json.parse and Json.mkObj, run through runCase, modelCase and profileTree; no runner path",
       "lean/VE/Risk/WireSound.lean": "statements about Risk.Run.runCase answers of the risk-elaborate and risk-decision kinds (getObjValD of the case's environment, document, decision and entries fields; Wire.ok and Json.mkObj of the stated answer fields) and their proofs; no runtime JSON handling",
       "lean/VE/SoftNorms/SlotSound.lean": "statements about SoftNorms.Run.runCase slot-certificate and slot-conflict answers (getObjVal? of the case's facts and witness, getObjValD of its environment, norms, pairs, budget and coherent_model, Json.mkObj of a decoded model) and their proofs; no runtime JSON handling",
-      "lean/VE/SoftNorms/ConflictSound.lean": "statements about SoftNorms.Run.runCase soft-conflict answers (getObjValD of the answer's verdict, the case's witness, environment and norms, lookups through Json.mkObj) and their proofs (kb-10c); no runtime JSON handling",
       "lean/VE/SoftNorms/SlotExamples.lean": "fixtures only: #guard checks of the slot-certificate and slot-conflict kinds that build their cases, models and packages as JSON test inputs for the pinned decoders; no runner path",
       "lean/ResponseShape/SlotExamples.lean": "fixtures only: #guard checks of soft-norms.json's slot rows (and the soft rows sharing their field lists) on the mode's answers and their variants build JSON; no runner path",
-      "lean/VE/Experimental/CoreDocument.lean": "experimental: the lowering of a document to its core documents builds the core document's environment and norm objects as JSON (`wireJson` of `E.lower` and of a unit's canonical soft rule, `encodeNode` of a strict norm) and reads a strict norm back only through the soft route's own decoder (`decodeSoftSource`, `decodeSoftNorm`); it decodes no field itself, and no service mode imports it (kb-2a step A; tools/check_lean_imports.py)",
-      "lean/VE/Experimental/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it",
+      "lean/VE/Service/CoreDocument.lean": "shell: the lowering of a document to its core documents builds the core document's environment and norm objects as JSON (`wireJson` of `E.lower` and of a unit's canonical soft rule, `encodeNode` of a strict norm) and reads a strict norm back only through the soft route's own decoder (`decodeSoftSource`, `decodeSoftNorm`); it decodes no field itself (kb-2a step A; promoted to the shell by kb-2a-b, called by Service.CoreCheck)",
+      "lean/VE/Service/CoreDocumentExamples.lean": "checks only: fixtures of the lowering (an environment JSON decoded by `decodedEnvironment`, soft rules by `decodeSoftNorm`) and #guard comparisons of its answers; no service mode or record reads it",
+      "lean/VE/Service/CoreCheck.lean": "shell: the document mode's core path (kb-2a-b) builds each core document's slot-admission case as JSON (`caseOf`: the lowering's environment and norm objects, the premises by `Route.Wire.encodeFormula`) and its view (`viewOf`: `Document.encodeFields` and the statements); it decodes nothing itself (the request through `Document.decode`, each case's facts read back only by the kernel's `decodeFacts`, `core_facts_round_trip`)",
+      "lean/VE/Service/CoreCheckProofs.lean": "proofs only: the theorems that tie the core path's shell definitions (kb-2a-b-cutback: `reads`, `viewOf`, `routed`, `runCaseReported`, `Document.decode`, ...) to what they are for; it builds JSON only inside statements about `unitJson`, `statementJson` and the refusal rows; no service mode or record reads it",
+      "lean/VE/Kernel/DocumentFold.lean": "kernel: the document mode's fold (kb-2a-b) writes the answer only through `VE.Kernel.carry` (its view and the kernel's rows verbatim); it reads no JSON",
+      "lean/ResponseShape/Encoders/CoreCheck.lean": "theorems that the document mode's core rows fit document.json (`VE.Service.CoreCheck.runCaseReported`); proofs only, no runner reads it",
+      "lean/VE/Service/CoreCheckExamples.lean": "fixtures only: #guard checks of the document mode's core path (`VE.Service.CoreCheck.runCaseReported`) on one small document and its one-edit variations; no service mode or record reads it",
+      "lean/VE/Kernel/DocumentFoldExamples.lean": "checks only: #guard checks of the document fold (`VE.Kernel.DocumentFold`) on constructed unit rows and kernel rows; no service mode or record reads it",
+      "lean/ResponseShape/CoreCheckExamples.lean": "fixtures only: #guard checks of document.json's core rows on the mode's answers to VE/Service/CoreCheckExamples.lean's fixtures (accepted, and refused with a member added, dropped or retyped); no runner reads it",
+      "lean/VE/SoftNorms/ConflictSound.lean": "statements about SoftNorms.Run.runCase soft-conflict answers (getObjValD of the answer's verdict, the case's witness, environment and norms, lookups through Json.mkObj) and their proofs (kb-10c); no runtime JSON handling",
       "lean/VE/Acts/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the acts hook's instances and the norms mode's dispatch) on environments built with Json.mkObj",
       "lean/VE/Acts/HookToday.lean": "kb-4a proofs only: frozen copies of today's norms decoders (proof helpers) and the equality theorems of the acts hook over them; no product code reads it",
       "lean/VE/Acts/HookTwins.lean": "kb-4a proofs only: frozen copies of today's norms runners (proof helpers) and the equality theorems of the norms mode's dispatch over them; no product code reads it",

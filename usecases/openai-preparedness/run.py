@@ -82,7 +82,7 @@ STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("beyond_sensitiv
 # K9's model has High capability "in a Tracked Category" without naming it: every High level is tried.
 SOME_HIGH_LEVEL = {"K9"}
 
-ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards",),
+ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards", "misuse_safeguards_before_external"),
          "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development",
                  "safeguards_before_internal_use"),
          "HALT": ("halt_development",),
@@ -108,7 +108,8 @@ K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFE
            "RESIDUAL_RISK_ASSESSMENT": ("residual_risk_assessment",)}
 ALL_OF = {"VALIDATE_AND_REVIEW_SUFFICIENCY"}  # "validating ... and reviewing ..." asks for both acts
 # Table 1, F2, F3 and F4: the rules that attach to a capability threshold (G5, G9).
-THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards", "alignment_safeguards",
+THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards",
+                        "misuse_safeguards_before_external", "alignment_safeguards",
                         "safeguards_before_deployment", "safeguards_during_development", "safeguards_before_internal_use",
                         "halt_development",
                         "pandemic_policy_contribution", "cyberdefense_contribution", "deployment_permitted")
@@ -584,7 +585,7 @@ CLUSTERS = {
            "f2-reminder-any", "f2-no-deploy", "f2-no-deploy-any"),
     "C2": ("f16-informed", "f16-without-noinput", "f16-without-nodelib"),
     "C3": ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-reminder"),
-    "C4": ("f6-rel", "f7-evaluations", "f7-report"),
+    "C4": ("f6-rel", "f7-evaluations", "f7-evaluations-any", "f7-report"),
     "C5": ("f1-security-strict", "f1-security-default", "f2-deploy", "f2-deploy-any"),
     "C6": ("f16-board-reverse", "f16-board-mandate"),
 }
@@ -844,7 +845,7 @@ COMMITMENTS = {
     "F4": (("f4-security",),),
     "F5": (("f5-ambiguous",), ("f5-checkpoint",)),
     "F6": (("f6-rel",),),
-    "F7": (("f7-evaluations",), ("f7-compile",), ("f7-report",), ("f7-recommend",)),
+    "F7": (("f7-evaluations", "f7-evaluations-any"), ("f7-compile",), ("f7-report",), ("f7-recommend",)),
     "F8": (("f8-start",),),
     "F9": (("f9-risk-paths",), ("f9-specific",), ("f9-efficacy",), ("f9-threshold",), ("f9-report",),
            ("f9-residual-strict", "f9-residual-default")),
