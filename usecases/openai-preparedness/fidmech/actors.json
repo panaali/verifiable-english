@@ -54,6 +54,10 @@
   {
    "phrase": "The SAG Chair",
    "reason": "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+  },
+  {
+   "phrase": "SSC",
+   "reason": "an alias of \"the Safety and Security Committee\" in the same legend (\"SSC is the Safety and Security Committee\"): swapping the two changes no actor"
   }
  ],
  "added": [],
@@ -72,7 +76,6 @@
   "employee",
   "the SAG",
   "OpenAI",
-  "SAG",
-  "SSC"
+  "SAG"
  ]
 }
