@@ -1,0 +1,15 @@
+{
+ "harness": "safety-framework",
+ "commit": "cd8b3018fcdd31b2beea12d0919fff487c6cec6f",
+ "command": "uv run python usecases/kb9_facts_shadow.py safety-framework OUT",
+ "harness_outcome": "exit 0",
+ "wall_seconds": 130.6,
+ "premise_check": "premise_status",
+ "lean_facts_cases_for_premises": 217,
+ "premise_evaluations": 217,
+ "facts_false": 0,
+ "mismatches": [],
+ "keyed_pairs": 672,
+ "coherent_false": [],
+ "background_false": []
+}

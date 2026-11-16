@@ -1,0 +1,15 @@
+{
+ "harness": "openai-preparedness",
+ "commit": "cd8b3018fcdd31b2beea12d0919fff487c6cec6f",
+ "command": "uv run python usecases/kb9_facts_shadow.py openai-preparedness OUT",
+ "harness_outcome": "exit 0",
+ "wall_seconds": 1591.9,
+ "premise_check": "check_premises",
+ "lean_facts_cases_for_premises": 495,
+ "premise_evaluations": 923,
+ "facts_false": 24,
+ "mismatches": [],
+ "keyed_pairs": 11526,
+ "coherent_false": [],
+ "background_false": []
+}

@@ -1,0 +1,36 @@
+{
+ "script": "usecases/openai-preparedness/run.py",
+ "args": [
+  "--check"
+ ],
+ "rc": 0,
+ "wall_s": 1521.6,
+ "calls": {
+  "check|None": 57879,
+  "english.read|None": 19,
+  "environment|None": 19,
+  "metered|evaluate-budgeted": 16392,
+  "model|None": 24,
+  "quantity|None": 45,
+  "quantity|certificate": 30,
+  "risk|risk-decision": 27,
+  "risk|risk-elaborate": 27,
+  "route|background": 42,
+  "route|certificate": 117,
+  "route|dependency-order": 15130,
+  "soft-norms|soft-conflict": 88,
+  "soft-norms|soft-elaborate": 2238,
+  "soft-norms|soft-selected": 6376
+ },
+ "seconds_by_mode": {
+  "check": 255.6,
+  "english.read": 0.4,
+  "environment": 0.2,
+  "metered": 36.9,
+  "model": 0.2,
+  "quantity": 0.1,
+  "risk": 0.5,
+  "route": 70.5,
+  "soft-norms": 576.1
+ }
+}

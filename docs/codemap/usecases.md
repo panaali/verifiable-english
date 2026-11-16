@@ -30,6 +30,7 @@
 - `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.
 - `usecases/eligibility/source/extract_text.py` — Extract the main-content text of a pinned GOV.UK page (stdlib only).
 - `usecases/eligibility/translation.py` — VE translation of the Winter Fuel Payment rules (PLAN.md sections 4 and 6).
+- `usecases/kb9_facts_shadow.py` — kb-9 shadow (evidence only): each harness's premise check against Lean's `facts` flag from `soft-selected`.
 - `usecases/keyed_paths.py` — Record which checker path, Lean's or Python's, computes the keyed answers of a use case.
 - `usecases/math-mini-paper/boundary/probe.py` — Task B probe: how far does VE get with Euclid's infinitude of primes?
 - `usecases/math-mini-paper/make_paper.py` — Expand `paper.template.md` into `paper.md` using only machine-produced text.
