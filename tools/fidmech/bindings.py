@@ -5,7 +5,8 @@ version, not code; run.py reads it from here. Each table names its type in a sma
 `list[T]`, `set[T]`, `tuple[T,...]`, `tuple[T1,T2]`, `dict[str,T]`) and the loader rebuilds exactly that type, so
 run.py sees the same tuples, lists and sets as the literals it replaced. A value of the wrong shape is refused by
 name. The sha256 of each file is pinned in tests/test_fidmech_bindings.py; `frozen_diff` prints the tables against
-the run.py literals at the file's `frozen_from` commit.
+the run.py literals at the file's `frozen_from` commit, read from `run_py_blob` (that run.py's git blob: a commit id
+is a record only, since the GitHub export rewrites commits and keeps blobs; tests/lineage.py).
 """
 from __future__ import annotations
 
@@ -111,12 +112,13 @@ def load_bindings(path, document=None):
         raise BindingsError(f"{path}: not readable JSON ({e})") from e
     if type(data) is not dict or data.get("schema") != SCHEMA:
         raise BindingsError(f"{path}: schema is not {SCHEMA}")
-    if set(data) != {"schema", "document", "frozen_from", "tables"}:
-        raise BindingsError(f"{path}: keys {sorted(data)} are not schema, document, frozen_from, tables")
+    if set(data) != {"schema", "document", "frozen_from", "run_py_blob", "tables"}:
+        raise BindingsError(f"{path}: keys {sorted(data)} are not schema, document, frozen_from, run_py_blob, tables")
     if document is not None and data["document"] != document:
         raise BindingsError(f"{path}: document {data['document']!r} is not {document!r}")
-    if type(data["frozen_from"]) is not str or type(data["tables"]) is not dict or not data["tables"]:
-        raise BindingsError(f"{path}: frozen_from is a commit and tables a non-empty object")
+    if type(data["frozen_from"]) is not str or type(data["run_py_blob"]) is not str or type(data["tables"]) is not dict \
+            or not data["tables"]:
+        raise BindingsError(f"{path}: frozen_from is a commit, run_py_blob a blob and tables a non-empty object")
     out = {}
     for name, table in data["tables"].items():
         if type(table) is not dict or set(table) != {"type", "value"} or type(table["type"]) is not str:
@@ -125,7 +127,7 @@ def load_bindings(path, document=None):
     return out
 
 
-def dump_bindings(document, frozen_from, tables):
+def dump_bindings(document, frozen_from, run_py_blob, tables):
     """The canonical text of a bindings.json; `tables` is {name: (type string, value)}. Each value must rebuild to
     itself, so a type that loses information (a list declared as a tuple) is refused here, not at load."""
     body = {}
@@ -139,7 +141,7 @@ def dump_bindings(document, frozen_from, tables):
         return json.dumps(value, ensure_ascii=False)
 
     lines = ["{" + f'"schema": {one(SCHEMA)}, "document": {one(document)}, "frozen_from": {one(frozen_from)},',
-             ' "tables": {']
+             f' "run_py_blob": {one(run_py_blob)},', ' "tables": {']
     for i, (name, (type_, data)) in enumerate(body.items()):
         if isinstance(data, dict) and data:
             value = "{\n" + ",\n".join(f"   {one(k)}: {one(v)}" for k, v in data.items()) + "}"
@@ -148,7 +150,7 @@ def dump_bindings(document, frozen_from, tables):
         lines.append(f"  {one(name)}: " + "{" + f'"type": {one(type_)}, "value": {value}' + "}"
                      + ("," if i < len(body) - 1 else ""))
     text = "\n".join(lines) + "}}\n"
-    if json.loads(text) != {"schema": SCHEMA, "document": document, "frozen_from": frozen_from,
+    if json.loads(text) != {"schema": SCHEMA, "document": document, "frozen_from": frozen_from, "run_py_blob": run_py_blob,
                             "tables": {n: {"type": t, "value": d} for n, (t, d) in body.items()}}:
         raise BindingsError("dump_bindings: the text does not read back as the tables")
     return text
@@ -194,11 +196,12 @@ def frozen_diff(path, *, new_source=None, old_source=None):
     if new_source is None:
         new_source = run_py.read_text(encoding="utf-8")
     if old_source is None:
-        old_source = subprocess.run(["git", "-C", str(REPO), "show", f"{data['frozen_from']}:{rel}"], check=True,
+        old_source = subprocess.run(["git", "-C", str(REPO), "cat-file", "-p", data["run_py_blob"]], check=True,
                                     capture_output=True, text=True).stdout
     new = module_tables(new_source, {"_B": tables})
     old = module_tables(old_source)
-    lines = [f"{data['document']}: run.py names read from bindings.json against {rel} at {data['frozen_from']}"]
+    lines = [f"{data['document']}: run.py names read from bindings.json against {rel} at {data['frozen_from']} "
+             f"(blob {data['run_py_blob']})"]
     for name in bound_names(new_source):
         if name not in new:
             lines.append(f"  {name}: DOES NOT EVALUATE from the bindings")

@@ -1,4 +1,5 @@
 {"schema": "fidmech-bindings/1", "document": "safety-framework", "frozen_from": "f97dd2d0c03689334abab42b0a6b5a3211b890db",
+ "run_py_blob": "fc5d4c01862710c0cf8a1954fff7f3874930013d",
  "tables": {
   "SELECTION_ITEMS": {"type": "dict[str,tuple[tuple[str,...],bool]]", "value": {
    "DM": [["harm_mitigated", "severe_harm_mitigated", "significant_harm_mitigated"], true],

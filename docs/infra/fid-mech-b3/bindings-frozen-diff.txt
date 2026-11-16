@@ -1,4 +1,4 @@
-anthropic-rsp: run.py names read from bindings.json against usecases/anthropic-rsp/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+anthropic-rsp: run.py names read from bindings.json against usecases/anthropic-rsp/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db (blob 9ba10263cef4a8ed7a58417a2898f7c8bade55eb)
   OT: same
   SCENARIO_TERMS: same
   SCENARIOS: same
@@ -7,7 +7,7 @@ anthropic-rsp: run.py names read from bindings.json against usecases/anthropic-r
   CASE_ATOMS: same
   PREDICATES: same
   K_LIMITS: same
-openai-preparedness: run.py names read from bindings.json against usecases/openai-preparedness/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+openai-preparedness: run.py names read from bindings.json against usecases/openai-preparedness/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db (blob 52fc35f09cd89d52e8be90103948d1e4e26eb2ec)
   LEVEL_IDS: same
   ACTIVITY: same
   OT: same
@@ -24,7 +24,7 @@ openai-preparedness: run.py names read from bindings.json against usecases/opena
   WITNESS: same
   WITNESS_LEVELS: same
   WITNESS_RELATIONS: same
-safety-framework: run.py names read from bindings.json against usecases/safety-framework/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db
+safety-framework: run.py names read from bindings.json against usecases/safety-framework/run.py at f97dd2d0c03689334abab42b0a6b5a3211b890db (blob fc5d4c01862710c0cf8a1954fff7f3874930013d)
   SELECTION_ITEMS: same
   DM: same
   SEC: same
