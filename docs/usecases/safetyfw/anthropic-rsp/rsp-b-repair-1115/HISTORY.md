@@ -45,7 +45,7 @@ three f8-internal mistags (in_scope now quotes their sentence) and f8-public.
 - `conformance/english-lean/lexicon-report.json`: `uv run python -m conformance.english_lean_lexicon` (43 valid, 0 invalid); only the anthropic-rsp row changed (lexicon id, 126 to 127 symbols: the new predicate). The first selected run failed `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` on this stale file; `--lean-fixtures` left `lean/VE/EnglishGrammar/LexiconFixtures.lean` unchanged.
 - The second selected run also failed three snapshot tests, each refreshed by its own script: `tests/data/norm-blocks/rsp.jsonl` (`docs/english-lean/en-s6/capture_blocks.py`, rsp.jsonl only, fsf.jsonl restored; ignoring the commit field one block changed, f6-strive-default's guard) and `tests/data/route-cases.jsonl` (`docs/en-e3-norm/en-2b/route_fixtures.py --write`; seven english.statement fixtures carry the new legends); `uv run pytest` of test_every_pinned_block_has_its_python_node[rsp], test_the_route_fixtures_are_recorded, test_lean_reads_each_pinned_block_as_python, test_each_pinned_block_through_the_mode and test_each_route_fixture_through_the_service: 5 passed. `docs/kernel/ownership.json` (run.py is a traced input): `tools/ownership_trace.py run` for the five keys (734 units, 0 failures), `verdict` and `passing-functions`; only the run.py input id changed, totals as before (RSP 100/126, PF 228/239, FSF 244/262, agent-policy 0/42, eligibility 269/269); test_ownership_json_is_of_the_traced_inputs passes.
 - Files other branches also change: `tests/data/route-cases.jsonl` (feature/ve-limits-lm1) and `docs/kernel/ownership.json` (infra/fid-mech-b3, which also changes run.py). Both are written by their scripts; the branch that merges second runs route_fixtures.py --write, or the five-key trace again, rather than merging them by hand.
-- kb-9 had not merged when this was written; `kb9-shadow.json` and the rest of `run.py` were not touched.
+- This item changes no line of `run.py` but the G8 line, and does not change `kb9-shadow.json` (see "Tests run").
 
 ## Trust, mutants and seeded bugs
 
@@ -71,6 +71,16 @@ three f8-internal mistags (in_scope now quotes their sentence) and f8-public.
 - `uv run pytest -q tests/test_rsp_b_repair_1115.py` and, after the X43 lines, the same file with
   `tests/test_safetyfw_usecases.py::test_rsp_run_recomputes_every_key_item_and_records_causes`,
   `::test_rsp_environment_file_is_generated` and `::test_rsp_six_mutants_change_exactly_the_named_results`: 14 passed.
+- Sync with main: main gained kb-9 (b8abce49ef) during the build and was merged in (c852496bd4). The one conflict was
+  `docs/kernel/ownership.json`: main's copy was taken in the merge and the five keys were traced again on the merged
+  tree (`tools/ownership_trace.py run` x5: 734 units, 0 failures; `verdict`; `passing-functions`): ownership.json changes only the run.py input id, totals as before. `docs/kernel/kb-10d/functions-under-passing.json` changes more: main's copy was last written by kb-10d (de602b7d44) before kb-9 merged, and kb-9 rewrote ownership.json only; the file now holds the script's output on the merged tree. test_ownership_json_is_of_the_traced_inputs and test_functions_under_passing_count_each_passing_item_at_most_once: 2 passed. After the merge: `lake build` (after lean-prep.sh) succeeded; `tools/regen_generated.py --check` exit 0;
+  `build_document.py --source <pinned> --check` exit 0; the accounting report and the lexicon report regenerate
+  byte-identical; `tests/test_rsp_b_repair_1115.py` with test_rsp_run_recomputes_every_key_item_and_records_causes:
+  13 passed.
+- kb-9's `docs/usecases/safetyfw/anthropic-rsp/kb9-shadow.json` (saved evidence no test recomputes): its own generator
+  (`uv run python usecases/kb9_facts_shadow.py anthropic-rsp /tmp/...`) on the merged tree gives the same 330 premise
+  evaluations, 0 mismatches and 1326 keyed pairs; only its `commit` and `wall_seconds` fields differ, so the file is not
+  stale and was left untouched.
 - The final selected run (`mac-pytest.sh --select`) on the committed HEAD is reported in the build report.
 - Pre-existing red on main (main-known-red.txt), not touched here: the two test_lean_service sub-tick tests,
   test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target and
