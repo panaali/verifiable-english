@@ -77,7 +77,9 @@ No Lean or Rust code changed, and no VE Python changed.
 - `DRA_SCRIPT=tools-local/decider-ready-alert.py.new-pha python3 -I tools-local/test_decider_ready_alert.py`: Ran 9, OK.
 - `python3 -I tools-local/decider-ready-alert.py.new-pha --dry-run` on the live backlog printed nothing. No ready p1 row is
   path-held right now, and `rsp-b-repair-1115` is in flight. Nothing was recorded.
-- Selected VE tests: see "Final selected run" below. This branch adds only docs.
+- Final selected run on committed HEAD a414db4c62 (clean tree, `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`): exit 0,
+  5 units, 5 passed (GitHub Actions run p1-path-hold-alert-a414db4c-t835171, 2 shards). This branch adds only docs.
+- Install read sent: `inbox/dri/20261116T133352Z-infra-p1-path-hold-alert-32524.md`.
 
 ## Notes for the DRI
 
@@ -110,7 +112,7 @@ No Lean or Rust code changed, and no VE Python changed.
 6. Gate evidence matches final HEAD: PASS. The final selected run is on the committed HEAD, and the chain gate runs on it.
 7. No unsigned item: PASS. DELTA none; no signature reserved.
 8. Every user-visible change in DELTA: N.A. No VE output changed. The changed decider message text is documented above.
-9. Test selection: PASS. Only docs changed. See the selected run below.
+9. Test selection: PASS. Only docs changed. The selected run (5 units) exited 0.
 10. Lean statements: N.A.
 11. Budgets fail closed: PASS for the one relevant point: an unparsable hold still alerts (`test_unparsed_hold_named_raw`), and a
     row with no timestamp is skipped as before. The tests use an injected clock (`DRA_NOW`) and no sleeps.
