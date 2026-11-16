@@ -1,0 +1,21 @@
+openai-preparedness: 513 mutants, generator fidmech/1, inputs_sha256 0dfa3100bf1f7847707c417138ff59a6d5dc08ba78400a69bbbe5ca1aac010bd
+op                 mutants    ok stillborn syntactic duplicates
+drop-conjunct          141   141         0         0          0
+drop-unless              4     4         0         0          0
+drop-disjunct            8     8         0         0          0
+drop-exception           8     8         0         0          0
+flip-force              91    91         0         0          0
+add-guard-true          63    63         0         0          0
+rule-drop               90    90         0         0          1
+actor                   53    46         7         0         60
+qualifier               24    24         0         0         29
+quantity                30    30         0         0         41
+attachment               1     1         0         0          1
+structural no-guard-true: ["f3-inuse-forecast", "f7-evaluations", "f7-evaluations-any", "f7-report", "f9-risk-paths", "f9-specific", "f9-efficacy", "f9-threshold", "f14-document", "f14-investigate", "f16-sag-recommend", "f16-ssc-visibility", "f16-informed", "f16-without-noinput", "f16-without-nodelib", "f16-board-reverse", "f16-board-mandate", "f16-fast-track", "f16-year", "f5-checkpoint", "f11-within", "f11-exception", "f11-exception-deploy", "f12-lra", "f17-suff", "f17-iff", "f17-iff-only", "f13-review"]
+wording parse_checked: true
+wording stillborn: [{"id": "openai-preparedness:f7-report:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for capabilities_report"}, {"id": "openai-preparedness:f7-compile:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for capabilities_report_submitted"}, {"id": "openai-preparedness:f7-recommend:actor:2", "reason": "VEError: InvalidInput: invalid act phrase for safeguards_recommended"}, {"id": "openai-preparedness:f14-document:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for decision_documented"}, {"id": "openai-preparedness:f16-sag-recommend:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for sag_recommendation"}, {"id": "openai-preparedness:f16-fast-track:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for fast_track_request"}, {"id": "openai-preparedness:f11-protect:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for more_protective"}]
+declarations: {"applied": 0, "stale": 0, "unknown": 0, "not-structural": 0, "already-equivalent": 0}
+
+real	3m11.651s
+user	3m9.713s
+sys	0m2.184s

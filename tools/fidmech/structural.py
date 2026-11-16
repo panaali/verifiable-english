@@ -44,7 +44,7 @@ KEEP_FIRST = ("drop-exception", "widen-quantifier", "drop-unless", "drop-disjunc
               "add-guard-true", "rule-drop")
 RULES, ENVIRONMENT, FACTS, BINDINGS = "rules.d1.ve", "environment.d1.json", "facts.d1.ve", "fidmech/bindings.json"
 EXCEPTION_HEADER = re.compile(r"\bexception to\b", re.I)
-_RULE = re.compile(r"(Rule [1-9][0-9]*\. )(.*)\Z", re.S)
+RULE_LINE = re.compile(r"(Rule [1-9][0-9]*\. )(.*)\Z", re.S)
 
 
 @dataclass(frozen=True)
@@ -62,7 +62,7 @@ def rule_blocks(text):
     out = []
     for i, line in enumerate(lines):
         head = re.match(r"## (\S+) \|", line)
-        if head and i + 1 < len(lines) and _RULE.match(lines[i + 1]):
+        if head and i + 1 < len(lines) and RULE_LINE.match(lines[i + 1]):
             out.append(Block(head.group(1), line, lines[i + 1]))
     return out
 
