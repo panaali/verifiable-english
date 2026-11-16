@@ -1,0 +1,23 @@
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpj62hxu04/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpr0wq8tg1/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpleb8p528/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdigkpgbp/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmppl9xblbv/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:108: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/backlog-svc.sh' mode='r' encoding='UTF-8'>
+  t = open(SVC).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 9 tests in 0.913s
+
+OK
