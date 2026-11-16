@@ -1,0 +1,200 @@
+tests/test_wire_contract_three_way.py::test_s4_public_admission_spec_python_lean
+tests/test_wire_contract_three_way.py::test_admission_adapter_uses_active_norm_units
+tests/test_wire_contract_three_way.py::test_forms_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_overlay_e40_e41_lean_answers_for_a_python_deferral
+tests/test_wire_contract_three_way.py::test_engine_corpus_covers_every_form
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_soft_conformance_fixture
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]
+tests/test_words.py::test_the_python_producers_are_gone
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\n    return f"{name} is {noun}"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def shown(clause):\n    return "Here the text does not say whether " + clause\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is a member"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is an agent"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def _article(noun):\n    """a or an."""\n    return "a"\n]
+tests/test_words.py::test_the_lint_reads_docstrings_as_documentation_and_the_tree_passes
+tests/test_words.py::test_a_genuine_answer_is_bound
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>0]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>1]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>2]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>3]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>5]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>6]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1870
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35746/35747 tests collected (1 deselected) in 37.28s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_acts_specialise_layer.py tests/test_answer_cutoff.py tests/test_ap56_statements.py tests/test_arith_uncharged_costs.py tests/test_asimov_extended.py tests/test_b14c.py tests/test_b17_owner.py tests/test_calc_stats.py tests/test_cedar_attributes.py tests/test_cedar_norms.py tests/test_commands_ci2_review.py tests/test_conformance.py tests/test_coverage_dashboard.py tests/test_defaults_english.py tests/test_defeasible_baseline_evidence.py tests/test_discourse_composed_route.py tests/test_discourse_three_way.py tests/test_e1_core.py tests/test_english.py tests/test_english_e2_overlay.py tests/test_english_e2_profile_matrix.py tests/test_english_lean_s2.py tests/test_entailment_properties.py tests/test_events_document.py tests/test_events_document_cli.py tests/test_filling_search.py tests/test_frozen_sources.py tests/test_fsf_proximity_tcl.py tests/test_gate.py tests/test_gate_rerun.py tests/test_inventory_lint.py tests/test_keyed_answers_authority.py tests/test_lean_experimental_boundary.py tests/test_lean_share.py tests/test_lexicon.py tests/test_me_2d_f2_delta.py tests/test_merge_tooling_evidence.py tests/test_metered_answer.py tests/test_metered_lean.py tests/test_metered_profile.py tests/test_norm_defaults_contract.py tests/test_p1_amendment13.py tests/test_premise_scale.py tests/test_presupposition_rule_ob.py tests/test_profile_table.py tests/test_question_differential.py tests/test_question_statements.py tests/test_readings_components_document.py tests/test_readings_defaults_rd2b_report.py tests/test_readings_defaults_rd4a_report.py tests/test_readings_defaults_rd6a.py tests/test_readings_rd5_udhr.py tests/test_readings_route_norm_defaults_binding.py tests/test_readings_route_relay.py tests/test_readings_s1_differential.py tests/test_readings_s1_python.py tests/test_readings_s2_document.py tests/test_regen_generated.py tests/test_reports.py tests/test_reports_status.py tests/test_risk_integration.py tests/test_risk_profile.py tests/test_route_row_schemas.py tests/test_rust_jsonl_schema.py tests/test_sc9_migrate.py tests/test_scope_authoring.py tests/test_single_owner.py tests/test_slot_premises.py tests/test_soft_review_regressions.py tests/test_speech_acts_conformance.py tests/test_stage2_faults.py tests/test_stage2_standalone.py tests/test_statement_scanner.py tests/test_suite_tail.py tests/test_units_lean_gate_w6a.py tests/test_ve_iface.py tests/test_views_polish.py tests/test_w6a_documents.py tests/test_w6a_limits.py tests/test_webapp_commands_env.py tests/test_wire_contract_s5_lean.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 21%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+...                                                                      [100%]
+ve: English comparator: {"records": 1091, "excluded": 0, "planted": 0, "classes": {"agree": 1090, "diagnostic-code": 1}} (/tmp/ve-gate-jd4ie96p/tmp/ve-english-comparator-v07ztnmm)
+
+=============================== warnings summary ===============================
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=3572) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_lexicon.py::test_unknown_warning_is_advisory_and_adoption_still_explicit
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 99b00148757645434344bb677b40b5382e02a56d56787d18efb16fdf3d4b847e: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 0f864ab4363826ffcd3d9bcdabca56080a5cf3d786a943a2c096a44e2be00101: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 136a1e7dd584d59907199d9fef3e4dfc5a35264ad99be1065432adf2cdf77a7a: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_token_boundaries_are_only_annotations
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 8f7cf2217f364d4f24cc7b7e1f89291e931b092662306b89b31fef94da8796cb: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member of the guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 792f6aa43d1b4c26be8d0bba03b62ff618a16e69a237cf1168992b96a84c6261: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member OF THE guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 4d61bb69d64684a8d732465c296c9665e9c5d79dc7d0d487de11150e8b7523f4: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_lexical_evidence_cannot_be_tampered_with_even_after_redigest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 97b120333eac45a5322365c21b320eb1eaa060db5106c0d9c2e114507c17e144: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2955 passed, 11 warnings in 1131.51s (0:18:51)
+[gate] slowest:    962.9 s tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results
+[gate] slowest:    487.0 s tests/test_stage2_standalone.py::test_every_corpus_model_and_environment_node_matches_frozen_python
+[gate] slowest:    203.6 s tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results
+[gate] slowest:    200.0 s tests/test_readings_s1_differential.py::test_all_generated_sets_lean_answers
+[gate] slowest:    113.0 s tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed
+[gate] slowest:    107.7 s tests/test_route_row_schemas.py::test_route_answer_mutations_agree_with_lean
+[gate] slowest:     66.8 s tests/test_scope_authoring.py::test_review_f7_the_probe_wordings_are_refused
+[gate] slowest:     66.6 s tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip
+[gate] slowest:     59.0 s tests/test_question_differential.py::test_lean_and_the_reference_reader_agree
+[gate] slowest:     53.7 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M5]
+[gate] slowest:     51.9 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M3]
+[gate] slowest:     49.1 s tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+[gate] slowest:     48.3 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M2]
+[gate] slowest:     46.1 s tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness
+[gate] slowest:     44.6 s tests/test_regen_generated.py::test_every_entry_whose_commands_import_the_service_client_is_marked
+[gate] slowest:     44.0 s tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M4]
+[gate] slowest:     42.6 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[5]
+[gate] slowest:     42.2 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[4]
+[gate] slowest:     40.9 s tests/test_speech_acts_conformance.py::test_every_parsed_speech_act_has_its_surface_kind
+[gate] slowest:     40.1 s tests/test_question_differential.py::test_the_comparison_can_fail
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+1f99cedcdbd18805bc124275d49095f0c54d8f83
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 1f99cedcdbd18805bc124275d49095f0c54d8f83
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 7b8909516a7042d1e3e1af3208a8f67b40a255a4, taken at the wrapper's start)
+[gate] shard-passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 2955 passed, 0 skipped, 0 failures
