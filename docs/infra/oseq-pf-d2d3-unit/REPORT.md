@@ -129,7 +129,10 @@ VE checks (docs-only change), all on 424fed4ed7:
 - `lake build` passed (1475 jobs).
 - `python3 lean/audit.py` passed (896 files, 10116 theorems, standard axioms only).
 
-Not run: the full gate (the merge train runs it). No test in main-known-red.txt was touched.
+Not run: a new full gate (the merge train runs it). review-ready [gate] reads the worktree's full gate of f97dd2d0 (main, no
+VE change). Its only failure passed on the same-commit rerun (R13):
+`tests/test_ownership_floor.py::test_the_safety_framework_adapter_records_plan_12_item_27`. That is the item_27 flake from
+`reviews/trial-stack-trip-20261116-cause.md`; this branch does not touch it. No test in main-known-red.txt was touched.
 
 ## Install (decider)
 
