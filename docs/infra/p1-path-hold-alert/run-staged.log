@@ -1,0 +1,91 @@
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmprsbdie8z/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5ac3v0xj/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpu411q63w/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpgo6nch07/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwu31dr5t/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp0rzm72og/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpb6jymc3s/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmppxklym11/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmptxgu7x_j/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpx6wqp8jn/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:357: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsspxriup/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpjvewkqa2/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp2xp8bad8/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7rkuy6h9/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_ugks5lm/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpkmu0p07v/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp1lwm2h0a/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpcyn49qjo/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpp9kbgryp/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_vu_024f/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpipl0wono/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpipl0wono/p1-unstartable-alert.sent' mode='r' encoding='UTF-8'>
+  sent = open(os.path.join(self.d, "p1-unstartable-alert.sent")).read().splitlines()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplob0atbt/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpotr8ofuq/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp0rtwf446/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:256: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp0rtwf446/p1-unstartable-alert.sent' mode='r' encoding='UTF-8'>
+  sent = open(os.path.join(self.d, "p1-unstartable-alert.sent")).read().splitlines()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp1cob9jou/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py:63: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpcgqwjg_0/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 33 tests in 4.722s
+
+OK
+alert: /home/seyran/code/manage-agents/tools-local/decider-ready-alert.py.new-pha
+backlog: /home/seyran/code/manage-agents/backlog.py

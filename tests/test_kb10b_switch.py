@@ -298,10 +298,11 @@ class _Elaborated:
     order = ("act",)
 
     def __init__(self, answer):
-        self.answer, self.asked = answer, []
+        self.answer, self.asked, self.facts = answer, [], []
 
-    def outcome_at(self, predicate, model, values):
+    def outcome_at(self, predicate, model, values, **kw):
         self.asked.append((predicate, model, values))
+        self.facts.append(kw.get("facts"))  # kb-9: the premise facts of the case it is read from
         return self.answer
 
 
@@ -317,8 +318,12 @@ def test_the_harnesses_completed_is_outcome_at(monkeypatch, answer):
             module = harness(name)
             monkeypatch.setattr(module, "model", lambda *a: "M", raising=False)
             monkeypatch.setattr(module, "subject", lambda predicate: ("capability", "k"), raising=False)
-            doc = type("Doc", (), {"elaborated": _Elaborated(answer)})()
+            # kb-9: Preparedness reads the outcome from the case that sent the document's premise facts.
+            monkeypatch.setattr(module, "premise_facts", lambda choice: ("F", choice), raising=False)
+            doc = type("Doc", (), {"elaborated": _Elaborated(answer), "reading": (("RS2", "x"),)})()
             assert module.completed(doc, *args) is answer and doc.elaborated.asked == [expected], name
+            facts = ("F", {"RS2": "x"}) if name == "openai-preparedness" else None
+            assert doc.elaborated.facts == [facts], name
 
 
 def test_a_harness_loads_its_own_siblings_and_leaves_none_behind(monkeypatch):

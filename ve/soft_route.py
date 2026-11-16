@@ -5,7 +5,7 @@ import re
 
 from .errors import CheckerUnavailable, VEError
 from .softnorms import (SoftEnvironment, SoftNormDocument, bind_selected, bind_soft_elaboration,  # noqa: F401
-                        selected_at as _selected_at)
+                        facts_wire, selected_at as _selected_at)
 from .backends.soft_relay import run as _run, wire as _wire
 
 
@@ -46,14 +46,14 @@ def classify_soft_pairs(soft_document: SoftNormDocument, *, pairs=None):
 
 def _slot_case(kind, case, facts, facts_model):
     """The case of the soft kind `kind`, or of its slot twin with `facts` (kb-3): `facts`, closed formulas over the
-    regenerated base vocabulary, sent as given for Lean to decode or refuse; `facts_model`, the base model Lean asks
-    for beside non-empty facts."""
+    regenerated base vocabulary, sent as given for Lean to decode or refuse (`facts_wire`); `facts_model`, the base
+    model Lean asks for beside non-empty facts."""
     if facts is None:
         if facts_model is not None:
             raise VEError("InvalidInput: a facts_model needs facts")
         return {"id": kind, "kind": kind, **case}
     slot = kind.replace("soft-", "slot-", 1)
-    case = {"id": slot, "kind": slot, **case, "facts": list(facts)}
+    case = {"id": slot, "kind": slot, **case, "facts": facts_wire(facts)}
     if facts_model is not None:
         case["facts_model"] = facts_model.to_dict() if hasattr(facts_model, "to_dict") else facts_model
     return case
@@ -233,10 +233,11 @@ def bind_certificate(row, case, elaborated):
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def selected_at(soft_document: SoftNormDocument, model, queries):
+def selected_at(soft_document: SoftNormDocument, model, queries, facts=None):
     """Lean's `soft-selected` answer for `queries` of the base `model` (`ve.softnorms.selected_at`, the one owner
-    of the request and its binding), sent through this route's runner."""
-    return _selected_at(soft_document, model, queries, run=_run)
+    of the request and its binding), sent through this route's runner; with `facts` (kb-9), also Lean's `facts`
+    and `coherent` flags in the same model."""
+    return _selected_at(soft_document, model, queries, run=_run, facts=facts)
 
 
 def admit_soft_document(environment, document, *, soft_document=None):
