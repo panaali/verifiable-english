@@ -1,0 +1,9 @@
+{
+ "schema": "fidmech-logic-words/1",
+ "about": "L3's logic-word classes (plan section 3.4, Opus round 2 point 9): a word of a class in a rule block's own words with no member of its class in the block's full source sentences is an L3w hit. Frozen on anthropic-rsp before any FSF or PF check run (plan 3.0); pinned by sha256 in tests/test_fidmech_data.py.",
+ "classes": [["within"], ["after"], ["before", "prior to"], ["once", "upon"], ["unless", "except"],
+             ["only", "solely", "exclusively"], ["until"], ["at least"], ["at most"], ["never"],
+             ["if", "when", "whenever", "provided that"], ["not", "nor"]],
+ "template": ["if", "unless", "not"],
+ "out": {"quantifiers": ["all", "every", "each", "any", "no"], "no class": ["in", "following"]}
+}
