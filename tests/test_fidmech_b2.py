@@ -211,6 +211,62 @@ def test_l3_uses_the_header_quote_when_l1_locates_no_sentence_and_says_so(tmp_pa
     assert hit["block"] == "r-publish" and hit["quote"] == "after" and "header quote" in hit["detail"]
 
 
+LOCATED = '"In selecting reviewers, we weigh their independence."'
+
+
+def test_l3_reads_an_unlocated_quote_beside_located_ones(tmp_path):
+    # Review F1 (PROBE F1): the block's other quote is located, so the unlocated quote's "after" was dropped and
+    # L3w fired on it (PF f1-misuse-bio-default, "before"). Plan 3.4: the header quote is used.
+    case = copy(tmp_path)
+    edit(case, "rules.d1.ve", 'section 2 "We will publish a summary after each review."',
+         f'section 2 {LOCATED} "We will publish a summary after each reviews."')
+    result = run(case, ("L3",))
+    assert hits(result, "L3w") == []
+    assert result["info"]["L3"] == {"rule_blocks_without_quote": 0, "from_header_quote": 0,
+                                    "partly_from_header_quote": 1}
+
+
+def test_l3_marks_a_hit_whose_block_has_some_quotes_unlocated(tmp_path):
+    case = copy(tmp_path)
+    edit(case, "rules.d1.ve", 'section 2 "We will publish a summary after each review."',
+         f'section 2 {LOCATED} "We will publish a summary following each reviews."')
+    [hit] = hits(run(case, ("L3",)), "L3w")
+    assert hit["block"] == "r-publish" and hit["quote"] == "after"
+    assert hit["detail"].endswith("in the full source sentences and the header quote L1 located no sentence for "
+                                  "(1 of 2 quotes)")
+
+
+def test_d_counts_and_marks_the_words_of_an_unlocated_quote_beside_located_ones(tmp_path):
+    case = copy(tmp_path)
+    edit(case, "rules.d1.ve", '"We will share the final report with the Board."',
+         '"We will share the final report with the Board." "The dossier is sealed."')
+    result = run(case, ("D",))
+    found = {h["quote"]: h["detail"] for h in hits(result, "D")}
+    assert {"dossier", "seal"} <= set(found)
+    assert all(h["block"] == "r-share" for h in hits(result, "D"))
+    for w in ("dossier", "seal"):
+        assert found[w] == ("unaccounted, in no sidecar entry (from the full sentences and the header quote L1 "
+                            "located no sentence for: 1 of 2 quotes)")
+    assert {k: result["info"]["D"][k] for k in ("from_header_quote", "partly_from_header_quote")} == {
+        "from_header_quote": 0, "partly_from_header_quote": 1}
+
+
+def test_block_sentences_keeps_the_text_of_every_quote_l1_did_not_locate():
+    seg = S.Segmentation(S.Source((FIX / "source.txt").read_bytes()), S.load_boundaries(FIX / "fidmech/boundaries.json"))
+    block = next(b for b in T.read_blocks(FIX) if b["id"] == "r-publish")
+    [placed] = T.analyse(seg, block)[2]
+    loose = T.Located(placed.quote, "the dossier is sealed after review", "L1u", None)
+    for locs, fallback, sentences in (([placed], "", 1), ([loose], "all", 0), ([placed, loose], "part", 1)):
+        src = C.block_sentences(seg, locs)
+        assert (src.fallback, src.sentences, src.unlocated, src.quotes) == (fallback, sentences, len(locs) - sentences,
+                                                                            len(locs))
+        assert ("We will publish a summary after each review." in src.text) == bool(sentences)
+        assert ("the dossier is sealed after review" in src.text) == (loose in locs)
+        assert ("header quote" in src.where()) == ("header quote" in src.mark()) == bool(fallback)
+    assert C.fallback_counts([C.block_sentences(seg, x) for x in ([placed], [loose], [placed, loose], [loose])]) == {
+        "from_header_quote": 2, "partly_from_header_quote": 1}
+
+
 def test_l4_coverage_by_unformalised_units_and_ruled_out_entries_are_levers(tmp_path):
     result = run(FIX, ("L4",))
     at = (FIX / "source.txt").read_bytes().index(b"We will train")
