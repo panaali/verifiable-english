@@ -1,0 +1,4 @@
+document | legacy candidates() actor rows (ACTORS) | harness_candidates() actor rows (actors.json) | units with a harness actor row and no legacy one
+anthropic-rsp | 44 | 71 | 11
+openai-preparedness | 5 | 113 | 64
+safety-framework | 0 | 36 | 20
