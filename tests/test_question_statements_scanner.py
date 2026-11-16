@@ -142,15 +142,31 @@ def test_q2_compares_a_definition_line_after_a_blank_line(tmp_path, monkeypatch,
     assert f"changed {name}: NOT LISTED" in capsys.readouterr().out
 
 
-def test_a_name_declared_twice_equals_no_approved_text(tmp_path, monkeypatch, capsys):
-    """A second copy of an approved predicate (another namespace, another file) is compared too: the gate does not
-    keep one copy and drop the other."""
+COPY = "namespace Other\ndef HasReading : Prop := True\nend Other\n"
+
+
+@pytest.mark.parametrize("where", ["same file before", "same file after", "other file before", "other file after"])
+def test_a_name_declared_twice_equals_no_approved_text(tmp_path, monkeypatch, capsys, where):
+    """A second copy of an approved predicate (another namespace, in the same file or another one, before or after
+    the approved one) is compared too: the gate keeps no single copy and drops the other."""
     tool = _tool()
-    first = tool.SOURCES[0]
-    sources = [tmp_path / source.name for source in tool.SOURCES]
-    for source, target in zip(tool.SOURCES, sources):
-        target.write_text(source.read_text())
-    sources[0].write_text(first.read_text() + "\nnamespace Other\ndef HasReading : Prop := True\nend Other\n")
+    sources = []
+    for source in tool.SOURCES:
+        text = source.read_text()
+        if ("def", "HasReading") in RD.declarations(text, True, ("def",)):
+            if where == "same file after":
+                text += "\n" + COPY
+            elif where == "same file before":
+                at = text.rfind("\n\n", 0, RD.span(text, "def", "HasReading")[0]) + 2
+                text = text[:at] + COPY + "\n" + text[at:]
+        sources.append(tmp_path / source.name)
+        sources[-1].write_text(text)
+    other = tmp_path / "Other.lean"
+    other.write_text("namespace VE.Question\n" + COPY + "end VE.Question\n")
+    if where == "other file before":
+        sources.insert(0, other)
+    elif where == "other file after":
+        sources.append(other)
     out = _q1_fails(tool, monkeypatch, capsys, sources)
     assert "HasReading" in out.split("Changed or missing predicates:", 1)[1]
 
