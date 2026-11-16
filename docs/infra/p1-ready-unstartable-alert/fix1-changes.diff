@@ -1,0 +1,284 @@
+--- a/tools-local/decider-ready-alert.py
++++ b/tools-local/decider-ready-alert.py
+@@ -14,13 +14,15 @@
+ P1 NOT STARTABLE (2026-11-16 p1-ready-unstartable-alert; reviews/dri-decisions-20261116-adv0244.md item 2): four critical-path
+ rows sat ready ~7.5 h with no task file and nobody was told. Any row, whatever its owner, with priority <= 1, status "ready" and
+ not startable for >= 30 min since ready_t (else status_t, else created) is named in the same pass's message as
+-"p1 ready but not startable: <id>, <owner>, <age>". Not startable = no task file (links.task names no existing file, and
+-neither prompts/task-<id>.txt nor prompts/dri-task-<id>.txt exists) and no links.launch (the reason backlog.py launch_spec
+-gives: "no task file and no launch link"). Deduped per row per 4 h (state: p1-unstartable-alert.sent, "<id>\t<epoch>\t<UTC>").
++"p1 ready but not startable: <id>, <owner>, <age>". Not startable = a links.launch that backlog.py launch_spec cannot start
++(delegate / infra-item with no existing links.task, an unknown launcher, a launcher without its arguments: the infra feed's
++own test, one owner), or no links.launch and no task file (links.task names no existing file, and neither
++prompts/task-<id>.txt nor prompts/dri-task-<id>.txt exists). Deduped per row per 4 h (state: p1-unstartable-alert.sent, "<id>\t<epoch>\t<UTC>").
+ Both parts go in one message per pass; a failed send records neither, so the next pass retries.
+ 
+ Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state files, prompts/, msg.sh); DRA_MSG = command run instead of
+-`zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds). --dry-run prints the message and records nothing.
++`zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds); DRA_BACKLOG_PY = the backlog.py whose launch_spec is used
++(default ../backlog.py from this script). --dry-run prints the message and records nothing.
+ Tests: python3 -I tools-local/test_decider_ready_alert.py; python3 -I tools-local/test_p1_ready_alert.py
+ """
+ import json, os, shlex, subprocess, sys, time
+@@ -59,8 +61,38 @@
+     return any(os.path.isfile(p if p.startswith("/") else os.path.join(M, p)) for p in paths)
+ 
+ 
++_LAUNCH_SPEC = []
++
++
++def launch_spec(r):
++    """backlog.py launch_spec, the one owner of "can this launch link start the row" (infra_feed.py starts rows through it).
++    Loaded once from DRA_BACKLOG_PY (tests), else the backlog.py next to tools-local; its M is pointed at DRA_M so task paths
++    resolve where the rows live. If it cannot be loaded, every launch link counts as not startable (alert, never silence)."""
++    if not _LAUNCH_SPEC:
++        try:
++            import importlib.util
++            here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++            sp = importlib.util.spec_from_file_location("backlog_for_dra", os.environ.get("DRA_BACKLOG_PY") or os.path.join(here, "backlog.py"))
++            bl = importlib.util.module_from_spec(sp)
++            sp.loader.exec_module(bl)
++            bl.M = M
++            _LAUNCH_SPEC.append(bl.launch_spec)
++        except Exception as e:
++            print(f"decider-ready-alert: backlog.py launch_spec unavailable ({type(e).__name__}: {e}); launch links count as not startable")
++            _LAUNCH_SPEC.append(lambda _r: (None, "launch_spec unavailable"))
++    try:
++        return _LAUNCH_SPEC[0](r)
++    except Exception as e:
++        return None, f"launch_spec error {type(e).__name__}"
++
++
+ def startable(r):
+-    return has_task_file(r) or bool(((r.get("links") or {}).get("launch") or "").strip())
++    """A row with a launch link is startable only when backlog.py launch_spec can start it: delegate / infra-item need an
++    existing links.task; an unknown launcher (e.g. iso, continue-item) or a launcher without its arguments is not startable.
++    A row with no launch link (e.g. a feature row the queue starts) is startable when it has a task file."""
++    if ((r.get("links") or {}).get("launch") or "").strip():
++        return launch_spec(r)[0] is not None
++    return has_task_file(r)
+ 
+ 
+ def age_s(sec):
+@@ -122,8 +154,9 @@
+                     + ". Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.")
+     if p1:
+         msgs.append("p1 ready but not startable: " + "; ".join(f"{r['id']}, {r.get('owner') or '-'}, {age_s(a)}" for r, a in p1)
+-                    + ". Not startable = no task file (links.task, prompts/task-<id>.txt, prompts/dri-task-<id>.txt) and no launch"
+-                    + " link (reviews/dri-decisions-20261116-adv0244.md item 2): write the task file and start the row, or move it"
++                    + ". Not startable = a launch link backlog.py launch_spec cannot start (e.g. delegate/infra-item without an existing"
++                    + " task file), or no launch link and no task file (links.task, prompts/task-<id>.txt, prompts/dri-task-<id>.txt)"
++                    + " (reviews/dri-decisions-20261116-adv0244.md item 2): write the task file and start the row, or move it"
+                     + " to blocked with the reason.")
+     msg = "NOW(critical): " + " | ".join(msgs)
+     if dry:
+--- a/tools-local/test_p1_ready_alert.py
++++ b/tools-local/test_p1_ready_alert.py
+@@ -2,9 +2,12 @@
+ """Tests for the p1 not-startable alert (tools-local/decider-ready-alert.py) and the p1 filing warning (backlog.py `add` /
+ `update`); item p1-ready-unstartable-alert, reviews/dri-decisions-20261116-adv0244.md item 2.
+ Run: python3 -I tools-local/test_p1_ready_alert.py
+-Code under test: P1RUA_ALERT / P1RUA_BACKLOG name the files; default the staged .new-p1rua copy when present, else the live file
+-(the live files before the install fail these tests)."""
+-import json, os, subprocess, sys, tempfile, unittest
++Code under test: P1RUA_ALERT / P1RUA_BACKLOG name the files; default the staged .new-p1rua2 (then .new-p1rua) copy when
++present, else the live file (the live files before the install fail these tests). The alert reads P1RUA_BACKLOG's launch_spec
++(DRA_BACKLOG_PY), so both sides of LaunchSpecAgreement run the same backlog.py.
++Fix round 1 (review F1, p1-ready-unstartable-alert-review.final.md): a launch link counts as startable only when backlog.py
++launch_spec can start it (LaunchLink, LaunchSpecAgreement)."""
++import importlib.util, json, os, subprocess, sys, tempfile, unittest
+ from datetime import datetime, timezone
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+@@ -12,8 +15,7 @@
+ 
+ 
+ def pick(env, live):
+-    staged = live + ".new-p1rua"
+-    return os.environ.get(env) or (staged if os.path.exists(staged) else live)
++    return os.environ.get(env) or next((p for p in (live + ".new-p1rua2", live + ".new-p1rua") if os.path.exists(p)), live)
+ 
+ 
+ ALERT = pick("P1RUA_ALERT", os.path.join(HERE, "decider-ready-alert.py"))
+@@ -30,7 +32,7 @@
+     return r
+ 
+ 
+-class Alert(unittest.TestCase):
++class Base(unittest.TestCase):
+     def setUp(self):
+         self.d = tempfile.mkdtemp()
+         os.makedirs(os.path.join(self.d, "prompts"))
+@@ -38,7 +40,7 @@
+         fake = os.path.join(self.d, "fake-msg.sh")
+         with open(fake, "w") as f:
+             f.write('#!/bin/sh\nprintf "%s|%s|%s\\n" "$1" "$2" "$3" >> ' + self.log + "\nexit ${FAKE_RC:-0}\n")
+-        self.env = dict(os.environ, DRA_M=self.d, DRA_MSG=f"sh {fake}")
++        self.env = dict(os.environ, DRA_M=self.d, DRA_MSG=f"sh {fake}", DRA_BACKLOG_PY=BACKLOG)
+ 
+     def write(self, rows):
+         with open(os.path.join(self.d, "BACKLOG.jsonl"), "w") as f:
+@@ -58,6 +60,8 @@
+     def msgs(self):
+         return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ 
++
++class Alert(Base):
+     def test_no_task_file_31_min_alerts_once(self):
+         self.write([row("p1-none", owner="feature planner")])
+         self.run_at(31 * MIN)
+@@ -102,6 +106,13 @@
+         self.run_at(5 * HOUR)
+         self.assertEqual(self.msgs(), [])
+ 
++    def test_exactly_30_min_alerts(self):
++        # C1 (review note): >= 30 min, so the 30:00 boundary alerts (a "<=" mutant is caught here)
++        self.write([row("p1-none")])
++        self.run_at(30 * MIN)
++        self.assertEqual(len(self.msgs()), 1)
++        self.assertIn("p1-none, infra feed, 30m", self.msgs()[0])
++
+     def test_p0_and_status_t_fallback(self):
+         self.write([row("p0", priority=0, ready_t=None, status_t="2026-11-16T02:00:30Z")])
+         self.run_at(31 * MIN)
+@@ -123,6 +134,98 @@
+         self.assertEqual(len(self.msgs()), 2)
+ 
+ 
++class LaunchLink(Base):
++    """F1: a launch link is startable only when backlog.py launch_spec can start it."""
++
++    def test_probe_f1_delegate_without_task_file_alerts(self):
++        # PROBE F1 verbatim: launch=delegate, links.task names a file that does not exist; --dry-run names the row
++        self.write([row("dlg", links={"launch": "delegate", "task": "prompts/dri-task-dlg.txt"})])
++        p = subprocess.run([sys.executable, "-I", ALERT, "--dry-run"], capture_output=True, text=True,
++                           env=dict(self.env, DRA_NOW="1794801600"))
++        self.assertIn("not startable: dlg", p.stdout)
++
++    def test_task_needing_launcher_without_task_file_alerts(self):
++        self.write([row("dlg", links={"launch": "delegate"}), row("ii", links={"launch": "infra-item"}),
++                    row("dlg-gone", links={"launch": "delegate", "task": "prompts/task-gone.txt"})])
++        self.run_at(31 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertIn("dlg, infra feed, 31m; ii, infra feed, 31m; dlg-gone, infra feed, 31m", m[0])
++
++    def test_unknown_launcher_alerts_even_with_task_file(self):
++        # the live backlog uses iso and continue-item, which launch_spec does not know: nobody starts these rows
++        self.touch("prompts/task-iso1.txt")
++        self.write([row("iso1", links={"launch": "iso x 8G", "task": "prompts/task-iso1.txt"}),
++                    row("cont", links={"launch": "continue-item ve-x"})])
++        self.run_at(31 * MIN)
++        self.assertIn("iso1, infra feed, 31m; cont, infra feed, 31m", self.msgs()[0])
++
++    def test_launcher_without_arguments_alerts(self):
++        self.write([row(w, links={"launch": w}) for w in ("research-wave", "design-item", "research-refresh")])
++        self.run_at(31 * MIN)
++        self.assertIn("research-wave, infra feed, 31m; design-item, infra feed, 31m; research-refresh, infra feed, 31m",
++                      self.msgs()[0])
++
++    def test_startable_launch_links_silent(self):
++        self.touch("prompts/t-d.txt")
++        self.write([row("d", links={"launch": "delegate", "task": "prompts/t-d.txt"}),
++                    row("i", links={"launch": "infra-item", "task": "prompts/t-d.txt"}),
++                    row("rw", links={"launch": "research-wave w1 VE/Research"}),
++                    row("di", links={"launch": "design-item n plan.md brief.md"}),
++                    row("rr", links={"launch": "research-refresh n"})])
++        self.run_at(5 * HOUR)
++        self.assertEqual(self.msgs(), [])
++
++    def test_launch_spec_unavailable_alerts(self):
++        # fail toward telling the decider: no backlog.py -> a launch link is not startable
++        self.write([row("rw", links={"launch": "research-wave w1 VE/Research"})])
++        e = dict(self.env, DRA_NOW=str(T0 + 31 * MIN), DRA_BACKLOG_PY=os.path.join(self.d, "no-backlog.py"))
++        p = subprocess.run([sys.executable, "-I", ALERT], env=e, capture_output=True, text=True)
++        self.assertEqual(p.returncode, 0)
++        self.assertIn("launch_spec unavailable", p.stdout)
++        self.assertIn("rw, infra feed, 31m", self.msgs()[0])
++
++
++def load_backlog(m):
++    sp = importlib.util.spec_from_file_location("backlog_under_test", BACKLOG)
++    bl = importlib.util.module_from_spec(sp)
++    sp.loader.exec_module(bl)
++    bl.M = m
++    return bl
++
++
++class LaunchSpecAgreement(Base):
++    """The class behind F1: for every launch link, the alert's verdict equals backlog.py launch_spec's (the infra feed's).
++    The launchers are enumerated from backlog.LAUNCH_HOW, so a launcher added there is covered without editing this test."""
++
++    def test_alert_agrees_with_launch_spec(self):
++        bl = load_backlog(self.d)
++        self.touch("prompts/t-ok.txt")
++        words = sorted(bl.LAUNCH_HOW) + ["iso", "continue-item", "Delegate"]
++        tails = ["", " a", " a b c"]
++        tasks = [None, "prompts/t-ok.txt", "prompts/t-gone.txt"]
++        rows, want = [], {}
++        for w in words:
++            for t in tails:
++                for k in tasks:
++                    i = f"r{len(rows)}"
++                    links = {"launch": w + t}
++                    if k:
++                        links["task"] = k
++                    r = row(i, links=links)
++                    rows.append(r)
++                    want[i] = bl.launch_spec(r)[0] is None
++        self.assertTrue(any(want.values()) and not all(want.values()))
++        self.write(rows)
++        self.run_at(31 * MIN)
++        m = self.msgs()
++        named = set()
++        if m:
++            part = m[0].split("p1 ready but not startable: ", 1)[1].split(". Not startable", 1)[0]
++            named = {x.split(",")[0] for x in part.split("; ")}
++        self.assertEqual(named, {i for i, nope in want.items() if nope})
++
++
+ class Filing(unittest.TestCase):
+     def setUp(self):
+         self.d = tempfile.mkdtemp()
+@@ -169,6 +272,12 @@
+             self.assertNotIn("WARNING", p.stderr, a)
+         self.assertEqual(self.logged(), [])
+ 
++    def test_add_p0_ready_warns(self):
++        # C2 (review note): priority <= 1, so p0 warns too (a "== 1" mutant is caught here)
++        p = self.bl("add", "zero", "infra", "t", "--priority", "0", "--status", "ready")
++        self.assertIn("WARNING zero:", p.stderr)
++        self.assertEqual(len(self.logged()), 1)
++
+     def test_writer_line_needs_a_time(self):
+         p = self.bl("add", "wr2", "infra", "t", "--priority", "1", "--status", "ready", "--note", "writer: dri-decider")
+         self.assertIn("WARNING wr2:", p.stderr)
+--- a/tools-local/test_decider_ready_alert.py
++++ b/tools-local/test_decider_ready_alert.py
+@@ -2,11 +2,12 @@
+ """Tests for tools-local/decider-ready-alert.py and its call in backlog-svc.sh (orchestrator 20261115T140543Z item 1).
+ Run: python3 -I tools-local/test_decider_ready_alert.py   (BACKLOG_SVC_SH = the backlog-svc.sh copy to check; default the
+ staged backlog-svc.sh.new-dra if present, else the live one; DRA_SCRIPT = the alert script, default the staged
+-decider-ready-alert.py.new-p1rua if present, else the live one)."""
++decider-ready-alert.py.new-p1rua2 (then .new-p1rua) if present, else the live one)."""
+ import json, os, subprocess, sys, tempfile, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-p1rua"),
++SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-p1rua2"),
++                                                           os.path.join(HERE, "decider-ready-alert.py.new-p1rua"),
+                                                            os.path.join(HERE, "decider-ready-alert.py")) if os.path.exists(p))
+ M = os.path.dirname(HERE)
+ SVC = os.environ.get("BACKLOG_SVC_SH") or (os.path.join(M, "backlog-svc.sh.new-dra")
+@@ -63,8 +64,9 @@
+     def test_non_matching_rows_silent(self):
+         self.write([row("blk", status="blocked"), row("fly", status="in-flight"), row("mrg", status="merged"),
+                     row("p40", priority=40), row("nop", priority=None),
+-                    # p1-ready-unstartable-alert: a p1 ready row of another owner is silent only when startable (launch link)
+-                    row("feat", owner="feature planner", links={"launch": "delegate"})])
++                    # p1-ready-unstartable-alert: a p1 ready row of another owner is silent only when startable (a launch
++                    # link backlog.py launch_spec can start; review F1: a bare "delegate" with no task file is not startable)
++                    row("feat", owner="feature planner", links={"launch": "research-wave w1 VE/Research"})])
+         self.assertEqual(self.run_it().returncode, 0)
+         self.assertEqual(self.msgs(), [])
+ 
