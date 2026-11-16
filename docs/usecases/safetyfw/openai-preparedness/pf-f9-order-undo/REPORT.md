@@ -14,7 +14,7 @@ Rulings: reviews/dri-ruling-record-void-astra-20261115.md section C (finding 1.1
 reviews/dri-decisions-20261115-record-void-ruling.md, reviews/dri-decisions-20261116-adv0244.md item 2. The three f9
 units stay UNRESOLVED; this item only undoes the record correction.
 
-SIZE: 4 product, 72 tests added and 18 removed (test_pf_fidelity_fix.py +6 -11, test_pf_f7_timed_act.py -7), 34 other hand-written lines (moved_check.py 28, moved-check.json 6), plus this
+SIZE: 4 product, 159 tests added and 18 removed (test_pf_f9_order_undo.py +153, test_pf_fidelity_fix.py +6 -11, test_pf_f7_timed_act.py -7), 48 other hand-written lines (PLAN.md 14, moved_check.py 28, moved-check.json 6), plus this
 report; coverage.json, environment.d1.json and conformance/english-lean/lexicon-report.json are generated (1 line each).
 
 ## 1. Hunks of 94167f21d4 (`git show 94167f21d4 -- usecases/openai-preparedness/`)
@@ -155,6 +155,11 @@ Failing first and seeded bugs (each run with `uv run pytest -q tests/test_pf_f9_
 | S5 | usecases/openai-preparedness/PLAN.md | ccaa6de31d's PLAN.md (no item 30) | test_no_live_record_of_the_case_claims_the_order_follows, test_plan12_records_the_undo_in_an_item_that_supersedes_item_29 (2 failed, 6 passed) |
 | S6 | usecases/openai-preparedness/accounting.d1.txt | a line "the order of the two steps follows from each of those" added | test_no_live_record_of_the_case_claims_the_order_follows (1 failed) |
 | S7 | usecases/openai-preparedness/PLAN.md | item 30 says "replaces" instead of "supersedes item 29" | both F1 tests (2 failed) |
+
+Selected run on committed 2633d73c72: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` exit 0
+("SHARD 1/3: ... 19 units, 19 passed", "SHARD 2/3: ... 16 units, 16 passed", "SHARD 3/3: ... 15 units, 15 passed";
+run pf-f9-order-undo-2633d73c-t802820). `lake build` "Build completed successfully (1475 jobs)"; `python3 lean/audit.py`
+PASS (896 source files). The full gate was not run here.
 
 Note C1 of the review was also fixed (section 1's lexicon id row). Notes C2 to C4 were not filed and are unchanged.
 DELTA: none (a PLAN deviation-log item and a test; no verdict, answer or legend changes).
