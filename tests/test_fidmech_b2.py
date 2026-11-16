@@ -336,3 +336,41 @@ def test_the_textcheck_command_runs_the_b2_checks_with_the_sentence_span(tmp_pat
     assert "unknown checks ['L5']" in capsys.readouterr().err
     with pytest.raises(SystemExit):
         main(args + ["--checks", "D", "--span", "quote"])
+
+
+NODES = (7, True, None, [], {}, "x")
+
+
+@pytest.mark.parametrize("node", NODES, ids=repr)
+@pytest.mark.parametrize("target", ["spans.json:units", "spans.json:units[0].span", "spans.json:units[0].rule",
+                                    "spans.json:source_sha256", "environment.d1.json:vocabulary",
+                                    "environment.d1.json:vocabulary.predicates.records_kept",
+                                    "fidmech/ruled_out.json:", "cues.json:first_person", "cues.json:modal",
+                                    "logic_words.json:classes", "logic_words.json:template"])
+def test_a_malformed_node_in_any_input_is_refused_by_name(target, node, tmp_path):
+    case = copy(tmp_path)
+    for name in ("cues.json", "logic_words.json"):
+        shutil.copy(C.HERE / name, case / name)
+    name, _, where = target.partition(":")
+    path = case / name
+    data = json.loads(path.read_text(encoding="utf-8"))
+    keys = [k for part in where.replace("[", ".").replace("]", "").split(".") if part
+            for k in [int(part) if part.isdigit() else part]]
+    if not keys:
+        data = node
+    else:
+        parent = data
+        for k in keys[:-1]:
+            parent = parent[k]
+        parent[keys[-1]] = node
+    path.write_text(json.dumps(data))
+    try:
+        C.report(case, (case / "source.txt").read_bytes(), case / "fidmech/boundaries.json", C.CHECKS,
+                 cues=case / "cues.json", logic=case / "logic_words.json")
+    except S.BoundariesError:
+        return
+    # The nodes the loaders accept leave a working report: the empty ruled-out list, a unit linked to no rule or to a
+    # rule no block has (L1a reads no such link), a predicate entry with nothing in it (an empty legend).
+    assert (target, node) in [("fidmech/ruled_out.json:", []), ("spans.json:units[0].rule", None),
+                              ("spans.json:units[0].rule", "x"),
+                              ("environment.d1.json:vocabulary.predicates.records_kept", {})]

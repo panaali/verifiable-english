@@ -67,6 +67,8 @@ EXCLUDED = {
     "usecases/*/spans.json": ("no-input", "a use case's source spans"),
     "usecases/*/fidmech/boundaries.json": ("no-input", "a use case's frozen source boundaries for the fidmech text "
                                            "checks (tools/fidmech)"),
+    "usecases/*/fidmech/ruled_out.json": ("no-input", "a use case's frozen ruled-out source sentences for the fidmech "
+                                          "L4 check (tools/fidmech)"),
     "usecases/*/*.manifest.json": ("no-input", "a use case's document manifest (its .ve files are read)"),
     "usecases/*/environment.english.json": ("no-input", "English surface words for an environment"),
     "usecases/*/log.vocabulary.json": ("no-input", "a vocabulary fragment the use case's script merges"),
