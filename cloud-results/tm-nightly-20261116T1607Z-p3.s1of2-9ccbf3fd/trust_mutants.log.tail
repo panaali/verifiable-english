@@ -1,0 +1,12 @@
+trust_mutants: 25 definitions, 36 mutants (19 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:97 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-le: = -> ≤ (lean/VE/EnglishGrammar/Norm/Owners.lean:97: failed to synthesize)
+UNKNOWN lean/VE/WireContract/Hooks/Purposes.lean:69 VE.WireContract.Hooks.Purposes.classifier (G[V], trusted) arm-default: match decodeBlock (purposesOf root) with -> .ok (lean/VE/WireContract/Hooks/Purposes.lean:70: Inconsistent number of patterns in match alternative...)
+UNKNOWN lean/VE/Commands/Steps.lean:89 VE.Commands.shapeOutcome (G[V], trusted) bool-flip: true -> false (lean/VE/Commands/StepsExamples.lean:57: Expression (it computes through a proof the mutant broke ...)
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) append-right: eventsReadingSets ++ ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:35 VE.Cardinality.projectW6 (D[V], trusted) list-empty: (Wire.projectedProfiles profiles).map Lean.Json.str -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) append-right: documentLayers ++ ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:889 VE.Compose.environmentRows (G[V], trusted) list-empty: ps -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:61 VE.EnglishGrammar.adviceTable (G[V], trusted) list-empty: sourceWordAdvice -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-empty: eventsReadingSets -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Run.lean:131 VE.EnglishGrammar.Run.codeClasses (G[V], trusted) list-empty: statementCodeRows -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-empty: ps.filter (· != "cardinality@0") -> [] (lake build did not finish in 1800 s (--build-timeout))
