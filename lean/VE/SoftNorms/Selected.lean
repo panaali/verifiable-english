@@ -1,4 +1,5 @@
 import VE.SoftNorms.Wire
+import VE.Compose.SlotWire
 
 /-! The soft route's `soft-selected` kind (kb-10a): which rules are selected at a typed tuple of a
 decoded base model, and the completed outcome there, both read from the soft route's own
@@ -8,7 +9,12 @@ base-expanded formulas (`circ D (selects' D N)` and `circ D (atom p (sortsOf D p
 says what they mean: the selection formula and the regulated atom in every full structure over
 `E′` whose base restriction is the model and whose layer symbols mean what the layers say
 (`AgreesBelow … (size (soften D))`). The case decoder (`decodeQueries`) and the answer row
-(`selectedRow`) are the kind's executable part; `SelectedSound.lean` states the wire answer. -/
+(`selectedRow`) are the kind's executable part; `SelectedSound.lean` states the wire answer.
+
+A case may send `facts` (kb-9): closed base formulas decoded by the slot kinds' own decoder
+(`VE.Compose.SlotWire.decodeFacts`). The answer then also reports `facts` (`factsAt`: every fact is
+true in the model) and `coherent` (`coherentAt`: every coherence conjunct `cohPremises` is), both
+read in the same model as the selected rules; a false value is reported, not refused. -/
 namespace VE.SoftNorms.Run
 open Lean
 open VE.Norms
@@ -264,16 +270,36 @@ def selectedQueries (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (j : Jso
     else decodeQueries D M 0 raw.toList
   | _ => .error "InvalidInput: soft-selected needs a queries array"
 
-/-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`
-(`selectedQueries`). A model that fails the soft background is answered with
-`background: false`, not refused. -/
+/-- The `facts` flag: every fact is true in the model. -/
+def factsAt (P : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity) : Bool := P.all fun φ => φ.eval M []
+
+/-- The `coherent` flag: every coherence conjunct of the document is true in the model (no colliding
+pair of rules is selected at one tuple). `background` evaluates the exception premises only. -/
+def coherentAt (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) : Bool :=
+  (cohPremises D).all fun a => a.eval M []
+
+/-- The case sent a `facts` member. -/
+def factsSent (j : Json) : Bool :=
+  match j.getObjVal? "facts" with
+  | .ok _ => true
+  | .error _ => false
+
+/-- The fields after `background` and `results`: `facts` and `coherent` exactly when `facts` was sent. -/
+def factsFields (sent facts coherent : Bool) : List (String × Json) :=
+  if sent then [("facts", .bool facts), ("coherent", .bool coherent)] else []
+
+/-- The kind `soft-selected`: `environment`, `norms`, an optional `facts` (`decodeFacts`), `model`
+and a non-empty `queries` (`selectedQueries`). A model that fails the soft background, a fact or a
+coherence conjunct is answered with that flag `false`, not refused. -/
 def runSelected (id : String) (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let src ← decodeSoftSource environment (j.getObjValD "norms")
+  let (P, _) ← VE.Compose.SlotWire.decodeFacts src j
   let ⟨M, _⟩ ← decodeModel src j
   let qs ← selectedQueries src.D M j
   let E := expanded src.D
-  pure (VE.Route.Wire.ok id [("background", .bool (classificationBackgroundValid src.D M)),
-    ("results", Json.arr (qs.map (selectedRow E M)).toArray)])
+  pure (VE.Route.Wire.ok id ([("background", .bool (classificationBackgroundValid src.D M)),
+    ("results", Json.arr (qs.map (selectedRow E M)).toArray)] ++
+    factsFields (factsSent j) (factsAt P M) (coherentAt src.D M)))
 
 end VE.SoftNorms.Run
