@@ -1,0 +1,670 @@
+--- a/tools-local/path_overlap.py
++++ b/tools-local/path_overlap.py
+@@ -16,6 +16,11 @@
+   1. f listed in REBASE-SECOND-SERIAL (the guard reverted it)                    -> serial
+   2. f is generated on main (git check-attr merge = ve-generated; the train regenerates it) -> rebase-second
+   3. f is a shared allowance file (docs/trust-baseline.json, tools/trust-classes.json; presync resolves them, adv0729) -> rebase-second
++  3a. f is docs/kernel/ALLOWANCES.md (row lw-allowances-shared; reviews/dri-decisions-20261115-lw-allowances.md item 1):
++       the running branch's diff to it is append-only table rows plus the "signed total:" line, its total following its
++       rows (allowances_merge.py, next to this file, owns the rule) -> rebase-second (merge-train.sh / presync-watch-job.sh
++       regen_merge resolve the conflict with allowances_merge.py resolve); an edited, deleted or inserted row, other text,
++       a total that does not follow the rows, or allowances_merge.py missing -> serial
+   4. f is .lean or .py and exists on main (a task line `Regions: <f>: name, name` replaces the name search for f):
+        R = declarations whose span holds a changed line of B (old side at the merge base, new side at B; new decls too)
+        N = declaration names of f (main and B) that the waiting item's task file names (word match, short or dotted name)
+@@ -133,6 +138,12 @@
+         return "rebase-second", "generated file (merge=ve-generated): the second to merge regenerates it"
+     if f in SHARED:
+         return "rebase-second", "shared allowance file (presync resolves it; adv0729)"
++    am = allowances()
++    if am is not None and f == am.PATH:
++        ok, why = am.branch_shape(repo, branch)
++        if ok:
++            return "rebase-second", f"kernel allowances, {why} (allowances_merge.py resolves it at the sync)"
++        return "serial", f"kernel allowances, {why}"
+     lean, py = f.endswith(".lean"), f.endswith(".py")
+     main_txt = git(repo, "show", f"main:{f}")
+     if not (lean or py) or main_txt is None:
+@@ -178,6 +189,19 @@
+                              "; task " + ",".join(sorted(N)[:4]))
+ 
+ 
++def allowances():
++    """The allowances_merge module next to this file, or None when it is missing or broken (then ALLOWANCES.md stays serial)."""
++    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allowances_merge.py")
++    try:
++        import importlib.util
++        spec = importlib.util.spec_from_file_location("allowances_merge", p)
++        mod = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(mod)
++        return mod
++    except Exception:
++        return None
++
++
+ def serial_paths():
+     try:
+         return {l.split("\t")[0].strip() for l in open(os.path.join(M, "REBASE-SECOND-SERIAL")) if l.strip() and not l.startswith("#")}
+--- a/merge-train.sh
++++ b/merge-train.sh
+@@ -26,7 +26,18 @@
+ # allgen <worktree>: the merge in progress conflicts only in generated files (merge=ve-generated in its .gitattributes)
+ allgen(){ local f=(${(f)"$(git -C $1 diff --name-only --diff-filter=U 2>/dev/null)"})
+   [ ${#f} -gt 0 ] && ! git -C $1 check-attr merge -- $f 2>/dev/null | grep -qv ': merge: ve-generated$'; }
++# 2026-11-16 lw-allowances-shared (reviews/dri-decisions-20261115-lw-allowances.md item 1): docs/kernel/ALLOWANCES.md is
++# rebase-second (path_overlap.py rule 3a). amerge <worktree>, with a merge in progress (HEAD = the branch): when that file
++# conflicts, tools-local/allowances_merge.py resolve gives main's file + the branch's appended rows, signed total = main's +
++# the branch's delta, and stages it; returns 0 only when that finished the merge (committed: nothing else conflicted). A
++# branch change of another shape is refused (logged with why; the file stays conflicted, so the generated-file resolve
++# below declines and the agent sync runs as before). Script missing -> nothing changes.
++amerge(){ local o rc; [ -f $M/tools-local/allowances_merge.py ] && git -C $1 rev-parse -q --verify MERGE_HEAD > /dev/null || return 1
++  o=$(python3 -I $M/tools-local/allowances_merge.py resolve --repo $1 --commit 2>&1); rc=$?
++  [ -n "$o" ] && echo "allowances resolve in ${1:t}: ${o[1,400]} $(date -u +%H:%MZ)" >> $log
++  [ $rc -eq 0 ]; }
+ regen_merge(){ local w=$1 pre mh out
++  amerge $w && return 0
+   [ -f $w/tools/regen_generated.py ] && grep -q -- '"--resolve"' $w/tools/regen_generated.py && git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null || return 1
+   pre=$(git -C $w rev-parse HEAD); mh=$(git -C $w rev-parse MERGE_HEAD)
+   # 2026-10-17 DRI (dri-decisions-20261017, L58): build Lean from the merged files and pin that build BEFORE the writers
+@@ -42,6 +53,7 @@
+     echo "generated-file resolve in ${w:t}: stale ve_service (handshake); Lean build of the merged files, then resolve again $(date -u +%H:%MZ)" >> $log
+     git -C $w merge --abort 2>/dev/null; git -C $w reset -q --hard $pre
+     git -C $w merge -q --no-commit --no-ff $mh > /dev/null 2>&1
++    amerge $w && return 0
+     if git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null; then
+       out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH zsh $M/iso.sh integ-regen-${w:t} 16G -- \
+         uv run python tools/regen_generated.py --resolve --only lake-build --only checker-pins 2>&1) \
+--- a/presync-watch-job.sh
++++ b/presync-watch-job.sh
+@@ -77,7 +77,14 @@
+ # the generated-file resolve: KEEP IN STEP with merge-train.sh regen_merge (2026-10-17 dri-apply1017 text: Lean build + pins
+ # first when every conflict is generated, then --resolve; on a stale ve_service handshake: redo the merge, build, resolve
+ # again). Differences: no nested iso scope (this job has its own), log lines go to presync-watch.log.
++# 2026-11-16 lw-allowances-shared: docs/kernel/ALLOWANCES.md conflicts -> tools-local/allowances_merge.py resolve first
++# (KEEP IN STEP with merge-train.sh amerge: 0 = it finished the merge; a refusal is logged and the file stays conflicted).
++amerge(){ local o rc; [ -f $M/tools-local/allowances_merge.py ] && git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null || return 1
++  o=$(python3 -I $M/tools-local/allowances_merge.py resolve --repo $w --commit 2>&1); rc=$?
++  [ -n "$o" ] && say "allowances resolve: ${o[1,400]}"
++  [ $rc -eq 0 ]; }
+ regen_merge(){ local mh out
++  amerge && return 0
+   [ -f $w/tools/regen_generated.py ] && grep -q -- '"--resolve"' $w/tools/regen_generated.py && git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null || return 1
+   mh=$(git -C $w rev-parse MERGE_HEAD)
+   if allgen $w; then out=$(rgen --resolve --only lake-build --only checker-pins) \
+@@ -87,6 +94,7 @@
+     say "generated-file resolve: stale ve_service (handshake); Lean build of the merged files, then resolve again"
+     git -C $w merge --abort 2>/dev/null; git -C $w reset -q --hard $pre
+     git -C $w merge -q --no-commit --no-ff $mh > /dev/null 2>&1
++    amerge && return 0
+     git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null && out=$(rgen --resolve --only lake-build --only checker-pins) \
+       && out=$(rgen --resolve) && git -C $w commit -q --no-edit && return 0
+   fi
+--- /dev/null
++++ b/tools-local/allowances_merge.py
+@@ -0,0 +1,267 @@
++#!/usr/bin/env python3
++"""allowances_merge.py: docs/kernel/ALLOWANCES.md as a rebase-second file with a resolver (row lw-allowances-shared;
++DRI decider reviews/dri-decisions-20261115-lw-allowances.md item 1).
++
++Every kernel row makes the same edit to VE's docs/kernel/ALLOWANCES.md: it appends a row to a table and raises the line
++"signed total: N lines". Two such branches conflict on that line by construction, so path_overlap.py held them serial
++(kb-9 waited 13.3 wall h in 24 h). This module is the one owner of the shape rule and of the resolution:
++
++  shape (base -> branch), APPEND-ONLY when, and only when:
++    - exactly one "signed total: N lines" line on each side;
++    - every other line outside the tables is unchanged, and the branch adds or removes no table;
++    - each table keeps every row of the base, unchanged and in order, as a prefix (rows are appended at its end only);
++    - the kernel table (the one whose header has the columns "Lines" and "Total after"): each appended row's
++      "Total after" equals the previous total plus its "Lines" (starting at the base's signed total), and the branch's
++      signed total equals the last of them, i.e. branch total - base total = the sum of the appended rows' Lines.
++      With no kernel row appended the signed total must not change.
++  Anything else (an edited, deleted or inserted row, other text, a total that does not follow the rows) is refused
++  with the reason, and the file stays serial (path_overlap) / conflicted (the merge goes to the agent sync as before).
++
++  resolve (base, branch = ours, main = theirs) -> main's file with the branch's appended rows added at the end of the
++  same table (matched by its header line, which must occur once on main), where a row that main added since the base
++  is not added again (kernel table: every cell but "Total after" equal; other tables: the whole row); the appended
++  kernel rows' "Total after" cells are renumbered from main's total, and
++    signed total = main total + (branch total - base total) - (Lines of the branch rows main already has).
++
++CLI (merge-train.sh / presync-watch-job.sh regen_merge call `resolve`, with a merge in progress, HEAD = the branch):
++  resolve --repo W [--commit]  exit 0: resolved and, with --commit, nothing else conflicted: merge committed
++                               exit 2: resolved and staged; other files still conflict (the caller goes on)
++                               exit 3: ALLOWANCES.md is not conflicted (nothing printed)
++                               exit 1: refused (one line: why); the file is left as git left it
++  check --repo R --branch B [--main main]   exit 0 "append-only ..." / 1 "not append-only: why" (path_overlap.py)
++"""
++import argparse, os, re, subprocess, sys
++
++PATH = "docs/kernel/ALLOWANCES.md"
++SIGNED = re.compile(r"^signed total: ([0-9][0-9,]*) lines$")
++SEP = re.compile(r"^\|(?:\s*:?-+:?\s*\|)+\s*$")
++CELL_SPLIT = re.compile(r"(?<!\\)\|")
++NUM = re.compile(r"^\s*([+-]?)([0-9]{1,3}(?:,[0-9]{3})*|[0-9]+)\s*$")
++
++
++class Refused(Exception):
++    pass
++
++
++def num(cell, what):
++    m = NUM.match(cell)
++    if not m:
++        raise Refused(f"{what} {cell.strip()!r} is not a number")
++    n = int(m.group(2).replace(",", ""))
++    return -n if m.group(1) == "-" else n
++
++
++def cells(row):
++    """The cells of a table row '| a | b |' (escaped pipes stay inside a cell)."""
++    parts = CELL_SPLIT.split(row)
++    return parts[1:-1] if len(parts) >= 3 and parts[0].strip() == "" and parts[-1].strip() == "" else None
++
++
++def parse(text, side):
++    """(skeleton, tables, total): skeleton = the lines with each table's rows removed (header and separator kept) and the
++    signed total line replaced by a marker; tables = [(header, [rows])] in file order; total = the signed total."""
++    lines = text.split("\n")
++    totals = [i for i, ln in enumerate(lines) if SIGNED.match(ln)]
++    if len(totals) != 1:
++        raise Refused(f"{side} has {len(totals)} 'signed total: N lines' lines, not one")
++    total = int(SIGNED.match(lines[totals[0]]).group(1).replace(",", ""))
++    skel, tables, i = [], [], 0
++    while i < len(lines):
++        ln = lines[i]
++        if ln.startswith("|"):
++            j = i
++            while j < len(lines) and lines[j].startswith("|"):
++                j += 1
++            block = lines[i:j]
++            if len(block) < 2 or not SEP.match(block[1]):
++                raise Refused(f"{side}: a table at line {i + 1} has no header and separator")
++            skel += [("table", block[0]), block[1]]
++            tables.append((block[0], block[2:]))
++            i = j
++            continue
++        skel.append("<signed total>" if i == totals[0] else ln)
++        i += 1
++    heads = [h for h, _ in tables]
++    for h in heads:
++        if heads.count(h) > 1:
++            raise Refused(f"{side}: two tables have the header {h.strip()[:60]!r}")
++    return skel, tables, total
++
++
++def kernel_cols(header):
++    """(index of Lines, index of Total after) when this is the kernel table, else None."""
++    hc = [c.strip() for c in (cells(header) or [])]
++    if "Lines" in hc and "Total after" in hc:
++        return hc.index("Lines"), hc.index("Total after")
++    return None
++
++
++def analyse(base, ours, side="the branch"):
++    """The branch's change to the file as {header: [appended rows]} with the totals, or Refused(why)."""
++    bskel, btabs, btot = parse(base, "the merge base")
++    oskel, otabs, otot = parse(ours, side)
++    if [h for h, _ in btabs] != [h for h, _ in otabs]:
++        raise Refused(f"{side} adds, removes or renames a table")
++    if bskel != oskel:
++        k = next((k for k, (x, y) in enumerate(zip(bskel, oskel)) if x != y), min(len(bskel), len(oskel)))
++        y = oskel[k] if k < len(oskel) else "(end of file)"
++        raise Refused(f"{side} changes text outside the tables' ends (first at {str(y)[:70]!r})")
++    appended, running = {}, btot
++    for (h, brows), (_, orows) in zip(btabs, otabs):
++        if orows[:len(brows)] != brows:
++            k = next((k for k, (x, y) in enumerate(zip(brows, orows)) if x != y), len(orows))
++            raise Refused(f"{side} edits, deletes or inserts before an existing row of the table {h.strip()[:40]!r} "
++                          f"(row {k + 1}: {(brows[k] if k < len(brows) else '')[:60]!r})")
++        new = orows[len(brows):]
++        if not new:
++            continue
++        appended[h] = new
++        kc = kernel_cols(h)
++        if kc is None:
++            continue
++        for r in new:
++            c = cells(r)
++            if c is None or len(c) <= max(kc):
++                raise Refused(f"{side}: appended kernel row is not a full table row: {r[:60]!r}")
++            running += num(c[kc[0]], "its Lines")
++            if num(c[kc[1]], "its Total after") != running:
++                raise Refused(f"{side}: appended row's Total after {c[kc[1]].strip()} is not the previous total plus its "
++                              f"Lines ({running:,}): {r[:60]!r}")
++    if otot != running:
++        raise Refused(f"{side}'s signed total {otot:,} does not match the merge base's {btot:,} plus its appended rows' "
++                      f"Lines ({running - btot:+,})")
++    return appended, btot, otot
++
++
++def resolve(base, ours, theirs):
++    """The resolved file text (see the module docstring), or Refused(why)."""
++    appended, btot, otot = analyse(base, ours)
++    _, btabs, _ = parse(base, "the merge base")
++    lines = theirs.split("\n")
++    parse(theirs, "main")   # one signed total line, unique table headers
++    based = {h: list(rows) for h, rows in btabs}
++    total = next(int(SIGNED.match(ln).group(1).replace(",", "")) for ln in lines if SIGNED.match(ln))
++    running, dup_lines = total, 0
++    for h, new in appended.items():
++        starts = [i for i, ln in enumerate(lines) if ln == h and (i == 0 or not lines[i - 1].startswith("|"))]
++        if len(starts) != 1 or starts[0] + 1 >= len(lines) or not SEP.match(lines[starts[0] + 1]):
++            raise Refused(f"main has no single table with the header {h.strip()[:60]!r}")
++        end = starts[0] + 2
++        while end < len(lines) and lines[end].startswith("|"):
++            end += 1
++        mrows = lines[starts[0] + 2:end]
++        added = list(mrows)             # rows main added since the base (a multiset difference)
++        for r in based.get(h, []):
++            if r in added:
++                added.remove(r)
++        kc = kernel_cols(h)
++        key = (lambda r: r) if kc is None else (lambda r: tuple(x.strip() for k, x in enumerate(cells(r) or [r]) if k != kc[1]))
++        have = [key(r) for r in added]
++        out = []
++        for r in new:
++            if key(r) in have:
++                have.remove(key(r))
++                if kc is not None:
++                    dup_lines += num(cells(r)[kc[0]], "its Lines")
++                continue
++            if kc is not None:
++                c = cells(r)
++                running += num(c[kc[0]], "its Lines")
++                c[kc[1]] = f" {running:,} "
++                r = "|" + "|".join(c) + "|"
++            out.append(r)
++        lines[end:end] = out
++    want = total + (otot - btot) - dup_lines
++    if running != want:   # the same figure two ways; a mismatch is a bug here, never a guess
++        raise Refused(f"internal: renumbered total {running:,} is not main {total:,} + branch delta {otot - btot:+,} - "
++                      f"rows main has {dup_lines:+,}")
++    lines = [f"signed total: {want:,} lines" if SIGNED.match(ln) else ln for ln in lines]
++    return "\n".join(lines), want, total, otot - btot
++
++
++def git(repo, *a, check=False):
++    r = subprocess.run(["git", "-C", repo, *a], capture_output=True, text=True, timeout=120)
++    if check and r.returncode:
++        raise Refused(f"git {' '.join(a[:2])} failed: {r.stderr.strip()[:120]}")
++    return r
++
++
++def branch_shape(repo, branch, main="main"):
++    """(True, why) when the branch's diff to ALLOWANCES.md since its merge base with main is append-only, else (False, why)."""
++    mb = git(repo, "merge-base", main, branch).stdout.strip()
++    if not mb:
++        return False, "no merge base with main"
++    b, o = git(repo, "show", f"{mb}:{PATH}"), git(repo, "show", f"{branch}:{PATH}")
++    if b.returncode or o.returncode:
++        return False, "the file is missing at the merge base or on the branch"
++    try:
++        app, bt, ot = analyse(b.stdout, o.stdout)
++    except Refused as e:
++        return False, str(e)
++    n = sum(len(v) for v in app.values())
++    return True, f"append-only: {n} appended row(s), signed total {bt:,} -> {ot:,} ({ot - bt:+,})"
++
++
++def cmd_resolve(a):
++    w = a.repo
++    if git(w, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode:
++        return 3
++    if not git(w, "ls-files", "-u", "--", PATH).stdout.strip():
++        return 3
++    try:
++        st = {}
++        for k in (1, 2, 3):
++            r = git(w, "show", f":{k}:{PATH}")
++            if r.returncode:
++                raise Refused(f"stage {k} of {PATH} is missing (a side deleted or added the file)")
++            st[k] = r.stdout
++        text, want, mt, delta = resolve(st[1], st[2], st[3])
++    except Refused as e:
++        print(f"refused: {e}; {PATH} left conflicted (serial path: agent sync)")
++        return 1
++    with open(os.path.join(w, PATH), "w") as fh:
++        fh.write(text)
++    git(w, "add", "--", PATH, check=True)
++    msg = f"{PATH} resolved: main's rows + the branch's appended rows, signed total {mt:,} {delta:+,} = {want:,}"
++    rest = git(w, "diff", "--name-only", "--diff-filter=U").stdout.split()
++    if rest:
++        print(f"{msg}; other files still conflict: {' '.join(rest)}")
++        return 2
++    if a.commit:
++        r = git(w, "commit", "-q", "--no-edit")
++        if r.returncode:
++            print(f"{msg}; the merge commit failed: {r.stderr.strip()[:120]}")
++            return 2
++        print(f"{msg}; merge committed")
++        return 0
++    print(f"{msg}; staged (no other conflicts)")
++    return 0
++
++
++def cmd_check(a):
++    ok, why = branch_shape(a.repo, a.branch, a.main)
++    print(why if ok else f"not append-only: {why}")
++    return 0 if ok else 1
++
++
++def main(argv):
++    ap = argparse.ArgumentParser()
++    sub = ap.add_subparsers(dest="cmd")
++    r = sub.add_parser("resolve")
++    r.add_argument("--repo", required=True)
++    r.add_argument("--commit", action="store_true")
++    c = sub.add_parser("check")
++    c.add_argument("--repo", required=True)
++    c.add_argument("--branch", required=True)
++    c.add_argument("--main", default="main")
++    a = ap.parse_args(argv)
++    if a.cmd == "resolve":
++        return cmd_resolve(a)
++    if a.cmd == "check":
++        return cmd_check(a)
++    print(__doc__)
++    return 2
++
++
++if __name__ == "__main__":
++    sys.exit(main(sys.argv[1:]))
+--- /dev/null
++++ b/tools-local/test_allowances_shared.py
+@@ -0,0 +1,296 @@
++#!/usr/bin/env python3
++"""Tests for row lw-allowances-shared (reviews/dri-decisions-20261115-lw-allowances.md item 1): docs/kernel/ALLOWANCES.md is
++rebase-second (path_overlap.py rule 3a) with a resolver (tools-local/allowances_merge.py) run by merge-train.sh and
++presync-watch-job.sh regen_merge.
++
++Run: python3 -I tools-local/test_allowances_shared.py
++Each script is taken as <file>$LWAS_SFX where that file exists, else <file> (default LWAS_SFX=.new-lwas: the staged copies
++before the install, the live ones after it); LWAS_SFX= (empty) tests the live scripts. The scripts are copied under their
++installed names into a temp manage-agents tree (HOME=<tmp>/home, so merge-train.sh's M=~/code/manage-agents is that tree);
++the VE repos are temp git repos. Nothing outside the temp dir is read or written."""
++import importlib.util, os, re, shutil, subprocess, sys, tempfile, unittest
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++MA = os.path.dirname(HERE)
++SFX = os.environ.get("LWAS_SFX", ".new-lwas")
++FILES = ["merge-train.sh", "presync-watch-job.sh", "tools-local/path_overlap.py", "tools-local/allowances_merge.py"]
++AP = "docs/kernel/ALLOWANCES.md"
++
++
++def pick(rel):
++    p = os.path.join(MA, rel)
++    return p + SFX if SFX and os.path.exists(p + SFX) else p
++
++
++def row(change, lines, total, date="2026-11-16"):
++    return f"| {date} | {change} | C | {lines:+,} | {total:,} | architect seat |"
++
++
++ROWS = [row("first measurement", 9565, 9565).replace("+9,565", "9,565"),
++        "| 2026-11-11 | Review kb-0 F1: `certificate` re-measured | none | -609 | 8,956 | not needed (a fall) |",
++        row("kb-x old", 1010, 9966)]
++OWN = ["| 2026-11-15 | `anthropic-rsp` | - | 100 | kb-10d: the first measurement | not needed |"]
++
++
++def doc(total, rows=(), own=()):
++    return ("# Kernel allowances\n\nIt may rise only with a line in the table below.\n"
++            '`tests/test_kernel_closure.py` reads the figure after the words "signed total:".\n\n'
++            f"signed total: {total:,} lines\n\n"
++            "| Date | Change | Door | Lines | Total after | Signed |\n|---|---|---|---:|---:|---|\n"
++            + "\n".join(ROWS + list(rows)) + "\n\nPre-signed, to be entered by the change that uses it:\n\n"
++            "| Change | Door | At most |\n|---|---|---:|\n| KB-1: Carry.lean | C | 80 |\n\n## Ownership floor\n\n"
++            "| Date | Key | Floor before | Floor after | Change | Signed |\n|---|---|---:|---:|---|---|\n"
++            + "\n".join(OWN + list(own)) + "\n")
++
++
++BASE = doc(9966)
++RX = row("kb-x: a kernel rise", 10, 9976)
++RY = row("kb-y: another kernel rise", 5, 9971)
++RO = "| 2026-11-16 | `eligibility` | - | 269 | kb-y: the first measurement | not needed |"
++
++
++def run(*a, cwd=None, env=None, check=True):
++    r = subprocess.run(a, cwd=cwd, env=env, capture_output=True, text=True, timeout=300)
++    if check and r.returncode:
++        raise AssertionError(f"{a} -> {r.returncode}\n{r.stdout}\n{r.stderr}")
++    return r
++
++
++class Base(unittest.TestCase):
++    def setUp(self):
++        self.d = tempfile.mkdtemp(prefix="lwas-")
++        self.home = os.path.join(self.d, "home")
++        self.M = os.path.join(self.home, "code", "manage-agents")
++        os.makedirs(os.path.join(self.M, "tools-local"))
++        os.makedirs(os.path.join(self.M, "prompts"))
++        for rel in FILES:
++            if os.path.exists(pick(rel)):
++                shutil.copy(pick(rel), os.path.join(self.M, rel))
++        self.env = dict(os.environ, HOME=self.home, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t",
++                        GIT_COMMITTER_EMAIL="t@t", GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL="/dev/null", FEED_DIR=self.M)
++        self.R = os.path.join(self.d, "repo")
++        self.git("init", "-q", "-b", "main", self.R, cwd=self.d)
++        self.write(self.R, BASE)
++        self.git("add", "-A")
++        self.git("commit", "-qm", "base")
++
++    def tearDown(self):
++        shutil.rmtree(self.d, ignore_errors=True)
++
++    def git(self, *a, cwd=None, check=True):
++        return run("git", *a, cwd=cwd or self.R, env=self.env, check=check)
++
++    def read(self, *rel):
++        with open(os.path.join(self.M, *rel)) as fh:
++            return fh.read()
++
++    def write(self, w, text):
++        os.makedirs(os.path.join(w, "docs", "kernel"), exist_ok=True)
++        with open(os.path.join(w, AP), "w") as fh:
++            fh.write(text)
++
++    def branch(self, name, text, start="main"):
++        """Branch <name> from <start> with ALLOWANCES.md = text (made in the main checkout, which returns to main)."""
++        self.git("checkout", "-q", "-b", name, start)
++        self.write(self.R, text)
++        self.git("commit", "-qam", name)
++        self.git("checkout", "-q", "main")
++
++    def publish(self, name):
++        self.git("merge", "-q", "--no-ff", "--no-edit", name)
++
++    def conflicted(self, name):
++        """A worktree of <name> with a merge of main in progress that conflicts on ALLOWANCES.md."""
++        w = os.path.join(self.d, "ve-" + name)
++        self.git("worktree", "add", "-q", w, name)
++        r = self.git("merge", "--no-edit", "main", cwd=w, check=False)
++        self.assertNotEqual(r.returncode, 0, "the fixture should conflict")
++        self.assertIn(AP, self.git("diff", "--name-only", "--diff-filter=U", cwd=w).stdout)
++        return w
++
++    def resolver(self, w):
++        p = os.path.join(self.M, "tools-local", "allowances_merge.py")
++        self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
++        return run(sys.executable, "-I", p, "resolve", "--repo", w, "--commit", env=self.env, check=False)
++
++    def train_regen_merge(self, w):
++        """merge-train.sh's own regen_merge in library mode (presync-lean-regen.zsh's way of sourcing it)."""
++        return run("zsh", "-c", 'MT_LIB=1; source $1 || exit 9; MT_LIB=""; regen_merge $2', "x",
++                   os.path.join(self.M, "merge-train.sh"), w, env=self.env, check=False)
++
++    def overlap(self):
++        spec = importlib.util.spec_from_file_location("po_" + str(id(self)), os.path.join(self.M, "tools-local", "path_overlap.py"))
++        mod = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(mod)
++        return mod
++
++    def text(self, w, rev="HEAD"):
++        return self.git("show", f"{rev}:{AP}", cwd=w).stdout
++
++    def total(self, text):
++        return int(re.search(r"^signed total: ([0-9,]+) lines$", text, re.M).group(1).replace(",", ""))
++
++
++class Behaviour(Base):
++    def test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total(self):
++        self.branch("kb-x", doc(9976, [RX]))
++        self.branch("kb-y", doc(9971, [RY]))
++        po = self.overlap()
++        self.assertEqual(po.classify(self.R, "kb-x", AP, "", set())[0], "rebase-second")
++        self.assertEqual(po.classify(self.R, "kb-y", AP, "", set())[0], "rebase-second")
++        self.publish("kb-x")
++        w = self.conflicted("kb-y")
++        r = self.train_regen_merge(w)
++        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
++        self.assertNotEqual(self.git("rev-parse", "-q", "--verify", "MERGE_HEAD", cwd=w, check=False).returncode, 0)
++        self.assertEqual(len(self.git("rev-list", "--parents", "-1", "HEAD", cwd=w).stdout.split()), 3)
++        t = self.text(w)
++        self.assertEqual(self.total(t), 9966 + 10 + 5)
++        self.assertEqual(t, doc(9981, [RX, row("kb-y: another kernel rise", 5, 9981)]))
++        self.assertIn("merge committed", self.read("merge-train.log"))
++
++    def test_presync_job_resolves_the_same_conflict(self):
++        self.branch("kb-x", doc(9976, [RX]))
++        self.branch("kb-y", doc(9971, [RY]))
++        self.publish("kb-x")
++        self.git("checkout", "-q", "--detach")
++        integ = os.path.join(self.d, "integ")
++        self.git("worktree", "add", "-q", integ, "main")
++        self.git("worktree", "add", "-q", os.path.join(self.d, "ve-kb-y"), "kb-y")
++        env = dict(self.env, PW_M=self.M, PW_R=self.R, PW_I=integ, PW_SLOT_BASE=os.path.join(self.d, "ve-presync"),
++                   PW_MLOG=os.path.join(self.M, "merge-train.log"))
++        r = run("zsh", os.path.join(self.M, "presync-watch-job.sh"), "label=kb-y", "branch=kb-y", "noagent", env=env, check=False)
++        log = self.read("presync-watch", "presync-watch.log")
++        self.assertEqual(r.returncode, 0, r.stdout + r.stderr + log)
++        s = self.git("rev-parse", "-q", "--verify", "refs/ve-presync/kb-y", check=False).stdout.strip()
++        self.assertTrue(s, log)
++        self.assertEqual(self.git("show", f"{s}:{AP}").stdout, doc(9981, [RX, row("kb-y: another kernel rise", 5, 9981)]))
++        self.assertIn("allowances resolve", log)
++
++    def test_branch_editing_an_existing_row_is_serial_and_refused(self):
++        rows = list(ROWS)
++        edited = doc(9971, [RY]).replace(ROWS[1], ROWS[1].replace("re-measured", "measured again"))
++        self.branch("kb-x", doc(9976, [RX]))
++        self.branch("kb-e", edited)
++        v, why = self.overlap().classify(self.R, "kb-e", AP, "", set())
++        self.assertEqual(v, "serial")
++        self.assertIn("existing row", why)
++        self.publish("kb-x")
++        w = self.conflicted("kb-e")
++        r = self.resolver(w)
++        self.assertEqual(r.returncode, 1, r.stdout)
++        self.assertIn("refused", r.stdout)
++        self.assertIn("existing row", r.stdout)
++        self.assertIn(AP, self.git("diff", "--name-only", "--diff-filter=U", cwd=w).stdout)  # left as git left it
++        self.assertEqual(rows, ROWS)
++        r = self.train_regen_merge(w)   # the train: refused, logged, the merge restored for the agent sync
++        self.assertNotEqual(r.returncode, 0)
++        self.assertIn("refused", self.read("merge-train.log"))
++
++    def test_duplicate_appended_row_is_not_doubled(self):
++        self.branch("kb-x", doc(9976, [RX], [RO]))                 # main gets the row RX (and RO) first
++        self.branch("kb-y", doc(9981, [RX, row("kb-y: another kernel rise", 5, 9981)], [RO]), start="main~0")
++        self.publish("kb-x")
++        w = self.conflicted("kb-y")
++        r = self.resolver(w)
++        self.assertEqual(r.returncode, 0, r.stdout)
++        t = self.text(w)
++        self.assertEqual(t.count(RX), 1)
++        self.assertEqual(t.count(RO), 1)
++        self.assertEqual(self.total(t), 9976 + 5)                  # main 9,976 + branch delta 15 - RX's 10
++        self.assertEqual(t, doc(9981, [RX, row("kb-y: another kernel rise", 5, 9981)], [RO]))
++
++    def test_total_not_matching_branch_delta_is_refused(self):
++        self.branch("kb-x", doc(9976, [RX]))
++        self.branch("kb-b", doc(9978, [row("kb-b: a rise", 10, 9976)]))   # rows say +10, the total says +12
++        v, why = self.overlap().classify(self.R, "kb-b", AP, "", set())
++        self.assertEqual(v, "serial")
++        self.assertIn("does not match", why)
++        self.publish("kb-x")
++        w = self.conflicted("kb-b")
++        r = self.resolver(w)
++        self.assertEqual(r.returncode, 1, r.stdout)
++        self.assertIn("does not match", r.stdout)
++        self.assertIn(AP, self.git("diff", "--name-only", "--diff-filter=U", cwd=w).stdout)
++
++    def test_path_overlap_check_no_longer_reports_append_only_branches(self):
++        self.branch("kb-x", doc(9976, [RX]))
++        task = os.path.join(self.d, "task-kb-y.txt")
++        with open(task, "w") as fh:
++            fh.write("kb-y: append a kernel row to docs/kernel/ALLOWANCES.md\n")
++        r = run(sys.executable, "-I", os.path.join(self.M, "tools-local", "path_overlap.py"), "check", "--repo", self.R,
++                "--branch", "kb-x", "--task", task, "--paths", "docs/kernel/", env=self.env)
++        out = r.stdout.strip().split("\n")
++        self.assertEqual(out[-1], "rebase-second", r.stdout)
++        self.assertTrue(out[0].startswith(f"rebase-second {AP}: kernel allowances, append-only"), r.stdout)
++        with open(os.path.join(self.M, "REBASE-SECOND-SERIAL"), "w") as fh:
++            fh.write(f"{AP}\t2026-11-16T00:00Z\tpair a/b\n")
++        r = run(sys.executable, "-I", os.path.join(self.M, "tools-local", "path_overlap.py"), "check", "--repo", self.R,
++                "--branch", "kb-x", "--task", task, "--paths", "docs/kernel/", env=self.env)
++        self.assertTrue(r.stdout.startswith(f"serial {AP}: REBASE-SECOND-SERIAL"), r.stdout)   # the guard still wins
++
++
++class Shapes(Base):
++    """allowances_merge.analyse / resolve on texts (no git)."""
++    def am(self):
++        p = os.path.join(self.M, "tools-local", "allowances_merge.py")
++        self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
++        spec = importlib.util.spec_from_file_location("am_" + str(id(self)), p)
++        mod = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(mod)
++        return mod
++
++    def refused(self, ours, needle, base=BASE):
++        am = self.am()
++        with self.assertRaises(am.Refused) as c:
++            am.analyse(base, ours)
++        self.assertIn(needle, str(c.exception))
++
++    def test_deleted_row_refused(self):
++        self.refused(BASE.replace(ROWS[1] + "\n", ""), "existing row")
++
++    def test_row_inserted_before_the_end_refused(self):
++        self.refused(doc(9976).replace(ROWS[2], RX + "\n" + ROWS[2].replace("9,966", "9,976")), "existing row")
++
++    def test_pre_signed_row_removed_refused(self):
++        self.refused(BASE.replace("| KB-1: Carry.lean | C | 80 |\n", ""), "existing row")
++
++    def test_text_outside_tables_refused(self):
++        self.refused(BASE.replace("It may rise only", "It may rise just"), "outside the tables")
++
++    def test_new_table_refused(self):
++        self.refused(BASE + "\n| A | B |\n|---|---|\n| 1 | 2 |\n", "table")
++
++    def test_two_total_lines_refused(self):
++        self.refused(BASE + "\nsigned total: 9,966 lines\n", "not one")
++
++    def test_total_after_not_following_lines_refused(self):
++        self.refused(doc(9976, [row("kb-z", 10, 9977)]), "Total after")
++
++    def test_total_raised_without_a_row_refused(self):
++        self.refused(doc(9970), "does not match")
++
++    def test_ownership_row_with_unchanged_total_is_append_only(self):
++        app, b, o = self.am().analyse(BASE, doc(9966, [], [RO]))
++        self.assertEqual((sum(len(v) for v in app.values()), b, o), (1, 9966, 9966))
++
++    def test_fall_is_append_only_and_summed(self):
++        fall = "| 2026-11-16 | kb-f: a fall | none | -135 | 9,831 | not needed |"
++        text, want, main_total, delta = self.am().resolve(BASE, doc(9831, [fall]), doc(9976, [RX]))
++        self.assertEqual((want, main_total, delta), (9841, 9976, -135))
++        self.assertIn("| 2026-11-16 | kb-f: a fall | none | -135 | 9,841 | not needed |", text)
++
++    def test_main_without_the_table_refused(self):
++        am = self.am()
++        with self.assertRaises(am.Refused):
++            am.resolve(BASE, doc(9966, [], [RO]), BASE.replace("## Ownership floor\n\n| Date | Key |", "## Ownership floor\n\n| Day | Key |"))
++
++    def test_resolver_missing_keeps_the_file_serial(self):
++        os.remove(os.path.join(self.M, "tools-local", "allowances_merge.py")) if os.path.exists(
++            os.path.join(self.M, "tools-local", "allowances_merge.py")) else None
++        self.branch("kb-x", doc(9976, [RX]))
++        self.assertEqual(self.overlap().classify(self.R, "kb-x", AP, "", set())[0], "serial")
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=1)
