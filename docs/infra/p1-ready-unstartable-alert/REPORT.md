@@ -4,8 +4,11 @@
   read (`inbox/dri/done/20261116T030645Z-infra-p1-ready-unstartable-alert-3398579.md`). The backups `*.bak-20261116-p1rua`
   are in place. The live alert fired at 03:11Z for fid-mech-b2 and lw-allowances-shared (`p1-unstartable-alert.sent`).
   No DELTA rows, no DRI signature reserved, trust +0.
-- What changed: (1) `decider-ready-alert.py` also reports any p1 ready row that has had no task file and no launch link for
-  30 min or more, whatever its owner. It reports each row at most once per 4 h. (2) `backlog.sh add`/`update` warns and
+- Fix round 1 (review F1, `manage-agents/p1-ready-unstartable-alert-review.final.md`): staged as `.new-p1rua2`
+  (decider-ready-alert.py, test_p1_ready_alert.py, test_decider_ready_alert.py); INSTALL WAITS FOR DECIDER READ (see
+  "Fix round 1" below). A launch link now counts as startable only when `backlog.py launch_spec` can start it.
+- What changed: (1) `decider-ready-alert.py` also reports any p1 ready row that has been not startable (fix round 1: a launch
+  link `backlog.py launch_spec` cannot start, or no launch link and no task file) for 30 min or more, whatever its owner. It reports each row at most once per 4 h. (2) `backlog.sh add`/`update` warns and
   logs when it leaves a row at p1 + ready without a task file or a "writer: <name> by <UTC>" note line. It never refuses.
 - Tests: `tools-local/test_p1_ready_alert.py`: 10 of 14 fail on the installed code, and all 14 pass on the staged code.
   The existing tests also pass on the staged code.
@@ -27,7 +30,10 @@ orchestrator `inbox/dri/done/20261116T025503Z-orchestrator-3198539.md`; task `pr
 | - | Existing decider-ready-alert tests stay green | `tools-local/test_decider_ready_alert.py.new-p1rua` | 8 of 8 OK on the staged script (below) |
 
 Readings I took (the conservative or narrower option each time; I did not ask):
-- **Not startable = no task file AND no launch link.** This is the reason `backlog.py launch_spec` gives ("no task file and no
+- **Not startable = no task file AND no launch link.** SUPERSEDED by fix round 1 (review F1): `launch_spec` also rejects a
+  launch link whose launcher needs a task file that is missing ("task file missing"), an unknown launcher, and a launcher
+  without its arguments, so the alert now asks `launch_spec` itself whenever a row has a launch link (below). Original
+  reading: this is the reason `backlog.py launch_spec` gives ("no task file and no
   launch link") and the one `INFRA-FEED-STATUS.md` showed for the incident rows. The task counts as present when any of
   these exists: the file `links.task` names, `prompts/task-<id>.txt`, or `prompts/dri-task-<id>.txt`. A `links.task` that
   names a missing file does not count. I rejected the other reading ("no task file OR no launch link"): it would alert on
@@ -106,7 +112,8 @@ copies until they are moved in. `live-changes.diff` holds the full staged diff.
   (about 9 h). Both are p1 infra-feed rows with no task file and no launch link (dry run above). The four incident rows
   now have task files and do not match.
 - `update-status <id> ready` on a p1 row does not trigger the filing warning, because the task names only `add`/`update`.
-  The 30-min alert covers that case.
+  The 30-min alert covers that case (for a row with a launch link, only since fix round 1: before it, a row with
+  `launch=delegate` and no task file was never alerted, review F1).
 - `backlog-p1-filing.log` and `p1-unstartable-alert.sent` grow by one line per event. Neither is rotated (both are small).
 
 ## Self-review against BUILDER-CHECKLIST
@@ -135,3 +142,67 @@ copies until they are moved in. `live-changes.diff` holds the full staged diff.
 15. Four classes: no overclaim, PASS (the readings and limits above are stated, including that `update-status` is not
     covered); no silent cut, PASS (both deliverables built); every new check can fail, PASS (S1-S6); limits charged
     before work, N.A. (no checker limits).
+
+## Fix round 1 (review F1)
+
+Review: `manage-agents/p1-ready-unstartable-alert-review.final.md` (one finding, F1 (B); notes C1-C6 not filed). The work is
+staged as `.new-p1rua2` next to the installed files in `/home/seyran/code/manage-agents/tools-local/`; the full staged diff is
+`fix1-changes.diff`. No VE product code (Lean, Python or Rust) changed; no DELTA rows; no DRI signature reserved.
+
+SIZE: 33 product (decider-ready-alert.py +40/-7), 122 tests (test_p1_ready_alert.py +116/-7, test_decider_ready_alert.py
++6/-4), 0 other hand-written files besides this section (seeded-bugs.json, fix1-*.log, fix1-changes.diff are records).
+
+| Finding | Class | Fix | Regression tests (`tools-local/test_p1_ready_alert.py.new-p1rua2`) |
+|---|---|---|---|
+| F1 (B) `startable()` counted any non-empty `links.launch` as startable, so a p1 ready `launch=delegate` / `infra-item` row with no task file never alerted while the infra feed listed it "task file missing" | The alert kept its own copy of "can this row be started" instead of reading the one owner, `backlog.py launch_spec` (the function `infra_feed.py` starts rows with). Every launch link launch_spec rejects was missed: a task-needing launcher with no (or a missing) task file, an unknown launcher (live backlog: `iso` x6, `continue-item` x1), a launcher without its arguments (`research-wave`, `design-item`, `research-refresh`) | `startable()`: a row with a launch link is startable iff `backlog.py launch_spec(r)` returns a spec. The alert loads that function from the backlog.py next to tools-local (hook `DRA_BACKLOG_PY`) with its `M` pointed at `DRA_M`. If it cannot be loaded, a launch link counts as not startable (alert, never silence) and one line says so. A row with no launch link keeps the task-text rule (startable iff it has a task file) | `LaunchLink.test_probe_f1_delegate_without_task_file_alerts` (PROBE F1 verbatim), `test_task_needing_launcher_without_task_file_alerts`, `test_unknown_launcher_alerts_even_with_task_file`, `test_launcher_without_arguments_alerts`, `test_startable_launch_links_silent`, `test_launch_spec_unavailable_alerts`; class test `LaunchSpecAgreement.test_alert_agrees_with_launch_spec`: 72 launch links (every launcher in `backlog.LAUNCH_HOW`, enumerated from backlog.py, plus `iso`, `continue-item`, `Delegate`; x no / one / three arguments; x no / existing / missing task file), the alert names exactly the rows launch_spec rejects |
+| F1, third bullet: `p1_filing_gap` | No instance (the review says so): the filing rule checks `links.task` only, whatever the launch link | none needed | - |
+
+Also from the review notes (not filed, cheap): C1 `Alert.test_exactly_30_min_alerts` (the 30:00 boundary alerts) and C2
+`Filing.test_add_p0_ready_warns` (p0 is "priority 1" for the filing rule). C3-C6 are unchanged and stay as stated above.
+
+Changed existing test: `test_decider_ready_alert.py` `test_non_matching_rows_silent` used `links={"launch": "delegate"}`
+with no task file to make the other-owner row `feat` startable; under F1 that row is not startable (the infra feed could not
+start it), so the staged copy uses `research-wave w1 VE/Research`, which launch_spec accepts without a task file. The test
+still checks the same thing. Both test files default to the `.new-p1rua2` copy, then `.new-p1rua`, then the live file.
+
+PROBE F1 (the review's command): before the fix, on the installed script: `AssertionError: ''`. After, with the path pointed
+at `tools-local/decider-ready-alert.py.new-p1rua2`: passes (`NOW(critical): p1 ready but not startable: dlg, infra feed, 2h00m.
+...`). It is the regression test `LaunchLink.test_probe_f1_delegate_without_task_file_alerts`.
+
+Test runs (2026-11-16, manage-agents/tools-local, `python3 -I`):
+
+| Run | Result |
+|---|---|
+| `test_p1_ready_alert.py.new-p1rua2` on the staged alert | `Ran 23 tests ... OK` (`fix1-run-staged.log`) |
+| `test_decider_ready_alert.py.new-p1rua2` on the staged alert | `Ran 8 tests ... OK` (`fix1-run-staged.log`) |
+| `P1RUA_ALERT=tools-local/decider-ready-alert.py` (installed) `test_p1_ready_alert.py.new-p1rua2` | `FAILED (failures=4, errors=2)`: 6 of the 7 F1 tests fail; `test_startable_launch_links_silent` passes (silent case); C1/C2 pass (they guard mutants, not a bug of the installed code) (`fix1-run-live.log`) |
+| `DRA_SCRIPT=...new-p1rua2` with the installed `test_decider_ready_alert.py` | `test_non_matching_rows_silent` FAILS: the old `feat` fixture (delegate, no task file) is the F1 case |
+| Dry run of the staged alert on the live backlog | empty (the live p1 ready rows are deduped or startable); the only p1 ready row, `rsp-b-repair-1115`, is startable under both versions, so the install adds no alert today |
+
+Seeded bugs S7-S13 (Python, temp copies of the staged files; all CAUGHT; `seeded-bugs.json`, `"round": "fix1"`):
+
+| # | File | Bug | Failing test |
+|---|---|---|---|
+| S7 | decider-ready-alert.py.new-p1rua2 | any launch link is startable (the installed behaviour) | `LaunchLink.test_task_needing_launcher_without_task_file_alerts` |
+| S8 | same | launch_spec unavailable counts as startable | `LaunchLink.test_launch_spec_unavailable_alerts` |
+| S9 | same | `bl.M = M` dropped (task paths resolve in the live dir) | `LaunchLink.test_startable_launch_links_silent` |
+| S10 | same | `< P1_AFTER` -> `<= P1_AFTER` (C1) | `Alert.test_exactly_30_min_alerts` |
+| S11 | backlog.py (installed) | `p1_filing_gap` `<= 1` -> `== 1` (C2) | `Filing.test_add_p0_ready_warns` |
+| S12 | decider-ready-alert.py.new-p1rua2 | a task file makes any launch-link row startable | `LaunchLink.test_unknown_launcher_alerts_even_with_task_file` |
+| S13 | same | links containing "research" are startable without launch_spec | `LaunchSpecAgreement.test_alert_agrees_with_launch_spec` |
+
+INSTALL WAITS FOR DECIDER READ. The bases of the staged copies (sha256 prefix): decider-ready-alert.py `a4a58c81b7dadab5`,
+test_p1_ready_alert.py `ed72e0fa9dde278e`, test_decider_ready_alert.py `42170efad5ceaf93` (backlog.py is unchanged and is
+read, not edited). If a live file no longer matches its prefix, re-stage before the `mv`.
+
+```
+cd /home/seyran/code/manage-agents/tools-local
+cp -p decider-ready-alert.py decider-ready-alert.py.bak-20261116-p1rua2
+cp -p test_p1_ready_alert.py test_p1_ready_alert.py.bak-20261116-p1rua2
+cp -p test_decider_ready_alert.py test_decider_ready_alert.py.bak-20261116-p1rua2
+mv decider-ready-alert.py.new-p1rua2 decider-ready-alert.py
+mv test_p1_ready_alert.py.new-p1rua2 test_p1_ready_alert.py
+mv test_decider_ready_alert.py.new-p1rua2 test_decider_ready_alert.py
+cd .. && python3 -I tools-local/test_p1_ready_alert.py && python3 -I tools-local/test_decider_ready_alert.py
+```
+Restart: none (`backlog-svc.sh` starts a fresh `python3 -I tools-local/decider-ready-alert.py` every pass).
