@@ -148,3 +148,15 @@ PASS: verdict writers outside the kernel 56 <= 56
 regen_generated: wrote 1 entries
 cmp docs/kernel/closure-baseline.json /tmp/kbrc-m/a.json: identical (rc 0) at 75735543
 ```
+
+## Final selected run (/tmp/kbrc-select.log)
+
+```
+186:SHARD 4/6: exit 0 in 1045.0 s; 84 units, 84 passed
+359:SHARD 3/6: exit 0 in 1472.0 s; 85 units, 85 passed
+532:SHARD 5/6: exit 0 in 1551.2 s; 86 units, 86 passed
+705:SHARD 2/6: exit 0 in 1606.7 s; 82 units, 82 passed
+878:SHARD 6/6: exit 0 in 1642.5 s; 66 units, 66 passed
+1051:SHARD 1/6: exit 0 in 1767.6 s; 84 units, 84 passed
+1052:[gha-select 16:06:11Z] summary: selected tests ran on GitHub Actions (6 shards, run kb-regen-closure-check-75735543-t843180); exit=0; 1991s
+```
