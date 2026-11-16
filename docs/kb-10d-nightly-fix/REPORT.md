@@ -100,7 +100,8 @@ that load an adapter. Also, the nightly leak comes from module-level imports at 
 
 Each bug was planted in `tools/ownership_trace.py` `_load` and checked against
 `tests/test_ownership_floor.py::test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys_modules`
-with `-p no:xdist`. Each was restored with `git checkout`.
+with `-p no:xdist`. Each was restored with `git checkout`. The same three are committed with file and test keys in
+`docs/kb-10d-nightly-fix/seeded-mutants.json` (the record the pre-review [mutants] check reads).
 
 1. No drop before exec (the saved-entries filter is made always false): exit=1,
    `AttributeError: module 'translation' has no attribute 'READING_SETS'` (`/tmp/kb10d-seed1.log`).
