@@ -1,0 +1,20 @@
+{
+ "id": "B-PUB/INSCOPE",
+ "error": null,
+ "verdict": "ALL",
+ "key": "ALL",
+ "agree": true,
+ "python_decision_calls": [],
+ "lean_cases": {
+  "check|None": 12,
+  "english.read|None": 9,
+  "environment|None": 2,
+  "route|dependency-order": 464,
+  "soft-norms|soft-elaborate": 80,
+  "soft-norms|soft-selected": 2
+ },
+ "lean_cases_from_check_premises": {
+  "environment|None": 1,
+  "soft-norms|soft-selected": 1
+ }
+}

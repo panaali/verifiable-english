@@ -1,0 +1,15 @@
+{
+ "harness": "anthropic-rsp",
+ "commit": "cd8b3018fcdd31b2beea12d0919fff487c6cec6f",
+ "command": "uv run python usecases/kb9_facts_shadow.py anthropic-rsp OUT",
+ "harness_outcome": "exit 0",
+ "wall_seconds": 244.8,
+ "premise_check": "check_premises",
+ "lean_facts_cases_for_premises": 129,
+ "premise_evaluations": 330,
+ "facts_false": 0,
+ "mismatches": [],
+ "keyed_pairs": 1326,
+ "coherent_false": [],
+ "background_false": []
+}
