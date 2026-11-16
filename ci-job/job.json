@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-kb-10d-nightly-fix-1bd44797-t844872-s2",
+ "head": "f69eb0cd19c93df029c65eb074c4ad3a0bbb1b5a",
+ "argv": [
+  "armsh-cand-kb-10d-nightly-fix-1bd44797-t844872-s2",
+  "f69eb0cd19c93df029c65eb074c4ad3a0bbb1b5a",
+  "27752700be3c34cc8b67701e1910af4df1a5e9d2",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
