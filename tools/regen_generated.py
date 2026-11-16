@@ -784,6 +784,27 @@ def entry_named(name: str) -> Generated:
     return next(entry for entry in GENERATED if entry.name == name)
 
 
+GATE_PY = ("uv", "run", "--frozen", "--no-sync", "python")   # the release gate's interpreter
+
+
+def gate_commands(stage: str) -> list[list[str]]:
+    """The commands the release gate runs at `stage` (tools/gate.py): the check of every entry whose `fresh` is
+    `gate:<stage>`, each as the entry writes it with the gate's interpreter for `PY`. One owner for the command,
+    so the stage an entry names runs that entry's whole check, never a part of it (kb-regen-closure-check F2:
+    the gate ran `kernel_closure.py --check` alone while the entry's `fresh` claimed its `--fresh` half too)."""
+    commands = []
+    for entry in GENERATED:
+        if entry.fresh != f"gate:{stage}":
+            continue
+        if entry.cwd != "." or not entry.check or not all(
+                isinstance(argv, tuple) and argv[:1] == (PY,) for argv in entry.check):
+            raise ValueError(f"{entry.name}: a gate stage runs only `PY` commands from the repository root")
+        commands.extend([*GATE_PY, *argv[1:]] for argv in entry.check)
+    if not commands:
+        raise ValueError(f"no entry names the gate stage {stage!r} (`fresh`)")
+    return commands
+
+
 def _service_current() -> bool:
     """Whether Lake has nothing to rebuild for ve_service: the build entry's own command with `--no-build`, which
     exits 3 when the target is missing or out of date. True when Lake cannot be run here: then the pin alone

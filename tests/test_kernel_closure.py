@@ -840,3 +840,19 @@ def test_no_kernel_path_counts_the_act_grammar_or_the_elaboration(lake, capsys):
     acts = next(p for p in REGISTRY["paths"] if p["name"] == "normsActs")
     assert acts["tier"] == "candidate" and acts["entry"] == ["VE.Norms.Run.runCaseActsRouted"]
     assert "VE.Norms.Run.runCaseActsRouted" in next(p for p in KERNEL if p["name"] == "norms")["delegates"]
+
+
+@pytest.mark.parametrize("text", ["[]", "1", "null", '"x"', '{"paths": 3}', '{"paths": [[1], {"name": [2]}]}',
+                                  "{not json"])
+def test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash(monkeypatch, tmp_path, capsys, text):
+    """Review F4 (kb-regen-closure-check): valid JSON that is not an object (or whose `paths` is not a list of rows)
+    crashed `check_fresh` with an AttributeError instead of printing STALE."""
+    measured = {"kernel_lines": 1, "problems": [], **writers("A"),
+                "paths": [{"name": "p", "tier": "kernel", "theorems": 1, "spec_lines": 1, "wrap_lines": 0, "lines": 1,
+                           "modes": ["m"]}]}
+    saved = tmp_path / "baseline.json"
+    saved.write_text(text)
+    assert run_main(monkeypatch, tmp_path, measured, "--fresh", str(saved)) == 1
+    out = capsys.readouterr().out
+    assert f"STALE: {saved} is not what --out writes now (" in out
+    assert "p" in re.search(r"path rows ([^;)]*)", out).group(1).split(", ")
