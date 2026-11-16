@@ -114,6 +114,6 @@ Each planted on HEAD, run with `uv run pytest -q tests/test_pf_f9_order_undo.py`
 13. Test-removed trailer: PASS, gate_collection --check --prebuilt exit 0, 0 refused/stale/malformed.
 14. Both directions: PASS, test_no_rule_or_legend_claims_the_order_follows (refuse) and
     test_pf_f7_timed_act_f9_lines_are_kept (keep); spec re-read: the restored header and legend against
-    `git show 94167f21d4^:usecases/openai-preparedness/rules.d1.ve` line 77 and `...pf_vocabulary.py` lines 212-216.
+    `git show 94167f21d4^:usecases/openai-preparedness/rules.d1.ve` line 75 and `...pf_vocabulary.py` lines 198-202.
 15. No overclaim: PASS, "no keyed answer moves" is moved-check.json; "byte-identical" is the sha256 in section 2; no
     deliverable cut; every new check has a seeded bug; no limits touched (N.A.).
