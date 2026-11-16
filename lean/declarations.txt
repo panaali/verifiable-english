@@ -25256,7 +25256,7 @@ module VE.Route.MeteredSplit 1f1f547fa9555d018b116f5502bd7374295f50eb2efc4a7b701
 272:0-278:17 theorem VE.Route.MeteredRun.runCase_split@VE.Route.MeteredSplit
 280:0-286:49 theorem VE.Route.MeteredRun.runCaseReported_today@VE.Route.MeteredSplit
 288:0-292:35 theorem VE.Route.MeteredRun.reportedWith_prepare@VE.Route.MeteredSplit
-module VE.Route.MeteredSplitExamples 49bde5e9b0826724b90124b728cd4c223deb6009e3437e54d293990f3128e940
+module VE.Route.MeteredSplitExamples e2618955ea4ce846da9c07a73e8fa4de75ec901a9a026aa9c97593ad83b844fb
 11:0-11:59 def VE.Route.MeteredSplitExamples.folList@VE.Route.MeteredSplitExamples
 12:0-12:61 def VE.Route.MeteredSplitExamples.naryList@VE.Route.MeteredSplitExamples
 14:0-16:260 def VE.Route.MeteredSplitExamples.legacyText@VE.Route.MeteredSplitExamples
@@ -25268,6 +25268,9 @@ module VE.Route.MeteredSplitExamples 49bde5e9b0826724b90124b728cd4c223deb6009e34
 30:0-34:71 def VE.Route.MeteredSplitExamples.legacy@VE.Route.MeteredSplitExamples
 36:0-40:69 def VE.Route.MeteredSplitExamples.cases@VE.Route.MeteredSplitExamples
 42:0-44:117 def VE.Route.MeteredSplitExamples.arm@VE.Route.MeteredSplitExamples
+65:0-67:486 def VE.Route.MeteredSplitExamples.layeredText@VE.Route.MeteredSplitExamples
+69:0-73:61 def VE.Route.MeteredSplitExamples.shown@VE.Route.MeteredSplitExamples
+75:0-77:62 def VE.Route.MeteredSplitExamples.environments@VE.Route.MeteredSplitExamples
 module VE.Route.MeteredTrace 09f92c352a845e7d95b5d764353956f9a37594b86cd0b6e847cc792534badbdf
 10:0-15:20 inductive VE.Route.MeteredTrace.Trace@VE.Route.MeteredTrace
 15:11-15:20 def VE.Route.MeteredTrace.instInhabitedTrace.default@VE.Route.MeteredTrace

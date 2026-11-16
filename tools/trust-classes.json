@@ -9224,12 +9224,15 @@
         "VE.Route.MeteredSplitExamples.arm",
         "VE.Route.MeteredSplitExamples.caseOf",
         "VE.Route.MeteredSplitExamples.cases",
+        "VE.Route.MeteredSplitExamples.environments",
         "VE.Route.MeteredSplitExamples.folList",
         "VE.Route.MeteredSplitExamples.judgments",
         "VE.Route.MeteredSplitExamples.judgmentsReadings",
+        "VE.Route.MeteredSplitExamples.layeredText",
         "VE.Route.MeteredSplitExamples.legacy",
         "VE.Route.MeteredSplitExamples.legacyText",
         "VE.Route.MeteredSplitExamples.naryList",
+        "VE.Route.MeteredSplitExamples.shown",
         "VE.Route.MeteredSplitExamples.withProfiles"
       ]
     },

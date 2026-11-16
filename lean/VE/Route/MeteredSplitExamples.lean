@@ -62,4 +62,42 @@ def arm (j : Json) : String :=
 #guard cases.all fun j => (VE.Route.MeteredRun.runCaseReported j).compress ==
   (VE.Route.MeteredRun.reportedWith (VE.Route.MeteredRun.prepare <$> j.getObjVal? "environment") j).compress
 
+/-- A layered core environment: `p` is defined over `base2` (`definitions@0` on the core family). -/
+def layeredText : String :=
+  r#"{"language": "ve.core@0.2", "profiles": ["closure@0", "data@0", "definitions@0", "nary@0", "relational-fol@0"], "spec_revision": "ve-v0.2-expand2-2026-09-25", "vocabulary": {"sorts": {"point": {"description": "point"}}, "constants": {}, "predicates": {"base2": {"arguments": ["point", "point"], "description": "base"}, "p": {"arguments": ["point", "point"], "description": "p", "defined": {"arguments": ["point", "point"], "body": ["binary", "base2", ["var", 1], ["var", 0]]}}}}}"#
+
+/-- What a validation yields, as text: the refusal, or the envelope, the decodable JSON and the layers. -/
+def shown : Except String VE.Service.Standalone.Validated → String
+  | .error e => "error: " ++ e
+  | .ok v => s!"{v.envelope.profiles} {repr v.envelope.family} {v.envelope.vocabulary.compress} " ++
+      s!"{v.decodable.compress} {v.layers.map Json.compress}"
+
+def environments : List Json :=
+  [parsed legacyText, withProfiles folList, withProfiles naryList, acts, judgments, judgmentsReadings,
+   parsed layeredText, parsed (environmentText folList false)]
+
+-- `validated` (every mode's) reads each environment, with and without typing, as its body before kb-4b did.
+#guard environments.all fun e => [true, false].all fun t =>
+  shown (VE.Service.Standalone.validated e t) == shown (VE.Service.Standalone.Today.validated e t)
+
+-- The current runner's validation is today's wherever it runs (no `acts@0`), and refuses an `acts@0` view.
+#guard (environments.filter fun e => !VE.Service.Standalone.readsApart e && !VE.Service.Standalone.isLegacy e).all
+  fun e => shown (VE.Service.Standalone.evaluableCurrent e) == shown (VE.Service.Standalone.evaluableActs e)
+#guard shown (VE.Service.Standalone.evaluableCurrent acts) == "error: UnsupportedProfile: acts@0 needs the acts decoder"
+
+-- A layered core environment keeps its layers apart without typing (the current runner) and not with it.
+#guard (VE.Service.Standalone.evaluableCurrent (parsed layeredText)).toOption.map (·.layers.isSome) == some true
+#guard (VE.Service.Standalone.validated (parsed layeredText) true).toOption.map (·.layers.isSome) == some false
+
+-- The current runner's norms profile is the model mode's on the environments it reads.
+#guard (environments.filter fun e => !VE.Service.Standalone.readsApart e && !VE.Service.Standalone.isLegacy e).all
+  fun e => ((VE.Route.MeteredRun.prepareCurrent e).profile.get.toOption.map (·.isSome)) ==
+    ((VE.Route.MeteredRun.prepare e).profile.get.toOption.map (·.isSome))
+
+-- The model-view profiles are the four `modelEnvironment` reads apart before `typingReduced` (`risk@0`,
+-- `alternatives@0`, `readings@1`, `norm-defaults@0`, lean/VE/Service/Standalone.lean `modelEnvironment`), each refused
+-- by the route gate; `modelViewDropped` reads them on objects the proofs cannot see as well-formed (REPORT D1).
+#guard VE.Service.Standalone.modelViewProfiles == ["risk@0", "alternatives@0", "readings@1", "norm-defaults@0"]
+#guard VE.Service.Standalone.modelViewProfiles.all fun p => !VE.Route.Gate.known p
+
 end VE.Route.MeteredSplitExamples
