@@ -1,0 +1,139 @@
+# fix round 1, new tests on the INSTALLED alert (P1RUA_ALERT=tools-local/decider-ready-alert.py), 2026-11-16
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmppov44v2w/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpq2fwu8ys/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpjz75puq6/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp6cy7oxe7/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpxy24wyxr/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpyi4wynvm/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmprww32b99/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:243: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpcdjv171v/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:243: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp8j6r8484/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:243: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfve67zpv/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2:243: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpyho76t0d/backlog-p1-filing.log' mode='r' encoding='UTF-8'>
+  return open(self.flog).read().splitlines() if os.path.exists(self.flog) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..FEF.FEF
+======================================================================
+ERROR: test_launcher_without_arguments_alerts (__main__.LaunchLink.test_launcher_without_arguments_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 167, in test_launcher_without_arguments_alerts
+    self.msgs()[0])
+    ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_unknown_launcher_alerts_even_with_task_file (__main__.LaunchLink.test_unknown_launcher_alerts_even_with_task_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 161, in test_unknown_launcher_alerts_even_with_task_file
+    self.assertIn("iso1, infra feed, 31m; cont, infra feed, 31m", self.msgs()[0])
+                                                                  ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_launch_spec_unavailable_alerts (__main__.LaunchLink.test_launch_spec_unavailable_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 185, in test_launch_spec_unavailable_alerts
+    self.assertIn("launch_spec unavailable", p.stdout)
+AssertionError: 'launch_spec unavailable' not found in ''
+
+======================================================================
+FAIL: test_probe_f1_delegate_without_task_file_alerts (__main__.LaunchLink.test_probe_f1_delegate_without_task_file_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 145, in test_probe_f1_delegate_without_task_file_alerts
+    self.assertIn("not startable: dlg", p.stdout)
+AssertionError: 'not startable: dlg' not found in ''
+
+======================================================================
+FAIL: test_task_needing_launcher_without_task_file_alerts (__main__.LaunchLink.test_task_needing_launcher_without_task_file_alerts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 152, in test_task_needing_launcher_without_task_file_alerts
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_alert_agrees_with_launch_spec (__main__.LaunchSpecAgreement.test_alert_agrees_with_launch_spec)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_p1_ready_alert.py.new-p1rua2", line 226, in test_alert_agrees_with_launch_spec
+    self.assertEqual(named, {i for i, nope in want.items() if nope})
+AssertionError: Items in the second set but not the first:
+'r53'
+'r2'
+'r9'
+'r28'
+'r45'
+'r65'
+'r3'
+'r21'
+'r46'
+'r67'
+'r62'
+'r49'
+'r54'
+'r10'
+'r63'
+'r38'
+'r27'
+'r69'
+'r24'
+'r48'
+'r18'
+'r47'
+'r56'
+'r60'
+'r36'
+'r66'
+'r59'
+'r0'
+'r55'
+'r26'
+'r6'
+'r5'
+'r68'
+'r61'
+'r70'
+'r64'
+'r51'
+'r58'
+'r71'
+'r20'
+'r8'
+'r50'
+'r11'
+'r29'
+'r57'
+'r52'
+'r23'
+'r37'
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.855s
+
+FAILED (failures=4, errors=2)
+alert: /home/seyran/code/manage-agents/tools-local/decider-ready-alert.py
+backlog: /home/seyran/code/manage-agents/backlog.py

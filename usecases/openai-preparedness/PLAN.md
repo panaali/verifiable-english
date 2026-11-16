@@ -707,6 +707,20 @@ items 1 and 2, and pf-f7-timed-act items 1 to 3).**
     `covered`, as “For each deployment under the Preparedness Framework” is its one condition. One predicate is new
     (62 of 64 regulated), the coverage counts are as they were, and no answer moved (236 of 239 agree, as before).
 
+**`pf-f9-order-undo` (2026-11-16): the record correction on 4.1's step order is undone (DRI ruling
+record-void-astra 2026-11-15, section C, finding 1.15: "if it was made, undo it"; DRI decisions 2026-11-15
+record-void-ruling and 2026-11-16 adv0244 item 2).**
+
+30. **4.1's step order is event order again, as item 27 records (supersedes item 29's sentence on the legend of
+    `risk_paths` and its block header).** That sentence of item 29 no longer holds: the correction it recorded is
+    undone. The legend of `risk_paths` and its block header are back to their text before that correction, word for
+    word: the order “first” states before the next step is event order, not formalised (ET, as O7), and the legend
+    carries the word because the act with it would pass 80 characters. They agree again with item 27 and with the
+    unit's spans.json record, an `event_order` gap that says the order is not formalised. The rest of item 29 stands:
+    the one-line limit records of the per-path and per-safeguard steps and the quoted legend of
+    `efficacy_methods_per_safeguard` are kept. The three 4.1 selection units stay unresolved. No guard, act or
+    predicate changed (62 of 64 regulated), and no answer moved (236 of 239 agree, as before).
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
