@@ -109,7 +109,13 @@ with `-p no:xdist`. Each was restored with `git checkout`.
 3. Own siblings popped after exec (the full-restore form): exit=1, `assert None is <module 'vocabulary' from
    '.../safety-framework/vocabulary.py'>` (`/tmp/kb10d-seed3.log`).
 
-Trust mutants: none. No Lean changed, no trusted-core file, about 30 changed lines.
+Trust mutants: none. No Lean changed and no trusted-core file was touched. `light-lane.py check` prints `NOT 190 changed lines
+outside generated files > 150 (3 files)`, but 158 of those lines are this report. `uv run python tools/trust_mutants.py --plan`
+gives `"definitions": 0, "mutants": 0, "to_run": 0`, so a sweep would have nothing to run.
+
+Final selected run on committed code: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+at f831894891 (clean tree) gave exit=0 on 3 Actions shards: 30 units passed, 0 failed (`/tmp/kb10d-final-select.log`).
+Only this docs file changed after it.
 
 ## DELTA
 
