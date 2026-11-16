@@ -76,6 +76,11 @@ Removed: `tests/test_pf_f7_timed_act.py::test_risk_paths_order_follows_from_each
 wording), with a `Test-removed` trailer in b316bfc4e8; `tools/gate_collection.py --check --prebuilt` exit 0:
 "1 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 
+Final selected run, on committed 12ec12e8d3 with a clean tree:
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` exit 0
+("SHARD 3/3: exit 0 ... 14 units, 14 passed"; summary "3 shards, run pf-f9-order-undo-12ec12e8-t800489; exit=0").
+The full gate was not run here; the chain runs it on the final HEAD.
+
 ## 4. Seeded bugs (Python: pf_vocabulary.py; VE data: rules.d1.ve; no Lean or Rust changed)
 
 Each planted on HEAD, run with `uv run pytest -q tests/test_pf_f9_order_undo.py`, then restored (`git checkout`).
