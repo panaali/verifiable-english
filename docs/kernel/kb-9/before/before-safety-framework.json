@@ -1,0 +1,37 @@
+{
+ "script": "usecases/safety-framework/run.py",
+ "args": [
+  "--check"
+ ],
+ "rc": 0,
+ "wall_s": 123.5,
+ "calls": {
+  "check|None": 8764,
+  "english.read|None": 16,
+  "environment|None": 14,
+  "metered|evaluate-budgeted": 10209,
+  "model|None": 444,
+  "quantity|None": 20,
+  "quantity|certificate": 3,
+  "quantity|countermodel": 1,
+  "risk|risk-decision": 1,
+  "risk|risk-elaborate": 1,
+  "route|background": 8,
+  "route|certificate": 1733,
+  "route|dependency-order": 642,
+  "soft-norms|soft-conflict": 48,
+  "soft-norms|soft-elaborate": 134,
+  "soft-norms|soft-selected": 672
+ },
+ "seconds_by_mode": {
+  "check": 28.7,
+  "english.read": 0.3,
+  "environment": 0.1,
+  "metered": 18.9,
+  "model": 3.1,
+  "quantity": 0.0,
+  "risk": 0.0,
+  "route": 6.7,
+  "soft-norms": 14.5
+ }
+}
