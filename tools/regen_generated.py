@@ -187,10 +187,14 @@ GENERATED = (
                    "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("kernel-closure", ("docs/kernel/closure-baseline.json",),
               ((PY, "tools/kernel_closure.py", "--out", "docs/kernel/closure-baseline.json"),),
-              ((PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json"),),
+              # One measurement, two checks: the section-6 limits (--check) and the bytes --out writes now (--fresh),
+              # since a stale per-path row can leave both totals equal (kb-regen-closure-check).
+              ((PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json",
+                "--fresh", "docs/kernel/closure-baseline.json"),),
               note="the kernel measure (docs/spec/kernel-boundary.md section 6): a rise of kernel_lines needs a "
                    "signed line in docs/kernel/ALLOWANCES.md (the write refuses a total above its `signed total:`); "
-                   "verdict writers outside the kernel never rise (the write refuses a rise over the file it replaces)",
+                   "verdict writers outside the kernel never rise (the write refuses a rise over the file it replaces); "
+                   "the check also fails on any byte the write would change",
               fresh="gate:Kernel check"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary", writer="train"),
@@ -778,6 +782,27 @@ FIX = "uv run python tools/regen_generated.py --write --only lake-build --only c
 
 def entry_named(name: str) -> Generated:
     return next(entry for entry in GENERATED if entry.name == name)
+
+
+GATE_PY = ("uv", "run", "--frozen", "--no-sync", "python")   # the release gate's interpreter
+
+
+def gate_commands(stage: str) -> list[list[str]]:
+    """The commands the release gate runs at `stage` (tools/gate.py): the check of every entry whose `fresh` is
+    `gate:<stage>`, each as the entry writes it with the gate's interpreter for `PY`. One owner for the command,
+    so the stage an entry names runs that entry's whole check, never a part of it (kb-regen-closure-check F2:
+    the gate ran `kernel_closure.py --check` alone while the entry's `fresh` claimed its `--fresh` half too)."""
+    commands = []
+    for entry in GENERATED:
+        if entry.fresh != f"gate:{stage}":
+            continue
+        if entry.cwd != "." or not entry.check or not all(
+                isinstance(argv, tuple) and argv[:1] == (PY,) for argv in entry.check):
+            raise ValueError(f"{entry.name}: a gate stage runs only `PY` commands from the repository root")
+        commands.extend([*GATE_PY, *argv[1:]] for argv in entry.check)
+    if not commands:
+        raise ValueError(f"no entry names the gate stage {stage!r} (`fresh`)")
+    return commands
 
 
 def _service_current() -> bool:
