@@ -52,6 +52,27 @@ def _literal(text: str) -> re.Pattern:
     return _phrase(" ".join(re.escape(t) for t in text.split()))
 
 
+def _refusing(fn):
+    """A loader whose malformed input (a node of the wrong type, a missing key, bad JSON) is a DataError by name."""
+    import functools
+
+    @functools.wraps(fn)
+    def wrapped(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except S.BoundariesError:
+            raise
+        except (KeyError, TypeError, AttributeError, IndexError, ValueError, re.error) as e:
+            raise DataError(f"{fn.__name__}: malformed input ({type(e).__name__}: {e})") from e
+    return wrapped
+
+
+def _strings_lists(value):
+    if not isinstance(value, list) or not value:
+        raise DataError("classes must be a non-empty list of lists")
+    return value
+
+
 def _strings(value, what) -> list[str]:
     if not isinstance(value, list) or not value or not all(isinstance(v, str) and v.strip() for v in value):
         raise DataError(f"{what} must be a non-empty list of strings")
@@ -89,6 +110,7 @@ class Cues:
         return None
 
 
+@_refusing
 def load_cues(document: str, path: Path = CUES) -> Cues:
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema") != "fidmech-cues/1":
@@ -114,11 +136,12 @@ class LogicWords:
         return [w for w, p in cls if p.search(text)]
 
 
+@_refusing
 def load_logic_words(path: Path = LOGIC_WORDS) -> LogicWords:
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema") != "fidmech-logic-words/1":
         raise DataError(f"{path}: schema must be fidmech-logic-words/1")
-    classes = [_strings(c, "a logic-word class") for c in data["classes"]]
+    classes = [_strings(c, "a logic-word class") for c in _strings_lists(data["classes"])]
     flat = [w for c in classes for w in c]
     if len(flat) != len(set(flat)) or set(flat) & set(data["out"]["quantifiers"] + data["out"]["no class"]):
         raise DataError(f"{path}: a word is in two classes, or in a class and out")
@@ -126,6 +149,7 @@ def load_logic_words(path: Path = LOGIC_WORDS) -> LogicWords:
                       frozenset(_strings(data["template"], "template")))
 
 
+@_refusing
 def load_ruled_out(path: Path, seg: S.Segmentation) -> tuple[dict, ...]:
     """ruled_out.json (plan 2c): a list, `[]` at first; each entry needs exactly at, sentence, reason and by, a
     reason and a `by`, and `at` must be the byte start of a sentence of the source whose first 60 characters (after
@@ -192,13 +216,28 @@ class CaseData:
         raise ValueError(f"unknown lever {lever!r}")
 
 
+@_refusing
 def load_case(case: Path, seg: S.Segmentation, cues: Path = CUES, logic: Path = LOGIC_WORDS) -> CaseData:
     acc = S.accounting
     spans = json.loads((case / "spans.json").read_text(encoding="utf-8"))
-    units = tuple(Unit(u["id"], u["kind"], u["status"], u.get("reason") or "", u.get("rule"), *u["span"],
-                       tuple(u.get("open_terms") or ()))
-                  for u in spans["units"])
+    if spans["source_sha256"] != seg.source.sha256:
+        raise DataError(f"{case.name}/spans.json is for source {spans['source_sha256'][:12]}, not {seg.source.sha256[:12]}")
+    if not isinstance(spans["units"], list) or not spans["units"]:
+        raise DataError(f"{case.name}/spans.json: units must be a non-empty list")
+    units = []
+    for u in spans["units"]:
+        a, b = u["span"]
+        if not (all(isinstance(u[k], str) for k in ("id", "kind", "status"))
+                and all(isinstance(x, int) and not isinstance(x, bool) for x in (a, b)) and 0 <= a <= b
+                and isinstance(u.get("rule"), (str, type(None))) and isinstance(u.get("reason", ""), str)
+                and isinstance(u.get("open_terms", []), list)):
+            raise DataError(f"{case.name}/spans.json: a malformed unit {u!r:.120}")
+        units.append(Unit(u["id"], u["kind"], u["status"], u.get("reason") or "", u.get("rule"), a, b,
+                          tuple(u.get("open_terms") or ())))
+    units = tuple(units)
     env = json.loads((case / "environment.d1.json").read_text(encoding="utf-8"))
+    if not isinstance(env["vocabulary"]["predicates"], dict):
+        raise DataError(f"{case.name}/environment.d1.json: vocabulary.predicates must be an object")
     sidecar = None
     if (case / acc.SIDECAR).exists():
         sidecar = {}
