@@ -188,10 +188,9 @@ def ops_of(rule, env, *, exception=False, true_atoms=()):
         out.append(("flip-force", "rule", _edit(rule, mode="strict" if rule.mode == "default" else "default")))
     used = predicates(core.guard) | {p for u in core.unless for p in predicates(u)} | {core.predicate}
     arguments = env.predicates[core.predicate].arguments
-    subject = ast.Unary  # the guard's new condition names the subject: the first argument, de Bruijn len - 1
     for name in true_atoms:
         if name not in used:
-            new = subject(name, ast.Var(len(arguments) - 1))
+            new = ast.Unary(name, ast.Var(len(arguments) - 1))  # the subject: first argument, de Bruijn len - 1
             guard = new if isinstance(core.guard, ast.Top) else ast.And(core.guard, new)
             out.append(("add-guard-true", "rule", _edit(rule, guard=guard)))
             break
