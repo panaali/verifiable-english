@@ -35,7 +35,7 @@ Every new test fails on main: `git ls-tree main tools/fidmech/` lists no structu
 - A parse that gets no answer (CheckerUnavailable) is `stillborn` with the reason prefix `undecided:`. It is never scored either way.
 - Any other exception propagates (2e5a79bcf9; `test_an_unanswered_parse_is_undecided_and_unscored_and_any_other_error_propagates`).
 - A rule the renderer cannot write back is listed as `unrenderable` and gets no ops. There are 0 in all three documents.
-- The renderer writes "both of the following hold" where an author wrote "all of the following" (6 FSF rules, 18 PF rules; a round-trip probe of every rule, run once and not committed: RSP 5, FSF 6, PF 18 lines differ only so). Those mutants' lines therefore differ in that wording too, which has the same parse.
+- The renderer writes "both of the following hold" where an author wrote "all of the following" (a round-trip probe of every rule, not committed: RSP 0 of 76 lines differ once line breaks are joined, FSF 6 of 45 and PF 18 of 91 differ only so). Those mutants' lines therefore differ in that wording too, which has the same parse.
 
 **Counts** (`uv run python -m tools.fidmech mutants --doc <doc>`; docs/infra/fid-mech-b4/counts-<doc>.txt). The columns are mutants / stillborn / syntactic / duplicates. The plan's RSP figures were estimates.
 
