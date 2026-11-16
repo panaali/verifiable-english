@@ -24,6 +24,7 @@ from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
+from tools.fidmech.bindings import load_bindings  # noqa: E402  (rsp_translation put the repo on sys.path)
 
 RESULTS = HERE / "results.json"
 THRESHOLDS = {block.id.split("-")[1].upper(): formula.term.name
@@ -34,56 +35,21 @@ BASE = {name: values[0] for name, values in SETS.items()}
 MUTANT = None
 WITHOUT_NARROWING = None
 PROVER_CALLS = 0
-OT = {"OT2": "more_capable_than_analyzed", "OT3a": "exceeds_prior_report",
-      "OT3b": "exceeds_all_analyzed", "OT4": "significantly_redacted", "OT5": "highly_capable",
-      "OT10": "material_safety_risk",
-      "OT11": "noteworthy", "OT15": "full_substitution_at_competitive_cost",
-      "OT16": "double_rate", "OT17": "automation_attributable", "OT18": "marginal_justification",
-      "OT19": "marginal_major_role", "OT22": "autonomous_research_use",
-      "OT28": "continuation_accelerates"}
+# The case-to-atom tables are frozen data (plan 2a): fidmech/bindings.json, sha256-pinned in
+# tests/test_fidmech_bindings.py. Each stays a module attribute (tests/test_rsp_fidelity_fix.py reads them).
+_B = load_bindings(HERE / "fidmech" / "bindings.json", "anthropic-rsp")
+OT = _B["OT"]
 # OT7 ("as needed") and OT8 (the evidence) are found per Appendix A scenario: each scenario has its own predicate.
 # Only m3's query-only vocabulary declares an "as needed" for General upleveling (the source states none).
 # A scenario is a label, not an atom: PLAN 5 stipulates the evidence (OT8), never the fact the evidence is about, so a
 # case names its scenarios (SCENARIOS, or a witness's "scenarios") and only the stipulated findings become atoms.
-SCENARIO_TERMS = {"lead": {"OT8": "lead_evidence", "OT7": "lead_delay_needed"},
-                  "competitors": {"OT8": "competitors_evidence", "OT7": "posture_delay_needed"},
-                  "upleveling": {"OT8": "mitigation_evidence", "OT7": "upleveling_delay_needed"}}
-SCENARIOS = {"K19a": ("lead",), "K19b": ("lead",), "K20": ("competitors",), "K21": ("upleveling",)}
-COMPETITORS = ["c"]
-SITUATIONS = {
-    "B-PUB": ("publicly_deployed",), "B-INT": ("internally_deployed",),
-    "B-INTD": ("internally_deployed", "determined_by_publication"), "B-AUT": ("internally_deployed",),
-    "K2": ("off_cycle_public_deployment",), "K3": ("off_cycle_public_deployment",),
-    "K4": ("off_cycle_internal_deployment",), "K7": ("risk_report_approved",),
-    "K11": ("ltbt_requested_review",), "K12": ("selecting_reviewers",),
-    "K13": ("candidate_has_financial_interest",),
-    "K14": ("submitted_under_external_review",),
-    "K15": ("noncompliance_report_received", "substantiated"),
-    "K16": ("concerns_rso",), "K17": ("rsp_updated",),
-    "K18": ("describes_mitigation_and_deviates",),
-    "K19a": ("in_the_lead",), "K19b": ("in_the_lead",),
-    "K22": ("roadmap_goal_missed",), "G4": ("off_cycle_public_deployment",),
-    "G7": ("noncompliance_report_received", "substantiated"),
-    "G8": ("goal_revised_less_ambitious",),
-}
+SCENARIO_TERMS = _B["SCENARIO_TERMS"]
+SCENARIOS = _B["SCENARIOS"]
+COMPETITORS = _B["COMPETITORS"]
+SITUATIONS = _B["SITUATIONS"]
 # K20: "with at least one such competitor" (PLAN 6).
-CASE_ATOMS = {"K20": (("develops_highly_capable", "c"),)}
-PREDICATES = {
-    "PUBLISH_RISK_REPORTS": "risk_reports_published", "OFF_CYCLE_ANALYSIS": "off_cycle_published",
-    "MARGINAL_RISK_ANALYSES": "marginal_analysed", "BOARD_AND_LTBT_APPROVAL": "board_approved",
-    "SHARE_WITH_BOARD_AND_LTBT": "governance_notified", "FULL_EXTERNAL_REVIEW": "full_review",
-    "EXTERNAL_REVIEW": "ltbt_review", "LTBT_APPROVAL": "reviewers_approved",
-    "CONSULT_BOARD": "reviewers_approved", "SELECT_REVIEWER": "candidate_selected",
-    "SHARE_WITH_REVIEWERS_WITHIN_ONE_WEEK": "shared_with_reviewers",
-    "PROMPT_BOARD_NOTICE": "board_notified", "PUBLIC_NOTICE": "public_notice",
-    "BOARD_MEMBER_AMONG_RECIPIENTS": "board_member_recipient",
-    "PUBLISH_BY_EFFECTIVE_DATE_AND_CHANGE_LOG": "update_published",
-    "TRACK_AND_REPORT_DEVIATION": "deviation_reported", "STRONG_ARGUMENT": "argument_required",
-    "DELAY": "delay", "MEET_OR_EXCEED_COMPETITOR_POSTURE": "posture_matched",
-    "SIGNIFICANT_EFFORT": "significant_effort", "RISK_REPORT_ADDRESSES_MISS": "roadmap_review_addressed",
-    "OTHER_CONSEQUENCE": "delay", "QUARTERLY_UPDATE": "quarterly_updates",
-    "ASSESS": "assessed_in_report", "INSCOPE": "in_scope",
-}
+CASE_ATOMS = _B["CASE_ATOMS"]
+PREDICATES = _B["PREDICATES"]
 
 
 def applies(block, choice):
@@ -685,8 +651,7 @@ def lead_without_competitors():
 
 # The K items whose selected rules cannot answer them, with the reason (one table: a limit that hides an answer the
 # selected rules give is a translation error, tests/test_rsp_fidelity_fix.py).
-K_LIMITS = {item: "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
-            for item in ("K9", "K10")}
+K_LIMITS = _B["K_LIMITS"]
 
 
 def answer(item):
