@@ -1,0 +1,128 @@
+[
+ {
+  "id": "S1",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L1a: a linked block's quote outside its linked spans is not refused",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L1a-other-span]",
+  "failed": true
+ },
+ {
+  "id": "S2",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L1a: an unlinked quote must occur 3 times before it is a hit",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L1a-unlinked-twice]",
+  "failed": true
+ },
+ {
+  "id": "S3",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L1a: every sentence of a linked span counts as quoted",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L1a-wrong-sentence]",
+  "failed": true
+ },
+ {
+  "id": "S4",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L2b: a legend without a passage is skipped",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L2b]",
+  "failed": true
+ },
+ {
+  "id": "S5",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L2q: a passage's L1 class is ignored",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L2q]",
+  "failed": true
+ },
+ {
+  "id": "S6",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L2a: the linked-span check is off",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L2a]",
+  "failed": true
+ },
+ {
+  "id": "S7",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L3: the VE template is left in the rule line",
+  "test": "tests/test_fidmech_b2.py::test_the_clean_fixture_has_no_hit_in_any_check",
+  "failed": true
+ },
+ {
+  "id": "S8",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L3/L4: a legend's own words keep its quoted passages",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[D-final]",
+  "failed": true
+ },
+ {
+  "id": "S9",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L3: a multi-word logic word escapes its space (the bug found while building)",
+  "test": "tests/test_fidmech_data.py::test_a_logic_word_matches_whole_words_only",
+  "failed": true
+ },
+ {
+  "id": "S10",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L4: UNFORMALISED units cover nothing",
+  "test": "tests/test_fidmech_b2.py::test_the_clean_fixture_has_no_hit_in_any_check",
+  "failed": true
+ },
+ {
+  "id": "S11",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L4: headings in a norm unit are obligation-bearing",
+  "test": "tests/test_fidmech_b2.py::test_the_clean_fixture_has_no_hit_in_any_check",
+  "failed": true
+ },
+ {
+  "id": "S12",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L4l: LABELLED units are not told apart",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L4l]",
+  "failed": true
+ },
+ {
+  "id": "S13",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "L4g: a legend quote covers like a header quote",
+  "test": "tests/test_fidmech_b2.py::test_each_plant_gives_exactly_its_class[L4g]",
+  "failed": true
+ },
+ {
+  "id": "S14",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "D: sidecar entries cover nothing",
+  "test": "tests/test_fidmech_b2.py::test_d_lists_the_word_a_legend_quote_alone_carries_and_the_sidecar_can_cover_it",
+  "failed": true
+ },
+ {
+  "id": "S15",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "D: loss entries are not hits",
+  "test": "tests/test_fidmech_b2.py::test_every_loss_entry_is_a_d_hit",
+  "failed": true
+ },
+ {
+  "id": "S16",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "ruled_out: the sentence text is not compared",
+  "test": "tests/test_fidmech_b2.py::test_a_ruled_out_entry_without_a_reason_or_outside_the_source_is_refused",
+  "failed": true
+ },
+ {
+  "id": "S17",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "cues: the hedge check is off",
+  "test": "tests/test_fidmech_b2.py::test_the_obligation_cues",
+  "failed": true
+ },
+ {
+  "id": "S18",
+  "file": "tools/fidmech/sentchecks.py",
+  "behaviour": "spans.json bound to no source",
+  "test": "tests/test_fidmech_b2.py::test_a_malformed_node_in_any_input_is_refused_by_name",
+  "failed": true
+ }
+]
