@@ -398,7 +398,8 @@ def test_the_safety_framework_adapter_records_plan_12_item_27(monkeypatch):
 def test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys_modules(monkeypatch):
     """kb-10d-nightly-fix: another use case's `translation` (eligibility's, as a test that imports it by bare name
     leaves it) is in sys.modules before the safety-framework adapter loads; the adapter still reads its own
-    `translation`, the item-27 check holds, and the other use case's module is left in place afterwards."""
+    `translation`, the item-27 check holds, and the other use case's module is left in place afterwards. A sibling
+    name nothing held before (`vocabulary`) keeps the adapter's own module, which the harness's lazy imports read."""
     import importlib.util
     path = ROOT / "usecases" / "eligibility" / "translation.py"
     spec = importlib.util.spec_from_file_location("translation", path)
@@ -407,9 +408,11 @@ def test_an_adapter_loads_its_own_siblings_whatever_another_use_case_left_in_sys
     assert not hasattr(other, "READING_SETS")
     monkeypatch.setitem(sys.modules, "translation", other)
     test_the_safety_framework_adapter_records_plan_12_item_27(monkeypatch)
+    monkeypatch.delitem(sys.modules, "vocabulary", raising=False)
     adapter = OT.ADAPTERS["safety-framework"]().load()
     assert Path(adapter.mod.T.__file__).resolve() == ROOT / "usecases" / "safety-framework" / "translation.py"
     assert sys.modules["translation"] is other
+    assert sys.modules.get("vocabulary") is adapter.mod.V
 
 
 def test_functions_under_passing_count_each_passing_item_at_most_once():
