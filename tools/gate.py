@@ -22,7 +22,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
+from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, regen_generated, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -869,10 +869,10 @@ def main() -> int:
             result["stages"].append("lean_build")
             # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
             # binary left by an earlier build would answer with another commit's modes.
+            # The commands are the regen entry's check (`fresh="gate:<stage>"`, tools/regen_generated.py).
             if shard is None or shard[0] == 1:
-                command(["uv", "run", "--frozen", "--no-sync", "python",
-                         "tools/wire_contract.py", "--check"], env=env,
-                        stage="Wire contract check")
+                for argv in regen_generated.gate_commands("Wire contract check"):
+                    command(argv, env=env, stage="Wire contract check")
 
             # The per-file trust counts live in the gate record, not the tree (AR-4, D3).
             if shard is None or shard[0] == 1:
@@ -881,9 +881,13 @@ def main() -> int:
                          str(trust_file)], env=env, stage=TRUST_STAGE)
                 result["trust"] = read_trust(trust_file)
                 # docs/spec/kernel-boundary.md section 6: the kernel total and the verdict writers outside the kernel
-                # against the saved measurement; the tool builds the registry's `imports` (VE.Route.MeteredProofs) first.
-                command(["uv", "run", "--frozen", "--no-sync", "python", "tools/kernel_closure.py", "--check",
-                         "docs/kernel/closure-baseline.json"], env=env, stage="Kernel check")
+                # against the saved measurement, and the baseline's bytes against what `--out` writes now (`--fresh`):
+                # the kernel-closure regen entry's check. The tool builds the registry's `imports` first.
+                kernel_check = regen_generated.gate_commands("Kernel check")
+                if not all(flag in argv for flag in ("--check", "--fresh") for argv in kernel_check):
+                    raise RuntimeError(f"Kernel check: the entry's check must run --check and --fresh: {kernel_check}")
+                for argv in kernel_check:
+                    command(argv, env=env, stage="Kernel check")
 
             if selection is None and (shard is None or shard[0] == 1):
                 audit_command = ["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"]
