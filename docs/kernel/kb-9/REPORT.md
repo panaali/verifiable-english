@@ -7,6 +7,8 @@ anthropic-rsp and openai-preparedness assert that flag instead of per-formula `m
 in 1,470 premise evaluations; `results.json` byte-identical). Open: safety-framework's premise check is not switched
 (it has no `check_premises`, see Notes 2); one note for the DRI on `SelectedAnswer` (Notes 1).
 
+Review fixes (kb-9-review.final.md, row `kb-9-text-1`): F1 and F2 correct records only; see section 10.
+
 SIZE: 481 product, 369 tests, about 650 other hand-written lines (`git diff --numstat` against the merge base;
 generated inventories, schemas, evidence JSON and the code map excluded). No deliverable was cut.
 
@@ -206,8 +208,10 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
   `decodeFactsIn` ones are killed by new `#guard`s (a false fact first; two colliding pairs failing first only, last
   only, neither; the prepared runner equal to the runner; a decision predicate at either position and the last
   decision name), the `SelectedAnswer`/`SelectedAnswerWith` ones (Prop definitions over Json, no decidable equality)
-  and two that do not elaborate are allowed with a reason each (kb-10a's precedent). Final run on 1d2df69240
-  (docs/kernel/kb-9/trust-mutants.json): 81 KILLED, 0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 32 ALLOWED, exit 0.
+  and two that do not elaborate are allowed with a reason each (kb-10a's precedent). Run on 1d2df69240: 81 KILLED,
+  0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 32 ALLOWED, exit 0. Final run, full (no --rescore), on 5bab46a913 after the
+  review fixes changed `SelectedSound.lean`'s docstrings and added two examples (docs/kernel/kb-9/trust-mutants.json):
+  81 KILLED, 0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 32 ALLOWED, exit 0.
 - `uv run python tools/regen_generated.py --write`, then `--check`: 41 entries, exit 0. The `lean_decoders` pins of
   `ve/assurance-manifest.json` for Selected.lean, Prepared.lean and SlotWire.lean were reviewed and repinned by hand
   (`decodeFactsIn` added to SlotWire's declarations); `tests/test_assurance_manifest.py` 167 passed.
@@ -278,3 +282,13 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
 15. No overclaim, no silent cut, every check can fail, limits before work: PASS. The universal words in this report
     cite their command (sections 3, 4, 9); no cut; every new `#guard` is a trust-mutant killer (run 2/3 counts); the
     facts list is decoded by kb-3a's decoder under its limits.
+
+## 10. Review fixes (text only: row `kb-9-text-1`)
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 (B): the spec and frozen keys kept 10,083, 16,545 and four stale path rows after the baseline moved | figures from `closure-baseline.json`; the records check lists every stale figure at once and also checks the section 1 keyed total and the measurement table's keyed row | `tests/test_kernel_closure.py::test_the_records_quote_the_saved_measurement` (the probe), `::test_the_records_check_lists_every_stale_figure_at_once` | 5bab46a913 |
+| F2 (A): three records said `soft_wire_selected` still rules out the flag fields for a case without `facts` | spec paragraph, note 8.1 and both `SelectedSound.lean` docstrings say the tail is open for every case and only `soft_wire_selected_facts` ties it to the case; two Lean examples check the open tail; `soft-norms.md`'s `soft-selected` row names `facts` and the flags | `tests/test_kb9_selected_facts.py::test_the_records_say_what_soft_wire_selected_states_since_facts`; the examples at the end of `lean/VE/SoftNorms/SelectedExamples.lean` (build) | 5bab46a913 |
+
+No user-visible behaviour changed, so DELTA gains no row. Of the review's unfiled notes, the FOLLOW-UPS row pointer
+(now DELTA row 3) and the `soft-norms.md` row are fixed; the others are not addressed here.
