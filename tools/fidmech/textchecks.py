@@ -9,7 +9,6 @@ counted in the info class `note`, outside the headline.
 from __future__ import annotations
 
 import bisect
-import hashlib
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -107,6 +106,8 @@ class Placement:
     lead_in: int | None  # the lead-in the first sentence needs
     start: int  # bytes
     end: int
+    i0: int = 0  # the normalised index range in the stream's canonical text
+    i1: int = 0
 
 
 def _placements(seg: S.Segmentation, frags, masked: bool = False):
@@ -134,7 +135,8 @@ def _placements(seg: S.Segmentation, frags, masked: bool = False):
                 a, z = spans[0][0], spans[-1][1]
                 whole = (any(START_SLACK.fullmatch(canon.text, x, a) for x in (first.i0, first.ib) if x <= a)
                          and END_SLACK.fullmatch(canon.text, z, max(z, last.i1)) is not None)
-                yield Placement(stream.name, tuple(touched), whole, first.lead_in, canon.starts[a], canon.ends[z - 1])
+                yield Placement(stream.name, tuple(touched), whole, first.lead_in, canon.starts[a], canon.ends[z - 1],
+                                a, z)
 
 
 @dataclass(frozen=True)
@@ -154,9 +156,17 @@ class Hit:
                 "detail": self.detail, "at": list(self.at) if self.at else None}
 
 
-def check_block(seg: S.Segmentation, block: dict) -> tuple[list[Hit], dict]:
-    """L1 on one block: (hits, info counts)."""
-    found, problem = header_quotes(block["source"])
+@dataclass(frozen=True)
+class Located:
+    """One checked quote: its L1 class (None when clean) and the placement chosen for it (None when unlocated)."""
+    quote: Quote
+    text: str  # norm() of the quote
+    cls: str | None
+    place: Placement | None
+
+
+def checkable(found) -> tuple[list[tuple[Quote, list[str], bool]], dict]:
+    """The quotes L1 checks (not in a note, not empty or punctuation only) with their fragments and elision mark."""
     info = {"note": sum(q.note for q in found), "empty": 0, "checked": 0}
     rows = []
     for q in found:
@@ -169,35 +179,59 @@ def check_block(seg: S.Segmentation, block: dict) -> tuple[list[Hit], dict]:
             info["empty"] += 1
             continue
         rows.append((q, frags, ELLIPSIS.search(n) is not None))
-    hit = lambda cls, q, detail, at=None: Hit(cls, block["id"], block["file"], q, detail, at)  # noqa: E731
-    if not rows:
-        why = problem or ("only quotations in translator's notes" if info["note"] else
-                          "only empty quotations" if info["empty"] else "no quotation")
-        return [hit("L1m", None, why)], info
     info["checked"] = len(rows)
+    return rows, info
+
+
+def classify(seg: S.Segmentation, rows) -> list[tuple[Located, str]]:
+    """L1 n/u/c/e of quotes that are checked together (one block's, or one legend's): each with its detail. A list
+    item needs its lead-in among the same quotes."""
     placed = [(q, frags, elided, list(_placements(seg, frags))) for q, frags, elided in rows]
     covered = set()
     for _, _, _, places in placed:
         best = next((p for p in places if p.whole), places[0] if places else None)
         if best:
             covered.update((best.stream, i) for i in best.sentences)
-    hits = []
+    out = []
     for q, frags, elided, places in placed:
+        text = " ... ".join(frags)
         if not places:
             masked = next(_placements(seg, frags, masked=True), None) is not None
-            hits.append(hit("L1n" if masked else "L1u", q.text,
-                            "equal only with the digit runs masked" if masked else "not source text under norm()"))
+            out.append((Located(q, text, "L1n" if masked else "L1u", None),
+                        "equal only with the digit runs masked" if masked else "not source text under norm()"))
             continue
         ranked = sorted(places, key=lambda p: (not p.whole, p.lead_in is not None
                                                and (p.stream, p.lead_in) not in covered))
         p = ranked[0]
-        at = (p.stream, p.start, p.end)
         if not p.whole:
-            hits.append(hit("L1c", q.text, "not a whole sentence run", at))
+            out.append((Located(q, text, "L1c", p), "not a whole sentence run"))
         elif p.lead_in is not None and (p.stream, p.lead_in) not in covered:
-            hits.append(hit("L1c", q.text, "a list item quoted without its lead-in", at))
+            out.append((Located(q, text, "L1c", p), "a list item quoted without its lead-in"))
         elif elided:
-            hits.append(hit("L1e", q.text, "an elision", at))
+            out.append((Located(q, text, "L1e", p), "an elision"))
+        else:
+            out.append((Located(q, text, None, p), ""))
+    return out
+
+
+def analyse(seg: S.Segmentation, block: dict) -> tuple[list[Hit], dict, list[Located]]:
+    """L1 on one block: (hits, info counts, every checked quote with its class and placement)."""
+    found, problem = header_quotes(block["source"])
+    rows, info = checkable(found)
+    if not rows:
+        why = problem or ("only quotations in translator's notes" if info["note"] else
+                          "only empty quotations" if info["empty"] else "no quotation")
+        return [Hit("L1m", block["id"], block["file"], None, why)], info, []
+    located = classify(seg, rows)
+    hits = [Hit(loc.cls, block["id"], block["file"], loc.quote.text, detail,
+                (loc.place.stream, loc.place.start, loc.place.end) if loc.place else None)
+            for loc, detail in located if loc.cls]
+    return hits, info, [loc for loc, _ in located]
+
+
+def check_block(seg: S.Segmentation, block: dict) -> tuple[list[Hit], dict]:
+    """L1 on one block: (hits, info counts)."""
+    hits, info, _ = analyse(seg, block)
     return hits, info
 
 
@@ -220,32 +254,8 @@ def counts(hits) -> dict:
     return {c: sum(h.cls == c for h in hits) for c in CLASSES}
 
 
-def report(case: Path, data: bytes, boundaries_path: Path) -> dict:
-    """The L1 report of one case: hits per class, raw and with each lever off, and what each lever clears."""
-    source = S.Source(data)
-    b = S.load_boundaries(boundaries_path)
-    blocks = read_blocks(case)
-    seg = S.Segmentation(source, b)
-    hits, info = l1(seg, blocks)
-    keys = {h.key() for h in hits}
-    levers = {}
-    for lever in S.LEVERS:
-        try:
-            off, _ = l1(S.Segmentation(source, b.without(lever, source)), blocks)
-        except S.BoundariesError as e:
-            levers[lever] = {"error": str(e)}
-            continue
-        off_keys = {h.key() for h in off}
-        levers[lever] = {"counts": counts(off), "cleared": sorted(map(list, off_keys - keys), key=str),
-                         "added": sorted(map(list, keys - off_keys), key=str)}
-    gated = ALSO_GATED.get(case.name, {})
-    return {"document": case.name, "checks": ["L1"], "source_sha256": source.sha256,
-            "boundaries_sha256": hashlib.sha256(Path(boundaries_path).read_bytes()).hexdigest(),
-            "blocks": len(blocks), "quotes": info, "counts": counts(hits),
-            "also_gated": {c: {"by": gated[c], "hits": sum(h.cls == c for h in hits)} for c in gated},
-            "sentences": {"main": len(seg.streams[0].sentences),
-                          "footnote": sum(len(s.sentences) for s in seg.streams[1:])},
-            "footnote_pairs": {"generator": sum(f["by"] == "generator" for f in b.footnotes),
-                               "hand": sum(f["by"] == "hand" for f in b.footnotes)},
-            "unpaired_digit_runs": len(seg.unpaired_runs),
-            "hits": [h.to_dict() for h in hits], "levers": levers}
+def report(case: Path, data: bytes, boundaries_path: Path, checks=("L1",)) -> dict:
+    """The report of one case: hits per class, raw and with each lever off, and what each lever clears or adds
+    (sentchecks.report, which also runs the later checks)."""
+    from tools.fidmech import sentchecks  # it builds on this module
+    return sentchecks.report(case, data, boundaries_path, checks)

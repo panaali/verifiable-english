@@ -1,0 +1,24 @@
+{
+ "schema": "fidmech-cues/1",
+ "about": "The obligation cues of plan section 3.5 (L4 and L1a): a sentence is obligation-bearing by cue when a modal or commitment pattern matches, or a first-person present-tense commitment does. A sentence is obligation-bearing by its unit's kind alone (norm, hedged, unformalised) only with min_words_by_kind words or more: shorter ones are headings and labels. Frozen on anthropic-rsp before any FSF or PF check run (plan 3.0); pinned by sha256 in tests/test_fidmech_data.py.",
+ "modal": ["will", "must", "shall", "should", "require[ds]", "commit(?:s|ted)", "ensure", "need to", "are to",
+           "is to be", "strive", "intend", "may not", "prohibit", "mandatory", "obligat\\w*"],
+ "min_words_by_kind": 5,
+ "first_person": {
+  "subjects": ["we"],
+  "companies": {"anthropic-rsp": "Anthropic", "safety-framework": "Google DeepMind",
+                "openai-preparedness": "OpenAI"},
+  "adverbs": ["also", "then", "now", "currently", "\\w+ly"],
+  "not_verbs": ["am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did",
+                "don", "can", "cannot", "could", "may", "might", "would", "will", "shall", "should", "must",
+                "believe", "believes", "think", "thinks", "hope", "hopes", "expect", "expects", "anticipate",
+                "anticipates", "aim", "aims", "aspire", "aspires", "want", "wants", "see", "sees", "view", "views",
+                "know", "knows", "consider", "considers", "mean", "means", "find", "finds", "face", "faces",
+                "learn", "learns", "observe", "observes", "recognize", "recognizes", "acknowledge",
+                "acknowledges", "took", "made", "found", "and", "or", "in", "no", "not", "still", "instead",
+                "employees", "staff"],
+  "past_suffix": "ed",
+  "hedges": ["may", "might", "could", "would", "can", "possibly", "perhaps", "likely", "typically", "generally",
+             "sometimes", "hope", "expect", "anticipate", "believe", "aim", "aspire"]
+ }
+}
