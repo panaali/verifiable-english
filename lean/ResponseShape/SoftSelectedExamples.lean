@@ -54,4 +54,20 @@ def refused : List Json := [selectedCase "deny" r#"[["a"]]"# r#"[{"predicate": "
 -- outcomes: `soft_wire_selected` does)
 #guard accepts deny (run allow |>.setObjVal! "id" (.str "s"))
 
+/-! kb-9: `facts` and `coherent` are present exactly when the request has `facts`, and are booleans. -/
+def withFacts : Json := factsCase ("[" ++ factTrue ++ ", " ++ factFalse ++ "]")
+def colliding : Json := factsCase "[]" collidingText collidingModel
+  r#"[{"predicate": "x_required", "tuple": ["a"]}]"#
+
+-- accepted: a case with facts (one false), and a colliding pair (`coherent: false`)
+#guard [withFacts, colliding].all fun j => accepts j (run j)
+-- refused: every variant of a facts answer (a member added or dropped, a leaf retyped)
+#guard [withFacts, colliding].all fun j => (variants [] 6 (run j)).all (!accepts j ·)
+-- refused: a flag retyped or dropped beside facts; a flag added to an answer for a case without facts
+#guard let a := run withFacts
+  [a.setObjVal! "facts" (.str "false"), a.setObjVal! "coherent" .null,
+    (match a with | .obj kvs => .obj (kvs.erase "facts") | x => x),
+    (match a with | .obj kvs => .obj (kvs.erase "coherent") | x => x)].all (!accepts withFacts ·)
+#guard [(run deny).setObjVal! "facts" (.bool true), (run deny).setObjVal! "coherent" (.bool true)].all (!accepts deny ·)
+
 end ResponseShape.SoftSelectedExamples

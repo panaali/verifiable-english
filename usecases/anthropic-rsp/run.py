@@ -24,6 +24,7 @@ from ve.soft_route import decide_soft_conflict  # noqa: E402
 from ve import ast as A  # noqa: E402
 from ve.entailment import prove_entailment, check_entailment_certificate  # noqa: E402
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
+from tools.fidmech.bindings import load_bindings  # noqa: E402  (rsp_translation put the repo on sys.path)
 
 RESULTS = HERE / "results.json"
 THRESHOLDS = {block.id.split("-")[1].upper(): formula.term.name
@@ -34,56 +35,21 @@ BASE = {name: values[0] for name, values in SETS.items()}
 MUTANT = None
 WITHOUT_NARROWING = None
 PROVER_CALLS = 0
-OT = {"OT2": "more_capable_than_analyzed", "OT3a": "exceeds_prior_report",
-      "OT3b": "exceeds_all_analyzed", "OT4": "significantly_redacted", "OT5": "highly_capable",
-      "OT10": "material_safety_risk",
-      "OT11": "noteworthy", "OT15": "full_substitution_at_competitive_cost",
-      "OT16": "double_rate", "OT17": "automation_attributable", "OT18": "marginal_justification",
-      "OT19": "marginal_major_role", "OT22": "autonomous_research_use",
-      "OT28": "continuation_accelerates"}
+# The case-to-atom tables are frozen data (plan 2a): fidmech/bindings.json, sha256-pinned in
+# tests/test_fidmech_bindings.py. Each stays a module attribute (tests/test_rsp_fidelity_fix.py reads them).
+_B = load_bindings(HERE / "fidmech" / "bindings.json", "anthropic-rsp")
+OT = _B["OT"]
 # OT7 ("as needed") and OT8 (the evidence) are found per Appendix A scenario: each scenario has its own predicate.
 # Only m3's query-only vocabulary declares an "as needed" for General upleveling (the source states none).
 # A scenario is a label, not an atom: PLAN 5 stipulates the evidence (OT8), never the fact the evidence is about, so a
 # case names its scenarios (SCENARIOS, or a witness's "scenarios") and only the stipulated findings become atoms.
-SCENARIO_TERMS = {"lead": {"OT8": "lead_evidence", "OT7": "lead_delay_needed"},
-                  "competitors": {"OT8": "competitors_evidence", "OT7": "posture_delay_needed"},
-                  "upleveling": {"OT8": "mitigation_evidence", "OT7": "upleveling_delay_needed"}}
-SCENARIOS = {"K19a": ("lead",), "K19b": ("lead",), "K20": ("competitors",), "K21": ("upleveling",)}
-COMPETITORS = ["c"]
-SITUATIONS = {
-    "B-PUB": ("publicly_deployed",), "B-INT": ("internally_deployed",),
-    "B-INTD": ("internally_deployed", "determined_by_publication"), "B-AUT": ("internally_deployed",),
-    "K2": ("off_cycle_public_deployment",), "K3": ("off_cycle_public_deployment",),
-    "K4": ("off_cycle_internal_deployment",), "K7": ("risk_report_approved",),
-    "K11": ("ltbt_requested_review",), "K12": ("selecting_reviewers",),
-    "K13": ("candidate_has_financial_interest",),
-    "K14": ("submitted_under_external_review",),
-    "K15": ("noncompliance_report_received", "substantiated"),
-    "K16": ("concerns_rso",), "K17": ("rsp_updated",),
-    "K18": ("describes_mitigation_and_deviates",),
-    "K19a": ("in_the_lead",), "K19b": ("in_the_lead",),
-    "K22": ("roadmap_goal_missed",), "G4": ("off_cycle_public_deployment",),
-    "G7": ("noncompliance_report_received", "substantiated"),
-    "G8": ("goal_revised_less_ambitious",),
-}
+SCENARIO_TERMS = _B["SCENARIO_TERMS"]
+SCENARIOS = _B["SCENARIOS"]
+COMPETITORS = _B["COMPETITORS"]
+SITUATIONS = _B["SITUATIONS"]
 # K20: "with at least one such competitor" (PLAN 6).
-CASE_ATOMS = {"K20": (("develops_highly_capable", "c"),)}
-PREDICATES = {
-    "PUBLISH_RISK_REPORTS": "risk_reports_published", "OFF_CYCLE_ANALYSIS": "off_cycle_published",
-    "MARGINAL_RISK_ANALYSES": "marginal_analysed", "BOARD_AND_LTBT_APPROVAL": "board_approved",
-    "SHARE_WITH_BOARD_AND_LTBT": "governance_notified", "FULL_EXTERNAL_REVIEW": "full_review",
-    "EXTERNAL_REVIEW": "ltbt_review", "LTBT_APPROVAL": "reviewers_approved",
-    "CONSULT_BOARD": "reviewers_approved", "SELECT_REVIEWER": "candidate_selected",
-    "SHARE_WITH_REVIEWERS_WITHIN_ONE_WEEK": "shared_with_reviewers",
-    "PROMPT_BOARD_NOTICE": "board_notified", "PUBLIC_NOTICE": "public_notice",
-    "BOARD_MEMBER_AMONG_RECIPIENTS": "board_member_recipient",
-    "PUBLISH_BY_EFFECTIVE_DATE_AND_CHANGE_LOG": "update_published",
-    "TRACK_AND_REPORT_DEVIATION": "deviation_reported", "STRONG_ARGUMENT": "argument_required",
-    "DELAY": "delay", "MEET_OR_EXCEED_COMPETITOR_POSTURE": "posture_matched",
-    "SIGNIFICANT_EFFORT": "significant_effort", "RISK_REPORT_ADDRESSES_MISS": "roadmap_review_addressed",
-    "OTHER_CONSEQUENCE": "delay", "QUARTERLY_UPDATE": "quarterly_updates",
-    "ASSESS": "assessed_in_report", "INSCOPE": "in_scope",
-}
+CASE_ATOMS = _B["CASE_ATOMS"]
+PREDICATES = _B["PREDICATES"]
 
 
 def applies(block, choice):
@@ -186,23 +152,35 @@ def selected_facts(choice):
             if applies(block, choice) and not (WITHOUT_NARROWING == "N1" and block.narrowing == "RS0"))
 
 
+@lru_cache(maxsize=None)
+def _premise_facts(choice, narrowing):
+    return tuple(f for _, formulas in selected_facts(dict(choice)) for f in formulas)
+
+
+def premise_facts(choice):
+    """Every premise the choice selects (`selected_facts`), one tuple per choice: the `facts` of its cases."""
+    return _premise_facts(tuple(sorted(choice.items())), WITHOUT_NARROWING)
+
+
 def check_premises(doc, case, choice):
-    from ve.evaluate import evaluate
+    """Every premise the choice selects is true in the case model: Lean's `facts` flag, from the `soft-selected`
+    case that also answers this document's selected rules in that model (kb-9; pass the returned facts to
+    `selected` and `completed`). A false flag names its first premise block, as each block's own flag finds it."""
+    facts = premise_facts(choice)
     key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i")),
            WITHOUT_NARROWING == "N1")
     if key in _PREMISES_CHECKED:
-        return
-    env = doc.elaborated.base_environment()
+        return facts
     witness = model(doc, case)
-    for block, formulas in selected_facts(choice):
-        for formula in formulas:
-            result = evaluate(env, formula, witness, trace=False)
-            if result.value is not True:
-                raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: {result.status}")
+    if doc.elaborated.selection_flags(witness, facts=facts)["facts"] is not True:
+        for block, formulas in selected_facts(choice):
+            if doc.elaborated.selection_flags(witness, facts=list(formulas))["facts"] is not True:
+                raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: Violated")
     _PREMISES_CHECKED.add(key)
+    return facts
 
 
-def selected(doc, case, predicate, sign, values=None):
+def selected(doc, case, predicate, sign, values=None, *, facts=None):
     m = model(doc, case)
     sorts = vocabulary()["vocabulary"]["predicates"][predicate]["arguments"]
     domains = [m.domains[s] for s in sorts]
@@ -210,13 +188,18 @@ def selected(doc, case, predicate, sign, values=None):
     for args in itertools.product(*domains):
         if args[0] != "s" or (values is not None and tuple(args) != tuple(values)):
             continue
-        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args) if r.sign == sign)
+        names.update(r.name for r in doc.elaborated.selected_rules(predicate, m, args, **_with(facts)) if r.sign == sign)
     return sorted(names)
 
 
-def completed(doc, case, predicate, values):
+def completed(doc, case, predicate, values, *, facts=None):
     """The completed outcome of `predicate` at `values` in the case model: Lean's `soft-selected` answer."""
-    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values))
+    return doc.elaborated.outcome_at(predicate, model(doc, case), tuple(values), **_with(facts))
+
+
+def _with(facts):
+    """The `facts` argument of a selection on the checked document; none for any other (asked as before kb-9)."""
+    return {} if facts is None else {"facts": facts}
 
 
 def cone(predicate):
@@ -236,15 +219,15 @@ def query(case, predicate, sign=True, values=None, *, extra_sets=(), requirement
         choice = {**BASE, **assignment}
         deny = document(tuple(sorted(choice.items())), "deny")
         allow = document(tuple(sorted(choice.items())), "allow")
-        check_premises(deny, case, choice)
-        left = selected(deny, case, predicate, sign, values)
+        facts = check_premises(deny, case, choice)
+        left = selected(deny, case, predicate, sign, values, facts=facts)
         right = selected(allow, case, predicate, sign, values)
         if requirement and V.REGULATED[predicate]["regulated"]["role"] != "obligation":
             left = right = []
         outcome_values = values or (("s",) if len(V.environment()["vocabulary"]["predicates"][predicate]["arguments"]) == 1 else None)
         rows.append({"choice": assignment, "holds": bool(left and right),
                      "rules": sorted(set(left) & set(right)),
-                     "default_sensitive": (completed(deny, case, predicate, outcome_values) !=
+                     "default_sensitive": (completed(deny, case, predicate, outcome_values, facts=facts) !=
                                            completed(allow, case, predicate, outcome_values))
                      if outcome_values and predicate != "in_scope" else None})
     return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion",
@@ -657,9 +640,9 @@ def lead_without_competitors():
                 "extra": ("in_the_lead",), "scenarios": scenarios}
         choice = {**BASE, **assignment}
         docs = [document(tuple(sorted(choice.items())), default) for default in ("deny", "allow")]
-        check_premises(docs[0], case, choice)
+        facts = check_premises(docs[0], case, choice)
         names = sorted({name for doc in docs for predicate in ("posture_matched", "delay")
-                        for name in selected(doc, case, predicate, True)})
+                        for name in selected(doc, case, predicate, True, facts=facts if doc is docs[0] else None)})
         rows.append({"choice": assignment, "holds": not any(name.startswith("f25-") for name in names),
                      "rules": names, "reason": "no F25 rule selects on posture_matched or delay"})
     return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation",
@@ -668,8 +651,7 @@ def lead_without_competitors():
 
 # The K items whose selected rules cannot answer them, with the reason (one table: a limit that hides an answer the
 # selected rules give is a translation error, tests/test_rsp_fidelity_fix.py).
-K_LIMITS = {item: "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
-            for item in ("K9", "K10")}
+K_LIMITS = _B["K_LIMITS"]
 
 
 def answer(item):
