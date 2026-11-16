@@ -65,10 +65,14 @@
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
 - `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
 - `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
+- `tests/test_fidmech_adapters.py` — fid-mech-b3: the execution adapters (plan section 6; Opus round 2 points 6 and 12).
 - `tests/test_fidmech_b2.py` — tools/fidmech/sentchecks.py: L1a, L2, L3, L4 and D on the fixture case tests/data/fidmech/b2.
+- `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
 - `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
 - `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
+- `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
 - `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
+- `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
 - `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
 - `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
 - `tests/test_fol_names.py` — (no module docstring)
@@ -79,7 +83,3 @@
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
 - `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
-- `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
-- `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
-- `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
-- `tests/test_gate_rerun.py` — `tools/gate.py --rerun-failed`: rerun only the failed tests' files of a gate that failed on this tree.
