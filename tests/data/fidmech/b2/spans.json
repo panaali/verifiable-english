@@ -1,0 +1,111 @@
+{
+ "source_sha256": "04f39424b23cfc77dc7eb2e2fde321ba04c050bfa2c3e440bb76273ab223e447",
+ "source_bytes": 487,
+ "units": [
+  {
+   "id": "u-title",
+   "span": [
+    0,
+    35
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "u-records",
+   "span": [
+    35,
+    94
+   ],
+   "kind": "norm",
+   "rule": "r-records",
+   "status": "CHECKED"
+  },
+  {
+   "id": "u-answer",
+   "span": [
+    94,
+    149
+   ],
+   "kind": "norm",
+   "rule": "r-answer",
+   "status": "CHECKED"
+  },
+  {
+   "id": "u-share",
+   "span": [
+    149,
+    196
+   ],
+   "kind": "norm",
+   "rule": "r-share",
+   "status": "CHECKED"
+  },
+  {
+   "id": "u-ends-1",
+   "span": [
+    196,
+    229
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "u-explain",
+   "span": [
+    229,
+    272
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "u-select",
+   "span": [
+    273,
+    325
+   ],
+   "kind": "norm",
+   "rule": "r-select",
+   "status": "OPEN"
+  },
+  {
+   "id": "u-publish",
+   "span": [
+    325,
+    370
+   ],
+   "kind": "norm",
+   "rule": "r-publish",
+   "status": "CHECKED"
+  },
+  {
+   "id": "u-conduct",
+   "span": [
+    370,
+    418
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "u-train",
+   "span": [
+    418,
+    453
+   ],
+   "kind": "unformalised",
+   "reason": "no_deadline_or_trigger",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "u-ends-2",
+   "span": [
+    453,
+    487
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  }
+ ]
+}
