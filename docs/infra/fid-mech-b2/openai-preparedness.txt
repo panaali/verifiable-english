@@ -1,0 +1,17 @@
+openai-preparedness: 101 blocks, 114 quotes checked, 17 note quotes, 0 empty (info, outside the headline)
+L1+L1a+L2+L3+L4+D hits: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0
+  L1a: {"linked_blocks": 14, "unlinked_blocks": 87}
+  L2: {"regulated": 62, "passages_unlinked": 5, "not_checked": {"base_predicates": 59, "base_bare": 58, "open_terms": 18}}
+  L3: {"rule_blocks_without_quote": 0, "from_header_quote": 11}
+  L4: {"sentences": 435, "obligation_bearing": 337, "by_cue": 118, "ruled_out": 0}
+  D: {"sidecar": true, "span": "sentence", "unaccounted": 1188, "outside_quote": 605}
+  extra off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0 (the lever clears 0 hits and adds 0)
+  suppress off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0 (the lever clears 0 hits and adds 0)
+  abbrev off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0 (the lever clears 0 hits and adds 0)
+  furniture off: L1m 0, L1n 0, L1u 17, L1c 65, L1e 0, L1a 4, L2b 45, L2q 9, L2a 2, L3w 14, L4u 12, L4l 0, D 677, L4g 0 (the lever clears 68 hits and adds 44)
+  footnotes off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0 (the lever clears 0 hits and adds 0)
+  hand-footnotes off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 655, L4g 0 (the lever clears 14 hits and adds 20)
+  ruled_out off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 661, L4g 0 (the lever clears 0 hits and adds 0)
+  unformalised off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 273, L4l 0, D 661, L4g 1 (the lever clears 262 hits and adds 0)
+  sidecar off: L1m 0, L1n 0, L1u 14, L1c 64, L1e 0, L1a 1, L2b 45, L2q 8, L2a 2, L3w 14, L4u 12, L4l 0, D 1188, L4g 0 (the lever clears 546 hits and adds 19)
+unpaired digit runs left as text: 39
