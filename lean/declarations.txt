@@ -29001,7 +29001,7 @@ module VE.SoftNorms.Selected 56f63f1156153cdb56ff2039bdba2241b616fc40ca57692f36a
 281:0-285:21 def VE.SoftNorms.Run.factsSent@VE.SoftNorms.Selected
 287:0-289:77 def VE.SoftNorms.Run.factsFields@VE.SoftNorms.Selected
 291:0-303:66 def VE.SoftNorms.Run.runSelected@VE.SoftNorms.Selected
-module VE.SoftNorms.SelectedExamples d0d6204e4dd39dfc986403fa45b26ed178ee843c8fbceabb3b0fb9c06c4b6636
+module VE.SoftNorms.SelectedExamples 1b6deb8db778b1dcf012e3f533b9cc78973607317c9d70fe97c542f31844001a
 12:0-15:393 def VE.SoftNorms.SelectedExamples.environmentText@VE.SoftNorms.SelectedExamples
 17:0-18:627 def VE.SoftNorms.SelectedExamples.normsText@VE.SoftNorms.SelectedExamples
 20:0-23:18 def VE.SoftNorms.SelectedExamples.modelText@VE.SoftNorms.SelectedExamples
@@ -29027,7 +29027,7 @@ module VE.SoftNorms.SelectedExamples d0d6204e4dd39dfc986403fa45b26ed178ee843c8fb
 178:0-178:96 def VE.SoftNorms.SelectedExamples.lastFails@VE.SoftNorms.SelectedExamples
 179:0-179:88 def VE.SoftNorms.SelectedExamples.noneFails@VE.SoftNorms.SelectedExamples
 192:0-192:121 def VE.SoftNorms.SelectedExamples.decisionFact@VE.SoftNorms.SelectedExamples
-module VE.SoftNorms.SelectedSound 0e4a16eebdc0029414ed5c5e0f2e489f1bf6f5e87c5e608d48af30c0fecb0efb
+module VE.SoftNorms.SelectedSound c53be0a3572db08c27a5e5fc048be5fb66fe775be70c49abc04aa375ed230d1e
 25:0-31:56 def VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound
 33:0-40:77 def VE.SoftNorms.Run.SelectedAnswerWith@VE.SoftNorms.SelectedSound
 42:0-47:93 def VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound

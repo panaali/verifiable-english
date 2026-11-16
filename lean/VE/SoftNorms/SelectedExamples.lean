@@ -197,4 +197,14 @@ def decisionFact (name : String) : String := "[\"exists\", \"assistant\", [\"una
 #guard answerOf (factsCase ("[" ++ decisionFact "soft__excepted__d" ++ ", " ++ factTrue ++ "]")) ==
   "error: InvalidInput: facts: soft__excepted__d is a soft decision predicate; its decider decides it, not a fact"
 
+/-- Review kb-9 F2: `SelectedAnswer` cannot see the case, so it admits no flag field and also both
+flag fields with any `facts` value; only `soft_wire_selected_facts` ties them to the case's `facts`. -/
+example (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (qs : List SelectedQuery)
+    (b : Bool) (answer : Json) (h : SelectedAnswerWith id D M qs (factsFields true b (coherentAt D M)) answer) :
+    SelectedAnswer id D M qs answer := ⟨true, b, h⟩
+
+example (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (qs : List SelectedQuery)
+    (answer : Json) (h : SelectedAnswerWith id D M qs [] answer) : SelectedAnswer id D M qs answer :=
+  ⟨false, false, h⟩
+
 end VE.SoftNorms.SelectedExamples

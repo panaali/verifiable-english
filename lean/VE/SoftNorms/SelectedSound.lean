@@ -2,12 +2,12 @@ import VE.SoftNorms.Run
 
 /-! The wire theorem of the soft route's `soft-selected` kind (kb-10a, kernel boundary).
 
-`soft_wire_selected` states the whole answer: it is exactly `Wire.ok id` with the two fields
-`background` and `results`, no other field, and one result per query of the request, in order,
-naming the request's predicate and tuple, with `selected = selectedAt` and `outcome = outcomeAt`
-for the source and the model the case's own decoders read. `selected_semantics` (`Selected.lean`)
-says what `selectedAt` and `outcomeAt` mean; each decoded query carries its hypotheses
-(`QueryDecoded`: a regulated predicate, a tuple typed for its sorts).
+`soft_wire_selected` states the answer but for its tail: it is `Wire.ok id` with the fields
+`background` and `results`, then no field or `facts` (any boolean) and `coherent`, and one result per
+query of the request, in order, naming the request's predicate and tuple, with `selected = selectedAt`
+and `outcome = outcomeAt` for the source and the model the case's own decoders read.
+`selected_semantics` (`Selected.lean`) says what `selectedAt` and `outcomeAt` mean; each decoded
+query carries its hypotheses (`QueryDecoded`: a regulated predicate, a tuple typed for its sorts).
 
 kb-9: a case that sends `facts` gets two more fields (`factsFields`), read in the same model.
 `soft_wire_selected_facts` states the whole answer with them: the facts are the slot kinds' decoded
@@ -39,9 +39,9 @@ def SelectedAnswerWith (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge
       ("selected", toJson (selectedAt D M q.pred q.tuple)),
       ("outcome", .bool (outcomeAt D M q.pred q.tuple))]).toArray)] ++ extra)
 
-/-- The `soft-selected` answer for `D`, `M` and the decoded queries: no field beyond `id`, `status`,
-`background`, `results` and, for a case that sent `facts`, `facts` and `coherent` (`coherentAt`).
-`soft_wire_selected_facts` states which and what `facts` is. -/
+/-- The `soft-selected` answer for `D`, `M` and the decoded queries: `id`, `status`, `background`,
+`results`, then no field or `facts` (any boolean) and `coherent` (`coherentAt`). It cannot see the case;
+`soft_wire_selected_facts` states, from the case, when the two appear and what `facts` is. -/
 def SelectedAnswer (id : String) (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
     (qs : List SelectedQuery) (answer : Json) : Prop :=
   ∃ sent facts, SelectedAnswerWith id D M qs (factsFields sent facts (coherentAt D M)) answer
