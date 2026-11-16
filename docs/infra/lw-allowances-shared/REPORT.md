@@ -189,3 +189,9 @@ is started fresh per job by `presync-watch.py` (svc-presync-watch). `merge-train
 already running keeps the file it opened (`mv` gives a new inode). Remote presync lean regen hosts get the new
 merge-train.sh by sha automatically (presync-watch-job.sh copies it when the sha differs). Rollback: `mv` each
 `.bak-20261116-lwas` back and `rm tools-local/allowances_merge.py`.
+
+## Selected run
+
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the committed clean HEAD
+a2d3738790: exit 0. GitHub Actions run `lw-allowances-shared-a2d37387-t806719` (2 shards): `SHARD 1/2: exit 0 ... 7 units,
+7 passed` and `SHARD 2/2: exit 0 ... 5 units, 5 passed`, 662 s. This line is the only change since, in docs/*.md.
