@@ -1,0 +1,185 @@
+--- tm-shard.sh	2026-11-14 04:33:49.897598518 +0000
++++ tm-shard.sh.new-tsa	2026-11-17 15:26:10.964189960 +0000
+@@ -139,6 +139,40 @@
+ #   file's at vm_head, inputs.lean recomputed from vm_head's bytes as trust_mutants inputs() does); the OK line names the copies,
+ #   $D/lockalign.log says why. Refused before: pc-1g-bdd8eae8, at-1c-af841eb3, qt-a4b-34d3afcf, et-4b-a97072e6. Any other input
+ #   difference: refused as before. Tests: tools-local/test_tm_shard_fallback_overwrite.py. Tests only: TM_LOCK_ALIGN.
++# 2026-11-17 tm-shard-actions-120 (row; DRI decider 11-17 10:31Z; MEASURED: dri-actions-susp-1117.final.md): all 3 Actions jobs
++#   of tm-nightly-20261117T0600Z were cancelled at ve-job.yml's 120-min job limit inside trust_mutants with no record. tm-shard
++#   had sized them at SETUP 500 s and the first-sweep floor of 80 slot-s per mutant (~1,700 s a part); the records read at
++#   06:12Z (rule (1) below) said setup worst 1,770 s of 20 runs and a per-mutant p90 of 3,301 slot-s (2,265 before review F1's
++#   fix counted only a part's own rows; 8 of p4's 12 printed verdicts were builds stopped at the 1,800 s --build-timeout). Now an
++#   Actions dispatch (the caller's pool actions; other pools and TM-SPM-OFF: exactly as before) is sized from the run records
++#   and every Actions part, the unsharded one too, ends itself in time:
++#   (1) RECORDS: the last TM_SHARD_REC_N (20) Actions trust_mutants runs within TM_SHARD_REC_H (168) h, newest first, read from
++#       the export repo TM_SHARD_RECORDS (default TM_SPM_EXPORT, ~/code/ve-github-export), refs/cloud/<job>:cloud-results/<job>/
++#       (a run = gha.txt with run_id= and timings.tsv with a branch_lake_build row; refs newer than CLOUD_NOW are ignored):
++#       setup = the sum of its timings.tsv rows other than trust_mutants (cache_restore + python_env + branch_lake_build);
++#       per-mutant slot-s = steps.wall.mutants x jobs / the mutants that took a slot in that run (`used_here`: its OWN
++#       rows, shard.owned for a --shard part, judged in that run, plus those its deadline abandoned mid-build; never
++#       another part's OTHER SHARD rows, a --rescore reuse (reused_from) or a --resume keep (resumed.kept); review F1:
++#       a part's record lists the whole plan, so counting every row read an N-part sweep ~N x too low) of its
++#       trust-mutants.json (none taken: no reading), or, for a run Actions cancelled (gha.txt run_result=cancelled, no record), tm-spm.py's L151
++#       bound (LIMIT - PRE - setup) x jobs / its mutants to run (trust_mutants.log.tail's first line "N mutants (K to run), J
++#       jobs"; the tail cannot count judged ones: trust_mutants prints KILLED lines only at its end).
++#       SETUP = max(TM_SHARD_ACTIONS_SETUP or 500, the WORST setup of those runs); the size target moves up by the same
++#       amount (the mutant phase keeps the room the constants gave it); SPM = max(the reading chosen above, the p90
++#       (nearest rank) of those per-mutant readings). No export repo or no run: the constants and readings as before.
++#   (2) LINE: a part's estimate (SETUP + CONTROL + its mutants x SPM / JOBS, from job.sh's start) must be <= LINE = LIMIT
++#       (7,200: gha/ve-job.yml `run:` timeout-minutes 120) - PRE (300: checkout and tools before job.sh; p4 measured 66 s)
++#       - POST (600: the partial record, the `out` upload and slack) - HEADROOM (1,200: the estimate's error; 0600Z p5's build
++#       ran 43 s over p4's) = 5,100 s. LINE is the default of TM_SHARD_ACTIONS_HARD (5,400: the reserve and NMAX are waived
++#       until the parts fit it) and TM_SHARD_ACTIONS_CANCEL (6,600: over it, not sent on actions); an explicit env value wins.
++#       Overrides: TM_SHARD_ACTIONS_LIMIT, _PRE, _POST, _HEADROOM.
++#   (3) BUDGET: with TM_PART_DEADLINE (header eff-tm-partial) every Actions part gets `--budget TM_PART_BUDGET` (LIMIT - PRE -
++#       POST = 6,300; a value over LIMIT - PRE is cut to it, a malformed one is replaced by 6,300), also the unsharded one (plain: the 0600Z p4 went with none) and
++#       also beside a caller's own --budget/--deadline: cloud-tm-job.sh (tm-actions-deadline, installed 2026-11-17) passes
++#       trust_mutants the EARLIEST of them, and trust_mutants kills its Lake runs at that deadline and writes a partial
++#       record (exit 4) with ~900 s of the job left. (Before tm-actions-deadline the caller's far --deadline won: the 0600Z
++#       jobs ran with 15:58Z and were cancelled.)
++#   Tests: tools-local/test_tm_shard_actions_120.py. Tests only: TM_SHARD_RECORDS.
+ # Tests only: TM_CODEX_VMLOAD_FLAG, TM_LOADAVG, TM_CODEX_VMLOAD_MIN, TM_FIT_ROOM_FLAG, TM_FIT_OVERFLOW, TM_QUEUE_SLEEP, TM_PART_DEADLINE_FLAG, TM_SPM, TM_SPM_OFF_FLAG, GHA_TESTS_DIR, TM_SHARD_FLAG, TM_SHARD_DISPATCH (default zsh $M/cloud-dispatch.sh), TM_SHARD_PY, TM_SHARD_TOOL (a
+ #   merge/plan command replacing the VE tool), CLOUD_CONF, CLOUD_JOBS_DIR, VE_EXPORT_SRC, CLOUD_NOW.
+ M=/home/seyran/code/manage-agents; source ${CLOUD_CONF:-$M/cloud-runner.conf}
+@@ -261,7 +295,13 @@
+ while [[ $1 == --* ]]; do case $1 in --worktree) wt=${2:A}; shift 2;; --pool) pool=$2; shift 2;; --) break;; *) shift;; esac; done
+ item=$1; arg=$2; shift 2; [ "$1" = -- ] && shift; args=("$@")
+ plain(){ [ $pool = codex ] && [ -z "$2" ] && { say "$item: not sent to codex unsharded ($1): VM path"; exit 3; }
+-  say "$item: unsharded ($1)"; exec ${=DISPATCH} $orig; }
++  local pb=""; [ $pool = actions ] && abudget ${sha:-$(git -C $SRC rev-parse -q --verify "${arg}^{commit}" 2>/dev/null)} && { orig+=($budget); pb="; --budget ${budget[2]} s"; }  # tm-shard-actions-120 (header (3))
++  say "$item: unsharded ($1$pb)"; exec ${=DISPATCH} $orig; }
++abudget(){  # tm-shard-actions-120 (header (3)): sets budget=(--budget B) for an Actions part of commit $1, else returns 1
++  budget=(); local lim=${TM_SHARD_ACTIONS_LIMIT:-7200} pre=${TM_SHARD_ACTIONS_PRE:-300} b
++  b=${TM_PART_BUDGET:-}; [[ $b == <-> ]] || b=$(( lim - pre - ${TM_SHARD_ACTIONS_POST:-600} )); (( b > lim - pre )) && b=$(( lim - pre ))  # unset or malformed: the computed one (fails closed)
++  [ -n "$1" ] && [ -f ${TM_PART_DEADLINE_FLAG:-$M/TM_PART_DEADLINE} ] && git -C $SRC show ${1}:tools/trust_mutants.py 2>/dev/null | grep -q -e '"--budget"' || return 1
++  budget=(--budget $b); }
+ ntr=""; if [ -n "$TM_ACTIONS_ROOM" ] && [ $pool = actions ]; then  # TM_ACTIONS_FIRST (header): the non-test Actions room, under a lock
+   exec {ntl}>>${TM_ACTIONS_ROOM_LOCK:-$M/run-log/tm-actions-room.lock}
+   flock -w 120 $ntl || { say "$item: TM_ACTIONS_FIRST: the room lock was busy for 120 s: not sent on actions"; exit 3; }
+@@ -314,6 +354,8 @@
+     fs=${TM_SHARD_ACTIONS_FIRST_SPM:-80}; [[ ${ms[1]} == <-> ]] && (( ms[1] > fs )) && fs=${ms[1]}
+     (( fs > ${TM_SHARD_ACTIONS_SPM:-26} )) && { mspm=$fs; mkind=first; spmw="; first sweep: $fs slot-s per mutant (pool reading ${ms[1]:-none}, floor ${TM_SHARD_ACTIONS_FIRST_SPM:-80})"; }; fi
+   if [ $pool = actions ]; then [ "$mkind" = item ] && export TM_SHARD_ACTIONS_NMAX=${TM_SHARD_ACTIONS_HEAVY_NMAX:-4}; [ -n "$mspm" ] && export TM_SHARD_ACTIONS_SPM=$mspm
++    [ -n "$rspm" ] && (( rspm > ${TM_SHARD_ACTIONS_SPM:-26} )) && { export TM_SHARD_ACTIONS_SPM=$rspm; spmw="$spmw; sized at the records' p90 $rspm slot-s per mutant"; }  # tm-shard-actions-120 (header (1))
++    spmw="$spmw$recw"
+   elif [ -n "$mspm" ] && (( mspm > ${TM_SHARD_CLAUDE_CLOUD_SPM:-12} )); then export TM_SHARD_CLAUDE_CLOUD_SPM=$mspm; spmw="$spmw, Actions' reading, used for claude-cloud (NMAX ${TM_SHARD_CLAUDE_CLOUD_NMAX:-6} kept)"
+   else spmw=""; fi; fi
+ sz=($(size $pool $tr $room)) || plain "size failed"; n=${sz[1]}
+@@ -378,6 +420,105 @@
+   o=$(python3 -I -c 'import math,sys; s,b,a,t=map(float,sys.argv[1:]); net=b/(t/60)-a/60; print(math.ceil(s/net) if net>0 else "none")' $qs $abusy $aarr ${TM_SHARD_ACTIONS_TARGET:-1800})
+   [[ $o == <-> ]] && (( o <= ${TM_QUEUE_MIN:-20} )) && { qm=$o; return 0; }
+   qw="Actions room not forecast within ${TM_QUEUE_MIN:-20} min (~${o:-none} min: $qs runners short, busy $abusy, $aarr arrivals/h)"; return 1; }
++arecs(){ python3 -I - "${TM_SHARD_RECORDS:-${TM_SPM_EXPORT:-$HOME/code/ve-github-export}}" ${CLOUD_NOW:-$(date +%s)} ${TM_SHARD_REC_N:-20} \
++    ${TM_SHARD_REC_H:-168} ${TM_SHARD_ACTIONS_LIMIT:-7200} ${TM_SHARD_ACTIONS_PRE:-300} ${TM_SHARD_REC_SCAN:-400} <<'PY'
++# tm-shard-actions-120 (header (1)): prints "<worst setup s> <runs> <p90 slot-s per mutant> <readings>", or nothing
++import json, math, re, subprocess, sys
++X, now, N, H, LIMIT, PRE, SCAN = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]), float(sys.argv[6]), int(sys.argv[7])
++try:
++    refs = subprocess.run(["git", "-C", X, "for-each-ref", "--sort=-committerdate", f"--count={SCAN}", "--format=%(committerdate:unix) %(refname)",
++                           "refs/cloud/"], capture_output=True, text=True, timeout=60, check=True).stdout.split("\n")
++except (OSError, subprocess.SubprocessError):
++    sys.exit(0)
++refs = [(int(t), r) for t, r in (l.split(" ", 1) for l in refs if " " in l) if 0 <= now - int(t) < H * 3600]
++FILES = ("gha.txt", "timings.tsv", "trust-mutants.json", "trust_mutants.log.tail")
++want = [f"{r}:cloud-results/{r.rsplit('/', 1)[1]}/{f}" for _, r in refs for f in FILES]
++try:
++    out = subprocess.run(["git", "-C", X, "cat-file", "--batch"], input="\n".join(want).encode() + b"\n", capture_output=True, timeout=300).stdout
++except (OSError, subprocess.SubprocessError):
++    sys.exit(0)
++blobs, i = [], 0
++for _ in want:  # --batch: "<sha> <type> <size>\n<bytes>\n" or "<name> missing\n"
++    j = out.find(b"\n", i)
++    if j < 0:
++        break
++    head = out[i:j].split()
++    if len(head) == 3 and head[2].isdigit():
++        n = int(head[2]); blobs.append(out[j + 1:j + 1 + n].decode("utf-8", "replace")); i = j + 2 + n
++    else:
++        blobs.append(None); i = j + 1
++OTHER, NOT_RUN, ABANDONED = "OTHER SHARD", "NOT RUN", "not judged: abandoned"  # tools/trust_mutants.py's row wordings
++
++
++def used_here(d):
++    """The record's mutants that took a slot in this run, or None: its own rows (a --shard part's shard.owned; else every
++    row but OTHER SHARD) judged in this run, plus those its deadline abandoned mid-build. Never another part's rows, a
++    --rescore reuse (reused_from) or a --resume keep: a --resume keeps every own row PREV finished, its --rescore reuses
++    among them (identical --rescore facts), so the finished rows not judged here number max(resumed.kept, reused)."""
++    ms = [m for m in d.get("mutants") or [] if isinstance(m, dict)]
++    sh = d.get("shard")
++    owned = set(sh["owned"]) if isinstance(sh, dict) and isinstance(sh.get("owned"), list) else None
++    own = [m for m in ms if m.get("status") != OTHER and (owned is None or m.get("id") in owned)]
++    done = [m for m in own if m.get("status") not in (None, NOT_RUN)]
++    reused = sum(1 for m in done if m.get("reused_from"))
++    res = d.get("resumed") if isinstance(d.get("resumed"), dict) else {}
++    kept = 0 if res.get("ignored") else res.get("kept", 0)
++    if type(kept) is not int or kept < 0 or 0 < kept < reused or kept > len(done):
++        return None  # a record no run of the tool writes: no reading
++    abandoned = sum(1 for m in own if m.get("status") == NOT_RUN and str(m.get("detail", "")).startswith(ABANDONED))
++    n = len(done) - max(kept, reused) + abandoned
++    return n if n > 0 else None
++
++
++setups, spms = [], []
++for k in range(len(blobs) // len(FILES)):
++    gha, tim, rec, tail = blobs[k * len(FILES):(k + 1) * len(FILES)]
++    if not gha or "run_id=" not in gha or not tim:
++        continue
++    rows = {c[0]: c for c in (l.split("\t") for l in tim.splitlines()[1:]) if len(c) > 2}
++    if "branch_lake_build" not in rows:
++        continue
++    try:
++        setup = sum(float(c[2]) for s, c in rows.items() if s != "trust_mutants")
++    except ValueError:
++        continue
++    if len(setups) < N:
++        setups.append(setup)
++    spm = None
++    try:
++        d = json.loads(rec) if rec else None
++    except ValueError:
++        d = None
++    if isinstance(d, dict):  # its own mutants judged here + the ones its deadline abandoned mid-build (they used the slots too)
++        used = used_here(d)
++        wall = ((d.get("steps") or {}).get("wall") or {}).get("mutants") or 0
++        if used and isinstance(wall, (int, float)) and wall > 0:
++            spm = wall * float(d.get("jobs") or 4) / used
++    elif "run_result=cancelled" in gha and tail:  # a lower bound: its to-run mutants needed more than the slots it had
++        m = re.search(r"^trust_mutants: \d+ definitions, \d+ mutants \((\d+) to run\), (\d+) jobs", tail, re.M)
++        if m and int(m.group(1)) and LIMIT - PRE - setup > 0:
++            spm = (LIMIT - PRE - setup) * int(m.group(2)) / int(m.group(1))
++    if spm is not None and len(spms) < N:
++        spms.append(spm)
++    if len(setups) >= N and len(spms) >= N:
++        break
++if setups:
++    s = sorted(spms)
++    p90 = math.ceil(s[math.ceil(0.9 * len(s)) - 1]) if s else 0
++    print(math.ceil(max(setups)), len(setups), p90, len(s))
++PY
++}
++recw=""; rspm=""  # tm-shard-actions-120 (header (1), (2)): the caller's pool actions, read once (fit's retry reads the same)
++if [ $pool = actions ] && [ ! -f ${TM_SPM_OFF_FLAG:-$M/TM-SPM-OFF} ]; then
++  aline=$(( ${TM_SHARD_ACTIONS_LIMIT:-7200} - ${TM_SHARD_ACTIONS_PRE:-300} - ${TM_SHARD_ACTIONS_POST:-600} - ${TM_SHARD_ACTIONS_HEADROOM:-1200} ))
++  export TM_SHARD_ACTIONS_HARD=${TM_SHARD_ACTIONS_HARD:-$aline} TM_SHARD_ACTIONS_CANCEL=${TM_SHARD_ACTIONS_CANCEL:-$aline}
++  rc_=($(arecs 2>>$log)); recw="; part line $aline s (limit ${TM_SHARD_ACTIONS_LIMIT:-7200} - pre ${TM_SHARD_ACTIONS_PRE:-300} - post ${TM_SHARD_ACTIONS_POST:-600} - headroom ${TM_SHARD_ACTIONS_HEADROOM:-1200})"
++  if [[ ${rc_[1]} == <-> && ${rc_[2]} == <-> ]] && (( rc_[2] > 0 )); then
++    s0=${TM_SHARD_ACTIONS_SETUP:-500}
++    (( rc_[1] > s0 )) && export TM_SHARD_ACTIONS_SETUP=${rc_[1]} TM_SHARD_ACTIONS_TARGET=$(( ${TM_SHARD_ACTIONS_TARGET:-1800} + rc_[1] - s0 ))
++    recw="$recw; records: setup worst ${rc_[1]} s of ${rc_[2]} runs"
++    [[ ${rc_[3]} == <-> && ${rc_[4]} == <-> ]] && (( rc_[4] > 0 )) && { rspm=${rc_[3]}; recw="$recw, per-mutant p90 $rspm slot-s of ${rc_[4]} readings"; }
++  else recw="$recw; records: none read"; fi; fi
+ act0=${TM_SHARD_ACTIONS_SPM-}; actn0=${TM_SHARD_ACTIONS_NMAX-}
+ fit; frc=$?
+ if (( frc )) && [ ! -f ${TM_FIT_ROOM_FLAG:-$M/TM_FIT_ROOM} ]; then say "$notsent"; exit 3; fi
+@@ -396,9 +537,8 @@
+   else say "$notsent; TM_FIT_ROOM: $frs; queue: no, $qw"; exit 3; fi; fi
+ (( n > 1 )) || plain "$tr mutants to run fit one part on $pool (~${sz[2]} s; <= ${sz[3]} per part; $rw$spmw)" fits
+ budget=()  # eff-tm-partial (header): an Actions part stops itself before the 120-min cancel and publishes what it judged
+-if [ $pool = actions ] && [ -f ${TM_PART_DEADLINE_FLAG:-$M/TM_PART_DEADLINE} ] && [[ " ${args[*]} " != *" --deadline"* && " ${args[*]} " != *" --budget"* ]] \
+-  && git -C $SRC show ${sha}:tools/trust_mutants.py 2>/dev/null | grep -q -e '"--budget"'; then
+-  budget=(--budget ${TM_PART_BUDGET:-6300}); spmw="$spmw; each part --budget ${TM_PART_BUDGET:-6300} s (a partial record before the cancel)"; fi
++# tm-shard-actions-120 (header (3)): also beside a caller's own --budget/--deadline (cloud-tm-job.sh takes the earliest)
++[ $pool = actions ] && abudget $sha && spmw="$spmw; each part --budget ${budget[2]} s (a partial record before the cancel)"
+ parent=$item-${sha[1,8]}; P=$J/$parent; [ -e $P ] && plain "job $parent exists already"
+ mkdir -p $P; dest=${dest:-$P/trust-mutants.json}
+ python3 -I - $P/job.json $parent $item $sha $n $pool "$dest" "$wt" "${CLOUD_WAITER:-0}" "${(pj:\n:)args}" <<'PY' || plain "cannot write the parent job"
