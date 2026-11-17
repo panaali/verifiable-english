@@ -40,6 +40,7 @@
   by one atomic `mv` after both suites passed on them.
 - Class fix for this incident: never edit a staged file in place; build in a scratch copy and move it in whole. The DRI note's
   checks (live name, live state file, dry install) are added anyway.
+- The decider was told (install read re-sent with this correction): `manage-agents/inbox/dri/20261117T220056Z-challenge-final-delivery-fix1-3928954.md`.
 
 ## 4. VE checks
 

@@ -1,7 +1,8 @@
 # challenge-final-delivery: a finished challenge final reaches its row's addressee within 30 min
 
 - Status: fix round 1 done; staged again as `manage-agents/tools-local/decider-ready-alert.py.new-challew` (sha256 `e7fa412c…`).
-  INSTALL WAITS FOR DECIDER READ (the 21:39Z install read was REJECTED: see `fix-round-1.md` section 3, its cause was my in-place edit).
+  INSTALL WAITS FOR DECIDER READ (install-read message: `manage-agents/inbox/dri/20261117T220056Z-challenge-final-delivery-fix1-3928954.md`;
+  the 21:39Z install read was REJECTED: see `fix-round-1.md` section 3, its cause was my in-place edit).
 - What changed in round 1: review F1 (every not-closed row with an in-flight stamp older than the final is named: review rows of
   the release gate, `dri-<x>` delegate rows, seeder and feed launches); review F2 (the suites test the live script after the install);
   the DRI note's state-file items (a state line in any shape never stops a pass; the script is tested under its live name).
