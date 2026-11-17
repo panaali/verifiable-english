@@ -1,0 +1,8 @@
+trust_mutants: 27 definitions, 30 mutants (30 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:96 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) list-drop-last: rs.flatMap NormStatement.clauses -> ((rs.flatMap NormStatement.clauses).dropLast) (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100, lean/VE/EnglishGrammar/Norm/Ow...)
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-drop-last: eventsRefusals -> (eventsRefusals.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/Presupposition/Couple.lean:55 VE.Presupposition.uniformB (S, trusted) list-drop-last: g.members -> (g.members.dropLast)
+SURVIVOR lean/VE/RightClauses/Run.lean:40 VE.RightClauses.Run.elaborateCase (G[V], trusted) list-drop-last: (← VE.Route.Gate.profilesOf environment) -> ((← VE.Route.Gate.profilesOf environment).dropLast)
+SURVIVOR lean/VE/Presupposition/Couple.lean:115 VE.Presupposition.SatUnder (S, trusted) list-drop-last: VE.Norms.elaborate (treeUnder D R ch) -> ((VE.Norms.elaborate (treeUnder D R ch)).dropLast) (the proofs it breaks: lean/VE/Presupposition/Couple/Fixtures.lean:129, lean/VE/Presupposition/Cou...)
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-first: ps -> (ps.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-first: VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) -> ((VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·)).take 1) (lake build did not finish in 1800 s (--build-timeout))
