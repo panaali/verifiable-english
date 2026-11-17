@@ -1,0 +1,833 @@
+--- tools-local/uc-audit.py (live, 239bd9d2)
++++ tools-local/uc-audit.py.new-pfd3 (66919fd5)
+@@ -1652,6 +1652,26 @@
+ # and the honest-premise export (_carry_cut) neither deletes nor stubs it, so only the D2D3 render, carriers and unit hash
+ # see the section. A header not found at a commit = the whole file (show and hash more, never less).
+ OMIT_CODE_SECTION = {'openai-preparedness': (('run.py', '# --- S, T, D: D2 and D3'),)}
++# fix round 1 F2 (oseq-pf-d2d3-unit review): the D2/D3 decision code inside a WHOLE OMIT_CODE file, (file, header) with
++# header None = the whole file. Its closure (omit_code_closure) is appended to the unit like a section's, so every case's
++# D2/D3 code is closure-checked, not only PF's section. RSP's d2()/d3() read only stage0.py (closure empty: the unit and its
++# hash do not move). FSF's s4() reads run.py's refute/fact_atoms/_model/holds and translation.py's facts/base_environment.
++OMIT_CODE_SEED = {'anthropic-rsp': (('stage0.py', '# --- D2:'), ('stage0.py', '# --- D3:')),
++                  'safety-framework': (('severity_and_dates.py', None),)}
++# A case whose seed closure is HELD OUT of the unit: computed (omit_code_open) but not shown, carried or hashed. Only FSF,
++# and only until the DRI rules: reviews/dri-decisions-20261116-oseq-render-unit.md item 3 says both "else the same fix for
++# FSF" and "RSP and FSF carry hashes must not move"; adding the closure moves FSF's D2D3 hash. Removing FSF from this table
++# is the whole FSF fix (reviews/omission-seq/pf-d2d3-unit/dri-oseq-pf-d2d3-unit.final.md, fix round 1).
++OMIT_CODE_HELD_OPEN = {'safety-framework': 'S4 decides through run.py and translation.py; FSF hash frozen, DRI to rule'}
++OMIT_CLOSURE_VERSION = 'scope-1'   # the reader requires it: a counter with the old name rule (any local hides) is refused
++_OMIT_EOL = re.compile(r'[^\r\n]*(?:\r\n|\r|\n)|[^\r\n]+\Z')
++_OMIT_EOL_B = re.compile(rb'[^\r\n]*(?:\r\n|\r|\n)|[^\r\n]+\Z')
++
++
++def _omit_lines(text):
++    """text (str or bytes) cut into lines (ends kept) where Python's parser counts lines: at \\r\\n, \\r and \\n only.
++    str.splitlines also cuts at \\x0c, \\x1c-\\x1e, \\x85, \\u2028 and \\u2029, which would shift every later ast line number."""
++    return [m.group(0) for m in (_OMIT_EOL_B if isinstance(text, bytes) else _OMIT_EOL).finditer(text)]
+ 
+ 
+ def omit_code_section(text, header):
+@@ -1659,7 +1679,7 @@
+     header line is absent."""
+     b = isinstance(text, bytes)
+     h, mark = (header.encode(), b'# --- ') if b else (header, '# --- ')
+-    lines = text.splitlines(keepends=True)
++    lines = _omit_lines(text)
+     i = next((k for k, l in enumerate(lines) if l.startswith(h)), None)
+     if i is None:
+         return text
+@@ -1667,87 +1687,234 @@
+     return (b'' if b else '').join(lines[i:j])
+ 
+ 
+-def _omit_reads(node):
+-    """What node reads from outside itself: [('name', n)] for a name read bare, [('base', n)] for a name read only as
+-    n.attr, [('attr', n, a)] for each n.attr read. Names bound inside a function of node (its arguments, assignment / for /
+-    with / import targets, nested defs) are not read from outside; comprehension targets are not subtracted. An
+-    over-approximation: a local that shares a top-level name pulls that name in (more, never less)."""
++def _omit_scopes(node):
++    """Python's scope rules over node (a parsed part or one top-level statement). Returns (root, loads, attrs, scopes):
++    root is the module scope; loads = [(Name, scope)] for every name read; attrs = {id(Name): [attr]} for a name read as
++    name.attr; scopes = every scope. A scope is a dict: kind (module / function / class / comp), parent, binds
++    {name: [None, or (import statement, alias) for an import]}, glob (declared global), nonloc (declared nonlocal)."""
+     import ast
+-    bound, comp, loads, bases, attrs = set(), set(), set(), set(), set()
+-    for f in ast.walk(node):
+-        if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+-            a = f.args
+-            bound |= {x.arg for x in a.posonlyargs + a.args + a.kwonlyargs + [v for v in (a.vararg, a.kwarg) if v]}
+-            for g in ast.walk(f):
+-                if isinstance(g, ast.comprehension):
+-                    comp |= {n.id for n in ast.walk(g.target) if isinstance(n, ast.Name)}
+-                elif isinstance(g, ast.Name) and isinstance(g.ctx, (ast.Store, ast.Del)):
+-                    bound.add(g.id)
+-                elif isinstance(g, (ast.Import, ast.ImportFrom)):
+-                    bound |= {x.asname or x.name.split('.')[0] for x in g.names}
+-                elif isinstance(g, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and g is not f:
+-                    bound.add(g.name)
+-        if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) and isinstance(f.value.ctx, ast.Load):
+-            bases.add(id(f.value))
+-            attrs.add((f.value.id, f.attr))
+-    for f in ast.walk(node):
+-        if isinstance(f, ast.Name) and isinstance(f.ctx, ast.Load):
+-            loads.add((f.id, id(f) in bases))
+-    local = bound - comp
+-    bare = {n for n, base in loads if not base and n not in local}
+-    based = {n for n, base in loads if base and n not in local} - bare
+-    return ([('name', n) for n in sorted(bare)] + [('base', n) for n in sorted(based)]
+-            + [('attr', n, a) for n, a in sorted(attrs) if n not in local])
++    root = {'kind': 'module', 'parent': None, 'binds': {}, 'glob': set(), 'nonloc': set()}
++    loads, attrs, scopes = [], {}, [root]
++
++    def new(kind, parent):
++        s = {'kind': kind, 'parent': parent, 'binds': {}, 'glob': set(), 'nonloc': set()}
++        scopes.append(s)
++        return s
++
++    def bind(sc, name, how=None):
++        sc['binds'].setdefault(name, []).append(how)
++
++    def args_of(a):
++        return a.posonlyargs + a.args + a.kwonlyargs + [v for v in (a.vararg, a.kwarg) if v]
++
++    def outer_args(a, sc):   # defaults and annotations are evaluated in the defining scope
++        for d in a.defaults + [x for x in a.kw_defaults if x is not None]:
++            visit(d, sc)
++        for x in args_of(a):
++            if x.annotation is not None:
++                visit(x.annotation, sc)
++
++    def visit(n, sc):
++        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
++            bind(sc, n.name)
++            for d in n.decorator_list:
++                visit(d, sc)
++            outer_args(n.args, sc)
++            for x in [n.returns] + list(getattr(n, 'type_params', [])):
++                if x is not None:
++                    visit(x, sc)
++            fs = new('function', sc)
++            for x in args_of(n.args):
++                bind(fs, x.arg)
++            for s in n.body:
++                visit(s, fs)
++        elif isinstance(n, ast.Lambda):
++            outer_args(n.args, sc)
++            fs = new('function', sc)
++            for x in args_of(n.args):
++                bind(fs, x.arg)
++            visit(n.body, fs)
++        elif isinstance(n, ast.ClassDef):
++            bind(sc, n.name)
++            for x in n.decorator_list + n.bases + n.keywords + list(getattr(n, 'type_params', [])):
++                visit(x, sc)
++            cs = new('class', sc)
++            for s in n.body:
++                visit(s, cs)
++        elif isinstance(n, (ast.ListComp, ast.SetComp, ast.GeneratorExp, ast.DictComp)):
++            visit(n.generators[0].iter, sc)   # the first iterable is evaluated outside the comprehension
++            cs = new('comp', sc)
++            for i, g in enumerate(n.generators):
++                visit(g.target, cs)
++                if i:
++                    visit(g.iter, cs)
++                for c in g.ifs:
++                    visit(c, cs)
++            for e in ((n.key, n.value) if isinstance(n, ast.DictComp) else (n.elt,)):
++                visit(e, cs)
++        elif isinstance(n, ast.Global):
++            sc['glob'] |= set(n.names)
++        elif isinstance(n, ast.Nonlocal):
++            sc['nonloc'] |= set(n.names)
++        elif isinstance(n, (ast.Import, ast.ImportFrom)):
++            for al in n.names:
++                if al.name != '*':
++                    bind(sc, al.asname or al.name.split('.')[0], (n, al))
++        elif isinstance(n, ast.Name):
++            if isinstance(n.ctx, ast.Load):
++                loads.append((n, sc))
++            else:
++                bind(sc, n.id)
++        elif isinstance(n, ast.NamedExpr):   # := binds in the nearest enclosing non-comprehension scope
++            t = sc
++            while t['kind'] == 'comp':
++                t = t['parent']
++            bind(t, n.target.id)
++            visit(n.value, sc)
++        else:
++            if isinstance(n, ast.ExceptHandler) and n.name:
++                bind(sc, n.name)
++            elif isinstance(n, (ast.MatchAs, ast.MatchStar)) and n.name:
++                bind(sc, n.name)
++            elif isinstance(n, ast.MatchMapping) and n.rest:
++                bind(sc, n.rest)
++            elif isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and isinstance(n.value.ctx, ast.Load):
++                attrs.setdefault(id(n.value), []).append(n.attr)
++            for c in ast.iter_child_nodes(n):
++                visit(c, sc)
++
++    if isinstance(node, ast.Module):
++        for s in node.body:
++            visit(s, root)
++    else:
++        visit(node, root)
++    return root, loads, attrs, scopes
++
++
++def _omit_resolve(name, sc):
++    """Where a read of name in scope sc goes, by Python's rules: (bindings, module_level). bindings = the enclosing
++    function's (or the reading class body's) binding list of name; module_level = the read reaches the module's globals
++    (a declared global, nothing binds it on the way out, or a class body, which falls back to the globals)."""
++    s, first = sc, True
++    while s['kind'] != 'module':
++        if name in s['glob']:
++            return [], True
++        if name not in s['nonloc'] and name in s['binds'] and (s['kind'] != 'class' or first):
++            return s['binds'][name], s['kind'] == 'class'
++        s, first = s['parent'], False
++    return [], True
++
++
++def _omit_reads(node):
++    """What node reads from outside itself, by Python's scope rules (_omit_scopes): [('name', n)] for a module-level name
++    read bare, [('base', n)] for one read only as n.attr, [('attr', n, a)] for each n.attr of a module-level name, and
++    [('import', statement, alias, 'name')] / [('import', statement, alias, 'attr', a)] for a name that an import INSIDE a
++    function (or class body) of node binds and node reads bare / as name.attr. A name declared global anywhere in node is
++    read (its module binding is shown). Arguments, locals and comprehension targets are not reads, each only in its own
++    scope: a local in one function hides nothing in another (fix round 1 F1)."""
++    root, loads, attrs, scopes = _omit_scopes(node)
++    bare, based, at, imp = set(), set(), set(), set()
++    for n, sc in loads:
++        binds, top = _omit_resolve(n.id, sc)
++        al = attrs.get(id(n), [])
++        if top:
++            (based if al else bare).add(n.id)
++            at |= {(n.id, a) for a in al}
++        for how in binds:
++            if how is not None:
++                st, alias = how
++                k = (st.lineno, st.col_offset, alias.name, alias.asname or '')
++                imp |= {(k, 'attr', a) for a in al} if al else {(k, 'name', '')}
++    bare |= {g for s in scopes for g in s['glob']}
++    keyed = {}
++    for s in scopes:
++        for hows in s['binds'].values():
++            for how in hows:
++                if how is not None:
++                    keyed[(how[0].lineno, how[0].col_offset, how[1].name, how[1].asname or '')] = how
++    return ([('name', n) for n in sorted(bare)] + [('base', n) for n in sorted(based - bare)]
++            + [('attr', n, a) for n, a in sorted(at)]
++            + [('import',) + keyed[k] + ((w,) if w == 'name' else (w, a)) for k, w, a in sorted(imp)])
+ 
+ 
+ def _omit_binds(st):
+-    """The top-level names statement st binds."""
++    """The module-level names top-level statement st binds or changes: every module-scope binding (also inside a top-level
++    if / try / with / for, imports included) and X for a top-level X[k] = v, X.a = v, X += v, del X[k] or X.m(...)
++    statement (the seat sees what a name holds after the module ran). A function that rebinds X under 'global X' when
++    called is not a binding of X: it is shown when the D2/D3 code calls it (e.g. PF's mutation harness rebinds MUTANT; an
++    honest run holds the module-level value)."""
+     import ast
++    root = _omit_scopes(st)[0]
++    out = set(root['binds'])
+     if isinstance(st, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+-        return {st.name}
+-    if isinstance(st, (ast.Import, ast.ImportFrom)):
+-        return {x.asname or x.name.split('.')[0] for x in st.names if x.name != '*'}
+-    return {n.id for n in ast.walk(st) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)} | \
+-        {g.name for g in ast.walk(st) if isinstance(g, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))}
++        return out
++    tgts = []
++    if isinstance(st, (ast.Assign, ast.AugAssign, ast.AnnAssign, ast.Delete)):
++        tgts = st.targets if isinstance(st, (ast.Assign, ast.Delete)) else [st.target]
++    elif isinstance(st, ast.Expr) and isinstance(st.value, ast.Call) and isinstance(st.value.func, ast.Attribute):
++        tgts = [st.value.func.value]
++    for t in tgts:
++        for x in ([t] + list(t.elts) if isinstance(t, (ast.Tuple, ast.List)) else [t]):
++            while isinstance(x, (ast.Subscript, ast.Attribute)):
++                x = x.value
++            if isinstance(x, ast.Name):
++                out.add(x.id)
++    return out
+ 
+ 
+ def omit_code_closure(case, fname, part, show):
+     """The definitions part (a piece of fname: text or bytes, as show gives) reads but does not hold, as [(label, text)],
+-    followed transitively: every top-level statement of fname that binds a name part reads (def, class, assignment,
+-    import), what that statement reads in turn, and through 'import m [as x]' / 'from m import a' of a sibling module m
+-    (m.py in the case directory, not already whole in OMIT_CODE) the statements of m.py that bind the names or attributes
+-    read. A sibling module read bare (not as m.attr), a file with a star import or a file that does not parse is given
+-    whole. One part per file, its statements in source order (row oseq-pf-d2d3-unit closure,
++    followed transitively by Python's scope rules (_omit_reads): every top-level statement of fname that binds a name part
++    reads (def, class, assignment, import, a later X[k] = v), what that statement reads in turn, and through
++    'import m [as x]' / 'from m import a' of a sibling module m (m.py in the case directory), at module level or inside a
++    function, the statements of m.py that bind the names or attributes read. A file the unit already shows whole
++    (OMIT_CODE) is not repeated, but what its read definitions read is followed. A sibling module read bare (not as m.attr),
++    a file with a star import or a file that does not parse is given whole, and what a whole file reads is followed (the
++    star-imported modules whole). One part per file, its statements in source order (row oseq-pf-d2d3-unit closure,
+     reviews/dri-decisions-20261116-adv1054.md item 2: the seat sees what every name of the D2/D3 code holds, e.g. PF's
+     date_answer -> choices() -> SETS -> pf_translation.READING_SETS, and constant())."""
+     import ast, builtins
+     b = isinstance(part, bytes)
+     dec = (lambda x: x.decode('utf-8')) if b else (lambda x: x)
+-    whole_files, files = set(OMIT_CODE.get(case, ())), {}
++    unit, files = set(OMIT_CODE.get(case, ())), {}
+ 
+-    def load(fn):   # fn -> None (missing) | (text, None) (does not parse / star import) | (lines, {name: [stmt]})
++    def load(fn):   # None (missing) | {lines, defs (None: does not parse), body, star [(statement, alias)]}
+         if fn not in files:
+             t, tree = show(fn), None
++            if t is None:
++                files[fn] = None
++                return None
+             try:
+-                tree = ast.parse(dec(t)) if t is not None else None
++                tree = ast.parse(dec(t))
+             except (SyntaxError, ValueError, UnicodeDecodeError):
+                 pass
+-            if tree is None or any(isinstance(s, ast.ImportFrom) and any(x.name == '*' for x in s.names) for s in tree.body):
+-                files[fn] = None if t is None else (t, None)
+-            else:
+-                defs = {}
+-                for st in tree.body:
+-                    for n in _omit_binds(st):
+-                        defs.setdefault(n, []).append(st)
+-                files[fn] = (dec(t).splitlines(keepends=True), defs)
++            defs = None if tree is None else {}
++            for st in (tree.body if tree else ()):
++                for n in _omit_binds(st):
++                    defs.setdefault(n, []).append(st)
++            star = [(st, al) for st in (tree.body if tree else ()) if isinstance(st, ast.ImportFrom)
++                    for al in st.names if al.name == '*']
++            files[fn] = {'lines': _omit_lines(dec(t)) if tree else None, 'defs': defs, 'body': tree.body if tree else [],
++                         'star': star}
+         return files[fn]
+ 
+     def sibling(st, alias):
+         m = alias.name if isinstance(st, ast.Import) else st.module
+-        if not m or '.' in m or getattr(st, 'level', 0) or f'{m}.py' in whole_files or load(f'{m}.py') is None:
++        if not m or '.' in m or getattr(st, 'level', 0) or load(f'{m}.py') is None:
+             return None
+         return f'{m}.py'
+ 
++    def follow(st, al, how):   # an import binding is read: how = ('name',) bare, ('attr', a), ('base',) as a base only
++        m = sibling(st, al)
++        if not m:
++            return
++        if isinstance(st, ast.ImportFrom):
++            work.append((m, ('whole',) if al.name == '*' else ('name', al.name)))
++        elif how[0] == 'attr':
++            work.append((m, ('name', how[1])))
++        elif how[0] == 'name':   # the module object itself is read: all of it
++            work.append((m, ('whole',)))
++
+     try:
+         own = ast.parse(dec(part))
+     except (SyntaxError, ValueError, UnicodeDecodeError):
+@@ -1756,37 +1923,41 @@
+     for st in own.body:
+         for n in _omit_binds(st):
+             held.setdefault(n, []).append(st)
+-    picked, whole, order, seen = {}, [], [], set()
++    picked, whole, order, seen, traversed = {}, [], [], set(), set()
+     work = [(fname, w) for w in _omit_reads(own)]
+     while work:
+         fn, want = work.pop(0)
+         if (fn, want) in seen:
+             continue
+         seen.add((fn, want))
++        if want[0] == 'import':
++            follow(want[1], want[2], want[3:])
++            continue
+         f = load(fn)
+-        if f is None or fn in whole:
++        if f is None:
+             continue
+-        if f[1] is None or want[0] == 'whole':
+-            whole.append(fn)
++        if f['defs'] is None or f['star'] or want[0] == 'whole':
++            if fn not in unit and fn not in whole:
++                whole.append(fn)
++            if fn not in traversed:   # every statement is shown: follow what each reads
++                traversed.add(fn)
++                for st in f['body']:
++                    work += [(fn, w) for w in _omit_reads(st)]
++                for st, al in f['star']:
++                    follow(st, al, ('name',))
+             continue
+         name = want[1]
+         inside = fn == fname and name in held   # bound in the part itself: shown already, but its imports are followed
+-        if not inside and name not in f[1] and hasattr(builtins, name):
++        shown = fn in unit or fn in whole        # shown whole already: nothing picked, but what it reads is followed
++        if not inside and name not in f['defs'] and hasattr(builtins, name):
+             continue
+-        for st in (held if inside else f[1]).get(name, ()):
+-            if not inside:
++        how = {'name': ('name',), 'base': ('base',)}.get(want[0]) or ('attr', want[2])
++        for st in (held if inside else f['defs']).get(name, ()):
++            if not inside and not shown:
+                 picked.setdefault(fn, {})[st.lineno] = st
+-            if isinstance(st, (ast.Import, ast.ImportFrom)):
+-                for al in st.names:
+-                    if (al.asname or al.name.split('.')[0]) != name or not (m := sibling(st, al)):
+-                        continue
+-                    if isinstance(st, ast.ImportFrom):
+-                        work.append((m, ('name', al.name)))
+-                    elif want[0] == 'attr':
+-                        work.append((m, ('name', want[2])))
+-                    elif want[0] == 'name':   # the module object itself is read: all of it
+-                        work.append((m, ('whole',)))
+-            elif not inside:
++            for ist, al in [h for h in _omit_scopes(st)[0]['binds'].get(name, ()) if h]:   # also inside a top-level if/try
++                follow(ist, al, how)
++            if not inside and not isinstance(st, (ast.Import, ast.ImportFrom)):
+                 work += [(fn, w) for w in _omit_reads(st)]
+         if fn not in order and fn in picked:
+             order.append(fn)
+@@ -1795,7 +1966,7 @@
+         if fn in whole:
+             out.append((f'{fn} (whole file: read by the D2D3 code)', show(fn)))
+         elif picked.get(fn):
+-            lines, segs = files[fn][0], []
++            lines, segs = files[fn]['lines'], []
+             for ln in sorted(picked[fn]):
+                 st = picked[fn][ln]
+                 s = min([st.lineno] + [d.lineno for d in getattr(st, 'decorator_list', [])])
+@@ -1805,9 +1976,32 @@
+     return out
+ 
+ 
++def _omit_seed_parts(case, show):
++    """[(file, part)], one per file, for the OMIT_CODE_SEED entries of case: the D2/D3 code inside a whole OMIT_CODE file,
++    the sections of one file joined by a newline (the whole file when header is None or not found: more, never less)."""
++    out = {}
++    for n, header in OMIT_CODE_SEED.get(case, ()):
++        t = show(n)
++        if t is not None:
++            out.setdefault(n, []).append(t if header is None else omit_code_section(t, header))
++    return [(n, (b'\n' if isinstance(ps[0], bytes) else '\n').join(ps)) for n, ps in out.items()]
++
++
++def omit_code_open(case, show):
++    """The closure the D2/D3 code of a HELD-OPEN case (OMIT_CODE_HELD_OPEN) reads outside its unit, as [(label, text)]:
++    what omit_code_parts would add once the DRI rules. [] for a case not held open."""
++    if case not in OMIT_CODE_HELD_OPEN:
++        return []
++    out = []
++    for n, part in _omit_seed_parts(case, show):
++        out += [x for x in omit_code_closure(case, n, part, show) if x not in out]
++    return out
++
++
+ def omit_code_parts(case, show):
+     """The D2D3 unit of case as [(label, text)]: every OMIT_CODE file whole, then every OMIT_CODE_SECTION section followed
+-    by its closure (omit_code_closure: the definitions the section reads, from its own file and sibling modules).
++    by its closure (omit_code_closure: the definitions the section reads, from its own file and sibling modules), then the
++    closure of each OMIT_CODE_SEED entry (the D2/D3 code inside a whole file) unless the case is OMIT_CODE_HELD_OPEN.
+     show(file name) -> its text or bytes at the commit, or None (a missing file gives text None). The reader renders these
+     parts and the counter carries and hashes the same ones (row oseq-pf-d2d3-unit)."""
+     out = [(n, show(n)) for n in OMIT_CODE.get(case, ())]
+@@ -1817,7 +2011,10 @@
+         part = t if whole else omit_code_section(t, header)
+         out.append((f'{n} (whole file: section {header!r} not found)' if whole else f'{n} section {header!r}', part))
+         if part is not None:
+-            out += omit_code_closure(case, n, part, show)
++            out += [x for x in omit_code_closure(case, n, part, show) if x not in out]
++    if case not in OMIT_CODE_HELD_OPEN:
++        for n, part in _omit_seed_parts(case, show):
++            out += [x for x in omit_code_closure(case, n, part, show) if x not in out]
+     return out
+ OMIT_FORCE = {'require', 'requires', 'required', 'must', 'shall', 'should', 'will', 'is', 'to', 'guidelines', 'guideline',
+               'recommendations', 'recommendation'}   # force-word precedent s4 condition 1 (duty verb / auxiliary / binding title)
+--- tools-local/omission-seq-read.py (live, 92da62b5)
++++ tools-local/omission-seq-read.py.new-pfd3 (b287eb96)
+@@ -168,6 +168,9 @@
+                 raise SystemExit('uc-audit.py has no omit_code_parts (row oseq-pf-d2d3-unit): install the counter with this reader')
+             if not hasattr(self.U, 'omit_code_closure'):   # fail closed: a counter whose section omits what it reads (adv1054 item 2)
+                 raise SystemExit('uc-audit.py has no omit_code_closure (row oseq-pf-d2d3-unit closure): install the counter with this reader')
++            if getattr(self.U, 'OMIT_CLOSURE_VERSION', None) != 'scope-1':   # fail closed: the older closure hid reads (review F1)
++                raise SystemExit('uc-audit.py closure is not OMIT_CLOSURE_VERSION scope-1 (row oseq-pf-d2d3-unit fix round 1): '
++                                 'install the counter with this reader')
+             parts = self.U.omit_code_parts(self.case, lambda n: self.show(n, missing_ok=True))
+             return '\n\n'.join(f'{label} (the D2D3 unit):\n' + (t or '') for label, t in parts)
+         mm = re.search(rf'^## {re.escape(unit)} \|.*?(?=^## |\Z)', self.rules, re.S | re.M)
+--- tools-local/test_oseq_pf_d2d3.py (live, d9dc9e17)
++++ tools-local/test_oseq_pf_d2d3.py.new-pfd3 (cdc5b189)
+@@ -22,10 +22,21 @@
+                 the installed counter gave before this change                                      [guard]
+   SIZE          every PF answer prompt that uses D2D3, with EVERY unit it uses as an exposure (an upper bound), and every
+                 D2D3 exposure prompt, stays under the runner's ARG_LIMIT                           [guard]
+-  FSF-ROUTE     FSF run.py @ da0822ae80 holds no D2/D3 decision path: no d2/d3/date/severity/harm/risk/quantity def, families
+-                S and D (plan 6.7, 6.8) skipped in compare, and severity_and_dates used only via run/compare/RISK_ROUTE [guard]
++  FSF-ROUTE     (fix round 1 F2) FSF's D2/D3 code (severity_and_dates.py whole: s4) reads run.py's refute / fact_atoms /
++                _model / holds and translation.py's facts / base_environment outside the unit: omit_code_open(FSF) is
++                exactly that closure (held out of the unit until the DRI rules: FSF hash frozen); with the hold lifted the
++                unit holds all six (the review's PROBE F2), the hash is the pinned fixed value and every FSF D2D3 prompt
++                stays under ARG_LIMIT                                                               [FAILS on 12:30Z code]
++  SWEEP         (F2 class) every case's D2/D3 code (OMIT_CODE_SECTION + OMIT_CODE_SEED) is closure-checked: its closure is
++                inside the unit, or the case is held open (only FSF); RSP's d2/d3 closure is empty    [FAILS on 12:30Z code]
++  SCOPE         (fix round 1 F1) omit_code_closure follows Python's scope rules: an import inside a function is followed, a
++                local of one function hides nothing in another, 'global X' reads X, a whole unit file's read definitions
++                are followed, a top-level X[k] = v / an import in a top-level if binds X, and lines are cut as the parser
++                counts them (\\x0c, \\x85, \\u2028 do not cut)                                       [FAILS on 12:30Z code]
++  ORACLE        (F1 class, differential) _omit_reads equals CPython's own symtable on every top-level statement of the
++                three cases' D2D3 files and their siblings, and on synthetic scope cases          [FAILS on 12:30Z code]
+ """
+-import ast, builtins, importlib.machinery, importlib.util, re, subprocess, sys, unittest
++import ast, builtins, importlib.machinery, importlib.util, re, subprocess, symtable, sys, unittest
+ from pathlib import Path
+ 
+ M = Path('/home/seyran/code/manage-agents')
+@@ -42,6 +53,21 @@
+ FROZEN_D2D3 = {RSP: '324e55cb7c9f2e54ed4b44699979492856118680b8e48d63cfa0f4101b5e9a5b',
+                FSF: 'ae4cbcc89688d7fa28b8b98b5cceaeea911e75bd966470ad23d2af84f9cb08d5'}
+ FROZEN_VID = {RSP: 'vid:c72c926f6c2d49bd', FSF: 'vid:be56349659bbb8c2', PF: 'vid:f7c7f364c7fafdb4'}
++FSF_S4 = ('def refute(', 'def _model(', 'def holds(', 'def fact_atoms(', 'def facts(', 'def base_environment(')
++FSF_FIXED_D2D3 = '33b87f171d01abd2556aeff805a2457c3230a3d4a1e42e858960bd7a75bb0f54'   # measured, staged counter
++SCOPE_CASES = (
++    'import json\nA = 1\nB = [A for A in range(3)]\nC = {k: v for k, v in json.loads("{}").items()}\n'
++    'G = (g for g in B)\nclass K(dict):\n    A = 2\n    B = A + 1\n    D = [A for _ in ()]\n'
++    '    def m(self, A=A):\n        return A, B, self\n'
++    'def f(x, *a, y=A, **kw):\n    import os\n    import os.path as P\n    from sys import argv as V\n'
++    '    global W\n    W = os.sep\n    def g():\n        nonlocal x\n        x = 1\n        return P.join, V, Z\n'
++    '    try:\n        pass\n    except Exception as E:\n        return E\n'
++    '    match x:\n        case {"k": q, **rest}:\n            return q, rest\n        case [s, *more]:\n'
++    '            return s, more\n    if (n := len(a)):\n        return [m for m in a if (t := m)], n, t\n'
++    '    lam = lambda u, h=H: u + h + J\n    del kw\n    return g, lam\n'
++    'async def af():\n    async with A as w:\n        async for i in w:\n            await i\n'
++    'X: int = 0\nX += A\nX[0] = f\n'
++    'class L:\n    Z9 = 1\n    Y9 = Z9\n')   # a class-local read in the class body also reads the globals (fallback)
+ NAMES = ('def date_answer(', 'def severity_answer(', 'def harm_environment(', 'def ratio_answer(', 'def choices(',
+          'def constant(', 'READING_SETS = {')
+ 
+@@ -71,11 +97,91 @@
+     return out
+ 
+ 
++def parser_lines(t):
++    """The test's own line cut, as CPython's tokenizer counts lines: only \\r\\n, \\r and \\n end a line."""
++    out, i = [], 0
++    while i < len(t):
++        j = i
++        while j < len(t) and t[j] not in '\r\n':
++            j += 1
++        j += 2 if t[j:j + 2] == '\r\n' else (1 if j < len(t) else 0)
++        out.append(t[i:j])
++        i = j
++    return out
++
++
++class NoInline(ast.NodeTransformer):
++    """A list / set / dict comprehension as the generator expression with the same scopes. CPython 3.12 inlines the
++    former into the enclosing symbol table (PEP 709), where symtable lists their targets as module-level names and does
++    not mark an enclosing function's local as referenced from inside them; a genexp keeps its own table."""
++    def visit_ListComp(self, n):
++        self.generic_visit(n)
++        return ast.GeneratorExp(n.elt, n.generators)
++
++    visit_SetComp = visit_ListComp
++
++    def visit_DictComp(self, n):
++        self.generic_visit(n)
++        return ast.GeneratorExp(ast.Tuple([n.key, n.value], ast.Load()), n.generators)
++
++
++def oracle_reads(src):
++    """CPython's own reading (symtable), independent of the counter: (module-level names read, names an import inside a
++    function binds and some scope reads). Module level: every referenced name; a function: referenced globals and declared
++    globals; a class body: referenced globals and its own referenced locals (the globals are the fallback)."""
++    glob, imp = set(), set()
++    src = ast.unparse(ast.fix_missing_locations(NoInline().visit(ast.parse(src))))
++
++    def walk(t, chain):
++        kind = t.get_type()
++        for s in t.get_symbols():
++            n = s.get_name()
++            if n.startswith('.'):
++                continue
++            if kind == 'module':
++                if s.is_referenced():
++                    glob.add(n)
++                continue
++            if s.is_declared_global() or (s.is_global() and s.is_referenced()):
++                glob.add(n)
++            if kind == 'class' and s.is_local() and s.is_referenced():
++                glob.add(n)
++            if s.is_imported() and s.is_local() and s.is_referenced():
++                imp.add(n)
++            if s.is_free() and s.is_referenced():
++                for up in reversed(chain):
++                    if up.get_type() == 'function':
++                        try:
++                            u = up.lookup(n)
++                        except KeyError:
++                            continue
++                        if u.is_local():
++                            if u.is_imported():
++                                imp.add(n)
++                            break
++        for c in t.get_children():
++            walk(c, chain + [t])
++    walk(symtable.symtable(src, 'x', 'exec'), [])
++    return glob, imp
++
++
++def counter_reads(U, src):
++    """The counter's _omit_reads over every top-level statement of src, in the oracle's terms."""
++    glob, imp = set(), set()
++    for st in ast.parse(src).body:
++        for r in U._omit_reads(st):
++            if r[0] in ('name', 'base'):
++                glob.add(r[1])
++            elif r[0] == 'import':
++                imp.add(r[2].asname or r[2].name.split('.')[0])
++    return glob, imp
++
++
+ def statements(b, firsts):
+     """The test's own cut of the closure: each top-level statement whose first line is in firsts, in source order, joined
+     by a blank line (expected for PF @ f51d683150, read by hand from run.py and pf_translation.py)."""
+     t = b.decode()
+-    lines = t.splitlines(keepends=True)
++    lines = parser_lines(t)
+     segs = []
+     for st in ast.parse(t).body:
+         s = min([st.lineno] + [d.lineno for d in getattr(st, 'decorator_list', [])])
+@@ -100,7 +206,7 @@
+ 
+ def section(b):
+     """The test's own cut (independent of the counter): HEADER's line to the next column-0 '# --- ' line."""
+-    lines = b.splitlines(keepends=True)
++    lines = [x.encode() for x in parser_lines(b.decode())]
+     i = next(k for k, l in enumerate(lines) if l.startswith(HEADER.encode()))
+     j = next((k for k in range(i + 1, len(lines)) if lines[k].startswith(b'# --- ')), len(lines))
+     return b''.join(lines[i:j])
+@@ -157,23 +263,28 @@
+                                   'pf_translation.py: the definitions the D2D3 code reads'])
+         self.assertEqual(parts[2][1], closure_run())
+         self.assertEqual(parts[3][1], closure_t())
+-        # independent closure check: the run.py code shown parses, and every name it reads is bound inside it
+-        code = ast.parse((parts[1][1] + b'\n' + parts[2][1]).decode())
+-        bound = {n.id for n in ast.walk(code) if isinstance(n, ast.Name) and not isinstance(n.ctx, ast.Load)}
+-        bound |= {a.arg for n in ast.walk(code) if isinstance(n, ast.arguments)
+-                  for a in n.posonlyargs + n.args + n.kwonlyargs + [v for v in (n.vararg, n.kwarg) if v]}
+-        bound |= {x.asname or x.name.split('.')[0] for n in ast.walk(code) if isinstance(n, (ast.Import, ast.ImportFrom))
+-                  for x in n.names}
+-        bound |= {n.name for n in ast.walk(code) if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+-        reads = {n.id for n in ast.walk(code) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+-        self.assertEqual(sorted(reads - bound - set(dir(builtins))), [], 'PF D2D3 code reads names the unit does not bind')
++        # independent closure check (CPython's symtable, not the counter's rule; fix round 1 F1): every module-level name the
++        # shown run.py code reads, in any scope, is bound at its top level or is a builtin
++        src = (parts[1][1] + b'\n' + parts[2][1]).decode()
++        code = ast.parse(src)
++        glob, imp = oracle_reads(src)
++        self.assertEqual(sorted(glob - top_names(src.encode()) - set(dir(builtins))), [],
++                         'PF D2D3 code reads names the unit does not bind')
++        # every import the shown code makes, at module level or inside a function, is the stdlib, ve, the unit's
++        # stage0.py, or pf_translation (shown as its part); each attr read of stage0 / T is defined in the unit
++        mods = {x.name.split('.')[0] for n in ast.walk(code) if isinstance(n, ast.Import) for x in n.names}
++        mods |= {n.module.split('.')[0] for n in ast.walk(code) if isinstance(n, ast.ImportFrom) and n.module}
++        siblings = {m for m in mods if git_b(f'usecases/{PF}/{m}.py', C[PF], missing_ok=True) is not None}
++        self.assertEqual(siblings, {'stage0', 'pf_translation'})
++        self.assertIn('stage0', imp)   # 'import stage0' inside certified / severity_answer (the other imports: ve.*)
+         tops = {'T': top_names(parts[3][1]), 'stage0': top_names(parts[0][1])}
+         for n in ast.walk(code):
+             if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id in tops:
+                 self.assertIn(n.attr, tops[n.value.id], f'{n.value.id}.{n.attr} is not defined in the unit')
+-        # the stage0.py functions the section calls (and what they call in stage0.py) read no sibling module: stage0.py whole
+-        # closes them (the closure is cut at the section's own reads; stage0.py's document builders stay out of the unit)
+-        s0 = ast.parse(parts[0][1].decode())
++        # the stage0.py functions the section calls, and what they call in stage0.py, read no sibling module, by symtable:
++        # neither a module-level import of stage0.py nor an import inside the function (stage0.py whole closes them)
++        s0src = parts[0][1].decode()
++        s0 = ast.parse(s0src)
+         s0defs = {st.name: st for st in s0.body if isinstance(st, ast.FunctionDef)}
+         s0imports = {x.asname or x.name.split('.')[0] for st in s0.body if isinstance(st, (ast.Import, ast.ImportFrom))
+                      for x in st.names}
+@@ -186,9 +297,14 @@
+             if fn in done:
+                 continue
+             done.add(fn)
+-            reads = {n.id for n in ast.walk(s0defs[fn]) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+-            self.assertEqual(sorted(reads & s0imports), [], f'stage0.{fn} reads a module-level import (outside the unit?)')
+-            todo += sorted((reads & set(s0defs)) - done)
++            fsrc = ast.get_source_segment(s0src, s0defs[fn])
++            g, i = oracle_reads(fsrc)
++            self.assertEqual(sorted(g & s0imports), [], f'stage0.{fn} reads a module-level import (outside the unit?)')
++            inner = {x.name.split('.')[0] for n in ast.walk(s0defs[fn]) if isinstance(n, ast.Import) for x in n.names}
++            inner |= {n.module.split('.')[0] for n in ast.walk(s0defs[fn]) if isinstance(n, ast.ImportFrom) and n.module}
++            self.assertEqual(sorted(m for m in inner if git_b(f'usecases/{PF}/{m}.py', C[PF], missing_ok=True)), [],
++                             f'stage0.{fn} imports a sibling module inside the function')
++            todo += sorted((g & set(s0defs)) - done)
+         blk = R.Doc(U, PF, C[PF]).block('D2D3')
+         for t in ('READING_SETS', '"RS10": ("publication", "unstated")', '"RS14": ("appointment", "unstated")',
+                   'def choices(', 'def constant(', 'SETS = T.READING_SETS', 'MUTANT = None'):
+@@ -207,6 +323,11 @@
+         with self.assertRaises(SystemExit) as e:
+             R.Doc(old, PF, C[PF]).block('D2D3')
+         self.assertIn('omit_code_closure', str(e.exception))
++        old.omit_code_closure = U.omit_code_closure
++        del old.OMIT_CLOSURE_VERSION   # a counter with the pre-scope closure (12:30Z install): refused (fix round 1 F1)
++        with self.assertRaises(SystemExit) as e:
++            R.Doc(old, PF, C[PF]).block('D2D3')
++        self.assertIn('OMIT_CLOSURE_VERSION', str(e.exception))
+ 
+     def test_closure_rules(self):
+         files = {
+@@ -234,8 +355,9 @@
+                                        'm.py (whole file: read by the D2D3 code)'])
+         self.assertEqual(whole['n.py: the definitions the D2D3 code reads'], 'p = q\n\nq = 2\n')
+         star = dict(files, **{'h.py': 'from n import *\n' + files['h.py']})
+-        self.assertEqual(U.omit_code_closure('nocase', 'h.py', sec, star.get),
+-                         [('h.py (whole file: read by the D2D3 code)', star['h.py'])])
++        self.assertEqual(U.omit_code_closure('nocase', 'h.py', sec, star.get),   # the star-imported module whole too
++                         [('h.py (whole file: read by the D2D3 code)', star['h.py']),
++                          ('n.py (whole file: read by the D2D3 code)', star['n.py'])])
+         bad = dict(files, **{'n.py': 'p = (\n'})
+         self.assertIn(('n.py (whole file: read by the D2D3 code)', 'p = (\n'),
+                       U.omit_code_closure('nocase', 'h.py', sec, bad.get))
+@@ -273,13 +395,137 @@
+             self.assertLess(n, R.ARG_LIMIT, a)
+ 
+     def test_fsf_route(self):
+-        t = git_b(f'usecases/{FSF}/run.py', C[FSF]).decode()
+-        defs = re.findall(r'^def (\w+)', t, re.M)
+-        bad = [n for n in defs if re.search(r'd2|d3|date|severity|harm|risk|quantit', n) and n != 'severity_and_dates_available']
+-        self.assertEqual(bad, [], 'FSF run.py defines a D2/D3 function')
+-        self.assertIn('if item["plan"] in ("6.7", "6.8"):\n            continue  # families S and D: severity_and_dates.compare', t)
+-        self.assertEqual(set(re.findall(r'severity_and_dates\.(\w+)', t)), {'RISK_ROUTE', 'run', 'compare'})
+-
++        """F2: FSF's s4() decides S4 through run.py and translation.py, outside the unit (severity_and_dates.py)."""
++        show = lambda n: git_b(f'usecases/{FSF}/{n}', C[FSF], missing_ok=True)
++        self.assertEqual(dict(U.OMIT_CODE_HELD_OPEN).keys(), {FSF})
++        opn = U.omit_code_open(FSF, show)
++        self.assertEqual([lab for lab, _t in opn], [f'{f}: the definitions the D2D3 code reads'
++                                                    for f in ('run.py', 'translation.py', 'vocabulary.py')])
++        text = b''.join(t for _l, t in opn)
++        for d in FSF_S4:
++            self.assertIn(d.encode(), text, f'FSF open closure lacks {d!r}')
++        # held open: the frozen unit is unchanged (test_frozen pins its hash) and shows none of them
++        held = b''.join(t or b'' for _l, t in U.omit_code_parts(FSF, show))
++        self.assertEqual([d for d in FSF_S4 if d.encode() in held], [])
++        self.assertIn(b'R.refute(premises, [], goal)', held)   # s4 itself is in the unit; what it calls is not
++        self.assertEqual(U.omit_code_open(RSP, show), [])   # not held open: nothing to report
++
++    def test_fsf_fixed(self):
++        """The DRI's option (lift the FSF hold): the review's PROBE F2 passes, the FSF hash is the pinned fixed value and
++        every FSF D2D3 prompt (every unit an answer uses exposed: an upper bound) stays under ARG_LIMIT."""
++        held = dict(U.OMIT_CODE_HELD_OPEN)
++        U.OMIT_CODE_HELD_OPEN.pop(FSF)
++        try:
++            show = lambda n: git_b(f'usecases/{FSF}/{n}', C[FSF], missing_ok=True)
++            t = b''.join(x or b'' for _l, x in U.omit_code_parts(FSF, show))
++            self.assertEqual([d for d in FSF_S4 if d.encode() not in t], [], 'PROBE F2: the FSF unit lacks')
++            self.assertEqual(U._ch(b'\0'.join(x or b'\0missing' for _n, x in U.omit_code_parts(FSF, show))), FSF_FIXED_D2D3)
++            d = R.Doc(U, FSF, C[FSF])
++            users = {a: us for a, us in self.st[FSF]['uses'].items() if 'D2D3' in us}
++            self.assertIn('S4', users)
++            sizes = []
++            for a, us in users.items():
++                ex = [[u, u, 'no-record', 'no accounting line', {}] for u in us]
++                p = d.p_answer(a, ex)
++                self.assertIn('def refute(', p)
++                sizes.append((len(p.encode()), a))
++                k = next(i for i, e in enumerate(ex, 1) if e[0] == 'D2D3')
++                sizes.append((len(d.p_exposure(a, ex[k - 1], k).encode()), a + '/E'))
++            print(f'\n  FSF D2D3 prompts with the hold lifted: {len(sizes)}; largest {max(sizes)}', file=sys.stderr)
++            for n, a in sizes:
++                self.assertLess(n, R.ARG_LIMIT, a)
++        finally:
++            U.OMIT_CODE_HELD_OPEN.update(held)
++
++    def test_sweep(self):
++        """The F2 class: every case's D2/D3 code is closure-checked; its closure is inside the unit or the case is held open."""
++        for case in U.OMIT_CODE:
++            self.assertTrue(U.OMIT_CODE_SECTION.get(case) or U.OMIT_CODE_SEED.get(case), f'{case}: D2/D3 code not seeded')
++            show = lambda n, case=case: git_b(f'usecases/{case}/{n}', C[case], missing_ok=True)
++            for n, header in U.OMIT_CODE_SEED.get(case, ()):
++                if header is not None:   # a seed header must exist at the frozen commit, else the whole file is the seed
++                    self.assertIn(header.encode(), show(n), f'{case} {n}: seed header {header!r} not found')
++            unit = U.omit_code_parts(case, show)
++            seeds = U._omit_seed_parts(case, show)
++            for n, part in seeds:
++                cl = U.omit_code_closure(case, n, part, show)
++                if case in U.OMIT_CODE_HELD_OPEN:
++                    self.assertNotEqual(cl, [], f'{case} held open but its D2/D3 code is closed: lift the hold')
++                    self.assertEqual([x for x in cl if x in unit], [])
++                else:
++                    self.assertEqual([x for x in cl if x not in unit], [], f'{case}: D2/D3 code reads outside the unit')
++        self.assertEqual([lab for lab, _t in U.omit_code_parts(RSP, lambda n: git_b(f'usecases/{RSP}/{n}', C[RSP], True))],
++                         ['stage0.py'])   # RSP's d2()/d3() read only stage0.py: the unit does not move
++
++    def test_closure_scope(self):
++        """F1: the review's PROBE F1 and the rest of the class (scope rules, whole unit files, binds, line cutting)."""
++        f = {'h.py': 'def k(v):\n    return v\n# --- A\ndef a(x):\n    import m as M\n    k = x\n    return M.Q\n'
++                     'def b(y):\n    return k(y)\n', 'm.py': 'Q = 1\n'}
++        r = ''.join(t for _l, t in U.omit_code_closure('c', 'h.py', U.omit_code_section(f['h.py'], '# --- A'), f.get))
++        self.assertIn('Q = 1', r)          # (a) an import inside a function is followed
++        self.assertIn('def k(', r)         # (b) a local of a() hides nothing in b()
++        g = {'h.py': 'X = 1\nW = 2\n# --- A\ndef a():\n    global X\n    return X\ndef b():\n    global W\n    W = 3\n',
++             'n.py': 'z = 0\n'}
++        got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(g['h.py'], '# --- A'), g.get))
++        self.assertEqual(got, {'h.py: the definitions the D2D3 code reads': 'X = 1\n\nW = 2\n'})   # (c) global X read
++        # scopes that DO hide: an argument, a comprehension target, a nested function's own local, a class attribute
++        # read from a method; a nonlocal and a free name reach the enclosing function, not the module
++        s = {'h.py': 'P = 1\nQ = 2\nR = 3\nS = 4\nT = 5\n# --- A\ndef a(P):\n    v = [Q for Q in P]\n    def i():\n'
++                     '        nonlocal v\n        R = 1\n        return v, R\n    class K:\n        S = 1\n'
++                     '        def f(self):\n            return S\n    return i, K\n'}
++        got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(s['h.py'], '# --- A'), s.get))
++        self.assertEqual(got, {'h.py: the definitions the D2D3 code reads': 'S = 4\n'})   # a method skips the class body
++        # 'from m import a' inside a function; a nested function reads its parent's import (a free name)
++        fr = {'h.py': '# --- A\ndef a():\n    from m import q\n    import n as N\n    def i():\n        return N.z\n'
++                      '    return q, i\n', 'm.py': 'q = 1\nr = 2\n', 'n.py': 'z = 0\ny = 1\n'}
++        got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(fr['h.py'], '# --- A'), fr.get))
++        self.assertEqual(got, {'m.py: the definitions the D2D3 code reads': 'q = 1\n',
++                               'n.py: the definitions the D2D3 code reads': 'z = 0\n'})
++        # a whole unit file (OMIT_CODE) is not repeated, but what its read definitions read is followed, module-level
++        # import or import inside the function; a definition the D2/D3 code does not reach pulls nothing
++        w = {'stage0.py': 'import hlp as H\ndef f():\n    import hlp2\n    return H.v, hlp2.u\ndef g():\n    return H.w\n',
++             'run.py': '# --- A\ndef a():\n    import stage0\n    return stage0.f()\n', 'hlp.py': 'v = 1\nw = 2\n',
++             'hlp2.py': 'u = 3\nt = 4\n'}
++        got = dict(U.omit_code_closure(PF, 'run.py', U.omit_code_section(w['run.py'], '# --- A'), w.get))
++        self.assertEqual(got, {'hlp.py: the definitions the D2D3 code reads': 'v = 1\n',
++                               'hlp2.py: the definitions the D2D3 code reads': 'u = 3\n'})
++        # a whole file given for a bare module read: what it reads is followed too
++        wb = {'h.py': '# --- A\ndef a():\n    import m\n    return m\n', 'm.py': 'import n\nQ = n.z\n', 'n.py': 'z = 0\ny = 1\n'}
++        got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(wb['h.py'], '# --- A'), wb.get))
++        self.assertEqual(got, {'n.py: the definitions the D2D3 code reads': 'z = 0\n',
++                               'm.py (whole file: read by the D2D3 code)': wb['m.py']})
++        # binds: a later top-level X[k] = v / X.update() and an import inside a top-level if / try bind the name
++        bd = {'h.py': 'X = {}\nX["a"] = 1\nX.update(b=2)\nif True:\n    import m as Z\nY = 0\n# --- A\ndef a():\n'
++                      '    return X, Z.q\n', 'm.py': 'q = 1\nr = 2\n'}
++        got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(bd['h.py'], '# --- A'), bd.get))
++        self.assertEqual(got, {'h.py: the definitions the D2D3 code reads':
++                               'X = {}\n\nX["a"] = 1\n\nX.update(b=2)\n\nif True:\n    import m as Z\n',
++                               'm.py: the definitions the D2D3 code reads': 'q = 1\n'})
++        # lines are cut where the parser counts them: \x0c, \x85 and \u2028 inside a line do not shift statements
++        for ch in ('\x0c', '\x85', '\u2028', '\x1c'):
++            lc = {'h.py': f'# a{ch}b\nK = 1\nJ = 2\n# --- A\ndef a():\n    return K\n'}
++            got = dict(U.omit_code_closure('c', 'h.py', U.omit_code_section(lc['h.py'], '# --- A'), lc.get))
++            self.assertEqual(got, {'h.py: the definitions the D2D3 code reads': 'K = 1\n'}, repr(ch))
++            gb = U.omit_code_closure('c', 'h.py', U.omit_code_section(lc['h.py'], '# --- A').encode(),
++                                     lambda n: lc[n].encode() if n in lc else None)
++            self.assertEqual(gb, [('h.py: the definitions the D2D3 code reads', b'K = 1\n')], repr(ch))
++            sec = f'K = 1{ch}\n# --- A\nx = 1{ch}y\n# --- B\n'
++            self.assertEqual(U.omit_code_section(sec, '# --- A'), f'# --- A\nx = 1{ch}y\n')
++
++    def test_reads_oracle(self):
++        """F1 class, differential: _omit_reads equals CPython's symtable on real D2D3 files and synthetic scope cases."""
++        srcs = {'synthetic': SCOPE_CASES}
++        for case, names in ((PF, ('run.py', 'stage0.py', 'pf_translation.py')), (RSP, ('stage0.py', 'rsp_translation.py')),
++                            (FSF, ('run.py', 'severity_and_dates.py', 'translation.py', 'vocabulary.py'))):
++            for n in names:
++                srcs[f'{case}/{n}'] = git_b(f'usecases/{case}/{n}', C[case]).decode()
++        for label, src in srcs.items():
++            for st in ast.parse(src).body:
++                seg = ast.get_source_segment(src, st, padded=True)
++                lines = parser_lines(src)
++                s = min([st.lineno] + [d.lineno for d in getattr(st, 'decorator_list', [])])
++                seg = ''.join(lines[s - 1:st.end_lineno])
++                self.assertEqual(counter_reads(U, seg), oracle_reads(seg), f'{label}:{st.lineno}')
+ 
+ if __name__ == '__main__':
+     print(f'runner {RUNNER}\ncounter {COUNTER}')
