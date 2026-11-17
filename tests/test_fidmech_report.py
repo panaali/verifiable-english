@@ -20,10 +20,12 @@ DOC = "anthropic-rsp"
 
 
 def line(mid, unit="u1", op="drop-conjunct", cls="structural", parse="ok", equivalent=None, K="survived", CR="not-read",
-         new_hits=(), **text):
+         new_hits=(), sentinel_ok=None, **text):
+    """A results line; its sentinel confirmed the run unless it is not-run or `sentinel_ok` says otherwise."""
     v = {"K": K, **{c: text.get(c, "survived") for c in REP.TEXT}, "CR": CR}
-    return {"record": {"id": mid, "verdict": v}, "mutant": {"id": mid, "unit": unit, "op": op, "class": cls,
-                                                            "parse": parse, "equivalent": equivalent},
+    ok = K != "not-run" if sentinel_ok is None else sentinel_ok
+    return {"record": {"id": mid, "verdict": v, "sentinel_ok": ok},
+            "mutant": {"id": mid, "unit": unit, "op": op, "class": cls, "parse": parse, "equivalent": equivalent},
             "text": {"new_hits": list(new_hits), "error": None}}
 
 
@@ -238,3 +240,80 @@ def test_a_changed_line_that_stands_twice_is_not_rebased():
         == (None, "the changed text 'Rule 1. Every situation must act.' stands 2 times in the file under test")
     new, how = MF.rebase(text, "## a | x\nRule 1. Every situation must act.", "## a | x\nRule 1. Every situation may act.")
     assert how == "whole" and new.count("may act") == 1
+
+
+# ---- a result no good sentinel confirmed (fid-mech-b5 review F1) ------------------------------------------------
+
+INVALID_KILLED = dict(K="killed", sentinel_ok=False)
+
+
+def test_an_invalid_k_is_left_out_of_every_k_denominator_and_counted_beside():
+    """F1: a line whose sentinel failed (sentinel_ok false) reads INVALID, never its measured K: out of K decided,
+    counted in the left-out K, no kill for any instrument, the unit incomplete, not a decided survivor."""
+    lines = [line("a", K="killed"), line("b", **INVALID_KILLED), line("c", K="survived", sentinel_ok=False),
+             line("d", K="error", sentinel_ok=False)]
+    row = REP.kill_table(lines)["all"]
+    assert (row["K"]["killed"], row["K"]["decided"]) == (1, 1)
+    assert row["K"]["left_out"] == {"INVALID": 3}
+    assert row["any"] == 1 and row["none"] == {"some instrument did not run": 3}
+    # a missing or non-bool sentinel_ok is unconfirmed too (fail closed)
+    odd = [line("e", K="killed"), line("f", K="killed")]
+    del odd[0]["record"]["sentinel_ok"]
+    odd[1]["record"]["sentinel_ok"] = 1
+    assert REP.kill_table(odd)["all"]["K"]["left_out"] == {"INVALID": 2}
+
+
+def test_a_unit_whose_mutant_is_invalid_is_incomplete_never_passing_or_failing_on_it():
+    t = text(["u1", "u2"])
+    lines = [line("a1", unit="u1", K="killed"), line("a2", unit="u1", **INVALID_KILLED),
+             line("b1", unit="u2", K="killed"), line("b2", unit="u2", K="survived", sentinel_ok=False)]
+    for kw in ({}, {"text_checks": False}, {"declared_as_survivor": True}):
+        u = REP.unit_status(lines, t, **kw)
+        assert u["lists"]["status"] == {"u1": "incomplete", "u2": "incomplete"} and u["with_survivor"] == 0
+
+
+def test_a_declared_equivalent_counted_as_a_survivor_keeps_an_invalid_or_not_run_k():
+    lines = [line("d1", equivalent="declared:x", **INVALID_KILLED), line("d2", equivalent="declared:x", K="not-run"),
+             line("d3", equivalent="declared:x", K="killed")]
+    row = REP.kill_table(lines, declared_as_survivor=True)["all"]
+    assert (row["K"]["killed"], row["K"]["decided"], row["K"]["left_out"]) == (0, 1, {"INVALID": 1, "not-run": 1})
+
+
+def test_the_document_report_reads_an_invalid_k_in_plants_blind_spot_unprobed_and_errors():
+    batch = {"document": DOC, "status": "ok", "mutants": 4, "ran": 4, "not_run": 0,
+             "selection": {"rule_blocks": 2, "in_no_item": ["u2"]},
+             "rows": {"plants": [{"id": "P1", "status": "applied", "mutant": "p", "reason": ""}], "defects": []}}
+    lines = [line("p", cls="plant", **INVALID_KILLED), line("k", unit="u2", **INVALID_KILLED),
+             line("e", K="error", sentinel_ok=False), line("ok", K="killed")]
+    lines[2]["record"]["kernel"] = {"error": "RuntimeError: boom"}
+    d, rows = REP.document_report({"batch": batch, "lines": lines, "mutants": [], "text": None})
+    assert d["K_invalid"] == 3
+    assert rows["plants_and_defects"]["plants"][0]["K"] == "INVALID"
+    assert rows["plants_and_defects"]["plants"][0]["any"] is False
+    p = d["plants_and_defects"]["plants"]
+    assert (p["K_killed"], p["K_decided"], p["K_invalid"], p["any_killed"]) == (0, 0, 1, 0)
+    assert d["blind_spot"] == {"drop-conjunct": 2}  # k and e: no instrument killed them; ok was killed
+    assert d["unprobed_rules"]["K"] == {"INVALID": 1}
+    assert d["K_errors"] == {}
+    md = REP.render({"documents": [d], "inputs_sha256": None})
+    assert "4 run, 3 with an INVALID K (no good sentinel confirmed the run: left out of every K denominator)" in md
+
+
+def test_only_records_k_reading_and_report_verdicts_read_a_records_verdicts():
+    """The class of F1: a reader that takes verdict["K"] off a record skips the sentinel. In tools/fidmech only
+    records.k_reading and report.verdicts read a record's verdict dict (report.fill_cr writes CR into it)."""
+    import ast
+    allowed = {("records.py", "k_reading"), ("report.py", "verdicts"), ("report.py", "fill_cr")}
+    found = set()
+    for path in sorted((ROOT / "tools/fidmech").glob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for fn in ast.walk(tree):
+            if not isinstance(fn, (ast.FunctionDef, ast.Lambda)):
+                continue
+            for node in ast.walk(fn):
+                if (isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant)
+                        and node.slice.value == "verdict" and not (isinstance(node.value, ast.Name)
+                                                                  and node.value.id == "f")):
+                    found.add((path.name, getattr(fn, "name", "<lambda>")))
+    assert found - allowed == set(), found - allowed
+    assert ("records.py", "k_reading") in found and ("report.py", "verdicts") in found

@@ -288,8 +288,16 @@ def run_batch(worker, mutants, *, sentinel_every=SENTINEL_EVERY, timeout_factor=
             worker.reset()
         if not pending:
             break
-    status = "ok" if good else "INVALID"
-    return Batch(status, first, sentinel, {m.id: outcomes[m.id] for m in mutants}, sentinels)
+    return Batch(batch_status([good], outcomes.values()), first, sentinel, {m.id: outcomes[m.id] for m in mutants},
+                 sentinels)
+
+
+def batch_status(last_sentinels, outcomes):
+    """"ok" when no worker's last sentinel failed (None: the worker ran none) and a good sentinel confirmed every
+    outcome; "INVALID" otherwise. An outcome INVALID twice (re-queued once, then its sentinel failed again) makes the
+    batch INVALID even when the worker's last sentinel passed."""
+    return ("ok" if all(s is not False for s in last_sentinels) and all(o.sentinel_ok is True for o in outcomes)
+            else "INVALID")
 
 
 def measure(document, worktree, scratch, runs=2):

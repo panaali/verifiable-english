@@ -4,12 +4,14 @@ plants and real defects, and the run cost, from the batch directories tools/fidm
   uv run python -m tools.fidmech report BATCH_DIR... --out DIR [--inputs DIR] [--cr FILE] [--rows DIR]
 
 - **Kill table** (plan 2e). Rows are ops; per instrument (K, L1-L4, D, CR) killed / decided, where decided leaves out
-  K error, inconclusive and not-run, a text check's error and CR not-read (each counted beside). "any" is killed by
+  K error, inconclusive, not-run and INVALID, a text check's error and CR not-read (each counted beside). Every K is
+  read through `verdicts`, which reads records.k_reading: a run no good sentinel confirmed (sentinel_ok false) is
+  INVALID, never its measured verdict, in every table, unit status, plant row and count below. "any" is killed by
   at least one instrument; "none" is split: every instrument ran (CR included), CR not read, some instrument did not
   run. Scored = parse ok and not equivalent; stillborn mutants are listed, never scored.
 - **Units passing the stated checks** (L1, L2, L3, D, K-structural): no L1, L2, L3 or D hit at baseline, and every
   applicable non-equivalent structural mutant of the unit ran to a decided K verdict and K killed it. Any
-  inconclusive, error or not-run makes the unit incomplete; a unit with no applicable mutant is untested. Printed
+  inconclusive, error, not-run or INVALID makes the unit incomplete; a unit with no applicable mutant is untested. Printed
   with and without flip-force, with declared equivalents counted as survivors, and without D for a document with no
   sidecar. Never "faithful".
 - **Adjudication** (`adjudicate`). A baseline hit is confirmed by a REAL-by-both finding, contradicted by a
@@ -25,6 +27,8 @@ import json
 import re
 from collections import Counter
 from pathlib import Path
+
+from tools.fidmech import records as R
 
 INSTRUMENTS = ("K", "L1", "L2", "L3", "L4", "D", "CR")
 TEXT = ("L1", "L2", "L3", "L4", "D")
@@ -60,10 +64,12 @@ def _declared(line):
 
 
 def verdicts(line, declared_as_survivor=False):
-    """A line's verdicts; a declared equivalent counted as a survivor reads survived on every instrument it ran."""
-    v = dict(line["record"]["verdict"])
+    """A line's verdicts, K read by records.k_reading (INVALID when no good sentinel confirmed the run); a declared
+    equivalent counted as a survivor reads survived on every instrument it ran (a K not run or INVALID stays so).
+    The one place the report reads a record's verdicts."""
+    v = {**line["record"]["verdict"], "K": R.k_reading(line["record"])}
     if declared_as_survivor and _declared(line):
-        v.update({k: "survived" for k in ("K", *TEXT)})
+        v.update({k: "survived" for k in ("K", *TEXT) if v[k] not in R.UNCONFIRMED})
     return v
 
 
@@ -260,7 +266,7 @@ def plant_rows(lines, rows):
             row = dict(r)
             x = by_id.get(r.get("mutant"))
             if x is not None:
-                v = x["record"]["verdict"]
+                v = verdicts(x)
                 row.update({"K": v["K"], "text": {c: v[c] for c in TEXT},
                             "any": any(v[i] == KILL[i] for i in INSTRUMENTS)})
             out[part].append(row)
@@ -276,6 +282,7 @@ def plant_counts(prows):
         out[part] = {"entries": len(rows), **Counter(r["status"] for r in rows),
                      "K_killed": sum(r["K"] == "killed" for r in ran),
                      "K_decided": sum(r["K"] in DECIDED["K"] for r in ran),
+                     "K_invalid": sum(r["K"] == R.INVALID for r in ran),
                      "any_killed": sum(r["any"] for r in ran), "text_killed": sum(
                          any(r["text"][c] == "killed" for c in TEXT) for r in ran),
                      "not_applicable_by": dict(Counter(reason_class(r["reason"]) for r in rows
@@ -303,18 +310,19 @@ def document_report(b, inputs=None, cr=None):
         batch["cr_filled"] = fill_cr(lines, b["mutants"], _cr_entries(cr), inputs["fp1"], fp_now, document)
     out = {"document": document, "status": batch.get("status"), "inputs_sha256": batch.get("inputs_sha256"),
            "in_sample": document == "anthropic-rsp", "mutants": batch.get("mutants"), "ran": batch.get("ran"),
-           "not_run": batch.get("not_run"), "measurements": batch.get("measurements")}
+           "not_run": batch.get("not_run"), "measurements": batch.get("measurements"),
+           "K_invalid": sum(verdicts(x)["K"] == R.INVALID for x in lines)}
     stillborn = [m for m in b["mutants"] if m["parse"] != "ok"]
     out["stillborn"] = {"count": len(stillborn), "by_op": dict(Counter(m["op"] for m in stillborn))}
     out["kill_table"] = kill_table(lines)
     out["kill_table_declared_as_survivor"] = {"all": kill_table(lines, True)["all"]}
-    errors = [x["record"]["kernel"].get("error") or "" for x in scored(lines) if x["record"]["verdict"]["K"] == "error"]
+    errors = [x["record"]["kernel"].get("error") or "" for x in scored(lines) if verdicts(x)["K"] == "error"]
     out["K_errors"] = dict(Counter(":".join((e.strip().splitlines() or [""])[-1].split(":")[:2])
                                    for e in errors).most_common())
     out["equivalent"] = dict(Counter(m["equivalent"].split(":")[0] for m in b["mutants"] if m["equivalent"]))
     sel = batch.get("selection") or {}
     unprobed = set(sel.get("in_no_item", ()))
-    k_unprobed = [x["record"]["verdict"]["K"] for x in scored(lines) if x["mutant"]["unit"] in unprobed]
+    k_unprobed = [verdicts(x)["K"] for x in scored(lines) if x["mutant"]["unit"] in unprobed]
     out["unprobed_rules"] = {"rule_blocks": sel.get("rule_blocks"), "in_no_item": len(unprobed),
                              "their_scored_mutants": len(k_unprobed), "K": dict(Counter(k_unprobed))}
     rows = {}
@@ -344,7 +352,7 @@ def document_report(b, inputs=None, cr=None):
                                     for h, r in zip([h for h in text["hits"] if h["class"] != "L4g"], results)]
     syntactic = [x for x in lines if x["mutant"]["equivalent"] == "syntactic"]
     out["control_false_alarms"] = sum(bool(x["text"]["new_hits"]) for x in syntactic)
-    blind = [x for x in scored(lines) if not any(x["record"]["verdict"][i] == KILL[i] for i in INSTRUMENTS)]
+    blind = [x for x in scored(lines) if not any(verdicts(x)[i] == KILL[i] for i in INSTRUMENTS)]
     out["blind_spot"] = dict(Counter(x["mutant"]["op"] for x in blind))
     rows["blind_spot_units"] = sorted({x["mutant"]["unit"] for x in blind})
     prows = plant_rows(lines, batch.get("rows") or {})
@@ -368,7 +376,9 @@ def render(report):
     for d in report["documents"]:
         out += [f"## {d['document']}" + (" (in-sample)" if d["in_sample"] else " (out-of-sample under the freeze "
                                                                               "rule)"), "",
-                f"batch status {d['status']}; {d['mutants']} mutants, {d['ran']} run, {d['not_run']} not run; "
+                f"batch status {d['status']}; {d['mutants']} mutants, {d['ran']} run, {d['K_invalid']} with an "
+                f"INVALID K (no good sentinel confirmed the run: left out of every K denominator), "
+                f"{d['not_run']} not run; "
                 f"stillborn {d['stillborn']['count']} (listed, never scored) {d['stillborn']['by_op']}; "
                 f"equivalent {d['equivalent']}; inputs_sha256 {d['inputs_sha256']}", ""]
         for name, u in d.get("units", {}).items():

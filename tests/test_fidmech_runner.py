@@ -371,3 +371,71 @@ def test_a_batch_that_dies_leaves_its_confirmed_results_and_resumes_from_them(tr
 
 def lines_of(path):
     return {x["record"]["id"]: x for x in map(json.loads, path.read_text().splitlines())}
+
+
+# ---- a result no good sentinel confirmed (fid-mech-b5 review F1) ------------------------------------------------
+
+def test_resume_runs_again_a_result_its_sentinel_marked_invalid(tree, tmp_path):
+    """F1 probe: the first batch is INVALID (m-leak's sentinels fail); a resume from it keeps no INVALID line and
+    runs m-leak again, so the resumed batch is ok only on a confirmed result."""
+    recs = [record(tree, "m-leak", RULE.replace("final ", ""))]
+    first = RUN.run(DOC, tmp_path / "a", jobs=1, deps=deps(tree, recs, {"m-leak": "ALL"}, leak="m-leak"))
+    assert first["status"] == "INVALID" and first["invalid"] == 1
+    assert RUN.read_resume(tmp_path / "a/results.jsonl", DIGEST) == {}
+    calls = []
+    second = RUN.run(DOC, tmp_path / "b", jobs=1, resume=tmp_path / "a/results.jsonl",
+                     deps=deps(tree, recs, {"m-leak": "ALL"}, calls=calls))
+    assert "m-leak" in calls and second["kept"] == 0 and second["status"] == "ok" and second["invalid"] == 0
+    assert lines(tmp_path / "b")["m-leak"]["record"]["sentinel_ok"] is True
+
+
+def test_a_requeued_mutant_the_budget_cuts_is_not_run_and_never_counted_as_ran(tree, tmp_path):
+    """F1 sweep: m-leak runs (killed), its sentinel fails, it is re-queued, then the budget cuts it: its line is
+    not-run (no INVALID decided K) and it is counted once, as not run."""
+    recs = [record(tree, "m-leak", RULE.replace("final ", ""))]
+    summary = RUN.run(DOC, tmp_path / "out", jobs=1, budget=100,
+                      deps=deps(tree, recs, {"m-leak": "NONE"}, leak="m-leak", step=60.0))
+    got = lines(tmp_path / "out")["m-leak"]["record"]
+    assert (got["verdict"]["K"], got["sentinel_ok"]) == ("not-run", False)
+    assert (summary["ran"], summary["not_run"], summary["invalid"]) == (0, 1, 0)
+    assert summary["measurements"]["per_mutant_s"] is None
+
+
+def scripted(tree, sentinels, calls):
+    """A slot whose sentinels (every baseline after the first) give the scripted results (True: the baseline)."""
+    clock, script, seen = Clock(), list(sentinels), {"baselines": 0}
+
+    def evaluate(mutant, limit):
+        calls.append(mutant.id)
+        if mutant.id != "baseline":
+            return projection("NONE")
+        seen["baselines"] += 1
+        return projection("ALL" if seen["baselines"] == 1 or script.pop(0) else "NONE")
+
+    def slot(name, document, scratch):
+        return W.Worker(document, tree, scratch, name=name, evaluate=evaluate, clock=clock,
+                        cpu_clock=lambda: 0.0, reset=lambda: None)
+    return slot
+
+
+def test_a_result_invalid_twice_makes_the_batch_invalid_though_every_last_sentinel_holds(tree, tmp_path,
+                                                                                        monkeypatch):
+    """F1 sweep (worker.run_batch's rule): m1's sentinel fails, it is re-queued and its sentinel fails again; the
+    slot's last sentinel holds. The batch is INVALID, m1 reads INVALID and stays out of results.partial.jsonl, and a
+    resume runs m1 alone."""
+    from tools.fidmech import records as R
+    monkeypatch.setattr(W, "SENTINEL_EVERY", 1)
+    recs = [record(tree, f"m{i}", RULE.replace("final ", "x" * i + " ")) for i in range(1, 4)]
+    calls = []
+    d = deps(tree, recs, {})
+    d.slot = scripted(tree, [False, False, True, False, True], calls)
+    summary = RUN.run(DOC, tmp_path / "out", jobs=1, deps=d)
+    assert [c for c in calls if c != "baseline"] == ["m1", "m2", "m3", "m1", "m2"]
+    assert summary["status"] == "INVALID" and summary["invalid"] == 1 and summary["ran"] == 3
+    got = lines(tmp_path / "out")
+    assert {k: R.k_reading(v["record"]) for k, v in got.items()} == {"m1": R.INVALID, "m2": "killed", "m3": "killed"}
+    assert set(lines_of(tmp_path / "out/results.partial.jsonl")) == {"m2", "m3"}
+    calls = []
+    again = RUN.run(DOC, tmp_path / "again", jobs=1, resume=tmp_path / "out/results.jsonl",
+                    deps=deps(tree, recs, {"m1": "NONE"}, calls=calls))
+    assert [c for c in calls if c != "baseline"] == ["m1"] and again["status"] == "ok" and again["kept"] == 2
