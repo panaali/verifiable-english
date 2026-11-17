@@ -50,6 +50,30 @@
  {
   "file": "pick-claude-account.sh.new-pickw",
   "language": "embedded python",
+  "seed": "extra slot past the 3rd main session (bound dropped)",
+  "test": "CritFallbackSlot.test_rank1_slot_never_a_fourth_main_session",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "extra slot past the 3rd main session (bound off by one)",
+  "test": "CritFallbackSlot.test_rank1_slot_sweep_never_past_the_third_main_session",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
   "seed": "extra slot skips the rank-1 rule (pace - 4)",
   "test": "CritFallbackSlot.test_rank1_slot_refused_over_pace_minus_4",
   "clean_rc": 0,
@@ -62,7 +86,7 @@
  {
   "file": "pick-claude-account.sh.new-pickw",
   "language": "embedded python",
-  "seed": "extra slot skips the one-row marker",
+  "seed": "extra slot skips the one-row marker only",
   "test": "CritFallbackSlot.test_rank1_slot_one_row_at_a_time",
   "clean_rc": 0,
   "rc": 1,

@@ -1,3 +1,3 @@
 zsh -n pick-claude-account.sh.new-pickw: clean
-compile(pick() embedded python): clean
+compile(pick() embedded python, lines 89-550): clean
 compile(test_pick_main_rank.py.new-pickw): clean
