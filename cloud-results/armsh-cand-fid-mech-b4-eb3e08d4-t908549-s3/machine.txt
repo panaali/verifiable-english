@@ -1,0 +1,7 @@
+job=armsh-cand-fid-mech-b4-eb3e08d4-t908549-s3 shard=3/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-17T09:44:34Z ulimit_s=16384
+Mem:              15           1           8           0           5          13
+/dev/root       145G   43G  102G  30% /
+ 09:44:34 up 1 min,  0 user,  load average: 1.48, 0.46, 0.16
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
