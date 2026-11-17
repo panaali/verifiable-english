@@ -1,0 +1,7 @@
+trust_mutants: 21 definitions, 30 mutants (5 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Service/Document.lean:2416 VE.Service.Document.cardinalityReport (D[V], trusted) list-drop-last: ? -> (?.dropLast) (lean/VE/Service/Document.lean:2416: don't know how to synthesize placeholder)
+trust_mutants: 1 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 3 NOT RUN, 25 OTHER SHARD in 1823 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 2 NOT RUN, 11 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 NOT RUN, 14 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 3 of its 5 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 15.4 s, scratch 3.6 s, control_build 1.6 s, probe_install 1.1 s, mutants 1794.6 s, cleanup 6.5 s, reads 0.1 s; lake control_build 1.6 s (2), probe_install 1.1 s (1), control_probes 60.7 s (2), mutant_builds 401.3 s (7), mutant_checks 4595.2 s (6), outside_checks 11 s (1), stage_controls 816.7 s (4), mutant_probes 65.3 s (3)
