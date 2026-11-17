@@ -7,9 +7,14 @@
   uv run python -m tools.fidmech mutants --doc anthropic-rsp [--kinds structural,wording] [--no-parse-wording]
                                          [--jsonl OUT]   (counts per op, stillborn listed; needs the Lean service)
   uv run python -m tools.fidmech actors --doc anthropic-rsp [--check | --write]   (actors.json's generated list)
+  uv run python -m tools.fidmech batch --doc <doc> --jobs auto --out DIR [--budget S] [--resume FILE] [--inputs DIR]
+                                       (one document's mutant batch, tools/fidmech/runner.py; exit 75 when loaded)
+  uv run python -m tools.fidmech report BATCH_DIR... --out DIR [--inputs DIR] [--cr FILE] [--rows DIR]
+                                       (kill tables and the report, tools/fidmech/report.py; counts only)
 
 --doc is a use-case name under usecases/ or a case directory; --source overrides the case's pinned source path.
-Exit 0 on a report, 1 when `boundaries --check` finds the frozen pairs stale, 2 on an input error.
+Exit 0 on a report, 1 when `boundaries --check` finds the frozen pairs stale or a batch is INVALID, 2 on an input
+error, 65 when an inputs file or a --resume file does not match its sha256, 75 when the host is too loaded to start.
 """
 from __future__ import annotations
 
@@ -140,9 +145,32 @@ def actors(args) -> int:
     return 0
 
 
+def batch(args) -> int:
+    from tools.fidmech import runner
+    return runner.main(args)
+
+
+def report(args) -> int:
+    from tools.fidmech import report as REP
+    return REP.main(args)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m tools.fidmech", description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
+    b = sub.add_parser("batch")
+    b.add_argument("--doc", required=True)
+    b.add_argument("--jobs", default="auto")
+    b.add_argument("--out", required=True)
+    b.add_argument("--budget", type=float)
+    b.add_argument("--resume")
+    b.add_argument("--inputs", help="manage-agents reviews/fid-mech-harness/inputs/ (plants and defects; read by sha256)")
+    r = sub.add_parser("report")
+    r.add_argument("batches", nargs="+")
+    r.add_argument("--out", required=True)
+    r.add_argument("--inputs")
+    r.add_argument("--cr")
+    r.add_argument("--rows", help="where the per-plant and per-defect rows go (manage-agents, never VE)")
     for name in ("textcheck", "furniture", "boundaries", "mutants", "actors"):
         p = sub.add_parser(name)
         p.add_argument("--doc", required=True)
@@ -164,7 +192,7 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     try:
         return {"textcheck": textcheck, "furniture": furniture, "boundaries": boundaries, "mutants": mutants,
-                "actors": actors}[args.cmd](args)
+                "actors": actors, "batch": batch, "report": report}[args.cmd](args)
     except (S.BoundariesError, OSError, ValueError) as e:
         print(f"fidmech: {e}", file=sys.stderr)
         return 2
