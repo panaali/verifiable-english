@@ -1,0 +1,114 @@
+{
+ "item": "tm-drain-vm1-idle",
+ "note": "Shell only, in manage-agents (no Lean, Python or Rust of this VE repo changed). manage-agents/tm-nightly.sh.new-tmidle, run with TMN_SH=<copy> python3 -I tools-local/test_tm_drain_vm1_idle.py.",
+ "mutants": [
+  {
+   "id": "S1",
+   "bug": "the reserve is ignored (the gate lends every core under nproc - load)",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "igate(){ local n=${TM_IDLE_NPROC:-$(nproc)} r=${TM_IDLE_RESERVE:-8} l ma",
+   "replace": "igate(){ local n=${TM_IDLE_NPROC:-$(nproc)} r=0 l ma",
+   "rc": 1,
+   "failing_tests": [
+    "test_gate_boundaries",
+    "test_idle_part_runs_locally_same_args_in_a_capped_scope",
+    "test_load_rises_later_parts_go_remote_or_wait"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_gate_boundaries, DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope, DrainIdle.test_load_rises_later_parts_go_remote_or_wait",
+   "caught": true
+  },
+  {
+   "id": "S2",
+   "bug": "the memory gate is dropped",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "[[ $ma == <-> ]] && (( ma >= ${TM_IDLE_MEM:-24} + ${TM_IDLE_MEM_SPARE:-8} )) ||",
+   "replace": "true ||",
+   "rc": 1,
+   "failing_tests": [
+    "test_gate_boundaries"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_gate_boundaries",
+   "caught": true
+  },
+  {
+   "id": "S3",
+   "bug": "the local part drops the first trust_mutants argument after `--` (not a remote host's command)",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "ta=(\"${(@)cmd[$(( ${cmd[(ie)--]} + 1 )),-1]}\" \"$@\"",
+   "replace": "ta=(\"${(@)cmd[$(( ${cmd[(ie)--]} + 2 )),-1]}\" \"$@\"",
+   "rc": 1,
+   "failing_tests": [
+    "test_idle_part_runs_locally_same_args_in_a_capped_scope",
+    "test_load_rises_later_parts_go_remote_or_wait"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope, DrainIdle.test_load_rises_later_parts_go_remote_or_wait",
+   "caught": true
+  },
+  {
+   "id": "S4",
+   "bug": "no nice/ionice on the local trust_mutants run",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "$sc --unit=$u nice -n 19 ionice -c 2 -n 7 ${=TM_IDLE_TM",
+   "replace": "$sc --unit=$u ${=TM_IDLE_TM",
+   "rc": 1,
+   "failing_tests": [
+    "test_idle_part_runs_locally_same_args_in_a_capped_scope"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope",
+   "caught": true
+  },
+  {
+   "id": "S5",
+   "bug": "no CPU weight or quota on the local scope",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "-p CPUWeight=${TM_IDLE_WEIGHT:-10} -p CPUQuota=$(( co * 100 ))%",
+   "replace": "-p CPUWeight=100",
+   "rc": 1,
+   "failing_tests": [
+    "test_gate_boundaries",
+    "test_idle_part_runs_locally_same_args_in_a_capped_scope"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_gate_boundaries, DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope",
+   "caught": true
+  },
+  {
+   "id": "S6",
+   "bug": "the gate is read once: after one open gate every later part goes local whatever the load",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "        if igate; then j=$i; return 0; fi;",
+   "replace": "        if [ -n \"$ionce\" ] || igate; then ionce=1; j=$i; return 0; fi;",
+   "rc": 1,
+   "failing_tests": [
+    "test_load_rises_later_parts_go_remote_or_wait"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_load_rises_later_parts_go_remote_or_wait",
+   "caught": true
+  },
+  {
+   "id": "S7",
+   "bug": "a failed local setup still runs trust_mutants",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "  if (( rc == 0 )); then left=$(( left - ss ))",
+   "replace": "  if true; then left=$(( left - ss ))",
+   "rc": 1,
+   "failing_tests": [
+    "test_setup_failure_no_record_ids_resume"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_setup_failure_no_record_ids_resume",
+   "caught": true
+  },
+  {
+   "id": "S8",
+   "bug": "the local record does not say where it ran",
+   "file": "manage-agents/tm-nightly.sh.new-tmidle",
+   "find": "d[\"where\"]=\"vm1-idle\"",
+   "replace": "d[\"where\"]=None",
+   "rc": 1,
+   "failing_tests": [
+    "test_idle_part_runs_locally_same_args_in_a_capped_scope"
+   ],
+   "test": "tools-local/test_tm_drain_vm1_idle.py DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope",
+   "caught": true
+  }
+ ]
+}

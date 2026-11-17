@@ -1,0 +1,25 @@
+== test_tm_nightly_build_timeout (TMN_SH=tm-nightly.sh.new-tmidle) rc=0
+Ran 16 tests in 22.257s
+OK
+== test_tm_nightly_complete (TMN_SH=tm-nightly.sh.new-tmidle) rc=0
+Ran 9 tests in 72.908s
+OK
+== test_tm_nightly_escape_rows (TMN_SH=tm-nightly.sh.new-tmidle) rc=0
+Ran 15 tests in 5.992s
+OK
+== test_tm_nightly_restart_main (TMN_SH=tm-nightly.sh.new-tmidle) rc=1
+ERROR: test_remote_every_pool_refusing_no_vm_no_mac (__main__.MacPytestRemoteOnly.test_remote_every_pool_refusing_no_vm_no_mac)
+FAIL: test_pools_absent_routes_as_before (__main__.MacPytestRemoteOnly.test_pools_absent_routes_as_before)
+Ran 20 tests in 34.645s
+FAILED (failures=1, errors=1)
+== test_tm_nightly_split (TMN_SH=tm-nightly.sh.new-tmidle) rc=0
+Ran 11 tests in 20.002s
+OK
+== test_tm_nightly_tests_allow (TMN_SH=tm-nightly.sh.new-tmidle) rc=0
+Ran 5 tests in 2.025s
+OK
+== test_tm_nightly_restart_main (live files)
+ERROR: test_remote_every_pool_refusing_no_vm_no_mac (__main__.MacPytestRemoteOnly.test_remote_every_pool_refusing_no_vm_no_mac)
+FAIL: test_pools_absent_routes_as_before (__main__.MacPytestRemoteOnly.test_pools_absent_routes_as_before)
+Ran 20 tests in 33.649s
+FAILED (failures=1, errors=1)

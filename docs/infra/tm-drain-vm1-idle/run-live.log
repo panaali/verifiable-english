@@ -1,0 +1,217 @@
+FFFFFFFFF.F
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='19.90', mem=64, env={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+    self.assertEqual(len(r["local"]), int(local), r["log"])
+AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 57dc1f997 since 79235ef3c (1 merges): /tmp/tmns-test-50u5inym/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-50u5inym/stub.py --worktree /tmp/tmns-test-50u5inym/wt --trustmut -- --base 79235ef3c1a435c9373cc1c944f82922f8a6dfe7 --max-mutants 5000 --budget 6300 --deadline 1794935388 --json /tmp/tmns-test-50u5inym/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-50u5inym/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-50u5inym/home/test-skip/nightly/20261117T0719Z.json", "head": "57dc1f997a6100101567bc056a57d58faac13633", "base": "79235ef3c1a435c9373cc1c944f82922f8a6dfe7", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> 57dc1f997
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='20.10', mem=64, env={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+    self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
+AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main ff4d7a540 since d5c293d00 (1 merges): /tmp/tmns-test-ytbyo8dp/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-ytbyo8dp/stub.py --worktree /tmp/tmns-test-ytbyo8dp/wt --trustmut -- --base d5c293d0067f9c11701a963eca6f69a778e75e46 --max-mutants 5000 --budget 6300 --deadline 1794935389 --json /tmp/tmns-test-ytbyo8dp/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-ytbyo8dp/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-ytbyo8dp/home/test-skip/nightly/20261117T0719Z.json", "head": "ff4d7a5409318967658a6681b9a613607d1167e8", "base": "d5c293d0067f9c11701a963eca6f69a778e75e46", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> ff4d7a540
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='0.50', mem=64, env={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+    self.assertEqual(len(r["local"]), int(local), r["log"])
+AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main fc5aa4ba0 since dc0292322 (1 merges): /tmp/tmns-test-xcvjudvu/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-xcvjudvu/stub.py --worktree /tmp/tmns-test-xcvjudvu/wt --trustmut -- --base dc0292322033a24dd540f52d1a8606d9f3f6410b --max-mutants 5000 --budget 6300 --deadline 1794935390 --json /tmp/tmns-test-xcvjudvu/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-xcvjudvu/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-xcvjudvu/home/test-skip/nightly/20261117T0719Z.json", "head": "fc5aa4ba0e0ccf0e8d75e82425f16704e4b2979e", "base": "dc0292322033a24dd540f52d1a8606d9f3f6410b", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> fc5aa4ba0
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='12.00', mem=64, env={'TM_IDLE_RESERVE': '16'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+    self.assertEqual(len(r["local"]), int(local), r["log"])
+AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 983e7de5e since a4f18af23 (1 merges): /tmp/tmns-test-pevxfsda/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-pevxfsda/stub.py --worktree /tmp/tmns-test-pevxfsda/wt --trustmut -- --base a4f18af233c7757c18db1063706fb694b0e67f76 --max-mutants 5000 --budget 6300 --deadline 1794935391 --json /tmp/tmns-test-pevxfsda/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-pevxfsda/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-pevxfsda/home/test-skip/nightly/20261117T0719Z.json", "head": "983e7de5ed4d6d2604a031e5b38c50e5c69366ae", "base": "a4f18af233c7757c18db1063706fb694b0e67f76", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> 983e7de5e
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=64, env={'TM_IDLE_CORES_PER_JOB': '4'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+    self.assertEqual(len(r["local"]), int(local), r["log"])
+AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 515e96923 since 27118c24b (1 merges): /tmp/tmns-test-1_3die77/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-1_3die77/stub.py --worktree /tmp/tmns-test-1_3die77/wt --trustmut -- --base 27118c24be81f90c13097bb937da4945004d0a3a --max-mutants 5000 --budget 6300 --deadline 1794935392 --json /tmp/tmns-test-1_3die77/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-1_3die77/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-1_3die77/home/test-skip/nightly/20261117T0719Z.json", "head": "515e96923abc5938d0891e8123dc1b7590baacd6", "base": "27118c24be81f90c13097bb937da4945004d0a3a", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> 515e96923
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=31, env={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+    self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
+AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 6ae979368 since 5f8f8844d (1 merges): /tmp/tmns-test-b5kor8yp/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-b5kor8yp/stub.py --worktree /tmp/tmns-test-b5kor8yp/wt --trustmut -- --base 5f8f8844d5e0e23ce5826b32884c5b6e1d01ee5d --max-mutants 5000 --budget 6300 --deadline 1794935393 --json /tmp/tmns-test-b5kor8yp/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-b5kor8yp/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-b5kor8yp/home/test-skip/nightly/20261117T0719Z.json", "head": "6ae97936889a884ad4c4e61414b181cfeace4473", "base": "5f8f8844d5e0e23ce5826b32884c5b6e1d01ee5d", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> 6ae979368
+
+
+======================================================================
+FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=64, env={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+    self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
+AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 65b4d30c5 since f48b7cf33 (1 merges): /tmp/tmns-test-mnjd9hds/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 4 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-mnjd9hds/stub.py --worktree /tmp/tmns-test-mnjd9hds/wt --trustmut -- --base f48b7cf33c3b2cdaeb950e40b4495109e9c49a63 --max-mutants 5000 --budget 6300 --deadline 1794935394 --json /tmp/tmns-test-mnjd9hds/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-mnjd9hds/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-mnjd9hds/home/test-skip/nightly/20261117T0719Z.json", "head": "65b4d30c5cfb2a022166a6359304ad5763907385", "base": "f48b7cf33c3b2cdaeb950e40b4495109e9c49a63", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:19Z base -> 65b4d30c5
+
+
+======================================================================
+FAIL: test_idle_part_runs_locally_same_args_in_a_capped_scope (__main__.DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 100, in test_idle_part_runs_locally_same_args_in_a_capped_scope
+    self.assertEqual([(x["cwd"], x["head"]) for x in r["local"]], [(wt + "-l1", self.main)], log)
+AssertionError: Lists differ: [] != [('/tmp/tmns-test-mxwxivex/wt-l1', '451e5b6a002174a40b3da40c877f073a02d211d9')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('/tmp/tmns-test-mxwxivex/wt-l1', '451e5b6a002174a40b3da40c877f073a02d211d9')
+
+- []
++ [('/tmp/tmns-test-mxwxivex/wt-l1', '451e5b6a002174a40b3da40c877f073a02d211d9')] : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main 451e5b6a0 since bef707526 (1 merges): /tmp/tmns-test-mxwxivex/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 12 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-mxwxivex/stub.py --worktree /tmp/tmns-test-mxwxivex/wt --trustmut -- --base bef7075265902aeb73261c581ccf69ca338a4e2b --max-mutants 4 --only <4 ids from M001> --budget 6300 --deadline 1794935395 --json /tmp/tmns-test-mxwxivex/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-mxwxivex/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z part 2: python3 -I /tmp/tmns-test-mxwxivex/stub.py --worktree /tmp/tmns-test-mxwxivex/wt --trustmut -- --base bef7075265902aeb73261c581ccf69ca338a4e2b --max-mutants 4 --only <4 ids from M005> --budget 6300 --deadline 1794935395 --json /tmp/tmns-test-mxwxivex/home/test-skip/nightly/parts-20261117T0719Z/part-2.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:19Z part 2: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-mxwxivex/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z part 3: python3 -I /tmp/tmns-test-mxwxivex/stub.py --worktree /tmp/tmns-test-mxwxivex/wt --trustmut -- --base bef7075265902aeb73261c581ccf69ca338a4e2b --max-mutants 4 --only <4 ids from M009> --budget 6300 --deadline 1794935395 --json /tmp/tmns-test-mxwxivex/home/test-skip/nightly/parts-20261117T0719Z/part-3.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:19Z part 3: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-mxwxivex/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z merge of 3 part(s): {"parts": 3, "partial": null, "carried": null}
+2026-11-17T07:19Z classify: {"t": "2026-11-17T07:19Z", "record": "/tmp/tmns-test-mxwxivex/home/test-skip/nightly/20261117T0719Z.json", "head": "451e5b6a002174a40b3da40c877f073a02d211d9", "base": "bef7075265902aeb73261c581ccf69ca338a4e2b", "mutants": 12, "counts": {"KILLED": 12, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 12, "parts": 3, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "se
+2026-11-17T07:19Z base -> 451e5b6a0
+
+
+======================================================================
+FAIL: test_load_rises_later_parts_go_remote_or_wait (__main__.DrainIdle.test_load_rises_later_parts_go_remote_or_wait)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 152, in test_load_rises_later_parts_go_remote_or_wait
+    self.assertEqual(len(r["local"]), 1, log)  # only the first part: the gate is re-read before each part
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
+2026-11-17T07:19Z full sweep of main d9537354d since 46923dd8b (1 merges): /tmp/tmns-test-5sx6n7w4/home/test-skip/nightly/20261117T0719Z.json
+2026-11-17T07:19Z tests: 0 --test paths from the item records
+2026-11-17T07:19Z plan: 12 mutants
+2026-11-17T07:19Z part 1: python3 -I /tmp/tmns-test-5sx6n7w4/stub.py --worktree /tmp/tmns-test-5sx6n7w4/wt --trustmut -- --base 46923dd8b850d43f298df55d37c6dfcf2016766d --max-mutants 4 --only <4 ids from M001> --budget 6300 --deadline 1794935396 --json /tmp/tmns-test-5sx6n7w4/home/test-skip/nightly/parts-20261117T0719Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:19Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-5sx6n7w4/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:19Z part 2: python3 -I /tmp/tmns-test-5sx6n7w4/stub.py --worktree /tmp/tmns-test-5sx6n7w4/wt --trustmut -- --base 46923dd8b850d43f298df55d37c6dfcf2016766d --max-mutants 4 --only <4 ids from M005> --budget 6300 --deadline 1794935396 --json /tmp/tmns-test-5sx6n7w4/home/test-skip/nightly/parts-20261117T0719Z/part-2.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:20Z part 2: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-5sx6n7w4/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:20Z part 3: python3 -I /tmp/tmns-test-5sx6n7w4/stub.py --worktree /tmp/tmns-test-5sx6n7w4/wt --trustmut -- --base 46923dd8b850d43f298df55d37c6dfcf2016766d --max-mutants 4 --only <4 ids from M009> --budget 6300 --deadline 1794935396 --json /tmp/tmns-test-5sx6n7w4/home/test-skip/nightly/parts-20261117T0719Z/part-3.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 4)
+2026-11-17T07:20Z part 3: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-5sx6n7w4/home/test-skip/nightly-run-20261117T0719Z.log)
+2026-11-17T07:20Z merge of 3 part(s): {"parts": 3, "partial": null, "carried": null}
+2026-11-17T07:20Z classify: {"t": "2026-11-17T07:20Z", "record": "/tmp/tmns-test-5sx6n7w4/home/test-skip/nightly/20261117T0719Z.json", "head": "d9537354d2a6f42a62a5d2743e235927596cd514", "base": "46923dd8b850d43f298df55d37c6dfcf2016766d", "mutants": 12, "counts": {"KILLED": 12, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 12, "parts": 3, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "se
+2026-11-17T07:20Z base -> d9537354d
+
+
+======================================================================
+FAIL: test_setup_failure_no_record_ids_resume (__main__.DrainIdle.test_setup_failure_no_record_ids_resume)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 162, in test_setup_failure_no_record_ids_resume
+    self.assertEqual((len(r["setup"]), r["local"], r["remote"]), (1, [], []), log)
+AssertionError: Tuples differ: (0, [], [{'pools': None, 'argv': ['--workt[360 chars]41}]) != (1, [], [])
+
+First differing element 0:
+0
+1
+
++ (1, [], [])
+- (0,
+-  [],
+-  [{'argv': ['--worktree',
+-             '/tmp/tmns-test-yup8f1ip/wt',
+-             '--trustmut',
+-             '--',
+-             '--base',
+-             '902eb982a0befa9e636528e84d048995b1b1a791',
+-             '--max-mutants',
+-             '5000',
+-             '--budget',
+-             '6300',
+-             '--deadline',
+-             '1794935405',
+-             '--json',
+-             '/tmp/tmns-test-yup8f1ip/home/test-skip/nightly/parts-20261117T0720Z/part-1.json'],
+-    'pools': None,
+-    't0': 1794900005.6201239,
+-    't1': 1794900005.673441,
+-    'wt': '/tmp/tmns-test-yup8f1ip/wt'}]) : 2026-11-17T07:20Z no resume: no nightly record: a sweep of main
+2026-11-17T07:20Z full sweep of main 7fc9dc386 since 902eb982a (1 merges): /tmp/tmns-test-yup8f1ip/home/test-skip/nightly/20261117T0720Z.json
+2026-11-17T07:20Z tests: 0 --test paths from the item records
+2026-11-17T07:20Z plan: 4 mutants
+2026-11-17T07:20Z part 1: python3 -I /tmp/tmns-test-yup8f1ip/stub.py --worktree /tmp/tmns-test-yup8f1ip/wt --trustmut -- --base 902eb982a0befa9e636528e84d048995b1b1a791 --max-mutants 5000 --budget 6300 --deadline 1794935405 --json /tmp/tmns-test-yup8f1ip/home/test-skip/nightly/parts-20261117T0720Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-17T07:20Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-yup8f1ip/home/test-skip/nightly-run-20261117T0720Z.log)
+2026-11-17T07:20Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}
+2026-11-17T07:20Z classify: {"t": "2026-11-17T07:20Z", "record": "/tmp/tmns-test-yup8f1ip/home/test-skip/nightly/20261117T0720Z.json", "head": "7fc9dc386dd2cec3256ab8b2737595b6338cbf04", "base": "902eb982a0befa9e636528e84d048995b1b1a791", "mutants": 4, "counts": {"KILLED": 4, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 4, "parts": 1, "part_rows": [{"k": 1, "first": "M001", "n": 4, "rc": 0, "where": null, "secon
+2026-11-17T07:20Z base -> 7fc9dc386
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 18.369s
+
+FAILED (failures=10)

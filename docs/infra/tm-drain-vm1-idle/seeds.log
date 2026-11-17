@@ -1,0 +1,8 @@
+S1 1 ['test_gate_boundaries', 'test_idle_part_runs_locally_same_args_in_a_capped_scope', 'test_load_rises_later_parts_go_remote_or_wait']
+S2 1 ['test_gate_boundaries']
+S3 1 ['test_idle_part_runs_locally_same_args_in_a_capped_scope', 'test_load_rises_later_parts_go_remote_or_wait']
+S4 1 ['test_idle_part_runs_locally_same_args_in_a_capped_scope']
+S5 1 ['test_gate_boundaries', 'test_idle_part_runs_locally_same_args_in_a_capped_scope']
+S6 1 ['test_load_rises_later_parts_go_remote_or_wait']
+S7 1 ['test_setup_failure_no_record_ids_resume']
+S8 1 ['test_idle_part_runs_locally_same_args_in_a_capped_scope']
