@@ -5,10 +5,10 @@
   "test": "tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english",
   "killed": true,
   "output": [
-   "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[drop-conjunct]",
    "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[drop-disjunct]",
    "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[widen-quantifier]",
-   "3 failed, 5 passed in 9.47s"
+   "FAILED tests/test_fidmech_prune.py::test_drop_is_prune_of_one_path_on_and_and_or_trees",
+   "4 failed, 5 passed in 7.64s"
   ]
  },
  {
@@ -186,6 +186,29 @@
    "FAILED tests/test_fidmech_wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot[openai-preparedness-f7-compile-the SAG]",
    "FAILED tests/test_fidmech_wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot[safety-framework-f14-governance function]",
    "2 failed in 0.47s"
+  ]
+ },
+ {
+  "bug": "widen-quantifier: restricting conjuncts dropped one path at a time (review F1)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together",
+   "FAILED tests/test_fidmech_prune.py::test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape",
+   "2 failed in 1.54s"
+  ]
+ },
+ {
+  "bug": "prune: a second path in the same walk is ignored (review F1 class)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[5]",
+   "FAILED tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[6]",
+   "FAILED tests/test_fidmech_prune.py::test_the_reviewers_two_stale_path_shapes",
+   "6 failed, 1 passed in 0.45s"
   ]
  }
 ]
