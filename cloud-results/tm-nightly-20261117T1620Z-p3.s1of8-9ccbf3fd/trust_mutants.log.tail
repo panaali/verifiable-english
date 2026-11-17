@@ -1,0 +1,7 @@
+trust_mutants: 21 definitions, 28 mutants (5 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/RightClauses/Wire.lean:87 VE.RightClauses.NoClauseKeys (S, trusted) ne-eq: ≠ -> = (the proofs it breaks: lean/VE/RightClauses/WireTheorems.lean:869)
+trust_mutants: 4 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 23 OTHER SHARD in 4180 s
+trust_mutants: D[V], trusted: 1 KILLED, 6 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 14 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 SURVIVOR, 3 OTHER SHARD
+trust_mutants: steps: wall plan 12.3 s, scratch 2.2 s, control_build 1.4 s, probe_install 1 s, mutants 4163 s, cleanup 0.6 s, reads 0.1 s; lake control_build 1.4 s (2), probe_install 1 s (1), control_probes 55.2 s (5), mutant_builds 181.4 s (6), mutant_checks 7990.2 s (10), outside_checks 13 s (2), stage_controls 4336.4 s (6), mutant_probes 55.1 s (5)
