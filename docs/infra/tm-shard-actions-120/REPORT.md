@@ -19,7 +19,7 @@ No DELTA rows (no Lean or trust-base change). No VE product code changed: this b
   cloud-jobs/tm-nightly-20261117T0600Z-p4-9ccbf3fd/job-script.sh` = 0. In that version the far deadline won, so no partial
   record was written before the cancel.
 
-## The fix (tm-shard.sh header entry "2026-11-17 tm-shard-actions-120"; diff: staged-changes.diff, +119/-4)
+## The fix (tm-shard.sh header entry "2026-11-17 tm-shard-actions-120"; diff: staged-changes.diff, +140/-4)
 This applies only when the caller's pool is actions and TM-SPM-OFF is absent. Other pools behave exactly as before (test 4).
 1. **Records.** tm-shard reads the export repo's `refs/cloud/*`, newest first, keeping runs that have `gha.txt` with `run_id=`
    and a `timings.tsv` with a `branch_lake_build` row. It takes the last 20 such runs within 168 h, using one
@@ -27,7 +27,10 @@ This applies only when the caller's pool is actions and TM-SPM-OFF is absent. Ot
    - SETUP is the larger of 500 and the **worst** setup of those 20 runs (cache_restore + python_env + branch_lake_build). The
      size target moves up by the same amount, so the mutant phase keeps the room the constants gave it.
    - SPM is the larger of the existing reading and the **p90** of the per-mutant readings.
-   - A run with a record gives steps.wall.mutants × jobs / (judged + abandoned).
+   - A run with a record gives steps.wall.mutants × jobs / the mutants that took a slot in that run (`used_here`): its own
+     rows (a `--shard` part's `shard.owned`) judged in that run, plus those its deadline abandoned mid-build. Another part's
+     `OTHER SHARD` rows, `--rescore` reuses (`reused_from`) and `--resume` keeps (`resumed.kept`) are not counted; a record
+     whose own rows took no slot gives no reading (review F1, below).
    - A cancelled run gives tm-spm.py's L151 bound: (7,200 − 300 − setup) × jobs / the number of mutants it had to run.
    - The log tail cannot count judged mutants, because trust_mutants prints KILLED lines only at its end
      (tools/trust_mutants.py:2359-2360, 2435-2436).
@@ -49,17 +52,17 @@ lines 45-55 pass trust_mutants the EARLIEST of every `--deadline` and `--budget`
 1283-1296), so a part stops at job.sh start + 6,300 s, which leaves about 900 s of the job for the record and the upload.
 Without tm-actions-deadline, a caller's far `--deadline` would beat the budget again.
 
-## Replay of the real 0600Z dispatches against the real records (replay-0600Z.log)
+## Replay of the real 0600Z dispatches against the real records (replay-0600Z.log; `python3 -I replay_run.py`)
 | | live tm-shard.sh | staged |
 |---|---|---|
-| p3, 60 mutants, records as of 06:12Z | 2 parts, ~1,700 s each, budget 6300 (both were cancelled) | not sent on actions: 12 parts would still be ~5,201 s > 5,100 (records: setup worst 1,770 s, p90 2,265 slot-s) |
-| p4, 30 mutants, records as of 08:20Z | unsharded, ~1,700 s, **no budget** (cancelled) | 8 parts, ~4,635 s each, `--budget 6300` |
+| p3, 60 mutants, records as of 06:12Z | 2 parts, ~1,700 s each, budget 6300 (both were cancelled) | not sent on actions: 12 parts would still be ~6,496 s > 5,100 (records: setup worst 1,770 s, p90 3,301 slot-s) |
+| p4, 30 mutants, records as of 08:20Z | unsharded, ~1,700 s, **no budget** (cancelled) | 10 parts, ~4,845 s each, `--budget 6300` |
 
 The replay uses room 40 and busy 0. At 06:12Z the real room was 22, which still allows the 12-part hard NMAX, so the outcome is
 the same.
 
 ## Tests (tools-local/test_tm_shard_actions_120.py; `TSH=<copy>` tests another file)
-Live results are in run-live.log (`python3 -I tools-local/test_tm_shard_actions_120.py --skip-5`, exit 1, 12 FAIL). Staged results
+Live results are in run-live.log (`python3 -I tools-local/test_tm_shard_actions_120.py --skip-5`, exit 1, 28 FAIL). Staged results
 are in run-staged.log (`TSH=$M/tm-shard.sh.new-tsa python3 -I tools-local/test_tm_shard_actions_120.py`, exit 0, `PASS: 0 failed`).
 | Case | live | staged |
 |---|---|---|
@@ -69,6 +72,7 @@ are in run-staged.log (`TSH=$M/tm-shard.sh.new-tsa python3 -I tools-local/test_t
 | (3) --budget ≤ 6,300 on sharded parts, beside a caller's `--budget 9000` and far `--deadline`, on the unsharded part; 99999 cut to 6,900; malformed gives 6,300; TM_PART_DEADLINE off gives none | FAIL ×4 (the flag-off check passes on both) | ok |
 | (4) claude-cloud ×3, codex ×2, claude: exit code, dispatch calls and log lines equal to the live script's, with the same records present | ok (trivially) | ok |
 | (5) tools-local/test_tm_shard_fallback_overwrite.py with TMS = the file under test | ok | ok |
+| (6) review F1: a record's per-mutant reading counts only its own mutants judged in that run plus the abandoned: a `--shard` part with `OTHER SHARD` rows (the probe's 1/8 of 30), with abandoned and not-started rows, a `--rescore` part, a `--resume` part (same HEAD, unmarked kept rows), `--resume` + `--rescore`, a `--resume` that was ignored, a full reuse (no reading), a whole run with `--max-mutants` rows; each record hand-written and from trust_mutants' own `record()` (VE_REPO) | FAIL ×16 (no records reader) | ok (16) |
 
 The Mac/VM part runs do not go through tm-shard dispatch. mac-pytest.sh tmparts builds their args from the caller's args
 (mac-pytest.sh:385-395: pa/pn), so none of these changes reach them.
@@ -82,6 +86,10 @@ then the tests were run with TSH set to that copy. Every bug was caught (test rc
 - B4: no cut over LIMIT − PRE. "TM_PART_BUDGET 99999 is cut …" fails.
 - B5: HARD/CANCEL keep 5,400/6,600. "84 mutants: not sent …" fails.
 - B6: a malformed or unset TM_PART_BUDGET drops the budget. 4 checks fail.
+- F1a: count every row (another part's `OTHER SHARD` rows too). 14 checks fail (the probe's part reads 240).
+- F1b: count `--rescore` reuses (`reused_from`) as judged. 4 checks fail.
+- F1c: count `--resume` keeps as judged. 4 checks fail.
+- F1d: leave out the mutants abandoned mid-build. 4 checks fail (case 1's p90 too).
 
 ## Old harnesses against the staged file (harness-regression.txt)
 - `test-harness/tmshard/test-tmshard.zsh` on the live file: 148 passed, 1 failed. That failure ("pc-3's case") is **pre-existing**.
@@ -136,7 +144,27 @@ Not covered by this item:
 
 `ls $M/ACTIONS_SUSPENDED` found no file when I read it at 14:41Z.
 
-SIZE: 119 product, 235 tests, 31 other hand-written lines (seed_run.py; plus this REPORT)
+SIZE: 140 product, 315 tests, 71 other hand-written lines (seed_run.py, replay_run.py; plus this REPORT)
+
+## Review F1 (tm-shard-actions-120-review.final.md): the per-mutant reading counted mutants the part never ran
+- **Bug.** `arecs` divided steps.wall.mutants × jobs by every row whose status was not `NOT RUN`. A `--shard` part's record
+  lists the whole plan, with the other parts' mutants as `OTHER SHARD` (tools/trust_mutants.py:2305-2307, 1976-1979), so an
+  N-part sweep read ~N× too low (the probe: 1,800 s × 4 jobs, 4 own + 26 `OTHER SHARD` rows read 240, not 1,800).
+- **Class, all removed in one function** (`used_here` in the arecs heredoc; the row wordings are named once beside it):
+  (a) another part's `OTHER SHARD` rows (a part's own rows are `shard.owned`); (b) `--rescore` reuses (`reused_from`);
+  (c) `--resume` keeps (`resumed.kept`; a kept row is not marked, so the count is used: a `--resume` keeps every own row its
+  PREV finished, the `--rescore` reuses among them, since its `--rescore` facts must be identical, so the finished own rows
+  not judged here number max(kept, reused)); the abandoned rows still count (they used the slots). A record whose own rows
+  took no slot, or one no run of the tool writes (kept over the finished rows, or under the reused), gives no reading.
+  The cancelled-run bound already divided by "to run" (only the part's own, trust_mutants.py:2346) and is unchanged.
+- **Regression test.** Case (6) of tools-local/test_tm_shard_actions_120.py runs the records reader on 8 records (the probe's
+  part; abandoned and not-started rows; `--rescore`; `--resume` at the same HEAD; `--resume` + `--rescore`; an ignored
+  `--resume`; a full reuse; a whole run with `--max-mutants` rows), each hand-written and written by trust_mutants' own
+  `record()` (VE_REPO), so a change of the tool's row shape fails here, not in the field. The old staged file fails 14 of
+  its 16 checks; seeds F1a-F1d (one per row class) are caught. The probe: review-f1-probe.log (240, exit 1 → 1,800, exit 0).
+- **Effect on the real records** (replay_run.py): the per-mutant p90 at 06:12Z is 3,301 (was 2,265), so the replay's p4 goes
+  as 10 parts of ~4,845 s (was 8 of ~4,635 s) and p3 stays not sent (~6,496 s for 12 parts). Before the fix, once the
+  cancelled-run bounds aged out the p90 fell to 1,376 (14:35Z); the fixed reader gives 3,026 at 15:26Z, so parts are not undersized.
 
 ## Notes for the DRI
 - test-tmshard.zsh needs updating after the install, and it is outside this row's paths:
@@ -147,13 +175,15 @@ SIZE: 119 product, 235 tests, 31 other hand-written lines (seed_run.py; plus thi
   "part line … records: …" clause. claude-cloud parts there are sized at the SPM Actions used, which can now be the records' p90.
   That is the existing fit-room design.
 - CONTROL stays 600 s. The records show 13-27 s (steps.wall plan..control_probes), so the 600 s acts as extra headroom.
-- The p90 at 06:12Z (2,265) was dominated by L151 bounds of cancelled runs. A bound can overstate when slots sat idle at the
-  cancel. It is the conservative side: such sweeps go elsewhere rather than being cancelled. At ~14:35Z the p90 was 1,376.
+- The p90 at 06:12Z is 3,301 slot-s with review F1's fix (2,265 before it: the sharded parts' records were read ~N× too low,
+  so the L151 bounds of cancelled runs set it). A bound can overstate when slots sat idle at the cancel. It is the
+  conservative side: such sweeps go elsewhere rather than being cancelled. At ~14:35Z the old reader gave 1,376 (the bounds
+  had aged out); the fixed one gives 3,026 at 15:26Z (`replay_run.py` prints the readings at 06:12Z and 08:20Z).
 
 ## Self-review against BUILDER-CHECKLIST
 1. N.A.: no Lean answer or relay.
-2. PASS: all 3 fix bullets, the cache finding and both tests files are delivered (run-staged.log `PASS: 0 failed`; tests 1-5).
-3. PASS: tests fail on the live file (run-live.log, 12 FAIL), and 6 seeded bugs are caught (seeds.log).
+2. PASS: all 3 fix bullets, the cache finding and both tests files are delivered (run-staged.log `PASS: 0 failed`; tests 1-6).
+3. PASS: tests fail on the live file (run-live.log, 28 FAIL), and 10 seeded bugs are caught (seeds.log).
 4. N.A.: no Python/Lean/Rust product code; for zsh the comparison against the live file is case (4).
 5. N.A.: no R8 binding.
 6. PASS: the evidence is from the final staged file (sha256.txt matches run-staged.log's TSH). The VE gate runs on this
@@ -171,5 +201,5 @@ SIZE: 119 product, 235 tests, 31 other hand-written lines (seed_run.py; plus thi
 15. PASS:
     - no overclaim: "every Actions part" is cases 3a-3c and 3f; "exactly as before" is case 4;
     - no silent cut: all deliverables are built;
-    - every new check can fail: B1-B6;
+    - every new check can fail: B1-B6, F1a-F1d;
     - limits are charged before work: N.A.
