@@ -1,0 +1,201 @@
+FFFFFFFFFFFF.FFFFF
+======================================================================
+FAIL: test_branch_editing_an_existing_row_is_serial_and_refused (__main__.Behaviour.test_branch_editing_an_existing_row_is_serial_and_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 177, in test_branch_editing_an_existing_row_is_serial_and_refused
+    self.assertIn("existing row", why)
+AssertionError: 'existing row' not found in 'unknown region (not a .lean/.py file)'
+
+======================================================================
+FAIL: test_duplicate_appended_row_is_not_doubled (__main__.Behaviour.test_duplicate_appended_row_is_not_doubled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 195, in test_duplicate_appended_row_is_not_doubled
+    r = self.resolver(w)
+        ^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 113, in resolver
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_path_overlap_check_no_longer_reports_append_only_branches (__main__.Behaviour.test_path_overlap_check_no_longer_reports_append_only_branches)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 224, in test_path_overlap_check_no_longer_reports_append_only_branches
+    self.assertEqual(out[-1], "rebase-second", r.stdout)
+AssertionError: 'serial docs/kernel/ALLOWANCES.md: unknown region (not a .lean/.py file)' != 'rebase-second'
+- serial docs/kernel/ALLOWANCES.md: unknown region (not a .lean/.py file)
++ rebase-second
+ : serial docs/kernel/ALLOWANCES.md: unknown region (not a .lean/.py file)
+
+
+======================================================================
+FAIL: test_presync_job_resolves_the_same_conflict (__main__.Behaviour.test_presync_job_resolves_the_same_conflict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 166, in test_presync_job_resolves_the_same_conflict
+    self.assertTrue(s, log)
+AssertionError: '' is not true : presync-watch kb-y: conflicts (1) docs/kernel/ALLOWANCES.md; no agent allowed for this job (the watcher's line says why): left to the train 05:01Z
+
+
+======================================================================
+FAIL: test_total_not_matching_branch_delta_is_refused (__main__.Behaviour.test_total_not_matching_branch_delta_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 208, in test_total_not_matching_branch_delta_is_refused
+    self.assertIn("does not match", why)
+AssertionError: 'does not match' not found in 'unknown region (not a .lean/.py file)'
+
+======================================================================
+FAIL: test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total (__main__.Behaviour.test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 139, in test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total
+    self.assertEqual(po.classify(self.R, "kb-x", AP, "", set())[0], "rebase-second")
+AssertionError: 'serial' != 'rebase-second'
+- serial
++ rebase-second
+
+
+======================================================================
+FAIL: test_deleted_row_refused (__main__.Shapes.test_deleted_row_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 250, in test_deleted_row_refused
+    self.refused(BASE.replace(ROWS[1] + "\n", ""), "existing row")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_fall_is_append_only_and_summed (__main__.Shapes.test_fall_is_append_only_and_summed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 279, in test_fall_is_append_only_and_summed
+    text, want, main_total, delta = self.am().resolve(BASE, doc(9831, [fall]), doc(9976, [RX]))
+                                    ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_main_without_the_table_refused (__main__.Shapes.test_main_without_the_table_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 284, in test_main_without_the_table_refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_new_table_refused (__main__.Shapes.test_new_table_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 262, in test_new_table_refused
+    self.refused(BASE + "\n| A | B |\n|---|---|\n| 1 | 2 |\n", "table")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_ownership_row_with_unchanged_total_is_append_only (__main__.Shapes.test_ownership_row_with_unchanged_total_is_append_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 274, in test_ownership_row_with_unchanged_total_is_append_only
+    app, b, o = self.am().analyse(BASE, doc(9966, [], [RO]))
+                ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_pre_signed_row_removed_refused (__main__.Shapes.test_pre_signed_row_removed_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 256, in test_pre_signed_row_removed_refused
+    self.refused(BASE.replace("| KB-1: Carry.lean | C | 80 |\n", ""), "existing row")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_row_inserted_before_the_end_refused (__main__.Shapes.test_row_inserted_before_the_end_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 253, in test_row_inserted_before_the_end_refused
+    self.refused(doc(9976).replace(ROWS[2], RX + "\n" + ROWS[2].replace("9,966", "9,976")), "existing row")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_text_outside_tables_refused (__main__.Shapes.test_text_outside_tables_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 259, in test_text_outside_tables_refused
+    self.refused(BASE.replace("It may rise only", "It may rise just"), "outside the tables")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_total_after_not_following_lines_refused (__main__.Shapes.test_total_after_not_following_lines_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 268, in test_total_after_not_following_lines_refused
+    self.refused(doc(9976, [row("kb-z", 10, 9977)]), "Total after")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_total_raised_without_a_row_refused (__main__.Shapes.test_total_raised_without_a_row_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 271, in test_total_raised_without_a_row_refused
+    self.refused(doc(9970), "does not match")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+======================================================================
+FAIL: test_two_total_lines_refused (__main__.Shapes.test_two_total_lines_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 265, in test_two_total_lines_refused
+    self.refused(BASE + "\nsigned total: 9,966 lines\n", "not one")
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 244, in refused
+    am = self.am()
+         ^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_allowances_shared.py", line 237, in am
+    self.assertTrue(os.path.exists(p), "tools-local/allowances_merge.py is not installed")
+AssertionError: False is not true : tools-local/allowances_merge.py is not installed
+
+----------------------------------------------------------------------
+Ran 18 tests in 2.055s
+
+FAILED (failures=17)
