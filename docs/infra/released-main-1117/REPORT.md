@@ -146,3 +146,8 @@ python3 -I tools-local/test_pick_released_main.py && python3 -I tools-local/test
     marker is removed; test_9 grants rel-a in the same fixture).
 15. Overclaim, silent cut, new checks can fail, limits: PASS. "Unchanged" claims cite run-staged-suites.txt; there is no cut;
     S1-S7; limits N.A.
+
+## Selected run (once, on the committed tree)
+
+`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit 0, 1024 s on
+ve-cloud-2; it recorded 227 units with 0 failed. This branch changes docs only, so the selection comes from the merge base.
