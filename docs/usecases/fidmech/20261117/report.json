@@ -1,0 +1,2551 @@
+{
+ "documents": [
+  {
+   "document": "anthropic-rsp",
+   "status": "ok",
+   "inputs_sha256": "39537b30c4c11e02dcad8bed896323d4915225c0afff357c2a56a0736f0264ed",
+   "in_sample": true,
+   "mutants": 467,
+   "ran": 457,
+   "not_run": 0,
+   "measurements": {
+    "wall_s": 2754.0,
+    "schedule_wall_s": 2610.7,
+    "child_cpu_s": 35591.9,
+    "run_cpu_s": 35590.8,
+    "peak_concurrency": 16,
+    "mean_concurrency": 15.72,
+    "admission_wait_s": 0.0,
+    "per_mutant_s": {
+     "mean": 78.3,
+     "median": 82.3,
+     "max": 101.6
+    },
+    "baseline_s": 59.123,
+    "worker_peak_rss_bytes": 297955328,
+    "max_peak_rss_bytes": 530628608,
+    "lean_service_start": {
+     "first_s": 0.3943415629910305,
+     "second_s": 0.11779605702031404,
+     "start_s": 0.277
+    },
+    "cpu_h_per_100": 2.16,
+    "wall_min_per_100": 10.0
+   },
+   "stillborn": {
+    "count": 10,
+    "by_op": {
+     "qualifier": 1,
+     "actor": 9
+    }
+   },
+   "kill_table": {
+    "drop-conjunct": {
+     "scored": 62,
+     "K": {
+      "killed": 9,
+      "decided": 62,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 62,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 62,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 62,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 62,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 50,
+      "decided": 62,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 62
+      }
+     },
+     "any": 50,
+     "none": {
+      "CR not read": 12
+     }
+    },
+    "drop-unless": {
+     "scored": 3,
+     "K": {
+      "killed": 1,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 3,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 3
+      }
+     },
+     "any": 3,
+     "none": {}
+    },
+    "drop-disjunct": {
+     "scored": 2,
+     "K": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 2,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 2
+      }
+     },
+     "any": 2,
+     "none": {}
+    },
+    "drop-exception": {
+     "scored": 3,
+     "K": {
+      "killed": 3,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 3,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 3
+      }
+     },
+     "any": 3,
+     "none": {}
+    },
+    "flip-force": {
+     "scored": 73,
+     "K": {
+      "killed": 0,
+      "decided": 70,
+      "left_out": {
+       "error": 3
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 73,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 73,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 73,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 73,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 73,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 73
+      }
+     },
+     "any": 0,
+     "none": {
+      "CR not read": 70,
+      "some instrument did not run": 3
+     }
+    },
+    "add-guard-true": {
+     "scored": 10,
+     "K": {
+      "killed": 5,
+      "decided": 10,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 10,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 10,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 1,
+      "decided": 10,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 10,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 10,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 10
+      }
+     },
+     "any": 6,
+     "none": {
+      "CR not read": 4
+     }
+    },
+    "rule-drop": {
+     "scored": 76,
+     "K": {
+      "killed": 29,
+      "decided": 76,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 76,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 76,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 76,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 76,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 40,
+      "decided": 76,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 76
+      }
+     },
+     "any": 45,
+     "none": {
+      "CR not read": 31
+     }
+    },
+    "widen-quantifier": {
+     "scored": 5,
+     "K": {
+      "killed": 3,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 5,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 5
+      }
+     },
+     "any": 5,
+     "none": {}
+    },
+    "quantity": {
+     "scored": 45,
+     "K": {
+      "killed": 0,
+      "decided": 40,
+      "left_out": {
+       "error": 5
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 45,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 5,
+      "decided": 45,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 2,
+      "decided": 45,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 45,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 1,
+      "decided": 45,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 45
+      }
+     },
+     "any": 8,
+     "none": {
+      "CR not read": 36,
+      "some instrument did not run": 1
+     }
+    },
+    "actor": {
+     "scored": 49,
+     "K": {
+      "killed": 0,
+      "decided": 44,
+      "left_out": {
+       "error": 5
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 49,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 13,
+      "decided": 49,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 49,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 49,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 17,
+      "decided": 49,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 49
+      }
+     },
+     "any": 30,
+     "none": {
+      "CR not read": 18,
+      "some instrument did not run": 1
+     }
+    },
+    "attachment": {
+     "scored": 5,
+     "K": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 4,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 5
+      }
+     },
+     "any": 4,
+     "none": {
+      "CR not read": 1
+     }
+    },
+    "qualifier": {
+     "scored": 103,
+     "K": {
+      "killed": 0,
+      "decided": 88,
+      "left_out": {
+       "error": 15
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 103,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 26,
+      "decided": 103,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 103,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 103,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 34,
+      "decided": 103,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 103
+      }
+     },
+     "any": 60,
+     "none": {
+      "CR not read": 43
+     }
+    },
+    "all": {
+     "scored": 436,
+     "K": {
+      "killed": 50,
+      "decided": 408,
+      "left_out": {
+       "error": 28
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 48,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 3,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 436,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 148,
+      "decided": 436,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 436
+      }
+     },
+     "any": 216,
+     "none": {
+      "CR not read": 215,
+      "some instrument did not run": 5
+     }
+    }
+   },
+   "kill_table_declared_as_survivor": {
+    "all": {
+     "scored": 436,
+     "K": {
+      "killed": 50,
+      "decided": 408,
+      "left_out": {
+       "error": 28
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 48,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 3,
+      "decided": 436,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 436,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 148,
+      "decided": 436,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 436
+      }
+     },
+     "any": 216,
+     "none": {
+      "CR not read": 215,
+      "some instrument did not run": 5
+     }
+    }
+   },
+   "K_errors": {
+    "ve.errors.SyntaxError: Norm consequence has no single declared reading; use a declared act phrase": 22,
+    "ve.errors.VEError: SoftOverHard": 3,
+    "ve.errors.VEError: InvalidInput": 2,
+    "ve.errors.VEError: Invalid ASCII identifier": 1
+   },
+   "equivalent": {},
+   "unprobed_rules": {
+    "rule_blocks": 76,
+    "in_no_item": 39,
+    "their_scored_mutants": 167,
+    "K": {
+     "survived": 160,
+     "error": 7
+    }
+   },
+   "units": {
+    "all ops": {
+     "units": 85,
+     "passing": 0,
+     "failing": 76,
+     "incomplete": 0,
+     "untested": 9,
+     "with_survivor": 75,
+     "failing_by": {
+      "K survivor": 74,
+      "K survivor, no text hit": 1,
+      "text hit D": 58,
+      "text hit L1": 31,
+      "text hit L2": 47,
+      "text hit L3": 12
+     }
+    },
+    "without flip-force": {
+     "units": 85,
+     "passing": 0,
+     "failing": 76,
+     "incomplete": 0,
+     "untested": 9,
+     "with_survivor": 71,
+     "failing_by": {
+      "K survivor": 70,
+      "K survivor, no text hit": 1,
+      "text hit D": 58,
+      "text hit L1": 31,
+      "text hit L2": 47,
+      "text hit L3": 12
+     }
+    },
+    "declared equivalents counted as survivors": {
+     "units": 85,
+     "passing": 0,
+     "failing": 76,
+     "incomplete": 0,
+     "untested": 9,
+     "with_survivor": 75,
+     "failing_by": {
+      "K survivor": 74,
+      "K survivor, no text hit": 1,
+      "text hit D": 58,
+      "text hit L1": 31,
+      "text hit L2": 47,
+      "text hit L3": 12
+     }
+    },
+    "K-structural alone (decomposition, not the headline)": {
+     "units": 85,
+     "passing": 1,
+     "failing": 75,
+     "incomplete": 0,
+     "untested": 9,
+     "with_survivor": 75,
+     "failing_by": {
+      "K survivor": 75
+     }
+    }
+   },
+   "sidecar": true,
+   "hits": {
+    "raw": {
+     "L1m": 2,
+     "L1n": 0,
+     "L1u": 4,
+     "L1c": 39,
+     "L1e": 1,
+     "L1a": 9,
+     "L2b": 25,
+     "L2q": 19,
+     "L2a": 2,
+     "L3w": 12,
+     "L4u": 20,
+     "L4l": 72,
+     "D": 1232,
+     "L4g": 0
+    },
+    "also_gated": {},
+    "levers": {
+     "extra": {
+      "cleared": 65,
+      "added": 6
+     },
+     "suppress": {
+      "cleared": 0,
+      "added": 0
+     },
+     "abbrev": {
+      "cleared": 0,
+      "added": 0
+     },
+     "furniture": {
+      "cleared": 87,
+      "added": 87
+     },
+     "footnotes": {
+      "cleared": 164,
+      "added": 85
+     },
+     "hand-footnotes": {
+      "cleared": 16,
+      "added": 1
+     },
+     "ruled_out": {
+      "cleared": 0,
+      "added": 0
+     },
+     "unformalised": {
+      "cleared": 15,
+      "added": 0
+     },
+     "sidecar": {
+      "cleared": 173,
+      "added": 3
+     }
+    }
+   },
+   "adjudication": {
+    "unadjudicated": 1437
+   },
+   "adjudication_findings": {
+    "findings": 33,
+    "REAL-by-both": 23,
+    "NOT-by-both": 3,
+    "split": 7,
+    "unit_fp1_unchanged": 0
+   },
+   "control_false_alarms": 0,
+   "blind_spot": {
+    "drop-conjunct": 12,
+    "flip-force": 73,
+    "add-guard-true": 4,
+    "rule-drop": 31,
+    "quantity": 37,
+    "qualifier": 43,
+    "attachment": 1,
+    "actor": 19
+   },
+   "plants_and_defects": {
+    "plants": {
+     "entries": 24,
+     "excluded": 12,
+     "applied": 11,
+     "not applicable": 1,
+     "K_killed": 5,
+     "K_decided": 11,
+     "any_killed": 7,
+     "text_killed": 6,
+     "not_applicable_by": {
+      "the unit text is gone at the tree under test": 1
+     }
+    },
+    "defects": {
+     "entries": 14,
+     "applied": 10,
+     "not applicable": 4,
+     "K_killed": 1,
+     "K_decided": 10,
+     "any_killed": 10,
+     "text_killed": 10,
+     "not_applicable_by": {
+      "the repair deleted text the defect needs": 4
+     }
+    }
+   }
+  },
+  {
+   "document": "safety-framework",
+   "status": "ok",
+   "inputs_sha256": "34ec93f778fab87851470d1e6701342afa6499140adfa08444ae3ed85c60b04d",
+   "in_sample": false,
+   "mutants": 256,
+   "ran": 64,
+   "not_run": 192,
+   "measurements": {
+    "wall_s": 11605.3,
+    "schedule_wall_s": 11500.9,
+    "child_cpu_s": 16439.0,
+    "run_cpu_s": 16437.8,
+    "peak_concurrency": 16,
+    "mean_concurrency": 2.91,
+    "admission_wait_s": 9368.5,
+    "per_mutant_s": {
+     "mean": 416.7,
+     "median": 337.6,
+     "max": 750.7
+    },
+    "baseline_s": 170.397,
+    "worker_peak_rss_bytes": 147525632,
+    "max_peak_rss_bytes": 265408512,
+    "lean_service_start": {
+     "first_s": 0.40130474301986396,
+     "second_s": 0.08203832898288965,
+     "start_s": 0.319
+    },
+    "cpu_h_per_100": 7.13,
+    "wall_min_per_100": 302.2
+   },
+   "stillborn": {
+    "count": 0,
+    "by_op": {}
+   },
+   "kill_table": {
+    "drop-conjunct": {
+     "scored": 60,
+     "K": {
+      "killed": 30,
+      "decided": 60,
+      "left_out": {}
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 60,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 60,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 60,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 60,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 40,
+      "decided": 60,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 60
+      }
+     },
+     "any": 50,
+     "none": {
+      "CR not read": 10
+     }
+    },
+    "drop-unless": {
+     "scored": 8,
+     "K": {
+      "killed": 0,
+      "decided": 4,
+      "left_out": {
+       "not-run": 4
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 4,
+      "decided": 8,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 8
+      }
+     },
+     "any": 4,
+     "none": {
+      "CR not read": 4
+     }
+    },
+    "drop-disjunct": {
+     "scored": 18,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 18
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 18,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 18,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 18,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 18,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 10,
+      "decided": 18,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 18
+      }
+     },
+     "any": 10,
+     "none": {
+      "some instrument did not run": 8
+     }
+    },
+    "drop-exception": {
+     "scored": 2,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 2
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 1,
+      "decided": 2,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 2
+      }
+     },
+     "any": 1,
+     "none": {
+      "some instrument did not run": 1
+     }
+    },
+    "flip-force": {
+     "scored": 41,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 41
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 41,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 41,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 41,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 41,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 41,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 41
+      }
+     },
+     "any": 0,
+     "none": {
+      "some instrument did not run": 41
+     }
+    },
+    "add-guard-true": {
+     "scored": 16,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 16
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 16,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 16,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 16,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 16,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 16,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 16
+      }
+     },
+     "any": 0,
+     "none": {
+      "some instrument did not run": 16
+     }
+    },
+    "rule-drop": {
+     "scored": 44,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 44
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 44,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 44,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 44,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 44,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 28,
+      "decided": 44,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 44
+      }
+     },
+     "any": 28,
+     "none": {
+      "some instrument did not run": 16
+     }
+    },
+    "widen-quantifier": {
+     "scored": 2,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 2
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 2,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 2,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 2
+      }
+     },
+     "any": 2,
+     "none": {}
+    },
+    "qualifier": {
+     "scored": 23,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 23
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 23,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 23,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 23,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 23,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 6,
+      "decided": 23,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 23
+      }
+     },
+     "any": 6,
+     "none": {
+      "some instrument did not run": 17
+     }
+    },
+    "quantity": {
+     "scored": 27,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 27
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 27,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 27,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 5,
+      "decided": 27,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 27,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 27,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 27
+      }
+     },
+     "any": 5,
+     "none": {
+      "some instrument did not run": 22
+     }
+    },
+    "actor": {
+     "scored": 14,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 14
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 14,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 14,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 14,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 14,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 14,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 14
+      }
+     },
+     "any": 2,
+     "none": {
+      "some instrument did not run": 12
+     }
+    },
+    "attachment": {
+     "scored": 1,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 1
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 1
+      }
+     },
+     "any": 0,
+     "none": {
+      "some instrument did not run": 1
+     }
+    },
+    "all": {
+     "scored": 256,
+     "K": {
+      "killed": 30,
+      "decided": 64,
+      "left_out": {
+       "not-run": 192
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 5,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 93,
+      "decided": 256,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 256
+      }
+     },
+     "any": 108,
+     "none": {
+      "CR not read": 14,
+      "some instrument did not run": 134
+     }
+    }
+   },
+   "kill_table_declared_as_survivor": {
+    "all": {
+     "scored": 256,
+     "K": {
+      "killed": 30,
+      "decided": 64,
+      "left_out": {
+       "not-run": 192
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 5,
+      "decided": 256,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 256,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 93,
+      "decided": 256,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 256
+      }
+     },
+     "any": 108,
+     "none": {
+      "CR not read": 14,
+      "some instrument did not run": 134
+     }
+    }
+   },
+   "K_errors": {},
+   "equivalent": {},
+   "unprobed_rules": {
+    "rule_blocks": 45,
+    "in_no_item": 11,
+    "their_scored_mutants": 50,
+    "K": {
+     "survived": 9,
+     "killed": 1,
+     "not-run": 40
+    }
+   },
+   "units": {
+    "all ops": {
+     "units": 61,
+     "passing": 0,
+     "failing": 45,
+     "incomplete": 0,
+     "untested": 16,
+     "with_survivor": 23,
+     "failing_by": {
+      "K survivor": 23,
+      "text hit D": 33,
+      "text hit L1": 37,
+      "text hit L2": 45,
+      "text hit L3": 22
+     }
+    },
+    "without flip-force": {
+     "units": 61,
+     "passing": 0,
+     "failing": 45,
+     "incomplete": 0,
+     "untested": 16,
+     "with_survivor": 23,
+     "failing_by": {
+      "K survivor": 23,
+      "text hit D": 33,
+      "text hit L1": 37,
+      "text hit L2": 45,
+      "text hit L3": 22
+     }
+    },
+    "declared equivalents counted as survivors": {
+     "units": 61,
+     "passing": 0,
+     "failing": 45,
+     "incomplete": 0,
+     "untested": 16,
+     "with_survivor": 23,
+     "failing_by": {
+      "K survivor": 23,
+      "text hit D": 33,
+      "text hit L1": 37,
+      "text hit L2": 45,
+      "text hit L3": 22
+     }
+    },
+    "without D (no sidecar)": {
+     "units": 61,
+     "passing": 0,
+     "failing": 45,
+     "incomplete": 0,
+     "untested": 16,
+     "with_survivor": 23,
+     "failing_by": {
+      "K survivor": 23,
+      "text hit L1": 37,
+      "text hit L2": 45,
+      "text hit L3": 22
+     }
+    },
+    "K-structural alone (decomposition, not the headline)": {
+     "units": 61,
+     "passing": 0,
+     "failing": 23,
+     "incomplete": 22,
+     "untested": 16,
+     "with_survivor": 23,
+     "failing_by": {
+      "K survivor": 23
+     }
+    }
+   },
+   "sidecar": false,
+   "hits": {
+    "raw": {
+     "L1m": 17,
+     "L1n": 0,
+     "L1u": 0,
+     "L1c": 38,
+     "L1e": 1,
+     "L1a": 4,
+     "L2b": 26,
+     "L2q": 1,
+     "L2a": 0,
+     "L3w": 24,
+     "L4u": 18,
+     "L4l": 50,
+     "D": 386,
+     "L4g": 0
+    },
+    "also_gated": {},
+    "levers": {
+     "extra": {
+      "cleared": 0,
+      "added": 0
+     },
+     "suppress": {
+      "cleared": 0,
+      "added": 0
+     },
+     "abbrev": {
+      "cleared": 0,
+      "added": 0
+     },
+     "furniture": {
+      "cleared": 5,
+      "added": 27
+     },
+     "footnotes": {
+      "cleared": 48,
+      "added": 10
+     },
+     "hand-footnotes": {
+      "cleared": 0,
+      "added": 0
+     },
+     "ruled_out": {
+      "cleared": 0,
+      "added": 0
+     },
+     "unformalised": {
+      "cleared": 33,
+      "added": 0
+     },
+     "sidecar": {
+      "cleared": 0,
+      "added": 0
+     }
+    }
+   },
+   "adjudication": {
+    "unadjudicated": 565
+   },
+   "adjudication_findings": {
+    "findings": 8,
+    "split": 6,
+    "REAL-by-both": 2,
+    "unit_fp1_unchanged": 0
+   },
+   "control_false_alarms": 0,
+   "blind_spot": {
+    "drop-conjunct": 10,
+    "drop-unless": 4,
+    "drop-disjunct": 8,
+    "drop-exception": 1,
+    "flip-force": 41,
+    "add-guard-true": 16,
+    "rule-drop": 16,
+    "quantity": 22,
+    "qualifier": 17,
+    "actor": 12,
+    "attachment": 1
+   },
+   "plants_and_defects": {
+    "plants": {
+     "entries": 0,
+     "K_killed": 0,
+     "K_decided": 0,
+     "any_killed": 0,
+     "text_killed": 0,
+     "not_applicable_by": {}
+    },
+    "defects": {
+     "entries": 0,
+     "K_killed": 0,
+     "K_decided": 0,
+     "any_killed": 0,
+     "text_killed": 0,
+     "not_applicable_by": {}
+    }
+   }
+  },
+  {
+   "document": "openai-preparedness",
+   "status": "ok",
+   "inputs_sha256": "50ac2c228942aa3dc55ecde6ef24436bd0471dc9d41e1f5b0eed6e516149f4b7",
+   "in_sample": false,
+   "mutants": 518,
+   "ran": 96,
+   "not_run": 415,
+   "measurements": {
+    "wall_s": 12561.9,
+    "schedule_wall_s": 12311.3,
+    "child_cpu_s": 40417.3,
+    "run_cpu_s": 40415.6,
+    "peak_concurrency": 16,
+    "mean_concurrency": 6.96,
+    "admission_wait_s": 6596.8,
+    "per_mutant_s": {
+     "mean": 714.7,
+     "median": 791.8,
+     "max": 1008.4
+    },
+    "baseline_s": 296.729,
+    "worker_peak_rss_bytes": 335855616,
+    "max_peak_rss_bytes": 505724928,
+    "lean_service_start": {
+     "first_s": 0.6483073480194435,
+     "second_s": 0.2007026270730421,
+     "start_s": 0.448
+    },
+    "cpu_h_per_100": 11.69,
+    "wall_min_per_100": 218.1
+   },
+   "stillborn": {
+    "count": 7,
+    "by_op": {
+     "actor": 7
+    }
+   },
+   "kill_table": {
+    "drop-conjunct": {
+     "scored": 139,
+     "K": {
+      "killed": 50,
+      "decided": 96,
+      "left_out": {
+       "not-run": 43
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 139,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 139,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 139,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 139,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 38,
+      "decided": 139,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 139
+      }
+     },
+     "any": 77,
+     "none": {
+      "CR not read": 37,
+      "some instrument did not run": 25
+     }
+    },
+    "drop-unless": {
+     "scored": 5,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 5
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 5,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 2,
+      "decided": 5,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 5
+      }
+     },
+     "any": 2,
+     "none": {
+      "some instrument did not run": 3
+     }
+    },
+    "drop-disjunct": {
+     "scored": 8,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 8
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 8
+      }
+     },
+     "any": 0,
+     "none": {
+      "some instrument did not run": 8
+     }
+    },
+    "drop-exception": {
+     "scored": 8,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 8
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 8,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 1,
+      "decided": 8,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 8
+      }
+     },
+     "any": 1,
+     "none": {
+      "some instrument did not run": 7
+     }
+    },
+    "flip-force": {
+     "scored": 91,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 91
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 91,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 91,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 91,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 91,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 1,
+      "decided": 91,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 91
+      }
+     },
+     "any": 1,
+     "none": {
+      "some instrument did not run": 90
+     }
+    },
+    "add-guard-true": {
+     "scored": 63,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 63
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 63,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 63,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 11,
+      "decided": 63,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 63,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 63,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 63
+      }
+     },
+     "any": 11,
+     "none": {
+      "some instrument did not run": 52
+     }
+    },
+    "rule-drop": {
+     "scored": 90,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 90
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 90,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 90,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 90,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 90,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 32,
+      "decided": 90,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 90
+      }
+     },
+     "any": 32,
+     "none": {
+      "some instrument did not run": 58
+     }
+    },
+    "qualifier": {
+     "scored": 24,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 24
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 24,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 2,
+      "decided": 24,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 24,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 24,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 3,
+      "decided": 24,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 24
+      }
+     },
+     "any": 5,
+     "none": {
+      "some instrument did not run": 19
+     }
+    },
+    "actor": {
+     "scored": 51,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 51
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 51,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 6,
+      "decided": 51,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 51,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 51,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 3,
+      "decided": 51,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 51
+      }
+     },
+     "any": 9,
+     "none": {
+      "some instrument did not run": 42
+     }
+    },
+    "quantity": {
+     "scored": 31,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 31
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 31,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 1,
+      "decided": 31,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 8,
+      "decided": 31,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 31,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 3,
+      "decided": 31,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 31
+      }
+     },
+     "any": 10,
+     "none": {
+      "some instrument did not run": 21
+     }
+    },
+    "attachment": {
+     "scored": 1,
+     "K": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-run": 1
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 0,
+      "decided": 1,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 1
+      }
+     },
+     "any": 0,
+     "none": {
+      "some instrument did not run": 1
+     }
+    },
+    "all": {
+     "scored": 511,
+     "K": {
+      "killed": 50,
+      "decided": 96,
+      "left_out": {
+       "not-run": 415
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 9,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 19,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 511,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 83,
+      "decided": 511,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 511
+      }
+     },
+     "any": 148,
+     "none": {
+      "CR not read": 37,
+      "some instrument did not run": 326
+     }
+    }
+   },
+   "kill_table_declared_as_survivor": {
+    "all": {
+     "scored": 511,
+     "K": {
+      "killed": 50,
+      "decided": 96,
+      "left_out": {
+       "not-run": 415
+      }
+     },
+     "L1": {
+      "killed": 0,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L2": {
+      "killed": 9,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L3": {
+      "killed": 19,
+      "decided": 511,
+      "left_out": {}
+     },
+     "L4": {
+      "killed": 0,
+      "decided": 511,
+      "left_out": {}
+     },
+     "D": {
+      "killed": 83,
+      "decided": 511,
+      "left_out": {}
+     },
+     "CR": {
+      "killed": 0,
+      "decided": 0,
+      "left_out": {
+       "not-read": 511
+      }
+     },
+     "any": 148,
+     "none": {
+      "CR not read": 37,
+      "some instrument did not run": 326
+     }
+    }
+   },
+   "K_errors": {},
+   "equivalent": {},
+   "unprobed_rules": {
+    "rule_blocks": 91,
+    "in_no_item": 0,
+    "their_scored_mutants": 0,
+    "K": {}
+   },
+   "units": {
+    "all ops": {
+     "units": 101,
+     "passing": 0,
+     "failing": 88,
+     "incomplete": 3,
+     "untested": 10,
+     "with_survivor": 36,
+     "failing_by": {
+      "K survivor": 36,
+      "text hit D": 62,
+      "text hit L1": 66,
+      "text hit L2": 81,
+      "text hit L3": 12
+     }
+    },
+    "without flip-force": {
+     "units": 101,
+     "passing": 0,
+     "failing": 88,
+     "incomplete": 3,
+     "untested": 10,
+     "with_survivor": 36,
+     "failing_by": {
+      "K survivor": 36,
+      "text hit D": 62,
+      "text hit L1": 66,
+      "text hit L2": 81,
+      "text hit L3": 12
+     }
+    },
+    "declared equivalents counted as survivors": {
+     "units": 101,
+     "passing": 0,
+     "failing": 88,
+     "incomplete": 3,
+     "untested": 10,
+     "with_survivor": 36,
+     "failing_by": {
+      "K survivor": 36,
+      "text hit D": 62,
+      "text hit L1": 66,
+      "text hit L2": 81,
+      "text hit L3": 12
+     }
+    },
+    "K-structural alone (decomposition, not the headline)": {
+     "units": 101,
+     "passing": 0,
+     "failing": 36,
+     "incomplete": 55,
+     "untested": 10,
+     "with_survivor": 36,
+     "failing_by": {
+      "K survivor": 36
+     }
+    }
+   },
+   "sidecar": true,
+   "hits": {
+    "raw": {
+     "L1m": 0,
+     "L1n": 0,
+     "L1u": 14,
+     "L1c": 64,
+     "L1e": 0,
+     "L1a": 1,
+     "L2b": 44,
+     "L2q": 9,
+     "L2a": 2,
+     "L3w": 16,
+     "L4u": 12,
+     "L4l": 0,
+     "D": 665,
+     "L4g": 0
+    },
+    "also_gated": {
+     "L1m": {
+      "by": "quote_evidence.py:39 (a block with no quotation)",
+      "hits": 0
+     },
+     "L1u": {
+      "by": "quote_evidence.py:40 via test_pf_fidelity_fix.py:179 (plain() substring)",
+      "hits": 14
+     },
+     "L1e": {
+      "by": "quote_evidence.py:40 and test_pf_fidelity_fix.py:184 ('…')",
+      "hits": 0
+     }
+    },
+    "levers": {
+     "extra": {
+      "cleared": 0,
+      "added": 0
+     },
+     "suppress": {
+      "cleared": 0,
+      "added": 0
+     },
+     "abbrev": {
+      "cleared": 0,
+      "added": 0
+     },
+     "furniture": {
+      "cleared": 68,
+      "added": 44
+     },
+     "footnotes": {
+      "cleared": 0,
+      "added": 0
+     },
+     "hand-footnotes": {
+      "cleared": 14,
+      "added": 20
+     },
+     "ruled_out": {
+      "cleared": 0,
+      "added": 0
+     },
+     "unformalised": {
+      "cleared": 262,
+      "added": 0
+     },
+     "sidecar": {
+      "cleared": 549,
+      "added": 19
+     }
+    }
+   },
+   "adjudication": {
+    "unadjudicated": 827
+   },
+   "adjudication_findings": {
+    "findings": 49,
+    "split": 24,
+    "REAL-by-both": 24,
+    "NOT-by-both": 1,
+    "unit_fp1_unchanged": 0
+   },
+   "control_false_alarms": 0,
+   "blind_spot": {
+    "drop-conjunct": 62,
+    "drop-unless": 3,
+    "drop-disjunct": 8,
+    "drop-exception": 7,
+    "flip-force": 90,
+    "add-guard-true": 52,
+    "rule-drop": 58,
+    "qualifier": 19,
+    "quantity": 21,
+    "actor": 42,
+    "attachment": 1
+   },
+   "plants_and_defects": {
+    "plants": {
+     "entries": 0,
+     "K_killed": 0,
+     "K_decided": 0,
+     "any_killed": 0,
+     "text_killed": 0,
+     "not_applicable_by": {}
+    },
+    "defects": {
+     "entries": 0,
+     "K_killed": 0,
+     "K_decided": 0,
+     "any_killed": 0,
+     "text_killed": 0,
+     "not_applicable_by": {}
+    }
+   }
+  }
+ ],
+ "inputs_sha256": {
+  "adjudications.json": "a4e1c3feb6699deac070e2c0797e83b1d585b2277289681de72128e5096c85f8",
+  "defects.json": "9ba691dd7b789ee77e1cdb7ea8f67b2261e5b636170af26faec7ff375d2f6394",
+  "fp1.json": "2a0a6dcb9e1f94ecce820bbcfe4a6deef4107435ce51417cbe4c829c0c35988b",
+  "plants.json": "5173f2b5f2154007bd956774bc00cddef3deb93e93fcc0c5f43c39bbd09e637a"
+ }
+}
