@@ -10,7 +10,9 @@
   `seeded-bugs.json`, `seed_run.py`, `staged-changes.diff`). No VE product code (Lean, Python or Rust) changed.
 - Tests: 4 of the 5 new tests fail on the live script and all 5 pass on the staged one (`run-live.log`, `run-staged.log`).
   The fifth (`test_remote_only_mode_never_local`) checks unchanged behaviour, so it passes on both by design. The six
-  existing tm-nightly test files pass on the staged script as they do on the live one (`run-regression.log`).
+  existing tm-nightly test files give the same result on the staged script as on the live one (`run-regression.log`). All
+  pass except two mac-pytest.sh tests in test_tm_nightly_restart_main.py, which fail on both and predate this item
+  (section 6).
 - Seeded bugs: 8 of 8 caught (`seeded-bugs.json`; shell, in the staged file).
 - Trust mutants: none for this branch. `uv run python tools/trust_mutants.py --base b00f97f5 --plan` gives
   `"mutants": 0` (no Lean changed). light-lane.py prints NOT only because of the evidence files' line count, and no
