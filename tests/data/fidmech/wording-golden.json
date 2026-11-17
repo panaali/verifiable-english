@@ -1,0 +1,2086 @@
+{
+ "generator": "manage-agents tools-local/wording-mutants.py",
+ "source_sha256": "ae53257d835a5dbc4a3e3b8d16c4750973dc22b0d551d2797a66f755971f1c37",
+ "n": 10,
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "documents": {
+  "anthropic-rsp": {
+   "input_sha256": {
+    "environment.d1.json": "aa22a6d41828af5198329ac9105f247174ea311f4f6e3dca353d4f6aef9c4b9e",
+    "rsp_vocabulary.py": "c611cd7581effacc7566e91a9cf40adf64b0694f450d8c67d59b29c61383ae43",
+    "rules.d1.ve": "bdfc557b1703977845c11e3b8d391c31424f91b09584340ff63238552aeee7d3"
+   },
+   "seeds": {
+    "1": {
+     "plan": [
+      {
+       "unit": "f20-quarterly",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "quarterly_updates",
+       "old": "the Board",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f15-revenue-strict",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "candidate_selected",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "f20-recipients",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "recipient_options",
+       "old": "one",
+       "new": "two"
+      },
+      {
+       "unit": "f6-keep-past",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "act",
+       "pred": "past_roadmaps_kept",
+       "old": "the link of the current Roadmap",
+       "new": "the current Roadmap of the link"
+      },
+      {
+       "unit": "f6-strive-default",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "goals_kept",
+       "old": "the company",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f10-in-line",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "deviation_reported",
+       "old": "noteworthy ",
+       "new": ""
+      },
+      {
+       "unit": "f5-strict",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "crossed",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f22-third-party-review",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f5-evidence-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation has crossed \"automated_rd\" and that situation is classified as \"ai_evidence_risk\".",
+       "new": ", if that situation has crossed \"automated_rd\"."
+      },
+      {
+       "unit": "f21-clause",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "3b63dd55696c99ff7eb9f38320f150961bf0a36c346721a18d1e63e9efb93c91",
+       "rsp_vocabulary.py": "a41db7dfcb4d68a2546ac7e94e9b077a662bb4bf020f022178ecfdb405ddad7b",
+       "rules.d1.ve": "5258bc1443b21a9fa779020b59de26e7e1d837704d6d92c474feb4f116e83b67"
+      },
+      {
+       "environment.d1.json": "bbc1b2fec0c8bc6ca5b48d40f242a3b2de3c1d8eaadf5b14fdf7a6ef69a7bb61",
+       "rsp_vocabulary.py": "b178a1fc18cecd4d4a97685d68f7032cd6acbdbed81e50f2a6abae89fdb06b33",
+       "rules.d1.ve": "9682672404601da3dee1b2e465a15682026685f687f5b1e71c278e028d95c2a1"
+      },
+      {
+       "environment.d1.json": "0a48e6d33029ca1e6694af54b20ac9609c30bd605b587b384153f1cd7161a484",
+       "rsp_vocabulary.py": "d6839f2e59510c8d749b0de251e4db54a1be704a45989d99253ed9a116c1bbe4",
+       "rules.d1.ve": "15dc351455b230bb0ebee2c06d638f149990a58f5bff286bc564f31f46c1ab1a"
+      },
+      {
+       "environment.d1.json": "1efc5bbdc878f70a1346fe5e700d3a66faa968386d9d8cc8a1fc4a6b0412e841",
+       "rsp_vocabulary.py": "8bd57d8abb2c26c533ede2ae20b36d6090bb741b22da13c332805a75c6eeaf47",
+       "rules.d1.ve": "9124cc416b346a7de7db0562cb813e6c6717466bef08462b49d3c2f931e55d7e"
+      },
+      {
+       "environment.d1.json": "718314c55f00fef6004bba9deb542be4b64074137daf4dc40505f9adce575d84",
+       "rsp_vocabulary.py": "1f8187875f5ea4cfdb44af1c2e93a7383ee3f1e5e9b92326a72f337460c0d59c"
+      },
+      {
+       "environment.d1.json": "4ef8407d231d6263ae2465e49fca27083b080a92b4647657329666d7f6e0a9e6",
+       "rsp_vocabulary.py": "673695e96c16599c1fdb22efd8681c98cb55ea173054852b39c5fd2f64d8cef9"
+      },
+      {
+       "environment.d1.json": "36580b3d6940c973f51a86c681301dcdb45045032a96e8b5f5c6027f4b4fc4d4",
+       "rsp_vocabulary.py": "59984831a15f9fc7e0b7b774c25781c21ada7a3588951e525f1c1ca053b63dad"
+      },
+      {
+       "rules.d1.ve": "c7e4864e05c18d811ae3ef9183a766a0a6c85e378452d67b021241bb524fd8e8"
+      },
+      {
+       "rules.d1.ve": "ea7b8ad51764acf9582b61ee64838711297b6142864566dfb7482a58cfea6d7b"
+      },
+      {
+       "rules.d1.ve": "69f41f7441328004b993e3d52b078c18b104f2357e6957bcc6abbe0f73b493ba"
+      }
+     ]
+    },
+    "2": {
+     "plan": [
+      {
+       "unit": "rows-cond",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "plans_in_place",
+       "old": "the company",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f15-revenue-strict",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "candidate_selected",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "f20-recipients",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "recipient_options",
+       "old": "one",
+       "new": "two"
+      },
+      {
+       "unit": "f6-keep-past",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "act",
+       "pred": "past_roadmaps_kept",
+       "old": "the link of the current Roadmap",
+       "new": "the current Roadmap of the link"
+      },
+      {
+       "unit": "f12-approval",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "executive_submitted",
+       "old": "the CEO",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f21-no-impeding",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "impedes_safety_concerns",
+       "old": "publicly ",
+       "new": ""
+      },
+      {
+       "unit": "f5-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "crossed",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "s1-advance-default",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " should ",
+       "new": " must "
+      },
+      {
+       "unit": "f5-evidence-default",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation has crossed \"automated_rd\" and that situation is classified as \"ai_evidence_risk\".",
+       "new": ", if that situation has crossed \"automated_rd\"."
+      },
+      {
+       "unit": "f23-approval",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "e4a5494f6ec7fc4928fab38d2b84d78c85d4df6568c015dff8fed35381d5b9d8",
+       "rsp_vocabulary.py": "1f65eb035a1be7cd273eb57469326fb62bbc39634053ac7f54d4c7106a6c6f18",
+       "rules.d1.ve": "54c5c470983c18e0703b115f462288d85baa0df58bc967c8b7223ddcb4ae2e5f"
+      },
+      {
+       "environment.d1.json": "bbc1b2fec0c8bc6ca5b48d40f242a3b2de3c1d8eaadf5b14fdf7a6ef69a7bb61",
+       "rsp_vocabulary.py": "b178a1fc18cecd4d4a97685d68f7032cd6acbdbed81e50f2a6abae89fdb06b33",
+       "rules.d1.ve": "9682672404601da3dee1b2e465a15682026685f687f5b1e71c278e028d95c2a1"
+      },
+      {
+       "environment.d1.json": "0a48e6d33029ca1e6694af54b20ac9609c30bd605b587b384153f1cd7161a484",
+       "rsp_vocabulary.py": "d6839f2e59510c8d749b0de251e4db54a1be704a45989d99253ed9a116c1bbe4",
+       "rules.d1.ve": "15dc351455b230bb0ebee2c06d638f149990a58f5bff286bc564f31f46c1ab1a"
+      },
+      {
+       "environment.d1.json": "1efc5bbdc878f70a1346fe5e700d3a66faa968386d9d8cc8a1fc4a6b0412e841",
+       "rsp_vocabulary.py": "8bd57d8abb2c26c533ede2ae20b36d6090bb741b22da13c332805a75c6eeaf47",
+       "rules.d1.ve": "9124cc416b346a7de7db0562cb813e6c6717466bef08462b49d3c2f931e55d7e"
+      },
+      {
+       "environment.d1.json": "65543fb23274530ecb864e59bb4f7b7b35db6cf77d14987514ea38edce2cad6b",
+       "rsp_vocabulary.py": "db3d4b198242ee55e233f23b0e8f58a6e84b8e89d6a433e7031cb9bc2659b913"
+      },
+      {
+       "environment.d1.json": "5ca23a759543e95461680c1f75718207553f54cef7b12745f4e165fff89c3f2a",
+       "rsp_vocabulary.py": "32dce921b7a19d7b83b25c57c4ac554dd708dcd9eb00ff346531703a821bcc35"
+      },
+      {
+       "environment.d1.json": "36580b3d6940c973f51a86c681301dcdb45045032a96e8b5f5c6027f4b4fc4d4",
+       "rsp_vocabulary.py": "59984831a15f9fc7e0b7b774c25781c21ada7a3588951e525f1c1ca053b63dad"
+      },
+      {
+       "rules.d1.ve": "fde587274ad5938386a0cf099ba49fe24f3ebcabffcbad1129ef11a662b86e24"
+      },
+      {
+       "rules.d1.ve": "c7ddeab76e3c1710d5281a9a33bbc27437757e978f316c6a2c595ef46b80bd02"
+      },
+      {
+       "rules.d1.ve": "0f36c304c4e965c4b89e9508f11fa19b64e1f83eb2ab390d3ee3e6a9d61c73e9"
+      }
+     ]
+    },
+    "3": {
+     "plan": [
+      {
+       "unit": "f16-only-legal",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "only_legal_redactions",
+       "old": "external reviewers",
+       "new": "the Board"
+      },
+      {
+       "unit": "f15-revenue-default",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "candidate_selected",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "f20-quarterly",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "quarterly_updates",
+       "old": "quarterly",
+       "new": "annually"
+      },
+      {
+       "unit": "f6-keep-past",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "act",
+       "pred": "past_roadmaps_kept",
+       "old": "the link of the current Roadmap",
+       "new": "the current Roadmap of the link"
+      },
+      {
+       "unit": "f13-redact-p",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "redaction",
+       "old": "the public",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f20-investigate",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "investigated",
+       "old": "promptly ",
+       "new": ""
+      },
+      {
+       "unit": "f5-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "crossed",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f22-third-party-review",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f5-evidence-default",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation has crossed \"automated_rd\" and that situation is classified as \"ai_evidence_risk\".",
+       "new": ", if that situation has crossed \"automated_rd\"."
+      },
+      {
+       "unit": "f15-select-approval",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "9660f182d460e0711ae98da1c94a454434e851551488d525ec1bc915f5ec49bb",
+       "rsp_vocabulary.py": "16848c15c4fdf6906d3b843ba59be344a5c27dbb3f77ef1a817e11d293ef4652",
+       "rules.d1.ve": "18bb01253ae4403ff0063d05b31c7f187457853c055e4e71231e68ccebe388ee"
+      },
+      {
+       "environment.d1.json": "bbc1b2fec0c8bc6ca5b48d40f242a3b2de3c1d8eaadf5b14fdf7a6ef69a7bb61",
+       "rsp_vocabulary.py": "b178a1fc18cecd4d4a97685d68f7032cd6acbdbed81e50f2a6abae89fdb06b33",
+       "rules.d1.ve": "9682672404601da3dee1b2e465a15682026685f687f5b1e71c278e028d95c2a1"
+      },
+      {
+       "environment.d1.json": "d72570454663f8eac6ac5b7ce9b462a26d02a52a9ef7d1f99921659c5fdf4bcf",
+       "rsp_vocabulary.py": "63c966effdaade1f14989e3903a0f17435495d8ba223a7d6ec60e1be912ff5e2",
+       "rules.d1.ve": "6bc57cf3e12387f789ae0ae8fc748d3f8da28992145e28edda9a369359bd51ce"
+      },
+      {
+       "environment.d1.json": "1efc5bbdc878f70a1346fe5e700d3a66faa968386d9d8cc8a1fc4a6b0412e841",
+       "rsp_vocabulary.py": "8bd57d8abb2c26c533ede2ae20b36d6090bb741b22da13c332805a75c6eeaf47",
+       "rules.d1.ve": "9124cc416b346a7de7db0562cb813e6c6717466bef08462b49d3c2f931e55d7e"
+      },
+      {
+       "environment.d1.json": "719cf892e9c05ae4f7f995805baecdd5e8dded6f2d1382895fb5226debc2ea97",
+       "rsp_vocabulary.py": "aa22440a3c540449bce1648cf76bda618edc674732254763922f96522d2f73ee"
+      },
+      {
+       "environment.d1.json": "ee131b2d2fd25d62e8773db5cc8e51fcff52ae17a9f89a0030679c73e0792ac8",
+       "rsp_vocabulary.py": "cb6093b4554872692960239bb4786b74b838d9e336098797498e298419d67df6"
+      },
+      {
+       "environment.d1.json": "36580b3d6940c973f51a86c681301dcdb45045032a96e8b5f5c6027f4b4fc4d4",
+       "rsp_vocabulary.py": "59984831a15f9fc7e0b7b774c25781c21ada7a3588951e525f1c1ca053b63dad"
+      },
+      {
+       "rules.d1.ve": "c7e4864e05c18d811ae3ef9183a766a0a6c85e378452d67b021241bb524fd8e8"
+      },
+      {
+       "rules.d1.ve": "c7ddeab76e3c1710d5281a9a33bbc27437757e978f316c6a2c595ef46b80bd02"
+      },
+      {
+       "rules.d1.ve": "46d35955c549508061a68841df60d0d99710848069ad5e156ce6f6b1f565ed7f"
+      }
+     ]
+    },
+    "4": {
+     "plan": [
+      {
+       "unit": "f16-before-board-default",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "early_full_review",
+       "old": "the Board",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f13-redact-p",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "redaction",
+       "old": "public ",
+       "new": ""
+      },
+      {
+       "unit": "f16-all-sections",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "sections_shared",
+       "old": "one",
+       "new": "two"
+      },
+      {
+       "unit": "f6-keep-past",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "act",
+       "pred": "past_roadmaps_kept",
+       "old": "the link of the current Roadmap",
+       "new": "the current Roadmap of the link"
+      },
+      {
+       "unit": "f23-approval",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "change_approved",
+       "old": "the CEO",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f13-disclose",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "redactions_disclosed",
+       "old": "public ",
+       "new": ""
+      },
+      {
+       "unit": "f11-marginal",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "marginal_justification",
+       "old": "18",
+       "new": "36"
+      },
+      {
+       "unit": "f11-assess",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f5-evidence-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation has crossed \"automated_rd\" and that situation is classified as \"ai_evidence_risk\".",
+       "new": ", if that situation has crossed \"automated_rd\"."
+      },
+      {
+       "unit": "f15-revenue-default",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "76f27b3fe9e76cdac435c76a99db48ccec861cd5d46a65ccedbc66a4c3c06caf",
+       "rsp_vocabulary.py": "f51b2e4444763467144a56864b9da31e9bb6c0cd748a2a9780ab28fc7b4ddee7",
+       "rules.d1.ve": "5b4fce35db7848110d29633ee4acc812ab6310205616b44d804f1f6531d47bc8"
+      },
+      {
+       "environment.d1.json": "89da43e9e9419adb932cbf30b54cf07651c1ce992577970e45b7bdf02503ffcb",
+       "rsp_vocabulary.py": "d239c18e7b9c3a2441f24ec8a7ced8f21bca8c6146579dbd3149a87f453779bd",
+       "rules.d1.ve": "d4d5f71ec0cf61e5eedb2afd22c09f0d9ab75bddbbfe886c7182da05d1b4f2a3"
+      },
+      {
+       "environment.d1.json": "94499c7055435024250015858e872de8268e33822a051f669a3f7ed43ecfe1fb",
+       "rsp_vocabulary.py": "a3c30f7213e5c0c89993856c751b7913db5122d34ed3bab0f620de802e5e9cfc",
+       "rules.d1.ve": "4bd74d949fe7e063adaf58ae3c788d783ac089a94df89d534ad4a6ef1a605bc3"
+      },
+      {
+       "environment.d1.json": "1efc5bbdc878f70a1346fe5e700d3a66faa968386d9d8cc8a1fc4a6b0412e841",
+       "rsp_vocabulary.py": "8bd57d8abb2c26c533ede2ae20b36d6090bb741b22da13c332805a75c6eeaf47",
+       "rules.d1.ve": "9124cc416b346a7de7db0562cb813e6c6717466bef08462b49d3c2f931e55d7e"
+      },
+      {
+       "environment.d1.json": "9b6f841ffa8e22007ada5591b7594f0a208e1b298d38daf87caa8be8fffb5fdf",
+       "rsp_vocabulary.py": "9226831e6046a1c96be71412e27df4ea29dce3550bc17ff84b2fe8471f39bb4d"
+      },
+      {
+       "environment.d1.json": "77ab2a508546ead8199f23eb06de03e775d4cfd2b6c693f8db1ad0acb8203650",
+       "rsp_vocabulary.py": "22dabfc67d349280f58447d92751cf454125b02b3d88d44dd76b372d3258b0b5"
+      },
+      {
+       "environment.d1.json": "bc34a0cf5b2ff0fd3325611c046108fa39342ff189f4b5ec54b522524b72922f",
+       "rsp_vocabulary.py": "776cce902a4fa73bfc65317673d979ba05333d8ad806e14e622b5d56e0908aa8"
+      },
+      {
+       "rules.d1.ve": "231b5d4af75d005e23588af284e4264d8c007a6b396ba3ef6e5ba3c1fc376cee"
+      },
+      {
+       "rules.d1.ve": "ea7b8ad51764acf9582b61ee64838711297b6142864566dfb7482a58cfea6d7b"
+      },
+      {
+       "rules.d1.ve": "1dc7ff63e3a603f25a4849db4a3ff34c9b5598f099e5ae51eac537c266b847ac"
+      }
+     ]
+    },
+    "5": {
+     "plan": [
+      {
+       "unit": "f20-board-recipient",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "board_member_recipient",
+       "old": "the Board",
+       "new": "the external reviewers"
+      },
+      {
+       "unit": "f25-meet",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "posture_matched",
+       "old": "at least ",
+       "new": ""
+      },
+      {
+       "unit": "f19-unredacted",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "unredacted_shared",
+       "old": "two hundred",
+       "new": "twenty"
+      },
+      {
+       "unit": "f6-keep-past",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "act",
+       "pred": "past_roadmaps_kept",
+       "old": "the link of the current Roadmap",
+       "new": "the current Roadmap of the link"
+      },
+      {
+       "unit": "f15-select-approval",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "selecting_reviewers",
+       "old": "external reviewers",
+       "new": "the Board"
+      },
+      {
+       "unit": "f9-public",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "more_capable_than_analyzed",
+       "old": "all ",
+       "new": ""
+      },
+      {
+       "unit": "f25-delay",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "highly_capable",
+       "old": "5",
+       "new": "10"
+      },
+      {
+       "unit": "f18-rso",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f5-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that threshold is listed and that situation has crossed that threshold.",
+       "new": ", if that threshold is listed."
+      },
+      {
+       "unit": "f24-delay",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if all of the following hold: (a) that situation is classified as ",
+       "new": ", if all of the following hold: (a) that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "e6b4a0072777ca2575fb6eac5e22b51643dbe638f84dae085486bc2849063224",
+       "rsp_vocabulary.py": "7ea5a7debc1996b89bb40af706d8e65bf2c0e3a5a9341fafd36f868787551b07",
+       "rules.d1.ve": "08f22fa72dfcae9ecb9d60edce987245beee42292961c643688541ce8b6ad6c0"
+      },
+      {
+       "environment.d1.json": "8543f599425a9f88e29789f92531aa10c80897d1bc318014088df6f01f5f0983",
+       "rsp_vocabulary.py": "fe59eb608be205937bb7fcf5e1693a17456be54b900e672519768e22481aa4ed",
+       "rules.d1.ve": "ac8548c5f65035c389effc94f074fec374a4f087b48609a1bb6698ffd8e30335"
+      },
+      {
+       "environment.d1.json": "c126200323fde8dfe55d8645c445556d1562abf197c46581beec60df6700990c",
+       "rsp_vocabulary.py": "10abcbd66e6a9bcf2446b18eef67d10ce27495730fe231b92e007874a4aeddfa",
+       "rules.d1.ve": "62feff6e63cc989eee35d88c2876e3856d109778d91d4778d9b048fff1316ed7"
+      },
+      {
+       "environment.d1.json": "1efc5bbdc878f70a1346fe5e700d3a66faa968386d9d8cc8a1fc4a6b0412e841",
+       "rsp_vocabulary.py": "8bd57d8abb2c26c533ede2ae20b36d6090bb741b22da13c332805a75c6eeaf47",
+       "rules.d1.ve": "9124cc416b346a7de7db0562cb813e6c6717466bef08462b49d3c2f931e55d7e"
+      },
+      {
+       "environment.d1.json": "85ff1f19c07359a9e95c523bf8479b0a6e8040c6092ef25c6176effb5981da8b",
+       "rsp_vocabulary.py": "330043a43fe0aa38618b33eb089cc277ad12f229fd65b6e20adb79bba567917c"
+      },
+      {
+       "environment.d1.json": "e63211c9856805d42339b9068ff13384afa153b01d96a7d73cbb5b8ed18a7886",
+       "rsp_vocabulary.py": "8abd9d89cf49e29b5b3d9f9bfb8eb5a676c168879f89395b3758f7e5af64d302"
+      },
+      {
+       "environment.d1.json": "2ea7ec15fd8541c97d57081f60842049f67a5044a6f1f16d7131ab3e4c7d8652",
+       "rsp_vocabulary.py": "e9aefa1f545e94bfd90b58646f4965d5d80d8498fa024c5b5135d99daf8fbb8b"
+      },
+      {
+       "rules.d1.ve": "c077a42773479988cf9b1e26eb718d18e1defe17a25a8f16d28f6ab336eef3d1"
+      },
+      {
+       "rules.d1.ve": "1ec09ebe9f2eb7cc11926ed4c5ac5467a1c19d9324ef5daa7b3776f62395e8c5"
+      },
+      {
+       "rules.d1.ve": "07f210bbe63d4bb298837ea7f66570a870ab8f689f6352a1f6d7f54ba28dfa7c"
+      }
+     ]
+    }
+   }
+  },
+  "openai-preparedness": {
+   "input_sha256": {
+    "environment.d1.json": "70d57272d4320c60cd774e3a71bf681df9c2bc7e2eae509ec0d3af80f6059bf4",
+    "pf_vocabulary.py": "1f6e89dfcc285015af29ac4f807bad751984c979c8659421c9d465eed61fa710",
+    "rules.d1.ve": "7b049b60ccc9819f4ec60a9b638a296f93f26f476c87f72d617ac1f360cbfe2f"
+   },
+   "seeds": {
+    "1": {
+     "plan": [
+      {
+       "unit": "f14-summary",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "summary_access",
+       "old": "employees",
+       "new": "the Board"
+      },
+      {
+       "unit": "f1-contrib-bio-strict",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "pandemic_policy_contribution",
+       "old": "public ",
+       "new": ""
+      },
+      {
+       "unit": "f7-evaluations-any",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "evaluations_before_deployment",
+       "old": "prior to",
+       "new": "after"
+      },
+      {
+       "unit": "f9-residual-strict",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "residual_risk_assessment",
+       "old": "the residual risk of severe harm based on the deployment",
+       "new": "the deployment of severe harm based on the residual risk"
+      },
+      {
+       "unit": "f16-board-reverse",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "decision_reversal",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f16-without-noinput",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "leadership_decision",
+       "old": "a final ",
+       "new": "a "
+      },
+      {
+       "unit": "f15-third-party",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "third_party_evaluation",
+       "old": "14",
+       "new": "28"
+      },
+      {
+       "unit": "f1-alignment-cyb-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f11-protect",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation is classified as \"adjustment_made\" and that situation is classified as \"adjustment_confirmed\".",
+       "new": ", if that situation is classified as \"adjustment_made\"."
+      },
+      {
+       "unit": "f2-reminder",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if all of the following hold: (a) that situation is ",
+       "new": ", if all of the following hold: (a) that situation is not "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "187a4b70ad694a72aa76e374a113a1c261046e958b35bbcfd98f7e0bd9361d6a",
+       "pf_vocabulary.py": "6965c1be04350e3cdcba4a7225f78b3d472210687f878079ce6b71121a7ce2f6",
+       "rules.d1.ve": "accd91c794faf513a3fd9a22cea12f792c5721bf88b7555e9a88a71207f4269e"
+      },
+      {
+       "environment.d1.json": "4353c03c72fd2cd85765d9b8bbaf7dc42d10db846bbf06fca12844152b9d0513",
+       "pf_vocabulary.py": "f47415e86a765c2f46d0e7ff44873a8326eea031d291644721bfae9273baed10",
+       "rules.d1.ve": "f9ce814a84be91bd81b346498efd0ca5cf0bfdee3a6669fc6a42654de345e155"
+      },
+      {
+       "environment.d1.json": "d480217ed7bbf84ee17d09cee427c90130a37b409aeb78a2473055558ec69d52",
+       "pf_vocabulary.py": "5d044a4c62ee2e2bb63749da5150c4fb43d96befb1948c590a9cfdb87185ae60",
+       "rules.d1.ve": "ce52fb6a6b12b0d5c302eda585daf4e7d189481c9e6efd551a6b1ddf3aafa5b6"
+      },
+      {
+       "environment.d1.json": "fa7610c523754dcced2573a99983b4208609137c58294c320d9395e47aab0556",
+       "pf_vocabulary.py": "3d08730b13361c7ad0f4014d62c34c869d58c1ebcf84a105df074151d2344b64"
+      },
+      {
+       "environment.d1.json": "2755c2e00b7bc1a1c9f602f2f6ee27337b9dc3694d1d2220717a4d46250b083c",
+       "pf_vocabulary.py": "a2c217e64f07319c886b735bcb6647e597579a21c324263076cc196f62874ca0"
+      },
+      {
+       "environment.d1.json": "9c330dbb88a87b8c231d09836d9a3ef6a912509c2ee96c9f25cf92a238ac4234",
+       "pf_vocabulary.py": "2b6db01665fdced5c827d8062e3235d28c520656582729facc68d2bff50513ae"
+      },
+      {
+       "environment.d1.json": "1f3971056434a3421c9d1327fd46d1018ce1e45e8595dd82a7329d1dae8fa4e5",
+       "pf_vocabulary.py": "1ed3e4134481363aa5514e08181126bc9f2e9bb9a33d4f497dce1b92e08b3d34"
+      },
+      {
+       "rules.d1.ve": "5049576ffe6cf9de9e3d45f1f5b6acf471998e4b9f4019cecfa070cca3b228fd"
+      },
+      {
+       "rules.d1.ve": "7b942ba9c49616125b91f54944c694980ef1cc1fe473919f0d11f3b8ab988bab"
+      },
+      {
+       "rules.d1.ve": "df9551b854b2598dc2ee1d11dbbc026e01106c16a9ce4c05f750a5eed04586d7"
+      }
+     ]
+    },
+    "2": {
+     "plan": [
+      {
+       "unit": "f16-board-mandate",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "revised_course_mandated",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f11-acknowledge",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "adjustment_acknowledged",
+       "old": "publicly ",
+       "new": ""
+      },
+      {
+       "unit": "f11-exception",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "safeguards_before_deployment",
+       "old": "before",
+       "new": "after"
+      },
+      {
+       "unit": "f9-residual-strict",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "residual_risk_assessment",
+       "old": "the residual risk of severe harm based on the deployment",
+       "new": "the deployment of severe harm based on the residual risk"
+      },
+      {
+       "unit": "f16-board-reverse",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "decision_reversal",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f1-misuse-bio-strict",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "external_deployment",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "f12-ara",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "ara_tracking",
+       "old": "2",
+       "new": "4"
+      },
+      {
+       "unit": "f1-contrib-cyb-default",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " should ",
+       "new": " must "
+      },
+      {
+       "unit": "f1-misuse-cyb-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation has reached \"cybersecurity_high\" and that situation is classified as \"external_deployment\".",
+       "new": ", if that situation has reached \"cybersecurity_high\"."
+      },
+      {
+       "unit": "f9-threshold",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "75d8758802ea240e2f65deeb493380442336fe62a00d69b31fb2ae7b2b2492d9",
+       "pf_vocabulary.py": "a81cd190362650721684f121bd786158c8128c1de81a8bf184f7727ce3fff262",
+       "rules.d1.ve": "1364b50fe4ab549336eef85fd620a133d6a533af5eac0696861dce4b558a3af9"
+      },
+      {
+       "environment.d1.json": "c65181721a7669509f7b967eedf7f6cccb6b4d84c57570d7920e269547020954",
+       "pf_vocabulary.py": "cdcea228f8d64d9b2ea7056c2e00991f12cc840ed8dd337194157e60670854cd",
+       "rules.d1.ve": "0832bbbce851e48fb2918522247df323f5c3236ef5f2d2d9ad40fac68ea7b673"
+      },
+      {
+       "environment.d1.json": "a4e61ee7bd888401fcb0743d01fab75901428d5c00ae5afd2f7fad6fac36429d",
+       "pf_vocabulary.py": "ecacac7927e1a06277c879cf696ec4d8a679e2ee36e8257c6c033a7c069927ed",
+       "rules.d1.ve": "b2c12802e2ab5d12625f30c6daeb15033652932d5961709741674af351227185"
+      },
+      {
+       "environment.d1.json": "fa7610c523754dcced2573a99983b4208609137c58294c320d9395e47aab0556",
+       "pf_vocabulary.py": "3d08730b13361c7ad0f4014d62c34c869d58c1ebcf84a105df074151d2344b64"
+      },
+      {
+       "environment.d1.json": "2755c2e00b7bc1a1c9f602f2f6ee27337b9dc3694d1d2220717a4d46250b083c",
+       "pf_vocabulary.py": "a2c217e64f07319c886b735bcb6647e597579a21c324263076cc196f62874ca0"
+      },
+      {
+       "environment.d1.json": "6aae517bb3ab8be14e75539608aaa6d0389d81d8440a82d0e74af334d1bdf5ac",
+       "pf_vocabulary.py": "6e0784af568b8394f95d3ca6b1bc6b05a98b3ecb66cdd6d28da3292bcc0e40db"
+      },
+      {
+       "environment.d1.json": "aa82281c11b0a29f25fb63eeb323597e4bd7cb0dcc791b9a955d0db4532e83c6",
+       "pf_vocabulary.py": "3e972ec536c4d2745ad24ccafc5b4bd25b249dcd41cd528e654e039da739a689"
+      },
+      {
+       "rules.d1.ve": "a67652d9a886b947a27e86e54159268ac40260fbe0ce3d1b82b1e669949ca28a"
+      },
+      {
+       "rules.d1.ve": "a2d41805f584793115ad7aa69e4027ca1721e6bc198359951b54e1121269a62b"
+      },
+      {
+       "rules.d1.ve": "7a9171797598b56149287d103520f5baf6dfd490779c69bfbc01125d1cccf5c8"
+      }
+     ]
+    },
+    "3": {
+     "plan": [
+      {
+       "unit": "f16-board-mandate",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "revised_course_mandated",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f9-specific",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "specific_safeguards_per_path",
+       "old": "each ",
+       "new": ""
+      },
+      {
+       "unit": "f2-deploy",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "safeguards_before_deployment",
+       "old": "before",
+       "new": "after"
+      },
+      {
+       "unit": "f9-residual-strict",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "residual_risk_assessment",
+       "old": "the residual risk of severe harm based on the deployment",
+       "new": "the deployment of severe harm based on the residual risk"
+      },
+      {
+       "unit": "f16-board-reverse",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "decision_reversal",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f2-deploy-any",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "external_deployment",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "f3-develop-forecast",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "safeguards_during_development",
+       "old": "one",
+       "new": "two"
+      },
+      {
+       "unit": "f9-efficacy",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f16-chair-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation is classified as \"rapid_risk\" and that situation is classified as \"immediate_reaction_needed\".",
+       "new": ", if that situation is classified as \"rapid_risk\"."
+      },
+      {
+       "unit": "cl4-persuasion",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "75d8758802ea240e2f65deeb493380442336fe62a00d69b31fb2ae7b2b2492d9",
+       "pf_vocabulary.py": "a81cd190362650721684f121bd786158c8128c1de81a8bf184f7727ce3fff262",
+       "rules.d1.ve": "1364b50fe4ab549336eef85fd620a133d6a533af5eac0696861dce4b558a3af9"
+      },
+      {
+       "environment.d1.json": "8b84676c2584807aa42f41df2a2e2e556b3fc40d03208a23024439a0f83ff5e3",
+       "pf_vocabulary.py": "a3b331d2f0acd25d46107a9c4d2b1d80578ad0bc3fc9e82f8c786baaaf407e12",
+       "rules.d1.ve": "4b234502ce0b85b995a82f65c71c33e217c25871e66968a86331c54409e1fccd"
+      },
+      {
+       "environment.d1.json": "a4e61ee7bd888401fcb0743d01fab75901428d5c00ae5afd2f7fad6fac36429d",
+       "pf_vocabulary.py": "ecacac7927e1a06277c879cf696ec4d8a679e2ee36e8257c6c033a7c069927ed",
+       "rules.d1.ve": "b2c12802e2ab5d12625f30c6daeb15033652932d5961709741674af351227185"
+      },
+      {
+       "environment.d1.json": "fa7610c523754dcced2573a99983b4208609137c58294c320d9395e47aab0556",
+       "pf_vocabulary.py": "3d08730b13361c7ad0f4014d62c34c869d58c1ebcf84a105df074151d2344b64"
+      },
+      {
+       "environment.d1.json": "2755c2e00b7bc1a1c9f602f2f6ee27337b9dc3694d1d2220717a4d46250b083c",
+       "pf_vocabulary.py": "a2c217e64f07319c886b735bcb6647e597579a21c324263076cc196f62874ca0"
+      },
+      {
+       "environment.d1.json": "6aae517bb3ab8be14e75539608aaa6d0389d81d8440a82d0e74af334d1bdf5ac",
+       "pf_vocabulary.py": "6e0784af568b8394f95d3ca6b1bc6b05a98b3ecb66cdd6d28da3292bcc0e40db"
+      },
+      {
+       "environment.d1.json": "95b19d8191d329a648b40bb104612f2034111734cfc8f0a2427158f5a0c06280",
+       "pf_vocabulary.py": "bc3c0069302a453810130e01964fbbb8181df2fecddbfb72db1af9f8c3756f8a"
+      },
+      {
+       "rules.d1.ve": "0df924da5944ceeda5b52de20ff888ded7837db6dec83fc717c8d19ddaf1e108"
+      },
+      {
+       "rules.d1.ve": "3688130eaff15cc0d84163a78f99122fbd8588c46667b070a45b991c49b8db67"
+      },
+      {
+       "rules.d1.ve": "ef0eed20b8c79870385ecb6ed409b02788d51e18e1265f5622f9768407ff37f7"
+      }
+     ]
+    },
+    "4": {
+     "plan": [
+      {
+       "unit": "f16-board-mandate",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "revised_course_mandated",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f3-inuse",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "safeguards_before_internal_use",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f7-evaluations",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "evaluations_before_deployment",
+       "old": "prior to",
+       "new": "after"
+      },
+      {
+       "unit": "f9-residual-strict",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "residual_risk_assessment",
+       "old": "the residual risk of severe harm based on the deployment",
+       "new": "the deployment of severe harm based on the residual risk"
+      },
+      {
+       "unit": "f16-board-reverse",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "decision_reversal",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f16-without-noinput",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "leadership_decision",
+       "old": "a final ",
+       "new": "a "
+      },
+      {
+       "unit": "f12-ara",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "ara_tracking",
+       "old": "2",
+       "new": "4"
+      },
+      {
+       "unit": "f17-iff-only",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must not ",
+       "new": " should not "
+      },
+      {
+       "unit": "f11-protect",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation is classified as \"adjustment_made\" and that situation is classified as \"adjustment_confirmed\".",
+       "new": ", if that situation is classified as \"adjustment_made\"."
+      },
+      {
+       "unit": "f16-chair-strict",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation is classified as ",
+       "new": ", if both that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "75d8758802ea240e2f65deeb493380442336fe62a00d69b31fb2ae7b2b2492d9",
+       "pf_vocabulary.py": "a81cd190362650721684f121bd786158c8128c1de81a8bf184f7727ce3fff262",
+       "rules.d1.ve": "1364b50fe4ab549336eef85fd620a133d6a533af5eac0696861dce4b558a3af9"
+      },
+      {
+       "environment.d1.json": "4c964da70d1705ebd5b10b76a83320845b2e3f1a040465ad400c4eae694b2af6",
+       "pf_vocabulary.py": "5c7c9bbb4dbe8ceadb5a72ffb38281a47ff52bcc8a87715eb37184d6b181d723",
+       "rules.d1.ve": "bd3aad7d20d7623360ca77d032d5a4b0950c6e50a6dd2adfb9bd6fbb9ecdd8cd"
+      },
+      {
+       "environment.d1.json": "d480217ed7bbf84ee17d09cee427c90130a37b409aeb78a2473055558ec69d52",
+       "pf_vocabulary.py": "5d044a4c62ee2e2bb63749da5150c4fb43d96befb1948c590a9cfdb87185ae60",
+       "rules.d1.ve": "ce52fb6a6b12b0d5c302eda585daf4e7d189481c9e6efd551a6b1ddf3aafa5b6"
+      },
+      {
+       "environment.d1.json": "fa7610c523754dcced2573a99983b4208609137c58294c320d9395e47aab0556",
+       "pf_vocabulary.py": "3d08730b13361c7ad0f4014d62c34c869d58c1ebcf84a105df074151d2344b64"
+      },
+      {
+       "environment.d1.json": "2755c2e00b7bc1a1c9f602f2f6ee27337b9dc3694d1d2220717a4d46250b083c",
+       "pf_vocabulary.py": "a2c217e64f07319c886b735bcb6647e597579a21c324263076cc196f62874ca0"
+      },
+      {
+       "environment.d1.json": "9c330dbb88a87b8c231d09836d9a3ef6a912509c2ee96c9f25cf92a238ac4234",
+       "pf_vocabulary.py": "2b6db01665fdced5c827d8062e3235d28c520656582729facc68d2bff50513ae"
+      },
+      {
+       "environment.d1.json": "aa82281c11b0a29f25fb63eeb323597e4bd7cb0dcc791b9a955d0db4532e83c6",
+       "pf_vocabulary.py": "3e972ec536c4d2745ad24ccafc5b4bd25b249dcd41cd528e654e039da739a689"
+      },
+      {
+       "rules.d1.ve": "aa354a5755fc4d8b07ef0dee1881f61392c6c16fd3a4df79cde749af5b605aa5"
+      },
+      {
+       "rules.d1.ve": "7b942ba9c49616125b91f54944c694980ef1cc1fe473919f0d11f3b8ab988bab"
+      },
+      {
+       "rules.d1.ve": "eb640e2511cb50c90308ce7aaf182bc3d1dcb69f7347dbcf49d46f8e93c519d4"
+      }
+     ]
+    },
+    "5": {
+     "plan": [
+      {
+       "unit": "f16-board-reverse",
+       "kind": "actor",
+       "class": "wording",
+       "where": "act",
+       "pred": "decision_reversal",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f3-inuse",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "safeguards_before_internal_use",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f7-evaluations",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "evaluations_before_deployment",
+       "old": "prior to",
+       "new": "after"
+      },
+      {
+       "unit": "f9-residual-default",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "residual_risk_assessment",
+       "old": "the residual risk of severe harm based on the deployment",
+       "new": "the deployment of severe harm based on the residual risk"
+      },
+      {
+       "unit": "f16-board-mandate",
+       "kind": "actor",
+       "class": "wording",
+       "where": "legend",
+       "pred": "revised_course_mandated",
+       "old": "the Board",
+       "new": "employees"
+      },
+      {
+       "unit": "f11-within",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "adjustment_conditions",
+       "old": "publicly ",
+       "new": ""
+      },
+      {
+       "unit": "f9-risk-paths",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "risk_paths",
+       "old": "before",
+       "new": "after"
+      },
+      {
+       "unit": "f9-threshold",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f16-chair-strict",
+       "kind": "guard",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if both that situation is classified as \"rapid_risk\" and that situation is classified as \"immediate_reaction_needed\".",
+       "new": ", if that situation is classified as \"rapid_risk\"."
+      },
+      {
+       "unit": "f13-results",
+       "kind": "negation",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": ", if that situation is classified as ",
+       "new": ", if that situation is not classified as "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "265ec093f4b9cb413af00a5121cf8bd64889932debd68f6ff59026514924ea29",
+       "pf_vocabulary.py": "a2c217e64f07319c886b735bcb6647e597579a21c324263076cc196f62874ca0",
+       "rules.d1.ve": "f4b33ab90c3dd0fb4002ec8c9c098199193b0fa2fb464cc4c1ca14e57cdf2157"
+      },
+      {
+       "environment.d1.json": "4c964da70d1705ebd5b10b76a83320845b2e3f1a040465ad400c4eae694b2af6",
+       "pf_vocabulary.py": "5c7c9bbb4dbe8ceadb5a72ffb38281a47ff52bcc8a87715eb37184d6b181d723",
+       "rules.d1.ve": "bd3aad7d20d7623360ca77d032d5a4b0950c6e50a6dd2adfb9bd6fbb9ecdd8cd"
+      },
+      {
+       "environment.d1.json": "d480217ed7bbf84ee17d09cee427c90130a37b409aeb78a2473055558ec69d52",
+       "pf_vocabulary.py": "5d044a4c62ee2e2bb63749da5150c4fb43d96befb1948c590a9cfdb87185ae60",
+       "rules.d1.ve": "ce52fb6a6b12b0d5c302eda585daf4e7d189481c9e6efd551a6b1ddf3aafa5b6"
+      },
+      {
+       "environment.d1.json": "fa7610c523754dcced2573a99983b4208609137c58294c320d9395e47aab0556",
+       "pf_vocabulary.py": "3d08730b13361c7ad0f4014d62c34c869d58c1ebcf84a105df074151d2344b64"
+      },
+      {
+       "environment.d1.json": "9bca6ecfba90452857429d404e06d4d22446fa750854019863dc996434bd77f9",
+       "pf_vocabulary.py": "a81cd190362650721684f121bd786158c8128c1de81a8bf184f7727ce3fff262"
+      },
+      {
+       "environment.d1.json": "15296e56c11aaa74d045fef6fd83541f1caae07add2336689eb50a57b8bcb01f",
+       "pf_vocabulary.py": "fb0f96dafefcfe883ecbfb9a00a14373674ca98dcba32dcfdeb2c0dcc2795a8d"
+      },
+      {
+       "environment.d1.json": "342ac854ade5a8c059b91dee374dd00b85feb59e6d61b586820f2d9021e1f862",
+       "pf_vocabulary.py": "96e28dfaefd3aa925a38ab866fbafb3d1329738b33c37c411086092e0fef3dba"
+      },
+      {
+       "rules.d1.ve": "7133f760dd547c9a09c054d20b9f1251f07422f3f66ca06be0f2b5bb786091a5"
+      },
+      {
+       "rules.d1.ve": "3688130eaff15cc0d84163a78f99122fbd8588c46667b070a45b991c49b8db67"
+      },
+      {
+       "rules.d1.ve": "71333eefc1cba1e7af691fc08fec1694cb3650a59a155fa937f780b56e9bcc7d"
+      }
+     ]
+    }
+   }
+  },
+  "safety-framework": {
+   "input_sha256": {
+    "environment.d1.json": "820619deb9f53b0d1ca4087fe567dc595b4c3cfa2460b95964416f41158528a1",
+    "rules.d1.ve": "4b6bf91cd38003b8c22e8ebcb84f88efcb72b6dae4b06f088729648b1b50abc5",
+    "vocabulary.py": "50361498d8fca830db6ac217f30fe0bdd2b9189cee56990afa575f5b11a6ba12"
+   },
+   "seeds": {
+    "1": {
+     "plan": [
+      {
+       "unit": "f4-need-r",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "further_need_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "f20-within-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "within_levels",
+       "old": "within",
+       "new": "after"
+      },
+      {
+       "unit": "f9-sec",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "open_release_benefits_outweigh_risks",
+       "old": "the open release of the model",
+       "new": "the model of the open release"
+      },
+      {
+       "unit": "f14",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "material_safety_case_update",
+       "old": "a material ",
+       "new": "an "
+      },
+      {
+       "unit": "f18-frequent",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "adherence_undermined",
+       "old": "13",
+       "new": "26"
+      },
+      {
+       "unit": "f17-hri",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "periodic_covers_internal",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f4-check-d",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "new_capabilities",
+       "old": "10",
+       "new": "20"
+      },
+      {
+       "unit": "f20-elicitation-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f20-elicitation-default",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " should ",
+       "new": " must "
+      },
+      {
+       "unit": "f20-holistic-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "7084b22cd8570d1026d6c11909e2db70f5f78701ba0f06e9efea0000dac705d0",
+       "rules.d1.ve": "4b0c4358afd6bb0727ab55a13bfac538d1b5350454a36f7512b4cc54687de9f2",
+       "vocabulary.py": "da211cbc5ec77c89f60f02dc3c3368800eb7b81052759738f16947d27a17ab26"
+      },
+      {
+       "environment.d1.json": "d43fb6ec42d94d2336efbc6a34ca3e2e54a1b7b2be04270fe1d9f4afbbd118ff",
+       "rules.d1.ve": "8f6618276b69d6bfb33ee5e5206bfec3f960031a36c9502e968f33fbd6647f19",
+       "vocabulary.py": "e43b8f38fab0a05a11e0df5fa6fa252af92a3192a3ba03e80b5b0882cab1a8d4"
+      },
+      {
+       "environment.d1.json": "31e73e6fc847eeff72994d24ca33d6b3aac936efae412bc50c57f20371702c87",
+       "vocabulary.py": "d5e6590b8ab992c48371a2710297a61f4f5ca8577995519bd68392ee5d034365"
+      },
+      {
+       "environment.d1.json": "05040268e3dc064a5938cccec1c75ec4999f8368da18427be3b3b8e8dc43d710",
+       "vocabulary.py": "6f0dff458bb832941af4bc08dbd1322f6202a38a04b590ebb4963b51c8a656b3"
+      },
+      {
+       "environment.d1.json": "4644cab96ac9fe8dda4934a9f28391d72f86e3bb503f19d2391da474b68a9e25",
+       "vocabulary.py": "7cf3bcbf0f0c5fac80a95b906bd43972ce76332576a310df286c727aa97c77c1"
+      },
+      {
+       "environment.d1.json": "4ab0db4b477418cdf8573ed733c584d464360b7e52f37abca0ca65d8e0d24d04",
+       "rules.d1.ve": "70c598dd9e7e2e87e9af4a9833c71c5d5dd7ad63f3dea0941e1e3b68d98f3977",
+       "vocabulary.py": "075decb97627900813984541f2ee3146b3bb40e3dd2ad9b4656d1e3e50588e0a"
+      },
+      {
+       "environment.d1.json": "0c26ec589ba9b4b718de2cba6fec53374923e5d3cdd65323821bf998df82ecf4",
+       "vocabulary.py": "671dfc3588d459390718b0f90a4c3f3eb5660877dd43fd8c32de58a8f6435444"
+      },
+      {
+       "rules.d1.ve": "dcc4de366bd58a35ce235ea3ab98074e135d05a05766e1973c940a289782fdd8"
+      },
+      {
+       "rules.d1.ve": "e1f138662221e0db0b6d2459df18280fe8740f882a9f78888be5074f1316c780"
+      },
+      {
+       "rules.d1.ve": "a3bed95b52aa518ff2db64b669a197a3a0b5d8d9745222eda4cfcfb17ea2c62b"
+      }
+     ]
+    },
+    "2": {
+     "plan": [
+      {
+       "unit": "f4-check-r",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "modification_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "f20-within-strict",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "within_levels",
+       "old": "within",
+       "new": "after"
+      },
+      {
+       "unit": "f9-sec",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "open_release_benefits_outweigh_risks",
+       "old": "the open release of the model",
+       "new": "the model of the open release"
+      },
+      {
+       "unit": "f11-rel",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "high_risk",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f17-pra",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "reached",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f17-hri",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "periodic_covers_internal",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "measures-sl2plus",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "includes",
+       "old": "2",
+       "new": "4"
+      },
+      {
+       "unit": "f17-add",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f4-further-r",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f11-dm",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "9c87393fbf8465ccc5ba0bb76b7873fb5591304f53c62a4acd55440bce906467",
+       "rules.d1.ve": "c683ce69d51b865fc42207516b9ec675dc74b10df267bba1fb51f6200f076d55",
+       "vocabulary.py": "090113751620c85c455d53e732324075a40727137a0b56f63ebf3d889fbc2e71"
+      },
+      {
+       "environment.d1.json": "d43fb6ec42d94d2336efbc6a34ca3e2e54a1b7b2be04270fe1d9f4afbbd118ff",
+       "rules.d1.ve": "8f6618276b69d6bfb33ee5e5206bfec3f960031a36c9502e968f33fbd6647f19",
+       "vocabulary.py": "e43b8f38fab0a05a11e0df5fa6fa252af92a3192a3ba03e80b5b0882cab1a8d4"
+      },
+      {
+       "environment.d1.json": "31e73e6fc847eeff72994d24ca33d6b3aac936efae412bc50c57f20371702c87",
+       "vocabulary.py": "d5e6590b8ab992c48371a2710297a61f4f5ca8577995519bd68392ee5d034365"
+      },
+      {
+       "environment.d1.json": "9227132da7fb517c15d9cea2cb15f094399339f245710bb42f0ce2b73a4ba9dd",
+       "vocabulary.py": "9e28da45b8eb12876b56da1298ac172ffffea4409bc0627866f7b4ae9f92d289"
+      },
+      {
+       "environment.d1.json": "52b024b266a3629048975eabba09af9980457c4b557b66a2f47302f4aeb2faae",
+       "vocabulary.py": "7ce83a57592789f11ad13e63aa7684fbbedb19d04785e77687861e4af63220a8"
+      },
+      {
+       "environment.d1.json": "4ab0db4b477418cdf8573ed733c584d464360b7e52f37abca0ca65d8e0d24d04",
+       "rules.d1.ve": "70c598dd9e7e2e87e9af4a9833c71c5d5dd7ad63f3dea0941e1e3b68d98f3977",
+       "vocabulary.py": "075decb97627900813984541f2ee3146b3bb40e3dd2ad9b4656d1e3e50588e0a"
+      },
+      {
+       "environment.d1.json": "3518f77e98bc2c5f5a97b6ac45462d3c5d1566b372b135a4a237e091198a2f59",
+       "vocabulary.py": "a7399f745c7b83823450080c96c47f818cd8d4560e8cb5edf925f10b77e17241"
+      },
+      {
+       "rules.d1.ve": "6e4a45425e9495a94f93bc083a4f9e3577da96a3fc776ed7fe73d2a6a35941e0"
+      },
+      {
+       "rules.d1.ve": "25a58fdadefc00952c619359e53ce118426963801a5d3a239dc35fef6223f56b"
+      },
+      {
+       "rules.d1.ve": "9a95f9c26926d3ac078a88c7f05b415acd5c00da09ecdd241c961e031ef43836"
+      }
+     ]
+    },
+    "3": {
+     "plan": [
+      {
+       "unit": "f4-need-d",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "further_need_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "f20-within-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "within_levels",
+       "old": "within",
+       "new": "after"
+      },
+      {
+       "unit": "f10-acc",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "open_release_benefits_outweigh_risks",
+       "old": "the open release of the model",
+       "new": "the model of the open release"
+      },
+      {
+       "unit": "f12-p",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "external",
+       "old": "an external ",
+       "new": "a "
+      },
+      {
+       "unit": "measures-sl2plus",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "includes",
+       "old": "2",
+       "new": "4"
+      },
+      {
+       "unit": "f4-check-d",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "modification_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "f7-sc",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "reached",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f11-dm",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f10-sec",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f20-elicitation-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "7084b22cd8570d1026d6c11909e2db70f5f78701ba0f06e9efea0000dac705d0",
+       "rules.d1.ve": "4b0c4358afd6bb0727ab55a13bfac538d1b5350454a36f7512b4cc54687de9f2",
+       "vocabulary.py": "da211cbc5ec77c89f60f02dc3c3368800eb7b81052759738f16947d27a17ab26"
+      },
+      {
+       "environment.d1.json": "d43fb6ec42d94d2336efbc6a34ca3e2e54a1b7b2be04270fe1d9f4afbbd118ff",
+       "rules.d1.ve": "8f6618276b69d6bfb33ee5e5206bfec3f960031a36c9502e968f33fbd6647f19",
+       "vocabulary.py": "e43b8f38fab0a05a11e0df5fa6fa252af92a3192a3ba03e80b5b0882cab1a8d4"
+      },
+      {
+       "environment.d1.json": "31e73e6fc847eeff72994d24ca33d6b3aac936efae412bc50c57f20371702c87",
+       "vocabulary.py": "d5e6590b8ab992c48371a2710297a61f4f5ca8577995519bd68392ee5d034365"
+      },
+      {
+       "environment.d1.json": "db3c1b01932a5aa4c0793fb9350313622f8cd7c432eac01bc5fab37d024e83f5",
+       "vocabulary.py": "cd3004c93de52508cd5e54a5d188f33f0e6890bf3967c2ebaa50cb9c037b678b"
+      },
+      {
+       "environment.d1.json": "3518f77e98bc2c5f5a97b6ac45462d3c5d1566b372b135a4a237e091198a2f59",
+       "vocabulary.py": "a7399f745c7b83823450080c96c47f818cd8d4560e8cb5edf925f10b77e17241"
+      },
+      {
+       "environment.d1.json": "9c87393fbf8465ccc5ba0bb76b7873fb5591304f53c62a4acd55440bce906467",
+       "rules.d1.ve": "c683ce69d51b865fc42207516b9ec675dc74b10df267bba1fb51f6200f076d55",
+       "vocabulary.py": "090113751620c85c455d53e732324075a40727137a0b56f63ebf3d889fbc2e71"
+      },
+      {
+       "environment.d1.json": "52b024b266a3629048975eabba09af9980457c4b557b66a2f47302f4aeb2faae",
+       "vocabulary.py": "7ce83a57592789f11ad13e63aa7684fbbedb19d04785e77687861e4af63220a8"
+      },
+      {
+       "rules.d1.ve": "9a95f9c26926d3ac078a88c7f05b415acd5c00da09ecdd241c961e031ef43836"
+      },
+      {
+       "rules.d1.ve": "4bdbd744b619f197e87d7a5a444ebde7ae5303c7e1eb8be97b7f879a09c30107"
+      },
+      {
+       "rules.d1.ve": "dcc4de366bd58a35ce235ea3ab98074e135d05a05766e1973c940a289782fdd8"
+      }
+     ]
+    },
+    "4": {
+     "plan": [
+      {
+       "unit": "f5",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "change_assessed",
+       "old": "material ",
+       "new": ""
+      },
+      {
+       "unit": "f20-within-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "within_levels",
+       "old": "within",
+       "new": "after"
+      },
+      {
+       "unit": "f11-acc",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "open_release_benefits_outweigh_risks",
+       "old": "the open release of the model",
+       "new": "the model of the open release"
+      },
+      {
+       "unit": "f19-default",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "unmitigated_public_safety_risk",
+       "old": "public ",
+       "new": ""
+      },
+      {
+       "unit": "f8",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "reached",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f4-check-d",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "modification_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "measures-sl2plus",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "includes",
+       "old": "2",
+       "new": "4"
+      },
+      {
+       "unit": "f20-holistic-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f17-pra",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f13-p",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must not ",
+       "new": " should not "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "4d68916af4a092fc3cba7291f65111b47aeb9034444900fe23707aafdd76a950",
+       "rules.d1.ve": "7eaa6b2b68fd269c079f56f4d05d5eefae8dbe8bb7c36f0794817ff5d891e1b1",
+       "vocabulary.py": "e6d7e459bf86c0b38ce9a1ffec08edf894f32b9442c18f89ba10a11a75c38e83"
+      },
+      {
+       "environment.d1.json": "d43fb6ec42d94d2336efbc6a34ca3e2e54a1b7b2be04270fe1d9f4afbbd118ff",
+       "rules.d1.ve": "8f6618276b69d6bfb33ee5e5206bfec3f960031a36c9502e968f33fbd6647f19",
+       "vocabulary.py": "e43b8f38fab0a05a11e0df5fa6fa252af92a3192a3ba03e80b5b0882cab1a8d4"
+      },
+      {
+       "environment.d1.json": "31e73e6fc847eeff72994d24ca33d6b3aac936efae412bc50c57f20371702c87",
+       "vocabulary.py": "d5e6590b8ab992c48371a2710297a61f4f5ca8577995519bd68392ee5d034365"
+      },
+      {
+       "environment.d1.json": "2fa280b9bbd7a061e6f7fa94b4ce51d79a591f25d22660966d4a033e4e2618fe",
+       "vocabulary.py": "91107b35bb53e43ee870fe16ba7b6257c46353d9c52673440fc8986a90ee8d3a"
+      },
+      {
+       "environment.d1.json": "52b024b266a3629048975eabba09af9980457c4b557b66a2f47302f4aeb2faae",
+       "vocabulary.py": "7ce83a57592789f11ad13e63aa7684fbbedb19d04785e77687861e4af63220a8"
+      },
+      {
+       "environment.d1.json": "9c87393fbf8465ccc5ba0bb76b7873fb5591304f53c62a4acd55440bce906467",
+       "rules.d1.ve": "c683ce69d51b865fc42207516b9ec675dc74b10df267bba1fb51f6200f076d55",
+       "vocabulary.py": "090113751620c85c455d53e732324075a40727137a0b56f63ebf3d889fbc2e71"
+      },
+      {
+       "environment.d1.json": "3518f77e98bc2c5f5a97b6ac45462d3c5d1566b372b135a4a237e091198a2f59",
+       "vocabulary.py": "a7399f745c7b83823450080c96c47f818cd8d4560e8cb5edf925f10b77e17241"
+      },
+      {
+       "rules.d1.ve": "a3bed95b52aa518ff2db64b669a197a3a0b5d8d9745222eda4cfcfb17ea2c62b"
+      },
+      {
+       "rules.d1.ve": "40539ac0a678603795e6009c6a3973213710f4e0d89447e8cb4d19cfa6dcd906"
+      },
+      {
+       "rules.d1.ve": "7cc51a39ec1acddc6d95c5661d6171b2259a673abc6da59ecafc881b6ab95a61"
+      }
+     ]
+    },
+    "5": {
+     "plan": [
+      {
+       "unit": "f17-hri",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "periodic_covers_internal",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f20-within-default",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "act",
+       "pred": "within_levels",
+       "old": "within",
+       "new": "after"
+      },
+      {
+       "unit": "f11-acc",
+       "kind": "attachment",
+       "class": "wording",
+       "where": "legend",
+       "pred": "open_release_benefits_outweigh_risks",
+       "old": "the open release of the model",
+       "new": "the model of the open release"
+      },
+      {
+       "unit": "f6-tcl",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "legend",
+       "pred": "proximity_assessed",
+       "old": "internal ",
+       "new": ""
+      },
+      {
+       "unit": "f7-sc",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "reached",
+       "old": "1",
+       "new": "2"
+      },
+      {
+       "unit": "f4-check-r",
+       "kind": "qualifier",
+       "class": "wording",
+       "where": "act",
+       "pred": "modification_checked",
+       "old": "any ",
+       "new": ""
+      },
+      {
+       "unit": "f12-u",
+       "kind": "quantity",
+       "class": "wording",
+       "where": "legend",
+       "pred": "governance_found_acceptable_with_safety_case_where_ccl_reached",
+       "old": "4",
+       "new": "8"
+      },
+      {
+       "unit": "f20-holistic-default",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " should ",
+       "new": " must "
+      },
+      {
+       "unit": "f16-ds-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      },
+      {
+       "unit": "f20-elicitation-strict",
+       "kind": "modal",
+       "class": "structural",
+       "where": "rule",
+       "pred": null,
+       "old": " must ",
+       "new": " should "
+      }
+     ],
+     "apply_sha256": [
+      {
+       "environment.d1.json": "4ab0db4b477418cdf8573ed733c584d464360b7e52f37abca0ca65d8e0d24d04",
+       "rules.d1.ve": "70c598dd9e7e2e87e9af4a9833c71c5d5dd7ad63f3dea0941e1e3b68d98f3977",
+       "vocabulary.py": "075decb97627900813984541f2ee3146b3bb40e3dd2ad9b4656d1e3e50588e0a"
+      },
+      {
+       "environment.d1.json": "d43fb6ec42d94d2336efbc6a34ca3e2e54a1b7b2be04270fe1d9f4afbbd118ff",
+       "rules.d1.ve": "8f6618276b69d6bfb33ee5e5206bfec3f960031a36c9502e968f33fbd6647f19",
+       "vocabulary.py": "e43b8f38fab0a05a11e0df5fa6fa252af92a3192a3ba03e80b5b0882cab1a8d4"
+      },
+      {
+       "environment.d1.json": "31e73e6fc847eeff72994d24ca33d6b3aac936efae412bc50c57f20371702c87",
+       "vocabulary.py": "d5e6590b8ab992c48371a2710297a61f4f5ca8577995519bd68392ee5d034365"
+      },
+      {
+       "environment.d1.json": "02f7fbe225afaff7e6503a03f4c92fd4dab37b8ebe6a2b8eb1ce874be375a410",
+       "vocabulary.py": "dbe57cf720f6f4a861bce277079edcc75689380b551f846e26a7577cad663fb1"
+      },
+      {
+       "environment.d1.json": "52b024b266a3629048975eabba09af9980457c4b557b66a2f47302f4aeb2faae",
+       "vocabulary.py": "7ce83a57592789f11ad13e63aa7684fbbedb19d04785e77687861e4af63220a8"
+      },
+      {
+       "environment.d1.json": "9c87393fbf8465ccc5ba0bb76b7873fb5591304f53c62a4acd55440bce906467",
+       "rules.d1.ve": "c683ce69d51b865fc42207516b9ec675dc74b10df267bba1fb51f6200f076d55",
+       "vocabulary.py": "090113751620c85c455d53e732324075a40727137a0b56f63ebf3d889fbc2e71"
+      },
+      {
+       "environment.d1.json": "ba9ad4a0655bd175972c7c767184f0e59d481839990947bd32d8b52dc76d0117",
+       "vocabulary.py": "2023f1afb33c50dde20273546bd4c95f76163a660e30eef6c1453a1dec88ea46"
+      },
+      {
+       "rules.d1.ve": "328e57d8d0c372942ee3e84a1298686a58bba9696a92489d121b69fb35f3356e"
+      },
+      {
+       "rules.d1.ve": "f744f18d396fda589f27febecbcaf7c8c97c39245cca7f5d82ebd459064b6471"
+      },
+      {
+       "rules.d1.ve": "dcc4de366bd58a35ce235ea3ab98074e135d05a05766e1973c940a289782fdd8"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

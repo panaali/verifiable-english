@@ -1,0 +1,98 @@
+import json, subprocess, sys
+from pathlib import Path
+ROOT = Path("/home/seyran/code/ve-fid-mech-b4")
+T = "tests/test_fidmech_"
+PLANTS = [
+ ("drop-conjunct: a leaf's sibling dropped instead of the leaf", "tools/fidmech/structural.py",
+  "        return right if left is None else left", "        return formula.left if left is None else formula.right",
+  [T + "structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english", T + "prune.py::test_drop_is_prune_of_one_path_on_and_and_or_trees"]),
+ ("add-guard-true: a predicate the rule already uses is chosen (A and A)", "tools/fidmech/structural.py",
+  "        if name not in used:", "        if True:",
+  [T + "structural.py::test_add_guard_true_never_picks_a_predicate_the_rule_uses"]),
+ ("guard template: a hard-coded \"that situation\"", "tools/fidmech/structural.py",
+  "    return re.sub(r\"\\n\\s*\", \" \", prefix + render_rule_sentence(rule, env))",
+  "    return re.sub(r\"\\n\\s*\", \" \", prefix + render_rule_sentence(rule, env)).replace(\"that proposal\", \"that situation\")",
+  [T + "structural.py::test_the_guard_template_names_the_bound_variables_sort"]),
+ ("equivalence through Norm.to_dict (the mode dropped)", "tools/fidmech/structural.py",
+  "    return canon(json.loads(json.dumps(rule.to_dict())))", "    return canon(json.loads(json.dumps(rule.core.to_dict())))",
+  [T + "structural.py::test_flip_force_is_never_syntactic"]),
+ ("canonicalisation does not sort and/or operands", "tools/fidmech/structural.py",
+  "            return [node[0], sorted(flat, key=lambda x: json.dumps(x, sort_keys=True))]", "            return [node[0], flat]",
+  [T + "structural.py::test_two_conjuncts_reordered_are_syntactic"]),
+ ("header-declared exception not read", "tools/fidmech/mutants.py",
+  "exception=bool(S.EXCEPTION_HEADER.search(_unquoted(block.header)))", "exception=False",
+  [T + "structural.py::test_a_header_declared_exception_and_its_precedence_pair_are_each_dropped"]),
+ ("widen-quantifier: restricts the subject instead of the second variable", "tools/fidmech/structural.py",
+  "if free_vars(leaf(core.guard, p)) == {0}]", "if free_vars(leaf(core.guard, p)) == {1}]",
+  [T + "structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english"]),
+ ("an edit is not widened to a unique find", "tools/fidmech/mutants.py",
+  "            while not \"\".join(a[run[0]:run[1]]) or old.count(\"\".join(a[run[0]:run[1]])) != 1:",
+  "            while not \"\".join(a[run[0]:run[1]]):",
+  [T + "mutants.py::test_an_edit_widens_until_its_find_occurs_once"]),
+ ("a record accepts a find that occurs twice", "tools/fidmech/mutants.py",
+  "        if not edit[\"find\"] or text.count(edit[\"find\"]) != 1:", "        if not edit[\"find\"] or text.count(edit[\"find\"]) == 0:",
+  [T + "mutants.py::test_a_record_refuses_a_find_that_is_not_unique_a_stale_sha_and_overlapping_edits"]),
+ ("a wording mutant may be equivalent", "tools/fidmech/mutants.py",
+  "    if equivalent is not None and class_ != \"structural\":", "    if False:",
+  [T + "mutants.py::test_a_wording_mutant_is_never_equivalent"]),
+ ("stillborn mutants are scored", "tools/fidmech/mutants.py",
+  "    return [r for r in records if r[\"parse\"] == \"ok\"]", "    return list(records)",
+  [T + "mutants.py::test_stillborn_records_are_never_scored", T + "wording.py::test_wording_mutants_are_scored_never_equivalent_and_stillborn_ones_are_listed"]),
+ ("equivalents.json enters the binding (circular: folded into the facts value binding() reads)", "tools/fidmech/mutants.py",
+  "    return {\"fp1\": fp1.fingerprints_of(files), \"facts_sha256\": sha(case_dir / S.FACTS),",
+  "    return {\"fp1\": fp1.fingerprints_of(files), \"facts_sha256\": (sha(case_dir / S.FACTS) or \"\") + (sha(case_dir / EQUIVALENTS) or \"\"),",
+  [T + "mutants.py::test_equivalents_json_and_the_commit_are_left_out_of_the_binding"]),
+ ("bindings.json left out of the binding", "tools/fidmech/mutants.py",
+  "                                     \"bindings_sha256\": inputs[\"bindings_sha256\"]})).hexdigest()",
+  "                                     \"bindings_sha256\": None})).hexdigest()",
+  [T + "mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes"]),
+ ("a stale declaration is applied", "tools/fidmech/mutants.py",
+  "        elif binding(rec, inputs) != e[\"binding\"]:", "        elif False:",
+  [T + "mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes", T + "mutants.py::test_a_declaration_stops_applying_when_the_mutants_edits_change"]),
+ ("fp-1: build_document.py not shared by every unit", "tools/fidmech/fp1.py",
+  "    return name == \"facts.d1.ve\" or name == \"build_document.py\" or name.endswith(\"translation.py\")",
+  "    return name == \"facts.d1.ve\" or name.endswith(\"translation.py\")",
+  [T + "mutants.py::test_fp1_equals_uc_audits_values_on_the_frozen_inputs"]),
+ ("apply(): environment.d1.json re-dumped with indent 1", "tools/fidmech/wording.py",
+  "        ind = 2 if '\\n  \"' in files.get('environment.d1.json', '') else None", "        ind = 1 if '\\n  \"' in files.get('environment.d1.json', '') else None",
+  [T + "wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs"]),
+ ("ACTORS changed (one actor dropped)", "tools/fidmech/wording.py",
+  "'the public', 'the government', 'reviewers', 'Anthropic']", "'the public', 'the government', 'reviewers']",
+  [T + "wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs", T + "wording.py::test_actors_is_unchanged"]),
+ ("harness mode matches the legacy ACTORS, not actors.json", "tools/fidmech/wording.py",
+  "    return candidates(files, unit, replacing, actors, actor_pattern, structural=False)",
+  "    return candidates(files, unit, replacing, ACTORS, actor_pattern, structural=False)",
+  [T + "wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot"]),
+ ("widen-quantifier: restricting conjuncts dropped one path at a time (review F1)", "tools/fidmech/structural.py",
+  "            out.append((\"widen-quantifier\", \"rule\", _edit(rule, guard=prune(core.guard, restricting))))",
+  "            out.append((\"widen-quantifier\", \"rule\", _edit(rule, guard=__import__(\"functools\").reduce(drop, sorted(restricting, reverse=True), core.guard))))",
+  [T + "prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together", T + "prune.py::test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape"]),
+ ("prune: a second path in the same walk is ignored (review F1 class)", "tools/fidmech/structural.py",
+  "    right = _prune(formula.right, frozenset(p[1:] for p in paths if p[0] == 1))",
+  "    right = formula.right if len(paths) > 1 else _prune(formula.right, frozenset(p[1:] for p in paths if p[0] == 1))",
+  [T + "prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset", T + "prune.py::test_the_reviewers_two_stale_path_shapes"]),
+]
+out = []
+ONLY = sys.argv[1:]
+for bug, rel, old, new, tests in PLANTS:
+    if ONLY and not bug.startswith(ONLY[0]):
+        continue
+    path = ROOT / rel
+    text = path.read_text()
+    assert text.count(old) == 1, (bug, text.count(old))
+    path.write_text(text.replace(old, new))
+    try:
+        run = subprocess.run(["uv", "run", "pytest", "-q", "-p", "no:cacheprovider", *tests], cwd=ROOT, capture_output=True, text=True, timeout=1800)
+    finally:
+        path.write_text(text)
+    lines = [l for l in run.stdout.splitlines() if l.startswith("FAILED") or " failed" in l or " passed" in l]
+    killed = run.returncode != 0 and any(l.startswith("FAILED") for l in lines)
+    out.append({"bug": bug, "file": rel, "test": tests[0], "killed": killed, "output": [l[:200] for l in lines][-4:]})
+    print(("KILLED  " if killed else "SURVIVED ") + bug, flush=True)
+saved = json.loads((ROOT / "docs/infra/fid-mech-b4/seeded-bugs.json").read_text()) if ONLY else []
+for o in out:
+    saved = [x for x in saved if not x["bug"].startswith(ONLY[0])] if ONLY else saved
+merged = saved + out if ONLY else out
+order = [p[0] for p in PLANTS]
+merged.sort(key=lambda x: order.index(x["bug"]))
+(ROOT / "docs/infra/fid-mech-b4/seeded-bugs.json").write_text(json.dumps(merged, indent=1) + "\n")

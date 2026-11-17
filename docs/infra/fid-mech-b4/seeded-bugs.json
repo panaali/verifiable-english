@@ -1,0 +1,214 @@
+[
+ {
+  "bug": "drop-conjunct: a leaf's sibling dropped instead of the leaf",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[drop-disjunct]",
+   "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[widen-quantifier]",
+   "FAILED tests/test_fidmech_prune.py::test_drop_is_prune_of_one_path_on_and_and_or_trees",
+   "4 failed, 5 passed in 7.64s"
+  ]
+ },
+ {
+  "bug": "add-guard-true: a predicate the rule already uses is chosen (A and A)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_add_guard_true_never_picks_a_predicate_the_rule_uses",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_add_guard_true_never_picks_a_predicate_the_rule_uses",
+   "1 failed in 1.08s"
+  ]
+ },
+ {
+  "bug": "guard template: a hard-coded \"that situation\"",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_the_guard_template_names_the_bound_variables_sort",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_the_guard_template_names_the_bound_variables_sort",
+   "1 failed in 1.39s"
+  ]
+ },
+ {
+  "bug": "equivalence through Norm.to_dict (the mode dropped)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_flip_force_is_never_syntactic",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_flip_force_is_never_syntactic",
+   "1 failed in 8.80s"
+  ]
+ },
+ {
+  "bug": "canonicalisation does not sort and/or operands",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_two_conjuncts_reordered_are_syntactic",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_two_conjuncts_reordered_are_syntactic",
+   "1 failed in 1.20s"
+  ]
+ },
+ {
+  "bug": "header-declared exception not read",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_structural.py::test_a_header_declared_exception_and_its_precedence_pair_are_each_dropped",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_a_header_declared_exception_and_its_precedence_pair_are_each_dropped",
+   "1 failed in 3.04s"
+  ]
+ },
+ {
+  "bug": "widen-quantifier: restricts the subject instead of the second variable",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[drop-conjunct]",
+   "FAILED tests/test_fidmech_structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english[widen-quantifier]",
+   "2 failed, 6 passed in 8.41s"
+  ]
+ },
+ {
+  "bug": "an edit is not widened to a unique find",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_an_edit_widens_until_its_find_occurs_once",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_an_edit_widens_until_its_find_occurs_once",
+   "1 failed in 0.54s"
+  ]
+ },
+ {
+  "bug": "a record accepts a find that occurs twice",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_a_record_refuses_a_find_that_is_not_unique_a_stale_sha_and_overlapping_edits",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_a_record_refuses_a_find_that_is_not_unique_a_stale_sha_and_overlapping_edits",
+   "1 failed in 0.52s"
+  ]
+ },
+ {
+  "bug": "a wording mutant may be equivalent",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_a_wording_mutant_is_never_equivalent",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_a_wording_mutant_is_never_equivalent",
+   "1 failed in 0.41s"
+  ]
+ },
+ {
+  "bug": "stillborn mutants are scored",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_stillborn_records_are_never_scored",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_stillborn_records_are_never_scored",
+   "FAILED tests/test_fidmech_wording.py::test_wording_mutants_are_scored_never_equivalent_and_stillborn_ones_are_listed",
+   "2 failed in 14.19s"
+  ]
+ },
+ {
+  "bug": "equivalents.json enters the binding (circular: folded into the facts value binding() reads)",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_equivalents_json_and_the_commit_are_left_out_of_the_binding",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_equivalents_json_and_the_commit_are_left_out_of_the_binding",
+   "1 failed in 0.47s"
+  ]
+ },
+ {
+  "bug": "bindings.json left out of the binding",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes[bindings]",
+   "1 failed, 3 passed in 0.53s"
+  ]
+ },
+ {
+  "bug": "a stale declaration is applied",
+  "file": "tools/fidmech/mutants.py",
+  "test": "tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes[precedence]",
+   "FAILED tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_what_it_rests_on_changes[bindings]",
+   "FAILED tests/test_fidmech_mutants.py::test_a_declaration_stops_applying_when_the_mutants_edits_change",
+   "5 failed in 0.49s"
+  ]
+ },
+ {
+  "bug": "fp-1: build_document.py not shared by every unit",
+  "file": "tools/fidmech/fp1.py",
+  "test": "tests/test_fidmech_mutants.py::test_fp1_equals_uc_audits_values_on_the_frozen_inputs",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_mutants.py::test_fp1_equals_uc_audits_values_on_the_frozen_inputs",
+   "1 failed in 0.40s"
+  ]
+ },
+ {
+  "bug": "apply(): environment.d1.json re-dumped with indent 1",
+  "file": "tools/fidmech/wording.py",
+  "test": "tests/test_fidmech_wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs[anthropic-rsp]",
+   "FAILED tests/test_fidmech_wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs[openai-preparedness]",
+   "FAILED tests/test_fidmech_wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs[safety-framework]",
+   "3 failed in 1.25s"
+  ]
+ },
+ {
+  "bug": "ACTORS changed (one actor dropped)",
+  "file": "tools/fidmech/wording.py",
+  "test": "tests/test_fidmech_wording.py::test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_wording.py::test_actors_is_unchanged - AssertionErr...",
+   "1 failed, 3 passed in 4.93s"
+  ]
+ },
+ {
+  "bug": "harness mode matches the legacy ACTORS, not actors.json",
+  "file": "tools/fidmech/wording.py",
+  "test": "tests/test_fidmech_wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot[openai-preparedness-f7-compile-the SAG]",
+   "FAILED tests/test_fidmech_wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot[safety-framework-f14-governance function]",
+   "2 failed in 0.47s"
+  ]
+ },
+ {
+  "bug": "widen-quantifier: restricting conjuncts dropped one path at a time (review F1)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together",
+   "FAILED tests/test_fidmech_prune.py::test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape",
+   "2 failed in 1.54s"
+  ]
+ },
+ {
+  "bug": "prune: a second path in the same walk is ignored (review F1 class)",
+  "file": "tools/fidmech/structural.py",
+  "test": "tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[5]",
+   "FAILED tests/test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[6]",
+   "FAILED tests/test_fidmech_prune.py::test_the_reviewers_two_stale_path_shapes",
+   "6 failed, 1 passed in 0.45s"
+  ]
+ }
+]
