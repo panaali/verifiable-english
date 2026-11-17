@@ -112,16 +112,31 @@ def leaf(formula, path):
     return formula
 
 
+def prune(formula, paths):
+    """`formula` with the leaves at every path in `paths` taken out of its tree (a parent left with one child is
+    replaced by that child); taking out every leaf leaves ast.Top. Every path is read on the original tree in one walk,
+    never on a tree an earlier removal reshaped (fid-mech-b4 F1: dropping paths one at a time collapsed parents, so the
+    paths still to drop pointed elsewhere). Paths come from `leaves` of the same tree."""
+    rest = _prune(formula, frozenset(paths))
+    return ast.Top() if rest is None else rest
+
+
+def _prune(formula, paths):
+    if () in paths:
+        return None
+    if not paths:
+        return formula
+    left = _prune(formula.left, frozenset(p[1:] for p in paths if p[0] == 0))
+    right = _prune(formula.right, frozenset(p[1:] for p in paths if p[0] == 1))
+    if left is None or right is None:
+        return right if left is None else left
+    return replace(formula, left=left, right=right)
+
+
 def drop(formula, path):
     """`formula` with the leaf at `path` taken out of its tree (its parent replaced by the sibling); a leaf at the
     root leaves ast.Top."""
-    if not path:
-        return ast.Top()
-    if len(path) == 1:
-        return formula.left if path[0] else formula.right
-    if path[0]:
-        return replace(formula, right=drop(formula.right, path[1:]))
-    return replace(formula, left=drop(formula.left, path[1:]))
+    return prune(formula, (path,))
 
 
 def predicates(formula):
@@ -196,12 +211,9 @@ def ops_of(rule, env, *, exception=False, true_atoms=()):
             break
     out.append(("rule-drop", "rule", _edit(rule, guard=ast.Bottom())))
     if len(arguments) == 2 and not isinstance(core.guard, ast.Top):
-        guard, restricting = core.guard, [p for p in leaves(core.guard, ast.And)
-                                          if free_vars(leaf(core.guard, p)) == {0}]
-        for p in sorted(restricting, reverse=True):  # deepest right first, so earlier paths stay valid
-            guard = drop(guard, p)
-        if restricting:
-            out.append(("widen-quantifier", "rule", _edit(rule, guard=guard)))
+        restricting = [p for p in leaves(core.guard, ast.And) if free_vars(leaf(core.guard, p)) == {0}]
+        if restricting:  # all dropped in one walk of the original guard (prune), never one path after another
+            out.append(("widen-quantifier", "rule", _edit(rule, guard=prune(core.guard, restricting))))
     return out
 
 
