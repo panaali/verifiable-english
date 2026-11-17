@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-released-main-1117-5fffd41c-t893201-s5",
+ "head": "cd9ddb9cb90bcd844046a647cabb24cf4a7918cc",
+ "argv": [
+  "armsh-cand-released-main-1117-5fffd41c-t893201-s5",
+  "cd9ddb9cb90bcd844046a647cabb24cf4a7918cc",
+  "749e01317dde7d81bfe09eeb27602c8164f6db3c",
+  "-",
+  "-",
+  "4",
+  "5/8"
+ ]
+}
