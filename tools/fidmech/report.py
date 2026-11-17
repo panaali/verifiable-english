@@ -11,9 +11,9 @@ plants and real defects, and the run cost, from the batch directories tools/fidm
   run. Scored = parse ok and not equivalent; stillborn mutants are listed, never scored.
 - **Units passing the stated checks** (L1, L2, L3, D, K-structural): no L1, L2, L3 or D hit at baseline, and every
   applicable non-equivalent structural mutant of the unit ran to a decided K verdict and K killed it. Any
-  inconclusive, error, not-run or INVALID makes the unit incomplete; a unit with no applicable mutant is untested. Printed
-  with and without flip-force, with declared equivalents counted as survivors, and without D for a document with no
-  sidecar. Never "faithful".
+  inconclusive, error, not-run or INVALID makes the unit incomplete; a unit with no applicable mutant is untested.
+  Printed with and without flip-force, with declared equivalents counted as survivors, and without D for a
+  document with no sidecar. Never "faithful".
 - **Adjudication** (`adjudicate`). A baseline hit is confirmed by a REAL-by-both finding, contradicted by a
   NOT-by-both one, of the SAME allegation class (ALLEGATION; the classes in NO_ALLEGATION have none), on the hit's
   unit, whose cited text (word, for the word classes) the hit overlaps, on a unit whose fp-1 is unchanged since the
