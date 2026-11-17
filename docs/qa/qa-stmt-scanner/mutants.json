@@ -27,8 +27,16 @@
      "test": "tests/test_question_statements_scanner.py::test_a_name_declared_twice_equals_no_approved_text[same file after]",
      "result": "killed: 1 failed"},
     {"id": "across-last-wins", "file": "tools/question_statements.py",
-     "change": "across(): a later file's text replaces an earlier one",
+     "change": "scan(): a later code unit's (file's) texts replace an earlier one's (review F1 fix: across() merged into scan() over source_code)",
      "test": "tests/test_question_statements_scanner.py::test_a_name_declared_twice_equals_no_approved_text[other file before]",
-     "result": "killed: 1 failed"}
+     "result": "killed: 1 failed"},
+    {"id": "source-fence-fallback", "file": "tools/question_statements.py",
+     "change": "source_code(): read a source through its ```lean fences when it has any (main's lean_blocks fallback, review F1)",
+     "test": "tests/test_question_statements_scanner.py::test_a_source_is_read_whole_not_through_a_doc_fence[q1-('theorem', 'asked_reads_back'), q1-('def', 'HasReading'), q2-('theorem', 'holds_iff'), q2-('def', 'HoldsU'), q2-('def', 'LeadHoldsU'), q2-('def', 'ReasonHoldsU'), q2-('structure', 'ZeroAsked')]",
+     "result": "killed: 7 of 7 failed"},
+    {"id": "scope-5-4-fence-fallback", "file": "tests/test_scope_5_4_statements.py",
+     "change": "statement(): read the code through its ```lean fences when it has any (the older fallback, review note C4)",
+     "test": "tests/test_scope_5_4_statements.py::test_a_source_is_read_whole_not_through_a_doc_fence",
+     "result": "killed: 8 of 8 failed"}
   ]
 }
