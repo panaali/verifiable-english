@@ -1,0 +1,42 @@
+--- chain-gate.sh.bak-20261117vmcancel	2026-11-15 15:27:30.807825275 +0000
++++ chain-gate.sh.new-vmcancel	2026-11-17 12:23:30.646604661 +0000
+@@ -22,7 +22,7 @@
+ # 2026-10-28 DRI (dri-fastloop, reviews/fast-loop-20261027.md; set only by infra-item.sh with flag FIX_EARLY): CHAIN_GATE_CANCEL=<file>:
+ #    the Mac gate gets it as MAC_GATE_CANCEL (the runner job stops, mac-gate.sh exits 4, no record), and once the file exists no
+ #    fallback (selected tests or VM gate) starts: exit 4 (cancelled: the review said FIX, so the fix round's own selected tests
+-#    and the merge train's full gate test the code instead). A selected run already going is stopped too (selrun, L133); a VM gate is not. Unset: unchanged.
++#    and the merge train's full gate test the code instead). A selected run already going is stopped too (selrun, L133), and so is a VM gate or its R13 rerun (2026-11-17, below). Unset: unchanged.
+ # 2026-10-28 DRI (dri-applywaste, reviews/waste-audit-20261028.md row 3, PIPELINE-LIMITS L118): with the flag file
+ #    $M/CHAIN_GATE_RISKY_ONLY (and CHAIN-GATE-SELECTED-FALLBACK + MAC_GATE), gate.py runs only when the diff from the merge
+ #    base with main touches a risky path (RISKY below: the selector, conftest, gate, regen, test history/heavy lists,
+@@ -359,10 +359,19 @@
+   zsh $M/cloud2-run.sh gate $w $h chain-$label --workers ${CLOUD2_CHAIN_WORKERS:-14} --slot-wait ${CLOUD2_CHAIN_SLOT_WAIT:-1800} --output $w/gate-result.json > $M/vm-gate-$label.log 2>&1; rc=$?
+   ev gate-end "ve-cloud-2 rc=$rc"
+   if [[ $rc == (0|1) ]] && [ -s $w/gate-result.json ]; then c2g=1; else ev gate-fallback "ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc): VM gate"; fi; fi
++# 2026-11-17 fix-early-running-vm-gate (reviews/dri-decisions-20261117-cg1218.md item 1): with CHAIN_GATE_CANCEL (FIX_EARLY)
++#    the VM gate and its R13 rerun run through selrun (own session, polled every 5 s; on the cancel file: TERM to the session,
++#    KILL after 60 s), then event gate-cancelled, gate-result.json removed (gate.py writes a failed placeholder at its start, and
++#    a cancelled rerun's full record is kept as $M/vm-gate-<label>.full.json), exit 4. p1-ready-unstartable-alert waited 1.72 h
++#    (11-16) on a cancelled VM gate. Unset: the old foreground subshell, unchanged. Test: tools-local/test_chain_gate_vm_cancel.py.
++vmg(){
++  if [ -n "$CHAIN_GATE_CANCEL" ]; then selrun env -C $w VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@"
++  else (cd $w && VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@"); fi; }
++vmcx(){ [ -n "$cx" ] || return 0; rm -f $w/gate-result.json; ev gate-cancelled "vm gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY$1)"; exit 4; }
+ if [ -z "$c2g" ]; then
+ ev gate-start "vm ${h[1,8]}"
+-(cd $w && VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py --workers ${VM_GATE_WORKERS:-8} > $M/vm-gate-$label.log 2>&1); rc=$?
+-ev gate-end "vm rc=$rc"; fi
++vmg --workers ${VM_GATE_WORKERS:-8} > $M/vm-gate-$label.log 2>&1; rc=$?
++ev gate-end "vm rc=$rc"; vmcx; fi
+ # 2026-10-14 (eff daily, PIPELINE-LIMITS L13): DRI-RULINGS R13 in the chain. A VM gate that failed only on tests (at most
+ # 10, the suite completed) gets ONE same-commit rerun of its failed tests (tools/gate.py --rerun-failed; gate.py decides,
+ # status rerun-passed or failed). fix-abbrev's 4-h VM gate failed on 3 load-induced errors and sent its builder back.
+@@ -381,6 +390,6 @@
+ raise SystemExit(0 if ok else 1)
+ EOF
+ then cp $w/gate-result.json $M/vm-gate-$label.full.json; ev gate-start "vm-rerun ${h[1,8]}"
+-  (cd $w && VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py --rerun-failed --workers ${VM_GATE_WORKERS:-8} >> $M/vm-gate-$label.log 2>&1); rc=$?
+-  ev gate-end "vm-rerun rc=$rc"; fi
++  vmg --rerun-failed --workers ${VM_GATE_WORKERS:-8} >> $M/vm-gate-$label.log 2>&1; rc=$?
++  ev gate-end "vm-rerun rc=$rc"; vmcx "; R13 rerun"; fi
+ [ $rc -eq 0 ]

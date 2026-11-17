@@ -1,0 +1,24 @@
+chain-gate.sh under test: /tmp/vmcx-ev/seeds/s4.sh
+  ok   (1) the stub VM gate started in its own session (setsid)
+  ok   (1) the stub gate's process group is gone within 70 s of the cancel file
+  ok   (1) chain-gate exits 4
+  ok   (1) event gate-cancelled 'vm gate stopped: <file> (FIX_EARLY)'
+  ok   (1) no gate-result.json left (the stub's failed placeholder removed)
+  ok   (1) the gate never completed
+  FAIL (1k) TERM ignored: the group is gone (KILL) within 70 s, exit 4, cancel event, no record  gone=None rc=None [('gate-start', 'vm c19dbbaf')] result=True
+  ok   (2) the R13 rerun started (--rerun-failed) in its own session
+  ok   (2) the rerun's process group is gone within 70 s of the cancel file
+  ok   (2) chain-gate exits 4
+  ok   (2) event gate-cancelled 'vm gate stopped: <file> (FIX_EARLY; R13 rerun)'
+  ok   (2) no gate-result.json left; the full record kept as vm-gate-t.full.json
+  ok   (3) unset, rc 0: completed, rc 0, no cancel event, record kept
+  ok   (3) unset: gate.py runs in chain-gate's own session (the plain foreground run), in the worktree, pinned sources on
+  ok   (3) unset: events exactly gate-start vm / gate-end vm rc=0
+  ok   (3) unset, rc 1 (not R13-eligible): rc 1, no rerun, no cancel event
+  ok   (3) unset, R13: the rerun runs in chain-gate's session and decides (rc 0), no cancel event
+  ok   (3s) set, no cancel file, rc 0: rc 0, completed, no cancel event, record kept
+  ok   (3s) set, no cancel file, rc 1: rc 1, completed, no cancel event, record kept
+  ok   (3s) set, no cancel file, R13 rerun rc 1: rc 1, both ran, no cancel event
+  ok   (4) cancel file before start: exit 4, 'no VM gate' event, gate.py never started
+FAIL: 1 failure(s)
+rc=1
