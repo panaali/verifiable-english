@@ -1,0 +1,8 @@
+$ systemd-run --user --scope --quiet --slice=ve-workers.slice -p CPUWeight=10 -p CPUQuota=400% -p MemoryMax=24G -p MemorySwapMax=0 --unit=ve-tmidle-smoke-1794874575 nice -n 19 ionice -c 2 -n 7 sh -c '<print nice, ionice, cgroup, cpu.max, cpu.weight, memory.max, memory.swap.max>'
+nice=19 io=best-effort: prio 7
+0::/user.slice/user-1001.slice/user@1001.service/ve.slice/ve-workers.slice/ve-tmidle-smoke-1794874575.scope
+400000 100000
+10
+25769803776
+0
+rc=0
