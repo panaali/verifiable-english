@@ -6,7 +6,7 @@
   ve-cloud-2 through the VM's live gate; `cloud2-codex.sh` starts that shim instead of `/usr/local/bin/codex`.
 - Open items: none in this branch. No DRI signature is reserved and there are no DELTA rows (no Lean, no VE product code, no
   trust base: only manage-agents control-plane scripts). No Codex account setting or login was touched.
-- SIZE: 77 product, 123 tests, about 150 other hand-written lines (this report).
+- SIZE: 77 product, 123 tests, 124 other hand-written lines (this report).
 
 ## 1. Spec (row note, decision reviews/dri-decisions-20261116-targets.md) and how each word is met
 
