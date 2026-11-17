@@ -1,0 +1,28 @@
+== seed-killed-only.log
+FAIL: test_same_text_killed_and_survived_at_h2 (__main__.Refused.test_same_text_killed_and_survived_at_h2)
+Ran 12 tests in 3.145s
+FAILED (failures=1)
+== seed-later.log
+FAIL: test_h2_older_than_h (__main__.Refused.test_h2_older_than_h)
+Ran 12 tests in 3.076s
+FAILED (failures=1)
+== seed-main-ancestor.log
+FAIL: test_h2_not_ancestor_of_main (__main__.Refused.test_h2_not_ancestor_of_main)
+Ran 12 tests in 3.223s
+FAILED (failures=1)
+== seed-row-complete.log
+FAIL: test_row_complete_subtracts_forward_killed (__main__.Resolved.test_row_complete_subtracts_forward_killed)
+Ran 12 tests in 2.897s
+FAILED (failures=1)
+== seed-same-head.log
+FAIL: test_h2_equal_to_h (__main__.Refused.test_h2_equal_to_h)
+Ran 12 tests in 2.971s
+FAILED (failures=1)
+== seed-sha.log
+FAIL: test_sha256_mismatch (__main__.Refused.test_sha256_mismatch)
+Ran 12 tests in 2.910s
+FAILED (failures=1)
+== seed-text-twice.log
+FAIL: test_text_twice_at_h (__main__.Refused.test_text_twice_at_h)
+Ran 12 tests in 2.924s
+FAILED (failures=1)

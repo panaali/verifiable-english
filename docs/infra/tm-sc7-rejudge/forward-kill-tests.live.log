@@ -1,0 +1,129 @@
+EEEEEEEEEEFF
+======================================================================
+ERROR: test_t1_escape_stays_an_escape (__main__.Escape.test_t1_escape_stays_an_escape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 217, in test_t1_escape_stays_an_escape
+    self.assertEqual(s["forward_killed"], 1, s)
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_h2_equal_to_h (__main__.Refused.test_h2_equal_to_h)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 172, in test_h2_equal_to_h
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_h2_not_ancestor_of_main (__main__.Refused.test_h2_not_ancestor_of_main)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 160, in test_h2_not_ancestor_of_main
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_h2_older_than_h (__main__.Refused.test_h2_older_than_h)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 166, in test_h2_older_than_h
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_record_head_not_ledger_head (__main__.Refused.test_record_head_not_ledger_head)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 202, in test_record_head_not_ledger_head
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_same_id_other_text (__main__.Refused.test_same_id_other_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 178, in test_same_id_other_text
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_same_text_killed_and_survived_at_h2 (__main__.Refused.test_same_text_killed_and_survived_at_h2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 190, in test_same_text_killed_and_survived_at_h2
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_same_text_survived_at_h2 (__main__.Refused.test_same_text_survived_at_h2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 184, in test_same_text_survived_at_h2
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_sha256_mismatch (__main__.Refused.test_sha256_mismatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 196, in test_sha256_mismatch
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+ERROR: test_text_twice_at_h (__main__.Refused.test_text_twice_at_h)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 208, in test_text_twice_at_h
+    self.assert_only_target_open(s, by)
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 115, in assert_only_target_open
+    self.assertEqual(s["forward_killed"], 1, s)  # KeyError on installed: it has no forward kill
+                     ~^^^^^^^^^^^^^^^^^^
+KeyError: 'forward_killed'
+
+======================================================================
+FAIL: test_later_ancestor_of_main_kills_same_text (__main__.Resolved.test_later_ancestor_of_main_kills_same_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 130, in test_later_ancestor_of_main_kills_same_text
+    self.assertEqual(s.get("forward_killed"), 1, s)
+AssertionError: None != 1 : {'t': '2026-11-17T12:11Z', 'record': '/tmp/tmfk-test-t9kebwbe/rec.json', 'head': 'b638e0478bf83a3832d2ed4e7eb5a18aed8d4f71', 'base': '57e6b0d981cbc38c73e82d990aff27f08b3d3171', 'mutants': 1, 'counts': {'NOT RUN': 0, 'SURVIVOR': 1}, 'survivors': 1, 'allowed': {'SURVIVOR': 0, 'UNKNOWN': 0}, 'invalid_here': 0, 'per_file': {'VE/W.lean': {'SURVIVOR': 1, 'UNKNOWN': 0, 'allowed': 0, 'item_killed': 0}}, 'escapes_new': 0, 'escapes_48h': 0, 'partial': False, 'complete': False, 'unresolved': {'SURVIVOR': 1}, 'guard': None, 'steps_wall': None, 'planned': None, 'parts': 1, 'part_rows': None, 'vm_cpu_s': None, 'unresolved_unknown': [], 'resumed_from': None, 'unallowed_survivor': ['M5'], 'tm_esc_new': ['tm-esc-item-w-1'], 'tm_esc_kept': 0}
+
+======================================================================
+FAIL: test_row_complete_subtracts_forward_killed (__main__.Resolved.test_row_complete_subtracts_forward_killed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_forward_kill.py", line 146, in test_row_complete_subtracts_forward_killed
+    self.assertTrue(s["complete"])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 12 tests in 3.218s
+
+FAILED (failures=2, errors=10)
