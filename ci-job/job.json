@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-pf-f16-without-fix-0eb03af8-t895865-s4",
+ "head": "612bf3ce70c2e258efa10eac011fe030b9114024",
+ "argv": [
+  "armsh-cand-pf-f16-without-fix-0eb03af8-t895865-s4",
+  "612bf3ce70c2e258efa10eac011fe030b9114024",
+  "97b964fb4884564bc6e12aac7c81817855354462",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
