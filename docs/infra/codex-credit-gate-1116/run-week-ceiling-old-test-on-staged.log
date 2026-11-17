@@ -1,0 +1,77 @@
+ok   week=80 ceil='75 2026-11-10T00:00:00Z' gpt-6-astra: plan week 80% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   week=75 ceil='75 2026-11-10T00:00:00Z' gpt-6-sol: plan week 75% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   week=74 ceil='75 2026-11-10T00:00:00Z' gpt-6-astra: plan week 74% < 88
+FAIL week=80 ceil='75 2026-11-10T00:00:00Z' gpt-6-astra: want 0 got 1: Codex week reading is 7200 min old (80%, rollout) and the live read fails: the plan week cannot be checked; past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   week=90 ceil='75 2026-11-10T00:00:00Z' gpt-6-astra: plan week 90% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   newest session file has no reading yet, the one before says 81: plan week 81% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   no reading at all under a ceiling: no Codex week reading: ceiling 75% until 2026-11-10T00:00:00Z cannot be checked (CODEX_WEEK_CEILING; tools-local/codex-meter.py)
+ok   74 read 4 h ago, live read off: Codex week reading is 240 min old (74%, rollout) and the live read fails: ceiling 75% until 2026-11-10T00:00:00Z cannot be checked (CODEX_WEEK_CEILING; codex-meter.log)
+ok   74 read 4 h ago, live read says 81: plan week 81% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   74 read 4 h ago, live read says 70: plan week 70% < 88
+ok   74 read 4 h ago, live read fails: Codex week reading is 240 min old (74%, rollout) and the live read fails: ceiling 75% until 2026-11-10T00:00:00Z cannot be checked (CODEX_WEEK_CEILING; codex-meter.log)
+ok   74 fresh, one Codex session running: plan week 74% with 1 Codex session(s) running leaves no room under ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING: 1 point per session)
+ok   72 fresh, one Codex session running: plan week 72% < 88
+ok   reserve 30: another caller at 50 (limit 45): plan week 50% >= ceiling 45% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING; 30 points under 75% are kept for the headline audits (uc-audit.sh))
+ok   reserve 30: the audit at 50 (limit 75): plan week 50% < 88
+ok   reserve 30: another caller at 40: plan week 40% < 88
+ok   reserve 30: the audit at 75: plan week 75% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   file: week 43 at 02:00Z, critical (limit 49): plan week 43% < 88
+ok   file: week 43 at 02:00Z, builder (limit 39): plan week 43% >= ceiling 39% until 2026-11-15T15:56:02Z (CODEX_WEEK_CEILING; 10 points under 49% are kept for the headline audits (uc-audit.sh) and critical-path rows)
+ok   file: week 43 at 02:00Z, audit (limit 49): plan week 43% < 88
+ok   file: week 48 at 02:00Z, critical, one Codex session running (48 + 2 seats > 49): plan week 48% with 1 Codex session(s) running leaves no room under ceiling 49% until 2026-11-15T15:56:02Z (CODEX_WEEK_CEILING: 1 point per session; critical-path row)
+ok   file: week 55 at 16:30Z (step 61), critical: plan week 55% < 88
+ok   file: week 55 at 16:30Z (step 61), builder (limit 51): plan week 55% >= ceiling 51% until 2026-11-16T15:56:02Z (CODEX_WEEK_CEILING; 10 points under 61% are kept for the headline audits (uc-audit.sh) and critical-path rows)
+ok   file: week 88 on 11-18 (step 100), critical: the audits keep 12: plan week 88% >= ceiling 88% until 2026-11-19T15:56:02Z (CODEX_WEEK_CEILING; 12 points of the week are kept for the freeze/omission reads until 2026-11-19T15:56:02Z; critical-path row)
+ok   file: week 88 on 11-18 (step 100), builder: the audits keep 12: plan week 88% >= ceiling 88% until 2026-11-19T15:56:02Z (CODEX_WEEK_CEILING; 12 points of the week are kept for the freeze/omission reads until 2026-11-19T15:56:02Z)
+FAIL file: week 88 on 11-18 (step 100), audit: want 0 got 1: plan week 88% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   file: week 86 on 11-18 (step 100), critical (86 + 1 <= 88): plan week 86% < 88
+ok   file: next week (75, reserve 30, audit line over), critical at 50 (limit 45 as before): plan week 50% >= ceiling 45% until 2026-11-26T15:56:02Z (CODEX_WEEK_CEILING; 30 points under 75% are kept for the headline audits (uc-audit.sh))
+ok   file: next week, audit at 50 (limit 75): plan week 50% < 88
+ok   file: --ceiling, critical at 43 at 02:00Z (the shim's check): no hard stop: plan week 43% under ceiling 49% until 2026-11-15T15:56:02Z
+ok   file: --ceiling, builder at 43 at 02:00Z: plan week 43% >= ceiling 39% until 2026-11-15T15:56:02Z (CODEX_WEEK_CEILING; 10 points under 49% are kept for the headline audits (uc-audit.sh) and critical-path rows)
+ok   audit 12: critical at 50 under 75 (reserve 30 is the audits' and critical's): plan week 50% < 88
+ok   audit 12: builder at 50 under 75 reserve 30 (limit 45): plan week 50% >= ceiling 45% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING; 30 points under 75% are kept for the headline audits (uc-audit.sh) and critical-path rows)
+ok   no audit line: critical at 50 under 75 reserve 30 (limit 45, as before): plan week 50% >= ceiling 45% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING; 30 points under 75% are kept for the headline audits (uc-audit.sh))
+ok   audit 12 under 100: critical at 88: plan week 88% >= ceiling 88% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING; 12 points of the week are kept for the freeze/omission reads until 2026-11-10T00:00:00Z; critical-path row)
+ok   audit 12 under 100: critical at 87: plan week 87% < 88
+ok   audit 12 under 100: audit at 95 (--ceiling): no hard stop: plan week 95% under ceiling 100% until 2026-11-10T00:00:00Z
+ok   audit line over: builder at 90 under 100, no reserve (--ceiling): no hard stop: plan week 90% under ceiling 100% until 2026-11-10T00:00:00Z
+ok   ceiling file: audit at 80 on 11-16T16:00Z (runs to the hard 97): plan week 80% < 88
+ok   ceiling file: workplace at 80 on 11-16T16:00Z (closed to the reset): Codex closed for caller workplace until 2026-11-19T15:56:02Z (CODEX_WEEK_CEILING caller line)
+ok   ceiling file: unnamed caller at 80 on 11-16T16:00Z (closed to the reset): Codex closed for caller other until 2026-11-19T15:56:02Z (CODEX_WEEK_CEILING caller line)
+ok   ceiling file: audit at 80 on 11-16T15:00Z (closed to 15:56Z): Codex closed for caller audit until 2026-11-16T15:56:02Z (CODEX_WEEK_CEILING caller line)
+ok   now (reset 11-16): audit at 80 on 11-17T11:00Z (runs to 97): plan week 80% < 88
+ok   now (reset 11-16): audit at 97 on 11-17T11:00Z (hard 97): plan week 97% >= ceiling 97% until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING)
+ok   now (reset 11-16): critical at 43, no A5 line, on 11-17T11:00Z (closed): Codex closed for caller critical until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   now (reset 11-16): critical at 11, no A5 line, on 11-17T11:00Z (closed): Codex closed for caller critical until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   now (reset 11-16): builder at 11 on 11-17T11:00Z (closed): Codex closed for caller other until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   now (reset 11-16): workplace at 11 on 11-17T11:00Z (closed): Codex closed for caller workplace until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   now (reset 11-16): --ceiling, critical at 43 on 11-17T11:00Z (the shim's check, closed): Codex closed for caller critical until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   A5: critical rsp-b-repair-1115 at 11 on 11-16T23:30Z (opened): plan week 11% < 88
+ok   A5: critical pf-f16-without-fix at 11 on 11-16T23:30Z (opened): plan week 11% < 88
+ok   A5: critical rsp-b-repair-1115 at 40 (closed at the week bound): plan week 40% >= ceiling 16% until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING; caller critical capped at 16% until 2026-11-17T12:00:00Z)
+ok   A5: critical counter-fix-unfinished-final at 11 (other critical row stays closed): Codex closed for caller critical until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   A5: builder (no caller) on rsp-b-repair-1115 at 11 (only the critical caller): Codex closed for caller other until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   A5: critical rsp-b-repair-1115 at 11 after L 11-17T12:00Z (closed again): Codex closed for caller critical until 2026-11-23T20:38:53Z (CODEX_WEEK_CEILING caller line)
+ok   two lines, the first is over: 65 against 60: plan week 65% >= ceiling 60% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   two lines, the first is over: 50 against 60: plan week 50% < 88
+ok   --ceiling at 80 under 75: plan week 80% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+FAIL --ceiling at 95, no ceiling in force (plan policy is not its job): want 0 got 1: Codex week reading is 7200 min old (95%, rollout) and the live read fails: the plan week cannot be checked; past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   shim: codex exec at 81 under 75 is refused, the binary is not started: [codex-shim] Codex run refused: plan week 81% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING)
+ok   shim: the refusal is logged: 2026-11-17T16:25:38Z refused: plan week 81% >= ceiling 75% until 2026-11-10T00:00:00Z (CODEX_WEEK_CEILING) | parent: zsh
+ok   shim: the log has the subcommand and model, never the prompt: 2026-11-17T16:25:39Z refused: plan week 81% >= ceiling 75% u
+ok   shim: ASTRA_CREDITS_OK does not pass the ceiling: 
+ok   shim: codex exec at 70 runs with its arguments: 
+ok   shim: `codex cloud exec --env e p` at 81 is refused: 
+ok   shim: `codex review` at 81 is refused: 
+ok   shim: `codex resume --last` at 81 is refused: 
+ok   shim: `codex some prompt` at 81 is refused: 
+ok   shim: `codex --version` does not spend and passes at 81: 
+ok   shim: `codex login status` does not spend and passes at 81: 
+ok   shim: `codex cloud diff task_1` does not spend and passes at 81: 
+ok   shim: `codex cloud list --json` does not spend and passes at 81: 
+ok   shim: `codex app-server` does not spend and passes at 81: 
+ok   shim: `codex doctor` does not spend and passes at 81: 
+ok   shim: a missing gate refuses (never open): 
+ok   shim: a stub codex placed before the system binary in PATH is run as it is: 
+FAILED

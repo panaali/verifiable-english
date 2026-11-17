@@ -1,0 +1,309 @@
+--- a/codex-allowed.sh
++++ b/codex-allowed.sh.new-codexw
+@@ -1,11 +1,13 @@
+ #!/bin/zsh
+ # usage: codex-allowed.sh [--ceiling] [model]. Exit 0 if a new Codex run is allowed now, else 1. Prints a one-line reason.
+-#   --ceiling: only the hard stops (CODEX_OFF and CODEX_WEEK_CEILING), not the plan/credit policy below. The codex shim
+-#   (codex-shim.sh, installed as the `codex` command) asks this before EVERY run that spends, whoever the caller is.
+-# LEAD 2026-10-01: credits pay for Sol only; Astra (gpt-6-astra, too expensive) runs on Codex only within the plan allowance.
+-# Rule (lead 2026-10-01): plan weekly < 88% -> allowed. Otherwise Codex runs on the one-time credit grant
+-# (62,500 credits, expires 2026-12-31) paced evenly: cumulative allowance = 4,808 credits per started week since 2026-10-01
+-# (13 weeks); allowed while credits spent < allowance and balance > 0. Never buys credits (automatic reload stays off).
++#   --ceiling: only the hard stops (CODEX_OFF, CODEX_WEEK_CEILING and the credit stop), not the plan policy below. The codex
++#   shim (codex-shim.sh, installed as the `codex` command; on ve-cloud-2 c2b-codex-shim.sh, which asks this file on the VM
++#   over ssh) asks this before EVERY run that spends, whoever the caller is.
++# Rule (lead 2026-10-05): plan weekly < 88% (CODEX_PLAN_CAP; 100 with CODEX_USE_ALL) -> allowed, else refused.
++# 2026-11-17 codex-credit-gate-1116 (reviews/dri-decisions-20261116-targets.md; orchestrator 191811Z (b)): NO caller of ours
++# spends Codex credits. The credit branch (the 2026-10-01 paced grant: allowed while balance > 0 and spent < 4,808 x weeks,
++# which would have opened again about 2026-12-17) is gone: the balance and has_credits never open this gate. And the CREDIT
++# STOP below holds in every mode, with or without a ceiling line: a run past the plan week's 100% is paid from credits.
+ M=/home/seyran/code/manage-agents
+ only=""; [ "${1:-}" = --ceiling ] && { only=1; shift; }
+ [ -f $M/CODEX_OFF ] && { echo "CODEX_OFF set"; exit 1; }
+@@ -14,7 +16,12 @@
+ # (no model call, no tokens), so spend from any machine is seen; a session file with no reading yet is skipped (it used
+ # to read as 0 = "allowed"). No reading at all: xw stays empty and counts as 100 below.
+ read xw bal age src ra <<< "$(python3 -I $M/tools-local/codex-meter.py get --max-age ${CODEX_METER_MAX_AGE:-240} 2>/dev/null)"
+-[[ $xw == <-> ]] || xw=""; [[ $bal == <-> ]] || bal=""; [[ $age == <-> ]] || age=999999
++[[ $xw == <-> ]] || xw=""; [[ $age == <-> ]] || age=999999
++# running: nrun = Codex sessions running here now (counted once; CODEX_RUNNING names it in tests)
++nrun=""; running(){ [ -n "$nrun" ] && return
++  if [[ ${CODEX_RUNNING:-} == <-> ]]; then nrun=$CODEX_RUNNING
++  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != /home/seyran ]; then nrun=0   # a test's clock or home: do not count real sessions
++  else nrun=0; for p in $(pgrep -f 'codex exec' 2>/dev/null); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && nrun=$(( nrun + 1 )); done; fi; }
+ # 2026-11-04 dri-decider (DRI ruling reviews/dri-decisions-20261104-pc-reaudit.md A3): dated Codex week ceiling on every
+ # Astra/Sol launch path, reviews included (credits too). File CODEX_WEEK_CEILING (rm = off); env CODEX_WEEK_CEILING overrides
+ # the file, CODEX_NOW (epoch) is for tests (tools-local/test_codex_week_ceiling.sh).
+@@ -72,20 +79,21 @@
+   if [ -n "$ccl" ] && [ $ccl -lt $lim ]; then lim=$ccl; kept="${kept}; caller ${CODEX_CALLER:-other} capped at ${ccl}% until $ccend"; fi
+   [ -n "$ccl" ] && [ $ccl = 0 ] && { echo "Codex closed for caller ${CODEX_CALLER:-other} until $ccend (CODEX_WEEK_CEILING caller line)"; exit 1; }
+   if [ $xw -ge $lim ]; then echo "plan week ${xw}% >= ceiling ${lim}% until $cend (CODEX_WEEK_CEILING$kept)"; exit 1; fi
+-  if [[ ${CODEX_RUNNING:-} == <-> ]]; then nrun=$CODEX_RUNNING
+-  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != /home/seyran ]; then nrun=0   # a test's clock or home: do not count real sessions
+-  else nrun=0; for p in $(pgrep -f 'codex exec' 2>/dev/null); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && nrun=$(( nrun + 1 )); done; fi
++  running
+   if [ $(( xw + ${CODEX_SEAT_RESERVE:-1} * (1 + nrun) )) -gt $lim ]; then
+     echo "plan week ${xw}% with $nrun Codex session(s) running leaves no room under ceiling ${lim}% until $cend (CODEX_WEEK_CEILING: ${CODEX_SEAT_RESERVE:-1} point per session$kept)"; exit 1; fi
+ fi
+-[ -n "$only" ] && { echo "no hard stop: plan week ${xw:-?}%${cpc:+ under ceiling ${lim}% until $cend}"; exit 0; }
++# CREDIT STOP (2026-11-17 codex-credit-gate-1116): in every mode, with or without a ceiling line in force, a run needs a
++# reading of the plan week at most CODEX_FRESH_MAX (900) s old and week + CODEX_SEAT_RESERVE (1) x (1 + Codex sessions
++# running here) <= 100, the plan's end, past which Codex spends credits. No env names a higher limit (CODEX_WEEK_CEILING,
++# CODEX_PLAN_CAP and CODEX_USE_ALL cannot lift it); the balance and has_credits are not read here at all.
++cs="past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)"
++[ -z "$xw" ] && { echo "no Codex week reading: the plan week cannot be checked; $cs"; exit 1; }
++[ $age -gt ${CODEX_FRESH_MAX:-900} ] && { echo "Codex week reading is $(( age / 60 )) min old (${xw}%, $src) and the live read fails: the plan week cannot be checked; $cs"; exit 1; }
++running
++if [ $(( xw + ${CODEX_SEAT_RESERVE:-1} * (1 + nrun) )) -gt 100 ]; then
++  echo "plan week ${xw}% with $nrun Codex session(s) running leaves no room under 100%: $cs"; exit 1; fi
++[ -n "$only" ] && { echo "no hard stop: plan week ${xw}%${cpc:+ under ceiling ${lim}% until $cend}"; exit 0; }
+ [ -f $M/CODEX_USE_ALL ] && CODEX_PLAN_CAP=${CODEX_PLAN_CAP:-100}  # lead 2026-10-12: use the plan week to 100%, then the lead resets
+-[ ${xw:-100} -lt ${CODEX_PLAN_CAP:-88} ] && { echo "plan week ${xw}% < ${CODEX_PLAN_CAP:-88}"; exit 0; }  # lead 2026-10-05: use the remaining plan before the full reset (was 88)
+-[[ "${1:-}" == *astra* ]] && { echo "plan week ${xw:-?}% >= 88 and Astra may not use credits"; exit 1; }
+-weeks=$(( ($(date -u +%s) - $(date -u -d 2026-10-01T00:00:00Z +%s)) / 604800 + 1 ))
+-allow=$(( weeks * 4808 )); [ $allow -gt 62500 ] && allow=62500
+-[ -z "$bal" ] && bal=62500   # no balance seen yet since the grant: assume full (first credit run records it)
+-spent=$(( 62500 - bal ))
+-echo "$(date -u +%FT%H:%MZ) plan=${xw:-?}% credits_balance=${bal} spent=${spent} allowance=${allow} (week ${weeks})" >> $M/codex-credits.log
+-[ $bal -gt 0 ] && [ $spent -lt $allow ] && { echo "credits: spent $spent < allowance $allow"; exit 0; }
+-echo "credits budget reached: spent $spent / allowance $allow (balance $bal)"; exit 1
++[ $xw -lt ${CODEX_PLAN_CAP:-88} ] && { echo "plan week ${xw}% < ${CODEX_PLAN_CAP:-88}"; exit 0; }  # lead 2026-10-05: use the remaining plan before the full reset (was 88)
++echo "plan week ${xw}% >= ${CODEX_PLAN_CAP:-88}%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)"; exit 1
+--- a/cloud2-codex.sh
++++ b/cloud2-codex.sh.new-codexw
+@@ -15,10 +15,15 @@
+ [[ $W == /home/seyran/code/ve-* ]] || fail "not an item worktree: $W"
+ [ "${args[1]}" = exec ] || fail "only codex exec runs there"
+ cw=$(zsh $M/codex-allowed.sh --ceiling 2>&1) || fail "Codex ceiling: ${cw##*$'\n'}"  # 2026-11-12: ve-cloud-2's binary is past this VM's codex shim
++# 2026-11-17 codex-credit-gate-1116: and the run there starts $RSHIM (c2b-codex-shim.sh, installed on the host), never
++# /usr/local/bin/codex: the shim asks this VM's live gate again as the same CODEX_CALLER/PICK_ITEM, so no run on the host
++# skips the gate (or the credit stop). No shim on the host: fail before anything is sent (run_builder reruns on the VM).
++RSHIM=/home/seyran/c2b/codex-shim.sh
+ prompt=${args[-1]}; args[-1]=-
+ python3 -I $M/tools-local/c2b-creds.py sync codex > /dev/null 2>> $LOG || fail "codex login sync failed"
+ u=c2b-$n-cx-$$-$(date +%s); pin=/home/seyran/c2b/in/$u.prompt
+-print -rn -- "$prompt" | timeout 120 ssh $SSHO $H "umask 077; mkdir -p ~/c2b/in && cat > $pin" || fail "prompt send failed"
++print -rn -- "$prompt" | timeout 120 ssh $SSHO $H "umask 077; test -x $RSHIM || exit 9; mkdir -p ~/c2b/in && cat > $pin"; prc=$?
++[ $prc = 9 ] && fail "no codex shim $RSHIM on $H (codex-credit-gate-1116 install)"; [ $prc = 0 ] || fail "prompt send failed"
+ # 2026-11-09 dri-ops-lean (D4 of reviews/dri-decisions-20261109-outcome-first.md; flag BUILDER_FAST_LOOP, trial to 2026-11-16T16:00Z):
+ # more cores per remote builder: CPUQuota 2400% (was 1600%; 24 of the host's 32 vCPU, CLOUD-HOSTS.md) and pytest floor 8 (was 4);
+ # the flag's lines "cpu: <n>%" / "workers: <n>" override; an explicit C2B_CPU wins; flag absent = as before.
+@@ -27,12 +32,13 @@
+   fc=$(sed -n 's/^cpu: *\([0-9][0-9]*%\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1); fw=$(sed -n 's/^workers: *\([0-9][0-9]*\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1)
+   [ -z "${C2B_CPU:-}" ] && c2cpu=${fc:-2400%}; (( ${fw:-8} > c2w )) && c2w=${fw:-8}; fi
+ envs=(CODEX_HOME=/home/seyran/.agent-accounts/codex VE_TEST_MIN_WORKERS=$c2w C2B_HOST_ROLE=$H)
++for v in CODEX_CALLER PICK_ITEM; do [ -n "${(P)v}" ] && envs+=($v=${(P)v}); done   # the remote shim asks the gate as this caller
+ for kv in ${(f)"$(env)"}; do case ${kv%%=*} in (*TOKEN*|*KEY*|*SECRET*|*PASS*|VE_TEST_MIN_WORKERS) ;; (VE_*) envs+=($kv);; esac; done
+ ( while sleep 300; do python3 -I $M/tools-local/c2b-creds.py sync codex > /dev/null 2>> $LOG; done ) & lp=$!
+ o=$(mktemp /tmp/c2b-cxo-XXXXXX)
+ coproc sleep 2147483647; cpp=$!
+ say "start on $H unit $u"
+-ssh $SSHO $H "bash /home/seyran/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} /usr/local/bin/codex ${(j: :)${(@q)args}}" <&p > $o 2>&1
++ssh $SSHO $H "bash /home/seyran/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} $RSHIM ${(j: :)${(@q)args}}" <&p > $o 2>&1
+ rc=$?
+ kill $cpp $lp 2> /dev/null
+ cat $o; say "end rc=$rc"
+--- a/tools-local/test_codex_week_ceiling.sh
++++ b/tools-local/test_codex_week_ceiling.sh.new-codexw
+@@ -20,7 +20,10 @@
+ t 1 80 $before "$C75" gpt-6-astra
+ t 1 75 $before "$C75" gpt-6-sol
+ t 0 74 $before "$C75" gpt-6-astra
+-t 0 80 $after  "$C75" gpt-6-astra
++# 2026-11-17 codex-credit-gate-1116: the credit stop needs a fresh reading in every mode, so "the ceiling is over" reads 80 at
++# that clock (it read 80 five days before, which now refuses: tools-local/test_codex_credit_gate.sh)
++reset; mk 80 $(( before - after )); out=$(HOME=$T CODEX_NOW=$after CODEX_WEEK_CEILING="$C75" zsh $S gpt-6-astra); ok $? 0 "week=80 ceil='$C75' over, fresh reading" "$out"
++reset; mk 80; out=$(HOME=$T CODEX_NOW=$after CODEX_WEEK_CEILING="$C75" zsh $S gpt-6-astra); ok $? 1 "week=80 read 5 days before, ceiling over: refused (credit stop)" "$out"
+ t 1 90 $before "$C75" gpt-6-astra
+ # g <want rc> <label> [VAR=value ...]: the gate on whatever files are in $D now
+ g(){ local want=$1 label=$2; shift 2; out=$(env HOME=$T CODEX_NOW=$before CODEX_WEEK_CEILING=$C75 "$@" zsh $S gpt-6-astra 2>&1); ok $? $want "$label" "$out"; }
+@@ -81,7 +84,10 @@
+ c 1 "file: week 55 at 16:30Z (step 61), builder (limit 51)" 55 $n1
+ c 1 "file: week 88 on 11-18 (step 100), critical: the audits keep 12" 88 $n4 CODEX_CALLER=critical
+ c 1 "file: week 88 on 11-18 (step 100), builder: the audits keep 12" 88 $n4
+-c 0 "file: week 88 on 11-18 (step 100), audit" 88 $n4 CODEX_CALLER=audit
++# 2026-11-17 codex-credit-gate-1116: at 88 the full gate is past the plan cap (88) and the credit branch that opened it is gone;
++# the step rule itself (audit limit 100) is what the shim asks (--ceiling)
++c 1 "file: week 88 on 11-18 (step 100), audit, full gate: plan cap 88, never on credits" 88 $n4 CODEX_CALLER=audit
++reset; mk 88 $(( before - n4 )); out=$(env HOME=$T CODEX_NOW=$n4 CODEX_WEEK_CEILING="$CFC" CODEX_RUNNING=0 CODEX_CALLER=audit zsh $S --ceiling 2>&1); ok $? 0 "file: week 88 on 11-18 (step 100), audit (--ceiling)" "$out"
+ c 0 "file: week 86 on 11-18 (step 100), critical (86 + 1 <= 88)" 86 $n4 CODEX_CALLER=critical
+ c 1 "file: next week (75, reserve 30, audit line over), critical at 50 (limit 45 as before)" 50 $n8 CODEX_CALLER=critical
+ c 0 "file: next week, audit at 50 (limit 75)" 50 $n8 CODEX_CALLER=audit
+@@ -138,7 +144,8 @@
+ reset; mk 50; g 0 "two lines, the first is over: 50 against 60" CODEX_WEEK_CEILING=$ML
+ # --- --ceiling: the hard stops only (what the shim asks) ---
+ reset; mk 80; out=$(HOME=$T CODEX_NOW=$before CODEX_WEEK_CEILING=$C75 zsh $S --ceiling 2>&1); ok $? 1 "--ceiling at 80 under 75" "$out"
+-reset; mk 95; out=$(HOME=$T CODEX_NOW=$after CODEX_WEEK_CEILING=$C75 zsh $S --ceiling 2>&1); ok $? 0 "--ceiling at 95, no ceiling in force (plan policy is not its job)" "$out"
++reset; mk 95 $(( before - after )); out=$(HOME=$T CODEX_NOW=$after CODEX_WEEK_CEILING=$C75 zsh $S --ceiling 2>&1); ok $? 0 "--ceiling at 95, no ceiling in force fresh reading (plan policy is not its job)" "$out"
++reset; mk 95; out=$(HOME=$T CODEX_NOW=$after CODEX_WEEK_CEILING=$C75 zsh $S --ceiling 2>&1); ok $? 1 "--ceiling at 95 read 5 days before, no ceiling in force: refused (credit stop)" "$out"
+ # --- the shim: every `codex` run that spends passes the gate, whoever calls ---
+ if [ ! -f $SH ]; then echo "FAIL no codex shim ($SH): a direct \`codex exec\` is not gated"; fail=1; else
+   sh(){ env HOME=$T CODEX_NOW=$before CODEX_WEEK_CEILING=$C75 CODEX_SHIM_GATE=$S CODEX_SHIM_REAL=$T/fake-codex CODEX_SHIM_LOG=$T/shim.log FAKE_CODEX_REC=$T/rec "$@"; }
+@@ -166,7 +173,7 @@
+   ok "$(readlink -f /home/seyran/.local/codex-0.162/bin/codex)" "$M/codex-shim.sh" "installed: the CLI 0.162 path is the shim" ""
+   # no script may start a codex binary by a full path that skips the shim (the meter, the shim itself and the ve-cloud-2
+   # wrapper, which asks the gate itself, are the three exceptions)
+-  bad=$(cd $M && grep -l -E '/usr/local/bin/codex|node_modules/@openai/codex' *.sh tools-local/*.sh tools-local/*.zsh tools-local/*.py *.py 2>/dev/null | grep -v -E '^(codex-shim\.sh|cloud2-codex\.sh|tools-local/codex-meter\.py|tools-local/codex-shim-install\.sh|tools-local/test_codex_week_ceiling\.sh)$' | tr '\n' ' ')
++  bad=$(cd $M && grep -l -E '/usr/local/bin/codex|node_modules/@openai/codex' *.sh tools-local/*.sh tools-local/*.zsh tools-local/*.py *.py 2>/dev/null | grep -v -E '^(codex-shim\.sh|cloud2-codex\.sh|tools-local/codex-meter\.py|tools-local/codex-shim-install\.sh|c2b-codex-shim\.sh|tools-local/test_codex_credit_gate\.sh|tools-local/test_codex_week_ceiling\.sh)$' | tr '\n' ' ')
+   ok "$bad" "" "call sites: no script names a codex binary that skips the shim" "$bad"
+   ok "$(grep -c 'codex-allowed.sh --ceiling' $M/cloud2-codex.sh)" 1 "call sites: cloud2-codex.sh (the binary on ve-cloud-2) asks the gate itself" ""
+   ok "$(grep -c '^export CODEX_CALLER=audit' $M/uc-audit.sh)" 1 "uc-audit.sh claims the audit reserve" ""
+--- /dev/null
++++ b/c2b-codex-shim.sh.new-codexw
+@@ -0,0 +1,41 @@
++#!/bin/bash
++# c2b-codex-shim.sh: the `codex` command of a remote builder host (ve-cloud-2; 2026-11-17 codex-credit-gate-1116,
++# reviews/dri-decisions-20261116-targets.md, orchestrator 191811Z (b): "ve-cloud-2 /usr/local/bin/codex has no shim").
++# Installed on the host as ~/c2b/codex-shim.sh, linked from ~/.local/bin/codex (first in c2b-job.sh's PATH, so a session in a
++# c2b scope that types `codex` gets it); cloud2-codex.sh starts it by that full path instead of /usr/local/bin/codex.
++# Every run that spends (the same subcommand list as the VM's codex-shim.sh) first asks the VM's LIVE gate over ssh:
++#   ssh ve-cloud-1 'CODEX_CALLER=<c> PICK_ITEM=<i> zsh <manage-agents>/codex-allowed.sh --ceiling'
++# (CODEX_OFF, CODEX_WEEK_CEILING and the credit stop, on the VM's live reading: this host's read-only mirror of
++# manage-agents can be days old, so its copy of the gate is never asked). Only CODEX_CALLER and PICK_ITEM go to the gate
++# (each refused unless it matches [A-Za-z0-9._:*-]{0,80}); no env of this host names a ceiling, clock or limit there.
++# Refused, gate unreachable or failing: one line on stderr, one in ~/c2b/logs/codex-shim.log, exit 75, the real binary is
++# not started (never open). Commands that do not spend pass. Test seams (tools-local/test_codex_credit_gate.sh only):
++# CODEX_SHIM_SSH (the ssh command word list), CODEX_SHIM_GATE (the gate path on the VM), CODEX_SHIM_REAL, CODEX_SHIM_LOG.
++real=${CODEX_SHIM_REAL:-/usr/local/bin/codex}
++gate=${CODEX_SHIM_GATE:-/home/seyran/code/manage-agents/codex-allowed.sh}
++log=${CODEX_SHIM_LOG:-$HOME/c2b/logs/codex-shim.log}
++read -r -a sshc <<< "${CODEX_SHIM_SSH:-ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 ve-cloud-1}"
++spend=1
++case ${1:-} in
++  (login|logout|mcp|plugin|app-server|remote-control|completion|update|doctor|sandbox|debug|apply|a|archive|delete|migrate-rollouts|unarchive|features|help|agents|exec-server|--version|-V|--help|-h) spend="";;
++  (cloud) [ "${2:-}" = exec ] || spend="";;
++esac
++if [ -n "$spend" ]; then
++  rc=0; why=""
++  for v in CODEX_CALLER PICK_ITEM; do
++    [[ ${!v:-} =~ ^[A-Za-z0-9._:*-]{0,80}$ ]] || { rc=2; why="$v is not a plain name"; }
++  done
++  if [ $rc = 0 ]; then
++    why=$(timeout 120 "${sshc[@]}" "CODEX_CALLER='${CODEX_CALLER:-}' PICK_ITEM='${PICK_ITEM:-}' zsh $gate --ceiling" < /dev/null 2>&1); rc=$?
++    why=${why##*$'\n'}; why=${why:0:300}
++  fi
++  if [ $rc != 0 ]; then
++    [ $rc = 1 ] || why="the gate on the VM could not be asked (exit $rc): $why"
++    case ${1:-} in (exec|e|review|resume|fork|queue|cloud) a=$1;; (*) a="(no subcommand)";; esac
++    args=("$@"); for (( i = 1; i < ${#args[@]} - 1; i++ )); do [ "${args[i]}" = -m ] && a="$a -m ${args[i+1]}"; done   # the subcommand and model only, never the prompt
++    printf '%s\n' "$(date -u +%FT%TZ) $(hostname) refused: $why | parent: $(tr '\0\n' '  ' < /proc/$PPID/cmdline 2>/dev/null | cut -c1-160) | codex ${a:0:80}" >> "$log" 2> /dev/null
++    printf '%s\n' "[codex-shim $(hostname)] Codex run refused: $why" >&2
++    exit 75
++  fi
++fi
++exec "$real" "$@"
+--- /dev/null
++++ b/tools-local/test_codex_credit_gate.sh
+@@ -0,0 +1,112 @@
++#!/bin/zsh
++# Test of codex-credit-gate-1116 (2026-11-17; reviews/dri-decisions-20261116-targets.md, orchestrator 191811Z (b)): no caller
++# of ours spends Codex credits.
++#   A. codex-allowed.sh: a positive balance / has_credits never opens the gate (the credit branch is gone), and the credit
++#      stop (a fresh reading and week + seats <= 100) holds in every mode, with or without a CODEX_WEEK_CEILING line.
++#   B. c2b-codex-shim.sh (ve-cloud-2's `codex`): every spending call on the host goes through the VM's gate (fake ssh here),
++#      refuses when the gate refuses or cannot be asked, and forwards only CODEX_CALLER and PICK_ITEM.
++#   C. cloud2-codex.sh: the run on the host starts that shim, never /usr/local/bin/codex, and forwards the caller.
++# usage: zsh tools-local/test_codex_credit_gate.sh [codex-allowed.sh] [c2b-codex-shim.sh] [cloud2-codex.sh]
++#   no arguments = the installed files, plus a read of what is installed on ve-cloud-2 (ssh; C2B_LIVE=0 skips it).
++# Nothing here calls Codex: readings come from session files in a temp HOME or from a stub `codex app-server`.
++M=/home/seyran/code/manage-agents; S=${1:-$M/codex-allowed.sh}; RS=${2:-$M/c2b-codex-shim.sh}; CX=${3:-$M/cloud2-codex.sh}
++live=""; [ $# = 0 ] && live=1
++[ -f $M/CODEX_OFF ] && { echo "SKIP: CODEX_OFF set"; exit 0; }
++T=$(mktemp -d); trap 'rm -rf $T' EXIT; D=$T/.agent-accounts/codex/sessions/2026/11/17; mkdir -p $D
++now=$(date -u -d 2026-12-17T12:00:00Z +%s); fail=0
++FUT="2027-01-01T00:00:00Z"; OVER="75 2026-11-10T00:00:00Z"   # a ceiling line in force / one that is over at $now
++reset(){ rm -rf $T/.cache $D/*(N); }
++# mk <percent> [balance|-] [age s]: one session file with a reading (and a credit balance, has_credits true), <age> s old
++mk(){ local cr=""; [ "${2:--}" != - ] && cr=",\"credits\":{\"has_credits\":true,\"unlimited\":false,\"balance\":\"$2\"}"
++  echo "{\"payload\":{\"rate_limits\":{\"primary\":{\"used_percent\":$1}$cr}}}" > $D/rollout-x.jsonl; touch -d @$(( now - ${3:-0} )) $D/rollout-x.jsonl; }
++ok(){ [ "$1" = "$2" ] && echo "ok   $3: $4" || { echo "FAIL $3: want $2 got $1: $4"; fail=1; }; }
++# g <want rc> <label> <ceiling content> [VAR=value ...] -- [gate args]: the gate on the reading in $D now
++g(){ local want=$1 label=$2 cl=$3; shift 3; local -a ev; while [ $# -gt 0 ] && [ "$1" != -- ]; do ev+=("$1"); shift; done; shift
++  out=$(env HOME=$T CODEX_NOW=$now CODEX_WEEK_CEILING="$cl" CODEX_RUNNING=0 $ev zsh $S "$@" 2>&1); ok $? $want "$label" "$out"; }
++cat > $T/fake-codex <<'PY'
++#!/usr/bin/env python3
++import sys, json, os
++rec = os.environ.get("FAKE_CODEX_REC")
++if rec: open(rec, "a").write(" ".join(sys.argv[1:])[:200] + "\n")
++if sys.argv[1:2] != ["app-server"]: sys.exit(0)
++for ln in sys.stdin:
++    try: m = json.loads(ln)
++    except ValueError: continue
++    if m.get("method") == "initialize": print(json.dumps({"id": m["id"], "result": {}}), flush=True)
++    elif m.get("method") == "account/rateLimits/read":
++        s = {"primary": {"usedPercent": int(os.environ["FAKE_WEEK"]), "resetsAt": 4102444800, "windowDurationMins": 10080},
++             "credits": {"hasCredits": True, "unlimited": False, "balance": os.environ.get("FAKE_BAL", "60000")}}
++        print(json.dumps({"id": m["id"], "result": {"rateLimits": s, "rateLimitsByLimitId": {"codex": s}}}), flush=True)
++PY
++chmod +x $T/fake-codex
++echo "# A. codex-allowed.sh ($S)"
++# A1-A4 fail on the gate with the credit branch: a positive balance (spent far under the paced allowance) opened it
++reset; mk 90 60000; g 1 "A1 no ceiling in force, week 90 >= plan cap 88, balance 60000 (has_credits): never on credits" "$OVER" -- gpt-6-sol
++reset; mk 90; g 1 "A2 no ceiling in force, week 90, no balance in the reading (was read as the full grant)" "$OVER" -- gpt-6-sol
++reset; mk 90 60000; g 1 "A3 ceiling 97 in force lets week 90 pass, plan cap 88, balance 60000: never on credits" "97 $FUT" CODEX_CALLER=audit -- gpt-6-sol
++reset; mk 70 - 14400; g 1 "A4 live read: week 95, hasCredits true, balance 60000, no ceiling" "$OVER" CODEX_METER_BIN=$T/fake-codex CODEX_METER_M=$T FAKE_WEEK=95 FAKE_BAL=60000 -- gpt-6-sol
++# A5-A10: the credit stop in every mode (A5-A9 fail on the old gate: --ceiling had no stop without a ceiling line)
++reset; mk 100 60000; g 1 "A5 --ceiling, no ceiling in force, week 100, balance 60000" "$OVER" -- --ceiling
++reset; mk 99 60000; g 1 "A6 --ceiling, no ceiling in force, week 99 with one session running (99 + 2 > 100)" "$OVER" CODEX_RUNNING=1 -- --ceiling
++reset; mk 50 60000 432000; g 1 "A7 --ceiling, no ceiling in force, week 50 read 5 days before, no live read" "$OVER" -- --ceiling
++reset; g 1 "A8 --ceiling, no ceiling in force, no reading at all" "$OVER" -- --ceiling
++reset; mk 100 60000; g 1 "A9 a ceiling line above 100 (120) does not lift the stop (--ceiling)" "120 $FUT" -- --ceiling
++reset; mk 100 60000; g 1 "A10 CODEX_PLAN_CAP=101 does not lift the stop (full gate)" "$OVER" CODEX_PLAN_CAP=101 -- gpt-6-sol
++# A11-A14 hold on both gates: the ceiling and the allowance closed these before; a balance still does not open them
++reset; mk 98 60000; g 1 "A11 ceiling 97 closes week 98, balance 60000" "97 $FUT" CODEX_CALLER=audit -- gpt-6-sol
++reset; mk 90 9370; g 1 "A12 allowance spent (balance 9370), week 90, no ceiling" "$OVER" -- gpt-6-sol
++reset; mk 90 60000; g 1 "A13 Astra at 90, balance 60000" "$OVER" -- gpt-6-astra
++reset; mk 50 60000; g 1 "A14 caller * 0 closes week 50, balance 60000 (--ceiling)" $'97 '$FUT$'\ncaller * 0 '$FUT -- --ceiling
++# A15-A18 what still runs: the plan below its cap, and --ceiling below 100
++reset; mk 50 0; g 0 "A15 week 50, balance 0, no ceiling: the plan runs" "$OVER" -- gpt-6-sol
++reset; mk 98 60000; g 0 "A16 --ceiling, no ceiling in force, week 98, no session running (98 + 1 <= 100)" "$OVER" -- --ceiling
++reset; mk 92; g 0 "A17 CODEX_USE_ALL-style cap 100: week 92 runs on the plan" "$OVER" CODEX_PLAN_CAP=100 -- gpt-6-sol
++reset; mk 80 60000; g 0 "A18 ceiling 97, audit at 80: runs" "97 $FUT" CODEX_CALLER=audit -- gpt-6-sol
++echo "# B. ve-cloud-2's shim ($RS)"
++if [ ! -f $RS ]; then echo "FAIL B0 no ve-cloud-2 codex shim ($RS): a \`codex\` call on ve-cloud-2 skips the gate"; fail=1; else
++  # fake ssh: the VM side of `ssh ve-cloud-1 <command>`: a fresh environment (env -i) with only what $T/vm.env sets, so
++  # nothing of the shim's own environment but what the command line names reaches the gate
++  print -r -- "#!/bin/bash"$'\n'"printf '%s\n' \"\$*\" >> $T/ssh.rec; cmd=\"\${@: -1}\"; exec env -i bash -c \"set -a; . $T/vm.env; set +a; \$cmd\"" > $T/fake-ssh
++  chmod +x $T/fake-ssh
++  vm(){ { print -r -- "HOME=$T"; print -r -- "PATH=/usr/local/bin:/usr/bin:/bin"; print -r -- "CODEX_NOW=$now"; print -r -- "CODEX_RUNNING=0"
++          print -r -- "CODEX_WEEK_CEILING='$1'"; } > $T/vm.env; }
++  # r <want rc/started> <label> [VAR=value ...] -- <codex args>: the shim on the host, asking the fake VM
++  r(){ local want=$1 label=$2; shift 2; local -a ev; while [ "$1" != -- ]; do ev+=("$1"); shift; done; shift; : > $T/rec
++    env -i HOME=$T PATH=/usr/bin:/bin CODEX_SHIM_SSH="$T/fake-ssh ve-cloud-1" CODEX_SHIM_GATE=$S CODEX_SHIM_REAL=$T/fake-codex \
++      CODEX_SHIM_LOG=$T/shim.log FAKE_CODEX_REC=$T/rec $ev bash $RS "$@" < /dev/null 2> $T/err; local rc=$?
++    ok "$rc/$(wc -l < $T/rec | tr -d ' ')" "$want" "$label" "$(head -c 200 $T/err)"; }
++  vm "75 $FUT"
++  reset; mk 81; r 75/0 "B1 exec at 81 under the VM's ceiling 75: refused, the binary is not started" -- exec -C /x -m gpt-6-sol "a prompt"
++  ok "$(grep -c 'refused' $T/shim.log 2>/dev/null)/$(grep -c 'a prompt' $T/shim.log 2>/dev/null)" "1/0" "B1 the refusal is logged without the prompt" "$(tail -1 $T/shim.log 2>/dev/null | cut -c1-120)"
++  reset; mk 70; : > $T/ssh.rec; r 0/1 "B2 exec at 70 under 75: runs" -- exec -C /x -m gpt-6-sol "a prompt"
++  ok "$(cat $T/rec)" "exec -C /x -m gpt-6-sol a prompt" "B2 the binary gets its arguments unchanged" ""
++  ok "$(grep -c -- '--ceiling' $T/ssh.rec)" 1 "B2 the gate was asked on the VM (--ceiling, one ssh)" "$(head -1 $T/ssh.rec | cut -c1-120)"
++  reset; mk 70; r 75/0 "B3 the VM cannot be reached (ssh fails): refused" CODEX_SHIM_SSH=false -- exec "p"
++  reset; mk 70; r 75/0 "B4 the gate on the VM is missing: refused" CODEX_SHIM_GATE=$T/no-such-gate -- exec "p"
++  vm "$OVER"
++  reset; mk 100 60000; r 75/0 "B5 no ceiling in force on the VM, week 100, balance 60000: refused (credit stop)" -- exec "p"
++  reset; mk 90 60000; r 0/1 "B6 no ceiling, week 90: --ceiling passes (plan policy is the caller's run-codex.sh)" -- exec "p"
++  vm "75 $FUT"
++  reset; mk 81; r 75/0 "B7 the host's own CODEX_WEEK_CEILING/CODEX_NOW do not reach the VM's gate" CODEX_WEEK_CEILING="100 $FUT" CODEX_NOW=1 -- exec "p"
++  vm $'97 '$FUT$'\ncaller audit 97 '$FUT$'\ncaller * 0 '$FUT
++  reset; mk 50; r 0/1 "B8 CODEX_CALLER=audit is forwarded: audit at 50 runs" CODEX_CALLER=audit -- exec "p"
++  reset; mk 50; r 75/0 "B9 no caller: caller * 0 closes it" -- exec "p"
++  reset; mk 50; : > $T/ssh.rec; r 75/0 "B10 a CODEX_CALLER that is not a plain name is refused" "CODEX_CALLER=audit';x='" -- exec "p"
++  ok "$(wc -l < $T/ssh.rec | tr -d ' ')" 0 "B10 ... before any ssh" ""
++  for c in "review" "resume --last" "cloud exec --env e p" "some prompt"; do reset; mk 81; vm "75 $FUT"; r 75/0 "B11 \`codex $c\` at 81 is refused" -- ${=c}; done
++  for c in "--version" "login status" "app-server" "cloud list"; do reset; mk 81; r 0/1 "B12 \`codex $c\` does not spend: passes without the gate" CODEX_SHIM_SSH=false -- ${=c}; done
++  bash -n $RS; ok $? 0 "B13 bash -n" ""
++fi
++echo "# C. cloud2-codex.sh ($CX)"
++ok "$(grep -v -E '^[[:space:]]*#' $CX | grep -c '/usr/local/bin/codex')" 0 "C1 no code line of it names /usr/local/bin/codex (the run on the host)" "$(grep -n '/usr/local/bin/codex' $CX | grep -v -E '^[0-9]+:[[:space:]]*#' | cut -c1-100)"
++ok "$(grep -c -E '^RSHIM=/home/seyran/c2b/codex-shim\.sh$' $CX)/$(grep -c -E 'c2b-job\.sh run .* \$RSHIM ' $CX)" "1/1" "C2 it starts the host's shim" ""
++ok "$(grep -c -E 'for v in CODEX_CALLER PICK_ITEM; do .*envs\+=' $CX)" 1 "C3 it forwards CODEX_CALLER and PICK_ITEM to the host" ""
++ok "$(grep -c 'test -x \$RSHIM || exit 9' $CX)" 1 "C4 no shim on the host: it fails before the prompt is sent" ""
++ok "$(grep -c 'codex-allowed.sh --ceiling' $CX)" 1 "C5 it still asks the gate on the VM first" ""
++zsh -n $CX; ok $? 0 "C6 zsh -n" ""
++if [ -n "$live" ] && [ "${C2B_LIVE:-1}" != 0 ]; then
++  echo "# D. installed on ve-cloud-2 (read only)"
++  st=$(timeout 60 ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 ve-cloud-2 'test -x ~/c2b/codex-shim.sh && echo shim; readlink -f ~/.local/bin/codex; cmp -s ~/c2b/codex-shim.sh /dev/stdin && echo same' < $RS 2>&1)
++  ok "$(print -r -- $st | tr '\n' ' ')" "shim /home/seyran/c2b/codex-shim.sh same " "D1 ve-cloud-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it" "$st"
++fi
++[ $fail = 0 ] && echo PASS || { echo FAILED; exit 1; }
