@@ -1,0 +1,72 @@
+{
+ "item": "tm-actions-deadline",
+ "planted_in": "temporary copies of the installed file (seed_run.py)",
+ "mutants": [
+  {
+   "id": "S1-latest",
+   "language": "shell (bash)",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_cloud_tm_deadline.py::1-budget-plus-far-deadline",
+   "failing_tests": [
+    "1-budget-plus-far-deadline",
+    "2-near-deadline-plus-large-budget",
+    "5-two-deadlines-plus-budget",
+    "7-equals-forms-and-order"
+   ],
+   "caught": true,
+   "bug": "pick the latest deadline instead of the earliest"
+  },
+  {
+   "id": "S2-all-deadlines",
+   "language": "shell (bash)",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_cloud_tm_deadline.py::1-budget-plus-far-deadline",
+   "failing_tests": [
+    "1-budget-plus-far-deadline",
+    "2-near-deadline-plus-large-budget",
+    "5-two-deadlines-plus-budget",
+    "7-equals-forms-and-order"
+   ],
+   "caught": true,
+   "bug": "pass every deadline instead of one"
+  },
+  {
+   "id": "S3-no-refuse",
+   "language": "shell (bash)",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_cloud_tm_deadline.py::6-budget-abc-refused",
+   "failing_tests": [
+    "6-budget-abc-refused",
+    "8b-deadline-bad-value-refused"
+   ],
+   "caught": true,
+   "bug": "pass a malformed value through instead of refusing"
+  },
+  {
+   "id": "S4-budget-from-now",
+   "language": "shell (bash)",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_cloud_tm_deadline.py::1-budget-plus-far-deadline",
+   "failing_tests": [
+    "1-budget-plus-far-deadline",
+    "2-near-deadline-plus-large-budget",
+    "3-budget-only",
+    "5-two-deadlines-plus-budget",
+    "7-equals-forms-and-order"
+   ],
+   "caught": true,
+   "bug": "count the budget from date instead of T0"
+  },
+  {
+   "id": "S5-equals-ignored",
+   "language": "shell (bash)",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_cloud_tm_deadline.py::7-equals-forms-and-order",
+   "failing_tests": [
+    "7-equals-forms-and-order"
+   ],
+   "caught": true,
+   "bug": "ignore the --x=V forms"
+  }
+ ]
+}
