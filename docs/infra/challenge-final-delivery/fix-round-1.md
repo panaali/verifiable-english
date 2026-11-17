@@ -43,9 +43,11 @@
 
 ## 4. VE checks
 
-- Selected tests: `selected-run-fix1.log` (see the commit after this file's first commit).
-- No Lean changed, so no lake build or `lean/audit.py` result depends on this branch; both were run for the record
-  (`selected-run-fix1.log` names them).
+- Selected tests, run once on commit f431c325f4 (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`):
+  `selected-run-fix1.log`: rc 0, `recorded 10 units ...; 0 failed` (ran on the VM; the Mac is the last resort).
+- No Lean changed. For the record, on the same tree: `lake build` `Build completed successfully (1478 jobs)` and
+  `python3 lean/audit.py` `PASS: 898 source files; 10153 named theorem declarations audited` (`selected-run-fix1.log`).
+- Not run: the full gate and trust_mutants (no Lean changed; the merge train runs the gate).
 
 ## 5. Follow-ups
 

@@ -54,7 +54,7 @@ done) does not close the challenge row `X` (test_5_row_mapping, test_18). A fina
   wider rule names nothing more on the live backlog now. The decider gets nothing extra.
 - Full diffs: `staged-changes.diff` (staged files against the live ones and the pre-item test backups), `fix-round-1.diff`
   (round 1 only).
-- Selected VE tests: see `fix-round-1.md` section 4.
+- Selected VE tests, once on commit f431c325f4: `selected-run-fix1.log`: rc 0, 0 failed; lake build and `lean/audit.py` pass (no Lean changed).
 
 ## 3. Choices made inside the scope (recorded, not asked)
 
