@@ -1,0 +1,16 @@
+trust_mutants: 26 definitions, 30 mutants (30 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Service/DocumentView.lean:112 VE.Service.Document.activeKinds (G[V], trusted) list-first: (candidatesOf c.front s) -> ((candidatesOf c.front s).take 1) (the proofs it breaks: lean/VE/Service/DocumentView.lean:363)
+SURVIVOR lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-last: M.preds -> (M.preds.dropLast)
+UNKNOWN lean/VE/SpeechActs/Wire.lean:986 VE.SpeechActs.Wire.surfaceKind (D[V], trusted) list-first: (text.splitOn ", ").tail -> (((text.splitOn ", ").tail).take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:27 VE.Cardinality.Wire.projectedProfiles (D[V], trusted) list-drop-last: ps -> (ps.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:35 VE.Cardinality.projectW6 (D[V], trusted) list-drop-last: (Wire.projectedProfiles profiles).map Lean.Json.str -> (((Wire.projectedProfiles profiles).map Lean.Json.str).dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-drop-last: VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) -> ((VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·)).dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:889 VE.Compose.environmentRows (G[V], trusted) list-drop-last: ps -> (ps.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:61 VE.EnglishGrammar.adviceTable (G[V], trusted) list-drop-last: sourceWordAdvice -> (sourceWordAdvice.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:83 VE.EnglishGrammar.advice (G[V], trusted) list-drop-last: adviceTable -> (adviceTable.dropLast) (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 3 KILLED, 2 SURVIVOR, 7 UNKNOWN, 0 INVALID, 0 ALLOWED, 18 NOT RUN in 3962 s
+trust_mutants: D[V], trusted: 1 SURVIVOR, 4 UNKNOWN, 7 NOT RUN
+trust_mutants: G[V], trusted: 2 KILLED, 1 SURVIVOR, 3 UNKNOWN, 10 NOT RUN
+trust_mutants: S, trusted: 1 KILLED, 1 NOT RUN
+trust_mutants: PARTIAL: the deadline stopped the run with 18 of its 30 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 12.5 s, scratch 2.5 s, control_build 1.5 s, probe_install 1.1 s, mutants 3943.6 s, cleanup 0.7 s, reads 0.1 s; lake control_build 1.5 s (2), probe_install 1 s (1), control_probes 9 s (3), mutant_builds 779.4 s (18), mutant_checks 14403.2 s (15), outside_checks 24 s (4), stage_controls 188.7 s (7), mutant_probes 8.9 s (3)
