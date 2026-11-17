@@ -47,6 +47,7 @@
 | staged ceiling test, staged gate | `zsh tools-local/test_codex_week_ceiling.sh.new-codexw <gate>.new-codexw codex-shim.sh` | PASS, 79 ok (`run-week-ceiling-staged.log`) |
 | staged ceiling test, installed gate | same, installed gate | FAILED on exactly the 3 new cases (`run-week-ceiling-installed.log`) |
 | installed ceiling test, staged gate | `zsh tools-local/test_codex_week_ceiling.sh <gate>.new-codexw codex-shim.sh` | FAILED on exactly the 3 changed cases (`run-week-ceiling-old-test-on-staged.log`): two stale readings, and the audit at 88 on the full gate that only the credit branch had opened |
+| VE selected tests (branch: docs only) | `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` | exit 0, 10 units, 0 failed (`selected-run.log`) |
 | syntax | `zsh -n` (gate, cloud2-codex.sh, both tests), `bash -n` (host shim) | clean (B13, C6) |
 
 Hashes of the staged and live files at hand-off: `sha256.txt`. Full staged diff: `staged-changes.diff`.
