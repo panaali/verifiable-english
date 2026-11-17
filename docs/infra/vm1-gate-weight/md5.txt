@@ -1,0 +1,8 @@
+# taken 2026-11-17T14:47:21Z after the F1 fix (review vm1-gate-weight-review.final.md); live files unchanged
+dd1904863dcf6df2c14bea053c382f69  chain-gate.sh
+dd1904863dcf6df2c14bea053c382f69  chain-gate.sh.new-vmcancel
+2fd93d12bab7f96ec5e339f79de414a5  chain-gate.sh.new-vm1w
+493df1e17a9eb072cf436503171e1788  iso.sh
+40bbfc4558ea7a608bcaf7b4a4e879ae  iso.sh.new-gcpu
+cff1c75dcd7ed3a359cc415cc89b26e6  iso.sh.new-vm1w
+ba8c75b3b5345f111897f62f02f407b2  tools-local/test_vm1_gate_weight.py

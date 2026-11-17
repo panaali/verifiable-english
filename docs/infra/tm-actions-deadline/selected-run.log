@@ -1,0 +1,41 @@
+# mac-pytest.sh --select on 889aa83874 (base d2573fc9a0), last 40 lines
+  tests/test_scales_exercised.py: exit 0 in 1.5 s, 223 functions
+  tests/test_rd9_statements.py: exit 0 in 48.3 s, 236 functions
+  tests/test_sa_checked_view.py: exit 0 in 36.1 s, 552 functions
+  tests/test_scope_5_6_statements.py: exit 0 in 3.8 s, 225 functions
+  tests/test_scope_forward.py: exit 0 in 1.4 s, 471 functions
+  tests/test_scope_rights_reach.py: exit 0 in 2.2 s, 493 functions
+  tests/test_scope_lean.py: exit 0 in 4.0 s, 226 functions
+  tests/test_select_defer.py: exit 0 in 1.2 s, 312 functions
+  tests/test_select_fast_stage.py: exit 0 in 1.0 s, 273 functions
+  tests/test_senses_lean.py: exit 0 in 2.7 s, 393 functions
+  tests/test_soft_decision_keys.py: exit 0 in 3.0 s, 658 functions
+  tests/test_softnorms_public_contract.py: exit 0 in 1.9 s, 687 functions
+  tests/test_readings_defaults_statements.py: exit 0 in 59.0 s, 282 functions
+  tests/test_speech_source_switch.py: exit 0 in 4.3 s, 906 functions
+  tests/test_suite_tail.py: exit 0 in 2.0 s, 254 functions
+  tests/test_surface_registry.py: exit 0 in 1.2 s, 435 functions
+  tests/test_test_speed_b2.py: exit 0 in 1.1 s, 234 functions
+  tests/test_trust_mutants_max_errors.py: exit 0 in 1.0 s, 268 functions
+  tests/test_rsp_fidelity_fix.py: exit 0 in 56.4 s, 1151 functions
+  tests/test_stage2_faults.py: exit 0 in 11.4 s, 746 functions
+  tests/test_w1_delta_suite.py: exit 0 in 1.3 s, 528 functions
+  tests/test_usecase_key_transcription.py: exit 0 in 3.5 s, 686 functions
+  tests/test_w6a_citations.py: exit 0 in 3.0 s, 609 functions
+  tests/test_statement_scanner.py: exit 0 in 13.8 s, 245 functions
+  tests/test_wire_contract_corpus.py: exit 0 in 1.4 s, 319 functions
+  tests/test_w6a_looprecheck2.py: exit 0 in 4.7 s, 496 functions
+  tests/test_wire_contract_lean.py: exit 0 in 1.5 s, 348 functions
+  tests/test_webapp_commands_env.py: exit 0 in 5.4 s, 191 functions
+  tests/test_wire_contract_s5_admission.py: exit 0 in 2.1 s, 589 functions
+  tests/test_wire_contract_three_way.py: exit 0 in 1.9 s, 703 functions
+  tests/test_wire_contract_s4_lean.py: exit 0 in 3.1 s, 780 functions
+  tests/test_pf_f16_without_fix.py: exit 0 in 158.9 s, 996 functions
+  tests/test_wire_contract_lint.py: exit 0 in 4.9 s, 828 functions
+  tests/test_scope_5_4_statements.py: exit 0 in 52.6 s, 245 functions
+  tests/test_question_statements_scanner.py: exit 0 in 197.0 s, 247 functions
+  tools/test_layer_policy.py: exit 0 in 178.7 s, 319 functions
+  tests/test_fidmech_adapters.py: exit 0 in 910.9 s, 974 functions
+recorded 232 units for tree 0ce9414bd0; 335 others left to the static graph until they run; 0 failed
+[cloud2 14:17:56Z] summary: ran on ve-cloud-2, select_tests, exit=0, 1637s
+[mac-pytest 14:17:56Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 1638s

@@ -1,0 +1,749 @@
+--- tools-local/decider-ready-alert.py
++++ tools-local/decider-ready-alert.py.new-nta
+@@ -29,6 +29,17 @@
+ Other feed holds (DRI hold, waits for, account room, and the capacity hold "queue items in flight on <host>") are unchanged.
+ Same p1-unstartable-alert.sent 4 h dedup.
+ 
++READY WITH NO TASK FILE (2026-11-17 notask-wait-alert; reviews/dri-decisions-20261117-orch1156.md item 3): six infra rows
++waited 04:42-10:52Z on 11-17 only because they had no task file. Any ready row the p1 rule above does not cover (priority > 1,
++any owner) that backlog.py launch_spec refuses with "no task file and no launch link" or "task file missing (...)" (the
++reason the infra feed's WAIT line shows) for >= 20 min since ready_t (else status_t, else created) is named in the same
++pass's message as "ready with no task file: <id>, <owner>, p<priority>, <age>, <reason>". Once per (row id, ready time),
++like the decider-owned ready alert, in the same state file with the id written "nt:<id>"; a row that goes in flight and back
++to ready alerts again. Not named: design / lead-question / decision rows; a row with no launch link whose kind the infra feed
++does not start (feature, follow-up: the planner and the queue start those, the infra feed shows no WAIT for them); and a row
++owned by lead|DRI|orchestrator... that the infra feed does not own (backlog.py FEED_OWNER) when no task is expected (reason
++"no task file and no launch link": no links.task and no launch link). p1 rows stay with the p1 rule (30 min, 4 h).
++
+ Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state files, prompts/, msg.sh); DRA_MSG = command run instead of
+ `zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds); DRA_BACKLOG_PY = the backlog.py whose launch_spec is used
+ (default ../backlog.py from this script). --dry-run prints the message and records nothing.
+@@ -42,6 +53,10 @@
+ P1_STATE = os.path.join(M, "p1-unstartable-alert.sent")
+ P1_AFTER = 30 * 60          # ready this long and not startable -> alert
+ P1_EVERY = 4 * 3600         # one alert per row per 4 h
++NT_AFTER = 20 * 60          # ready this long with no task file -> alert (notask-wait-alert)
++NT_REASON = re.compile(r"^(no task file and no launch link|task file missing\b)")
++NT_KINDS_OUT = ("design", "lead-question", "decision")
++NT_OWNER_OUT = re.compile(r"(lead|DRI|orchestrator)\b", re.I)
+ 
+ 
+ def prio_le_1(r):
+@@ -74,14 +89,13 @@
+     return any(os.path.isfile(p if p.startswith("/") else os.path.join(M, p)) for p in paths)
+ 
+ 
+-_LAUNCH_SPEC = []
++_BL = []
+ 
+ 
+-def launch_spec(r):
+-    """backlog.py launch_spec, the one owner of "can this launch link start the row" (infra_feed.py starts rows through it).
+-    Loaded once from DRA_BACKLOG_PY (tests), else the backlog.py next to tools-local; its M is pointed at DRA_M so task paths
+-    resolve where the rows live. If it cannot be loaded, every launch link counts as not startable (alert, never silence)."""
+-    if not _LAUNCH_SPEC:
++def backlog_mod():
++    """backlog.py, loaded once from DRA_BACKLOG_PY (tests), else the backlog.py next to tools-local; its M is pointed at DRA_M
++    so task paths resolve where the rows live. None when it cannot be loaded."""
++    if not _BL:
+         try:
+             import importlib.util
+             here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+@@ -89,16 +103,31 @@
+             bl = importlib.util.module_from_spec(sp)
+             sp.loader.exec_module(bl)
+             bl.M = M
+-            _LAUNCH_SPEC.append(bl.launch_spec)
++            _BL.append(bl)
+         except Exception as e:
+             print(f"decider-ready-alert: backlog.py launch_spec unavailable ({type(e).__name__}: {e}); launch links count as not startable")
+-            _LAUNCH_SPEC.append(lambda _r: (None, "launch_spec unavailable"))
++            _BL.append(None)
++    return _BL[0]
++
++
++def launch_spec(r):
++    """backlog.py launch_spec, the one owner of "can this launch link start the row" (infra_feed.py starts rows through it).
++    If it cannot be loaded, every launch link counts as not startable (alert, never silence)."""
++    bl = backlog_mod()
++    if bl is None:
++        return None, "launch_spec unavailable"
+     try:
+-        return _LAUNCH_SPEC[0](r)
++        return bl.launch_spec(r)
+     except Exception as e:
+         return None, f"launch_spec error {type(e).__name__}"
+ 
+ 
++def feed_owned(own):
++    """backlog.py FEED_OWNER (the owners the infra feed starts rows for); False when backlog.py cannot be loaded."""
++    bl = backlog_mod()
++    return bool(bl is not None and bl.FEED_OWNER.match(own))
++
++
+ def startable(r):
+     """A row with a launch link is startable only when backlog.py launch_spec can start it: delegate / infra-item need an
+     existing links.task; an unknown launcher (e.g. iso, continue-item) or a launcher without its arguments is not startable.
+@@ -167,6 +196,40 @@
+     return out
+ 
+ 
++def no_task_reason(r):
++    """The launch_spec reason when a ready row cannot start only for want of a task file, else None (see the docstring)."""
++    if r.get("kind") in NT_KINDS_OUT:
++        return None
++    s, why = launch_spec(r)
++    if s is not None or not NT_REASON.match(why or ""):
++        return None
++    L = r.get("links") or {}
++    bl = backlog_mod()
++    if not (L.get("launch") or "").strip() and r.get("kind") not in bl.FEED_KINDS:
++        return None  # a feature/follow-up row: the planner and the queue start it, the infra feed never WAITs on it
++    own = (r.get("owner") or "").strip()
++    if why.startswith("no task file") and NT_OWNER_OUT.match(own) and not feed_owned(own):
++        return None  # held by the lead / the DRI / the orchestrator, no task expected
++    return why
++
++
++def no_task_rows(rows, now):
++    """[(row, (id, ready-time text), age seconds, reason)]: ready rows with priority > 1 (p1 rows are the p1 rule's) and no
++    task file for >= 20 min since ready_t (else status_t, else created)."""
++    out = []
++    for r in rows:
++        if r.get("status") != "ready" or prio_le_1(r) or not r.get("id"):
++            continue
++        k, t0 = next(((str(r.get(k)), t) for k, t in ((k, parse_t(r.get(k))) for k in ("ready_t", "status_t", "created"))
++                      if t is not None), (None, None))
++        if t0 is None or now - t0 < NT_AFTER:
++            continue
++        why = no_task_reason(r)
++        if why:
++            out.append((r, ("nt:" + r["id"], k), now - t0, why))
++    return out
++
++
+ def main(argv):
+     dry = "--dry-run" in argv
+     now = float(os.environ.get("DRA_NOW") or time.time())
+@@ -201,7 +264,8 @@
+     p1all = [x for x in p1_unstartable(rows, now) if now - p1_last.get(x[0]["id"], float("-inf")) >= P1_EVERY]
+     p1 = [(r, a) for r, a, h in p1all if h is None]
+     held = [(r, a, h) for r, a, h in p1all if h is not None]
+-    if not new and not p1all:
++    nt = [x for x in no_task_rows(rows, now) if x[1] not in sent]
++    if not new and not p1all and not nt:
+         return 0
+     msgs = []
+     if new:
+@@ -218,6 +282,12 @@
+         msgs.append("p1 ready but held: " + "; ".join(f"{r['id']}, {r.get('owner') or '-'}, {age_s(a)}, {h}" for r, a, h in held)
+                     + ". Held = a feed path hold (backlog state 'feed: path <p> in flight on <branch>') for >= 30 min"
+                     + " (p1-path-hold-alert): land or release the holding branch, or start the row by hand.")
++    if nt:
++        msgs.append("ready with no task file: " + "; ".join(f"{r['id']}, {r.get('owner') or '-'}, p{'?' if r.get('priority') is None else r.get('priority')}, {age_s(a)}, {why}"
++                                                           for r, _, a, why in nt)
++                    + ". The infra feed WAITs on these rows until a task file exists (notask-wait-alert, >= 20 min ready;"
++                    + " R21: whoever queues a row writes its task file in the same step): write the task file and link it"
++                    + " (links.task), or move the row to blocked with the reason.")
+     msg ="NOW(critical): " + " | ".join(msgs)
+     if dry:
+         print(msg)
+@@ -229,15 +299,15 @@
+     if rc != 0:
+         print(f"{stamp} decider-ready-alert: msg.sh rc {rc}; will retry next pass")
+         return 0
+-    if new:
++    if new or nt:
+         with open(STATE, "a", encoding="utf-8") as f:
+-            for k, _ in new:
++            for k in [k for k, _ in new] + [x[1] for x in nt]:
+                 f.write(f"{k[0]}\t{k[1]}\t{stamp}\n")
+     if p1all:
+         with open(P1_STATE, "a", encoding="utf-8") as f:
+             for x in p1all:
+                 f.write(f"{x[0]['id']}\t{int(now)}\t{stamp}\n")
+-    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [x[0]['id'] for x in p1all])}")
++    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [x[0]['id'] for x in p1all] + [x[1][0] for x in nt])}")
+     return 0
+ 
+ 
+--- tools-local/bottleneck-scan.py
++++ tools-local/bottleneck-scan.py.new-nta
+@@ -14,9 +14,11 @@
+         5-h and week headroom), Codex week (codexWeek vs CODEX_WEEK_CEILING), Actions runs in progress/queued (REST,
+         unauthenticated), remote tm/gate slots (latest remote-hosts-load sample).
+       - refusal reasons: pick-wait.log (one line per held caller per 5 min = 5 caller-minutes), feed-features.log WAIT
+-        spans (a WAIT line holds until the row's next line; row-hours).
+-      BINDING = the largest delay among the stages (item-hours) and the saturated resources with a queue behind them
+-      (the queue's item-hours); runner-up = the next. --write: BOTTLENECK.md (one screen) + a row in
++        spans (a WAIT line holds until the row's next line; row-hours), and infra-feed.log's "no task file" WAIT spans.
++      - process causes: process:no-task-file = feed WAIT "no task file and no launch link" / "task file missing (...)"
++        row-hours (both feed logs); never added to a resource (2026-11-17 notask-wait-alert).
++      BINDING = the largest delay among the stages (item-hours), the process causes (row-hours) and the saturated resources
++      with a queue behind them (the queue's item-hours); runner-up = the next. --write: BOTTLENECK.md (one screen) + a row in
+       bottleneck-scan.jsonl (trend). --alert: msg.sh orchestrator "BOTTLENECK: ..." when the binding changed since the
+       last scan, or it has had no analysis/fix row in flight for 2 h (at most one message per 2 h per bottleneck; state
+       in bottleneck-state.json).
+@@ -474,11 +476,23 @@
+ 
+ 
+ # ---------------------------------------------------------------- refusals
+-FEED_BUCKETS = (("width: chains cap", r"^chains \d+ >= \d+"), ("width: building cap", r"queue items building"),
++# 2026-11-17 notask-wait-alert (reviews/dri-decisions-20261117-orch1156.md item 3): "no task file" is its own cause, first in
++# the order (before 2026-11-17 it was last and matched only "task file missing", so "task file missing (prompts/task-account-
++# x.txt)" went to accounts through the bare "account" pattern). Accounts match the word "account" only ("accounting" is not).
++# 2026-11-17 notask-wait-alert review F1: every reader names a bucket through these constants, never a string literal (the
++# rename "task file" -> NO_TASK left a literal "task file" in stage_details, so no-task row-hours showed as capacity waits).
++NO_TASK, PREREQ, ACCOUNTS, MAC_LOAD, VM_LOAD = "no task file", "prerequisites", "accounts", "Mac load", "VM load"
++FEED_BUCKETS = ((NO_TASK, r"^(no task file|task file missing)\b"),
++                ("width: chains cap", r"^chains \d+ >= \d+"), ("width: building cap", r"queue items building"),
+                 ("width: in-flight cap", r"queue items in flight"), ("path locks", r"^path \S+ in flight"),
+-                ("trains cap", r"trains running"), ("Mac load", r"Mac load"), ("VM load", r"VM (5-min )?load"),
+-                ("accounts", r"no Claude account|account"), ("one launch per pass", r"one launch per pass"),
+-                ("prerequisites", r"waits for"), ("task file", r"task file missing"))
++                ("trains cap", r"trains running"), (MAC_LOAD, r"Mac load"), (VM_LOAD, r"VM (5-min )?load"),
++                (ACCOUNTS, r"no Claude account|\baccount\b"), ("one launch per pass", r"one launch per pass"),
++                (PREREQ, r"waits for"))
++# Buckets that are a missing input, not a capacity limit: kept out of the launch-wait capacity hint (stage_details). The one
++# list of them; a name here that is not a bucket stops the scan at import.
++NOT_CAPACITY = frozenset({NO_TASK, PREREQ})
++if not NOT_CAPACITY <= {n for n, _ in FEED_BUCKETS}:
++    raise SystemExit(f"bottleneck-scan: NOT_CAPACITY names no bucket: {sorted(NOT_CAPACITY - {n for n, _ in FEED_BUCKETS})}")
+ 
+ 
+ def feed_bucket(reason):
+@@ -488,30 +502,41 @@
+     return "other: " + re.sub(r"\d+(\.\d+)?", "N", reason)[:40]
+ 
+ 
+-def feed_waits(spans, now, rows):
+-    """Row-hours per first WAIT reason (feed-features.log logs on change: a WAIT holds until the row's next line)."""
+-    w0 = spans[0][0]
++def wait_spans(log, kinds, spans, now, rows, only=None):
++    """Row-hours per first WAIT reason of one feed log (it logs on change: a WAIT holds until the row's next line, a row
++    still ready holds to now). only = count just that bucket (the other lines still end a span)."""
+     last = {}
+     out = Counter()
+-    for ln in rd(p("feed-features.log"), 20000):
+-        m = re.match(r"^\[(\S+)\] (WAIT|LAUNCH|URGENT) (\S+?):? (.*)$", ln)
++    for ln in rd(p(log), 20000):
++        m = re.match(r"^\[(\S+)\] (" + kinds + r") (\S+?):? (.*)$", ln)
+         if not m:
+             continue
+         t = parse_t(m.group(1))
+         if t is None:
+             continue
+-        item = m.group(3)
+-        if item in last:
+-            a, b = last.pop(item)
+-            out[b] += clip(a, t, spans) / 3600
+-        if m.group(2) == "WAIT":
+-            last[item] = (t, feed_bucket(m.group(4).split(";")[0].strip()))
++        for item in (m.group(3).split(",") if only else [m.group(3)]):
++            if item in last:
++                a, b = last.pop(item)
++                out[b] += clip(a, t, spans) / 3600
++            if m.group(2) == "WAIT":
++                b = feed_bucket(m.group(4).split(";")[0].strip())
++                if only is None or b == only:
++                    last[item] = (t, b)
+     for item, (a, b) in last.items():
+         if (rows.get(item) or {}).get("status") == "ready":
+             out[b] += clip(a, now, spans) / 3600
+     return out
+ 
+ 
++def feed_waits(spans, now, rows):
++    """Row-hours per first WAIT reason: feed-features.log (every bucket) plus infra-feed.log's "no task file" WAITs (the infra
++    feed's "no task file and no launch link" / "task file missing (...)" rows; before 2026-11-17 this log was not read, so
++    those hours showed under no cause at all). Other infra-feed WAIT reasons are not counted here (unchanged)."""
++    out = wait_spans("feed-features.log", "WAIT|LAUNCH|URGENT", spans, now, rows)
++    out.update(wait_spans("infra-feed.log", "WAIT|LAUNCH|RECONCILE", spans, now, rows, only=NO_TASK))
++    return out
++
++
+ def pick_waits(spans):
+     w0 = spans[0][0]
+     out = Counter()
+@@ -713,8 +738,9 @@
+ 
+ # ---------------------------------------------------------------- classification (pure)
+ def classify(cands):
+-    """cands: [{key, hours, kind: stage|resource, saturated, queue_h, ...}]. A stage competes with its item-hours; a
+-    resource competes only when saturated AND with a queue behind it, with the queue's item-hours. Returns
++    """cands: [{key, hours, kind: stage|resource|process, saturated, queue_h, ...}]. A stage competes with its item-hours; a
++    resource competes only when saturated AND with a queue behind it, with the queue's item-hours; a process cause (rows
++    held by a missing input, e.g. process:no-task-file) competes with its row-hours. Returns
+     (binding, runner_up) dicts or None."""
+     pool = []
+     for c in cands:
+@@ -722,6 +748,8 @@
+             pool.append((c["hours"], c))
+         elif c["kind"] == "resource" and c.get("saturated") and c.get("queue_h", 0) > 0:
+             pool.append((c["queue_h"], c))
++        elif c["kind"] == "process" and c["hours"] > 0:  # a process cause (process:no-task-file) competes with its row-hours
++            pool.append((c["hours"], c))
+     pool.sort(key=lambda x: (-x[0], x[1]["key"]))
+     return (pool[0][1] if pool else None), (pool[1][1] if len(pool) > 1 else None)
+ 
+@@ -746,7 +774,7 @@
+     cores = L["vm1"]["cores"] or 32
+     avg = sum(v for _, v in sar) / len(sar) if sar else L["vm1"]["load5"]
+     over = sum(1 for _, v in sar if v > cores) / len(sar) if sar else None
+-    q = fw.get("VM load", 0)
++    q = fw.get(VM_LOAD, 0)
+     res["VM1"] = {"now": L["vm1"]["load5"], "cores": cores, "avg": round(avg, 1), "over_share": over, "queue_h": round(q, 1),
+                   "queue": "feed rows held by VM load"}
+     # VM2/VM3
+@@ -772,7 +800,7 @@
+     a = sum(x[1] for x in xs) / len(xs) if xs else None
+     msw = mac_slot_waits(ev, spans)
+     res["Mac"] = {"now": (lv or {}).get("load5"), "cores": mc, "avg": round(a, 1) if a is not None else None, "samples": len(xs),
+-                  "queue_h": round(msw + fw.get("Mac load", 0), 1), "queue": "chain-gate Mac slot waits + feed rows held by Mac load"}
++                  "queue_h": round(msw + fw.get(MAC_LOAD, 0), 1), "queue": "chain-gate Mac slot waits + feed rows held by Mac load"}
+     for k in ("VM1", "VM2", "VM3", "Mac"):
+         x = res[k]
+         x["saturated"] = bool(x["avg"] is not None and x["cores"] and x["avg"] / x["cores"] >= SAT)
+@@ -780,7 +808,7 @@
+                       "queue_h": x["queue_h"], "hours": x["queue_h"]})
+     # accounts
+     acc, codex = usage()
+-    accq = sum(v for k, v in pw.items()) + fw.get("accounts", 0)
++    accq = sum(v for k, v in pw.items()) + fw.get(ACCOUNTS, 0)
+     worst = None
+     for a, (h5, wk) in acc.items():
+         cap = CAPS.get(a, 88)
+@@ -806,6 +834,15 @@
+     return res, cands
+ 
+ 
++def process_cands(fw):
++    """Process causes: feed rows held by a missing input, never added to a resource (2026-11-17 notask-wait-alert: six infra
++    rows waited 04:42-10:52Z for a task file while the scan named resource:accounts)."""
++    h = round(fw.get(NO_TASK, 0), 1)
++    return [{"key": "process:no-task-file", "name": "ready rows with no task file (feed WAIT)", "kind": "process", "hours": h,
++             "queue_h": h, "note": "feed WAIT 'no task file and no launch link' / 'task file missing' row-hours; the queuer writes"
++             " the task file in the same step (R21)"}]
++
++
+ def stage_details(ev, spans, fw, res, tl):
+     """One-line cause hints per stage (what an analysis row starts from)."""
+     w0, d = spans[0][0], {}
+@@ -831,7 +868,7 @@
+         d["build"] = (f"{len(b)} build attempts ended in the window, median {b[len(b) // 2]:.1f} h, longest {b[-1]:.1f} h "
+                       f"(whole attempts incl. hours before the window; {sum(inwin):.1f} h of them in the window, account waits "
+                       f"included); {cloud} placed on a remote host")
+-    cap = [(k, v) for k, v in fw.most_common() if k not in ("prerequisites", "task file") and v > 0]
++    cap = [(k, v) for k, v in fw.most_common() if k not in NOT_CAPACITY and v > 0]
+     if cap:
+         d["launch-wait"] = "feed capacity waits (row-h): " + ", ".join(f"{k} {v:.1f}" for k, v in cap[:3])
+     d["chain-gate"] = f"Mac gate-slot waits {mac_slot_waits(ev, spans):.1f} h; Mac avg load {res['Mac']['avg']} on {res['Mac']['cores']} cores"
+@@ -853,7 +890,7 @@
+     total = sum(sh_.values()) or 1.0
+     det = stage_details(ev, spans, fw, res, tl)
+     cands = [{"key": f"stage:{s}", "name": s, "kind": "stage", "hours": round(sh_.get(s, 0), 1), "note": det.get(s, "")}
+-             for s in STAGES] + rcands
++             for s in STAGES] + rcands + process_cands(fw)
+     b, r2 = classify(cands)
+     sup = supply()
+     tq = [x for x in tl if x[1] == "queue"]
+@@ -867,6 +904,7 @@
+                       "train_queue": tq[-1][3] if tq else None, "train_queue_t": iso(tq[-1][0]) if tq else None},
+            "resources": res, "feed_waits_h": {k: round(v, 1) for k, v in fw.most_common(8)},
+            "pick_waits_h": {k: round(v, 1) for k, v in pw.most_common(5)},
++           "process_h": {c["key"]: c["hours"] for c in process_cands(fw)},
+            "binding": b, "runner_up": r2}
+     top = sorted(((sum(v.values()), i) for i, v in per_item.items()), reverse=True)[:5]
+     out["top_items"] = [{"item": i, "h": round(h, 1), "stages": {k: round(v, 1) for k, v in per_item[i].most_common(3)}} for h, i in top]
+@@ -892,6 +930,8 @@
+         return "none"
+     if c["kind"] == "stage":
+         return f"{c['hours']} item-h = {s['shares'].get(c['name'], 0):.0%} of cycle" + (f" ({c['note']})" if c.get("note") else "")
++    if c["kind"] == "process":
++        return f"{c['hours']} row-h" + (f" ({c['note']})" if c.get("note") else "")
+     return f"queue behind it {c['queue_h']} item-h" + (f" ({c['note']})" if c.get("note") else "")
+ 
+ 
+--- tools-local/test_decider_ready_alert.py.bak-20261117-nta
++++ tools-local/test_decider_ready_alert.py
+@@ -2,11 +2,14 @@
+ """Tests for tools-local/decider-ready-alert.py and its call in backlog-svc.sh (orchestrator 20261115T140543Z item 1).
+ Run: python3 -I tools-local/test_decider_ready_alert.py   (BACKLOG_SVC_SH = the backlog-svc.sh copy to check; default the
+ staged backlog-svc.sh.new-dra if present, else the live one; DRA_SCRIPT = the alert script, default the staged
+-decider-ready-alert.py.new-p1rua2 (then .new-p1rua) if present, else the live one)."""
++decider-ready-alert.py.new-nta (then .new-p1rua2, .new-p1rua) if present, else the live one).
++NoTaskFile (notask-wait-alert, reviews/dri-decisions-20261117-orch1156.md item 3): a ready row of any priority > 1 and any
++owner with no task file for >= 20 min is named once per (row, ready time); the live script before the install fails it."""
+ import json, os, subprocess, sys, tempfile, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-p1rua2"),
++SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-nta"),
++                                                           os.path.join(HERE, "decider-ready-alert.py.new-p1rua2"),
+                                                            os.path.join(HERE, "decider-ready-alert.py.new-p1rua"),
+                                                            os.path.join(HERE, "decider-ready-alert.py")) if os.path.exists(p))
+ M = os.path.dirname(HERE)
+@@ -22,7 +25,7 @@
+     return r
+ 
+ 
+-class Alert(unittest.TestCase):
++class Base(unittest.TestCase):
+     def setUp(self):
+         self.d = tempfile.mkdtemp()
+         self.log = os.path.join(self.d, "msgs.log")
+@@ -43,6 +46,8 @@
+     def msgs(self):
+         return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ 
++
++class Alert(Base):
+     def test_dummy_row_alerts_once(self):
+         self.write([row("dummy-p1-ready")])
+         p = self.run_it()
+@@ -103,6 +108,144 @@
+         self.assertEqual(p.returncode, 0)
+ 
+ 
++READY = "2026-11-17T04:42Z"
++T0 = 1794890520.0  # 2026-11-17T04:42Z
++MIN = 60
++
++
++def nt_row(i, **kw):
++    """A priority-80 infra row of the infra feed, ready, with no task file and no launch link (the 11-17 rows)."""
++    r = {"id": i, "kind": "infra", "title": f"title {i}", "owner": "infra feed", "priority": 80, "status": "ready",
++         "ready_t": READY, "links": {}}
++    r.update(kw)
++    return r
++
++
++class NoTaskFile(Base):
++    """notask-wait-alert: any ready row (priority > 1, any owner) launch_spec refuses for want of a task file, >= 20 min."""
++
++    def at(self, after, *a, **env):
++        p = self.run_it(*a, DRA_NOW=str(T0 + after), **env)
++        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
++        self.assertNotIn("error", p.stdout)
++        return p
++
++    def test_t0_is_ready_time(self):
++        from datetime import datetime, timezone
++        self.assertEqual(datetime.strptime(READY, "%Y-%m-%dT%H:%MZ").replace(tzinfo=timezone.utc).timestamp(), T0)
++
++    def test_1_p80_infra_row_25_min_named_once(self):
++        self.write([nt_row("tm-actions-deadline")])
++        self.at(25 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        to, frm, text = m[0].split("|", 2)
++        self.assertEqual((to, frm), ("dri", "decider-ready-alert"))
++        self.assertTrue(text.startswith("NOW(critical): ready with no task file: tm-actions-deadline, infra feed, p80, 25m,"
++                                        " no task file and no launch link"), text)
++
++    def test_2_same_row_next_pass_not_named_again(self):
++        self.write([nt_row("tm-actions-deadline")])
++        self.at(25 * MIN)
++        self.at(35 * MIN)
++        self.at(5 * 60 * MIN)
++        self.assertEqual(len(self.msgs()), 1, self.msgs())
++
++    def test_2b_ready_again_named_again(self):
++        self.write([nt_row("r")]); self.at(25 * MIN)
++        self.write([nt_row("r", ready_t="2026-11-17T08:00Z")]); self.at(4 * 60 * MIN)
++        self.assertEqual(len(self.msgs()), 2, self.msgs())
++
++    def test_3_fifteen_min_not_named_twenty_named(self):
++        self.write([nt_row("young")])
++        self.at(15 * MIN)
++        self.at(19 * MIN)
++        self.assertEqual(self.msgs(), [])
++        self.at(20 * MIN)  # >= 20 min: the boundary alerts
++        self.assertEqual(len(self.msgs()), 1)
++        self.assertIn("young, infra feed, p80, 20m", self.msgs()[0])
++
++    def test_4_gets_a_task_file_not_named(self):
++        os.makedirs(os.path.join(self.d, "prompts"))
++        open(os.path.join(self.d, "prompts", "task-has.txt"), "w").close()
++        self.write([nt_row("has", links={"task": "prompts/task-has.txt"}), nt_row("none")])
++        self.at(25 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertIn("ready with no task file: none, infra feed", m[0])
++        self.assertNotIn("has,", m[0])
++
++    def test_task_link_to_missing_file_named(self):
++        self.write([nt_row("gone", links={"task": "prompts/task-gone.txt"})])
++        self.at(25 * MIN)
++        self.assertIn("gone, infra feed, p80, 25m, task file missing (prompts/task-gone.txt)", self.msgs()[0])
++
++    def test_any_owner_any_priority_and_fallback_times(self):
++        self.write([nt_row("own-empty", owner="", priority=240), nt_row("chain", owner="chain", priority=250),
++                    nt_row("orch", owner="orchestrator", priority=5),
++                    nt_row("st", ready_t=None, status_t="2026-11-17T04:42:00Z"), nt_row("cr", ready_t=None, created=READY)])
++        self.at(25 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        for x in ("own-empty, -, p240", "chain, chain, p250", "orch, orchestrator, p5", "st, infra feed", "cr, infra feed"):
++            self.assertIn(x, m[0])
++
++    def test_exclusions(self):
++        self.write([nt_row("des", kind="design"), nt_row("lq", kind="lead-question"), nt_row("dec", kind="decision"),
++                    nt_row("lead", owner="lead go needed"), nt_row("dri", owner="DRI decider"),
++                    nt_row("orchrev", owner="orchestrator review"),
++                    nt_row("fly", status="in-flight"), nt_row("blk", status="blocked"), nt_row("not", ready_t=None),
++                    nt_row("startable", links={"launch": "research-wave w1 VE/Research"})])
++        self.at(5 * 60 * MIN)
++        self.assertEqual(self.msgs(), [])
++
++    def test_dri_owner_with_task_expected_named(self):
++        # "held by lead|DRI|orchestrator with no task expected" only: a DRI row linking a missing task file expects one
++        self.write([nt_row("dri-t", owner="DRI decider", links={"task": "prompts/task-gone.txt"})])
++        self.at(25 * MIN)
++        self.assertIn("dri-t, DRI decider, p80, 25m, task file missing", self.msgs()[0])
++
++    def test_feature_rows_without_launch_link_left_to_the_planner(self):
++        # the infra feed shows no WAIT for feature/follow-up rows (the planner and the queue start them): not named; a
++        # feature row whose launch link needs a task file that is missing is named, and so are efficiency/trial rows
++        self.write([nt_row("feat", kind="feature", owner="feature planner"), nt_row("fu", kind="follow-up", owner=""),
++                    nt_row("featd", kind="feature", owner="feature planner", links={"launch": "delegate"}),
++                    nt_row("eff", kind="efficiency"), nt_row("tri", kind="trial")])
++        self.at(25 * MIN)
++        self.assertEqual(len(self.msgs()), 1)
++        m = self.msgs()[0]
++        for x in ("featd, feature planner, p80, 25m, task file missing (none)", "eff, infra feed", "tri, infra feed"):
++            self.assertIn(x, m)
++        self.assertNotIn("feat,", m)
++        self.assertNotIn("fu,", m)
++
++    def test_p1_rows_left_to_p1_rule(self):
++        # p1 behaviour unchanged: a p1 row with no task file is silent at 25 min and named by the p1 rule (not twice) at 30
++        self.write([nt_row("p1", priority=1)])
++        self.at(25 * MIN)
++        self.assertEqual(self.msgs(), [])
++        self.at(30 * MIN)
++        self.assertEqual(len(self.msgs()), 1)
++        self.assertIn("p1 ready but not startable: p1, infra feed, 30m", self.msgs()[0])
++        self.assertNotIn("ready with no task file", self.msgs()[0])
++
++    def test_failed_send_records_nothing_then_retries(self):
++        self.write([nt_row("a")])
++        self.at(25 * MIN, FAKE_RC="1")
++        self.assertFalse(os.path.exists(os.path.join(self.d, "decider-ready-alert.sent")))
++        self.at(26 * MIN)
++        self.assertEqual(len(self.msgs()), 2)
++        self.assertIn("nt:a\t" + READY + "\t", open(os.path.join(self.d, "decider-ready-alert.sent")).read())
++
++    def test_with_decider_part_one_message(self):
++        self.write([row("dec"), nt_row("b")])
++        self.at(25 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        self.assertIn("decider-owned p1 row(s) ready with no job in flight: dec", m[0])
++        self.assertIn(" | ready with no task file: b, infra feed, p80, 25m", m[0])
++
++
+ class Loop(unittest.TestCase):
+     def test_backlog_svc_runs_alert_after_seed(self):
+         t = open(SVC).read()
+--- tools-local/test_bottleneck_scan.py.bak-20261117-nta
++++ tools-local/test_bottleneck_scan.py
+@@ -1,11 +1,17 @@
+ #!/usr/bin/env python3
+ """Tests for tools-local/bottleneck-scan.py (svc-bottleneck; lead 2026-11-09). Run: python3 -I tools-local/test_bottleneck_scan.py
+ Fixtures are recorded log lines (stage-events.jsonl, merge-train.log, feed-features.log, pick-wait.log, usage-watch.log,
+-remote-hosts-load.jsonl of 2026-11-08/09), trimmed; every live probe is replaced by BN_LIVE."""
+-import importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
++remote-hosts-load.jsonl of 2026-11-08/09), trimmed; every live probe is replaced by BN_LIVE.
++BN_SCRIPT = the script under test; default the staged bottleneck-scan.py.new-nta when present, else the live one.
++NoTaskFile (notask-wait-alert, reviews/dri-decisions-20261117-orch1156.md item 3): infra-feed.log WAIT "no task file ..." /
++"task file missing ..." row-hours are their own cause (process:no-task-file), never resource:accounts; the live script before
++the install fails it."""
++import importlib.machinery, importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
++from collections import Counter
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-SCRIPT = os.environ.get("BN_SCRIPT", os.path.join(HERE, "bottleneck-scan.py"))
++SCRIPT = os.environ.get("BN_SCRIPT") or next(x for x in (os.path.join(HERE, "bottleneck-scan.py.new-nta"),
++                                                         os.path.join(HERE, "bottleneck-scan.py")) if os.path.exists(x))
+ 
+ EVENTS = """\
+ {"t":"2026-11-08T05:59:40Z","item":"ci-5","stage":"build-start","note":"attempt 1"}
+@@ -86,7 +92,8 @@
+ 
+ 
+ def load():
+-    spec = importlib.util.spec_from_file_location("bottleneck_scan", SCRIPT)
++    spec = importlib.util.spec_from_file_location("bottleneck_scan", SCRIPT,  # an explicit loader: a staged ".new-<x>" name too
++                                                  loader=importlib.machinery.SourceFileLoader("bottleneck_scan", SCRIPT))
+     m = importlib.util.module_from_spec(spec)
+     spec.loader.exec_module(m)
+     return m
+@@ -216,6 +223,142 @@
+         self.assertEqual(bn.feed_bucket("queue items in flight 12 >= 12"), "width: in-flight cap")
+ 
+ 
++# 2026-11-17 shape (infra-feed.log, infra_feed.py log lines): six rows wait "no task file" for 6 h each inside the 12-h window
++# 03:40-15:40Z; r1-r5 end at 12:00Z on their next line (LAUNCH, a two-row LAUNCH, another WAIT, RECONCILE), r6 is still ready
++# (to now). An infra-feed "no Claude account" WAIT is not read from this log (other infra-feed reasons are unchanged).
++INFRA = """\
++[2026-11-09T06:00Z] WAIT r1: no task file and no launch link
++[2026-11-09T06:00Z] WAIT r2: no task file and no launch link
++[2026-11-09T06:00Z] WAIT r3: task file missing (prompts/task-account-fix.txt)
++[2026-11-09T06:00Z] WAIT r4: no task file and no launch link
++[2026-11-09T06:00Z] WAIT r5: no task file and no launch link
++[2026-11-09T06:00Z] WAIT r7: no Claude account has room (picker)
++[2026-11-09T09:40Z] WAIT r6: no task file and no launch link
++[2026-11-09T12:00Z] LAUNCH r1,r2 (infra-item as r1, iso 32G)
++[2026-11-09T12:00Z] LAUNCH r3 (infra-item as r3, iso 32G)
++[2026-11-09T12:00Z] WAIT r4: one launch per lane per pass
++[2026-11-09T12:00Z] RECONCILE r5 -> done: merged
++[2026-11-09T13:00Z] LAUNCH r4 (infra-item as r4, iso 32G)
++[2026-11-09T14:00Z] LAUNCH r7 (infra-item as r7, iso 32G)
++"""
++ACCT = "[2026-11-09T07:00Z] WAIT acc-1: no Claude account has room and Codex not allowed; \n[2026-11-09T09:00Z] LAUNCH acc-1 (feature/acc-1)\n"
++
++
++class NoTaskFile(Base):
++    def rows(self):
++        return {"r6": {"status": "ready"}, "r7": {"status": "ready"}, "pe-2": {"status": "ready"}}
++
++    def accounts_hours(self, fw):
++        sp = [(T("2026-11-09T03:40Z"), T(NOW))]
++        _, cands = bn.resources(sp, bn.live(sp), bn.stage_events(0), fw, bn.pick_waits(sp), self.rows())
++        return next(c for c in cands if c["key"] == "resource:accounts")["hours"]
++
++    def test_6_six_rows_six_hours_own_cause_not_accounts(self):
++        sp = [(T("2026-11-09T03:40Z"), T(NOW))]
++        fw0 = bn.feed_waits(sp, T(NOW), self.rows())
++        acc0 = self.accounts_hours(fw0)
++        open(f"{self.d}/infra-feed.log", "w").write(INFRA)
++        fw = bn.feed_waits(sp, T(NOW), self.rows())
++        self.assertAlmostEqual(fw["no task file"], 36.0)                 # 6 rows x 6 h
++        self.assertAlmostEqual(fw["accounts"], fw0["accounts"])           # nothing of them under accounts
++        self.assertEqual(self.accounts_hours(fw), acc0)
++        pc = {c["key"]: c for c in bn.process_cands(fw)}
++        self.assertEqual(pc["process:no-task-file"]["hours"], 36.0)
++        self.assertEqual(pc["process:no-task-file"]["kind"], "process")
++        # a named candidate of the scan: it binds when it is the largest delay (36 row-h > held 10.4 item-h)
++        open(f"{self.d}/BACKLOG.jsonl", "a").write(json.dumps({"id": "r6", "kind": "infra", "status": "ready"}) + "\n")
++        r = subprocess.run([sys.executable, "-I", SCRIPT, "scan", "--write"], env=dict(os.environ, **self.env),
++                           capture_output=True, text=True)
++        self.assertEqual(r.returncode, 0, r.stderr)
++        row = json.loads(open(f"{self.d}/bottleneck-scan.jsonl").read().splitlines()[-1])
++        self.assertEqual(row["process_h"], {"process:no-task-file": 36.0})
++        self.assertEqual(row["binding"]["key"], "process:no-task-file")
++        self.assertEqual(row["feed_waits_h"]["no task file"], 36.0)
++        self.assertNotIn("other: no task file and no launch link", row["feed_waits_h"])
++        md = open(f"{self.d}/BOTTLENECK.md").read()
++        self.assertIn("**BINDING: process:no-task-file** (ready rows with no task file (feed WAIT)): 36.0 row-h", md)
++        self.assertLessEqual(len(md.splitlines()), 30)
++
++    def test_7_real_account_wait_still_accounts(self):
++        sp = [(T("2026-11-09T03:40Z"), T(NOW))]
++        acc0 = self.accounts_hours(bn.feed_waits(sp, T(NOW), self.rows()))
++        open(f"{self.d}/feed-features.log", "a").write(ACCT)
++        open(f"{self.d}/infra-feed.log", "w").write(INFRA)
++        fw = bn.feed_waits(sp, T(NOW), self.rows())
++        self.assertAlmostEqual(fw["accounts"], 2.0)                       # 07:00-09:00 on feed-features.log
++        self.assertAlmostEqual(self.accounts_hours(fw), round(acc0 + 2.0, 1))
++        self.assertAlmostEqual(fw["no task file"], 36.0)
++
++    def test_buckets(self):
++        self.assertEqual(bn.feed_bucket("no task file and no launch link"), "no task file")
++        self.assertEqual(bn.feed_bucket("task file missing (prompts/task-account-fix.txt)"), "no task file")
++        self.assertEqual(bn.feed_bucket("no Claude account has room (picker)"), "accounts")
++        self.assertEqual(bn.feed_bucket("DESIGN_HOLD_QN: protected builder row wg-1 (rank 3) is startable and an account is its first blocker"), "accounts")
++        self.assertNotEqual(bn.feed_bucket("owner 'delegate dri-vs-cpu-accounting' starts it, not this feed"), "accounts")
++        self.assertEqual(bn.feed_bucket("waits for pe-1b"), "prerequisites")
++
++    def test_no_infra_log_no_cause(self):
++        fw = bn.feed_waits([(T("2026-11-09T03:40Z"), T(NOW))], T(NOW), self.rows())
++        self.assertEqual(fw["no task file"], 0)
++        self.assertEqual(bn.process_cands(fw)[0]["hours"], 0)
++        self.assertEqual(bn.classify(bn.process_cands(fw)), (None, None))
++
++    def test_named_buckets_feed_their_resource(self):  # review F1 class: the readers of VM load, Mac load and accounts
++        sp = [(T("2026-11-09T03:40Z"), T(NOW))]
++        L, ev, pw = bn.live(sp), bn.stage_events(0), bn.pick_waits(sp)
++        r0, c0 = bn.resources(sp, L, ev, Counter(), pw, self.rows())
++        fw = Counter({"VM load": 3.0, "Mac load": 5.0, "accounts": 7.0, "no task file": 50.0, "prerequisites": 11.0})
++        r1, c1 = bn.resources(sp, L, ev, fw, pw, self.rows())
++        self.assertAlmostEqual(r1["VM1"]["queue_h"] - r0["VM1"]["queue_h"], 3.0)
++        self.assertAlmostEqual(r1["Mac"]["queue_h"] - r0["Mac"]["queue_h"], 5.0)
++        acc = lambda cs: next(c for c in cs if c["key"] == "resource:accounts")["hours"]
++        self.assertAlmostEqual(acc(c1) - acc(c0), 7.0)                    # the no-task and prerequisite hours reach no resource
++        self.assertAlmostEqual(sum(c["hours"] for c in c1) - sum(c["hours"] for c in c0), 3.0 + 5.0 + 7.0, places=1)
++
++
++class BucketKeys(unittest.TestCase):
++    """notask-wait-alert review F1: the rename "task file" -> NO_TASK left the literal "task file" in stage_details' capacity
++    exclusion, so no-task row-hours showed as "feed capacity waits (row-h): no task file 169.0". The class: a reader that names
++    a bucket by a string literal drifts from the table. Every reader goes through the bucket constants and NOT_CAPACITY."""
++    RES = {"Mac": {"avg": 1, "cores": 18}}
++
++    def hint(self, fw):
++        return bn.stage_details({}, [(0.0, 1.0)], Counter(fw), self.RES, []).get("launch-wait", "")
++
++    def test_f1_no_task_hours_not_a_capacity_hint(self):  # PROBE F1
++        self.assertNotIn("no task file", self.hint({bn.NO_TASK: 169.0}))
++        self.assertEqual(self.hint({bn.NO_TASK: 169.0, "prerequisites": 40.0}), "")
++        self.assertEqual(self.hint({bn.NO_TASK: 169.0, "Mac load": 2.0}), "feed capacity waits (row-h): Mac load 2.0")
++
++    def test_every_bucket_capacity_or_not(self):
++        names = [n for n, _ in bn.FEED_BUCKETS]
++        self.assertEqual(bn.NOT_CAPACITY, {"no task file", "prerequisites"})
++        self.assertLessEqual(bn.NOT_CAPACITY, set(names))
++        for n in names + ["other: something new"]:
++            with self.subTest(bucket=n):
++                self.assertEqual(n in self.hint({n: 3.0}), n not in bn.NOT_CAPACITY)
++
++    def test_no_bucket_literal_outside_the_table(self):
++        """Lint: no `x in (...)` / `x not in (...)` over a literal collection, and no fw.get(...) / fw[...], names a bucket (or
++        the old name "task file") by a string; FEED_BUCKETS, the constants and NOT_CAPACITY are the only place."""
++        import ast
++        names = {n for n, _ in bn.FEED_BUCKETS} | {"task file"}
++        bad = []
++        for node in ast.walk(ast.parse(open(SCRIPT).read())):
++            if isinstance(node, ast.Compare):
++                for op, rhs in zip(node.ops, node.comparators):
++                    if isinstance(op, (ast.In, ast.NotIn)) and isinstance(rhs, (ast.Tuple, ast.List, ast.Set)):
++                        bad += [(node.lineno, e.value) for e in rhs.elts if isinstance(e, ast.Constant) and e.value in names]
++            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "get"
++                    and isinstance(node.func.value, ast.Name) and node.func.value.id == "fw" and node.args
++                    and isinstance(node.args[0], ast.Constant)):
++                bad.append((node.lineno, node.args[0].value))
++            if (isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and node.value.id == "fw"
++                    and isinstance(node.slice, ast.Constant)):
++                bad.append((node.lineno, node.slice.value))
++        self.assertEqual(bad, [])
++
++
+ class Classify(unittest.TestCase):
+     def test_stage_beats_smaller_resource_queue(self):
+         b, r = bn.classify([{"key": "stage:build", "kind": "stage", "hours": 80},
+--- tools-local/test_p1_ready_alert.py.bak-20261117-nta
++++ tools-local/test_p1_ready_alert.py
+@@ -17,7 +17,7 @@
+ 
+ 
+ def pick(env, live):
+-    return os.environ.get(env) or next((p for p in (live + ".new-pha", live + ".new-p1rua2", live + ".new-p1rua") if os.path.exists(p)), live)
++    return os.environ.get(env) or next((p for p in (live + ".new-nta", live + ".new-pha", live + ".new-p1rua2", live + ".new-p1rua") if os.path.exists(p)), live)
+ 
+ 
+ ALERT = pick("P1RUA_ALERT", os.path.join(HERE, "decider-ready-alert.py"))
+@@ -106,7 +106,12 @@
+         self.write([row("p2", priority=2), row("fly", status="in-flight"), row("blk", status="blocked"),
+                     row("nop", priority=None), row("not", ready_t=None, status_t=None)])
+         self.run_at(5 * HOUR)
+-        self.assertEqual(self.msgs(), [])
++        # notask-wait-alert (2026-11-17): p2 / no-priority rows with no task file are named by the no-task-file part, never
++        # by the p1 parts
++        self.assertEqual([x for x in self.msgs() if "p1 ready but" in x], [])
++        self.assertEqual(len(self.msgs()), 1, self.msgs())
++        self.assertIn("NOW(critical): ready with no task file: p2, infra feed, p2, 5h00m, no task file and no launch link; "
++                      "nop, infra feed, p?, 5h00m", self.msgs()[0])
+ 
+     def test_exactly_30_min_alerts(self):
+         # C1 (review note): >= 30 min, so the 30:00 boundary alerts (a "<=" mutant is caught here)
