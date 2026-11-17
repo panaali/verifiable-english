@@ -1,0 +1,18 @@
+== test_tm_nightly_blame_prebase.live.log: OK
+== test_tm_nightly_blame_prebase.staged.log: OK
+== test_tm_nightly_build_timeout.live.log: OK
+== test_tm_nightly_build_timeout.staged.log: OK
+== test_tm_nightly_complete.live.log: OK
+== test_tm_nightly_complete.staged.log: OK
+== test_tm_nightly_escape_rows.live.log: OK
+== test_tm_nightly_escape_rows.staged.log: OK
+== test_tm_nightly_lookups.live.log: OK
+== test_tm_nightly_lookups.staged.log: OK
+== test_tm_nightly_restart_main.live.log: FAILED (failures=1, errors=1)
+== test_tm_nightly_restart_main.staged.log: FAILED (failures=1, errors=1)
+== test_tm_nightly_split.live.log: OK
+== test_tm_nightly_split.staged.log: OK
+== test_tm_nightly_tests_allow.live.log: OK
+== test_tm_nightly_tests_allow.staged.log: OK
+== test_tm_nightly_unknown_disposition.live.log: OK
+== test_tm_nightly_unknown_disposition.staged.log: OK

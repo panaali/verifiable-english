@@ -1,0 +1,8 @@
+[
+  {"id": "S1", "file": "/home/seyran/code/manage-agents/iso.sh.new-gcpu", "language": "zsh",
+   "bug": "drop tmidle-* from the weight-25 case", "test": "tools-local/test_iso_weight_tmfill.py::IsoWeight::test_idle_fill_scopes_weight_25", "caught": true},
+  {"id": "S2", "file": "/home/seyran/code/manage-agents/iso.sh.new-gcpu", "language": "zsh",
+   "bug": "drop tm-drain-* from the weight-25 case", "test": "tools-local/test_iso_weight_tmfill.py::IsoWeight::test_idle_fill_scopes_weight_25", "caught": true},
+  {"id": "S3", "file": "/home/seyran/code/manage-agents/iso.sh.new-gcpu", "language": "zsh",
+   "bug": "widen the two patterns to tm-* (lowers the escape-fix chain tm-esc-sc7-wordchar too)", "test": "tools-local/test_iso_weight_tmfill.py::IsoWeight::test_chain_and_escape_fix_stay_100", "caught": true}
+]

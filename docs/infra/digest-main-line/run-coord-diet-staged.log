@@ -1,0 +1,407 @@
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-12s_1ycl/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-12s_1ycl/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:171: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-12s_1ycl/state-backup.jsonl' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/state-backup.jsonl", "w").write("".join(l + "\n" for l in lines))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-12s_1ycl/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-iia4qjyb/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-iia4qjyb/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:171: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-iia4qjyb/state-backup.jsonl' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/state-backup.jsonl", "w").write("".join(l + "\n" for l in lines))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-iia4qjyb/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-l3c0vh7x/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-l3c0vh7x/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:171: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-l3c0vh7x/state-backup.jsonl' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/state-backup.jsonl", "w").write("".join(l + "\n" for l in lines))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-l3c0vh7x/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-y22direm/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-y22direm/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-y22direm/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-pebtqbju/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-pebtqbju/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-pebtqbju/inbox/orchestrator/20261109T010000Z-advisor-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/inbox/orchestrator/20261113T010000Z-dri-x-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:90: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/PORTFOLIO-PINS.tsv' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/PORTFOLIO-PINS.tsv", "w").write("# h\ngate-tie-test-split\t2099-01-01T00:00Z\tx\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/inbox/orchestrator/20261113T010001Z-dri-x-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-4o5y9zqt/inbox/orchestrator/20261113T010002Z-dri-x-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/orchestrator/20261113T010000Z-dri-c2-disk-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/orchestrator/20261113T010001Z-fable-architect-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/orchestrator/20261113T010002Z-dri-blind-x-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/orchestrator/20261113T010003Z-dri-decider-4.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/PORTFOLIO-PINS.tsv' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/PORTFOLIO-PINS.tsv", "w").write("# h\nanthropic-rsp-fidelity-fix\t2099-01-01T00:00Z\tx\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/orchestrator/20261113T010004Z-anthropic-rsp-fidelity-fix-2-5.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/dri/20261113T050913Z-kb-1-6.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:103: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/merge-train-kb-1.final.md' mode='w' encoding='UTF-8'>
+  f = f"{self.m}/merge-train-kb-1.final.md"; open(f, "w").write("merge train refused: reserves a signature for the DRI\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/dri/20261113T010005Z-orchestrator-7.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x0nj4_y9/inbox/dri/20261113T010006Z-orchestrator-8.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-o00j94sz/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-o00j94sz/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-o00j94sz/inbox/orchestrator/20261113T010000Z-dri-gate-time-77.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-o00j94sz/inbox/orchestrator/20261113T010001Z-dri-decider-78.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-o00j94sz/inbox/orchestrator/20261113T010002Z-svc-bottleneck-79.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-rg12br37/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-rg12br37/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-mueo48dy/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-mueo48dy/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-mueo48dy/inbox/lead/20261109T010000Z-mac-down-check-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-mueo48dy/inbox/lead/20261109T010001Z-mac-down-check-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/inbox/orchestrator/20261113T010000Z-lead-proxy-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/inbox/orchestrator/20261113T010001Z-lead-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/inbox/lead/20261113T010002Z-dri-x-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-exqsilq9/inbox/orchestrator/20261113T010003Z-dri-x-4.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-h2vi53kp/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-h2vi53kp/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-h2vi53kp/inbox/lead/20261109T010000Z-dri-cloud3-logins-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cusbx7_g/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cusbx7_g/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cusbx7_g/inbox/orchestrator/20261113T010000Z-dri-decider-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cusbx7_g/inbox/orchestrator/20261113T010001Z-dri-decider-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cusbx7_g/inbox/orchestrator/20261113T010002Z-fable-architect-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-kjt1ez95/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-kjt1ez95/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-kjt1ez95/inbox/orchestrator/20261109T010000Z-verdict-sample-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/inbox/orchestrator/20261114T015609Z-dri-blind-rsp-revise-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/inbox/orchestrator/20261114T162654Z-dri-blind-rsp-revise2-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/inbox/orchestrator/20261114T232125Z-dri-replan-lean-lw-1114-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/inbox/orchestrator/20261116T105851Z-dri-decider-4.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-j5s1llmb/inbox/orchestrator/20261116T105852Z-dri-x-5.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/inbox/orchestrator/20261113T010000Z-main-guard-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/inbox/orchestrator/20261113T010001Z-dri-build-speed-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/inbox/orchestrator/20261113T010002Z-cloud-pull-3.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-97f6de1o/inbox/orchestrator/20261113T010003Z-mac-last-resort-4.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-3mu67o75/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-3mu67o75/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-3mu67o75/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-3mu67o75/inbox/orchestrator/20261109T010001Z-DRI-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:143: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/reviews/advisor/s1-still-open.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/s1-still-open.md", "w").write("## STILL OPEN ADV-20261108T0531-1: g\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:144: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/reviews/advisor/s2-still-open.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/s2-still-open.md", "w").write("## STILL OPEN ADV-20261108T0531-2: g\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/inbox/orchestrator/20261109T010000Z-advisor-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-cvrb1wrg/inbox/orchestrator/20261109T010001Z-advisor-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-e_l_woz0/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-e_l_woz0/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-e_l_woz0/inbox/orchestrator/note.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-qqz7046o/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-qqz7046o/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/inbox/dri/20261113T010000Z-dri-x-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/inbox/dri/20261113T010001Z-orchestrator-2.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:132: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/x-build.final.md' mode='w' encoding='UTF-8'>
+  f1 = f"{self.m}/x-build.final.md"; open(f1, "w").write("STOP: reserves a signature for the DRI (row 3)\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:133: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-392_5zzu/kb-9.final.md' mode='w' encoding='UTF-8'>
+  f2 = f"{self.m}/kb-9.final.md"; open(f2, "w").write("STOP: merge train refused: reserves a signature for the DRI\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-whvd06o4/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-whvd06o4/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-whvd06o4/inbox/orchestrator/20261109T010000Z-cloud-pull-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-a_grk_0c/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-a_grk_0c/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-a_grk_0c/inbox/orchestrator/20261109T010000Z-cloud-pull-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8vumhdev/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8vumhdev/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8vumhdev/inbox/orchestrator/20261109T010000Z-DRI-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-k544izlb/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-k544izlb/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-k544izlb/inbox/orchestrator/20261109T010000Z-cloud-pull-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:201: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/inbox-wait.sh.new-dml' mode='r' encoding='UTF-8'>
+  src = open(IW).read().replace("M=/home/seyran/code/manage-agents", f"M={self.m}")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-k544izlb/iw.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/iw.sh", "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8c73jnml/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8c73jnml/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8c73jnml/inbox/orchestrator/20261113T010000Z-dri-x-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:223: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8c73jnml/inbox/.orchestrator-digest-last' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/inbox/.orchestrator-digest-last", "w").write(str(int(time.time()) - 7200))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:201: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/inbox-wait.sh.new-dml' mode='r' encoding='UTF-8'>
+  src = open(IW).read().replace("M=/home/seyran/code/manage-agents", f"M={self.m}")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-8c73jnml/iw.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/iw.sh", "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-jiev7hj8/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-jiev7hj8/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-jiev7hj8/inbox/orchestrator/20261113T010000Z-dri-x-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:230: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-jiev7hj8/inbox/.orchestrator-digest-last' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/inbox/.orchestrator-digest-last", "w").write(str(int(time.time()) - 60))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:201: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/inbox-wait.sh.new-dml' mode='r' encoding='UTF-8'>
+  src = open(IW).read().replace("M=/home/seyran/code/manage-agents", f"M={self.m}")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-jiev7hj8/iw.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/iw.sh", "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x3zl5k8p/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x3zl5k8p/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x3zl5k8p/inbox/orchestrator/20261109T010000Z-cloud-pull-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:201: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/inbox-wait.sh.new-dml' mode='r' encoding='UTF-8'>
+  src = open(IW).read().replace("M=/home/seyran/code/manage-agents", f"M={self.m}")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-x3zl5k8p/iw.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/iw.sh", "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_coord_diet.py:16: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-vmgua184/CURRENT-STATE.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/CURRENT-STATE.md", "w").write("- 2026-11-09 10:00Z (dri-decider) ADV-20261109T0900-1 accepted\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:17: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-vmgua184/reviews/advisor/LEDGER.md' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/reviews/advisor/LEDGER.md", "w").write(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:27: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-vmgua184/inbox/orchestrator/20261109T010000Z-cloud2-guard-1.md' mode='w' encoding='UTF-8'>
+  open(p, "w").write(text); return p
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:201: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/inbox-wait.sh.new-dml' mode='r' encoding='UTF-8'>
+  src = open(IW).read().replace("M=/home/seyran/code/manage-agents", f"M={self.m}")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_coord_diet.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cdtest-vmgua184/iw.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.m}/iw.sh", "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 29 tests in 100.926s
+
+OK

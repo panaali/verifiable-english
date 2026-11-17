@@ -1,0 +1,51 @@
+TSH=/home/seyran/code/manage-agents/tm-shard.sh.new-tsa
+LIVE=/home/seyran/code/manage-agents/tm-shard.sh
+== (1) the 0600Z inputs: parts fit 120 min - headroom
+  ok   p4: 30 mutants sent to actions as parts (exit 0, 8 dispatched)
+  ok   p4: each part's predicted total 5020 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)
+  ok   p4: the log names the records' worst setup and p90 and the part line
+  ok   p3: 60 mutants sent to actions as parts (exit 0, 10 dispatched)
+  ok   p3: each part's predicted total 5920 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)
+  ok   p3: the log names the records' worst setup and p90 and the part line
+  ok   84 mutants: not sent on actions (exit 3, nothing dispatched) or every part's predicted total < 6000
+== (2) a per-mutant reading from the records above the floor is used
+  ok   reading 300: the parts are sized at 300 slot-s per mutant (estimate 3092 s)
+  ok   reading 300: the log says it sized at the records' p90
+  ok   reading 50: the parts are sized at 80 slot-s per mutant (estimate 1897 s)
+  ok   reading 50: the log does not say it sized at the records' p90
+== (3) every Actions part gets a --budget below the limit
+  ok   sharded: 8 parts, each with --budget <= 6300
+  ok   sharded beside the caller's --budget 9000 and far --deadline: each part also has --budget <= 6300
+  ok   unsharded (5 mutants fit one part): the one dispatch has --budget <= 6300
+  ok   TM_PART_BUDGET 99999 is cut to LIMIT - PRE (6900)
+  ok   a malformed TM_PART_BUDGET gives the computed --budget 6300 (never no budget)
+  ok   TM_PART_DEADLINE off: no --budget added, as before
+== (4) other pools dispatch exactly as the live tm-shard.sh
+  ok   claude-cloud, 300 mutants (tm-spm '40 pool'): exit, dispatch calls and log lines = the live tm-shard.sh's (6 calls)
+  ok   claude-cloud, 60 mutants (tm-spm '300 pool'): exit, dispatch calls and log lines = the live tm-shard.sh's (2 calls)
+  ok   codex, 300 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (5 calls)
+  ok   claude, 300 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (2 calls)
+  ok   codex, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
+  ok   claude-cloud, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
+  note mac-pytest.sh's Mac/VM part runs build their args from the caller's (tmparts: pa/pn), never from tm-shard's
+== (6) the per-mutant reading counts only the mutants a run judged itself (review F1: sharded, reused, resumed rows)
+  ok   part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [mirror]: reading 1800
+  ok   part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [record()]: reading 1800
+  ok   part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [mirror]: reading 1800
+  ok   part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [record()]: reading 1800
+  ok   --rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800
+  ok   --rescore part 1/4 of 32: 6 reused_from, 2 judged [record()]: reading 1800
+  ok   --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800
+  ok   --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [record()]: reading 1800
+  ok   --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [mirror]: reading 1800
+  ok   --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [record()]: reading 1800
+  ok   --resume ignored (a full run): 8 judged [mirror]: reading 1800
+  ok   --resume ignored (a full run): 8 judged [record()]: reading 1800
+  ok   a full reuse (every own row reused_from): no reading [mirror]: reading None
+  ok   a full reuse (every own row reused_from): no reading [record()]: reading None
+  ok   a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [mirror]: reading 1800
+  ok   a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [record()]: reading 1800
+== (5) tools-local/test_tm_shard_fallback_overwrite.py with TMS = the tm-shard.sh under test
+  ok   it exits 0
+PASS: 0 failed
+exit 0

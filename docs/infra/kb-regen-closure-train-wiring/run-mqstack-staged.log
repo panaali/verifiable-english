@@ -1,0 +1,91 @@
+== merge-train.sh STACKED SPECULATIVE REGEN (MQ_STACK_SPEC, L162)
+F0 flag off: b (Lean) conflicts with c's candidate on the inventory -> waits for c with its speculative regen, as before
+  ok   off: b waits, no gate of b, no stack
+  ok   off: the live wait line, exactly (queue base = c's candidate, the spec regen named)
+  ok   off: c then b published; b used its spec regen after c published
+  ok   off: candregen refreshed the contract on b's candidate; no stacked_spec field
+(i) stacked on the tail, c passes: b gates while c gates, publishes by fast-forward after c; published = gated; at-merge file refreshed
+  ok   b stacked on c's candidate and its gate started while c gates (main unchanged, c not published)
+  ok   b's candidate = c's candidate + S; S = branch head h + c's candidate, regenerated (Lean inventory commit)
+  ok   S's inventory has b and c; the stale contract in S was refreshed by candregen on the stacked candidate (F1)
+  ok   the branch ref stays at h while b gates; refs/ve-spec/b = S
+  ok   the candidate's message names the stacked regen
+  ok   b passed and waits for c (main unchanged)
+  ok   c then b published; main = b's gated candidate, gated once
+  ok   the branch fast-forwarded to S only after publication; refs/ve-spec/b dropped
+  ok   records: published line, cl1, gate-records stacked_spec {s, c}
+  ok   the published tree equals the flag-off path's (F0)
+  ok   no cancel, no rebuild; the stacked verdict line for guard 3
+(ii) c fails while b is stacked on it: b's Mac leg stopped, cancel line, b rebuilt on main, not blamed, published
+  ok   c STOP on its own failure; b's first Mac run stopped
+  ok   cancel line with the leg, its runner count and minutes
+  ok   b not blamed: no FAIL, no verify-fix, no STOP; published on main, second gate, without c
+  ok   the branch never moved to S (c was never in main); its own head published
+(iii) main moves outside the queue: c and b rebuilt; b stacks again on c's new candidate; order kept
+  ok   both published; c = moved main + c; b = c + S; each gated twice
+  ok   b stacked twice (the second time on c's new candidate), one cancel line
+(iv) b fails while c gates, c publishes: branch fast-forwarded to S, then b's own failure, ONE verify-fix on S's tree
+  ok   b's FAIL waits for c's own record (no verdict, branch still at h)
+  ok   c published; b: own failure, fast-forward to S before the verify-fix
+  ok   one verify-fix, run on S (the tree that failed); the stacked FAIL line for guard 3
+  ok   b's second candidate published on c with the fix and S
+(v) the conflicting candidate is not the tail (p, then n stacked on it; b conflicts with p only): b waits as before
+  ok   b: spec regen on p's candidate, does not stack, waits (no gate of b)
+  ok   p, n, b published in order; b never stacked
+(vi) depth cap: n (no conflict) and c (Lean, the tail) below b -> 2 unpublished below: b waits; MQ_STACK_SPEC_DEPTH=3 is capped at 2
+  ok   depth 2: b waits (no gate of b)
+  ok   depth 2: all three published in order
+  ok   MQ_STACK_SPEC_DEPTH=3 is capped at 2 in v1 (ruling (a)): b waits
+  ok   capped: all three published in order
+(vi-c) 2026-11-09 depth=3 in MQ_STACK_SPEC (DRI 01:05Z): n and c (Lean, the tail) below b -> b stacks at depth 3 of 3
+  ok   depth=3: b stacked at depth 3 of 3 and its gate started (n, c unpublished)
+  ok   depth=3: all three published in order
+  ok   depth=3 in the file, MQ_STACK_SPEC_DEPTH=2 in the environment lowers it: b waits
+(vii-a) trains started under MQ_BATCH (qb set), the file removed before b's decision: no stacking, no hang
+  ok   qb set: b did not stack, waits
+  ok   both published, c first (no hang in qbclaim)
+(vii-b) MQ_BATCH created after the trains started (qb empty): no stacking
+  ok   file present: b did not stack, waits
+  ok   both published, c first
+(viii) the speculative regen touches a file outside the owner list: no S, no stacking; b waits as before
+  ok   the regen was refused (owner extra) and S not made
+  ok   c then b published, b never stacked
+(ix) MQ_SENIOR: junior d defers to senior b while b still regenerates on c; b stacks first; d then enters on b
+  ok   b registered as a waiter for c before its regen (F7)
+  ok   d made its own S but defers (no gate of d)
+  ok   b stacked on c before d went on; d did not stack on c (no longer the tail)
+  ok   after c published, d entered the queue on b's candidate while b gates
+  ok   c, b, d published in order; d on b
+(ix-b) MQ_SENIOR, review finding 1: an older train in a PLAIN wait for c (not regenerating) does not hold b back
+  ok   b stacked at once, no seniority wait for o
+  ok   c then b published
+(x) MQ_STACK_SPEC removed while d defers: b waits as before; d's stack is dropped under the queue lock (stkdrop), no deadlock
+  ok   b waited as before (flag gone), d dropped its stack under the lock; nobody gated behind c
+  ok   all three published, c first
+(xi) v2 non-tail: p (Lean), n (test) stacked behind it; b conflicts with p only -> spec regen on n's candidate (the tail), b stacked on n at depth 3 of 4
+  ok   v2: the regen ran on the tail's candidate (n), the stack line names p as the conflict
+  ok   v2: b's candidate = n's candidate + S; S contains p's and n's candidates and h; branch at h; main unchanged
+  ok   v2: S's inventory lists P and B; candregen refreshed the contract on b's candidate
+  ok   v2: p, n, b published in order; main = b's gated candidate, gated once; branch fast-forwarded to S after
+  ok   v2: gate record stacked_spec with v2=1, x_label=p, c = n's candidate
+(xi-b) the same with MQ_STACK_V2 absent: b refuses (not the tail) and waits for p, as v1
+  ok   no v2: regen on p, refusal with the v1 text, no gate of b
+  ok   no v2: p, n, b published in order
+(xii) v2 depth: p (Lean), n1, n2 (tests) below b -> b stacks at depth 4 of 4; e (Lean) then has 4 below -> refused, waits
+  ok   v2: b stacked on n2 at depth 4 of 4 (conflict with p)
+  ok   v2: e refused at depth 5 (4 below), waits for p as v1; no gate of e
+  ok   v2: p, n1, n2, b, e published in order
+(xii-b) MQ_STACK_SPEC_DEPTH=3 lowers the v2 cap: b (3 below) is refused
+  ok   lowered: b waits, no gate of b
+  ok   lowered: all published, b last
+(xiii) v2: p (the conflicting one, below the tail n) FAILS while b is stacked on n: b's leg stopped, cancelled, rebuilt, not blamed
+  ok   v2: b stacked on n (conflict with p)
+  ok   p STOPs on its own failure; b's first Mac run stopped; cancel line for b
+  ok   b not blamed (no verify-fix, no STOP), gated again, published after n on main without p; branch never moved to S
+(xiv) inline guard (stkv2): a red nightly of a stacked publish turns MQ_STACK_V2 off at the next v2 decision; clean -> stays
+  ok   clean: stkv2 true, the flag stays, no message
+  ok   red nightly of the stacked publish: stkv2 false, MQ_STACK_V2 renamed .off-<stamp>, MQ_STACK_SPEC .off too (guard 1), orchestrator told
+  ok   rate limit: within 5 min of the last check the guard does not run again
+(unit) stkcancel: stopped legs with shard counts from the leg logs (mtime >= the gate start), legs run to the end, minutes
+  ok   unit: arm n=5 from its log, x86 n=1 (its sharded log is older than the gate), mac ran to the end, 2 min
+== stacked spec regen: 68 passed, 0 failed

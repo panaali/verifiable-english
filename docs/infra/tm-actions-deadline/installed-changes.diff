@@ -1,0 +1,44 @@
+--- cloud-tm-job.sh.bak-20261117tad	2026-11-08 14:53:14.908008444 +0000
++++ cloud-tm-job.sh	2026-11-17 12:35:26.786663159 +0000
+@@ -13,6 +13,11 @@
+ # 2026-10-31 eff-tm-partial: a `--budget S` among the trust_mutants args (tm-shard.sh, flag TM_PART_DEADLINE) counts
+ #   from this script's start, not the tool's (the cache restore, uv sync and the branch's lake build come first): it is
+ #   passed as `--deadline <start + S>` (unix seconds). The tool then writes a partial record (exit 4) before the job limit.
++# 2026-11-17 tm-actions-deadline (reviews/dri-decisions-20261117-tm-drain-vm1-idle.md item 2): trust_mutants gets exactly
++#   ONE --deadline, the EARLIEST of every caller --deadline T and every <start + S> of a --budget S (both forms, `--x V`
++#   and `--x=V`); before, a caller's far --deadline kept beside the budget's won and Actions parts ran into the 120-min
++#   cancel. A value that is not 1-12 digits (a decimal part allowed), or a flag with no value, refuses the job here,
++#   before any build (machine.txt says why, timings.tsv row args 2, DONE 2, trust_mutants not run): a bound is never dropped.
+ # Tests only: CLOUD_TM_LEAN_BIN (a dir prepended to PATH), CLOUD_TM_TMP (default /tmp), CLOUD_TM_START (the start time).
+ set -u
+ T0=${CLOUD_TM_START:-$(date +%s)}
+@@ -36,6 +41,18 @@
+   printf '%s\t%s\t%s\n' "$name" "$rc" "$(awk -v a="$t0" -v b="$(now)" 'BEGIN{printf "%.1f", b-a}')" >> "$P"; return $rc; }
+ finish(){ echo "$1" > "$O/DONE"; exit "$1"; }
+ { echo "job=$JOB nproc=$(nproc) host=$(hostname) date=$(date -u +%FT%TZ)"; free -g | sed -n 2p; df -h / | tail -1; uptime; } > "$O/machine.txt"
++refuse(){ echo "refused: $1" >> "$O/machine.txt"; printf 'args\t2\t0\n' >> "$P"; finish 2; }
++targs=(); dls=(); a=("$@"); i=0  # tm-actions-deadline (header): one --deadline, the earliest; a malformed bound refuses
++while [ $i -lt ${#a[@]} ]; do f=${a[$i]}
++  case $f in --budget|--deadline) [ $((i + 1)) -lt ${#a[@]} ] || refuse "$f has no value"
++                                  v=${a[$((i + 1))]}; i=$((i + 2));;
++             --budget=*|--deadline=*) v=${f#*=}; f=${f%%=*}; i=$((i + 1));;
++             *) targs+=("$f"); i=$((i + 1)); continue;; esac
++  [[ $v =~ ^[0-9]{1,12}(\.[0-9]+)?$ ]] || refuse "$f ${v:0:40} is not a number of seconds"
++  if [ "$f" = --deadline ]; then dls+=("$v")
++  elif [[ $v =~ ^[0-9]+$ ]]; then dls+=($(( T0 + 10#$v )))
++  else dls+=("$(awk -v a="$T0" -v b="$v" 'BEGIN{printf "%.3f", a + b}')"); fi; done
++[ ${#dls[@]} -gt 0 ] && targs+=(--deadline "$(printf '%s\n' "${dls[@]}" | sort -g | head -n 1)")
+ cd "$R" || finish 2
+ [ "$(git rev-parse HEAD)" = "$HEAD_SHA" ] || { echo "HEAD is not $HEAD_SHA" >> "$O/machine.txt"; finish 2; }
+ git cat-file -e "$BASE^{commit}" 2>/dev/null || step fetch_history git fetch -q --unshallow origin || step fetch_history2 git fetch -q origin
+@@ -100,10 +117,6 @@
+     sys.exit("the shipped --resume record does not match its sha256")
+ os.makedirs(os.path.dirname(sys.argv[2]), exist_ok=True); open(sys.argv[2], "wb").write(raw)' "$(dirname "$0")/job.json" "$R/ci-job/resume.json" || finish 2;;
+ esac
+-targs=()  # eff-tm-partial (header): --budget S -> --deadline T0 + S
+-while [ $# -gt 0 ]; do
+-  if [ "$1" = --budget ] && [ $# -ge 2 ] && [[ $2 =~ ^[0-9]+$ ]]; then targs+=(--deadline $(( T0 + $2 ))); shift 2
+-  else targs+=("$1"); shift; fi; done
+ step trust_mutants uv run --frozen python tools/trust_mutants.py --base "$BASE" ${targs[@]+"${targs[@]}"} --json "$O/trust-mutants.json"
+ echo $? > "$O/tm.rc"
+ finish 0

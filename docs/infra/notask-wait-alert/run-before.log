@@ -1,0 +1,16 @@
+# BN_SCRIPT=<staged scan before review F1> python3 -I tools-local/test_bottleneck_scan.py
+ERROR: test_every_bucket_capacity_or_not
+FAIL: test_f1_no_task_hours_not_a_capacity_hint
+FAIL: test_no_bucket_literal_outside_the_table
+Ran 25 tests in 1.583s
+FAILED (failures=2, errors=1)
+# BN_SCRIPT=tools-local/bottleneck-scan.py (live) python3 -I tools-local/test_bottleneck_scan.py
+ERROR: test_every_bucket_capacity_or_not
+ERROR: test_f1_no_task_hours_not_a_capacity_hint
+ERROR: test_no_infra_log_no_cause
+FAIL: test_no_bucket_literal_outside_the_table
+FAIL: test_6_six_rows_six_hours_own_cause_not_accounts
+FAIL: test_7_real_account_wait_still_accounts
+FAIL: test_buckets
+Ran 25 tests in 1.130s
+FAILED (failures=4, errors=3)
