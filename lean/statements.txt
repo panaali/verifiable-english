@@ -58805,12 +58805,24 @@ theorem VE.Route.MeteredProofs.order_sound
           b = fs.all fun f => VE.Order.Formula.eval M [] f
   -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered VE.Time.evalB@VE.Time.Budget
   -- expr 1155899805
+theorem VE.Route.MeteredRun.actsCase_ok
+  ∀ (j environment : Lean.Json),
+    j.getObjVal? "environment" = Except.ok environment →
+      VE.Route.MeteredRun.actsCase j = VE.Service.Standalone.readsApart environment
+  -- uses VE.Route.MeteredRun.actsCase@VE.Route.MeteredRun VE.Service.Standalone.readsApart@VE.Service.Standalone
+  -- expr 704834670
 theorem VE.Route.MeteredRun.answer_evaluate
   ∀ {α ρ σ entity : Type} (q : VE.Route.MeteredRun.Query) (s : VE.Route.MeteredRun.Session α ρ σ entity) (fs : List α),
     VE.Route.MeteredRun.EncodesEvaluation q.id (s.document fs)
       (VE.Route.MeteredRun.answer q s (VE.Route.MeteredRun.Request.evaluate fs))
   -- uses VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.Request.evaluate@VE.Route.MeteredRun VE.Route.MeteredRun.Session.document@VE.Route.MeteredRun VE.Route.MeteredRun.Session@VE.Route.MeteredRun VE.Route.MeteredRun.answer@VE.Route.MeteredRun
   -- expr 4266498267
+theorem VE.Route.MeteredRun.legacyCase_ok
+  ∀ (j environment : Lean.Json),
+    j.getObjVal? "environment" = Except.ok environment →
+      VE.Route.MeteredRun.legacyCase j = VE.Service.Standalone.isLegacy environment
+  -- uses VE.Route.MeteredRun.legacyCase@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone
+  -- expr 2761649199
 theorem VE.Route.MeteredRun.metered_wire_sound
   ∀ (j answer : Lean.Json),
     VE.Route.MeteredRun.runCase j = Except.ok answer →
@@ -58826,6 +58838,63 @@ theorem VE.Route.MeteredRun.metered_wire_sound
                         answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCase@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluable@VE.Service.Standalone
   -- expr 1220572776
+theorem VE.Route.MeteredRun.metered_wire_sound_acts
+  ∀ (j answer : Lean.Json),
+    VE.Route.MeteredRun.runCaseActs j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id environment checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok environment ∧
+              VE.Service.Standalone.evaluableActs environment = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked (VE.Route.MeteredRun.prepareActs environment) model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧
+                      VE.Route.MeteredRun.EvaluationAnswer q checked (VE.Route.MeteredRun.prepareActs environment) model
+                        answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepareActs@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseActs@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluableActs@VE.Service.Standalone
+  -- expr 3283078964
+theorem VE.Route.MeteredRun.metered_wire_sound_current
+  ∀ (j answer : Lean.Json),
+    VE.Route.MeteredRun.runCaseCurrent j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id environment checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok environment ∧
+              VE.Service.Standalone.evaluableCurrent environment = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked (VE.Route.MeteredRun.prepareCurrent environment) model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧
+                      VE.Route.MeteredRun.EvaluationAnswer q checked (VE.Route.MeteredRun.prepareCurrent environment)
+                        model answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepareCurrent@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseCurrent@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluableCurrent@VE.Service.Standalone
+  -- expr 2860683478
+theorem VE.Route.MeteredRun.metered_wire_sound_legacy
+  ∀ (j answer : Lean.Json),
+    VE.Route.MeteredRun.runCaseLegacy j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id environment checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok environment ∧
+              VE.Service.Standalone.evaluableLegacy environment = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked (VE.Route.MeteredRun.prepareLegacy environment) model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧
+                      VE.Route.MeteredRun.EvaluationAnswer q checked (VE.Route.MeteredRun.prepareLegacy environment) model
+                        answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepareLegacy@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseLegacy@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluableLegacy@VE.Service.Standalone
+  -- expr 733671226
+theorem VE.Route.MeteredRun.prepare_acts
+  ∀ (environment : Lean.Json),
+    VE.Service.Standalone.isLegacy environment = Bool.false →
+      VE.Route.MeteredRun.prepare environment = VE.Route.MeteredRun.prepareActs environment
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.prepareActs@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone
+  -- expr 2799599808
+theorem VE.Route.MeteredRun.prepare_legacy
+  ∀ (environment : Lean.Json),
+    VE.Service.Standalone.isLegacy environment = Bool.true →
+      VE.Route.MeteredRun.prepare environment = VE.Route.MeteredRun.prepareLegacy environment
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.prepareLegacy@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone
+  -- expr 3810464891
 theorem VE.Route.MeteredRun.prepare_profile
   ∀ (environment : Lean.Json),
     (VE.Route.MeteredRun.prepare environment).profile.get =
@@ -58863,6 +58932,36 @@ theorem VE.Route.MeteredRun.request_evaluate
         ∃ fs, formulas q.input = Except.ok fs ∧ fs ≠ [] ∧ r = VE.Route.MeteredRun.Request.evaluate fs
   -- uses VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.Request.evaluate@VE.Route.MeteredRun VE.Route.MeteredRun.Request@VE.Route.MeteredRun VE.Route.MeteredRun.request@VE.Route.MeteredRun
   -- expr 1811396450
+theorem VE.Route.MeteredRun.runCaseReported_today
+  ∀ (j : Lean.Json),
+    VE.Route.MeteredRun.runCaseReported j =
+      VE.Route.MeteredRun.reportedWith (VE.Route.MeteredRun.prepare <$> j.getObjVal? "environment") j
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.reportedWith@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun
+  -- expr 507965941
+theorem VE.Route.MeteredRun.runCase_split
+  ∀ (j : Lean.Json),
+    VE.Route.MeteredRun.runCase j =
+      if VE.Route.MeteredRun.legacyCase j = Bool.true then VE.Route.MeteredRun.runCaseLegacy j
+      else
+        if VE.Route.MeteredRun.actsCase j = Bool.true then VE.Route.MeteredRun.runCaseActs j
+        else VE.Route.MeteredRun.runCaseCurrent j
+  -- uses VE.Route.MeteredRun.actsCase@VE.Route.MeteredRun VE.Route.MeteredRun.legacyCase@VE.Route.MeteredRun VE.Route.MeteredRun.runCase@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseActs@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseCurrent@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseLegacy@VE.Route.MeteredRun
+  -- expr 3446902463
+theorem VE.Route.MeteredRun.runWith_congr
+  ∀ (p p' : VE.Route.MeteredRun.Prepared) (j : Lean.Json),
+    p.checked = p'.checked →
+      (∀ (c : VE.Service.Standalone.Validated), p.checked = Except.ok c → p = p') →
+        VE.Route.MeteredRun.runWith (Except.ok p) j = VE.Route.MeteredRun.runWith (Except.ok p') j
+  -- uses VE.Route.MeteredRun.Prepared.checked@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 4243406818
+theorem VE.Route.MeteredRun.runWith_prepare_current
+  ∀ (environment j : Lean.Json),
+    VE.Service.Standalone.isLegacy environment = Bool.false →
+      VE.Service.Standalone.readsApart environment = Bool.false →
+        VE.Route.MeteredRun.runWith (Except.ok (VE.Route.MeteredRun.prepare environment)) j =
+          VE.Route.MeteredRun.runWith (Except.ok (VE.Route.MeteredRun.prepareCurrent environment)) j
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.prepareCurrent@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun VE.Service.Standalone.isLegacy@VE.Service.Standalone VE.Service.Standalone.readsApart@VE.Service.Standalone
+  -- expr 3972213191
 theorem VE.Route.MeteredRun.runWith_sound
   ∀ (prepared : Except String VE.Route.MeteredRun.Prepared) (j answer : Lean.Json),
     VE.Route.MeteredRun.runWith prepared j = Except.ok answer →
@@ -58876,6 +58975,17 @@ theorem VE.Route.MeteredRun.runWith_sound
                     q.id = id ∧ VE.Route.MeteredRun.EvaluationAnswer q checked p model answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.checked@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone
   -- expr 1377892341
+theorem VE.Route.MeteredRun.runWith_split
+  ∀ (j : Lean.Json),
+    VE.Route.MeteredRun.runWith (VE.Route.MeteredRun.prepare <$> j.getObjVal? "environment") j =
+      if VE.Route.MeteredRun.legacyCase j = Bool.true then
+        VE.Route.MeteredRun.runWith (VE.Route.MeteredRun.prepareLegacy <$> j.getObjVal? "environment") j
+      else
+        if VE.Route.MeteredRun.actsCase j = Bool.true then
+          VE.Route.MeteredRun.runWith (VE.Route.MeteredRun.prepareActs <$> j.getObjVal? "environment") j
+        else VE.Route.MeteredRun.runWith (VE.Route.MeteredRun.prepareCurrent <$> j.getObjVal? "environment") j
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.actsCase@VE.Route.MeteredRun VE.Route.MeteredRun.legacyCase@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.prepareActs@VE.Route.MeteredRun VE.Route.MeteredRun.prepareCurrent@VE.Route.MeteredRun VE.Route.MeteredRun.prepareLegacy@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun
+  -- expr 1576095685
 theorem VE.Route.MeteredRun.run_closure_sound
   ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
     (model answer : Lean.Json),
@@ -58949,6 +59059,19 @@ theorem VE.Route.MeteredRun.run_order_sound
                           result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
   -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.ProfileAdmits@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
   -- expr 2770110657
+theorem VE.Route.MeteredRun.wire_sound_of
+  ∀ (prep : Lean.Json → VE.Route.MeteredRun.Prepared) (j answer : Lean.Json),
+    VE.Route.MeteredRun.runWith (prep <$> j.getObjVal? "environment") j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id environment checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok environment ∧
+              (prep environment).checked = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked (prep environment) model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧ VE.Route.MeteredRun.EvaluationAnswer q checked (prep environment) model answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.checked@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 132139965
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
@@ -65604,12 +65727,117 @@ theorem VE.Service.Readings.resolve_choice
     VE.Service.Readings.resolve sets is = Option.some choice → VE.Service.Readings.Choice sets choice
   -- uses VE.Formula@VE.Syntax VE.Service.Readings.Choice@VE.Service.Readings VE.Service.Readings.resolve@VE.Service.Readings
   -- expr 2309747103
+theorem VE.Service.Standalone.actsRead_plain
+  ∀ (environment : Lean.Json),
+    (VE.Norms.Wire.actsProfiles Bool.true environment).isEmpty = Bool.true →
+      VE.Service.Standalone.actsRead environment = Except.ok environment
+  -- uses VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Service.Standalone.actsRead@VE.Service.Standalone
+  -- expr 2235938492
+theorem VE.Service.Standalone.checkRegulated_today
+  ∀ (environment : Lean.Json) (predicates : List (String × Lean.Json)),
+    VE.Service.Standalone.checkRegulated environment predicates = do
+      let __discr ← VE.Service.Standalone.regulatedOf environment predicates
+      have x : List VE.Norms.Regulated := __discr
+      Pure.pure ()
+  -- uses VE.Norms.Regulated@VE.Norms.Tree VE.Service.Standalone.checkRegulated@VE.Service.Standalone VE.Service.Standalone.regulatedOf@VE.Service.Standalone
+  -- expr 1919440209
 theorem VE.Service.Standalone.checkedModelTables_error_preserved
   ∀ (environment model : Lean.Json) (fault : VE.Service.Standalone.ModelFault),
     VE.Service.Standalone.locatedModelTables✝ environment model = Except.error fault →
       VE.Service.Standalone.checkedModelTables environment model = Except.error fault
   -- uses VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.locatedModelTables@VE.Service.Standalone
   -- expr 171467256
+theorem VE.Service.Standalone.decodeEnvelope_no_unit_schema
+  ∀ (view : Lean.Json) (e : VE.Route.Gate.Envelope),
+    VE.Route.Gate.decodeEnvelope view = Except.ok e → (view.getObjVal? "unit_schema").isOk = Bool.false
+  -- uses VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate
+  -- expr 3019737683
+theorem VE.Service.Standalone.evaluableActs_today
+  ∀ (environment : Lean.Json),
+    VE.Service.Standalone.evaluableActs environment = do
+      let __do_lift ← VE.Compose.decidingEnvironment environment
+      VE.Service.Standalone.validated __do_lift
+  -- uses VE.Compose.decidingEnvironment@VE.Compose.Dispatch VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluableActs@VE.Service.Standalone VE.Service.Standalone.validated@VE.Service.Standalone
+  -- expr 1258715121
+theorem VE.Service.Standalone.modelEnvironment_current
+  ∀ (environment view : Lean.Json) (e : VE.Route.Gate.Envelope),
+    VE.Compose.decidingEnvironment environment = Except.ok view →
+      VE.Service.Standalone.modelViewDropped environment view = Bool.false →
+        VE.Route.Gate.decodeEnvelope view = Except.ok e →
+          VE.Service.Standalone.modelEnvironment environment = VE.Service.Standalone.modelEnvironmentCurrent environment
+  -- uses VE.Compose.decidingEnvironment@VE.Compose.Dispatch VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Service.Standalone.modelEnvironment@VE.Service.Standalone VE.Service.Standalone.modelEnvironmentCurrent@VE.Service.Standalone VE.Service.Standalone.modelViewDropped@VE.Service.Standalone
+  -- expr 4038069973
+theorem VE.Service.Standalone.profileTreeWith_plain
+  ∀ (environment : Lean.Json),
+    (VE.Norms.Wire.actsProfiles Bool.true environment).isEmpty = Bool.true →
+      VE.Service.Standalone.profileTreeWith VE.Norms.Wire.ActsHook.plain environment =
+        VE.Service.Standalone.profileTree environment
+  -- uses VE.Norms.Tree@VE.Norms.Tree VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Service.Standalone.profileTree@VE.Service.Standalone VE.Service.Standalone.profileTreeWith@VE.Service.Standalone
+  -- expr 2711920508
+theorem VE.Service.Standalone.profileTree_today
+  ∀ (modelEnv : Lean.Json),
+    VE.Service.Standalone.profileTree modelEnv = do
+      let __do_lift ← modelEnv.getObjVal? "vocabulary"
+      let __do_lift ← __do_lift.getObjVal? "predicates"
+      let predicates ← VE.Bridge.fields __do_lift
+      have __do_jp : PUnit → Except String (Option VE.Norms.Tree) := fun y => Pure.pure Option.none
+      if
+            (List.any predicates fun x =>
+                match x with
+                | (fst, entry) => (entry.getObjVal? "regulated").isOk) =
+              Bool.true then
+          do
+          let __do_lift ← VE.Service.Standalone.regulatedOf modelEnv predicates
+          Pure.pure (Option.some { regulated := __do_lift, definitions := [], nodes := [] })
+        else do
+          let y ← Pure.pure PUnit.unit
+          __do_jp y
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.mk@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Service.Standalone.Today.validated.match_1@VE.Route.MeteredSplit VE.Service.Standalone.profileTree@VE.Service.Standalone VE.Service.Standalone.regulatedOf@VE.Service.Standalone
+  -- expr 2693515694
+theorem VE.Service.Standalone.regulatedOfWith_plain
+  ∀ (environment : Lean.Json),
+    (VE.Norms.Wire.actsProfiles Bool.true environment).isEmpty = Bool.true →
+      VE.Service.Standalone.regulatedOfWith VE.Norms.Wire.ActsHook.plain environment =
+        VE.Service.Standalone.regulatedOf environment
+  -- uses VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.ActsHook.plain@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Service.Standalone.regulatedOf@VE.Service.Standalone VE.Service.Standalone.regulatedOfWith@VE.Service.Standalone
+  -- expr 332663015
+theorem VE.Service.Standalone.regulatedOf_lexical
+  ∀ (environment : Lean.Json),
+    VE.Service.Standalone.regulatedOf environment =
+      VE.Service.Standalone.regulatedOfWith VE.Norms.Wire.ActsHook.lexical environment
+  -- uses VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.ActsHook.lexical@VE.Acts.Hook VE.Service.Standalone.regulatedOf@VE.Service.Standalone VE.Service.Standalone.regulatedOfWith@VE.Service.Standalone
+  -- expr 365924717
+theorem VE.Service.Standalone.regulatedOf_today
+  ∀ (environment : Lean.Json) (predicates : List (String × Lean.Json)),
+    VE.Service.Standalone.regulatedOf environment predicates =
+      have ps := VE.Norms.Wire.actsProfiles Bool.true environment;
+      do
+      let __do_lift ← VE.Norms.Wire.actsFixed ps environment
+      VE.Norms.Plain.decodeRegulatedAllIn ps __do_lift predicates
+  -- uses VE.Norms.Plain.decodeRegulatedAllIn@VE.Norms.Plain VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Service.Standalone.regulatedOf@VE.Service.Standalone
+  -- expr 550457856
+theorem VE.Service.Standalone.typingReduced_inert
+  ∀ (v : Lean.Json),
+    (∀ (p : String), p ∈ (VE.Route.Gate.profilesOf v).toOption.getD [] → VE.Route.Gate.known p = Bool.true) →
+      VE.Service.Standalone.typingReduced v = Except.ok v
+  -- uses VE.Route.Gate.known@VE.Route.Gate VE.Route.Gate.profilesOf@VE.Route.Gate VE.Service.Standalone.typingReduced@VE.Service.Standalone
+  -- expr 4257568039
+theorem VE.Service.Standalone.validatedCurrent_eq
+  ∀ (view : Lean.Json),
+    (VE.Norms.Wire.actsProfiles Bool.true view).isEmpty = Bool.true →
+      VE.Service.Standalone.validatedCurrent view = VE.Service.Standalone.validatedPlain view
+  -- uses VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.validatedCurrent@VE.Service.Standalone VE.Service.Standalone.validatedPlain@VE.Service.Standalone
+  -- expr 341524940
+theorem VE.Service.Standalone.validated_plain
+  ∀ (environment : Lean.Json),
+    VE.Service.Standalone.validated environment = VE.Service.Standalone.validatedPlain environment
+  -- uses VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.validated@VE.Service.Standalone VE.Service.Standalone.validatedPlain@VE.Service.Standalone
+  -- expr 4045346318
+theorem VE.Service.Standalone.validated_today
+  ∀ (environment : Lean.Json) (typing : Bool),
+    VE.Service.Standalone.validated environment typing = VE.Service.Standalone.Today.validated environment typing
+  -- uses VE.Service.Standalone.Today.validated@VE.Route.MeteredSplit VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.validated@VE.Service.Standalone
+  -- expr 3127183341
 theorem VE.Service.boundResults_eq
   ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (entries : Array (Option VE.Service.Entry))
     (digests : Array String) (i : Nat) (h : i < cases.size),

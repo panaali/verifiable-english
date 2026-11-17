@@ -124,7 +124,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 24 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 15 modules — -
-- [lean/VE/Route/](lean__VE__Route.md) — 33 modules — -
+- [lean/VE/Route/](lean__VE__Route.md) — 35 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
 - [lean/VE/Scope/](lean__VE__Scope.md) — 20 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
@@ -145,14 +145,14 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 84 modules — -
 - [tests/ part 5](tests--part-5.md) — 89 modules — -
 - [tests/ part 6](tests--part-6.md) — 78 modules — -
-- [tests/ part 7](tests--part-7.md) — 79 modules — -
-- [tests/ part 8](tests--part-8.md) — 86 modules — -
+- [tests/ part 7](tests--part-7.md) — 80 modules — -
+- [tests/ part 8](tests--part-8.md) — 78 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 95 modules — -
 - [tools/ part 2](tools--part-2.md) — 24 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
-- [tools/fidmech/](tools__fidmech.md) — 9 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
+- [tools/fidmech/](tools__fidmech.md) — 5 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 71 modules — -
 - [ve/](ve.md) — 84 modules — VE v0 experimental language, finite semantics and checked argument API.

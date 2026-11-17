@@ -1,0 +1,46 @@
+{
+ "item": "kb-4b",
+ "note": "Each bug was planted in a scratch copy of lean/ at the final sources (the worktree's build was serving the frozen-key runs), the named check was run and failed as recorded, and the file was restored from a copy saved before the plant (cmp equal to the worktree's file). No Python or Rust product code changed in this item (tools/kernel-paths.json and tools/trust-classes.json are data; the Python change is tests/test_kernel_closure.py), so every seed is Lean.",
+ "seeds": [
+  {
+   "id": "S1",
+   "task_seed": "a",
+   "language": "lean",
+   "file": "lean/VE/Route/MeteredRun.lean",
+   "claim": "the mode's dispatch sends every frozen envelope to the frozen-envelope runner, and each runner answers its cases as runCase does (runCase_split)",
+   "mutation": "legacyCase answers false on every case (`| .ok _ => false`): a frozen envelope goes to the current runner",
+   "failing": "cd lean && lake build VE.Route.MeteredSplit",
+   "result": "the split theorem does not build: its lemma VE.Route.MeteredRun.legacyCase_ok fails (MeteredSplit.lean:250, unsolved goals), so `lake build` fails; runWith_split, runCase_split and runCaseReported_today rest on it (the examples' arm #guard would fail next)"
+  },
+  {
+   "id": "S2",
+   "task_seed": "b",
+   "language": "lean",
+   "file": "lean/VE/Service/Standalone.lean",
+   "claim": "validatedPlain is validated without typing: it checks the regulated extension (validated_plain), and the current runner's validation is validatedPlain where it runs (validatedCurrent_eq)",
+   "mutation": "validatedPlain passes `fun _ => pure ()` as the regulated check (skips Standalone.checkRegulated)",
+   "failing": "cd lean && lake build VE.Route.MeteredSplit",
+   "result": "VE.Service.Standalone.validated_plain (MeteredSplit.lean:89) and validatedCurrent_eq (MeteredSplit.lean:126) do not build (`rfl` failed)"
+  },
+  {
+   "id": "S2b",
+   "task_seed": "b",
+   "language": "lean",
+   "file": "lean/VE/Service/Standalone.lean",
+   "claim": "validated's shared body validatedOver checks and strips the regulated extension as the body before kb-4b did (validated_today)",
+   "mutation": "validatedOver skips both the regulated check and the strip (Standalone.lean, the `norms@0` branch becomes `pure ()`)",
+   "failing": "cd lean && lake build VE.Route.MeteredSplit",
+   "result": "VE.Service.Standalone.validated_today (MeteredSplit.lean:72) does not build (`rfl` failed against the frozen copy Today.validated)"
+  },
+  {
+   "id": "S3",
+   "task_seed": "c",
+   "language": "lean",
+   "file": "lean/VE/Route/MeteredWire.lean",
+   "claim": "the current runner's restated theorem keeps the frozen decoders and the typing reductions out of every kernel path",
+   "mutation": "metered_wire_sound_current is stated about runCase, Standalone.evaluable and prepare (today's metered_wire_sound) and proved by wire_sound_of prepare",
+   "failing": "python3 tools/kernel_closure.py --why VE.Service.Standalone.decodeLegacy; python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json",
+   "result": "--why prints `metered spec: 20 lines; chain: VE.Route.MeteredRun.metered_wire_sound_current -> VE.Service.Standalone.evaluable -> VE.Service.Standalone.evaluableLegacy -> VE.Service.Standalone.decodeLegacy` (and typingReduced through prepare -> modelEnvironment); --check exits 1: `FAIL: the kernel grew from 9738 to 10081 lines`; tests/test_kernel_closure.py::test_no_kernel_path_counts_the_typing_reductions_or_the_frozen_decoders asserts those names are counted by no kernel path"
+  }
+ ]
+}

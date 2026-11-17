@@ -2438,7 +2438,7 @@
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/Route/Metered.lean": "lean:runner-glue: opt-in metered case budget fields and evaluation result rows; existing family decoders validate formulas and models",
-      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: the metered case dispatch and result rows (ve_service mode metered, and the ve_metered test oracle); the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
+      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: the metered case dispatch and result rows (ve_service mode metered, and the ve_metered test oracle): since kb-4b the entry hands a frozen envelope, an environment whose deciding view reads acts@0, and every other case to its own runner (runCaseReportedLegacy, runCaseReportedActs, runCaseReportedCurrent), each answering as runCase does (MeteredSplit.runCase_split); the environment is validated by the service's Standalone validations (evaluableLegacy, evaluableActs, evaluableCurrent) and formulas and models by the existing family decoders",
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
@@ -2659,7 +2659,9 @@
       "lean/VE/Acts/HookTwins.lean": "kb-4a proofs only: frozen copies of today's norms runners (proof helpers) and the equality theorems of the norms mode's dispatch over them; no product code reads it",
       "lean/VE/Alternatives/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the alternatives route's declarations through the acts hook) on environments built with Json.mkObj",
       "lean/VE/NormDefaults/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the norm-defaults decoders through the acts hook) on environments built with Json.mkObj",
-      "lean/VE/Service/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the family norms route's FOL view through the acts hook) on environments built with Json.mkObj"
+      "lean/VE/Service/HookExamples.lean": "fixtures only: #guard checks of kb-4a (the family norms route's FOL view through the acts hook) on environments built with Json.mkObj",
+      "lean/VE/Route/MeteredSplit.lean": "kb-4b proofs only: the equality theorems of the metered runner split over MeteredRun and Standalone (getObjVal? of the case's environment, as the runners read it), and a frozen copy of Standalone.validated (a proof helper no product code reads); no runtime JSON handling",
+      "lean/VE/Route/MeteredSplitExamples.lean": "fixtures only: #guard checks of the metered runner split (kb-4b) on environments and models built with Json.parse and Json.mkObj, run through the three runners, the entry and the Standalone validations; no runner path"
     }
   },
   "plan_operations": {

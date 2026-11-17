@@ -5728,7 +5728,8 @@
         "VE.Norms.Plain.layered",
         "VE.Norms.Plain.softPremises",
         "VE.Norms.Plain.strip",
-        "VE.Norms.Plain.decodeRegulatedAllIn"
+        "VE.Norms.Plain.decodeRegulatedAllIn",
+        "VE.Norms.Plain.decodeRegulatedAllBy"
       ],
       "G[V]": [
         "VE.Norms.Plain.certificate",
@@ -9101,6 +9102,12 @@
         "VE.Route.MeteredRun.Request",
         "VE.Route.MeteredRun.Session",
         {
+          "name": "VE.Route.MeteredRun.actsCase",
+          "tied": [
+            "VE.Route.MeteredRun.runWith_split"
+          ]
+        },
+        {
           "name": "VE.Route.MeteredRun.answer",
           "tied": [
             "VE.Route.MeteredRun.answer_evaluate"
@@ -9109,10 +9116,35 @@
         "VE.Route.MeteredRun.closure",
         "VE.Route.MeteredRun.core",
         "VE.Route.MeteredRun.fol",
+        {
+          "name": "VE.Route.MeteredRun.legacyCase",
+          "tied": [
+            "VE.Route.MeteredRun.runWith_split"
+          ]
+        },
         "VE.Route.MeteredRun.main",
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
         "VE.Route.MeteredRun.prepare",
+        {
+          "name": "VE.Route.MeteredRun.prepareActs",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_acts"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.prepareCurrent",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_current"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.prepareLegacy",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_legacy"
+          ]
+        },
+        "VE.Route.MeteredRun.prepareOf",
         "VE.Route.MeteredRun.profiled",
         {
           "name": "VE.Route.MeteredRun.query",
@@ -9144,7 +9176,33 @@
             "VE.Route.MeteredRun.metered_wire_sound"
           ]
         },
-        "VE.Route.MeteredRun.runCaseReported",
+        {
+          "name": "VE.Route.MeteredRun.runCaseActs",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_acts"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.runCaseCurrent",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_current"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.runCaseLegacy",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_legacy"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.runCaseReported",
+          "tied": [
+            "VE.Route.MeteredRun.runCaseReported_today"
+          ]
+        },
+        "VE.Route.MeteredRun.runCaseReportedActs",
+        "VE.Route.MeteredRun.runCaseReportedCurrent",
+        "VE.Route.MeteredRun.runCaseReportedLegacy",
         {
           "name": "VE.Route.MeteredRun.runWith",
           "tied": [
@@ -9153,6 +9211,29 @@
         },
         "VE.Route.MeteredRun.tick",
         "VE.Route.MeteredRun.tickCache"
+      ]
+    },
+    "VE/Route/MeteredSplit.lean": {
+      "P": [
+        "VE.Service.Standalone.Today.validated"
+      ]
+    },
+    "VE/Route/MeteredSplitExamples.lean": {
+      "T": [
+        "VE.Route.MeteredSplitExamples.acts",
+        "VE.Route.MeteredSplitExamples.arm",
+        "VE.Route.MeteredSplitExamples.caseOf",
+        "VE.Route.MeteredSplitExamples.cases",
+        "VE.Route.MeteredSplitExamples.environments",
+        "VE.Route.MeteredSplitExamples.folList",
+        "VE.Route.MeteredSplitExamples.judgments",
+        "VE.Route.MeteredSplitExamples.judgmentsReadings",
+        "VE.Route.MeteredSplitExamples.layeredText",
+        "VE.Route.MeteredSplitExamples.legacy",
+        "VE.Route.MeteredSplitExamples.legacyText",
+        "VE.Route.MeteredSplitExamples.naryList",
+        "VE.Route.MeteredSplitExamples.shown",
+        "VE.Route.MeteredSplitExamples.withProfiles"
       ]
     },
     "VE/Route/MeteredTrace.lean": {
@@ -10706,7 +10787,40 @@
         "VE.Service.Standalone.tableFields",
         "VE.Service.Standalone.regulatedOf",
         "VE.Service.Standalone.actsRead",
-        "VE.Service.Standalone.profileTree"
+        "VE.Service.Standalone.profileTree",
+        "VE.Service.Standalone.regulatedBy",
+        {
+          "name": "VE.Service.Standalone.regulatedOfWith",
+          "tied": [
+            "VE.Service.Standalone.regulatedOfWith_plain"
+          ]
+        },
+        "VE.Service.Standalone.profileTreeBy",
+        {
+          "name": "VE.Service.Standalone.profileTreeWith",
+          "tied": [
+            "VE.Service.Standalone.profileTreeWith_plain"
+          ]
+        },
+        "VE.Service.Standalone.checkRegulatedBy",
+        {
+          "name": "VE.Service.Standalone.evaluableLegacy",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_legacy"
+          ]
+        },
+        {
+          "name": "VE.Service.Standalone.evaluableActs",
+          "tied": [
+            "VE.Service.Standalone.evaluableActs_today"
+          ]
+        },
+        {
+          "name": "VE.Service.Standalone.evaluableCurrent",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound_current"
+          ]
+        }
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -10737,7 +10851,39 @@
         "VE.Service.Standalone.validatedLayerEnvironment",
         "VE.Service.Standalone.letterName",
         "VE.Service.Standalone.modelAct",
-        "VE.Service.Standalone.modelActs"
+        "VE.Service.Standalone.modelActs",
+        "VE.Service.Standalone.validatedOver",
+        {
+          "name": "VE.Service.Standalone.validatedPlain",
+          "tied": [
+            "VE.Service.Standalone.validated_plain"
+          ]
+        },
+        {
+          "name": "VE.Service.Standalone.validatedCurrent",
+          "tied": [
+            "VE.Service.Standalone.validatedCurrent_eq"
+          ]
+        },
+        "VE.Service.Standalone.modelViewProfiles",
+        {
+          "name": "VE.Service.Standalone.modelViewDropped",
+          "tied": [
+            "VE.Service.Standalone.modelEnvironment_current"
+          ]
+        },
+        {
+          "name": "VE.Service.Standalone.readsApart",
+          "tied": [
+            "VE.Route.MeteredRun.runWith_prepare_current"
+          ]
+        },
+        {
+          "name": "VE.Service.Standalone.modelEnvironmentCurrent",
+          "tied": [
+            "VE.Service.Standalone.modelEnvironment_current"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",
