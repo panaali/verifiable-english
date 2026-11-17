@@ -1,14 +1,14 @@
 {
  "item": "challenge-final-delivery",
- "note": "Python only, in manage-agents/tools-local (no Lean, Python or Rust of this VE repo changed). Each seed is a temp copy of the staged script, run with DRA_SCRIPT=<copy> python3 -I tools-local/test_decider_ready_alert.py; the staged file itself was never edited.",
+ "round": "fix round 1",
+ "note": "Python only, in manage-agents/tools-local (no Lean, Rust or Python of this VE repo changed). Each seed is a temp copy of the staged script (or, S20-S21, of the test file) with one find/replace, run as DRA_SCRIPT=<copy> python3 -I <test copy>; the staged files were never edited (sha256 before = after: ['e409de3ce6db4da26f93dfb445e34fdd782d1af6cfc4488076d04fa941538bc6', 'e7fa412c1a4ab4d70906d859124dd9b61c82ebffa6b26a1aed645f15bd850500']).",
  "mutants": [
   {
    "id": "S1",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "the 30-min wait is 29 min",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "now - st.st_mtime < CF_AFTER",
    "replace": "now - st.st_mtime < CF_AFTER - 60",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
     "test_1_astra_final_30_min_to_orchestrator_once"
@@ -17,46 +17,52 @@
   },
   {
    "id": "S2",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "no once-only dedup for challenge finals",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "cf = [x for x in challenge_finals(rows, now) if x[1] not in sent]",
    "replace": "cf = list(challenge_finals(rows, now))",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
+    "test_11_release_gate_review_row_named",
     "test_1_astra_final_30_min_to_orchestrator_once",
     "test_7_relaunched_row_new_final_alerts_again",
     "test_8_failed_send_to_one_addressee_records_only_the_other",
-    "test_9_failed_dri_send_keeps_other_parts_unrecorded"
+    "test_9_failed_dri_send_keeps_other_parts_unrecorded",
+    "test_installed_under_live_name_with_live_state_file"
    ],
    "caught": true
   },
   {
    "id": "S3",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "Astra challenges go to the decider, not the orchestrator",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "return \"orchestrator\" if ASTRA.search",
    "replace": "return \"dri\" if ASTRA.search",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
     "test_10_dry_run_records_nothing",
+    "test_11_release_gate_review_row_named",
+    "test_14_feed_launched_row_named",
+    "test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named",
+    "test_17_astra_in_the_file_name_or_the_row_id_alone",
     "test_1_astra_final_30_min_to_orchestrator_once",
+    "test_20_backlog_py_unloadable_still_names_stamped_rows",
     "test_3_two_addressees_two_messages",
     "test_8_failed_send_to_one_addressee_records_only_the_other",
-    "test_9_failed_dri_send_keeps_other_parts_unrecorded"
+    "test_9_failed_dri_send_keeps_other_parts_unrecorded",
+    "test_installed_under_live_name_with_live_state_file"
    ],
    "caught": true
   },
   {
    "id": "S4",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "a final older than the in-flight stamp still counts",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "if t is None or st.st_mtime <= t:",
    "replace": "if t is None:",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
+    "test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named",
     "test_6_silent_cases",
     "test_7_relaunched_row_new_final_alerts_again"
    ],
@@ -64,24 +70,24 @@
   },
   {
    "id": "S5",
-   "bug": "any open status has an in-flight stamp",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
-   "find": "t = parse_t(r.get(\"status_t\")) if r.get(\"status\") == \"in-flight\" else None",
-   "replace": "t = parse_t(r.get(\"status_t\")) if r.get(\"status\") not in (\"done\", \"merged\", \"dropped\") else None",
-   "test": "tools-local/test_decider_ready_alert.py",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "closed rows (done/merged/dropped) count (replaces the first round's S5, which recorded the required behaviour of review F1 as a bug)",
+   "find": "if r.get(\"status\") in closed:",
+   "replace": "if False:",
    "rc": 1,
    "failing_tests": [
+    "test_20_backlog_py_unloadable_still_names_stamped_rows",
+    "test_5_row_mapping",
     "test_6_silent_cases"
    ],
    "caught": true
   },
   {
    "id": "S6",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "a failed send to one addressee still records its finals",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "cf = [x for x in cf if x[4] in ok]",
    "replace": "cf = cf",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
     "test_8_failed_send_to_one_addressee_records_only_the_other"
@@ -90,11 +96,10 @@
   },
   {
    "id": "S7",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "any suffix after a row id claims the final",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "CF_SUFFIX = re.compile(r\"(stopped-)?\\d{4,8}(T\\d{4,6}Z?)?\")",
    "replace": "CF_SUFFIX = re.compile(r\".*\")",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
     "test_6_silent_cases"
@@ -103,16 +108,181 @@
   },
   {
    "id": "S8",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "bug": "the dri- prefix is not stripped",
-   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
    "find": "[stem] + ([stem[4:]] if stem.startswith(\"dri-\") else [])",
    "replace": "[stem]",
-   "test": "tools-local/test_decider_ready_alert.py",
    "rc": 1,
    "failing_tests": [
+    "test_13_seeder_in_flight_rows_without_status_t_named",
     "test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message",
     "test_3_two_addressees_two_messages",
     "test_5_row_mapping"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S9",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F1: the run start (backlog.py row_run_t) is not a stamp: only status_t",
+   "find": "ts.append(bl.row_run_t(dict(r, links=L)))",
+   "replace": "pass",
+   "rc": 1,
+   "failing_tests": [
+    "test_12_dri_delegate_row_named",
+    "test_13_seeder_in_flight_rows_without_status_t_named",
+    "test_14_feed_launched_row_named",
+    "test_15_blocked_and_ready_rows_with_a_run_start_named",
+    "test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S10",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F1: the earliest stamp wins, not the latest",
+   "find": "return max(ts) if ts else None",
+   "replace": "return min(ts) if ts else None",
+   "rc": 1,
+   "failing_tests": [
+    "test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S11",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F1: status_t counts whatever status backlog.sh wrote",
+   "find": "(r.get(\"status_cli\") or r.get(\"status\")) == \"in-flight\"",
+   "replace": "True",
+   "rc": 1,
+   "failing_tests": [
+    "test_6_silent_cases"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S12",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F1: a dri-<x> delegate row is not its own delegate",
+   "find": "L[\"delegate\"] = r[\"id\"]",
+   "replace": "pass",
+   "rc": 1,
+   "failing_tests": [
+    "test_12_dri_delegate_row_named"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S13",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F1: only status in-flight rows count (the first build's rule)",
+   "find": "if r.get(\"status\") in closed:",
+   "replace": "if r.get(\"status\") != \"in-flight\":",
+   "rc": 1,
+   "failing_tests": [
+    "test_11_release_gate_review_row_named",
+    "test_12_dri_delegate_row_named",
+    "test_15_blocked_and_ready_rows_with_a_run_start_named",
+    "test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named",
+    "test_20_backlog_py_unloadable_still_names_stamped_rows",
+    "test_installed_under_live_name_with_live_state_file"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S14",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "DRI note 1: a state line that is not UTF-8 stops the pass",
+   "find": "except UnicodeDecodeError:\n            w = None",
+   "replace": "except KeyError:\n            w = None",
+   "rc": 1,
+   "failing_tests": [
+    "test_installed_under_live_name_with_live_state_file"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S15",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "DRI note 1: lines skipped from the state file are not named",
+   "find": "print(f\"decider-ready-alert: state {os.path.basename(path)}: line(s)",
+   "replace": "None and print(f\"",
+   "rc": 1,
+   "failing_tests": [
+    "test_installed_under_live_name_with_live_state_file"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S16",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "the CLOSED fallback drifts from backlog.py CLOSED",
+   "find": "CF_CLOSED_FALLBACK = (\"merged\", \"done\", \"dropped\")",
+   "replace": "CF_CLOSED_FALLBACK = (\"merged\", \"done\")",
+   "rc": 1,
+   "failing_tests": [
+    "test_19_closed_fallback_is_backlog_closed"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S17",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F4: astra matched in the row id only",
+   "find": "ASTRA.search(f\"{r.get('id', '')} {name}\")",
+   "replace": "ASTRA.search(f\"{r.get('id', '')}\")",
+   "rc": 1,
+   "failing_tests": [
+    "test_17_astra_in_the_file_name_or_the_row_id_alone"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S18",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F4: astra matched in the file name only",
+   "find": "ASTRA.search(f\"{r.get('id', '')} {name}\")",
+   "replace": "ASTRA.search(f\"{name}\")",
+   "rc": 1,
+   "failing_tests": [
+    "test_17_astra_in_the_file_name_or_the_row_id_alone"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S19",
+   "where": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "bug": "F4: a row two links claim is named twice",
+   "find": " and r not in out:",
+   "replace": ":",
+   "rc": 1,
+   "failing_tests": [
+    "test_18_a_row_claimed_twice_is_named_once"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S20",
+   "where": "manage-agents/tools-local/test_decider_ready_alert.py",
+   "bug": "F2: the picker ignores mtimes (a stale staged copy is tested after the install)",
+   "find": "new = [x for x in new if x[0] > t0]",
+   "replace": "new = new",
+   "rc": 1,
+   "failing_tests": [
+    "test_staged_newer_copy_only_then_live_after_install"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S21",
+   "where": "manage-agents/tools-local/test_decider_ready_alert.py",
+   "bug": "F2: the picker prefers any staged copy by a fixed tag list (the first build's rule)",
+   "find": "    return max(new)[1] if new else live",
+   "replace": "    return next((live + t for t in ('.new-nta', '.new-challew') if os.path.exists(live + t)), live)",
+   "rc": 1,
+   "failing_tests": [
+    "test_staged_newer_copy_only_then_live_after_install"
    ],
    "caught": true
   }
