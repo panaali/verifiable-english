@@ -280,10 +280,10 @@ def plant_counts(prows):
     return out
 
 
-REASONS = (("is gone from the file under test", "the plant's unit text is gone at the tree under test"),
-           ("times in the file under test", "the changed text is not unique at the tree under test"),
+REASONS = (("never read as the repair", "the repaired text changed later"),
            ("the repair deleted", "the repair deleted text the defect needs"),
-           ("never read as the repair", "the repaired text changed later"))
+           ("is gone from the file under test", "the unit text is gone at the tree under test"),
+           ("times in the file under test", "the changed text is not unique at the tree under test"))
 
 
 def reason_class(reason):
