@@ -63,7 +63,13 @@ Each case runs a zsh caller script in one of the sweep's shapes:
 
 The product is outside this repository, so the build round committed nothing here. This folder (report, diffs, run logs,
 seeded bugs) is now committed on `infra/pick-main-rank1`, following `docs/infra/tm-plan-failfast` and
-`docs/infra/p1-ready-unstartable-alert`. Rerun of `review-ready.py`: see the fix report.
+`docs/infra/p1-ready-unstartable-alert`. Rerun of `review-ready.py` at 252004ef:
+- `[commits]`, `[clean]`, `[mutants]`, `[relay]` and `[delta]`: PASS (`1 commits ahead of the merge base b00f97f5`).
+- `[gate]`: FAIL, because no full gate was run. The task leaves the full gate to the merge train. The selected run of this
+  round passed: GitHub Actions run `pick-main-rank1-252004ef-t878961`, 2 shards, 10 units, exit 0.
+- `lake build` and `python3 lean/audit.py` pass; no Lean changed.
+
+Install read sent: `manage-agents/inbox/dri/20261117T013930Z-pick-main-rank1-3202893.md`.
 
 ## Install (picker read per call, no restart)
 
