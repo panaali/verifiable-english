@@ -1,0 +1,5 @@
+# existing suites on the F1-fixed staged chain-gate.sh.new-vm1w (CG / CHAIN_GATE_SCRIPT), 2fd93d12bab7f96ec5e339f79de414a5
+=== test_chain_gate_vm_cancel rc=0
+=== test_gate_reuse rc=0
+=== test_mac_last_resort rc=0
+=== test_defer_heavy rc=0

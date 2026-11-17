@@ -1,0 +1,7 @@
+# PROBE F1 (vm1-gate-weight-review.final.md), real systemd user manager
+## before the fix (staged cc914a94…, 2026-11-17T14:2xZ): stdout
+orphan gate.py alive: True
+exit=1
+## after the fix (staged 2fd93d12…)
+orphan gate.py alive: False
+exit=0
