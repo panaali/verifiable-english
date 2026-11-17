@@ -1,0 +1,201 @@
+{
+ "after": {
+  "kernel_lines": 9963,
+  "paths": {
+   "alternatives": {
+    "lines": 3938,
+    "spec": 3932,
+    "tier": "candidate",
+    "wrap": 6
+   },
+   "certificate": {
+    "lines": 1346,
+    "spec": 1341,
+    "tier": "candidate",
+    "wrap": 5
+   },
+   "discourse": {
+    "lines": 36204,
+    "spec": 36198,
+    "tier": "candidate",
+    "wrap": 11
+   },
+   "document": {
+    "lines": 36169,
+    "spec": 35281,
+    "tier": "candidate",
+    "wrap": 895
+   },
+   "metered": {
+    "lines": 3238,
+    "spec": 3232,
+    "tier": "kernel",
+    "wrap": 6
+   },
+   "normDefaults": {
+    "lines": 6370,
+    "spec": 5717,
+    "tier": "candidate",
+    "wrap": 657
+   },
+   "norms": {
+    "lines": 3409,
+    "spec": 3207,
+    "tier": "kernel",
+    "wrap": 202
+   },
+   "normsActs": {
+    "lines": 4069,
+    "spec": 4046,
+    "tier": "candidate",
+    "wrap": 23
+   },
+   "quantity": {
+    "lines": 2190,
+    "spec": 2183,
+    "tier": "kernel",
+    "wrap": 7
+   },
+   "readingsRoute": {
+    "lines": 24229,
+    "spec": 9343,
+    "tier": "candidate",
+    "wrap": 14946
+   },
+   "reports": {
+    "lines": 4367,
+    "spec": 4360,
+    "tier": "candidate",
+    "wrap": 7
+   },
+   "rights": {
+    "lines": 4899,
+    "spec": 4892,
+    "tier": "candidate",
+    "wrap": 7
+   },
+   "risk": {
+    "lines": 7895,
+    "spec": 5404,
+    "tier": "candidate",
+    "wrap": 2504
+   },
+   "route": {
+    "lines": 4177,
+    "spec": 4166,
+    "tier": "kernel",
+    "wrap": 11
+   },
+   "softNorms": {
+    "lines": 4697,
+    "spec": 4689,
+    "tier": "kernel",
+    "wrap": 8
+   }
+  }
+ },
+ "before": {
+  "kernel_lines": 9991,
+  "paths": {
+   "alternatives": {
+    "lines": 3938,
+    "spec": 3932,
+    "tier": "candidate",
+    "wrap": 6
+   },
+   "certificate": {
+    "lines": 1377,
+    "spec": 1372,
+    "tier": "candidate",
+    "wrap": 5
+   },
+   "discourse": {
+    "lines": 36232,
+    "spec": 36226,
+    "tier": "candidate",
+    "wrap": 11
+   },
+   "document": {
+    "lines": 36197,
+    "spec": 35309,
+    "tier": "candidate",
+    "wrap": 895
+   },
+   "metered": {
+    "lines": 3238,
+    "spec": 3232,
+    "tier": "kernel",
+    "wrap": 6
+   },
+   "normDefaults": {
+    "lines": 6370,
+    "spec": 5717,
+    "tier": "candidate",
+    "wrap": 657
+   },
+   "norms": {
+    "lines": 3409,
+    "spec": 3207,
+    "tier": "kernel",
+    "wrap": 202
+   },
+   "normsActs": {
+    "lines": 4069,
+    "spec": 4046,
+    "tier": "candidate",
+    "wrap": 23
+   },
+   "quantity": {
+    "lines": 2190,
+    "spec": 2183,
+    "tier": "kernel",
+    "wrap": 7
+   },
+   "readingsRoute": {
+    "lines": 24257,
+    "spec": 9343,
+    "tier": "candidate",
+    "wrap": 14974
+   },
+   "reports": {
+    "lines": 4367,
+    "spec": 4360,
+    "tier": "candidate",
+    "wrap": 7
+   },
+   "rights": {
+    "lines": 4899,
+    "spec": 4892,
+    "tier": "candidate",
+    "wrap": 7
+   },
+   "risk": {
+    "lines": 7895,
+    "spec": 5404,
+    "tier": "candidate",
+    "wrap": 2504
+   },
+   "route": {
+    "lines": 4205,
+    "spec": 4194,
+    "tier": "kernel",
+    "wrap": 11
+   },
+   "softNorms": {
+    "lines": 4697,
+    "spec": 4689,
+    "tier": "kernel",
+    "wrap": 8
+   }
+  }
+ },
+ "cut": "VE.CertificateWire.decodeClosureTrace",
+ "kernel_delta": -28,
+ "path_deltas": {
+  "certificate": -31,
+  "discourse": -28,
+  "document": -28,
+  "readingsRoute": -28,
+  "route": -28
+ }
+}
