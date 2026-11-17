@@ -24,7 +24,7 @@ One early check at the top of `pick()`'s account loop, before the run-codex lift
 released-row main waiter is recorded (`relwant = False`). With no other account the picker gives the usual no-pick
 (PICK_NOWAIT: exit 1, empty stdout, one PICK_WHY line). `PICK_OSEQ_OPUS` unset or empty: unchanged.
 
-## Tests (logs in this directory)
+## Tests (logs in this directory: the unittest result lines; the picker stderr is not kept)
 
 - `run-staged.log`: the new suite on the staged picker, 18/18 OK (`LIVE_PICK_SCRIPT` = the pre-install backup, so the
   unset cases compare with the pre-install picker).
