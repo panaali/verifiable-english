@@ -148,6 +148,8 @@ Revert: mv the two `.bak-20261117-vm1w` files back. A gate already running keeps
   about Lean growth only).
 - Selected tests of this branch: `mac-pytest.sh --select` → GitHub Actions run vm1-gate-weight-baeb2b98-t923172, 5 units,
   5 passed, exit 0.
+  After the F1 fix (68b85c94): run vm1-gate-weight-68b85c94-t926890, 4 units, 4 passed, exit 0. `lake build` rc 0 (Lean
+  unchanged), `python3 lean/audit.py` PASS (898 files, 10153 theorems).
 
 ## Self-review against BUILDER-CHECKLIST
 
