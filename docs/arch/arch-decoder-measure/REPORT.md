@@ -201,7 +201,7 @@ does not apply. These bugs prove that the item's own checks can fail, one per cl
 
 - Trust: `uv run python tools/trust_map.py --check` on HEAD: PASS, all classes +0. No allowance, no FOLLOW-UPS row.
 - DELTA: none. Nothing user-visible changes, so there is no DELTA.md row.
-- SIZE: 0 product, 0 tests, 864 other hand-written lines (`deps.lean`, `switch.lean`, `kernel_cut.py`,
+- SIZE: 0 product, 0 tests, 865 other hand-written lines (`deps.lean`, `switch.lean`, `kernel_cut.py`,
   `measure.py`, this REPORT). `MEASURE.json` and `evidence/` are generated outputs.
 - Pilot bytes expected to move: 0 (no product change).
 - Next item: the decider's keep/switch ruling (`msg.sh dri arch-decoder-measure …`, sent when this item finished).
