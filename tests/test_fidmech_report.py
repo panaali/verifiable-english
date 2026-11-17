@@ -74,12 +74,13 @@ def test_an_incomplete_unit_is_never_passing_and_an_untested_one_never_passes_va
              line("b1", unit="u2", K="killed"), line("b2", unit="u2", K="killed"),
              line("c1", unit="u3", K="killed"), line("c2", unit="u3", K="not-run"),
              line("d1", unit="u4", K="killed", op="flip-force"), line("d2", unit="u4", K="survived", op="flip-force"),
-             line("w1", unit="u5", cls="wording", op="actor", K="killed")]
-    t = text(["u1", "u2", "u3", "u4", "u5"])
+             line("w1", unit="u5", cls="wording", op="actor", K="killed"),
+             line("e1", unit="u6", K="survived"), line("e2", unit="u6", K="error")]
+    t = text(["u1", "u2", "u3", "u4", "u5", "u6"])
     u = REP.unit_status(lines, t)
     assert u["lists"]["status"] == {"u1": "incomplete", "u2": "passing", "u3": "incomplete", "u4": "failing",
-                                    "u5": "untested"}
-    assert (u["passing"], u["incomplete"], u["untested"], u["with_survivor"]) == (1, 2, 1, 1)
+                                    "u5": "untested", "u6": "failing"}
+    assert (u["passing"], u["incomplete"], u["untested"], u["with_survivor"]) == (1, 2, 1, 2)
     assert REP.unit_status(lines, t, flip_force=False)["lists"]["status"]["u4"] == "untested"
 
 
@@ -88,6 +89,7 @@ def test_a_unit_with_a_baseline_text_hit_fails_and_l2_reaches_it_through_the_pre
     t = text(["u1", "u2", "u3"], hits=[("L1c", "u1", "q"), ("L2b", "pred", None), ("L4u", "main@0", "s")],
              users={"pred": ["u2"]})
     assert REP.unit_status(lines, t)["lists"]["status"] == {"u1": "failing", "u2": "failing", "u3": "passing"}
+    assert set(REP.unit_status(lines, t, text_checks=False)["lists"]["status"].values()) == {"passing"}
 
 
 def test_d_hits_are_every_uncovered_word_and_every_loss_entry_and_a_sidecarless_document_has_a_headline_without_d(
@@ -128,7 +130,8 @@ def test_the_report_says_units_passing_the_stated_checks_and_never_calls_them_fa
     md = REP.render({"documents": [d], "inputs_sha256": None})
     assert "Units passing the stated checks (L1, L2, L3, D, K-structural), all ops: 1 of 2" in md
     assert md.replace('Never "faithful"', "").lower().count("faithful") == 0
-    assert "1 of 2 rule blocks are in no item; every K mutant of such a rule survives K" in md
+    assert "1 of 2 rule blocks are selected by no item (the adapter's rule ids); every K mutant of such a rule is " \
+           "expected to survive K" in md and "measured K verdicts of their scored mutants: {}" in md
 
 
 # ---- plants and real defects (plan 5.3) -------------------------------------------------------------------------

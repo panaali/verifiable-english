@@ -127,9 +127,10 @@ def unit_hits(text, with_d=True):
     return {u: sorted(c) for u, c in out.items()}
 
 
-def unit_status(lines, text, *, flip_force=True, declared_as_survivor=False, with_d=True):
-    """{"passing", "failing", "incomplete", "untested", "with_survivor"} counts and the unit lists (rows only)."""
-    hits = unit_hits(text, with_d)
+def unit_status(lines, text, *, flip_force=True, declared_as_survivor=False, with_d=True, text_checks=True):
+    """{"passing", "failing", "incomplete", "untested", "with_survivor"} counts and the unit lists (rows only);
+    `text_checks=False` reads K-structural alone (a decomposition beside the headline, never the headline)."""
+    hits = unit_hits(text, with_d) if text_checks else {}
     structural = [x for x in scored(lines, ("structural",), declared_as_survivor)
                   if flip_force or x["mutant"]["op"] != "flip-force"]
     by_unit = {}
@@ -145,11 +146,13 @@ def unit_status(lines, text, *, flip_force=True, declared_as_survivor=False, wit
             why.update({"text hit " + ("L1" if c in L1_CLASSES else c[:2] if c != "D" else "D")
                         for c in hits[u]})
             why["K survivor"] += "survived" in ks
+        elif "survived" in ks:  # a decided survivor fails the unit whatever else did not run
+            status[u] = "failing"
+            why["K survivor, no text hit" if text_checks else "K survivor"] += 1
         elif any(k not in DECIDED["K"] for k in ks):
             status[u] = "incomplete"
         else:
-            status[u] = "passing" if all(k == "killed" for k in ks) else "failing"
-            why["K survivor, no text hit"] += status[u] == "failing"
+            status[u] = "passing"
     counts = Counter(status.values())
     survivors = sorted(u for u, ks in by_unit.items() if "survived" in ks)
     return {"units": len(status), **{k: counts.get(k, 0) for k in ("passing", "failing", "incomplete", "untested")},
@@ -321,6 +324,7 @@ def document_report(b, inputs=None, cr=None):
                     "declared equivalents counted as survivors": {"declared_as_survivor": True}}
         if not sidecar:
             variants["without D (no sidecar)"] = {"with_d": False}
+        variants["K-structural alone (decomposition, not the headline)"] = {"text_checks": False}
         units = {name: unit_status(lines, text, **kw) for name, kw in variants.items()}
         rows["units"] = {name: u.pop("lists") for name, u in units.items()}
         out["units"] = units
@@ -368,7 +372,9 @@ def render(report):
                 f"stillborn {d['stillborn']['count']} (listed, never scored) {d['stillborn']['by_op']}; "
                 f"equivalent {d['equivalent']}; inputs_sha256 {d['inputs_sha256']}", ""]
         for name, u in d.get("units", {}).items():
-            out.append(f"- {HEADLINE}, {name}: {u['passing']} of {u['units']} (failing {u['failing']}, incomplete "
+            label = (f"Units whose structural mutants K killed, {name}" if name.startswith("K-structural alone")
+                     else f"{HEADLINE}, {name}")
+            out.append(f"- {label}: {u['passing']} of {u['units']} (failing {u['failing']}, incomplete "
                        f"{u['incomplete']}, untested {u['untested']}; units with at least one K survivor "
                        f"{u['with_survivor']}); failing units by cause (a unit can have several) {u['failing_by']}")
         t = d["kill_table"]
@@ -382,8 +388,9 @@ def render(report):
                     f"equivalents counted as survivors: K {_cell(s, 'K')}, any {_cell(s, 'any')}. No Wilson "
                     "interval: mutants of one unit are correlated and generated, not sampled.",
                 f"- unprobed rules: {d['unprobed_rules']['in_no_item']} of {d['unprobed_rules']['rule_blocks']} rule "
-                f"blocks are in no item; every K mutant of such a rule survives K (their K verdicts: "
-                f"{d['unprobed_rules']['K']}).",
+                f"blocks are selected by no item (the adapter's rule ids); every K mutant of such a rule is expected "
+                f"to survive K (Opus round 2 point 9), unless an item that reads the whole document (FSF C-doc) moves; "
+                f"measured K verdicts of their scored mutants: {d['unprobed_rules']['K']}.",
                 f"- K errors (VE refused the mutated document when it ran, or the run failed), by last line: "
                 f"{d['K_errors']}",
                 f"- control false alarms (new hits on syntactic equivalents): {d['control_false_alarms']}",
