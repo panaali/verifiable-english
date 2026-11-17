@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-rsp-b-repair-1115-f2de63a4-t881043-s6",
+ "head": "749e01317dde7d81bfe09eeb27602c8164f6db3c",
+ "argv": [
+  "armsh-cand-rsp-b-repair-1115-f2de63a4-t881043-s6",
+  "749e01317dde7d81bfe09eeb27602c8164f6db3c",
+  "951c5526d9b165c536b5c1a5d67b88edd6603861",
+  "-",
+  "-",
+  "4",
+  "6/6"
+ ]
+}
