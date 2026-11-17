@@ -1,0 +1,4 @@
+403c403
+<   [ -n "$brclose" ] && [ -z "$brbuild" ] && [ ! -f $M/KERNEL_CLOSURE_REGEN.off ] || return 0
+---
+>   [ -z "$brbuild" ] && [ ! -f $M/KERNEL_CLOSURE_REGEN.off ] || return 0
