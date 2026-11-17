@@ -80,8 +80,12 @@ iso.sh runs at each launch, so no service restart is needed. Scopes that are alr
 
 ## 6. Checks run
 
-- Trust mutants: none. No Lean or VE product code changed (light lane: section 8).
-- VE tests: the branch changes only `docs/infra/gate-cpu-over-tmfill/`; the selected run is in section 8.
+- Trust mutants: none to run. light-lane.py prints `NOT 277 changed lines outside generated files > 150 (10 files)`, from
+  the evidence files only; no trusted-core file changed. `tools/trust_mutants.py --base d2573fc9 --plan` gives
+  `"mutants": 0` (`trust-mutants-plan.log`).
+- VE tests: the branch changes only `docs/infra/gate-cpu-over-tmfill/`. The selected run (mac-pytest.sh --select, on
+  GitHub Actions, run gate-cpu-over-tmfill-42f065f9-t919464) passed: shard 1 had 6 units and 6 passed, shard 2 had 4
+  units and 4 passed, exit 0. It deferred two weakly selected files to the chain gate (`selected-run.log`).
 - main-known-red: no listed test is touched.
 
 ## Notes for the DRI
