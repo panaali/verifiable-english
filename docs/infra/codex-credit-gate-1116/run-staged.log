@@ -1,0 +1,51 @@
+# A. codex-allowed.sh (/home/seyran/code/manage-agents/codex-allowed.sh.new-codexw)
+ok   A1 no ceiling in force, week 90 >= plan cap 88, balance 60000 (has_credits): never on credits: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A2 no ceiling in force, week 90, no balance in the reading (was read as the full grant): plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A3 ceiling 97 in force lets week 90 pass, plan cap 88, balance 60000: never on credits: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A4 live read: week 95, hasCredits true, balance 60000, no ceiling: plan week 95% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A5 --ceiling, no ceiling in force, week 100, balance 60000: plan week 100% with 0 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A6 --ceiling, no ceiling in force, week 99 with one session running (99 + 2 > 100): plan week 99% with 1 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A7 --ceiling, no ceiling in force, week 50 read 5 days before, no live read: Codex week reading is 7200 min old (50%, rollout) and the live read fails: the plan week cannot be checked; past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A8 --ceiling, no ceiling in force, no reading at all: no Codex week reading: the plan week cannot be checked; past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A9 a ceiling line above 100 (120) does not lift the stop (--ceiling): plan week 100% with 0 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A10 CODEX_PLAN_CAP=101 does not lift the stop (full gate): plan week 100% with 0 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (codex-credit-gate-1116)
+ok   A11 ceiling 97 closes week 98, balance 60000: plan week 98% >= ceiling 97% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   A12 allowance spent (balance 9370), week 90, no ceiling: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A13 Astra at 90, balance 60000: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
+ok   A14 caller * 0 closes week 50, balance 60000 (--ceiling): Codex closed for caller other until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING caller line)
+ok   A15 week 50, balance 0, no ceiling: the plan runs: plan week 50% < 88
+ok   A16 --ceiling, no ceiling in force, week 98, no session running (98 + 1 <= 100): no hard stop: plan week 98%
+ok   A17 CODEX_USE_ALL-style cap 100: week 92 runs on the plan: plan week 92% < 100
+ok   A18 ceiling 97, audit at 80: runs: plan week 80% < 88
+# B. ve-cloud-2's shim (/home/seyran/code/manage-agents/c2b-codex-shim.sh.new-codexw)
+ok   B1 exec at 81 under the VM's ceiling 75: refused, the binary is not started: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B1 the refusal is logged without the prompt: 2026-11-17T16:25:05Z multi-agent-lab refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILIN
+ok   B2 exec at 70 under 75: runs: 
+ok   B2 the binary gets its arguments unchanged: 
+ok   B2 the gate was asked on the VM (--ceiling, one ssh): ve-cloud-1 CODEX_CALLER='' PICK_ITEM='' zsh /home/seyran/code/manage-agents/codex-allowed.sh.new-codexw --ceiling
+ok   B3 the VM cannot be reached (ssh fails): refused: [codex-shim multi-agent-lab] Codex run refused: 
+ok   B4 the gate on the VM is missing: refused: [codex-shim multi-agent-lab] Codex run refused: the gate on the VM could not be asked (exit 127): zsh: can't open input file: /tmp/tmp.dVuuAHiaFS/no-such-gate
+ok   B5 no ceiling in force on the VM, week 100, balance 60000: refused (credit stop): [codex-shim multi-agent-lab] Codex run refused: plan week 100% with 0 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (c
+ok   B6 no ceiling, week 90: --ceiling passes (plan policy is the caller's run-codex.sh): 
+ok   B7 the host's own CODEX_WEEK_CEILING/CODEX_NOW do not reach the VM's gate: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B8 CODEX_CALLER=audit is forwarded: audit at 50 runs: 
+ok   B9 no caller: caller * 0 closes it: [codex-shim multi-agent-lab] Codex run refused: Codex closed for caller other until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING caller line)
+ok   B10 a CODEX_CALLER that is not a plain name is refused: [codex-shim multi-agent-lab] Codex run refused: the gate on the VM could not be asked (exit 2): CODEX_CALLER is not a plain name
+ok   B10 ... before any ssh: 
+ok   B11 `codex review` at 81 is refused: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B11 `codex resume --last` at 81 is refused: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B11 `codex cloud exec --env e p` at 81 is refused: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B11 `codex some prompt` at 81 is refused: [codex-shim multi-agent-lab] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
+ok   B12 `codex --version` does not spend: passes without the gate: 
+ok   B12 `codex login status` does not spend: passes without the gate: 
+ok   B12 `codex app-server` does not spend: passes without the gate: 
+ok   B12 `codex cloud list` does not spend: passes without the gate: 
+ok   B13 bash -n: 
+# C. cloud2-codex.sh (/home/seyran/code/manage-agents/cloud2-codex.sh.new-codexw)
+ok   C1 no code line of it names /usr/local/bin/codex (the run on the host): 
+ok   C2 it starts the host's shim: 
+ok   C3 it forwards CODEX_CALLER and PICK_ITEM to the host: 
+ok   C4 no shim on the host: it fails before the prompt is sent: 
+ok   C5 it still asks the gate on the VM first: 
+ok   C6 zsh -n: 
+PASS
