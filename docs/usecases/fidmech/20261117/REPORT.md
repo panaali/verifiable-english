@@ -6,7 +6,7 @@ Inputs read by sha256: adjudications.json a4e1c3feb6699dea..., defects.json 9ba6
 
 ## anthropic-rsp (in-sample)
 
-batch status ok; 467 mutants, 457 run, 0 not run; stillborn 10 (listed, never scored) {'qualifier': 1, 'actor': 9}; equivalent {}; inputs_sha256 39537b30c4c11e02dcad8bed896323d4915225c0afff357c2a56a0736f0264ed
+batch status ok; 467 mutants, 457 run, 0 with an INVALID K (no good sentinel confirmed the run: left out of every K denominator), 0 not run; stillborn 10 (listed, never scored) {'qualifier': 1, 'actor': 9}; equivalent {}; inputs_sha256 39537b30c4c11e02dcad8bed896323d4915225c0afff357c2a56a0736f0264ed
 
 - Units passing the stated checks (L1, L2, L3, D, K-structural), all ops: 0 of 85 (failing 76, incomplete 0, untested 9; units with at least one K survivor 75); failing units by cause (a unit can have several) {'K survivor': 74, 'K survivor, no text hit': 1, 'text hit D': 58, 'text hit L1': 31, 'text hit L2': 47, 'text hit L3': 12}
 - Units passing the stated checks (L1, L2, L3, D, K-structural), without flip-force: 0 of 85 (failing 76, incomplete 0, untested 9; units with at least one K survivor 71); failing units by cause (a unit can have several) {'K survivor': 70, 'K survivor, no text hit': 1, 'text hit D': 58, 'text hit L1': 31, 'text hit L2': 47, 'text hit L3': 12}
@@ -38,14 +38,14 @@ batch status ok; 467 mutants, 457 run, 0 not run; stillborn 10 (listed, never sc
 - hits each lever clears / adds when off: {'extra': {'cleared': 65, 'added': 6}, 'suppress': {'cleared': 0, 'added': 0}, 'abbrev': {'cleared': 0, 'added': 0}, 'furniture': {'cleared': 87, 'added': 87}, 'footnotes': {'cleared': 164, 'added': 85}, 'hand-footnotes': {'cleared': 16, 'added': 1}, 'ruled_out': {'cleared': 0, 'added': 0}, 'unformalised': {'cleared': 15, 'added': 0}, 'sidecar': {'cleared': 173, 'added': 3}}
 - adjudication of the baseline hits: 0 confirmed, 0 contradicted, 1437 unadjudicated; the document's findings: {'findings': 33, 'REAL-by-both': 23, 'NOT-by-both': 3, 'split': 7, 'unit_fp1_unchanged': 0} (a hit matches only a finding whose unit's fp-1 is unchanged since the adjudication)
 - false-discovery proportion among hits not measured: 0 confirmed, 0 contradicted, 1437 unadjudicated. Item 32's false-alarm figure needs a seeded adjudication sample (two blind adjudicators, about 20 hits per document), offered to the DRI and not run here.
-- plants: {"entries": 24, "excluded": 12, "applied": 11, "not applicable": 1, "K_killed": 5, "K_decided": 11, "any_killed": 7, "text_killed": 6, "not_applicable_by": {"the unit text is gone at the tree under test": 1}}
-- defects: {"entries": 14, "applied": 10, "not applicable": 4, "K_killed": 1, "K_decided": 10, "any_killed": 10, "text_killed": 10, "not_applicable_by": {"the repair deleted text the defect needs": 4}}
+- plants: {"entries": 24, "excluded": 12, "applied": 11, "not applicable": 1, "K_killed": 5, "K_decided": 11, "K_invalid": 0, "any_killed": 7, "text_killed": 6, "not_applicable_by": {"the unit text is gone at the tree under test": 1}}
+- defects: {"entries": 14, "applied": 10, "not applicable": 4, "K_killed": 1, "K_decided": 10, "K_invalid": 0, "any_killed": 10, "text_killed": 10, "not_applicable_by": {"the repair deleted text the defect needs": 4}}
 - old joint-run figures (item 49, the joint K + CR run before this harness, not isolated): 6/12 plants, 0/14 real RSP defects
 - run cost (measured): {"wall_s": 2754.0, "schedule_wall_s": 2610.7, "child_cpu_s": 35591.9, "run_cpu_s": 35590.8, "peak_concurrency": 16, "mean_concurrency": 15.72, "admission_wait_s": 0.0, "per_mutant_s": {"mean": 78.3, "median": 82.3, "max": 101.6}, "baseline_s": 59.123, "worker_peak_rss_bytes": 297955328, "max_peak_rss_bytes": 530628608, "lean_service_start": {"first_s": 0.3943415629910305, "second_s": 0.11779605702031404, "start_s": 0.277}, "cpu_h_per_100": 2.16, "wall_min_per_100": 10.0}; tokens 0. the challenger's 2.8 CPU-h per 100 mutants is an estimate for a 280-question set; RSP has 126 questions, so the figures are not like for like.
 
 ## safety-framework (out-of-sample under the freeze rule)
 
-batch status ok; 256 mutants, 64 run, 192 not run; stillborn 0 (listed, never scored) {}; equivalent {}; inputs_sha256 34ec93f778fab87851470d1e6701342afa6499140adfa08444ae3ed85c60b04d
+batch status ok; 256 mutants, 64 run, 0 with an INVALID K (no good sentinel confirmed the run: left out of every K denominator), 192 not run; stillborn 0 (listed, never scored) {}; equivalent {}; inputs_sha256 34ec93f778fab87851470d1e6701342afa6499140adfa08444ae3ed85c60b04d
 
 - Units passing the stated checks (L1, L2, L3, D, K-structural), all ops: 0 of 61 (failing 45, incomplete 0, untested 16; units with at least one K survivor 23); failing units by cause (a unit can have several) {'K survivor': 23, 'text hit D': 33, 'text hit L1': 37, 'text hit L2': 45, 'text hit L3': 22}
 - Units passing the stated checks (L1, L2, L3, D, K-structural), without flip-force: 0 of 61 (failing 45, incomplete 0, untested 16; units with at least one K survivor 23); failing units by cause (a unit can have several) {'K survivor': 23, 'text hit D': 33, 'text hit L1': 37, 'text hit L2': 45, 'text hit L3': 22}
@@ -82,7 +82,7 @@ batch status ok; 256 mutants, 64 run, 192 not run; stillborn 0 (listed, never sc
 
 ## openai-preparedness (out-of-sample under the freeze rule)
 
-batch status ok; 518 mutants, 96 run, 415 not run; stillborn 7 (listed, never scored) {'actor': 7}; equivalent {}; inputs_sha256 50ac2c228942aa3dc55ecde6ef24436bd0471dc9d41e1f5b0eed6e516149f4b7
+batch status ok; 518 mutants, 96 run, 0 with an INVALID K (no good sentinel confirmed the run: left out of every K denominator), 415 not run; stillborn 7 (listed, never scored) {'actor': 7}; equivalent {}; inputs_sha256 50ac2c228942aa3dc55ecde6ef24436bd0471dc9d41e1f5b0eed6e516149f4b7
 
 - Units passing the stated checks (L1, L2, L3, D, K-structural), all ops: 0 of 101 (failing 88, incomplete 3, untested 10; units with at least one K survivor 36); failing units by cause (a unit can have several) {'K survivor': 36, 'text hit D': 62, 'text hit L1': 66, 'text hit L2': 81, 'text hit L3': 12}
 - Units passing the stated checks (L1, L2, L3, D, K-structural), without flip-force: 0 of 101 (failing 88, incomplete 3, untested 10; units with at least one K survivor 36); failing units by cause (a unit can have several) {'K survivor': 36, 'text hit D': 62, 'text hit L1': 66, 'text hit L2': 81, 'text hit L3': 12}
