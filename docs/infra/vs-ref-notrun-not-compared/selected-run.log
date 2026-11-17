@@ -11,3 +11,11 @@ Build completed successfully (1478 jobs).
 
 # python3 lean/audit.py: exit 0
 PASS: 898 source files; 10153 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+# DRI-note round, on e83381dc3f (tree af443dac48)
+mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run: exit 0
+recorded 232 units for tree af443dac48; 335 others left to the static graph until they run; 0 failed
+[cloud2 18:41:31Z] summary: ran on ve-cloud-2, select_tests, exit=0, 1185s
+[mac-pytest 18:41:31Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: MAC_LAST_RESORT: VM full, remote attempt 3; exit=0; 1311s
+lake build: exit 0, Build completed successfully (1478 jobs).
+python3 lean/audit.py: exit 0, PASS: 898 source files; 10153 named theorem declarations aud
