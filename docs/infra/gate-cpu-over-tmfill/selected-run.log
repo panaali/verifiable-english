@@ -1,0 +1,4 @@
+5:deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (2021.7 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+111:SHARD 1/2: exit 0 in 74.5 s; 6 units, 6 passed
+207:SHARD 2/2: exit 0 in 116.3 s; 4 units, 4 passed
+208:[gha-select 12:49:53Z] summary: selected tests ran on GitHub Actions (2 shards, run gate-cpu-over-tmfill-42f065f9-t919464); exit=0; 329s
