@@ -1,0 +1,25 @@
+== merge-train.sh: the kernel closure baseline after a merge of main (2026-11-17 kb-regen-closure-train-wiring)
+K1 the train's sync merge keeps a per-path stale baseline with equal totals -> rewritten, one commit, published fresh
+  ok   premise: the sync merge kept the branch's baseline: total 6 = the fresh total, rows P and Q stale
+  FAIL one regen commit on the sync merge, changing only the baseline   [[ "$(g -C $I rev-parse $HB^)" = "$SM" ] && [ "$(g -C $I log -1 --format=%s $HB)" = "Regenerate the kernel closure baseline after the merge of main (merge train, R12)" ] && [ "$(g -C $I diff-tree --no-commit-id --name-only -r $HB)" = "$KB" ] && g -C $I log -1 --format=%B $HB | grep -qF "(path rows P.lean, Q.lean)"]
+  FAIL published: main = the one gated candidate, its baseline fresh, its second parent the regen commit   [[ $(rcof k1) = 0 ] && [ $(gstarts k1) = 1 ] && [ "$HM" = "$(gsha k1 1)" ] && [ "$(g -C $I rev-parse $HM^2)" = "$HB" ] && kcfresh $HM && [ "$(kctot $HM)" = 6 ]]
+  FAIL the log line names the rows; check, write, check on k1's worktree only, once (not again on the new head)   [grep -qF "kernel closure regen of k1: ${SM[1,8]} -> ${HB[1,8]} refreshed $KB ($KB is not what --out writes now (path rows P.lean, Q.lean); regen_generated --write --only kernel-closure) in " $M/merge-train.log && [ "$(kcalls)" = "ve-k1 check;ve-k1 write;ve-k1 check;" ]]
+K2 a fresh tree -> checked once, logged fresh, no commit
+  FAIL published the branch head as it was; one check; fresh line in merge-train.log.candregen   [[ $(rcof k2) = 0 ] && [ "$(g -C $I rev-parse HEAD^2)" = "$H0" ] && [ "$(kcalls)" = "ve-k2 check;" ] && grep -qE " k2 branch ${H0[1,8]} kernel closure fresh [0-9]+ s$" $M/merge-train.log.candregen && ! grep -q "kernel closure regen of k2" $M/merge-train.log]
+K3 STALE and a FAIL line (a limit) -> never rewritten here: no write, gated as is
+  FAIL skipped (a limit), no write, the branch head is the sync merge   [kskip k3 "the check also failed a limit: FAIL: the kernel grew from 5 to 6 lines" && [ "$(kcalls)" = "ve-k3 check;" ] && [ "$(g -C $H/code/ve-k3 rev-parse HEAD)" = "$SM" ]]
+K4 the check fails with no STALE line (a broken build) -> no write
+  FAIL skipped (no STALE line, the failure quoted), no write, head unchanged   [kskip k4 "the check failed without a STALE line: lake build VE failed (1): stub)" && [ "$(kcalls)" = "ve-k4 check;" ] && [ "$(g -C $H/code/ve-k4 rev-parse HEAD)" = "$SM" ]]
+K5 the write changes a file of another entry -> refused, the branch reset to its head
+  FAIL skipped (owner extra), head unchanged, worktree clean, notes untouched, published stale as before   [kskip k5 "the write changed docs/notes.txt (owner extra), not a file of kernel-closure)" && [ "$(g -C $H/code/ve-k5 rev-parse HEAD)" = "$SM" ] && [ -z "$(g -C $H/code/ve-k5 status --porcelain --untracked-files=no)" ] && [ "$(cat $H/code/ve-k5/docs/notes.txt)" = notes ] && [ $(rcof k5) = 0 ] && ! kcfresh $(g -C $I rev-parse HEAD)]
+K6 the write leaves it stale -> refused, reset
+  FAIL skipped (still STALE after the write), head unchanged, check write check   [kskip k6 "still failing after the write: STALE: $KB is not what --out writes now" && [ "$(g -C $H/code/ve-k6 rev-parse HEAD)" = "$SM" ] && [ "$(kcalls)" = "ve-k6 check;ve-k6 write;ve-k6 check;" ]]
+K7 the writer fails after leaving an untracked file -> that file removed, the builder's own untracked file kept
+  FAIL skipped (writer failed), out.tmp removed, mine.txt kept, head unchanged   [kskip k7 "the writer failed or timed out (2700 s): REFUSED: stub writer failure)" && [ ! -e $H/code/ve-k7/docs/kernel/out.tmp ] && [ "$(cat $H/code/ve-k7/mine.txt)" = mine ] && [ "$(g -C $H/code/ve-k7 rev-parse HEAD)" = "$SM" ]]
+K8 off switch KERNEL_CLOSURE_REGEN.off -> no check; the stale baseline is gated as before
+  ok   no check or write, no kernel closure line; published stale
+K9 library mode (presync-lean-regen.zsh run, MT_LIB): branchregen never runs the kernel closure step
+  ok   the tree is stale, yet no check ran; PSLR fresh, head unchanged
+K10 the check outlasts KERNEL_CLOSURE_TIMEOUT (1 s here) -> killed, no write, the timeout named; gated as is
+  FAIL skipped (no failure line, killed at the 1 s timeout), no write, head unchanged, published   [kskip k10 "the check failed without a STALE line: no failure line (killed at the 1 s timeout, or a crash); last line: == check kernel-closure)" && [ "$(kcalls)" = "ve-k10 check;" ] && [ "$(g -C $H/code/ve-k10 rev-parse HEAD)" = "$SM" ] && [ $(rcof k10) = 0 ]]
+== merge queue (kernel closure cases): 3 passed, 10 failed

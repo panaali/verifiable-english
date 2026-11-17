@@ -1,0 +1,150 @@
+{
+ "item": "tm-shard-actions-120",
+ "planted_in": "temporary copies of the staged file (seed_run.py); the staged file is never edited",
+ "command": "VE_REPO=<a VE checkout> python3 -I docs/infra/tm-shard-actions-120/seed_run.py",
+ "mutants": [
+  {
+   "id": "B1-setup-best",
+   "behaviour": "(1) SETUP = the records' worst setup",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::p4: the log names the records' worst setup and p90 and the part line",
+   "failing_tests": [
+    "p4: the log names the records' worst setup and p90 and the part line",
+    "p3: each part's predicted total 6820 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)",
+    "p3: the log names the records' worst setup and p90 and the part line",
+    "84 mutants: not sent on actions (exit 3, nothing dispatched) or every part's predicted total < 6000"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B2-records-spm-unused",
+   "behaviour": "(1)/(2) the records' p90 per-mutant time sizes the parts",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::p4: each part's predicted total 16720 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)",
+   "failing_tests": [
+    "p4: each part's predicted total 16720 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)",
+    "p3: each part's predicted total 16720 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)",
+    "84 mutants: not sent on actions (exit 3, nothing dispatched) or every part's predicted total < 6000",
+    "reading 300: the parts are sized at 300 slot-s per mutant (estimate 3767 s)",
+    "reading 300: the log says it sized at the records' p90"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B3-no-unsharded-budget",
+   "behaviour": "(3) the unsharded Actions part gets --budget",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::unsharded (5 mutants fit one part): the one dispatch has --budget <= 6300",
+   "failing_tests": [
+    "unsharded (5 mutants fit one part): the one dispatch has --budget <= 6300",
+    "a malformed TM_PART_BUDGET gives the computed --budget 6300 (never no budget)"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B4-no-budget-cut",
+   "behaviour": "(3) a budget over LIMIT - PRE is cut",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::TM_PART_BUDGET 99999 is cut to LIMIT - PRE (6900)",
+   "failing_tests": [
+    "TM_PART_BUDGET 99999 is cut to LIMIT - PRE (6900)"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B6-malformed-budget-dropped",
+   "behaviour": "(3) a malformed TM_PART_BUDGET still gives a budget (fails closed)",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::sharded: 8 parts, each with --budget <= 6300",
+   "failing_tests": [
+    "sharded: 8 parts, each with --budget <= 6300",
+    "sharded beside the caller's --budget 9000 and far --deadline: each part also has --budget <= 6300",
+    "unsharded (5 mutants fit one part): the one dispatch has --budget <= 6300",
+    "a malformed TM_PART_BUDGET gives the computed --budget 6300 (never no budget)"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B5-old-lines",
+   "behaviour": "(2) the part line 5,100 s is the default HARD/CANCEL",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::84 mutants: not sent on actions (exit 3, nothing dispatched) or every part's predicted total < 6000",
+   "failing_tests": [
+    "84 mutants: not sent on actions (exit 3, nothing dispatched) or every part's predicted total < 6000"
+   ],
+   "caught": true
+  },
+  {
+   "id": "F1a-other-shard-rows",
+   "behaviour": "(1) a --shard part's OTHER SHARD rows are not its mutants",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [mirror]: reading 1800",
+   "failing_tests": [
+    "part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [mirror]: reading 1800",
+    "part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [record()]: reading 1800",
+    "part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [mirror]: reading 1800",
+    "part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [record()]: reading 1800",
+    "--rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800",
+    "--rescore part 1/4 of 32: 6 reused_from, 2 judged [record()]: reading 1800",
+    "--resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800",
+    "--resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [record()]: reading 1800",
+    "--resume + --rescore part: 2 reused_from among 5 kept, 3 judged [mirror]: reading 1800",
+    "--resume + --rescore part: 2 reused_from among 5 kept, 3 judged [record()]: reading 1800",
+    "--resume ignored (a full run): 8 judged [mirror]: reading 1800",
+    "--resume ignored (a full run): 8 judged [record()]: reading 1800",
+    "a full reuse (every own row reused_from): no reading [mirror]: reading None",
+    "a full reuse (every own row reused_from): no reading [record()]: reading None"
+   ],
+   "caught": true
+  },
+  {
+   "id": "F1b-reused-rows",
+   "behaviour": "(1) --rescore reuses (reused_from) were not judged in the run",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::--rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800",
+   "failing_tests": [
+    "--rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800",
+    "--rescore part 1/4 of 32: 6 reused_from, 2 judged [record()]: reading 1800",
+    "a full reuse (every own row reused_from): no reading [mirror]: reading None",
+    "a full reuse (every own row reused_from): no reading [record()]: reading None"
+   ],
+   "caught": true
+  },
+  {
+   "id": "F1c-resumed-rows",
+   "behaviour": "(1) --resume keeps (resumed.kept) were not judged in the run",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::--resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800",
+   "failing_tests": [
+    "--resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800",
+    "--resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [record()]: reading 1800",
+    "--resume + --rescore part: 2 reused_from among 5 kept, 3 judged [mirror]: reading 1800",
+    "--resume + --rescore part: 2 reused_from among 5 kept, 3 judged [record()]: reading 1800"
+   ],
+   "caught": true
+  },
+  {
+   "id": "F1d-abandoned-rows",
+   "behaviour": "(1) the mutants the deadline abandoned mid-build took a slot",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh.new-tsa",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py::p4: the log names the records' worst setup and p90 and the part line",
+   "failing_tests": [
+    "p4: the log names the records' worst setup and p90 and the part line",
+    "p3: the log names the records' worst setup and p90 and the part line",
+    "part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [mirror]: reading 1800",
+    "part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [record()]: reading 1800"
+   ],
+   "caught": true
+  }
+ ]
+}

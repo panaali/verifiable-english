@@ -1,0 +1,70 @@
+--- merge-train.sh	2026-11-16 04:59:23.762027689 +0000
++++ merge-train.sh.new-kbw	2026-11-17 16:48:23.745702096 +0000
+@@ -351,7 +351,7 @@
+   elif [ "$mn" = "$rm" ]; then echo "presync lean regen not the head: $label branch ${h[1,8]} has commits after the presync regen ${rg[1,8]} (main ${rm[1,8]} unchanged); probe $n, the train regenerates as today $(date -u +%H:%MZ)" >> $log
+   else echo "presync regen stale (main moved): $label branch ${h[1,8]} contains the presync regen ${rg[1,8]} (main ${rm[1,8]}) and main moved since (now ${mn[1,8]}); probe $n, the train regenerates as today $(date -u +%H:%MZ)" >> $log; fi
+   return 0; }
+-branchregen(){ local h n n1 out pin ch=() f o why="" s=$(date +%s) cto=${CAND_REGEN_LEAN_TIMEOUT:-2700} le=(lean-statements lean-audit-manifests assurance-doc) loa=(--only lake-build)
++branchinv(){ local h n n1 out pin ch=() f o why="" s=$(date +%s) cto=${CAND_REGEN_LEAN_TIMEOUT:-2700} le=(lean-statements lean-audit-manifests assurance-doc) loa=(--only lake-build)
+   brbuild=""; [ -f $M/CAND_REGEN_LEAN ] || return 0
+   h=$(git -C $wt rev-parse HEAD); [ "$h" = "$brprobed" ] && return 0; brprobed=$h
+   for f in $le; do loa+=(--only $f); done
+@@ -386,7 +386,58 @@
+     [ "$(git -C $wt rev-parse HEAD)" = "$h" ] && [[ "$why" != "uncommitted"* ]] && git -C $wt reset -q --hard $h > /dev/null 2>&1
+     echo "branch regen of $label${brtag} skipped ($why): the branch is gated as is $(date -u +%H:%MZ)" >> $log; fi
+   return 0; }
++# 2026-11-17 kb-regen-closure-train-wiring (F1 of the kb-regen-closure-check review; reviews/dri-decisions-20261116-kb-regen-
++# closure-check.md item 1; off switch $M/KERNEL_CLOSURE_REGEN.off, read at each use). docs/kernel/closure-baseline.json (regen
++# entry kernel-closure) is measured from the COMPILED tree, so it is in neither candregen's --at-merge entries nor branchinv's
++# inventory entries, and a clean merge of main can keep one side's per-path rows with equal totals: the gate's "Kernel check"
++# (--check and --fresh) then fails the candidate and a verify-fix only reruns the writer. brclosure (in branchregen, after
++# branchinv's Lean build; once per branch head; train only, never in library mode: presync-watch-job.sh accepts only the
++# inventory owners in a presync regen): when the tree's regen_generated.py has the entry, --check --only kernel-closure; when
++# its output has a STALE line and no FAIL line (a limit failure is never rewritten here: a write could raise the baseline),
++# --write --only kernel-closure (timeout KERNEL_CLOSURE_TIMEOUT, else CAND_REGEN_LEAN_TIMEOUT, default 2700 s), then the check
++# must pass and every changed path's --owner must be kernel-closure; kept as one commit on the branch (R12: the train
++# regenerates generated files at merge time). Anything else: the branch is reset to its head and gated as is (the gate's
++# Kernel check refuses a stale baseline). Fresh -> $log.candregen.
++typeset -A brcseen
++brclosure(){ local h n out u0=() ch=() f o why="" st s=$(date +%s) cto=${KERNEL_CLOSURE_TIMEOUT:-${CAND_REGEN_LEAN_TIMEOUT:-2700}} ko=(--only kernel-closure)
++  [ -n "$brclose" ] && [ -z "$brbuild" ] && [ ! -f $M/KERNEL_CLOSURE_REGEN.off ] || return 0
++  grep -q '"kernel-closure"' $wt/tools/regen_generated.py 2> /dev/null || return 0
++  h=$(git -C $wt rev-parse HEAD); [ -z "${brcseen[$h]}" ] || return 0; brcseen[$h]=1
++  u0=(${(f)"$(git -C $wt ls-files --others --exclude-standard)"})
++  if [ -n "$(git -C $wt status --porcelain --untracked-files=no)" ]; then why="uncommitted changes in ${wt:t}"
++  elif out=$(cregen_run $wt --check $ko); then
++    echo "$(date -u +%FT%H:%MZ) $label branch ${h[1,8]} kernel closure fresh $(( $(date +%s) - s )) s" >> $log.candregen; return 0
++  elif ! st=$(print -r -- "$out" | grep -m1 '^STALE: '); then
++    o=$(print -r -- "$out" | grep -v -e '^== ' -e '^regen_generated: ' | grep -m1 -E 'FAIL|REFUSED|failed|rror|imed out')
++    why="the check failed without a STALE line: ${${o:-no failure line (killed at the ${cto} s timeout, or a crash); last line: $(print -r -- "$out" | tail -1)}[1,160]}"
++  elif print -r -- "$out" | grep -q '^FAIL: '; then why="the check also failed a limit: $(print -r -- "$out" | grep -m1 '^FAIL: ' | cut -c1-120)"
++  elif ! out=$(cregen_run $wt --write $ko); then why="the writer failed or timed out (${cto} s): $(print -r -- "$out" | tail -1 | cut -c1-120)"
++  elif ! out=$(cregen_run $wt --check $ko); then why="still failing after the write: $(print -r -- "$out" | grep -m1 -E '^(STALE|FAIL)' | cut -c1-120)"
++  else
++    ch=(${(f)"$(git -C $wt diff --name-only; git -C $wt ls-files --others --exclude-standard | grep -vxF -f <(print -rl -- $u0))"})
++    (( ${#ch} )) || why="the check read STALE, but the write changed nothing"
++    for f in $ch; do o=$(cregen_run $wt --owner $f | tail -1); [ "$o" = kernel-closure ] || { why="the write changed $f (owner $o), not a file of kernel-closure"; break; }; done
++    st=${${st#STALE: }%%; regenerate it*}
++    if [ -z "$why" ] && git -C $wt add -- $ch > /dev/null 2>&1 && git -C $wt commit -q -m "Regenerate the kernel closure baseline after the merge of main (merge train, R12)
++
++tools/regen_generated.py --check --only kernel-closure read: ${st[1,300]}.
++tools/regen_generated.py --write --only kernel-closure rewrote: ${(j:, :)ch}; the check then passed. No hand edits.
++
++Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" > /dev/null 2>&1; then
++      n=$(git -C $wt rev-parse HEAD); brcseen[$n]=1; [ "$brprobed" = "$h" ] && brprobed=$n
++      echo "kernel closure regen of $label${brtag}: ${h[1,8]} -> ${n[1,8]} refreshed ${(j:, :)ch} (${st[1,160]}; regen_generated --write $ko) in $(( $(date +%s) - s )) s $(date -u +%H:%MZ)" >> $log
++    else [ -n "$why" ] || why="git could not commit the refreshed baseline"; fi
++  fi
++  if [ -n "$why" ]; then
++    if [ "$(git -C $wt rev-parse HEAD)" = "$h" ] && [[ "$why" != "uncommitted"* ]]; then git -C $wt reset -q --hard $h > /dev/null 2>&1
++      for f in ${(f)"$(git -C $wt ls-files --others --exclude-standard)"}; do (( ${u0[(Ie)$f]} )) || rm -f -- $wt/$f; done; fi
++    echo "kernel closure regen of $label${brtag} skipped ($why): the branch is gated as is $(date -u +%H:%MZ)" >> $log; fi
++  return 0; }
++# branchregen: the Lean inventories (branchinv, L87), then the kernel closure baseline (brclosure); always returns 0
++branchregen(){ branchinv; brclosure; return 0; }
++brclose=""  # set below: the train runs brclosure; library mode (presync-lean-regen.zsh) returns on the next line first
+ [[ -n $MT_LIB && $ZSH_EVAL_CONTEXT == *:file* ]] && return 0  # 2026-11-09 fix 5: library mode ends here (see line 9)
++brclose=1  # 2026-11-17 kb-regen-closure-train-wiring
+ # 2026-10-27 DRI improvement review (PIPELINE-LIMITS L110; flag file $M/MQ_SPEC_REGEN, read at each use). mkcand's
+ # merge-tree runs in $R, whose checkout has no .gitattributes, so the ve-generated merge driver never runs there: every
+ # Lean branch "conflicts" with the candidate ahead on lean/declarations.txt and tools/trust-classes.json (12 of 12 queue

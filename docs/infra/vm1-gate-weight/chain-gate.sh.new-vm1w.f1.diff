@@ -1,0 +1,76 @@
+--- /tmp/vm1w-fix/chain-gate.sh.new-vm1w.pre-f1
++++ /home/seyran/code/manage-agents/chain-gate.sh.new-vm1w
+@@ -378,8 +378,38 @@
+ #    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / ve-cloud-2 gates
+ #    take no slot and keep their weight. No $VM_GATE_ISO (default $M/iso.sh) file: the old unscoped command (a note on
+ #    stderr). Test: tools-local/test_vm1_gate_weight.py.
++#    The gate's scope is tied to the chain (review F1, vm1-gate-weight-review.final.md): the scope's main process is a watcher
++#    ($vwatch) that runs gate.py and polls the chain (pid + start time, every VM_GATE_WATCH s, 1); when the chain is gone
++#    (its scope stopped by stop-at-boundary.sh / freeze-mover.sh, a manual stop or kill) it stops its own scope ($vunit:
++#    the gate and everything in it), then TERMs (KILL after VM_GATE_STOP_GRACE s, 30) the gate's tree if anything is left.
++#    The slot is kept until that scope is gone: the watcher records its scope (cgroup, else its own pid + start time) in
++#    <lock>.gate, and a chain that gets the flock while that record is live releases it and keeps waiting (the wait event
++#    names "<label>: gate of a stopped chain"). A gate that ends by itself removes its record.
+ viso=${VM_GATE_ISO:-$M/iso.sh}; [ -f "$viso" ] || { echo "chain-gate.sh: no $viso: the VM gate runs unscoped" >&2; viso=""; }
+-vheld=""; vfd=""
++vheld=""; vfd=""; vunit="ve-vmgate-${label//[^A-Za-z0-9_-]/_}-$$-*.scope"  # the units iso.sh names vmgate-$label-$$-<t>
++vst='pst(){ local s; s=$(</proc/$1/stat) 2>/dev/null || return 1; s=(${=${s##*) }}); [[ $s[1] != [ZX] ]] && print -r -- $s[20]; }'
++# ^ a live pid's start time; nothing for a gone pid or a zombie (a killed chain stays a zombie until its parent reaps it)
++eval "$vst"; vps=$(pst $$)
++vglive(){  # $1 slot: the gate recorded in $1.gate (its scope's cgroup, else its watcher pid + start time) still runs
++  local g p s x r; { read -r g p s x < $1.gate } 2>/dev/null || return 1
++  if [[ $g == /* ]]; then { r=$(<$g/cgroup.procs) } 2>/dev/null; [ -n "$r" ]; return; fi
++  [[ $p == <-> && -n $s && "$(pst $p)" == $s ]]; }
++vwatch=$vst'
++desc(){ local k; for k in $(pgrep -P $1 2>/dev/null); do desc $k; print $k; done; }
++p=$1 ps=$2 slot=$3 unit=$4; shift 4; g=-; c=$(</proc/$$/cgroup); c=${${(M)${(f)c}:#0::*}#0::}
++[[ ${c:t} == ve-vmgate-*.scope ]] && g=/sys/fs/cgroup$c
++[ "$slot" != - ] && print -r -- "$g $$ $(pst $$)" > $slot.gate
++[[ "$(pst $p)" == $ps ]] || { echo "vmgate: chain $p is gone: gate not started" >&2; exit 4; }
++"$@" & k=$!
++stopgate(){ local t=($(desc $k) $k) n=0; kill -TERM $t 2>/dev/null
++  while kill -0 $k 2>/dev/null && (( n < ${VM_GATE_STOP_GRACE:-30} )); do sleep 1; (( n++ )); done
++  kill -KILL $t $(desc $k) $k 2>/dev/null; }
++trap "stopgate; exit 143" INT TERM HUP
++while kill -0 $k 2>/dev/null; do
++  if [[ "$(pst $p)" != $ps ]]; then echo "vmgate: chain $p is gone: stopping its VM gate ($unit)" >&2
++    ${VM_GATE_SYSTEMCTL:-systemctl} --user stop "$unit" > /dev/null 2>&1; stopgate; wait $k; exit 4; fi
++  sleep ${VM_GATE_WATCH:-1}; done
++wait $k; r=$?; [ "$slot" != - ] && rm -f $slot.gate; exit $r'  # a gate that ended by itself: no record (strays keep no slot)
+ vlock(){
+   [ -n "$vheld" ] && return 0
+   zmodload zsh/system || return 0
+@@ -388,24 +418,28 @@
+   mkdir -p $d
+   while :; do
+     for i in {1..$n}; do f=$d/vm1-gate.lock; (( i > 1 )) && f=$d/vm1-gate-$i.lock; : >> $f
+-      if zsystem flock -t 0 -f vfd $f 2>/dev/null; then vheld=$f; print -r -- "$label $$ $(date -u +%FT%TZ)" > $f.holder
++      if zsystem flock -t 0 -f vfd $f 2>/dev/null; then
++        if vglive $f; then zsystem flock -u $vfd; vfd=""; continue; fi  # F1: a stopped chain's gate still runs
++        rm -f $f.gate; vheld=$f; print -r -- "$label $$ $(date -u +%FT%TZ)" > $f.holder
+         [ -n "$said" ] && echo "chain-gate.sh: vm1 slot $f after $(( $(date +%s) - t0 ))s" >&2; return 0; fi
+     done
+     if [ -n "$CHAIN_GATE_CANCEL" ] && [ -e "$CHAIN_GATE_CANCEL" ]; then [ -n "$1" ] && rm -f $w/gate-result.json  # as vmcx
+       ev gate-cancelled "no VM gate: $CHAIN_GATE_CANCEL (FIX_EARLY$1) while waiting for vm1"; exit 4; fi
+     if [ -z "$said" ]; then who=(); (( tries++ ))  # a holder writes its .holder just after its flock: 3 polls to name it
+-      for i in {1..$n}; do f=$d/vm1-gate.lock; (( i > 1 )) && f=$d/vm1-gate-$i.lock
+-        read -r l p x < $f.holder 2>/dev/null && [[ $p == <-> ]] && kill -0 $p 2>/dev/null && who+=($l); done
++      for i in {1..$n}; do f=$d/vm1-gate.lock; (( i > 1 )) && f=$d/vm1-gate-$i.lock; l=""; p=""
++        { read -r l p x < $f.holder } 2>/dev/null
++        if [[ $p == <-> ]] && kill -0 $p 2>/dev/null; then who+=($l)
++        elif [ -n "$l" ] && vglive $f; then who+=("$l: gate of a stopped chain"); fi; done
+       if (( ${#who} || tries >= 3 )); then said=1; (( ${#who} )) || who=(unknown)
+         ev gate-wait "waiting: another VM gate holds vm1 (${(j:, :)who})"; echo "chain-gate.sh: waiting: another VM gate holds vm1 (${(j:, :)who})" >&2; fi; fi
+     sleep ${VM_GATE_POLL:-10}
+   done; }
+ vmg(){
+   local c=(env -C $w VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@")
+-  [ -n "$viso" ] && c=(zsh $viso vmgate-$label-$$ ${VM_GATE_MEM:-48G} -- $c)
++  [ -n "$viso" ] && c=(zsh $viso vmgate-$label-$$ ${VM_GATE_MEM:-48G} -- zsh -f -c $vwatch vmgate-watch $$ $vps ${vheld:--} $vunit $c)
+   if [ -n "$CHAIN_GATE_CANCEL" ]; then selrun $c; else $c; fi; }
+ vmcx(){ [ -n "$cx" ] || return 0
+-  [ -n "$viso" ] && ${VM_GATE_SYSTEMCTL:-systemctl} --user stop "ve-vmgate-${label//[^A-Za-z0-9_-]/_}-$$-*.scope" > /dev/null 2>&1
++  [ -n "$viso" ] && ${VM_GATE_SYSTEMCTL:-systemctl} --user stop "$vunit" > /dev/null 2>&1
+   rm -f $w/gate-result.json; ev gate-cancelled "vm gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY$1)"; exit 4; }
+ if [ -z "$c2g" ]; then
+ vlock

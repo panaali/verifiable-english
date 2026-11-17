@@ -1,0 +1,10 @@
+ok   1-budget-plus-far-deadline
+ok   2-near-deadline-plus-large-budget
+ok   3-budget-only
+ok   4-deadline-only
+ok   5-two-deadlines-plus-budget
+ok   6-budget-abc-refused
+ok   7-equals-forms-and-order
+ok   8a-deadline-no-value-refused
+ok   8b-deadline-bad-value-refused
+all passed

@@ -1,0 +1,14 @@
+== seed: sed 's/|tmidle-\*|tm-drain-\*) cw=25/|tm-drain-*) cw=25/' iso.sh.new-gcpu
+FAIL: test_idle_fill_scopes_weight_25 (__main__.IsoWeight.test_idle_fill_scopes_weight_25)
+AssertionError: 100 != 25
+FAILED (failures=1)
+== seed: sed 's/|tmidle-\*|tm-drain-\*) cw=25/|tmidle-*) cw=25/' iso.sh.new-gcpu
+FAIL: test_idle_fill_scopes_weight_25 (__main__.IsoWeight.test_idle_fill_scopes_weight_25)
+AssertionError: 100 != 25
+FAILED (failures=1)
+== seed: sed 's/|tmidle-\*|tm-drain-\*) cw=25/|tm-*) cw=25/' iso.sh.new-gcpu
+FAIL: test_chain_and_escape_fix_stay_100 (__main__.IsoWeight.test_chain_and_escape_fix_stay_100)
+AssertionError: 25 != 100
+FAIL: test_idle_fill_scopes_weight_25 (__main__.IsoWeight.test_idle_fill_scopes_weight_25)
+AssertionError: 100 != 25
+FAILED (failures=2)
