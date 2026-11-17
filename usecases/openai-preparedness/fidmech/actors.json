@@ -1,0 +1,81 @@
+{
+ "schema": "fidmech-actors/1",
+ "document": "openai-preparedness",
+ "generated": [
+  "the Safety and Security Committee",
+  "the OpenAI Board of Directors",
+  "OpenAI Leadership",
+  "government actors",
+  "improved public",
+  "The SAG Chair",
+  "the SAG Chair",
+  "third parties",
+  "Leadership",
+  "government",
+  "Employees",
+  "developer",
+  "employees",
+  "the Board",
+  "employee",
+  "the SAG",
+  "OpenAI",
+  "ARA",
+  "SAG",
+  "SSC",
+  "AI",
+  "ET",
+  "US"
+ ],
+ "removed": [
+  {
+   "phrase": "improved public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "ARA",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "AI",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "ET",
+   "reason": "a PLAN term (elicitation threshold), not a party"
+  },
+  {
+   "phrase": "US",
+   "reason": "an adjective of \"US government\"; \"government\" is listed"
+  },
+  {
+   "phrase": "Employees",
+   "reason": "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+  },
+  {
+   "phrase": "The SAG Chair",
+   "reason": "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+  },
+  {
+   "phrase": "SSC",
+   "reason": "an alias of \"the Safety and Security Committee\" in the same legend (\"SSC is the Safety and Security Committee\"): swapping the two changes no actor"
+  }
+ ],
+ "added": [],
+ "actors": [
+  "the Safety and Security Committee",
+  "the OpenAI Board of Directors",
+  "OpenAI Leadership",
+  "government actors",
+  "the SAG Chair",
+  "third parties",
+  "Leadership",
+  "government",
+  "developer",
+  "employees",
+  "the Board",
+  "employee",
+  "the SAG",
+  "OpenAI",
+  "SAG"
+ ]
+}

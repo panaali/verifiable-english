@@ -1,0 +1,32 @@
+import json
+from pathlib import Path
+from tools.fidmech import wording as W
+ADJ = "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+DOC = "a document term (a capability level, category, assessment or framework name), not a party"
+DUP = "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+REVIEW = {
+ "openai-preparedness": ({"improved public": ADJ, "ARA": DOC, "AI": DOC, "ET": "a PLAN term (elicitation threshold), not a party",
+                          "US": "an adjective of \"US government\"; \"government\" is listed", "Employees": DUP,
+                          "The SAG Chair": DUP, "SSC": "an alias of \"the Safety and Security Committee\" in the same legend (\"SSC is the Safety and Security Committee\"): swapping the two changes no actor"}, {}),
+ "safety-framework": ({"the CBRN": DOC, "the CCL": DOC, "CCA": DOC, "CCL": DOC, "SEC": DOC, "TCL": DOC, "AI": DOC,
+                       "appropriate government": "an adjective of \"appropriate government authorities\", which is covered by \"government authorities\"",
+                       "overall public": ADJ},
+                      {"Google": "the developer named in the legends (\"restricted to Google\", \"entities outside Google\"); a plain capitalised word, which the generator does not take"}),
+ "anthropic-rsp": ({"comprehensive public": ADJ, "provide public": ADJ, "made public": ADJ, "Public": ADJ, "public": ADJ,
+                    "manipulate users": "a verb taken as a modifier; \"users\" is listed", "sabotage users": "a verb taken as a modifier; \"users\" is listed",
+                    "hundred employees": "a number taken as a modifier; \"employees\" is listed", "Misaligned AI": "an AI system, not a party",
+                    "AI": DOC, "the RSP": DOC, "Actors": DUP, "Competitors": DUP,
+                    "this group": "a determiner taken as a modifier", "these competitors": "a determiner taken as a modifier; \"competitors\" is listed"}, {}),
+}
+for doc, (removed, added) in REVIEW.items():
+    d = Path("usecases") / doc
+    files = {f.name: f.read_text() for f in d.iterdir() if f.name in ("environment.d1.json", "rules.d1.ve") or f.name.endswith("vocabulary.py")}
+    gen = W.propose_actors(files)
+    assert set(removed) <= set(gen), set(removed) - set(gen)
+    actors = sorted((set(gen) - set(removed)) | set(added), key=lambda a: (-len(a), a))
+    data = {"schema": "fidmech-actors/1", "document": doc, "generated": gen,
+            "removed": [{"phrase": p, "reason": r} for p, r in removed.items()],
+            "added": [{"phrase": p, "reason": r} for p, r in added.items()], "actors": actors}
+    (d / "fidmech" / "actors.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+    W.load_actors(d / "fidmech" / "actors.json")
+    print(doc, len(gen), "generated", len(removed), "removed", len(added), "added", len(actors), "actors")

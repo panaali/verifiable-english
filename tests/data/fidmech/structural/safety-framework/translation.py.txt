@@ -1,0 +1,1 @@
+PRECEDENCE = {"f3": ("f2",)}

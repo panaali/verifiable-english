@@ -1,0 +1,21 @@
+clean tree at commit 732ebf412e6c14579183c3559cd0d6fc679a30fb (git status empty before and after): uv run python -m tools.fidmech mutants --doc anthropic-rsp
+anthropic-rsp: 435 mutants, generator fidmech/1, inputs_sha256 bbe3c9d1f1b9317e7ad221eee90d21e85cf3a31cd43431c7ac9f69649ecd743e
+op                 mutants    ok stillborn syntactic duplicates
+drop-conjunct           61    61         0         0          5
+drop-unless              3     3         0         0          0
+drop-disjunct            2     2         0         0          0
+drop-exception           3     3         0         0          0
+flip-force              73    73         0         0          0
+add-guard-true          10    10         0         0          0
+rule-drop               76    76         0         0          0
+widen-quantifier         5     5         0         0          0
+actor                   57    48         9         0         14
+qualifier               97    96         1         0         11
+quantity                44    44         0         0         11
+attachment               4     4         0         0          1
+structural no-item: ["f5-evidence-strict", "f5-evidence-default", "s1-advance-default", "f6-maintain", "f6-share", "f6-updates", "f6-keep-past", "f10-candid-default", "f10-attempt-strict", "f10-attempt-default", "f11-factual", "f11-analyses", "f11-review", "f12-internal-feedback", "f12-external-default", "f12-approval", "f13-disclose", "f13-justify-default", "f14-public-review-default", "f15-revenue-strict", "f15-revenue-default", "f16-ask-commentary", "f16-before-board-default", "f16-all-sections", "f16-split-p", "f18-rso", "f19-brief-ltbt", "f19-minimally-redacted", "f20-process", "f20-recipients", "f20-investigate", "f20-notice-p", "f20-retaliation", "f21-no-impeding", "f21-clause", "f22-internal-review", "f22-third-party-review", "f23-approval", "f23-website"]
+structural no-guard-true: ["f6-strive-default", "f7-publish", "f8-public", "f8-internal", "f8-autonomous", "f9-public", "f9-internal", "f10-in-line", "f11-marginal", "f12-final", "f12-share", "f12-board-approval", "f13-minimize-default", "f13-redact-p", "f14-full-review", "f14-ltbt-request", "f15-financial-interest", "f15-select-approval", "f16-share-one-week", "f16-only-legal", "f19-unredacted", "f20-board-recipient", "f23-publish", "f25-meet", "f25-delay", "f26-effort", "f26-need-not-delay"]
+wording parse_checked: true
+wording stillborn: [{"id": "anthropic-rsp:f10-attempt-strict:qualifier:1", "reason": "undecided: CheckerUnavailable: CheckerUnavailable: Lean soft elaboration is not bound to the request: changed source predicate"}, {"id": "anthropic-rsp:f12-external-default:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for external_feedback"}, {"id": "anthropic-rsp:f13-redact-p:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for redaction"}, {"id": "anthropic-rsp:f14-full-review:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for full_review"}, {"id": "anthropic-rsp:f16-ask-commentary:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for commentary_asked"}, {"id": "anthropic-rsp:f16-split-p:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for split_review"}, {"id": "anthropic-rsp:f19-brief-ltbt:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for ltbt_briefed"}, {"id": "anthropic-rsp:f19-unredacted:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for unredacted_shared"}, {"id": "anthropic-rsp:f20-process:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for reporting_process"}, {"id": "anthropic-rsp:f20-quarterly:actor:1", "reason": "VEError: InvalidInput: invalid act phrase for quarterly_updates"}]
+stillborn because VE gave no answer (undecided, never scored): 1 ['anthropic-rsp:f10-attempt-strict:qualifier:1']
+declarations: {"applied": 0, "stale": 0, "unknown": 0, "not-structural": 0, "already-equivalent": 0}

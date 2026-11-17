@@ -1,0 +1,23 @@
+zsh mac-pytest.sh --select -- --base b00f97f5c2 --run on tree 2157253dce (commit a2c27c6281); summary lines:
+348:FAILED tests/test_history_tests.py (exit 1): tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree, tests/test_history_tests.py::test_the_tree_passes; log /tmp/ve-select-run-62wvq2tq/tests__test_history_tests.py.log
+371:FAILED tests/test_history_tests.py::test_the_tree_passes - AssertionError: as...
+372:FAILED tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree
+373:2 failed, 25 passed in 224.78s (0:03:44)
+374:recorded 268 units for tree 2157253dce; 292 others left to the static graph until they run; 1 failed
+375:[cloud2 23:21:37Z] summary: ran on ve-cloud-2, select_tests, exit=1, 2574s
+376:[mac-pytest 23:21:38Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=1; 2575s
+
+per unit (267 exit 0, 1 exit 1):
+tests/test_fidmech_mutants.py: exit 0 in 4.0 s, 249 functions
+tests/test_fidmech_structural.py: exit 0 in 29.9 s, 615 functions
+tests/test_fidmech_wording.py: exit 0 in 64.8 s, 597 functions
+tests/test_history_tests.py: exit 1 in 226.6 s, 349 functions
+tests/test_fidmech_bindings.py: exit 0 in 1.9 s, 209 functions
+tests/test_fidmech_data.py: exit 0 in 1.5 s, 220 functions
+tests/test_fidmech_b2.py: exit 0 in 5.6 s, 356 functions
+tests/test_fidmech_l1.py: exit 0 in 2.8 s, 293 functions
+tests/test_fidmech_records.py: exit 0 in 3.8 s, 230 functions
+tests/test_fidmech_segment.py: exit 0 in 3.5 s, 276 functions
+tests/test_fidmech_worker.py: exit 0 in 7.5 s, 239 functions
+tests/test_rsp_fidelity_fix.py: exit 0 in 136.3 s, 1151 functions
+tests/test_fidmech_adapters.py: exit 0 in 1139.1 s, 974 functions
