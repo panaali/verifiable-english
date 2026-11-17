@@ -1,0 +1,26 @@
+# PROBE F1 verbatim (review file), before the fix: installed cloud-late.py + staged comparator
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: CLOUD_LATE_APPLY turned off
+2026-11-17T16:44:04Z cloud-late: CLOUD_LATE_APPLY OFF: by-tree/k.json and a VM run under the same key have different inputs (mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 31 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status,): the key is not exact
+CLOUD_LATE_APPLY OFF (its guard): by-tree/k.json and a VM run under the same key have different inputs (mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 31 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status,): the key is not exact. Late results are back to today's handling (trust-mutants.late.json only, no reuse). Store: /tmp/tmpd4onzte4/ma/J/by-tree/
+rc=1
+
+# PROBE F1 verbatim, after staging cloud-late.py.new-vsnr: spec_from_file_location returns None for a .new-vsnr suffix (the probe cannot load a staged file)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<frozen importlib._bootstrap>", line 810, in module_from_spec
+AttributeError: 'NoneType' object has no attribute 'loader'
+rc=1
+
+# PROBE F1 with only loader=SourceFileLoader added, staged cloud-late.py.new-vsnr hidden (before)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: CLOUD_LATE_APPLY turned off
+2026-11-17T16:45:04Z cloud-late: CLOUD_LATE_APPLY OFF: by-tree/k.json and a VM run under the same key have different inputs (mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 31 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status,): the key is not exact
+CLOUD_LATE_APPLY OFF (its guard): by-tree/k.json and a VM run under the same key have different inputs (mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 31 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status,): the key is not exact. Late results are back to today's handling (trust-mutants.late.json only, no reuse). Store: /tmp/tmpx_u04d2h/ma/J/by-tree/
+rc=1
+
+# same, with cloud-late.py.new-vsnr (after)
+2026-11-17T16:45:04Z cloud-late: j: comparison with a VM run not made (not compared: NOT COMPARED: 0 of 31 shared mutants judged on both sides; verdicts not compared (not a mismatch, not a passed sample: rerun the reference so it judges them) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecide)
+rc=0
