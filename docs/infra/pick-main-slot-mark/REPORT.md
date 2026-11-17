@@ -3,7 +3,7 @@
 - Status: fix round done (review F1, class B); INSTALL WAITS FOR DECIDER READ. No DRI signature needed, no DELTA row reserved.
 - HEAD: the evidence commit is 63dfdea2cc (fix round on 4b44f472fc); the staged files are pinned by `md5.txt`.
 - Changed: the rank-1 critical slot is now the 3rd main slot at most (`0 < mcap == running < 3`): a cap of 3 (5-h < 40) no longer gives a 4th session.
-- Tests: 18/18 on the staged picker, 18/18 on both merged copies, 10/10 distinct seeds caught; the VE selected run is in `run-selected.log`.
+- Tests: 18/18 on the staged picker, 18/18 on both merged copies, 10/10 distinct seeds caught; the VE selected run on 652322f096: 10 units, 0 failed (`run-selected.log`).
 - Open: none. Not run: the full gate and the full suite (the merge train runs them); no Lean, Python-package or Rust code changed in the VE tree.
 
 INSTALL WAITS FOR DECIDER READ (no DELTA row reserved; no Lean, Python, Rust or trust-base change in the VE tree).
@@ -92,8 +92,8 @@ test_pick_main5h_nowindow: FAILED (failures=11) on BOTH: those are the failing-f
 Regression rerun on the fixed staged picker (fix round): same results as before, so the installed column is from the first round
 (the installed md5 is unchanged, `md5.txt`).
 
-VE selected run (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): see `run-selected.log`, which names its
-commit. The VE tree changes are docs under this directory only.
+VE selected run on commit 652322f096 (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): exit 0, 10 units,
+0 failed (`run-selected.log`; ran on the VM). The same log records `lake build` (it completed) and `python3 lean/audit.py` (PASS). The VE tree changes are docs under this directory only.
 
 ## Seeded bugs (`seeded-bugs.json`, produced by `seed_run.py`)
 
