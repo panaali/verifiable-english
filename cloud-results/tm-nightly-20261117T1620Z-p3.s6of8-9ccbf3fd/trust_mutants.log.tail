@@ -1,0 +1,9 @@
+trust_mutants: 21 definitions, 28 mutants (6 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/RightClauses/Wire.lean:110 VE.RightClauses.hasKeys (D[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/NormDefaults/Layered.lean:580 VE.NormDefaults.Wire.layeredCase (G[V], trusted) ne-eq: != -> ==
+trust_mutants: 0 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 4 NOT RUN, 22 OTHER SHARD in 5058 s
+trust_mutants: D[V], trusted: 1 SURVIVOR, 2 NOT RUN, 4 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 1 NOT RUN, 14 OTHER SHARD
+trust_mutants: S, trusted: 1 NOT RUN, 4 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 4 of its 6 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 15.6 s, scratch 3.6 s, control_build 1.6 s, probe_install 1.1 s, mutants 5028.6 s, cleanup 7.7 s; lake control_build 1.6 s (2), probe_install 1.1 s (1), mutant_builds 22.8 s (6), mutant_checks 12060.9 s (9), outside_checks 14.7 s (2), stage_controls 8013.2 s (4)
