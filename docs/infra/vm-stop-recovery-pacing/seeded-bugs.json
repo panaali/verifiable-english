@@ -1,0 +1,211 @@
+{
+ "script": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+ "tests": "/home/seyran/code/manage-agents/tools-local/test_vm_stop_recover.py",
+ "seeds": [
+  {
+   "seed": "baseline (no change)",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "",
+   "new": "",
+   "rc": 0,
+   "ran": 17,
+   "failing_tests": [],
+   "caught": false
+  },
+  {
+   "seed": "order: file order instead of trains first",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "ORDER=(); for i in {1..$#CLS}; do [[ $CLS[i] = train ]] && ORDER+=$i; done; for i in {1..$#CLS}; do [[ $CLS[i] = job ]] && ORDER+=$i; done",
+   "new": "ORDER=({1..$#CLS})",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_pause_launch_record_restore",
+    "test_trains_first_whatever_the_file_order"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "load hold: 48 itself passes (> instead of >=)",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "[[ -n $L1 ]] && (( L1 >= LOAD_MAX ))",
+   "new": "[[ -n $L1 ]] && (( L1 > LOAD_MAX ))",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_load_hold_at_48_and_release_under_it"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "young cap: a 7th relaunch in 15 min passes",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "(( young >= YOUNG_MAX )) && why+=",
+   "new": "(( young > YOUNG_MAX )) && why+=",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "young window counts 10 min, not 15",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=900",
+   "new": "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=600",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
+    "test_load_hold_at_48_and_release_under_it"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "restore: no 10-min wait after the last relaunch",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "while stopped; (( NOW < last + RESTORE_SEC )); do",
+   "new": "while stopped; (( 0 )); do",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
+    "test_pause_launch_record_restore"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "pause: the dry run moves the flag",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "if (( dry )); then say \"pause: would move $f -> ${p:t}\"",
+   "new": "if (( dry )); then mv -n -- $M/$f $p; say \"pause: would move $f -> ${p:t}\"",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_1108_moves_no_flag_launches_nothing_writes_nothing",
+    "test_dry_run_on_a_load_that_stays_high_shows_the_hold_and_ends"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "pause: flags not moved in a real run",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "else mv -n -- $M/$f $p && [[ -e $p && ! -e $M/$f ]]",
+   "new": "else [[ 1 = 1 ]]",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_absent_flag_stays_off",
+    "test_interrupted_run_leaves_flags_paused",
+    "test_pause_launch_record_restore",
+    "test_recreated_flag_wins_and_vetoed_copy_stays_removed"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "dry run launches",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "if (( dry )); then say \"launch (dry run: not started)",
+   "new": "if (( 0 )); then say \"launch (dry run: not started)",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_1108_moves_no_flag_launches_nothing_writes_nothing",
+    "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
+    "test_load_hold_at_48_and_release_under_it"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "restore: a re-created flag is overwritten",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "elif [[ -e $M/$f ]]; then say \"restore: $f exists again",
+   "new": "elif false; then say \"restore: $f exists again",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_recreated_flag_wins_and_vetoed_copy_stays_removed"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "skip: a running job is relaunched",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "if out=$(busy $KEYS[$1]); then",
+   "new": "if false; then",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_running_job_is_skipped"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "skip: an unreadable scope list is read as no scope",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "(( r )) && { print -r -- \"scope list unreadable",
+   "new": "(( 0 )) && { print -r -- \"scope list unreadable",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_live_or_unreadable_scope_is_skipped"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "record: no CURRENT-STATE.md line in a real run",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "$NOW) (vm-stop-recover $D): $*\" >> $M/CURRENT-STATE.md",
+   "new": "$NOW) (vm-stop-recover $D): $*\" >> /dev/null",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_absent_flag_stays_off",
+    "test_interrupted_run_leaves_flags_paused",
+    "test_pause_launch_record_restore",
+    "test_recreated_flag_wins_and_vetoed_copy_stays_removed",
+    "test_restore_only",
+    "test_running_job_is_skipped"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "jobs file: $(...) accepted",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "if [[ $line == *'$'* || $line == *'`'* ]]; then",
+   "new": "if false; then",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_bad_jobs_file_refused_before_anything"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "lock: the launched job inherits the lock fd",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": " {lockfd}>&- &!",
+   "new": " &!",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_absent_flag_stays_off",
+    "test_pause_launch_record_restore"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "interrupt: flags restored instead of left paused",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "  exit 130; }",
+   "new": "  restore_flags; exit 130; }",
+   "rc": 1,
+   "ran": 17,
+   "failing_tests": [
+    "test_interrupted_run_leaves_flags_paused"
+   ],
+   "caught": true
+  }
+ ]
+}

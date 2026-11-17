@@ -1,0 +1,75 @@
++0m00s DRY RUN (tools-local/vm-stop-recover-jobs-20261108.txt, date 20261108): virtual clock, no flag moved, nothing launched, no file written
++0m00s order (trains first): 15 jobs
++0m00s   1. train pc-1g -> scope gt-pc-1g-081108 (32G): zsh /home/seyran/code/manage-agents/gate-train.sh pc-1g /home/seyran/code/ve-pc-1g feature/pc-1g pc-1g-r1108
++0m00s   2. train train:ps-1c -> scope ps-1c-train (32G): zsh /home/seyran/code/manage-agents/recover-20261108-train.sh ps-1c feature/ps-1c
++0m00s   3. train et-4b -> scope gt-et-4b-081108 (32G): zsh /home/seyran/code/manage-agents/gate-train.sh et-4b /home/seyran/code/ve-et-4b feature/et-4b et-4b-c050416 --need-merge
++0m00s   4. train df-5 -> scope gt-df-5-081108 (32G): zsh /home/seyran/code/manage-agents/gate-train.sh df-5 /home/seyran/code/ve-df-5 feature/df-5 df-5-c050431 --need-merge
++0m00s   5. train ps-e1 -> scope gt-ps-e1-081108 (32G): zsh /home/seyran/code/manage-agents/gate-train.sh ps-e1 /home/seyran/code/ve-ps-e1 feature/ps-e1 ps-e1
++0m00s   6. job at-1b -> scope at-1b (32G): zsh /home/seyran/code/manage-agents/infra-item.sh at-1b feature/at-1b /home/seyran/code/manage-agents/prompts/task-at-1b.txt
++0m00s   7. job cmp-s4a-nested -> scope cmp-s4a-nested (32G): zsh /home/seyran/code/manage-agents/infra-item.sh cmp-s4a-nested feature/cmp-s4a-nested /home/seyran/code/manage-agents/prompts/task-cmp-s4a-nested.txt
++0m00s   8. job qt-a4b -> scope qt-a4b (32G): zsh /home/seyran/code/manage-agents/infra-item.sh qt-a4b feature/qt-a4b /home/seyran/code/manage-agents/prompts/task-qt-a4b.txt
++0m00s   9. job jt-3b -> scope jt-3b (32G): zsh /home/seyran/code/manage-agents/infra-item.sh jt-3b feature/jt-3b /home/seyran/code/manage-agents/prompts/task-jt-3b.txt
++0m00s   10. job ap-3dc -> scope ap-3dc (32G): zsh /home/seyran/code/manage-agents/infra-item.sh ap-3dc feature/ap-3dc /home/seyran/code/manage-agents/prompts/task-ap-3dc.txt
++0m00s   11. job ci-5 -> scope ci-5 (32G): zsh /home/seyran/code/manage-agents/infra-item.sh ci-5 feature/ci-5 /home/seyran/code/manage-agents/prompts/task-ci-5.txt
++0m00s   12. job eff-20261104-1 -> scope cont-eff-20261104-1-081108 (32G): zsh /home/seyran/code/manage-agents/continue-item.sh eff-20261104-1 /home/seyran/code/ve-eff-20261104-1 infra/eff-20261104-1 /home/seyran/code/manage-agents/eff-20261104-1-looprecheck1.final.md /home/seyran/code/manage-agents/reviews/eff-20261104-1-dri-note-20261105.md
++0m00s   13. job arch-20261105-1 -> scope arch-20261105-1 (32G): nice -n 10 zsh /home/seyran/code/manage-agents/infra-item.sh arch-20261105-1 infra/arch-20261105-1 /home/seyran/code/manage-agents/prompts/arch-20261105-1-task.txt
++0m00s   14. job arch-20261105-2 -> scope arch-20261105-2 (32G): nice -n 10 zsh /home/seyran/code/manage-agents/infra-item.sh arch-20261105-2 infra/arch-20261105-2 /home/seyran/code/manage-agents/prompts/arch-20261105-2-task.txt
++0m00s   15. job dri-cm-pilot3-fix -> scope dri-cm-pilot3-fix (8G): zsh /home/seyran/code/manage-agents/dri-delegate.sh dri-cm-pilot3-fix /home/seyran/code/manage-agents/prompts/dri-task-cm-pilot3-fix.txt
++0m00s pause: would move CHAIN_WATCH -> CHAIN_WATCH.paused-recovery-20261108
++0m00s pause: would move FEATURE_FEED -> FEATURE_FEED.paused-recovery-20261108
++0m00s pause: INFRA_FEED is off (absent): stays off, not restored
++0m00s   CURRENT-STATE.md line (dry run: not written): recovery start: paused CHAIN_WATCH, FEATURE_FEED (as <flag>.paused-recovery-20261108); 15 jobs, trains first; a relaunch waits for 1-min load < 48, < 6 relaunches in their first 15 min and 60 s since the last.
++0m00s launch (dry run: not started) train gt-pc-1g-081108 (pc-1g): 1-min load 3, 1/6 in their first 15 min
++0m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched train gt-pc-1g-081108 (pc-1g; 1-min load 3, 1/6 in their first 15 min, held 0 s).
++1m00s launch (dry run: not started) train ps-1c-train (train:ps-1c): 1-min load 17, 2/6 in their first 15 min
++1m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched train ps-1c-train (train:ps-1c; 1-min load 17, 2/6 in their first 15 min, held 60 s).
++2m00s launch (dry run: not started) train gt-et-4b-081108 (et-4b): 1-min load 35, 3/6 in their first 15 min
++2m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched train gt-et-4b-081108 (et-4b; 1-min load 35, 3/6 in their first 15 min, held 60 s).
++3m00s HOLD gt-df-5-081108: 1-min load 51 >= 48
++3m30s HOLD gt-df-5-081108: 1-min load 58 >= 48
++4m00s HOLD gt-df-5-081108: 1-min load 63 >= 48
++4m30s HOLD gt-df-5-081108: 1-min load 66 >= 48
++5m00s HOLD gt-df-5-081108: 1-min load 61 >= 48
++5m30s HOLD gt-df-5-081108: 1-min load 55 >= 48
++6m00s HOLD gt-df-5-081108: 1-min load 50 >= 48
++6m30s launch (dry run: not started) train gt-df-5-081108 (df-5): 1-min load 47, 4/6 in their first 15 min, held 4m30s
++6m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched train gt-df-5-081108 (df-5; 1-min load 47, 4/6 in their first 15 min, held 270 s).
++6m30s HOLD gt-ps-e1-081108: 1-min load 52 >= 48; 0 s since the last relaunch (min 60)
++7m00s HOLD gt-ps-e1-081108: 1-min load 49 >= 48; 30 s since the last relaunch (min 60)
++7m30s launch (dry run: not started) train gt-ps-e1-081108 (ps-e1): 1-min load 46, 5/6 in their first 15 min, held 1m0s
++7m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched train gt-ps-e1-081108 (ps-e1; 1-min load 46, 5/6 in their first 15 min, held 60 s).
++8m30s launch (dry run: not started) job at-1b (at-1b): 1-min load 38, 6/6 in their first 15 min
++8m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job at-1b (at-1b; 1-min load 38, 6/6 in their first 15 min, held 60 s).
++8m30s HOLD cmp-s4a-nested: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++15m00s launch (dry run: not started) job cmp-s4a-nested (cmp-s4a-nested): 1-min load 34, 6/6 in their first 15 min, held 6m30s
++15m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job cmp-s4a-nested (cmp-s4a-nested; 1-min load 34, 6/6 in their first 15 min, held 390 s).
++15m00s HOLD qt-a4b: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++16m00s launch (dry run: not started) job qt-a4b (qt-a4b): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++16m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job qt-a4b (qt-a4b; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++16m00s HOLD jt-3b: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++17m00s launch (dry run: not started) job jt-3b (jt-3b): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++17m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job jt-3b (jt-3b; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++17m00s HOLD ap-3dc: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++21m30s launch (dry run: not started) job ap-3dc (ap-3dc): 1-min load 30, 6/6 in their first 15 min, held 4m30s
++21m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job ap-3dc (ap-3dc; 1-min load 30, 6/6 in their first 15 min, held 270 s).
++21m30s HOLD ci-5: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++22m30s launch (dry run: not started) job ci-5 (ci-5): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++22m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job ci-5 (ci-5; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++22m30s HOLD cont-eff-20261104-1-081108: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++23m30s launch (dry run: not started) job cont-eff-20261104-1-081108 (eff-20261104-1): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++23m30s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job cont-eff-20261104-1-081108 (eff-20261104-1; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++23m30s HOLD arch-20261105-1: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++30m00s launch (dry run: not started) job arch-20261105-1 (arch-20261105-1): 1-min load 30, 6/6 in their first 15 min, held 6m30s
++30m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job arch-20261105-1 (arch-20261105-1; 1-min load 30, 6/6 in their first 15 min, held 390 s).
++30m00s HOLD arch-20261105-2: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++31m00s launch (dry run: not started) job arch-20261105-2 (arch-20261105-2): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++31m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job arch-20261105-2 (arch-20261105-2; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++31m00s HOLD dri-cm-pilot3-fix: 6 relaunches in their first 15 min (max 6); 0 s since the last relaunch (min 60)
++32m00s launch (dry run: not started) job dri-cm-pilot3-fix (dri-cm-pilot3-fix): 1-min load 30, 6/6 in their first 15 min, held 1m0s
++32m00s   CURRENT-STATE.md line (dry run: not written): recovery: relaunched job dri-cm-pilot3-fix (dri-cm-pilot3-fix; 1-min load 30, 6/6 in their first 15 min, held 60 s).
++32m00s restore waits until the last relaunch (dri-cm-pilot3-fix) has run 10 min
++42m00s restore: would move CHAIN_WATCH.paused-recovery-20261108 -> CHAIN_WATCH (only if CHAIN_WATCH is still absent and CHAIN_WATCH.paused-recovery-20261108 still there)
++42m00s restore: would move FEATURE_FEED.paused-recovery-20261108 -> FEATURE_FEED (only if FEATURE_FEED is still absent and FEATURE_FEED.paused-recovery-20261108 still there)
++42m00s   CURRENT-STATE.md line (dry run: not written): recovery end: restored CHAIN_WATCH, FEATURE_FEED; relaunched 15, skipped 0.
++42m00s done: relaunched 15, skipped 0
+rc=0
