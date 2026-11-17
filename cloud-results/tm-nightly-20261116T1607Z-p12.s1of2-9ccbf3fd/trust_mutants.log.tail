@@ -1,0 +1,7 @@
+trust_mutants: 60 definitions, 60 mutants (30 to run), 4 jobs, base a998c06909c3
+trust_mutants: 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 30 NOT RUN, 30 OTHER SHARD in 13 s
+trust_mutants: D[V], trusted: 6 NOT RUN, 6 OTHER SHARD
+trust_mutants: G[V], trusted: 13 NOT RUN, 14 OTHER SHARD
+trust_mutants: S, trusted: 11 NOT RUN, 10 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 30 of its 30 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 12.2 s, scratch 0.7 s, cleanup 0.1 s; lake 
