@@ -1,0 +1,98 @@
+[
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "shell",
+  "seed": "cffall cap refusal does not mark",
+  "test": "CritFallbackSlot.test_crit_fallback_cap_refusal_marks",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "shell",
+  "seed": "cffall marks on any refusal",
+  "test": "CritFallbackSlot.test_crit_fallback_other_refusal_or_rank4_no_mark",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "no rank-1 extra slot",
+  "test": "CritFallbackSlot.test_rank1_crit_fallback_third_slot",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "extra slot not limited to mcap + 1",
+  "test": "CritFallbackSlot.test_rank1_slot_only_one_over_the_cap",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "extra slot skips the rank-1 rule (pace - 4)",
+  "test": "CritFallbackSlot.test_rank1_slot_refused_over_pace_minus_4",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "extra slot skips the one-row marker",
+  "test": "CritFallbackSlot.test_rank1_slot_one_row_at_a_time",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "extra slot not only for the critical fallback",
+  "test": "CritFallbackSlot.test_slot_only_for_rank1_critical_fallback",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-pickw",
+  "language": "embedded python",
+  "seed": "granted slot not recorded (r1d): holder marker given back",
+  "test": "CritFallbackSlot.test_rank1_crit_fallback_third_slot",
+  "clean_rc": 0,
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ }
+]

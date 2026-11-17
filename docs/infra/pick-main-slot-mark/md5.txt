@@ -1,0 +1,6 @@
+4cc8cce24dadf854674b8fdb5db8b898  pick-claude-account.sh
+9cb3829a323fa8ff67ebeecb4d94c7e2  pick-claude-account.sh.new-pickw
+f168d46d1ca0c7d5785dba08aa46263d  tools-local/test_pick_main_rank.py
+771a5bc8290fe35dfcd246899dc4e386  tools-local/test_pick_main_rank.py.new-pickw
+e1db56d0d7db7f62b9e3c9debc8d68f9  pick-claude-account.sh.new-m5h2
+2c57393e0ba1c915a2c3b8c412a831d5  pick-claude-account.sh.new-placec

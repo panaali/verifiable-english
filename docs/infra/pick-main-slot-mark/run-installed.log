@@ -1,0 +1,7 @@
+ERROR: test_crit_fallback_cap_refusal_marks_rank3 (__main__.CritFallbackSlot.test_crit_fallback_cap_refusal_marks_rank3)
+FAIL: test_crit_fallback_cap_refusal_marks (__main__.CritFallbackSlot.test_crit_fallback_cap_refusal_marks)
+FAIL: test_rank1_crit_fallback_third_slot (__main__.CritFallbackSlot.test_rank1_crit_fallback_third_slot)
+FAIL: test_rank1_slot_one_row_at_a_time (__main__.CritFallbackSlot.test_rank1_slot_one_row_at_a_time)
+FAIL: test_rank1_slot_refused_over_pace_minus_4 (__main__.CritFallbackSlot.test_rank1_slot_refused_over_pace_minus_4)
+Ran 16 tests in 9.891s
+FAILED (failures=4, errors=1)
