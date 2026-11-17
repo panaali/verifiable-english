@@ -58,6 +58,9 @@ Regression, every `tools-local/test_pick_*.py` on staged and installed (`run-reg
 test_pick_main5h_nowindow: FAILED (failures=11) on BOTH: those are the failing-first tests of the staged, not yet installed
 `.new-m5h2` item (main5h-build-1117), not this change.
 
+VE selected run on commit 3cbffe43a0 (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): exit 0, 10 units,
+0 failed (`run-selected.log`; ran on the VM by MAC_LAST_RESORT). The VE tree changes are docs under this directory only.
+
 ## Seeded bugs (`seeded-bugs.json`, produced by `seed_run.py`)
 
 Command: `python3 -I docs/infra/pick-main-slot-mark/seed_run.py /home/seyran/code/manage-agents docs/infra/pick-main-slot-mark/seeded-bugs.json`.
