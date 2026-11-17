@@ -96,6 +96,13 @@ a568738647c6d0f6bcde543a04f89441. Staged: `decider-ready-alert.py.new-nta` 6aea3
 
 Left as the review recorded them; none is an A or B finding.
 
-## 7. VE checks of this branch
+## 7. VE checks of this branch (commit 773f2932, evidence only)
 
-Recorded in section 8 after the run.
+- Selected tests: `mac-pytest.sh --select -- --base d2573fc9 --run`: 10 of 646 units selected, run on GitHub Actions in 2
+  shards (run notask-wait-alert-773f2932-t919961), 10 passed, 0 failed, exit 0 (`selected-run.log`). Two files selected
+  only for weak reasons (tests/test_select_tests.py, tests/test_wire_gate_corpus.py) were deferred to the chain gate by the
+  selector.
+- `lake build`: Build completed successfully (1478 jobs), 0 errors.
+- `python3 lean/audit.py`: PASS, 898 source files, 10153 theorem declarations, only the allowed axioms.
+- Full gate not run (the merge train's branch verify runs it).
+- No test of `main-known-red.txt` was touched.
