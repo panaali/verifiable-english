@@ -57,65 +57,30 @@ MUTANT = None
 WITHOUT_NARROWING = None
 PROVER_CALLS = 0
 
-LEVEL_IDS = {"BIO-H": "biological_and_chemical_high", "BIO-C": "biological_and_chemical_critical",
-             "CYB-H": "cybersecurity_high", "CYB-C": "cybersecurity_critical",
-             "AIS-H": "ai_self_improvement_high", "AIS-C": "ai_self_improvement_critical"}
+# The case-to-atom tables are frozen data (plan 2a): fidmech/bindings.json, sha256-pinned in
+# tests/test_fidmech_bindings.py. The loader is imported by RSP's run.py above (rsp_translation puts the repo on
+# sys.path while it loads).
+from tools.fidmech.bindings import load_bindings  # noqa: E402
+_B = load_bindings(HERE / "fidmech" / "bindings.json", "openai-preparedness")
+LEVEL_IDS = _B["LEVEL_IDS"]
 # The case's proposal (cases.json "activities"). A large-scale internal deployment is an internal deployment.
-ACTIVITY = {"DEV": ("further_development",), "INT": ("internal_deployment",),
-            "LINT": ("internal_deployment", "large_scale_internal"), "EXT": ("external_deployment",)}
-OT = {"OT1": "threshold_determined", "OT2": "sufficient_safeguards", "OT9": "likely_to_cross",
-      "OT10": "forecast_critical", "OT11": "reasonable_evidence", "OT12": "adjustment_confirmed",
-      "OT13": "major_deployment", "OT18": "rapid_risk", "OT20": "significant_increase",
-      "OT21": "immediate_reaction_needed"}
+ACTIVITY = _B["ACTIVITY"]
+OT = _B["OT"]
 # What each case's situation states beyond its findings (cases.json "situation"), as D1 base atoms.
-SITUATIONS = {
-    "K3": ("distilled_finetuned_or_quantized_from_below_high",), "K4": ("distilled_finetuned_or_quantized_from_below_high",),
-    "K6": ("adjustment_made",), "K7": ("further_development",), "K8": ("further_development",),
-    "K9": ("undermining_found",), "K10": ("sandbagging_found",), "K11": ("coverage_ambiguous",),
-    "K13": ("fast_track_requested",), "K14": ("deeper_testing_warranted", "third_party_available"),
-    "K15": ("research_category_review",), "K16": ("employee_request",),
-    "K17": ("substantiated_noncompliance",), "K18": ("nuclear_found",), "K19": ("ara_found",),
-    "K20": ("safeguards_report_compiled",), "G5": ("nuclear_found",), "G6": ("persuasion_risk",),
-}
+SITUATIONS = _B["SITUATIONS"]
 # Atoms a case's situation states as false ("not already implemented", "no highly sensitive information").
-STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("beyond_sensitive_limits",)}
+STATED_FALSE = _B["STATED_FALSE"]
 # K9's model has High capability "in a Tracked Category" without naming it: every High level is tried.
-SOME_HIGH_LEVEL = {"K9"}
+SOME_HIGH_LEVEL = _B["SOME_HIGH_LEVEL"]
 
-ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards", "misuse_safeguards_before_external"),
-         "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development",
-                 "safeguards_before_internal_use"),
-         "HALT": ("halt_development",),
-         "CAPREP": ("capabilities_report_submitted",), "SAFEREP": ("safeguards_report",), "MREP": ("misalignment_report",),
-         "DISC": ("safeguards_disclosed",), "PUBRES": ("public_disclosure",),
-         "CONTRIB": ("pandemic_policy_contribution", "cyberdefense_contribution")}
-K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFEGUARDS": ("safeguards_recommended",),
-           "ADDITIONAL_SAFETY_MEASURES": ("additional_safety_measures",),
-           "CAPABILITIES_REPORT": ("capabilities_report_submitted",),
-           "VALIDATE_AND_REVIEW_SUFFICIENCY": ("validate_evidence", "review_sufficiency"),
-           "KEEP_SAFEGUARDS_MORE_PROTECTIVE": ("more_protective",),
-           "PUBLICLY_ACKNOWLEDGE_ADJUSTMENT": ("adjustment_acknowledged",),
-           "SHARE_INFORMATION_TO_VALIDATE": ("validation_shared",),
-           "SAFEGUARDS_DURING_DEVELOPMENT": ("safeguards_during_development",), "HALT": ("halt_development",),
-           "ROBUST_SAFEGUARDS_CASE": ("robust_case",), "ELICITATION_OR_CONSERVATIVE_BOUND": ("sandbagging_response",),
-           "SAG_FINAL_DETERMINATION": ("coverage_decided",), "ANNUAL_REVIEW": ("annual_review",),
-           "CHAIR_COORDINATES_WITH_LEADERSHIP": ("chair_coordination",),
-           "THIRD_PARTY_EVALUATION": ("third_party_evaluation",),
-           "SAG_RECEIVES_RESULTS": ("research_results_received",),
-           "REQUEST_AND_RECEIVE_SUMMARY": ("summary_access",), "CORRECTIVE_ACTION": ("corrective_action",),
-           "HEIGHTEN_SAFEGUARDS_WITH_US_GOVERNMENT": ("nuclear_safeguards",),
-           "CONVERT_TO_TRACKED_CATEGORY": ("ara_tracking",),
-           "RESIDUAL_RISK_ASSESSMENT": ("residual_risk_assessment",)}
-ALL_OF = {"VALIDATE_AND_REVIEW_SUFFICIENCY"}  # "validating ... and reviewing ..." asks for both acts
+ATOMS = _B["ATOMS"]
+K_ITEMS = _B["K_ITEMS"]
+ALL_OF = _B["ALL_OF"]  # "validating ... and reviewing ..." asks for both acts
 # Table 1, F2, F3 and F4: the rules that attach to a capability threshold (G5, G9).
-THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards",
-                        "misuse_safeguards_before_external", "alignment_safeguards",
-                        "safeguards_before_deployment", "safeguards_during_development", "safeguards_before_internal_use",
-                        "halt_development",
-                        "pandemic_policy_contribution", "cyberdefense_contribution", "deployment_permitted")
-SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + ("access_limited", "misalignment_risk_minimized", "nuclear_safeguards")
+THRESHOLD_PREDICATES = _B["THRESHOLD_PREDICATES"]
+SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + _B["SAFEGUARD_PREDICATES_ADDED"]
 # The Critical-specific rules (Table 1's Critical rows and 4.4): G2.
-CRITICAL_PREDICATES = ("safeguards_during_development", "safeguards_before_internal_use", "halt_development")
+CRITICAL_PREDICATES = _B["CRITICAL_PREDICATES"]
 
 M2_PERMISSION = ("Rule 1. Every situation may be deployed, if all of the following hold: (a) all of the following "
                  "hold: (i) there is a level such that both that situation has reached that level and that level "
@@ -381,7 +346,7 @@ def regulated(predicate):
 
 
 # The one element of each sort an act is asked of: the case's situation, a capability, the Framework (f16-year).
-SUBJECT = {"situation": "s", "capability": "k", "framework": "f"}
+SUBJECT = _B["SUBJECT"]
 
 
 def subject(predicate):
@@ -589,19 +554,10 @@ CLUSTERS = {
     "C5": ("f1-security-strict", "f1-security-default", "f2-deploy", "f2-deploy-any"),
     "C6": ("f16-board-reverse", "f16-board-mandate"),
 }
-WITNESS = {
-    "C1": ("covered", "external_deployment", "internal_deployment", "adjustment_confirmed",
-           "adjustment_conditions", "adjustment_made"),
-    "C2": ("leadership_decision", "decided_without_sag"),
-    "C3": ("further_development", "critical_standard_unspecified"),
-    "C4": ("covered", "distilled_finetuned_or_quantized_from_below_high", "significant_increase"),
-    "C5": ("covered", "external_deployment"),
-    "C6": ("leadership_decision", "board_finds_necessary"),
-    "m2": ("external_deployment", "misuse_standard_met"),
-}
-WITNESS_LEVELS = {"C1": ("BIO-H",), "C3": ("BIO-C",), "C5": ("AIS-H",), "m2": ("BIO-H",)}
+WITNESS = _B["WITNESS"]
+WITNESS_LEVELS = _B["WITNESS_LEVELS"]
 # F11's adjustment is in "that capability area": C1's confirmed scenario is in the witness level's category.
-WITNESS_RELATIONS = {"C1": (("adjustment_area", "s", "biological_and_chemical"),)}
+WITNESS_RELATIONS = _B["WITNESS_RELATIONS"]
 
 
 def witness(names):
