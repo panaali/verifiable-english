@@ -20,8 +20,9 @@ from pathlib import Path
 
 VOCABULARY = {
     "K": ("killed", "survived", "inconclusive", "error", "not-run"),
-    "L1": ("killed", "survived"), "L2": ("killed", "survived"), "L3": ("killed", "survived"),
-    "L4": ("killed", "survived"), "D": ("killed", "survived"),
+    # A text check that raised on a mutant's tree ran to no verdict: "error", left out of its denominator (plan 2e).
+    "L1": ("killed", "survived", "error"), "L2": ("killed", "survived", "error"),
+    "L3": ("killed", "survived", "error"), "L4": ("killed", "survived", "error"), "D": ("killed", "survived", "error"),
     "CR": ("found", "missed", "not-read"),
 }
 RECORD_KEYS = ("id", "verdict", "kernel", "seconds", "cpu_seconds", "worker", "sentinel_ok", "inputs_sha256")
