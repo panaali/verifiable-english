@@ -135,21 +135,26 @@ def unit_status(lines, text, *, flip_force=True, declared_as_survivor=False, wit
     by_unit = {}
     for x in structural:
         by_unit.setdefault(x["mutant"]["unit"], []).append(verdicts(x, declared_as_survivor)["K"])
-    status = {}
+    status, why = {}, Counter()
     for u in text["units"]:
         ks = by_unit.get(u)
         if not ks:
             status[u] = "untested"
         elif hits.get(u):
             status[u] = "failing"
+            why.update({"text hit " + ("L1" if c in L1_CLASSES else c[:2] if c != "D" else "D")
+                        for c in hits[u]})
+            why["K survivor"] += "survived" in ks
         elif any(k not in DECIDED["K"] for k in ks):
             status[u] = "incomplete"
         else:
             status[u] = "passing" if all(k == "killed" for k in ks) else "failing"
+            why["K survivor, no text hit"] += status[u] == "failing"
     counts = Counter(status.values())
     survivors = sorted(u for u, ks in by_unit.items() if "survived" in ks)
     return {"units": len(status), **{k: counts.get(k, 0) for k in ("passing", "failing", "incomplete", "untested")},
-            "with_survivor": len(survivors), "lists": {"status": status, "with_survivor": survivors}}
+            "with_survivor": len(survivors), "failing_by": dict(sorted(why.items())),
+            "lists": {"status": status, "with_survivor": survivors}}
 
 
 def _norm(text):
@@ -288,6 +293,8 @@ def document_report(b, inputs=None, cr=None):
     out["stillborn"] = {"count": len(stillborn), "by_op": dict(Counter(m["op"] for m in stillborn))}
     out["kill_table"] = kill_table(lines)
     out["kill_table_declared_as_survivor"] = {"all": kill_table(lines, True)["all"]}
+    errors = [x["record"]["kernel"].get("error") or "" for x in scored(lines) if x["record"]["verdict"]["K"] == "error"]
+    out["K_errors"] = dict(Counter((e.strip().splitlines() or [""])[-1][:120] for e in errors).most_common())
     out["equivalent"] = dict(Counter(m["equivalent"].split(":")[0] for m in b["mutants"] if m["equivalent"]))
     sel = batch.get("selection") or {}
     unprobed = set(sel.get("in_no_item", ()))
@@ -312,6 +319,10 @@ def document_report(b, inputs=None, cr=None):
             results = [adjudicate(h, document, inputs["adjudications"], text["users"], fp_now) for h in text["hits"]
                        if h["class"] != "L4g"]
             out["adjudication"] = dict(Counter(r[0] for r in results))
+            mine = [f for f in inputs["adjudications"] if f["case"] == document]
+            out["adjudication_findings"] = {
+                "findings": len(mine), **dict(Counter(f["verdict"] for f in mine)),
+                "unit_fp1_unchanged": sum(fp_now.get(f["fp1_key"]) == f["fp1"] for f in mine)}
             rows["adjudication"] = [{"hit": [h["class"], h["block"], h["quote"]], "outcome": r[0], "by": r[1]}
                                     for h, r in zip([h for h in text["hits"] if h["class"] != "L4g"], results)]
     syntactic = [x for x in lines if x["mutant"]["equivalent"] == "syntactic"]
@@ -346,7 +357,7 @@ def render(report):
         for name, u in d.get("units", {}).items():
             out.append(f"- {HEADLINE}, {name}: {u['passing']} of {u['units']} (failing {u['failing']}, incomplete "
                        f"{u['incomplete']}, untested {u['untested']}; units with at least one K survivor "
-                       f"{u['with_survivor']})")
+                       f"{u['with_survivor']}); failing units by cause (a unit can have several) {u['failing_by']}")
         t = d["kill_table"]
         out += ["", "| op | scored | K | L1 | L2 | L3 | L4 | D | CR | any | none | K left out |",
                 "|---|---|---|---|---|---|---|---|---|---|---|---|"]
@@ -360,6 +371,8 @@ def render(report):
                 f"- unprobed rules: {d['unprobed_rules']['in_no_item']} of {d['unprobed_rules']['rule_blocks']} rule "
                 f"blocks are in no item; every K mutant of such a rule survives K (their K verdicts: "
                 f"{d['unprobed_rules']['K']}).",
+                f"- K errors (VE refused the mutated document when it ran, or the run failed), by last line: "
+                f"{d['K_errors']}",
                 f"- control false alarms (new hits on syntactic equivalents): {d['control_false_alarms']}",
                 f"- blind spot (no kill among the instruments run), by op: {d['blind_spot']}"]
         if "hits" in d:
@@ -368,7 +381,9 @@ def render(report):
         if "adjudication" in d:
             c = d["adjudication"]
             out.append(f"- adjudication of the baseline hits: {c.get('confirmed', 0)} confirmed, "
-                       f"{c.get('contradicted', 0)} contradicted, {c.get('unadjudicated', 0)} unadjudicated")
+                       f"{c.get('contradicted', 0)} contradicted, {c.get('unadjudicated', 0)} unadjudicated; the "
+                       f"document's findings: {d['adjudication_findings']} (a hit matches only a finding whose unit's "
+                       "fp-1 is unchanged since the adjudication)")
             if c.get("unadjudicated"):
                 out.append(f"- false-discovery proportion among hits not measured: {c.get('confirmed', 0)} confirmed, "
                            f"{c.get('contradicted', 0)} contradicted, {c.get('unadjudicated', 0)} unadjudicated. "
