@@ -1,0 +1,2 @@
+493df1e17a9eb072cf436503171e1788  iso.sh
+40bbfc4558ea7a608bcaf7b4a4e879ae  iso.sh.new-gcpu
