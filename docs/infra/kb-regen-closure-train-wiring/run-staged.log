@@ -1,0 +1,25 @@
+== merge-train.sh: the kernel closure baseline after a merge of main (2026-11-17 kb-regen-closure-train-wiring)
+K1 the train's sync merge keeps a per-path stale baseline with equal totals -> rewritten, one commit, published fresh
+  ok   premise: the sync merge kept the branch's baseline: total 6 = the fresh total, rows P and Q stale
+  ok   one regen commit on the sync merge, changing only the baseline
+  ok   published: main = the one gated candidate, its baseline fresh, its second parent the regen commit
+  ok   the log line names the rows; check, write, check on k1's worktree only, once (not again on the new head)
+K2 a fresh tree -> checked once, logged fresh, no commit
+  ok   published the branch head as it was; one check; fresh line in merge-train.log.candregen
+K3 STALE and a FAIL line (a limit) -> never rewritten here: no write, gated as is
+  ok   skipped (a limit), no write, the branch head is the sync merge
+K4 the check fails with no STALE line (a broken build) -> no write
+  ok   skipped (no STALE line, the failure quoted), no write, head unchanged
+K5 the write changes a file of another entry -> refused, the branch reset to its head
+  ok   skipped (owner extra), head unchanged, worktree clean, notes untouched, published stale as before
+K6 the write leaves it stale -> refused, reset
+  ok   skipped (still STALE after the write), head unchanged, check write check
+K7 the writer fails after leaving an untracked file -> that file removed, the builder's own untracked file kept
+  ok   skipped (writer failed), out.tmp removed, mine.txt kept, head unchanged
+K8 off switch KERNEL_CLOSURE_REGEN.off -> no check; the stale baseline is gated as before
+  ok   no check or write, no kernel closure line; published stale
+K9 library mode (presync-lean-regen.zsh run, MT_LIB): branchregen never runs the kernel closure step
+  ok   the tree is stale, yet no check ran; PSLR fresh, head unchanged
+K10 the check outlasts KERNEL_CLOSURE_TIMEOUT (1 s here) -> killed, no write, the timeout named; gated as is
+  ok   skipped (no failure line, killed at the 1 s timeout), no write, head unchanged, published
+== merge queue (kernel closure cases): 13 passed, 0 failed

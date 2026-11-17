@@ -1,0 +1,4 @@
+FAIL: test_rank1_slot_never_a_fourth_main_session (__main__.CritFallbackSlot.test_rank1_slot_never_a_fourth_main_session)
+FAIL: test_rank1_slot_sweep_never_past_the_third_main_session (__main__.CritFallbackSlot.test_rank1_slot_sweep_never_past_the_third_main_session)
+Ran 2 tests in 5.967s
+FAILED (failures=2)

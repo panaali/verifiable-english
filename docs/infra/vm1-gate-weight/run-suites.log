@@ -1,0 +1,15 @@
+# existing suites on the staged files (CG / CHAIN_GATE_SCRIPT = chain-gate.sh.new-vm1w; ISO_GCPU_FILE = iso.sh.new-vm1w), final staged chain-gate
+=== test_chain_gate_vm_cancel rc=0
+=== test_gate_reuse rc=0
+=== test_mac_last_resort rc=0
+=== test_defer_heavy rc=0
+# first round (before the 3-poll holder fix; these do not read chain-gate.sh's VM branch or read live files only)
+=== test_gate_one_per_host
+=== test_gate_one_per_host rc=0
+=== test_tm_drain_vm1_idle
+=== test_tm_drain_vm1_idle rc=0
+=== test_iso_weight_tmfill(vm1w)
+=== test_iso_weight_tmfill(vm1w) rc=1
+=== test_builder_test_runs
+=== test_builder_test_runs rc=0
+# test_iso_weight_tmfill: its one failure (test_idle_fill_scopes_weight_25, 100 != 25) is the same on the live iso.sh: it tests row gate-cpu-over-tmfill's staged iso.sh.new-gcpu, not in live iso.sh
