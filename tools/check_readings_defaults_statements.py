@@ -11,7 +11,9 @@ the way a command does still ends it early, and the text after that line is not 
 sc-2d-f1 F4). These cases are: a line that starts with `#` (an array literal `#[..]`), a line that starts with `@[`,
 and a line that starts with a command keyword used as a term or tactic prefix: `open X in`, `set_option o v in` (Lean's
 term and tactic forms ending in ` in`) and the term `unsafe e`. These are all the term and tactic parsers of Lean
-v4.24.0's built-in syntax that start with a keyword in `COMMANDS`; a syntax a project declares could add more.
+v4.24.0's built-in syntax that start with a keyword in `COMMANDS`, which lists only that version's keywords (a
+column-0 field or term line that starts with `lemma`, `coinductive` or `prelude`, names there, is read on; review
+sc-2d-f1 F5); a syntax a project declares could add more.
 The Lean compiler checks elaboration, and lean/audit.py checks proof dependencies. A declaration that differs from the
 approved text must be listed in PENDING with the reason, and is reported as pending the statement re-review; an
 unlisted difference, a missing or repeated declaration, or a PENDING entry that no longer differs fails.
@@ -122,13 +124,15 @@ KINDS = ("theorem", "def", "structure")
 # `open X in ..` and `set_option o v in ..` (term and tactic forms) and the term `unsafe ..`. These are all of Lean
 # v4.24.0's built-in term and tactic parsers that start with a keyword listed here; a syntax a project declares could
 # add more. `binder_predicate` to `unif_hint` are the other declaration commands Lean's parser lists as able to
-# follow a doc comment, so a doc comment no longer separating them changes nothing.
-COMMANDS = ("theorem", "lemma", "def", "structure", "class", "inductive", "coinductive", "abbrev", "instance",
+# follow a doc comment, so a doc comment no longer separating them changes nothing. Only keywords of Lean v4.24.0
+# are listed: `lemma` (Mathlib's), `coinductive` and `prelude` (a module header, before any declaration) are names
+# there, so a column-0 field or term line that starts with one is read on (review sc-2d-f1 F5).
+COMMANDS = ("theorem", "def", "structure", "class", "inductive", "abbrev", "instance",
             "example", "axiom", "opaque", "mutual", "end", "namespace", "section", "open", "export", "universe",
             "variable", "private", "protected", "noncomputable", "partial", "unsafe", "nonrec", "attribute",
             "set_option", "local", "scoped", "macro", "macro_rules", "syntax", "elab", "elab_rules", "notation",
             "infix", "infixl", "infixr", "prefix", "postfix", "initialize", "builtin_initialize",
-            "declare_syntax_cat", "import", "prelude", "omit", "include", "add_decl_doc", "run_cmd",
+            "declare_syntax_cat", "import", "omit", "include", "add_decl_doc", "run_cmd",
             r"deriving\s+instance", "binder_predicate", "simproc", "simproc_decl", "dsimproc", "dsimproc_decl",
             "builtin_simproc", "builtin_simproc_decl", "builtin_dsimproc", "builtin_dsimproc_decl",
             "grind_propagator", "builtin_grind_propagator", "declare_simp_like_tactic", "recommended_spelling",
@@ -211,21 +215,34 @@ def normal(text: str) -> str:
 OPEN, CLOSE = "([{⟨⦃", ")]}⟩⦄"
 
 
+BINDS = re.compile(r"(?<![\w'!?.])(?:let|have|letI|haveI)(?![\w'!?.])")
+
+
 def proof_cut(text: str) -> int:
     """Where a theorem's statement in `text` ends: its first `:=` outside every bracket, the one that starts the proof
-    (len(text) when there is none). A `:=` inside the statement (`{ L with scope := s }`) is part of it (review sc-6
-    F1); every statement gate cuts here."""
-    depth = 0
+    (len(text) when there is none), that no `let` or `have` before it binds. A `:=` inside the statement (`{ L with
+    scope := s }`, review sc-6 F1; `let span := e`, item qa-stmt-scanner) is part of it; every statement gate cuts
+    here. Each `let` or `have` outside every bracket takes the next such `:=` as its own, so a stray one (in a string,
+    or a `let x ← e`) only moves the cut later, never earlier."""
+    depth = binds = 0
     for i, char in enumerate(text):
         depth += (char in OPEN) - (char in CLOSE)
-        if depth == 0 and text.startswith(":=", i):
-            return i
+        if depth == 0 and BINDS.match(text, i):
+            binds += 1
+        elif depth == 0 and text.startswith(":=", i):
+            if not binds:
+                return i
+            binds -= 1
     return len(text)
 
 
 def declarations(text: str, statements_only: bool, kinds: tuple[str, ...] = KINDS) -> dict[tuple[str, str], list[str]]:
     """Every declaration of a kind in `kinds` at column 0 of `text` (`spans`): (kind, name) → its normalized texts,
-    comments left out. A theorem is cut at its proof's `:=` when `statements_only`."""
+    comments left out. A theorem is cut at its proof's `:=` when `statements_only` (`proof_cut`). A declaration runs
+    to the next column-0 line that starts with `#`, `@[` or a keyword of `COMMANDS` (Lean v4.24.0's keywords only:
+    a field or term line that starts with `lemma`, `coinductive` or `prelude` is read on); the term and tactic lines
+    of that form that Lean reads inside a declaration (`#[..]`, `@[..]`, `open X in`, `set_option o v in`, `unsafe`)
+    end it early, and the text after them is not compared."""
     code, _ = lex(text)
     out: dict[tuple[str, str], list[str]] = {}
     for kind, name, start, end in spans(text, kinds):
