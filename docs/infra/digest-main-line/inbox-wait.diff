@@ -1,0 +1,72 @@
+--- inbox-wait.sh	2026-11-16 12:02:21.401078406 +0000
++++ inbox-wait.sh.new-dml	2026-11-17 12:16:44.410920588 +0000
+@@ -19,12 +19,50 @@
+ # 2026-10-28 lead: keep the prompt cache warm (TTL 60 min): exit after KEEPALIVE_MIN (default 50) with no message,
+ # printing '== keepalive', so the session makes one cheap call (~0.025 x context) instead of a cold rewrite (~1.2 x).
+ start=$SECONDS; ka=$(( ${KEEPALIVE_MIN:-50} * 60 )); dgc=$SECONDS
++# 2026-11-17 digest-main-line (orchestrator BATCH 052409Z item 3; reviews/dri-decisions-20261117-orch1156.md item 2): every digest this
++# loop hands over (hourly, keepalive, with a wake) opens with ONE header line, printed right above the digest-take text and only when
++# there is a digest: "main week <W>% (usage-watch.log <HH:MMZ of the line read>) vs line <L>% (<source>) gap <W-L> pt". W = the last
++# main line of usage-watch.log (path: PICK_USAGE_LOG, as in the picker), read with the picker's row rule (live()/week_rise():
++# "<HH:MMZ> main 5h=.. week=<n>", n >= 0). L = the picker's own pace_line() (PICK_MAIN_PACE), taken from pick-claude-account.sh
++# (checked with ast: exactly one def pace_line) and called with the picker's clock (endgame.now()); the line is not computed here.
++# Either value unreadable: "main week ? (<reason>)". The header never blocks or fails the digest: 30 s cap, any error is a "?" line,
++# and the digest text below it is byte-identical to before. Tests: python3 -I tools-local/test_digest_main_line.py
++DMLPY='
++import ast, datetime, os, re, sys
++m, log = sys.argv[1], sys.argv[2]; why = []; w = pl = None
++src = "PICK_MAIN_PACE via pick-claude-account.sh pace_line()"
++try:
++    sz = os.stat(log).st_size
++    with open(log, "rb") as fh:
++        fh.seek(max(sz - 400000, 0)); rows = fh.read().decode(errors="replace").splitlines()[1 if sz > 400000 else 0:]
++    for r in reversed(rows):
++        x = r.split()
++        if len(x) < 4 or x[1] != "main" or not x[0].endswith("Z") or not x[3].startswith("week="): continue
++        try: v = int(x[3].split("=")[1])
++        except ValueError: continue
++        if v >= 0: w = (v, x[0]); break
++    if w is None: why.append("no main week line in usage-watch.log")
++except OSError as e: why.append(f"usage-watch.log unreadable: {type(e).__name__}")
++try:
++    sys.path.insert(0, f"{m}/tools-local"); import endgame
++    pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(f"{m}/pick-claude-account.sh").read(), re.S | re.M)
++    tree = ast.parse(pk.group(0))
++    if [type(n).__name__ + ":" + getattr(n, "name", "") for n in tree.body] != ["FunctionDef:pace_line"]: raise SyntaxError("not one def pace_line")
++    ns = {"datetime": datetime, "os": os, "now": endgame.now()}
++    exec(compile(tree, "pick-claude-account.sh:pace_line", "exec"), ns); pl = ns["pace_line"]()
++    if pl is None: why.append("no PICK_MAIN_PACE line: pick-claude-account.sh pace_line() read none")
++except Exception as e: why.append(f"pace line unreadable: {type(e).__name__} from pick-claude-account.sh pace_line()")
++if w is not None and pl is not None: print(f"main week {w[0]}% (usage-watch.log {w[1]}) vs line {pl:.1f}% ({src}) gap {w[0] - pl:+.1f} pt")
++else: print("main week ? (" + "; ".join(why) + ")")
++'
++dml(){ local h; h=$(timeout 30 python3 -I -c "$DMLPY" $M "${PICK_USAGE_LOG:-$M/usage-watch.log}" 2> /dev/null) && [ -n "$h" ] || h="main week ? (header failed: no reading within 30 s)"; print -r -- "${h%%$'\n'*}"; }
++dtake(){ local d; d=$($CD digest-take); [ -n "$d" ] && { dml; print -r -- "$d"; }; return 0; }
+ while true; do
+   dg=0; [ -f $M/ORCH_DIGEST ] && dg=1  # no end date since the 2026-11-16 trial read (reviews/dri-decisions-20261116-orch-digest.md)
+   if (( SECONDS - start >= ka )); then
+     if (( dg )); then
+       echo "== keepalive (no message that needs you in ${KEEPALIVE_MIN:-50} min; routine notices go to the hourly digest, ORCH_DIGEST): if nothing below needs you, re-arm only, in one call, with no status check unless the lead asked for one"
+-      $CD digest-take
++      dtake
+     else
+       echo '== keepalive (no new messages in' ${KEEPALIVE_MIN:-50} 'min)'
+     fi
+@@ -32,7 +70,7 @@
+   fi
+   if (( dg && SECONDS - dgc >= 60 )); then   # hourly hand-over of the digest (no other wake came)
+     dgc=$SECONDS
+-    if [ -s $M/inbox/orchestrator-digest.md ] && $CD digest-due; then echo "== digest due (hourly; ORCH_DIGEST): read it, act only on what needs you, re-arm"; $CD digest-take; exit 0; fi
++    if [ -s $M/inbox/orchestrator-digest.md ] && $CD digest-due; then echo "== digest due (hourly; ORCH_DIGEST): read it, act only on what needs you, re-arm"; dtake; exit 0; fi
+   fi
+   new=()
+   for f in $M/inbox/lead/*.md $M/inbox/orchestrator/*.md; do grep -qxF "$f" $S || new+=$f; done
+@@ -47,7 +85,7 @@
+       done
+       if (( ${#wake} )); then
+         for f in $wake; do echo "$f" >> $S; echo "== ${f:t}"; head -c 600 $f; echo; done
+-        $CD digest-due && $CD digest-take
++        $CD digest-due && dtake
+         exit 0
+       fi
+     else
