@@ -1,0 +1,110 @@
+{
+ "item": "codex-credit-gate-1116",
+ "note": "Seeds in the staged manage-agents scripts (no VE Lean, Python or Rust changed). Each seed is a temp copy of one staged file; the test runs on the copy with the other staged files.",
+ "mutants": [
+  {
+   "id": "S1",
+   "bug": "the credit branch is back: a positive balance opens the full gate past the plan cap",
+   "file": "manage-agents/codex-allowed.sh.new-codexw",
+   "find": "echo \"plan week ${xw}% >= ${CODEX_PLAN_CAP:-88}%: refused;",
+   "replace": "[ -n \"$bal\" ] && [ \"$bal\" -gt 0 ] && { echo \"credits\"; exit 0; }\necho \"plan week ${xw}% >= ${CODEX_PLAN_CAP:-88}%: refused;",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "A1",
+    "A12",
+    "A13",
+    "A3",
+    "A4"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S2",
+   "bug": "the credit stop only under a ceiling line (no line in force: no reading needed)",
+   "file": "manage-agents/codex-allowed.sh.new-codexw",
+   "find": "[ -z \"$xw\" ] && { echo \"no Codex week reading: the plan week cannot be checked; $cs\"; exit 1; }",
+   "replace": "[ -z \"$xw\" ] && [ -n \"$cpc\" ] && { echo \"no Codex week reading: the plan week cannot be checked; $cs\"; exit 1; }\n[ -z \"$xw\" ] && { echo \"no hard stop\"; exit 0; }",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "A8"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S3",
+   "bug": "the credit stop at 120 instead of the plan's 100%",
+   "file": "manage-agents/codex-allowed.sh.new-codexw",
+   "find": "(1 + nrun) )) -gt 100 ]; then",
+   "replace": "(1 + nrun) )) -gt 120 ]; then",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "A10",
+    "A5",
+    "A6",
+    "A9",
+    "B5"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S4",
+   "bug": "the host's shim opens when the VM's gate cannot be asked (only exit 1 refuses)",
+   "file": "manage-agents/c2b-codex-shim.sh.new-codexw",
+   "find": "  if [ $rc != 0 ]; then\n    [ $rc = 1 ]",
+   "replace": "  [ $rc = 1 ] || rc=0\n  if [ $rc != 0 ]; then\n    [ $rc = 1 ]",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "B10",
+    "B4"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S5",
+   "bug": "the host's shim forwards its own CODEX_WEEK_CEILING to the VM's gate",
+   "file": "manage-agents/c2b-codex-shim.sh.new-codexw",
+   "find": "PICK_ITEM='${PICK_ITEM:-}' zsh",
+   "replace": "PICK_ITEM='${PICK_ITEM:-}' CODEX_WEEK_CEILING='${CODEX_WEEK_CEILING:-}' zsh",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "B1",
+    "B11",
+    "B7",
+    "B9"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S6",
+   "bug": "the host's shim drops the caller (asks the gate as nobody)",
+   "file": "manage-agents/c2b-codex-shim.sh.new-codexw",
+   "find": "CODEX_CALLER='${CODEX_CALLER:-}' PICK_ITEM",
+   "replace": "CODEX_CALLER='' PICK_ITEM",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "B8"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S7",
+   "bug": "cloud2-codex.sh starts /usr/local/bin/codex on the host again",
+   "file": "manage-agents/cloud2-codex.sh.new-codexw",
+   "find": "-- env ${(j: :)${(@q)envs}} $RSHIM ${(j: :)${(@q)args}}",
+   "replace": "-- env ${(j: :)${(@q)envs}} /usr/local/bin/codex ${(j: :)${(@q)args}}",
+   "test": "manage-agents/tools-local/test_codex_credit_gate.sh",
+   "rc": 1,
+   "failing_tests": [
+    "C1",
+    "C2"
+   ],
+   "caught": true
+  }
+ ]
+}
