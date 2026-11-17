@@ -275,8 +275,20 @@ def plant_counts(prows):
                      "K_decided": sum(r["K"] in DECIDED["K"] for r in ran),
                      "any_killed": sum(r["any"] for r in ran), "text_killed": sum(
                          any(r["text"][c] == "killed" for c in TEXT) for r in ran),
-                     "not_applicable_reasons": sorted({r["reason"] for r in rows if r["status"] == "not applicable"})}
+                     "not_applicable_by": dict(Counter(reason_class(r["reason"]) for r in rows
+                                                       if r["status"] == "not applicable"))}
     return out
+
+
+REASONS = (("is gone from the file under test", "the plant's unit text is gone at the tree under test"),
+           ("times in the file under test", "the changed text is not unique at the tree under test"),
+           ("the repair deleted", "the repair deleted text the defect needs"),
+           ("never read as the repair", "the repaired text changed later"))
+
+
+def reason_class(reason):
+    """The class of a not-applicable reason; VE gets the class, the reason (which names the unit) stays in rows."""
+    return next((label for key, label in REASONS if key in reason), "other")
 
 
 def document_report(b, inputs=None, cr=None):
@@ -294,7 +306,8 @@ def document_report(b, inputs=None, cr=None):
     out["kill_table"] = kill_table(lines)
     out["kill_table_declared_as_survivor"] = {"all": kill_table(lines, True)["all"]}
     errors = [x["record"]["kernel"].get("error") or "" for x in scored(lines) if x["record"]["verdict"]["K"] == "error"]
-    out["K_errors"] = dict(Counter((e.strip().splitlines() or [""])[-1][:120] for e in errors).most_common())
+    out["K_errors"] = dict(Counter(":".join((e.strip().splitlines() or [""])[-1].split(":")[:2])
+                                   for e in errors).most_common())
     out["equivalent"] = dict(Counter(m["equivalent"].split(":")[0] for m in b["mutants"] if m["equivalent"]))
     sel = batch.get("selection") or {}
     unprobed = set(sel.get("in_no_item", ()))
