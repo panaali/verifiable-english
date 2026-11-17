@@ -1,0 +1,178 @@
+{
+ "schema": "fidmech-actors/1",
+ "document": "anthropic-rsp",
+ "generated": [
+  "the CEO and Responsible Scaling Officer",
+  "regular-clearance staff",
+  "reviewing organization",
+  "the external reviewers",
+  "the frontier developer",
+  "the external reviewer",
+  "comprehensive public",
+  "full-time employees",
+  "malicious employees",
+  "technical employees",
+  "external reviewers",
+  "frontier developer",
+  "the Board and LTBT",
+  "external reviewer",
+  "hundred employees",
+  "these competitors",
+  "external parties",
+  "former employees",
+  "individual users",
+  "manipulate users",
+  "industry groups",
+  "the CEO and RSO",
+  "Board and LTBT",
+  "external party",
+  "provide public",
+  "sabotage users",
+  "the competitor",
+  "Misaligned AI",
+  "threat actors",
+  "trusted users",
+  "Competitors",
+  "competitors",
+  "made public",
+  "review team",
+  "small teams",
+  "the company",
+  "competitor",
+  "the public",
+  "this group",
+  "Anthropic",
+  "employees",
+  "reviewers",
+  "the Board",
+  "the LTBT",
+  "company",
+  "the CEO",
+  "the RSO",
+  "the RSP",
+  "Actors",
+  "Public",
+  "expert",
+  "public",
+  "Board",
+  "staff",
+  "users",
+  "LTBT",
+  "team",
+  "user",
+  "CEO",
+  "RSO",
+  "AI"
+ ],
+ "removed": [
+  {
+   "phrase": "comprehensive public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "provide public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "made public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "Public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "public",
+   "reason": "an adjective or a verb's object, not a party: \"public\" before a noun or after a verb"
+  },
+  {
+   "phrase": "manipulate users",
+   "reason": "a verb taken as a modifier; \"users\" is listed"
+  },
+  {
+   "phrase": "sabotage users",
+   "reason": "a verb taken as a modifier; \"users\" is listed"
+  },
+  {
+   "phrase": "hundred employees",
+   "reason": "a number taken as a modifier; \"employees\" is listed"
+  },
+  {
+   "phrase": "Misaligned AI",
+   "reason": "an AI system, not a party"
+  },
+  {
+   "phrase": "AI",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "the RSP",
+   "reason": "a document term (a capability level, category, assessment or framework name), not a party"
+  },
+  {
+   "phrase": "Actors",
+   "reason": "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+  },
+  {
+   "phrase": "Competitors",
+   "reason": "the capitalised spelling of a listed phrase: the matcher reads a first letter in either case"
+  },
+  {
+   "phrase": "this group",
+   "reason": "a determiner taken as a modifier"
+  },
+  {
+   "phrase": "these competitors",
+   "reason": "a determiner taken as a modifier; \"competitors\" is listed"
+  }
+ ],
+ "added": [],
+ "actors": [
+  "the CEO and Responsible Scaling Officer",
+  "regular-clearance staff",
+  "reviewing organization",
+  "the external reviewers",
+  "the frontier developer",
+  "the external reviewer",
+  "full-time employees",
+  "malicious employees",
+  "technical employees",
+  "external reviewers",
+  "frontier developer",
+  "the Board and LTBT",
+  "external reviewer",
+  "external parties",
+  "former employees",
+  "individual users",
+  "industry groups",
+  "the CEO and RSO",
+  "Board and LTBT",
+  "external party",
+  "the competitor",
+  "threat actors",
+  "trusted users",
+  "competitors",
+  "review team",
+  "small teams",
+  "the company",
+  "competitor",
+  "the public",
+  "Anthropic",
+  "employees",
+  "reviewers",
+  "the Board",
+  "the LTBT",
+  "company",
+  "the CEO",
+  "the RSO",
+  "expert",
+  "Board",
+  "staff",
+  "users",
+  "LTBT",
+  "team",
+  "user",
+  "CEO",
+  "RSO"
+ ]
+}

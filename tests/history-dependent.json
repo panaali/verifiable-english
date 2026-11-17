@@ -510,6 +510,18 @@
    ]
   },
   {
+   "test": "tests/test_fidmech_b2.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
    "test": "tests/test_fidmech_bindings.py",
    "why": "starts git (git cat-file) in tools/fidmech/bindings.py",
    "recorded": [
@@ -520,6 +532,30 @@
    ]
   },
   {
+   "test": "tests/test_fidmech_l1.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_mutants.py",
+   "why": "starts git (git commit, git init) in tests/test_fidmech_mutants.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_fidmech_mutants.py:test_equivalents_json_and_the_commit_are_left_out_of_the_binding.<locals>.<lambda>: git",
+    "tests/test_fidmech_mutants.py:test_the_generator_version_and_mutant_edits_enter_inputs_sha256: git commit, git init",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
    "test": "tests/test_fidmech_records.py",
    "why": "starts git in tests/test_fidmech_records.py, tools/fidmech/records.py",
    "recorded": [
@@ -527,6 +563,30 @@
    ],
    "via": [
     "tests/test_fidmech_records.py:git: git",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_segment.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_wording.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
     "tools/fidmech/records.py:_git: git"
    ]
   },

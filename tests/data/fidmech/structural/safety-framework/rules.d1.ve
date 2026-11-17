@@ -1,0 +1,8 @@
+## f2 | always | F2, fixture
+Rule 1. Every proposal must be preceded by a critical capability assessment, if both that proposal is classified as "first_deployment" and that proposal is frontier.
+## f3 | RS7=E | F3, fixture (an exception to f2; the determination is one finding)
+Rule 1. Every proposal need not be preceded by a critical capability assessment, if both that proposal is classified as "low_risk" and that proposal is classified as "governance_found_acceptable_with_safety_case_where_ccl_reached".
+## f4-check-r | RS5=R | F4, fixture (the Astra round 2 shape: an item's model holds the rule's own guard)
+Rule 1. Every proposal must be preceded by a determination of any substantial modification, if that proposal is subsequent.
+## f4-fact | item A9 | a premise block, no rule
+That proposal is frontier.
