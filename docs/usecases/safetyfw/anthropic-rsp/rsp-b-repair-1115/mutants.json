@@ -1,0 +1,101 @@
+{
+ "item": "rsp-b-repair-1115",
+ "note": "each seed applied alone, its tests run, the file restored with git checkout HEAD; usecases/ Python is product code of the RSP case",
+ "trust_mutants_plan": {
+  "definitions": 0,
+  "mutants": 0,
+  "why": "no Lean file changed; tools/trust_mutants.py --plan at 1dc4854ac4"
+ },
+ "seeds": [
+  {
+   "id": "S1",
+   "claim": "X43: F6's guard needs the cause",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "language": "ve (rules.d1.ve)",
+   "change": "'if both that situation is classified as \"goal_revised_less_ambitious\" and that situation is classified as \"revised_because_unable\".' -> 'if that situation is classified as \"goal_revised_less_ambitious\".'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_f6_guard_has_the_revision_and_its_cause",
+    "tests/test_rsp_b_repair_1115.py::test_f6_forbids_a_revision_for_inability_and_not_for_another_cause"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S2",
+   "claim": "X43: G8 states the cause, its keyed answer holds",
+   "file": "usecases/anthropic-rsp/run.py",
+   "language": "python",
+   "change": "'\"G8\": (\"goal_revised_less_ambitious\", \"revised_because_unable\"),' -> '\"G8\": (\"goal_revised_less_ambitious\",),'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_g8_keeps_its_keyed_answer"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S3",
+   "claim": "X36: D3 carries 'Effective'",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "language": "python",
+   "change": "'page 1 \\\\\"Effective July 8, 2026\\\\\" and the' -> 'page 1 and the'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_d2d3_records_only_words_d2_and_d3_do_not_carry"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S4",
+   "claim": "X37/X38: in_scope quotes both 3.1 sentences",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "language": "python",
+   "change": "'this will—at a minimum—include' -> 'this will include'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_in_scope_legend_quotes_both_31_sentences",
+    "tests/test_rsp_b_repair_1115.py::test_f8_restates_entries_are_carried[f8-autonomous]"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S5",
+   "claim": "X40: full_review quotes F14's sentence",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "language": "python",
+   "change": "'anytime a Risk Report covers highly capable models and' -> 'when a Risk Report covers highly capable models and'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_full_review_legend_quotes_f14_and_carries_its_entries"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S6",
+   "claim": "X43: RS12strive's witness meets the whole guard",
+   "file": "usecases/anthropic-rsp/build_document.py",
+   "language": "python",
+   "change": "'\"RS12strive\": [(\"goal_revised_less_ambitious\", \"s\"), (\"revised_because_unable\", \"s\")],' -> '\"RS12strive\": [(\"goal_revised_less_ambitious\", \"s\")],'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_f6_guard_has_the_revision_and_its_cause"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S7",
+   "claim": "X36: the D2D3 line records both losses",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "language": "data (accounting sidecar)",
+   "change": "' ; \"refers generally to risks of the most severe potential harms from advanced AI\" loss 1' -> ''",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_d2d3_line_exists_parses_and_is_saved"
+   ],
+   "result": "FAIL as expected; restored"
+  },
+  {
+   "id": "S8",
+   "claim": "X42: public_notice quotes 4.4",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "language": "python",
+   "change": "'\"we may provide public notice of the same\\\\\"\"' -> '\"we may give notice\\\\\"\"'",
+   "test": [
+    "tests/test_rsp_b_repair_1115.py::test_c_restates_entries_are_carried[f20-notice-p]"
+   ],
+   "result": "FAIL as expected; restored"
+  }
+ ]
+}
