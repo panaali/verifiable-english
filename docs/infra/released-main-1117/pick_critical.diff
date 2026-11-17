@@ -1,0 +1,92 @@
+--- tools-local/pick_critical.py	2026-11-17 03:45:18.231284059 +0000
++++ tools-local/pick_critical.py.new-released-main	2026-11-17 03:45:18.220281318 +0000
+@@ -263,6 +263,73 @@
+     return None
+ 
+ 
++# (vi) released rows take main one at a time, in rank order (2026-11-17 released-main-1117; reviews/dri-decisions-20261117-
++#     released-main.md item 2): pick-claude-account.sh admits main for a released row with links.avoid main only under its
++#     released-row main rule (pace line - 4, 5-h rise < 5, one holder marker pick-main-released). A released row refused main only
++#     because main is taken (that marker, a better-ranked waiter, the main worker cap, a rank hold) touches
++#     pick-waiting-relmain/<row> (mtime = last refusal, dead after PCF_TTL_S) and removes it on any pick; a free marker goes to
++#     the best live waiter first: relmain_key (rank() above, then the FEATURE-QUEUE.tsv rank column, unqueued last, then the id).
++def queue_rank(item):
++    """the FEATURE-QUEUE.tsv rank (column 1) of item's base row; 1e9 when not queued or unreadable."""
++    item, best = base(item), 1e9
++    try:
++        for ln in open(os.path.join(M, "FEATURE-QUEUE.tsv"), errors="replace"):
++            x = ln.split("\t")
++            if not ln.startswith("#") and len(x) >= 2 and x[1] == item:
++                try:
++                    best = min(best, float(x[0]))
++                except ValueError:
++                    pass
++    except OSError:
++        pass
++    return best
++
++
++def relmain_key(item):
++    return (rank(item), queue_rank(item), base(item))
++
++
++def rmwdir():
++    return os.path.join(M, "pick-waiting-relmain")
++
++
++def relmain_mark(item):
++    if not released(item):
++        return False
++    os.makedirs(rmwdir(), exist_ok=True)
++    with open(os.path.join(rmwdir(), base(item)), "w") as f:
++        f.write(f"{now().strftime('%Y-%m-%dT%H:%MZ')} {item}\n")
++    return True
++
++
++def relmain_unmark(item):
++    try:
++        os.remove(os.path.join(rmwdir(), base(item)))
++        return True
++    except OSError:
++        return False
++
++
++def relmain_ahead(item):
++    """the live released-row main waiter that ranks before item (another row), or None."""
++    me, t, best = base(item), now().timestamp(), None
++    try:
++        names = sorted(os.listdir(rmwdir()))
++    except OSError:
++        return None
++    mk = relmain_key(item)
++    for n in names:
++        try:
++            if n == me or t - os.path.getmtime(os.path.join(rmwdir(), n)) > TTL or not released(n):
++                continue
++        except OSError:
++            continue
++        k = relmain_key(n)
++        if k < mk and (best is None or k < best):
++            best = k
++    return best[2] if best else None
++
++
+ def accounts():
+     if os.environ.get("PCF_ACCOUNTS"):
+         return open(os.environ["PCF_ACCOUNTS"]).read().splitlines()
+@@ -363,6 +430,15 @@
+         if y:
+             print(y)
+         return 0 if y else 1
++    if c == "relmainmark" and len(a) == 2:  # (vi)
++        return 0 if relmain_mark(a[1]) else 1
++    if c == "relmainunmark" and len(a) == 2:
++        return 0 if relmain_unmark(a[1]) else 1
++    if c == "relmainahead" and len(a) == 2:
++        h = relmain_ahead(a[1])
++        if h:
++            print(h)
++        return 0 if h else 1
+     if c == "frozen":
+         return 0 if frozen() else 1
+     if c == "codex-offer" and len(a) == 2:

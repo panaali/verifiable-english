@@ -1,0 +1,55 @@
+{
+ "item": "released-main-1117",
+ "command": "python3 -I docs/infra/released-main-1117/seeded-run.py (mutants in /tmp copies; staged files untouched)",
+ "mutants": [
+  {
+   "id": "S1-pace-bound",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_2_pace_minus_3_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S2-rise-bound",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_3_rise_5_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S3-giveback-drops-all",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_6_same_row_second_session_joins",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S4-dead-pid-kept",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_7_dead_pid_marker_cleared",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S5-other-row-joins",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_5_second_released_row_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S6-shell-keeps-row-main",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_1_granted",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S7-rank-order-reversed",
+   "language": "Python",
+   "file": "/home/seyran/code/manage-agents/tools-local/pick_critical.py.new-released-main",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_rank_order",
+   "result": "CAUGHT"
+  }
+ ]
+}

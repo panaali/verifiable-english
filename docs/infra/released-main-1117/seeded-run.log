@@ -1,0 +1,7 @@
+S1-pace-bound file=pick-claude-account.sh.new-rel test=ReleasedMain.test_2_pace_minus_3_avoided rc=1 CAUGHT ['FAIL: test_2_pace_minus_3_avoided (__main__.ReleasedMain.test_2_pace_minus_3_avoided)']
+S2-rise-bound file=pick-claude-account.sh.new-rel test=ReleasedMain.test_3_rise_5_avoided rc=1 CAUGHT ['FAIL: test_3_rise_5_avoided (__main__.ReleasedMain.test_3_rise_5_avoided)']
+S3-giveback-drops-all file=pick-claude-account.sh.new-rel test=ReleasedMain.test_6_same_row_second_session_joins rc=1 CAUGHT ['FAIL: test_6_same_row_second_session_joins (__main__.ReleasedMain.test_6_same_row_second_session_joins)']
+S4-dead-pid-kept file=pick-claude-account.sh.new-rel test=ReleasedMain.test_7_dead_pid_marker_cleared rc=1 CAUGHT ['FAIL: test_7_dead_pid_marker_cleared (__main__.ReleasedMain.test_7_dead_pid_marker_cleared)']
+S5-other-row-joins file=pick-claude-account.sh.new-rel test=ReleasedMain.test_5_second_released_row_avoided rc=1 CAUGHT ['FAIL: test_5_second_released_row_avoided (__main__.ReleasedMain.test_5_second_released_row_avoided)']
+S6-shell-keeps-row-main file=pick-claude-account.sh.new-rel test=ReleasedMain.test_1_granted rc=1 CAUGHT ['FAIL: test_1_granted (__main__.ReleasedMain.test_1_granted)']
+S7-rank-order-reversed file=tools-local/pick_critical.py.new-released-main test=ReleasedMain.test_rank_order rc=1 CAUGHT ['FAIL: test_rank_order (__main__.ReleasedMain.test_rank_order)']
