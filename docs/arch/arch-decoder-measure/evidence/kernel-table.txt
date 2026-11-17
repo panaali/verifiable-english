@@ -1,0 +1,20 @@
+path          tier        theorems    spec    wrap   lines  modes
+certificate   candidate          4    1372       5    1377  checkCertificate
+route         kernel            26    4194      11    4205  route
+norms         kernel            16    3207     202    3409  norms
+normsActs     candidate          6    4046      23    4069  norms
+softNorms     kernel            21    4689       8    4697  softNorms
+metered       kernel             2    3232       6    3238  metered
+quantity      kernel             6    2183       7    2190  quantity
+rights        candidate          2    4892       7    4899  rights
+normDefaults  candidate          7    5717     657    6370  normDefaults
+alternatives  candidate          2    3932       6    3938  alternatives
+risk          candidate          8    5404    2504    7895  risk
+reports       candidate          3    4360       7    4367  reports
+readingsRoute candidate          8    9343   14974   24257  readingsRoute
+discourse     candidate          6   36226      11   36232  discourse
+document      candidate          9   35309     895   36197  document
+kernel (distinct lines of every path of tier kernel): 9991
+under the frozen keys' answers: 16269, of them in the kernel: 9991
+definitions that write a verdict token: 59, of them outside the kernel: 56 in 28 modules
+signed total 9991 >= kernel 9991
