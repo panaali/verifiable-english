@@ -9,7 +9,9 @@ comment. A term or tactic line at column 0 that starts the way a command does st
 the text after that line is not compared (review sc-2d-f1 F4). The cases: a line that starts with `#` (an array
 literal `#[..]`; `#check` is a command) or `@[` (`@[simp]` is a command), and a command keyword used as a term or
 tactic prefix, `open X in ..`, `set_option o v in ..` or the term `unsafe ..`. These are every such case in Lean
-v4.24.0's built-in syntax; the DRI rulings on F3 and F4 grade them C (`EARLY_ENDS`).
+v4.24.0's built-in syntax; the DRI rulings on F3 and F4 grade them C (`EARLY_ENDS`). `COMMANDS` lists only that
+version's keywords, so a column-0 field or term line that starts with `lemma`, `coinductive` or `prelude` (names
+there) is read on (review sc-2d-f1 F5).
 """
 
 from __future__ import annotations
@@ -58,6 +60,14 @@ CASES = {
     # compared (longer, never shorter).
     "doc comments in a body": ("def P : Prop :=\n  True\n/-- doc -/\n  ∧ False\n/-! note -/\n∧ True\n",
                                {("def", "P"): ["def P : Prop := True ∧ False ∧ True"]}),
+    # Review sc-2d-f1 F5: `lemma`, `coinductive` and `prelude` are names in Lean v4.24.0, not keywords (each source
+    # checked with `lean` v4.24.0), so a column-0 line that starts with one is read on.
+    "F5 field named prelude": ("structure S where\nprelude : Nat\nx : Nat\n",
+                               {("structure", "S"): ["structure S where prelude : Nat x : Nat"]}),
+    "F5 binder named lemma": ("def f (lemma : Nat) : Nat :=\nlemma + 1\n",
+                              {("def", "f"): ["def f (lemma : Nat) : Nat := lemma + 1"]}),
+    "F5 binder named coinductive": ("def g (coinductive : Nat) : Nat :=\ncoinductive\n",
+                                    {("def", "g"): ["def g (coinductive : Nat) : Nat := coinductive"]}),
 }
 
 # The named exception of the records: a term line at column 0 that starts with `#` or `@[` is read as a command.

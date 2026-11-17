@@ -1,0 +1,10 @@
+test_pick_main5h_unknown: FAILED (failures=4) FAIL: test_same_row_give_back_keeps_other_session FAIL: test_same_row_marker_live_while_any_pid_lives FAIL: test_same_row_same_holder_counts_grants FAIL: test_same_row_second_session_keeps_main_after_first_exits 
+test_pick_released_yield: OK 
+test_pick_why: OK 
+test_pick_critical: OK 
+test_pick_crit_fallback: OK 
+test_pick_main_rank: OK 
+test_pick_mgmt: FAILED (failures=7) FAIL: test_coord_main_88_without_pace FAIL: test_coord_with_pace_flag_unchanged FAIL: test_endgame_window_lifts_hold FAIL: test_main_fallback_when_nothing_else FAIL: test_main_preferred_below_75 FAIL: test_main_three_at_once_and_taper FAIL: test_mgmt_leaves_main_from_75 
+test_pick_tell: OK 
+test_pick_longroom: OK 
+test_pick_prefer: OK 

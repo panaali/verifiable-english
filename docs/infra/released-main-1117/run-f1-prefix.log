@@ -1,0 +1,82 @@
+FF.FFFFF.
+======================================================================
+FAIL: test_f1_no_pace_line_keeps_rank (__main__.GateReopen.test_f1_no_pace_line_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 319, in test_f1_no_pace_line_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: held out (PICK_AVOID: row links.avoid main; released-row main rule: no PICK_MAIN_PACE line) (5-h 10%, week 47%)
+
+
+======================================================================
+FAIL: test_f1_other_shared_refusal_keeps_rank (__main__.GateReopen.test_f1_other_shared_refusal_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 344, in test_f1_other_shared_refusal_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: held out (PICK_EXCLUDE) (5-h 10%, week 47%)
+
+
+======================================================================
+FAIL: test_f1_pace_refusal_keeps_rank (__main__.GateReopen.test_f1_pace_refusal_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 312, in test_f1_pace_refusal_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: held out (PICK_AVOID: row links.avoid main; released-row main rule: week 57 > PICK_MAIN_PACE line 60.0 - 4) (5-h 10%, week 57%)
+
+
+======================================================================
+FAIL: test_f1_path_yield_keeps_rank (__main__.GateReopen.test_f1_path_yield_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 352, in test_f1_path_yield_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: yield: Nov 23 path row path-x waiting (targets ruling A2(c): released row or PICK_YIELD_PATH; every account)
+
+
+======================================================================
+FAIL: test_f1_rise_refusal_keeps_rank (__main__.GateReopen.test_f1_rise_refusal_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 325, in test_f1_rise_refusal_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: held out (PICK_AVOID: row links.avoid main; released-row main rule: week +5 pt in 5 h >= 5) (5-h 10%, week 47%)
+
+
+======================================================================
+FAIL: test_f1_stand_in_guard_keeps_rank (__main__.GateReopen.test_f1_stand_in_guard_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 336, in test_f1_stand_in_guard_keeps_rank
+    self.rank_kept((got, err), lines=(U5,))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: week +3 pt in 5 h, 5-h unknown (stand-in guard PICK_MAIN_WEEKRISE 3/300 min, over 280 min of usage-watch.log) (5-h ?%, week 47%)
+
+
+======================================================================
+FAIL: test_f1_trend_unknown_keeps_rank (__main__.GateReopen.test_f1_trend_unknown_keeps_rank)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 330, in test_f1_trend_unknown_keeps_rank
+    self.rank_kept((got, err))
+  File "/home/seyran/code/manage-agents/tools-local/test_pick_released_main.py", line 299, in rank_kept
+    self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+AssertionError: False is not true : rel-b refused main without a waiter: PICK_WHY: no eligible account: main: held out (PICK_AVOID: row links.avoid main; released-row main rule: week trend unknown) (5-h 10%, week 47%)
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 4.388s
+
+FAILED (failures=7)

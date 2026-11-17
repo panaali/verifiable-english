@@ -1,0 +1,5 @@
+aa89fe5b4eda1ea93c9afed5894e71c5  pick-claude-account.sh
+d63e47643af7166c8b43e6faec11665e  pick-claude-account.sh.new-rel
+1c3349ac70d8940ae587fabaff3cbb14  tools-local/pick_critical.py
+e272ac8e665fefa030ddb70a921aeaa2  tools-local/pick_critical.py.new-released-main
+784a85dc334563be6f5d0d1a5d360a02  tools-local/test_pick_released_main.py
