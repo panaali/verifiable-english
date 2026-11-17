@@ -554,6 +554,8 @@ CLUSTERS = {
     "C5": ("f1-security-strict", "f1-security-default", "f2-deploy", "f2-deploy-any"),
     "C6": ("f16-board-reverse", "f16-board-mandate"),
 }
+# WITNESS["C2"] keeps `decided_without_sag`: no rule reads it since pf-f16-without-fix (both f16-without guards dropped
+# it, ruling pf-f16-without-n2-20261116 section 4), so it is inert there (tests/test_pf_f16_without_fix.py).
 WITNESS = _B["WITNESS"]
 WITNESS_LEVELS = _B["WITNESS_LEVELS"]
 # F11's adjustment is in "that capability area": C1's confirmed scenario is in the witness level's category.
@@ -750,9 +752,27 @@ def guard_atoms(node, negative=False, out=None):
     return out
 
 
+def witness_attempts(block, names, blocked, every):
+    """The positive atom sets witness_for tries, in order (its docstring): the guard's positive atoms; those plus the
+    positive `unless` atoms of each rule precedence() puts over this block, read entry by entry, only when that adds
+    an atom; every situation and capability atom. Atoms the rule tests negatively (`blocked`) are never set."""
+    blocks = {b.id for b in T.rule_blocks()}
+    excepted = {a for name, over in precedence().items() if block.id in over and name in blocks
+                for exception in json.loads(T.parsed_rule(name))["unless"] for a in guard_atoms(exception)[False]}
+    attempts = [names[False] - blocked]
+    if excepted - names[False] - blocked:
+        attempts.append((names[False] | excepted) - blocked)
+    attempts.append(every - blocked)
+    return attempts
+
+
 def witness_for(block):
-    """A case model on which VE selects the rule: first its guard's positive atoms alone, then every atom but the
-    negated ones; each with every level reached, under the rule's own reading."""
+    """A case model on which VE selects the rule, under the rule's own reading and with every level reached. Three
+    attempts in order: (1) its guard's positive atoms alone; (2) when PRECEDENCE puts a rule over this one (N2's
+    "avoidance of doubt" clause over f16-informed, F11's exceptions over the f2 rules), those atoms plus the `unless`
+    atoms of every such overriding rule: the overriding exception's own stated limit, where this rule is not
+    displaced (skipped when it adds no atom); (3) every atom but the negated ones. An attempt only builds a model: VE
+    must still select the rule on it, premise-checked, under both completion defaults."""
     rule = json.loads(T.parsed_rule(block.id))
     names = guard_atoms(rule["guard"])
     unless = guard_atoms(rule["unless"])
@@ -769,7 +789,7 @@ def witness_for(block):
     choice = {**BASE, **dict(block.when)}
     names_ = tuple(sorted(choice.items()))
     arg = subject(rule["predicate"])[1]
-    for positive in (names[False] - blocked, (situation | capability) - blocked):
+    for positive in witness_attempts(block, names, blocked, situation | capability):
         found = set(atoms({"id": block.id, "levels": list(LEVEL_IDS), "activity": None, "findings": {}}, choice))
         found = {a for a in found if a[0] not in situation or a[0] in positive}
         found |= {(n, "s") for n in positive & situation} | {(n, "k") for n in positive & capability} | areas
