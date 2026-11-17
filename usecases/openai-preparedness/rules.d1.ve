@@ -117,9 +117,9 @@ Rule 1. Every situation must give SSC visibility into processes.
 ## f16-informed | RS6=req | Appendix B: “Making all final decisions, including accepting any residual risks and making deployment go/no-go decisions, informed by SAG’s recommendations.” (RS6=req)
 Rule 1. Every situation must have Leadership informed by SAG, if that situation is classified as "leadership_decision".
 ## f16-without-noinput | RS7=noinput | Appendix B: “For the avoidance of doubt, OpenAI Leadership can also make decisions without the SAG’s participation, i.e., the SAG does not have the ability to “filibuster”” (RS7=noinput: without any SAG recommendation)
-Rule 1. Every situation need not have Leadership informed by SAG, if both that situation is classified as "leadership_decision" and that situation is classified as "decided_without_sag".
+Rule 1. Every situation need not have Leadership informed by SAG, if that situation is classified as "leadership_decision", unless that situation is classified as "sag_recommendations_given".
 ## f16-without-nodelib | RS7=nodelib | Appendix B: “For the avoidance of doubt, OpenAI Leadership can also make decisions without the SAG’s participation, i.e., the SAG does not have the ability to “filibuster”” (RS7=nodelib: without the SAG taking part in the decision)
-Rule 1. Every situation need not have the SAG take part in the decision, if both that situation is classified as "leadership_decision" and that situation is classified as "decided_without_sag".
+Rule 1. Every situation need not have the SAG take part in the decision, if that situation is classified as "leadership_decision".
 ## f16-board-reverse | RS17=bperm | Appendix B: “Where necessary, the Board may reverse a decision and/or mandate a revised course of action.” (RS17=bperm: its first alternative)
 Rule 1. Every situation may have the decision reversed by the Board, if both that situation is classified as "leadership_decision" and that situation is classified as "board_finds_necessary".
 ## f16-board-mandate | RS17=bperm | Appendix B: “Where necessary, the Board may reverse a decision and/or mandate a revised course of action.” (RS17=bperm: its second alternative)

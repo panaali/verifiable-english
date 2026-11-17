@@ -1,0 +1,46 @@
+--- tools-local/test_pick_main5h_unknown.py
++++ tools-local/test_pick_main5h_unknown.py
+@@ -270,6 +270,43 @@
+         self.assertIn("main worker cap 2/2", err)
+         self.assertIsNone(self.holder())
+ 
++    # review F1 (fix 1): callers pick inside a forked subshell, so the picker's $PPID is a subshell that exits with the pick.
++    # The holder must be the caller script itself ($$ of the wrapper), which outlives the pick; one wrapper per caller shape.
++    def via(self, body, **extra):  # runs body as a zsh caller script; PICK is the real picker; returns (stdout, stderr)
++        real, self.p = self.p, f"{self.h}/caller.sh"
++        open(self.p, "w").write(body.replace("PICK", real))
++        try:
++            return self.pick([main_line(47)], **extra)
++        finally:
++            self.p = real
++
++    # run-codex.sh: acct=$(rcx_pick ...) with rcx_pick a function; the second row is refused while the caller lives
++    def test_holder_is_the_caller_through_a_function_in_command_substitution(self):
++        got, err = self.via('rcx_pick(){ zsh PICK; }; a=$(rcx_pick) || exit 1; print -r -- "$a $$ $(cat MARK)"\n'
++                            'b=$(PICK_ITEM=other-r1 zsh PICK 2>/dev/null) && exit 3; exit 0\n'.replace("MARK", self.marker),
++                            PICK_ITEM="fsf-fix-r1")
++        self.assertIsNotNone(got, err)
++        acct, caller, item, pid = got.split()
++        self.assertEqual((acct, item, pid), ("/x/claude-main", "fsf-fix-r1", caller))
++        # the caller has exited: its marker is stale now, so the next rank-1 row is granted and holds main
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="other-r1")[0], "/x/claude-main")
++        self.assertEqual(self.holder(), ["other-r1", str(os.getpid())])
++
++    # converge.sh / feature-pipeline.sh / action-assurance-leanrun.sh: ( ... x=$(until zsh pick; do ...; done) ... ) &
++    def test_holder_is_the_caller_through_until_in_a_background_subshell(self):
++        got, err = self.via('( a=$(until zsh PICK; do exit 1; done); print -r -- "$a" > OUT ) &\nwait\n'
++                            'print -r -- "$(cat OUT) $$ $(cat MARK)"\n'.replace("OUT", f"{self.h}/out").replace("MARK", self.marker),
++                            PICK_ITEM="fsf-fix-r1")
++        self.assertIsNotNone(got, err)
++        acct, caller, item, pid = got.split()
++        self.assertEqual((acct, item, pid), ("/x/claude-main", "fsf-fix-r1", caller))
++
++    # the give-back compares the same holder pid: main admitted but held out through a subshell leaves no marker
++    def test_holder_marker_given_back_through_a_subshell(self):
++        got, err = self.via('a=$(f(){ zsh PICK; }; f) && exit 3; exit 0\n', PICK_ITEM="fsf-fix-r1", PICK_AVOID="claude-main")
++        self.assertEqual(got, "", err)
++        self.assertIsNone(self.holder())
++
+     # coordinators keep their own exemption and never take the marker
+     def test_coordinator_takes_no_marker(self):
+         self.assertEqual(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1", PICK_COORD="1")[0], "/x/claude-main")

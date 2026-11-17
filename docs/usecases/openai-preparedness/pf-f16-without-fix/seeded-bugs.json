@@ -1,0 +1,50 @@
+[
+ {
+  "id": "s1",
+  "file": "usecases/openai-preparedness/rules.d1.ve",
+  "bug": "f16-without-noinput's guard gets `and that situation is classified as \"decided_without_sag\"` back",
+  "failing_tests": [
+   "tests/test_pf_f16_without_fix.py::test_b_noinput_selects_need_not_on_a_case_silent_on_sag_input",
+   "tests/test_pf_f16_without_fix.py::test_f_guards_drop_decided_without_sag_and_noinput_names_its_limit"
+  ],
+  "log": "/tmp/f16-seed1.txt"
+ },
+ {
+  "id": "s2",
+  "file": "usecases/openai-preparedness/rules.d1.ve",
+  "bug": "f16-without-noinput loses `unless that situation is classified as \"sag_recommendations_given\"` (ruling variant b)",
+  "failing_tests": [
+   "tests/test_pf_f16_without_fix.py::test_a_witness_for_returns_a_model_for_each_f16_rule"
+  ],
+  "log": "/tmp/f16-seed2.txt"
+ },
+ {
+  "id": "s3",
+  "file": "usecases/openai-preparedness/run.py",
+  "bug": "witness_attempts without the exception attempt (ruling variant c0)",
+  "failing_tests": [
+   "tests/test_pf_f16_without_fix.py::test_a_witness_for_returns_a_model_for_each_f16_rule",
+   "tests/test_pf_f16_without_fix.py::test_g_only_f16_informed_has_the_exception_attempt",
+   "tests/test_pf_f16_without_fix.py::test_g_f16_informed_is_witnessed_by_the_exception_attempt"
+  ],
+  "log": "/tmp/f16-seed3.txt"
+ },
+ {
+  "id": "s4",
+  "file": "usecases/openai-preparedness/run.py",
+  "bug": "the exception attempt ignores the atoms the rule tests negatively (`- blocked` removed)",
+  "failing_tests": [
+   "tests/test_pf_f16_without_fix.py::test_g_an_exception_whose_limit_contradicts_the_guard_gives_no_witness"
+  ],
+  "log": "/tmp/f16-seed4.txt"
+ },
+ {
+  "id": "s5",
+  "file": "usecases/openai-preparedness/pf_vocabulary.py",
+  "bug": "the `sag_recommendations_given` legend loses its \"i.e., ... ‘filibuster’\" quote",
+  "failing_tests": [
+   "tests/test_pf_f7_timed_act.py::test_f16_without_reads_n2_as_ruled"
+  ],
+  "log": "/tmp/f16-seed5.txt"
+ }
+]

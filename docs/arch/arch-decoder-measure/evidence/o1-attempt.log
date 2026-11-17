@@ -1,0 +1,29 @@
+/tmp/adm/O1.lean:181:8: warning: declaration uses 'sorry'
+/tmp/adm/O1.lean:186:8: warning: declaration uses 'sorry'
+/tmp/adm/O1.lean:191:8: warning: declaration uses 'sorry'
+/tmp/adm/O1.lean:207:26: error: Tactic `simp` failed with a nested error:
+(deterministic) timeout at `simp`, maximum number of heartbeats (200000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+/tmp/adm/O1.lean:207:6: error: (deterministic) timeout at `«tactic execution»`, maximum number of heartbeats (200000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+/tmp/adm/O1.lean:207:36: warning: This simp argument is unused:
+  ih
+
+Hint: Omit it from the simp argument list.
+  simp_all [i̵h̵,̵ ̵embedClosure, VE.Closure.Formula.toCore]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/adm/O1.lean:207:54: warning: This simp argument is unused:
+  VE.Closure.Formula.toCore
+
+Hint: Omit it from the simp argument list.
+  simp_all [ih, embedClosure,̵ ̵V̵E̵.̵C̵l̵o̵s̵u̵r̵e̵.̵F̵o̵r̵m̵u̵l̵a̵.̵t̵o̵C̵o̵r̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/adm/O1.lean:217:8: warning: declaration uses 'sorry'
