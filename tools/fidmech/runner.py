@@ -236,9 +236,10 @@ class Meter:
 
 
 def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_end, clock, sleep, log,
-             sentinel_every=W.SENTINEL_EVERY):
-    """Every mutant through the slots under admission. Returns (outcomes {id: Outcome}, not_run ids, status,
-    sentinels [bool], admission_wait_s, Meter)."""
+             sentinel_every=W.SENTINEL_EVERY, after=None):
+    """Every mutant through the slots under admission; `after(mutant id)` (the text checks) runs in the mutant's
+    thread after its kernel run, beside the other runs. Returns (outcomes {id: Outcome}, not_run ids, status,
+    sentinels [bool], admission_wait_s, Meter, {id: after's result})."""
     pending, requeued, outcomes, not_run, sentinels = deque(mutants), set(), {}, [], []
     free, due, running = deque(slots), deque(), {}
     meter, waited, waiting_since = Meter(clock), 0.0, None
@@ -248,9 +249,10 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
     def finish(fut):
         slot, kind, mutant = running.pop(fut)
         meter.move(-1)
-        out = fut.result()
+        out, extra = fut.result()
         if kind == "mutant":
             outcomes[mutant.id] = out
+            extras[mutant.id] = extra
             slot.since_good.append(mutant)
             slot.count += 1
             if slot.count % sentinel_every == 0:
@@ -270,6 +272,12 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
         if not good:
             slot.worker.reset()
         free.append(slot)
+
+    extras = {}
+
+    def task_run(slot, kind, mutant):
+        out = slot.worker.run(mutant, limit)
+        return out, (after(mutant.id) if after is not None and kind == "mutant" else None)
 
     try:
         while True:
@@ -315,11 +323,11 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
             if kind == "mutant":
                 free.popleft()
             meter.move(+1)
-            running[pool.submit(slot.worker.run, mutant, limit)] = (slot, kind, mutant)
+            running[pool.submit(task_run, slot, kind, mutant)] = (slot, kind, mutant)
     finally:
         pool.shutdown(wait=True)
     status = "ok" if all(s.last_sentinel is not False for s in slots) else "INVALID"
-    return outcomes, not_run, status, sentinels, waited, meter
+    return outcomes, not_run, status, sentinels, waited, meter, extras
 
 
 # ---- the batch -------------------------------------------------------------------------------------------------
@@ -477,9 +485,10 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
     limit = W.TIMEOUT_FACTOR * max(baseline.seconds, 1.0)
     mutants = [M.to_worker(r, files) for r in runnable]
     budget_end = started + budget if budget is not None else None
-    outcomes, not_run, status, sentinels, scheduled_wait, meter = schedule(
+    outcomes, not_run, status, sentinels, scheduled_wait, meter, texts = schedule(
         slots, mutants, baseline, host=deps.host, jobs=jobs, peak_rss=peak_rss, limit=limit, budget_end=budget_end,
-        clock=deps.clock, sleep=deps.sleep, log=deps.log)
+        clock=deps.clock, sleep=deps.sleep, log=deps.log,
+        after=(lambda rid: text.verdicts(by_id[rid])) if text is not None else None)
     lines = []
     for rid, rec in by_id.items():
         if rid in kept:
@@ -487,7 +496,12 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
             continue
         if rec["parse"] != "ok":
             continue
-        verdicts, new, error = text.verdicts(rec) if text is not None else ({c: "survived" for c in TEXT}, [], None)
+        if texts.get(rid) is not None:
+            verdicts, new, error = texts[rid]
+        elif text is not None:  # not run: the text checks need no Lean and still run
+            verdicts, new, error = text.verdicts(rec)
+        else:
+            verdicts, new, error = {c: "survived" for c in TEXT}, [], None
         o = outcomes.get(rid)
         if o is None:
             k, kernel = "not-run", {"changed": [], "inconclusive": [], "toward_key": 0, "away_from_key": 0}
