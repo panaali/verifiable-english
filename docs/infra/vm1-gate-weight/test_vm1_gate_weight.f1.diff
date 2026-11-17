@@ -1,0 +1,194 @@
+--- /tmp/vm1w-fix/test.pre-f1
++++ /home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py
+@@ -27,7 +27,17 @@
+         no gate-wait, no scope) nor by the selected-test fallback (MAC_GATE + CHAIN-GATE-SELECTED-FALLBACK, mac-gate rc 3);
+         an R13 rerun after a failed ve-cloud-2 gate takes the slot itself (waits for the holder, then runs scoped);
+   (7)   VM_GATE_MAX=2: two gates run at once (both start before either ends).
+-Fails on the live files (no scope, no lock). Nothing outside the temp dir is read or written.
++  (8)   review F1 (vm1-gate-weight-review.final.md): a chain killed while its gate runs (its own scope stopped: here
++        SIGKILL to the chain shell only, the gate's scope untouched) takes its gate with it: the watcher calls systemctl
++        --user stop with the unit pattern, then TERMs the gate's tree; the gate is gone. The slot stays held until that
++        gate is gone: a second chain waiting for vm1 starts its gate.py only after the first gate.py exited (the first
++        ignores TERM for 2 s). Each VM gate call site: (8a) the VM gate, no cancel file set; (8b) the R13 rerun with
++        CHAIN_GATE_CANCEL set (selrun path); (8c) the rerun after a failed ve-cloud-2 gate.
++  (9r)  the same on the real systemd user manager (no stub systemd-run / systemctl; skipped with a note when
++        `systemd-run --user --scope true` fails): (9r) the reviewer's PROBE F1: the chain runs in its own scope, that scope
++        is stopped, the gate.py (and its ve-vmgate scope) is gone and a waiting chain's gate starts only after it;
++        (9s) a gate that ends by itself and leaves a stray process in its scope keeps no slot (the next gate does not wait).
++Fails on the live files (no scope, no lock); (8) and (9r) fail on the pre-F1 staged file (an orphan gate). Nothing outside the temp dir is read or written.
+ 
+ usage: python3 -I tools-local/test_vm1_gate_weight.py     (CG=<chain-gate.sh copy>, ISO=<iso.sh copy>)
+ """
+@@ -46,10 +56,18 @@
+ ISO = pick("ISO", "iso.sh.new-vm1w", "iso.sh")
+ fails = 0
+ 
+-STUB = r'''import fcntl, json, os, subprocess, sys, time
++STUB = r'''import fcntl, json, os, signal, subprocess, sys, time
+ cfg = json.load(open(os.environ["STUB_CFG"]))
+ mode = "rerun" if "--rerun-failed" in sys.argv else "full"
+ c = cfg[mode]
++def live(pid):
++    try:
++        return open(f"/proc/{pid}/stat").read().rsplit(") ", 1)[1].split()[0] != "Z"
++    except OSError:
++        return False
++others = []
++if os.path.exists(os.environ["STUB_LOG"]):
++    others = sorted({r["pid"] for r in map(json.loads, open(os.environ["STUB_LOG"])) if r["ev"] == "start" and live(r["pid"])})
+ lk = os.path.join(os.environ["STUB_M"], "locks", "vm1-gate.lock")
+ free = None
+ if os.path.exists(lk):
+@@ -69,7 +87,16 @@
+         f.write(json.dumps(dict(d, wt=os.path.basename(os.getcwd()), mode=mode, t=time.time())) + "\n")
+ rec({"commit_sha": head, "dirty": False, "mode": "full", "stages": ["toolchains"], "failures": [], "status": "failed"})
+ log({"ev": "start", "pid": os.getpid(), "pgid": os.getpgid(0), "lock_free": free, "holder": holder,
+-     "pinned": os.environ.get("VE_REQUIRE_PINNED_SOURCES"), "argv": sys.argv[1:]})
++     "pinned": os.environ.get("VE_REQUIRE_PINNED_SOURCES"), "argv": sys.argv[1:], "others_alive": others})
++if c.get("term_delay"):
++    def onterm(*_):
++        t = time.time() + c["term_delay"]
++        while time.time() < t:
++            time.sleep(0.05)
++        log({"ev": "term", "pid": os.getpid()}); os._exit(143)
++    signal.signal(signal.SIGTERM, onterm)
++if c.get("stray"):
++    subprocess.Popen(["sleep", str(c["stray"])], start_new_session=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+ end = time.time() + c["sleep"]
+ while time.time() < end:
+     time.sleep(0.1)
+@@ -222,6 +249,52 @@
+         os.close(fd)
+ 
+ 
++def gone(pid):
++    try:
++        return open(f"/proc/{pid}/stat").read().rsplit(") ", 1)[1].split()[0] == "Z"
++    except OSError:
++        return True
++
++
++def chain_kill(e, tag, name, mode, extra=None, waiter=None, kill=None):
++    """(8)/(9r): start chain `name` (its worktree configured by the caller), wait for its gate.py of `mode`, start
++    `waiter` (if any) and wait for its gate-wait event, kill the chain (SIGKILL to the chain shell, or `kill(proc)`),
++    then check that the gate.py is gone and that the waiter's gate.py started only after it exited."""
++    pa = e.start(name, extra=extra) if kill is None else kill("start", name)
++    ok = e.until(lambda: e.rows(name, "start", mode), 60)
++    check(f"({tag}) the {mode} gate started", ok, f"{e.rows()} {e.events(name)}")
++    if not ok:
++        os.killpg(pa.pid, signal.SIGKILL) if kill is None else kill("cleanup", name); return
++    pid = e.rows(name, "start", mode)[0]["pid"]
++    pb = None
++    if waiter:
++        pb = e.start(waiter) if kill is None else kill("start", waiter)
++        check(f"({tag}) the second chain waits for vm1, naming the first", e.until(lambda: e.events(waiter, "gate-wait"), 60)
++              and e.events(waiter, "gate-wait")[0]["note"] == f"waiting: another VM gate holds vm1 ({name})", f"{e.events(waiter)}")
++    if kill is None:
++        os.kill(pa.pid, signal.SIGKILL)
++    else:
++        kill("stop", name)
++    dead = e.until(lambda: gone(pid), 60)
++    check(f"({tag}) the chain's {mode} gate.py is gone after its chain was stopped", dead, f"pid {pid}")
++    if kill is None:
++        pa.wait()
++        sc = [x.split() for x in open(e.sctl)] if os.path.exists(e.sctl) else []
++        units = [x["unit"] + ".scope" for x in jl(e.sdr) if x.get("unit", "").startswith(f"ve-vmgate-{name}-{pa.pid}-")]
++        check(f"({tag}) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
++              units and any(x[:2] == ["--user", "stop"] and len(x) == 3 and fnmatch.fnmatch(units[-1], x[2]) for x in sc), f"{sc} {units}")
++        check(f"({tag}) the gate was TERMed (it ran its 2 s TERM delay)", any(r["pid"] == pid for r in e.rows(name, "term")), f"{e.rows(name)}")
++    else:
++        dead or kill("cleanup", name)
++    if waiter:
++        rb = wait(pb, 120)[0] if kill is None else (e.until(lambda: e.rows(waiter, "end"), 120) and 0)
++        sb = e.rows(waiter, "start")
++        tend = max([r["t"] for r in e.rows(name, "term")], default=None)
++        check(f"({tag}) the second chain's gate.py starts only after the first gate.py exited, rc 0",
++              rb == 0 and len(sb) == 1 and sb[0]["others_alive"] == [] and (tend is None or sb[0]["t"] >= tend), f"rb={rb} {sb} term={tend} {e.events(waiter)}")
++        kill is None or kill("cleanup", waiter)
++
++
+ def iso_cases(d):
+     m = os.path.join(d, "isoM"); os.makedirs(m)
+     iso = os.path.join(m, "iso.sh"); open(iso, "w").write(open(ISO).read().replace(M, m))
+@@ -240,6 +313,53 @@
+     check("(i) iso.sh vmgate-x: MemoryMax as given", "MemoryMax=48G" in o, o[-300:])
+ 
+ 
++def real_systemd(e, d):
++    """(9r), (9s): the real systemd user manager. Each chain runs in its own transient scope (as a launcher's iso.sh)."""
++    if subprocess.run(["systemd-run", "--user", "--scope", "--quiet", "true"], capture_output=True).returncode != 0:
++        print("  skip (9r) (9s): no systemd user manager here (systemd-run --user --scope true failed)")
++        return
++    for x in ("systemd-run", "systemctl"):
++        os.remove(os.path.join(e.fb, x))
++    tag = f"t{os.getpid()}"
++    env = {"PATH": e.fb + ":/usr/bin:/bin", "HOME": e.home, "XDG_RUNTIME_DIR": os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"),
++           "STUB_M": e.m, "STUB_LOG": e.slog, "VM_GATE_POLL": "0.2"}
++    units = []
++
++    def ctl(what, name):
++        u = f"rv{tag}{name}"
++        if what == "start":
++            units.append(u)
++            return subprocess.Popen(["systemd-run", "--user", "--scope", "--quiet", f"--unit={u}", "zsh", e.cg, e.wts[name], name],
++                                    env=dict(env, STUB_CFG=os.path.join(d, f"cfg-{name}.json")), stdout=subprocess.DEVNULL,
++                                    stderr=subprocess.DEVNULL, start_new_session=True)
++        if what == "stop":
++            subprocess.run(["systemctl", "--user", "stop", u + ".scope"], capture_output=True)
++        else:
++            subprocess.run(["systemctl", "--user", "stop", u + ".scope", f"ve-vmgate-{name}-*.scope"], capture_output=True)
++    try:
++        la, lb = f"ra{tag}", f"rb{tag}"
++        e.wt(la, {"sleep": 120, "rc": 0, "record": "pass", "term_delay": 2}); e.wt(lb, {"sleep": 1, "rc": 0, "record": "pass"})
++        chain_kill(e, "9r", la, "full", waiter=lb, kill=lambda what, name: ctl(what, name))
++        left = subprocess.run(["systemctl", "--user", "list-units", "--all", "--no-legend", f"ve-vmgate-{la}-*"], capture_output=True, text=True).stdout.strip()
++        check("(9r) the stopped chain's ve-vmgate scope is gone", e.until(lambda: not subprocess.run(
++            ["systemctl", "--user", "list-units", "--no-legend", f"ve-vmgate-{la}-*"], capture_output=True, text=True).stdout.strip(), 60), left)
++        e.reset()
++        ls = f"rs{tag}"; lt = f"rt{tag}"
++        e.wt(ls, {"sleep": 1, "rc": 0, "record": "pass", "stray": 120}); e.wt(lt, {"sleep": 1, "rc": 0, "record": "pass"})
++        p = ctl("start", ls)
++        e.until(lambda: e.rows(ls, "end"), 120); p.wait(120)
++        p = ctl("start", lt)
++        e.until(lambda: e.rows(lt, "end"), 120); p.wait(120)
++        stray = subprocess.run(["systemctl", "--user", "list-units", "--no-legend", f"ve-vmgate-{ls}-*"], capture_output=True, text=True).stdout.strip()
++        check("(9s) a gate that ended by itself and left a stray in its (still live) scope keeps no slot: the next gate ran, no gate-wait",
++              bool(stray) and e.rows(lt, "end") and not e.events(lt, "gate-wait"), f"stray scope: {stray!r} {e.events(lt)}")
++        ctl("cleanup", ls); ctl("cleanup", lt)
++    finally:
++        for u in units:
++            subprocess.run(["systemctl", "--user", "stop", u + ".scope"], capture_output=True)
++        subprocess.run(["systemctl", "--user", "stop", f"ve-vmgate-*{tag}-*.scope"], capture_output=True)
++
++
+ def main():
+     print(f"chain-gate.sh under test: {CG}\niso.sh under test: {ISO}")
+     with tempfile.TemporaryDirectory() as d:
+@@ -329,7 +449,8 @@
+         s = jl(e.sdr); sc = open(e.sctl).read().split() if os.path.exists(e.sctl) else []
+         check("(5) exit 4, gate-cancelled 'vm gate stopped'", ra == 4 and any(x["note"].startswith("vm gate stopped:") for x in e.events("a", "gate-cancelled")), f"ra={ra} {e.events('a')} {oa[-300:]}")
+         check("(5) the scoped gate's process group is gone", st and not alive(st[0]["pgid"]), f"{st}")
+-        check("(5) the scope kept the chain's process group (systemd-run pid = gate pid)", st and s and s[0]["pid"] == st[0]["pid"], f"{s} {st}")
++        check("(5) the gate runs in the scope main process's group (systemd-run pid = gate pgid: selrun's group kill reaches it)",
++              st and s and s[0]["pid"] == st[0]["pgid"], f"{s} {st}")
+         check("(5) systemctl --user stop with a pattern matching the unit", len(sc) == 3 and sc[:2] == ["--user", "stop"] and s
+               and fnmatch.fnmatch(s[0]["unit"] + ".scope", sc[2]), f"{sc} {s}")
+         check("(5) the slot is free after the cancel", lock_free(e.lock), "")
+@@ -401,6 +522,17 @@
+         check("(7) VM_GATE_MAX=2: both gates start before either ends, rc 0, no gate-wait",
+               ra == 0 and rb == 0 and len(starts) == 2 and len(ends) == 2 and max(starts) < min(ends) and not e.events(stage="gate-wait"),
+               f"ra={ra} rb={rb} {e.rows()} {e.events()}")
++        # (8) review F1: a stopped chain takes its gate with it, and keeps the slot until that gate is gone
++        SLOW = {"sleep": 120, "rc": 0, "record": "pass", "term_delay": 2}
++        e.reset(); e.wt("a", SLOW); e.wt("b", PASS)
++        chain_kill(e, "8a", "a", "full", waiter="b")
++        e.reset(); e.wt("a", {"sleep": 1, "rc": 1, "record": "fail_tests"}, SLOW); e.wt("b", PASS)
++        chain_kill(e, "8b", "a", "rerun", extra={"CHAIN_GATE_CANCEL": os.path.join(d, "never.cancel")}, waiter="b")
++        e.reset(); open(os.path.join(e.m, "CLOUD2_RUNNER"), "w").close(); e.wt("a", PASS, SLOW); e.wt("b", PASS)
++        fl = os.path.join(d, "c2fail"); open(fl, "w").close()
++        chain_kill(e, "8c", "a", "rerun", extra={"C2_FAIL": fl})
++        e.reset()
++        real_systemd(e, d)
+     print(f"{'FAILED' if fails else 'PASSED'}: {fails} failure(s)")
+     return 1 if fails else 0
+ 
