@@ -5,7 +5,7 @@ Changed (outside this repo, staged only): pick-claude-account.sh.new-rel, tools-
 Open items: none for this item. No DELTA rows: no Lean or trust-base change, and no VE product code in this repo changed.
 DRI signature needed: none. The install read goes to the decider (`msg.sh dri`).
 
-SIZE: 155 product (picker +91/-4, pick_critical.py +64), 287 tests, 290 other hand-written lines (this REPORT, seeded-run.py).
+SIZE: 155 product (picker +91/-4, pick_critical.py +64), 287 tests, 170 other hand-written lines (this REPORT, seeded-run.py).
 
 ## What it does
 
