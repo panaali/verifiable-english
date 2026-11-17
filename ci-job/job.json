@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-gate-cpu-over-tmfill-d6efe2c7-t922163-s8",
+ "head": "5239a0d0df049becab8fe7d39fe547f24c943e48",
+ "argv": [
+  "armsh-cand-gate-cpu-over-tmfill-d6efe2c7-t922163-s8",
+  "5239a0d0df049becab8fe7d39fe547f24c943e48",
+  "dfc045eb4c592febd818b55e98865e757913c966",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
