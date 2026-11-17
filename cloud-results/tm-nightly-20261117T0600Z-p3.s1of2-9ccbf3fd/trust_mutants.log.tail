@@ -1,0 +1,8 @@
+trust_mutants: 37 definitions, 60 mutants (28 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Compose/Dispatch.lean:922 VE.Compose.listFault (G[V], trusted) list-empty: VE.Cardinality.Wire.profileLists -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) append-right: documentLayers ++ ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) append-right: eventsReadingSets ++ ->  (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/RightClauses/Wire.lean:86 VE.RightClauses.NoClauseKeys (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/RightClauses/WireTheorems.lean:869)
+SURVIVOR lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:97 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100, lean/VE/EnglishGrammar/Norm/Ow...)
+UNKNOWN lean/VE/Commands/Steps.lean:89 VE.Commands.shapeOutcome (G[V], trusted) bool-flip: true -> false (lean/VE/Commands/StepsExamples.lean:57: Expression (it computes through a proof the mutant broke ...)
