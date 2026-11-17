@@ -15,7 +15,7 @@ LIVE=/home/seyran/code/manage-agents/tm-shard.sh
   ok   reading 50: the log does not say it sized at the records' p90
 == (3) every Actions part gets a --budget below the limit
   ok   sharded: 8 parts, each with --budget <= 6300
-  FAIL sharded beside the caller's --budget 9000 and far --deadline: each part also has --budget <= 6300  [['dispatch --worktree <S>/wt item.s1of8 <SHA> -- --budget 9000 --deadline 1794955147 --json <S>/o.json --shard 1/8 --json <S>/jobs/item-<SHA8>/part-1.json']]
+  FAIL sharded beside the caller's --budget 9000 and far --deadline: each part also has --budget <= 6300  [['dispatch --worktree <S>/wt item.s1of8 <SHA> -- --budget 9000 --deadline 1794959288 --json <S>/o.json --shard 1/8 --json <S>/jobs/item-<SHA8>/part-1.json']]
   FAIL unsharded (5 mutants fit one part): the one dispatch has --budget <= 6300  [(['dispatch --worktree <S>/wt item <SHA> -- --json <S>/o.json'], ['item: unsharded (5 mutants to run fit one part on actions (~1200 s; <= 35 per part; room 40: cap 40 - busy 0 - reserve 0 for 0 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80)))'])]
   FAIL TM_PART_BUDGET 99999 is cut to LIMIT - PRE (6900)  [['dispatch --worktree <S>/wt item.s1of8 <SHA> -- --json <S>/o.json --budget 99999 --shard 1/8 --json <S>/jobs/item-<SHA8>/part-1.json']]
   FAIL a malformed TM_PART_BUDGET gives the computed --budget 6300 (never no budget)  [['dispatch --worktree <S>/wt item <SHA> -- --json <S>/o.json']]
@@ -28,4 +28,22 @@ LIVE=/home/seyran/code/manage-agents/tm-shard.sh
   ok   codex, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
   ok   claude-cloud, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
   note mac-pytest.sh's Mac/VM part runs build their args from the caller's (tmparts: pa/pn), never from tm-shard's
-FAIL: 12 failed
+== (6) the per-mutant reading counts only the mutants a run judged itself (review F1: sharded, reused, resumed rows)
+  FAIL part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [mirror]: reading 1800  [arecs printed None]
+  FAIL part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [record()]: reading 1800  [arecs printed None]
+  FAIL part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [mirror]: reading 1800  [arecs printed None]
+  FAIL part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [record()]: reading 1800  [arecs printed None]
+  FAIL --rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800  [arecs printed None]
+  FAIL --rescore part 1/4 of 32: 6 reused_from, 2 judged [record()]: reading 1800  [arecs printed None]
+  FAIL --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800  [arecs printed None]
+  FAIL --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [record()]: reading 1800  [arecs printed None]
+  FAIL --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [mirror]: reading 1800  [arecs printed None]
+  FAIL --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [record()]: reading 1800  [arecs printed None]
+  FAIL --resume ignored (a full run): 8 judged [mirror]: reading 1800  [arecs printed None]
+  FAIL --resume ignored (a full run): 8 judged [record()]: reading 1800  [arecs printed None]
+  FAIL a full reuse (every own row reused_from): no reading [mirror]: reading None  [arecs printed None]
+  FAIL a full reuse (every own row reused_from): no reading [record()]: reading None  [arecs printed None]
+  FAIL a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [mirror]: reading 1800  [arecs printed None]
+  FAIL a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [record()]: reading 1800  [arecs printed None]
+FAIL: 28 failed
+exit 1

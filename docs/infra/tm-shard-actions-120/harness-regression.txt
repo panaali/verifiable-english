@@ -11,3 +11,4 @@
 ## tools-local/test_tm_actions_first.py, STAGED (TSH=...new-tsa; it sets TM_SPM_OFF_FLAG=on, TM_PART_DEADLINE_FLAG off): PASS: 0 failed, 20 ok
 ## tools-local/test_tm_shard_fallback_overwrite.py, STAGED (TMS=...new-tsa): case (5) of run-staged.log:   ok   it exits 0
 ## note: the test_tm_actions_first.py run and the 106/42 run were made before the last edit (a malformed TM_PART_BUDGET now falls back to the computed budget instead of none); that edit changes no valid-value path, and the 144/5 run and run-staged.log were made after it.
+## review F1 (2026-11-17 15:33Z): the fix touches only arecs' records reader; the 144/5 run isolates the records (TM_SHARD_RECORDS=/nonexistent) and test_tm_actions_first.py sets TM_SPM_OFF_FLAG=on, so neither reaches it: both results stand for the final staged file

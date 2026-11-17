@@ -28,6 +28,24 @@ LIVE=/home/seyran/code/manage-agents/tm-shard.sh
   ok   codex, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
   ok   claude-cloud, 5 mutants (tm-spm ''): exit, dispatch calls and log lines = the live tm-shard.sh's (1 calls)
   note mac-pytest.sh's Mac/VM part runs build their args from the caller's (tmparts: pa/pn), never from tm-shard's
+== (6) the per-mutant reading counts only the mutants a run judged itself (review F1: sharded, reused, resumed rows)
+  ok   part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [mirror]: reading 1800
+  ok   part 1/8 of 30 (4 own KILLED, 26 OTHER SHARD), 1,800 s x 4 jobs: the probe's [record()]: reading 1800
+  ok   part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [mirror]: reading 1800
+  ok   part 2/4 of 32: 3 judged, 1 abandoned, 4 not started, 24 OTHER SHARD [record()]: reading 1800
+  ok   --rescore part 1/4 of 32: 6 reused_from, 2 judged [mirror]: reading 1800
+  ok   --rescore part 1/4 of 32: 6 reused_from, 2 judged [record()]: reading 1800
+  ok   --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [mirror]: reading 1800
+  ok   --resume part 1/4 of 32, same HEAD: 5 kept (unmarked rows), 3 judged [record()]: reading 1800
+  ok   --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [mirror]: reading 1800
+  ok   --resume + --rescore part: 2 reused_from among 5 kept, 3 judged [record()]: reading 1800
+  ok   --resume ignored (a full run): 8 judged [mirror]: reading 1800
+  ok   --resume ignored (a full run): 8 judged [record()]: reading 1800
+  ok   a full reuse (every own row reused_from): no reading [mirror]: reading None
+  ok   a full reuse (every own row reused_from): no reading [record()]: reading None
+  ok   a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [mirror]: reading 1800
+  ok   a whole run, --max-mutants 4 of 14: 4 judged, 10 NOT RUN past it [record()]: reading 1800
 == (5) tools-local/test_tm_shard_fallback_overwrite.py with TMS = the tm-shard.sh under test
   ok   it exits 0
 PASS: 0 failed
+exit 0
