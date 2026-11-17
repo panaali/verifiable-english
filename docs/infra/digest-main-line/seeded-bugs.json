@@ -1,0 +1,69 @@
+{
+ "item": "digest-main-line",
+ "command": "python3 -I docs/infra/digest-main-line/seeded-run.py (mutants in /tmp copies; staged file untouched)",
+ "mutants": [
+  {
+   "id": "S1-gap-sign-flipped",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "gap {w[0] - pl:+.1f} pt",
+   "new": "gap {pl - w[0]:+.1f} pt",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_2_gap_sign_above_and_below_the_line",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S2-header-below-digest",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "[ -n \"$d\" ] && { dml; print -r -- \"$d\"; }",
+   "new": "[ -n \"$d\" ] && { print -r -- \"$d\"; dml; }",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_4_body_byte_identical_below_header_keepalive",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S3-header-without-digest",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "[ -n \"$d\" ] && { dml; print -r -- \"$d\"; }",
+   "new": "dml; [ -n \"$d\" ] && print -r -- \"$d\"",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_4b_no_digest_no_header",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S4-missing-log-reads-zero",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "except OSError as e: why.append(f\"usage-watch.log unreadable: {type(e).__name__}\")",
+   "new": "except OSError as e: w = (0, \"?\")",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_3_missing_log_question_line_and_digest_unchanged",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S5-first-main-line-not-last",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "for r in reversed(rows):",
+   "new": "for r in rows:",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_1_header_has_week_line_gap_and_sources",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S6-line-real-clock-not-picker-clock",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "\"now\": endgame.now()",
+   "new": "\"now\": datetime.datetime.now(datetime.timezone.utc)",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_2b_line_follows_the_picker_clock",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S7-expired-header-drops-line",
+   "language": "zsh + Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/inbox-wait.sh.new-dml",
+   "old": "|| h=\"main week ? (header failed: no reading within 30 s)\"",
+   "new": "|| h=\"\"",
+   "test": "tools-local/test_digest_main_line.py::DigestMainLine.test_3e_header_deadline_expired_still_sends_digest",
+   "result": "CAUGHT"
+  }
+ ]
+}

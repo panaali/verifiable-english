@@ -1,0 +1,135 @@
+--- tools-local/bottleneck-scan.py.new-nta (before review F1)
++++ tools-local/bottleneck-scan.py.new-nta
+@@ -479,13 +479,20 @@
+ # 2026-11-17 notask-wait-alert (reviews/dri-decisions-20261117-orch1156.md item 3): "no task file" is its own cause, first in
+ # the order (before 2026-11-17 it was last and matched only "task file missing", so "task file missing (prompts/task-account-
+ # x.txt)" went to accounts through the bare "account" pattern). Accounts match the word "account" only ("accounting" is not).
+-NO_TASK = "no task file"
++# 2026-11-17 notask-wait-alert review F1: every reader names a bucket through these constants, never a string literal (the
++# rename "task file" -> NO_TASK left a literal "task file" in stage_details, so no-task row-hours showed as capacity waits).
++NO_TASK, PREREQ, ACCOUNTS, MAC_LOAD, VM_LOAD = "no task file", "prerequisites", "accounts", "Mac load", "VM load"
+ FEED_BUCKETS = ((NO_TASK, r"^(no task file|task file missing)\b"),
+                 ("width: chains cap", r"^chains \d+ >= \d+"), ("width: building cap", r"queue items building"),
+                 ("width: in-flight cap", r"queue items in flight"), ("path locks", r"^path \S+ in flight"),
+-                ("trains cap", r"trains running"), ("Mac load", r"Mac load"), ("VM load", r"VM (5-min )?load"),
+-                ("accounts", r"no Claude account|\baccount\b"), ("one launch per pass", r"one launch per pass"),
+-                ("prerequisites", r"waits for"))
++                ("trains cap", r"trains running"), (MAC_LOAD, r"Mac load"), (VM_LOAD, r"VM (5-min )?load"),
++                (ACCOUNTS, r"no Claude account|\baccount\b"), ("one launch per pass", r"one launch per pass"),
++                (PREREQ, r"waits for"))
++# Buckets that are a missing input, not a capacity limit: kept out of the launch-wait capacity hint (stage_details). The one
++# list of them; a name here that is not a bucket stops the scan at import.
++NOT_CAPACITY = frozenset({NO_TASK, PREREQ})
++if not NOT_CAPACITY <= {n for n, _ in FEED_BUCKETS}:
++    raise SystemExit(f"bottleneck-scan: NOT_CAPACITY names no bucket: {sorted(NOT_CAPACITY - {n for n, _ in FEED_BUCKETS})}")
+ 
+ 
+ def feed_bucket(reason):
+@@ -767,7 +774,7 @@
+     cores = L["vm1"]["cores"] or 32
+     avg = sum(v for _, v in sar) / len(sar) if sar else L["vm1"]["load5"]
+     over = sum(1 for _, v in sar if v > cores) / len(sar) if sar else None
+-    q = fw.get("VM load", 0)
++    q = fw.get(VM_LOAD, 0)
+     res["VM1"] = {"now": L["vm1"]["load5"], "cores": cores, "avg": round(avg, 1), "over_share": over, "queue_h": round(q, 1),
+                   "queue": "feed rows held by VM load"}
+     # VM2/VM3
+@@ -793,7 +800,7 @@
+     a = sum(x[1] for x in xs) / len(xs) if xs else None
+     msw = mac_slot_waits(ev, spans)
+     res["Mac"] = {"now": (lv or {}).get("load5"), "cores": mc, "avg": round(a, 1) if a is not None else None, "samples": len(xs),
+-                  "queue_h": round(msw + fw.get("Mac load", 0), 1), "queue": "chain-gate Mac slot waits + feed rows held by Mac load"}
++                  "queue_h": round(msw + fw.get(MAC_LOAD, 0), 1), "queue": "chain-gate Mac slot waits + feed rows held by Mac load"}
+     for k in ("VM1", "VM2", "VM3", "Mac"):
+         x = res[k]
+         x["saturated"] = bool(x["avg"] is not None and x["cores"] and x["avg"] / x["cores"] >= SAT)
+@@ -801,7 +808,7 @@
+                       "queue_h": x["queue_h"], "hours": x["queue_h"]})
+     # accounts
+     acc, codex = usage()
+-    accq = sum(v for k, v in pw.items()) + fw.get("accounts", 0)
++    accq = sum(v for k, v in pw.items()) + fw.get(ACCOUNTS, 0)
+     worst = None
+     for a, (h5, wk) in acc.items():
+         cap = CAPS.get(a, 88)
+@@ -861,7 +868,7 @@
+         d["build"] = (f"{len(b)} build attempts ended in the window, median {b[len(b) // 2]:.1f} h, longest {b[-1]:.1f} h "
+                       f"(whole attempts incl. hours before the window; {sum(inwin):.1f} h of them in the window, account waits "
+                       f"included); {cloud} placed on a remote host")
+-    cap = [(k, v) for k, v in fw.most_common() if k not in ("prerequisites", "task file") and v > 0]
++    cap = [(k, v) for k, v in fw.most_common() if k not in NOT_CAPACITY and v > 0]
+     if cap:
+         d["launch-wait"] = "feed capacity waits (row-h): " + ", ".join(f"{k} {v:.1f}" for k, v in cap[:3])
+     d["chain-gate"] = f"Mac gate-slot waits {mac_slot_waits(ev, spans):.1f} h; Mac avg load {res['Mac']['avg']} on {res['Mac']['cores']} cores"
+--- tools-local/test_bottleneck_scan.py (before review F1)
++++ tools-local/test_bottleneck_scan.py
+@@ -7,6 +7,7 @@
+ "task file missing ..." row-hours are their own cause (process:no-task-file), never resource:accounts; the live script before
+ the install fails it."""
+ import importlib.machinery, importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
++from collections import Counter
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ SCRIPT = os.environ.get("BN_SCRIPT") or next(x for x in (os.path.join(HERE, "bottleneck-scan.py.new-nta"),
+@@ -302,6 +303,61 @@
+         self.assertEqual(bn.process_cands(fw)[0]["hours"], 0)
+         self.assertEqual(bn.classify(bn.process_cands(fw)), (None, None))
+ 
++    def test_named_buckets_feed_their_resource(self):  # review F1 class: the readers of VM load, Mac load and accounts
++        sp = [(T("2026-11-09T03:40Z"), T(NOW))]
++        L, ev, pw = bn.live(sp), bn.stage_events(0), bn.pick_waits(sp)
++        r0, c0 = bn.resources(sp, L, ev, Counter(), pw, self.rows())
++        fw = Counter({"VM load": 3.0, "Mac load": 5.0, "accounts": 7.0, "no task file": 50.0, "prerequisites": 11.0})
++        r1, c1 = bn.resources(sp, L, ev, fw, pw, self.rows())
++        self.assertAlmostEqual(r1["VM1"]["queue_h"] - r0["VM1"]["queue_h"], 3.0)
++        self.assertAlmostEqual(r1["Mac"]["queue_h"] - r0["Mac"]["queue_h"], 5.0)
++        acc = lambda cs: next(c for c in cs if c["key"] == "resource:accounts")["hours"]
++        self.assertAlmostEqual(acc(c1) - acc(c0), 7.0)                    # the no-task and prerequisite hours reach no resource
++        self.assertAlmostEqual(sum(c["hours"] for c in c1) - sum(c["hours"] for c in c0), 3.0 + 5.0 + 7.0, places=1)
++
++
++class BucketKeys(unittest.TestCase):
++    """notask-wait-alert review F1: the rename "task file" -> NO_TASK left the literal "task file" in stage_details' capacity
++    exclusion, so no-task row-hours showed as "feed capacity waits (row-h): no task file 169.0". The class: a reader that names
++    a bucket by a string literal drifts from the table. Every reader goes through the bucket constants and NOT_CAPACITY."""
++    RES = {"Mac": {"avg": 1, "cores": 18}}
++
++    def hint(self, fw):
++        return bn.stage_details({}, [(0.0, 1.0)], Counter(fw), self.RES, []).get("launch-wait", "")
++
++    def test_f1_no_task_hours_not_a_capacity_hint(self):  # PROBE F1
++        self.assertNotIn("no task file", self.hint({bn.NO_TASK: 169.0}))
++        self.assertEqual(self.hint({bn.NO_TASK: 169.0, "prerequisites": 40.0}), "")
++        self.assertEqual(self.hint({bn.NO_TASK: 169.0, "Mac load": 2.0}), "feed capacity waits (row-h): Mac load 2.0")
++
++    def test_every_bucket_capacity_or_not(self):
++        names = [n for n, _ in bn.FEED_BUCKETS]
++        self.assertEqual(bn.NOT_CAPACITY, {"no task file", "prerequisites"})
++        self.assertLessEqual(bn.NOT_CAPACITY, set(names))
++        for n in names + ["other: something new"]:
++            with self.subTest(bucket=n):
++                self.assertEqual(n in self.hint({n: 3.0}), n not in bn.NOT_CAPACITY)
++
++    def test_no_bucket_literal_outside_the_table(self):
++        """Lint: no `x in (...)` / `x not in (...)` over a literal collection, and no fw.get(...) / fw[...], names a bucket (or
++        the old name "task file") by a string; FEED_BUCKETS, the constants and NOT_CAPACITY are the only place."""
++        import ast
++        names = {n for n, _ in bn.FEED_BUCKETS} | {"task file"}
++        bad = []
++        for node in ast.walk(ast.parse(open(SCRIPT).read())):
++            if isinstance(node, ast.Compare):
++                for op, rhs in zip(node.ops, node.comparators):
++                    if isinstance(op, (ast.In, ast.NotIn)) and isinstance(rhs, (ast.Tuple, ast.List, ast.Set)):
++                        bad += [(node.lineno, e.value) for e in rhs.elts if isinstance(e, ast.Constant) and e.value in names]
++            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "get"
++                    and isinstance(node.func.value, ast.Name) and node.func.value.id == "fw" and node.args
++                    and isinstance(node.args[0], ast.Constant)):
++                bad.append((node.lineno, node.args[0].value))
++            if (isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and node.value.id == "fw"
++                    and isinstance(node.slice, ast.Constant)):
++                bad.append((node.lineno, node.slice.value))
++        self.assertEqual(bad, [])
++
+ 
+ class Classify(unittest.TestCase):
+     def test_stage_beats_smaller_resource_queue(self):

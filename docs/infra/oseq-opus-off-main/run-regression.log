@@ -1,0 +1,15 @@
+tools-local/test_endgame.py rc=0 Ran 9 tests in 6.368s OK 
+tools-local/test_pick_crit_fallback.py rc=0 Ran 18 tests in 32.248s OK 
+tools-local/test_pick_critical.py rc=0 Ran 10 tests in 13.147s OK 
+tools-local/test_pick_longroom.py rc=0 Ran 5 tests in 6.515s OK 
+tools-local/test_pick_main5h_unknown.py rc=0 Ran 30 tests in 41.375s OK 
+tools-local/test_pick_main_rank.py rc=0 Ran 8 tests in 8.898s OK 
+tools-local/test_pick_mgmt.py rc=0 Ran 9 tests in 14.134s OK 
+tools-local/test_pick_prefer.py rc=0 Ran 5 tests in 2.710s OK 
+tools-local/test_pick_rcx_main_pace.py rc=0 Ran 13 tests in 8.106s OK 
+tools-local/test_pick_released_main.py rc=0 Ran 25 tests in 51.494s OK 
+tools-local/test_pick_released_yield.py rc=0 Ran 13 tests in 14.570s OK 
+tools-local/test_pick_room_i10.py rc=0 Ran 3 tests in 3.805s OK 
+tools-local/test_pick_tell.py rc=0 Ran 5 tests in 21.054s OK 
+tools-local/test_pick_why.py rc=0 Ran 15 tests in 64.776s OK 
+tools-local/test_codex_week_ceiling.sh rc=0 PASS

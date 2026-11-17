@@ -1,0 +1,14 @@
+--- /home/seyran/code/manage-agents/iso.sh	2026-11-11 08:42:03.779005305 +0000
++++ /home/seyran/code/manage-agents/iso.sh.new-vm1w	2026-11-17 13:06:03.281249528 +0000
+@@ -15,7 +15,10 @@
+ # 2026-11-08 DRI improvement review (PIPELINE-LIMITS L177): the twice-daily use-case pilots (svc-pilot, svc-pilot-udhr:
+ # pilot.sh / pilot-udhr.sh, their translator and audit worktrees inherit the scope) are measurements no chain waits on: weight 25.
+ # At 07:02Z Nov 8 they held ~190% CPU (lean) at load 121 on 32 vCPU beside 9 builders and a merge train.
+-cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*) cw=25;; esac
++# 2026-11-17 vm1-gate-weight (orchestrator BATCH 125731Z item 5; reviews/dri-decisions-20261117-orch1257.md item 5): a chain's
++# VM gate and its R13 rerun (chain-gate.sh: vmgate-<label>-<pid>, one per host) get the trains' weight 1000, as ve-cloud-2's
++# gate scopes (cloud2-job.sh C2_GATE_WEIGHT): from Nov 18 07:22Z every chain gate runs on VM1. Builder chains stay 100.
++cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*|vmgate-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*) cw=25;; esac
+ # 2026-11-08 dri-decider (lead proxy 1201Z Q2, reviews/dri-decisions-20261108-lp1201.md item 2): the chains of the items listed
+ # in CPU-PRIORITY-ITEMS (rights' and norm-defaults' critical paths; one id per line) get CPU weight 400 (trains stay 1000).
+ # Remove the file (or lines) to revert; the nov12-transition ruling reads it.

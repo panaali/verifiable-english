@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Tests for row gate-cpu-over-tmfill (reviews/dri-decisions-20261117-gatecpu.md item 1): iso.sh gives the trust-mutant
+idle-fill scopes (tmidle-*, tm-drain-*) CPUWeight 25, so a chain gate's VM fallback (weight 100) is ahead of them.
+
+Run: python3 -I tools-local/test_iso_weight_tmfill.py
+The script is ISO_GCPU_FILE when set, else iso.sh.new-gcpu while it exists (before the install), else iso.sh. It is copied
+into a temp tree with /home/seyran/code/manage-agents rewritten to that tree, so the live CPU-PRIORITY-ITEMS,
+WORKER_NO_AUTOMEM and worktree manifest are not read; systemd-run is a stub on PATH that prints its arguments.
+Nothing outside the temp dir is read or written."""
+import os, shutil, subprocess, tempfile, unittest
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+MA = os.path.dirname(HERE)
+LIVE_MA = "/home/seyran/code/manage-agents"
+
+
+def script():
+    env = os.environ.get("ISO_GCPU_FILE")
+    if env:
+        return env
+    new = os.path.join(MA, "iso.sh.new-gcpu")
+    return new if os.path.exists(new) else os.path.join(MA, "iso.sh")
+
+
+ZSH = shutil.which("zsh")
+
+
+class IsoWeight(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.mkdtemp(prefix="iso-gcpu-")
+        fake_ma = os.path.join(cls.tmp, "ma")
+        os.makedirs(os.path.join(fake_ma, "tools-local"))
+        with open(script()) as f:
+            src = f.read()
+        cls.iso = os.path.join(fake_ma, "iso.sh")
+        with open(cls.iso, "w") as f:
+            f.write(src.replace(LIVE_MA, fake_ma))
+        bindir = os.path.join(cls.tmp, "bin")
+        os.makedirs(bindir)
+        stub = os.path.join(bindir, "systemd-run")
+        with open(stub, "w") as f:
+            f.write('#!/bin/sh\nfor a in "$@"; do printf "%s\\n" "$a"; done\n')
+        os.chmod(stub, 0o755)
+        cls.env = {"PATH": bindir + ":/usr/bin:/bin", "HOME": os.path.join(cls.tmp, "home")}
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def weight(self, name):
+        r = subprocess.run([ZSH, self.iso, name, "--", "true"], env=self.env, capture_output=True, text=True,
+                           timeout=60)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        args = r.stdout.splitlines()
+        cws = [a for a in args if a.startswith("CPUWeight=")]
+        self.assertEqual(len(cws), 1, args)
+        return int(cws[0].split("=", 1)[1])
+
+    def test_idle_fill_scopes_weight_25(self):
+        self.assertEqual(self.weight("tmidle-20261117T0531Z-p1"), 25)
+        self.assertEqual(self.weight("tm-drain-vm1-idle"), 25)
+
+    def test_chain_and_escape_fix_stay_100(self):
+        self.assertEqual(self.weight("kb-4b"), 100)
+        self.assertEqual(self.weight("tm-esc-sc7-wordchar"), 100)  # an escape-fix chain, not idle fill
+
+    def test_merge_train_1000(self):
+        self.assertEqual(self.weight("merge-x"), 1000)
+
+    def test_existing_low_weight_kept(self):
+        self.assertEqual(self.weight("exp-foo"), 25)
+        self.assertEqual(self.weight("vs-tm-nightly"), 25)
+
+
+if __name__ == "__main__":
+    if not ZSH:
+        raise SystemExit("zsh not found")
+    print("iso.sh under test:", script())
+    unittest.main(verbosity=1)
