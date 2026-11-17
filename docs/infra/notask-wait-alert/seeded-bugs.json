@@ -1,0 +1,72 @@
+{
+ "item": "notask-wait-alert",
+ "round": "review F1 (notask-wait-alert-review.final.md)",
+ "note": "Python only, in manage-agents/tools-local (no Lean, Python or Rust of this VE repo changed). Each seed is a temp copy of the staged scan, run with BN_SCRIPT=<copy> python3 -I tools-local/test_bottleneck_scan.py. The build round's 8 seeds are listed in REPORT.md section 3.",
+ "mutants": [
+  {
+   "id": "R1",
+   "bug": "a no-task bucket left out of NOT_CAPACITY (no-task hours become a capacity hint again)",
+   "file": "manage-agents/tools-local/bottleneck-scan.py.new-nta",
+   "find": "NOT_CAPACITY = frozenset({NO_TASK, PREREQ})",
+   "replace": "NOT_CAPACITY = frozenset({PREREQ})",
+   "rc": 1,
+   "failing_tests": [
+    "test_every_bucket_capacity_or_not",
+    "test_f1_no_task_hours_not_a_capacity_hint"
+   ],
+   "caught": true
+  },
+  {
+   "id": "R2",
+   "bug": "a bucket read back by a string literal (the F1 shape, on the VM load reader)",
+   "file": "manage-agents/tools-local/bottleneck-scan.py.new-nta",
+   "find": "q = fw.get(VM_LOAD, 0)",
+   "replace": "q = fw.get(\"VM load\", 0)",
+   "rc": 1,
+   "failing_tests": [
+    "test_no_bucket_literal_outside_the_table"
+   ],
+   "caught": true
+  },
+  {
+   "id": "R3",
+   "bug": "no-task hours added to the accounts queue",
+   "file": "manage-agents/tools-local/bottleneck-scan.py.new-nta",
+   "find": "fw.get(ACCOUNTS, 0)",
+   "replace": "fw.get(ACCOUNTS, 0) + fw.get(NO_TASK, 0)",
+   "rc": 1,
+   "failing_tests": [
+    "test_6_six_rows_six_hours_own_cause_not_accounts",
+    "test_7_real_account_wait_still_accounts",
+    "test_named_buckets_feed_their_resource"
+   ],
+   "caught": true
+  },
+  {
+   "id": "R4",
+   "bug": "the review's exact regression: the stale literal tuple back in stage_details",
+   "file": "manage-agents/tools-local/bottleneck-scan.py.new-nta",
+   "find": "if k not in NOT_CAPACITY and v > 0]",
+   "replace": "if k not in (PREREQ, \"task file\") and v > 0]",
+   "rc": 1,
+   "failing_tests": [
+    "test_every_bucket_capacity_or_not",
+    "test_f1_no_task_hours_not_a_capacity_hint",
+    "test_no_bucket_literal_outside_the_table"
+   ],
+   "caught": true
+  },
+  {
+   "id": "R5",
+   "bug": "NOT_CAPACITY names a key that is no bucket (the old name)",
+   "file": "manage-agents/tools-local/bottleneck-scan.py.new-nta",
+   "find": "NOT_CAPACITY = frozenset({NO_TASK, PREREQ})",
+   "replace": "NOT_CAPACITY = frozenset({NO_TASK, PREREQ, \"task file\"})",
+   "rc": 1,
+   "failing_tests": [
+    "(module import stops: bottleneck-scan: NOT_CAPACITY names no bucket: ['task file'])"
+   ],
+   "caught": true
+  }
+ ]
+}
