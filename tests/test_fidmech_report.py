@@ -167,6 +167,10 @@ def test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_
     assert rec["class"] == "real-defect" and '"We will keep records ..."' in rec["edits"][0]["replace"]
     counts = REP.plant_counts(REP.plant_rows([line(rec["id"], K="killed")], {"defects": rows}))["defects"]
     assert (counts["entries"], counts["applied"], counts["no repair yet"], counts["not applicable"]) == (4, 1, 1, 2)
+    # VE gets the class of each reason, never the reason, which names the unit
+    assert counts["not_applicable_by"] == {"the repaired text changed later": 1,
+                                           "the repair deleted text the defect needs": 1}
+    assert "r-publish" not in json.dumps(counts) and "old_pred" not in json.dumps(counts)
     assert (counts["K_killed"], counts["K_decided"], counts["any_killed"]) == (1, 1, 1)
 
 
