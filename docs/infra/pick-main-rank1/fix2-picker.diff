@@ -1,0 +1,93 @@
+--- pick-claude-account.sh
++++ pick-claude-account.sh.new-r1
+@@ -145,11 +145,11 @@
+ # 2026-11-17 pick-main-rank1 (reviews/dri-decisions-20261116-rsp-presync.md item 6; replaces the rsp-b-repair-1115 exception): a
+ # rank-1 caller (PICK_R1_, from r1rank in the shell) passes the main stand-in week-rise guard and the critical fallback 5-h-unknown
+ # refusal ONLY while main week % <= the PICK_MAIN_PACE line - 4 and the main week rise over 300 min of usage-watch.log is < 5, and
+-# only ONE rank-1 row at a time: the marker PICK_R1_MARKER holds "<PICK_ITEM> <pid>" of its holder (r1holder below:
+-# the caller above any forked subshell of it);
+-# a marker of a dead pid is cleared, a live one of another item refuses the rule. No flag file, no fresh log or no pid: refused.
++# only ONE rank-1 row at a time: the marker PICK_R1_MARKER holds "<PICK_ITEM> <pid>[:<n>] ..." with EVERY live holder of that
++# row (r1holder below: the caller above any forked subshell of it; <n> grants of one holder, shown when > 1);
++# a marker with no live pid is cleared, one with a live pid of another item refuses the rule. No flag file, no fresh log or no pid: refused.
+ # Every other gate (worker caps, week caps, pace line, avoid, hold) is unchanged. Tests: python3 -I tools-local/test_pick_main5h_unknown.py
+-r1on = os.environ.get("PICK_R1_") == "1"; r1item = os.environ.get("PICK_ITEM", ""); r1mark = os.environ.get("PICK_R1_MARKER", ""); r1made = False
++r1on = os.environ.get("PICK_R1_") == "1"; r1item = os.environ.get("PICK_ITEM", ""); r1mark = os.environ.get("PICK_R1_MARKER", ""); r1made = 0  # grants this call added to the marker
+ def pid_alive(pid):
+     if pid <= 0: return False
+     try: os.kill(pid, 0)
+@@ -182,25 +182,46 @@
+             pid = up
+         r1me.append(pid)
+     return r1me[0]
+-def r1hold():  # under the marker lock: (ok, reason); a free or stale marker is taken (this caller becomes the holder)
+-    global r1made
++# pick-main-rank1 fix 2 (review F2): a second session of the same rank-1 row (feature-pipeline.sh and infra-item.sh run two
++# per row) rode on the pid of the first holder without being recorded, so when the first holder exited the marker looked stale
++# while the row was still on main, and the next rank-1 row was let in; the give-back could also drop a marker another
++# session of the row relied on. Now every grant adds its holder to the marker (a pid once, with a grant count), a marker is
++# stale only when none of its pids lives, and the give-back takes back only the grants of this call, under the same lock.
++# One reader and one writer (r1read, r1write) for the take and the give-back. Tests: Rank1Main.test_same_row_* in
++# tools-local/test_pick_main5h_unknown.py
++def r1read():  # under the marker lock: (item, {live pid: grants}); (None, {}) without a marker; dead or bad pids dropped
++    try: hx = open(r1mark).read().split()
++    except FileNotFoundError: return (None, {})
++    hs = {}
++    for tok in hx[1:]:
++        p, _, n = tok.partition(":")
++        try: p, n = int(p), int(n or 1)
++        except ValueError: continue
++        if n > 0 and pid_alive(p): hs[p] = hs.get(p, 0) + n
++    return ((hx[0] if hx else "?"), hs)
++def r1write(item, hs):  # under the marker lock: the marker of item with holders hs; none left: no marker
++    if not hs:
++        try: os.remove(r1mark)
++        except FileNotFoundError: pass
++        return
++    with open(r1mark + ".tmp", "w") as fh: fh.write(item + "".join(f" {p}" + (f":{n}" if n > 1 else "") for p, n in hs.items()) + "\n")
++    os.replace(r1mark + ".tmp", r1mark)
++def r1lock():
+     import fcntl
++    lk = open(r1mark + ".lock", "a"); fcntl.flock(lk, fcntl.LOCK_EX)
++    return lk
++def r1hold():  # under the marker lock: (ok, reason); a free or stale marker is taken, a live one of this row is joined
++    global r1made
+     me = r1holder()
+     if me is None: return (False, "no caller pid")
+     if not r1mark or not r1item: return (False, "no holder marker")
+     try:
+-        with open(r1mark + ".lock", "a") as lk:
+-            fcntl.flock(lk, fcntl.LOCK_EX)
+-            try: hx = open(r1mark).read().split()
+-            except FileNotFoundError: hx = None
+-            if hx is not None:
+-                try: hi, hp = hx[0], int(hx[1])
+-                except (IndexError, ValueError): hi, hp = "?", 0
+-                if pid_alive(hp):
+-                    return (True, "") if hi == r1item else (False, f"main held by rank-1 row {hi} (pid {hp})")
+-                os.remove(r1mark)  # stale: its holder is gone
+-            with open(r1mark + ".tmp", "w") as fh: fh.write(f"{r1item} {me}\n")
+-            os.replace(r1mark + ".tmp", r1mark); r1made = True
++        with r1lock():
++            hi, hs = r1read()
++            if hs and hi != r1item:
++                return (False, f"main held by rank-1 row {hi} (pid " + " ".join(map(str, hs)) + ")")
++            hs[me] = hs.get(me, 0) + 1
++            r1write(r1item, hs); r1made += 1
+             return (True, "")
+     except OSError as e:
+         return (False, f"holder marker unreadable ({e.__class__.__name__})")
+@@ -374,7 +395,12 @@
+     if best is None or (pref, pace) > (best[2], best[0]): best = (pace, d, pref)
+ if r1made and (best[1] if best else fb) != r1d:  # pick-main-rank1: the holder marker taken for main, but main was not picked: give it back
+     try:
+-        if open(r1mark).read().split() == [r1item, str(r1holder())]: os.remove(r1mark)
++        with r1lock():  # only the grants of this call for its own holder: other holders and other grants of this row stay
++            hi, hs = r1read(); me = r1holder()
++            if hi == r1item and me in hs:
++                hs[me] -= r1made
++                if hs[me] <= 0: del hs[me]
++                r1write(r1item, hs)
+     except OSError: pass
+ if best: print(best[1])
+ elif fb: print(fb)

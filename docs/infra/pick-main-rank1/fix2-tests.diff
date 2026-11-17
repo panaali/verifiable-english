@@ -1,0 +1,130 @@
+--- tools-local/test_pick_main5h_unknown.py.before
++++ tools-local/test_pick_main5h_unknown.py
+@@ -11,7 +11,7 @@
+ replaced by the rank-1 main rule (class Rank1Main): a PICK_ITEM ranked 1 by tools-local/pick_critical.py passes the stand-in guard
+ and the critical fallback 5-h-unknown refusal only while main week <= PICK_MAIN_PACE line - 4 and the 300-min week rise < 5, one
+ holder at a time (marker pick-main-rank1 "<item> <pid>"). Those cases fail on the picker installed before the rank-1 rule."""
+-import os, shutil, subprocess, sys, tempfile, unittest
++import os, shutil, subprocess, sys, tempfile, time, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ sys.path.insert(0, HERE)
+@@ -68,8 +68,13 @@
+         shutil.rmtree(self.h, ignore_errors=True)
+ 
+     def pick(self, lines, log=RISING, busy="", **extra):
++        r = subprocess.run(["zsh", self.p], env=self.env(lines, log, busy, **extra), capture_output=True, text=True, timeout=120)
++        return (r.stdout.strip() if r.returncode == 0 else None), r.stderr
++
++    def env(self, lines, log=RISING, busy="", **extra):  # writes the fixture files; returns the picker environment
+         acc = f"{self.h}/accounts.sh"
+-        open(acc, "w").write("cat <<'E'\n" + "\n".join(lines) + "\nE\n")
++        open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
++                            + 'if [ -n "$R1_BLOCK" ]; then read -t 120 x <&3; fi\n')  # R1_BLOCK: a fifo, opened before the lines
+         ul = f"{self.h}/usage-watch.log"
+         if log is None:
+             ul = f"{self.h}/none"
+@@ -80,8 +85,7 @@
+         env.update(HOME=self.h, PICK_ACCOUNTS_SH=acc, PICK_LOADAVG=f"{self.h}/load", PICK_BUSY=busy, PICK_NOWAIT="1",
+                    PICK_SHORT="1", ENDGAME_NOW=str(te.NOW.timestamp()), PICK_USAGE_LOG=ul, PCF_M=self.m)
+         env.update(extra)
+-        r = subprocess.run(["zsh", self.p], env=env, capture_output=True, text=True, timeout=120)
+-        return (r.stdout.strip() if r.returncode == 0 else None), r.stderr
++        return env
+ 
+ 
+ class Main5hUnknown(PickCase):
+@@ -307,6 +311,93 @@
+         self.assertEqual(got, "", err)
+         self.assertIsNone(self.holder())
+ 
++    # review F2 (fix 2): a rank-1 row often runs two sessions (feature-pipeline.sh:110-112, infra-item.sh:331,335). Every session
++    # of the row that is granted main is listed in the marker, so the marker stays live while ANY of them lives, and a give-back
++    # takes back only its own grant. hold() starts a caller that picks and stays alive (on main) until release() is called.
++    def hold(self, name, **extra):  # (Popen of the caller, its pick result); the caller lives until self.release(name)
++        g, f = f"{self.h}/{name}.g", f"{self.h}/{name}.f"
++        os.mkfifo(g); os.mkfifo(f)
++        open(f"{self.h}/{name}.sh", "w").write(f'exec 3<> {f}; a=$(zsh {self.p} 2>/dev/null); print -r -- "$a" > {g}; read -t 120 x <&3\n')
++        pr = subprocess.Popen(["zsh", f"{self.h}/{name}.sh"], env=self.env([main_line(47)], **extra),
++                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
++        self.addCleanup(lambda: pr.poll() is None and (pr.kill(), pr.wait()))  # a failed assertion leaves no caller behind
++        with open(g) as fh:
++            return pr, fh.read().strip()
++
++    def go(self, fifo):  # wakes the one reader of fifo (it holds it open read-write, so this write never blocks)
++        fd = os.open(fifo, os.O_WRONLY | os.O_NONBLOCK)
++        try:
++            os.write(fd, b"go\n")
++        finally:
++            os.close(fd)
++
++    def release(self, name, pr):
++        self.go(f"{self.h}/{name}.f")
++        self.assertEqual(pr.wait(timeout=120), 0)
++
++    # the review's probe: a second session of the row (same PICK_ITEM, another caller) joins; the first exits; the second is
++    # still on main, so another rank-1 row is refused until it exits too
++    def test_same_row_second_session_keeps_main_after_first_exits(self):
++        p1, a1 = self.hold("s1", PICK_ITEM="fsf-fix-r1")
++        p2, a2 = self.hold("s2", PICK_ITEM="fsf-fix-r1")
++        self.assertEqual((a1, a2), ("/x/claude-main", "/x/claude-main"))
++        self.assertEqual(self.holder(), ["fsf-fix-r1", str(p1.pid), str(p2.pid)])
++        self.release("s1", p1)
++        got, err = self.pick([main_line(47)], PICK_ITEM="other-r1")
++        self.assertIsNone(got)
++        self.assertIn("main held by rank-1 row fsf-fix-r1 (pid %d)" % p2.pid, err)
++        self.release("s2", p2)
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="other-r1")[0], "/x/claude-main")
++        self.assertEqual(self.holder(), ["other-r1", str(os.getpid())])
++
++    # the give-back race: session A takes the marker for main but will not pick it (PICK_AVOID); before A gives it back,
++    # session B of the same row joins and picks main. A gives back only its own grant: B stays listed, other rows stay out
++    def test_same_row_give_back_keeps_other_session(self):
++        go = f"{self.h}/go"
++        os.mkfifo(go)
++        pa = subprocess.Popen(["zsh", self.p], env=self.env([main_line(47)], PICK_ITEM="fsf-fix-r1", PICK_AVOID="claude-main",
++                                                             R1_BLOCK=go), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
++        self.addCleanup(lambda: pa.poll() is None and (pa.kill(), pa.communicate()))
++        for _ in range(6000):  # A blocks in accounts.sh after its main line; wait (bounded) until it holds the marker
++            if self.holder() or pa.poll() is not None:
++                break
++            time.sleep(0.02)
++        self.assertEqual(self.holder(), ["fsf-fix-r1", str(os.getpid())])
++        pb, b = self.hold("sb", PICK_ITEM="fsf-fix-r1")
++        self.assertEqual(b, "/x/claude-main")
++        self.go(go)
++        out, err = pa.communicate(timeout=120)
++        self.assertIn("held out (PICK_AVOID)", err)
++        self.assertEqual(self.holder(), ["fsf-fix-r1", str(pb.pid)])
++        self.assertIsNone(self.pick([main_line(47)], PICK_ITEM="other-r1")[0])
++        self.release("sb", pb)
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="other-r1")[0], "/x/claude-main")
++
++    # the same holder pid granted twice (two forked subshells of one caller) and one grant given back: the other grant stays
++    def test_same_row_same_holder_counts_grants(self):
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1")[0], "/x/claude-main")
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1")[0], "/x/claude-main")
++        self.assertEqual(self.holder(), ["fsf-fix-r1", "%d:2" % os.getpid()])
++        self.assertIsNone(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1", PICK_AVOID="claude-main")[0])
++        self.assertEqual(self.holder(), ["fsf-fix-r1", "%d:2" % os.getpid()])
++        self.assertIsNone(self.pick([main_line(47)], PICK_ITEM="other-r1")[0])
++
++    # a marker is stale only when NONE of its pids lives: a live pid after a dead one still refuses another row; dead pids
++    # and bad tokens are dropped when the row's next session joins
++    def test_same_row_marker_live_while_any_pid_lives(self):
++        p1, _ = self.hold("s1", PICK_ITEM="fsf-fix-r1")
++        dead = dead_pid()
++        open(self.marker, "w").write(f"fsf-fix-r1 {dead} junk {p1.pid}\n")
++        got, err = self.pick([main_line(47)], PICK_ITEM="other-r1")
++        self.assertIsNone(got)
++        self.assertIn("main held by rank-1 row fsf-fix-r1 (pid %d)" % p1.pid, err)
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1")[0], "/x/claude-main")
++        self.assertEqual(self.holder(), ["fsf-fix-r1", str(p1.pid), str(os.getpid())])
++        self.release("s1", p1)
++        open(self.marker, "w").write(f"fsf-fix-r1 {dead} {dead_pid()}:3\n")
++        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="other-r1")[0], "/x/claude-main")
++        self.assertEqual(self.holder(), ["other-r1", str(os.getpid())])
++
+     # coordinators keep their own exemption and never take the marker
+     def test_coordinator_takes_no_marker(self):
+         self.assertEqual(self.pick([main_line(47)], PICK_ITEM="fsf-fix-r1", PICK_COORD="1")[0], "/x/claude-main")
