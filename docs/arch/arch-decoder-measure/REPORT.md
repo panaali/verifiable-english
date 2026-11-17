@@ -250,7 +250,8 @@ does not apply. These bugs prove that the item's own checks can fail, one per cl
 7. No unsigned item: PASS. DELTA none, trust +0 (`trust_map.py --check`).
 8. Every user-visible change in DELTA: N.A. (no product change; the diff is docs only).
 9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` selects 13 of 639 units, not
-   every unit; selected run: see the build report.
+   every unit. The selected run on `a547ef767c` (`mac-pytest.sh --select`, GitHub Actions run
+   `arch-decoder-measure-a547ef76-t880327`) exited 0: shard 1 had 7 units, 7 passed; shard 2 had 4 units, 4 passed.
 10. Lean statements say what they claim: PASS. `no_check_after_core` is broken by SB2. `switch_eq`'s spot check is
     broken by SB1. Both elaborate (`evidence/switch-elaboration.log`).
 11. Budgets and limits fail closed: N.A. (no evaluator added).
