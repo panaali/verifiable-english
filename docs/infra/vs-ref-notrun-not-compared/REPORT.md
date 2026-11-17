@@ -96,5 +96,8 @@ This directory is the item's commit: the report, the staged diff and the evidenc
 
 ## Testing in this repository
 
-There is no product change here, so the selected run, `lake build` and `lean/audit.py` run once on the final commit. They
-are recorded in `selected-run.log`.
+There is no product change here. The selected run, `lake build` and `lean/audit.py` ran once, on 8c6ed86508 (the
+evidence commit; this report commit adds only their record). All three passed, and `selected-run.log` records them:
+- **Selected run:** exit 0 on GitHub Actions, 2 shards, 10 of 10 units passed.
+- **`lake build`:** 1478 jobs.
+- **`lean/audit.py`:** PASS on 898 source files.
