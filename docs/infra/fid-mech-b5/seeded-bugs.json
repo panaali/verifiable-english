@@ -1,0 +1,192 @@
+[
+ {
+  "id": "S16",
+  "file": "tools/fidmech/worker.py",
+  "bug": "a fresh run's resource use is not recorded",
+  "test": "tests/test_fidmech_runner.py::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure"
+  ]
+ },
+ {
+  "id": "S17",
+  "file": "tools/fidmech/worker.py",
+  "bug": "a failed run's stderr is dropped",
+  "test": "tests/test_fidmech_runner.py::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure"
+  ]
+ },
+ {
+  "id": "S1",
+  "file": "tools/fidmech/runner.py",
+  "bug": "refusal never checked",
+  "test": "tests/test_fidmech_runner.py::test_a_five_minute_load_of_50_exits_75_and_runs_nothing",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_five_minute_load_of_50_exits_75_and_runs_nothing"
+  ]
+ },
+ {
+  "id": "S2",
+  "file": "tools/fidmech/runner.py",
+  "bug": "admission ignores the 1-min load",
+  "test": "tests/test_fidmech_runner.py::test_admission_waits_at_load_30_logs_the_wait_and_dispatches_at_10",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_admission_waits_at_load_30_logs_the_wait_and_dispatches_at_10"
+  ]
+ },
+ {
+  "id": "S3",
+  "file": "tools/fidmech/runner.py",
+  "bug": "budget never stops dispatch",
+  "test": "tests/test_fidmech_runner.py::test_the_budget_stops_dispatch_and_the_rest_is_not_run",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_the_budget_stops_dispatch_and_the_rest_is_not_run"
+  ]
+ },
+ {
+  "id": "S4",
+  "file": "tools/fidmech/runner.py",
+  "bug": "resume ignores the inputs_sha256",
+  "test": "tests/test_fidmech_runner.py::test_resume_on_a_matching_inputs_sha256_continues_and_a_mismatch_refuses",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_resume_on_a_matching_inputs_sha256_continues_and_a_mismatch_refuses"
+  ]
+ },
+ {
+  "id": "S5",
+  "file": "tools/fidmech/manifests.py",
+  "bug": "inputs loaded without the sha256 check",
+  "test": "tests/test_fidmech_runner.py::test_an_inputs_file_whose_sha256_differs_is_refused_before_anything_runs",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_an_inputs_file_whose_sha256_differs_is_refused_before_anything_runs"
+  ]
+ },
+ {
+  "id": "S6",
+  "file": "tools/fidmech/runner.py",
+  "bug": "a standing baseline hit kills",
+  "test": "tests/test_fidmech_runner.py::test_a_mutant_on_a_unit_whose_legend_is_bare_at_baseline_does_not_kill_by_l2",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_mutant_on_a_unit_whose_legend_is_bare_at_baseline_does_not_kill_by_l2"
+  ]
+ },
+ {
+  "id": "S7",
+  "file": "tools/fidmech/runner.py",
+  "bug": "a moved answer always kills (UNDECIDED read as decided)",
+  "test": "tests/test_fidmech_runner.py::test_an_answer_turning_undecided_is_inconclusive_and_a_decided_change_kills",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_an_answer_turning_undecided_is_inconclusive_and_a_decided_change_kills"
+  ]
+ },
+ {
+  "id": "S8",
+  "file": "tools/fidmech/runner.py",
+  "bug": "a failed last sentinel leaves the batch ok",
+  "test": "tests/test_fidmech_runner.py::test_a_worker_with_a_leaked_module_global_makes_the_batch_invalid",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_worker_with_a_leaked_module_global_makes_the_batch_invalid"
+  ]
+ },
+ {
+  "id": "S9",
+  "file": "tools/fidmech/runner.py",
+  "bug": "stillborn mutants are run",
+  "test": "tests/test_fidmech_runner.py::test_a_stillborn_mutant_is_listed_never_run_and_never_scored",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_stillborn_mutant_is_listed_never_run_and_never_scored"
+  ]
+ },
+ {
+  "id": "S10",
+  "file": "tools/fidmech/report.py",
+  "bug": "every verdict counts as decided",
+  "test": "tests/test_fidmech_report.py::test_each_instruments_denominator_leaves_out_what_did_not_run_and_none_is_split",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_each_instruments_denominator_leaves_out_what_did_not_run_and_none_is_split"
+  ]
+ },
+ {
+  "id": "S11",
+  "file": "tools/fidmech/report.py",
+  "bug": "an incomplete unit can pass",
+  "test": "tests/test_fidmech_report.py::test_an_incomplete_unit_is_never_passing_and_an_untested_one_never_passes_vacuously",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_an_incomplete_unit_is_never_passing_and_an_untested_one_never_passes_vacuously"
+  ]
+ },
+ {
+  "id": "S12",
+  "file": "tools/fidmech/report.py",
+  "bug": "adjudication ignores a changed fp-1",
+  "test": "tests/test_fidmech_report.py::test_a_hit_is_confirmed_or_contradicted_only_by_its_own_class_word_and_unchanged_unit",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_a_hit_is_confirmed_or_contradicted_only_by_its_own_class_word_and_unchanged_unit[hit2-findings2-fp_now2-unadjudicated]"
+  ]
+ },
+ {
+  "id": "S13",
+  "file": "tools/fidmech/report.py",
+  "bug": "the no-sidecar headline keeps D",
+  "test": "tests/test_fidmech_report.py::test_d_hits_are_every_uncovered_word_and_every_loss_entry_and_a_sidecarless_document_has_a_headline_without_d",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_d_hits_are_every_uncovered_word_and_every_loss_entry_and_a_sidecarless_document_has_a_headline_without_d"
+  ]
+ },
+ {
+  "id": "S14",
+  "file": "tools/fidmech/manifests.py",
+  "bug": "a defect without a repair is applied",
+  "test": "tests/test_fidmech_report.py::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair"
+  ]
+ },
+ {
+  "id": "S15",
+  "file": "tools/fidmech/manifests.py",
+  "bug": "rebase takes the first of several occurrences",
+  "test": "tests/test_fidmech_report.py::test_a_changed_line_that_stands_twice_is_not_rebased",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_a_changed_line_that_stands_twice_is_not_rebased"
+  ]
+ },
+ {
+  "id": "S18",
+  "file": "tools/fidmech/report.py",
+  "bug": "VE gets the not-applicable reason, which names the unit",
+  "test": "tests/test_fidmech_report.py::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_report.py::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair"
+  ]
+ },
+ {
+  "id": "S19",
+  "file": "tools/fidmech/runner.py",
+  "bug": "a new hit anywhere kills",
+  "test": "tests/test_fidmech_runner.py::test_a_new_hit_away_from_the_mutated_unit_kills_nothing",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_new_hit_away_from_the_mutated_unit_kills_nothing"
+  ]
+ }
+]

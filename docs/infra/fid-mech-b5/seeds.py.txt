@@ -1,0 +1,43 @@
+"""Plant each seeded bug, run its named test, record whether it fails, restore the file."""
+import json, subprocess, sys
+from pathlib import Path
+ROOT = Path("/home/seyran/code/ve-fid-mech-b5")
+R, REP, MF = "tools/fidmech/runner.py", "tools/fidmech/report.py", "tools/fidmech/manifests.py"
+TR, TP = "tests/test_fidmech_runner.py", "tests/test_fidmech_report.py"
+W_ = "tools/fidmech/worker.py"
+SEEDS = [
+ ("S16", W_, "a fresh run's resource use is not recorded", "        usage.append((rusage.ru_utime + rusage.ru_stime, rusage.ru_maxrss * 1024))", "        pass", TR + "::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure"),
+ ("S17", W_, "a failed run's stderr is dropped", "        raise RuntimeError(f\"the process exited {proc.returncode}: {tail}\")", "        raise RuntimeError(f\"the process exited {proc.returncode}\")", TR + "::test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure"),
+ ("S1", R, "refusal never checked", "    refuse_if_loaded(deps.host)\n", "    pass\n", TR + "::test_a_five_minute_load_of_50_exits_75_and_runs_nothing"),
+ ("S2", R, "admission ignores the 1-min load", "    if load1 >= MAX_LOAD1:", "    if False:", TR + "::test_admission_waits_at_load_30_logs_the_wait_and_dispatches_at_10"),
+ ("S3", R, "budget never stops dispatch", "if pending and budget_end is not None and clock() >= budget_end:", "if False:", TR + "::test_the_budget_stops_dispatch_and_the_rest_is_not_run"),
+ ("S4", R, "resume ignores the inputs_sha256", 'wrong = sorted({line["record"]["inputs_sha256"] for line in lines} - {digest})', "wrong = []", TR + "::test_resume_on_a_matching_inputs_sha256_continues_and_a_mismatch_refuses"),
+ ("S5", MF, "inputs loaded without the sha256 check", "        if got != want:", "        if False:", TR + "::test_an_inputs_file_whose_sha256_differs_is_refused_before_anything_runs"),
+ ("S6", R, "a standing baseline hit kills", "h.key() not in self.keys and ", "", TR + "::test_a_mutant_on_a_unit_whose_legend_is_bare_at_baseline_does_not_kill_by_l2"),
+ ("S7", R, "a moved answer always kills (UNDECIDED read as decided)", "            k, kernel = R.kernel_verdict(baseline.projection.answers, o.projection.answers,\n                                         baseline.projection.agree, o.projection.agree)",
+  "            k, kernel = R.kernel_verdict(baseline.projection.answers, o.projection.answers,\n                                         baseline.projection.agree, o.projection.agree)\n            k = 'killed' if k == 'inconclusive' else k", TR + "::test_an_answer_turning_undecided_is_inconclusive_and_a_decided_change_kills"),
+ ("S8", R, "a failed last sentinel leaves the batch ok", 'status = "ok" if all(s.last_sentinel is not False for s in slots) else "INVALID"', 'status = "ok"', TR + "::test_a_worker_with_a_leaked_module_global_makes_the_batch_invalid"),
+ ("S9", R, "stillborn mutants are run", 'runnable = [r for r in prepared.records if r["parse"] == "ok" and r["id"] not in kept]', 'runnable = [r for r in prepared.records if r["id"] not in kept]', TR + "::test_a_stillborn_mutant_is_listed_never_run_and_never_scored"),
+ ("S10", REP, "every verdict counts as decided", '"decided": sum(v in DECIDED[instrument] for v in vs),', '"decided": len(vs),', TP + "::test_each_instruments_denominator_leaves_out_what_did_not_run_and_none_is_split"),
+ ("S11", REP, "an incomplete unit can pass", '        elif any(k not in DECIDED["K"] for k in ks):', '        elif False:', TP + "::test_an_incomplete_unit_is_never_passing_and_an_untested_one_never_passes_vacuously"),
+ ("S12", REP, "adjudication ignores a changed fp-1", '        if fp_now.get(f["fp1_key"]) != f["fp1"]:', '        if False:', TP + "::test_a_hit_is_confirmed_or_contradicted_only_by_its_own_class_word_and_unchanged_unit"),
+ ("S13", REP, "the no-sidecar headline keeps D", '(with_d and cls == "D")', '(cls == "D")', TP + "::test_d_hits_are_every_uncovered_word_and_every_loss_entry_and_a_sidecarless_document_has_a_headline_without_d"),
+ ("S14", MF, "a defect without a repair is applied", '        if not d.get("repair_commit"):', '        if False:', TP + "::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair"),
+ ("S15", MF, "rebase takes the first of several occurrences", "        if n != 1:", "        if n == 0:", TP + "::test_a_changed_line_that_stands_twice_is_not_rebased"),
+ ("S18", REP, "VE gets the not-applicable reason, which names the unit", '"not_applicable_by": dict(Counter(reason_class(r["reason"]) for r in rows', '"not_applicable_by": dict(Counter((r["reason"]) for r in rows', TP + "::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair"),
+ ("S19", R, "a new hit anywhere kills", " and h.block in where]", "]", TR + "::test_a_new_hit_away_from_the_mutated_unit_kills_nothing"),
+]
+out = []
+for sid, f, what, old, new, test in SEEDS:
+    p = ROOT / f
+    src = p.read_text()
+    assert src.count(old) == 1, (sid, src.count(old))
+    p.write_text(src.replace(old, new))
+    try:
+        r = subprocess.run(["uv", "run", "pytest", "-q", "-x", test], cwd=ROOT, capture_output=True, text=True)
+    finally:
+        p.write_text(src)
+    failed = [l for l in r.stdout.splitlines() if l.startswith("FAILED")]
+    out.append({"id": sid, "file": f, "bug": what, "test": test, "killed": r.returncode != 0, "failed": failed[:3]})
+    print(sid, r.returncode != 0, failed[:1] or r.stdout.strip().splitlines()[-1:])
+Path(sys.argv[1]).write_text(json.dumps(out, indent=1) + "\n")
