@@ -1,0 +1,7 @@
+trust_mutants: 21 definitions, 30 mutants (4 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-first: documentLayers -> (documentLayers.take 1)
+trust_mutants: 2 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 1 NOT RUN, 26 OTHER SHARD in 2115 s
+trust_mutants: D[V], trusted: 1 KILLED, 13 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 1 NOT RUN, 13 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 1 of its 4 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 12.4 s, scratch 2.2 s, control_build 1.4 s, probe_install 1 s, mutants 2097.2 s, cleanup 0.6 s, reads 0.1 s; lake control_build 1.4 s (2), probe_install 1 s (1), control_probes 31.9 s (2), mutant_builds 304.4 s (6), mutant_checks 3218.7 s (7), outside_checks 10.7 s (2), stage_controls 929.1 s (5), mutant_probes 48 s (2)
