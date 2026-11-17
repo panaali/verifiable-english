@@ -191,3 +191,7 @@ python3 -I tools-local/test_pick_released_main.py && python3 -I tools-local/test
 
 `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit 0, 1024 s on
 ve-cloud-2; it recorded 227 units with 0 failed. This branch changes docs only, so the selection comes from the merge base.
+
+F1 fix round, on 697ad3ec4d: the same command gave exit 0 in 1203 s on ve-cloud-2, again 227 units with 0 failed.
+`lake build` succeeded (1475 jobs), and `python3 lean/audit.py` passed (896 source files, only the allowed axioms). Lean is
+unchanged. Not run: the full suite and tools/gate.py; the merge train runs them.
