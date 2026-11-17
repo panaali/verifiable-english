@@ -6,7 +6,7 @@ before and after). Trust +0 in every class (`tools/trust_map.py --check`: K +0, 
 Source: reviews/dri-decisions-20261111-sc-2d-f1.md item 4 (LEVER 1, text-only F5) and sc-2d-f1's "Outside this item";
 held row 5 of prompts/held-20261116/README.md. Python only; no Lean file and no approved statement changed.
 
-SIZE: 78 product (tools: +78 −81), 190 tests (+190 −2), 135 other hand-written lines (this report and mutants.json;
+SIZE: 98 product (tools: +98 −89), 320 tests (+320 −21), 135 other hand-written lines (this report and mutants.json;
 the saved outputs under evidence/ are tool output, not hand-written).
 
 ## Deliverables
@@ -36,6 +36,21 @@ the saved outputs under evidence/ are tool output, not hand-written).
 - tests/test_question_statements.py: one call updated to the new signature (`statements(spec)`; the unused
   `source`/`proof` parameters are gone).
 
+## Review fixes (qa-stmt-scanner-review.final.md)
+
+| Finding | Fix | Regression tests | Commit |
+|---|---|---|---|
+| F1 (B): `lean_blocks` read a `.lean` source only from a ```` ```lean ```` fence in its doc comment | Structural: the readers (`statements`, `definitions`, `types`, through `scan`) take only a `Code` value, built by `spec_code` (a spec section's fences; a section without one is an error, never prose read as code) or `source_code` (whole files). Raw text is a `TypeError`. `across()` is folded into `scan()`, which merges every code unit the same way. Every source reader goes through `source_code`: Q1 statements and predicates, Q2 statements, definitions, structures and inductives. The module docstring is corrected. | `tests/test_question_statements_scanner.py::test_a_source_is_read_whole_not_through_a_doc_fence[*]` (102 ids: 15 Q1 theorems, 5 Q1 predicates, 31 Q2 theorems, 37 Q2 bodies, 14 Q2 types; a doc fence quotes the approved text and the declaration changes, so the gate must fail by name). Also `test_a_doc_fence_quoting_every_approved_declaration_changes_nothing[q1, q2]` (a quote is not read as a second copy) and `test_the_readers_take_only_spec_or_source_code`. The review's PROBE F1 fails on d2c38652da (the gate passed "5 of 5 equal") and passes after the fix ("Changed or missing predicates: HasReading"). | d5da3181ed |
+| C4 (note, same class): `tests/test_scope_5_4_statements.py` `statement()` fell back to a source's fences | `statement()` reads Lean code only. Spec callers pass `spec_5_4_lean()` (the spec's fences; asserts at least one). | `tests/test_scope_5_4_statements.py::test_a_source_is_read_whole_not_through_a_doc_fence[*]` (8 theorems) | d5da3181ed |
+| C2 (note): the `statements` docstring said "the first `:=` outside every bracket" | The docstring now says the cut skips a `let`/`have` binding's own `:=`. | none (docstring only) | d5da3181ed |
+| C3 (note): comment text is no longer compared | Recorded here. Q1 and Q2 now compare declarations with their comments left out, by the shared scanner's design; main compared `--` text. Meaning is unchanged. | none (record only) | this report |
+
+C1 (`let_fun` not in `BINDS`) is left as noted. No approved statement uses it, and adding it would change the
+shared `proof_cut` of every gate.
+
+The other gates (RD, RD-9, PC-3, PC-9, PC-2a, AP56, English S3/E2) read fences in spec sections only. A grep of
+tools/ and tests/ found no other source read through a fence.
+
 ## Seeded bugs (Python; no Lean or Rust product code changed)
 
 Each was planted alone in the committed tree, its tests were run, and then it was restored (`git checkout HEAD --`).
@@ -47,7 +62,9 @@ Full list: mutants.json.
 | column-0 doc-comment stop restored | tools/question_statements.py | test_q2_compares_a_field_or_constructor_after_a_column_0_doc_comment[*]: 14 failed |
 | `"prelude"` restored in COMMANDS | tools/check_readings_defaults_statements.py | test_the_scanner_reads_a_declaration_as_lean_does[F5 field named prelude-rd] and [-pc3] |
 | `proof_cut` ignores `let` (`binds += 0`) | tools/check_readings_defaults_statements.py | test_proof_cut_keeps_a_let_or_have_binding, test_q1_compares_the_statement_after_a_let[*]: 3 failed |
-| last copy of a duplicated name wins / first wins / later file wins | tools/question_statements.py | test_a_name_declared_twice_equals_no_approved_text[same file before] / [same file after] / [other file before] |
+| last copy of a duplicated name wins / first wins / later file wins | tools/question_statements.py | test_a_name_declared_twice_equals_no_approved_text[same file before] / [same file after] / [other file before] (the later-file case re-run against `scan` after `across` was folded in: 1 failed) |
+| F1: `source_code` reads a source through its ```` ```lean ```` fences again | tools/question_statements.py | test_a_source_is_read_whole_not_through_a_doc_fence[q1 asked_reads_back, q1 HasReading, q2 holds_iff, HoldsU, LeadHoldsU, ReasonHoldsU, ZeroAsked]: 7 of 7 failed |
+| C4: `statement()` reads through fences again | tests/test_scope_5_4_statements.py | test_a_source_is_read_whole_not_through_a_doc_fence[*]: 8 of 8 failed |
 
 The first version of the duplicate test let "last wins" survive, because its copy came last. It now places the copy
 before and after the approved one, in the same file and in another (2157efa34c), and all three variants are caught.
@@ -64,6 +81,10 @@ before and after the approved one, in the same file and in another (2157efa34c),
 - Trust: `tools/trust_map.py --check` PASS, +0 in every class. The light lane printed NOT (534 lines, the saved
   evidence included). `tools/trust_mutants.py --plan` selects 0 definitions and 0 mutants (no Lean change), so the
   sweep has nothing to run; no trust_mutants record.
+- After the review fixes (d5da3181ed): selected run (`mac-pytest.sh --select`, GitHub Actions run
+  qa-stmt-scanner-d5da3181-t877702): 54 units in 3 shards, 0 failed, exit 0. `lake build`: 1475 jobs, success.
+  `lean/audit.py`: PASS. `tools/gate_collection.py --check`: 191 added, 3 removed by a trailer, 0 refused. The tool's
+  real-tree output (Q1, Q2 text) is byte-identical to evidence/after.
 - Full gate: not run by the builder (the chain runs it on the final HEAD).
 
 Pre-existing failures (main-known-red.txt): none met in this item's tests.
@@ -89,7 +110,7 @@ None in this line.
 
 1. Lean answers typed and contained: N.A. (no relay or Lean answer touched).
 2. Every deliverable built: PASS (table above; one owner: the private scanner is deleted, the shared one is the only reader). Tests: tests/test_question_statements_scanner.py, tests/test_statement_scanner.py F5 cases.
-3. Tests can fail: PASS (7 seeded bugs, all caught; the probes fail on main: evidence/failing-first-on-main.txt).
+3. Tests can fail: PASS (9 seeded bugs, all caught; the probes fail on main: evidence/failing-first-on-main.txt).
 4. Base and HEAD agree, valid inputs pass: PASS (byte-identical before/after outputs of all 7 checkers; every approved Q1/Q2 statement read as main read it).
 5. R8 binding: N.A. (no relayed field).
 6. Gate evidence matches final HEAD: PASS (evidence is saved checker output and a saved test run, not live git; the full gate runs on the chain).
