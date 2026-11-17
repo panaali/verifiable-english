@@ -147,8 +147,8 @@
   {
    "environment": "usecases/anthropic-rsp/environment.d1.json",
    "failures": [],
-   "lexicon_id": "d6ef369e3844b4fc625e1c9def749c44a3a27352d65dfe74e813dcb36ee9b4bf",
-   "symbols": 126
+   "lexicon_id": "3e964f5134ca2abdf1ea70e6ac6166f8a648be179b2f5296fededc016534eb43",
+   "symbols": 127
   },
   {
    "environment": "usecases/asimov-extended/environment.json",

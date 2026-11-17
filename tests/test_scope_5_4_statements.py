@@ -71,12 +71,19 @@ DECLARED = sorted(approved())
 PROVED = tuple(name for kind, name in DECLARED if kind == "theorem")
 
 
-def statement(text: str, name: str) -> str | None:
-    """The first statement of theorem `name` in `text` (Lean source, or a spec's Markdown: its Lean blocks), read by
-    the shared scanner: from `theorem name` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the
+def spec_5_4_lean() -> str:
+    """Spec 5.4's Lean code: its ```lean blocks, one after another (a spec is read from its fences only)."""
+    blocks = re.findall(r"```lean\n(.*?)```", spec_5_4(), re.S)
+    assert blocks, "spec 5.4 has no ```lean block"
+    return "\n".join(blocks)
+
+
+def statement(code: str, name: str) -> str | None:
+    """The first statement of theorem `name` in the Lean code `code` (a source read whole, or `spec_5_4_lean()`),
+    read by the shared scanner: from `theorem name` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the
     statement, `{ L with scope := s }`, is kept), comments left out, whitespace normalised. A blank line or a comment
-    inside the statement does not end it (review sc-2d-f1 F2)."""
-    code = "\n".join(re.findall(r"```lean\n(.*?)```", text, re.S)) if "```lean" in text else text
+    inside the statement does not end it (review sc-2d-f1 F2). A ```lean fence in a source's doc comment is comment
+    text, never read as the code (review qa-stmt-scanner F1, note C4)."""
     texts = declarations(code, statements_only=True).get(("theorem", name))
     return texts[0] if texts else None
 
@@ -188,15 +195,15 @@ def binder_faults(name: str, spec: str, elaborated: str) -> list[str]:
 
 @pytest.mark.parametrize("name", PROVED)
 def test_the_proved_statements_are_spec_5_4s_text(name):
-    assert statement(spec_5_4(), name) is not None, name
-    assert statement(lean(), name) == statement(spec_5_4(), name), name
+    assert statement(spec_5_4_lean(), name) is not None, name
+    assert statement(lean(), name) == statement(spec_5_4_lean(), name), name
 
 
 @pytest.mark.parametrize("name", EFFECTS)
 def test_an_effect_statement_takes_exactly_the_signed_premises(name):
-    for text in (lean(), spec_5_4()):
+    for text in (lean(), spec_5_4_lean()):
         assert statement(text, name).count("(hw : JsonWF o)") == 1, name
-    assert binder_faults(name, statement(spec_5_4(), name), typed(name)) == [], name
+    assert binder_faults(name, statement(spec_5_4_lean(), name), typed(name)) == [], name
 
 
 PLANTS = (("{hx : True} ", "∀ {hx : True}, "), ("[inst : Inhabited Nat] ", "∀ [inst : Inhabited Nat], "),
@@ -210,9 +217,9 @@ def test_a_binder_added_to_both_texts_fails(name, plant):
     """sc-2d-f1: a binder of any kind added before `hw` in spec 5.4's text and, as Lean prints it, in the elaborated
     statement fails the pin, though the Lean source would still equal the spec."""
     source, printed = plant
-    spec = statement(spec_5_4(), name).replace("(hw : JsonWF o)", source + "(hw : JsonWF o)", 1)
+    spec = statement(spec_5_4_lean(), name).replace("(hw : JsonWF o)", source + "(hw : JsonWF o)", 1)
     elaborated = typed(name).replace("VE.Scope.JsonWF o →", printed + "VE.Scope.JsonWF o →", 1)
-    assert elaborated != typed(name) and spec != statement(spec_5_4(), name), name
+    assert elaborated != typed(name) and spec != statement(spec_5_4_lean(), name), name
     faults = binder_faults(name, spec, elaborated)
     assert any(f.startswith("spec binders") for f in faults), faults
     assert any(f.startswith("elaborated") for f in faults), faults
@@ -226,7 +233,19 @@ def test_the_statement_runs_past_a_record_update(name):
     assert ":=" in proved and proved.rsplit(":=", 1)[1].strip(), name
     inner = text.index(":=", text.index(f"theorem {name} "))
     changed = text[:inner] + ":= changed" + text[inner + 2:]
-    assert statement(changed, name) != statement(spec_5_4(), name), name
+    assert statement(changed, name) != statement(spec_5_4_lean(), name), name
+
+
+@pytest.mark.parametrize("name", PROVED)
+def test_a_source_is_read_whole_not_through_a_doc_fence(name):
+    """Review qa-stmt-scanner F1, note C4: a source whose doc comment quotes the approved statement in a ```lean fence
+    is still read whole, so a change to the theorem itself is a different statement, and the quote alone is none."""
+    text = lean()
+    head = text.index(f"theorem {name} ") + len(f"theorem {name}")
+    quoted = "/-! The approved statement:\n```lean\n" + spec_5_4_lean() + "\n```\n-/\n"
+    assert statement(quoted + text, name) == statement(spec_5_4_lean(), name), name
+    changed = quoted + text[:head] + " (hx : True)" + text[head:]
+    assert statement(changed, name) != statement(spec_5_4_lean(), name), name
 
 
 def test_the_check_tells_a_changed_statement():
@@ -238,11 +257,12 @@ def test_the_check_tells_a_changed_statement():
         proved = statement(lean(), name)
         assert old in proved, name
         changed = proved.replace(old, new, 1)
-        assert changed != statement(spec_5_4(), name), name
+        assert changed != statement(spec_5_4_lean(), name), name
         if name in EFFECTS:
             assert binder_faults(name, changed, typed(name)), name
     for name in EFFECTS:  # the elaborated premise at `hw` is read, not only counted
-        assert binder_faults(name, statement(spec_5_4(), name), typed(name).replace("JsonWF o →", "JsonWF o' →", 1))
+        wrong = typed(name).replace("JsonWF o →", "JsonWF o' →", 1)
+        assert binder_faults(name, statement(spec_5_4_lean(), name), wrong)
 
 
 def test_spec_5_4_declares_the_reviewed_declarations():
@@ -302,7 +322,7 @@ def test_a_suffix_after_a_gap_is_compared(key, gap):
     assert len(faults) == 1 and faults[0].startswith(f"{kind} {name}: Lean"), faults
     assert "∧ False" in faults[0], faults
     if kind == "theorem":
-        assert statement(changed, name) != statement(spec_5_4(), name), name
+        assert statement(changed, name) != statement(spec_5_4_lean(), name), name
 
 
 @pytest.mark.parametrize("key", DECLARED, ids=" ".join)
