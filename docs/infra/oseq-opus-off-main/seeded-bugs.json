@@ -1,0 +1,46 @@
+[
+ {
+  "file": "pick-claude-account.sh.new-oseqmain",
+  "language": "shell (embedded python)",
+  "seed": "check removed",
+  "test": "test_1_no_avoid_main_only",
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-oseqmain",
+  "language": "shell (embedded python)",
+  "seed": "check only with PICK_AVOID empty",
+  "test": "test_3_rcx_main_pace_lift",
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-oseqmain",
+  "language": "shell (embedded python)",
+  "seed": "config-dir match dropped",
+  "test": "test_1_config_dir_of_main",
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ },
+ {
+  "file": "pick-claude-account.sh.new-oseqmain",
+  "language": "shell (embedded python)",
+  "seed": "relwant not cleared",
+  "test": "test_3_released_row",
+  "rc": 1,
+  "caught": true,
+  "tail": [
+   "FAILED (failures=1)"
+  ]
+ }
+]
