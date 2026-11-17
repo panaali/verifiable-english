@@ -2359,7 +2359,8 @@
   "ve/backends/lean_service.py:executable_sha256.<locals>.<lambda>": {
    "file": "ve/backends/lean_service.py",
    "items": {
-    "openai-preparedness": 4
+    "openai-preparedness": 4,
+    "safety-framework": 1
    },
    "lines": [
     517,
