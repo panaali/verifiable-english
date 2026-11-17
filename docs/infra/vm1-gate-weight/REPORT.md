@@ -1,11 +1,45 @@
 # vm1-gate-weight: VM1 chain gates get ve-cloud-2's rule (weight 1000, one gate per host)
 
 Status: BUILT and STAGED; INSTALL WAITS FOR DECIDER READ. No DRI signature needed (no DELTA row, no Lean or trust-base change).
-HEAD: this commit on infra/vm1-gate-weight (VE side: evidence only). Staged: `chain-gate.sh.new-vm1w` (cc914a94…), `iso.sh.new-vm1w` (cff1c75d…), new test `tools-local/test_vm1_gate_weight.py` (f7ddf636…).
+HEAD: this commit on infra/vm1-gate-weight (VE side: evidence only). Staged: `chain-gate.sh.new-vm1w` (2fd93d12…, after the review F1 fix; was cc914a94…), `iso.sh.new-vm1w` (cff1c75d…, unchanged), new test `tools-local/test_vm1_gate_weight.py` (ba8c75b3…; was f7ddf636…).
 Change: the VM gate and its R13 rerun run as `zsh $M/iso.sh vmgate-<label>-<pid> ${VM_GATE_MEM:-48G} -- <same gate.py command>`. iso.sh gives `vmgate-*` CPUWeight 1000. Each gate holds one of `VM_GATE_MAX` (default 1) slots, `$M/locks/vm1-gate.lock`, for the gate and its rerun. A gate that has to wait honours CHAIN_GATE_CANCEL.
 Open: the decider installs it (HUMAN). MEASURE: the last 72 h had 2 overlaps (118 min). From Nov 18, about 14 gates a day at about 2.3 h each would exceed 24 gate-hours a day on one slot. That argues for VM_GATE_MAX 2 or more workers per gate (Notes). The default stays 1.
 
-SIZE: 49 product (chain-gate.sh +45/-4, iso.sh +4/-1), 409 tests (test_vm1_gate_weight.py, new), 73 other hand-written lines (measure.py).
+SIZE: 87 product (chain-gate.sh +79/-4, of which the F1 fix is +40/-6; iso.sh +4/-1), 541 tests (test_vm1_gate_weight.py, new; the F1 fix +129/-4), 73 other hand-written lines (measure.py).
+
+## Review fix F1 (vm1-gate-weight-review.final.md, B): stopping a chain stops its VM gate
+
+- **Finding:** iso.sh moved gate.py into its own `ve-vmgate-*.scope`, so stopping the chain's scope (stop-at-boundary.sh,
+  freeze-mover.sh, a manual stop) killed the chain and freed the vm1 slot, but left gate.py running for hours. The next
+  gate then started beside it. This happened at both `vmg` call sites, with and without the cancel file, and in the rerun after a failed ve-cloud-2 gate.
+- **Fix (class: anything that ends the chain, not one stop path):** the scope's main process is now a watcher (`$vwatch` in
+  chain-gate.sh.new-vm1w, inline: one file to install). It runs gate.py as its child, in its own process group, so
+  selrun's group kill still reaches it. It polls the chain every `VM_GATE_WATCH` s (1) by pid plus start time. A zombie
+  counts as gone: a killed chain stays a zombie until its parent reaps it, and the first test run caught this. When the
+  chain is gone, the watcher runs `systemctl --user stop "$vunit"`, which ends the gate's scope and everything in it.
+  If anything is left (no systemd, or the stop failed), it TERMs the gate's process tree and KILLs it after
+  `VM_GATE_STOP_GRACE` s (30). A watcher that gets TERM, INT or HUP does the same. `$vunit` is now one variable, shared by
+  the watcher and `vmcx`.
+- **The slot is kept until the gate's scope is gone:** the watcher records its scope's cgroup, or its own pid and start
+  time when it is not in a `ve-vmgate-*` scope, in `<lock>.gate`. A chain that gets the flock while that record is live
+  releases the flock and keeps waiting. Its wait event names `<label>: gate of a stopped chain`. A gate that ends by
+  itself removes its record, so a stray process left in a finished scope never holds the slot.
+- **PROBE F1** (`probe-f1.log`): before, `orphan gate.py alive: True`, exit 1. After, `False`, exit 0.
+- **Regression tests** (test_vm1_gate_weight.py, new cases (8a), (8b), (8c), (9r) and (9s)):
+  - (8a) the VM gate, no cancel file; (8b) the R13 rerun, CHAIN_GATE_CANCEL set; (8c) the rerun after a failed ve-cloud-2
+    gate. In each, SIGKILL goes to the chain shell only. The gate.py is gone, `systemctl --user stop` gets a pattern that
+    matches its unit, and the gate was TERMed. In (8a) and (8b), a second chain that waits gets its gate.py started only
+    after the first exited: the first ignores TERM for 2 s.
+  - (9r) the probe on the real systemd user manager, with a waiting second chain; the stopped chain's ve-vmgate scope is gone.
+  - (9s) a stray in a finished scope keeps no slot.
+  - (9r) and (9s) are skipped, with a note, where `systemd-run --user --scope` does not work.
+  - Check (5) "systemd-run pid = gate pid" became "systemd-run pid = gate pgid": the gate is now the watcher's child. The
+    property tested is the one that matters, that selrun's group kill reaches the gate.
+- **Runs:** `run-staged-f1.log` 60 ok, 0 FAIL. `run-pre-f1.log` is the pre-fix staged file (cc914a94): 13 FAIL, all in
+  (8a)–(8c) and (9r). `run-suites-f1.log`: test_chain_gate_vm_cancel, test_gate_reuse, test_mac_last_resort and
+  test_defer_heavy all rc 0 on the fixed file. Diffs: `chain-gate.sh.new-vm1w.f1.diff` and `test_vm1_gate_weight.f1.diff`.
+- **Not done (review notes F2–F5, C, not filed):** F2's leftover gate-result.json on a first-slot cancel, F3's scratch-tree
+  coverage and F4's `<label>-<pid>` pattern overlap are unchanged. F5 (stale-6h.py and backlog.py do not know `gate-wait`) is already with the DRI.
 
 ## Base
 
@@ -66,6 +100,14 @@ Pairing: VM gate gate-start/gate-end events, one item's gate and its rerun withi
 | S4 | chain-gate.sh.new-vm1w | cancel check in the slot wait disabled | (3) exits 4 while the holder runs, (3) event, (3) gate.py never started (3 FAIL) |
 | S5 | chain-gate.sh.new-vm1w | stop pattern `ve-vm-gate-…` | (5) systemctl stop pattern matches the unit (1 FAIL) |
 | S6 | chain-gate.sh.new-vm1w | holder liveness check removed | (2u) stale holder → unknown (1 FAIL) |
+| S7 | chain-gate.sh.new-vm1w (F1) | the watcher never sees its chain gone | (8a)–(8c) gate gone / scope stopped / TERMed, (9r) gate gone (10 FAIL) |
+| S8 | chain-gate.sh.new-vm1w (F1) | `vglive` always false: the slot ignores a stopped chain's running gate | (8a), (8b), (9r) second gate starts only after the first exited (3 FAIL) |
+| S9 | chain-gate.sh.new-vm1w (F1) | no watcher in the scope (the pre-F1 command) | (8a)–(8c), (9r) (13 FAIL) |
+| S10 | chain-gate.sh.new-vm1w (F1) | a zombie chain counts as alive | (8a)–(8c), (9r) gate gone (10 FAIL) |
+| S11 | chain-gate.sh.new-vm1w (F1) | a gate that ended by itself keeps its `.gate` record | (9s) a stray keeps no slot (1 FAIL) |
+| S12 | chain-gate.sh.new-vm1w (F1) | the watcher does not `systemctl stop` its scope | (8a)–(8c) scope stopped (3 FAIL) |
+
+S7–S12: `mutants-f1.json` (each mutation, its failing checks and rc), planted in /tmp copies run with `CG=`.
 
 Changed languages: zsh only (manage-agents placement scripts). No Lean, Python product or Rust product code in VE changed.
 I wrote the test file in Python.
@@ -85,7 +127,7 @@ mv chain-gate.sh.new-vm1w chain-gate.sh && mv iso.sh.new-vm1w iso.sh
 If BASE-OK is not printed for iso.sh (for example, iso.sh.new-gcpu was installed first), do not mv `iso.sh.new-vm1w`.
 Add the one word to the live file instead, then check it:
 `cp -p iso.sh iso.sh.bak-20261117-vm1w && sed 's/|integ-\*) cw=1000/|integ-*|vmgate-*) cw=1000/' iso.sh > iso.sh.new && zsh -n iso.sh.new && mv iso.sh.new iso.sh`.
-If chain-gate.sh moved, rebase the 45-line hunk in `chain-gate.sh.new-vm1w.diff`.
+If chain-gate.sh moved, rebase the hunks in `chain-gate.sh.new-vm1w.diff` (+79/-4).
 Revert: mv the two `.bak-20261117-vm1w` files back. A gate already running keeps the script it started with.
 
 ## Notes for the DRI
@@ -111,7 +153,7 @@ Revert: mv the two `.bak-20261117-vm1w` files back. A gate already running keeps
 
 1. Lean answers typed and contained: N.A., no Lean answer or relay touched.
 2. Deliverables built, no rule broken: PASS, the deliverables table above; each row names its test in test_vm1_gate_weight.py.
-3. Tests and gates can fail: PASS, `mutants.json` S1–S6 (each fails test_vm1_gate_weight.py); `run-live.log` and `run-live-vmcancel.log` fail on the live files.
+3. Tests and gates can fail: PASS, `mutants.json` S1–S6 and `mutants-f1.json` S7–S12 (each fails test_vm1_gate_weight.py); `run-pre-f1.log` fails on the pre-F1 staged file; `run-live.log` and `run-live-vmcancel.log` fail on the live files.
 4. Py/Lean/Rust agree: N.A., no checker code changed.
 5. R8 binding: N.A., no Lean answer fields read.
 6. Gate evidence matches final HEAD: PASS, the full gate runs on the final HEAD by the chain. Evidence files are saved, not live diffs (md5.txt, measure-72h.txt with its timestamp).
