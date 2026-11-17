@@ -1,0 +1,43 @@
+chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh
+iso.sh under test: /home/seyran/code/manage-agents/iso.sh
+  FAIL (i) iso.sh vmgate-x -> CPUWeight 1000  got 100: --user --scope --quiet --slice=ve-workers.slice --unit=ve-vmgate-x-1794922601 -p CPUWeight=100 -p MemoryMax=48G -p MemorySwapMax=0 true
+
+  FAIL (i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000  got 100: --user --scope --quiet --slice=ve-workers.slice --unit=ve-vmgate-vm1-gate-weight-1234-1794922601 -p CPUWeight=100 -p MemoryMax=48G -p MemorySwapMax=0 true
+
+  ok   (i) iso.sh vm1-gate-weight -> CPUWeight 100
+  ok   (i) iso.sh chain-foo -> CPUWeight 100
+  ok   (i) iso.sh merge-x -> CPUWeight 1000
+  ok   (i) iso.sh integ-y -> CPUWeight 1000
+  ok   (i) iso.sh exp-z -> CPUWeight 25
+  ok   (i) iso.sh vmgate-x: MemoryMax as given
+  ok   (1) rc 0 (the R13 rerun passed)
+  FAIL (1) two scopes: the gate and its R13 rerun  []
+  FAIL (1) unit ve-vmgate-a-<pid>-<t>, CPUWeight 1000, MemoryMax 48G  []
+  ok   (1) the scope runs gate.py in the worktree (env -C), pinned sources on
+  FAIL (1) the lock is held during the gate and the rerun  [{'ev': 'start', 'pid': 2515890, 'pgid': 2515850, 'lock_free': None, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'a', 'mode': 'full', 't': 1794922601.6630554}, {'ev': 'start', 'pid': 2516172, 'pgid': 2515850, 'lock_free': None, 'holder': None, 'pinned': '1', 'argv': ['--rerun-failed', '--workers', '8'], 'wt': 'a', 'mode': 'rerun', 't': 1794922602.9346275}]
+  FAIL (4) the rerun runs inside the same hold (holder record and mtime unchanged: no second acquire)  [{'ev': 'start', 'pid': 2515890, 'pgid': 2515850, 'lock_free': None, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'a', 'mode': 'full', 't': 1794922601.6630554}, {'ev': 'start', 'pid': 2516172, 'pgid': 2515850, 'lock_free': None, 'holder': None, 'pinned': '1', 'argv': ['--rerun-failed', '--workers', '8'], 'wt': 'a', 'mode': 'rerun', 't': 1794922602.9346275}]
+  ok   (1) the slot is free after the run
+  ok   (1) no gate-wait event (nothing held vm1)
+  FAIL (1) VM_GATE_MEM sets MemoryMax; the gate.py arguments are unchanged  rc=0 []
+  ok   (2) rc passed through: a 0, b 1
+  FAIL (2) the second gate.py starts only after the first ended  [(1794922605.5537305, 1794922608.563457, 'a'), (1794922605.564159, 1794922608.578566, 'b')]
+  FAIL (2) the waiter's gate-wait event once, naming the holder  [{'t': '2026-11-17T13:36:45Z', 'item': 'a', 'stage': 'gate-start', 'note': 'vm c4ebd819'}, {'t': '2026-11-17T13:36:45Z', 'item': 'b', 'stage': 'gate-start', 'note': 'vm 38f2a04f'}, {'t': '2026-11-17T13:36:48Z', 'item': 'a', 'stage': 'gate-end', 'note': 'vm rc=0'}, {'t': '2026-11-17T13:36:48Z', 'item': 'b', 'stage': 'gate-end', 'note': 'vm rc=1'}]
+  ok   (2) the holder has no gate-wait event
+  FAIL (2) both gates ran scoped at weight 1000  []
+  FAIL (3) the waiter exits 4 on the cancel file, while the holder still runs  rb=0 after 0.0s a_running=False 
+  FAIL (3) event gate-cancelled ... while waiting for vm1  [{'t': '2026-11-17T13:36:49Z', 'item': 'b', 'stage': 'gate-start', 'note': 'vm 38f2a04f'}, {'t': '2026-11-17T13:36:50Z', 'item': 'b', 'stage': 'gate-end', 'note': 'vm rc=0'}]
+  FAIL (3) the waiter's gate.py never started, no gate-start vm event  [{'ev': 'start', 'pid': 2517822, 'pgid': 2517794, 'lock_free': True, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'b', 'mode': 'full', 't': 1794922609.290897}, {'ev': 'end', 'rc': 0, 'wt': 'b', 'mode': 'full', 't': 1794922610.292824}] [{'t': '2026-11-17T13:36:49Z', 'item': 'b', 'stage': 'gate-start', 'note': 'vm 38f2a04f'}, {'t': '2026-11-17T13:36:50Z', 'item': 'b', 'stage': 'gate-end', 'note': 'vm rc=0'}]
+  ok   (3) the holder ends rc 0, the lock is free afterwards
+  ok   (4) a: gate + rerun, rc 0; b rc 0
+  FAIL (4) b's gate starts only after a's R13 rerun ended  [{'ev': 'start', 'pid': 2526045, 'pgid': 2525925, 'lock_free': True, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'a', 'mode': 'full', 't': 1794922639.3550675}, {'ev': 'start', 'pid': 2526251, 'pgid': 2526106, 'lock_free': True, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'b', 'mode': 'full', 't': 1794922639.6880774}, {'ev': 'end', 'rc': 0, 'wt': 'b', 'mode': 'full', 't': 1794922640.691377}, {'ev': 'end', 'rc': 1, 'wt': 'a', 'mode': 'full', 't': 1794922641.365282}, {'ev': 'start', 'pid': 2527409, 'pgid': 2525925, 'lock_free': True, 'holder': None, 'pinned': '1', 'argv': ['--rerun-failed', '--workers', '8'], 'wt': 'a', 'mode': 'rerun', 't': 1794922641.6348686}, {'ev': 'end', 'rc': 0, 'wt': 'a', 'mode': 'rerun', 't': 1794922643.6531544}]
+  FAIL (5) exit 4, gate-cancelled 'vm gate stopped'  ra=0 [{'t': '2026-11-17T13:37:23Z', 'item': 'a', 'stage': 'gate-start', 'note': 'vm c4ebd819'}, {'t': '2026-11-17T13:39:23Z', 'item': 'a', 'stage': 'gate-end', 'note': 'vm rc=0'}] 
+  ok   (5) the scoped gate's process group is gone
+  FAIL (5) the scope kept the chain's process group (systemd-run pid = gate pid)  [] [{'ev': 'start', 'pid': 2528484, 'pgid': 2528417, 'lock_free': True, 'holder': None, 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'a', 'mode': 'full', 't': 1794922643.8949919}]
+  FAIL (5) systemctl --user stop with a pattern matching the unit  [] []
+  ok   (5) the slot is free after the cancel
+  ok   (6) lock held elsewhere: a passing ve-cloud-2 record passes, no wait, no scope, no gate.py
+  FAIL (6) R13 rerun after a failed ve-cloud-2 gate: waits for the slot (holder named), then runs scoped, rc 0  ra=0 [{'ev': 'start', 'pid': 2567336, 'pgid': 2567229, 'lock_free': False, 'holder': ['ext 2567165 t', 1794922764001131202], 'pinned': '1', 'argv': ['--rerun-failed', '--workers', '8'], 'wt': 'a', 'mode': 'rerun', 't': 1794922764.6142144}] [] [{'t': '2026-11-17T13:39:24Z', 'item': 'a', 'stage': 'gate-start', 'note': 've-cloud-2 c4ebd819'}, {'t': '2026-11-17T13:39:24Z', 'item': 'a', 'stage': 'gate-end', 'note': 've-cloud-2 rc=1'}, {'t': '2026-11-17T13:39:24Z', 'item': 'a', 'stage': 'gate-start', 'note': 'vm-rerun c4ebd819'}, {'t': '2026-11-17T13:39:25Z', 'item': 'a', 'stage': 'gate-end', 'note': 'vm-rerun rc=0'}] 
+  ok   (6) lock held elsewhere: the selected-test fallback runs at once, no wait, no scope, no gate.py
+  FAIL (2u) a stale holder record: 'waiting: another VM gate holds vm1 (unknown)' once, then the gate runs, rc 0  ra=0 [] [{'ev': 'start', 'pid': 2585663, 'pgid': 2585601, 'lock_free': False, 'holder': ['stale 2585600 t', 1794922814942581189], 'pinned': '1', 'argv': ['--workers', '8'], 'wt': 'a', 'mode': 'full', 't': 1794922815.161273}, {'ev': 'end', 'rc': 0, 'wt': 'a', 'mode': 'full', 't': 1794922816.1683078}] 
+  ok   (7) VM_GATE_MAX=2: both gates start before either ends, rc 0, no gate-wait
+FAILED: 19 failure(s)

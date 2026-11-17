@@ -1,0 +1,5 @@
+S1-latest: bash -n 0, test rc 1, failing: 1-budget-plus-far-deadline 2-near-deadline-plus-large-budget 5-two-deadlines-plus-budget 7-equals-forms-and-order
+S2-all-deadlines: bash -n 0, test rc 1, failing: 1-budget-plus-far-deadline 2-near-deadline-plus-large-budget 5-two-deadlines-plus-budget 7-equals-forms-and-order
+S3-no-refuse: bash -n 0, test rc 1, failing: 6-budget-abc-refused 8b-deadline-bad-value-refused
+S4-budget-from-now: bash -n 0, test rc 1, failing: 1-budget-plus-far-deadline 2-near-deadline-plus-large-budget 3-budget-only 5-two-deadlines-plus-budget 7-equals-forms-and-order
+S5-equals-ignored: bash -n 0, test rc 1, failing: 7-equals-forms-and-order
