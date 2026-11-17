@@ -22,7 +22,10 @@
 - **Budget.** Past --budget seconds no mutant is dispatched; the rest are K `not-run` (their text checks, which need
   no Lean, still run). **Resume** reads a results.jsonl: every line's inputs_sha256 must equal this batch's or the
   runner refuses (EXIT_MISMATCH, nothing run); lines with a K verdict other than not-run are kept, the rest run.
-- **Out.** mutants.jsonl (the records), results.jsonl (one line per mutant: {"record", "mutant", "text"}),
+  It also reads a results.partial.jsonl. After the budget, the last sentinels still wait for admission: they are
+  what makes the results valid.
+- **Out.** mutants.jsonl (the records), results.partial.jsonl (each result as a good sentinel confirms it, so a
+  batch that dies can be resumed from it), results.jsonl (one line per mutant: {"record", "mutant", "text"}),
   baseline.json, textcheck.json (the baseline text-check report with every lever off) and batch.json (status,
   counts, the measurements of plan 7).
 """
@@ -236,10 +239,11 @@ class Meter:
 
 
 def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_end, clock, sleep, log,
-             sentinel_every=W.SENTINEL_EVERY, after=None):
+             sentinel_every=W.SENTINEL_EVERY, after=None, confirmed=None):
     """Every mutant through the slots under admission; `after(mutant id)` (the text checks) runs in the mutant's
     thread after its kernel run, beside the other runs. Returns (outcomes {id: Outcome}, not_run ids, status,
-    sentinels [bool], admission_wait_s, Meter, {id: after's result})."""
+    sentinels [bool], admission_wait_s, Meter, {id: after's result}). `confirmed(outcome, after's result)` is called
+    for each result a good sentinel confirms, as it is confirmed (the runner appends it to results.partial.jsonl)."""
     pending, requeued, outcomes, not_run, sentinels = deque(mutants), set(), {}, [], []
     free, due, running = deque(slots), deque(), {}
     meter, waited, waiting_since = Meter(clock), 0.0, None
@@ -265,6 +269,8 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
         slot.last_sentinel = good
         for m in slot.since_good:
             outcomes[m.id] = replace(outcomes[m.id], sentinel_ok=good)
+            if good and confirmed is not None:
+                confirmed(outcomes[m.id], extras.get(m.id))
             if not good and m.id not in requeued:
                 requeued.add(m.id)
                 pending.append(m)
@@ -450,8 +456,9 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
             raise Refused(str(e), EXIT_MISMATCH) from e
     out = Path(out)
     started, cpu0 = deps.clock(), resource.getrusage(resource.RUSAGE_CHILDREN)
-    if (out / "results.jsonl").exists() and not (resume and Path(resume).resolve() == (out / "results.jsonl").resolve()):
-        raise Refused(f"{out}/results.jsonl exists; pass it as --resume or choose another --out", 2)
+    for name in ("results.jsonl", "results.partial.jsonl"):
+        if (out / name).exists() and not (resume and Path(resume).resolve() == (out / name).resolve()):
+            raise Refused(f"{out}/{name} exists; pass it as --resume or choose another --out", 2)
     prepared = (deps.prepare or prepare)(deps.worktree, document, inputs)
     kept = read_resume(resume, prepared.inputs_sha256) if resume else {}
     out.mkdir(parents=True, exist_ok=True)
@@ -485,24 +492,19 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
     limit = W.TIMEOUT_FACTOR * max(baseline.seconds, 1.0)
     mutants = [M.to_worker(r, files) for r in runnable]
     budget_end = started + budget if budget is not None else None
-    outcomes, not_run, status, sentinels, scheduled_wait, meter, texts = schedule(
-        slots, mutants, baseline, host=deps.host, jobs=jobs, peak_rss=peak_rss, limit=limit, budget_end=budget_end,
-        clock=deps.clock, sleep=deps.sleep, log=deps.log,
-        after=(lambda rid: text.verdicts(by_id[rid])) if text is not None else None)
-    lines = []
-    for rid, rec in by_id.items():
-        if rid in kept:
-            lines.append(kept[rid])
-            continue
-        if rec["parse"] != "ok":
-            continue
-        if texts.get(rid) is not None:
-            verdicts, new, error = texts[rid]
+    partial = out / "results.partial.jsonl"
+    partial.write_text("".join(json.dumps(line, ensure_ascii=False) + "\n" for line in kept.values()),
+                       encoding="utf-8")
+
+    def result_line(rid, o, text_result):
+        """The results line of one mutant: its K verdict from its outcome (None: not run), its text verdicts."""
+        rec = by_id[rid]
+        if text_result is not None:
+            verdicts, new, error = text_result
         elif text is not None:  # not run: the text checks need no Lean and still run
             verdicts, new, error = text.verdicts(rec)
         else:
             verdicts, new, error = {c: "survived" for c in TEXT}, [], None
-        o = outcomes.get(rid)
         if o is None:
             k, kernel = "not-run", {"changed": [], "inconclusive": [], "toward_key": 0, "away_from_key": 0}
             o = W.Outcome(rid, "not-run", None, 0.0, 0.0, None, sentinel_ok=False)
@@ -514,7 +516,22 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
                                          baseline.projection.agree, o.projection.agree)
         record = R.result_record(rid, {"K": k, **verdicts, "CR": "not-read"}, kernel, o.seconds, o.cpu_seconds,
                                  o.worker or "", bool(o.sentinel_ok), prepared.inputs_sha256)
-        lines.append({"record": record, "mutant": _meta(rec), "text": {"new_hits": new, "error": error}})
+        return {"record": record, "mutant": _meta(rec), "text": {"new_hits": new, "error": error}}
+
+    def confirmed(o, text_result):
+        with partial.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(result_line(o.id, o, text_result), ensure_ascii=False) + "\n")
+    outcomes, not_run, status, sentinels, scheduled_wait, meter, texts = schedule(
+        slots, mutants, baseline, host=deps.host, jobs=jobs, peak_rss=peak_rss, limit=limit, budget_end=budget_end,
+        clock=deps.clock, sleep=deps.sleep, log=deps.log,
+        after=(lambda rid: text.verdicts(by_id[rid])) if text is not None else None, confirmed=confirmed,
+        sentinel_every=W.SENTINEL_EVERY)
+    lines = []
+    for rid, rec in by_id.items():
+        if rid in kept:
+            lines.append(kept[rid])
+        elif rec["parse"] == "ok":
+            lines.append(result_line(rid, outcomes.get(rid), texts.get(rid)))
     _jsonl(out / "results.jsonl", lines)
     shutil.rmtree(scratch, ignore_errors=True)
     wall = deps.clock() - started

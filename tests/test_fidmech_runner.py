@@ -333,3 +333,41 @@ def test_a_budget_of_zero_runs_no_mutant_and_reads_not_run_never_a_verdict(tree,
     assert calls == ["baseline"] and summary["not_run"] == 2 and summary["ran"] == 0
     assert {v["record"]["verdict"]["K"] for v in lines(tmp_path / "out").values()} == {"not-run"}
     assert summary["measurements"]["cpu_h_per_100"] is None
+
+
+def test_a_batch_that_dies_leaves_its_confirmed_results_and_resumes_from_them(tree, tmp_path, monkeypatch):
+    """results.partial.jsonl holds each result a good sentinel confirmed; a batch killed after that resumes from
+    it and runs only the rest."""
+    monkeypatch.setattr(W, "SENTINEL_EVERY", 1)
+    recs = [record(tree, f"m{i}", RULE.replace("final ", "x" * i + " ")) for i in range(1, 4)]
+    answers = {"m1": "NONE", "m2": "ALL", "m3": "NONE"}
+    d = deps(tree, recs, answers)
+    real = d.slot
+
+    def dying(name, document, scratch):
+        worker = real(name, document, scratch)
+        evaluate = worker.evaluate
+
+        def run(mutant, limit):
+            if mutant.id == "m3":
+                raise KeyboardInterrupt  # the batch process dies (Worker.run does not catch it)
+            return evaluate(mutant, limit)
+        worker.evaluate = run
+        return worker
+    d.slot = dying
+    with pytest.raises(KeyboardInterrupt):
+        RUN.run(DOC, tmp_path / "dead", jobs=1, deps=d)
+    partial = tmp_path / "dead/results.partial.jsonl"
+    assert not (tmp_path / "dead/results.jsonl").exists()
+    assert {k: v["record"]["verdict"]["K"] for k, v in lines_of(partial).items()} == {"m1": "killed", "m2": "survived"}
+    calls = []
+    RUN.run(DOC, tmp_path / "again", jobs=1, resume=partial, deps=deps(tree, recs, answers, calls=calls))
+    assert [c for c in calls if c != "baseline"] == ["m3"]
+    assert {k: v["record"]["verdict"]["K"] for k, v in lines(tmp_path / "again").items()} == {
+        "m1": "killed", "m2": "survived", "m3": "killed"}
+    with pytest.raises(RUN.Refused):  # a dead batch's out dir is not silently reused
+        RUN.run(DOC, tmp_path / "dead", jobs=1, deps=deps(tree, recs, answers))
+
+
+def lines_of(path):
+    return {x["record"]["id"]: x for x in map(json.loads, path.read_text().splitlines())}

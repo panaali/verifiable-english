@@ -188,5 +188,15 @@
   "failed": [
    "FAILED tests/test_fidmech_runner.py::test_a_new_hit_away_from_the_mutated_unit_kills_nothing"
   ]
+ },
+ {
+  "id": "S20",
+  "file": "tools/fidmech/runner.py",
+  "bug": "confirmed results are not written as they are confirmed",
+  "test": "tests/test_fidmech_runner.py::test_a_batch_that_dies_leaves_its_confirmed_results_and_resumes_from_them",
+  "killed": true,
+  "failed": [
+   "FAILED tests/test_fidmech_runner.py::test_a_batch_that_dies_leaves_its_confirmed_results_and_resumes_from_them"
+  ]
  }
 ]
