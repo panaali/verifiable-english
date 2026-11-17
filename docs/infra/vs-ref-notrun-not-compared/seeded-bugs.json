@@ -1,0 +1,65 @@
+{
+ "item": "vs-ref-notrun-not-compared",
+ "round": "review F1",
+ "run": "VSNR_SFX=.new-vsnr python3 -I tools-local/test_vs_ref_notrun.py -k CloudLate",
+ "seeds": [
+  {
+   "file": "manage-agents/cloud-late.py.new-vsnr",
+   "language": "Python",
+   "bug": "OUTCOMES maps \"NOT COMPARED\" to \"invalid\"",
+   "id": "s1-notcompared-as-invalid",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_not_compared_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_outcome_line_and_exit_code_fuzz",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_summary_names_the_verdict_line_first"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-late.py.new-vsnr",
+   "language": "Python",
+   "bug": "outcome() drops the exit-code agreement check",
+   "id": "s2-exit-code-ignored",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_outcome_line_and_exit_code_fuzz"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-late.py.new-vsnr",
+   "language": "Python",
+   "bug": "summary puts mutants:/counts: before the verdict line",
+   "id": "s3-summary-order",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_not_compared_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_summary_names_the_verdict_line_first"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-late.py.new-vsnr",
+   "language": "Python",
+   "bug": "cmd_local_done treats \"not compared\" like \"invalid\" (flag off, entry deleted)",
+   "id": "s4-localdone-exit3-alarm",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_not_compared_is_not_made"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-late.py.new-vsnr",
+   "language": "Python",
+   "bug": "compare() reads any exit 1 as \"differ\"",
+   "id": "s5-exit1-is-differ",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_a_crashing_comparator_is_not_a_mismatch"
+   ]
+  }
+ ]
+}
