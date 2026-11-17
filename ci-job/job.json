@@ -1,0 +1,12 @@
+{
+ "job": "testmap-baeebe46-t910194-s1",
+ "head": "8eb1fc0c1ea1e4adfd0b48b0776f83ad5c7bf6a7",
+ "argv": [
+  "testmap-baeebe46-t910194-s1",
+  "8eb1fc0c1ea1e4adfd0b48b0776f83ad5c7bf6a7",
+  "8eb1fc0c1ea1e4adfd0b48b0776f83ad5c7bf6a7",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-71a76c375f58.tar.zst",
+  "60e7d73e0e77263d3e55ae821be4f3f24923909fad08c4c13274b4bd437a6705",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_wire_gate_corpus.py tests/test_regen_generated.py tests/test_test_chunks.py tests/test_judgments_answer.py tests/test_code_map.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
