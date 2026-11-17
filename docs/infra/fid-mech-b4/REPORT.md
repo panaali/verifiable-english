@@ -1,11 +1,11 @@
 # fid-mech-b4: structural and wording mutants, mutant records, equivalence and declarations (build report)
 
-**Status:** built, ready for review. **Branch:** infra/fid-mech-b4, base main b00f97f5c2 (main has not moved).
+**Status:** built; review F1 (B, widen-quantifier) fixed in fcf2aae834 (section 15), ready for recheck. **Branch:** infra/fid-mech-b4, base main b00f97f5c2 (main has not moved).
 **What changed:** tools/fidmech/{structural,mutants,fp1}.py are new; wording.py is moved in from manage-agents with a harness mode; there are three actors.json and three empty equivalents.json files; and a CLI (`mutants`, `actors`).
 **Open:** the install read (section 7) waits for the decider. **DRI signature:** none reserved. DELTA is none and trust is +0.
 **Not run here:** the full gate (the chain runs it on the final HEAD) and a mutant run on VM1 (B5's job).
 
-SIZE: 940 product, 567 tests, 52 other hand-written lines. Product is structural.py 279, mutants.py 419, fp1.py 90, `__main__.py` +61/−3 and wording.py +91/−16 against the verbatim copy e6aa6effb9. The 356 moved lines and the copied fixture data are not counted. "Other" is the fixture rules (20) and the actors review script (32). There is no seam cut: the operations seat's override 1 sets no line cap, and every deliverable passes its own tests.
+SIZE: 952 product, 686 tests, 52 other hand-written lines (after the F1 fix: structural.py +25/−13, tests/test_fidmech_prune.py 119). Product is structural.py 290, mutants.py 419, fp1.py 90, `__main__.py` +61/−3 and wording.py +91/−16 against the verbatim copy e6aa6effb9. The 356 moved lines and the copied fixture data are not counted. "Other" is the fixture rules (20) and the actors review script (32). There is no seam cut: the operations seat's override 1 sets no line cap, and every deliverable passes its own tests.
 
 ## 1. Deliverables (task DO list; plan rev 2 sections 2d, 5.1, 5.2, 9, 10; decision item 1)
 
@@ -162,6 +162,7 @@ New files:
 - tests/test_fidmech_structural.py: 16 tests, all marked `needs_lean`, B3's skipif on lean/.lake/build/bin/ve_service, as a module `pytestmark`.
 - tests/test_fidmech_mutants.py: 25 tests, no Lean.
 - tests/test_fidmech_wording.py: 13 tests. One is `needs_lean`: `test_wording_mutants_are_scored_never_equivalent_and_stillborn_ones_are_listed`.
+- tests/test_fidmech_prune.py (review F1): 5 tests, 10 ids. Three need no Lean (`prune` on every tree shape up to six leaves and every subset of leaves; `drop` = `prune` of one path; the reviewer's two stale-path shapes). Two are marked `needs_lean` per test, because they parse rows-cond: the probe and every bracketing of up to five conjuncts through `ops_of`.
 
 The new tests contain neither of the two texts the fidq step selects on.
 
@@ -192,9 +193,11 @@ The new tests contain neither of the two texts the fidq step selects on.
 
 Python is the only language changed: no Lean, no Rust. 18 plants were each applied, run against their named test and restored; all 18 were killed. They ran at b320272017, and the tree was clean after each. 2e5a79bcf9 later changed only exception handling, and all 18 plant sites still occur exactly once at HEAD (checked by script).
 
+**Review fix (F1):** the fix rewrote `drop` as `prune` of one path, so plant 1's site moved to `_prune` (the collapsed parent keeps the dropped leaf, not its sibling). Plants 1, 19 and 20 were replayed with the script (`uv run python docs/infra/fid-mech-b4/seeded-bugs.py.txt '<bug prefix>'`) on fcf2aae834's tree, and all three were killed. All 20 plant sites occur exactly once in the working tree (checked by script), and structural.py was byte-identical to its backup after the replays.
+
 | # | file | plant | killed by |
 |---|---|---|---|
-| 1 | tools/fidmech/structural.py | drop-conjunct drops the sibling | test_each_op_writes_its_expected_mutant_back_as_ve_english (3 failed) |
+| 1 | tools/fidmech/structural.py | drop-conjunct drops the sibling (site moved into `_prune` by F1; replayed) | test_each_op_writes_its_expected_mutant_back_as_ve_english (3 failed), test_fidmech_prune.py::test_drop_is_prune_of_one_path_on_and_and_or_trees |
 | 2 | tools/fidmech/structural.py | add-guard-true takes a used predicate | test_add_guard_true_never_picks_a_predicate_the_rule_uses |
 | 3 | tools/fidmech/structural.py | a hard-coded "that situation" | test_the_guard_template_names_the_bound_variables_sort |
 | 4 | tools/fidmech/structural.py | equivalence through Norm.to_dict | test_flip_force_is_never_syntactic |
@@ -212,6 +215,8 @@ Python is the only language changed: no Lean, no Rust. 18 plants were each appli
 | 16 | tools/fidmech/wording.py | apply() re-dumps with indent 1 | test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs (3 failed) |
 | 17 | tools/fidmech/wording.py | one ACTORS entry dropped | test_plan_and_apply_give_..., test_actors_is_unchanged |
 | 18 | tools/fidmech/wording.py | harness matches ACTORS, not actors.json | test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot (2 failed) |
+| 19 | tools/fidmech/structural.py | F1: widen drops its restricting conjuncts one path at a time (the pre-fix code, as a reduce) | test_fidmech_prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together, ::test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape (2 failed) |
+| 20 | tools/fidmech/structural.py | F1 class: `_prune` ignores a second path in the same walk | test_fidmech_prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[5,6], ::test_the_reviewers_two_stale_path_shapes (6 failed) |
 
 My first plant for #12 survived, and it was a bad plant. It added a key to `binding_inputs` that `binding()` never reads, so it changed nothing. The replant puts equivalents.json's sha where the hash reads it, and it is killed.
 
@@ -275,7 +280,7 @@ None. This is Python tooling and data: no Lean line, no Rust line, no verdict, a
 
 1. N.A.: no relayed Lean answer and no new route. The harness reads VE's parse through the existing public `parse_english`.
 2. PASS: section 1 maps every DO line to a commit and a test. There is no new Python copy of a Lean decision: equivalence compares VE's own parse, and `render_rule_sentence` and `parse_english` are VE's. There is no permanent report test (the counts are saved evidence, not tested), and no protected file was touched (`git diff --stat main...HEAD` has no quote_evidence.py, conftest, run.py, bindings.json or translation file).
-3. PASS: 18 seeded bugs, all killed (seeded-bugs.json). The opposite directions are covered by the plant table in section 8.
+3. PASS: 20 seeded bugs, all killed (seeded-bugs.json; 19 and 20 are review F1's). The opposite directions are covered by the plant table in section 8.
 4. N.A.: no Python, Lean or Rust path pair changed. The wording golden compares the old and new copies byte for byte (`test_plan_and_apply_give_the_bundles_output_on_the_frozen_inputs`).
 5. PASS (inputs): an undeclared declaration id is reported as `unknown`; a wording or already-equivalent target is refused (`test_a_declaration_names_a_structural_mutant_with_no_equivalence`); a malformed entry is refused (`test_a_malformed_declaration_is_refused`).
 6. PASS: main has not moved (`git log HEAD..main` is empty); the chain gates the final HEAD.
@@ -292,3 +297,20 @@ None. This is Python tooling and data: no Lean line, no Rust line, no verdict, a
     - **cut deliverable:** none.
     - **every new check can fail:** section 9.
     - **limits:** N.A., no new limit.
+
+## 15. Review fix (manage-agents fid-mech-b4-review.final.md; the overlapped review -ov.final.md has the same single finding)
+
+| finding | class | fix | regression tests | commit |
+|---|---|---|---|---|
+| F1 (B) widen-quantifier dropped its restricting conjuncts one path at a time. Each drop collapsed a parent, so the remaining paths were stale: two restricting conjuncts crashed the run (AttributeError outside REFUSED), or a stale path on an Or leaf dropped half of it silently | several positional edits applied in sequence, each reading a tree the previous one reshaped | `structural.prune(formula, paths)` reads every path on the original tree in one walk. A parent left with one child becomes that child; no leaf left gives ast.Top. `drop` is `prune` of one path, and widen-quantifier calls `prune` once | tests/test_fidmech_prune.py: `test_probe_f1_two_restricting_conjuncts_are_dropped_together` (the probe), `test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape`, `test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset[1-6]`, `test_drop_is_prune_of_one_path_on_and_and_or_trees`, `test_the_reviewers_two_stale_path_shapes` | fcf2aae834 |
+
+- **Probe F1:** before the fix it raised `AttributeError: 'Unary' object has no attribute 'right'` (structural.py `drop`). After it, the probe passes and is the test `test_probe_f1_two_restricting_conjuncts_are_dropped_together`.
+- **Sweep (same class):** drop-conjunct and both drop-disjunct sites now go through `prune` and edit one path. `mutants.apply_edits` places every text edit at its `find` in the original file in one pass and refuses overlaps. No other site in tools/fidmech/ applies several positional edits one after another (grep for `reverse=True`, `drop(`, `_put(`, offsets).
+- **Counts unchanged:** I reran `uv run python -m tools.fidmech mutants --doc <doc>` for all three documents on fcf2aae834. Each per-op table equals the saved counts-<doc>.txt; the only diffs are the saved files' `time` lines. As the review said, each real two-variable rule has at most one restricting conjunct, and `prune` of one path is the old `drop`. The inputs_sha256 changes by design, because it covers the commit and every file under tools/fidmech/ (records.py `collect_inputs`).
+- **Checks on the fix:**
+  - `mac-pytest.sh --select -- --base b00f97f5c2 --run` on fcf2aae834 plus the seeded-bug evidence ran on ve-cloud-2: 271 units, 0 failed, exit 0. It selected test_fidmech_prune.py, test_fidmech_structural.py and test_fidmech_mutants.py.
+  - `lake build` completed (1475 jobs); `python3 lean/audit.py` gave PASS.
+  - `regen_generated.py --check` and `history_tests.py --check` exit 0.
+- **Pre-existing red** (main-known-red.txt): untouched. tests/test_lean_service.py and test_readings_defaults_rd8_report.py exited 0 in this selected run; test_ownership_floor.py was deferred to the chain gate.
+- **DELTA:** none. Python tooling only: no Lean, Rust or `ve/` file, no verdict, translation or answer, so there is no DELTA row and no Ruling cell. No DRI signature is reserved.
+- **Review notes (C, not filed):** not changed here. The three surviving seeded bugs the reviewer lists (the `used` unless predicates, the sort filter, the stillborn "parses to another rule" check) are missing test rows, and are left for a later item.

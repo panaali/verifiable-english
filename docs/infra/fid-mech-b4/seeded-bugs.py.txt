@@ -4,8 +4,8 @@ ROOT = Path("/home/seyran/code/ve-fid-mech-b4")
 T = "tests/test_fidmech_"
 PLANTS = [
  ("drop-conjunct: a leaf's sibling dropped instead of the leaf", "tools/fidmech/structural.py",
-  "        return formula.left if path[0] else formula.right", "        return formula.right if path[0] else formula.left",
-  [T + "structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english"]),
+  "        return right if left is None else left", "        return formula.left if left is None else formula.right",
+  [T + "structural.py::test_each_op_writes_its_expected_mutant_back_as_ve_english", T + "prune.py::test_drop_is_prune_of_one_path_on_and_and_or_trees"]),
  ("add-guard-true: a predicate the rule already uses is chosen (A and A)", "tools/fidmech/structural.py",
   "        if name not in used:", "        if True:",
   [T + "structural.py::test_add_guard_true_never_picks_a_predicate_the_rule_uses"]),
@@ -63,6 +63,14 @@ PLANTS = [
   "    return candidates(files, unit, replacing, actors, actor_pattern, structural=False)",
   "    return candidates(files, unit, replacing, ACTORS, actor_pattern, structural=False)",
   [T + "wording.py::test_the_actors_json_matcher_finds_an_actor_the_legacy_list_cannot"]),
+ ("widen-quantifier: restricting conjuncts dropped one path at a time (review F1)", "tools/fidmech/structural.py",
+  "            out.append((\"widen-quantifier\", \"rule\", _edit(rule, guard=prune(core.guard, restricting))))",
+  "            out.append((\"widen-quantifier\", \"rule\", _edit(rule, guard=__import__(\"functools\").reduce(drop, sorted(restricting, reverse=True), core.guard))))",
+  [T + "prune.py::test_probe_f1_two_restricting_conjuncts_are_dropped_together", T + "prune.py::test_widen_quantifier_keeps_exactly_the_non_restricting_conjuncts_on_every_shape"]),
+ ("prune: a second path in the same walk is ignored (review F1 class)", "tools/fidmech/structural.py",
+  "    right = _prune(formula.right, frozenset(p[1:] for p in paths if p[0] == 1))",
+  "    right = formula.right if len(paths) > 1 else _prune(formula.right, frozenset(p[1:] for p in paths if p[0] == 1))",
+  [T + "prune.py::test_prune_keeps_exactly_the_other_leaves_in_order_for_every_shape_and_subset", T + "prune.py::test_the_reviewers_two_stale_path_shapes"]),
 ]
 out = []
 ONLY = sys.argv[1:]
