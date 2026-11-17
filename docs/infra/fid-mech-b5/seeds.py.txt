@@ -26,9 +26,10 @@ SEEDS = [
  ("S15", MF, "rebase takes the first of several occurrences", "        if n != 1:", "        if n == 0:", TP + "::test_a_changed_line_that_stands_twice_is_not_rebased"),
  ("S18", REP, "VE gets the not-applicable reason, which names the unit", '"not_applicable_by": dict(Counter(reason_class(r["reason"]) for r in rows', '"not_applicable_by": dict(Counter((r["reason"]) for r in rows', TP + "::test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair"),
  ("S19", R, "a new hit anywhere kills", " and h.block in where]", "]", TR + "::test_a_new_hit_away_from_the_mutated_unit_kills_nothing"),
+ ("S20", R, "confirmed results are not written as they are confirmed", "            if good and confirmed is not None:", "            if False:", TR + "::test_a_batch_that_dies_leaves_its_confirmed_results_and_resumes_from_them"),
 ]
 out = []
-for sid, f, what, old, new, test in SEEDS:
+for sid, f, what, old, new, test in [x for x in SEEDS if x[0] in sys.argv[2:]] or SEEDS:
     p = ROOT / f
     src = p.read_text()
     assert src.count(old) == 1, (sid, src.count(old))
