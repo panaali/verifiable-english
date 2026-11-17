@@ -8,9 +8,10 @@ written; the plants and real defects turned into mutant records by unit text.
   still stands once in the rules file it is replaced whole; otherwise each line the plant changes is rebased by its
   text (it must stand exactly once in the file); otherwise the plant is "not applicable" with the reason. Controls
   (`excluded`) are never applied.
-- **Real defects** (`defect_records`): the mutant puts the defective text back where the repaired text stands. A
-  defect with no repair commit is "no repair yet" and unscored. Repaired text that no longer stands at the tree under
-  test (a later change) makes the defect "not applicable": a later change is never read as the repair.
+- **Real defects** (`defect_records`): the mutant puts the defective text back where the repaired text stands (text
+  the repair only added is deleted). A defect with no repair commit is "no repair yet" and unscored. Repaired text
+  that no longer stands at the tree under test (a later change) makes the defect "not applicable": a later change is
+  never read as the repair. So does a repair that deleted text the defect needs: no unit text marks where it stood.
 - A plant or defect that edits a `*vocabulary.py` gets environment.d1.json regenerated from the edited module's
   text(), as the module's own __main__ writes it, so the text checks read what the kernel reads.
 """
@@ -170,7 +171,13 @@ def defect_records(defects, document, case_dir):
         if not d.get("repair_commit"):
             rows.append({**row, "status": "no repair yet", "reason": "no repair commit: unscored"})
             continue
-        edits = [(_case_name(e["file"]), e["after"], e["before"]) for e in d["edits"]]
+        gone = [e["what"] for e in d["edits"] if e["after"] is None]
+        if gone:
+            rows.append({**row, "status": "not applicable", "reason": (
+                f"the repair deleted {', '.join(gone)}; no unit text marks where the defective text stood")})
+            continue
+        # A repair that only added text (before None) is undone by deleting that text.
+        edits = [(_case_name(e["file"]), e["after"], e["before"] or "") for e in d["edits"]]
         changed, how = _apply(files, edits)
         if changed is None:
             how = f"{how} (the repaired text no longer stands: a later change is never read as the repair)"
