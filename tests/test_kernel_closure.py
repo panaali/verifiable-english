@@ -917,6 +917,55 @@ def test_no_kernel_path_counts_the_act_grammar_or_the_elaboration(lake, capsys):
     assert "VE.Norms.Run.runCaseActsRouted" in next(p for p in KERNEL if p["name"] == "norms")["delegates"]
 
 
+METERED_ARMS = {"meteredLegacy": ("VE.Route.MeteredRun.runCaseReportedLegacy", "VE.Route.MeteredRun.metered_wire_sound_legacy"),
+                "meteredActs": ("VE.Route.MeteredRun.runCaseReportedActs", "VE.Route.MeteredRun.metered_wire_sound_acts")}
+
+
+def test_the_metered_mode_lists_every_runner_arm():
+    """kb-4b (HANDOFF D14): the `metered` mode's entry hands a frozen envelope to `runCaseReportedLegacy` and an
+    environment whose deciding view reads `acts@0` to `runCaseReportedActs` (delegates: the candidate paths
+    `meteredLegacy` and `meteredActs`, each with its runner theorem and the architect seat's note); the kernel path
+    keeps the current runner's theorem. Every arm of the mode is a path of the census."""
+    metered = next(p for p in KERNEL if p["name"] == "metered")
+    assert metered["entry"] == ["VE.Route.MeteredRun.runCaseReported"]
+    assert metered["theorems"] == ["VE.Route.MeteredRun.runWith_sound", "VE.Route.MeteredRun.metered_wire_sound_current"]
+    assert sorted(metered["delegates"]) == sorted(entry for entry, _ in METERED_ARMS.values())
+    paths = {p["name"]: p for p in REGISTRY["paths"] if "metered" in p["modes"]}
+    assert set(paths) == {"metered", *METERED_ARMS}
+    for name, (entry, theorem) in METERED_ARMS.items():
+        arm = paths[name]
+        assert arm["tier"] == "candidate" and arm["entry"] == [entry], name
+        assert arm["theorems"] == ["VE.Route.MeteredRun.runWith_sound", theorem], name
+        assert arm["subject"] == metered["subject"], name
+        assert arm["note"].startswith("runner theorems complete; outside the kernel tier by the architect seat (D14)")
+        assert theorem in STATEMENTS, theorem
+    assert "metered" in REGISTRY["keys"]["paths"] and not set(METERED_ARMS) & set(REGISTRY["keys"]["paths"])
+
+
+def test_no_kernel_path_counts_the_typing_reductions_or_the_frozen_decoders(lake, capsys):
+    """kb-4b step 2: the current runner validates with `validatedOver` (no typing reduction, no acts view) and reads
+    the regulated extension through `ActsHook.plain`; the frozen decoders and today's acts view are read only by the
+    candidate runners. So `typingReduced`, `riskReduced`, `Typed.typingEnvironment`, `decodeLegacy` and the frozen
+    family decoders, `actsRead` and `modelEnvironment` are counted by no kernel path, while the current runner's
+    validation is counted by the `metered` spec, through its restated theorem."""
+    absent = ["VE.Service.Standalone.typingReduced", "VE.Service.Standalone.riskReduced",
+              "VE.Route.Typed.typingEnvironment", "VE.Service.Standalone.decodeLegacy", "VE.Bridge.decodeEnvironment",
+              "VE.Closure.Bridge.decodeEnvironment", "VE.Service.Standalone.actsRead",
+              "VE.Service.Standalone.modelEnvironment", "VE.Service.Standalone.evaluable",
+              "VE.Route.MeteredRun.prepare", "VE.Route.MeteredRun.runCaseReportedLegacy",
+              "VE.Route.MeteredRun.runCaseReportedActs"]
+    present = "VE.Service.Standalone.validatedOver"
+    assert kernel_closure.main([arg for name in absent + [present] for arg in ("--why", name)]) == 0
+    out = capsys.readouterr().out.splitlines()
+    for name in absent:
+        assert f"{name}: counted by no kernel path" in out, name
+    i = out.index(present)
+    spec = WHY_ROW.match(out[i + 1])
+    assert spec and spec[1] == "metered" and spec[2] == "spec", out[i:i + 2]
+    assert spec[4].split(" -> ")[:2] == ["VE.Route.MeteredRun.metered_wire_sound_current",
+                                         "VE.Service.Standalone.evaluableCurrent"], spec[4]
+
+
 @pytest.mark.parametrize("text", ["[]", "1", "null", '"x"', '{"paths": 3}', '{"paths": [[1], {"name": [2]}]}',
                                   "{not json"])
 def test_fresh_reports_a_baseline_of_another_json_shape_as_stale_never_a_crash(monkeypatch, tmp_path, capsys, text):

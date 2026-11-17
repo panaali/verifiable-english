@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9991,
- "keyed_kernel_lines": 9991,
- "keyed_lines": 16269,
+ "kernel_lines": 9738,
+ "keyed_kernel_lines": 9738,
+ "keyed_lines": 16341,
  "paths": [
   {
    "attributed": {
@@ -1138,11 +1138,11 @@
       "prefix": "VE.Core.instReprFormula.repr"
      },
      {
-      "by": "VE.Service.Standalone.Legacy.profiles",
-      "lines": 5,
-      "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.Legacy.version.match_1",
-      "prefix": "VE.Service.Standalone.Legacy.version"
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
      },
      {
       "by": "VE.Compose.gateOf",
@@ -1152,11 +1152,496 @@
       "prefix": "VE.Compose.todayGate"
      },
      {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_3",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_7",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_9",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Route.MeteredRun.legacyCase",
+      "lines": 15,
+      "module": "VE.Route.MeteredRun",
+      "name": "VE.Route.MeteredRun.query.match_1",
+      "prefix": "VE.Route.MeteredRun.query"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
+     },
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
       "by": "VE.Definitions.firstBad",
       "lines": 3,
       "module": "VE.Definitions.Elaborate",
       "name": "VE.Definitions.chainOk.match_1",
       "prefix": "VE.Definitions.chainOk"
+     }
+    ]
+   },
+   "axioms": [],
+   "lines": 2883,
+   "modes": [
+    "metered"
+   ],
+   "name": "metered",
+   "spec_lines": 2843,
+   "spec_modules": {
+    "VE.Acts.Lexical": 5,
+    "VE.Acts.LexicalBase": 41,
+    "VE.Acts.Tree": 23,
+    "VE.Bridge": 116,
+    "VE.Cardinality.Wire": 9,
+    "VE.Closure.Bridge": 43,
+    "VE.Closure.Finite": 4,
+    "VE.Closure.Paths": 3,
+    "VE.Closure.Syntax": 35,
+    "VE.Compose.Dispatch": 152,
+    "VE.Core.Bridge": 107,
+    "VE.Core.Finite": 36,
+    "VE.Core.Layers": 189,
+    "VE.Core.Paths": 6,
+    "VE.Core.Syntax": 41,
+    "VE.Core.Wire": 36,
+    "VE.Data.Background": 7,
+    "VE.Definitions.Elaborate": 49,
+    "VE.Definitions.Layer": 45,
+    "VE.Finite": 33,
+    "VE.Limits": 16,
+    "VE.Norms.Plain": 22,
+    "VE.Norms.Tree": 80,
+    "VE.Norms.Wire": 92,
+    "VE.Order.Finite": 41,
+    "VE.Order.ModelCheck": 20,
+    "VE.Order.Semantics": 19,
+    "VE.Order.Syntax": 54,
+    "VE.Order.Wire": 111,
+    "VE.Paths": 19,
+    "VE.Route.AstLimit": 70,
+    "VE.Route.Background": 20,
+    "VE.Route.Budget": 146,
+    "VE.Route.Closure": 63,
+    "VE.Route.Decode": 155,
+    "VE.Route.Flags": 23,
+    "VE.Route.Gate": 72,
+    "VE.Route.Metered": 28,
+    "VE.Route.MeteredRun": 61,
+    "VE.Route.MeteredWire": 56,
+    "VE.Route.PyDecoder": 97,
+    "VE.Route.Route": 45,
+    "VE.Route.Run": 3,
+    "VE.Route.Typed": 14,
+    "VE.Route.Wire": 315,
+    "VE.Semantics": 14,
+    "VE.Service.Standalone": 119,
+    "VE.Surface": 15,
+    "VE.Syntax": 49,
+    "VE.Time.Budget": 21,
+    "VE.Time.Wire": 3
+   },
+   "stated": {
+    "VE.Route.MeteredRun.runWith": [
+     "VE.Route.MeteredRun.runWith_sound"
+    ]
+   },
+   "theorems": 2,
+   "tier": "kernel",
+   "wrap_lines": 40,
+   "wrap_modules": {
+    "VE.Acts.Lexical": 5,
+    "VE.Acts.LexicalBase": 41,
+    "VE.Acts.Tree": 23,
+    "VE.Bridge": 106,
+    "VE.Cardinality.Wire": 9,
+    "VE.Compose.Dispatch": 152,
+    "VE.Core.Bridge": 84,
+    "VE.Core.Layers": 133,
+    "VE.Core.Paths": 3,
+    "VE.Core.Syntax": 41,
+    "VE.Core.Wire": 21,
+    "VE.Data.Background": 7,
+    "VE.Definitions.Elaborate": 49,
+    "VE.Definitions.Layer": 42,
+    "VE.Limits": 10,
+    "VE.Norms.Plain": 18,
+    "VE.Norms.Tree": 61,
+    "VE.Norms.Wire": 92,
+    "VE.Order.ModelCheck": 5,
+    "VE.Order.Syntax": 4,
+    "VE.Order.Wire": 57,
+    "VE.Paths": 3,
+    "VE.Route.AstLimit": 70,
+    "VE.Route.Background": 1,
+    "VE.Route.Gate": 72,
+    "VE.Route.MeteredRun": 52,
+    "VE.Route.PyDecoder": 97,
+    "VE.Route.Route": 45,
+    "VE.Route.Run": 3,
+    "VE.Route.Typed": 14,
+    "VE.Route.Wire": 186,
+    "VE.Service.Standalone": 138,
+    "VE.Surface": 15,
+    "VE.Syntax": 49,
+    "VE.Time.Wire": 3
+   }
+  },
+  {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Core.Layers.folPredicates",
+      "lines": 3,
+      "module": "VE.Core.Layers",
+      "name": "VE.Core.Layers.usesLayers.match_1",
+      "prefix": "VE.Core.Layers.usesLayers"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Service.Standalone.Legacy.profiles",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.Legacy.version.match_1",
+      "prefix": "VE.Service.Standalone.Legacy.version"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_3",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_7",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Route.Budget.evalN",
+      "lines": 48,
+      "module": "VE.Route.Budget",
+      "name": "VE.Route.Budget.evalC.match_9",
+      "prefix": "VE.Route.Budget.evalC"
+     },
+     {
+      "by": "VE.Closure.Formula.toCore",
+      "lines": 1,
+      "module": "VE.Closure.Syntax",
+      "name": "VE.Closure.instReprFormula.repr.match_1",
+      "prefix": "VE.Closure.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Formula.check",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprFormula.repr.match_1",
+      "prefix": "VE.Order.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Order.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Order.Syntax",
+      "name": "VE.Order.instReprTerm.repr.match_1",
+      "prefix": "VE.Order.instReprTerm.repr"
+     }
+    ],
+    "wrap": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Route.MeteredRun.reportedWith",
+      "lines": 15,
+      "module": "VE.Route.MeteredRun",
+      "name": "VE.Route.MeteredRun.query.match_1",
+      "prefix": "VE.Route.MeteredRun.query"
+     },
+     {
+      "by": "VE.Core.Layers.folPredicates",
+      "lines": 3,
+      "module": "VE.Core.Layers",
+      "name": "VE.Core.Layers.usesLayers.match_1",
+      "prefix": "VE.Core.Layers.usesLayers"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Service.Standalone.Legacy.profiles",
+      "lines": 5,
+      "module": "VE.Service.Standalone",
+      "name": "VE.Service.Standalone.Legacy.version.match_1",
+      "prefix": "VE.Service.Standalone.Legacy.version"
+     }
+    ]
+   },
+   "axioms": [],
+   "lines": 2463,
+   "modes": [
+    "metered"
+   ],
+   "name": "meteredLegacy",
+   "spec_lines": 2457,
+   "spec_modules": {
+    "VE.Bridge": 169,
+    "VE.Closure.Bridge": 53,
+    "VE.Closure.Finite": 4,
+    "VE.Closure.Paths": 3,
+    "VE.Closure.Syntax": 35,
+    "VE.Core.Bridge": 107,
+    "VE.Core.Finite": 36,
+    "VE.Core.Layers": 182,
+    "VE.Core.Paths": 6,
+    "VE.Core.Syntax": 41,
+    "VE.Core.Wire": 36,
+    "VE.Data.Background": 7,
+    "VE.Definitions.Elaborate": 49,
+    "VE.Definitions.Layer": 45,
+    "VE.Finite": 33,
+    "VE.Limits": 16,
+    "VE.Norms.Plain": 4,
+    "VE.Norms.Tree": 51,
+    "VE.Order.Finite": 41,
+    "VE.Order.ModelCheck": 20,
+    "VE.Order.Semantics": 19,
+    "VE.Order.Syntax": 54,
+    "VE.Order.Wire": 111,
+    "VE.Paths": 19,
+    "VE.Route.AstLimit": 70,
+    "VE.Route.Background": 20,
+    "VE.Route.Budget": 146,
+    "VE.Route.Closure": 63,
+    "VE.Route.Decode": 155,
+    "VE.Route.Flags": 23,
+    "VE.Route.Gate": 72,
+    "VE.Route.Metered": 28,
+    "VE.Route.MeteredRun": 55,
+    "VE.Route.MeteredWire": 56,
+    "VE.Route.PyDecoder": 97,
+    "VE.Route.Route": 45,
+    "VE.Route.Run": 3,
+    "VE.Route.Typed": 6,
+    "VE.Route.Wire": 315,
+    "VE.Semantics": 14,
+    "VE.Service.Standalone": 63,
+    "VE.Surface": 15,
+    "VE.Syntax": 49,
+    "VE.Time.Budget": 21
+   },
+   "stated": {
+    "VE.Route.MeteredRun.runWith": [
+     "VE.Route.MeteredRun.runWith_sound"
+    ]
+   },
+   "theorems": 2,
+   "tier": "candidate",
+   "wrap_lines": 6,
+   "wrap_modules": {
+    "VE.Bridge": 159,
+    "VE.Closure.Bridge": 10,
+    "VE.Core.Bridge": 84,
+    "VE.Core.Layers": 126,
+    "VE.Core.Paths": 3,
+    "VE.Core.Syntax": 41,
+    "VE.Core.Wire": 21,
+    "VE.Data.Background": 7,
+    "VE.Definitions.Elaborate": 49,
+    "VE.Definitions.Layer": 42,
+    "VE.Limits": 10,
+    "VE.Norms.Tree": 32,
+    "VE.Order.ModelCheck": 5,
+    "VE.Order.Syntax": 4,
+    "VE.Order.Wire": 57,
+    "VE.Paths": 3,
+    "VE.Route.AstLimit": 70,
+    "VE.Route.Background": 1,
+    "VE.Route.Gate": 72,
+    "VE.Route.MeteredRun": 32,
+    "VE.Route.PyDecoder": 97,
+    "VE.Route.Route": 45,
+    "VE.Route.Run": 3,
+    "VE.Route.Typed": 6,
+    "VE.Route.Wire": 186,
+    "VE.Service.Standalone": 63,
+    "VE.Surface": 15,
+    "VE.Syntax": 49
+   }
+  },
+  {
+   "attributed": {
+    "spec": [
+     {
+      "by": "VE.Surface.identifier",
+      "lines": 3,
+      "module": "VE.Surface",
+      "name": "VE.Surface.boundary.match_1",
+      "prefix": "VE.Surface.boundary"
+     },
+     {
+      "by": "VE.Formula.WellFormed",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprFormula.repr.match_1",
+      "prefix": "VE.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Term.sortOf",
+      "lines": 1,
+      "module": "VE.Syntax",
+      "name": "VE.instReprTerm.repr.match_1",
+      "prefix": "VE.instReprTerm.repr"
+     },
+     {
+      "by": "VE.Core.Formula.check",
+      "lines": 1,
+      "module": "VE.Core.Syntax",
+      "name": "VE.Core.instReprFormula.repr.match_1",
+      "prefix": "VE.Core.instReprFormula.repr"
+     },
+     {
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
+     },
+     {
+      "by": "VE.Compose.gateOf",
+      "lines": 42,
+      "module": "VE.Compose.Dispatch",
+      "name": "VE.Compose.todayGate.match_1",
+      "prefix": "VE.Compose.todayGate"
      },
      {
       "by": "VE.NormDefaults.Wire.placeholderJson",
@@ -1259,11 +1744,11 @@
       "prefix": "VE.Route.MeteredRun.query"
      },
      {
-      "by": "VE.Service.Standalone.Legacy.profiles",
-      "lines": 5,
-      "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.Legacy.version.match_1",
-      "prefix": "VE.Service.Standalone.Legacy.version"
+      "by": "VE.Definitions.firstBad",
+      "lines": 3,
+      "module": "VE.Definitions.Elaborate",
+      "name": "VE.Definitions.chainOk.match_1",
+      "prefix": "VE.Definitions.chainOk"
      },
      {
       "by": "VE.Compose.gateOf",
@@ -1271,13 +1756,6 @@
       "module": "VE.Compose.Dispatch",
       "name": "VE.Compose.todayGate.match_1",
       "prefix": "VE.Compose.todayGate"
-     },
-     {
-      "by": "VE.Definitions.firstBad",
-      "lines": 3,
-      "module": "VE.Definitions.Elaborate",
-      "name": "VE.Definitions.chainOk.match_1",
-      "prefix": "VE.Definitions.chainOk"
      },
      {
       "by": "VE.NormDefaults.Wire.placeholderJson",
@@ -1303,19 +1781,19 @@
     ]
    },
    "axioms": [],
-   "lines": 3238,
+   "lines": 3139,
    "modes": [
     "metered"
    ],
-   "name": "metered",
-   "spec_lines": 3232,
+   "name": "meteredActs",
+   "spec_lines": 3133,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
     "VE.Alternatives.Wire": 4,
-    "VE.Bridge": 169,
+    "VE.Bridge": 116,
     "VE.Cardinality.Wire": 9,
-    "VE.Closure.Bridge": 53,
+    "VE.Closure.Bridge": 43,
     "VE.Closure.Finite": 4,
     "VE.Closure.Paths": 3,
     "VE.Closure.Syntax": 35,
@@ -1332,9 +1810,9 @@
     "VE.Finite": 33,
     "VE.Limits": 16,
     "VE.NormDefaults.Wire": 18,
-    "VE.Norms.Plain": 21,
+    "VE.Norms.Plain": 22,
     "VE.Norms.Tree": 80,
-    "VE.Norms.Wire": 84,
+    "VE.Norms.Wire": 81,
     "VE.Order.Finite": 41,
     "VE.Order.ModelCheck": 20,
     "VE.Order.Semantics": 19,
@@ -1351,15 +1829,15 @@
     "VE.Route.Flags": 23,
     "VE.Route.Gate": 72,
     "VE.Route.Metered": 28,
-    "VE.Route.MeteredRun": 52,
+    "VE.Route.MeteredRun": 56,
     "VE.Route.MeteredWire": 56,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Run": 3,
-    "VE.Route.Typed": 18,
+    "VE.Route.Typed": 14,
     "VE.Route.Wire": 315,
     "VE.Semantics": 14,
-    "VE.Service.Standalone": 276,
+    "VE.Service.Standalone": 242,
     "VE.SoftNorms.Phases": 18,
     "VE.Surface": 15,
     "VE.Syntax": 49,
@@ -1372,15 +1850,14 @@
     ]
    },
    "theorems": 2,
-   "tier": "kernel",
+   "tier": "candidate",
    "wrap_lines": 6,
    "wrap_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
     "VE.Alternatives.Wire": 4,
-    "VE.Bridge": 159,
+    "VE.Bridge": 106,
     "VE.Cardinality.Wire": 9,
-    "VE.Closure.Bridge": 10,
     "VE.Compose.Dispatch": 152,
     "VE.Core.Bridge": 84,
     "VE.Core.Layers": 133,
@@ -1392,9 +1869,9 @@
     "VE.Definitions.Layer": 42,
     "VE.Limits": 10,
     "VE.NormDefaults.Wire": 18,
-    "VE.Norms.Plain": 17,
+    "VE.Norms.Plain": 18,
     "VE.Norms.Tree": 61,
-    "VE.Norms.Wire": 84,
+    "VE.Norms.Wire": 81,
     "VE.Order.ModelCheck": 5,
     "VE.Order.Syntax": 4,
     "VE.Order.Wire": 57,
@@ -1404,13 +1881,13 @@
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 1,
     "VE.Route.Gate": 72,
-    "VE.Route.MeteredRun": 29,
+    "VE.Route.MeteredRun": 33,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
     "VE.Route.Run": 3,
-    "VE.Route.Typed": 18,
+    "VE.Route.Typed": 14,
     "VE.Route.Wire": 186,
-    "VE.Service.Standalone": 276,
+    "VE.Service.Standalone": 242,
     "VE.SoftNorms.Phases": 18,
     "VE.Surface": 15,
     "VE.Syntax": 49,
@@ -3542,12 +4019,12 @@
     ]
    },
    "axioms": [],
-   "lines": 24257,
+   "lines": 24263,
    "modes": [
     "readingsRoute"
    ],
    "name": "readingsRoute",
-   "spec_lines": 9343,
+   "spec_lines": 9349,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 21,
@@ -3611,7 +4088,7 @@
     "VE.Norms.Basic": 41,
     "VE.Norms.Conflict": 25,
     "VE.Norms.Elaborate": 36,
-    "VE.Norms.Plain": 17,
+    "VE.Norms.Plain": 23,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 8,
     "VE.Norms.Subst": 33,
@@ -3760,7 +4237,7 @@
     "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 204,
+    "VE.Norms.Plain": 210,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 111,
@@ -3962,10 +4439,10 @@
      },
      {
       "by": "VE.Service.Standalone.reported",
-      "lines": 43,
+      "lines": 7,
       "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.identityCase.match_1",
-      "prefix": "VE.Service.Standalone.identityCase"
+      "name": "VE.Service.Standalone.readsApart.match_1",
+      "prefix": "VE.Service.Standalone.readsApart"
      },
      {
       "by": "VE.Alternatives.fulfilmentOk",
@@ -3982,11 +4459,11 @@
       "prefix": "VE.Reports.holderSort"
      },
      {
-      "by": "VE.Service.Standalone.validated",
-      "lines": 7,
+      "by": "VE.Service.Standalone.validatedOver",
+      "lines": 8,
       "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.profileTree.match_1",
-      "prefix": "VE.Service.Standalone.profileTree"
+      "name": "VE.Service.Standalone.profileTreeBy.match_1",
+      "prefix": "VE.Service.Standalone.profileTreeBy"
      },
      {
       "by": "VE.Core.Formula.check",
@@ -4574,12 +5051,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36232,
+   "lines": 36272,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36226,
+   "spec_lines": 36266,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -4733,7 +5210,7 @@
     "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 204,
+    "VE.Norms.Plain": 210,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 117,
@@ -4824,7 +5301,7 @@
     "VE.Senses.Version": 3,
     "VE.Service.Document": 1865,
     "VE.Service.ParseDiagnostic": 7,
-    "VE.Service.Standalone": 755,
+    "VE.Service.Standalone": 789,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
@@ -4945,10 +5422,10 @@
      },
      {
       "by": "VE.Service.Standalone.reported",
-      "lines": 43,
+      "lines": 7,
       "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.identityCase.match_1",
-      "prefix": "VE.Service.Standalone.identityCase"
+      "name": "VE.Service.Standalone.readsApart.match_1",
+      "prefix": "VE.Service.Standalone.readsApart"
      },
      {
       "by": "VE.Compose.gateOf",
@@ -5000,11 +5477,11 @@
       "prefix": "VE.Reports.holderSort"
      },
      {
-      "by": "VE.Service.Standalone.validated",
-      "lines": 7,
+      "by": "VE.Service.Standalone.validatedOver",
+      "lines": 8,
       "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.profileTree.match_1",
-      "prefix": "VE.Service.Standalone.profileTree"
+      "name": "VE.Service.Standalone.profileTreeBy.match_1",
+      "prefix": "VE.Service.Standalone.profileTreeBy"
      },
      {
       "by": "VE.Core.Formula.check",
@@ -5542,10 +6019,10 @@
      },
      {
       "by": "VE.Service.Standalone.reported",
-      "lines": 43,
+      "lines": 7,
       "module": "VE.Service.Standalone",
-      "name": "VE.Service.Standalone.identityCase.match_1",
-      "prefix": "VE.Service.Standalone.identityCase"
+      "name": "VE.Service.Standalone.readsApart.match_1",
+      "prefix": "VE.Service.Standalone.readsApart"
      },
      {
       "by": "VE.Compose.gateOf",
@@ -5788,12 +6265,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36197,
+   "lines": 36242,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35309,
+   "spec_lines": 35349,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -5940,7 +6417,7 @@
     "VE.Norms.Elaborate": 36,
     "VE.Norms.Flagged": 166,
     "VE.Norms.LayersOnce": 36,
-    "VE.Norms.Plain": 204,
+    "VE.Norms.Plain": 210,
     "VE.Norms.Prefix": 15,
     "VE.Norms.Replay": 86,
     "VE.Norms.Run": 117,
@@ -6040,7 +6517,7 @@
     "VE.Service.DocumentView": 67,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
-    "VE.Service.Standalone": 755,
+    "VE.Service.Standalone": 789,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Admission": 78,
     "VE.SoftNorms.Coherence": 20,
@@ -6082,7 +6559,7 @@
    },
    "theorems": 9,
    "tier": "candidate",
-   "wrap_lines": 895,
+   "wrap_lines": 900,
    "wrap_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 21,
@@ -6147,12 +6624,12 @@
     "VE.Norms.Conflict": 11,
     "VE.Norms.Elaborate": 33,
     "VE.Norms.LayersOnce": 32,
-    "VE.Norms.Plain": 31,
+    "VE.Norms.Plain": 32,
     "VE.Norms.Prefix": 10,
     "VE.Norms.Replay": 8,
     "VE.Norms.Subst": 31,
     "VE.Norms.Tree": 273,
-    "VE.Norms.Wire": 340,
+    "VE.Norms.Wire": 337,
     "VE.Order.Finite": 41,
     "VE.Order.ModelCheck": 41,
     "VE.Order.Semantics": 19,
@@ -6190,7 +6667,7 @@
     "VE.Service.CoreDocument": 3,
     "VE.Service.Document": 771,
     "VE.Service.ParseDiagnostic": 337,
-    "VE.Service.Standalone": 1076,
+    "VE.Service.Standalone": 1115,
     "VE.Service.TypingDiagnostic": 201,
     "VE.SoftNorms.Once": 95,
     "VE.SoftNorms.Phases": 333,

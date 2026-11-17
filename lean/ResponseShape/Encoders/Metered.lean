@@ -85,7 +85,11 @@ theorem reportedWith_fits (p : Except String Prepared) (j : Json) :
   · exact runWith_fits p j _ ‹_›
   · fits
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.metered (runCaseReported j) :=
-  reportedWith_fits _ j
+/-- The mode's entry answers with one of its runners (kb-4b), each `reportedWith` of a prepared environment. -/
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.metered (runCaseReported j) := by
+  unfold runCaseReported runCaseReportedLegacy runCaseReportedActs runCaseReportedCurrent
+  split
+  · exact reportedWith_fits _ j
+  · split <;> exact reportedWith_fits _ j
 
 end ResponseShape.Encoders.Metered

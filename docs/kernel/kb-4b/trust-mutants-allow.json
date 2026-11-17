@@ -1,0 +1,24 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Service.Standalone.validated",
+   "operator": "bool-flip",
+   "reason": "only the default `typing := false` of lean/VE/Service/Standalone.lean:313 (its `if typing` lines are unchanged): Lean elaborates a default into every call that omits it, so a check that refutes the flip changes its own term; the guard of lean/VE/Route/MeteredSplitExamples.lean comparing `validated e t` with the frozen `Today.validated e t` for both values of `t`, and `validated_plain` (`validated environment false`), refute each value"
+  },
+  {
+   "definition": "VE.Service.Standalone.regulatedBy",
+   "operator": "list-first",
+   "reason": "equivalent: `ps` reaches `fixed` (Standalone.lean:35), and both hooks' `fixed` read only whether `ps` is empty (`actsFixed`: `match ps.isEmpty, \u2026`; `ActsHook.plain.fixed`: `pure []`), and `(l.take 1).isEmpty = l.isEmpty` for every list; the act check reads the unmutated `ps`"
+  },
+  {
+   "definition": "VE.Service.Standalone.regulatedBy",
+   "operator": "list-drop-last",
+   "reason": "equivalent: as list-first, `fixed` reads only emptiness, and `ps` is nonempty only when `acts@0` is read (`actsProfiles`: `readsActs`), where the route gate's profile list holds `acts@0` and the base `relational-fol@0`, so `ps.dropLast` is nonempty too"
+  },
+  {
+   "definition": "VE.Service.Standalone.profileTreeBy",
+   "operator": "list-empty",
+   "reason": "the mutant does not elaborate (Standalone.lean:73: `[].any` has no element type to resolve the field notation `(entry.getObjVal? \u2026)`: 'Invalid field notation'), which the tool reports UNKNOWN; the same line's other mutants are killed"
+  }
+ ]
+}

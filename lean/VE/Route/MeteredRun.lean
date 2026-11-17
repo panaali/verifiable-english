@@ -13,8 +13,10 @@ contracts have been checked against the frozen oracle.
 
 Every case reads its environment through the service's one validation
 (`Standalone.evaluable`: the frozen `ve.core@0` and `ve.core@0.1` envelopes by
-their frozen decoders, `ve.core@0.2` by `Standalone.validated`), and each
-family is decoded once into a `Session` that both case kinds use.
+their frozen decoders, `ve.core@0.2` by `Standalone.validated` without typing), and each
+family is decoded once into a `Session` that both case kinds use. Since kb-4b the mode's entry
+answers each case with the runner of its environment's arm (`runCaseReported`; frozen envelope, acts,
+current), each answering as `runCase` does (lean/VE/Route/MeteredSplit.lean).
 
 What a case decodes from its environment alone is a `Prepared` (`prepare`): the
 service keeps it with an environment handle and answers every case against that
@@ -160,17 +162,40 @@ structure Prepared where
   (`Standalone.profileTree` of its model environment; none on a frozen envelope). -/
   profile : Thunk (Except String (Option VE.Norms.Tree))
 
-def prepare (environment : Json) : Prepared :=
-  let checked := VE.Service.Standalone.evaluable environment
-  { checked
-    profile := Thunk.mk fun _ => if VE.Service.Standalone.isLegacy environment then pure none
-      else do VE.Service.Standalone.profileTree (← VE.Service.Standalone.modelEnvironment environment)
+/-- What a case decodes from an environment checked as `checked`, with the norms profile `profile`: the layers and
+the family's vocabulary, each decoded from the checked environment on first use. -/
+def prepareOf (checked : Except String VE.Service.Standalone.Validated)
+    (profile : Thunk (Except String (Option VE.Norms.Tree))) : Prepared :=
+  { checked, profile
     layered := Thunk.mk fun _ => do
       let c ← checked
       VE.Core.Layers.decodeLayered c.envelope.profiles (← c.layers.elim (throw "no layers") pure)
     route := Thunk.mk fun _ => do Run.decodeRouteVocabulary (← checked).envelope
     order := Thunk.mk fun _ => do Wire.decodeOrderVocabulary (← checked).envelope.vocabulary
     core := Thunk.mk fun _ => do VE.Core.Bridge.decodeEnvironment (← checked).decodable }
+
+def prepare (environment : Json) : Prepared :=
+  prepareOf (VE.Service.Standalone.evaluable environment)
+    (Thunk.mk fun _ => if VE.Service.Standalone.isLegacy environment then pure none
+      else do VE.Service.Standalone.profileTree (← VE.Service.Standalone.modelEnvironment environment))
+
+/-- `prepare` of a frozen envelope (kb-4b): its frozen decoder, and no norms profile (`prepare_legacy`). -/
+def prepareLegacy (environment : Json) : Prepared :=
+  prepareOf (VE.Service.Standalone.evaluableLegacy environment) (Thunk.mk fun _ => pure none)
+
+/-- `prepare` of a `ve.core@0.2` environment (kb-4b): the acts runner's, today's (`prepare_acts`). -/
+def prepareActs (environment : Json) : Prepared :=
+  prepareOf (VE.Service.Standalone.evaluableActs environment)
+    (Thunk.mk fun _ => do VE.Service.Standalone.profileTree (← VE.Service.Standalone.modelEnvironment environment))
+
+/-- The current runner's prepared environment (kb-4b): `evaluableCurrent`, and the norms profile of the deciding view
+read through `ActsHook.plain`. It references no frozen decoder, no acts view and no typing reduction; where the current
+runner reads it, it answers as `prepare` does (`runWith_prepare_current`). -/
+def prepareCurrent (environment : Json) : Prepared :=
+  prepareOf (VE.Service.Standalone.evaluableCurrent environment)
+    (Thunk.mk fun _ => do
+      VE.Service.Standalone.profileTreeWith VE.Norms.Wire.ActsHook.plain
+        (← VE.Service.Standalone.modelEnvironmentCurrent environment))
 
 /-- The norms profile condition on a decoded model's relations, by the `model` mode's own check
 (`Plain.profileOkOn`, D13): a verdict path checks its model itself. -/
@@ -248,12 +273,43 @@ def reportedWith (prepared : Except String Prepared) (j : Json) : Json :=
   | .error message => Json.mkObj [("id", j.getObjValD "id"),
       ("status", .str "error"), ("error", .str message)]
 
-def runCaseReported (j : Json) : Json := reportedWith (prepare <$> j.getObjVal? "environment") j
+/-! ### The three runners (kb-4b)
 
-/-- A case answered with what its own environment decodes to is answered as it was sent. -/
-theorem reportedWith_prepare (j environment : Json) (h : j.getObjVal? "environment" = .ok environment) :
-    reportedWith (.ok (prepare environment)) j = runCaseReported j := by
-  simp [runCaseReported, h, Functor.map, Except.map]
+A case is answered by the runner of its environment's arm: a frozen envelope (`legacyCase`) by `runCaseLegacy`, an
+environment the acts runner reads apart (`actsCase`, `Standalone.readsApart`) by `runCaseActs`, every other case by
+`runCaseCurrent`. Each answers its cases as `runCase` does (`runCase_split`, lean/VE/Route/MeteredSplit.lean), and
+the mode's entry `runCaseReported` dispatches the same way (`runCaseReported_today`). -/
+
+/-- Whether a case's environment is a frozen envelope. -/
+def legacyCase (j : Json) : Bool :=
+  match j.getObjVal? "environment" with
+  | .ok environment => VE.Service.Standalone.isLegacy environment
+  | .error _ => false
+
+/-- Whether a case's environment is one the acts runner reads (`Standalone.readsApart`). -/
+def actsCase (j : Json) : Bool :=
+  match j.getObjVal? "environment" with
+  | .ok environment => VE.Service.Standalone.readsApart environment
+  | .error _ => false
+
+def runCaseLegacy (j : Json) : Except String Json := runWith (prepareLegacy <$> j.getObjVal? "environment") j
+
+def runCaseActs (j : Json) : Except String Json := runWith (prepareActs <$> j.getObjVal? "environment") j
+
+/-- The current runner: a case whose environment is no frozen envelope and which the acts runner does not read. -/
+def runCaseCurrent (j : Json) : Except String Json := runWith (prepareCurrent <$> j.getObjVal? "environment") j
+
+def runCaseReportedLegacy (j : Json) : Json := reportedWith (prepareLegacy <$> j.getObjVal? "environment") j
+
+def runCaseReportedActs (j : Json) : Json := reportedWith (prepareActs <$> j.getObjVal? "environment") j
+
+def runCaseReportedCurrent (j : Json) : Json := reportedWith (prepareCurrent <$> j.getObjVal? "environment") j
+
+/-- The mode's entry: the runner of the case's arm. -/
+def runCaseReported (j : Json) : Json :=
+  if legacyCase j then runCaseReportedLegacy j
+  else if actsCase j then runCaseReportedActs j
+  else runCaseReportedCurrent j
 
 def main (paths : List String) : IO UInt32 := do
   let input ← match paths with
