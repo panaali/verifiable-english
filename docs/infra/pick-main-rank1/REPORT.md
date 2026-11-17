@@ -1,4 +1,92 @@
-# pick-main-rank1: rank-1 main rule, fix round 1 (holder pid through subshells)
+# pick-main-rank1: rank-1 main rule, fix rounds 1 (holder pid through subshells) and 2 (every session of the row holds)
+
+## Fix round 2 (review `manage-agents/pick-main-rank1-looprecheck1.final.md`: F1 and F-ready1 FIXED, F2 (B) new)
+
+Fix round 1 is installed now: the live picker md5 is `aa89fe5b4eda1ea93c9afed5894e71c5`, the round-1 staged script. The round-2
+fix is staged as `manage-agents/pick-claude-account.sh.new-r1` (md5 `b52321d8d0fa600cdacd6fb98c96b0bd`, `zsh -n` clean,
+diff `fix2-picker.diff`). It needs an install read (below). No file of this repo outside this folder changed.
+
+### F2 (B): a second session of the same rank-1 row was not recorded in the marker
+
+**Class:** the marker recorded one holder per rank-1 row, but a row can be on main through several sessions
+(`feature-pipeline.sh:110-112` and `infra-item.sh:331,335` run two per row, plus forked subshells of one caller). The
+marker's state and the row's real use of main could drift apart in three ways:
+- a second session of the row was let onto main without being recorded;
+- when the recorded holder exited, the marker looked stale while the row was still on main, so the next rank-1 row got main;
+- the give-back (`:377`) could remove a marker that another session of the row relied on. One case: session A takes the
+  marker but will not pick main, session B of the row joins, then A gives back.
+
+**Fix:** one reader and one writer of the marker (`r1read`, `r1write`), used by both the take and the give-back, both under
+the marker lock.
+- The marker is `<item> <pid>[:<n>] ...` and lists every live holder of the row; `<n>` counts the grants of one holder pid
+  and is written only when it is over 1.
+- Every grant adds its holder (`r1holder()`) or raises its count.
+- A marker is stale only when none of its pids lives. Dead pids and bad tokens are dropped on the next write.
+- A live marker of another row refuses, naming all of its live pids.
+- The give-back now runs under the lock and takes back only the grants this call added (`r1made` is a count now). Other
+  holders and earlier grants of the same holder stay.
+- The rule-head comment (`:148`) states the list.
+
+Only the picker and its tests read the marker (`grep` over manage-agents). A marker in the old one-pid format reads as a
+one-holder list.
+
+**Probe F2** (the review's command, verbatim, with `PICK_SCRIPT=<script>`; `fix2-run-tests.log`):
+- live picker (round 1): exit 1;
+- staged `.new-r1`: exit 0.
+
+**Regression tests**, in `manage-agents/tools-local/test_pick_main5h_unknown.py` (`Rank1Main`; diff `fix2-tests.diff`):
+- `test_same_row_second_session_keeps_main_after_first_exits`: the probe as a test. Two live callers of the row are both
+  listed; after the first exits, another rank-1 row is refused (naming the second) until the second exits.
+- `test_same_row_give_back_keeps_other_session`: the give-back race, made deterministic with a fifo in the `accounts.sh`
+  fixture. A (with `PICK_AVOID`) takes the marker; B of the same row joins and picks main; A gives back. B stays listed and
+  other rows stay out.
+- `test_same_row_same_holder_counts_grants`: one holder pid granted twice, and one grant given back. The other grant stays.
+- `test_same_row_marker_live_while_any_pid_lives`: a live pid after a dead pid and a junk token still refuses another row.
+  Joining drops the dead pid and the junk; an all-dead marker is cleared.
+
+The callers that `hold()` starts read their fifos with `read -t 120`, are killed in `addCleanup` and do not inherit the
+test's output. So a failing assertion leaves no process behind.
+
+**Results:**
+- Staged: 30 of 30 OK.
+- Live (round 1): the four `test_same_row_*` cases fail and the 26 others pass.
+- `test_same_row_same_holder_counts_grants` fails on the live picker only on the marker format: sequential picks of one
+  holder never gave back there. It guards the count against the seed `F2-giveback-drops-all-grants`.
+
+**Seeded bugs** (`seeded-bugs.json`, `fix2-run-seeded.log`): four mutants of the staged script, each caught.
+- join not listed (the old behaviour);
+- the give-back drops the whole marker;
+- stale judged by the first pid only;
+- the give-back drops every grant of the holder.
+
+**Other picker suites, live and staged** (`fix2-run-other-suites.log`):
+- Results are identical on both scripts.
+- `endgame` and `pick_mgmt` failed on both under this session's environment. Their env starts from `os.environ`, and this
+  session exports `PICK_AVOID=main`, which holds main out. With the session's `PICK_*` unset, both pass on both scripts.
+  This is an isolation gap in those tests, not in the picker, and it is not a finding of this review.
+- `role_budget test_listed_item_goes_unlisted_waits` fails on both scripts, as in round 1 and the build round: pre-existing.
+- Every other suite is OK.
+
+**Repo checks:**
+- No VE code changed in round 2.
+- DELTA: none, so there are no Ruling cells.
+- The selected run (`mac-pytest.sh --select`), `lake build` and `python3 lean/audit.py` are recorded below.
+- `[gate]` is left to the merge train (R17).
+
+### Install round 2 (picker read per call, no restart)
+
+Check first that the live md5 is still `aa89fe5b4eda1ea93c9afed5894e71c5`. The test file is already updated in place; until
+the install, its four `test_same_row_*` cases fail on the live picker.
+
+```
+cd /home/seyran/code/manage-agents
+cp -p pick-claude-account.sh pick-claude-account.sh.bak-20261117-r1fix2
+mv pick-claude-account.sh.new-r1 pick-claude-account.sh
+```
+
+Any live marker `pick-main-rank1` in the old one-pid format stays valid; it reads as a one-holder list.
+
+## Fix round 1
 
 Row pick-main-rank1; decision `reviews/dri-decisions-20261116-rsp-presync.md` item 6; review
 `manage-agents/pick-main-rank1-review.final.md` (FIX: F1 (B), F-ready1 (B)). All product changes are in
@@ -71,7 +159,7 @@ seeded bugs) is now committed on `infra/pick-main-rank1`, following `docs/infra/
 
 Install read sent: `manage-agents/inbox/dri/20261117T013930Z-pick-main-rank1-3202893.md`.
 
-## Install (picker read per call, no restart)
+## Install round 1 (done: the live md5 is the round-1 staged script)
 
 Check first that the live md5 is still `deb8c19d7a50f67e6613e0e62d8f5afc`, then:
 
