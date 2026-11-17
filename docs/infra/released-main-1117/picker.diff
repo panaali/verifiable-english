@@ -1,0 +1,179 @@
+--- pick-claude-account.sh	2026-11-17 01:17:16.899506203 +0000
++++ pick-claude-account.sh.new-rel	2026-11-17 04:45:30.128995823 +0000
+@@ -50,7 +50,23 @@
+ # "yield: Nov 23 path row <x> waiting"). Tests: python3 -I tools-local/test_pick_released_yield.py
+ rlinks=(); [ -n "$PICK_ITEM" ] && rlinks=($(python3 -I $PCF/tools-local/pick_critical.py links "$PICK_ITEM" 2>/dev/null))
+ rrel=${rlinks[1]:-0}; ravoid="${rlinks[2,-1]}"
+-[ -n "$ravoid" ] && export PICK_AVOID="${PICK_AVOID:+$PICK_AVOID }$ravoid"
++# 2026-11-17 released-main-1117 (reviews/dri-decisions-20261117-released-main.md item 2; orchestrator BATCH 032312Z; INSTALL READ):
++# a released row whose links.avoid names main (relmain; not for PICK_COORD callers) leaves the row's own "main" out of PICK_AVOID;
++# instead pick() admits main for it (PICK_REL_, never inherited; not in the cfhold probe) only while main week <= the
++# PICK_MAIN_PACE line - 4 AND the main week rise over 300 min of usage-watch.log < 5 AND it holds or takes the ONE released-row main
++# marker $PCF/pick-main-released ("<row> <pid>[:<grants>] ...": every live holder of the row; a second session of the row joins, the
++# marker is stale only when none of its pids lives, a give-back takes back only this call's grants) AND, to take a free marker, no
++# better-ranked released row waits for main (pick-waiting-relmain/, tools-local/pick_critical.py (vi): rank, then FEATURE-QUEUE.tsv
++# rank). Otherwise main is held out as before ("held out (PICK_AVOID: row links.avoid main; released-row main rule: <why>)"). A
++# live Nov 23 path waiting marker refuses the row on every account first (ryield). Any other "main" in PICK_AVOID (run-codex.sh's
++# own, dri-* delegates, claude-resume-on-limit.sh), the row's other avoid entries and every other gate (stand-in guard, main worker
++# cap and taper, week caps, pace line, role hold, rank holds) stay. Tests: python3 -I tools-local/test_pick_released_main.py
++# released-main-1117 F1 (review released-main-1117-review.final.md): a caller that avoids main itself (its own PICK_AVOID names
++# main, e.g. run-codex.sh's PICK_AVOID_RCX) never takes main, so it is no relmain caller: it gets no rule and writes no waiter.
++relmain=""; [ "$rrel" = 1 ] && [[ " $ravoid " == *" main "* ]] && [ -z "$PICK_COORD" ] && [[ " ${PICK_AVOID:-} " != *" main "* ]] && relmain=1
++() { local -a rv=(${=ravoid}); [ -n "$relmain" ] && rv=(${rv:#main}); [ -n "${rv[*]}" ] && export PICK_AVOID="${PICK_AVOID:+$PICK_AVOID }${rv[*]}"; }
++relrule(){ [ -n "$relmain" ] && [ -z "$r1off" ] && print 1; return 0; }
++relwait(){ [ -n "$relmain" ] && python3 -I $PCF/tools-local/pick_critical.py relmain$1 "$PICK_ITEM" > /dev/null 2>&1; return 0; }
+ ryield(){ ryrow=""; [ "$rrel" = 1 ] || [ "${PICK_YIELD_PATH:-}" = 1 ] || return 1
+   ryrow=$(python3 -I $PCF/tools-local/pick_critical.py yield "${PICK_ITEM:-}" 2>/dev/null) && [ -n "$ryrow" ]; }
+ mhold(){ unset PICK_MAIN_HELD; [ -z "$PICK_COORD" ] || return 0; local h; h=$(python3 -I $PCF/tools-local/pick_critical.py mainheld "${PICK_ITEM:-}" 2>/dev/null) && [ -n "$h" ] && export PICK_MAIN_HELD=$h; return 0; }
+@@ -61,7 +77,7 @@
+ # account loop finds the caller above any forked subshell (r1holder). The cfhold probe (r1off) never uses it.
+ r1pid=$PPID; r1off=""
+ r1rank(){ [ -n "${PICK_ITEM:-}" ] && [ -z "$r1off" ] && [ -z "$PICK_COORD" ] && [ "$(python3 -I $PCF/tools-local/pick_critical.py rank "$PICK_ITEM" 2>/dev/null)" = 1 ] && print 1; return 0; }
+-pick(){ BUSY="${PICK_BUSY-$(busy)}" zsh ${PICK_ACCOUNTS_SH:-~/code/manage-agents/accounts.sh} | PICK_R1_="$(r1rank)" PICK_R1_MARKER="$PCF/pick-main-rank1" PICK_R1_PID="$r1pid" BUSY="${PICK_BUSY-$(busy)}" python3 -c '
++pick(){ BUSY="${PICK_BUSY-$(busy)}" zsh ${PICK_ACCOUNTS_SH:-~/code/manage-agents/accounts.sh} | PICK_R1_="$(r1rank)" PICK_R1_MARKER="$PCF/pick-main-rank1" PICK_R1_PID="$r1pid" PICK_REL_="$(relrule)" PICK_REL_MARKER="$PCF/pick-main-released" BUSY="${PICK_BUSY-$(busy)}" python3 -c '
+ import sys, datetime, zoneinfo, os
+ sys.path.insert(0, os.path.expanduser("~/code/manage-agents/tools-local")); import endgame
+ tz = zoneinfo.ZoneInfo("America/Los_Angeles"); now = endgame.now(); best = None; fb = None
+@@ -101,7 +117,10 @@
+ # main week < PICK_CRIT_MAIN_WEEK (60) and its 5-h window < PICK_CRIT_MAIN_5H (50), read as below; every other gate stays
+ critmain = os.environ.get("PICK_CRIT_MAIN") == "1"
+ why = []
+-def no(a, f, w, text): why.append(f"{a}: {text} (5-h " + (str(f) if f >= 0 else "?") + f"%, week {w}%)")
++def no(a, f, w, text):
++    global relwant
++    why.append(f"{a}: {text} (5-h " + (str(f) if f >= 0 else "?") + f"%, week {w}%)")
++    if a == "main" and relwant is None: relwant = True  # released-main-1117 F1 (relwant, below): every refusal of main, unless already one of the caller own refusals
+ # 2026-11-16 main-5h-unknown-1116 (orchestrator NOW(critical) 194526Z; ADV-20261116T1935-2; reviews/dri-decisions-20261116-adv1935.md
+ # item 2): the main rate-limit reply carries no five_hour window at all (MEASURED, one raw probe 19:54Z: unifiedWindows has seven_day
+ # only), so accounts.sh prints 5-h -1 with reset "?" on every main line since 11-0x while the main week rose 43 -> 47 (15:01Z-19:17Z
+@@ -215,6 +234,72 @@
+     ok, why_ = r1hold()
+     return (ok, "" if ok else "rank-1 main rule: " + why_)
+ r1d = None  # the main config dir admitted by the rank-1 rule
++# 2026-11-17 released-main-1117 (shell: relmain, above): PICK_REL_ = this caller is a released row whose own links.avoid main the
++# shell left out of PICK_AVOID; main is admitted for it only by relok below (pace line - 4, 300-min rise < 5, the one released-row
++# marker PICK_REL_MARKER with every live holder of the row, a better-ranked released waiter first); refused: held out as before.
++# The holder pid is r1holder() (the caller above any forked subshell). Tests: python3 -I tools-local/test_pick_released_main.py
++relon = os.environ.get("PICK_REL_") == "1"; relmark = os.environ.get("PICK_REL_MARKER", ""); relmade = 0; reld = None
++# released-main-1117 F1 (review released-main-1117-review.final.md): the waiter that keeps the rank order. A PICK_REL_ caller whose
++# pick fails WAITS for main (pick_critical.relmain_mark: pick-waiting-relmain/<row>) whenever main was refused by a gate every
++# released row shares: the state of main (stand-in guard, the pace line of this rule and 300-min rise, the held or rank-kept marker, the
++# caps, rank and critical-builder holds, week and 5-h limits, the pace line, PICK_EXCLUDE). Only the OWN refusals of the caller write
++# none (relwant False): its own PICK_AVOID names main (the account or its config dir), or relhold failed for this caller (no
++# caller pid, the marker unreadable). One classifier (no() sets True; the two own cases set False first), so a refusal added
++# later waits by default. relwant: None = main not refused (or not listed).
++relwant = None
++def hlock(mk):
++    import fcntl
++    lk = open(mk + ".lock", "a"); fcntl.flock(lk, fcntl.LOCK_EX)
++    return lk
++def hread(mk):  # under the lock: (row, {live pid: grants}); (None, {}) without a marker; dead or bad pids dropped
++    try: hx = open(mk).read().split()
++    except FileNotFoundError: return (None, {})
++    hs = {}
++    for tok in hx[1:]:
++        p, _, n = tok.partition(":")
++        try: p, n = int(p), int(n or 1)
++        except ValueError: continue
++        if n > 0 and pid_alive(p): hs[p] = hs.get(p, 0) + n
++    return ((hx[0] if hx else "?"), hs)
++def hwrite(mk, row, hs):  # under the lock: the marker of row with holders hs; none left: no marker
++    if not hs:
++        try: os.remove(mk)
++        except FileNotFoundError: pass
++        return
++    with open(mk + ".tmp", "w") as fh: fh.write(row + "".join(f" {p}" + (f":{n}" if n > 1 else "") for p, n in hs.items()) + "\n")
++    os.replace(mk + ".tmp", mk)
++def relrow():  # the base row id of PICK_ITEM (pick_critical.base: a continue round -c<6 digits> is its row)
++    import pick_critical
++    return pick_critical.base(r1item)
++def relhold():  # (ok, reason); joins a live marker of this row, takes a free or stale one unless a better released row waits
++    global relmade, relwant
++    me = r1holder()
++    if me is None: relwant = False; return (False, "no caller pid")
++    if not relmark or not r1item: relwant = False; return (False, "no holder marker")
++    try:
++        import pick_critical
++        row = relrow()
++        with hlock(relmark):
++            hi, hs = hread(relmark)
++            if hs and hi != row:
++                return (False, f"main held by released row {hi} (pid " + " ".join(map(str, hs)) + ")")
++            if not hs:
++                ah = pick_critical.relmain_ahead(r1item)
++                if ah: return (False, f"main kept for better-ranked released row {ah} (waiting, pick-waiting-relmain/)")
++            hs[me] = hs.get(me, 0) + 1
++            hwrite(relmark, row, hs); relmade += 1
++            return (True, "")
++    except (OSError, ImportError, AttributeError) as e:  # AttributeError: pick_critical.py without (vi) installed: refused
++        relwant = False
++        return (False, f"holder marker unreadable ({e.__class__.__name__})")
++def relok(w):  # (ok, reason) of the released-row main rule for main at week w; ok also makes this caller a holder
++    pl = pace_line()
++    if pl is None: return (False, "no PICK_MAIN_PACE line")
++    if w > pl - 4: return (False, f"week {w} > PICK_MAIN_PACE line {pl:.1f} - 4")
++    wr = week_rise("main", 300)
++    if wr is None: return (False, "week trend unknown")
++    if wr[0] >= 5: return (False, f"week +{wr[0]} pt in 5 h >= 5")
++    return relhold()
+ for line in sys.stdin:
+     a, d, f, w, st, r1, r2 = line.split()
+     f, w = int(f), int(w)
+@@ -223,6 +308,7 @@
+     if f < 0 and st.startswith("allowed") and r1 != "?" and (endgame.hours_to(r1, now) if endgame.hours_to(r1, now) is not None else 1) <= 0: f = 0
+     f5u = f < 0 and st.startswith("allowed")  # allowed, but no 5-h figure
+     if critmain and a != "main": continue
++    if a == "main" and relon and (a in avoid or os.path.basename(d) in avoid): relwant = False  # F1 (relwant): the own avoid of the caller, whichever gate refuses first
+     r1_ = (False, "")  # pick-main-rank1 (above): asked only where a guard below would refuse main, so only a row that needs it holds the marker
+     if critmain and not (0 <= f < int(os.environ.get("PICK_CRIT_MAIN_5H", "50")) and w < int(os.environ.get("PICK_CRIT_MAIN_WEEK", "60"))):
+         if a == "main" and f5u and w < int(os.environ.get("PICK_CRIT_MAIN_WEEK", "60")) and not os.environ.get("PICK_COORD"): r1_ = r1ok(w)
+@@ -242,6 +328,11 @@
+     if r1_[0]: r1d = d
+     if a in excl or os.path.basename(d) in excl or a in avoid or os.path.basename(d) in avoid:  # 2026-10-29 dri-lp0401: PICK_EXCLUDE may name the config dir (claude-danielsaeedi37), which never matched the account name; 2026-10-28 dri-cacheweight: accounts named in PICK_EXCLUDE (one per line) are held out of the picker
+         no(a, f, w, "held out (" + ("PICK_EXCLUDE" if (a in excl or os.path.basename(d) in excl) else "PICK_AVOID") + ")"); continue
++    if a == "main" and relon:  # released-main-1117 (above): the own links.avoid main of the row, unless the released-row main rule admits it
++        rel_ = relok(w)
++        if not rel_[0]:
++            no(a, f, w, "held out (PICK_AVOID: row links.avoid main; released-row main rule: " + rel_[1] + ")"); continue
++        reld = d
+     if hold and d == hold:
+         no(a, f, w, "held for a waiting critical builder (pick-waiting/, bs-pick-critical-first)"); continue
+     size = 2 if a == "main" else 1  # 2026-10-04: main (panaali2) is a 20x plan, the others 5x: one percent of main is 4x the tokens
+@@ -376,6 +467,20 @@
+     try:
+         if open(r1mark).read().split() == [r1item, str(r1holder())]: os.remove(r1mark)
+     except OSError: pass
++if relmade and (best[1] if best else fb) != reld:  # released-main-1117: main admitted but not picked: take back only the grants of this call
++    try:
++        with hlock(relmark):
++            hi, hs = hread(relmark); me = r1holder()
++            if hi == relrow() and me in hs:
++                hs[me] -= relmade
++                if hs[me] <= 0: del hs[me]
++                hwrite(relmark, hi, hs)
++    except OSError: pass
++if relon and relwant and not best and not fb:  # released-main-1117 F1 (relwant, above): the row waits for main, so it keeps its rank
++    try:
++        import pick_critical
++        pick_critical.relmain_mark(r1item)
++    except (OSError, ImportError, AttributeError): pass
+ if best: print(best[1])
+ elif fb: print(fb)
+ else: print("; ".join(why) or "no account listed"); sys.exit(1)
+@@ -490,12 +595,14 @@
+ # refusals read "no eligible account: <account>: <gate> (5-h f%, week w%); ..." (the pick() reasons; tools-local/test_pick_why.py)
+ while true; do pwhy=""
+   if ryield; then pwhy="yield: Nov 23 path row $ryrow waiting (targets ruling A2(c): released row or PICK_YIELD_PATH; every account)"
++    relwait mark  # released-main-1117 F1: the yield refuses every released row alike, so the row keeps its rank for main
+   elif overloaded && [ $(( $(date +%s) - t0 )) -lt 2700 ]; then
+     # 2026-10-28 dri-advfix2 (advisor ADV-20261028T0227-4): say when the wait is the CPU-load gate, not the accounts (the CPU-loss measure counts these)
+     pwhy="load gate: VM 5-min load $(cut -d' ' -f2 ${PICK_LOADAVG:-/proc/loadavg}) > 2x $(nproc) cores (delays at most 45 min)"
+   elif rolehold; then pwhy="role budget: $rheld (ROLE_BUDGET)"
+-  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
+-  else pwhy="no eligible account: ${${a//$'\n'/ }:-the account check gave no reason}"; cfmark mark; [[ "$a" == *"main: main worker cap"* ]] && mmark mark; cffall; fi
++  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; relwait unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
++  else pwhy="no eligible account: ${${a//$'\n'/ }:-the account check gave no reason}"; cfmark mark; [[ "$a" == *"main: main worker cap"* ]] && mmark mark
++    cffall; fi  # released-main-1117 F1: pick() itself writes the released row's main waiter (relwant), no reason text is matched here
+   [ -n "$PICK_NOWAIT" ] && { print -r -- "PICK_WHY: $pwhy" >&2; exit 1; }
+   echo "$(date -u +%FT%H:%MZ) pick-claude-account: $pwhy; waiting (caller pid $PPID) busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} coord=${PICK_COORD:-0}" >> ~/code/manage-agents/pick-wait.log
+   [ -z "$ptold" ] && [ $(( $(date +%s) - t0 )) -gt $(( ${PICK_TELL_MIN:-60} * 60 )) ] && { ptold=1; ptell; }
