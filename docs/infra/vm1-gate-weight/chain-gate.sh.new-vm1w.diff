@@ -1,0 +1,67 @@
+--- /home/seyran/code/manage-agents/chain-gate.sh.new-vmcancel	2026-11-17 12:23:30.646604661 +0000
++++ /home/seyran/code/manage-agents/chain-gate.sh.new-vm1w	2026-11-17 13:24:21.097805507 +0000
+@@ -364,11 +364,51 @@
+ #    KILL after 60 s), then event gate-cancelled, gate-result.json removed (gate.py writes a failed placeholder at its start, and
+ #    a cancelled rerun's full record is kept as $M/vm-gate-<label>.full.json), exit 4. p1-ready-unstartable-alert waited 1.72 h
+ #    (11-16) on a cancelled VM gate. Unset: the old foreground subshell, unchanged. Test: tools-local/test_chain_gate_vm_cancel.py.
++# 2026-11-17 vm1-gate-weight (orchestrator BATCH 125731Z item 5; reviews/dri-decisions-20261117-orch1257.md item 5; ve-cloud-2's
++#    rule, cloud2-run.sh "ONE GATE PER HOST", reviews/dri-decisions-20261114-gate50.md item 2). From Nov 18 07:22Z every chain
++#    gate runs on VM1 (Mac down), and its VM gate ran in the chain's own scope at CPUWeight 100, beside every builder chain,
++#    with no limit on gates at once. Now (1) the VM gate and its R13 rerun run as `zsh $M/iso.sh vmgate-<label>-<pid>
++#    ${VM_GATE_MEM:-48G} -- <the same gate.py command>`, and iso.sh gives vmgate-* CPUWeight 1000 (the trains' class); on a
++#    FIX_EARLY cancel selrun stops the scope's process group (systemd-run --scope keeps the pid, group and session), then
++#    `systemctl --user stop` of ve-vmgate-<label>-<pid>-*.scope ends anything that left the group; (2) a VM gate holds one of
++#    VM_GATE_MAX (default 1) slots, $M/locks/vm1-gate.lock (then vm1-gate-2.lock ...; zsystem flock, fcntl: only this shell
++#    holds it, released at its exit), for its run AND its R13 rerun (one hold); a rerun after a ve-cloud-2 gate takes a slot
++#    itself. Another gate waits for a slot with no time limit (VM1 is the last host), event gate-wait "waiting: another VM
++#    gate holds vm1 (<holder labels, from <lock>.holder; unknown after 3 polls>)" once, polled every VM_GATE_POLL s (10); a CHAIN_GATE_CANCEL file ends the wait: event
++#    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / ve-cloud-2 gates
++#    take no slot and keep their weight. No $VM_GATE_ISO (default $M/iso.sh) file: the old unscoped command (a note on
++#    stderr). Test: tools-local/test_vm1_gate_weight.py.
++viso=${VM_GATE_ISO:-$M/iso.sh}; [ -f "$viso" ] || { echo "chain-gate.sh: no $viso: the VM gate runs unscoped" >&2; viso=""; }
++vheld=""; vfd=""
++vlock(){
++  [ -n "$vheld" ] && return 0
++  zmodload zsh/system || return 0
++  local d=${VM_GATE_LOCK_DIR:-$M/locks} n=${VM_GATE_MAX:-1} i f l p x said="" who=() tries=0 t0=$(date +%s)
++  [[ $n == <-> ]] && (( n >= 1 )) || n=1
++  mkdir -p $d
++  while :; do
++    for i in {1..$n}; do f=$d/vm1-gate.lock; (( i > 1 )) && f=$d/vm1-gate-$i.lock; : >> $f
++      if zsystem flock -t 0 -f vfd $f 2>/dev/null; then vheld=$f; print -r -- "$label $$ $(date -u +%FT%TZ)" > $f.holder
++        [ -n "$said" ] && echo "chain-gate.sh: vm1 slot $f after $(( $(date +%s) - t0 ))s" >&2; return 0; fi
++    done
++    if [ -n "$CHAIN_GATE_CANCEL" ] && [ -e "$CHAIN_GATE_CANCEL" ]; then [ -n "$1" ] && rm -f $w/gate-result.json  # as vmcx
++      ev gate-cancelled "no VM gate: $CHAIN_GATE_CANCEL (FIX_EARLY$1) while waiting for vm1"; exit 4; fi
++    if [ -z "$said" ]; then who=(); (( tries++ ))  # a holder writes its .holder just after its flock: 3 polls to name it
++      for i in {1..$n}; do f=$d/vm1-gate.lock; (( i > 1 )) && f=$d/vm1-gate-$i.lock
++        read -r l p x < $f.holder 2>/dev/null && [[ $p == <-> ]] && kill -0 $p 2>/dev/null && who+=($l); done
++      if (( ${#who} || tries >= 3 )); then said=1; (( ${#who} )) || who=(unknown)
++        ev gate-wait "waiting: another VM gate holds vm1 (${(j:, :)who})"; echo "chain-gate.sh: waiting: another VM gate holds vm1 (${(j:, :)who})" >&2; fi; fi
++    sleep ${VM_GATE_POLL:-10}
++  done; }
+ vmg(){
+-  if [ -n "$CHAIN_GATE_CANCEL" ]; then selrun env -C $w VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@"
+-  else (cd $w && VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@"); fi; }
+-vmcx(){ [ -n "$cx" ] || return 0; rm -f $w/gate-result.json; ev gate-cancelled "vm gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY$1)"; exit 4; }
++  local c=(env -C $w VE_REQUIRE_PINNED_SOURCES=1 uv run python tools/gate.py "$@")
++  [ -n "$viso" ] && c=(zsh $viso vmgate-$label-$$ ${VM_GATE_MEM:-48G} -- $c)
++  if [ -n "$CHAIN_GATE_CANCEL" ]; then selrun $c; else $c; fi; }
++vmcx(){ [ -n "$cx" ] || return 0
++  [ -n "$viso" ] && ${VM_GATE_SYSTEMCTL:-systemctl} --user stop "ve-vmgate-${label//[^A-Za-z0-9_-]/_}-$$-*.scope" > /dev/null 2>&1
++  rm -f $w/gate-result.json; ev gate-cancelled "vm gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY$1)"; exit 4; }
+ if [ -z "$c2g" ]; then
++vlock
+ ev gate-start "vm ${h[1,8]}"
+ vmg --workers ${VM_GATE_WORKERS:-8} > $M/vm-gate-$label.log 2>&1; rc=$?
+ ev gate-end "vm rc=$rc"; vmcx; fi
+@@ -389,7 +429,8 @@
+       and "pytest" in (d.get("stages") or []) and 0 < len(tests) <= 10 and not rest)
+ raise SystemExit(0 if ok else 1)
+ EOF
+-then cp $w/gate-result.json $M/vm-gate-$label.full.json; ev gate-start "vm-rerun ${h[1,8]}"
++then cp $w/gate-result.json $M/vm-gate-$label.full.json; vlock "; R13 rerun"; ev gate-start "vm-rerun ${h[1,8]}"
+   vmg --rerun-failed --workers ${VM_GATE_WORKERS:-8} >> $M/vm-gate-$label.log 2>&1; rc=$?
+   ev gate-end "vm-rerun rc=$rc"; vmcx "; R13 rerun"; fi
++[ -n "$vheld" ] && zsystem flock -u $vfd 2>/dev/null  # vm1-gate-weight: the slot is free (it would be at exit too)
+ [ $rc -eq 0 ]
