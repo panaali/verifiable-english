@@ -260,8 +260,9 @@ def test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash(fake):
 def test_every_gate_runs_the_kernel_check_after_the_lean_build(fake, monkeypatch):
     """docs/spec/kernel-boundary.md section 6 (KB-1): a full gate and a rerun both run `tools/kernel_closure.py
     --check` against the saved baseline in the trust stage, after the Lean build; a failing check fails the gate."""
+    # kb-regen-closure-check F2: the stage runs the entry's whole check, the `--fresh` half included.
     check = ["uv", "run", "--frozen", "--no-sync", "python", "tools/kernel_closure.py", "--check",
-             "docs/kernel/closure-baseline.json"]
+             "docs/kernel/closure-baseline.json", "--fresh", "docs/kernel/closure-baseline.json"]
     for flags in ((), ("--rerun-failed",)):
         fake.run(*flags)
         fake.failing = set()
@@ -278,3 +279,50 @@ def test_every_gate_runs_the_kernel_check_after_the_lean_build(fake, monkeypatch
     monkeypatch.setattr(gate, "command", failing_kernel)
     code, record = fake.run()
     assert (code, record["status"]) == (1, "failed") and "Kernel check" in json.dumps(record["failures"])
+
+
+def test_every_gate_stage_a_regen_entry_names_runs_that_entrys_whole_check(fake):
+    """kb-regen-closure-check F2, as a class: an entry's `fresh="gate:<stage>"` says the gate runs its check
+    unmocked at that stage. The gate ran `kernel_closure.py --check` alone (the entry's `--fresh` half ran
+    nowhere) and `wire_contract --check` without the entry's conformance directory. Every such stage runs
+    exactly the entry's check commands, in a full gate and a rerun."""
+    from tools import regen_generated as R
+    named = sorted({entry.fresh.removeprefix("gate:") for entry in R.GENERATED if entry.fresh.startswith("gate:")})
+    assert {"Kernel check", "Wire contract check"} <= set(named)
+    for flags in ((), ("--rerun-failed",)):
+        fake.run(*flags)
+        fake.failing = set()
+        for stage in named:
+            expected = [[*R.GATE_PY, *argv[1:]] for entry in R.GENERATED if entry.fresh == f"gate:{stage}"
+                        for argv in entry.check]
+            assert [list(args) for seen, args in fake.seen if seen == stage] == expected, (stage, flags)
+
+
+def test_gate_commands_refuse_a_stage_no_entry_names_and_an_entry_the_gate_cannot_run(monkeypatch):
+    import dataclasses
+    from tools import regen_generated as R
+    with pytest.raises(ValueError, match="no entry names"):
+        R.gate_commands("No such stage")
+    entry = R.entry_named("kernel-closure")
+    for bad in (dataclasses.replace(entry, cwd="lean"), dataclasses.replace(entry, check=("check_pins",))):
+        monkeypatch.setattr(R, "GENERATED", (bad,))
+        with pytest.raises(ValueError, match="kernel-closure"):
+            R.gate_commands("Kernel check")
+
+
+def test_the_gate_refuses_a_kernel_check_without_its_fresh_half(fake, monkeypatch):
+    """The section-6 limits and the baseline's bytes are one check (docs/spec/kernel-boundary.md section 6):
+    an entry whose check drops `--fresh` fails the gate rather than running half of it."""
+    from tools import regen_generated as R
+    real = R.gate_commands
+
+    def without_fresh(stage):
+        commands = real(stage)
+        if stage == "Kernel check":
+            commands = [args[:args.index("--fresh")] + args[args.index("--fresh") + 2:] for args in commands]
+        return commands
+
+    monkeypatch.setattr(R, "gate_commands", without_fresh)
+    code, record = fake.run()
+    assert code == 1 and "--check and --fresh" in json.dumps(record["failures"])
+    assert "Kernel check" not in fake.stages()

@@ -1,3 +1,8 @@
+- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
+- `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
+- `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
+- `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
+- `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
 - `tests/test_metered_profile.py` — The `metered` mode checks the norms profile of its model itself (kb-validators part 1, decision D13).
 - `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
 - `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
@@ -58,6 +63,7 @@
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pf_f7_timed_act.py` — pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings et-5c-5d-coverage-20261115 section 3 and pf-split-unit…
+- `tests/test_pf_f9_order_undo.py` — pf-f9-order-undo: the order of 4.1's two safeguard-selection steps is again a self-declared ET gap.
 - `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
 - `tests/test_pinned_sources.py` — usecases/pinned_sources.json, tools/fetch_pinned_sources.py, the test helper tests/pinned_source.py and the gate's seeding of its fresh home (item actions-pinn…
 - `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
@@ -81,8 +87,3 @@
 - `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
 - `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
-- `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
-- `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
-- `tests/test_question_lean_relay.py` — Request binding at the Python side of the Lean question reader.
-- `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
-- `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …

@@ -1,0 +1,3 @@
+{"document": "anthropic-rsp", "warm": [65.999, 32.736], "warm_errors": [], "fresh": [76.158, 87.427], "fresh_errors": [], "projections_equal": true}
+{"document": "safety-framework", "warm": [163.35, 129.869], "warm_errors": [], "fresh": [162.784, 175.214], "fresh_errors": [], "projections_equal": true}
+{"document": "openai-preparedness", "warm": [191.491, 118.511], "warm_errors": [], "fresh": [202.814, 266.676], "fresh_errors": [], "projections_equal": true}

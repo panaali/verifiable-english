@@ -58,6 +58,7 @@ from ve.evaluate import evaluate  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
 from ve.norms import _instantiate  # noqa: E402
 from ve.soft_route import decide_soft_conflict  # noqa: E402
+from tools.fidmech.bindings import load_bindings  # noqa: E402  (translation put the repo on sys.path)
 
 RESULTS = HERE / "results.json"
 SETS = T.READING_SETS
@@ -66,20 +67,18 @@ ACTIVITIES = json.loads((HERE / "cases.json").read_text())["activities"]
 CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["cases"]}
 PROVER_STEPS = 20000
 
-DM = ("harm_mitigated", "severe_harm_mitigated", "significant_harm_mitigated")
-SEC = ("secured", "adequately_secured")
+# The item-to-predicate tables are frozen data (plan 2a): fidmech/bindings.json, sha256-pinned in
+# tests/test_fidmech_bindings.py.
+_B = load_bindings(HERE / "fidmech" / "bindings.json", "safety-framework")
 # Item kind -> (predicates, sign): "pos" means a rule requires, permits or affirms.
-SELECTION_ITEMS = {
-    "DM": (DM, True), "SEC": (SEC, True), "CCA": (("assessed",), True),
-    "RRA": (("residual_assessed",), True), "SC": (("safety_case",), True), "PRA": (("periodic_assessed", "periodic_covers_internal"), True),
-    "RECSEC": (("applied",), True), "DISC": (("shared",), True), "PROXIMITY": (("proximity_assessed",), True),
-    "FURTHER_CCA": (("further_assessed",), True), "SUBMISSION": (("case_submitted",), True),
-    "YEARLY_REVIEW": (("yearly_review",), True), "ADD": (("safeguards_added",), True),
-    "FREQUENT_REVIEW": (("frequent_review",), True), "ACCEPTABLE": (("acceptable",), True),
-    "PERMITS": (("proceed",), True), "FORBIDS": (("proceed",), False),
-}
-SILENT_ITEMS = {"SEC": SEC, "GOV": ("proceed",), "PROXIMITY": ("proximity_assessed",),
-                "DISC": ("shared",), "CCA": ("assessed",)}
+SELECTION_ITEMS = _B["SELECTION_ITEMS"]
+DM = SELECTION_ITEMS["DM"][0]
+SEC = SELECTION_ITEMS["SEC"][0]
+SILENT_ITEMS = {"SEC": SEC, **_B["SILENT_ITEMS"]}
+# The item kinds item_predicates() and answer() bound inline: GOV, SILENT:CCA+GOV, FORBIDS+L0, CHECKPOINT_MCCA;
+# CATCH_ALL is its own predicates plus DM and SEC.
+INLINE_ITEMS = _B["INLINE_ITEMS"]
+CATCH_ALL_OWN = _B["CATCH_ALL_OWN"]
 
 
 # --- rules, cones and choices ---------------------------------------------------
@@ -421,21 +420,15 @@ def completed(doc, model, predicate, values):
 def item_predicates(kind):
     if kind in SELECTION_ITEMS:
         return SELECTION_ITEMS[kind][0]
-    if kind == "GOV":
-        return ("proceed",)
+    if kind in INLINE_ITEMS:
+        return INLINE_ITEMS[kind]
     if kind.startswith("SILENT:"):
         part = kind.split(":", 1)[1]
-        if part == "CCA+GOV":
-            return ("assessed", "proceed")
         if part == "EVIDENCE":
             return tuple(sorted(T.environment().predicates.keys() & {rule_predicate(b.id) for b in T.rule_blocks()}))
         return SILENT_ITEMS[part]
     if kind == "CATCH_ALL":
-        return ("acceptable",) + DM + SEC
-    if kind == "FORBIDS+L0":
-        return ("proceed",)
-    if kind == "CHECKPOINT_MCCA":
-        return ("change_assessed",)
+        return CATCH_ALL_OWN + DM + SEC
     raise KeyError(kind)
 
 
@@ -453,14 +446,14 @@ def answer(kind, case, choice, *, default="deny", variant=(), detail=None, level
             if kind == "DM":
                 detail["release"] = selected(doc, model, DM, False)
             if kind == "CCA":
-                detail["release"] = selected(doc, model, ("assessed",), False)
+                detail["release"] = selected(doc, model, SELECTION_ITEMS["CCA"][0], False)
             if kind == "RECSEC":
                 detail["measures"] = sorted(args[1] for args, picks in selections(doc, model, "applied").items()
                                             if any(sign for _, sign in picks))
         return bool(rules)
     if kind == "GOV":
         counter = case_model(doc, case_atoms(case, without=(GOVERNANCE_FINDING,)))
-        rules = selected(doc, counter, ("proceed",), False)
+        rules = selected(doc, counter, INLINE_ITEMS["GOV"], False)
         if detail is not None:
             detail["rules"] = rules
         return bool(rules)
@@ -477,7 +470,7 @@ def answer(kind, case, choice, *, default="deny", variant=(), detail=None, level
         same = all(selections(doc, model, p) == selections(doc, plain, p) for p in predicates)
         return same
     if kind == "CATCH_ALL":
-        acceptable = selected(doc, model, ("acceptable",), True)
+        acceptable = selected(doc, model, CATCH_ALL_OWN, True)
         safeguards = selected(doc, model, DM + SEC, True)
         if detail is not None:
             detail["rules"] = acceptable + safeguards
@@ -487,7 +480,7 @@ def answer(kind, case, choice, *, default="deny", variant=(), detail=None, level
         # slot for a particular checkpoint, so no rule can require an assessment of one.
         slots = {s for d in T.environment().predicates.values() if d.regulated is not None for s in d.arguments}
         if detail is not None:
-            detail["rules"] = selected(doc, model, ("change_assessed",), True)
+            detail["rules"] = selected(doc, model, INLINE_ITEMS["CHECKPOINT_MCCA"], True)
             detail["regulated_argument_sorts"] = sorted(slots)
         return "checkpoint" in slots
     raise KeyError(kind)
@@ -1064,14 +1057,20 @@ def severity_and_dates_available():
     return severity_and_dates.RISK_ROUTE.exists()
 
 
+def with_comparison(results):
+    """run()'s results with the D2/D3 answers and the comparison against the key: what main() writes, and what
+    tools/fidmech/adapters.py projects (one construction, plan section 6)."""
+    import severity_and_dates
+    results["d2_d3"] = severity_and_dates.run()
+    results["comparison"] = compare(results) + severity_and_dates.compare(results["d2_d3"])
+    return results
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
-    results = run()
-    import severity_and_dates
-    results["d2_d3"] = severity_and_dates.run()
-    results["comparison"] = compare(results) + severity_and_dates.compare(results["d2_d3"])
+    results = with_comparison(run())
     seconds = results.pop("seconds")
     text = json.dumps(results, indent=1, sort_keys=True) + "\n"
     if args.check:

@@ -1,5 +1,9 @@
 - `tools/fidmech/__init__.py` — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - `tools/fidmech/__main__.py` — The fidmech command line: textcheck (the text-check report), furniture (every furniture match) and boundaries.
+- `tools/fidmech/adapters.py` — Execution adapters: one per document, the deterministic projection of a use case's answers (plan section 6).
+- `tools/fidmech/bindings.py` — Load a use case's case-to-atom tables from its frozen `fidmech/bindings.json`, with their exact Python types.
+- `tools/fidmech/records.py` — The result record of one mutant and the inputs_sha256 that binds it to everything it was computed from (plan 2e).
 - `tools/fidmech/segment.py` — Page-aware segmentation of a pinned source into sentences, on raw byte offsets (plan sections 2b and 3.1).
 - `tools/fidmech/sentchecks.py` — L1a, L2, L3, L4 and D, the checks against the full source sentence (plan sections 3.2-3.6): a report, never a gate.
 - `tools/fidmech/textchecks.py` — L1, the header-quote checks per rule and fact block (plan section 3.2; L1a is fid-mech-b2's): a report, never a gate.
+- `tools/fidmech/worker.py` — Isolated runs of one document's mutants: a scratch tree per mutant, a long-lived worker, sentinels (plan 6).
