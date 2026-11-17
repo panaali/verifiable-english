@@ -187,11 +187,11 @@ def slotsEnding (e : String) : List String :=
 -- `wordChar`'s filler list read directly, one code point each, inside a word where `clause`'s own refusal does not
 -- apply (none is a `VE.Discourse.spaceChar` or in the control ranges): kills its list-empty, list-first, list-last,
 -- list-drop-first and list-drop-last mutants; the plain space and a heading without a filler stay admitted
-#guard !spaced "a\u115fb"
+#guard !spaced "a\u115Fb"
 #guard !spaced "a\u1160b"
 #guard !spaced "a\u2800b"
 #guard !spaced "a\u3164b"
-#guard !spaced "a\uffa0b"
+#guard !spaced "a\uFFA0b"
 #guard spaced "a b"
 #guard readHeading "# A\u3164B" == none
 #guard readHeading "# A B" != none
