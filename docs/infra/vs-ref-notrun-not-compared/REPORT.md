@@ -85,6 +85,19 @@ runs `--plan` on a fixture worktree that has no `tools/trust_mutants.py`. They d
 **Seeded bugs** (`seeded-bugs.json`): 5 bugs planted in `cloud-late.py.new-vsnr`. Each one failed at least one
 `CloudLate` test, and each was restored byte-for-byte.
 
+### Install (backup and mv; no service restart; review round 1 adds `cloud-late.py`)
+
+```
+cd /home/seyran/code/manage-agents
+for f in actions-health.py cloud-verdict-compare.py verdict-sample.sh cloud-late.py test-harness/cloudplumb/test-advfix4.zsh; do
+  cp -p $f $f.bak-20261117-vsnr && mv $f.new-vsnr $f
+done
+```
+
+`cloud-late.py` runs as a fresh `python3 -I` for each call (from cloud-pull.sh and mac-pytest.sh), so nothing needs a
+restart. Install `cloud-late.py` together with `cloud-verdict-compare.py`. Without it, the staged comparator's
+NOT COMPARED exit would turn `CLOUD_LATE_APPLY` off (F1).
+
 ### F-ready1 (B): 0 commits ahead of the merge base
 
 This directory is the item's commit: the report, the staged diff and the evidence.
