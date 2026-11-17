@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-notask-wait-alert-55104fe8-t923285-s4",
+ "head": "804a963e312be6b92af1afd0cffd551a1076bc41",
+ "argv": [
+  "armsh-cand-notask-wait-alert-55104fe8-t923285-s4",
+  "804a963e312be6b92af1afd0cffd551a1076bc41",
+  "5239a0d0df049becab8fe7d39fe547f24c943e48",
+  "-",
+  "-",
+  "4",
+  "4/5"
+ ]
+}
