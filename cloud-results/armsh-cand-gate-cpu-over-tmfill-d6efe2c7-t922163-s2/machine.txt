@@ -1,0 +1,7 @@
+job=armsh-cand-gate-cpu-over-tmfill-d6efe2c7-t922163-s2 shard=2/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-17T13:31:45Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 13:31:45 up 6 min,  0 user,  load average: 1.34, 0.50, 0.20
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 23.3 s
+p1-tokenizers: 443909a61d42 fetched
