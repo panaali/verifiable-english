@@ -14,16 +14,16 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is five paths:** the route, norms, soft norms, since KB-7 the `metered` mode's
-   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **9,966 lines (M)**, 34 under the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
+   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **9,991 lines (M)**, 9 under the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
    kb-validators' (+68, the profile condition on `metered`) and kb-10e's (+8, the prepared `soft-selected` theorem)
    were measured apart and add up on merging, kb-8c's promotion of `quantity` adds +1,096 (signed up to +1,300, decision D11;
-   KB-4 is what brings the total down), kb-4a's acts hook takes 1,038 out, kb-10c's `soft-conflict` theorems add +2, kb-2a-b's `slot-admission` kind (the document mode's kernel row) adds +18, and kb-closure-attrib's measuring fix (a matcher Lean shares is charged to its user) takes 135 out: the plain norms and soft-norms paths
+   KB-4 is what brings the total down), kb-4a's acts hook takes 1,038 out, kb-10c's `soft-conflict` theorems add +2, kb-2a-b's `slot-admission` kind (the document mode's kernel row) adds +18, kb-closure-attrib's measuring fix (a matcher Lean shares is charged to its user) takes 135 out, and kb-9's facts and coherence theorems on `soft-selected` add +25 (signed up to +60): the plain norms and soft-norms paths
    reference no act grammar or elaboration, and the norms mode's `acts@0` cases are the candidate path `normsActs`
    (section 6; docs/kernel/ALLOWANCES.md). The
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,244 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 7-line wrap),
+   16,269 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 7-line wrap),
    the risk route (a candidate: since kb-risk runner theorems state the two kinds the
    keys call) and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
@@ -76,9 +76,9 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | route | kernel | 26 | 4,194 | 11 | 4,205 |
 | norms | kernel | 16 | 3,207 | 202 | 3,409 |
 | normsActs | candidate | 6 | 4,046 | 23 | 4,069 |
-| softNorms | kernel | 19 | 4,664 | 8 | 4,672 |
+| softNorms | kernel | 21 | 4,689 | 8 | 4,697 |
 | quantity | kernel | 6 | 2,183 | 7 | 2,190 |
-| **kernel, distinct lines** | | | | | **9,966** |
+| **kernel, distinct lines** | | | | | **9,991** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 5 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 3,232 | 6 | 3,238 |
 | rights | candidate | 2 | 4,892 | 7 | 4,899 |
@@ -86,9 +86,9 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | reports | candidate | 3 | 4,360 | 7 | 4,367 |
 | normDefaults | candidate | 7 | 5,717 | 657 | 6,370 |
 | risk | candidate | 8 | 5,404 | 2,504 | 7,895 |
-| readingsRoute | candidate | 8 | 9,343 | 14,955 | 24,238 |
-| discourse | candidate | 6 | 36,199 | 11 | 36,205 |
-| document | candidate | 9 | 35,282 | 895 | 36,170 |
+| readingsRoute | candidate | 8 | 9,343 | 14,974 | 24,257 |
+| discourse | candidate | 6 | 36,226 | 11 | 36,232 |
+| document | candidate | 9 | 35,309 | 895 | 36,197 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
 candidate rows moved with main's code, the kernel rows did not). kb-4a regenerated it with the acts hook: `normsActs` is the norms mode's `acts@0` cases
@@ -101,7 +101,7 @@ candidate rows moved with main's code, the kernel rows did not). kb-4a regenerat
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
 | Definitions that write a verdict token, outside example, check and schema modules | 59, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,244, of them 9,966 in the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,269, of them 9,991 in the kernel (M) |
 
 Reading the table:
 
@@ -132,10 +132,16 @@ Reading the table:
   coherence premises from `colliding_pairs` (`SoftNormDocument._init_soft`), which no theorem
   covers, and the norms route accepts
   `soft_premises` as the case carries them (`VE.Norms.Plain.softPremises`): that step is open.
-  Since kb-10a it also lists `VE.SoftNorms.Run.soft_wire_selected`: a `soft-selected` answer is exactly
+  Since kb-10a it also lists `VE.SoftNorms.Run.soft_wire_selected`: a `soft-selected` answer is
   `Wire.ok` with `background` and one result per request query, in order, naming its predicate and
   tuple, with `selected = selectedAt` and `outcome = outcomeAt` for the source and model the case's
-  decoders read; `selected_semantics` says these are the rules whose selection formula, and the
+  decoders read, and after them either no field or the two fields `facts` (some boolean) and
+  `coherent` (`coherentAt`). Since kb-9 that tail is open in this theorem for every case, with or
+  without `facts`: the theorem has no access to whether the case sent `facts`, and it does not pin the
+  `facts` flag. `soft_wire_selected_facts` closes it: the two fields are there exactly when the case
+  sent `facts`, and `facts` is true exactly when every decoded fact holds in the model;
+  `selected_model_admissible` adds `BaseAdmissibleP` of that model when `background`, `coherent` and
+  `facts` are all true (both listed on `softNorms` since kb-9). `selected_semantics` says these are the rules whose selection formula, and the
   regulated atom, hold in every full structure over `E′` whose base restriction is the model and whose
   layer symbols agree with their meanings (`AgreesBelow` at the full prefix). No caller reads it yet
   (kb-10b moves the keys' `selected` and `completed` onto it).
@@ -163,8 +169,8 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,244 |
-| of which in the proved kernel | 9,966 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,269 |
+| of which in the proved kernel | 9,991 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (wire theorems since KB-8, kernel since kb-8c; before them, 1,804 lines of wire code under no theorem, now a 7-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
@@ -405,6 +411,11 @@ verifier's amendment (an import boundary, not a flag; an expiry).
    when the kernel total exceeds the saved one, or when more verdict writers are outside the kernel
    than the saved measurement has. The baseline is generated (`tools/regen_generated.py`, entry
    `kernel-closure`), and `--out` refuses a kernel total above `docs/kernel/ALLOWANCES.md`'s signed total.
+   That entry's check adds `--fresh` to the same measurement: a baseline that differs by any byte from
+   what `--out` writes now is stale, even with equal totals. The gate stage runs the entry's whole check
+   (the command is read from the entry), so a stale baseline fails the gate; it is rewritten by
+   `regen_generated.py --write --only kernel-closure`. The merge train's per-merge regeneration does not
+   run this entry yet (follow-up kb-regen-closure-train-wiring).
 2. A change that raises the total updates the baseline in the same change and carries, in
    `docs/kernel/ALLOWANCES.md`, one line: lines added, door (B or C), reason, the architect's
    signature. A change that lowers it updates the baseline with no signature.
@@ -415,7 +426,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 9,966 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 9,991 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order

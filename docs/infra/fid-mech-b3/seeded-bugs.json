@@ -1,0 +1,202 @@
+[
+ {
+  "bug": "bindings: a SITUATIONS entry changed (plan 10 plant)",
+  "file": "usecases/anthropic-rsp/fidmech/bindings.json",
+  "test": "tests/test_fidmech_bindings.py::test_each_bindings_file_has_its_pinned_sha256",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_bindings.py::test_each_bindings_file_has_its_pinned_sha256[anthropic-rsp]",
+   "1 failed in 0.27s"
+  ]
+ },
+ {
+  "bug": "loader: tuple[T,...] rebuilt as a list",
+  "file": "tools/fidmech/bindings.py",
+  "test": "tests/test_fidmech_bindings.py::test_the_loader_rebuilds_the_exact_python_types_of_the_literals",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_bindings.py::test_the_loader_rebuilds_the_exact_python_types_of_the_literals",
+   "1 failed in 0.27s"
+  ]
+ },
+ {
+  "bug": "loader: a set's duplicate member accepted",
+  "file": "tools/fidmech/bindings.py",
+  "test": "tests/test_fidmech_bindings.py::test_a_value_of_the_wrong_shape_is_refused_with_its_path",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_bindings.py::test_a_value_of_the_wrong_shape_is_refused_with_its_path[set[str]-data4-twice]",
+   "1 failed, 4 passed in 0.27s"
+  ]
+ },
+ {
+  "bug": "adapter: a dotted field (PF soft.ve) never read",
+  "file": "tools/fidmech/adapters.py",
+  "test": "tests/test_fidmech_adapters.py::test_the_answer_fields_follow_the_plans_table",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_adapters.py::test_the_answer_fields_follow_the_plans_table",
+   "1 failed in 0.24s"
+  ]
+ },
+ {
+  "bug": "adapter: PF rule ids read from audit_input.rules",
+  "file": "tools/fidmech/adapters.py",
+  "test": "tests/test_fidmech_adapters.py::test_the_selected_rule_ids_are_read_from_each_documents_own_place",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_adapters.py::test_the_selected_rule_ids_are_read_from_each_documents_own_place",
+   "1 failed in 0.23s"
+  ]
+ },
+ {
+  "bug": "adapter: atoms united over the models, not intersected",
+  "file": "tools/fidmech/adapters.py",
+  "test": "tests/test_fidmech_adapters.py::test_the_case_model_atoms_are_those_true_in_every_model_the_item_read",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_adapters.py::test_the_case_model_atoms_are_those_true_in_every_model_the_item_read",
+   "1 failed in 0.26s"
+  ]
+ },
+ {
+  "bug": "worker: no purge of use-case modules",
+  "file": "tools/fidmech/worker.py",
+  "test": "tests/test_fidmech_worker.py::test_a_mutant_runs_in_a_scratch_copy_and_the_module_is_purged_after",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_worker.py::test_a_mutant_runs_in_a_scratch_copy_and_the_module_is_purged_after",
+   "1 failed in 0.28s"
+  ]
+ },
+ {
+  "bug": "worker: a sentinel compared by status only",
+  "file": "tools/fidmech/worker.py",
+  "test": "tests/test_fidmech_worker.py::test_a_leaked_module_global_makes_the_batch_invalid",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_worker.py::test_a_leaked_module_global_makes_the_batch_invalid",
+   "1 failed in 0.58s"
+  ]
+ },
+ {
+  "bug": "worker: no re-queue after a failed sentinel",
+  "file": "tools/fidmech/worker.py",
+  "test": "tests/test_fidmech_worker.py::test_a_sentinel_failure_requeues_each_result_since_the_last_good_one_once",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_worker.py::test_a_sentinel_failure_requeues_each_result_since_the_last_good_one_once",
+   "1 failed in 0.26s"
+  ]
+ },
+ {
+  "bug": "worker: a run past the limit is not an error",
+  "file": "tools/fidmech/worker.py",
+  "test": "tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
+   "1 failed in 0.26s"
+  ]
+ },
+ {
+  "bug": "worker: the timeout factor is 20, not 10",
+  "file": "tools/fidmech/worker.py",
+  "test": "tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_worker.py::test_a_run_past_ten_times_the_baseline_is_an_error",
+   "1 failed in 0.26s"
+  ]
+ },
+ {
+  "bug": "records: untracked files left out of the inputs",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes[actors.json created]",
+   "1 failed, 1 passed in 0.35s"
+  ]
+ },
+ {
+  "bug": "records: a case file B4 creates (equivalents.json) left out",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_inputs_sha256_changes_when_any_listed_input_changes[actors.json created]",
+   "1 failed, 1 passed in 0.35s"
+  ]
+ },
+ {
+  "bug": "records: a move to UNDECIDED counted as a kill",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_k_kills_on_a_decided_answer_that_differs_and_a_move_to_or_from_undecided_is_inconclusive",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_k_kills_on_a_decided_answer_that_differs_and_a_move_to_or_from_undecided_is_inconclusive[mutant2-expected2]",
+   "1 failed, 2 passed in 0.26s"
+  ]
+ },
+ {
+  "bug": "FSF with_comparison: the D2/D3 rows left out",
+  "file": "usecases/safety-framework/run.py",
+  "test": "tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework]",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework]",
+   "1 failed in 363.13s (0:06:03)"
+  ]
+ },
+ {
+  "bug": "review F1: UNKNOWN left out of records.UNDECIDED (an FSF move to UNKNOWN is a kill)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_the_review_probe_f1_an_fsf_answer_moving_to_unknown_is_inconclusive",
+   "FAILED tests/test_fidmech_records.py::test_fsfs_own_undecided_answers_on_its_committed_results_are_inconclusive",
+   "FAILED tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+   "9 failed, 50 passed in 1.73s"
+  ]
+ },
+ {
+  "bug": "review F1 class: a third-value spelling with a suffix (UNDECIDED-faithful, 'resource limit: ...', 'UNKNOWN (budget)') not recognised (exact match only)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[flat-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[premises-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNDECIDED-faithful]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-resource limit: no quantity certificate]",
+   "FAILED tests/test_fidmech_records.py::test_a_move_to_or_from_every_third_value_spelling_is_inconclusive_never_a_kill[parts-UNKNOWN (budget)]",
+   "FAILED tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+   "10 failed, 49 passed in 1.82s"
+  ]
+ },
+ {
+  "bug": "review F1 class, the other side: a decided string containing a third-value word (UNKNOWN_ACTOR, NOT RUNNING) read as undecided (substring match)",
+  "file": "tools/fidmech/records.py",
+  "test": "tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills",
+  "killed": true,
+  "output": [
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[UNKNOWN_ACTOR]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[SOME(UNKNOWN=x)]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[UNKNOWNS]",
+   "FAILED tests/test_fidmech_records.py::test_a_decided_string_that_only_contains_a_third_value_word_still_kills[NOT RUNNING]",
+   "4 failed, 55 passed in 1.64s"
+  ]
+ }
+]

@@ -1,0 +1,30 @@
+test_closure (__main__.PfD2D3.test_closure) ... ok
+test_closure_rules (__main__.PfD2D3.test_closure_rules) ... ok
+test_closure_scope (__main__.PfD2D3.test_closure_scope)
+F1: the review's PROBE F1 and the rest of the class (scope rules, whole unit files, binds, line cutting). ... ok
+test_frozen (__main__.PfD2D3.test_frozen) ... ok
+test_fsf_fixed (__main__.PfD2D3.test_fsf_fixed)
+The DRI's option (lift the FSF hold): the review's PROBE F2 passes, the FSF hash is the pinned fixed value and ... 
+  FSF D2D3 prompts with the hold lifted: 30; largest (111910, 'D3')
+ok
+test_fsf_route (__main__.PfD2D3.test_fsf_route)
+F2: FSF's s4() decides S4 through run.py and translation.py, outside the unit (severity_and_dates.py). ... ok
+test_pf_carry (__main__.PfD2D3.test_pf_carry) ... ok
+test_pf_prompt (__main__.PfD2D3.test_pf_prompt) ... ok
+test_reader_refuses_open_counter (__main__.PfD2D3.test_reader_refuses_open_counter)
+The reader stops (SystemExit) on a counter with omit_code_parts but no omit_code_closure. ... ok
+test_reads_oracle (__main__.PfD2D3.test_reads_oracle)
+F1 class, differential: _omit_reads equals CPython's symtable on real D2D3 files and synthetic scope cases. ... ok
+test_section (__main__.PfD2D3.test_section) ... ok
+test_size (__main__.PfD2D3.test_size) ... 
+  PF D2D3 prompts: 28; largest (110338, 'T2') bytes; ARG_LIMIT 131000
+ok
+test_sweep (__main__.PfD2D3.test_sweep)
+The F2 class: every case's D2/D3 code is closure-checked; its closure is inside the unit or the case is held open. ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 22.985s
+
+OK
+runner /home/seyran/code/manage-agents/tools-local/omission-seq-read.py.new-pfd3
+counter /home/seyran/code/manage-agents/tools-local/uc-audit.py.new-pfd3

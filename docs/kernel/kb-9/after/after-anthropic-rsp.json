@@ -1,0 +1,36 @@
+{
+ "script": "usecases/anthropic-rsp/run.py",
+ "args": [
+  "--check"
+ ],
+ "rc": 0,
+ "wall_s": 190.9,
+ "calls": {
+  "check|None": 13711,
+  "english.read|None": 9,
+  "environment|None": 20,
+  "metered|evaluate-budgeted": 2311,
+  "model|None": 29,
+  "quantity|None": 145,
+  "quantity|certificate": 26,
+  "risk|risk-decision": 1,
+  "risk|risk-elaborate": 2,
+  "route|background": 7,
+  "route|certificate": 93,
+  "route|dependency-order": 1990,
+  "soft-norms|soft-conflict": 31,
+  "soft-norms|soft-elaborate": 194,
+  "soft-norms|soft-selected": 458
+ },
+ "seconds_by_mode": {
+  "check": 47.8,
+  "english.read": 0.1,
+  "environment": 0.1,
+  "metered": 3.6,
+  "model": 0.2,
+  "quantity": 0.3,
+  "risk": 0.0,
+  "route": 7.9,
+  "soft-norms": 58.3
+ }
+}

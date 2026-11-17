@@ -1533,8 +1533,8 @@
   "ve/backends/lean_runner.py:_metered": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -1587,8 +1587,8 @@
   "ve/backends/lean_runner.py:encoded_model": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -1600,8 +1600,8 @@
   "ve/backends/lean_runner.py:metered_environment": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -1613,8 +1613,8 @@
   "ve/backends/lean_runner.py:metered_environment.<locals>.<lambda>": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -1626,8 +1626,8 @@
   "ve/backends/lean_runner.py:metered_evaluation": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -1639,8 +1639,8 @@
   "ve/backends/lean_runner.py:metered_row": {
    "file": "ve/backends/lean_runner.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -2490,9 +2490,9 @@
   "ve/backends/relay.py:rows": {
    "file": "ve/backends/relay.py",
    "items": {
-    "anthropic-rsp": 89,
+    "anthropic-rsp": 6,
     "eligibility": 269,
-    "openai-preparedness": 215,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -3669,7 +3669,7 @@
    "file": "ve/backends/service_schema.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
@@ -6781,8 +6781,8 @@
   "ve/evaluate.py:_evaluate_lean": {
    "file": "ve/evaluate.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -6794,8 +6794,8 @@
   "ve/evaluate.py:_validate_model": {
    "file": "ve/evaluate.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -6807,8 +6807,8 @@
   "ve/evaluate.py:evaluate": {
    "file": "ve/evaluate.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -6820,8 +6820,8 @@
   "ve/evaluate.py:evaluate.<locals>.<lambda>": {
    "file": "ve/evaluate.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -6833,8 +6833,8 @@
   "ve/evaluate.py:read_evaluation": {
    "file": "ve/evaluate.py",
    "items": {
-    "anthropic-rsp": 89,
-    "openai-preparedness": 215,
+    "anthropic-rsp": 6,
+    "openai-preparedness": 1,
     "safety-framework": 241
    },
    "lines": [
@@ -8587,9 +8587,9 @@
   "ve/profiles.py:model_environment": {
    "file": "ve/profiles.py",
    "items": {
-    "anthropic-rsp": 98,
+    "anthropic-rsp": 15,
     "eligibility": 269,
-    "openai-preparedness": 228,
+    "openai-preparedness": 14,
     "safety-framework": 244
    },
    "lines": [
@@ -8601,9 +8601,9 @@
   "ve/profiles.py:model_environment.<locals>.<genexpr>": {
    "file": "ve/profiles.py",
    "items": {
-    "anthropic-rsp": 98,
+    "anthropic-rsp": 15,
     "eligibility": 269,
-    "openai-preparedness": 228,
+    "openai-preparedness": 14,
     "safety-framework": 244
    },
    "lines": [
@@ -8615,9 +8615,9 @@
   "ve/profiles.py:model_environment.<locals>.entry": {
    "file": "ve/profiles.py",
    "items": {
-    "anthropic-rsp": 97,
+    "anthropic-rsp": 14,
     "eligibility": 269,
-    "openai-preparedness": 223,
+    "openai-preparedness": 9,
     "safety-framework": 244
    },
    "lines": [
@@ -8718,7 +8718,7 @@
    },
    "lines": [
     1,
-    242
+    243
    ],
    "qualname": "<module>"
   },
@@ -8731,7 +8731,7 @@
    },
    "lines": [
     1,
-    683
+    757
    ],
    "qualname": "<module>"
   },
@@ -8834,8 +8834,8 @@
     "safety-framework": 244
    },
    "lines": [
-    683,
-    748
+    757,
+    822
    ],
    "qualname": "SoftNormDocument"
   },
@@ -8847,8 +8847,8 @@
     "safety-framework": 241
    },
    "lines": [
-    692,
-    703
+    766,
+    777
    ],
    "qualname": "SoftNormDocument.__init__"
   },
@@ -8860,8 +8860,8 @@
     "safety-framework": 241
    },
    "lines": [
-    724,
-    739
+    798,
+    813
    ],
    "qualname": "SoftNormDocument._elaborate"
   },
@@ -8873,8 +8873,8 @@
     "safety-framework": 241
    },
    "lines": [
-    729,
-    730
+    803,
+    804
    ],
    "qualname": "SoftNormDocument._elaborate.<locals>.<genexpr>"
   },
@@ -8886,8 +8886,8 @@
     "safety-framework": 241
    },
    "lines": [
-    741,
-    746
+    815,
+    820
    ],
    "qualname": "SoftNormDocument._init_rules"
   },
@@ -8899,8 +8899,8 @@
     "safety-framework": 241
    },
    "lines": [
-    745,
-    745
+    819,
+    819
    ],
    "qualname": "SoftNormDocument._init_rules.<locals>.<genexpr>"
   },
@@ -8912,8 +8912,8 @@
     "safety-framework": 241
    },
    "lines": [
-    748,
-    817
+    822,
+    891
    ],
    "qualname": "SoftNormDocument._init_soft"
   },
@@ -8925,8 +8925,8 @@
     "safety-framework": 241
    },
    "lines": [
-    754,
-    814
+    828,
+    888
    ],
    "qualname": "SoftNormDocument._init_soft.<locals>.<genexpr>"
   },
@@ -8964,8 +8964,8 @@
     "safety-framework": 244
    },
    "lines": [
-    298,
-    423
+    326,
+    497
    ],
    "qualname": "SoftenedNormDocument"
   },
@@ -8973,12 +8973,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    408,
-    421
+    475,
+    495
    ],
    "qualname": "SoftenedNormDocument._ask_rows"
   },
@@ -8986,12 +8986,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    396,
-    406
+    463,
+    473
    ],
    "qualname": "SoftenedNormDocument._ask_selection"
   },
@@ -9003,8 +9003,8 @@
     "safety-framework": 241
    },
    "lines": [
-    331,
-    340
+    386,
+    395
    ],
    "qualname": "SoftenedNormDocument._query_sorts"
   },
@@ -9016,8 +9016,8 @@
     "safety-framework": 241
    },
    "lines": [
-    336,
-    336
+    391,
+    391
    ],
    "qualname": "SoftenedNormDocument._query_sorts.<locals>.<genexpr>"
   },
@@ -9029,8 +9029,8 @@
     "safety-framework": 241
    },
    "lines": [
-    342,
-    350
+    397,
+    405
    ],
    "qualname": "SoftenedNormDocument._selected_row"
   },
@@ -9038,12 +9038,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    352,
-    384
+    407,
+    451
    ],
    "qualname": "SoftenedNormDocument._selection_pair"
   },
@@ -9051,12 +9051,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    386,
-    394
+    453,
+    461
    ],
    "qualname": "SoftenedNormDocument._selection_queries"
   },
@@ -9064,12 +9064,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    391,
-    394
+    458,
+    461
    ],
    "qualname": "SoftenedNormDocument._selection_queries.<locals>.<genexpr>"
   },
@@ -9081,8 +9081,8 @@
     "safety-framework": 241
    },
    "lines": [
-    423,
-    431
+    497,
+    505
    ],
    "qualname": "SoftenedNormDocument.base_environment"
   },
@@ -9093,8 +9093,8 @@
     "openai-preparedness": 206
    },
    "lines": [
-    319,
-    329
+    373,
+    384
    ],
    "qualname": "SoftenedNormDocument.outcome_at"
   },
@@ -9106,8 +9106,8 @@
     "safety-framework": 241
    },
    "lines": [
-    310,
-    317
+    340,
+    350
    ],
    "qualname": "SoftenedNormDocument.selected_rules"
   },
@@ -9119,10 +9119,22 @@
     "safety-framework": 241
    },
    "lines": [
-    317,
-    317
+    349,
+    350
    ],
    "qualname": "SoftenedNormDocument.selected_rules.<locals>.<genexpr>"
+  },
+  "ve/softnorms.py:SoftenedNormDocument.selection_flags": {
+   "file": "ve/softnorms.py",
+   "items": {
+    "anthropic-rsp": 83,
+    "openai-preparedness": 215
+   },
+   "lines": [
+    352,
+    366
+   ],
+   "qualname": "SoftenedNormDocument.selection_flags"
   },
   "ve/softnorms.py:_act_key": {
    "file": "ve/softnorms.py",
@@ -9132,8 +9144,8 @@
     "safety-framework": 241
    },
    "lines": [
-    452,
-    454
+    526,
+    528
    ],
    "qualname": "_act_key"
   },
@@ -9145,8 +9157,8 @@
     "safety-framework": 241
    },
    "lines": [
-    438,
-    444
+    512,
+    518
    ],
    "qualname": "_decision_key"
   },
@@ -9158,8 +9170,8 @@
     "safety-framework": 241
    },
    "lines": [
-    442,
-    443
+    516,
+    517
    ],
    "qualname": "_decision_key.<locals>.<genexpr>"
   },
@@ -9197,8 +9209,8 @@
     "safety-framework": 241
    },
    "lines": [
-    468,
-    473
+    542,
+    547
    ],
    "qualname": "_incompatible"
   },
@@ -9206,12 +9218,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    257,
-    262
+    281,
+    286
    ],
    "qualname": "_query"
   },
@@ -9223,8 +9235,8 @@
     "safety-framework": 241
    },
    "lines": [
-    457,
-    465
+    531,
+    539
    ],
    "qualname": "_rank_above"
   },
@@ -9249,8 +9261,8 @@
     "safety-framework": 241
    },
    "lines": [
-    476,
-    502
+    550,
+    576
    ],
    "qualname": "bind_prime_environment"
   },
@@ -9262,8 +9274,8 @@
     "safety-framework": 241
    },
    "lines": [
-    497,
-    497
+    571,
+    571
    ],
    "qualname": "bind_prime_environment.<locals>.<genexpr>"
   },
@@ -9271,12 +9283,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    265,
-    294
+    289,
+    322
    ],
    "qualname": "bind_selected"
   },
@@ -9284,12 +9296,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    282,
-    285
+    298,
+    313
    ],
    "qualname": "bind_selected.<locals>.<genexpr>"
   },
@@ -9301,8 +9313,8 @@
     "safety-framework": 241
    },
    "lines": [
-    505,
-    680
+    579,
+    754
    ],
    "qualname": "bind_soft_elaboration"
   },
@@ -9314,8 +9326,8 @@
     "safety-framework": 241
    },
    "lines": [
-    525,
-    667
+    599,
+    741
    ],
    "qualname": "bind_soft_elaboration.<locals>.<genexpr>"
   },
@@ -9332,6 +9344,18 @@
    ],
    "qualname": "check_soft_source"
   },
+  "ve/softnorms.py:facts_wire": {
+   "file": "ve/softnorms.py",
+   "items": {
+    "anthropic-rsp": 83,
+    "openai-preparedness": 215
+   },
+   "lines": [
+    235,
+    251
+   ],
+   "qualname": "facts_wire"
+  },
   "ve/softnorms.py:rule_key": {
    "file": "ve/softnorms.py",
    "items": {
@@ -9340,8 +9364,8 @@
     "safety-framework": 241
    },
    "lines": [
-    447,
-    449
+    521,
+    523
    ],
    "qualname": "rule_key"
   },
@@ -9349,12 +9373,12 @@
    "file": "ve/softnorms.py",
    "items": {
     "anthropic-rsp": 85,
-    "openai-preparedness": 214,
+    "openai-preparedness": 215,
     "safety-framework": 241
    },
    "lines": [
-    235,
-    254
+    254,
+    278
    ],
    "qualname": "selected_at"
   },
