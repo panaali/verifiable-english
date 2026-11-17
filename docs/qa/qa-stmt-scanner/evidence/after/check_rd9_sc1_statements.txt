@@ -1,0 +1,24 @@
+checked 14 approved SC-1 entailment declarations (9 theorems)
+SC-1 entailment PASS: 14 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 13 approved SC-1 documents declarations (4 theorems)
+SC-1 documents PASS: 13 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 22 approved SC-1 fold declarations (14 theorems)
+SC-1 fold PASS: 22 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 12 approved SC-2 separation declarations (6 theorems)
+SC-2 separation PASS: 12 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 23 approved SC-4 wire declarations (7 theorems)
+SC-4 wire PASS: 23 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+choiceLayeredG: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS): approved text with its one signed edit
+ndTextWith: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS): approved text with its one signed edit
+checked 27 approved SC-5 verdicts declarations (13 theorems)
+SC-5 verdicts PASS: 27 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 26 approved SC-6 layered kinds declarations (6 theorems)
+SC-6 layered kinds PASS: 26 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+SoftLeafX: APPROVED by a later statement spec: docs/spec/premise-packs.md 5 (pk-1s statement review, merge 49a926ee7): approved text with its one approved edit
+checked 11 approved SC-10 superposition declarations (7 theorems)
+SC-10 superposition PASS: 11 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 11 approved SC-11 labels declarations (8 theorems)
+SC-11 labels PASS: 11 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 15 approved SC-11 wire declarations (9 theorems)
+SC-11 wire PASS: 15 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+sdSuperposable: SIGNED by the DRI 2026-11-10 (reviews/dri-decisions-20261110-sc-11w.md item 1): approved text with its one signed edit
