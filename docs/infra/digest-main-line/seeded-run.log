@@ -1,0 +1,7 @@
+S1-gap-sign-flipped DigestMainLine.test_2_gap_sign_above_and_below_the_line CAUGHT FAILED (failures=1)
+S2-header-below-digest DigestMainLine.test_4_body_byte_identical_below_header_keepalive CAUGHT FAILED (failures=1)
+S3-header-without-digest DigestMainLine.test_4b_no_digest_no_header CAUGHT FAILED (failures=1)
+S4-missing-log-reads-zero DigestMainLine.test_3_missing_log_question_line_and_digest_unchanged CAUGHT FAILED (failures=1)
+S5-first-main-line-not-last DigestMainLine.test_1_header_has_week_line_gap_and_sources CAUGHT FAILED (failures=1)
+S6-line-real-clock-not-picker-clock DigestMainLine.test_2b_line_follows_the_picker_clock CAUGHT FAILED (failures=1)
+S7-expired-header-drops-line DigestMainLine.test_3e_header_deadline_expired_still_sends_digest CAUGHT FAILED (failures=1)

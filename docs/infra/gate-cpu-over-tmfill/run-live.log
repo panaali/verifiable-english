@@ -1,0 +1,15 @@
+..F.
+======================================================================
+FAIL: test_idle_fill_scopes_weight_25 (__main__.IsoWeight.test_idle_fill_scopes_weight_25)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_iso_weight_tmfill.py", line 61, in test_idle_fill_scopes_weight_25
+    self.assertEqual(self.weight("tmidle-20261117T0531Z-p1"), 25)
+AssertionError: 100 != 25
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.119s
+
+FAILED (failures=1)
+iso.sh under test: /home/seyran/code/manage-agents/iso.sh
+rc=1

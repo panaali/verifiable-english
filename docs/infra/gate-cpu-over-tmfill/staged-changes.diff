@@ -1,0 +1,13 @@
+--- iso.sh	2026-11-11 08:42:03.779005305 +0000
++++ iso.sh.new-gcpu	2026-11-17 12:41:00.817706623 +0000
+@@ -15,7 +15,9 @@
+ # 2026-11-08 DRI improvement review (PIPELINE-LIMITS L177): the twice-daily use-case pilots (svc-pilot, svc-pilot-udhr:
+ # pilot.sh / pilot-udhr.sh, their translator and audit worktrees inherit the scope) are measurements no chain waits on: weight 25.
+ # At 07:02Z Nov 8 they held ~190% CPU (lean) at load 121 on 32 vCPU beside 9 builders and a merge train.
+-cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*) cw=25;; esac
++# 2026-11-17 gate-cpu-over-tmfill (reviews/dri-decisions-20261117-gatecpu.md item 1): the trust-mutant idle-fill scopes
++# (tmidle-*, tm-drain-*) are lower-ranked work beside the chain gates' VM fallback (weight 100): weight 25. Other tm-* stay 100.
++cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*|tmidle-*|tm-drain-*) cw=25;; esac
+ # 2026-11-08 dri-decider (lead proxy 1201Z Q2, reviews/dri-decisions-20261108-lp1201.md item 2): the chains of the items listed
+ # in CPU-PRIORITY-ITEMS (rights' and norm-defaults' critical paths; one id per line) get CPU weight 400 (trains stay 1000).
+ # Remove the file (or lines) to revert; the nov12-transition ruling reads it.
