@@ -1,0 +1,272 @@
+--- tm-nightly.sh	2026-11-16 15:32:47.518541257 +0000
++++ tm-nightly.sh.new-tmidle	2026-11-17 05:31:18.323945999 +0000
+@@ -48,20 +48,63 @@
+ # ids), so it is not refused as "already sent once" because an earlier part of the same head used the worktree's job name.
+ # (b) final coverage: a sweep that completes a record (the base moved) but does not cover t1-final-main (a resume of an older
+ # head) is followed AT ONCE by the sweep of main, once per slot, instead of at the next TM_NIGHTLY_HOUR; no progress = as before.
+-rmt=""; [ "$TM_NIGHTLY_POOLS" = remote ] && rmt=1
+-rslot(){ local i; while :; do for (( i = 1; i <= C; i++ )); do [ -z "${rp[$i]}" ] || ! kill -0 ${rp[$i]} 2> /dev/null && { j=$i; rp[$i]=""; return 0; }; done; sleep ${TM_NIGHTLY_POLL:-15}; done; }
++# 2026-11-17 tm-drain-vm1-idle (reviews/dri-decisions-20261116-coord-budget.md item 4; docs/infra/tm-drain-vm1-idle/REPORT.md in
++# the VE repo): TM_NIGHTLY_POOLS=remote+idle = remote (above), plus up to TM_IDLE_MAX (1) LOCAL slots on this VM (worktree
++# $W-l<i>). A part takes a free local slot first, but only while the idle gate (igate) holds: no TM_IDLE.off flag, the 5-min
++# load < nproc - TM_IDLE_RESERVE (8 cores kept for gates and chains), at least TM_IDLE_MIN (4) whole cores left, and
++# MemAvailable >= TM_IDLE_MEM (24 GiB) + TM_IDLE_MEM_SPARE (8). Otherwise it goes to a free remote slot as before, or
++# waits (re-checked each TM_NIGHTLY_POLL). A local part (lpart) lends c = min(idle cores, TM_IDLE_CORES 16) cores and runs
++# --jobs c / TM_IDLE_CORES_PER_JOB (2; 1..8: a heavy cone's check is bound by its serial chain of modules, ~1500 s at 1 or
++# 5 cores (Part 0 and the VM1 trial), so more jobs, not more cores a job, raise the rate) in its own
++# systemd scope (ve-workers.slice, CPUWeight TM_IDLE_WEIGHT 10, CPUQuota c x 100%, MemoryMax TM_IDLE_MEM, no swap) under
++# nice 19 and ionice best-effort 7: first `lake build` in the slot's worktree (only work at a new head), then the SAME
++# trust_mutants arguments a remote host gets (the args after `--` in cmd, the part's --only/--budget/--deadline, --json,
++# --jobs), and "where": "vm1-idle" in its record as cloud2-run.sh writes the host's name. A local part already running is
++# not stopped when the load rises (its weight yields; its --budget and --deadline bound it); only new parts move. Tests
++# only: TM_IDLE_LOADAVG, TM_IDLE_MEMINFO, TM_IDLE_NPROC, TM_IDLE_SCOPE (the scope launcher), TM_IDLE_STOP, TM_IDLE_TM
++# (the trust_mutants command), TM_IDLE_SETUP (the setup command), TM_IDLE_OFF_FLAG.
++rmt=""; idle=""; case $TM_NIGHTLY_POOLS in (remote) rmt=1;; (remote+idle) rmt=1; idle=1;; esac
++igate(){ local n=${TM_IDLE_NPROC:-$(nproc)} r=${TM_IDLE_RESERVE:-8} l ma  # tm-drain-vm1-idle (header): sets icores ijobs iwhy
++  icores=0; ijobs=0
++  [ -f ${TM_IDLE_OFF_FLAG:-$M/TM_IDLE.off} ] && { iwhy="TM_IDLE.off"; return 1; }
++  l=$(cut -d' ' -f2 ${TM_IDLE_LOADAVG:-/proc/loadavg} 2> /dev/null); [[ $l == <->(|.<->) ]] || { iwhy="the 5-min load is unreadable"; return 1; }
++  icores=$(awk -v n=$n -v r=$r -v l=$l 'BEGIN { c = n - r - l; print (c > 0 ? int(c) : 0) }')  # whole cores under nproc - reserve - load
++  (( icores > ${TM_IDLE_CORES:-16} )) && icores=${TM_IDLE_CORES:-16}
++  (( icores >= ${TM_IDLE_MIN:-4} )) || { iwhy="5-min load $l, nproc $n - reserve $r leaves $icores whole cores (< ${TM_IDLE_MIN:-4})"; return 1; }
++  ma=$(awk '/^MemAvailable:/{print int($2 / 1048576)}' ${TM_IDLE_MEMINFO:-/proc/meminfo} 2> /dev/null)
++  [[ $ma == <-> ]] && (( ma >= ${TM_IDLE_MEM:-24} + ${TM_IDLE_MEM_SPARE:-8} )) || { iwhy="MemAvailable ${ma:-?} GiB < ${TM_IDLE_MEM:-24} + ${TM_IDLE_MEM_SPARE:-8}"; return 1; }
++  ijobs=$(( icores / ${TM_IDLE_CORES_PER_JOB:-2} )); (( ijobs < 1 )) && ijobs=1; (( ijobs > 8 )) && ijobs=8
++  iwhy="5-min load $l < nproc $n - reserve $r: $icores cores, --jobs $ijobs, MemAvailable $ma GiB"; return 0; }
++rslot(){ local i; while :; do
++    if [ -n "$idle" ]; then for (( i = Cr + 1; i <= C; i++ )); do [ -z "${rp[$i]}" ] || ! kill -0 ${rp[$i]} 2> /dev/null || continue; rp[$i]=""
++        if igate; then j=$i; return 0; fi; [ "$iwhy" = "$iwas" ] || { iwas=$iwhy; say "vm1-idle: no local part now ($iwhy): parts go remote or wait"; }; break; done; fi
++    for (( i = 1; i <= Cr; i++ )); do [ -z "${rp[$i]}" ] || ! kill -0 ${rp[$i]} 2> /dev/null && { j=$i; rp[$i]=""; return 0; }; done; sleep ${TM_NIGHTLY_POLL:-15}; done; }
+ rpart(){ local k=$1 n=$2 pt=$3 left=$4 f=$5 il=$6 wj=${ws[$j]} pool=remote rc; local -a cj; shift 6; cj=("${(@)cmd}"); cj[$(( ${cmd[(ie)--worktree]} + 1 ))]=$wj
+   (( j % 3 == 0 )) && pool=remote-actions; print -r -- $wj > $P/part-$k.wt
+   (cd $wj && $pre MAC_PYTEST_POOLS=$pool CLOUD_JOB_ITEM=tm-nightly-$stamp-p$k timeout -k 60 $left $cj "$@" --json $P/part-$k.json) >> $D/nightly-run-$stamp.log 2>&1; rc=$?
+   say "part $k: mac-pytest.sh --trustmut exit $rc in ${wj:t} ($D/nightly-run-$stamp.log)$( (( rc == 4 )) && print -r -- ': partial (its deadline cut it, or no remote pool took it; its unjudged ids resume)')"
+   print -r -- "$k	$n	$rc	$pt	$(date +%s)	$P/part-$k.json	$f	$il" >> $P/parts.tsv; }
++lpart(){ local k=$1 n=$2 pt=$3 left=$4 f=$5 il=$6 wj=${ws[$j]} co=$icores jb=$ijobs rc t1 ss u=ve-tmidle-$stamp-p$k; local -a ta sc; shift 6
++  ta=("${(@)cmd[$(( ${cmd[(ie)--]} + 1 )),-1]}" "$@" --json $P/part-$k.json --jobs $jb)  # tm-drain-vm1-idle (header): a remote host's args
++  sc=(${=TM_IDLE_SCOPE:-systemd-run --user --scope --quiet --slice=ve-workers.slice} -p CPUWeight=${TM_IDLE_WEIGHT:-10} -p CPUQuota=$(( co * 100 ))%
++      -p MemoryMax=${TM_IDLE_MEM:-24}G -p MemorySwapMax=0); print -r -- $wj > $P/part-$k.wt
++  t1=$(date +%s); (cd $wj/lean && $pre timeout -k 60 $left $sc --unit=$u-setup nice -n 19 ionice -c 2 -n 7 ${=TM_IDLE_SETUP:-lake build}) >> $D/nightly-run-$stamp.log 2>&1; rc=$?
++  ${=TM_IDLE_STOP:-systemctl --user stop} $u-setup.scope > /dev/null 2>&1; ss=$(( $(date +%s) - t1 ))
++  print -r -- "[tm-idle $(date -u +%H:%M:%SZ)] trust_mutants on vm1-idle, slot $j, $co cores, setup ${ss}s (rc $rc): ${ta[*]}" >> $D/nightly-run-$stamp.log
++  if (( rc == 0 )); then left=$(( left - ss ))
++    if (( left > 60 )); then (cd $wj && $pre timeout -k 60 $left $sc --unit=$u nice -n 19 ionice -c 2 -n 7 ${=TM_IDLE_TM:-uv run python tools/trust_mutants.py} $ta) >> $D/nightly-run-$stamp.log 2>&1; rc=$?
++      ${=TM_IDLE_STOP:-systemctl --user stop} $u.scope > /dev/null 2>&1
++      [ -s $P/part-$k.json ] && python3 -I -c 'import json,sys; p=sys.argv[1]; d=json.load(open(p)); d["where"]="vm1-idle"; json.dump(d,open(p,"w"),indent=1)' $P/part-$k.json 2> /dev/null
++    else rc=4; fi; fi  # no time left after the setup: NOT RUN, resumed
++  say "part $k: vm1-idle trust_mutants exit $rc in ${wj:t} ($co cores, --jobs $jb, setup ${ss}s)$( (( rc == 4 )) && print -r -- ': partial (its unjudged ids resume)')"
++  print -r -- "$k	$n	$rc	$pt	$(date +%s)	$P/part-$k.json	$f	$il" >> $P/parts.tsv; }
+ fin(){ local out uu; out=$(python3 -I $M/tm-nightly.py classify $1 $W $base 2>> $log); say "classify: ${out[1,600]}"
+   if [[ $out == *'"complete": true'* ]]; then print -r -- $tgt > $D/nightly-base.new && mv $D/nightly-base.new $D/nightly-base
+     say "base -> ${tgt[1,9]}${rrec:+ (the resumed head; main ${main[1,9]} is the next nightly's)}"; return 0; fi
+   uu=(${(s:,:)$(print -r -- $out | python3 -I -c 'import json,sys; print(",".join(json.load(sys.stdin).get("unresolved_unknown") or []))' 2> /dev/null)})
+   (( ${#uu} )) && say "not complete: ${#uu} unallowed UNKNOWN need a disposition (${uu[*]})"
+   say "record not complete: the base stays ${base[1,9]}"; return 1; }
+-one(){ local main base stamp rec rc out t tl terr cap P pj total t0 dl cpu0 s k n sz szw left pt d1 tgt rrec rplan bud ds C=1 i j wi; local -a tst tp cmd pre oa rs ids ws rp
++one(){ local main base stamp rec rc out t tl terr cap P pj total t0 dl cpu0 s k n sz szw left pt d1 tgt rrec rplan bud ds C=1 Cr=1 i j wi icores ijobs iwhy iwas; local -a tst tp cmd pre oa rs ids ws rp
+   main=$(git -C $R rev-parse main) || { say "no main in $R"; return 1; }
+   base=$(cat $D/nightly-base 2>/dev/null); [ -n "$base" ] || base=$(cut -d' ' -f2 $D/t1-on 2>/dev/null)
+   [ -n "$base" ] || { say "no base (test-skip/nightly-base or test-skip/t1-on): not run"; return 1; }
+@@ -106,7 +149,11 @@
+   if [ -n "$rmt" ]; then C=${TM_NIGHTLY_CONC:-3}; ws=($W); for (( i = 2; i <= C; i++ )); do wi=$W-s$i
+       if [ ! -d $wi ]; then git -C $R worktree add -q --detach $wi $tgt; else [ -z "$(git -C $wi status --porcelain --untracked-files=no)" ] && git -C $wi checkout -q --detach $tgt; fi \
+         && ws+=($wi) || say "pools remote: $wi is not usable at ${tgt[1,9]}: one fewer concurrent part"; done
+-    C=${#ws}; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to $C at once (${ws[*]})"; fi
++    C=${#ws}; Cr=$C; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to $C at once (${ws[*]})"
++    if [ -n "$idle" ]; then for (( i = 1; i <= ${TM_IDLE_MAX:-1}; i++ )); do wi=$W-l$i  # tm-drain-vm1-idle (header): the local slots
++        if [ ! -d $wi ]; then git -C $R worktree add -q --detach $wi $tgt; else [ -z "$(git -C $wi status --porcelain --untracked-files=no)" ] && git -C $wi checkout -q --detach $tgt; fi \
++          && ws+=($wi) || say "vm1-idle: $wi is not usable at ${tgt[1,9]}: one fewer local slot"; done
++      C=${#ws}; say "vm1-idle (TM_NIGHTLY_POOLS=remote+idle, tm-drain-vm1-idle): plus $(( C - Cr )) local slot(s) on this VM while its 5-min load < nproc - ${TM_IDLE_RESERVE:-8} (${ws[Cr+1,C]})"; fi; fi
+   t0=$(date +%s); dl=$(( t0 + ${TM_NIGHTLY_TIMEOUT:-36000} )); cpu0=$(cgcpu); s=1; k=0
+   while :; do k=$(( k + 1 )); oa=(); n=${#ids}; sz=$cap; [ -n "$rmt" ] && [ -z "$dry" ] && rslot
+     if (( ${#ids} )); then szw=$(python3 -I $M/tm-nightly.py size $(( ${#ids} - s + 1 )) $cap 2>> $log); sz=${${szw%% *}:-$cap}; [[ $sz == <-> ]] || sz=$cap; fi
+@@ -115,6 +162,9 @@
+     bud=$(( left - 600 )); (( bud > ${TM_PART_BUDGET:-6300} )) && bud=${TM_PART_BUDGET:-6300}; oa+=(--budget $bud --deadline $(( dl - 600 )))
+     ds=""; (( ${oa[(I)--only]} )) && ds=" --only <$n ids from ${ids[$s]}>"
+     pt=$(date +%s); rm -f $P/part-$k.json; d1="${cmd[*]}$ds --budget $bud --deadline $(( dl - 600 )) --json $P/part-$k.json"
++    if [ -n "$rmt" ] && [ -z "$dry" ] && (( j > Cr )); then say "part $k (slot $j, ${ws[$j]:t}, vm1-idle: $iwhy): trust_mutants ${${d1#*--trustmut -- }/ --json / --jobs $ijobs --json }${szw:+ (part size: ${szw#* })}"
++      lpart $k $n $pt $left ${ids[$s]:-M001} "${(j:,:)ids[$s,$(( s + n - 1 ))]}" $oa &
++      rp[$j]=${!}; s=$(( s + n )); (( ${#ids} && s <= ${#ids} )) || break; continue; fi
+     if [ -n "$rmt" ] && [ -z "$dry" ]; then say "part $k (slot $j, ${ws[$j]:t}): ${d1/--worktree $W /--worktree ${ws[$j]} }${szw:+ (part size: ${szw#* })}"
+       rpart $k $n $pt $left ${ids[$s]:-M001} "${(j:,:)ids[$s,$(( s + n - 1 ))]}" $oa &
+       rp[$j]=${!}; s=$(( s + n )); (( ${#ids} && s <= ${#ids} )) || break; continue; fi
+--- tools-local/test_tm_drain_vm1_idle.py (new)	2026-11-09 02:12:43.513920872 +0000
++++ tools-local/test_tm_drain_vm1_idle.py	2026-11-17 05:31:18.324282429 +0000
+@@ -0,0 +1,177 @@
++#!/usr/bin/env python3
++"""Tests for tm-drain-vm1-idle (reviews/dri-decisions-20261116-coord-budget.md item 4): TM_NIGHTLY_POOLS=remote+idle.
++  (1) VM1 idle (5-min load < nproc - reserve, >= TM_IDLE_MIN whole cores, MemAvailable >= cap + spare): a part runs LOCALLY
++      in worktree <wt>-l1, in its own scope (CPUWeight 10, CPUQuota cores x 100%, MemoryMax, no swap) under nice 19 and
++      ionice -c 2 -n 7, with the trust_mutants arguments a remote host gets (same --base/--max-mutants/--test/--budget/
++      --deadline; --jobs from the cores), and its record says "where": "vm1-idle"; the other parts go remote at once.
++  (2) VM1 busy (load, memory, TM_IDLE.off): no local part; every part goes remote, and the log says why.
++  (3) the load rises after a local part started: later parts go remote, or wait for a remote slot; never local.
++  (4) the local setup (lake build) fails: no record, the part's ids stay unjudged (resumed), the base stays.
++  (5) TM_NIGHTLY_POOLS=remote (no +idle) at the same idle load: no local part (as before).
++Stub harness: test_tm_nightly_split.py's (synthetic repository, stub plan); stub remote runner, stub scope launcher, stub
++setup and stub trust_mutants (TM_IDLE_SCOPE, TM_IDLE_SETUP, TM_IDLE_TM, TM_IDLE_STOP); fake /proc/loadavg and /proc/meminfo
++(TM_IDLE_LOADAVG, TM_IDLE_MEMINFO, TM_IDLE_NPROC). No Lean, no systemd, no network.
++Run: python3 -I tools-local/test_tm_drain_vm1_idle.py   Staged copy: TMN_SH=<tm-nightly.sh.new-tmidle> (default: the live file)."""
++import json, os, sys, unittest
++
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++import test_tm_nightly_split as base  # noqa: E402  (reads TMN_PY / TMN_SH)
++
++REMOTE = r'''import json, os, subprocess, sys, time
++a = sys.argv[1:]; t0 = time.time()
++time.sleep(float(os.environ.get("STUB_SLEEP", "0")))
++rc = subprocess.run([sys.executable, "-I", os.environ["STUB_INNER"]] + a).returncode
++open(os.environ["STUB_CALLS"] + ".remote", "a").write(json.dumps({"pools": os.environ.get("MAC_PYTEST_POOLS"), "argv": a,
++    "wt": a[a.index("--worktree") + 1], "t0": t0, "t1": time.time()}) + "\n")
++sys.exit(rc)
++'''
++SCOPE = r'''import json, os, sys
++a = sys.argv[1:]; i = 0
++while i < len(a) and a[i].startswith("-"):
++    i += 2 if a[i] == "-p" else 1
++open(os.environ["STUB_CALLS"] + ".scope", "a").write(json.dumps({"argv": a, "cwd": os.getcwd()}) + "\n")
++os.execvp(a[i], a[i:])
++'''
++SETUP = r'''import json, os, sys
++open(os.environ["STUB_CALLS"] + ".setup", "a").write(json.dumps({"cwd": os.getcwd(), "nice": os.nice(0)}) + "\n")
++sys.exit(int(os.environ.get("STUB_SETUP_RC", "0")))
++'''
++LOCAL = r'''import json, os, subprocess, sys, time
++a = sys.argv[1:]; w = os.getcwd(); out = a[a.index("--json") + 1]
++head = subprocess.run(["git", "-C", w, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
++open(os.environ["STUB_CALLS"] + ".local", "a").write(json.dumps({"argv": a, "cwd": w, "head": head, "nice": os.nice(0),
++                                                                 "t0": time.time()}) + "\n")
++if os.environ.get("STUB_RAISE_LOAD"):  # the load rises once this part runs
++    open(os.environ["TM_IDLE_LOADAVG"], "w").write(f"{os.environ['STUB_RAISE_LOAD']} {os.environ['STUB_RAISE_LOAD']} 1.00 1/9 9\n")
++want, rp = int(os.environ.get("STUB_WAIT_REMOTE", "0")), os.environ["STUB_CALLS"] + ".remote"
++end = time.time() + 120  # busy until the other parts went remote (a bound, not a timing assert)
++while want and time.time() < end and (not os.path.exists(rp) or sum(1 for _ in open(rp)) < want):
++    time.sleep(0.2)
++ids = a[a.index("--only") + 1].split(",")
++rows = [{"id": i, "status": "KILLED", "raw_status": "KILLED", "detail": "", "file": "VE/A.lean", "line": 1, "definition": "A.f",
++         "operator": "nat-succ", "before": "1", "after": i} for i in ids]
++json.dump({"base": a[a.index("--base") + 1], "head": head, "jobs": int(a[a.index("--jobs") + 1]),
++           "max_mutants": int(a[a.index("--max-mutants") + 1]), "inputs": {"lean": head}, "tests": [], "seconds": 30,
++           "mutants": rows, "counts": {"KILLED": len(rows)}}, open(out, "w"))
++'''
++
++
++def lines(p):
++    return [json.loads(x) for x in base.rd(p).splitlines()] if os.path.exists(p) else []
++
++
++def tm_args(argv):
++    """trust_mutants' args with the per-part values blanked: what must be the same on a remote host and on VM1."""
++    a = argv[argv.index("--") + 1:] if "--" in argv else list(argv)
++    out, i = [], 0
++    while i < len(a):
++        if a[i] == "--jobs":
++            i += 2; continue
++        out += [a[i], "<v>"] if a[i] in ("--only", "--json", "--budget", "--deadline") else [a[i]]
++        i += 2 if a[i] in ("--only", "--json", "--budget", "--deadline") else 1
++    return out
++
++
++class DrainIdle(base.TmNightlySplit):
++    locals().update({n: None for n in dir(base.TmNightlySplit) if n.startswith("test_")})  # only this file's tests
++
++    def idle(self, total, load="10.00", mem_gib=64, **extra):
++        t = self.tmp
++        for f, s in (("stub.py", REMOTE), ("inner.py", base.STUB), ("scope.py", SCOPE), ("setup.py", SETUP), ("local.py", LOCAL)):
++            base.wr(f"{t}/{f}", s)
++        base.wr(f"{t}/loadavg", f"{load} {load} 1.00 1/9 9\n")
++        base.wr(f"{t}/meminfo", f"MemTotal: 131072000 kB\nMemAvailable: {mem_gib * 1048576} kB\n")
++        env = dict(STUB_INNER=f"{t}/inner.py", TM_NIGHTLY_POOLS="remote+idle",
++                   TM_NIGHTLY_POLL="1", TM_IDLE_LOADAVG=f"{t}/loadavg", TM_IDLE_MEMINFO=f"{t}/meminfo", TM_IDLE_NPROC="32",
++                   TM_IDLE_SCOPE=f"python3 -I {t}/scope.py", TM_IDLE_SETUP=f"python3 -I {t}/setup.py",
++                   TM_IDLE_TM=f"python3 -I {t}/local.py", TM_IDLE_STOP="true", TM_IDLE_OFF_FLAG=f"{t}/TM_IDLE.off")
++        env.update(extra)
++        p, calls, rows, b, log = self.nightly(total, **env)
++        c = f"{t}/calls"
++        return dict(p=p, rows=rows, base=b, log=log, remote=lines(c + ".remote"), local=lines(c + ".local"),
++                    scope=lines(c + ".scope"), setup=lines(c + ".setup"))
++
++    def fresh(self):
++        self.tearDown(); self.setUp()
++
++    def test_idle_part_runs_locally_same_args_in_a_capped_scope(self):
++        r = self.idle(12, TM_NIGHTLY_MAX="4", STUB_WAIT_REMOTE="2")
++        wt, log = os.path.join(self.tmp, "wt"), r["log"]
++        self.assertEqual([(x["cwd"], x["head"]) for x in r["local"]], [(wt + "-l1", self.main)], log)
++        self.assertEqual(sorted(x["pools"] for x in r["remote"]), ["remote", "remote"], log)
++        self.assertEqual(sorted(x["argv"][x["argv"].index("--only") + 1] for x in r["remote"]) +
++                         [r["local"][0]["argv"][r["local"][0]["argv"].index("--only") + 1]],
++                         ["M005,M006,M007,M008", "M009,M010,M011,M012", "M001,M002,M003,M004"], log)
++        la = r["local"][0]["argv"]  # the same trust_mutants args as the remote parts' (after mac-pytest's `--`)
++        self.assertEqual({tuple(tm_args(x["argv"])) for x in r["remote"]}, {tuple(tm_args(la))}, log)
++        self.assertEqual(la[la.index("--jobs") + 1], "7", log)  # 32 - 8 - 10 = 14 cores / 2 a job
++        self.assertEqual(la[la.index("--json") + 1].rsplit("/", 1)[1], "part-1.json", log)
++        self.assertEqual((r["local"][0]["nice"], r["setup"][0]["nice"], r["setup"][0]["cwd"]), (19, 19, wt + "-l1/lean"), log)
++        sc = r["scope"][0]["argv"]
++        for want in ("-p CPUWeight=10", "-p CPUQuota=1400%", "-p MemoryMax=24G", "-p MemorySwapMax=0", "nice -n 19",
++                     "ionice -c 2 -n 7"):
++            self.assertIn(want, " ".join(sc), sc)
++        self.assertTrue(all(any(a.startswith("--unit=ve-tmidle-") for a in x["argv"]) for x in r["scope"]), r["scope"])
++        rec = json.load(open(la[la.index("--json") + 1]))
++        self.assertEqual((rec["where"], rec["jobs"]), ("vm1-idle", 7), log)
++        self.assertEqual((r["rows"][-1]["parts"], r["rows"][-1]["complete"], r["rows"][-1]["mutants"], r["base"]),
++                         (3, True, 12, self.main), log)
++        self.assertIn("vm1-idle (TM_NIGHTLY_POOLS=remote+idle, tm-drain-vm1-idle): plus 1 local slot(s)", log)
++        self.assertRegex(log, r"part 1 \(slot 4, wt-l1, vm1-idle: 5-min load 10.00 < nproc 32 - reserve 8: 14 cores, --jobs 7")
++        self.assertIn("part 1: vm1-idle trust_mutants exit 0 in wt-l1 (14 cores, --jobs 7, setup ", log)
++
++    def test_gate_boundaries(self):
++        cases = [  # (load, MemAvailable GiB, env, local?, CPUQuota, --jobs)
++            ("19.90", 64, {}, True, "400%", "2"),  # 32 - 8 - 19.9 = 4.1: 4 whole cores
++            ("20.10", 64, {}, False, None, None),  # 3.9: 3 whole cores < TM_IDLE_MIN 4
++            ("0.50", 64, {}, True, "1600%", "8"),  # 23.5 cores, capped at TM_IDLE_CORES 16
++            ("12.00", 64, {"TM_IDLE_RESERVE": "16"}, True, "400%", "2"),  # the reserve is env
++            ("10.00", 64, {"TM_IDLE_CORES_PER_JOB": "4"}, True, "1400%", "3"),  # so is the cores a job
++            ("10.00", 31, {}, False, None, None),  # 31 GiB < 24 + 8
++            ("10.00", 64, {"OFF": "1"}, False, None, None),  # TM_IDLE.off
++        ]
++        for load, mem, env, local, quota, jobs in cases:
++            with self.subTest(load=load, mem=mem, env=env):
++                self.fresh()
++                if env.pop("OFF", None):
++                    base.wr(f"{self.tmp}/TM_IDLE.off", "")
++                r = self.idle(4, load=load, mem_gib=mem, **env)
++                self.assertEqual(len(r["local"]), int(local), r["log"])
++                self.assertEqual(len(r["remote"]), int(not local), r["log"])
++                if local:
++                    sc, la = " ".join(r["scope"][-1]["argv"]), r["local"][0]["argv"]
++                    self.assertIn(f"-p CPUQuota={quota}", sc)
++                    self.assertEqual(la[la.index("--jobs") + 1], jobs, r["log"])
++                else:
++                    self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
++                    self.assertRegex(r["log"], r"vm1-idle: no local part now \((5-min load|MemAvailable|TM_IDLE\.off)")
++
++    def test_load_rises_later_parts_go_remote_or_wait(self):
++        r = self.idle(12, TM_NIGHTLY_MAX="4", TM_NIGHTLY_CONC="1", STUB_RAISE_LOAD="30.00", STUB_SLEEP="2")
++        log = r["log"]
++        self.assertEqual(len(r["local"]), 1, log)  # only the first part: the gate is re-read before each part
++        rm = sorted(r["remote"], key=lambda x: x["t0"])
++        self.assertEqual([x["pools"] for x in rm], ["remote", "remote"], log)
++        self.assertGreaterEqual(rm[1]["t0"], rm[0]["t1"] - 0.5, log)  # one remote slot: the third part waited for it
++        self.assertIn("vm1-idle: no local part now (5-min load 30.00, nproc 32 - reserve 8 leaves 0 whole cores (< 4))", log)
++        self.assertEqual((r["rows"][-1]["complete"], r["base"]), (True, self.main), log)
++
++    def test_setup_failure_no_record_ids_resume(self):
++        r = self.idle(4, STUB_SETUP_RC="1")
++        log = r["log"]
++        self.assertEqual((len(r["setup"]), r["local"], r["remote"]), (1, [], []), log)
++        self.assertIn("part 1: vm1-idle trust_mutants exit 1 in wt-l1", log)
++        self.assertIn("no record: the base stays", log)
++        self.assertEqual(r["base"], self.base, log)
++        tsv = [x.split("\t") for x in base.rd(next(
++            os.path.join(dp, f) for dp, _, fs in os.walk(f"{self.skip}/nightly") for f in fs if f == "parts.tsv")).splitlines()]
++        self.assertEqual([(x[0], x[2], x[7]) for x in tsv], [("1", "1", "M001,M002,M003,M004")], log)
++
++    def test_remote_only_mode_never_local(self):  # unchanged behaviour (passes on the live file too)
++        r = self.idle(4, TM_NIGHTLY_POOLS="remote")
++        self.assertEqual((r["local"], r["setup"], [x["pools"] for x in r["remote"]]), ([], [], ["remote"]), r["log"])
++        self.assertNotIn("vm1-idle", r["log"])
++
++
++if __name__ == "__main__":
++    unittest.main()
