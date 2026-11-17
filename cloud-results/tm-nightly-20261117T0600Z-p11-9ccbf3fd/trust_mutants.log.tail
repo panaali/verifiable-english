@@ -1,0 +1,19 @@
+trust_mutants: 23 definitions, 30 mutants (30 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/EnglishGrammar/Norm/Run.lean:123 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-first: (spansOf rs) -> ((spansOf rs).take 1)
+SURVIVOR lean/VE/NormDefaults/Explain.lean:201 VE.NormDefaults.Wire.ruleSources (G[V], trusted) list-first: gen -> (gen.take 1) (the proofs it breaks: lean/VE/NormDefaults/Explain.lean:206)
+SURVIVOR lean/VE/NormDefaults/Explain.lean:240 VE.NormDefaults.Wire.statusFields (D[V], trusted) list-first: tuple.map (·.2) -> ((tuple.map (·.2)).take 1)
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-first: eventsFixed -> (eventsFixed.take 1) (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-first: baseRows -> (baseRows.take 1) (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/NormDefaults/Layered.lean:142 VE.NormDefaults.Wire.rightsSources (G[V], trusted) list-first: (VE.Rights.barNodes D) -> ((VE.Rights.barNodes D).take 1) (the proofs it breaks: lean/VE/NormDefaults/Layered.lean:173)
+SURVIVOR lean/VE/Service/Document.lean:2521 VE.Service.Document.check (D[V], trusted) list-first: used -> (used.take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:51 VE.Scope.Pinned.charRef (D[V], trusted) list-first: r -> (r.take 1)
+SURVIVOR lean/VE/Service/DocumentView.lean:112 VE.Service.Document.activeKinds (G[V], trusted) list-first: (candidatesOf c.front s).map (·.2) -> (((candidatesOf c.front s).map (·.2)).take 1) (the proofs it breaks: lean/VE/Service/DocumentView.lean:363)
+SURVIVOR lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-drop-last: M.preds.map (·.2.1) -> ((M.preds.map (·.2.1)).dropLast)
+SURVIVOR lean/VE/NormDefaults/Layered.lean:225 VE.NormDefaults.Wire.decodeRightsU (D[V], trusted) list-first: hookPacks H -> ((hookPacks H).take 1) (the proofs it breaks: lean/VE/Events/Chain.lean:51, lean/VE/NormDefaults/PacksExamples.lean:154)
+SURVIVOR lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) list-drop-last: rs -> (rs.dropLast) (the proofs it breaks: lean/VE/Commands/Steps.lean:163, lean/VE/Commands/Steps.lean:307, lean/VE/C...)
+trust_mutants: 4 KILLED, 10 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 14 NOT RUN in 5073 s
+trust_mutants: D[V], trusted: 6 SURVIVOR, 5 NOT RUN
+trust_mutants: G[V], trusted: 4 KILLED, 4 SURVIVOR, 1 UNKNOWN, 8 NOT RUN
+trust_mutants: S, trusted: 1 UNKNOWN, 1 NOT RUN
+trust_mutants: PARTIAL: the deadline stopped the run with 14 of its 30 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 15.5 s, scratch 3.6 s, control_build 1.6 s, probe_install 1.2 s, mutants 5044.3 s, cleanup 6.7 s, reads 0.1 s; lake control_build 1.6 s (2), probe_install 1.2 s (1), control_probes 32.1 s (4), mutant_builds 1085.2 s (29), mutant_checks 17334.9 s (27), outside_checks 67.7 s (13), stage_controls 1013 s (12), mutant_probes 31.3 s (4)
