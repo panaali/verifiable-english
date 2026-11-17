@@ -1,0 +1,17 @@
+== 1-no-walk.sh
+FAIL: test_holder_is_the_caller_through_a_function_in_command_substitution
+FAIL: test_holder_is_the_caller_through_until_in_a_background_subshell
+Ran 26 tests in 31.006s
+FAILED (failures=2)
+== 2-giveback-raw-ppid.sh
+FAIL: test_holder_marker_given_back_through_a_subshell
+Ran 26 tests in 28.191s
+FAILED (failures=1)
+== 3-walk-ignores-cmdline.sh
+FAIL: test_dead_pid_marker_cleared
+FAIL: test_holder_is_the_caller_through_a_function_in_command_substitution
+FAIL: test_holder_is_the_caller_through_until_in_a_background_subshell
+FAIL: test_rank1_granted_and_holds_main
+FAIL: test_second_rank1_refused_while_holder_live
+Ran 26 tests in 23.687s
+FAILED (failures=5)

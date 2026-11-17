@@ -25093,6 +25093,10 @@
       "reached",
       "s",
       "cybersecurity_high"
+     ],
+     [
+      "sag_recommendations_given",
+      "s"
      ]
     ],
     "f16-sag-recommend": [
@@ -25165,10 +25169,6 @@
     ],
     "f16-without-nodelib": [
      [
-      "decided_without_sag",
-      "s"
-     ],
-     [
       "leadership_decision",
       "s"
      ],
@@ -25204,10 +25204,6 @@
      ]
     ],
     "f16-without-noinput": [
-     [
-      "decided_without_sag",
-      "s"
-     ],
      [
       "leadership_decision",
       "s"

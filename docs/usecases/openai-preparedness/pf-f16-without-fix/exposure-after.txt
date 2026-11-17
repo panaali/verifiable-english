@@ -1,0 +1,8 @@
+f16-informed f16-informed mistag | Making all final decisions (restates)
+f16-informed f16-informed loss | including accepting any residual risks and making deployment go/no-go decisions (exposition)
+f16-informed f16-informed mistag | SAG's (restates)
+f16-informed f16-informed plan12 | `decided_without_sag` stays declared and in run.py's C2 witness, where no rule reads it. run.py `witness_for` tries one more model between the guard-o
+f16-without-nodelib f16-without-nodelib mistag | For the avoidance of doubt (reading N2)
+f16-without-nodelib f16-without-nodelib plan12 | `f16-without-nodelib` reads "need not have the SAG take part in the decision, if that situation is classified as "leadership_decision"": it meets no o
+f16-without-noinput f16-without-noinput mistag | For the avoidance of doubt (reading N2)
+f16-without-noinput f16-without-noinput plan12 | `f16-without-noinput` now reads "need not have Leadership informed by SAG, if that situation is classified as "leadership_decision", unless that situa

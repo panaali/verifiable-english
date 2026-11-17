@@ -1,0 +1,32 @@
+# PICK_SCRIPT=<script> python3 -I tools-local/test_<suite>.py; live = md5 aa89fe5b..., staged = .new-r1 md5 b52321d8...
+ccloud_main88 live: OK
+ccloud_main88 staged: OK
+endgame live: rc=1 FAIL: test_main 
+endgame staged: rc=1 FAIL: test_main 
+pick_crit_fallback live: OK
+pick_crit_fallback staged: OK
+pick_critical live: OK
+pick_critical staged: OK
+pick_longroom live: OK
+pick_longroom staged: OK
+pick_main_rank live: OK
+pick_main_rank staged: OK
+pick_mgmt live: rc=1 FAIL: test_coord_main_88_without_pace FAIL: test_coord_with_pace_flag_unchanged FAIL: test_endgame_window_lifts_hold FAIL: test_main_fallback_when_nothing_else FAIL: test_main_preferred_below_75 FAIL: test_main_three_at_once_and_taper FAIL: test_mgmt_leaves_main_from_75 
+pick_mgmt staged: rc=1 FAIL: test_coord_main_88_without_pace FAIL: test_coord_with_pace_flag_unchanged FAIL: test_endgame_window_lifts_hold FAIL: test_main_fallback_when_nothing_else FAIL: test_main_preferred_below_75 FAIL: test_main_three_at_once_and_taper FAIL: test_mgmt_leaves_main_from_75 
+pick_prefer live: OK
+pick_prefer staged: OK
+pick_released_yield live: OK
+pick_released_yield staged: OK
+pick_tell live: OK
+pick_tell staged: OK
+pick_why live: OK
+pick_why staged: OK
+role_budget live: rc=1 FAIL: test_listed_item_goes_unlisted_waits 
+role_budget staged: rc=1 FAIL: test_listed_item_goes_unlisted_waits 
+# endgame and pick_mgmt inherit the session's PICK_AVOID=main (their env starts from os.environ and does not drop it); rerun with the session's PICK_* unset:
+endgame live (PICK_* of the session unset): OK
+endgame staged (PICK_* of the session unset): OK
+pick_mgmt live (PICK_* of the session unset): OK
+pick_mgmt staged (PICK_* of the session unset): OK
+role_budget live (PICK_* of the session unset): rc=1 FAIL: test_listed_item_goes_unlisted_waits 
+role_budget staged (PICK_* of the session unset): rc=1 FAIL: test_listed_item_goes_unlisted_waits 

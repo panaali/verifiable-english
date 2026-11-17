@@ -3,8 +3,9 @@ et-5c-5d-coverage-20261115 section 3 and pf-split-units-20261115 section 2; DRI 
 items 1 and 2 and pf-f7-timed-act items 1 to 3; PLAN 12 item 29).
 
 The round is wording only: no answer may move against the snapshot of results.json taken at the merge base (saved
-with the batch), and each signed fix is pinned in the case's own files. f16-without keeps its guard
-`decided_without_sag` (DRI decision pf-f7-timed-act item 3): the tests below pin that dropping it moves N3.
+with the batch), and each signed fix is pinned in the case's own files. f16-without kept its guard
+`decided_without_sag` here (DRI decision pf-f7-timed-act item 3); the N2 ruling (pf-f16-without-n2-20261116, reading
+(c)) later dropped it, and the pin below is that reading's (tests/test_pf_f16_without_fix.py has its condition tests).
 """
 import json
 import re
@@ -68,9 +69,9 @@ def test_touched_answers_on_a_live_query_equal_the_snapshot(pf, item_id):
                                       "f1-misuse-bio-default", "f16-sag-recommend", "f16-informed",
                                       "f16-without-noinput", "f16-without-nodelib"])
 def test_touched_rules_keep_a_witness_model(pf, block_id):
-    """N3 stays NONE for the rules this round touches: VE selects each on a model built from its own guard. With
-    `decided_without_sag` dropped, f16-without-noinput would override f16-informed on every leadership decision
-    (N2) and f16-informed would have no witness (the measured stop, DRI decision pf-f7-timed-act item 3)."""
+    """N3 stays NONE for the rules this round touches: VE selects each on a model built from its own guard, or, for
+    f16-informed (which N2 puts under f16-without-noinput), from its guard plus noinput's `unless` atom
+    `sag_recommendations_given` (run.py witness_for's exception attempt, ruling pf-f16-without-n2-20261116)."""
     R.MUTANT = R.WITHOUT_NARROWING = None
     blocks = {b.id: b for b in T.rule_blocks()}
     assert R.witness_for(blocks[block_id]) is not None
@@ -133,12 +134,27 @@ def test_f16_sag_recommend_tests_only_its_own_condition():
     assert "is covered" not in block("f16-sag-recommend").text
 
 
-def test_f16_without_keeps_its_guard_until_n2_is_ruled():
-    """DRI decision pf-f7-timed-act item 3: both f16-without rules keep `decided_without_sag` (follow-up row
-    pf-f16-without-n2); the guard's legend is what carries "without the SAG's participation"."""
-    for block_id in ("f16-without-noinput", "f16-without-nodelib"):
-        assert guard_atoms(block_id) == {"leadership_decision", "decided_without_sag"}
-    assert "without the SAG's participation" in legend("decided_without_sag")
+def unless_atoms(block_id):
+    return set(re.findall(r'"unary", "([a-z_]+)"', json.dumps(json.loads(T.parsed_rule(block_id))["unless"])))
+
+
+def test_f16_without_reads_n2_as_ruled():
+    """Ruling pf-f16-without-n2-20261116 reading (c): noinput "need not" on every leadership decision unless the SAG
+    gave its recommendations; nodelib on every leadership decision; both act on the act their RS6/RS7 partner reads
+    (noinput and f16-informed regulate `recommendation_informed`) and N2's precedence is unchanged."""
+    assert guard_atoms("f16-without-noinput") == {"leadership_decision"}
+    assert unless_atoms("f16-without-noinput") == {"sag_recommendations_given"}
+    assert guard_atoms("f16-without-nodelib") == {"leadership_decision"}
+    assert json.loads(T.parsed_rule("f16-without-nodelib"))["unless"] == []
+    assert [b.id for b in T.rule_blocks() if json.loads(T.parsed_rule(b.id))["predicate"] ==
+            "recommendation_informed"] == ["f16-informed", "f16-without-noinput"]
+    assert T.PRECEDENCE == {
+        "f11-exception": ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"),
+        "f11-exception-deploy": ("f2-no-deploy", "f2-no-deploy-any"), "f16-without-noinput": ("f16-informed",)}
+    assert T.N2_PRECEDENCE == ("f16-without-noinput", "f16-informed")
+    assert "“informed by SAG's recommendations”" in legend("sag_recommendations_given")
+    assert "without the SAG's participation" in legend("sag_recommendations_given")
+    assert "‘filibuster’" in legend("sag_recommendations_given")
 
 
 # --- the legends of the signed units -------------------------------------------------------------------------------
