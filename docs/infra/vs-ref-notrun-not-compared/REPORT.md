@@ -1,7 +1,8 @@
 # vs-ref-notrun-not-compared: report
 
 **INSTALL WAITS FOR DECIDER READ.** The fix is a set of staged `.new-vsnr` files in `/home/seyran/code/manage-agents`.
-Nothing is installed. No DELTA row and no signature are needed: no product code in this repository changed, and no DRI
+Nothing is installed. The DRI-note round (below) is staged again as `.new-vsnr`, and its install read goes to the DRI.
+All 4 files are installed together. No DELTA row and no signature are needed: no product code in this repository changed, and no DRI
 ruling covers this item. This directory is the item's record in the VE repository: the report, the staged diff and the
 evidence.
 
@@ -78,7 +79,8 @@ staged set the file copies):
 | `tools-local/test_cloud_late_apply.py`, `CLOUD_LATE_PY=cloud-late.py.new-vsnr` | 23 passed, 5 failed | `cloud-late-apply.log` |
 | `tools-local/test_cloud_late_apply.py` on the installed `cloud-late.py` | the same 5 failed | `cloud-late-apply.log` |
 
-On the installed files, 7 of the 8 `CloudLate` tests fail. `test_local_done_equal` passes there, as it should. The 5
+On the installed files, 5 of the 8 `CloudLate` tests fail (3 FAIL, 2 ERROR; `run-installed.log`; corrected after
+looprecheck note F7). `test_local_done_equal` and the two guard tests pass there, as they should. The 5
 `MacPytest` failures in `test_cloud_late_apply.py` are the same on both files. They are pre-existing: `mac-pytest.sh`
 runs `--plan` on a fixture worktree that has no `tools/trust_mutants.py`. They do not touch `cloud-late.py`.
 
@@ -89,10 +91,15 @@ runs `--plan` on a fixture worktree that has no `tools/trust_mutants.py`. They d
 
 ```
 cd /home/seyran/code/manage-agents
-for f in actions-health.py cloud-verdict-compare.py verdict-sample.sh cloud-late.py test-harness/cloudplumb/test-advfix4.zsh; do
+for f in cloud-late.py actions-health.py cloud-verdict-compare.py verdict-sample.sh test-harness/cloudplumb/test-advfix4.zsh; do
   cp -p $f $f.bak-20261117-vsnr && mv $f.new-vsnr $f
 done
 ```
+
+`cloud-late.py` goes first (looprecheck note F9): it already reads the installed comparator's lines correctly, so no
+moment has the staged comparator paired with the installed `cloud-late.py`. The new test file and its fixture directory
+(`tools-local/test_vs_ref_notrun.py`, `tools-local/fixtures/vsnr-p9-9ccbf3fd/`) are already in place; they are not
+part of the loop.
 
 `cloud-late.py` runs as a fresh `python3 -I` for each call (from cloud-pull.sh and mac-pytest.sh), so nothing needs a
 restart. Install `cloud-late.py` together with `cloud-verdict-compare.py`. Without it, the staged comparator's
@@ -105,7 +112,84 @@ This directory is the item's commit: the report, the staged diff and the evidenc
 ### Notes (C, not filed)
 
 - **F5** is fixed with F1 (the verdict line comes first in the summary).
-- **F2, F3, F4 and F6** are left as the review recorded them.
+- **F2, F3, F4 and F6** are left as the review recorded them. (The DRI-note round below settles F2 and F6.)
+
+## DRI-note round (reviews/vs-ref-notrun-not-compared-dri-note-20261117.md; decision item 2 of dri-decisions-20261117-vsfin-p9.md)
+
+### The finding: a reference timeout let a sample count as met
+
+**Spec (a):** a mutant whose reference status is NOT RUN or a timeout UNKNOWN is "not compared", and the sample is then
+"not run": the obligation stays pending and is retried.
+
+**What the staged code did:** the comparator gave exit 3 only when nothing was judged on both sides. Example: p9's
+`vm-ref.fin.json` against `cloud-verdicts.json` gave exit 0, `VERDICTS EQUAL (28 of 31 not judged on both sides)`, so
+`vdone` would mark 1in5:276 met. But the reference's lake build timed out on M3657 and M3680, 2 of the cloud's 5 KILLED
+(`probe-dri-note.log`).
+
+**Class:** a comparison passes while a verdict the cloud claimed was never checked by the reference. It is the same
+class as the round-0 bug, where nothing was checked at all; the round-0 test only caught the all-or-nothing case.
+
+### Fix (`dri-note-fix.diff`)
+
+**`cloud-verdict-compare.py.new-vsnr`:**
+- One predicate, `ref_gaps(pairs)`: a not-judged pair whose reference (argv 1, the vm side) is `unjudged` while the
+  cloud side is not. `unjudged` is the same predicate as round 0: NOT RUN, or an UNKNOWN past `--build-timeout` or the
+  deadline.
+- After the comparison, when there is no difference and there is a gap, the comparator prints `NOT COMPARED: the
+  reference did not judge N of the cloud's M verdicts (NOT RUN or out of time: <ids>); K judged on both sides agree` and
+  exits 3.
+- A judged-against-judged difference, or an id or identity difference, still gives VERDICTS DIFFER first. That follows
+  the decision's condition: "a judged-vs-judged difference is still a real MISMATCH".
+- A mutant only the cloud left unjudged, or both sides left unjudged, is not compared for that line only. It does not
+  block VERDICTS EQUAL.
+- Note F2 is settled here: the `verdict` comment is back on `VERDICT_OF`.
+
+**Callers:** every caller already branches on the `^NOT COMPARED` line, so the new case needs no new branch.
+- `verdict-sample.sh`: when a reused reference gives NOT COMPARED, the reference is rerun on the VM. When a fresh one
+  does, the row is "not run" and `vdone notrun` runs: pending, streak 3, pool kept. Its message now quotes the
+  comparator's NOT COMPARED line, so it no longer says "no mutant was judged by both".
+- `cloud-late.py` (`OUTCOMES`): the outcome is "not compared", which means "not made": the flag and the entry stay.
+  Only comments changed.
+- `actions-health.py`: unchanged. Its streak still reads only `VERDICTS EQUAL … (N of M not judged`, and that line now
+  appears only when the gaps are on the cloud side.
+- The ve-cloud-2 path's `c2c` only acts on exit 1.
+
+**Not changed (by ruling):** a reference UNKNOWN that is not a timeout, against a cloud KILLED or SURVIVOR, stays
+UNDECIDED under verdict-unknown-rule (2026-10-31). Spec (a) and this note name only NOT RUN and timeout UNKNOWN.
+
+### Regression tests (`manage-agents/tools-local/test_vs_ref_notrun.py`)
+
+The fixture is now `tools-local/fixtures/vsnr-p9-9ccbf3fd/`, a copy of the job's `job.json`, `cloud-verdicts.json`,
+`vm-ref.fin.json` and the partial (`fixture-vsnr-p9-SHA256SUMS`). This settles note F6: the tests no longer read the
+live `cloud-jobs/` directory.
+
+| Test | What it checks |
+|---|---|
+| `Compare::test_dri_p9_fin_reference_timeout_is_not_compared` | the DRI fixture: exit 3, names M3657 and M3680, no VERDICTS line |
+| `Sample::test_dri_p9_fin_reference_timeout_leaves_the_sample_pending` | the DRI fixture through `verdict-sample.sh`: 1in5:276 pending, streak 3, no MISMATCH, pool kept |
+| `CloudLate::test_local_done_reference_timeout_is_not_made` | the same case through `cloud-late.py`: "not made", flag and entry kept |
+| `Compare::test_cloud_only_unjudged_does_not_block_equal` | guard: the fin record with M3657 and M3680 judged gives EQUAL (26 of 31 not compared), exit 0 |
+| `Compare::test_reference_gap_class_fuzz` | 5 unjudged forms × 5 cloud verdicts, both orientations, both unjudged, and with a judged difference (DIFFER first) |
+
+### Results
+
+| Run | Result | Log |
+|---|---|---|
+| The staged files after the fix | 25/25 pass | `dri-run-staged.log` |
+| The staged files before the fix | 4 failed: the four new failing-first tests (the guard test passes) | `dri-run-pre-fix.log` |
+| The installed files | 20 failures, 2 errors | `dri-run-installed.log` |
+| `test-advfix6.zsh` on a copy of the staged set | 68 passed, 0 failed | `dri-harness-runs.log` |
+| `test-comparators.zsh`, staged, then installed | 37 passed, 1 failed, the same on both (pre-existing, note F8) | `dri-harness-runs.log` |
+
+**Seeded bugs** (`seeded-bugs-dri-note.json`): 5 seeds in `cloud-verdict-compare.py.new-vsnr`. Each one failed at least
+one test, and each was restored and checked byte-for-byte:
+- the gap check removed;
+- the gap read on the cloud side;
+- the gap checked before a judged difference;
+- only NOT RUN counted as a gap, not a timeout;
+- a both-unjudged line counted as a gap.
+
+**No DELTA rows and no signature.** No product code in this repository changed, and no standing ruling applies.
 
 ## Testing in this repository
 
