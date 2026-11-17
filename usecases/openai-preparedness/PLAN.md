@@ -79,7 +79,7 @@ releases a comparable system.
 | RS5 | 4.3: "we could adjust accordingly the level of safeguards that we require in that capability area, but only if: …" | **within**: an adjusted level must still sufficiently minimize the risk (4.2 lists "The baseline risk from other deployments" among the SAG's factors) / **exception**: an exception to the High deployment rule, under the three stated conditions | "Could adjust" may change what counts as sufficient or override the requirement. |
 | RS6 | Appendix B: OpenAI Leadership makes "deployment go/no-go decisions, informed by SAG's recommendations" | **req**: being informed by the SAG's recommendations is a requirement on the decision / **desc**: a description of the role, no norm | It sits in a list of responsibilities. |
 | RS7 | Appendix B: "OpenAI Leadership can also make decisions without the SAG's participation" | **noinput**: without any SAG recommendation / **nodelib**: without the SAG taking part in the decision itself; its prior recommendation may still inform it | "Participation" and the explanation "does not have the ability to 'filibuster'" fit both. |
-| N2 | the RS7 clause takes precedence over RS6 = req | cites "For the avoidance of doubt", which marks the clause as the one that decides the question it answers | Section 9 reports C2 without N2. |
+| N2 | the RS7 clause takes precedence over RS6 = req | cites "For the avoidance of doubt", which marks the clause as the one that decides the question it answers; the precedence decides the case where both rules apply, and the clause's own scope (its "i.e." limit, the SAG cannot "filibuster") is a decision with no SAG recommendation given (architect ruling pf-f16-without-n2-20261116, section 12 item 31) | Section 9 reports C2 without N2. |
 | RS8 | footnote 6: "will ordinarily not require additional safety measures barring reason to believe a significant increase in capability has occurred" | **rel**: a default "need not" rule with the stated exception / **pred**: a prediction | "Ordinarily" marks a default; "will … not require" may report an expectation. |
 | RS9 | every "should" and every "must" not restated by a strict "required" (e.g. 4.2 "The Safeguards Report should include …", Appendix B "The SAG Chair should also coordinate …", C.3 "access must be strictly limited", "Employees must authenticate") | **strict** / **default** | the [soft-norms.md](../../docs/spec/soft-norms.md) 2.2 rule. F2's "must have safeguards" (4.2, Appendix C) restates 2.2's strict "are required to have", so F2 is strict. |
 | RS10 | Appendix B: "at least once a year" | **publication**: counted from 2025-04-15 / **unstated** | No start point is given. |
@@ -720,6 +720,23 @@ record-void-ruling and 2026-11-16 adv0244 item 2).**
     the one-line limit records of the per-path and per-safeguard steps and the quoted legend of
     `efficacy_methods_per_safeguard` are kept. The three 4.1 selection units stay unresolved. No guard, act or
     predicate changed (62 of 64 regulated), and no answer moved (236 of 239 agree, as before).
+31. **N2 decides where RS6 = req and RS7 meet; the clause's own "i.e." limit decides where they meet (architect ruling
+    pf-f16-without-n2-20261116, reading (c), signed by the DRI 2026-11-16).** The guard `decided_without_sag` is
+    dropped from both f16-without rules. `f16-without-noinput` now reads "need not have Leadership informed by SAG, if
+    that situation is classified as "leadership_decision", unless that situation is classified as
+    "sag_recommendations_given"": the permission is the SAG's inability to "filibuster", so it holds wherever the SAG
+    has given no recommendation for the decision, and N2's precedence decides that one case, where both rules apply.
+    `f16-without-nodelib` reads "need not have the SAG take part in the decision, if that situation is classified as
+    "leadership_decision"": it meets no opposite rule. The new base situation predicate `sag_recommendations_given`
+    holds when the SAG has given OpenAI Leadership its recommendations for this decision before it; a SAG still
+    deliberating with none given for this decision is none given. Modelling rule: a case that states SAG
+    recommendations, findings or SAG participation for the decision sets `sag_recommendations_given`; a case silent
+    on them reads as none given (the closed world every other atom has), so it gets "need not" under RS7 = noinput.
+    `decided_without_sag` stays declared and in run.py's C2 witness, where no rule reads it. run.py `witness_for`
+    tries one more model between the guard-only one and the all-atoms one: the guard's positive atoms plus the
+    `unless` atoms of every rule PRECEDENCE puts over the rule (only f16-informed reaches it). MEASURED (results.json):
+    N3 NONE, C2 NONE, C-doc NONE as before, no answer moved (236 of 239 agree); m6 and the run without N2 still change
+    exactly C-doc and C2, C2 to SOME(RS6 = req ∧ RS7 = noinput), and every mutant stays exact.
 
 ## 13. Files for the implementation round (not this commit)
 
