@@ -1,0 +1,15 @@
+# PICK_SCRIPT=<script> python3 -I tools-local/test_pick_main5h_unknown.py
+== staged pick-claude-account.sh.new-r1 (md5 b52321d8d0fa600cdacd6fb98c96b0bd)
+Ran 30 tests in 19.678s
+OK
+== live pick-claude-account.sh (md5 aa89fe5b4eda1ea93c9afed5894e71c5, fix 1 installed, before fix 2)
+FAIL: test_same_row_give_back_keeps_other_session
+FAIL: test_same_row_marker_live_while_any_pid_lives
+FAIL: test_same_row_same_holder_counts_grants
+FAIL: test_same_row_second_session_keeps_main_after_first_exits
+Ran 30 tests in 17.587s
+FAILED (failures=4)
+
+# probe F2 (review command, verbatim, with PICK_SCRIPT=<script>)
+PROBE F2 staged .new-r1 (md5 b52321d8d0fa600cdacd6fb98c96b0bd): exit 0
+PROBE F2 live picker (md5 aa89fe5b4eda1ea93c9afed5894e71c5, pre-fix): exit 1

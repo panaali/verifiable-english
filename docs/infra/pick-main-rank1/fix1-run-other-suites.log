@@ -1,0 +1,24 @@
+ccloud_main88 live: OK 
+ccloud_main88 staged: OK 
+endgame live: OK 
+endgame staged: OK 
+pick_crit_fallback live: OK 
+pick_crit_fallback staged: OK 
+pick_critical live: OK 
+pick_critical staged: OK 
+pick_longroom live: OK 
+pick_longroom staged: OK 
+pick_main_rank live: OK 
+pick_main_rank staged: OK 
+pick_mgmt live: OK 
+pick_mgmt staged: OK 
+pick_prefer live: OK 
+pick_prefer staged: OK 
+pick_released_yield live: OK 
+pick_released_yield staged: OK 
+pick_tell live: OK 
+pick_tell staged: OK 
+pick_why live: OK 
+pick_why staged: OK 
+role_budget live: FAIL: test_listed_item_goes_unlisted_waits FAILED (failures=1) 
+role_budget staged: FAIL: test_listed_item_goes_unlisted_waits FAILED (failures=1) 

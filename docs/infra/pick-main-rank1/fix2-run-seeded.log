@@ -1,0 +1,22 @@
+== 4-join-not-listed rc=1
+FAIL: test_same_row_give_back_keeps_other_session
+FAIL: test_same_row_marker_live_while_any_pid_lives
+FAIL: test_same_row_same_holder_counts_grants
+FAIL: test_same_row_second_session_keeps_main_after_first_exits
+Ran 30 tests in 17.788s
+FAILED (failures=4)
+== 5-giveback-drops-marker rc=1
+FAIL: test_same_row_give_back_keeps_other_session
+FAIL: test_same_row_same_holder_counts_grants
+Ran 30 tests in 18.057s
+FAILED (failures=2)
+== 6-stale-by-first-pid rc=1
+FAIL: test_same_row_give_back_keeps_other_session
+FAIL: test_same_row_marker_live_while_any_pid_lives
+FAIL: test_same_row_second_session_keeps_main_after_first_exits
+Ran 30 tests in 18.453s
+FAILED (failures=3)
+== 7-giveback-drops-all-grants rc=1
+FAIL: test_same_row_same_holder_counts_grants
+Ran 30 tests in 21.417s
+FAILED (failures=1)

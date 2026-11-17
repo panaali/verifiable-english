@@ -1,0 +1,1163 @@
+{
+ "agree": 236,
+ "answers": {
+  "A-AIS-C-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-DEV/HALT": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-C-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-DEV/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-AIS-C-DEV/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-C-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-EXT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-EXT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-AIS-C-EXT/SUF": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=ext&RS5=within | RS18=devonly&RS2=nest&RS3=ext&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-AIS-C-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-INT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-AIS-C-INT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-AIS-C-LINT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-C-LINT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-AIS-C-LINT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-AIS-H-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-DEV/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-DEV/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-H-DEV/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-EXT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-EXT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-H-EXT/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-H-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-INT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-H-INT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-AIS-H-LINT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-AIS-H-LINT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-AIS-H-LINT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-BIO-C-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-DEV/HALT": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-C-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-DEV/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-BIO-C-DEV/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-C-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-EXT/MIS": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-BIO-C-EXT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-BIO-C-EXT/SUF": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=ext&RS5=within | RS18=devonly&RS2=nest&RS3=ext&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-BIO-C-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-INT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-BIO-C-INT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-BIO-C-LINT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-C-LINT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-BIO-C-LINT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-BIO-H-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-DEV/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-DEV/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-DEV/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-EXT/MIS": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-EXT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-EXT/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-INT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-INT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-BIO-H-LINT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-BIO-H-LINT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-BIO-H-LINT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-CYB-C-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-DEV/HALT": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-C-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-DEV/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-DEV/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-C-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-EXT/MIS": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-EXT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-EXT/SUF": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=ext&RS5=within | RS18=devonly&RS2=nest&RS3=ext&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-CYB-C-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-INT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-INT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-CYB-C-LINT/ALN": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-C-LINT/SEC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "A-CYB-C-LINT/SUF": {
+   "key": "SOME(inuse | (nest & any))",
+   "ve": "SOME(RS18=inuse&RS2=nest&RS3=ext&RS5=within | RS18=inuse&RS2=nest&RS3=ext&RS5=exception | RS18=inuse&RS2=nest&RS3=any&RS5=within | RS18=inuse&RS2=nest&RS3=any&RS5=exception | RS18=inuse&RS2=sep&RS3=ext&RS5=within | RS18=inuse&RS2=sep&RS3=ext&RS5=exception | RS18=inuse&RS2=sep&RS3=any&RS5=within | RS18=inuse&RS2=sep&RS3=any&RS5=exception | RS18=devonly&RS2=nest&RS3=any&RS5=within | RS18=devonly&RS2=nest&RS3=any&RS5=exception)"
+  },
+  "A-CYB-H-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-DEV/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-DEV/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-DEV/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-EXT/MIS": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-EXT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-EXT/SUF": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-INT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-INT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-CYB-H-LINT/ALN": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-CYB-H-LINT/SEC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "A-CYB-H-LINT/SUF": {
+   "key": "SOME(any)",
+   "ve": "SOME(RS18=inuse&RS3=any&RS5=within | RS18=inuse&RS3=any&RS5=exception | RS18=devonly&RS3=any&RS5=within | RS18=devonly&RS3=any&RS5=exception)"
+  },
+  "A-L0-DEV/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-DEV/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-DEV/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-DEV/SEC": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-DEV/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-EXT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-EXT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-EXT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-EXT/SEC": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-EXT/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-INT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-INT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-INT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-INT/SEC": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-INT/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-LINT/ALN": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-LINT/HALT": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-LINT/MIS": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-LINT/SEC": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "A-L0-LINT/SUF": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-AIS-C/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-C/CONTRIB": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-AIS-C/DISC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS2=nest)"
+  },
+  "B-AIS-C/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
+  },
+  "B-AIS-C/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-C/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-H/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-H/CONTRIB": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-AIS-H/DISC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-H/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS4=N&RS4s=unscoped)"
+  },
+  "B-AIS-H/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-AIS-H/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-C/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-C/CONTRIB": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-C/DISC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS2=nest)"
+  },
+  "B-BIO-C/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
+  },
+  "B-BIO-C/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-C/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-H/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-H/CONTRIB": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-BIO-H/DISC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-H/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS4=N&RS4s=unscoped)"
+  },
+  "B-BIO-H/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-BIO-H/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-C/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-C/CONTRIB": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS1=strict&RS2=nest | RS1=default&RS2=nest)"
+  },
+  "B-CYB-C/DISC": {
+   "key": "SOME(nest)",
+   "ve": "SOME(RS2=nest)"
+  },
+  "B-CYB-C/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS2=nest&RS4=N&RS4s=unscoped | RS2=sep&RS4=N&RS4s=unscoped)"
+  },
+  "B-CYB-C/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-C/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-H/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-H/CONTRIB": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-H/DISC": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-H/MREP": {
+   "key": "SOME(N ∧ unscoped)",
+   "ve": "SOME(RS4=N&RS4s=unscoped)"
+  },
+  "B-CYB-H/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-CYB-H/SAFEREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-L0/CAPREP": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-L0/CONTRIB": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-L0/DISC": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-L0/MREP": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "B-L0/PUBRES": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "B-L0/SAFEREP": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C-doc": {
+   "key": "SOME(final & bperm)",
+   "ve": "NONE"
+  },
+  "C1": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C2": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C3": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C4": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C5": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "C6": {
+   "key": "SOME(final & bperm)",
+   "ve": "NONE"
+  },
+  "D1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "D2": {
+   "key": "SOME(publication)",
+   "ve": "SOME(RS10=publication)"
+  },
+  "D3": {
+   "key": "SOME(appointment)",
+   "ve": "SOME(RS14=appointment)"
+  },
+  "D4": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G10": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G2": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G3": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G4": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G5": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G6": {
+   "key": "SOME(explanation)",
+   "ve": "SOME(RS15=explanation)"
+  },
+  "G7": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "G8": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "G9": {
+   "key": "ALL",
+   "ve": "NONE"
+  },
+  "K1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K10": {
+   "key": "SOME(N)",
+   "ve": "SOME(RS4=N&RS4s=scoped | RS4=N&RS4s=unscoped)"
+  },
+  "K11": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K12": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K13": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K14": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K15": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K16": {
+   "key": "SOME(permission)",
+   "ve": "SOME(RS13=permission)"
+  },
+  "K17": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K18": {
+   "key": "SOME(N)",
+   "ve": "SOME(RS4=N&RS4s=scoped | RS4=N&RS4s=unscoped)"
+  },
+  "K19": {
+   "key": "SOME(N)",
+   "ve": "SOME(RS4=N&RS4s=scoped | RS4=N&RS4s=unscoped)"
+  },
+  "K2": {
+   "key": "SOME(coupled)",
+   "ve": "SOME(RS16=coupled)"
+  },
+  "K20": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K3": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "K4": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K5": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K6a": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K6b": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K6c": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K7": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "K8": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "K9": {
+   "key": "SOME(N)",
+   "ve": "SOME(RS4=N&RS4s=scoped | RS4=N&RS4s=unscoped)"
+  },
+  "N1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "N2": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "N3": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "N4": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "S1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "S2": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "S3": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "S4": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "S5": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "S6": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "S7": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "S8": {
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  "T1": {
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  "T2": {
+   "key": "NONE",
+   "ve": "NONE"
+  }
+ },
+ "merge_base": "9f7d4bd179f956b079057ddb43c9bc2f99b119c3",
+ "mutants": {
+  "m1": {
+   "changed": [
+    "C-doc",
+    "C1"
+   ],
+   "exact": true
+  },
+  "m2": {
+   "changed": [
+    "C-doc"
+   ],
+   "exact": true
+  },
+  "m3": {
+   "changed": [
+    "A-CYB-C-DEV/ALN",
+    "A-CYB-C-EXT/ALN",
+    "A-CYB-C-INT/ALN",
+    "A-CYB-H-DEV/ALN",
+    "A-CYB-H-EXT/ALN",
+    "A-CYB-H-INT/ALN",
+    "G3"
+   ],
+   "exact": true
+  },
+  "m4": {
+   "changed": [
+    "T2"
+   ],
+   "exact": true
+  },
+  "m5": {
+   "changed": [
+    "S1"
+   ],
+   "exact": true
+  },
+  "m6": {
+   "changed": [
+    "C-doc",
+    "C2"
+   ],
+   "exact": true
+  }
+ },
+ "source": "usecases/openai-preparedness/results.json at the merge base: comparison rows, mutants' changed and exact, without_narrowings' changed",
+ "without_narrowings": {
+  "N1": {
+   "B-AIS-C/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-C/DISC": {
+    "with": "SOME(RS2=nest)",
+    "without": "NONE"
+   },
+   "B-AIS-C/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-C/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-H/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-H/DISC": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-H/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-AIS-H/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-C/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-C/DISC": {
+    "with": "SOME(RS2=nest)",
+    "without": "NONE"
+   },
+   "B-BIO-C/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-C/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-H/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-H/DISC": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-H/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-BIO-H/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-C/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-C/DISC": {
+    "with": "SOME(RS2=nest)",
+    "without": "NONE"
+   },
+   "B-CYB-C/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-C/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-H/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-H/DISC": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-H/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-CYB-H/SAFEREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-L0/CAPREP": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "B-L0/PUBRES": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "G10": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K1": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K12": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K14": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K15": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K17": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K4": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "K5": {
+    "with": "ALL",
+    "without": "NONE"
+   },
+   "N3": {
+    "with": "NONE",
+    "without": "UNDECIDED"
+   }
+  },
+  "N2": {
+   "C-doc": {
+    "with": "NONE",
+    "without": "SOME(RS12=suff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
+   },
+   "C2": {
+    "with": "NONE",
+    "without": "SOME(RS6=req&RS7=noinput)"
+   }
+  }
+ }
+}

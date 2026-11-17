@@ -184,6 +184,17 @@ def slotsEnding (e : String) : List String :=
 #guard !clause "x.\u1160"
 #guard !clause "x.\uFFA0"
 #guard !clause "x.\u2800"
+-- `wordChar`'s filler list read directly, one code point each, inside a word where `clause`'s own refusal does not
+-- apply (none is a `VE.Discourse.spaceChar` or in the control ranges): kills its list-empty, list-first, list-last,
+-- list-drop-first and list-drop-last mutants; the plain space and a heading without a filler stay admitted
+#guard !spaced "a\u115Fb"
+#guard !spaced "a\u1160b"
+#guard !spaced "a\u2800b"
+#guard !spaced "a\u3164b"
+#guard !spaced "a\uFFA0b"
+#guard spaced "a b"
+#guard readHeading "# A\u3164B" == none
+#guard readHeading "# A B" != none
 -- a C1 control after a sentence end, and a filler drawn as a space in place of a space, are no word characters
 #guard ["The hard constraints apply only where x.\u0080 y.", "The hard constraints apply only where x.\u009F y.",
   "The rules below are called the x.\u3164The rules below are called the y.", "The hard constraints apply only where x.\u2800y.",

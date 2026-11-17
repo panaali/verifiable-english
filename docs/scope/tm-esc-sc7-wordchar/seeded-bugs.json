@@ -1,0 +1,22 @@
+{
+  "target": "lean/VE/Scope/AuthoringExamples.lean",
+  "note": "The item changes only this test module. Each seed edits the definition its new guards check (lean/VE/Scope/Authoring.lean, restored after), and the build of VE.Scope.AuthoringExamples fails at the listed guard lines (lake build VE.Scope.AuthoringExamples, logs /tmp/sc7wc-seed<n>.log at the time). Line numbers are those of HEAD bc3699d5d3.",
+  "seeds": [
+    {"id": "M995", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list -> [] (trust_mutants list-empty)",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [190], "evidence": "trust-mutants-head.json"},
+    {"id": "M3104", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list -> .take 1 (keeps U+115F; list-first)",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [191], "evidence": "trust-mutants-head.json"},
+    {"id": "M3441", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list -> .dropLast (drops U+FFA0; list-drop-last)",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [194], "evidence": "trust-mutants-head.json"},
+    {"id": "M5771", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list -> .reverse.take 1 (keeps U+FFA0; list-last)",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [190], "evidence": "trust-mutants-head.json"},
+    {"id": "M6108", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list -> .drop 1 (drops U+115F; list-drop-first)",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [190], "evidence": "trust-mutants-head.json"},
+    {"id": "seed-1", "file": "lean/VE/Scope/Authoring.lean", "line": 185, "edit": "readHeading: `spaced h` -> `!h.isEmpty`",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [69, 80, 196]},
+    {"id": "seed-2", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list gains 0x62 ('b'); failing_lines lists the build's first 10 errors only",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [29, 30, 89, 101, 105, 154, 195, 239, 241, 243]},
+    {"id": "seed-3", "file": "lean/VE/Scope/Authoring.lean", "line": 26, "edit": "filler list loses 0x2800 and 0x3164; and line 185 `k ≤ 6` -> `k ≤ 0`",
+     "test": "lean/VE/Scope/AuthoringExamples.lean", "failing_lines": [46, 47, 48, 49, 52, 53, 54, 91, 130, 192, 193, 197, 239]}
+  ]
+}

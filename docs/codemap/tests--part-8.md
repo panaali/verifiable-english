@@ -1,3 +1,7 @@
+- `tests/test_soft_document_handles.py` — Soft-document handles (kb-10e): a `soft-selected` case names its document by handle and is answered from the document the service prepared once.
+- `tests/test_soft_norms_conformance.py` — Three-way checks against the acceptance fixtures in soft-norms.md §10.
+- `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
+- `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
 - `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
 - `tests/test_soft_selected.py` — The soft route's `soft-selected` kind (kb-10a) and its relay `ve.soft_route.selected_at`.
 - `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.

@@ -1,0 +1,10 @@
+== staged
+----------------------------------------------------------------------
+Ran 26 tests in 32.836s
+
+OK
+== live (old)
+FAIL: test_holder_is_the_caller_through_a_function_in_command_substitution (__main__.Rank1Main.test_holder_is_the_caller_through_a_function_in_command_substitution)
+FAIL: test_holder_is_the_caller_through_until_in_a_background_subshell (__main__.Rank1Main.test_holder_is_the_caller_through_until_in_a_background_subshell)
+Ran 26 tests in 30.160s
+FAILED (failures=2)

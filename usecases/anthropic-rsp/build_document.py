@@ -173,7 +173,7 @@ DISTINGUISHING = {"RS1": [("crossed", "s", "novel_chem_bio_weapons")], "RS2 and 
     "RS13": [], "RS6redact": [("redaction_reason_listed", "s")], "RS6split": [("external_review_process", "s")],
     "RS6notice": [("substantiated", "s"), ("material_safety_risk", "s")],
     "RS8evidence": [("crossed", "s", "automated_rd")], "RS8attempt": [], "RS8revenue": [
-        ("candidate_revenue_dependent", "s")], "RS12strive": [("goal_revised_less_ambitious", "s")],
+        ("candidate_revenue_dependent", "s")], "RS12strive": [("goal_revised_less_ambitious", "s"), ("revised_because_unable", "s")],
     **{f"RS12{s}": [] for s in ("advance", "candid", "minimize", "justify", "review")},
     "RS12before": [("external_review_process", "s")]}
 

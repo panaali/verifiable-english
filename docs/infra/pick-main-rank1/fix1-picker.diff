@@ -1,0 +1,71 @@
+--- pick-claude-account.sh
++++ pick-claude-account.sh.new-r1
+@@ -57,7 +57,8 @@
+ # 2026-11-17 pick-main-rank1 (reviews/dri-decisions-20261116-rsp-presync.md item 6; replaces the rsp-b-repair-1115 one-item
+ # exception): r1rank prints 1 when PICK_ITEM ranks 1 in tools-local/pick_critical.py (an unexpired "Nov 23 path" pin), read on every
+ # pick() so an expired pin stops at once; pick() hands it to the account loop as PICK_R1_ (never inherited from the caller) with the
+-# one-holder marker $PCF/pick-main-rank1 ("<PICK_ITEM> <caller pid>") and the caller pid. The cfhold probe (r1off) never uses it.
++# one-holder marker $PCF/pick-main-rank1 ("<PICK_ITEM> <caller pid>") and $PPID, from which the
++# account loop finds the caller above any forked subshell (r1holder). The cfhold probe (r1off) never uses it.
+ r1pid=$PPID; r1off=""
+ r1rank(){ [ -n "${PICK_ITEM:-}" ] && [ -z "$r1off" ] && [ -z "$PICK_COORD" ] && [ "$(python3 -I $PCF/tools-local/pick_critical.py rank "$PICK_ITEM" 2>/dev/null)" = 1 ] && print 1; return 0; }
+ pick(){ BUSY="${PICK_BUSY-$(busy)}" zsh ${PICK_ACCOUNTS_SH:-~/code/manage-agents/accounts.sh} | PICK_R1_="$(r1rank)" PICK_R1_MARKER="$PCF/pick-main-rank1" PICK_R1_PID="$r1pid" BUSY="${PICK_BUSY-$(busy)}" python3 -c '
+@@ -144,7 +145,8 @@
+ # 2026-11-17 pick-main-rank1 (reviews/dri-decisions-20261116-rsp-presync.md item 6; replaces the rsp-b-repair-1115 exception): a
+ # rank-1 caller (PICK_R1_, from r1rank in the shell) passes the main stand-in week-rise guard and the critical fallback 5-h-unknown
+ # refusal ONLY while main week % <= the PICK_MAIN_PACE line - 4 and the main week rise over 300 min of usage-watch.log is < 5, and
+-# only ONE rank-1 row at a time: the marker PICK_R1_MARKER holds "<PICK_ITEM> <pid>" of its holder (the pid of the picker caller);
++# only ONE rank-1 row at a time: the marker PICK_R1_MARKER holds "<PICK_ITEM> <pid>" of its holder (r1holder below:
++# the caller above any forked subshell of it);
+ # a marker of a dead pid is cleared, a live one of another item refuses the rule. No flag file, no fresh log or no pid: refused.
+ # Every other gate (worker caps, week caps, pace line, avoid, hold) is unchanged. Tests: python3 -I tools-local/test_pick_main5h_unknown.py
+ r1on = os.environ.get("PICK_R1_") == "1"; r1item = os.environ.get("PICK_ITEM", ""); r1mark = os.environ.get("PICK_R1_MARKER", ""); r1made = False
+@@ -154,11 +156,37 @@
+     except ProcessLookupError: return False
+     except PermissionError: return True
+     return True
++# pick-main-rank1 fix 1 (review F1): the holder pid is the caller that outlives the pick, not $PPID as such. A caller that picks
++# inside a command substitution or a ( ... ) subshell (run-codex.sh acct=$(rcx_pick ...), feature-pipeline.sh, converge.sh,
++# action-assurance-leanrun.sh: acct=$(until zsh pick...; done)) makes $PPID a forked subshell that exits when the pick returns,
++# so the marker named a dead pid and the next rank-1 row cleared it as stale. A forked subshell keeps the argv of the shell it
++# forked from, so walk up from $PPID while the parent has the same /proc cmdline (no /proc: $PPID as before). One function, used
++# to take the marker and to give it back. Tests: Rank1Main.test_holder_* in tools-local/test_pick_main5h_unknown.py
++def proc_argv(pid):
++    try:
++        with open(f"/proc/{pid}/cmdline", "rb") as fh: return fh.read()
++    except OSError: return None
++def proc_ppid(pid):
++    try:
++        with open(f"/proc/{pid}/stat") as fh: return int(fh.read().rsplit(")", 1)[1].split()[1])
++    except (OSError, ValueError, IndexError): return 0
++r1me = []
++def r1holder():  # the holder pid of this caller (None: no caller pid)
++    if not r1me:
++        try: pid = int(os.environ.get("PICK_R1_PID", ""))
++        except ValueError: pid = None
++        for _ in range(64):
++            if pid is None or pid <= 1: break
++            up = proc_ppid(pid); argv = proc_argv(pid)
++            if up <= 1 or not argv or proc_argv(up) != argv: break
++            pid = up
++        r1me.append(pid)
++    return r1me[0]
+ def r1hold():  # under the marker lock: (ok, reason); a free or stale marker is taken (this caller becomes the holder)
+     global r1made
+     import fcntl
+-    try: me = int(os.environ.get("PICK_R1_PID", ""))
+-    except ValueError: return (False, "no caller pid")
++    me = r1holder()
++    if me is None: return (False, "no caller pid")
+     if not r1mark or not r1item: return (False, "no holder marker")
+     try:
+         with open(r1mark + ".lock", "a") as lk:
+@@ -346,7 +374,7 @@
+     if best is None or (pref, pace) > (best[2], best[0]): best = (pace, d, pref)
+ if r1made and (best[1] if best else fb) != r1d:  # pick-main-rank1: the holder marker taken for main, but main was not picked: give it back
+     try:
+-        if open(r1mark).read().split() == [r1item, os.environ.get("PICK_R1_PID", "")]: os.remove(r1mark)
++        if open(r1mark).read().split() == [r1item, str(r1holder())]: os.remove(r1mark)
+     except OSError: pass
+ if best: print(best[1])
+ elif fb: print(fb)
