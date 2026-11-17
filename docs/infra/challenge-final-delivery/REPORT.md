@@ -45,6 +45,12 @@ without `dri-`) is a row id, alone or followed by `-<date>` / `-stopped-<date>` 
   since 2026-11-14T22:52:16Z). These are real hits: both rows are still `in-flight` 34 h and 52 h after their finals. The
   decider gets nothing extra.
 - Full diff of the staged script and the test file: `staged-changes.diff`.
+- Selected VE tests, run once on commit 112022e59e:
+  `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` -> `selected-run.log`: rc 0,
+  `recorded 10 units ...; 0 failed`. It ran on the VM because the Mac was the last resort.
+- Light lane: `python3 -I tools-local/light-lane.py check` printed `NOT 962 changed lines outside generated files > 150
+  (7 files)`. All of those lines are this report and its logs and diffs. No trust_mutants sweep was run, because no Lean
+  (trusted or not) changed and the sweep has nothing to mutate (build-checklist 13a applies to trusted Lean growth only).
 
 ## 3. Choices made inside the scope (the conservative or narrower option, recorded, not asked)
 
@@ -98,7 +104,8 @@ those rows first if they are already answered.
 ## Notes for the DRI
 
 - `delegate-cw.py` without arguments cannot find this session: `VE_STEP` is `infra-item:...`, not `dri-delegate:...`. I ran it
-  on this session's transcript instead. MEASURED: `0.34M CW (ledger weights), raw context 2.49M, 40 calls`. The value at the end is in the final.
+  on this session's transcript instead. MEASURED: `0.34M CW, raw context 2.49M, 40 calls`, then `0.44M CW (ledger
+  weights), raw context 3.60M, 51 calls` after the selected run.
 - Pre-existing red on main (`manage-agents/main-known-red.txt`): none of those tests was touched here.
 
 ## Self-review against BUILDER-CHECKLIST
