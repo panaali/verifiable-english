@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-qa-stmt-scanner-c684e19b-t880289-s2",
+ "head": "274a71ef4c2bdc10d80ac6595b850edc26d9fae8",
+ "argv": [
+  "armsh-cand-qa-stmt-scanner-c684e19b-t880289-s2",
+  "274a71ef4c2bdc10d80ac6595b850edc26d9fae8",
+  "90f0505d38a9d6b6017c477f3c269a90213523cb",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
