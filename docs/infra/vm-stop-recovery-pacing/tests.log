@@ -1,0 +1,14 @@
+........../home/seyran/code/manage-agents/tools-local/test_vm_stop_recover.py:345: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vmsr-fux3sxf8/manage-agents/vm-stop-recover-20261108.log' mode='r' encoding='UTF-8'>
+  while not (os.path.exists(log) and "HOLD b1" in open(log).read()) and time.monotonic() < deadline:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....../usr/lib/python3.12/unittest/suite.py:107: ResourceWarning: unclosed file <_io.BufferedWriter name=5>
+  for index, test in enumerate(self):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.12/unittest/suite.py:107: ResourceWarning: unclosed file <_io.BufferedWriter name=4>
+  for index, test in enumerate(self):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+----------------------------------------------------------------------
+Ran 17 tests in 10.185s
+
+OK

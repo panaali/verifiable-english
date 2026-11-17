@@ -1,0 +1,630 @@
+--- /dev/null
++++ tools-local/vm-stop-recover.sh
+@@ -0,0 +1,242 @@
++#!/bin/zsh
++# vm-stop-recover.sh: relaunch the jobs a VM stop killed, with the feeds held and each start paced on load.
++# 2026-11-17 row vm-stop-recovery-pacing (L178, DRI improvement review 2026-11-08; decision reviews/recover-20261108.md).
++# After the Nov 5-8 billing stop, recover-20261108.sh relaunched 15 jobs 2 min apart while FEATURE_FEED and INFRA_FEED kept
++# launching (the 5-min load lags relaunches): load 214 on 32 vCPU at 06:16Z. Lesson of 2026-10-11 too: stagger, at most 6
++# at once. A dated recover-<date>.sh does its own per-incident cleanup (empty finals, interrupted merges, dated wakes) and
++# then runs this with its job list. Nothing calls it yet.
++#
++# usage: zsh tools-local/vm-stop-recover.sh [--dry-run [--dry-loads "L1 L2 ..."]] [--date YYYYMMDD] <jobs-file>
++#        zsh tools-local/vm-stop-recover.sh [--dry-run] --restore --date YYYYMMDD    (put this date's paused flags back now)
++#   Run the real one once, in its own iso scope (zsh iso.sh recover-<date>-jobs 1G -- zsh tools-local/vm-stop-recover.sh ...).
++#
++# 1. Pause: CHAIN_WATCH, FEATURE_FEED and INFRA_FEED move to <flag>.paused-recovery-<date> (mv -n), all checked before any
++#    moves. A flag that is absent stays absent (it was off: not turned on at the end). A flag already paused under this date
++#    (an interrupted earlier run) stays paused and is restored at the end. A flag present AND paused refuses the run.
++# 2. Order: the `train` rows of the jobs file first (merge trains, gate-trains), then the `job` rows, each in file order.
++# 3. Pace: a relaunch starts only when the 1-min load (/proc/loadavg) is under 48, fewer than 6 of this run's relaunches
++#    are in their first 15 min, and 60 s have passed since the previous relaunch (so the 1-min load shows it). Holds are
++#    checked every 30 s, logged when they start and change, and again every 10 min while they last.
++# 4. Skip: a job whose key already runs (a process with argv <launcher> <key>, launcher one of infra-item.sh gate-train.sh
++#    continue-item.sh dri-delegate.sh; or merge-train.sh <...>:<key>; key train:<k> means <k> there) or whose ve-<scope>-*
++#    scope is live; checked before its hold and again right before its launch. An unreadable scope list skips the job.
++# 5. Restore: once the last relaunch has run 10 min (at once if nothing was relaunched), each paused flag moves back
++#    (mv -n). A flag someone re-created meanwhile wins (its paused copy is kept, logged); a paused copy someone removed
++#    (a veto) stays removed. Interrupted (INT/TERM/HUP): the flags stay paused; restore with --restore --date <date>.
++# 6. Record: one CURRENT-STATE.md line for the pause, each relaunch, each skip and the restore; every step also goes to
++#    vm-stop-recover-<date>.log.
++# --dry-run: the same steps on a virtual clock (no waiting). It moves no flag, launches nothing and writes no file; the
++#    process and scope checks only read. Load: --dry-loads gives the 1-min loads read one per check (the last repeats),
++#    else the live load read once. A load hold on a load that no longer changes is shown, then released with a note.
++#
++# jobs file: one job per line, `#` comments:   <train|job> <key>[,<key>...] <scope> <mem> -- <command...>
++#   In the command, $M (${M}) and $HOME (${HOME}) are replaced by the manage-agents path and the home directory; the words
++#   split as the shell would (quotes keep a word together). No other $, backtick or shell operator is allowed. Any bad
++#   line refuses the whole file before step 1.
++# Test hooks (tools-local/test_vm_stop_recover.py): VMSR_M (manage-agents dir), VMSR_LOADAVG (load file),
++#   VMSR_SYSTEMCTL (systemctl command), VMSR_VIRTUAL_CLOCK=1 (no real waiting).
++zmodload zsh/datetime || exit 2
++setopt extended_glob
++M=${VMSR_M:-/home/seyran/code/manage-agents}
++LOADAVG=${VMSR_LOADAVG:-/proc/loadavg}
++SYSTEMCTL=${VMSR_SYSTEMCTL:-systemctl}
++LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=900 GAP_SEC=60 POLL_SEC=30 RESTORE_SEC=600 REMIND_SEC=600
++FLAGS=(CHAIN_WATCH FEATURE_FEED INFRA_FEED)
++
++die(){ print -r -- "vm-stop-recover: $*" >&2; exit 2; }
++dry=0 restore_only=0 D="" jobsf="" loads=() li=1 fixed_load=0
++while (( $# )); do
++  case $1 in
++    (--dry-run) dry=1;;
++    (--restore) restore_only=1;;
++    (--date) (( $# > 1 )) || die "--date needs YYYYMMDD"; D=$2; shift;;
++    (--dry-loads) (( $# > 1 )) || die "--dry-loads needs a list"; loads=(${=2}); shift
++      (( $#loads )) || die "--dry-loads: empty list";;
++    (-h|--help) sed -n '2,/^zmodload/p' $0 | sed '$d'; exit 0;;
++    (-*) die "unknown option $1 (see --help)";;
++    (*) [[ -z $jobsf ]] || die "one jobs file only"; jobsf=$1;;
++  esac; shift
++done
++(( $#loads && ! dry )) && die "--dry-loads needs --dry-run"
++for l in $loads; do [[ $l =~ '^[0-9]+(\.[0-9]+)?$' ]] || die "--dry-loads: '$l' is not a load"; done
++if (( restore_only )); then
++  [[ -n $D ]] || die "--restore needs --date YYYYMMDD (the date the flags were paused under)"
++  [[ -z $jobsf ]] || die "--restore takes no jobs file"
++else
++  [[ -n $jobsf ]] || die "usage: vm-stop-recover.sh [--dry-run] [--date YYYYMMDD] <jobs-file> (see --help)"
++  [[ -r $jobsf ]] || die "cannot read jobs file $jobsf"
++  [[ -n $D ]] || D=$(TZ=UTC strftime %Y%m%d $EPOCHSECONDS)
++fi
++[[ $D =~ '^[0-9]{8}$' ]] || die "--date: '$D' is not YYYYMMDD"
++[[ -d $M ]] || die "no manage-agents dir $M"
++LOG=$M/vm-stop-recover-$D.log
++
++# clock: real, or virtual (dry run and the test hook) where a wait only moves NOW
++virt=0; (( dry )) && virt=1; [[ ${VMSR_VIRTUAL_CLOCK:-} = 1 ]] && virt=1
++NOW=$EPOCHSECONDS; T0=$NOW
++pause_s(){ if (( virt )); then (( NOW += $1 )); else sleep $1; NOW=$EPOCHSECONDS; fi; }
++tick(){ (( virt )) || NOW=$EPOCHSECONDS; }
++stamp(){ if (( dry )); then printf '+%dm%02ds' $(( (NOW - T0) / 60 )) $(( (NOW - T0) % 60 )); else TZ=UTC strftime '%H:%M:%SZ' $NOW; fi; }
++say(){ local l="$(stamp) $*"; print -r -- "$l"; (( dry )) || print -r -- "$l" >> $LOG; }
++state(){ if (( dry )); then print -r -- "$(stamp)   CURRENT-STATE.md line (dry run: not written): $*"
++  else print -r -- "- $(TZ=UTC strftime '%Y-%m-%d %H:%MZ' $NOW) (vm-stop-recover $D): $*" >> $M/CURRENT-STATE.md; fi; }
++
++# ---- jobs file ----
++CLS=() KEYS=() SCOPE=() MEM=() CMD=()
++parse(){
++  local n=0 line raw w t k1
++  local -a tok bad mains
++  while IFS= read -r raw || [[ -n $raw ]]; do
++    (( n++ ))
++    [[ $raw =~ '^[[:space:]]*(#|$)' ]] && continue
++    line=${raw//'${HOME}'/$HOME}; line=${line//'$HOME'/$HOME}; line=${line//'${M}'/$M}
++    line=${line//(#b)'$M'([^A-Za-z0-9_]|(#e))/$M${match[1]}}
++    if [[ $line == *'$'* || $line == *'`'* ]]; then bad+="line $n: only \$M and \$HOME are expanded"; continue; fi
++    tok=(${(z)line})
++    for t in $tok; do case $t in (';'|'&'|'|'|'&&'|'||'|'<'|'>'|'>>'|'<<'|'('|')'|'&!'|'&|'|'|&'|'>&'|'<&')
++      bad+="line $n: shell operator '$t'"; continue 2;; esac; done
++    w=(${(Q)tok})
++    if (( $#w < 6 )) || [[ $w[5] != -- ]]; then bad+="line $n: want <train|job> <key>[,<key>...] <scope> <mem> -- <command...>"; continue; fi
++    [[ $w[1] = (train|job) ]] || { bad+="line $n: class '$w[1]' is not train or job"; continue; }
++    [[ $w[2] =~ '^[A-Za-z0-9._:-]+(,[A-Za-z0-9._:-]+)*$' ]] || { bad+="line $n: bad key list '$w[2]'"; continue; }
++    [[ $w[3] =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]] || { bad+="line $n: bad scope '$w[3]'"; continue; }
++    [[ $w[4] =~ '^[0-9]+[KMG]$' ]] || { bad+="line $n: bad memory cap '$w[4]'"; continue; }
++    (( ${SCOPE[(Ie)$w[3]]} )) && { bad+="line $n: scope $w[3] twice"; continue; }
++    k1=${w[2]%%,*}; mains=(${KEYS%%,*})
++    (( ${mains[(Ie)$k1]} )) && { bad+="line $n: key $k1 twice"; continue; }
++    CLS+=$w[1] KEYS+=$w[2] SCOPE+=$w[3] MEM+=$w[4] CMD+="${(j: :)${(qq)w[6,-1]}}"
++  done < $jobsf
++  (( $#bad )) && { print -rl -- "vm-stop-recover: refused $jobsf (nothing paused, nothing launched):" $bad >&2; return 1; }
++  (( $#SCOPE )) || { print -r -- "vm-stop-recover: refused $jobsf: no jobs" >&2; return 1; }
++}
++
++# ---- checks ----
++busy(){ python3 -I - "$1" <<'EOF'
++import os, sys
++keys = sys.argv[1].split(",")
++launchers = ("infra-item.sh", "gate-train.sh", "continue-item.sh", "dri-delegate.sh")
++for p in os.listdir("/proc"):
++    if not p.isdigit() or int(p) == os.getpid():
++        continue
++    try:
++        a = [x.decode(errors="ignore") for x in open(f"/proc/{p}/cmdline", "rb").read().split(b"\0")]
++    except OSError:
++        continue
++    for i, x in enumerate(a[:-1]):
++        for k in keys:
++            if x.endswith(launchers) and a[i + 1] == k:
++                print(f"{k} runs (pid {p})"); sys.exit(0)
++            if x.endswith("merge-train.sh") and a[i + 1].endswith(":" + k.removeprefix("train:")):
++                print(f"{k}: its merge train runs (pid {p})"); sys.exit(0)
++sys.exit(1)
++EOF
++}
++# why_skip <i>: prints the reason and returns 0 when job i must not start
++why_skip(){ local out r
++  if out=$(busy $KEYS[$1]); then print -r -- "$out"; return 0; fi
++  out=$($=SYSTEMCTL --user list-units --type=scope --no-legend "ve-$SCOPE[$1]-*" 2>&1); r=$?
++  (( r )) && { print -r -- "scope list unreadable (systemctl rc $r): skipped, not guessed"; return 0; }
++  [[ -n ${out//[[:space:]]/} ]] && { print -r -- "a ve-$SCOPE[$1]-* scope is live"; return 0; }
++  return 1; }
++L1=""
++load1(){
++  if (( $#loads )); then L1=$loads[li]; (( li < $#loads )) && (( li++ )) || fixed_load=1
++  elif (( dry )) && [[ -n $L1 ]]; then fixed_load=1
++  else L1=""; read -r L1 _ < $LOADAVG 2>/dev/null; (( dry )) && fixed_load=1; fi
++  [[ $L1 =~ '^[0-9]+(\.[0-9]+)?$' ]]; }
++
++# ---- flags ----
++PAUSED=()
++pause_flags(){ local f p moved=()
++  for f in $FLAGS; do p=$M/$f.paused-recovery-$D
++    [[ -e $M/$f && -e $p ]] && die "$f and ${p:t} both exist (a run of this date was interrupted and $f was turned on since): refused, nothing paused, nothing launched"
++  done
++  for f in $FLAGS; do p=$M/$f.paused-recovery-$D
++    if [[ -e $M/$f ]]; then
++      if (( dry )); then say "pause: would move $f -> ${p:t}"
++      else mv -n -- $M/$f $p && [[ -e $p && ! -e $M/$f ]] || { say "pause FAILED on $f; already paused: ${moved:-none} (restore with --restore --date $D); nothing launched"; exit 1; }
++        say "pause: $f -> ${p:t}"; moved+=$f; fi
++      PAUSED+=$f
++    elif [[ -e $p ]]; then say "pause: $f already paused as ${p:t} (an earlier run of this date): kept, restored at the end"; PAUSED+=$f
++    else say "pause: $f is off (absent): stays off, not restored"; fi
++  done
++  state "recovery start: paused ${${(j:, :)PAUSED}:-nothing} (as <flag>.paused-recovery-$D); $#ORDER jobs, trains first; a relaunch waits for 1-min load < $LOAD_MAX, < $YOUNG_MAX relaunches in their first $(( YOUNG_SEC / 60 )) min and $GAP_SEC s since the last."
++}
++restore_flags(){ local f p done_=() kept=()
++  for f in $PAUSED; do p=$M/$f.paused-recovery-$D
++    if (( dry )); then say "restore: would move ${p:t} -> $f (only if $f is still absent and ${p:t} still there)"; done_+=$f
++    elif [[ -e $M/$f ]]; then say "restore: $f exists again (re-created during the recovery): it wins; ${p:t} kept for a human"; kept+="$f (re-created)"
++    elif [[ ! -e $p ]]; then say "restore: ${p:t} is gone (removed during the recovery: a veto): $f stays off"; kept+="$f (vetoed)"
++    elif mv -n -- $p $M/$f && [[ -e $M/$f ]]; then say "restore: ${p:t} -> $f"; done_+=$f
++    else say "restore FAILED on $f: ${p:t} left in place"; kept+="$f (mv failed)"; fi
++  done
++  state "recovery end: restored ${${(j:, :)done_}:-nothing}${kept:+; not restored: ${(j:, :)kept}}${1:+; $1}."
++}
++
++# ---- run ----
++if (( ! dry )); then
++  exec {lockfd}>>$M/vm-stop-recover.lock || die "cannot open $M/vm-stop-recover.lock"
++  flock -n $lockfd || die "another vm-stop-recover.sh runs (lock $M/vm-stop-recover.lock)"
++fi
++if (( restore_only )); then
++  for f in $FLAGS; do [[ -e $M/$f.paused-recovery-$D ]] && PAUSED+=$f; done
++  say "restore only (--restore --date $D): paused flags ${${(j:, :)PAUSED}:-none}"
++  restore_flags "--restore by hand"; exit 0
++fi
++parse || exit 2
++ORDER=(); for i in {1..$#CLS}; do [[ $CLS[i] = train ]] && ORDER+=$i; done; for i in {1..$#CLS}; do [[ $CLS[i] = job ]] && ORDER+=$i; done
++(( dry )) && say "DRY RUN ($jobsf, date $D): virtual clock, no flag moved, nothing launched, no file written"
++say "order (trains first): $#ORDER jobs"
++n=0; for i in $ORDER; do (( n++ )); say "  $n. $CLS[i] ${KEYS[i]%%,*} -> scope $SCOPE[i] ($MEM[i]): ${(Q)${(z)CMD[i]}}"; done
++pause_flags
++# a signal only sets stop (a long trap body crashed zsh 5.9 mid-loop); it is acted on at the next check, within POLL_SEC
++stop=0; trap 'stop=1' INT TERM HUP
++stopped(){ (( stop )) || return 0; trap - INT TERM HUP; tick
++  say "INTERRUPTED: flags stay paused (${(j:, :)PAUSED}); restore: zsh $M/tools-local/vm-stop-recover.sh --restore --date $D"
++  state "recovery INTERRUPTED after $nl relaunches; flags stay paused (${(j:, :)PAUSED}): restore with tools-local/vm-stop-recover.sh --restore --date $D."
++  exit 130; }
++LT=() nl=0 ns=0 last=0 lastscope=""
++for i in $ORDER; do
++  stopped; k=${KEYS[i]%%,*}; s=$SCOPE[i]
++  if why=$(why_skip $i); then tick; say "SKIP $s ($k): $why"; state "recovery: skipped $s ($k): $why."; (( ns++ )); continue; fi
++  tick; held=0 hs=$NOW prev="" lastsaid=0
++  while true; do
++    stopped; young=0; for t in $LT; do (( NOW - t < YOUNG_SEC )) && (( young++ )); done
++    why=()
++    load1 || why+="1-min load unreadable ($LOADAVG)"
++    [[ -n $L1 ]] && (( L1 >= LOAD_MAX )) && why+="1-min load $L1 >= $LOAD_MAX"
++    (( young >= YOUNG_MAX )) && why+="$young relaunches in their first $(( YOUNG_SEC / 60 )) min (max $YOUNG_MAX)"
++    (( nl && NOW - last < GAP_SEC )) && why+="$(( NOW - last )) s since the last relaunch (min $GAP_SEC)"
++    (( $#why )) || break
++    cur=${(j:; :)why}
++    if [[ $cur != $prev ]] || (( NOW - lastsaid >= REMIND_SEC )); then
++      [[ $cur == *(in their first|1-min load)* ]] && say "HOLD $s: $cur"; prev=$cur lastsaid=$NOW; fi
++    [[ $cur == *(in their first|1-min load)* ]] && held=1
++    if (( dry && fixed_load )) && [[ $cur == *'1-min load'* ]]; then
++      say "  dry run: the load no longer changes here; a real run waits until it is under $LOAD_MAX; continuing"; break; fi
++    if (( virt )) && [[ $cur != *load* ]]; then   # only time-based holds: jump to the earliest release
++      nxt=$(( nl ? last + GAP_SEC : NOW ))
++      (( young >= YOUNG_MAX )) && for t in $LT; do (( NOW - t < YOUNG_SEC )) || continue
++        (( t + YOUNG_SEC > nxt )) && nxt=$(( t + YOUNG_SEC )); break; done
++      (( nxt > NOW )) && { pause_s $(( nxt - NOW )); continue; }
++    fi
++    pause_s $POLL_SEC
++  done
++  if why=$(why_skip $i); then say "SKIP $s ($k) after its hold: $why"; state "recovery: skipped $s ($k): $why."; (( ns++ )); continue; fi
++  stopped; young=0; for t in $LT; do (( NOW - t < YOUNG_SEC )) && (( young++ )); done
++  if (( dry )); then say "launch (dry run: not started) $CLS[i] $s ($k): 1-min load ${L1:-?}, $(( young + 1 ))/$YOUNG_MAX in their first $(( YOUNG_SEC / 60 )) min$( (( held )) && print -n ", held $(( (NOW - hs) / 60 ))m$(( (NOW - hs) % 60 ))s")"
++  else
++    cmd=(${(Q)${(z)CMD[i]}})
++    setsid nohup zsh $M/iso.sh $s $MEM[i] -- $cmd >> $M/$s.recover.log 2>&1 < /dev/null {lockfd}>&- &!   # the job must not hold the lock
++    say "launch $CLS[i] $s ($k): 1-min load $L1, $(( young + 1 ))/$YOUNG_MAX in their first $(( YOUNG_SEC / 60 )) min, held $(( NOW - hs )) s (log $s.recover.log)"
++  fi
++  state "recovery: relaunched $CLS[i] $s ($k; 1-min load ${L1:-?}, $(( young + 1 ))/$YOUNG_MAX in their first $(( YOUNG_SEC / 60 )) min, held $(( NOW - hs )) s)."
++  LT+=$NOW last=$NOW lastscope=$s; (( nl++ ))
++done
++if (( nl )); then
++  tick; (( NOW < last + RESTORE_SEC )) && say "restore waits until the last relaunch ($lastscope) has run $(( RESTORE_SEC / 60 )) min"
++  while stopped; (( NOW < last + RESTORE_SEC )); do pause_s $(( last + RESTORE_SEC - NOW < POLL_SEC ? last + RESTORE_SEC - NOW : POLL_SEC )); done
++else say "nothing relaunched: restore now"; fi
++stopped; trap - INT TERM HUP
++restore_flags "relaunched $nl, skipped $ns"
++say "done: relaunched $nl, skipped $ns"
+--- /dev/null
++++ tools-local/vm-stop-recover-jobs-20261108.txt
+@@ -0,0 +1,21 @@
++# Job list of the 2026-11-08 recovery (recover-20261108.sh, its 15 `L` lines in their order; reviews/recover-20261108.md).
++# For vm-stop-recover.sh (dry run: zsh tools-local/vm-stop-recover.sh --dry-run --date 20261108 tools-local/vm-stop-recover-jobs-20261108.txt).
++# <train|job> <key>[,<key>...] <scope> <mem> -- <command...>
++# pc-1g keeps its first scope name (the as-run relaunch was gt-pc-1g-081108b after the failed merge --abort; see the decision).
++# ps-1c: recover-20261108.sh skipped its train when `infra-item.sh ps-1c` ran: the key list train:ps-1c,ps-1c does that.
++# at-1b is a builder chain in its chain gate (infra-item.sh), not a train: a `job` row, first of them.
++train pc-1g gt-pc-1g-081108 32G -- zsh $M/gate-train.sh pc-1g $HOME/code/ve-pc-1g feature/pc-1g pc-1g-r1108
++train train:ps-1c,ps-1c ps-1c-train 32G -- zsh $M/recover-20261108-train.sh ps-1c feature/ps-1c
++train et-4b gt-et-4b-081108 32G -- zsh $M/gate-train.sh et-4b $HOME/code/ve-et-4b feature/et-4b et-4b-c050416 --need-merge
++train df-5 gt-df-5-081108 32G -- zsh $M/gate-train.sh df-5 $HOME/code/ve-df-5 feature/df-5 df-5-c050431 --need-merge
++train ps-e1 gt-ps-e1-081108 32G -- zsh $M/gate-train.sh ps-e1 $HOME/code/ve-ps-e1 feature/ps-e1 ps-e1
++job at-1b at-1b 32G -- zsh $M/infra-item.sh at-1b feature/at-1b $M/prompts/task-at-1b.txt
++job cmp-s4a-nested cmp-s4a-nested 32G -- zsh $M/infra-item.sh cmp-s4a-nested feature/cmp-s4a-nested $M/prompts/task-cmp-s4a-nested.txt
++job qt-a4b qt-a4b 32G -- zsh $M/infra-item.sh qt-a4b feature/qt-a4b $M/prompts/task-qt-a4b.txt
++job jt-3b jt-3b 32G -- zsh $M/infra-item.sh jt-3b feature/jt-3b $M/prompts/task-jt-3b.txt
++job ap-3dc ap-3dc 32G -- zsh $M/infra-item.sh ap-3dc feature/ap-3dc $M/prompts/task-ap-3dc.txt
++job ci-5 ci-5 32G -- zsh $M/infra-item.sh ci-5 feature/ci-5 $M/prompts/task-ci-5.txt
++job eff-20261104-1 cont-eff-20261104-1-081108 32G -- zsh $M/continue-item.sh eff-20261104-1 $HOME/code/ve-eff-20261104-1 infra/eff-20261104-1 $M/eff-20261104-1-looprecheck1.final.md $M/reviews/eff-20261104-1-dri-note-20261105.md
++job arch-20261105-1 arch-20261105-1 32G -- nice -n 10 zsh $M/infra-item.sh arch-20261105-1 infra/arch-20261105-1 $M/prompts/arch-20261105-1-task.txt
++job arch-20261105-2 arch-20261105-2 32G -- nice -n 10 zsh $M/infra-item.sh arch-20261105-2 infra/arch-20261105-2 $M/prompts/arch-20261105-2-task.txt
++job dri-cm-pilot3-fix dri-cm-pilot3-fix 8G -- zsh $M/dri-delegate.sh dri-cm-pilot3-fix $M/prompts/dri-task-cm-pilot3-fix.txt
+--- /dev/null
++++ tools-local/test_vm_stop_recover.py
+@@ -0,0 +1,358 @@
++"""Tests for tools-local/vm-stop-recover.sh (2026-11-17 row vm-stop-recovery-pacing, L178; reviews/recover-20261108.md).
++usage: python3 -I tools-local/test_vm_stop_recover.py   (VMSR_SCRIPT = another copy of the script)
++Every run uses a temporary manage-agents dir (VMSR_M) with a stub iso.sh that records its argv and the flag files it sees,
++a stub systemctl (VMSR_SYSTEMCTL) and a load file (VMSR_LOADAVG); real-mode runs use the virtual clock (VMSR_VIRTUAL_CLOCK=1),
++so nothing waits for real time."""
++import fcntl, os, re, shutil, signal, subprocess, sys, tempfile, time, unittest
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++SCRIPT = os.environ.get("VMSR_SCRIPT", os.path.join(HERE, "vm-stop-recover.sh"))
++JOBS_1108 = os.path.join(HERE, "vm-stop-recover-jobs-20261108.txt")
++D = "20261108"
++FLAGS = ("CHAIN_WATCH", "FEATURE_FEED", "INFRA_FEED")
++TRAINS_1108 = ["gt-pc-1g-081108", "ps-1c-train", "gt-et-4b-081108", "gt-df-5-081108", "gt-ps-e1-081108"]
++JOBS_1108_SCOPES = ["at-1b", "cmp-s4a-nested", "qt-a4b", "jt-3b", "ap-3dc", "ci-5", "cont-eff-20261104-1-081108",
++                    "arch-20261105-1", "arch-20261105-2", "dri-cm-pilot3-fix"]
++WAIT = 120  # seconds: upper bound for a run or a stub to finish (never reached when the script works)
++
++ISO_STUB = """#!/bin/zsh
++# stub iso.sh: one line per call: <scope> <mem> | flags seen | lock fd held? | argv
++M=${0:h}; s=$1
++seen=(); for f in CHAIN_WATCH FEATURE_FEED INFRA_FEED; do [ -e $M/$f ] && seen+=$f; done
++lk=no; ls -l /proc/$$/fd 2>/dev/null | grep -q vm-stop-recover.lock && lk=yes
++print -r -- "$1 $2 | ${seen:-none} | lock:$lk | ${(j: :)@[3,-1]}" >> $M/iso-calls
++[ -f $M/hook-$s ] && zsh $M/hook-$s
++exit 0
++"""
++SYSTEMCTL_STUB = """#!/bin/sh
++# stub systemctl: rc from $M/systemctl-rc; prints a unit when the pattern names a scope listed in $M/live-scopes
++M=$(dirname "$0"); [ -f "$M/systemctl-rc" ] && exit "$(cat "$M/systemctl-rc")"
++for a in "$@"; do case $a in ve-*-\\*) s=${a#ve-}; s=${s%-\\*}
++  grep -qxF -- "$s" "$M/live-scopes" 2>/dev/null && echo "ve-$s-123.scope loaded active running $s"; esac; done
++exit 0
++"""
++
++
++def jobs(*rows):
++    return "".join(r + "\n" for r in rows)
++
++
++def row(cls, key, scope=None, mem="1G", cmd=None):
++    return f"{cls} {key} {scope or key} {mem} -- {cmd or f'zsh $M/infra-item.sh {key} feature/{key} $M/prompts/task-{key}.txt'}"
++
++
++class Base(unittest.TestCase):
++    def setUp(self):
++        self.h = tempfile.mkdtemp(prefix="vmsr-")
++        self.m = os.path.join(self.h, "manage-agents")
++        os.makedirs(self.m)
++        for f in FLAGS:
++            self.write(f, f"{f} on (test original)\nmax: 7\n")
++        self.write("CURRENT-STATE.md", "# state\n- old line\n")
++        self.write("iso.sh", ISO_STUB)
++        self.write("systemctl", SYSTEMCTL_STUB)
++        os.chmod(self.p("systemctl"), 0o755)
++        self.write("loadavg", "12.50 10.00 9.00 3/900 12345\n")
++        self.procs = []
++
++    def tearDown(self):
++        for pr in self.procs:
++            pr.kill(); pr.wait()
++        shutil.rmtree(self.h, ignore_errors=True)
++
++    def p(self, name):
++        return os.path.join(self.m, name)
++
++    def write(self, name, text):
++        with open(self.p(name), "w") as f:
++            f.write(text)
++
++    def read(self, name):
++        with open(self.p(name)) as f:
++            return f.read()
++
++    def env(self, virtual=True):
++        e = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": os.environ.get("HOME", self.h),
++             "VMSR_M": self.m, "VMSR_LOADAVG": self.p("loadavg"), "VMSR_SYSTEMCTL": self.p("systemctl")}
++        if virtual:
++            e["VMSR_VIRTUAL_CLOCK"] = "1"
++        return e
++
++    def run_script(self, *args, jobs_text=None, virtual=True):
++        argv = ["zsh", SCRIPT, *args]
++        if jobs_text is not None:
++            self.write("jobs.txt", jobs_text)
++            argv.append(self.p("jobs.txt"))
++        r = subprocess.run(argv, env=self.env(virtual), capture_output=True, text=True, timeout=WAIT)
++        self.out = r.stdout + r.stderr
++        return r
++
++    def iso_calls(self, n=None):
++        """Lines of the stub iso.sh; waits (bounded) until n lines exist (the launches are detached)."""
++        deadline = time.monotonic() + WAIT
++        while True:
++            lines = self.read("iso-calls").splitlines() if os.path.exists(self.p("iso-calls")) else []
++            if n is None or len(lines) >= n or time.monotonic() > deadline:
++                return lines
++            time.sleep(0.05)
++
++    def launches(self):
++        """(stamp, scope) of the launch lines of a run's output."""
++        return re.findall(r"^(\S+) launch (?:\(dry run: not started\) )?\w+ (\S+) \(", self.out, re.M)
++
++    def state_tail(self):
++        return self.read("CURRENT-STATE.md").split("- old line\n", 1)[1]
++
++    def flags_untouched(self):
++        for f in FLAGS:
++            self.assertEqual(self.read(f), f"{f} on (test original)\nmax: 7\n", f)
++            self.assertFalse(os.path.exists(self.p(f"{f}.paused-recovery-{D}")), f)
++
++
++def secs(stamp):
++    """+12m05s (dry run) or HH:MM:SSZ (real run) -> seconds."""
++    m = re.fullmatch(r"\+(\d+)m(\d\d)s", stamp)
++    if m:
++        return int(m[1]) * 60 + int(m[2])
++    h, mi, s = stamp.rstrip("Z").split(":")
++    return int(h) * 3600 + int(mi) * 60 + int(s)
++
++
++class DryRun(Base):
++    """The task's test: a dry run on the recover-20261108 job list prints the order (trains first), the holds and the
++    feed pause/restore steps, and launches nothing."""
++
++    def dry_1108(self, *extra):
++        r = subprocess.run(["zsh", SCRIPT, "--dry-run", "--date", D, *extra, JOBS_1108], env=self.env(virtual=False),
++                           capture_output=True, text=True, timeout=WAIT)
++        self.out = r.stdout + r.stderr
++        self.assertEqual(r.returncode, 0, self.out)
++        return r
++
++    def test_1108_order_trains_first(self):
++        self.dry_1108()
++        order = re.findall(r"^\+0m00s +\d+\. (train|job) \S+ -> scope (\S+)", self.out, re.M)
++        self.assertEqual([s for _, s in order], TRAINS_1108 + JOBS_1108_SCOPES)
++        self.assertEqual([c for c, _ in order], ["train"] * 5 + ["job"] * 10)
++        self.assertEqual([s for _, s in self.launches()], TRAINS_1108 + JOBS_1108_SCOPES)
++
++    def test_trains_first_whatever_the_file_order(self):
++        r = self.run_script("--dry-run", "--date", D, jobs_text=jobs(
++            row("job", "b1"), row("train", "t1", cmd="zsh $M/gate-train.sh t1 x y z"), row("job", "b2"),
++            row("train", "train:t2", "t2-train", cmd="zsh $M/merge-train.sh feature/t2:x:t2")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertEqual([s for _, s in self.launches()], ["t1", "t2-train", "b1", "b2"])
++
++    def test_1108_moves_no_flag_launches_nothing_writes_nothing(self):
++        before = sorted(os.listdir(self.m))
++        self.dry_1108()
++        self.flags_untouched()
++        self.assertEqual(sorted(os.listdir(self.m)), before)  # no iso-calls, log, lock or paused file
++        self.assertEqual(self.read("CURRENT-STATE.md"), "# state\n- old line\n")
++        for f in FLAGS:
++            self.assertIn(f"pause: would move {f} -> {f}.paused-recovery-{D}", self.out)
++            self.assertIn(f"restore: would move {f}.paused-recovery-{D} -> {f}", self.out)
++        self.assertEqual(len(self.launches()), 15)
++
++    def test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last(self):
++        self.dry_1108()
++        t = [secs(s) for s, _ in self.launches()]
++        self.assertEqual(len(t), 15)
++        for i, ti in enumerate(t):  # never a 7th relaunch while 6 are in their first 15 min
++            self.assertLessEqual(sum(1 for tj in t[:i + 1] if ti - tj < 900), 6, (i, t))
++        self.assertEqual(t[6] - t[0], 900, t)  # the 7th waits exactly until the 1st has run 15 min
++        self.assertTrue(all(b - a >= 60 for a, b in zip(t, t[1:])), t)
++        self.assertRegex(self.out, r"(?m)^\+5m00s HOLD cmp-s4a-nested: 6 relaunches in their first 15 min \(max 6\)")
++        rs = re.findall(r"^(\S+) restore: would move", self.out, re.M)
++        self.assertEqual(len(rs), 3)
++        self.assertEqual(secs(rs[0]) - t[-1], 600)
++        # the restore comes after every launch, the pause before the first
++        self.assertLess(self.out.index("pause: would move"), self.out.index("launch (dry run"))
++
++    def test_load_hold_at_48_and_release_under_it(self):
++        # one load per check (every 30 s): 48 holds (>=), 47.99 releases; the load hold outlasts the 60 s gap
++        self.dry_1108("--dry-loads", "10 48 60.5 60.5 50 47.99 10")
++        self.assertRegex(self.out, r"(?m)^\+0m00s HOLD ps-1c-train: 1-min load 48 >= 48; 0 s since the last relaunch")
++        self.assertRegex(self.out, r"(?m)^\+0m30s HOLD ps-1c-train: 1-min load 60.5 >= 48; 30 s since the last relaunch")
++        self.assertRegex(self.out, r"(?m)^\+1m00s HOLD ps-1c-train: 1-min load 60.5 >= 48$")
++        self.assertRegex(self.out, r"(?m)^\+1m30s HOLD ps-1c-train: 1-min load 50 >= 48$")
++        self.assertRegex(self.out, r"(?m)^\+2m00s launch \(dry run: not started\) train ps-1c-train \(train:ps-1c\): "
++                                   r"1-min load 47.99, 2/6 in their first 15 min, held 2m0s$")
++        self.assertRegex(self.out, r"(?m)^\+3m00s launch \(dry run: not started\) train gt-et-4b-081108 ")
++
++    def test_dry_run_on_a_load_that_stays_high_shows_the_hold_and_ends(self):
++        self.write("loadavg", "60.00 50.00 40.00 3/900 1\n")
++        r = self.run_script("--dry-run", "--date", D, jobs_text=jobs(row("train", "t1"), row("job", "b1")),
++                            virtual=False)
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertIn("HOLD t1: 1-min load 60.00 >= 48", self.out)
++        self.assertIn("a real run waits until it is under 48", self.out)
++        self.assertEqual(len(self.launches()), 2)
++        self.flags_untouched()
++
++
++class RealRun(Base):
++    """Real mode (stub iso.sh, virtual clock): pause, paced launches, CURRENT-STATE lines, restore."""
++
++    def test_pause_launch_record_restore(self):
++        r = self.run_script("--date", D, jobs_text=jobs(
++            row("job", "b1"), row("train", "t1", "gt-t1", "32G", "zsh $M/gate-train.sh t1 $HOME/code/ve-t1 feature/t1 tag1"),
++            row("job", "b2", mem="8G", cmd="nice -n 10 zsh ${M}/infra-item.sh b2 'two words' x")))
++        self.assertEqual(r.returncode, 0, self.out)
++        calls = self.iso_calls(3)
++        home = self.env()["HOME"]
++        self.assertEqual(calls, [
++            f"gt-t1 32G | none | lock:no | -- zsh {self.m}/gate-train.sh t1 {home}/code/ve-t1 feature/t1 tag1",
++            f"b1 1G | none | lock:no | -- zsh {self.m}/infra-item.sh b1 feature/b1 {self.m}/prompts/task-b1.txt",
++            f"b2 8G | none | lock:no | -- nice -n 10 zsh {self.m}/infra-item.sh b2 two words x"])
++        self.flags_untouched()  # restored with their own contents, no paused copy left
++        st = self.state_tail().splitlines()
++        self.assertEqual(len(st), 5, st)
++        self.assertRegex(st[0], rf"\(vm-stop-recover {D}\): recovery start: paused CHAIN_WATCH, FEATURE_FEED, INFRA_FEED")
++        for line, s in zip(st[1:4], ["gt-t1", "b1", "b2"]):
++            self.assertRegex(line, rf"^- \d{{4}}-\d\d-\d\d \d\d:\d\dZ \(vm-stop-recover {D}\): recovery: relaunched \w+ {s} ")
++        self.assertIn("recovery end: restored CHAIN_WATCH, FEATURE_FEED, INFRA_FEED; relaunched 3, skipped 0.", st[4])
++        log = self.read(f"vm-stop-recover-{D}.log")
++        self.assertEqual(len(re.findall(r"(?m)^\S+ launch ", log)), 3)
++        t = [secs(s) for s, _ in self.launches()]
++        rs = re.findall(r"^(\S+) restore: ", self.out, re.M)
++        self.assertEqual(secs(rs[0]) - t[-1], 600)
++
++    def test_absent_flag_stays_off(self):
++        os.remove(self.p("INFRA_FEED"))
++        r = self.run_script("--date", D, jobs_text=jobs(row("job", "b1")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertFalse(os.path.exists(self.p("INFRA_FEED")))
++        self.assertIn("pause: INFRA_FEED is off (absent): stays off, not restored", self.out)
++        self.assertEqual(self.iso_calls(1), [f"b1 1G | none | lock:no | -- zsh {self.m}/infra-item.sh b1 feature/b1 "
++                                             f"{self.m}/prompts/task-b1.txt"])
++        self.assertIn("restored CHAIN_WATCH, FEATURE_FEED;", self.state_tail())
++
++    def test_recreated_flag_wins_and_vetoed_copy_stays_removed(self):
++        self.write("hook-b1", f"print 'FEATURE_FEED on again (by hand)' > {self.m}/FEATURE_FEED\n"
++                              f"rm -f {self.m}/INFRA_FEED.paused-recovery-{D}\n")
++        r = self.run_script("--date", D, jobs_text=jobs(row("job", "b1"), row("job", "b2")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertEqual(self.read("FEATURE_FEED"), "FEATURE_FEED on again (by hand)\n")
++        self.assertTrue(os.path.exists(self.p(f"FEATURE_FEED.paused-recovery-{D}")))
++        self.assertFalse(os.path.exists(self.p("INFRA_FEED")))
++        self.assertEqual(self.read("CHAIN_WATCH"), "CHAIN_WATCH on (test original)\nmax: 7\n")
++        self.assertIn("restored CHAIN_WATCH; not restored: FEATURE_FEED (re-created), INFRA_FEED (vetoed)", self.state_tail())
++
++    def test_running_job_is_skipped(self):
++        for argv in (["/x/infra-item.sh", "vmsr-busy-b"], ["/x/merge-train.sh", "feature/vmsr-t:abc:vmsr-busy-t"]):
++            pr = subprocess.Popen([sys.executable, "-c", "import sys; sys.stdin.read()", *argv], stdin=subprocess.PIPE)
++            self.procs.append(pr)
++        r = self.run_script("--date", D, jobs_text=jobs(
++            row("job", "vmsr-busy-b"), row("train", "train:vmsr-busy-t", "vmsr-t-train"), row("job", "vmsr-free")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertEqual([c.split()[0] for c in self.iso_calls(1)], ["vmsr-free"])
++        self.assertIn("SKIP vmsr-busy-b (vmsr-busy-b): vmsr-busy-b runs (pid", self.out)
++        self.assertIn("SKIP vmsr-t-train (train:vmsr-busy-t): train:vmsr-busy-t: its merge train runs (pid", self.out)
++        self.assertEqual(self.state_tail().count("recovery: skipped "), 2)
++        self.assertIn("relaunched 1, skipped 2.", self.state_tail())
++
++    def test_live_or_unreadable_scope_is_skipped(self):
++        self.write("live-scopes", "b-live\n")
++        r = self.run_script("--date", D, jobs_text=jobs(row("job", "b-live"), row("job", "b-ok")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertIn("SKIP b-live (b-live): a ve-b-live-* scope is live", self.out)
++        self.assertEqual([c.split()[0] for c in self.iso_calls(1)], ["b-ok"])
++        self.write("systemctl-rc", "1\n")
++        os.remove(self.p("iso-calls"))
++        r = self.run_script("--date", "20261109", jobs_text=jobs(row("job", "b-x")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertIn("SKIP b-x (b-x): scope list unreadable (systemctl rc 1): skipped, not guessed", self.out)
++        self.assertFalse(os.path.exists(self.p("iso-calls")))
++
++    def test_bad_jobs_file_refused_before_anything(self):
++        bad = {
++            "class": "builder b1 b1 1G -- zsh $M/infra-item.sh b1",
++            "no --": "job b1 b1 1G zsh $M/infra-item.sh b1",
++            "no command": "job b1 b1 1G --",
++            "mem": "job b1 b1 lots -- zsh $M/infra-item.sh b1",
++            "scope": "job b1 ../b1 1G -- zsh $M/infra-item.sh b1",
++            "subst": "job b1 b1 1G -- zsh $M/infra-item.sh $(touch pwned)",
++            "backtick": "job b1 b1 1G -- zsh `touch pwned`",
++            "var": "job b1 b1 1G -- zsh $MX/infra-item.sh b1",
++            "op": "job b1 b1 1G -- zsh $M/infra-item.sh b1 ; touch pwned",
++            "pipe": "job b1 b1 1G -- zsh $M/infra-item.sh b1 | cat",
++            "redir": "job b1 b1 1G -- zsh $M/infra-item.sh b1 > out",
++        }
++        for name, line in bad.items():
++            with self.subTest(name):
++                r = self.run_script("--date", D, jobs_text=jobs(row("train", "t-ok"), line))
++                self.assertEqual(r.returncode, 2, self.out)
++                self.assertIn("refused", self.out)
++                self.assertFalse(os.path.exists(self.p("iso-calls")))
++                self.assertFalse(os.path.exists(os.path.join(self.h, "pwned")) or os.path.exists("pwned"))
++                self.flags_untouched()
++        for name, text in {"dup scope": jobs(row("job", "a", "s"), row("job", "b", "s")),
++                           "dup key": jobs(row("job", "a", "s1"), row("job", "a,c", "s2")),
++                           "empty": "# nothing\n\n"}.items():
++            with self.subTest(name):
++                r = self.run_script("--date", D, jobs_text=text)
++                self.assertEqual(r.returncode, 2, self.out)
++                self.flags_untouched()
++        self.assertEqual(self.read("CURRENT-STATE.md"), "# state\n- old line\n")
++
++    def test_flag_present_and_paused_refuses(self):
++        self.write(f"FEATURE_FEED.paused-recovery-{D}", "paused earlier\n")
++        r = self.run_script("--date", D, jobs_text=jobs(row("job", "b1")))
++        self.assertEqual(r.returncode, 2, self.out)
++        self.assertIn("FEATURE_FEED and FEATURE_FEED.paused-recovery-20261108 both exist", self.out)
++        for f in FLAGS:
++            self.assertTrue(os.path.exists(self.p(f)))
++        self.assertFalse(os.path.exists(self.p(f"CHAIN_WATCH.paused-recovery-{D}")))
++        self.assertFalse(os.path.exists(self.p("iso-calls")))
++
++    def test_earlier_pause_of_this_date_is_kept_and_restored(self):
++        os.rename(self.p("INFRA_FEED"), self.p(f"INFRA_FEED.paused-recovery-{D}"))
++        r = self.run_script("--date", D, jobs_text=jobs(row("job", "b1")))
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertIn("pause: INFRA_FEED already paused as INFRA_FEED.paused-recovery-20261108", self.out)
++        self.flags_untouched()
++
++    def test_restore_only(self):
++        for f in ("FEATURE_FEED", "INFRA_FEED"):
++            os.rename(self.p(f), self.p(f"{f}.paused-recovery-{D}"))
++        r = self.run_script("--dry-run", "--restore", "--date", D)
++        self.assertEqual(r.returncode, 0, self.out)
++        self.assertFalse(os.path.exists(self.p("FEATURE_FEED")))  # dry: nothing moved
++        r = self.run_script("--restore", "--date", D)
++        self.assertEqual(r.returncode, 0, self.out)
++        self.flags_untouched()
++        self.assertIn("recovery end: restored FEATURE_FEED, INFRA_FEED; --restore by hand.", self.state_tail())
++        self.assertEqual(self.run_script("--restore").returncode, 2)  # no date: refused
++
++    def test_second_run_refused_while_one_holds_the_lock(self):
++        with open(self.p("vm-stop-recover.lock"), "a") as lk:
++            fcntl.flock(lk, fcntl.LOCK_EX | fcntl.LOCK_NB)
++            r = self.run_script("--date", D, jobs_text=jobs(row("job", "b1")))
++        self.assertEqual(r.returncode, 2, self.out)
++        self.assertIn("another vm-stop-recover.sh runs", self.out)
++        self.flags_untouched()
++        self.assertFalse(os.path.exists(self.p("iso-calls")))
++
++    def test_interrupted_run_leaves_flags_paused(self):
++        self.write("loadavg", "90.00 90.00 90.00 3/900 1\n")  # held on load forever
++        self.write("jobs.txt", jobs(row("job", "b1")))
++        pr = subprocess.Popen(["zsh", SCRIPT, "--date", D, self.p("jobs.txt")], env=self.env(), stdout=subprocess.PIPE,
++                              stderr=subprocess.STDOUT, text=True)
++        self.procs.append(pr)
++        log = self.p(f"vm-stop-recover-{D}.log")
++        deadline = time.monotonic() + WAIT
++        while not (os.path.exists(log) and "HOLD b1" in open(log).read()) and time.monotonic() < deadline:
++            time.sleep(0.05)
++        pr.send_signal(signal.SIGTERM)
++        out = pr.communicate(timeout=WAIT)[0]
++        self.assertEqual(pr.returncode, 130, out)
++        for f in FLAGS:
++            self.assertFalse(os.path.exists(self.p(f)), f)
++            self.assertTrue(os.path.exists(self.p(f"{f}.paused-recovery-{D}")), f)
++        self.assertIn("recovery INTERRUPTED after 0 relaunches; flags stay paused", self.state_tail())
++        self.assertFalse(os.path.exists(self.p("iso-calls")))
++
++
++if __name__ == "__main__":
++    unittest.main()
