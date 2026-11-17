@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-vm1-gate-weight-42319339-t928743-s3",
+ "head": "363fcf0267e7c1cb52f595c231d0325871eb3122",
+ "argv": [
+  "armsh-cand-vm1-gate-weight-42319339-t928743-s3",
+  "363fcf0267e7c1cb52f595c231d0325871eb3122",
+  "cef4280596dccf8c89003412c0ec90b9d7444452",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ]
+}
