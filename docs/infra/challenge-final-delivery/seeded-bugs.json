@@ -1,0 +1,120 @@
+{
+ "item": "challenge-final-delivery",
+ "note": "Python only, in manage-agents/tools-local (no Lean, Python or Rust of this VE repo changed). Each seed is a temp copy of the staged script, run with DRA_SCRIPT=<copy> python3 -I tools-local/test_decider_ready_alert.py; the staged file itself was never edited.",
+ "mutants": [
+  {
+   "id": "S1",
+   "bug": "the 30-min wait is 29 min",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "now - st.st_mtime < CF_AFTER",
+   "replace": "now - st.st_mtime < CF_AFTER - 60",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_1_astra_final_30_min_to_orchestrator_once"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S2",
+   "bug": "no once-only dedup for challenge finals",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "cf = [x for x in challenge_finals(rows, now) if x[1] not in sent]",
+   "replace": "cf = list(challenge_finals(rows, now))",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_1_astra_final_30_min_to_orchestrator_once",
+    "test_7_relaunched_row_new_final_alerts_again",
+    "test_8_failed_send_to_one_addressee_records_only_the_other",
+    "test_9_failed_dri_send_keeps_other_parts_unrecorded"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S3",
+   "bug": "Astra challenges go to the decider, not the orchestrator",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "return \"orchestrator\" if ASTRA.search",
+   "replace": "return \"dri\" if ASTRA.search",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_10_dry_run_records_nothing",
+    "test_1_astra_final_30_min_to_orchestrator_once",
+    "test_3_two_addressees_two_messages",
+    "test_8_failed_send_to_one_addressee_records_only_the_other",
+    "test_9_failed_dri_send_keeps_other_parts_unrecorded"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S4",
+   "bug": "a final older than the in-flight stamp still counts",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "if t is None or st.st_mtime <= t:",
+   "replace": "if t is None:",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_6_silent_cases",
+    "test_7_relaunched_row_new_final_alerts_again"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S5",
+   "bug": "any open status has an in-flight stamp",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "t = parse_t(r.get(\"status_t\")) if r.get(\"status\") == \"in-flight\" else None",
+   "replace": "t = parse_t(r.get(\"status_t\")) if r.get(\"status\") not in (\"done\", \"merged\", \"dropped\") else None",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_6_silent_cases"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S6",
+   "bug": "a failed send to one addressee still records its finals",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "cf = [x for x in cf if x[4] in ok]",
+   "replace": "cf = cf",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_8_failed_send_to_one_addressee_records_only_the_other"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S7",
+   "bug": "any suffix after a row id claims the final",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "CF_SUFFIX = re.compile(r\"(stopped-)?\\d{4,8}(T\\d{4,6}Z?)?\")",
+   "replace": "CF_SUFFIX = re.compile(r\".*\")",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_6_silent_cases"
+   ],
+   "caught": true
+  },
+  {
+   "id": "S8",
+   "bug": "the dri- prefix is not stripped",
+   "file": "manage-agents/tools-local/decider-ready-alert.py.new-challew",
+   "find": "[stem] + ([stem[4:]] if stem.startswith(\"dri-\") else [])",
+   "replace": "[stem]",
+   "test": "tools-local/test_decider_ready_alert.py",
+   "rc": 1,
+   "failing_tests": [
+    "test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message",
+    "test_3_two_addressees_two_messages",
+    "test_5_row_mapping"
+   ],
+   "caught": true
+  }
+ ]
+}

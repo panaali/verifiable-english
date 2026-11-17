@@ -1,0 +1,153 @@
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpc3jfzwcf/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpki1u9thr/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpoag5p5ur/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59843swz/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfd8yypj0/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.FF/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpuln33_zz/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FFFF.FEE./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:426: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/backlog-svc.sh' mode='r' encoding='UTF-8'>
+  t = open(SVC).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpc21yxh19/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpgh2qi9mx/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7b_vfltf/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpkh660_w0/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpj7ct0_pz/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpuaffaygs/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwghx0q09/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplzrcfznr/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:242: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplzrcfznr/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
+  self.assertIn("nt:a\t" + READY + "\t", open(os.path.join(self.d, "decider-ready-alert.sent")).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp777wgljb/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp2ad2x93r/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsqkjzhdk/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpogb9y681/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+======================================================================
+ERROR: test_8_failed_send_to_one_addressee_records_only_the_other (__main__.ChallengeFinal.test_8_failed_send_to_one_addressee_records_only_the_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 396, in test_8_failed_send_to_one_addressee_records_only_the_other
+    sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpgue6ud45/decider-ready-alert.sent'
+
+======================================================================
+ERROR: test_9_failed_dri_send_keeps_other_parts_unrecorded (__main__.ChallengeFinal.test_9_failed_dri_send_keeps_other_parts_unrecorded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 409, in test_9_failed_dri_send_keeps_other_parts_unrecorded
+    sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmptbkmm5ze/decider-ready-alert.sent'
+
+======================================================================
+FAIL: test_10_dry_run_records_nothing (__main__.ChallengeFinal.test_10_dry_run_records_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 419, in test_10_dry_run_records_nothing
+    self.assertIn("to orchestrator: NOW(critical): challenge final not delivered: o-astra-challenge.final.md", p.stdout)
+AssertionError: 'to orchestrator: NOW(critical): challenge final not delivered: o-astra-challenge.final.md' not found in ''
+
+======================================================================
+FAIL: test_1_astra_final_30_min_to_orchestrator_once (__main__.ChallengeFinal.test_1_astra_final_30_min_to_orchestrator_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 294, in test_1_astra_final_30_min_to_orchestrator_once
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message (__main__.ChallengeFinal.test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 316, in test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message
+    self.assertIn(" | challenge final not delivered: dri-targets-release-challenge-1116.final.md (finished"
+AssertionError: ' | challenge final not delivered: dri-targets-release-challenge-1116.final.md (finished 2026-11-15T02:31Z, 45m ago) for row targets-release-challenge-1116' not found in 'NOW(critical): decider-owned p1 row(s) ready with no job in flight: dec (ready since 2026-11-15T14:03Z; infra: title dec). Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.'
+
+======================================================================
+FAIL: test_3_two_addressees_two_messages (__main__.ChallengeFinal.test_3_two_addressees_two_messages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 325, in test_3_two_addressees_two_messages
+    self.assertEqual([x.split("|", 2)[0] for x in m], ["dri", "orchestrator"], m)
+AssertionError: Lists differ: [] != ['dri', 'orchestrator']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'dri'
+
+- []
++ ['dri', 'orchestrator'] : []
+
+======================================================================
+FAIL: test_4_explicit_addressee_field (__main__.ChallengeFinal.test_4_explicit_addressee_field)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 336, in test_4_explicit_addressee_field
+    self.assertEqual(sorted(to), ["dri", "orchestrator"], self.msgs())
+AssertionError: Lists differ: [] != ['dri', 'orchestrator']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'dri'
+
+- []
++ ['dri', 'orchestrator'] : []
+
+======================================================================
+FAIL: test_5_row_mapping (__main__.ChallengeFinal.test_5_row_mapping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 350, in test_5_row_mapping
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_7_relaunched_row_new_final_alerts_again (__main__.ChallengeFinal.test_7_relaunched_row_new_final_alerts_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 382, in test_7_relaunched_row_new_final_alerts_again
+    self.assertEqual(len(self.msgs()), 1, self.msgs())
+AssertionError: 0 != 1 : []
+
+----------------------------------------------------------------------
+Ran 34 tests in 2.997s
+
+FAILED (failures=7, errors=2)
