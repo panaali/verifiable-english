@@ -198,3 +198,7 @@ evidence commit; this report commit adds only their record). All three passed, a
 - **Selected run:** exit 0 on GitHub Actions, 2 shards, 10 of 10 units passed.
 - **`lake build`:** 1478 jobs.
 - **`lean/audit.py`:** PASS on 898 source files.
+
+**DRI-note round:** the selected run, `lake build` and `lean/audit.py` ran once, on e83381dc3f, and all three passed
+(`selected-run.log`). The selected run exited 0 on ve-cloud-2, with 232 units and 0 failed. `lake build` built 1478
+jobs, and `lean/audit.py` passed on 898 source files.
