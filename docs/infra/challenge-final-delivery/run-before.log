@@ -1,61 +1,67 @@
-../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpc3jfzwcf/msgs.log' mode='r' encoding='UTF-8'>
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpqkqbtroc/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpki1u9thr/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwdopmdy3/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpoag5p5ur/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp8h3v3cpw/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp59843swz/msgs.log' mode='r' encoding='UTF-8'>
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpt_9g7zw5/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfd8yypj0/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdq_rtxzc/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-.FF/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpuln33_zz/msgs.log' mode='r' encoding='UTF-8'>
+.FF/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpk1k54o6o/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-FFFF.FEE./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:426: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/backlog-svc.sh' mode='r' encoding='UTF-8'>
+FFFF.FEE.FFFFFFFFEF/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:605: ResourceWarning: unclosed file <_io.BufferedReader name='/home/seyran/code/manage-agents/decider-ready-alert.sent'>
+  data = open(live_state, "rb").read() if os.path.isfile(live_state) else b""
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:610: ResourceWarning: unclosed file <_io.BufferedReader name='/home/seyran/code/manage-agents/p1-unstartable-alert.sent'>
+  f.write((open(live_p1, "rb").read() if os.path.isfile(live_p1) else b"") + b"p1row\tnot-a-number\tx\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:634: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/backlog-svc.sh' mode='r' encoding='UTF-8'>
   t = open(SVC).read()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpc21yxh19/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpz1zktvgf/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpgh2qi9mx/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpn0zrut4m/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7b_vfltf/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpr1s6llnm/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpkh660_w0/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp0rfvvxfj/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpj7ct0_pz/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_9yq9kd2/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpuaffaygs/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpdkozvzjm/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwghx0q09/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpn1ylowmv/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplzrcfznr/msgs.log' mode='r' encoding='UTF-8'>
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwqqulyr6/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:242: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplzrcfznr/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
+/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:255: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpwqqulyr6/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
   self.assertIn("nt:a\t" + READY + "\t", open(os.path.join(self.d, "decider-ready-alert.sent")).read())
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp777wgljb/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpaciemsb3/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp2ad2x93r/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmppllngc7n/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsqkjzhdk/msgs.log' mode='r' encoding='UTF-8'>
+../home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpziympj7u/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:51: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpogb9y681/msgs.log' mode='r' encoding='UTF-8'>
+./home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp0lwzijh9/msgs.log' mode='r' encoding='UTF-8'>
   return open(self.log).read().splitlines() if os.path.exists(self.log) else []
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 .
@@ -63,25 +69,34 @@ ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ERROR: test_8_failed_send_to_one_addressee_records_only_the_other (__main__.ChallengeFinal.test_8_failed_send_to_one_addressee_records_only_the_other)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 396, in test_8_failed_send_to_one_addressee_records_only_the_other
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 416, in test_8_failed_send_to_one_addressee_records_only_the_other
     sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpgue6ud45/decider-ready-alert.sent'
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpzxtxkl5g/decider-ready-alert.sent'
 
 ======================================================================
 ERROR: test_9_failed_dri_send_keeps_other_parts_unrecorded (__main__.ChallengeFinal.test_9_failed_dri_send_keeps_other_parts_unrecorded)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 409, in test_9_failed_dri_send_keeps_other_parts_unrecorded
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 429, in test_9_failed_dri_send_keeps_other_parts_unrecorded
     sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmptbkmm5ze/decider-ready-alert.sent'
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpfb0k9wxj/decider-ready-alert.sent'
+
+======================================================================
+ERROR: test_19_closed_fallback_is_backlog_closed (__main__.ChallengeFinalRows.test_19_closed_fallback_is_backlog_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 561, in test_19_closed_fallback_is_backlog_closed
+    self.assertEqual(tuple(runpy.run_path(SCRIPT, run_name="dra")["CF_CLOSED_FALLBACK"]), tuple(bl.CLOSED))
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'CF_CLOSED_FALLBACK'
 
 ======================================================================
 FAIL: test_10_dry_run_records_nothing (__main__.ChallengeFinal.test_10_dry_run_records_nothing)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 419, in test_10_dry_run_records_nothing
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 439, in test_10_dry_run_records_nothing
     self.assertIn("to orchestrator: NOW(critical): challenge final not delivered: o-astra-challenge.final.md", p.stdout)
 AssertionError: 'to orchestrator: NOW(critical): challenge final not delivered: o-astra-challenge.final.md' not found in ''
 
@@ -89,7 +104,7 @@ AssertionError: 'to orchestrator: NOW(critical): challenge final not delivered: 
 FAIL: test_1_astra_final_30_min_to_orchestrator_once (__main__.ChallengeFinal.test_1_astra_final_30_min_to_orchestrator_once)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 294, in test_1_astra_final_30_min_to_orchestrator_once
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 310, in test_1_astra_final_30_min_to_orchestrator_once
     self.assertEqual(len(m), 1, m)
 AssertionError: 0 != 1 : []
 
@@ -97,7 +112,7 @@ AssertionError: 0 != 1 : []
 FAIL: test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message (__main__.ChallengeFinal.test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 316, in test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 332, in test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message
     self.assertIn(" | challenge final not delivered: dri-targets-release-challenge-1116.final.md (finished"
 AssertionError: ' | challenge final not delivered: dri-targets-release-challenge-1116.final.md (finished 2026-11-15T02:31Z, 45m ago) for row targets-release-challenge-1116' not found in 'NOW(critical): decider-owned p1 row(s) ready with no job in flight: dec (ready since 2026-11-15T14:03Z; infra: title dec). Rule (orchestrator 20261115T140543Z): start within 30 min of ready, or move the row to blocked with the reason.'
 
@@ -105,7 +120,7 @@ AssertionError: ' | challenge final not delivered: dri-targets-release-challenge
 FAIL: test_3_two_addressees_two_messages (__main__.ChallengeFinal.test_3_two_addressees_two_messages)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 325, in test_3_two_addressees_two_messages
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 341, in test_3_two_addressees_two_messages
     self.assertEqual([x.split("|", 2)[0] for x in m], ["dri", "orchestrator"], m)
 AssertionError: Lists differ: [] != ['dri', 'orchestrator']
 
@@ -120,7 +135,7 @@ First extra element 0:
 FAIL: test_4_explicit_addressee_field (__main__.ChallengeFinal.test_4_explicit_addressee_field)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 336, in test_4_explicit_addressee_field
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 352, in test_4_explicit_addressee_field
     self.assertEqual(sorted(to), ["dri", "orchestrator"], self.msgs())
 AssertionError: Lists differ: [] != ['dri', 'orchestrator']
 
@@ -135,7 +150,7 @@ First extra element 0:
 FAIL: test_5_row_mapping (__main__.ChallengeFinal.test_5_row_mapping)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 350, in test_5_row_mapping
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 366, in test_5_row_mapping
     self.assertEqual(len(m), 1, m)
 AssertionError: 0 != 1 : []
 
@@ -143,11 +158,120 @@ AssertionError: 0 != 1 : []
 FAIL: test_7_relaunched_row_new_final_alerts_again (__main__.ChallengeFinal.test_7_relaunched_row_new_final_alerts_again)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 382, in test_7_relaunched_row_new_final_alerts_again
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 402, in test_7_relaunched_row_new_final_alerts_again
     self.assertEqual(len(self.msgs()), 1, self.msgs())
 AssertionError: 0 != 1 : []
 
+======================================================================
+FAIL: test_11_release_gate_review_row_named (__main__.ChallengeFinalRows.test_11_release_gate_review_row_named)
 ----------------------------------------------------------------------
-Ran 34 tests in 2.997s
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 471, in test_11_release_gate_review_row_named
+    self.assertIn("for row wg-x-astra-challenge (review, in flight since 2026-11-15T00:40:00Z)", self.one("orchestrator"))
+                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
 
-FAILED (failures=7, errors=2)
+======================================================================
+FAIL: test_12_dri_delegate_row_named (__main__.ChallengeFinalRows.test_12_dri_delegate_row_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 480, in test_12_dri_delegate_row_named
+    self.assertIn("for row dri-pq-challenge (review, in flight since 2026-11-15T01:31:00Z)", self.one("dri"))
+                                                                                             ^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_13_seeder_in_flight_rows_without_status_t_named (__main__.ChallengeFinalRows.test_13_seeder_in_flight_rows_without_status_t_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 493, in test_13_seeder_in_flight_rows_without_status_t_named
+    m = self.one("dri")
+        ^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_14_feed_launched_row_named (__main__.ChallengeFinalRows.test_14_feed_launched_row_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 503, in test_14_feed_launched_row_named
+    self.assertIn("for row fd-astra-challenge (in-flight, in flight since 2026-11-15T01:00:00Z)", self.one("orchestrator"))
+                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_15_blocked_and_ready_rows_with_a_run_start_named (__main__.ChallengeFinalRows.test_15_blocked_and_ready_rows_with_a_run_start_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 515, in test_15_blocked_and_ready_rows_with_a_run_start_named
+    m = self.one("dri")
+        ^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named (__main__.ChallengeFinalRows.test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 530, in test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named
+    self.assertIn("for row rl-astra-challenge (review, in flight since 2026-11-15T02:41:00Z)", self.one("orchestrator"))
+                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_17_astra_in_the_file_name_or_the_row_id_alone (__main__.ChallengeFinalRows.test_17_astra_in_the_file_name_or_the_row_id_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 543, in test_17_astra_in_the_file_name_or_the_row_id_alone
+    self.assertEqual(sorted(to), ["dri", "orchestrator"], self.msgs())
+AssertionError: Lists differ: [] != ['dri', 'orchestrator']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'dri'
+
+- []
++ ['dri', 'orchestrator'] : []
+
+======================================================================
+FAIL: test_18_a_row_claimed_twice_is_named_once (__main__.ChallengeFinalRows.test_18_a_row_claimed_twice_is_named_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 554, in test_18_a_row_claimed_twice_is_named_once
+    self.assertEqual(self.one("dri").count("for row once-challenge "), 1)
+                     ^^^^^^^^^^^^^^^
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_20_backlog_py_unloadable_still_names_stamped_rows (__main__.ChallengeFinalRows.test_20_backlog_py_unloadable_still_names_stamped_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 569, in test_20_backlog_py_unloadable_still_names_stamped_rows
+    self.assertIn("launch_spec unavailable", p.stdout)
+AssertionError: 'launch_spec unavailable' not found in ''
+
+======================================================================
+FAIL: test_installed_under_live_name_with_live_state_file (__main__.Install.test_installed_under_live_name_with_live_state_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_decider_ready_alert.py", line 621, in test_installed_under_live_name_with_live_state_file
+    self.assertNotIn("error", p.stdout)
+AssertionError: 'error' unexpectedly found in "decider-ready-alert: error UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 2072: invalid start byte\n"
+
+----------------------------------------------------------------------
+Ran 46 tests in 3.898s
+
+FAILED (failures=17, errors=3)
+rc=1
