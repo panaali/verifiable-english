@@ -1,12 +1,15 @@
-  tests/test_definitions.py: exit 0 in 18.0 s, 740 functions
-  tests/test_judgments_answer.py: exit 0 in 27.1 s, 969 functions
-  tests/test_code_map.py: exit 0 in 13.1 s, 193 functions
-  tests/test_conformance.py: exit 0 in 2.4 s, 615 functions
-  tests/test_surface_registry.py: exit 0 in 2.0 s, 435 functions
-  tests/test_answer_cutoff.py: exit 0 in 37.7 s, 562 functions, OPAQUE
-  tests/test_test_chunks.py: exit 0 in 45.4 s, 385 functions, OPAQUE
-  tests/test_run_order.py: exit 0 in 24.0 s, 553 functions, OPAQUE
-  tests/test_regen_generated.py: exit 0 in 68.6 s, 815 functions
-  tests/test_history_tests.py: exit 0 in 146.6 s, 349 functions
-recorded 10 units for tree 228c682092; 2 others left to the static graph until they run; 0 failed
-[mac-pytest 18:08:43Z] summary: ran LOCALLY (VM) because: MAC_LAST_RESORT: VM load 25.60 + 6 workers < 32 after 247 s; exit=0; 462s
+# fix round: selected run on commit 652322f096 (mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run), exit 0
+  tests/test_definitions.py: exit 0 in 13.5 s, 740 functions
+  tests/test_judgments_answer.py: exit 0 in 20.1 s, 969 functions
+  tests/test_code_map.py: exit 0 in 9.1 s, 193 functions
+  tests/test_conformance.py: exit 0 in 1.4 s, 615 functions
+  tests/test_surface_registry.py: exit 0 in 1.0 s, 435 functions
+  tests/test_answer_cutoff.py: exit 0 in 26.7 s, 562 functions, OPAQUE
+  tests/test_test_chunks.py: exit 0 in 28.5 s, 385 functions, OPAQUE
+  tests/test_run_order.py: exit 0 in 15.3 s, 553 functions, OPAQUE
+  tests/test_regen_generated.py: exit 0 in 49.1 s, 820 functions
+  tests/test_history_tests.py: exit 0 in 95.2 s, 349 functions
+recorded 10 units for tree 8c6ce462f1; 2 others left to the static graph until they run; 0 failed
+[mac-pytest 18:38:06Z] summary: ran LOCALLY (VM) because: MAC_LAST: VM load 13.43 + 6 workers < 32 (the Mac is the last resort); exit=0; 424s
+# lake build on 652322f096: Build completed successfully (1478 jobs).
+# python3 lean/audit.py on 652322f096: PASS: 898 source files; 10153 named theorem declarations audited (headline resul
