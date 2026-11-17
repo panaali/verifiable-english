@@ -275,3 +275,19 @@ def test_a_new_hit_away_from_the_mutated_unit_kills_nothing(tmp_path):
     near, _, _ = tc.verdicts({"id": "m", "unit": "r-records", "edits": edits})
     far, _, _ = tc.verdicts({"id": "m", "unit": "r-share", "edits": edits})
     assert near["L1"] == "killed" and far["L1"] == "survived"
+
+
+def test_the_batch_writes_each_mutants_text_verdicts_run_beside_its_kernel_run(tree, tmp_path):
+    case = tree / "usecases" / DOC
+    files = M.case_files(case)
+    old = '"We will share the final report with the Board."'
+    edits = M.line_edits("rules.d1.ve", files["rules.d1.ve"], files["rules.d1.ve"].replace(old, '"We will share the"'))
+    rec = {**record(tree, "m-cut", RULE), "edits": edits}
+    d = deps(tree, [rec, record(tree, "m-k", RULE.replace("final ", ""))], {"m-cut": "ALL", "m-k": "NONE"})
+    d.text = lambda document: checks(case)
+    RUN.run(DOC, tmp_path / "out", jobs=2, budget=None, deps=d)
+    got = lines(tmp_path / "out")
+    assert got["m-cut"]["record"]["verdict"]["L1"] == "killed" and got["m-cut"]["record"]["verdict"]["K"] == "survived"
+    assert got["m-cut"]["text"]["new_hits"][0]["block"] == "r-share"
+    assert got["m-k"]["record"]["verdict"]["K"] == "killed"
+    assert (tmp_path / "out/textcheck.json").exists()
