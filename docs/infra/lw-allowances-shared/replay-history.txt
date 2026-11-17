@@ -1,0 +1,7 @@
+7f290356cb RESOLVED total 9,966 (committed 9,966) SAME FILE | Merge commit '677f183aa04964acbbdf6811f56ecd2c963aff45' into
+677f183aa0 REFUSED the branch adds, removes or renames a table | Merge commit 'ed1cdc8eec1f4ca136451437428f93a301e0ebc7' into
+7cba6155a1 REFUSED the branch adds, removes or renames a table | Merge commit 'd68272ce8973b93f0231acdabe53384a71e76243' into
+0847a9e259 RESOLVED total 10,101 (committed 10,101) file differs | Merge ve-integration (0f715cea1b) into feature/kb-2a-b
+b7ca4aeca9 RESOLVED total 10,083 (committed 10,083) file differs | Merge ve-integration into feature/kb-10c
+6633c9c89f RESOLVED total 10,023 (committed 10,023) file differs | Merge ve-integration (f93b86d334) into feature/kb-10e
+a978b8e8e8 RESOLVED total 10,015 (committed 10,015) file differs | Merge ve-integration into feature/kb-validators

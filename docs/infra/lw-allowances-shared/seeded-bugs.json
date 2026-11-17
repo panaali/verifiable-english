@@ -1,0 +1,62 @@
+{
+ "item": "lw-allowances-shared",
+ "note": "Control-plane only: Python (tools-local/allowances_merge.py, path_overlap.py) and zsh (merge-train.sh, presync-watch-job.sh) in manage-agents; no Lean, Python or Rust of this repo changed. Each seed was applied to a temp copy of the staged file (every staged file copied as <name>.seed into a temp tree) and run with LWAS_SFX=.seed python3 -I tools-local/test_allowances_shared.py <test>; the staged files were never edited, so nothing needed restoring. Run 2026-11-16: all 8 CAUGHT (the named test fails).",
+ "mutants": [
+  {
+   "id": "S1-sum-totals",
+   "file": "manage-agents/tools-local/allowances_merge.py.new-lwas",
+   "change": "signed total = branch total, not main + branch delta",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total",
+   "caught": true
+  },
+  {
+   "id": "S2-prefix-check",
+   "file": "manage-agents/tools-local/allowances_merge.py.new-lwas",
+   "change": "an edited existing row passes the append-only check",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_branch_editing_an_existing_row_is_serial_and_refused",
+   "caught": true
+  },
+  {
+   "id": "S3-dup-skip",
+   "file": "manage-agents/tools-local/allowances_merge.py.new-lwas",
+   "change": "a row main already has is appended again",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_duplicate_appended_row_is_not_doubled",
+   "caught": true
+  },
+  {
+   "id": "S4-delta-check",
+   "file": "manage-agents/tools-local/allowances_merge.py.new-lwas",
+   "change": "a total that does not match the rows' Lines is accepted",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_total_not_matching_branch_delta_is_refused",
+   "caught": true
+  },
+  {
+   "id": "S5-overlap-rule",
+   "file": "manage-agents/tools-local/path_overlap.py.new-lwas",
+   "change": "path_overlap ignores the allowances rule (ALLOWANCES.md serial again)",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_path_overlap_check_no_longer_reports_append_only_branches",
+   "caught": true
+  },
+  {
+   "id": "S6-train-glue",
+   "file": "manage-agents/merge-train.sh.new-lwas",
+   "change": "merge-train regen_merge no longer calls the resolver",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total",
+   "caught": true
+  },
+  {
+   "id": "S7-presync-glue",
+   "file": "manage-agents/presync-watch-job.sh.new-lwas",
+   "change": "presync-watch-job regen_merge no longer calls the resolver",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_presync_job_resolves_the_same_conflict",
+   "caught": true
+  },
+  {
+   "id": "S8-renumber",
+   "file": "manage-agents/tools-local/allowances_merge.py.new-lwas",
+   "change": "appended kernel rows keep the branch's Total after (not renumbered from main)",
+   "test": "tools-local/test_allowances_shared.py Behaviour.test_two_append_only_branches_rebase_second_with_both_rows_and_summed_total",
+   "caught": true
+  }
+ ]
+}
