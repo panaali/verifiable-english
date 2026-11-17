@@ -1,0 +1,196 @@
+--- pick-claude-account.sh	2026-11-17 13:05:09.846319816 +0000
++++ pick-claude-account.sh.new-pickw	2026-11-17 17:49:51.579095777 +0000
+@@ -42,6 +42,8 @@
+ # a rank 1-3 caller (Nov 23 path pin / tm-* / bottleneck pin) refused on main by the main worker cap touches
+ # pick-waiting-main/<row> (mmark mark) and removes it on any pick; while a live marker of a better rank exists, a lower-ranked
+ # non-coordinator caller gets PICK_MAIN_HELD and pick() refuses it main only (mhold). Tests: python3 -I tools-local/test_pick_main_rank.py
++# 2026-11-17 pick-main-slot-mark (reviews/dri-decisions-20261117-pf16-main-slot.md item 3): the critical fallback's main pick (cffall)
++# marks too when it is refused by the main worker cap: a caller whose first pick held main out (PICK_AVOID) never saw that reason.
+ mmark(){ [ -n "$PICK_ITEM" ] && [ -z "$PICK_COORD" ] && python3 -I $PCF/tools-local/pick_critical.py main$1 "$PICK_ITEM" > /dev/null 2>&1; return 0; }
+ # 2026-11-16 release-yield-1116 (targets ruling Amendment 1 A2(b)(c), A3; reviews/dri-decisions-20261116-release-a1.md item 2;
+ # tools-local/pick_critical.py (v)): PICK_ITEM's backlog row (base id) adds its links.avoid to PICK_AVOID for every pick of the item
+@@ -471,7 +473,17 @@
+     if a == "main" and not os.environ.get("PICK_COORD"):
+         mcap = int(os.environ.get("PICK_MAIN_WORKERS", "3")); t55, t40 = (int(x) for x in os.environ.get("PICK_MAIN_TAPER", "55 40").split()); mcap = 0 if f >= t55 else ((mcap + 1) // 2 if (f >= t40 or f < 0) else mcap)  # main-5h-unknown-1116: unknown is not "below 40" (the stand-in guard stands for the 55 step)
+         if int(running.get(d, 0)) >= mcap:
+-            no(a, f, w, f"main worker cap {int(running.get(d, 0))}/{mcap} (PICK_MAIN_WORKERS at once; 5-h taper PICK_MAIN_TAPER {t55}/{t40})"); continue
++            # 2026-11-17 pick-main-slot-mark (reviews/dri-decisions-20261117-pf16-main-slot.md item 3; INSTALL READ): a rank-1 (PICK_R1_,
++            # Nov 23 path) critical fallback (PICK_CRIT_MAIN) may take ONE main slot over the cap (mcap + 1; never at taper 0) only by the
++            # rank-1 main rule r1ok (main week <= PICK_MAIN_PACE line - 4, 300-min week rise < 5, the one-row holder marker
++            # PICK_R1_MARKER; a grant this call already took above is reused). Refused: the main worker cap reason as before, plus the reason
++            # of the rule after a comma (no ";": cffall reads the reason), so cffall still writes the waiting-main marker (mmark).
++            # Tests: python3 -I tools-local/test_pick_main_rank.py (CritFallbackSlot)
++            r1x = (False, "")
++            if critmain and r1on and 0 < mcap == int(running.get(d, 0)): r1x = r1_ if r1_[0] else r1ok(w)
++            if not r1x[0]:
++                no(a, f, w, f"main worker cap {int(running.get(d, 0))}/{mcap} (PICK_MAIN_WORKERS at once; 5-h taper PICK_MAIN_TAPER {t55}/{t40})" + (f", rank-1 critical slot {mcap + 1}: {r1x[1]}" if r1x[1] else "")); continue
++            r1_ = r1x; r1d = d
+     if int(running.get(d, 0)) >= cap and not os.environ.get("PICK_LIGHT") and not os.environ.get("PICK_FAST") and not (os.environ.get("PICK_URGENT") and a != "main") and not (os.environ.get("PICK_DECIDER") and a == "main"):  # 2026-11-11 DRI: the decider is never starved by the main worker cap (Fable seats filled both helper 5-h windows)
+         no(a, f, w, f"worker cap {int(running.get(d, 0))}/{cap}"); continue  # 2026-10-03: at most 3 concurrent workers per account (burst control); short sessions (PICK_LIGHT) are exempt
+     # 2026-10-29 dri-lp0401 (DRI answer LP-20261029T0401-3): management sessions (PICK_MGMT=1, set by dri-delegate.sh) leave main
+@@ -638,6 +650,7 @@
+     echo "$(date -u +%FT%H:%MZ) item=$PICK_ITEM caller=$l to=main main_week=$mw main_5h=$mf held=${m}m (caller pid $PPID)" >> $PCF/pick-fallback.log
+     zsh $PCF/msg.sh orchestrator pick-claude-account "pick fallback: $PICK_ITEM ($l) held $m min in the picker -> main (main week $mw%, 5-h $mf%; standing rule pick-critical-fallback-1115, pick-fallback.log)" > /dev/null 2>&1
+     echo "$(date -u +%FT%H:%MZ) picked ${b:t} busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} crit-fallback=main (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $b; exit 0; fi
++  [[ "$b" == *"main: main worker cap"* ]] && mmark mark  # pick-main-slot-mark: the cap refusal of the fallback pick keeps the row's rank (pick-waiting-main/)
+   pwhy="$pwhy; critical fallback to main (held $m min): ${${b//$'\n'/ }:-refused}"; }
+ # 2026-10-15 eff pass: log every pick and wait with the per-account worker counts (busy), so a cap change (L43) can be
+ # shown to fire: pair pick.log with the 5h/week values in usage-watch.log
+--- tools-local/test_pick_main_rank.py	2026-11-16 19:41:08.406685198 +0000
++++ tools-local/test_pick_main_rank.py.new-pickw	2026-11-17 17:52:16.235755206 +0000
+@@ -1,7 +1,8 @@
+ """Tests for main slots by rank (2026-11-16 main-slot-rank, orchestrator BATCH 193757Z; targets ruling 4.1 order of claim,
+ reviews/dri-ruling-targets-20261116.md): a Nov 23 path row refused on main by the main worker cap leaves a pick-waiting-main/
+ marker; while it is live, a lower-ranked non-coordinator caller (kb-4b) is refused main only and goes to another account.
+-usage: python3 -I tools-local/test_pick_main_rank.py   (PICK_SCRIPT / PCRIT_SCRIPT = .new copies before mv)"""
++usage: python3 -I tools-local/test_pick_main_rank.py   (PICK_SCRIPT / PCRIT_SCRIPT = .new copies before mv)
++CritFallbackSlot (2026-11-17 pick-main-slot-mark): the critical fallback marks on a main-cap refusal; rank-1 takes mcap + 1 (pace - 4)."""
+ import os, shutil, subprocess, sys, tempfile, time, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+@@ -18,7 +19,7 @@
+         "old-path\t2020-01-01T00:00Z\tNov 23 path (expired)\n")
+ 
+ 
+-class MainRank(unittest.TestCase):
++class RankBase(unittest.TestCase):
+     def setUp(self):
+         self.h = tempfile.mkdtemp(prefix="pm-rank-")
+         self.m = f"{self.h}/code/manage-agents"
+@@ -35,7 +36,7 @@
+     def acct(self, a, f=10, w=40):
+         return f"{a} /x/claude-{a} {f} {w} allowed {te.field(4)} {te.field(50)}"
+ 
+-    def pick(self, lines, item=None, busy="", coord=False):
++    def pick(self, lines, item=None, busy="", coord=False, **extra):
+         acc = f"{self.h}/accounts.sh"
+         open(acc, "w").write("cat <<'E'\n" + "\n".join(lines) + "\nE\n")
+         src = open(PICK).read()
+@@ -51,6 +52,7 @@
+             env["PICK_ITEM"] = item
+         if coord:
+             env["PICK_COORD"] = "1"
++        env.update(extra)
+         r = subprocess.run(["zsh", p], env=env, capture_output=True, text=True)
+         return (r.stdout.strip() if r.returncode == 0 else None), r.stderr
+ 
+@@ -66,6 +68,7 @@
+         return subprocess.run([sys.executable, "-I", PCRIT, "rank", item], env=dict(os.environ, PCF_M=self.m),
+                               capture_output=True, text=True).stdout.strip()
+ 
++class MainRank(RankBase):
+     def test_rank_classes(self):
+         self.assertEqual(self.rank("rsp-x"), "1")
+         self.assertEqual(self.rank("rsp-x-c191230"), "1")  # a continue round of the row
+@@ -117,5 +120,111 @@
+         self.assertIsNone(self.pick([self.acct("main")], item="kb-4b", busy="/x/claude-main=2")[0])
+ 
+ 
++# 2026-11-17 pick-main-slot-mark (reviews/dri-decisions-20261117-pf16-main-slot.md item 3; the MEASURED case: pf-f16-without-fix,
++# rank 1, waited with main in its run-codex.sh PICK_AVOID; only its critical-fallback pick (cffall) was refused by the main worker cap,
++# no pick-waiting-main/ marker was written, and a rank-4 launch took the slot freed at 03:32Z).
++# (A) cffall marks pick-waiting-main/<row> when its PICK_CRIT_MAIN pick is refused by the main worker cap.
++# (B) a rank-1 critical fallback may take ONE main slot over the cap (mcap + 1) while main week <= PICK_MAIN_PACE line - 4 (with the
++#     rank-1 rule's 300-min rise < 5), one row at a time through PICK_R1_MARKER ($PCF/pick-main-rank1).
++PACE = "2026-10-01T00:00Z 60 2026-12-31T00:00Z 60\n"  # a flat PICK_MAIN_PACE line at 60: the rank-1 bound is week <= 56
++
++
++def flat_log(week):  # usage-watch.log lines: main flat at week over 4 h (rise 0)
++    return "header line dropped by the reader\n" + "".join(f"{h:02d}:00Z main 5h=45 week={week} allowed\n" for h in range(15, 20))
++
++
++class CritFallbackSlot(RankBase):
++    def setUp(self):
++        super().setUp()
++        self.r1 = f"{self.m}/pick-main-rank1"
++
++    def crit(self, item, busy, f=45, w=47, flat=False, pace=True, **extra):
++        """the picker as run-codex.sh's critical caller held 20 min: main only in PICK_AVOID (PICK_AVOID_RCX), cffall due"""
++        if pace:
++            open(f"{self.h}/flag-PICK_MAIN_PACE", "w").write(PACE)
++        elif os.path.exists(f"{self.h}/flag-PICK_MAIN_PACE"):
++            os.remove(f"{self.h}/flag-PICK_MAIN_PACE")
++        ul = f"{self.h}/none"
++        if flat:  # a fresh usage-watch.log with main flat at week w
++            ul = f"{self.h}/usage-watch.log"; open(ul, "w").write(flat_log(w))
++            os.utime(ul, (te.NOW.timestamp() - 60, te.NOW.timestamp() - 60))
++        return self.pick([self.acct("main", f, w)], item=item, busy=busy, PICK_AVOID="main", PICK_AVOID_RCX="main",
++                         PICK_CRIT_T0=str(int(time.time()) - 20 * 60), PICK_USAGE_LOG=ul, **extra)
++
++    def holder(self):
++        return open(self.r1).read().split() if os.path.exists(self.r1) else None
++
++    # (A) the MEASURED case: first pick "held out (PICK_AVOID)", the fallback pick refused by the cap (5-h 45: cap 3 -> 2) -> marker.
++    # No PICK_MAIN_PACE line in (A): the run-codex main lift (pace line - 4, installed after 03:28Z) is off, so the first pick holds
++    # main out as it did for pf-f16 (it also does whenever main week is over the line - 4 and under the critical bound 60)
++    def test_crit_fallback_cap_refusal_marks(self):
++        out, err = self.crit("rsp-x", "/x/claude-main=2", pace=False)
++        self.assertIsNone(out)
++        self.assertIn("main: held out (PICK_AVOID", err)
++        self.assertIn("critical fallback to main (held 20 min): main: main worker cap 2/2", err)
++        self.assertTrue(os.path.exists(self.marker("rsp-x")))
++        self.assertEqual(open(self.marker("rsp-x")).read().split()[0], "1")
++        # and the marker does what it is for: the rank-4 launch of 03:32Z is held off the freed slot
++        out, err = self.pick([self.acct("main", 45, 47)], item="kb-4b", busy="/x/claude-main=1")
++        self.assertIsNone(out)
++        self.assertIn("held for a waiting higher-ranked row rsp-x", err)
++
++    def test_crit_fallback_cap_refusal_marks_rank3(self):  # rank 2-3 rows mark too (a pinned bottleneck row is critical)
++        self.assertIsNone(self.crit("cg-fix", "/x/claude-main=2", pace=False)[0])
++        self.assertIn("main: held out (PICK_AVOID", self.crit("cg-fix", "/x/claude-main=2", pace=False)[1])
++        self.assertEqual(open(self.marker("cg-fix")).read().split()[0], "3")
++
++    def test_crit_fallback_other_refusal_or_rank4_no_mark(self):
++        out, err = self.crit("rsp-x", "/x/claude-main=1", f=52, pace=False)  # refused by the critical 5-h bound, not by the cap: no marker
++        self.assertIsNone(out)
++        self.assertIn("critical fallback needs main week < 60 and 5-h < 50", err)
++        self.assertFalse(os.path.exists(self.marker("rsp-x")))
++        self.assertIsNone(self.crit("kb-4b", "/x/claude-main=2", pace=False)[0])  # rank 4 (critical as kb-*): refused, never marks
++        self.assertFalse(os.path.exists(self.marker("kb-4b")))
++
++    # (B) rank-1, week 47 <= 60 - 4, flat week: the 3rd main slot (cap 2 at 5-h 45), this caller holds PICK_R1_MARKER
++    def test_rank1_crit_fallback_third_slot(self):
++        out, err = self.crit("rsp-x", "/x/claude-main=2", flat=True)
++        self.assertEqual(out, "/x/claude-main", err)
++        self.assertEqual(self.holder(), ["rsp-x", str(os.getpid())])
++        self.assertIn("item=rsp-x", open(f"{self.m}/pick-fallback.log").read())
++        self.assertFalse(os.path.exists(self.marker("rsp-x")))
++        self.assertEqual(self.crit("rsp-x", "/x/claude-main=2", flat=True, w=56)[0], "/x/claude-main")  # bound: week = line - 4
++
++    def test_rank1_slot_only_one_over_the_cap(self):  # mcap + 1 is the limit: a 4th session is refused and waits (marker)
++        out, err = self.crit("rsp-x", "/x/claude-main=3", flat=True)
++        self.assertIsNone(out)
++        self.assertTrue(os.path.exists(self.marker("rsp-x")))
++        self.assertIsNone(self.holder())
++
++    def test_rank1_slot_refused_over_pace_minus_4(self):  # week 57 > 60 - 4: refused with the cap reason, so it waits (marker)
++        out, err = self.crit("rsp-x", "/x/claude-main=2", flat=True, w=57)
++        self.assertIsNone(out)
++        self.assertIn("main worker cap 2/2", err)
++        self.assertIn("rank-1 main rule: week 57 > PICK_MAIN_PACE line 60.0 - 4", err)
++        self.assertTrue(os.path.exists(self.marker("rsp-x")))
++        self.assertIsNone(self.holder())
++        self.assertIsNone(self.crit("rsp-x", "/x/claude-main=2", flat=True, pace=False)[0])  # no PICK_MAIN_PACE line: refused
++
++    def test_rank1_slot_one_row_at_a_time(self):  # another rank-1 row holds the marker (live pid): refused, marker unchanged
++        open(self.r1, "w").write(f"rsp-y {os.getpid()}\n")
++        out, err = self.crit("rsp-x", "/x/claude-main=2", flat=True)
++        self.assertIsNone(out)
++        self.assertIn("rank-1 main rule: main held by rank-1 row rsp-y", err)
++        self.assertEqual(self.holder(), ["rsp-y", str(os.getpid())])
++        self.assertTrue(os.path.exists(self.marker("rsp-x")))
++
++    def test_slot_only_for_rank1_critical_fallback(self):
++        self.assertIsNone(self.crit("cg-fix", "/x/claude-main=2", flat=True)[0])  # rank 3: no extra slot
++        self.assertIsNone(self.holder())
++        open(f"{self.h}/flag-PICK_MAIN_PACE", "w").write(PACE)
++        ul = f"{self.h}/usage-watch.log"; open(ul, "w").write(flat_log(47))
++        os.utime(ul, (te.NOW.timestamp() - 60, te.NOW.timestamp() - 60))
++        out, err = self.pick([self.acct("main", 45, 47)], item="rsp-x", busy="/x/claude-main=2", PICK_USAGE_LOG=ul)  # no fallback
++        self.assertIsNone(out)
++        self.assertIn("main: main worker cap 2/2 (PICK_MAIN_WORKERS at once; 5-h taper PICK_MAIN_TAPER 55/40) (5-h 45%", err)
++        self.assertIsNone(self.holder())
++
++
+ if __name__ == "__main__":
+     unittest.main()
