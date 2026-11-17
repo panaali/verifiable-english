@@ -191,6 +191,9 @@ All three languages of the VE repo: none changed, so no Lean, Python or Rust see
 
 ## 7. Install read (for the DRI; I did not install or restart)
 
+Sent to the DRI on 2026-11-17 at 07:38Z: `manage-agents/inbox/dri/20261117T073833Z-tm-drain-vm1-idle-2707191.md` (the same
+commands).
+
 Safe window: when `test-skip/nightly.log` ends with "final coverage: not yet complete; next try ..." (today's sweep
 started at 06:08Z with a 10 h budget, so after ~16:10Z) and no mac-pytest.sh runs in the svc-tm-nightly scope. A restart
 during a sweep kills its in-flight parts (their ids stay unjudged and resume, but their work is lost).
