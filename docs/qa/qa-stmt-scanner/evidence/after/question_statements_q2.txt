@@ -1,0 +1,4 @@
+Q2 statements: 32 of 32 implemented; 0 missing; 0 differ in text
+Q2 definitions: 51 approved, 37 with bodies, 37 equal to the approved text, 0 changed (0 listed with their reasons); 0 absent
+Q2 structures and inductives: 14 approved, 14 equal to the approved text, 0 changed
+Q2 Lean check: 46 approved statements and signatures elaborated against the implementation; PASS

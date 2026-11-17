@@ -170,10 +170,10 @@ def test_a_changed_predicate_body_is_noticed():
     tool = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(tool)
     source = (ROOT / "lean/VE/Question/Properties.lean").read_text()
-    approved = tool.definitions(SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0])
-    assert tool.definitions(source)["HasReading"] == approved["HasReading"]
+    approved = tool.definitions(tool.spec_code(SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0]))
+    assert tool.definitions(tool.Code([source]))["HasReading"] == approved["HasReading"]
     changed = source.replace("∃ φ, EnglishOneReading E O L s [(φ, false)]", "∃ φ, EnglishOneReading E O L s [(φ, true)]")
-    assert changed != source and tool.definitions(changed)["HasReading"] != approved["HasReading"]
+    assert changed != source and tool.definitions(tool.Code([changed]))["HasReading"] != approved["HasReading"]
 
 
 def test_every_approved_statement_is_proved_as_written():

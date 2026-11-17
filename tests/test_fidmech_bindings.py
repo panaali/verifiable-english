@@ -16,7 +16,7 @@ from tools.fidmech import bindings as B
 
 ROOT = Path(__file__).resolve().parents[1]
 PINNED = {
-    "anthropic-rsp": "58a8cc43d30b51fa52cbec8325755246e2b27181445409f1275574fbf43f28d9",
+    "anthropic-rsp": "86d75856b65cbe63a47cd1893e91a31e6eb329d71ed2c8d2f2394bc77b55bc0e",
     "openai-preparedness": "f6155b130d91414abe2400202130dfafcae2a5e01185b8c8ba5c14e756b3920b",
     "safety-framework": "bfccca31e1df9d322ae37a0e7596ae0b8ae7d663cc341f89cd2187ce9360b7b0",
 }
