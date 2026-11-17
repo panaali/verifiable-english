@@ -1,0 +1,136 @@
+--- /home/seyran/code/manage-agents/tm-nightly.py.bak-20261117T1236Z-fk	2026-11-16 20:10:38.581379419 +0000
++++ /home/seyran/code/manage-agents/tm-nightly.py	2026-11-17 12:09:51.806679500 +0000
+@@ -86,11 +86,21 @@
+           equal (inputs: only the test option, the added outside files' digests and the tests digest differ): KILLED,
+           INVALID, ALLOWED and UNKNOWN rows carry, a SURVIVOR never does; "tests_added" names the new paths. unjudged
+           lists every SURVIVOR when `tests` at the record's head is a strict superset of the record's tests.
++  2026-11-17 tm-sc7-rejudge (reviews/dri-decisions-20261116-tmlk.md item 3; reviews/tm-nightly-lookups-20261116.md item 6):
++      FORWARD KILL. An unallowed SURVIVOR at the record's head H counts resolved (its own count "forward_killed", never
++      "allowed") when a trust_mutants record listed in test-skip/forward-kills.jsonl ({"record", "head", "sha256"}) holds
++      its text (file, definition, operator, before, after; never the id: ids renumber) as KILLED and: the file's sha256 is
++      the ledger's; its own "head" is the ledger's head H2 (a full sha); H2 != H, H is an ancestor of H2 and H2 is an
++      ancestor of main (the worktree's `main`). A text the record also holds with any other status, or a text on more
++      than one row of the nightly record at H (which line is meant is not known), resolves nothing. Its
++      survivor row and the nightly.jsonl row cite "forward-kill: <record> @ <H2>" (record, head, sha256 kept in "forward_kill").
++      A T1 escape stays an escape (escapes.jsonl, its tm-esc row); any other forward-killed SURVIVOR files no tm-esc row.
++      complete and row_complete subtract forward_killed. UNKNOWN rows are never forward-killed.
+ Tests only: TEST_SKIP_DIR, TM_TARGETED_ONLY_FLAG, TM_NIGHTLY_NO_SIDE=1 (no backlog row, message or CURRENT-STATE line),
+ TM_NIGHTLY_SPM / TM_NIGHTLY_SETUP (size's s/mutant and setup s), TM_NIGHTLY_MPJ (mac-pytest.jsonl), TM_NIGHTLY_BACKLOG
+ (BACKLOG.jsonl read for existing tm-esc rows and ids), TM_NIGHTLY_SIDE_LOG (with NO_SIDE: each side command as a json line).
+ """
+-import calendar, glob, json, os, re, subprocess, sys, time
++import calendar, glob, hashlib, json, os, re, subprocess, sys, time
+ 
+ M = "/home/seyran/code/manage-agents"
+ D = os.environ.get("TEST_SKIP_DIR", f"{M}/test-skip")
+@@ -442,6 +452,37 @@
+     return f, lb, tm_, al is not None, al is None and killed, al
+ 
+ 
++def is_ancestor(w, a, b):
++    return subprocess.run(["git", "-C", w, "merge-base", "--is-ancestor", a, b], capture_output=True).returncode == 0
++
++
++def forward_kills(w, head):
++    """tm-sc7-rejudge: {text key: {"record", "head", "sha256"}} of the texts a ledgered later record holds as KILLED only
++    (header). A ledger row that fails any condition resolves nothing: never a guess, never an id match."""
++    out = {}
++    for r in jl(f"{D}/forward-kills.jsonl"):
++        p, h2, sha = (r.get(k) if isinstance(r, dict) else None for k in ("record", "head", "sha256"))
++        if not (isinstance(p, str) and isinstance(h2, str) and re.fullmatch(r"[0-9a-f]{40}", h2) and isinstance(sha, str)):
++            continue
++        p = os.path.join(D, p)  # a relative path is under test-skip/
++        try:
++            raw = open(p, "rb").read()
++            d = json.loads(raw)
++        except (OSError, ValueError):
++            continue
++        if (hashlib.sha256(raw).hexdigest() != sha or not isinstance(d, dict) or d.get("head") != h2 or h2 == head
++                or not is_ancestor(w, head, h2) or not is_ancestor(w, h2, "main")):
++            continue
++        st, ms = {}, d.get("mutants")
++        for m in ms if isinstance(ms, list) else []:
++            st.setdefault(text_key(m) if isinstance(m, dict) else None, set()).add(m.get("status") if isinstance(m, dict) else None)
++        st.pop(None, None)
++        for k, s in st.items():
++            if s == {"KILLED"}:
++                out.setdefault(k, {"record": p, "head": h2, "sha256": sha})
++    return out
++
++
+ def classify(rec, w, base):
+     on, cut_items = t1_cut_items()  # tm-nightly-fix (1): raises Unread before anything is written
+     d = json.load(open(rec))
+@@ -455,6 +496,10 @@
+     unallowed = []  # tm-nightly-fix (2)/(3): (row, is escape) of every SURVIVOR allow_of does not allow
+     escapes, others, unres = [], [], []
+     per_file, allowed_n, invalid_n = {}, {"SURVIVOR": 0, "UNKNOWN": 0}, 0
++    fks, fk_rows = forward_kills(w, head) if surv else {}, []  # tm-sc7-rejudge: forward kills (header)
++    n_text = {}  # a text on two rows at H: which line H2's KILLED row is on is not known, so nothing resolves
++    for m in rows:
++        n_text[text_key(m)] = n_text.get(text_key(m), 0) + 1
+     for m in surv + unk:
+         st = m.get("status")
+         key = (m.get("definition"), m.get("operator"))
+@@ -472,6 +517,10 @@
+                "definition": key[0], "operator": key[1], "before": m.get("before"), "after": m.get("after"),
+                "merge": f, "label": lb, "t_merge": tm_, "lag_h": round((t - tm_) / 3600, 2) if tm_ else None,
+                "allowed": is_allowed, "item_killed": ikilled, "allow_label": al, "invalid_here": inv}
++        fk = fks.get(text_key(m)) if st == "SURVIVOR" and not is_allowed and n_text.get(text_key(m)) == 1 else None
++        if fk:
++            row["forward_kill"] = {**fk, "cite": f"forward-kill: {fk['record']} @ {fk['head']}"}
++            fk_rows.append({"id": m.get("id"), **row["forward_kill"]})
+         if st == "UNKNOWN":
+             row["why_not_escape"] = ("allow-listed UNKNOWN (resolved)" if is_allowed else "INVALID: Lean refused the mutant's text at its "
+                                      "own line (resolved)" if inv else "UNKNOWN (unresolved, never an escape)")
+@@ -480,10 +529,11 @@
+             escapes.append(row)
+             unallowed.append((row, "T1 escape"))
+         else:
+-            row["why_not_escape"] = ("allow-listed" if is_allowed else "merged before T1 went on" if not (on and tm_ and tm_ >= on)
++            row["why_not_escape"] = ("allow-listed" if is_allowed else f"{row['forward_kill']['cite']} (resolved)" if fk else
++                                     "merged before T1 went on" if not (on and tm_ and tm_ >= on)
+                                      else f"{lb}: no T1 cut of its sweep (it ran the full plan)")
+             others.append(row)
+-            if not is_allowed:
++            if not is_allowed and not fk:
+                 unallowed.append((row, "merged before T1 went on" if lb in cut_items and lb else "no t1 CUT entry"))
+     # tm-nightly-fix (3): one p5 tm-esc row per unallowed SURVIVOR text, filed or kept (idempotent across runs).
+     led = jl(f"{D}/tm-esc.jsonl")
+@@ -571,7 +621,7 @@
+     # a gap on main until killed or allowed; its tm-esc row does not resolve it).
+     cts = d.get("counts") or {}
+     left = {"NOT RUN": cts.get("NOT RUN", 0), "UNKNOWN": max(0, cts.get("UNKNOWN", 0) - allowed_n["UNKNOWN"] - invalid_n),
+-            "SURVIVOR": len(surv) - allowed_n["SURVIVOR"]}
++            "SURVIVOR": len(surv) - allowed_n["SURVIVOR"] - len(fk_rows)}
+     unresolved = {k: v for k, v in left.items() if v}
+     summ = {"t": now_iso(), "record": rec, "head": head, "base": base, "mutants": len(rows), "counts": d.get("counts"),
+             "survivors": len(surv), "allowed": allowed_n, "invalid_here": invalid_n, "per_file": per_file,
+@@ -580,7 +630,8 @@
+             "steps_wall": (d.get("steps") or {}).get("wall"), "planned": d.get("planned"),
+             "parts": len(d.get("parts") or []) or 1, "part_rows": d.get("parts"), "vm_cpu_s": d.get("vm_cpu_s"),
+             "unresolved_unknown": unres, "resumed_from": d.get("resumed_from"),
+-            "unallowed_survivor": [r["id"] for r, _ in unallowed], "tm_esc_new": esc_new, "tm_esc_kept": esc_kept}
++            "unallowed_survivor": [r["id"] for r, _ in unallowed if "forward_kill" not in r], "tm_esc_new": esc_new,
++            "tm_esc_kept": esc_kept, "forward_killed": len(fk_rows), "forward_kill": fk_rows}
+     append(f"{D}/nightly.jsonl", summ)
+     return summ
+ 
+@@ -602,13 +653,15 @@
+ 
+ 
+ def row_complete(r):
+-    """tm-nightly-fix (2): a nightly.jsonl row is complete only with no unallowed SURVIVOR (older rows: survivors - allowed)."""
++    """tm-nightly-fix (2): a nightly.jsonl row is complete only with no unallowed SURVIVOR (older rows: survivors - allowed;
++    tm-sc7-rejudge: - forward_killed)."""
+     if not r.get("complete"):
+         return False
+     if (r.get("unresolved") or {}).get("SURVIVOR"):
+         return False
+     try:
+-        return int(r.get("survivors") or 0) - int((r.get("allowed") or {}).get("SURVIVOR") or 0) <= 0
++        return (int(r.get("survivors") or 0) - int((r.get("allowed") or {}).get("SURVIVOR") or 0)
++                - int(r.get("forward_killed") or 0) <= 0)
+     except (TypeError, ValueError, AttributeError):
+         return False
+ 
