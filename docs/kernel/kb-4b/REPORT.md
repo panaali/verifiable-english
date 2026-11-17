@@ -7,7 +7,7 @@
 runner's validation and model view reference no typing reduction, no frozen decoder and no acts view. Kernel 9,991 to
 9,738 lines (-253); `metered` path 3,238 to 2,883. No answer byte changes (equality theorems; the five keys' 24,385
 metered answers compared before and after). Open: none blocking; deviations from the task's letter are D1-D9 under
-"Notes for the DRI"; the full gate is the chain's.
+"Notes for the DRI"; the full gate is the chain's. Main merged at `5fffd41cf` (pre-review round 1).
 
 SIZE: 650 product, 152 tests, 726 other hand-written lines (`git diff --numstat` against the merge base, generated
 files excluded; product: the Lean of lean/VE/Service/Standalone.lean, lean/VE/Route/MeteredRun.lean,
@@ -196,6 +196,8 @@ wrap: … runCaseRouted -> decidesActs -> decidingEnvironment`).
 | `lake build VE.Route.MeteredSplitExamples` (the dispatch #guards) | builds |
 | `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the committed `33aa14181` (clean tree; ran on the VM, the Mac unreachable) | 535 units: 534 passed, 1 failed: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the two new Lean files were not classified in ve/assurance-manifest.json). Fixed in `bc93a6a02` (their `other_json` reasons); `uv run pytest -q tests/test_assurance_manifest.py`: `167 passed` (`/tmp/kb4b/t-am.log`). Every test file that reaches `evaluate` (CALLS.md's 87) and the service corpus's replays (`tests/test_lean_service_schema.py`, `tests/test_lean_handles.py`, `tests/test_metered_handles.py`) ran in it and passed |
 | `uv run python tools/gate_collection.py --check --prebuilt` | exit 0: `35624 collected, 35622 at b8abce49e…; 2 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers` (`/tmp/kb4b/gc.log`; no test removed or renamed) |
+| the chain's selected run on `5a1949b76` (pre-review round 1; the Mac unreachable, ran on the VM) | stopped by the runner's 3-hour limit (exit 124) on a loaded VM, not by a test: 520 of its 521 units ran, every one `exit 0`; the one it never reached, `tests/test_trust_mutants_probe_scope.py`, then ran through `mac-pytest.sh -- -q tests/test_trust_mutants_probe_scope.py`: `41 passed` (`/tmp/kb4b-probe-scope.log`) |
+| merge of main `5fffd41cf` (78 commits; no Lean source changed on main; kb-regen-closure-check's `--fresh` baseline check among them) | one conflict, `tests/test_kernel_closure.py`, both sides only added tests: both kept (`febaed24f`). After it: `lake build` `Build completed successfully (1478 jobs)`; `tools/regen_generated.py --check` exit 0, `checked 41 entries`; `tools/kernel_closure.py --check … --fresh …`: `PASS: kernel 9738 <= 9738`, `PASS: verdict writers outside the kernel 56 <= 56`, `PASS: docs/kernel/closure-baseline.json is what --out writes now`; `mac-pytest.sh -- -q tests/test_kernel_closure.py`: `53 passed`; `tools/gate_collection.py --check --prebuilt`: `35962 collected, 35960 at 5fffd41cf…; 2 added, … 0 stale and 0 malformed` |
 | the full release gate | not run here (the chain runs it on the final HEAD) |
 
 ## Trust mutants
@@ -280,7 +282,7 @@ The experiment that measured the `judgments@0` arm also showed the examples catc
 3. Tests and gates can fail: PASS (seeded-bugs.json (a), (b), (b'), (c); trust-mutants.json 18 KILLED, 0 SURVIVOR, exit 0, with trust-mutants-allow.json).
 4. Python, Lean and Rust agree, valid inputs pass: PASS (keys-answers.json, same multiset of case and answer digests for 24,385 keyed cases; timing.json outputs byte-identical; the #guard comparing the entry with `reportedWith (prepare …)` on eight cases).
 5. R8 binding: N.A. (no field Python reads changes).
-6. Gate evidence matches the final HEAD: PASS (main has not moved since b8abce49e, `git log HEAD..main` empty; the selected run is on the committed `33aa14181`; after it, `bc93a6a02` (ve/assurance-manifest.json, the failed test rerun and passing) and docs/kernel/kb-4b/*.md; the full gate is the chain's on the final HEAD).
+6. Gate evidence matches the final HEAD: PASS (main merged at `5fffd41cf`, `git log HEAD..main` empty at the merge; the selected run of `33aa14181` and the chain's of `5a1949b76` (520 units `exit 0`, the 521st run after it: 41 passed) cover the branch's code; after the merge, the conflicted test file, the generated-files check, the `--fresh` kernel check and the collection check passed (Tests table); the full gate is the chain's on the final HEAD).
 7. No unsigned item: PASS (DELTA rows 1 and 2 cite R16 and R12; the R16 conditions: per-file itemisation re-measured with `tools/trust_map.py --check`, trust-mutants.json, FOLLOW-UPS.md ties-pass row).
 8. Every user-visible change in DELTA: PASS (no answer changes: `runCaseReported_today`, `validated_today`, keys-answers.json; the non-answer deltas are DELTA rows 1-2).
 9. Test selection finds the tests: PASS (`tools/select_tests.py --base b8abce49e` selects 516 files, among them tests/test_kernel_closure.py, test_metered_profile.py, test_metered_answer.py, test_metered_lean.py, test_metered_handles.py, test_lean_service_schema.py, test_lean_handles.py; `/tmp/kb4b/select-plan.log`).
