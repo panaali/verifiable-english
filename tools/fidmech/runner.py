@@ -450,10 +450,10 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
             raise Refused(str(e), EXIT_MISMATCH) from e
     out = Path(out)
     started, cpu0 = deps.clock(), resource.getrusage(resource.RUSAGE_CHILDREN)
-    prepared = (deps.prepare or prepare)(deps.worktree, document, inputs)
-    kept = read_resume(resume, prepared.inputs_sha256) if resume else {}
     if (out / "results.jsonl").exists() and not (resume and Path(resume).resolve() == (out / "results.jsonl").resolve()):
         raise Refused(f"{out}/results.jsonl exists; pass it as --resume or choose another --out", 2)
+    prepared = (deps.prepare or prepare)(deps.worktree, document, inputs)
+    kept = read_resume(resume, prepared.inputs_sha256) if resume else {}
     out.mkdir(parents=True, exist_ok=True)
     _jsonl(out / "mutants.jsonl", prepared.records)
     by_id = {r["id"]: r for r in prepared.records}
