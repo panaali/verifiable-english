@@ -1,0 +1,7 @@
+# the same tests against the staged files as they were before the DRI-note fix (copies of d4bbf09a's staged set under a temp suffix)
+FAIL: test_local_done_reference_timeout_is_not_made (__main__.CloudLate.test_local_done_reference_timeout_is_not_made)
+FAIL: test_dri_p9_fin_reference_timeout_is_not_compared (__main__.Compare.test_dri_p9_fin_reference_timeout_is_not_compared)
+FAIL: test_reference_gap_class_fuzz (__main__.Compare.test_reference_gap_class_fuzz)
+FAIL: test_dri_p9_fin_reference_timeout_leaves_the_sample_pending (__main__.Sample.test_dri_p9_fin_reference_timeout_leaves_the_sample_pending)
+Ran 25 tests in 13.878s
+FAILED (failures=4)
