@@ -1,0 +1,32 @@
+OPEN tm-sc7-rejudge vm 2026-11-17 12:28:38+00:00
+vm gate runs in 72h: 15 items: 12
+  11-14 17:47-20:04  136.7m vm         anthropic-rsp-fidelity-fix-4b
+  11-15 00:34-02:51  136.9m vm         openai-preparedness-cases-repair
+  11-15 07:36-09:41  125.0m vm         anthropic-rsp-facts-repair
+  11-15 12:04-14:17  133.5m vm         fidq-dri-read-exact
+  11-15 14:13-16:00  107.5m vm         pf-f7-timed-act
+  11-16 03:20-05:03  103.1m vm         p1-ready-unstartable-alert
+  11-16 07:43-09:44  120.7m vm-rerun   kb-9
+  11-16 09:48-11:24   96.7m vm         kb-9
+  11-16 12:34-14:57  143.4m vm         oseq-pf-d2d3-unit
+  11-16 14:57-15:02    5.0m vm-rerun   oseq-pf-d2d3-unit
+  11-16 19:22-21:47  145.7m vm         rsp-b-repair-1115
+  11-16 19:54-22:28  153.7m vm         counter-fix-unfinished-final
+  11-16 23:52-02:38  166.3m vm         fid-mech-b4
+  11-17 02:38-02:45    6.9m vm-rerun   fid-mech-b4
+  11-17 07:39-09:22  102.7m vm         tm-drain-vm1-idle
+overlapping pairs: 2 total overlap min: 118.1
+     4.7m  fidq-dri-read-exact 11-15 12:04-14:17 | pf-f7-timed-act 11-15 14:13-16:00
+   113.4m  rsp-b-repair-1115 11-16 19:22-21:47 | counter-fix-unfinished-final 11-16 19:54-22:28
+max concurrent: 2 time at concurrency (min): {0: 2245.3, 1: 1451.2, 2: 118.1}
+ESTIMATE one-per-host: gates that wait: 3 of 12 total wait min: 147.6 max min: 113.4 mean over waiters min: 49.2
+   wait    4.7m pf-f7-timed-act
+   wait  113.4m counter-fix-unfinished-final
+   wait   29.4m fid-mech-b4
+all chain gate kinds in the window:
+  ve-cloud-2       n= 31 median=  69.8m total=  31.4h
+  mac              n= 17 median=   0.7m total=   3.4h
+  vm               n= 12 median= 136.7m total=  25.9h
+  selected         n=  6 median=  49.3m total=   7.1h
+  vm-rerun         n=  3 median=   6.9m total=   2.2h
+  collection       n=  2 median=   1.7m total=   0.0h
