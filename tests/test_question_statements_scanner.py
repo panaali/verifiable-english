@@ -176,3 +176,94 @@ def test_proof_cut_keeps_a_let_or_have_binding():
                       "theorem t (n : Nat) : let a := n; let b := a\n  b = n"):
         assert RD.proof_cut(statement + " := by rfl") == len(statement) + 1
     assert RD.proof_cut("theorem letter : True := trivial") == len("theorem letter : True ")
+
+
+# Review qa-stmt-scanner F1: a Lean source is read whole, never through the ```lean fences of its doc comments (only
+# the spec is read from its fences). Each reader of a source is probed: a copy of the file that declares `kind name`
+# opens with a module doc quoting the approved declaration in a ```lean fence, and the declaration itself changes.
+Q1_THEOREMS = sorted(_approved(Q1_SPEC, ("theorem",)))
+Q2_THEOREMS = sorted(_approved(Q2_SPEC, ("theorem",)))
+FENCED = ([("q1", key) for key in Q1_THEOREMS + Q1_PREDICATES]
+          + [("q2", key) for key in Q2_THEOREMS + Q2_BODIES + Q2_TYPES])
+
+
+def _quote(text: str, kind: str, name: str) -> str:
+    """A module doc that quotes the declaration `kind name` of `text` in a ```lean fence."""
+    start, stop = RD.span(text, kind, name)
+    return "/-! A quoted declaration:\n```lean\n" + text[start:stop].rstrip() + "\n```\n-/\n"
+
+
+def _fenced_copies(tmp_path: Path, sources: list[Path], keys: list[tuple[str, str]], change: bool) -> list[Path]:
+    """`sources` copied under `tmp_path`; each file opens with a module doc per declaration of `keys` it declares,
+    quoting it in a ```lean fence, and, if `change` (one key), has that declaration changed by `_with_suffix`."""
+    out, found = [], 0
+    for source in sources:
+        text = source.read_text()
+        mine = [(kind, name) for kind, name in keys if (kind, name) in RD.declarations(text, True, (kind,))]
+        quoted = "".join(_quote(text, kind, name) for kind, name in mine)
+        if change and mine:
+            text = _with_suffix(text, *mine[0], "\n")
+        found += len(mine)
+        target = tmp_path / source.relative_to(ROOT)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(quoted + text)
+        out.append(target)
+    assert found == len(keys), f"{keys}: {found} declarations found"
+    return out
+
+
+def _gate(tool, monkeypatch, capsys, part: str, sources: list[Path]) -> tuple[int, str]:
+    """Run the Q1 or the Q2 text gate on `sources`: its exit code and output."""
+    if part == "q2":
+        monkeypatch.setattr(tool, "Q2_SOURCES", sources)
+        code = tool.q2(lean=False)
+    else:
+        monkeypatch.setattr(tool, "SOURCES", sources)
+        monkeypatch.setattr(sys, "argv", ["question_statements.py"])
+        try:
+            tool.main()
+            code = 0
+        except SystemExit as stop:
+            code = stop.code
+    return code, capsys.readouterr().out
+
+
+@pytest.mark.parametrize("part", ["q1", "q2"])
+def test_a_doc_fence_quoting_every_approved_declaration_changes_nothing(tmp_path, monkeypatch, capsys, part):
+    """Every approved declaration quoted in a ```lean fence of its file's doc comments: the gate still passes, so a
+    quote is never read as a second declaration either."""
+    tool = _tool()
+    sources = tool.SOURCES if part == "q1" else tool.Q2_SOURCES
+    keys = [key for where, key in FENCED if where == part]
+    code, out = _gate(tool, monkeypatch, capsys, part, _fenced_copies(tmp_path, sources, keys, False))
+    assert code == 0, out
+
+
+@pytest.mark.parametrize("part, key", FENCED, ids=lambda v: str(v))
+def test_a_source_is_read_whole_not_through_a_doc_fence(tmp_path, monkeypatch, capsys, part, key):
+    """PROBE F1: a changed approved declaration fails the gate by name although a doc comment of its file quotes the
+    approved text in a ```lean fence: a source is read whole, its code compared, never the quote."""
+    kind, name = key
+    tool = _tool()
+    sources = tool.SOURCES if part == "q1" else tool.Q2_SOURCES
+    code, out = _gate(tool, monkeypatch, capsys, part, _fenced_copies(tmp_path, sources, [key], True))
+    assert code == 1, out
+    named = {"theorem": "Mismatched statements:" if part == "q1" else "Statements differing in text:",
+             "def": "Changed or missing predicates:" if part == "q1" else f"changed {name}: NOT LISTED"}
+    marker = named.get(kind, f"changed {name}: NOT LISTED")
+    assert marker in out, out
+    assert name in marker or name in [n.strip() for n in out.split(marker, 1)[1].splitlines()[0].split(",")], out
+
+
+def test_the_readers_take_only_spec_or_source_code():
+    """The readers refuse raw text, so no caller can read a source through a spec's fences or a spec's prose as code;
+    a spec section without a ```lean block is an error, not code."""
+    tool = _tool()
+    for read in (tool.statements, tool.definitions, tool.types):
+        with pytest.raises(TypeError):
+            read("def HasReading : Prop := True")
+    with pytest.raises(SystemExit):
+        tool.spec_code("prose\ndef HasReading : Prop := True\n")
+    fenced = "/-! ```lean\ndef HasReading : Prop := True\n``` -/\ndef HasReading : Prop := False\n"
+    assert tool.definitions(tool.Code([fenced])) == {"HasReading": "def HasReading : Prop := False"}
+    assert tool.definitions(tool.spec_code("x\n```lean\ndef A : Prop := True\n```\n")) == {"A": "def A : Prop := True"}

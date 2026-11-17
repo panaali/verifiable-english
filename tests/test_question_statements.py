@@ -24,7 +24,7 @@ def test_q2_statements_match_the_approved_text(capsys):
     assert "0 missing; 0 differ in text" in out
     assert "0 changed" in out and "0 absent" in out
     assert "elaborated against the implementation; PASS" in out
-    spec = checker.SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0]
+    spec = checker.spec_code(checker.SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0])
     assert {"HoldsU", "RowOkU", "LeadHoldsU", "ReasonHoldsU"} <= set(checker.definitions(spec))
     assert {"holds_iff", "leadU_sound", "reasonU_sound", "leadHolds_eq", "zero_ask_wire_sound"} <= \
         set(checker.statements(spec))

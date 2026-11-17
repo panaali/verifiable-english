@@ -13,9 +13,11 @@ opens, and `lake env lean` must elaborate it. A text difference Lean accepts (a 
 proof) is listed as such; one it rejects fails. The approved definitions that changed are listed with their
 reasons in `DIFFERENCES` (each a DRI item of the batch's DELTA.md); any other change fails.
 
-Both sides are read by the shared declaration scanner of the statement gates (`scan`), the spec from its ```lean
-blocks: a declaration runs to the next Lean command at column 0, so a line after a blank line or a column-0 doc
-comment inside it is compared (review sc-2d-f1, "Outside this item"; item qa-stmt-scanner).
+Both sides are read by the shared declaration scanner of the statement gates (`scan`): a declaration runs to the next
+Lean command at column 0, so a line after a blank line or a column-0 doc comment inside it is compared (review
+sc-2d-f1, "Outside this item"; item qa-stmt-scanner). The spec is read from its ```lean blocks only (`spec_code`), a
+Lean source whole, always (`source_code`): a ```lean fence in a source's doc comment is comment text, never the code
+compared (review qa-stmt-scanner F1).
 """
 
 import argparse
@@ -40,40 +42,50 @@ sys.path.insert(0, str(ROOT / "tools"))
 from check_readings_defaults_statements import declarations  # noqa: E402
 
 
-def lean_blocks(text: str) -> list[str]:
-    """The Lean code of `text`: each ```lean block of a spec section, or `text` itself when it has none (a source)."""
-    return re.findall(r"```lean\n(.*?)```", text, re.S) or [text]
+class Code(tuple):
+    """The Lean code units one reader scans: built only by `spec_code` (a spec section's ```lean blocks) or
+    `source_code` (whole Lean files). The readers take nothing else, so a source can never be read through a spec's
+    fences, nor a spec's prose as code (review qa-stmt-scanner F1)."""
 
 
-def scan(text: str, kinds: tuple[str, ...], statements_only: bool = False) -> dict[str, str]:
-    """Name → normalized text of every declaration of a kind in `kinds` in `text`, read by the shared scanner of the
+def spec_code(section: str) -> Code:
+    """The ```lean blocks of a spec section, one code unit each. A section with none has no approved Lean text: an
+    error, never a reason to read the section's prose as code."""
+    blocks = re.findall(r"```lean\n(.*?)```", section, re.S)
+    if not blocks:
+        raise SystemExit("the spec section has no ```lean block")
+    return Code(blocks)
+
+
+def source_code(sources) -> Code:
+    """Each Lean source file read whole, one code unit each: a ```lean fence in a doc comment is comment text."""
+    return Code(Path(source).read_text() for source in sources)
+
+
+def scan(code: Code, kinds: tuple[str, ...], statements_only: bool = False) -> dict[str, str]:
+    """Name → normalized text of every declaration of a kind in `kinds` in `code`, read by the shared scanner of the
     statement gates (`check_readings_defaults_statements.declarations`): a declaration runs to the next Lean command
     at column 0, so a blank line or a comment inside it, a column-0 doc comment too, never ends it, and comments are
-    left out. A name read more than once keeps every text, one per line, so it equals no single approved text."""
+    left out. A name read more than once, in one unit or several, keeps every text, one per line, so it equals no
+    single approved text."""
+    if not isinstance(code, Code):
+        raise TypeError(f"scan reads spec_code or source_code, not {type(code).__name__}")
     found: dict[str, list[str]] = {}
-    for code in lean_blocks(text):
-        for (_, name), texts in declarations(code, statements_only, kinds).items():
+    for unit in code:
+        for (_, name), texts in declarations(unit, statements_only, kinds).items():
             found.setdefault(name, []).extend(texts)
     return {name: "\n".join(texts) for name, texts in found.items()}
 
 
-def across(read, sources) -> dict[str, str]:
-    """`read` over several files, merged as `scan` merges one (a name read twice keeps both texts)."""
-    found: dict[str, str] = {}
-    for source in sources:
-        for name, text in read(Path(source).read_text()).items():
-            found[name] = f"{found[name]}\n{text}" if name in found else text
-    return found
+def statements(code: Code) -> dict[str, str]:
+    """Every `theorem` of `code`, up to its proof's `:=` (`proof_cut`: the first `:=` outside every bracket that
+    does not belong to a `let` or `have` binding of the statement)."""
+    return scan(code, ("theorem",), statements_only=True)
 
 
-def statements(text: str) -> dict[str, str]:
-    """Every `theorem` of `text`, up to its proof's `:=` (`proof_cut`: the first `:=` outside every bracket)."""
-    return scan(text, ("theorem",), statements_only=True)
-
-
-def definitions(text: str) -> dict[str, str]:
-    """Every `def` of `text`, signature and body."""
-    return scan(text, ("def",))
+def definitions(code: Code) -> dict[str, str]:
+    """Every `def` of `code`, signature and body."""
+    return scan(code, ("def",))
 
 
 # Approved Q2 definitions whose implementation differs from the approved text, each with its reason; every entry is
@@ -82,10 +94,10 @@ def definitions(text: str) -> dict[str, str]:
 DIFFERENCES = {}
 
 
-def types(text: str) -> dict[str, str]:
-    """Every `structure` and `inductive` of `text`, without its `deriving` clause."""
+def types(code: Code) -> dict[str, str]:
+    """Every `structure` and `inductive` of `code`, without its `deriving` clause."""
     return {name: re.sub(r"\bderiving\b.*$", "", body).strip()
-            for name, body in scan(text, ("structure", "inductive")).items()}
+            for name, body in scan(code, ("structure", "inductive")).items()}
 
 
 def signature(block: str) -> str | None:
@@ -115,15 +127,15 @@ def theorem_type(statement: str) -> str:
 
 
 def q2(lean: bool) -> int:
-    spec = SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0]
+    spec = spec_code(SPEC.read_text().split("### 5.2 Q2", 1)[1].split("## 6. Limits", 1)[0])
     approved = statements(spec)
-    actual = {name: stmt for name, stmt in across(statements, Q2_SOURCES).items() if name in approved}
+    actual = {name: stmt for name, stmt in statements(source_code(Q2_SOURCES)).items() if name in approved}
     missing = [name for name in approved if name not in actual]
     differ = [name for name in actual if approved[name] != actual[name]]
     print(f"Q2 statements: {len(actual)} of {len(approved)} implemented; {len(missing)} missing; "
           f"{len(differ)} differ in text")
     approved_defs = definitions(spec)
-    actual_defs = {name: text for name, text in across(definitions, Q2_SOURCES).items() if name in approved_defs}
+    actual_defs = {name: text for name, text in definitions(source_code(Q2_SOURCES)).items() if name in approved_defs}
     sigs = {name: signature(block) for name, block in approved_defs.items()}
     bodies = [name for name in approved_defs if sigs[name] is None]
     absent = [name for name in approved_defs if name not in actual_defs]
@@ -135,7 +147,7 @@ def q2(lean: bool) -> int:
     for name in changed:
         print(f"  changed {name}: {DIFFERENCES.get(name, 'NOT LISTED')}")
     approved_types = types(spec)
-    actual_types = {name: text for name, text in across(types, Q2_SOURCES).items() if name in approved_types}
+    actual_types = {name: text for name, text in types(source_code(Q2_SOURCES)).items() if name in approved_types}
     changed_types = [name for name in approved_types if actual_types.get(name) != approved_types[name]]
     unlisted += [name for name in changed_types if name not in DIFFERENCES]
     print(f"Q2 structures and inductives: {len(approved_types)} approved, "
@@ -174,9 +186,9 @@ def main() -> None:
     options = parser.parse_args()
     if options.q2:
         raise SystemExit(q2(not options.no_lean))
-    spec = SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0]
+    spec = spec_code(SPEC.read_text().split("### 5.1 Q1", 1)[1].split("### 5.2 Q2", 1)[0])
     approved = statements(spec)
-    actual = {name: stmt for name, stmt in across(statements, SOURCES).items() if name in approved}
+    actual = {name: stmt for name, stmt in statements(source_code(SOURCES)).items() if name in approved}
     different = [name for name in actual if approved.get(name) != actual[name]]
     missing = [name for name in approved if name not in actual]
     print(f"Q1 statements: {len(actual)} of {len(approved)} implemented; {len(missing)} missing")
@@ -185,7 +197,7 @@ def main() -> None:
     if missing:
         print("Missing statements:", ", ".join(missing))
     approved_defs = definitions(spec)
-    actual_defs = {name: text for name, text in across(definitions, SOURCES).items() if name in approved_defs}
+    actual_defs = {name: text for name, text in definitions(source_code(SOURCES)).items() if name in approved_defs}
     changed = [name for name in approved_defs if actual_defs.get(name) != approved_defs[name]]
     print(f"Q1 predicates: {len(approved_defs) - len(changed)} of {len(approved_defs)} equal to the approved text")
     if changed:
