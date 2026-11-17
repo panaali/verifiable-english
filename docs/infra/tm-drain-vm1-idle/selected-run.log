@@ -1,0 +1,36 @@
+# zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, on 6dd7379eca (docs-only branch), rc=0
+[mac-pytest 07:25:07Z] CLOUD2_RUNNER: trying the remote hosts before the VM (REMOTE_FIRST: remote hosts before the test pools and the Mac)
+[cloud2 07:25:08Z] not used: ve-cloud-2: 5-min load 89.12 >= 1x 32 cores while it runs 1 gate job(s) (gate-host-load-1x): no new job there (remote-hosts.sh load rule)
+[mac-pytest 07:25:08Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+10/639 test units (map b00f97f5c2, 23.17 s)
+deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (2021.7 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+changed: docs/infra/tm-drain-vm1-idle/REPORT.md, docs/infra/tm-drain-vm1-idle/part0-tables.md, docs/infra/tm-drain-vm1-idle/part0_measure.py, docs/infra/tm-drain-vm1-idle/run-live.log, docs/infra/tm-drain-vm1-idle/run-regression.log, docs/infra/tm-drain-vm1-idle/run-staged.log, docs/infra/tm-drain-vm1-idle/sar/ve-cloud-2.txt, docs/infra/tm-drain-vm1-idle/sar/vm1.txt, docs/infra/tm-drain-vm1-idle/scope-smoke.log, docs/infra/tm-drain-vm1-idle/seed_run.py, docs/infra/tm-drain-vm1-idle/seeded-bugs.json, docs/infra/tm-drain-vm1-idle/seeds.log, docs/infra/tm-drain-vm1-idle/staged-changes.diff, docs/infra/tm-drain-vm1-idle/trial/nightly-run-20261117T0318Z.excerpt.log, docs/infra/tm-drain-vm1-idle/trial/nightly-run-20261117T0531Z.excerpt.log, docs/infra/tm-drain-vm1-idle/trial/nightly.log, docs/infra/tm-drain-vm1-idle/trial/noremote.py, docs/infra/tm-drain-vm1-idle/trial/run.sh, docs/infra/tm-drain-vm1-idle/trial/run2.sh, docs/infra/tm-drain-vm1-idle/trial/trial.log, docs/infra/tm-drain-vm1-idle/trial/trial1-part-1.json, docs/infra/tm-drain-vm1-idle/trial/trial2-part-1.json, docs/infra/tm-drain-vm1-idle/trial/trial2.log
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
++ uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_answer_cutoff.py tests/test_code_map.py tests/test_conformance.py tests/test_definitions.py tests/test_history_tests.py tests/test_judgments_answer.py tests/test_regen_generated.py tests/test_run_order.py tests/test_surface_registry.py tests/test_test_chunks.py
+gha-select: 10 units in 2 shards (weights b00f97f5c2beb6da2ff0a13170a5c5f9cf90f305.json.gz + runner seconds for 10 units (ratio 0.67): total 188 s, longest 53 s; shard loads [39, 53])
+[gha-select 07:26:10Z] tm-drain-vm1-idle-6dd7379e-t900308: 2 shards dispatched to Actions in 62 s (push 32 s, workflow from VE main); waiting (Mac path after 08:46Z)
+[gha-select 07:26:10Z] fast first: the cheap units run on multi-agent-lab meanwhile (log /home/seyran/code/manage-agents/gha-tests/tm-drain-vm1-idle-6dd7379e-t900308/fast.log)
+[gha-select 07:28:34Z] fast first: the cheap units passed after 206 s; waiting for the shards
+[gha-select 07:36:16Z] tm-drain-vm1-idle-6dd7379e-t900308: Actions failed (Actions queued: 1 of 2 shards still queued (no runner) after 10 min; VM1 5-min load 18 < 44: the local path (actions-queued overflow)) after 668 s: the Mac path
+[mac-pytest 07:36:16Z] GitHub Actions gave no usable result: the Mac path
+[mac-pytest 07:36:16Z] running on the VM instead (local): MAC_LAST: VM load 13.30 + 6 workers < 32 (the Mac is the last resort)
+    Finished `release` profile [optimized] target(s) in 0.05s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+10/639 test units (map b00f97f5c2, 5.21 s)
+deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (2021.7 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+changed: docs/infra/tm-drain-vm1-idle/REPORT.md, docs/infra/tm-drain-vm1-idle/part0-tables.md, docs/infra/tm-drain-vm1-idle/part0_measure.py, docs/infra/tm-drain-vm1-idle/run-live.log, docs/infra/tm-drain-vm1-idle/run-regression.log, docs/infra/tm-drain-vm1-idle/run-staged.log, docs/infra/tm-drain-vm1-idle/sar/ve-cloud-2.txt, docs/infra/tm-drain-vm1-idle/sar/vm1.txt, docs/infra/tm-drain-vm1-idle/scope-smoke.log, docs/infra/tm-drain-vm1-idle/seed_run.py, docs/infra/tm-drain-vm1-idle/seeded-bugs.json, docs/infra/tm-drain-vm1-idle/seeds.log, docs/infra/tm-drain-vm1-idle/staged-changes.diff, docs/infra/tm-drain-vm1-idle/trial/nightly-run-20261117T0318Z.excerpt.log, docs/infra/tm-drain-vm1-idle/trial/nightly-run-20261117T0531Z.excerpt.log, docs/infra/tm-drain-vm1-idle/trial/nightly.log, docs/infra/tm-drain-vm1-idle/trial/noremote.py, docs/infra/tm-drain-vm1-idle/trial/run.sh, docs/infra/tm-drain-vm1-idle/trial/run2.sh, docs/infra/tm-drain-vm1-idle/trial/trial.log, docs/infra/tm-drain-vm1-idle/trial/trial1-part-1.json, docs/infra/tm-drain-vm1-idle/trial/trial2-part-1.json, docs/infra/tm-drain-vm1-idle/trial/trial2.log
++ uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_answer_cutoff.py tests/test_code_map.py tests/test_conformance.py tests/test_definitions.py tests/test_history_tests.py tests/test_judgments_answer.py tests/test_regen_generated.py tests/test_run_order.py tests/test_surface_registry.py tests/test_test_chunks.py
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 10 units with 6 jobs in /tmp/ve-select-run-zt6fc78j
+  tests/test_definitions.py: exit 0 in 11.4 s, 740 functions
+  tests/test_judgments_answer.py: exit 0 in 19.0 s, 968 functions
+  tests/test_code_map.py: exit 0 in 8.0 s, 193 functions
+  tests/test_conformance.py: exit 0 in 1.3 s, 615 functions
+  tests/test_surface_registry.py: exit 0 in 1.1 s, 435 functions
+  tests/test_answer_cutoff.py: exit 0 in 25.1 s, 562 functions, OPAQUE
+  tests/test_test_chunks.py: exit 0 in 28.2 s, 385 functions, OPAQUE
+  tests/test_run_order.py: exit 0 in 15.2 s, 553 functions, OPAQUE
+  tests/test_regen_generated.py: exit 0 in 49.4 s, 820 functions
+  tests/test_history_tests.py: exit 0 in 90.1 s, 349 functions
+recorded 10 units for tree db737f0057; 2 others left to the static graph until they run; 0 failed
+[mac-pytest 07:38:16Z] summary: ran LOCALLY (VM) because: MAC_LAST: VM load 13.30 + 6 workers < 32 (the Mac is the last resort); exit=0; 789s
