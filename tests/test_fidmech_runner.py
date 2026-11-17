@@ -310,3 +310,26 @@ def test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_name
                         HANG_TIMEOUT)
     assert ok.status == "ok" and broken.status == "error" and "planted" in broken.error
     assert len(worker.usage) == 2 and all(cpu > 0 and rss > 2**20 for cpu, rss in worker.usage)
+
+
+def _args(out, **kw):
+    import argparse
+    base = {"doc": DOC, "out": str(out), "jobs": "1", "budget": None, "resume": None, "inputs": None}
+    return argparse.Namespace(**{**base, **kw})
+
+
+def test_the_exit_code_is_0_for_an_ok_batch_1_for_an_invalid_one_and_2_when_the_out_dir_holds_results(tree,
+                                                                                                          tmp_path):
+    recs = [record(tree, "m1", RULE.replace("final ", ""))]
+    assert RUN.main(_args(tmp_path / "ok"), deps(tree, recs, {"m1": "NONE"})) == 0
+    assert RUN.main(_args(tmp_path / "bad"), deps(tree, recs, {"m1": "ALL"}, leak="m1")) == 1
+    assert RUN.main(_args(tmp_path / "ok"), deps(tree, recs, {"m1": "NONE"})) == 2
+
+
+def test_a_budget_of_zero_runs_no_mutant_and_reads_not_run_never_a_verdict(tree, tmp_path):
+    recs = [record(tree, f"m{i}", RULE.replace("final ", "x" * i + " ")) for i in range(1, 3)]
+    calls = []
+    summary = RUN.run(DOC, tmp_path / "out", jobs=2, budget=0, deps=deps(tree, recs, {}, calls=calls))
+    assert calls == ["baseline"] and summary["not_run"] == 2 and summary["ran"] == 0
+    assert {v["record"]["verdict"]["K"] for v in lines(tmp_path / "out").values()} == {"not-run"}
+    assert summary["measurements"]["cpu_h_per_100"] is None
