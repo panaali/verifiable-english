@@ -1,0 +1,9 @@
+trust_mutants: 37 definitions, 60 mutants (32 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:96 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) list-empty: rs.flatMap NormStatement.clauses -> [] (lean/VE/EnglishGrammar/Norm/Owners.lean:97: Invalid field notation: Type of)
+UNKNOWN lean/VE/Events/Wire.lean:249 VE.Events.openTermsOf (D[V], trusted) list-empty: ts.toList -> [] (lean/VE/Events/Wire.lean:250: Invalid field notation: Type of)
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-empty: eventsRefusals -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/NormDefaults/Packs.lean:391 VE.NormDefaults.Packs.eventsArray (D[V], trusted) list-empty: [("events_premises", Json.arr (ls.map (fun (l, a) => labelledJson l a none)).toArray)] -> [] (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/Presupposition/Couple.lean:115 VE.Presupposition.SatUnder (S, trusted) list-empty: VE.Norms.elaborate (treeUnder D R ch) -> [] (the proofs it breaks: lean/VE/Presupposition/Couple/Fixtures.lean:129, lean/VE/Presupposition/Cou...)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:97 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100, lean/VE/EnglishGrammar/Norm/Ow...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) append-left: ++ environmentWrappers ->  (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) append-left: ++ eventsFixed ->  (lake build did not finish in 1800 s (--build-timeout))
