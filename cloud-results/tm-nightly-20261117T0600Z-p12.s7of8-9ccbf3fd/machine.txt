@@ -1,0 +1,5 @@
+job=tm-nightly-20261117T0600Z-p12.s7of8-9ccbf3fd nproc=4 host=ip-10-0-135-67 date=2026-11-17T15:09:17Z
+Mem:              15           1           8           0           5          13
+/dev/mapper/cow-root  145G   61G   85G  42% /
+ 15:09:17 up 8 min,  0 user,  load average: 1.45, 0.61, 0.32
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
