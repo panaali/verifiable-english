@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-oseq-opus-off-main-2e9301ac-t931872-s2",
+ "head": "0701acb51306887916cbe8ca42ccd8147ad01cba",
+ "argv": [
+  "armsh-cand-oseq-opus-off-main-2e9301ac-t931872-s2",
+  "0701acb51306887916cbe8ca42ccd8147ad01cba",
+  "363fcf0267e7c1cb52f595c231d0325871eb3122",
+  "-",
+  "-",
+  "4",
+  "2/6"
+ ]
+}
