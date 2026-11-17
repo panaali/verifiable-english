@@ -1,0 +1,13 @@
+# Old tm-shard harnesses run against tm-shard.sh.new-tsa (2026-11-17; summaries of the logs, last line verbatim)
+## test-harness/tmshard/test-tmshard.zsh, LIVE tm-shard.sh (TMS_SUFFIX= TMS_TS=$M/tm-shard.sh): tmshard: 148 passed, 1 failed
+  FAIL pc-3's case: 6+1 runners busy, 253 first-sweep mutants ~6,160 s: cap - busy = 1 is no gain, one part over TM_SHARD_ACTIONS_HARD: not sent (L168; en-s6b ~6,140 s was cancelled)
+## same harness, STAGED, records isolated (TM_SHARD_RECORDS=/nonexistent): tmshard: 144 passed, 5 failed
+  FAIL own heavy reading over the hard limit (400 x 216 at 4 parts ~6,500 s): NMAX waived only as far as needed, 5 parts ~5,120 s
+  FAIL pc-3's case: 6+1 runners busy, 253 first-sweep mutants ~6,160 s: cap - busy = 1 is no gain, one part over TM_SHARD_ACTIONS_HARD: not sent (L168; en-s6b ~6,140 s was cancelled)
+  FAIL the hard NMAX caps a waiver at cap 8 (2000 mutants)
+  FAIL P4 the caller's own --budget: no second one
+  FAIL P5 the caller's own --deadline: no --budget
+## same harness, STAGED, reading the live export records (the harness does not isolate TM_SHARD_RECORDS): tmshard: 106 passed, 42 failed
+## tools-local/test_tm_actions_first.py, STAGED (TSH=...new-tsa; it sets TM_SPM_OFF_FLAG=on, TM_PART_DEADLINE_FLAG off): PASS: 0 failed, 20 ok
+## tools-local/test_tm_shard_fallback_overwrite.py, STAGED (TMS=...new-tsa): case (5) of run-staged.log:   ok   it exits 0
+## note: the test_tm_actions_first.py run and the 106/42 run were made before the last edit (a malformed TM_PART_BUDGET now falls back to the computed budget instead of none); that edit changes no valid-value path, and the 144/5 run and run-staged.log were made after it.

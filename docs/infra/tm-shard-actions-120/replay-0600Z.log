@@ -1,0 +1,14 @@
+staged p3 (60 mutants, records as of 06:12Z): exit 3, 0 dispatched
+    item: 60 mutants need ~5201 s per part in 12 parts (room 40: cap 40 - busy 0 - reserve 0 for 0 arrivals/h; reserve and NMAX waived to 12 parts: ~5100 s per part at most, Actions cancels at 120 min; first sweep: 80 slot-s per mutant (pool reading none, floor 80); sized at the records' p90 2265 slot-s per mutant; part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: setup worst 1770 s of 20 runs, per-mutant p90 2265 slot-s of 20 readings) on actions, which cancels a job at 120 min: not sent (VM path)
+    part args: -
+staged p4 (30 mutants, records as of 08:20Z): exit 0, 8 dispatched
+    item-<SHA8>: 30 mutants to run on actions -> 8 parts (~4635 s each; <= 1 mutants per part; room 40: cap 40 - busy 0 - reserve 0 for 0 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80); sized at the records' p90 2265 slot-s per mutant; part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: setup worst 1770 s of 20 runs, per-mutant p90 2265 slot-s of 20 readings; each part --budget 6300 s (a partial record before the cancel))
+    item-<SHA8>: 8 parts dispatched; cloud-pull.sh merges them into <S>/o.json
+    part args: --budget 6300 --shard 1/8 --json <S>/jobs/item-<SHA8>/part-1.json
+live p3 (60 mutants, records as of 06:12Z): exit 0, 2 dispatched
+    item-<SHA8>: 60 mutants to run on actions -> 2 parts (~1700 s each; <= 35 mutants per part; room 40: cap 40 - busy 0 - reserve 0 for 0 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80); each part --budget 6300 s (a partial record before the cancel))
+    item-<SHA8>: 2 parts dispatched; cloud-pull.sh merges them into <S>/o.json
+    part args: --budget 6300 --shard 1/2 --json <S>/jobs/item-<SHA8>/part-1.json
+live p4 (30 mutants, records as of 08:20Z): exit 0, 1 dispatched
+    item: unsharded (30 mutants to run fit one part on actions (~1700 s; <= 35 per part; room 40: cap 40 - busy 0 - reserve 0 for 0 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80)))
+    part args: <S>/wt item <SHA> -- --json <S>/o.json
