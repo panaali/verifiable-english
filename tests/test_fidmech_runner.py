@@ -291,3 +291,22 @@ def test_the_batch_writes_each_mutants_text_verdicts_run_beside_its_kernel_run(t
     assert got["m-cut"]["text"]["new_hits"][0]["block"] == "r-share"
     assert got["m-k"]["record"]["verdict"]["K"] == "killed"
     assert (tmp_path / "out/textcheck.json").exists()
+
+
+TOY = ROOT / "tests/data/fidmech/worker"
+
+
+def test_a_fresh_run_is_reaped_with_its_own_cpu_and_peak_rss_and_its_stderr_names_a_failure(tmp_path):
+    """The runner's per-run measurements: evaluate_fresh reaps its process with os.wait4 (one entry per run in
+    Worker.usage, CPU and peak RSS of that process alone), and a failing process's error carries its stderr."""
+    from subprocesses import HANG_TIMEOUT
+    root = tmp_path / "toy"
+    shutil.copytree(TOY, root)
+    run_py = root / "usecases" / DOC / "run.py"
+    (root / "usecases" / DOC / "run.py.txt").rename(run_py)
+    worker = W.Worker(DOC, root, tmp_path / "scratch", fresh=True)
+    ok = worker.run(W.BASELINE, HANG_TIMEOUT)
+    broken = worker.run(W.Mutant("m-raise", {f"{DOC}/run.py": run_py.read_text() + "\nraise RuntimeError('planted')\n"}),
+                        HANG_TIMEOUT)
+    assert ok.status == "ok" and broken.status == "error" and "planted" in broken.error
+    assert len(worker.usage) == 2 and all(cpu > 0 and rss > 2**20 for cpu, rss in worker.usage)
