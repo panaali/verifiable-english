@@ -82,4 +82,9 @@ mutant record, so the two targeted runs above were done anyway.
 
 ## Not run here
 
-The full gate is run by the chain on the final HEAD. The selected tests are in the build report.
+The full gate is run by the chain on the final HEAD. The selected tests were run once, on commit 6c6cf5cfa6 (tree 2c8ef14a3f) (the guards, the regenerated inventory and this evidence):
+`mac-pytest.sh --select -- --base b00f97f5c2 --run` ran on the VM and exited 0 in 4611 s. It ran 125 units with no
+failure, including tests/test_scope_authoring.py and tests/test_scope_lean.py.
+`tools/regen_generated.py --check` failed only route-cases and checker-pins. Both fail because
+rust/target/release/ve is missing from this worktree (the Rust binary was never built here); neither reads the changed
+files.
