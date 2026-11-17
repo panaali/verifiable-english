@@ -1,0 +1,13 @@
+trust_mutants: 16 definitions, 30 mutants (30 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:98 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:98 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Owners.lean:98 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/EnglishGrammar/Norm/Owners.lean:100)
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:83 VE.EnglishGrammar.advice (G[V], trusted) list-empty: r.patterns -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Cardinality/Wire.lean:68 VE.Cardinality.Wire.profileLists (D[V], trusted) list-empty: [chainProfiles] -> [] (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: baseRows.map (·.profile) -> [] (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/WireContract/Tables/Purposes.lean:7 VE.WireContract.Tables.Purposes.table (G[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: (documentLayers ++ modeProfiles) -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-empty: documentLayers -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/Norm/Owners.lean:98 VE.EnglishGrammar.Norm.ReadNormAuthoring (S, trusted) eq-ne: = -> ≠ (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/SpeechActs/Wire.lean:990 VE.SpeechActs.Wire.surfaceKind (D[V], trusted) list-empty: (· -> (fun x_tm => [] (lake build did not finish in 1800 s (--build-timeout))
