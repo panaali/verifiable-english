@@ -1,0 +1,7 @@
+job=armsh-cand-digest-main-line-a87b8c3b-t925486-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-17T14:27:31Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 14:27:31 up 2 min,  0 user,  load average: 1.41, 0.48, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 12.9 s
+p1-tokenizers: 443909a61d42 fetched
