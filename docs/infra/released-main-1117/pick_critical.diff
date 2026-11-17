@@ -1,14 +1,27 @@
 --- tools-local/pick_critical.py	2026-11-17 03:45:18.231284059 +0000
-+++ tools-local/pick_critical.py.new-released-main	2026-11-17 03:45:18.220281318 +0000
-@@ -263,6 +263,73 @@
++++ tools-local/pick_critical.py.new-released-main	2026-11-17 04:52:01.333977353 +0000
+@@ -25,7 +25,10 @@
+ 
+ usage: pick_critical.py critical <item> | fallback <item> | mark <item> | unmark <item> | waiting | frozen | codex-offer <label>
+        | rank <item> | mainmark <item> | mainunmark <item> | mainheld <item> | links <item> | yield <item>
++       | relmainmark <item> | relmainunmark <item> | relmainahead <item>
+ (v) links <item> | yield <item>: released rows (links.released) yield to a waiting Nov 23 path row; see released_yield().
++(vi) relmainmark <item> | relmainunmark <item> | relmainahead <item>: released rows take main one at a time in rank order;
++    see relmain_ahead().
+ Exit 0 = yes / done, 1 = no. Env (tests): PCF_M (base dir), PCF_NOW (ISO), PCF_ACCOUNTS (file replacing accounts.sh output),
+ PCF_CEILING_CMD (command replacing codex-allowed.sh --ceiling gpt-6-sol).
+ """
+@@ -263,6 +266,75 @@
      return None
  
  
 +# (vi) released rows take main one at a time, in rank order (2026-11-17 released-main-1117; reviews/dri-decisions-20261117-
 +#     released-main.md item 2): pick-claude-account.sh admits main for a released row with links.avoid main only under its
-+#     released-row main rule (pace line - 4, 5-h rise < 5, one holder marker pick-main-released). A released row refused main only
-+#     because main is taken (that marker, a better-ranked waiter, the main worker cap, a rank hold) touches
-+#     pick-waiting-relmain/<row> (mtime = last refusal, dead after PCF_TTL_S) and removes it on any pick; a free marker goes to
++#     released-row main rule (pace line - 4, 5-h rise < 5, one holder marker pick-main-released). A released row whose pick is
++#     refused and that main refused by a gate every released row shares (the rule's own pace and rise gates, the stand-in guard,
++#     that marker, a better-ranked waiter, the caps, a rank hold, the Nov 23 path yield; review F1: not only when main is
++#     "taken") touches pick-waiting-relmain/<row> (mtime = last refusal, dead after PCF_TTL_S) and removes it on any pick; only
++#     the caller's own refusals (its own PICK_AVOID names main, an unreadable marker) write none; a free marker goes to
 +#     the best live waiter first: relmain_key (rank() above, then the FEATURE-QUEUE.tsv rank column, unqueued last, then the id).
 +def queue_rank(item):
 +    """the FEATURE-QUEUE.tsv rank (column 1) of item's base row; 1e9 when not queued or unreadable."""
@@ -74,7 +87,7 @@
  def accounts():
      if os.environ.get("PCF_ACCOUNTS"):
          return open(os.environ["PCF_ACCOUNTS"]).read().splitlines()
-@@ -363,6 +430,15 @@
+@@ -363,6 +435,15 @@
          if y:
              print(y)
          return 0 if y else 1
