@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-arch-decoder-measure-c05691ae-t895400-s4",
+ "head": "97b964fb4884564bc6e12aac7c81817855354462",
+ "argv": [
+  "armsh-cand-arch-decoder-measure-c05691ae-t895400-s4",
+  "97b964fb4884564bc6e12aac7c81817855354462",
+  "0f109b24c13a24c88b0bf25166660fe6444838db",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
