@@ -1,0 +1,8 @@
+2026-11-17T05:31:41Z attempt 1 at 5-min load 17.40
+tm-nightly.sh --once exit 1
+2026-11-17T03:21Z vm1-idle (TM_NIGHTLY_POOLS=remote+idle, tm-drain-vm1-idle): plus 1 local slot(s) on this VM while its 5-min load < nproc - 8 (/home/seyran/code/ve-tmidle-trial-l1)
+2026-11-17T03:21Z part 1 (slot 2, ve-tmidle-trial-l1, vm1-idle: 5-min load 18.69 < nproc 32 - reserve 8: 5 cores, --jobs 1, MemAvailable 118 GiB): trust_mutants --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Service/ActsExamples.lean --test lean/VE/Compose/Examples
+2026-11-17T05:30Z part 1: vm1-idle trust_mutants exit 4 in ve-tmidle-trial-l1 (5 cores, --jobs 1, setup 3292s): partial (its unjudged ids resume)
+2026-11-17T05:33Z vm1-idle (TM_NIGHTLY_POOLS=remote+idle, tm-drain-vm1-idle): plus 1 local slot(s) on this VM while its 5-min load < nproc - 8 (/home/seyran/code/ve-tmidle-trial-l1)
+2026-11-17T05:33Z part 1 (slot 2, ve-tmidle-trial-l1, vm1-idle: 5-min load 16.58 < nproc 32 - reserve 8: 7 cores, --jobs 3, MemAvailable 107 GiB): trust_mutants --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Service/ActsExamples.lean --test lean/VE/Compose/Examples
+2026-11-17T07:18Z part 1: vm1-idle trust_mutants exit 4 in ve-tmidle-trial-l1 (7 cores, --jobs 3, setup 1s): partial (its unjudged ids resume)
