@@ -21,7 +21,7 @@ Rule 1. Every situation must have updates provided on whether the Roadmap goals 
 ## f6-keep-past | always | RS0 | F6 "Our current Frontier Safety Roadmap is available at anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps available at that link." ("that link" is the current Roadmap's link)
 Rule 1. Every situation must have past Roadmaps kept available at the link of the current Roadmap.
 ## f6-strive-default | RS12strive=default | independent | F6 "we will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them" (RS12 default)
-Rule 1. Every situation should avoid the revision, if that situation is classified as "goal_revised_less_ambitious".
+Rule 1. Every situation should avoid the revision, if both that situation is classified as "goal_revised_less_ambitious" and that situation is classified as "revised_because_unable".
 ## f7-publish | always | RS0 | F7, section 3 "We will publish Risk Reports discussing the risks of our systems and how we have made determinations about whether to continue AI development and deployment in light of the risks."; restated in 3.5 "We will publish a public version of our Risk Report" (the act names both parts; its legend quotes the sentence)
 Rule 1. Every situation must have Risk Reports on risks as well as continuation determinations published.
 ## f8-public | always | RS0 | F8, 3.1 "It will cover all publicly deployed models as of the coverage date"

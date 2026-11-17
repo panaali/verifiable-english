@@ -26,6 +26,7 @@
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
+- `tests/test_rsp_b_repair_1115.py` — rsp-b-repair-1115: the four B repairs of the RSP blocker classification (DRI decisions 2026-11-15, item 2).
 - `tests/test_rsp_fidelity_fix.py` — anthropic-rsp-fidelity-fix: the T fixes of the RSP use-case audit (PLAN section 12, item 19).
 - `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
@@ -76,4 +77,3 @@
 - `tests/test_soft_document_handles.py` — Soft-document handles (kb-10e): a `soft-selected` case names its document by handle and is answered from the document the service prepared once.
 - `tests/test_soft_norms_conformance.py` — Three-way checks against the acceptance fixtures in soft-norms.md §10.
 - `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
-- `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).

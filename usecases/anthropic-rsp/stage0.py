@@ -132,6 +132,11 @@ def d2():
 
 # --- D3: dates (P4) -------------------------------------------------------------------------------------------------
 
+# A date constant whose source words are more than its name: v3.4's date is also the policy's effective date (D2).
+DATE_WORDS = {"v3_4_date": "the v3.4 date, the policy's effective date: page 1 \"Effective July 8, 2026\" and the "
+                           "changelog's \"July 8, 2026 (RSP v3.4)\""}
+
+
 def date_environment(extra=()):
     from ve.environment import Environment
     from ve.profiles import LANGUAGE, SPEC_REVISION
@@ -141,7 +146,7 @@ def date_environment(extra=()):
                         "units": {"day": {"scale": "1", "display": {"kind": "iso_date"}},
                                   "elapsed_day": {"scale": "1", "display": {"kind": "decimal", "label": "days"}}},
                         "vocabulary": {"sorts": {}, "predicates": {}, "constants": {
-                            n: {"sort": "$int", "unit": "day", "description": n.replace("_", " "),
+                            n: {"sort": "$int", "unit": "day", "description": DATE_WORDS.get(n, n.replace("_", " ")),
                                 "verbalisation": "the " + n.replace("_", " ")} for n in names}}})
 
 
