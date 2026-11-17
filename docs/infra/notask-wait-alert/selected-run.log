@@ -1,0 +1,11 @@
+10/646 test units (map d2573fc9a0, 3.82 s)
+deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (2021.7 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+gha-select: 10 units in 2 shards (weights d2573fc9a09365634c4f8aecc7d22130eb00b6c7.json.gz + runner seconds for 10 units (ratio 0.75): total 234 s, longest 72 s; shard loads [53, 72])
+[gha-select 12:53:15Z] notask-wait-alert-773f2932-t919961: 2 shards dispatched to Actions in 34 s (push 26 s, workflow from VE main); waiting (Mac path after 14:13Z)
+[gha-select 12:53:15Z] fast first: the cheap units run on multi-agent-lab meanwhile (log /home/seyran/code/manage-agents/gha-tests/notask-wait-alert-773f2932-t919961/fast.log)
+[gha-select 12:54:17Z] fast first: the cheap units passed after 96 s; waiting for the shards
+recorded 6 units for tree 5b1b0f005c; 0 others left to the static graph until they run; 0 failed
+SHARD 1/2: exit 0 in 91.0 s; 6 units, 6 passed
+recorded 4 units for tree 5b1b0f005c; 0 others left to the static graph until they run; 0 failed
+SHARD 2/2: exit 0 in 86.4 s; 4 units, 4 passed
+[gha-select 13:08:51Z] summary: selected tests ran on GitHub Actions (2 shards, run notask-wait-alert-773f2932-t919961); exit=0; 970s
