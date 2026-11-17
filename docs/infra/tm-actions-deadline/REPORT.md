@@ -70,3 +70,9 @@ installed file and runs the test file on it:
   - `--budget=S` now counts from the job start.
 - This branch exists only to record the item. The pre-review [commits] check needs a commit, and the deliverables live in
   manage-agents.
+
+## 6. Selected run
+
+`mac-pytest.sh --select -- --base d2573fc9a0 --run` on 889aa83874 exited 0: 232 units, 0 failed, run on ve-cloud-2
+(`selected-run.log`). This branch adds only docs, so the run covers main's tests on this tree.
+No main-known-red test is involved.
