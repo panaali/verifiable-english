@@ -1,0 +1,379 @@
+--- decider-ready-alert.py	2026-11-17 12:33:46.709298245 +0000
++++ decider-ready-alert.py.new-challew	2026-11-17 21:12:43.282070074 +0000
+@@ -40,12 +40,25 @@
+ owned by lead|DRI|orchestrator... that the infra feed does not own (backlog.py FEED_OWNER) when no task is expected (reason
+ "no task file and no launch link": no links.task and no launch link). p1 rows stay with the p1 rule (30 min, 4 h).
+ 
++CHALLENGE FINAL NOT DELIVERED (2026-11-17 challenge-final-delivery; reviews/dri-ruling-record-void-astra-20261115.md section F):
++record-void-astra-challenge-1115.final.md finished 02:31Z on 11-15 and reached the orchestrator 17:06Z (14.5 h), its row
++still open. A <M>/*-challenge*.final.md (non-empty) that belongs to a row, is newer than the row's in-flight stamp (status
++"in-flight" and its status_t; a row in any other status has no in-flight stamp and is not named) and is >= 30 min old (file
++mtime) is named in a "NOW(critical): challenge final not delivered: ..." message to the row's addressee. Its row: links.final
++is the file name, or links.delegate is its stem, or the stem (or the stem without "dri-") is the row id, or the row id plus
++"-<date>" / "-stopped-<date>" (record-void-astra-challenge-1115); a final no row claims is not named. Every open in-flight row
++it belongs to is named (a delegate row the seeder closed does not close the challenge row). Addressee: the row's "addressee"
++field when it is dri or orchestrator, else orchestrator for an Astra challenge ("astra" a word of the row id or the file
++name: the orchestrator answers Astra challenges), else dri (then it is one more part of the dri message). Once per (row id,
++final name, in-flight stamp), in the same state file with the id written "cf:<id>"; a row sent in flight again whose new
++final lands alerts again. One message per addressee per pass; a failed send records nothing for that addressee.
++
+ Hooks (tests): DRA_M = manage dir (BACKLOG.jsonl, state files, prompts/, msg.sh); DRA_MSG = command run instead of
+ `zsh $M/msg.sh`; DRA_NOW = the clock (epoch seconds); DRA_BACKLOG_PY = the backlog.py whose launch_spec is used
+ (default ../backlog.py from this script). --dry-run prints the message and records nothing.
+ Tests: python3 -I tools-local/test_decider_ready_alert.py; python3 -I tools-local/test_p1_ready_alert.py
+ """
+-import json, os, re, shlex, subprocess, sys, time
++import glob, json, os, re, shlex, subprocess, sys, time
+ from datetime import datetime, timezone
+ 
+ M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+@@ -57,6 +70,11 @@
+ NT_REASON = re.compile(r"^(no task file and no launch link|task file missing\b)")
+ NT_KINDS_OUT = ("design", "lead-question", "decision")
+ NT_OWNER_OUT = re.compile(r"(lead|DRI|orchestrator)\b", re.I)
++CF_AFTER = 30 * 60          # challenge final this old, row still in flight -> its addressee (challenge-final-delivery)
++CF_GLOB = "*-challenge*.final.md"
++CF_SUFFIX = re.compile(r"(stopped-)?\d{4,8}(T\d{4,6}Z?)?")   # the "-1115" / "-stopped-20261116T0614Z" after a row id
++CF_TO = ("dri", "orchestrator")   # addressees a row may name; never lead from this script
++ASTRA = re.compile(r"(?<![a-z0-9])astra(?![a-z0-9])", re.I)
+ 
+ 
+ def prio_le_1(r):
+@@ -230,6 +248,58 @@
+     return out
+ 
+ 
++def final_rows(name, rows):
++    """Every row a challenge final belongs to (see the docstring): links.final / links.delegate first, then the row id from
++    the file's stem, with or without "dri-", alone or followed by a date / stopped-date suffix."""
++    stem = name[:-len(".final.md")]
++    out = [r for r in rows if isinstance(r.get("links"), dict)
++           and (r["links"].get("final") == name or r["links"].get("delegate") == stem)]
++    by = {r.get("id"): r for r in rows if r.get("id")}
++    for s in [stem] + ([stem[4:]] if stem.startswith("dri-") else []):
++        p = s.split("-")
++        for k in range(len(p), 0, -1):
++            r = by.get("-".join(p[:k]))
++            if r is not None and (k == len(p) or CF_SUFFIX.fullmatch("-".join(p[k:]))) and r not in out:
++                out.append(r)
++    return out
++
++
++def addressee(r, name):
++    a = str(r.get("addressee") or "").strip().lower()
++    if a in CF_TO:
++        return a
++    return "orchestrator" if ASTRA.search(f"{r.get('id', '')} {name}") else "dri"
++
++
++def challenge_finals(rows, now):
++    """[(row, ("cf:<id>", "<final>@<status_t>"), final name, final mtime, addressee)]: challenge finals newer than their
++    in-flight row's status_t, >= 30 min old, row still in flight."""
++    out = []
++    for f in sorted(glob.glob(os.path.join(M, CF_GLOB))):
++        try:
++            st = os.stat(f)
++        except OSError:
++            continue
++        name = os.path.basename(f)
++        if st.st_size == 0 or now - st.st_mtime < CF_AFTER:
++            continue
++        for r in final_rows(name, rows):
++            t = parse_t(r.get("status_t")) if r.get("status") == "in-flight" else None
++            if t is None or st.st_mtime <= t:
++                continue
++            out.append((r, ("cf:" + r["id"], f"{name}@{r['status_t']}"), name, st.st_mtime, addressee(r, name)))
++    return out
++
++
++def cf_part(xs, now):
++    return ("challenge final not delivered: "
++            + "; ".join(f"{name} (finished {time.strftime('%Y-%m-%dT%H:%MZ', time.gmtime(mt))}, {age_s(now - mt)} ago)"
++                        f" for row {r['id']} (in flight since {r.get('status_t')})" for r, _, name, mt, _ in xs)
++            + ". Rule (reviews/dri-ruling-record-void-astra-20261115.md section F): a finished challenge final closes its row"
++            + " and reaches its addressee within 30 min: read and answer the final, then close the row"
++            + " (backlog.sh update-status <id> done) or move it to blocked with the reason.")
++
++
+ def main(argv):
+     dry = "--dry-run" in argv
+     now = float(os.environ.get("DRA_NOW") or time.time())
+@@ -265,7 +335,12 @@
+     p1 = [(r, a) for r, a, h in p1all if h is None]
+     held = [(r, a, h) for r, a, h in p1all if h is not None]
+     nt = [x for x in no_task_rows(rows, now) if x[1] not in sent]
+-    if not new and not p1all and not nt:
++    try:
++        cf = [x for x in challenge_finals(rows, now) if x[1] not in sent]
++    except Exception as e:  # the challenge-final part never silences the parts above
++        print(f"decider-ready-alert: challenge finals skipped ({type(e).__name__}: {e})")
++        cf = []
++    if not new and not p1all and not nt and not cf:
+         return 0
+     msgs = []
+     if new:
+@@ -288,29 +363,44 @@
+                     + ". The infra feed WAITs on these rows until a task file exists (notask-wait-alert, >= 20 min ready;"
+                     + " R21: whoever queues a row writes its task file in the same step): write the task file and link it"
+                     + " (links.task), or move the row to blocked with the reason.")
+-    msg ="NOW(critical): " + " | ".join(msgs)
++    cf_to = {}
++    for x in cf:
++        cf_to.setdefault(x[4], []).append(x)
++    if cf_to.get("dri"):
++        msgs.append(cf_part(cf_to["dri"], now))
++    out = [("dri", "NOW(critical): " + " | ".join(msgs))] if msgs else []
++    out += [(to, "NOW(critical): " + cf_part(cf_to[to], now)) for to in sorted(cf_to) if to != "dri"]
+     if dry:
+-        print(msg)
++        for to, msg in out:
++            print(msg if to == "dri" else f"to {to}: {msg}")
+         return 0
+     cmd = shlex.split(os.environ["DRA_MSG"]) if os.environ.get("DRA_MSG") else ["zsh", os.path.join(M, "msg.sh")]
+-    rc = subprocess.run(cmd + ["dri", "decider-ready-alert", msg], stdin=subprocess.DEVNULL,
+-                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+     stamp = time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime(now))
+-    if rc != 0:
+-        print(f"{stamp} decider-ready-alert: msg.sh rc {rc}; will retry next pass")
++    ok = set()
++    for to, msg in out:
++        rc = subprocess.run(cmd + [to, "decider-ready-alert", msg], stdin=subprocess.DEVNULL,
++                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
++        if rc != 0:
++            print(f"{stamp} decider-ready-alert: msg.sh {to} rc {rc}; will retry next pass")
++        else:
++            ok.add(to)
++    if "dri" not in ok:
++        new, nt, p1all = [], [], []
++    cf = [x for x in cf if x[4] in ok]
++    if not ok:
+         return 0
+-    if new or nt:
++    if new or nt or cf:
+         with open(STATE, "a", encoding="utf-8") as f:
+-            for k in [k for k, _ in new] + [x[1] for x in nt]:
++            for k in [k for k, _ in new] + [x[1] for x in nt] + [x[1] for x in cf]:
+                 f.write(f"{k[0]}\t{k[1]}\t{stamp}\n")
+     if p1all:
+         with open(P1_STATE, "a", encoding="utf-8") as f:
+             for x in p1all:
+                 f.write(f"{x[0]['id']}\t{int(now)}\t{stamp}\n")
+-    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join([k[0] for k, _ in new] + [x[0]['id'] for x in p1all] + [x[1][0] for x in nt])}")
++    named = [k[0] for k, _ in new] + [x[0]['id'] for x in p1all] + [x[1][0] for x in nt] + [f"{x[1][0]} to {x[4]}" for x in cf]
++    print(f"{stamp} decider-ready-alert: sent NOW(critical) for {', '.join(named)}")
+     return 0
+ 
+-
+ if __name__ == "__main__":
+     try:
+         sys.exit(main(sys.argv[1:]))
+--- test_decider_ready_alert.py.bak-20261117-challew	2026-11-17 12:33:46.709615706 +0000
++++ test_decider_ready_alert.py	2026-11-17 21:15:58.793587256 +0000
+@@ -2,13 +2,17 @@
+ """Tests for tools-local/decider-ready-alert.py and its call in backlog-svc.sh (orchestrator 20261115T140543Z item 1).
+ Run: python3 -I tools-local/test_decider_ready_alert.py   (BACKLOG_SVC_SH = the backlog-svc.sh copy to check; default the
+ staged backlog-svc.sh.new-dra if present, else the live one; DRA_SCRIPT = the alert script, default the staged
+-decider-ready-alert.py.new-nta (then .new-p1rua2, .new-p1rua) if present, else the live one).
++decider-ready-alert.py.new-challew (then .new-nta, .new-p1rua2, .new-p1rua) if present, else the live one).
+ NoTaskFile (notask-wait-alert, reviews/dri-decisions-20261117-orch1156.md item 3): a ready row of any priority > 1 and any
+-owner with no task file for >= 20 min is named once per (row, ready time); the live script before the install fails it."""
++owner with no task file for >= 20 min is named once per (row, ready time); the live script before the install fails it.
++ChallengeFinal (challenge-final-delivery, reviews/dri-ruling-record-void-astra-20261115.md section F): a *-challenge*.final.md
++newer than its in-flight row's status_t, row not done after 30 min -> one message to the row's addressee (orchestrator for
++Astra challenges), not repeated; the live script of 2026-11-17 13:45Z (notask-wait-alert) fails it."""
+ import json, os, subprocess, sys, tempfile, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+-SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-nta"),
++SCRIPT = os.environ.get("DRA_SCRIPT") or next(p for p in (os.path.join(HERE, "decider-ready-alert.py.new-challew"),
++                                                           os.path.join(HERE, "decider-ready-alert.py.new-nta"),
+                                                            os.path.join(HERE, "decider-ready-alert.py.new-p1rua2"),
+                                                            os.path.join(HERE, "decider-ready-alert.py.new-p1rua"),
+                                                            os.path.join(HERE, "decider-ready-alert.py")) if os.path.exists(p))
+@@ -31,7 +35,7 @@
+         self.log = os.path.join(self.d, "msgs.log")
+         fake = os.path.join(self.d, "fake-msg.sh")
+         with open(fake, "w") as f:
+-            f.write('#!/bin/sh\nprintf "%s|%s|%s\\n" "$1" "$2" "$3" >> ' + self.log + "\nexit ${FAKE_RC:-0}\n")
++            f.write('#!/bin/sh\nprintf "%s|%s|%s\\n" "$1" "$2" "$3" >> ' + self.log + "\n[ -n \"$FAKE_FAIL_TO\" ] && [ \"$1\" = \"$FAKE_FAIL_TO\" ] && exit 1\nexit ${FAKE_RC:-0}\n")
+         self.env = dict(os.environ, DRA_M=self.d, DRA_MSG=f"sh {fake}")
+ 
+     def write(self, rows):
+@@ -246,6 +250,177 @@
+         self.assertIn(" | ready with no task file: b, infra feed, p80, 25m", m[0])
+ 
+ 
++FIN = 1794709860.0     # 2026-11-15T02:31Z: record-void-astra-challenge-1115.final.md finished (ruling section F)
++FLY = "2026-11-15T00:40:00Z"   # the row's in-flight stamp (status_t), before the final
++
++
++def cf_row(i, **kw):
++    """A decider-launched challenge row in flight (no delegate link: nothing but a person closes it)."""
++    r = {"id": i, "kind": "design", "title": f"title {i}", "owner": "DRI decider", "priority": 5, "status": "in-flight",
++         "status_t": FLY, "ready_t": "2026-11-15T00:28Z", "links": {}}
++    r.update(kw)
++    return r
++
++
++class ChallengeFinal(Base):
++    """challenge-final-delivery: a finished challenge final reaches its row's addressee within 30 min, once."""
++
++    def final(self, name, t=FIN, text="# challenge final\nverdict: ...\n"):
++        p = os.path.join(self.d, name)
++        with open(p, "w") as f:
++            f.write(text)
++        os.utime(p, (t, t))
++        return p
++
++    def at(self, after, *a, **env):
++        p = self.run_it(*a, DRA_NOW=str(FIN + after), **env)
++        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
++        self.assertNotIn("error", p.stdout)
++        self.assertNotIn("skipped", p.stdout)
++        return p
++
++    def test_fin_is_the_final_time(self):
++        from datetime import datetime, timezone
++        self.assertEqual(datetime(2026, 11, 15, 2, 31, tzinfo=timezone.utc).timestamp(), FIN)
++
++    def test_1_astra_final_30_min_to_orchestrator_once(self):
++        # the 11-15 case: final 02:31Z, row still in flight; the orchestrator answers Astra challenges
++        self.write([cf_row("record-void-astra-challenge")])
++        self.final("record-void-astra-challenge-1115.final.md")
++        self.at(29 * MIN)
++        self.assertEqual(self.msgs(), [], "29 min: not yet")
++        self.at(30 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        to, frm, text = m[0].split("|", 2)
++        self.assertEqual((to, frm), ("orchestrator", "decider-ready-alert"))
++        self.assertTrue(text.startswith("NOW(critical): challenge final not delivered: record-void-astra-challenge-1115.final.md"
++                                        " (finished 2026-11-15T02:31Z, 30m ago) for row record-void-astra-challenge"
++                                        " (in flight since 2026-11-15T00:40:00Z)"), text)
++        self.assertIn("dri-ruling-record-void-astra-20261115.md section F", text)
++        self.at(40 * MIN)
++        self.at(15 * 60 * MIN)
++        self.assertEqual(len(self.msgs()), 1, "not repeated: " + repr(self.msgs()))
++        self.assertIn("cf:record-void-astra-challenge\trecord-void-astra-challenge-1115.final.md@" + FLY + "\t",
++                      open(os.path.join(self.d, "decider-ready-alert.sent")).read())
++
++    def test_2_non_astra_challenge_goes_to_dri_in_the_one_dri_message(self):
++        self.write([cf_row("targets-release-challenge-1116"), row("dec")])
++        self.final("dri-targets-release-challenge-1116.final.md")
++        self.at(45 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        to, frm, text = m[0].split("|", 2)
++        self.assertEqual((to, frm), ("dri", "decider-ready-alert"))
++        self.assertIn("decider-owned p1 row(s) ready with no job in flight: dec", text)
++        self.assertIn(" | challenge final not delivered: dri-targets-release-challenge-1116.final.md (finished"
++                      " 2026-11-15T02:31Z, 45m ago) for row targets-release-challenge-1116", text)
++
++    def test_3_two_addressees_two_messages(self):
++        self.write([cf_row("replan-astra-challenge-1114"), cf_row("record-void-challenge-3p4")])
++        self.final("replan-astra-challenge-1114.final.md")
++        self.final("dri-record-void-challenge-3p4.final.md")
++        self.at(31 * MIN)
++        m = sorted(self.msgs())
++        self.assertEqual([x.split("|", 2)[0] for x in m], ["dri", "orchestrator"], m)
++        self.assertIn("record-void-challenge-3p4", m[0]); self.assertNotIn("replan-astra", m[0])
++        self.assertIn("replan-astra-challenge-1114", m[1]); self.assertNotIn("3p4", m[1])
++
++    def test_4_explicit_addressee_field(self):
++        self.write([cf_row("x-astra-challenge", addressee="dri"), cf_row("y-challenge", addressee="orchestrator"),
++                    cf_row("z-challenge", addressee="lead")])   # lead is never an addressee here: the default rule applies
++        for n in ("x-astra-challenge", "y-challenge", "z-challenge"):
++            self.final(n + ".final.md")
++        self.at(31 * MIN)
++        to = {x.split("|", 2)[0]: x for x in self.msgs()}
++        self.assertEqual(sorted(to), ["dri", "orchestrator"], self.msgs())
++        self.assertIn("x-astra-challenge", to["dri"]); self.assertIn("z-challenge", to["dri"])
++        self.assertIn("y-challenge", to["orchestrator"]); self.assertNotIn("x-astra", to["orchestrator"])
++
++    def test_5_row_mapping(self):
++        # links.final, links.delegate, "dri-" + id, id + "-stopped-<date>"; every open row a final belongs to is named
++        self.write([cf_row("a-challenge", links={"final": "dri-qq-challenge.final.md"}),
++                    cf_row("b-challenge", links={"delegate": "dri-bee-challenge"}),
++                    cf_row("rv-challenge-2"),
++                    cf_row("c-challenge"), cf_row("dri-c-challenge", status="done")])
++        for n in ("dri-qq-challenge", "dri-bee-challenge", "dri-rv-challenge-2-stopped-20261116T0614Z", "dri-c-challenge"):
++            self.final(n + ".final.md")
++        self.at(31 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 1, m)
++        for x in ("dri-qq-challenge.final.md (finished 2026-11-15T02:31Z, 31m ago) for row a-challenge ",
++                  "dri-bee-challenge.final.md (finished 2026-11-15T02:31Z, 31m ago) for row b-challenge ",
++                  "dri-rv-challenge-2-stopped-20261116T0614Z.final.md (finished 2026-11-15T02:31Z, 31m ago) for row rv-challenge-2 ",
++                  "dri-c-challenge.final.md (finished 2026-11-15T02:31Z, 31m ago) for row c-challenge "):
++            self.assertIn(x, m[0])
++        self.assertNotIn("for row dri-c-challenge ", m[0])
++
++    def test_6_silent_cases(self):
++        self.write([cf_row("done-challenge", status="done"), cf_row("mrg-challenge", status="merged"),
++                    cf_row("drop-challenge", status="dropped"), cf_row("rdy-challenge", status="ready"),
++                    cf_row("blk-challenge", status="blocked"), cf_row("rev-challenge", status="review"),
++                    cf_row("nostamp-challenge", status_t=None),
++                    cf_row("late-challenge", status_t="2026-11-15T02:40:00Z"),   # sent in flight again after the final
++                    cf_row("empty-challenge"), cf_row("other-challenge"), cf_row("sfx-challenge"), cf_row("build-x")])
++        for n in ("done-challenge", "mrg-challenge", "drop-challenge", "rdy-challenge", "blk-challenge", "rev-challenge",
++                  "nostamp-challenge", "late-challenge",
++                  "orphan-astra-challenge-1115",      # no row claims it
++                  "other-challenge-notadate",        # a suffix that is no date: not other-challenge's
++                  "sfxx-challenge",                   # not sfx-challenge's
++                  "build-x"):                         # not a challenge final
++            self.final(n + ".final.md")
++        self.final("empty-challenge.final.md", text="")
++        self.at(5 * 60 * MIN)
++        self.assertEqual(self.msgs(), [])
++
++    def test_7_relaunched_row_new_final_alerts_again(self):
++        self.write([cf_row("rv-astra-challenge")])
++        self.final("rv-astra-challenge.final.md")
++        self.at(31 * MIN)
++        self.write([cf_row("rv-astra-challenge", status_t="2026-11-15T05:00:00Z")])
++        self.at(3 * 60 * MIN)    # the old final is older than the new stamp: silent
++        self.assertEqual(len(self.msgs()), 1, self.msgs())
++        self.final("rv-astra-challenge.final.md", t=FIN + 4 * 60 * MIN)
++        self.at(4 * 60 * MIN + 29 * MIN)
++        self.at(4 * 60 * MIN + 30 * MIN)
++        self.at(9 * 60 * MIN)
++        m = self.msgs()
++        self.assertEqual(len(m), 2, m)
++        self.assertIn("(in flight since 2026-11-15T05:00:00Z)", m[1])
++
++    def test_8_failed_send_to_one_addressee_records_only_the_other(self):
++        self.write([cf_row("o-astra-challenge"), cf_row("d-challenge")])
++        self.final("o-astra-challenge.final.md")
++        self.final("d-challenge.final.md")
++        self.at(31 * MIN, FAKE_FAIL_TO="orchestrator")
++        sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
++        self.assertIn("cf:d-challenge\t", sent)
++        self.assertNotIn("o-astra-challenge", sent)
++        self.at(41 * MIN)
++        self.at(51 * MIN)
++        to = [x.split("|", 2)[0] for x in self.msgs()]
++        self.assertEqual(to.count("orchestrator"), 2, self.msgs())   # failed once, retried once, then recorded
++        self.assertEqual(to.count("dri"), 1, self.msgs())
++
++    def test_9_failed_dri_send_keeps_other_parts_unrecorded(self):
++        self.write([cf_row("o-astra-challenge"), row("dec")])
++        self.final("o-astra-challenge.final.md")
++        self.at(31 * MIN, FAKE_FAIL_TO="dri")
++        sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
++        self.assertIn("cf:o-astra-challenge\t", sent)
++        self.assertNotIn("dec\t", sent)
++        self.at(41 * MIN)
++        self.assertEqual([x.split("|", 2)[0] for x in self.msgs()], ["dri", "orchestrator", "dri"], self.msgs())
++
++    def test_10_dry_run_records_nothing(self):
++        self.write([cf_row("o-astra-challenge")])
++        self.final("o-astra-challenge.final.md")
++        p = self.at(31 * MIN, "--dry-run")
++        self.assertIn("to orchestrator: NOW(critical): challenge final not delivered: o-astra-challenge.final.md", p.stdout)
++        self.assertEqual(self.msgs(), [])
++        self.assertFalse(os.path.exists(os.path.join(self.d, "decider-ready-alert.sent")))
++
++
+ class Loop(unittest.TestCase):
+     def test_backlog_svc_runs_alert_after_seed(self):
+         t = open(SVC).read()
