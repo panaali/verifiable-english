@@ -70,7 +70,8 @@ test's output. So a failing assertion leaves no process behind.
 **Repo checks:**
 - No VE code changed in round 2.
 - DELTA: none, so there are no Ruling cells.
-- The selected run (`mac-pytest.sh --select`), `lake build` and `python3 lean/audit.py` are recorded below.
+- Selected run (`mac-pytest.sh --select`, at 35660501, on ve-cloud-2): exit 0, 224 units recorded, 0 failed.
+- `lake build`: 1475 jobs, success. `python3 lean/audit.py`: PASS (896 source files, 10126 theorems).
 - `[gate]` is left to the merge train (R17).
 
 ### Install round 2 (picker read per call, no restart)
