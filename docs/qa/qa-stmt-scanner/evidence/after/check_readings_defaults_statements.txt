@@ -1,0 +1,15 @@
+checked 31 approved RD-1 declarations (10 theorems)
+RD-1 PASS: 31 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 10 approved RD-6a declarations (7 theorems)
+superpose_all_extra: amended by DRI ruling 2026-10-07, refuted original mechanised (superpose_all_extra_refuted)
+RD-6a PASS: 10 exact after whitespace normalization (1 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 16 approved RD-2a declarations (5 theorems)
+RD-2a PASS: 16 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 30 approved RD-3 declarations (11 theorems)
+RD-3 PASS: 30 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 10 approved RD-4a declarations (4 theorems)
+RD-4a PASS: 10 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 16 approved RD-4b declarations (6 theorems)
+RD-4b PASS: 16 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
+checked 3 approved RD-6b declarations (3 theorems)
+RD-6b PASS: 3 exact after whitespace normalization (0 amended by a DRI ruling, its original refuted in Lean); 0 pending the statement re-review
