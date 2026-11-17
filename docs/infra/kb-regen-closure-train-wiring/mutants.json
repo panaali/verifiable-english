@@ -1,0 +1,62 @@
+[
+ {
+  "id": "S1",
+  "file": "/home/seyran/code/manage-agents/merge-train.sh.new-kbw",
+  "language": "zsh",
+  "mutation": "the FAIL-line guard disabled (`elif false`): a limit failure besides STALE is rewritten",
+  "behaviour": "a limit failure is never rewritten",
+  "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-mq.zsh.new-kbw (zsh test-mq.zsh.new-kbw kc, PS_NEW=1 PS_NEW_SFX=.mut-kbw)",
+  "case": "K3",
+  "failed_checks": [
+   "skipped (a limit), no write, the branch head is the sync merge"
+  ],
+  "diff": "mut-S1.diff",
+  "log": "mut-S1.log",
+  "restored": true
+ },
+ {
+  "id": "S2",
+  "file": "/home/seyran/code/manage-agents/merge-train.sh.new-kbw",
+  "language": "zsh",
+  "mutation": "the --owner check disabled (`true ||`): a write that changes another entry's file is committed",
+  "behaviour": "only kernel-closure's file is committed",
+  "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-mq.zsh.new-kbw (zsh test-mq.zsh.new-kbw kc, PS_NEW=1 PS_NEW_SFX=.mut-kbw)",
+  "case": "K5",
+  "failed_checks": [
+   "skipped (owner extra), head unchanged, worktree clean, notes untouched, published stale as before"
+  ],
+  "diff": "mut-S2.diff",
+  "log": "mut-S2.log",
+  "restored": true
+ },
+ {
+  "id": "S3",
+  "file": "/home/seyran/code/manage-agents/merge-train.sh.new-kbw",
+  "language": "zsh",
+  "mutation": "the `[ -n \"$brclose\" ]` guard removed: library mode (presync) runs the closure step",
+  "behaviour": "train only, never in library mode",
+  "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-mq.zsh.new-kbw (zsh test-mq.zsh.new-kbw kc, PS_NEW=1 PS_NEW_SFX=.mut-kbw)",
+  "case": "K9",
+  "failed_checks": [
+   "the tree is stale, yet no check ran; PSLR fresh, head unchanged"
+  ],
+  "diff": "mut-S3.diff",
+  "log": "mut-S3.log",
+  "restored": true
+ },
+ {
+  "id": "S4",
+  "file": "/home/seyran/code/manage-agents/merge-train.sh.new-kbw",
+  "language": "zsh",
+  "mutation": "the cleanup of untracked files the failed write left removed (`do :; done`)",
+  "behaviour": "a refused write leaves the worktree as it was",
+  "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-mq.zsh.new-kbw (zsh test-mq.zsh.new-kbw kc, PS_NEW=1 PS_NEW_SFX=.mut-kbw)",
+  "case": "K7",
+  "failed_checks": [
+   "skipped (writer failed), out.tmp removed, mine.txt kept, head unchanged"
+  ],
+  "diff": "mut-S4.diff",
+  "log": "mut-S4.log",
+  "restored": true
+ }
+]
