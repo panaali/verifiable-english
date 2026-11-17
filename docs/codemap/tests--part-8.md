@@ -1,3 +1,4 @@
+- `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
 - `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
 - `tests/test_soft_selected.py` — The soft route's `soft-selected` kind (kb-10a) and its relay `ve.soft_route.selected_at`.
 - `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.

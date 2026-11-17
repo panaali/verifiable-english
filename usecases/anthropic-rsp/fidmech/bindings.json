@@ -48,7 +48,7 @@
    "K22": ["roadmap_goal_missed"],
    "G4": ["off_cycle_public_deployment"],
    "G7": ["noncompliance_report_received", "substantiated"],
-   "G8": ["goal_revised_less_ambitious"]}},
+   "G8": ["goal_revised_less_ambitious", "revised_because_unable"]}},
   "CASE_ATOMS": {"type": "dict[str,tuple[tuple[str,...],...]]", "value": {
    "K20": [["develops_highly_capable", "c"]]}},
   "PREDICATES": {"type": "dict[str,str]", "value": {
