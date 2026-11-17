@@ -12,22 +12,26 @@
 - **Workers.** Each slot is a tools/fidmech/worker.py Worker in a thread; a run is a fresh process reaped with
   os.wait4, so each run's CPU and peak RSS are its own. The unmutated baseline runs first, alone; then each slot runs
   a sentinel after every SENTINEL_EVERY of its mutants and a last one. A sentinel that differs from the first
-  baseline makes the slot's results since its last good sentinel INVALID and re-queues them once; a slot whose last
-  sentinel differs makes the batch INVALID (worker.run_batch's rule, per slot).
+  baseline makes the slot's results since its last good sentinel INVALID and re-queues them once; the batch is
+  INVALID when a slot's last sentinel differs or a result stays INVALID (worker.batch_status, shared with
+  worker.run_batch). An INVALID result keeps its measured K in its line with sentinel_ok false; every reader takes K
+  through records.k_reading, which reads it as INVALID (no verdict).
 - **Verdicts.** K by records.kernel_verdict against the batch baseline (a move to or from UNDECIDED is inconclusive).
   L1-L4 and D (`TextChecks`): a mutant kills a check when its tree has a hit of that check the baseline lacks
   (keyed by class, block or predicate, quote), located on the mutated unit, a predicate the mutation edited, a block
   using such a predicate, or a sentence the unit quoted at baseline (L4's location, the missing rule). CR is never
   run here: `not-read`.
 - **Budget.** Past --budget seconds no mutant is dispatched; the rest are K `not-run` (their text checks, which need
-  no Lean, still run). **Resume** reads a results.jsonl: every line's inputs_sha256 must equal this batch's or the
-  runner refuses (EXIT_MISMATCH, nothing run); lines with a K verdict other than not-run are kept, the rest run.
+  no Lean, still run), a mutant re-queued after a failed sentinel included: its INVALID outcome is dropped, so it is
+  counted not run, never ran. **Resume** reads a results.jsonl: every line's inputs_sha256 must equal this batch's or
+  the runner refuses (EXIT_MISMATCH, nothing run); the lines a good sentinel confirmed (records.confirmed) are kept,
+  the rest (not-run and INVALID) run again.
   It also reads a results.partial.jsonl. After the budget, the last sentinels still wait for admission: they are
   what makes the results valid.
 - **Out.** mutants.jsonl (the records), results.partial.jsonl (each result as a good sentinel confirms it, so a
   batch that dies can be resumed from it), results.jsonl (one line per mutant: {"record", "mutant", "text"}),
   baseline.json, textcheck.json (the baseline text-check report with every lever off) and batch.json (status,
-  counts, the measurements of plan 7).
+  counts, `invalid` the results no good sentinel confirmed, the measurements of plan 7).
 """
 from __future__ import annotations
 
@@ -291,6 +295,9 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
                 finish(fut)
             if pending and budget_end is not None and clock() >= budget_end:
                 not_run += [m.id for m in pending]
+                for m in pending:  # a mutant re-queued after a failed sentinel drops its INVALID outcome: not run
+                    outcomes.pop(m.id, None)
+                    extras.pop(m.id, None)
                 log(f"budget reached: {len(pending)} mutants not run")
                 pending.clear()
             task = None
@@ -332,7 +339,7 @@ def schedule(slots, mutants, baseline, *, host, jobs, peak_rss, limit, budget_en
             running[pool.submit(task_run, slot, kind, mutant)] = (slot, kind, mutant)
     finally:
         pool.shutdown(wait=True)
-    status = "ok" if all(s.last_sentinel is not False for s in slots) else "INVALID"
+    status = W.batch_status([s.last_sentinel for s in slots], outcomes.values())
     return outcomes, not_run, status, sentinels, waited, meter, extras
 
 
@@ -391,13 +398,15 @@ def prepare(worktree, document, inputs=None):
 
 
 def read_resume(path, digest):
-    """{id: line} of a results.jsonl whose every line carries `digest`; any other refuses (nothing run)."""
+    """{id: line} of the lines of a results.jsonl a good sentinel confirmed (records.confirmed: not a not-run line,
+    not one whose sentinel failed, which the batch runs again); a line whose inputs_sha256 is not `digest` refuses
+    (nothing run)."""
     lines = [json.loads(x) for x in Path(path).read_text(encoding="utf-8").splitlines() if x.strip()]
     wrong = sorted({line["record"]["inputs_sha256"] for line in lines} - {digest})
     if wrong:
         raise Refused(f"--resume {path}: inputs_sha256 {wrong[0][:16]}... is not this batch's {digest[:16]}...: "
                       "refused, nothing run", EXIT_MISMATCH)
-    return {line["record"]["id"]: line for line in lines if line["record"]["verdict"]["K"] != "not-run"}
+    return {line["record"]["id"]: line for line in lines if R.confirmed(line["record"])}
 
 
 def _fp1(worktree, document):
@@ -542,8 +551,8 @@ def run(document, out, *, jobs="auto", budget=None, resume=None, inputs=None, de
     child_cpu = (cpu1.ru_utime + cpu1.ru_stime) - (cpu0.ru_utime + cpu0.ru_stime)
     summary.update({
         "status": status, "mutants": len(prepared.records), "stillborn": sum(r["parse"] != "ok" for r in by_id.values()),
-        "ran": ran, "kept": len(kept), "not_run": len(not_run), "sentinels": {"run": len(sentinels),
-                                                                               "failed": sentinels.count(False)},
+        "ran": ran, "invalid": sum(R.k_reading(x["record"]) == R.INVALID for x in lines), "kept": len(kept),
+        "not_run": len(not_run), "sentinels": {"run": len(sentinels), "failed": sentinels.count(False)},
         "selection": prepared.selection, "rows": prepared.rows, "fp1": _fp1(deps.worktree, document),
         "measurements": {
             "wall_s": round(wall, 1), "schedule_wall_s": round(deps.clock() - t0, 1),
@@ -575,8 +584,9 @@ def main(args, deps=None) -> int:
     except Refused as e:
         print(f"fidmech batch: {e}", file=sys.stderr)
         return e.code
-    print(json.dumps({k: summary.get(k) for k in ("document", "status", "mutants", "ran", "kept", "not_run")}))
-    if summary.get("not_run"):
+    print(json.dumps({k: summary.get(k) for k in ("document", "status", "mutants", "ran", "invalid", "kept",
+                                                  "not_run")}))
+    if summary.get("not_run") or summary.get("invalid"):
         print(f"resume: uv run python -m tools.fidmech batch --doc {summary['document']} --jobs {args.jobs} "
               f"--out <new dir> --resume {Path(args.out) / 'results.jsonl'}"
               + (f" --inputs {args.inputs}" if args.inputs else ""))
