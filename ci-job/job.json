@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-drain-vm1-idle-baeebe46-t907406-s8",
+ "head": "8eb1fc0c1ea1e4adfd0b48b0776f83ad5c7bf6a7",
+ "argv": [
+  "armsh-cand-tm-drain-vm1-idle-baeebe46-t907406-s8",
+  "8eb1fc0c1ea1e4adfd0b48b0776f83ad5c7bf6a7",
+  "e06483b9fe1898684436e9b674b1ed710e871ad3",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
