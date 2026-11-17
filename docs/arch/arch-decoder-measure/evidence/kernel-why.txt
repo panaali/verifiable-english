@@ -1,0 +1,28 @@
+VE.CertificateWire.decodeClosureTrace
+  route spec: 26 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.CertificateWire.decodeClosureCertificate -> VE.CertificateWire.decodeClosureTrace
+VE.CertificateWire.decodeClosureCertificate
+  route spec: 5 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.CertificateWire.decodeClosureCertificate
+VE.Closure.Bridge.decodeFormula
+  route spec: 24 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.Route.WireSound.closureFamily -> VE.Closure.Bridge.decodeFormula
+  metered spec: 24 lines; chain: VE.Route.MeteredRun.runWith_sound -> VE.Route.MeteredRun.EvaluationAnswer -> VE.Closure.Bridge.decodeFormulas -> VE.Closure.Bridge.decodeFormula
+VE.Closure.Bridge.formulaNodes
+  route spec: 9 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.CertificateWire.decodeClosureCertificate -> VE.CertificateWire.decodeClosureTrace -> VE.Closure.Bridge.formulaNodes
+  metered spec: 9 lines; chain: VE.Route.MeteredRun.runWith_sound -> VE.Route.MeteredRun.EvaluationAnswer -> VE.Closure.Bridge.decodeFormulas -> VE.Closure.Bridge.formulaNodes
+VE.Closure.Bridge.decodeKind
+  route spec: 5 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.Route.WireSound.closureFamily -> VE.Closure.Bridge.decodeFormula -> VE.Closure.Bridge.decodeKind
+  metered spec: 5 lines; chain: VE.Route.MeteredRun.runWith_sound -> VE.Route.MeteredRun.EvaluationAnswer -> VE.Closure.Bridge.decodeFormulas -> VE.Closure.Bridge.decodeFormula -> VE.Closure.Bridge.decodeKind
+VE.Core.Wire.decodeTrace
+  route spec: 25 lines; chain: VE.Route.RunSound.runCase_dispatch -> VE.Route.Run.dispatch -> VE.Core.Wire.run -> VE.Core.Wire.decodeCertificate -> VE.Core.Wire.decodeTrace
+VE.Core.Bridge.decodeFormula
+  route spec: 32 lines; chain: VE.Route.RunSound.runCase_dispatch -> VE.Route.Run.dispatch -> VE.Core.Wire.run -> VE.Core.Bridge.decodeFormula
+  norms spec: 32 lines; chain: VE.Norms.FlaggedSpec.norms_wire_conflict_free -> VE.Norms.Wire.decodeSource -> VE.Norms.Wire.decodeNormsEnvironmentWith -> VE.Route.Wire.decodeVocabulary -> VE.Route.Wire.decodeDefined -> VE.Route.Wire.decodeBody -> VE.Route.Wire.bodyFault -> VE.Core.Bridge.decodeFormula
+  softNorms spec: 32 lines; chain: VE.SoftNorms.Run.soft_wire_elaborate -> VE.SoftNorms.Wire.decodeSoftSource -> VE.SoftNorms.Phases.checkSource -> VE.SoftNorms.Phases.declarations -> VE.Norms.Wire.decodeNormsEnvironmentWith -> VE.Route.Wire.decodeVocabulary -> VE.Route.Wire.decodeDefined -> VE.Route.Wire.decodeBody -> VE.Route.Wire.bodyFault -> VE.Core.Bridge.decodeFormula
+  metered spec: 32 lines; chain: VE.Route.MeteredRun.runWith_sound -> VE.Route.MeteredRun.EvaluationAnswer -> VE.Core.Bridge.decodeFormulas -> VE.Core.Bridge.decodeFormula
+  metered wrap: 32 lines; chain: VE.Route.MeteredRun.runCaseReported -> VE.Route.MeteredRun.prepare -> VE.Core.Layers.decodeLayered -> VE.Core.Layers.naryEntries -> VE.Core.Bridge.decodeFormula
+VE.Closure.Tableau.extraRule
+  route spec: 2 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.CertificateWire.decodeClosureCertificate -> VE.CertificateWire.decodeClosureTrace -> VE.Closure.Tableau.extraRule
+VE.CertificateWire.canonicalWith
+  route spec: 16 lines; chain: VE.Route.RunSound.route_closure_certificate -> VE.CertificateWire.decodeClosureCertificate -> VE.CertificateWire.decodeClosureTrace -> VE.CertificateWire.canonicalWith.match_5
+  norms spec: 16 lines; chain: VE.Norms.RunSound.norms_wire_certificate_acceptanceIn -> VE.Norms.Flagged.replayEntailmentIn -> VE.CertificateWire.decodeCertificate -> VE.CertificateWire.decodeTrace -> VE.CertificateWire.canonicalWith.match_5
+  softNorms spec: 16 lines; chain: VE.Compose.SlotWire.slot_wire_empty -> VE.SoftNorms.Wire.replaySoftEntailment -> VE.CertificateWire.decodeCertificate -> VE.CertificateWire.decodeTrace -> VE.CertificateWire.canonicalWith.match_5
+  quantity spec: 16 lines; chain: VE.Time.Wire.quantity_document_wire_sound -> VE.CertificateWire.digest -> VE.CertificateWire.canonical -> VE.CertificateWire.canonicalWith
