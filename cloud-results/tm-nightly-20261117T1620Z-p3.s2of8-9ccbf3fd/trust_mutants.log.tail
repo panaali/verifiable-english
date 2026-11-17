@@ -1,0 +1,8 @@
+trust_mutants: 21 definitions, 28 mutants (3 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/RightClauses/Run.lean:52 VE.RightClauses.Run.elaborateCase (G[V], trusted) lit-plus: 257 -> 258
+UNKNOWN lean/VE/Commands/Steps.lean:88 VE.Commands.shapeOutcome (G[V], trusted) bool-flip: false -> true (lean/VE/Commands/StepsExamples.lean:60: Expression (it computes through a proof the mutant broke ...)
+trust_mutants: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 25 OTHER SHARD in 1891 s
+trust_mutants: D[V], trusted: 7 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 1 UNKNOWN, 13 OTHER SHARD
+trust_mutants: S, trusted: 5 OTHER SHARD
+trust_mutants: steps: wall plan 12.2 s, scratch 1.8 s, control_build 1.3 s, probe_install 0.9 s, mutants 1874 s, cleanup 0.4 s; lake control_build 1.3 s (2), probe_install 0.9 s (1), control_probes 5.4 s (3), mutant_builds 37 s (4), mutant_checks 1551.4 s (6), outside_checks 4.3 s (1), stage_controls 764.2 s (3), mutant_probes 5.5 s (3)
