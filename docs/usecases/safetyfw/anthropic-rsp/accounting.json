@@ -186,14 +186,10 @@
    "span_length": 135,
    "used": [
     "goal_revised_less_ambitious",
-    "goals_kept"
+    "goals_kept",
+    "revised_because_unable"
    ],
-   "unaccounted": [
-    "achieve",
-    "revise",
-    "strive",
-    "unable"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "we will strive to",
@@ -215,10 +211,7 @@
    "used": [
     "risk_reports_published"
    ],
-   "unaccounted": [
-    "public",
-    "version"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will publish a public version of our Risk Report",
@@ -236,9 +229,7 @@
     "in_scope",
     "publicly_deployed"
    ],
-   "unaccounted": [
-    "cover"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "It will cover",
@@ -258,11 +249,7 @@
     "in_scope",
     "internally_deployed"
    ],
-   "unaccounted": [
-    "posed",
-    "relat",
-    "well"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "as well as",
@@ -291,10 +278,7 @@
     "in_scope",
     "internally_deployed"
    ],
-   "unaccounted": [
-    "include",
-    "minimum"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "this will-at a minimum-include",
@@ -844,13 +828,7 @@
     "highly_capable",
     "significantly_redacted"
    ],
-   "unaccounted": [
-    "anytime",
-    "complete",
-    "cover",
-    "minimum",
-    "proces"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "At a minimum",
@@ -1234,9 +1212,7 @@
     "material_safety_risk",
     "public_notice"
    ],
-   "unaccounted": [
-    "provide"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "provide",
@@ -1641,6 +1617,27 @@
    "id": "CASES",
    "entries": [],
    "problems": []
+  },
+  {
+   "id": "D2D3",
+   "entries": [
+    {
+     "words": "Scope.",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "A Risk Report will cover the risks of Anthropic's models and actions",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "refers generally to risks of the most severe potential harms from advanced AI",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
   }
  ],
  "totals": {
@@ -1658,8 +1655,8 @@
    "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 160,
-  "blocks_with_unaccounted_words": 34,
+  "unaccounted_words": 142,
+  "blocks_with_unaccounted_words": 27,
   "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0

@@ -1,9 +1,11 @@
+- `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
 - `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
 - `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
 - `tests/test_question_lean_relay.py` — Request binding at the Python side of the Lean question reader.
 - `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
 - `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
 - `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
+- `tests/test_question_statements_scanner.py` — The question-answering statement gate reads Lean declarations with the shared scanner (item qa-stmt-scanner).
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
@@ -74,6 +76,3 @@
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
 - `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
-- `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
-- `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
-- `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.

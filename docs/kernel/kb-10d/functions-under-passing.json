@@ -2359,7 +2359,7 @@
   "ve/backends/lean_service.py:executable_sha256.<locals>.<lambda>": {
    "file": "ve/backends/lean_service.py",
    "items": {
-    "openai-preparedness": 4
+    "anthropic-rsp": 4
    },
    "lines": [
     517,

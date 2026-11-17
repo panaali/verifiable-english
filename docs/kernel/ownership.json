@@ -6,7 +6,7 @@
   "usecases/agent-policy/check.py": "c59483ac65c478ee5f6ebf09d0db99c148ace6c2",
   "usecases/anthropic-rsp/run.py": "09b0420b19f797abe02d3459a9f544f7a9e5142e",
   "usecases/eligibility/run.py": "6fe02ae9a5524c27a0f6f58cf8df59f366dd3d75",
-  "usecases/openai-preparedness/run.py": "c9630fc7cca248302d801c7367c75e259c762929",
+  "usecases/openai-preparedness/run.py": "eecf37eb64d48154576dd6600adbc4dd425285a5",
   "usecases/safety-framework/run.py": "6cbe1838f1351e606bb4b1297b660b4bc615a7f6",
   "ve/evaluate.py": "e0c37d8ccf1b905d40d19869a35011e806e91aa1",
   "ve/norms.py": "c6d565c271e515a745acb0431a4bfb25c1f80830",
