@@ -283,5 +283,96 @@ class ReleasedMain(Base):
         self.assertIn("main kept for better-ranked released row tm-rel", err)
 
 
+U5 = main_line(47, -1).replace(te.field(3), "?")  # main 5-h unknown (no reset field): the stand-in guard PICK_MAIN_WEEKRISE 3/300 applies
+
+
+class GateReopen(Base):
+    """released-main-1117 review F1: a released row refused main by a gate every released row shares writes its waiter, so when
+    the gate reopens the better-ranked row (rel-b: FEATURE-QUEUE.tsv 5) takes the free marker before rel-a (9), whichever asks
+    first. Only the caller's own refusals (its own PICK_AVOID names main, an unreadable marker) write none."""
+    def waiter(self, row):
+        return os.path.exists(f"{self.m}/pick-waiting-relmain/{row}")
+
+    def rank_kept(self, refused, lines=(main_line(47),)):  # refused: rel-b's refusal (got, err) under a closed gate; then it reopens
+        got, err = refused
+        self.assertIsNone(got, err)
+        self.assertTrue(self.waiter("rel-b"), "rel-b refused main without a waiter: " + err)
+        self.assertIsNone(self.holder())
+        got, err = self.pick(list(lines), PICK_ITEM="rel-a")
+        self.assertIsNone(got, "rel-a took main while better-ranked rel-b waits")
+        self.assertIn(AV + "main kept for better-ranked released row rel-b (waiting", err)
+        self.assertEqual(self.pick(list(lines), PICK_ITEM="rel-b")[0], "/x/claude-main")
+        self.assertEqual(self.holder(), ["rel-b", str(os.getpid())])
+        self.assertFalse(self.waiter("rel-b"))
+
+    # (a) the rule's pace refusals: week > line - 4, no PICK_MAIN_PACE line
+    def test_f1_pace_refusal_keeps_rank(self):
+        got, err = self.pick([main_line(57)], PICK_ITEM="rel-b")
+        self.assertIn(AV + "week 57 > PICK_MAIN_PACE line 60.0 - 4)", err)
+        self.rank_kept((got, err))
+
+    def test_f1_no_pace_line_keeps_rank(self):
+        os.rename(f"{self.h}/flag-PICK_MAIN_PACE", f"{self.h}/pace.off")
+        got, err = self.pick([main_line(47)], PICK_ITEM="rel-b")
+        self.assertIn(AV + "no PICK_MAIN_PACE line)", err)
+        os.rename(f"{self.h}/pace.off", f"{self.h}/flag-PICK_MAIN_PACE")
+        self.rank_kept((got, err))
+
+    # (b) the rule's rise refusals: rise >= 5 (the reviewer's probe), week trend unknown
+    def test_f1_rise_refusal_keeps_rank(self):
+        got, err = self.pick([main_line(47)], rise=5, PICK_ITEM="rel-b")
+        self.assertIn(AV + "week +5 pt in 5 h >= 5)", err)
+        self.rank_kept((got, err))
+
+    def test_f1_trend_unknown_keeps_rank(self):
+        got, err = self.pick([main_line(47)], rise=None, PICK_ITEM="rel-b")
+        self.assertIn(AV + "week trend unknown)", err)
+        self.rank_kept((got, err))
+
+    # (c) the 5-h-unknown stand-in guard (before the PICK_AVOID check and the rule)
+    def test_f1_stand_in_guard_keeps_rank(self):
+        got, err = self.pick([U5], rise=3, PICK_ITEM="rel-b")
+        self.assertIn("stand-in guard PICK_MAIN_WEEKRISE 3/300", err)
+        self.rank_kept((got, err), lines=(U5,))
+
+    # the class: any other refusal of main every released row shares waits too (PICK_EXCLUDE names main here)
+    def test_f1_other_shared_refusal_keeps_rank(self):
+        open(f"{self.h}/flag-PICK_EXCLUDE", "w").write("main\n")
+        got, err = self.pick([main_line(47)], PICK_ITEM="rel-b")
+        self.assertIn("main: held out (PICK_EXCLUDE)", err)
+        os.remove(f"{self.h}/flag-PICK_EXCLUDE")
+        self.rank_kept((got, err))
+
+    # the path yield (ryield, before pick()) refuses every released row alike: the row keeps its rank through it
+    def test_f1_path_yield_keeps_rank(self):
+        self.put("pick-waiting", "path-x", "2026-11-17T03:00Z path-x-build\n")
+        got, err = self.pick([main_line(47)], PICK_ITEM="rel-b")
+        self.assertIn("PICK_WHY: yield: Nov 23 path row path-x waiting", err)
+        os.remove(f"{self.m}/pick-waiting/path-x")
+        self.rank_kept((got, err))
+
+    # the caller's own refusals write no waiter, whichever gate refuses main first: its own PICK_AVOID names main (run-codex.sh:
+    # "main"; claude-resume-on-limit.sh: the config dir) under the stand-in guard, the rise gate and the path yield
+    def test_f1_own_avoid_writes_no_waiter(self):
+        for av in ("main", "claude-main"):
+            for lines, rise in (([U5], 3), ([main_line(47)], 5)):
+                with self.subTest(PICK_AVOID=av, rise=rise):
+                    got, err = self.pick(lines, rise=rise, PICK_ITEM="rel-b", PICK_AVOID=av, PICK_AVOID_RCX=av)
+                    self.assertIsNone(got)
+                    self.assertFalse(self.waiter("rel-b"), err)
+        self.put("pick-waiting", "path-x", "2026-11-17T03:00Z path-x-build\n")
+        self.assertIsNone(self.pick([main_line(47)], PICK_ITEM="rel-b", PICK_AVOID="main", PICK_AVOID_RCX="main")[0])
+        self.assertFalse(self.waiter("rel-b"))
+        os.remove(f"{self.m}/pick-waiting/path-x")
+        self.assertEqual(self.pick([main_line(47)], PICK_ITEM="rel-a")[0], "/x/claude-main")
+
+    def test_f1_unreadable_marker_writes_no_waiter(self):
+        os.mkdir(self.marker + ".lock")
+        got, err = self.pick([main_line(47)], PICK_ITEM="rel-b")
+        self.assertIsNone(got)
+        self.assertIn(AV + "holder marker unreadable (IsADirectoryError))", err)
+        self.assertFalse(self.waiter("rel-b"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

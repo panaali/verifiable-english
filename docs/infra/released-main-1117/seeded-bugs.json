@@ -50,6 +50,60 @@
    "file": "/home/seyran/code/manage-agents/tools-local/pick_critical.py.new-released-main",
    "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_rank_order",
    "result": "CAUGHT"
+  },
+  {
+   "id": "S8-no-default-wait",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_rise_refusal_keeps_rank",
+   "breaks": "no() no longer marks a refusal of main as a wait (F1 class: shared gates)",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S9-pick-own-avoid-waits",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_own_avoid_writes_no_waiter",
+   "breaks": "pick() ignores the caller's own PICK_AVOID (config-dir form) and writes a waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S10-shell-own-avoid-ignored",
+   "language": "zsh",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_own_avoid_writes_no_waiter",
+   "breaks": "the shell makes a caller that avoids main itself a relmain caller (it waits through the yield)",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S11-yield-no-wait",
+   "language": "zsh",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_path_yield_keeps_rank",
+   "breaks": "the path yield writes no waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S12-unreadable-marker-waits",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_unreadable_marker_writes_no_waiter",
+   "breaks": "an unreadable marker (caller-own failure) writes a waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S13-waiter-not-written",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_stand_in_guard_keeps_rank",
+   "breaks": "pick() decides the wait but never writes the waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
   }
  ]
 }

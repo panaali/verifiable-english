@@ -10,6 +10,13 @@ seeds = [  # (id, file, old, new, test)
  ("S5-other-row-joins", PK, "            if hs and hi != row:", "            if hs and hi == \"?\":", "ReleasedMain.test_5_second_released_row_avoided"),
  ("S6-shell-keeps-row-main", PK, "[ -n \"$relmain\" ] && rv=(${rv:#main});", "", "ReleasedMain.test_1_granted"),
  ("S7-rank-order-reversed", PC, "        if k < mk and (best is None or k < best):", "        if k > mk and (best is None or k < best):", "ReleasedMain.test_rank_order"),
+ # review F1 (fix round): the waiter of a released row refused main by a shared gate, and its exclusions
+ ("S8-no-default-wait", PK, "    if a == \"main\" and relwant is None: relwant = True", "    if False: relwant = True", "GateReopen.test_f1_rise_refusal_keeps_rank"),
+ ("S9-pick-own-avoid-waits", PK, "os.path.basename(d) in avoid): relwant = False  #", "os.path.basename(d) in avoid): pass  #", "GateReopen.test_f1_own_avoid_writes_no_waiter"),
+ ("S10-shell-own-avoid-ignored", PK, " && [[ \" ${PICK_AVOID:-} \" != *\" main \"* ]] && relmain=1", " && relmain=1", "GateReopen.test_f1_own_avoid_writes_no_waiter"),
+ ("S11-yield-no-wait", PK, "    relwait mark  # released-main-1117 F1", "    :  # released-main-1117 F1", "GateReopen.test_f1_path_yield_keeps_rank"),
+ ("S12-unreadable-marker-waits", PK, "        relwant = False\n        return (False, f\"holder marker unreadable", "        return (False, f\"holder marker unreadable", "GateReopen.test_f1_unreadable_marker_writes_no_waiter"),
+ ("S13-waiter-not-written", PK, "        pick_critical.relmain_mark(r1item)\n", "        pass\n", "GateReopen.test_f1_stand_in_guard_keeps_rank"),
 ]
 for sid, f, old, new, test in seeds:
     src = open(f).read(); assert src.count(old) == 1, sid

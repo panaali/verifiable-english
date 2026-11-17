@@ -1,6 +1,15 @@
-Ran 16 tests in 6.597s
+Ran 25 tests in 11.161s
 
-FAILED (failures=16)
+FAILED (failures=25)
+FAIL: test_f1_no_pace_line_keeps_rank (__main__.GateReopen.test_f1_no_pace_line_keeps_rank)
+FAIL: test_f1_other_shared_refusal_keeps_rank (__main__.GateReopen.test_f1_other_shared_refusal_keeps_rank)
+FAIL: test_f1_own_avoid_writes_no_waiter (__main__.GateReopen.test_f1_own_avoid_writes_no_waiter)
+FAIL: test_f1_pace_refusal_keeps_rank (__main__.GateReopen.test_f1_pace_refusal_keeps_rank)
+FAIL: test_f1_path_yield_keeps_rank (__main__.GateReopen.test_f1_path_yield_keeps_rank)
+FAIL: test_f1_rise_refusal_keeps_rank (__main__.GateReopen.test_f1_rise_refusal_keeps_rank)
+FAIL: test_f1_stand_in_guard_keeps_rank (__main__.GateReopen.test_f1_stand_in_guard_keeps_rank)
+FAIL: test_f1_trend_unknown_keeps_rank (__main__.GateReopen.test_f1_trend_unknown_keeps_rank)
+FAIL: test_f1_unreadable_marker_writes_no_waiter (__main__.GateReopen.test_f1_unreadable_marker_writes_no_waiter)
 FAIL: test_1_boundary_pace_minus_4_and_rise_4_granted (__main__.ReleasedMain.test_1_boundary_pace_minus_4_and_rise_4_granted)
 FAIL: test_1_continue_round_is_its_row (__main__.ReleasedMain.test_1_continue_round_is_its_row)
 FAIL: test_1_granted (__main__.ReleasedMain.test_1_granted)
