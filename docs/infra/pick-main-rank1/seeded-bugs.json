@@ -1,0 +1,27 @@
+{
+  "item": "pick-main-rank1",
+  "note": "zsh/Python-in-zsh only: the product code is manage-agents/pick-claude-account.sh.new-r1 (no Lean, Python or Rust of this repo changed). Each seed was applied to a /tmp copy of the staged script and run with PICK_SCRIPT=<copy> python3 -I tools-local/test_pick_main5h_unknown.py; the copies were deleted, and the staged script passes 26 of 26 (fix1-run-seeded.log, fix1-run-tests.log).",
+  "mutants": [
+    {
+      "id": "F1-no-walk",
+      "file": "manage-agents/pick-claude-account.sh.new-r1",
+      "change": "r1holder: break before the cmdline compare (holder = $PPID, the pre-fix behaviour)",
+      "test": "tools-local/test_pick_main5h_unknown.py Rank1Main.test_holder_is_the_caller_through_a_function_in_command_substitution; tools-local/test_pick_main5h_unknown.py Rank1Main.test_holder_is_the_caller_through_until_in_a_background_subshell",
+      "caught": true
+    },
+    {
+      "id": "F1-giveback-raw-ppid",
+      "file": "manage-agents/pick-claude-account.sh.new-r1",
+      "change": "give-back compares the marker with raw PICK_R1_PID instead of r1holder()",
+      "test": "tools-local/test_pick_main5h_unknown.py Rank1Main.test_holder_marker_given_back_through_a_subshell",
+      "caught": true
+    },
+    {
+      "id": "F1-walk-ignores-cmdline",
+      "file": "manage-agents/pick-claude-account.sh.new-r1",
+      "change": "r1holder walks to the topmost ancestor (cmdline compare dropped)",
+      "test": "tools-local/test_pick_main5h_unknown.py Rank1Main.test_rank1_granted_and_holds_main; test_second_rank1_refused_while_holder_live; test_dead_pid_marker_cleared; and both test_holder_is_the_caller_* cases",
+      "caught": true
+    }
+  ]
+}
