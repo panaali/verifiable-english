@@ -359,6 +359,12 @@
         ],
         "description": "it is necessary at {0} to act on the decision (Appendix B: “Where necessary”); the source names no decider: the decider is unstated (an open term, as OT13)"
       },
+      "sag_recommendations_given": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the SAG has given OpenAI Leadership its recommendations for the decision at {0}, before the decision (Appendix B: “informed by SAG's recommendations”; without them OpenAI Leadership “can also make decisions without the SAG's participation, i.e., the SAG does not have the ability to ‘filibuster’”)"
+      },
       "decided_without_sag": {
         "arguments": [
           "situation"
@@ -1055,7 +1061,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: decisions without the SAG",
+        "description": "Appendix B: OpenAI Leadership “can also make decisions without the SAG's participation, i.e., the SAG does not have the ability to ‘filibuster’”",
         "regulated": {
           "role": "obligation",
           "default": "deny",

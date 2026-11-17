@@ -115,6 +115,18 @@ BASE = {
     "board_finds_necessary": base(["situation"], "it is necessary at {0} to act on the decision (Appendix B: "
                                                   "\u201cWhere necessary\u201d); the source names no decider: the "
                                                   "decider is unstated (an open term, as OT13)"),
+    # pf-f16-without-fix (ruling pf-f16-without-n2-20261116 section 4): the limit of RS7=noinput's permission.
+    # Recommendations count as given only if they are for this decision and given before it; a SAG still
+    # deliberating with none given for this decision is "none given". Modelling rule: a case that states SAG
+    # recommendations, findings or SAG participation for the decision sets this atom (closed world otherwise).
+    "sag_recommendations_given": base(["situation"], "the SAG has given OpenAI Leadership its recommendations for "
+                                                     "the decision at {0}, before the decision (Appendix B: "
+                                                     "“informed by SAG's recommendations”; without them OpenAI "
+                                                     "Leadership “can also make decisions without the SAG's "
+                                                     "participation, i.e., the SAG does not have the ability to "
+                                                     "‘filibuster’”)"),
+    # No rule reads `decided_without_sag` since pf-f16-without-fix (both f16-without guards dropped it); it stays
+    # declared for run.py WITNESS["C2"], where it is inert (tests/test_pf_f16_without_fix.py).
     "decided_without_sag": base(["situation"], "OpenAI Leadership makes the decision at {0} without the SAG's participation"),
     "research_category_review": base(["situation"], "{0} is a Research Category review"),
     "plausible": base(["capability"], "{0} meets the plausible-pathway criterion"),
@@ -299,7 +311,9 @@ ACTS = {
                                    "change log item 4: including via the Model Spec and policy prohibitions on the use "
                                    "of OpenAI's tools for political campaigning or lobbying, and ongoing investigations "
                                    "of misuse of its products (including detecting and disrupting influence operations)"),
-    "sag_participation": ("{0} have the SAG take part in the decision", "Appendix B: decisions without the SAG"),
+    "sag_participation": ("{0} have the SAG take part in the decision",
+                          "Appendix B: OpenAI Leadership “can also make decisions without the SAG's participation, "
+                          "i.e., the SAG does not have the ability to ‘filibuster’”"),
     "access_limited": ("{0} have model access strictly limited with strong multifactor authentication",
                        "C.3: access for all models"),
     "research_results_received": ("{0} have SAG receive the research results", "2.3: SAG receives Research Category review results"),

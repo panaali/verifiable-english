@@ -99,6 +99,18 @@ In openai-preparedness-facts-repair Table 1's four column titles and its first c
 units: the fourth title, “Risk-specific safeguard guidelines”, is RS1's own OPEN unit (35 bytes; PLAN 12 item 28),
 and every unit id from page 6 on moved up by four.
 
+## Case modelling: SAG recommendations (pf-f16-without-fix)
+
+Appendix B's "OpenAI Leadership can also make decisions without the SAG's participation, i.e., the SAG does not
+have the ability to "filibuster"" is read by architect ruling pf-f16-without-n2-20261116 (reading (c); PLAN 12 item
+31). Under RS7 = noinput Leadership need not be informed by SAG on a leadership decision unless the SAG has given its
+recommendations for it (`sag_recommendations_given`); under RS7 = nodelib the SAG need not take part in any
+leadership decision. Modelling rule: a case that states SAG recommendations, findings or SAG participation for the
+decision sets `sag_recommendations_given`. Recommendations count as given only if they are for this decision and
+given before it; a SAG still deliberating with none given for this decision is none given. A case silent on them
+reads as none given (the closed world every atom has), so under RS6 = req and RS7 = noinput it gets "need not", and
+a case that states them gets RS6's "must".
+
 ## Stage 0
 
 [stage0.json](../../docs/usecases/safetyfw/openai-preparedness/stage0.json) saves the VE answers. P1 admits F2 as
