@@ -1,0 +1,2 @@
+Q1 statements: 15 of 15 implemented; 0 missing
+Q1 predicates: 5 of 5 equal to the approved text

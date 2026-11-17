@@ -1,0 +1,109 @@
+{
+ "item": "released-main-1117",
+ "command": "python3 -I docs/infra/released-main-1117/seeded-run.py (mutants in /tmp copies; staged files untouched)",
+ "mutants": [
+  {
+   "id": "S1-pace-bound",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_2_pace_minus_3_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S2-rise-bound",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_3_rise_5_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S3-giveback-drops-all",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_6_same_row_second_session_joins",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S4-dead-pid-kept",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_7_dead_pid_marker_cleared",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S5-other-row-joins",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_5_second_released_row_avoided",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S6-shell-keeps-row-main",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_1_granted",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S7-rank-order-reversed",
+   "language": "Python",
+   "file": "/home/seyran/code/manage-agents/tools-local/pick_critical.py.new-released-main",
+   "test": "tools-local/test_pick_released_main.py::ReleasedMain.test_rank_order",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S8-no-default-wait",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_rise_refusal_keeps_rank",
+   "breaks": "no() no longer marks a refusal of main as a wait (F1 class: shared gates)",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S9-pick-own-avoid-waits",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_own_avoid_writes_no_waiter",
+   "breaks": "pick() ignores the caller's own PICK_AVOID (config-dir form) and writes a waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S10-shell-own-avoid-ignored",
+   "language": "zsh",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_own_avoid_writes_no_waiter",
+   "breaks": "the shell makes a caller that avoids main itself a relmain caller (it waits through the yield)",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S11-yield-no-wait",
+   "language": "zsh",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_path_yield_keeps_rank",
+   "breaks": "the path yield writes no waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S12-unreadable-marker-waits",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_unreadable_marker_writes_no_waiter",
+   "breaks": "an unreadable marker (caller-own failure) writes a waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  },
+  {
+   "id": "S13-waiter-not-written",
+   "language": "Python (embedded in zsh)",
+   "file": "/home/seyran/code/manage-agents/pick-claude-account.sh.new-rel",
+   "test": "tools-local/test_pick_released_main.py::GateReopen.test_f1_stand_in_guard_keeps_rank",
+   "breaks": "pick() decides the wait but never writes the waiter",
+   "round": "review F1 fix",
+   "result": "CAUGHT"
+  }
+ ]
+}
