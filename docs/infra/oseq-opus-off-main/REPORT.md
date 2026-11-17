@@ -29,7 +29,9 @@ released-row main waiter is recorded (`relwant = False`). With no other account 
 - `run-staged.log`: the new suite on the staged picker, 18/18 OK (`LIVE_PICK_SCRIPT` = the pre-install backup, so the
   unset cases compare with the pre-install picker).
 - `run-pre-install.log`: the same suite on the pre-install picker: 14 of 18 FAIL (failing first). The 4 that pass check
-  unchanged behaviour (I10 week-44 rule, unset = live).
+  unchanged behaviour (`test_2_others_stop_at_44`, `test_empty_value_is_unset`, the two `test_4_same_as_live*`).
+  `test_2_oseq_gets_saeedi_over_44` fails there because its state also offers main, which the pre-install picker prefers;
+  on the staged picker the I10 exemption gives saeedi.danial.
 - `run-regression.log`: test_endgame.py, every other tools-local/test_pick_*.py and test_codex_week_ceiling.sh with
   `PICK_SCRIPT`/`PICKER` pointed at the staged file: all pass.
 
