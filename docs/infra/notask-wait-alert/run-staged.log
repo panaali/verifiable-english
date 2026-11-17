@@ -1,0 +1,17 @@
+# python3 -I tools-local/test_bottleneck_scan.py on the staged scan after review F1 (BN_SCRIPT default = bottleneck-scan.py.new-nta)
+Ran 25 tests in 1.513s
+OK
+# python3 -I tools-local/test_bottleneck_account_wait.py (staged copies)
+Ran 9 tests in 0.323s
+OK
+# python3 -I tools-local/test_bottleneck_actions_abf.py (staged copies)
+Ran 3 tests in 0.471s
+OK
+# python3 -I tools-local/test_launch_wait_w3.py (staged copies)
+18/18 passed
+# python3 -I tools-local/test_decider_ready_alert.py (staged copies)
+Ran 23 tests in 3.628s
+OK
+# python3 -I tools-local/test_p1_ready_alert.py (staged copies)
+Ran 33 tests in 5.426s
+OK
