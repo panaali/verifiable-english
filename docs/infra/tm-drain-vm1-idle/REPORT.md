@@ -12,6 +12,10 @@
   The fifth (`test_remote_only_mode_never_local`) checks unchanged behaviour, so it passes on both by design. The six
   existing tm-nightly test files pass on the staged script as they do on the live one (`run-regression.log`).
 - Seeded bugs: 8 of 8 caught (`seeded-bugs.json`; shell, in the staged file).
+- Trust mutants: none for this branch. `uv run python tools/trust_mutants.py --base b00f97f5 --plan` gives
+  `"mutants": 0` (no Lean changed). light-lane.py prints NOT only because of the evidence files' line count, and no
+  trusted-core file changed. The trial records in `trial/` are trust_mutants' own JSON, re-serialized on one line each
+  (`json.load` equal to the files the runs wrote).
 
 SIZE: 54 product (tm-nightly.sh +54/-4, comments included), 177 tests (test_tm_drain_vm1_idle.py, new), ~560 other
 hand-written lines (this report, part0_measure.py, seed_run.py; the tables, logs, diff and sar files are records).
