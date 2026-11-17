@@ -1,0 +1,33 @@
+"""Probe (not a test): replay allowances_merge.resolve on the historical merges of docs/kernel/ALLOWANCES.md in this repo
+(base = merge base, ours = the branch parent, theirs = the main parent) and compare with the committed signed total.
+Run in a VE checkout: python3 -I docs/infra/lw-allowances-shared/replay.py.txt [<merge sha> to print its diff]"""
+import importlib.util, subprocess, sys
+import os
+from importlib.machinery import SourceFileLoader
+AM = "/home/seyran/code/manage-agents/tools-local/allowances_merge.py"
+AM = AM + ".new-lwas" if os.path.exists(AM + ".new-lwas") else AM   # the staged copy before the install, the live one after
+spec = importlib.util.spec_from_file_location("am", AM, loader=SourceFileLoader("am", AM))
+am = importlib.util.module_from_spec(spec); spec.loader.exec_module(am)
+P = "docs/kernel/ALLOWANCES.md"
+def g(*a):
+    r = subprocess.run(["git", *a], capture_output=True, text=True); return r.stdout if r.returncode == 0 else None
+for c in g("log", "--merges", "--format=%H", "-40", "--", P).split():
+    p = g("rev-list", "--parents", "-1", c).split()[1:]
+    if len(p) != 2: continue
+    o, t = p
+    b = g("merge-base", o, t).strip()
+    B, O, T, R = (g("show", f"{x}:{P}") for x in (b, o, t, c))
+    if None in (B, O, T, R) or O == B or T == B: continue   # one side unchanged: git merges it alone
+    subj = g("log", "-1", "--format=%s", c)[:60]
+    try:
+        txt, want, mt, d = am.resolve(B, O, T)
+        rt = am.parse(R, "r")[2]
+        print(f"{c[:10]} RESOLVED total {want:,} (committed {rt:,}){' SAME FILE' if txt == R else ' file differs'} | {subj}")
+    except am.Refused as e:
+        print(f"{c[:10]} REFUSED {str(e)[:110]} | {subj}")
+if len(sys.argv) > 1:
+    import difflib
+    c = sys.argv[1]; o, t = g("rev-list", "--parents", "-1", c).split()[1:]; b = g("merge-base", o, t).strip()
+    txt = am.resolve(*(g("show", f"{x}:{P}") for x in (b, o, t)))[0]
+    for ln in difflib.unified_diff(g("show", f"{c}:{P}").split("\n"), txt.split("\n"), "committed", "resolver", n=0, lineterm=""):
+        print(ln[:260])

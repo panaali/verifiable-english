@@ -1,0 +1,5 @@
+../docs/arch/arch-decoder-measure/switch.lean:208:8: warning: declaration uses 'sorry'
+../docs/arch/arch-decoder-measure/switch.lean:213:8: warning: declaration uses 'sorry'
+../docs/arch/arch-decoder-measure/switch.lean:218:8: warning: declaration uses 'sorry'
+../docs/arch/arch-decoder-measure/switch.lean:223:8: warning: declaration uses 'sorry'
+../docs/arch/arch-decoder-measure/switch.lean:235:8: warning: declaration uses 'sorry'
