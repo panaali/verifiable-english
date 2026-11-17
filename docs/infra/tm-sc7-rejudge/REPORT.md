@@ -164,3 +164,13 @@ install between steps, when no `tm-nightly.py classify` is running (`pgrep -af '
 13. N.A. (no test removed).
 14. PASS: opposite directions (Resolved vs Refused, with a control in each refusal); each claim names its command/log.
 15. PASS: no overclaim (the nightly record's own completion stated as open); no cut deliverable; every new check can fail (seeded bugs); limits N.A.
+
+## Pre-review fix (2026-11-17 16:05Z)
+
+The pre-review gate failed [commits] (0 commits ahead of d2573fc9a0): the item's code lives in manage-agents, so the VE
+branch had no commit. Fix: this directory (report + evidence, docs only) committed as f25fa20c9f. `regen_generated.py
+--check`: clean (41 entries). Selected run (`mac-pytest.sh --select -- --base d2573fc9a0 --run`): exit 0, 10 units
+passed (2 shards); 2 slow weakly-selected files (tests/test_select_tests.py, tests/test_wire_gate_corpus.py) left to
+the chain gate. mac-pytest.sh sent this run to GitHub Actions on its own; the ACTIONS_SUSPENDED note in the task
+covers the re-judge, which ran on VM1. installed-changes.diff keeps diff's trailing blanks on context lines as they are
+(evidence, not edited).
