@@ -13,4 +13,4 @@
 == actions-health.py (ACTIONS_SUSPENDED streak; findref): /home/seyran/code/manage-agents/actions-health.py
 == another nightly part as the reference (orchestrator ruling 2026-11-14 093053Z (b); tm-nightly.r2-9ccbf3fd)
 == verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): /home/seyran/code/manage-agents/verdict-sample.sh.new-vsw
-comparators: 52 passed, 1 failed
+comparators: 56 passed, 1 failed

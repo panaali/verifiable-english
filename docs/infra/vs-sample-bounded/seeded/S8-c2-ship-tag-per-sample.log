@@ -1,0 +1,4 @@
+# seeded (F1): replace <<CLOUD2_SHIP_TAG=vs zsh>> with <<CLOUD2_SHIP_TAG=vs$$ zsh>> (one tag a sample, a new one in a later sample)
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL
+comparators: 55 passed, 2 failed
