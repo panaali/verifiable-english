@@ -195,7 +195,7 @@
   {
    "environment": "usecases/eligibility/environment.json",
    "failures": [],
-   "lexicon_id": "42a3ce7317052682ca9d841e0af34d682fda1969572dea1c45ec210f542fac66",
+   "lexicon_id": "933ff074fe14241750feeb6c6074d49f5f831ddb69e411a39a95971e69097cf5",
    "symbols": 85
   },
   {
@@ -243,7 +243,7 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "9aa1930a9e04a72cea964f25fb0a1f8f051125e72905b554a1ce1e5922f6825c",
+   "lexicon_id": "be37913f3214821f23fed674a7aea48c8694e0827a028f5f4e04c10e08dbaf5b",
    "symbols": 85
   },
   {

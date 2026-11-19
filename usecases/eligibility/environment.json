@@ -22,7 +22,7 @@
      "person",
      "person"
     ],
-    "description": "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3)."
+    "description": "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3). \u201cpartner\u201d means a member of a couple or a polygamous marriage; \u201ccouple\u201d means\u2014 (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; \u201cpolygamous marriage\u201d means any marriage which took place under the laws of a country which permits polygamy where\u2014 (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
    },
    "shares_home": {
     "arguments": [
@@ -88,7 +88,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation from the care start date, and to the care end date if the stay has one."
+    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation from the care start date, and to the care end date if the stay has one. \u201ccare home\u201d\u2014 (a) in England, has the meaning assigned to it by section 3 of the Care Standards Act 2000(4); (b) in Wales, means accommodation the provision of which, together with nursing or care, is a care home service as defined in paragraph 1 of Schedule 1 to the Regulation and Inspection of Social Care (Wales) Act 2016(5) which is provided wholly or mainly to persons aged 18 or over; \u201cindependent hospital\u201d\u2014 (a) in England, means a hospital as defined by section 275(1) of the National Health Service Act 2006(7) that is not a health service hospital as defined by that section; (b) in Wales, means a hospital as defined by section 206(1) of the National Health Service (Wales) Act 2006(8) that is not a health service hospital as defined by that section;"
    },
    "care_ended": {
     "arguments": [
@@ -100,7 +100,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date."
+    "description": "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date. \u201cfree in-patient treatment\u201d is to be construed in accordance with regulation 2(4) and (5) of the Social Security (Hospital In-Patients) Regulations 2005(6); (4) For the purposes of this regulation, a person shall be regarded as receiving or having received free in-patient treatment for any period for which he is or has been maintained free of charge while undergoing medical or other treatment as an in-patient\u2014 (a)in a hospital or similar institution under the National Health Service Act 1977 M2, the National Health Service (Scotland) Act 1978 M3 or the National Health Service and Community Care Act 1990 M4, or (b)in a hospital or similar institution maintained or administered by the Defence Council, and such a person shall for the purposes of sub-paragraph (a) be regarded as being maintained free of charge in a hospital or similar institution unless his accommodation and services are provided under section 65 of the National Health Service Act 1977, section 57 of the National Health Service (Scotland) Act 1978 M5 or paragraph 14 of Schedule 2 to the National Health Service and Community Care Act 1990."
    },
    "detained_in_custody": {
     "arguments": [
@@ -154,14 +154,14 @@
     "arguments": [
      "person"
     ],
-    "description": "R5: the person is in residential care (S1 reg. 1(4)(a))."
+    "description": "R5: the person is in residential care (S1 reg. 1(4)(a)). (4) In these Regulations, a person\u2014 (a)is in residential care if, disregarding any period of temporary absence, they reside in\u2014 (i)a care home, (ii)an independent hospital, or (iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14), throughout the qualifying week and the period of at least 12 weeks ending immediately before the qualifying week;"
    },
    "lives_with": {
     "arguments": [
      "person",
      "person"
     ],
-    "description": "R6: the first person lives with the second (S1 reg. 1(4)(b))."
+    "description": "R6: the first person lives with the second (S1 reg. 1(4)(b)). (b)lives with a person if, disregarding any period of temporary absence, they share accommodation with one or more persons as their mutual home and they are not in residential care."
    },
    "home_throughout": {
     "arguments": [
@@ -175,20 +175,20 @@
      "person",
      "person"
     ],
-    "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."
+    "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7). \u201cpartner\u201d means a member of a couple or a polygamous marriage; \u201ccouple\u201d means\u2014 (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; \u201cpolygamous marriage\u201d means any marriage which took place under the laws of a country which permits polygamy where\u2014 (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
    },
    "partner_at_home": {
     "arguments": [
      "person",
      "person"
     ],
-    "description": "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8)."
+    "description": "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8). \u201cpartner\u201d means a member of a couple or a polygamous marriage; \u201ccouple\u201d means\u2014 (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; \u201cpolygamous marriage\u201d means any marriage which took place under the laws of a country which permits polygamy where\u2014 (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
    },
    "excluded_partner_benefit": {
     "arguments": [
      "person"
     ],
-    "description": "R7: S1 reg. 4(2)(a) applies to the person."
+    "description": "R7: S1 reg. 4(2)(a) applies to the person. \u201cpartner\u201d means a member of a couple or a polygamous marriage; \u201ccouple\u201d means\u2014 (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; \u201cpolygamous marriage\u201d means any marriage which took place under the laws of a country which permits polygamy where\u2014 (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
    },
    "excluded_hospital": {
     "arguments": [
@@ -236,7 +236,7 @@
     "arguments": [
      "person"
     ],
-    "description": "R16: HMRC takes the payment back from the person (S2)."
+    "description": "R16: HMRC takes the payment back from the person (S2). Your partner\u2019s income does not count towards your total income. You\u2019ll need to provide the total amount of income you expect to receive in the tax year before any deductions. If your total income is over \u00a335,000, HM Revenue and Customs (HMRC) will take your Winter Fuel Payment back."
    }
   },
   "constants": {
