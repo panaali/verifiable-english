@@ -4,7 +4,7 @@
 Inputs (all read-only): the audit's candidate rows (rows-<doc>.tsv, one line per row) and two of its pages
 (udhr-pilot.md for the rowless finding D7, claude-constitution-pilot.md for that page's rule numbers R1-R19), a copy of
 which is committed under tests/data/defs_carried/audit/; the VE repository at the audit's pin; and the FSF/RSP repairs
-at the commits REPAIRS pins (their legend or code appends name the predicate and the source passage of each repair).
+at the trees REPAIR_TREES pins (their legend or code appends name the predicate and the source passage of each repair).
 
 Mechanical only. Each row becomes one case per (rule, term): wildcards (`R5b.*`), ranges (`R14.1-R14.3`), "all 49",
 `claims.ve:5` and the pilot's R<n> are resolved against the pin; the term is the row's carrier key when the pin declares
@@ -33,9 +33,11 @@ import defs_carried as dc  # noqa: E402
 
 PIN = '3d6b459df40163909537f000b23fbf61c3bc0d48'   # 3d6b459df4, the audit's pin, as a full commit id
 # The 9 FSF/RSP repair rows the design lists (F1-F3, F5-F9, R1): (case id, branch, document, tip, base, merge). The
-# tip, base and merge are full commit ids, pinned when the fixture was built (`--resolve-branches` prints how the branches
-# resolve today, for a deliberate refresh). A rebuild reads only these commits: never a branch name and never `main`, so
-# it gives the same fixture after main moves, after a repair merges and after a branch is deleted.
+# tip, base and merge are the commit ids the fixture records, pinned when it was built; they are labels only and never
+# reach git. A rebuild reads each repair at the content-addressed trees REPAIR_TREES pins (the trees of that tip and
+# base), never a branch name, a commit or `main`, so it gives the same fixture after main moves, after a repair merges,
+# after a branch is deleted and after the history is rewritten or exported (R18). `--resolve-branches` prints how the
+# branches resolve today, for a deliberate refresh.
 REPAIRS = [
     ('F1', 'feature/fsf-repair-f1-leveldefs-1119', 'safety-framework',
      'e09136236176238629c5cab0d59af83a70a85919', 'd8758ce96837db7780caddb9f498e36fd7f511ba', None),
@@ -57,6 +59,17 @@ REPAIRS = [
     ('R1', 'feature/rsp-repair-r1-catastrophic-1119', 'anthropic-rsp',
      'f7a6e5f7545e5fb5b369c9ba445339bb32b5b634', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
 ]
+REPAIR_TREES = {   # case id -> (tip tree, base tree): what the builder reads
+    'F1': ('72a24fafabb8469099bd2938c77793f1940c5077', '929d31f4be48ef1b3879dc0d02b98eca6a56173c'),
+    'F2': ('416381c9178d698c569f9c0833aa2d8243a68912', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
+    'F3': ('96403957a175cd4291fa92c7685609f7228b7c92', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
+    'F5': ('e9f291b37ec8abf1f326fb9b4c67d230b191f081', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
+    'F6': ('0be81c9071a7eee3776cee8c60d1d62f599de6ed', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
+    'F7': ('a1bcdcec15762cd3166e0a74d7f074cd004da67e', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
+    'F8': ('e9005138bf775cd4b45ecfb99df6533b089b26ff', '929d31f4be48ef1b3879dc0d02b98eca6a56173c'),
+    'F9': ('a32a664e2963abacf711b6395d007e4ea4227074', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
+    'R1': ('430d44d030b845743dc832c1a81a8d4332ec617a', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
+}
 MIN_RUN = 3          # words: a shorter run shared with the source is not a cut (a wrapper's "Rule 1" is not a quote)
 MIN_REPAIR_RUN = 10  # words: a repair append's source passage (a shorter shared run is a label or a citation)
 
@@ -300,15 +313,16 @@ def d7_cases(page, doc):
 
 # ----------------------------------------------------------------------------------------------- FSF / RSP repairs ---
 def repair_commits(repo, rid):
-    """(base, tip, merge) of a repair: the pinned commits of REPAIRS, each checked to exist; no ref is resolved."""
-    for r, _branch, _doc, tip, base, merge in REPAIRS:
-        if r == rid:
-            for c in (tip, base, merge):
-                if c is not None and subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', f'{c}^{{commit}}'],
-                                                    capture_output=True).returncode != 0:
-                    raise SystemExit(f'{rid}: pinned commit {c} is not in {repo}')
-            return base, tip, merge
-    raise SystemExit(f'unknown repair {rid!r}')
+    """A repair's pinned record: (base, tip, merge) commit labels and (base_tree, tip_tree), the trees the builder reads,
+    each checked to exist. No ref is resolved and no commit is read."""
+    labels = {r: (base, tip, merge) for r, _branch, _doc, tip, base, merge in REPAIRS}
+    if rid not in labels or rid not in REPAIR_TREES:
+        raise SystemExit(f'unknown repair {rid!r}')
+    tip_tree, base_tree = REPAIR_TREES[rid]
+    for t in (tip_tree, base_tree):
+        if subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', f'{t}^{{tree}}'], capture_output=True).returncode:
+            raise SystemExit(f'{rid}: pinned tree {t} is not in {repo}')
+    return labels[rid] + (base_tree, tip_tree)
 
 
 def branch_commits(repo, branch):
@@ -356,7 +370,7 @@ def _source_runs(added, src_tokens, pos, min_run, gap=3):
 
 
 def repair_cases(repo, rid, branch, docname, src_text):
-    base, tip, merge = repair_commits(repo, rid)
+    base, tip, merge, base_tree, tip_tree = repair_commits(repo, rid)
     case = dc.DOCS[docname]['case']
     st = raw_tokens(src_text)
     pos = {}
@@ -366,8 +380,8 @@ def repair_cases(repo, rid, branch, docname, src_text):
     def cut(ac, n):
         return _span(src_text, st[ac][1], st[ac + n - 1][2])
     out = []
-    old = dc._vocab(dc._json(git(repo, 'show', f'{base}:usecases/{case}/environment.d1.json')))['predicates']
-    new = dc._vocab(dc._json(git(repo, 'show', f'{tip}:usecases/{case}/environment.d1.json')))['predicates']
+    old = dc._vocab(dc._json(git(repo, 'show', f'{base_tree}:usecases/{case}/environment.d1.json')))['predicates']
+    new = dc._vocab(dc._json(git(repo, 'show', f'{tip_tree}:usecases/{case}/environment.d1.json')))['predicates']
     for k in sorted(new):
         nd, od = new[k].get('description') or '', (old.get(k) or {}).get('description') or ''
         if nd == od:
@@ -382,8 +396,8 @@ def repair_cases(repo, rid, branch, docname, src_text):
                 names = list(re.finditer(r'\b([a-z][a-z0-9]*_[a-z0-9_]+) is\b', nd[:at]))
                 out.append({'term': names[-1].group(1) if names else None, 'term_kind': 'constant', 'passage': p})
     for n in dc.counter.OMIT_CODE.get(case, ()):
-        a = subprocess.run(['git', '-C', str(repo), 'show', f'{base}:usecases/{case}/{n}'], capture_output=True, text=True)
-        b = subprocess.run(['git', '-C', str(repo), 'show', f'{tip}:usecases/{case}/{n}'], capture_output=True, text=True)
+        a = subprocess.run(['git', '-C', str(repo), 'show', f'{base_tree}:usecases/{case}/{n}'], capture_output=True, text=True)
+        b = subprocess.run(['git', '-C', str(repo), 'show', f'{tip_tree}:usecases/{case}/{n}'], capture_output=True, text=True)
         if a.returncode or b.returncode or a.stdout == b.stdout:
             continue
         olds, news = _dict_strings(a.stdout), _dict_strings(b.stdout)
@@ -394,7 +408,7 @@ def repair_cases(repo, rid, branch, docname, src_text):
                 p = cut(ac, m)
                 if not _in_tokens(p, olds.get(key) or ''):
                     out.append({'term': key, 'term_kind': 'code_name', 'passage': p, 'rule': 'D2D3'})
-    return {'id': rid, 'branch': branch, 'tip': tip, 'base': base, 'merge': merge}, out
+    return {'id': rid, 'branch': branch, 'tip': tip, 'base': base, 'merge': merge, 'base_tree': base_tree}, out
 
 
 def _lead_phrases(passage):
@@ -431,10 +445,10 @@ def _dict_strings(src):
     return out
 
 
-def tree_blobs(repo, commit, paths):
+def tree_blobs(repo, treeish, paths):
     out = {}
     for p in sorted(paths):
-        x = subprocess.run(['git', '-C', str(repo), 'rev-parse', '--verify', '-q', f'{commit}:{p}'],
+        x = subprocess.run(['git', '-C', str(repo), 'rev-parse', '--verify', '-q', f'{treeish}:{p}'],
                            capture_output=True, text=True)
         if x.returncode == 0:
             out[p] = x.stdout.strip()
@@ -487,14 +501,15 @@ def build(audit, repo, pin, src_override=None):
                       'audit_verdict': 'NOT CARRIED', 'entry': 'udhr-pilot.md D7 (Articles 2, 29(3), 30 -> Articles 3-27)',
                       'passages': [{'file': next(iter(udoc.sources)), 'text': d7_passage}], 'tree': 'pin'})
     trees['pin']['docs'].add('udhr-pilot')
-    repairs = []
-    for rid, branch, docname, *_pinned in REPAIRS:
+    repairs, read_at = [], {'pin': pin_tree.commit}   # fixture tree id -> what git reads (a repair: its base tree)
+    for rid, branch, docname, *_labels in REPAIRS:
         case = dc.DOCS[docname]['case']
         ps = json.loads(git(repo, 'show', f'{pin}:usecases/pinned_sources.json'))['sources'][case]
         src = Path((src_override or {}).get(case) or (Path.home() / ps['path'])).read_text(encoding='utf-8')
         info, found = repair_cases(repo, rid, branch, docname, src)
+        read_at[f'base-{rid}'] = info.pop('base_tree')
         repairs.append(dict(info, passages=len(found)))
-        btree = dc.GitTree(repo, info['base'])
+        btree = dc.GitTree(repo, read_at[f'base-{rid}'])
         doc = doc_at(docname, btree)
         tid = f'base-{rid}'
         trees[tid] = {'commit': info['base'], 'docs': {docname}}
@@ -515,11 +530,11 @@ def build(audit, repo, pin, src_override=None):
                               'entry': f'{case} pinned source', 'passages': [{'file': f'~/{ps["path"]}',
                                                                             'text': f['passage']}], 'tree': tid})
     for tid, t in trees.items():
-        tr = pin_tree if tid == 'pin' else dc.GitTree(repo, t['commit'])
+        tr = pin_tree if tid == 'pin' else dc.GitTree(repo, read_at[tid])
         paths = set()
         for name in t['docs']:
             paths |= all_paths(doc_at(name, tr), tr)
-        t['files'] = {p: {'blob': b} for p, b in tree_blobs(repo, t['commit'], paths).items()}
+        t['files'] = {p: {'blob': b} for p, b in tree_blobs(repo, read_at[tid], paths).items()}
         t['docs'] = sorted(t['docs'])
     ids = [c['case'] for c in cases]
     assert len(ids) == len(set(ids)), 'case ids are not unique'
