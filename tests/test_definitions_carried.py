@@ -102,8 +102,8 @@ def test_the_known_case_fixture_counts_and_rows():
 
 
 def test_the_builder_pins_every_commit_the_fixture_records():
-    """Review F3: the fixture builder's pins are exactly the commits the fixture records (the audit pin, and each
-    repair's tip, base and merge, as full commit ids), so a rebuild reads the same commits."""
+    """Review F3: the fixture builder's labels are exactly the commits the fixture records (the audit pin, and each
+    repair's tip, base and merge, as full ids), and each repair it reads at a pinned tree id (content-addressed, R18)."""
     import defs_carried_known as dk
     full = lambda c: c is None or (len(c) == 40 and all(x in "0123456789abcdef" for x in c))  # noqa: E731
     assert dk.PIN == FIXTURE["pin"] == FIXTURE["trees"]["pin"]["commit"] and full(dk.PIN)
@@ -112,12 +112,13 @@ def test_the_builder_pins_every_commit_the_fixture_records():
     assert all(full(c) for t in pinned.values() for c in t)
     assert {rid: t[1] for rid, t in pinned.items()} == {
         tid[len("base-"):]: t["commit"] for tid, t in FIXTURE["trees"].items() if tid.startswith("base-")}
+    assert set(dk.REPAIR_TREES) == set(pinned) and all(full(t) for p in dk.REPAIR_TREES.values() for t in p)
 
 
 def test_a_rebuild_resolves_no_branch_and_no_main(monkeypatch):
-    """Review F3, the class: the builder's repair commits come from its pins; it names no branch and no `main` to git
-    (a moving ref would give other commits after main moves, and fail once a branch is deleted). build() reaches the
-    branch resolver nowhere: it is a refresh aid behind --resolve-branches."""
+    """Review F3, the class: the builder reads each repair at its pinned trees; it names no branch, no commit and no
+    `main` to git (a moving ref gives other commits after main moves and fails once a branch is deleted). build()
+    reaches the branch resolver nowhere: it is a refresh aid behind --resolve-branches."""
     import defs_carried_known as dk
     calls = []
 
@@ -126,18 +127,41 @@ def test_a_rebuild_resolves_no_branch_and_no_main(monkeypatch):
         return subprocess.CompletedProcess(args, 0, "", "")
     monkeypatch.setattr(dk.subprocess, "run", fake_run)
     monkeypatch.setattr(dk, "git", lambda repo, *a: calls.append(list(a)) or "")
-    pins = set()
-    for rid, branch, _doc, tip, base, merge in dk.REPAIRS:
-        assert dk.repair_commits("/nonexistent", rid) == (base, tip, merge)
-        pins |= {tip, base, merge} - {None}
+    labels = set()
+    for rid, _branch, _doc, tip, base, merge in dk.REPAIRS:
+        assert dk.repair_commits("/nonexistent", rid) == (base, tip, merge) + dk.REPAIR_TREES[rid][::-1]
+        labels |= {tip, base, merge} - {None}
     branches = {b for _r, b, *_ in dk.REPAIRS}
     named = {a for call in calls for a in call}
-    assert not named & (branches | {"main", "HEAD"}), named & (branches | {"main", "HEAD"})
-    assert {a.split("^")[0] for a in named if "^{commit}" in a} == pins
+    assert not named & (branches | labels | {"main", "HEAD"}), named & (branches | labels | {"main", "HEAD"})
+    assert {a.split("^")[0] for a in named if "^{tree}" in a} == {t for p in dk.REPAIR_TREES.values() for t in p}
     src = ast.parse(Path(dk.__file__).read_text(encoding="utf-8"))
     for fn in (n for n in src.body if isinstance(n, ast.FunctionDef) and n.name in ("build", "repair_cases")):
         used = {getattr(x, "id", None) for x in ast.walk(fn)} | {getattr(x, "value", None) for x in ast.walk(fn)}
         assert not used & {"branch_commits", "main"}, fn.name
+        refs = {x.id for f in ast.walk(fn) if isinstance(f, ast.JoinedStr) for x in ast.walk(f) if isinstance(x, ast.Name)}
+        assert not refs & {"base", "tip", "merge"}, (fn.name, "a commit label is read; read its pinned tree")
+
+
+def test_git_tree_reads_a_commit_or_a_tree_by_id(tmp_path):
+    """The builder reads repairs by tree id (content-addressed): GitTree reads a tree as it reads a commit, and refuses
+    an id that is neither. A throwaway repository under tmp_path, so no VE history is read."""
+    env = {"PATH": __import__("os").environ["PATH"], "HOME": str(tmp_path), "GIT_CONFIG_NOSYSTEM": "1",
+           "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid", "GIT_COMMITTER_NAME": "t",
+           "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+    repo = tmp_path / "r"
+    (repo / "usecases" / "x").mkdir(parents=True)
+    (repo / "usecases" / "x" / "a.md").write_text("alpha\n", encoding="utf-8")
+    for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "m"]):
+        subprocess.run(["git", "-C", str(repo), *args], check=True, env=env, timeout=HANG_TIMEOUT)
+    tree = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD^{tree}"], capture_output=True, text=True,
+                          check=True, env=env, timeout=HANG_TIMEOUT).stdout.strip()
+    by_tree, by_commit = dc.GitTree(repo, tree), dc.GitTree(repo, "HEAD")
+    assert by_tree.read("usecases/x/a.md") == by_commit.read("usecases/x/a.md") == "alpha\n"
+    assert by_tree.names("usecases/x") == ["a.md"] and by_tree.subdirs("usecases") == ["x"]
+    assert by_tree.describe() == {"kind": "tree", "tree": tree} and by_commit.describe()["kind"] == "commit"
+    with pytest.raises(SystemExit):
+        dc.GitTree(repo, "0" * 40)
 
 
 def test_every_passage_is_verbatim_source_text_at_its_tree():

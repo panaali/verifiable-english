@@ -78,17 +78,22 @@ class FsTree:
 
 
 class GitTree:
-    """A VE commit, read with git (read-only)."""
+    """A VE commit, or a tree by its id (content-addressed), read with git (read-only)."""
 
     def __init__(self, repo, ref):
         self.repo = str(repo)
         out = subprocess.run(['git', '-C', self.repo, 'rev-parse', '--verify', f'{ref}^{{commit}}'],
                              capture_output=True, text=True)
-        if out.returncode != 0:
-            raise SystemExit(f'defs_carried: unknown commit {ref!r}')
-        self.commit = out.stdout.strip()
-        self.key = f'git:{self.commit}'
-        ls = subprocess.run(['git', '-C', self.repo, 'ls-tree', '-r', '--name-only', self.commit, 'usecases/'],
+        self.commit = out.stdout.strip() if out.returncode == 0 else None
+        if self.commit is None:
+            out = subprocess.run(['git', '-C', self.repo, 'rev-parse', '--verify', f'{ref}^{{tree}}'],
+                                 capture_output=True, text=True)
+            if out.returncode != 0:
+                raise SystemExit(f'defs_carried: unknown commit or tree {ref!r}')
+        self.tree = out.stdout.strip() if self.commit is None else None
+        self.ref = self.commit or self.tree
+        self.key = f'git:{self.ref}'
+        ls = subprocess.run(['git', '-C', self.repo, 'ls-tree', '-r', '--name-only', self.ref, 'usecases/'],
                             capture_output=True, text=True)
         self._paths = set(ls.stdout.split('\n')) - {''}
         self._cache = {}
@@ -97,7 +102,7 @@ class GitTree:
         if path not in self._paths:
             return None
         if path not in self._cache:
-            x = subprocess.run(['git', '-C', self.repo, 'cat-file', 'blob', f'{self.commit}:{path}'], capture_output=True)
+            x = subprocess.run(['git', '-C', self.repo, 'cat-file', 'blob', f'{self.ref}:{path}'], capture_output=True)
             self._cache[path] = x.stdout.decode('utf-8', 'replace').replace('\r\n', '\n') if x.returncode == 0 else None
         return self._cache[path]
 
@@ -109,7 +114,7 @@ class GitTree:
         return _child_dirs(self._paths, d)
 
     def describe(self):
-        return {'kind': 'commit', 'commit': self.commit}
+        return {'kind': 'commit', 'commit': self.commit} if self.commit else {'kind': 'tree', 'tree': self.tree}
 
 
 class MemTree:
