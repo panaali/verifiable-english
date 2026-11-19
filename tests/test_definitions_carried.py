@@ -269,6 +269,48 @@ def test_lexical_bar_on_the_known_cases():
     assert any(x["term"] == "governance_found_acceptable_with_safety_case_where_ccl_reached" for x in eligible)
 
 
+@pytest.mark.parametrize("variant", [
+    "A\u00a0careful robot checks every step.",        # NBSP
+    "A careful\trobot checks  every step.",           # tab, double space
+    "A careful robot\r\nchecks every step.",          # CR LF
+    "A CAREFUL ROBOT checks every step.",              # case
+])
+def test_source_norm_whitespace_and_case_variants_carry(variant):
+    assert dc.source_norm(variant) == dc.source_norm("A careful robot checks every step.")
+
+
+def test_source_norm_keeps_distinct_letters_distinct():
+    """NFKC folds the Kelvin sign to K; a dotted capital I is not folded to i (conservative: no silent widening)."""
+    assert dc.source_norm("\u212a level") == dc.source_norm("K level")
+    assert dc.source_norm("\u0130tem") != dc.source_norm("Item")
+
+
+@pytest.mark.parametrize("bad", ["7", "true", "null", "[]", "{}", '{"vocabulary": []}', '{"vocabulary": {"predicates": 7}}',
+                                 '{"vocabulary": {"predicates": {"careful": 7}}}', '{"units": {"u1": 1}}',
+                                 '{"rules": {"R1": {}}}', '{"rules": [{"id": 7}, {"id": "R1", "gloss": 7, "source": []}]}'])
+def test_malformed_inputs_never_crash_and_never_pass(bad):
+    """Every JSON input replaced by a scalar, a list, an empty object or a mistyped node: each document still reports
+    (problems listed, no exception), and a definition stays not carried."""
+    for name, path in (("asimov-laws", "usecases/asimov-laws/environment.json"),
+                       ("udhr-pilot", "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"),
+                       ("eligibility", "usecases/eligibility/rules.json"),
+                       ("safety-framework", "usecases/safety-framework/environment.d1.json")):
+        text = "---\n" + bad + "\n---\nbody\n" if path.endswith(".ve.md") else bad
+        files = {path: text, "usecases/asimov-laws/rules.ve": 'Rule 1. Every robot is classified as "careful".\n',
+                 "usecases/safety-framework/rules.d1.ve": "## b1 | always | 1\nEvery robot is careful.\n",
+                 "usecases/eligibility/environment.json": bad}
+        rep = dc.run_document(name, dc.MemTree(files), known=[
+            {"case": "k", "doc": name, "rule": "R1", "term": "careful", "passages": [{"text": DEF}]}])
+        assert rep["known"][0]["verdict"] not in dc.PASSING
+
+
+def test_every_use_case_is_checked_or_named_out_of_scope():
+    """A new document under usecases/ fails here until it gets an adapter (DOCS) or an out-of-scope reason."""
+    dirs = {p.name for p in (ROOT / "usecases").iterdir() if p.is_dir() and not p.name.startswith(("_", "."))}
+    assert dirs == set(dc.DOCS) | set(dc.OUT_OF_SCOPE)
+    assert len(dc.DOCS) == 15 and len(dc.OUT_OF_SCOPE) == 5
+
+
 # ------------------------------------------------------------------------------------------------------- selection ---
 def test_selection_shared_input_selects_every_reader():
     """Codex B11: an edit to a shared input selects every document that reads it; the checker, the pinned counter code

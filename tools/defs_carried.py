@@ -255,19 +255,24 @@ COUNTER_SURFACE = ('the counter\'s omit_carrier_texts rule text and seq_unit_leg
 
 
 def _json(text):
+    """A JSON object, or None for absent, unparsable or non-object text (every file the adapters read is an object)."""
     try:
-        return json.loads(text) if text else None
+        x = json.loads(text) if text else None
     except ValueError:
         return None
+    return x if isinstance(x, dict) else None
 
 
 def _vocab(env):
-    v = (env or {}).get('vocabulary') or {}
+    v = env.get('vocabulary') if isinstance(env, dict) else None
+    v = v if isinstance(v, dict) else {}
     out = {}
     for kind in ('sorts', 'predicates', 'constants'):
         x = v.get(kind) or {}
         if isinstance(x, list):
-            x = {k: {} for k in x}
+            x = {k: {} for k in x if isinstance(k, str)}
+        if not isinstance(x, dict):
+            x = {}
         out[kind] = {k: (d if isinstance(d, dict) else {}) for k, d in x.items()}
     return out
 
@@ -521,16 +526,20 @@ def adapt_vemd(doc, tree, prefix=None):
             doc.problems.append(('UNREADABLE-FRONT-MATTER', f'{s["dir"]}/{f}'))
             continue
         voc = _vocab(fm.get('environment'))
-        ots = [o for o in fm.get('open_terms') or () if isinstance(o, dict)]
+        ots = [o for o in (fm.get('open_terms') if isinstance(fm.get('open_terms'), list) else ())
+               if isinstance(o, dict) and isinstance(o.get('name'), str)]
         _declare_vocab(doc, voc, ots)
         vocs.append(voc)
         declared = set(voc['predicates']) | set(voc['constants']) | set(voc['sorts']) | {o['name'] for o in ots if o.get('name')}
         fences = dict(re.findall(r'(?ms)^```ve (\S+)\n(.*?)^```', body))
         nodes = {}
-        for nd in ((fm.get('graph') or {}).get('nodes') or ()):
+        graph = fm.get('graph') if isinstance(fm.get('graph'), dict) else {}
+        for nd in (graph.get('nodes') if isinstance(graph.get('nodes'), list) else ()):
             if isinstance(nd, dict):
                 nodes.setdefault(nd.get('unit') or nd.get('name'), []).append(nd)
-        for u in fm.get('units') or ():
+        for u in (fm.get('units') if isinstance(fm.get('units'), list) else ()):
+            if not isinstance(u, dict) or not isinstance(u.get('id'), str):
+                continue
             kind, meaning, content = u.get('kind'), u.get('meaning'), u.get('content')
             if kind == 'meta':
                 continue
@@ -601,15 +610,15 @@ def adapt_rules_json(doc, tree):
         src = _read(doc, tree, f'{s["dir"]}/{f}') or ''
         code.append((f'code:{f}', _code_text(src, voc)))
     rj = _json(_read(doc, tree, f'{s["dir"]}/rules.json')) or {}
-    for r in rj.get('rules') or ():
-        if not isinstance(r, dict) or not r.get('id'):
+    for r in (rj.get('rules') if isinstance(rj.get('rules'), list) else ()):
+        if not isinstance(r, dict) or not isinstance(r.get('id'), str):
             continue
         terms = _with_arg_sorts(_ast_atoms(r.get('formula'), set()) & declared, voc, ())
-        gloss = r.get('gloss') or ''
+        gloss = r['gloss'] if isinstance(r.get('gloss'), str) else ''
         doc.add_rule(r['id'], 'rules.json', gloss, terms,
                      [('rule:gloss', gloss)] + _legend_runs(terms, voc) + code)
         doc.lexical_labels.append((f'rules.json:{r["id"]}.gloss', gloss, r['id']))
-        if r.get('source'):
+        if isinstance(r.get('source'), str):
             doc.unshown.append((f'rules.json:{r["id"]}.source', r['source']))
     _finish_unshown(doc, voc)
     return voc, ()
@@ -756,8 +765,14 @@ def load_sources(doc, tree):
 
 
 def build_doc(name, tree):
+    """The document's adapter output. An input the adapter cannot read (malformed JSON of an unexpected shape inside the
+    copied counter code, say) is reported as an ADAPTER-FAILED problem with the rules read so far, never a crash and
+    never a silent pass: the summary names it."""
     doc = Doc(name, DOCS[name])
-    ADAPTERS[doc.format](doc, tree)
+    try:
+        ADAPTERS[doc.format](doc, tree)
+    except (AttributeError, TypeError, KeyError, ValueError, IndexError) as e:
+        doc.problems.append(('ADAPTER-FAILED', f'{type(e).__name__}: {e}'))
     load_sources(doc, tree)
     used = {t for r in doc.rules.values() for t in r['terms']}
     for t, d in doc.declared.items():

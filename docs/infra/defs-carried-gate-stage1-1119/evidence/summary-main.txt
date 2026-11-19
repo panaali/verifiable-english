@@ -1,0 +1,92 @@
+python3 tools/defs_carried.py  # tree {"kind": "checkout", "root": "/home/seyran/code/ve-defs-carried-gate-stage1-1119"}
+asimov-laws (rules.ve): 13 rules, 21 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 13 pairs, 12 detected not carried, 1 not
+    MISS defs-asimov-laws-2-1119:R9 R9 breaks_zeroth_law: NOT CARRIED, reach term-not-in-rule
+  marker hits 1 (1 link no term); pairs 0: 
+  run time 0.024 s
+asimov-extended (rules.ve): 29 rules, 41 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 35 pairs, 34 detected not carried, 1 not
+    MISS defs-asimov-extended-7-1119:R16 R16 breaks_first_law: NOT CARRIED, reach term-not-in-rule
+  marker hits 5 (5 link no term); pairs 0: 
+  run time 0.049 s
+birthright-citizenship-debate (claims.ve): 7 rules, 8 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 3 pairs, 3 detected not carried, 0 not
+  marker hits 7 (7 link no term); pairs 0: 
+  run time 0.011 s
+bluedot-grant (.ve.md): 69 rules, 160 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 6 (u012, u019, u020, u033, u080, u081); dependencies unknown: any of the document's 160 declared terms; candidates (terms no parsed rule reaches): 28
+  known cases: 20 pairs, 20 detected not carried, 0 not
+  marker hits 16 (8 link no term); pairs 61: NOT CARRIED 61
+  run time 0.081 s
+claude-constitution-excerpt (claims.ve): 11 rules, 32 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 16 pairs, 16 detected not carried, 0 not
+  marker hits 10 (9 link no term); pairs 1: FRAGMENT 1
+  run time 0.026 s
+claude-constitution-pilot (.ve.md): 19 rules, 54 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 3 (u0125.s04.p2, u0156.s03, u0263.s04.p2); dependencies unknown: any of the document's 54 declared terms; candidates (terms no parsed rule reaches): 7
+  known cases: 37 pairs, 36 detected not carried, 1 not
+    MISS defs-claude-constitution-pilot-1-1119:u0036.s05 u0036.s05 claude_instance: NOT CARRIED, reach term-not-in-rule
+  marker hits 140 (135 link no term); pairs 36: FRAGMENT 2, NOT CARRIED 34
+  run time 0.222 s
+eligibility (rules.json): 49 rules, 85 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 141 pairs, 121 detected not carried, 20 not
+    MISS defs-eligibility-2-1119:R5a.applicant R5a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5b.applicant R5b.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8a.applicant R8a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8b.applicant R8b.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8c.applicant R8c.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R9.applicant R9.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R12.applicant R12.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R13a.applicant R13a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5a.housemate R5a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5b.housemate R5b.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8a.housemate R8a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8b.housemate R8b.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8c.housemate R8c.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R9.housemate R9.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R12.housemate R12.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R13a.housemate R13a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16a R16a None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16b R16b None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16c R16c None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:B1 B1 None: NOT CARRIED, reach no-ve-term
+  marker hits 117 (98 link no term); pairs 364: FRAGMENT 98, NOT CARRIED 266
+  run time 4.397 s
+math-mini-paper (theorems): 19 rules, 12 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 23 pairs, 23 detected not carried, 0 not
+  marker hits 122 (119 link no term); pairs 9: NOT CARRIED 9
+  run time 0.065 s
+news-article (claims.ve): 26 rules, 73 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 1 (s12_year); dependencies unknown: any of the document's 73 declared terms; candidates (terms no parsed rule reaches): 1
+  known cases: 1 pairs, 1 detected not carried, 0 not
+  marker hits 5 (5 link no term); pairs 0: 
+  run time 0.023 s
+question-answering (.ve.md): 10 rules, 87 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 2 (u087, u096); dependencies unknown: any of the document's 87 declared terms; candidates (terms no parsed rule reaches): 70
+  marker hits 0 (0 link no term); pairs 0: 
+  run time 0.02 s
+udhr-pilot (.ve.md): 50 rules, 66 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 20 (u022a, u022b, u022c, u029, u045b, u048, u049, u063 ...); dependencies unknown: any of the document's 66 declared terms; candidates (terms no parsed rule reaches): 26
+  known cases: 10 pairs, 7 detected not carried, 3 not
+    MISS defs-udhr-pilot-1-1119:u052 u052 asylum_right_covers_case: NOT CARRIED, reach term-not-in-rule
+    MISS udhr-D7:u112:exercise_of_declared_right u112 exercise_of_declared_right: NOT CARRIED, reach term-not-in-rule
+    MISS udhr-D7:u114:declaration_implies_destructive_right u114 declaration_implies_destructive_right: NOT CARRIED, reach term-not-in-rule
+  marker hits 4 (3 link no term); pairs 1: NOT CARRIED 1
+  run time 0.041 s
+us-constitution-14th-s1 (claims.ve): 4 rules, 16 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  marker hits 8 (8 link no term); pairs 0: 
+  run time 0.007 s
+safety-framework (counter): 62 rules, 173 declared terms; COUNTED
+  known cases: 89 pairs, 87 detected not carried, 2 not
+    MISS F5:f3:low_risk:p1 f3 low_risk: CARRIED, reach parsed
+    MISS F5:activities-low-risk:low_risk:p1 activities-low-risk low_risk: CARRIED, reach parsed
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 66999 bytes (ARG_LIMIT 131000)
+  run time 0.71 s
+anthropic-rsp (counter): 86 rules, 224 declared terms; COUNTED
+  known cases: 1 pairs, 1 detected not carried, 0 not
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 73304 bytes (ARG_LIMIT 131000)
+  run time 0.972 s
+openai-preparedness (counter): 102 rules, 244 declared terms; COUNTED
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 85611 bytes (ARG_LIMIT 131000)
+  run time 1.458 s
+known cases: 389 pairs, 361 detected not carried, 28 missed; total 8.11 s

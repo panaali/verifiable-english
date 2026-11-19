@@ -1,0 +1,176 @@
+{
+ "about": "Seeded bugs of defs-carried-gate-stage1-1119: each planted alone in the named file, the named tests run, the file restored with git checkout.",
+ "mutants": [
+  {
+   "id": "adapter-rules-ve-path",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t1_every_known_case_is_reported_not_carried_or_a_named_miss",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t1_every_known_case_is_reported_not_carried_or_a_named_miss"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "adapter-vemd-speaker",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t1_every_known_case_is_reported_not_carried_or_a_named_miss",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t1_every_known_case_is_reported_not_carried_or_a_named_miss"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "adapter-unparsed",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_unparsed_rules_print_the_full_set_and_candidates",
+   "failed": [
+    "tests/test_definitions_carried.py::test_unparsed_rules_print_the_full_set_and_candidates"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "surface-unused-legend-shown",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_a_definition_off_the_shown_surface_is_not_carried",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_a_definition_off_the_shown_surface_is_not_carried[unused]"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "surface-counter-header-shown",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_open_term_factor_and_header_and_constant_table",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_open_term_factor_and_header_and_constant_table"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-carried-assumed",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_the_shown_surface_carries_but_only_as_assumed_outside_the_counter",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_the_shown_surface_carries_but_only_as_assumed_outside_the_counter"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-elsewhere",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_elsewhere_and_oversize",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_elsewhere_and_oversize"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-unshown",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_a_definition_off_the_shown_surface_is_not_carried",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_a_definition_off_the_shown_surface_is_not_carried[constant]"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-oversize",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t5_elsewhere_and_oversize",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t5_elsewhere_and_oversize"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-partial",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_fragment_partial_and_not_carried",
+   "failed": [
+    "tests/test_definitions_carried.py::test_fragment_partial_and_not_carried"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "verdict-fragment",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_fragment_partial_and_not_carried",
+   "failed": [
+    "tests/test_definitions_carried.py::test_fragment_partial_and_not_carried"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "source-norm-markdown",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t9_equivalences_carry",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t9_equivalences_carry[Operators:"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "source-norm-citation",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_t9_equivalences_carry",
+   "failed": [
+    "tests/test_definitions_carried.py::test_t9_equivalences_carry[A"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "lexical-matcher-split",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_lexical_matcher_finds_phrases_inside_identifiers_f3",
+   "failed": [
+    "tests/test_definitions_carried.py::test_lexical_matcher_finds_phrases_inside_identifiers_f3"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "marker-grep-lead-in",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_marker_grep_hits_definitions_lead_ins_and_table_rows",
+   "failed": [
+    "tests/test_definitions_carried.py::test_marker_grep_hits_definitions_lead_ins_and_table_rows"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "selection-select-all",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_selection_shared_input_selects_every_reader",
+   "failed": [
+    "tests/test_definitions_carried.py::test_selection_shared_input_selects_every_reader"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "selection-shared-source",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_selection_shared_input_selects_every_reader",
+   "failed": [
+    "tests/test_definitions_carried.py::test_selection_shared_input_selects_every_reader"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "report-mode-exit",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_report_mode_exits_0_with_findings",
+   "failed": [
+    "tests/test_definitions_carried.py::test_report_mode_exits_0_with_findings"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "counter-pin",
+   "file": "tools/defs_carried_counter.py",
+   "test": "tests/test_definitions_carried.py::test_the_counter_code_is_a_byte_copy_of_the_pinned_source",
+   "failed": [
+    "tests/test_definitions_carried.py::test_the_counter_code_is_a_byte_copy_of_the_pinned_source"
+   ],
+   "rc": 1
+  }
+ ]
+}
