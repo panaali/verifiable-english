@@ -1,0 +1,57 @@
+{
+ "item": "gate-train-tag-reuse",
+ "run": "zsh /home/seyran/code/manage-agents/test-harness/gatetrain/test-gatetrain.zsh <seeded copy of gate-train.sh>",
+ "note": "Each seed is a one-line edit of a /tmp copy of the installed gate-train.sh (the live file is never edited; sha256.txt). Each copy passes zsh -n. Logs: seed-<id>.log (the diff, then the harness output).",
+ "seeds": [
+  {
+   "id": "s1-no-redirect",
+   "file": "manage-agents/gate-train.sh",
+   "language": "zsh",
+   "bug": "drop `[ \"$a[2]\" = $out ] && a[2]=$out.old-$t0` (the et-4b-sync item 2 fix): tm-inventory is given the moved-away <out>",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "test-gatetrain.zsh: same tag: tm-inventory reads the moved old record (<out>.old-<t0>), not the missing <out>",
+    "test-gatetrain.zsh: the inventory call itself names <out>.old-<t0> as the record and <out> as the output",
+    "test-gatetrain.zsh: no stop: the barrier passes on the new record and the train runs",
+    "test-gatetrain.zsh: the new record is at <out>; the old one and both its sidecars sit together at <out>.old-<t0>",
+    "test-gatetrain.zsh: same tag, no new record: tm-inventory still read the old record"
+   ]
+  },
+  {
+   "id": "s2-sidecars-stay",
+   "file": "manage-agents/gate-train.sh",
+   "language": "zsh",
+   "bug": "the record moves aside without its .inventory.json and .ruling.json sidecars",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "test-gatetrain.zsh: same tag: tm-inventory reads the moved old record (<out>.old-<t0>), not the missing <out>",
+    "test-gatetrain.zsh: the new record is at <out>; the old one and both its sidecars sit together at <out>.old-<t0>",
+    "test-gatetrain.zsh: same tag, no new record: tm-inventory still read the old record"
+   ]
+  },
+  {
+   "id": "s3-no-tmback",
+   "file": "manage-agents/gate-train.sh",
+   "language": "zsh",
+   "bug": "tmback() does nothing: with no new record the moved record is never put back at <out>",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "test-gatetrain.zsh: the old record and its sidecars are back at <out>, nothing left at .old-<t0>"
+   ]
+  },
+  {
+   "id": "s4-redirect-always",
+   "file": "manage-agents/gate-train.sh",
+   "language": "zsh",
+   "bug": "the redirect drops its `a[2] == $out` condition: a STALE record that is not <out> is replaced by the moved <out>",
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "test-gatetrain.zsh: a STALE record that is not <out>: passed through unchanged"
+   ]
+  }
+ ]
+}
