@@ -1,0 +1,38 @@
+B1-release-prune-ignores-pin: CAUGHT (exit 1, 14 failing)
+    FAIL (1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)
+    FAIL (1) exact tree: nothing deleted: the release keeps the newest 5 (lean-build-602ee25f6749.tar.zst the oldest of them) + the nightly's
+    FAIL (1) exact tree: manifest.json still lists it with its url
+    FAIL (1) exact tree: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)
+    FAIL (1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted
+    FAIL (1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+    FAIL (1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)
+    FAIL (1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's
+    FAIL (1) nearest ancestor within K: manifest.json still lists it with its url
+    FAIL (1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)
+    FAIL (1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted
+    FAIL (1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+    FAIL (3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)
+    FAIL (3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written
+B2-manifest-slice-drops-pin: CAUGHT (exit 1, 4 failing)
+    FAIL (1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted
+    FAIL (1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+    FAIL (1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted
+    FAIL (1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+B3-no-resume-check: CAUGHT (exit 1, 3 failing)
+    FAIL (2) record complete (nightly.jsonl): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+    FAIL (2) record over 4 days old: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+    FAIL (2) head on the no-resume list: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+B4-quarantine-ignored: CAUGHT (exit 1, 1 failing)
+    FAIL (2) the head's asset quarantined: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+B5-platform-suffix-ignored: CAUGHT (exit 1, 2 failing)
+    FAIL (3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)
+    FAIL (3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written
+B6-exact-tree-only: CAUGHT (exit 1, 7 failing)
+    FAIL (1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)
+    FAIL (1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's
+    FAIL (1) nearest ancestor within K: manifest.json still lists it with its url
+    FAIL (1) nearest ancestor within K: the log names the kept asset and the head
+    FAIL (1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)
+    FAIL (1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted
+    FAIL (1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+6 of 6 caught

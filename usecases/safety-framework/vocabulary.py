@@ -85,8 +85,9 @@ BASE = {
                        "automating ML R&D)\")", "no one the text names (unstated)", term="OT7"),
     "external": _base(["proposal"], "{0} is an external deployment: a model release to entities outside Google",
                       "{0} is external"),
-    "low_risk": _open(["proposal"], "{0} is a low-risk external deployment: a small scale and private release "
-                      "restricted to particular external groups", "no one the text names (unstated)", term="OT8"),
+    "low_risk": _open(["proposal"], "{0} is a low-risk external deployment (Glossary: \"Low-Risk External "
+                      "Deployments: represent small scale and private releases restricted to particular external "
+                      "groups or organizations.\")", "no one the text names (unstated)", term="OT8"),
     "first_deployment": _base(["proposal"], "{0} is the first external deployment of a new model"),
     "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary definition)",
                       "no one the text names (unstated)", "{0} is frontier", "OT9"),
@@ -147,7 +148,10 @@ def _obligation(args, act, description):
 
 REGULATED = {
     "assessed": _obligation(["proposal"], "{0} be preceded by a critical capability assessment",
-                            "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2)"),
+                            "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); on "
+                            "models not on the frontier, 1.3.2 \"We may also apply material capability change "
+                            "assessments to models not on the frontier, to understand whether a critical capability "
+                            "assessment is required.\""),
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
@@ -159,7 +163,9 @@ REGULATED = {
     "change_assessed": _obligation(
         ["proposal"], "{0} be followed by material capability change assessments on various checkpoints",
         "material capability change assessments on various checkpoints follow {0} (1.3.2); the checkpoints are "
-        "part of the act, not a situation variable"),
+        "part of the act, not a situation variable; their content, 1.3.2 \"These assessments draw on model "
+        "characteristics, such as its provenance, size, modality, and performance on general capability "
+        "benchmarks.\""),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
         "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
