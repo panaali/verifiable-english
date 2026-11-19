@@ -57,7 +57,7 @@ All in Python, usecases/eligibility/translation.py, each with environment.json a
 
 - Trust: `uv run python tools/trust_map.py --check`: K +0, S +0, D +0, G +0, trusted +0; PASS. No allowance recorded, no FOLLOW-UPS.md row (no R16 growth).
 - DELTA.md: 5 rows, Ruling cells R3 (legends, gloss, ids) and R1 (message drift in results.json from main's code). No row needs a DRI signature.
-- SIZE: 63 product (translation.py), 117 tests, about 140 other hand-written lines (REPORT, DELTA, mutants.json); generated: environment.json 18, rules.json 2, results.json 166, RESULTS.md 2, corpus-seal.json 204, lexicon-report.json 2, evidence/results-delta.json.
+- SIZE: 65 product (translation.py, 63 added and 2 changed), 95 tests, 140 other hand-written lines (REPORT 95, DELTA 13, mutants.json 32); generated: environment.json 18, rules.json 2, results.json 166, RESULTS.md 2, corpus-seal.json 204, lexicon-report.json 2, evidence/results-delta.json.
 - Pilot bytes expected to move (estimate, nothing claimed before a pilot audit): environment.json grows from 16157 to 21569 bytes (+5412), all of it source text on 9 legends; the B1 gloss grows by 260 characters. In the definitions-carried counter, 11 eligibility rows should move from NOT CARRIED / FRAGMENT to CARRIED.
 
 ## Notes for the DRI
