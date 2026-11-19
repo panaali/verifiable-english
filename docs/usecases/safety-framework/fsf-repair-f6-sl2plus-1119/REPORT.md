@@ -14,9 +14,12 @@ not touch the rendered text. The work was built on main d8758ce968, then synced 
 this branch's final HEAD, and the train names the exact merge commit. A merge after the R16 diagnostic voids the diagnostic
 for the touched answers, since the C2/C3 pins are per commit. The counted read re-pins at the merge commit.
 
-SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 76 tests, 149 other hand-written lines
-(REPORT.md 109, DELTA.md 8, c5-dryrun.txt 32: docs and evidence). LIGHT lane: `light-lane.py check` printed "LIGHT 102 changed lines
-outside generated files <= 150 (7 files), no trusted-core file, against d8758ce9". So no trust_mutants sweep was run.
+SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 187 tests, 200 other hand-written lines
+(REPORT.md 149, DELTA.md 9, c5-dryrun.txt 42: docs and evidence). LIGHT lane: no longer light after review F1.
+`light-lane.py check` prints "NOT 408 changed lines outside generated files > 150 (10 files) against f5553bc8" (it was
+LIGHT 102 before F1 added the guard tests and evidence). No trusted-core file changes: no Lean file changes, and
+`trust_map.py --check` gives trusted +0. So checklist 13a (trusted Lean growth) does not apply and no trust_mutants
+sweep was run.
 
 ## The source passages (pinned FSF 3.1 text, sha256 18e3375b…3946, read with python3 -I over the pinned file)
 - **S:9** (source line 9, 2.1.1; offset 2495 in the line): `We also define and recommend "Security Level 2+," which
@@ -106,6 +109,10 @@ unclassified +0, trusted +0 … PASS". There is no new trusted definition, so no
 - Selected run: `mac-pytest.sh --select -- --base d8758ce968 --run`. It ran on the VM ("no mac-pytest slot on ve-mac-1"), with exit=0 in 7242 s: "recorded 75 units … 0 failed".
   - It included tests/test_fsf_repair_f6_sl2plus_1119.py, tests/test_safety_framework.py, tests/test_safetyfw_usecases.py and tests/test_route_row_schemas.py.
   - One file was deferred to the chain gate: tests/test_relay_binding_inventory.py, "selected only for weak reasons" (log /tmp/f6-select.log).
+- After review F1, at 15a5d9b630: `mac-pytest.sh --select -- --base f5553bc894 --run` ran on ve-mac-1 and gave exit=0 in 2644 s ("recorded 74 units … 0 failed; failed/error ids=0").
+  - It included tests/test_fsf_repair_f6_sl2plus_1119.py (run first, as changed) and tests/test_safety_framework.py.
+  - Three files were deferred to the chain gate, "selected only for weak reasons": tests/test_answer_cutoff.py, tests/test_relay_binding_inventory.py and tests/test_test_chunks.py.
+- `lake build`: "Build completed successfully (1478 jobs)". `python3 lean/audit.py`: PASS. No Lean file changed.
 - Pre-existing red tests: none met.
 
 ## Pilot bytes expected to move (estimate; nothing is claimed before a pilot audit)
