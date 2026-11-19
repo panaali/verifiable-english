@@ -1,0 +1,22 @@
+# diff gate-train.sh (installed) -> seed s3-no-tmback
+12c12
+< tmback(){ [ -n "$tmold" ] && [ ! -f $out ] && [ -f $tmold ] && { mv $tmold $out; for s in inventory ruling; do [ -f $tmold.$s.json ] && mv -f $tmold.$s.json $out.$s.json; done; }; tmold=""; }  # et-4b-sync item 2
+---
+> tmback(){ tmold=""; }
+# zsh test-harness/gatetrain/test-gatetrain.zsh <seed copy>
+grep: /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json: No such file or directory
+  FAIL   the old record and its sidecars are back at <out>, nothing left at .old-<t0>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json.inventory.json (base c3b0987d1) 08:10Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.S8IQar/wt
+    tm-inventory apply zz /tmp/gatetrain-test.S8IQar/wt /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json.old-1795075812 /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json --base c3
+    read /tmp/gatetrain-test.S8IQar/M/reviews/tm-targeted/zz-t2.json.old-1795075812 marker=old2 sidecar=1
+    tm-inventory restore /tmp/gatetrain-test.S8IQar/wt
+    tm-barrier zz /tmp/gatetrain-test.S8IQar/wt
+    chain-gate /tmp/gatetrain-test.S8IQar/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.S8IQar/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.S8IQar/wt
+gatetrain: 8 passed, 1 failed

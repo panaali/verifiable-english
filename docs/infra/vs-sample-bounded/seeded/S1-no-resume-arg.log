@@ -1,0 +1,6 @@
+# seeded: replace <<$run $args ${rp:+--resume} $rp; trc=$?>> with <<$run $args; trc=$?>> in verdict-sample.sh.new-vsw
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL resume: a budget-cut reference (exit 4, partial) is resumed: a 2nd run with --resume <the cut, set aside>
+  FAIL resume: a later sample resumes the part's earlier VM cut (its 1st run has --resume <that cut>): EQUAL
+  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+comparators: 49 passed, 4 failed

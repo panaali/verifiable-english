@@ -1,0 +1,211 @@
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp1xtkd9xr/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpmqgou4i3/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpfnsqznlt/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp84b9n2nd/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp1rjpqor1/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpeziij0xv/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F/tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp7jdizdw1/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp9vo44hyy/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp4unv949e/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp39pdxue5/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpvlyy7uyq/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F/tmp/cfd-work/tools-local/test_decider_ready_alert.py:416: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpneyeu8iv/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
+  sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpneyeu8iv/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:429: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp595u2k_u/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
+  sent = open(os.path.join(self.d, "decider-ready-alert.sent")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp595u2k_u/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..FFFFFF/tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpmip_mr07/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp654teevp/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.EF/tmp/cfd-work/tools-local/test_decider_ready_alert.py:605: ResourceWarning: unclosed file <_io.BufferedReader name='/tmp/cfd-work/decider-ready-alert.sent'>
+  data = open(live_state, "rb").read() if os.path.isfile(live_state) else b""
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/cfd-work/tools-local/test_decider_ready_alert.py:610: ResourceWarning: unclosed file <_io.BufferedReader name='/tmp/cfd-work/p1-unstartable-alert.sent'>
+  f.write((open(live_p1, "rb").read() if os.path.isfile(live_p1) else b"") + b"p1row\tnot-a-number\tx\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F./tmp/cfd-work/tools-local/test_decider_ready_alert.py:634: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/cfd-work/backlog-svc.sh' mode='r' encoding='UTF-8'>
+  t = open(SVC).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp1zrpo7ys/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp_0rzxuqs/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpw8h8f7r5/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpznseyzzb/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpqdx_ebcn/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmph8g_cfxx/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpd1xdsqfk/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpma1knlj0/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/cfd-work/tools-local/test_decider_ready_alert.py:255: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpma1knlj0/decider-ready-alert.sent' mode='r' encoding='UTF-8'>
+  self.assertIn("nt:a\t" + READY + "\t", open(os.path.join(self.d, "decider-ready-alert.sent")).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpa5119qfr/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5ckmh6o5/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpsgwbkz_d/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/cfd-work/tools-local/test_decider_ready_alert.py:64: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5broqnia/msgs.log' mode='r' encoding='UTF-8'>
+  return open(self.log).read().splitlines() if os.path.exists(self.log) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.
+======================================================================
+ERROR: test_19_closed_fallback_is_backlog_closed (__main__.ChallengeFinalRows.test_19_closed_fallback_is_backlog_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 561, in test_19_closed_fallback_is_backlog_closed
+    self.assertEqual(tuple(runpy.run_path(SCRIPT, run_name="dra")["CF_CLOSED_FALLBACK"]), tuple(bl.CLOSED))
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'CF_CLOSED_FALLBACK'
+
+======================================================================
+FAIL: test_1_astra_final_30_min_to_orchestrator_once (__main__.ChallengeFinal.test_1_astra_final_30_min_to_orchestrator_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 313, in test_1_astra_final_30_min_to_orchestrator_once
+    self.assertTrue(text.startswith("NOW(critical): challenge final not delivered: record-void-astra-challenge-1115.final.md"
+AssertionError: False is not true : NOW(critical): challenge final not delivered: record-void-astra-challenge-1115.final.md (finished 2026-11-15T02:31Z, 30m ago) for row record-void-astra-challenge (in flight since 2026-11-15T00:40:00Z). Rule (reviews/dri-ruling-record-void-astra-20261115.md section F): a finished challenge final closes its row and reaches its addressee within 30 min: read and answer the final, then close the row (backlog.sh update-status <id> done) or move it to blocked with the reason.
+
+======================================================================
+FAIL: test_7_relaunched_row_new_final_alerts_again (__main__.ChallengeFinal.test_7_relaunched_row_new_final_alerts_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 409, in test_7_relaunched_row_new_final_alerts_again
+    self.assertIn("(in-flight, in flight since 2026-11-15T05:00:00Z)", m[1])
+AssertionError: '(in-flight, in flight since 2026-11-15T05:00:00Z)' not found in 'orchestrator|decider-ready-alert|NOW(critical): challenge final not delivered: rv-astra-challenge.final.md (finished 2026-11-15T06:31Z, 30m ago) for row rv-astra-challenge (in flight since 2026-11-15T05:00:00Z). Rule (reviews/dri-ruling-record-void-astra-20261115.md section F): a finished challenge final closes its row and reaches its addressee within 30 min: read and answer the final, then close the row (backlog.sh update-status <id> done) or move it to blocked with the reason.'
+
+======================================================================
+FAIL: test_11_release_gate_review_row_named (__main__.ChallengeFinalRows.test_11_release_gate_review_row_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 471, in test_11_release_gate_review_row_named
+    self.assertIn("for row wg-x-astra-challenge (review, in flight since 2026-11-15T00:40:00Z)", self.one("orchestrator"))
+                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_12_dri_delegate_row_named (__main__.ChallengeFinalRows.test_12_dri_delegate_row_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 480, in test_12_dri_delegate_row_named
+    self.assertIn("for row dri-pq-challenge (review, in flight since 2026-11-15T01:31:00Z)", self.one("dri"))
+                                                                                             ^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_13_seeder_in_flight_rows_without_status_t_named (__main__.ChallengeFinalRows.test_13_seeder_in_flight_rows_without_status_t_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 493, in test_13_seeder_in_flight_rows_without_status_t_named
+    m = self.one("dri")
+        ^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_14_feed_launched_row_named (__main__.ChallengeFinalRows.test_14_feed_launched_row_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 503, in test_14_feed_launched_row_named
+    self.assertIn("for row fd-astra-challenge (in-flight, in flight since 2026-11-15T01:00:00Z)", self.one("orchestrator"))
+                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_15_blocked_and_ready_rows_with_a_run_start_named (__main__.ChallengeFinalRows.test_15_blocked_and_ready_rows_with_a_run_start_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 515, in test_15_blocked_and_ready_rows_with_a_run_start_named
+    m = self.one("dri")
+        ^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named (__main__.ChallengeFinalRows.test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 530, in test_16_latest_stamp_wins_relaunch_after_final_silent_then_new_final_named
+    self.assertIn("for row rl-astra-challenge (review, in flight since 2026-11-15T02:41:00Z)", self.one("orchestrator"))
+                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 459, in one
+    self.assertEqual(len(m), 1, m)
+AssertionError: 0 != 1 : []
+
+======================================================================
+FAIL: test_20_backlog_py_unloadable_still_names_stamped_rows (__main__.ChallengeFinalRows.test_20_backlog_py_unloadable_still_names_stamped_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 569, in test_20_backlog_py_unloadable_still_names_stamped_rows
+    self.assertIn("launch_spec unavailable", p.stdout)
+AssertionError: 'launch_spec unavailable' not found in ''
+
+======================================================================
+FAIL: test_installed_under_live_name_with_live_state_file (__main__.Install.test_installed_under_live_name_with_live_state_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cfd-work/tools-local/test_decider_ready_alert.py", line 621, in test_installed_under_live_name_with_live_state_file
+    self.assertNotIn("error", p.stdout)
+AssertionError: 'error' unexpectedly found in "decider-ready-alert: error UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 2072: invalid start byte\n"
+
+----------------------------------------------------------------------
+Ran 46 tests in 5.665s
+
+FAILED (failures=10, errors=1)

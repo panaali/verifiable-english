@@ -1,0 +1,4 @@
+# seeded: replace <<[ -n "$prev" ] && (( left >= prev )) &&>> with <<false &&>> in verdict-sample.sh.new-vsw
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL resume: a resumed run that judges nothing more stops (2 runs, not 3): row not run, exit 1, no MISMATCH, pool kept
+comparators: 51 passed, 2 failed
