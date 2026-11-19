@@ -1,0 +1,43 @@
+{
+ "item": "rsp-repair-r1-catastrophic-1119",
+ "note": "each seed applied alone by /tmp/r1-seed.sh, its tests run (uv run pytest -q tests/test_rsp_repair_r1_catastrophic_1119.py tests/test_rsp_b_repair_1115.py -k 'd2d3 or catastrophic or footnote'), the files restored with git checkout; usecases/ Python is product code of the RSP case",
+ "trust_mutants_plan": {
+  "definitions": 0,
+  "mutants": 0,
+  "why": "no Lean file changed; light-lane.py check: LIGHT 101 changed lines, no trusted-core file"
+ },
+ "seeds": [
+  {
+   "id": "M1",
+   "claim": "the legend quotes footnote 1 to its end",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "language": "python",
+   "change": "the third sentence's opening 'Where laws such as California SB 53 define' cut from the existential_threats legend",
+   "test": "tests/test_rsp_repair_r1_catastrophic_1119.py::test_catastrophic_legend_quotes_footnote_1_to_its_end"
+  },
+  {
+   "id": "M2",
+   "claim": "the legend is byte for byte the normalised source",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "language": "python",
+   "change": "'statutory definition.' -> 'statutory definitions.'",
+   "test": "tests/test_rsp_repair_r1_catastrophic_1119.py::test_catastrophic_legend_quotes_footnote_1_to_its_end"
+  },
+  {
+   "id": "M3",
+   "claim": "the legend is on a constant D2 classes catastrophic",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "language": "python",
+   "change": "existential_threats class 'catastrophic' -> None",
+   "test": "tests/test_rsp_repair_r1_catastrophic_1119.py::test_footnote_1_constant_stays_in_the_catastrophic_class"
+  },
+  {
+   "id": "M4",
+   "claim": "the D2D3 line no longer records footnote 1 as a loss",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "language": "accounting sidecar",
+   "change": "the removed '\"refers generally to risks of the most severe potential harms from advanced AI\" loss 1' entry restored",
+   "test": "tests/test_rsp_repair_r1_catastrophic_1119.py::test_d2d3_no_longer_records_footnote_1_as_a_loss"
+  }
+ ]
+}

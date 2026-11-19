@@ -1,0 +1,34 @@
+{
+  "force-u0036-s05:strict": {
+    "candidate": "1bd143c6747f6890c36fff07f43250ecac95ca77b151588bf26dc8aa08715dbf",
+    "lean_unit": "ae66da4188c188a62c96b43cd80c805bc9973996dd75f156e1a134f36a7fee07"
+  },
+  "force-u0036-s05:default": {
+    "candidate": "4260863761046dccd42f20db35195c05232a696f9e0ad95766c089a1215af614",
+    "lean_unit": "f11249c15037a5d2eeff561529941faadbede0db371024f61f5131609e761831"
+  },
+  "force-u0125-s04-p2:strict": {
+    "candidate": "c359165406a1dcb6a7baff7f0e0900156a1ca5b296b5eb5be1ca84625997b835",
+    "lean_unit": "5fd9b7877d23ac9d5254a39d917e0c7df56a2ca9b27e30d85f938c1c926390c0"
+  },
+  "force-u0125-s04-p2:default": {
+    "candidate": "a69dd0c9681c1c016ece6bb159d2eeb81e583326d723cf0dd208c9370c9c43b1",
+    "lean_unit": "410fbb851812f4a5477b70d493a11e9581e1845d59083748b4897c094d2df0cc"
+  },
+  "force-u0156-s03:strict": {
+    "candidate": "d297a00e00277161aff8f110f21aca273b96051884f71d5303c668ced12dd91f",
+    "lean_unit": "dd2a51a93e301fb09114f5068b2b8b152f10aaa1284b344fbcc56b38d3d20ec4"
+  },
+  "force-u0156-s03:default": {
+    "candidate": "66dcc307ed7d601c0796323a8f8a41295500efa185dbbd67dba98a871cc56d6b",
+    "lean_unit": "6066e0d735ca932bd6402fff33e93c422240594b160448beb343a9b9302d7c69"
+  },
+  "force-u0263-s04-p2:strict": {
+    "candidate": "1b50b938b4c08e71f27d4e7b7a04ccb8f051edc9edac9316a153b0905d883584",
+    "lean_unit": "e5f99c40284d9dc503c9091f79c3e81e5ffa254bec0489ac8bad359215fb775a"
+  },
+  "force-u0263-s04-p2:default": {
+    "candidate": "fbb897c4357791f3e932afbada69a42ed329603f540c9d026fda66a6d4d93460",
+    "lean_unit": "57148d2d0c94d01c57d74c3474dbdb1c5a52cf52c9e6de9027b606b916b2a658"
+  }
+}
