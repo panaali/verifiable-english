@@ -72,8 +72,6 @@ RELEASE_ASSET = re.compile(r"https://[^\s/]+/(?:\S*/)?releases/download/(\S+)")
 GIT_SOURCE = re.compile(r"https://mirrors\.edge\.kernel\.org/pub/software/scm/git/git-\$GIT_PIN\.tar\.xz")
 # A check of a file against a variable the block sets once to a literal sha256; it may lead an `&&` chain.
 SHA_CHECK_VAR = re.compile(r'echo "\$([A-Z_]+)  (\S+)" \| sha256sum -c -(?=[ \t]*(?:&&|$))', re.M)
-GIT_STEP = "git"
-GIT_PIN = "2.56.1"
 TOOLS_STEP = "tools"
 KEY = re.compile(r"([A-Za-z0-9_-]+):(?:\s+(.*))?")
 BLOCK_SCALAR = re.compile(r"[|>][-+]?")
@@ -532,18 +530,18 @@ SEEDED = [
      "          curl -sSfL -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/"
      "uv-x86_64-unknown-linux-gnu.tar.gz\n          command -v zstd", "uv.tgz is not checked by a pinned sha256"),
     # the git step (x86-shard-toolchain-mix): its source tarball is checked against its one literal sha256
-    ("git unchecked", '              && echo "$GIT_SHA  git.tar.xz" | sha256sum -c - \\\n', "",
+    ("pin unchecked", '              && echo "$GIT_SHA  git.tar.xz" | sha256sum -c - \\\n', "",
      "git.tar.xz is not checked by a pinned sha256"),
-    ("git check of another file", '"$GIT_SHA  git.tar.xz"', '"$GIT_SHA  git.tar"', "git.tar.xz is not checked"),
-    ("git check warns only", "sha256sum -c - \\\n              && {", "sha256sum -c - || true \\\n              && {",
+    ("pin check of another file", '"$GIT_SHA  git.tar.xz"', '"$GIT_SHA  git.tar"', "git.tar.xz is not checked"),
+    ("pin check warns only", "sha256sum -c - \\\n              && {", "sha256sum -c - || true \\\n              && {",
      "git.tar.xz is not checked by a pinned sha256"),
-    ("git sha set again", "          have=$(git --version", "          GIT_SHA=$1\n          have=$(git --version",
+    ("pin sha set again", "          have=$(git --version", "          GIT_SHA=$1\n          have=$(git --version",
      "GIT_SHA is not set once to a literal"),
-    ("git short sha", "a607f\n", "a607\n", "GIT_SHA is not set once to a literal"),
-    ("git pin set again", "          have=$(git --version", "          GIT_PIN=$1\n          have=$(git --version",
+    ("pin short sha", "a607f\n", "a607\n", "GIT_SHA is not set once to a literal"),
+    ("pin pin set again", "          have=$(git --version", "          GIT_PIN=$1\n          have=$(git --version",
      "GIT_PIN is not set once to a literal"),
-    ("git over http", "\"https://mirrors.edge.kernel.org/", "\"http://mirrors.edge.kernel.org/", "is not a release asset"),
-    ("git from another host", "https://mirrors.edge.kernel.org/", "https://example.org/", "is not a release asset"),
+    ("pin over http", "\"https://mirrors.edge.kernel.org/", "\"http://mirrors.edge.kernel.org/", "is not a release asset"),
+    ("pin from another host", "https://mirrors.edge.kernel.org/", "https://example.org/", "is not a release asset"),
 ]
 
 
@@ -1053,8 +1051,11 @@ class Shard:
     sandbox: Path
 
 
-def git_step() -> dict:
-    return next(step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if step.get("name") == GIT_STEP)
+def pin_step() -> dict:
+    """The run job's one step that sets GIT_PIN (the step `git`)."""
+    found = [step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if "GIT_PIN=" in step.get("run", "")]
+    assert len(found) == 1, f"{len(found)} steps set GIT_PIN"
+    return found[0]
 
 
 def git_tarball(tmp_path: Path, pin: str) -> Path:
@@ -1070,7 +1071,7 @@ def git_tarball(tmp_path: Path, pin: str) -> Path:
 
 def run_git_step(tmp_path: Path, name: str, image_git: str, *, zlib: bool = True, **modes: str) -> Shard:
     """The step `git` on a shard whose image has `image_git` as /usr/bin/git, every absolute path in the sandbox."""
-    script = textwrap.dedent(git_step()["run"])
+    script = textwrap.dedent(pin_step()["run"])
     pin = literal(script, "GIT_PIN", VERSION)
     tarball = git_tarball(tmp_path, pin)
     script = script.replace(literal(script, "GIT_SHA", SHA256), hashlib.sha256(tarball.read_bytes()).hexdigest())
@@ -1109,14 +1110,14 @@ def run_git_step(tmp_path: Path, name: str, image_git: str, *, zlib: bool = True
 def test_the_git_step_is_unconditional_between_tools_and_the_job():
     run = parse(VE_JOB.read_text())["jobs"]["run"]
     names = [step.get("name") for step in steps(run)]
-    assert names.count(GIT_STEP) == 1 and names.index(TOOLS_STEP) < names.index(GIT_STEP) < names.index("job"), names
-    step = git_step()
+    step = pin_step()
+    assert names.index(TOOLS_STEP) < steps(run).index(step) < names.index("job"), names
     assert set(step) == {"name", "run"}, sorted(step)
 
 
 def test_every_shard_of_a_mixed_leg_records_the_one_pinned_git(tmp_path):
     """The bug: s1 2.56.1, s2-s4 2.56.0 (x86sh-nightly-a8b8c0fd-t539141); a 2/2 split had no majority."""
-    pin = literal(git_step()["run"], "GIT_PIN", VERSION)
+    pin = literal(pin_step()["run"], "GIT_PIN", VERSION)
     shards = {image: run_git_step(tmp_path, f"s{i}", image) for i, image in enumerate([pin, "2.56.0", "2.57.0"])}
     for image, shard in shards.items():
         assert shard.rc == 0, shard.said
@@ -1136,7 +1137,7 @@ def test_every_shard_of_a_mixed_leg_records_the_one_pinned_git(tmp_path):
 def test_no_zlib_headers_installs_them_before_the_build(tmp_path):
     shard = run_git_step(tmp_path, "s1", "2.56.0", zlib=False)
     assert shard.rc == 0 and "apt-get install -y -qq zlib1g-dev" in shard.calls, shard.calls
-    assert shard.git == f"git version {literal(git_step()['run'], 'GIT_PIN', VERSION)}"
+    assert shard.git == f"git version {literal(pin_step()['run'], 'GIT_PIN', VERSION)}"
 
 
 @pytest.mark.parametrize("modes, said", [
