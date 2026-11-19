@@ -684,6 +684,24 @@ def test_every_glossary_definition_is_the_pinned_source_text():
     assert [p for p, quote in GLOSSARY_DEFINITIONS.items() if quote not in text] == []
 
 
+def _quote_normal(text):
+    """This file's quote normalisation: whitespace runs collapse to one space, curly quotes become straight ones."""
+    return " ".join(text.split()).translate(str.maketrans("‘’“”", "''\"\""))
+
+
+def test_the_low_risk_legend_quotes_the_glossary_sentence_whole():
+    """fsf-repair-f5-lowrisk-1119 (row F5): the `low_risk` legend carries the Glossary sentence on Low-Risk External
+    Deployments byte for byte, read from the pinned source (not a paraphrase that drops "or organizations"), in the
+    vocabulary and in the committed environment.d1.json; the predicate keeps its open term OT8."""
+    text = _quote_normal(pinned_source("safety-framework").read_text())
+    sentences = re.findall(r"Low-Risk External Deployments: [^.]*\.", text)
+    assert len(sentences) == 1 and sentences[0].endswith("external groups or organizations.")
+    committed = json.loads((HERE / "environment.d1.json").read_text())["vocabulary"]["predicates"]["low_risk"]
+    for legend in (_legend("low_risk"), committed["description"]):
+        assert f'"{sentences[0]}"' in _quote_normal(legend)
+    assert vocabulary.OPEN_PREDICATES["low_risk"] == "OT8"
+
+
 F10_SPEC_REREAD = (
     'RS9 and RS6 keep the one reading "different", and the blocks f10-dm-same, f10-rel-same and f15-same no longer '
     'exist.',
