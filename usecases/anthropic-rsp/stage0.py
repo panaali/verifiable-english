@@ -58,8 +58,16 @@ HARMS = {  # harm constant -> (class or None, the text's words)
                                                        "global catastrophe\""),
     "harm_of_automated_rd": (None, "row T4: \"threats to international security and/or rapid disruptions to the "
                                    "global balance of power\" (no harm class word)"),
-    "existential_threats": ("catastrophic", "footnote 1: catastrophic risk \"such as existential threats or "
-                                            "fundamental destabilization of global systems\" (a stated instance)"),
+    # The class "catastrophic" has no legend field of its own on the risk wire (severity.classes is a list of names),
+    # so footnote 1, which defines it, is carried whole in the legend of its stated instance.
+    "existential_threats": ("catastrophic", "footnote 1 (the catastrophic class, verbatim): \"Catastrophic risk\" as "
+                                            "used in our RSP refers generally to risks of the most severe potential "
+                                            "harms from advanced AI, such as existential threats or fundamental "
+                                            "destabilization of global systems. We use this term in its plain meaning "
+                                            "rather than adopting any specific statutory definition. Where laws such "
+                                            "as California SB 53 define this or similar terms with specific "
+                                            "thresholds, we address those requirements in separate compliance "
+                                            "frameworks. (existential threats: a stated instance)"),
 }
 
 
