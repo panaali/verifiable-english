@@ -114,7 +114,9 @@ intersected with files naming `usecases`; tests/test_ownership_floor.py is one o
 
 No existing test had passed only because of a leaked module, so no test's own import needed a fix.
 
-Selected run: SELECTED-RUN-RESULT
+Selected run: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at d6fa3a1683 (clean tree; it ran
+locally on the VM) gave exit=0. The plan was `648/648 test units ... FULL: tests/conftest.py`, and the run `recorded 648 units for tree
+17347e22e7; 0 others left to the static graph until they run; 0 failed` (`/tmp/smleak-select.log`). Only this report changed after it.
 
 ## Seeded bugs (Python; tests/conftest.py is the only changed file with code)
 
@@ -187,7 +189,7 @@ signature is reserved.
 3. Tests can fail: PASS. Seeded bugs (i)-(iii) each fail a named test (`seeded-mutants.json`).
 4. Python/Lean/Rust agree: N.A., no product code in any language.
 5. R8 binding: N.A., no relayed field.
-6. Gate evidence matches final HEAD: PASS. The chain runs the gate on the committed final HEAD. The one-process and selected runs are on committed code (337158a644), and the only later commits are docs.
+6. Gate evidence matches final HEAD: PASS. The chain runs the gate on the committed final HEAD. The one-process run is on 337158a644 and the selected run on d6fa3a1683; code is unchanged since 337158a644, and the only later commits are docs.
 7. No unsigned item: PASS. There are no DELTA rows and no trust growth.
 8. Every user-visible change in DELTA: N.A. There is no user-visible output; this is test harness only.
 9. Test selection: PASS. The plan selects every unit for a conftest change, including `tests/test_sysmodules_leak_{a,b}.py` (`/tmp/smleak-plan.log`). The intermediate select_tests regression was found and fixed (Notes).
