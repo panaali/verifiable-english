@@ -503,7 +503,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the framework is reviewed at least once a year, at the time of {0} (5.1)",
+        "description": "the framework is reviewed at least once a year, at the time of {0} (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -514,7 +514,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the framework is reviewed more often than yearly, at the time of {0} (5.1)",
+        "description": "the framework is reviewed more often than yearly, at the time of {0} (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -525,7 +525,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "relevant information about the model of {0} is shared with appropriate government authorities (5.2)",
+        "description": "relevant information about the model of {0} is shared with appropriate government authorities (5.2: \"Where appropriate, and subject to adequate confidentiality and security measures and considerations around proprietary and sensitive information, this information may include: ● Model information : characteristics of the AI model relevant to the risk it may pose with its critical capabilities. ● Evaluation results : such as details about the evaluation design, the results, and any robustness tests. ● Mitigation plans : descriptions of our mitigation plans and how they are expected to reduce the risk.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
