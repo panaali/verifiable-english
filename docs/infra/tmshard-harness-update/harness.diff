@@ -1,0 +1,37 @@
+--- test-harness/tmshard/test-tmshard.zsh.bak-tmshard-harness-update	2026-11-11 15:58:56.160044985 +0000
++++ test-harness/tmshard/test-tmshard.zsh	2026-11-19 10:46:47.296120794 +0000
+@@ -6,6 +6,7 @@
+ M=/home/seyran/code/manage-agents; SFX=${TMS_SUFFIX-.new-tmshard}
+ export CCLOUD_POOL_FLAG=/nonexistent/CLAUDE_CLOUD_POOL  # 2026-10-28 dri-claudecloud: the real flag never leaks into these tests
+ export TM_CODEX_VMLOAD_FLAG=/nonexistent/TM_CODEX_VMLOAD  # vm-offload-1108: nor this one (its section sets its own)
++export TM_SHARD_RECORDS=/nonexistent  # tmshard-harness-update (tm-shard-actions-120): the live export's run records never leak into these tests
+ S=$(mktemp -d /tmp/tmshard-test.XXXXXX); [ -n "$KEEP" ] && print "scratch kept: $S" || trap 'rm -rf $S' EXIT
+ pass=0; fail=0; out=$S/out
+ ok(){ if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); print -- "  FAIL $1"; sed 's/^/    /' $out 2>/dev/null | tail -8; fi; }
+@@ -178,13 +179,13 @@
+ print '216 item' > $S/spmv; print 248 > $S/to_run; tsp --max-mutants 1000
+ ok "own heavy reading, 248 mutants at 4 parts ~4,148 s: under the hard limit, no waiver" 'grep -q "\-> 4 parts" $out && ! grep -q waived $out'
+ print 400 > $S/to_run; tsp --max-mutants 1000
+-ok "own heavy reading over the hard limit (400 x 216 at 4 parts ~6,500 s): NMAX waived only as far as needed, 5 parts ~5,120 s" 'grep -q "\-> 5 parts" $out && grep -q "reserve and NMAX waived to 5 parts" $out'
++ok "own heavy reading over the hard limit (400 x 216 at 4 parts ~6,500 s): NMAX waived only as far as needed, 6 parts ~4,418 s (tm-shard-actions-120: 5 parts ~5,120 s is over the 5,100-s part line)" 'grep -q "\-> 6 parts (~4418 s each" $out && grep -q "reserve and NMAX waived to 6 parts: ~5100 s per part at most" $out && [ $(grep -c "^dispatch" $S/drec) = 6 ]'
+ rm -f $S/spmv; print 253 > $S/to_run; rm -rf $S/gha-tests/*(N); gt sel1 dispatched 6 300 1800; gt sel2 dispatched 1 300 1800
+ tsp --max-mutants 1000; ok "pc-3's case: 6+1 runners busy, 253 first-sweep mutants ~6,160 s: cap - busy = 1 is no gain, one part over TM_SHARD_ACTIONS_HARD: not sent (L168; en-s6b ~6,140 s was cancelled)" '[ ! -e $S/drec ] && grep -q "cancels a job at 120 min: not sent (VM path)" $out'
+ print '216 item' > $S/spmv; tsp --max-mutants 1000; ok "ap-4a's case: 253 x 216 in one part (~14,800 s) with no room: not sent, exit 3 (VM path)" '[ ! -e $S/drec ] && grep -q "cancels a job at 120 min: not sent (VM path)" $out'; rm -f $S/spmv
+ rm -rf $S/gha-tests/*(N); gt sel1 dispatched 5 300 1800; print 500 > $S/to_run
+ tsp --max-mutants 1000; ok "busy 5 + 1 arrival: room 2, 500 first-sweep mutants ~6,100 s: reserve waived to cap - busy = 3 parts" 'grep -q "\-> 3 parts" $out && grep -q "waived to 3 parts" $out'
+-print 2000 > $S/to_run; rm -rf $S/gha-tests/*(N); tsp --max-mutants 1000; ok "the hard NMAX caps a waiver at cap 8 (2000 mutants)" 'grep -q "\-> 8 parts" $out'
++print 2000 > $S/to_run; rm -rf $S/gha-tests/*(N); tsp --max-mutants 1000; ok "the hard NMAX caps a waiver at cap 8 (2000 mutants): 8 parts ~5,800 s are over the 5,100-s part line, not sent on actions (tm-shard-actions-120)" 'grep -q "2000 mutants need ~5800 s per part in 8 parts" $out && grep -q "on actions, which cancels a job at 120 min: not sent" $out && ! grep -qs "\"pool\": \"actions\"" $J/*/job.json(N) /dev/null'
+ : > $S/TM-SPM-OFF; print 69 > $S/to_run; tsp --max-mutants 1000; ok "veto TM-SPM-OFF: no first-sweep floor (the constant, one part)" 'grep -q "fit one part on actions" $out'; rm -f $S/TM-SPM-OFF
+ rm -rf $S/gha-tests/*(N); export TM_SHARD_ACTIONS_FIRST_SPM=26 TM_SHARD_ACTIONS_HARD=999999 TM_SHARD_ACTIONS_CANCEL=999999; print 338 > $S/to_run
+ print "== state and merge"
+@@ -244,8 +245,8 @@
+ : > $S/TM_PART_DEADLINE
+ pd; ok "P2 flag on, Actions, a commit whose tool has --budget: each of the 3 parts gets --budget 6300 before --shard; the line says so" '[ $PRC = 0 ] && [ $(budgeted) = 3 ] && grep -q "3 parts .*each part --budget 6300 s" $out'
+ TM_PART_BUDGET=5000 pd; ok "P3 TM_PART_BUDGET sets the seconds" '[ $(budgeted "" 5000) = 3 ]'
+-pd "--budget 99"; ok "P4 the caller's own --budget: no second one" '[ $(grep -c -- "--budget" $S/drec) = 3 ] && ! grep -q -- "--budget 6300" $S/drec'
+-pd "--deadline 99"; ok "P5 the caller's own --deadline: no --budget" '[ $(grep -c ^dispatch $S/drec) = 3 ] && ! grep -q -- "--budget" $S/drec'
++pd "--budget 99"; ok "P4 the caller's own --budget: tm-shard's --budget 6300 beside it (tm-shard-actions-120; cloud-tm-job.sh takes the earliest)" '[ $PRC = 0 ] && [ $(budgeted "--budget 99 ") = 3 ]'
++pd "--deadline 99"; ok "P5 the caller's own --deadline: tm-shard's --budget 6300 beside it (tm-shard-actions-120; cloud-tm-job.sh takes the earliest)" '[ $PRC = 0 ] && [ $(budgeted "--deadline 99 ") = 3 ]'
+ pd "" $SHA; ok "P6 a commit whose trust_mutants.py has no --budget: none (the tool would refuse it)" '[ $(grep -c ^dispatch $S/drec) = 3 ] && ! grep -q -- --budget $S/drec'
+ POOL=claude pd; ok "P7 not Actions (claude): none" '[ $(grep -c ^dispatch $S/drec) -ge 2 ] && ! grep -q -- --budget $S/drec'
+ rm -f $S/TM_PART_DEADLINE

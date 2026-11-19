@@ -69,6 +69,10 @@ CITED_QUOTES_ON_MAIN = {
     ("safety-framework", "residual_assessed"): 1,
     ("safety-framework", "holistic"): 1,
     ("safety-framework", "within_levels"): 1,
+    # Added on main by fsf-repair-f8-disclosure-1119 (in ve-integration c0693260f7, merged here): its S:17 quote sits
+    # in "(5.2: ...)", which tests/test_fsf_repair_f8_disclosure_1119.py pins. The counter cuts it as a citation, so
+    # S:17 is not counted text of `shared`: a follow-up for that item, not this one (like review note C4 above).
+    ("safety-framework", "shared"): 1,
 }
 
 
