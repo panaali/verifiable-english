@@ -1,0 +1,52 @@
+# diff gate-train.sh (installed) -> seed s1-no-redirect
+26c26
+<     [ "$a[2]" = $out ] && a[2]=$out.old-$t0; fi
+---
+>     fi
+# zsh test-harness/gatetrain/test-gatetrain.zsh <seed copy>
+  FAIL same tag: tm-inventory reads the moved old record (<out>.old-<t0>), not the missing <out>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (base ca368f1cd) 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.uc4ndo/wt
+    tm-inventory apply zz /tmp/gatetrain-test.uc4ndo/wt /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json --base ca368f1cd891de122
+    msg dri gate-train zz: targeted inventory refused: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (/tmp/gatetrain-test.uc4ndo
+    tm-inventory restore /tmp/gatetrain-test.uc4ndo/wt
+  FAIL   the inventory call itself names <out>.old-<t0> as the record and <out> as the output
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (base ca368f1cd) 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.uc4ndo/wt
+    tm-inventory apply zz /tmp/gatetrain-test.uc4ndo/wt /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json --base ca368f1cd891de122
+    msg dri gate-train zz: targeted inventory refused: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (/tmp/gatetrain-test.uc4ndo
+    tm-inventory restore /tmp/gatetrain-test.uc4ndo/wt
+  FAIL   no stop: the barrier passes on the new record and the train runs
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (base ca368f1cd) 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.uc4ndo/wt
+    tm-inventory apply zz /tmp/gatetrain-test.uc4ndo/wt /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json --base ca368f1cd891de122
+    msg dri gate-train zz: targeted inventory refused: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (/tmp/gatetrain-test.uc4ndo
+    tm-inventory restore /tmp/gatetrain-test.uc4ndo/wt
+  FAIL   the new record is at <out>; the old one and both its sidecars sit together at <out>.old-<t0>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (base ca368f1cd) 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.uc4ndo/wt
+    tm-inventory apply zz /tmp/gatetrain-test.uc4ndo/wt /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json --base ca368f1cd891de122
+    msg dri gate-train zz: targeted inventory refused: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t1.json' (/tmp/gatetrain-test.uc4ndo
+    tm-inventory restore /tmp/gatetrain-test.uc4ndo/wt
+  FAIL same tag, no new record: tm-inventory still read the old record
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t2.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t2.json' (base ca368f1cd) 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.uc4ndo/wt
+    tm-inventory apply zz /tmp/gatetrain-test.uc4ndo/wt /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t2.json /tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t2.json --base ca368f1cd891de122
+    msg dri gate-train zz: targeted inventory refused: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gatetrain-test.uc4ndo/M/reviews/tm-targeted/zz-t2.json' (/tmp/gatetrain-test.uc4ndo
+    tm-inventory restore /tmp/gatetrain-test.uc4ndo/wt
+gatetrain: 4 passed, 5 failed

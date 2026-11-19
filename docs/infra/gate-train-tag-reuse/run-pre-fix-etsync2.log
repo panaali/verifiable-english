@@ -1,0 +1,30 @@
+  FAIL   the inventory call itself names <out>.old-<t0> as the record and <out> as the output
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:09Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t1.json.inventory.json 08:09Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:09Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.CfUoyV/wt
+    tm-inventory apply zz /tmp/gatetrain-test.CfUoyV/wt /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t1.json.old-1795075795 /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t1.json
+    read /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t1.json.old-1795075795 marker=old sidecar=1
+    tm-inventory restore /tmp/gatetrain-test.CfUoyV/wt
+    tm-barrier zz /tmp/gatetrain-test.CfUoyV/wt
+    chain-gate /tmp/gatetrain-test.CfUoyV/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.CfUoyV/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.CfUoyV/wt
+grep: /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json: No such file or directory
+  FAIL   the old record and its sidecars are back at <out>, nothing left at .old-<t0>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json - - --max-mutants 1000 08:09Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json.inventory.json 08:09Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:09Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.CfUoyV/wt
+    tm-inventory apply zz /tmp/gatetrain-test.CfUoyV/wt /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json.old-1795075795 /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json
+    read /tmp/gatetrain-test.CfUoyV/M/reviews/tm-targeted/zz-t2.json.old-1795075795 marker=old2 sidecar=1
+    tm-inventory restore /tmp/gatetrain-test.CfUoyV/wt
+    tm-barrier zz /tmp/gatetrain-test.CfUoyV/wt
+    chain-gate /tmp/gatetrain-test.CfUoyV/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.CfUoyV/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.CfUoyV/wt
+gatetrain: 7 passed, 2 failed
