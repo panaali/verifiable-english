@@ -167,7 +167,7 @@ The false alarms have six causes:
   - Output: one JSON report (`--json`) and one short text summary per document (`--summary-dir`). Exit 0 always.
 - **`tools/defs_carried_counter.py`.** It holds 11 statements copied byte for byte: `omit_norm`, `rule_blocks`, `seq_unit_legends`, `used_predicates`, `legend_raw`, `_omit_strip_comments`, `_omit_legend_segments` and `omit_carrier_texts` from `uc-audit.py.reads-1119` (sha256 `d618d963...`), the `OMIT_CODE` and `OMIT_CODE_SECTION` tables, and `ARG_LIMIT = 131000` from `omission-seq-read.py`. Each is hashed against `tests/data/defs_carried/counter_pin.json`. The module adds four functions of its own: three read shims and a narrowed `omit_code_parts` (see the limits).
 - **`tools/defs_carried_known.py` and `tests/data/defs_carried/known_cases.json`** (deliverable 2): see section 3.
-- **`tests/test_definitions_carried.py`**: 59 tests (42 at build; the review fixes removed 1 and added 18, section 9).
+- **`tests/test_definitions_carried.py`**: 60 tests (42 at build; the review fixes removed 1 and added 19, section 9).
   - The condition tests:
     - T1 (every known case is not carried at its tree, or a named miss);
     - the 61-finding check;
@@ -207,7 +207,7 @@ Resolution:
 - **D7's passage** is Articles 3-27 cut whole from the body, as the udhr-pilot page says ("The target is ... Articles 3-27").
 
 ## 4. Seeded bugs (MEASURED; `mutants.json` has file and test keys)
-Each bug was planted alone, its tests were run, and the file was restored with `git checkout`. All 26 made a test fail (19 at build, 7 for the review fixes). Python is the only product language changed; there is no Lean or Rust change.
+Each bug was planted alone, its tests were run, and the file was restored with `git checkout`. All 28 made a test fail (19 at build, 9 for the review fixes). Python is the only product language changed; there is no Lean or Rust change.
 
 | behaviour | bug planted (file) | failing test |
 |---|---|---|
@@ -234,6 +234,8 @@ Each bug was planted alone, its tests were run, and the file was restored with `
 | review F2: precedence sentence | precedence sentences dropped (tools/defs_carried.py) | test_a_precedence_sentence_puts_its_target_on_the_path |
 | review F3: repair commits pinned | `repair_cases` resolves the branch against main (tools/defs_carried_known.py) | test_a_rebuild_resolves_no_branch_and_no_main |
 | review F3: resolver not reached | `repair_commits` returns the branch's commits today (tools/defs_carried_known.py) | test_a_rebuild_resolves_no_branch_and_no_main |
+| review F3: trees, not commit labels | `repair_cases` reads the base commit label instead of its pinned tree (tools/defs_carried_known.py) | test_a_rebuild_resolves_no_branch_and_no_main (test_lineage_lint does not see this one: the label flows through a return value) |
+| review F3: GitTree reads a tree id | a tree id no longer accepted (tools/defs_carried.py) | test_git_tree_reads_a_commit_or_a_tree_by_id |
 | review F3: audit pin a full id | PIN shortened to `3d6b459df4` (tools/defs_carried_known.py) | test_the_builder_pins_every_commit_the_fixture_records |
 | report mode | exit 1 when a case is detected | test_report_mode_exits_0_with_findings |
 | counter byte pin | one character changed in the copied omit_norm (tools/defs_carried_counter.py) | test_the_counter_code_is_a_byte_copy_of_the_pinned_source |
@@ -266,14 +268,14 @@ Each bug was planted alone, its tests were run, and the file was restored with `
 
 ## 8. Notes
 - **Detector noise to reduce in stage 2**, measured in 1b: mentions and pointers ("the definition of X", "See section N for the definition of X") and amendment text. A rule that drops a marker hit whose quoted phrase follows "definition of" would remove S16, S22 and S23.
-- **Repair commits.** `tools/defs_carried_known.py` pins each repair's tip, base and merge as full commit ids in its `REPAIRS` table (the commits the fixture records; a test checks they are equal), and the audit pin as a full id. A rebuild reads only those commits, never a branch name or `main`, so it gives the same fixture after main moves, after a repair merges and after a branch is deleted (review F3; a rebuild on 2026-11-19 gave a byte-equal fixture while five repair tips and F9's merge had moved). `--resolve-branches` prints how the branches resolve today next to the pins, for a deliberate refresh; it changes nothing.
+- **Repair commits.** `tools/defs_carried_known.py` records each repair's tip, base and merge as full commit ids in its `REPAIRS` table, as labels the fixture records (a test checks they are equal), and reads each repair at the tip and base trees its `REPAIR_TREES` table pins (content-addressed, so `test_lineage_lint` passes, R18). A rebuild names no branch, commit or `main` to git, so it gives the same fixture after main moves, after a repair merges, after a branch is deleted and after the history is rewritten (review F3; a rebuild on 2026-11-19 gave a byte-equal fixture while five repair tips and F9's merge had moved). `--resolve-branches` prints how the branches resolve today next to the pins, for a deliberate refresh; it changes nothing. The audit pin `PIN` stays a commit (now a full id), as before: the pin's report names its commit.
 - **SIZE:** 1,843 product (tools/defs_carried.py 1,251, tools/defs_carried_known.py 524, the counter module's own 68 lines; plus 178 lines copied verbatim), 382 tests, 281 other hand-written lines (this REPORT). Generated or copied data, not counted: known_cases.json, counter_pin.json, the audit copies, the evidence files and history-dependent.json.
 - **COST: ESTIMATE**, since this session has no token meter. About 2.5-3.5M CW: checker, adapters and tests 1.8-2.4M; known-case conversion 0.4-0.6M; measurement, hand check and report 0.3-0.5M. The design's estimate was 1.5-3M plus 0.6-1.0M.
 
 ## Self-review against BUILDER-CHECKLIST
 1. Typed and contained Lean answers: N.A. (no Lean answer relayed).
 2. Every deliverable built, no rule broken: PASS. Deliverables 1-4 are present; nothing under manage-agents was changed; no legend or rule was edited. Tests: test_t1_every_known_case_is_reported_not_carried_or_a_named_miss, test_report_mode_exits_0_with_findings.
-3. Tests can fail: PASS. 26 seeded bugs (section 4, mutants.json).
+3. Tests can fail: PASS. 28 seeded bugs (section 4, mutants.json).
 4. Python, Lean and Rust agree: N.A. (Python only).
 5. R8 binding, undeclared names refused: N.A. (no relay). Known cases bind to declared rules and terms, with misses named: test_t1_every_known_case_is_reported_not_carried_or_a_named_miss.
 6. Gate evidence matches the final HEAD: PASS. The full gate runs in the chain on the final HEAD, and the evidence numbers were saved from this branch.
@@ -285,7 +287,7 @@ Each bug was planted alone, its tests were run, and the file was restored with `
 12. No CPU or memory regression: PASS. A new tool only; 8.1 s for all documents. The test file runs in about 30 s.
 13. Removed or renamed tests: one test of this branch (never on main) was removed for review F1: `test_every_use_case_is_checked_or_named_out_of_scope` compared the live `usecases/` with the tool's lists, a merge blocker for any later use case. It is replaced by `test_a_new_use_case_is_reported_never_failed` and `test_the_scope_lists_are_disjoint_and_complete_as_named` (section 9).
 14. Pre-review self-check, both directions: PASS. Misses and false alarms are both measured, and new true findings are listed (sections 1a and 1b).
-15. The four FIX classes: PASS. Hermetic tests: writes only under tmp_path, waits use HANG_TIMEOUT, git reads are by blob id only (test_lineage_lint passes).
+15. The four FIX classes: PASS. Hermetic tests: writes only under tmp_path, waits use HANG_TIMEOUT, git reads are by blob or tree id only, plus one throwaway repository under tmp_path (test_lineage_lint passes).
 
 ## 9. Review fixes (review of `02cd654`: F1 B, F2 B, F3 A)
 Each finding is fixed as a class. Each PROBE failed before the fix and passes after it. Notes F4-F11 were not filed and are not changed here.
@@ -294,8 +296,9 @@ Each finding is fixed as a class. Each PROBE failed before the fix and passes af
 |---|---|---|---|
 | F1 (B): a test compared the live `usecases/` with `DOCS` + `OUT_OF_SCOPE`, so any later use case failed the VE gate | tests whose outcome depends on the moving live tree (a merge blocker, which stage 1 forbids) | the tool lists unscoped use cases in the report (`unscoped_use_cases`) and prints them, exit 0; trees list their subdirectories (`subdirs`, all three tree kinds); the selection test, which also read the live tree, now reads the pin's blobs | test_a_new_use_case_is_reported_never_failed, test_the_scope_lists_are_disjoint_and_complete_as_named, test_no_test_here_reads_the_live_use_case_tree (AST guard: no `FsTree(ROOT)`, no `ROOT / "usecases"`, no `select_documents` without a tree), test_selection_shared_input_selects_every_reader |
 | F2 (B): `rules? (\d+)` read only the first rule of "exception to rules 8, 9", so R10 lost R9's terms | a hand-copied rule-header regex instead of VE's grammar | rules.ve references are read with VE's own `ve.surface.softnorms.parse_header_options` (one owner), plus precedence sentences as `norm_english` reads them; a header the grammar does not read makes the rule UNPARSED, never short | test_a_multi_rule_header_puts_every_named_rule_on_the_path[asimov-laws, asimov-extended], test_rule_header_refs_read_every_header_ve_renders (round trip through VE's `render_header_options`, 1-4 rules), test_a_header_the_grammar_does_not_read_is_unparsed_never_short (6 forms), test_a_precedence_sentence_puts_its_target_on_the_path |
-| F3 (A): the REPORT said a rebuild reads the recorded commits, but the builder resolved branch names against the moving `main` | provenance that depends on moving refs | `REPAIRS` pins each repair's tip, base and merge as full commit ids (equal to the fixture's), and `PIN` is a full id; the builder never names a branch or `main` to git; `--resolve-branches` prints today's resolution for a deliberate refresh | test_the_builder_pins_every_commit_the_fixture_records, test_a_rebuild_resolves_no_branch_and_no_main |
+| F3 (A): the REPORT said a rebuild reads the recorded commits, but the builder resolved branch names against the moving `main` | provenance that depends on moving refs | `REPAIRS` records each repair's tip, base and merge as full commit ids (labels, equal to the fixture's), `REPAIR_TREES` pins the tip and base trees the builder reads (content-addressed, R18), and `PIN` is a full id; the builder never names a branch, a repair commit or `main` to git; `GitTree` reads a tree id as it reads a commit; `--resolve-branches` prints today's resolution for a deliberate refresh | test_the_builder_pins_every_commit_the_fixture_records, test_a_rebuild_resolves_no_branch_and_no_main (also an AST check that no commit label is read), test_git_tree_reads_a_commit_or_a_tree_by_id |
 
 - **F2's effect on the numbers: none.** R10's dependency list grows by 5 terms in asimov-laws (7 to 12) and 6 in asimov-extended (7 to 13): `harms_humanity`, `has_lawful_option`, `harm`, `robot`, `available` (and `prevent_required` in asimov-extended). No pair count, verdict, known-case result or lexical-recall row changes: the reports at main and `--known-trees` are equal apart from timings and R10's `terms`/`shown`, and `evidence/lexical-recall.json` and `evidence/t1-known-trees.json` still match a fresh run.
 - **F3's rebuild:** `python3 tools/defs_carried_known.py --audit tests/data/defs_carried/audit --repo . --out /tmp/k.json` gives a fixture byte-equal to the committed one (`cmp`), not just equal `trees`. `--resolve-branches` shows today's branches differ from the pins for F1, F2, F3, F6, F8 (tips) and F9 (now merged). The probe itself is not a pytest test, because the builder reads the FSF/RSP/PF sources from `~/<path>` outside the repository (note F10), which a hermetic test may not do. The two tests above pin the same property without git or home-directory reads.
+- **Why trees, not commits.** A first fix pinned the repair commits; the selected run then failed `tests/test_lineage_lint.py::test_history_revisions_are_content_addressed` (13 commit ids reach git; R18 asks for content-addressed pins). The builder now reads the pinned trees, and the commits are recorded labels only.
 - **F1's probe** (a `usecases/zz-probe` directory, then the test file) passes; the class guard keeps any later test here off the live tree.

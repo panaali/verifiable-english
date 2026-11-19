@@ -226,7 +226,7 @@
    ],
    "rc": 1,
    "bug": "F3 repair commits pinned",
-   "run": "1 failed, 58 deselected"
+   "run": "1 failed, 59 deselected"
   },
   {
    "id": "review-f3-resolver-not-reached",
@@ -236,8 +236,8 @@
     "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main"
    ],
    "rc": 1,
-   "bug": "F3 repair commits pinned (resolver)",
-   "run": "1 failed, 58 deselected"
+   "bug": "F3 resolver not reached",
+   "run": "1 failed, 59 deselected"
   },
   {
    "id": "review-f3-pin-full-id",
@@ -248,7 +248,29 @@
    ],
    "rc": 1,
    "bug": "F3 audit pin a full id",
-   "run": "1 failed, 58 deselected"
+   "run": "1 failed, 59 deselected"
+  },
+  {
+   "id": "review-f3-tree-not-commit-label",
+   "file": "tools/defs_carried_known.py",
+   "test": "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main"
+   ],
+   "rc": 1,
+   "bug": "F3 a commit label read instead of its tree",
+   "run": "1 failed, 1 passed, 71 deselected"
+  },
+  {
+   "id": "review-f3-gittree-reads-tree",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_git_tree_reads_a_commit_or_a_tree_by_id",
+   "failed": [
+    "tests/test_definitions_carried.py::test_git_tree_reads_a_commit_or_a_tree_by_id"
+   ],
+   "rc": 1,
+   "bug": "F3 GitTree reads a tree id",
+   "run": "1 failed, 59 deselected"
   }
  ]
 }
