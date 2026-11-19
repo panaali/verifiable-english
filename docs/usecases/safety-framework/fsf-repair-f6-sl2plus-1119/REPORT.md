@@ -9,8 +9,8 @@ commits change only `docs/` and do not touch the rendered text. The item merges 
 d8758ce968 as its base. The train names the exact merge commit. A merge after the R16 diagnostic voids the diagnostic
 for the touched answers, since the C2/C3 pins are per commit. The counted read re-pins at the merge commit.
 
-SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 76 tests, 41 other hand-written lines (this
-REPORT, DELTA.md and c5-dryrun.txt are docs and evidence). LIGHT lane: `light-lane.py check` printed "LIGHT 102 changed lines
+SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 76 tests, 149 other hand-written lines
+(REPORT.md 109, DELTA.md 8, c5-dryrun.txt 32: docs and evidence). LIGHT lane: `light-lane.py check` printed "LIGHT 102 changed lines
 outside generated files <= 150 (7 files), no trusted-core file, against d8758ce9". So no trust_mutants sweep was run.
 
 ## The source passages (pinned FSF 3.1 text, sha256 18e3375b…3946, read with python3 -I over the pinned file)
