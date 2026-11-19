@@ -2,6 +2,9 @@
 - `docs/infra/arch-20261105-2/measure.py` — Measure what raising `actions_version` rewrote in recorded test files (arch-20261105-2, the "why now" figures).
 - `docs/infra/arch-20261105-2/rerun_timeouts.py` — Re-record the pilot documents a recording lost to the 600 s timeout under machine load (A/B evidence aid).
 - `docs/infra/arch-20261109-2/layer_list.py` — Print every Lean and Python module of this checkout with the layer a tools/layer_policy.py gives it, one per line.
+- `docs/infra/challenge-final-delivery/dry_install.py` — Dry install of REPORT.md section 5 (reviews/challenge-final-delivery-dri-note-20261117.md item 3; review F2).
+- `docs/infra/challenge-final-delivery/run_seeds.py` — Seeded bugs for challenge-final-delivery fix round 1.
+- `docs/infra/digest-main-line/seeded-run.py` — digest-main-line seeded bugs: each mutant is a /tmp copy of the staged waiter; the staged file is never edited.
 - `docs/infra/eff-20261020-1/builder_shape.py` — Plan a small non-Lean change at the base of each replayed main commit whose drift holds a Lean change.
 - `docs/infra/eff-20261020-1/replay.py` — Replay `select_tests.py --commit <c> --json` from one checkout over main's last N first-parent commits.
 - `docs/infra/eff-20261021-1/replay.py` — Replay the eff-20261021-1 corpus (review F2): each hand mutant's selection, generation and verdict, measured.
@@ -16,7 +19,22 @@
 - `docs/infra/eff-20261030-1/step5_table.py` — Step 5 table of eff-20261030-1: each chunkable file whole vs in chunks on the Mac, from measure5.sh's logs.
 - `docs/infra/eff-20261104-1/evidence/oracle.py` — eff-20261104-1 F2: `lean_code` against Lean's own parser over every Lean source of this tree, writing oracle-result.json.
 - `docs/infra/eff-20261104-1/evidence/replay.py` — eff-20261104-1's replay: what the new `previous` decides on recorded --rescore pairs, and whether each verdict it carries is the one the recorded full run at t…
+- `docs/infra/oseq-opus-off-main/seed_run.py` — Seeded bugs for oseq-opus-off-main: each mutates a /tmp copy of pick-claude-account.sh.new-oseqmain and runs one test of tools-local/test_pick_oseq_opus_main.p…
+- `docs/infra/pick-main-slot-mark/seed_run.py` — Seeded bugs for pick-main-slot-mark: each mutates a /tmp copy of pick-claude-account.sh.new-pickw and runs one test of tools-local/test_pick_main_rank.py.new-p…
+- `docs/infra/released-main-1117/seeded-run.py` — (no module docstring)
+- `docs/infra/released-main-1117/test_pick_released_main.py` — released-main-1117 (reviews/dri-decisions-20261117-released-main.md item 2; orchestrator BATCH 20261117T032312Z item 2): a released row (BACKLOG links.released…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
+- `docs/infra/tm-actions-deadline/seed_run.py` — Plant one seeded bug per behaviour in a temporary COPY of cloud-tm-job.sh (argv[1], default the installed one) and run the test file against it.
+- `docs/infra/tm-cache-asset-pick/seed_run.py` — Seeded bugs of tm-cache-asset-pick: each is planted in a TEMPORARY copy of the staged lean-cache-publish.sh.new-tmcache (the staged file is never edited), tool…
+- `docs/infra/tm-drain-vm1-idle/part0_measure.py` — Part 0 of tm-drain-vm1-idle: timeouts vs verdicts of the trust-mutant nightly, per host and per hour, from its records.
+- `docs/infra/tm-drain-vm1-idle/seed_run.py` — Seeded bugs for tm-drain-vm1-idle: each seed is one exact find/replace in a /tmp copy of the staged manage-agents/tm-nightly.sh.new-tmidle, run with TMN_SH=<co…
+- `docs/infra/tm-drain-vm1-idle/trial/noremote.py` — (no module docstring)
 - `docs/infra/tm-elab-unknown/reclass.py` — Reclassify the UNKNOWN ids of the df-5 and et-4b records under tools/trust_mutants.py's `invalid` (this tree).
 - `docs/infra/tm-inventory-flag/measure.py` — measure.py: for each targeted trust-mutant inventory, the prior record's kills at a check line changed since it.
+- `docs/infra/tm-shard-actions-120/replay_run.py` — Replay the real 0600Z Actions dispatches (p3: 60 mutants at 06:12Z; p4: 30 at 08:20Z) against the real export records (read-only), through tools-local/test_tm_…
+- `docs/infra/tm-shard-actions-120/seed_run.py` — Plant one seeded bug per behaviour in a temporary COPY of tm-shard.sh (argv[1], default the staged .new-tsa) and run tools-local/test_tm_shard_actions_120.py -…
+- `docs/infra/vm-stop-recovery-pacing/f1_differential.py` — Review F1 (fix round): the reviewed script vs the fixed one, dry runs on the 1108 list, one row per load trigger.
+- `docs/infra/vm-stop-recovery-pacing/pin_files.py` — Pin the three manage-agents files of row vm-stop-recovery-pacing: writes new-files.diff (full text, as additions) and md5.txt next to this file.
+- `docs/infra/vm-stop-recovery-pacing/seed_run.py` — Seeded bugs for tools-local/vm-stop-recover.sh (row vm-stop-recovery-pacing).
+- `docs/infra/vm1-gate-weight/measure.py` — vm1-gate-weight MEASURE (read only): VM chain gates over the 72 h before the run, from stage-events.jsonl.

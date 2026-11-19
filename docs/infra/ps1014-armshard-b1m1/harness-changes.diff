@@ -1,0 +1,45 @@
+--- /home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh.bak-20261119-b1m1	2026-11-03 13:18:11.818713262 +0000
++++ /home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh	2026-11-19 09:00:36.551729376 +0000
+@@ -40,9 +40,11 @@
+ senv /tmp/ps1014sh/s5; touch $M/ARM_SHARD_SHADOW; echo "2026-11-01T03:19Z old" > $M/arm-compare/due; sh pass; mt
+ ok "rc 0, published by the Mac leg, one shadow run" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=shadow" $CALLS'
+ 
++# 2026-11-19 ps1014-armshard-b1m1: since 2026-11-08 (DRI rule lp1201 Q1, reviews/dri-decisions-20261108-lp1201.md item 1) the
++# blocking leg's shard deadline is 105 min with ve-mac-1 online (B1) and 180 min with it unreachable (B5b), one log line each.
+ echo "B1 ARM_SHARD_BLOCKING on (a sharded comparison 1 h old), sharded PASS -> published on the sharded leg, NO Mac leg"
+ senv /tmp/ps1014sh/b1; touch $M/ARM_SHARD_BLOCKING $M/ARM_SHARD_SHADOW; recent; sh pass; mt
+-ok "rc 0, published = the candidate, one blocking sharded run, no Mac job, no VM gate" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && [ "$MACC" = 0 ] && [ ${#VMC} = 0 ] && grep -q "^ARMSH start cand-item ${HEADI[1,8]} run=1 mode=pass shard_mode=blocking mac= deadline=180" $CALLS'
++ok "rc 0, published = the candidate, one blocking sharded run, no Mac job, no VM gate" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && [ "$MACC" = 0 ] && [ ${#VMC} = 0 ] && grep -q "^ARMSH start cand-item ${HEADI[1,8]} run=1 mode=pass shard_mode=blocking mac= deadline=105" $CALLS && grep -q "^sharded aarch64 leg of item: shard deadline 105 min (ve-mac-1 online: DRI rule lp1201 Q1)" $M/merge-train.log'
+ ok "own iso scope integ-armsh-item; logged with the ruling" 'grep -q "^iso integ-armsh-item 2G -- zsh $M/gha-arm-shard.sh cand-item $HEADI" $CALLS && grep -q "aarch64 leg of item: the sharded Actions leg (gha-arm-shard.sh, blocking; ARM_SHARD_BLOCKING, DRI ruling 2026-10-29 01:54Z, parallel-actions item 3) instead of the Mac leg" $M/merge-train.log'
+ ok "line 1: arm PASS, sharded leg named, no Mac unavailable" '[[ $L1 == *"; arm: PASS; x86: not run"* || $L1 == *"; arm: PASS"* ]] && [[ $L1 == *"arm = aarch64 gate.py in shards merged on Actions ubuntu-24.04-arm (sharded leg, ARM_SHARD_BLOCKING; Mac leg not run)"* ]] && [[ $L1 != *"Mac leg unavailable"* ]]'
+ ok "record: commit_sha = candidate, where=actions-arm, leg_reason sharded" 'python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert d[\"commit_sha\"]==sys.argv[2] and d[\"where\"]==\"actions-arm\" and d[\"leg_reason\"]==\"sharded leg (ARM_SHARD_BLOCKING)\"" $M/cand-runs/$HEADI.arm.json $HEADI && grep -qE "^PASS cand-item-arm \(gate.py of ${HEADI[1,8]}, 3 shards merged, on Actions ubuntu-24.04-arm" $IF'
+@@ -65,7 +67,7 @@
+ ok "the next candidate within the week: sharded blocking again" '(cd $WT && echo b5 > b5.txt && g add -A && g commit -qm b5); mt; [ $RC = 0 ] && [ "$MACC" = 0 ] && grep -q "shard_mode=blocking" $CALLS'
+ echo "B5b blocking, the week's Mac comparison due with ve-mac-1 unreachable -> no pick, no marker (2026-11-02 shweekly-macoff): the sharded leg blocks; the pick waits for the Mac"
+ senv /tmp/ps1014sh/b5b; touch $M/ARM_SHARD_BLOCKING $SCEN/unreach; recent 700000; sh pass; mt
+-ok "rc 0, published on the blocking sharded leg, no validate run, no Mac job, no marker, the skip logged" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=blocking" $CALLS && ! grep -q "shard_mode=validate" $CALLS && [ "$MACC" = 0 ] && [ ! -f $M/arm-compare/sharded-weekly ] && ! grep -q "weekly Mac comparison (last" $M/merge-train.log && grep -q "aarch64 leg of item: the week.s Mac comparison is due but ve-mac-1 is unreachable: not picked (no marker)" $M/merge-train.log'
++ok "rc 0, published on the blocking sharded leg, no validate run, no Mac job, no marker, the skip logged" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=blocking" $CALLS && ! grep -q "shard_mode=validate" $CALLS && [ "$MACC" = 0 ] && [ ! -f $M/arm-compare/sharded-weekly ] && ! grep -q "weekly Mac comparison (last" $M/merge-train.log && grep -q "aarch64 leg of item: the week.s Mac comparison is due but ve-mac-1 is unreachable: not picked (no marker)" $M/merge-train.log && grep -q "^ARMSH start cand-item ${HEADI[1,8]} .*shard_mode=blocking mac= deadline=180" $CALLS && grep -q "^sharded aarch64 leg of item: shard deadline 180 min (ve-mac-1 unreachable: DRI rule lp1201 Q1)" $M/merge-train.log'
+ ok "ve-mac-1 back: the next candidate is the week's Mac comparison (validate run, marker)" 'rm -f $SCEN/unreach; (cd $WT && echo b5b > b5b.txt && g add -A && g commit -qm b5b); mt; [ $RC = 0 ] && [ "$MACC" -ge 1 ] && grep -q "shard_mode=validate" $CALLS && [ -f $M/arm-compare/sharded-weekly ] && grep -q "aarch64 leg of item: weekly Mac comparison (last sharded comparison" $M/merge-train.log'
+ echo "B6 blocking, ACTIONS_SUSPENDED present -> not tried: the Mac leg as before"
+ senv /tmp/ps1014sh/b6; touch $M/ARM_SHARD_BLOCKING $M/ACTIONS_SUSPENDED; recent; sh pass; mt
+@@ -88,10 +90,17 @@
+ mtw(){ local t=$(date +%s); mt; WALL=$(( $(date +%s) - t )); PROBE=$(grep -c '^MACSLOT' $CALLS); }
+ norm(){ sed -E 's/[0-9a-f]{40}/SHA/g; s/[0-9a-f]{8}/SH8/g; s/[0-9]{2}:[0-9]{2}Z/HH:MMZ/g; s/[0-9]+ min/N min/g; s/-t[0-9]+/-tN/g; s|/tmp/ps1014mf/[a-z0-9]+|ROOT|g' "$@"; }
+ echo "M1 ARM_MAC_FIRST absent, ve-mac-1 free -> identical to merge-train.sh before this change (MF_BASE, default its .bak-20261102-arm-leg-mac-first; same log and calls, normalized)"
+-mfenv /tmp/ps1014mf/m1a; rm -f $M/ARM_MAC_FIRST; cp ${MF_BASE:-$R0/merge-train.sh.bak-20261102-arm-leg-mac-first} $M/merge-train.sh; mtw; norm $M/merge-train.log > /tmp/ps1014mf/m1a.log; norm $CALLS > /tmp/ps1014mf/m1a.calls
+-mfenv /tmp/ps1014mf/m1b; rm -f $M/ARM_MAC_FIRST; mtw; norm $M/merge-train.log > /tmp/ps1014mf/m1b.log; norm $CALLS > /tmp/ps1014mf/m1b.calls
++# 2026-11-19 ps1014-armshard-b1m1: the baseline predates later train changes that act whatever ARM_MAC_FIRST says. M1 maps the
++# baseline through them (m1later: log lines they add, left out of both sides; m1lp: lp1201 Q1 on the calls) and nothing else.
++# A new flag-independent train line makes M1 FAIL with /tmp/ps1014mf/m1.diff: add it here with its ruling, or file the train bug.
++m1later='^(fidquote step of item: |sharded aarch64 leg of item: shard deadline |trust baseline after item)'  # 2026-11-13 fidquote; 2026-11-08 lp1201 Q1 (log); 2026-11-12 tbr trust-baseline-record (trustrec)
++m1lp(){ sed -E 's/( shard_mode=blocking mac= deadline=)180$/\1105/'; }  # lp1201 Q1: ve-mac-1 online -> 105 min (the baseline: 180)
++m1probe(){ sed -E '0,/^ssh -o BatchMode=yes -o ConnectTimeout=20 ve-mac-1 true$/{//d}'; }  # lp1201 Q1: shleg's one macup probe
++mfenv /tmp/ps1014mf/m1a; rm -f $M/ARM_MAC_FIRST; cp ${MF_BASE:-$R0/merge-train.sh.bak-20261102-arm-leg-mac-first} $M/merge-train.sh; mtw; norm $M/merge-train.log | grep -vE "$m1later" > /tmp/ps1014mf/m1a.log; norm $CALLS | m1lp > /tmp/ps1014mf/m1a.calls
++mfenv /tmp/ps1014mf/m1b; rm -f $M/ARM_MAC_FIRST; mtw; norm $M/merge-train.log | grep -vE "$m1later" > /tmp/ps1014mf/m1b.log; norm $CALLS | m1probe > /tmp/ps1014mf/m1b.calls
++{ diff /tmp/ps1014mf/m1a.log /tmp/ps1014mf/m1b.log; diff /tmp/ps1014mf/m1a.calls /tmp/ps1014mf/m1b.calls; } > /tmp/ps1014mf/m1.diff; [ -s /tmp/ps1014mf/m1.diff ] && sed -n 1,12p /tmp/ps1014mf/m1.diff | sed 's/^/    m1.diff: /'
+ ok "flag off: sharded blocking leg, no Mac job, no slot probe, no ARM_MAC_FIRST line" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && [ "$MACC" = 0 ] && [ $PROBE = 0 ] && grep -q "shard_mode=blocking" $CALLS && ! grep -q ARM_MAC_FIRST $M/merge-train.log'
+-ok "flag off: merge-train.log and the stub calls equal the installed script's" 'diff -q /tmp/ps1014mf/m1a.log /tmp/ps1014mf/m1b.log > /dev/null && diff -q /tmp/ps1014mf/m1a.calls /tmp/ps1014mf/m1b.calls > /dev/null'
++ok "flag off: merge-train.log and the stub calls equal the installed script's (no macslot probe)" '[ $PROBE = 0 ] && diff -q /tmp/ps1014mf/m1a.log /tmp/ps1014mf/m1b.log > /dev/null && diff -q /tmp/ps1014mf/m1a.calls /tmp/ps1014mf/m1b.calls > /dev/null'
+ echo "M2 ARM_MAC_FIRST on, ve-mac-1 free (2 slots, no candidate waiting) -> the Mac leg decides; no sharded run, no shadow"
+ mfenv /tmp/ps1014mf/m2; mtw
+ ok "rc 0, published by the Mac leg, one probe, no sharded run (blocking or shadow), no VM gate" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ "$MACC" = 1 ] && [ $PROBE = 1 ] && [ ${#SH} = 0 ] && [ ${#VMC} = 0 ]'

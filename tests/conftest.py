@@ -1,5 +1,6 @@
 """Shared test setup for serial and xdist runs."""
 
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import json
@@ -390,3 +391,74 @@ def interrupted_gate_reaches_its_injected_build(request, monkeypatch):
     """
     if request.node.originalname == "test_interrupted_gate_cannot_record_pass":
         monkeypatch.setattr(request.module.gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
+
+
+# --- A use case's harness modules stay with the test module that imported them ---------------------------
+# The use cases import their siblings by bare names that several of them share (`translation`, `run`,
+# `reference`, `check`, ...). A test module that puts a use case's directory on `sys.path` and imports them
+# at module level does so at collection, before any test runs, so a fixture alone never sees it. Each test
+# module's collection, and later its tests, run inside `_harness_scope`: the harness modules and `sys.path`
+# entries it adds are recorded for it and taken out on exit, and put back while its own tests run (the
+# harnesses import some siblings lazily, at call time). A harness module is a bare-named module, not a
+# package, whose file lies outside the shared directories below and outside the interpreter's prefixes:
+# packages (`ve`, `tools`, `tests`), the stdlib and site-packages are never taken out.
+# (Only directory words tools/source_graph.py counts as generic are strings here: it reads this file's
+# constants as paths it reads, and this file is in every test's closure.)
+_SHARED_DIRS = frozenset({ROOT, ROOT / "tests", ROOT / "tools", ROOT / "lean"})
+_SYSTEM_DIRS = tuple({Path(prefix).resolve() for prefix in (sys.prefix, sys.base_prefix, sys.exec_prefix)})
+_HARNESS_RECORDS = {}  # test module path -> (its harness sys.path entries, its harness modules by name)
+
+
+def _harness_dir(directory) -> bool:
+    directory = Path(directory).resolve()  # Path("") is the working directory, as for `sys.path`
+    return not (directory in _SHARED_DIRS or any(directory.is_relative_to(system) for system in _SYSTEM_DIRS))
+
+
+def _harness_module(name, module) -> bool:
+    file = getattr(module, "__file__", None)
+    return ("." not in name and isinstance(file, str) and not hasattr(module, "__path__")
+            and _harness_dir(Path(file).parent))
+
+
+@contextmanager
+def _harness_scope(key):
+    """While open: the harness entries recorded for `key` are in place. On exit, the harness entries added
+    meanwhile are recorded for `key`, and `sys.path` and the harness names are as they were before."""
+    paths, modules = _HARNESS_RECORDS.setdefault(key, ([], {}))
+    path_before, modules_before = list(sys.path), dict(sys.modules)
+    sys.path[:0] = [entry for entry in paths if entry not in sys.path]
+    sys.modules.update(modules)
+    try:
+        yield
+    finally:
+        added = [entry for entry in sys.path if entry not in path_before and _harness_dir(entry)]
+        paths[:] = dict.fromkeys([*added, *paths])
+        sys.path[:] = [entry for entry in sys.path if entry not in added]
+        changed = {name for name, module in sys.modules.items() if modules_before.get(name) is not module}
+        for name in changed | (modules_before.keys() - sys.modules.keys()):
+            now, before = sys.modules.get(name), modules_before.get(name)
+            if _harness_module(name, now):
+                modules[name] = now
+            elif not _harness_module(name, before):
+                continue
+            if name in modules_before:
+                sys.modules[name] = before
+            else:
+                sys.modules.pop(name, None)
+
+
+@pytest.hookimpl(wrapper=True)
+def pytest_make_collect_report(collector):
+    """A test module is imported when it is collected: that runs inside its harness scope."""
+    module = collector.getparent(pytest.Module)
+    if module is None:
+        return (yield)
+    with _harness_scope(module.path):
+        return (yield)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def harness_modules_stay_with_their_test_module(request):
+    """A test module's own harness modules and `sys.path` entries are in place while its tests run, and only then."""
+    with _harness_scope(request.node.path):
+        yield
