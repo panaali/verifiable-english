@@ -1,0 +1,2 @@
+zsh -n tm-remote-parallel.sh.new-tmparw: OK
+py_compile tools-local/test_tmpar_lock_align.py.new-tmparw: OK

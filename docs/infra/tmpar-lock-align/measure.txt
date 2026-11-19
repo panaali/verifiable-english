@@ -1,0 +1,32 @@
+# MEASURED 2026-11-19T11:06:19Z on multi-agent-lab: tmpar-lock-align
+$ ls -d cloud-jobs/tmpar-refused
+ls: cannot access 'tmpar-refused': No such file or directory
+$ find cloud-jobs/tmpar-refused -name merge.out | xargs grep -l 'disagree on inputs' | wc -l
+0
+$ grep -c 'slot=tmpar' cloud-jobs/cloud-overflow.log
+79
+$ grep 'slot=tmpar' cloud-jobs/cloud-overflow.log | grep -c REFUSED
+2
+$ grep 'slot=tmpar' cloud-jobs/cloud-overflow.log | grep -c 'disagree on inputs'
+0
+$ grep -c 'merged [0-9]* parts' (tmpar lines)
+3
+$ wc -l cloud-jobs/tmpar.jsonl; grep -c 'merge refused' cloud-jobs/tmpar.jsonl
+6
+2
+$ tail of tmpar-guard.log
+2026-11-10T15:25:58Z ve-ci-3.tmpar-1110T141116-4015583 merge refused (exit 2)
+2026-11-10T20:28:22Z ve-norm-defaults-cfr-1b.tmpar-1110T190447-2810507 merge refused (exit 2)
+# reset 2026-11-10T21:17:55Z after fix tmpar-merge-where (dri-buildfix-tmpar2): both counts were cloud2-run.sh's "where" stamp on the parts (trust_mutants --merge right to refuse); tm-remote-parallel.sh/tm-shard.sh now merge each part without only that stamp; challenge debates/tmpar-where-20261110/ (0 A, B1 fixed)
+2026-11-11T02:45:13Z ve-norm-defaults-cfr-1b.tmpar-1111T022258-3285721 part-hours 1.99x the serial estimate (> 1.5)
+2026-11-11T06:05:27Z ve-et-5b.tmpar-1111T050836-641946 part-hours 1.98x the serial estimate (> 1.5)
+$ ls ../TM_REMOTE_PARALLEL*
+TM_REMOTE_PARALLEL.off-20261111T0605Z
+$ grep 'slot=tmpar' cloud-overflow.log | tail -1 | cut -c1-25
+2026-11-11T06:05:28Z ve-e
+ve-qt-a4b.tmpar-1109T222329-2328174 parts failed: 1 3 4 ['ve-cloud-2', 'fallback', 've-cloud-2', 'fallback', 've-cloud-3', 'fallback', 've-cloud-3']
+ve-ci-3.tmpar-1110T141116-4015583 merge refused ['ve-cloud-2', 've-cloud-2']
+ve-norm-defaults-cfr-1b.tmpar-1110T19044 merge refused ['ve-cloud-2', 've-cloud-2']
+ve-et-5b.tmpar-1110T215303-559549 merged ['ve-cloud-3', 've-cloud-2']
+ve-norm-defaults-cfr-1b.tmpar-1111T02225 merged ['ve-cloud-3', 've-cloud-3']
+ve-et-5b.tmpar-1111T050836-641946 merged ['ve-cloud-3', 've-cloud-3', 've-cloud-3', 've-cloud-2']
