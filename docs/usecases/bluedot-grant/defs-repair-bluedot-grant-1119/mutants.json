@@ -1,0 +1,78 @@
+{
+ "item": "defs-repair-bluedot-grant-1119",
+ "method": "each mutant applied to the file, usecases/bluedot-grant/build_document.py run to regenerate document.ve.md and causal.ve.md, the tests run, then git checkout restores the files",
+ "trust_mutants": "N.A.: tools/trust_mutants.py --plan on this branch gives {definitions: 0, mutants: 0}; no Lean changes",
+ "mutants": [
+  {
+   "id": "m1",
+   "language": "Python",
+   "file": "usecases/bluedot-grant/semantic_readings.py",
+   "behaviour": "row 1: the vex legend carries note 4 in full",
+   "change": "DEFINES_VEX drops 'and approximate' (a defining clause)",
+   "test": [
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_legend_carries_the_source_definition[defs-bluedot-grant-1-1119]",
+    "tests/test_bluedot_grant.py::test_no_invented_content"
+   ],
+   "killed": true
+  },
+  {
+   "id": "m2",
+   "language": "Python",
+   "file": "usecases/bluedot-grant/semantic_readings.py",
+   "behaviour": "rows 1-6: carrying() appends the source sentence to the legend",
+   "change": "carrying() returns the legend alone",
+   "test": [
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_legend_carries_the_source_definition (all six rows)",
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_old_text_speaker_names_the_constant_whose_legend_carries_g5"
+   ],
+   "killed": true
+  },
+  {
+   "id": "m3",
+   "language": "Python",
+   "file": "usecases/bluedot-grant/semantic_readings.py",
+   "behaviour": "row 5: the causal.ve.md legend of mandatory_proof carries the NEW contribution sentence",
+   "change": "mandatory_proof keeps the bare legend 'mandatory proof'",
+   "test": [
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_legend_carries_the_source_definition[defs-bluedot-grant-5-1119]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "m4",
+   "language": "Python",
+   "file": "usecases/bluedot-grant/semantic_readings.py",
+   "behaviour": "rows 6 and 7: the old_text legend carries note 1 in full",
+   "change": "DEFINES_OLD drops ', the current form text'",
+   "test": [
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_legend_carries_the_source_definition[defs-bluedot-grant-6-1119]",
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_old_text_speaker_names_the_constant_whose_legend_carries_g5",
+    "tests/test_bluedot_grant.py::test_no_invented_content"
+   ],
+   "killed": true
+  },
+  {
+   "id": "m5",
+   "language": "Python",
+   "file": "usecases/bluedot-grant/semantic_readings.py",
+   "behaviour": "the no-invented-content guard exempts a quoted run only when source.md has it verbatim",
+   "change": "the vex legend quotes 'VEX is presented as invented', which source.md does not contain",
+   "test": [
+    "tests/test_bluedot_grant.py::test_no_invented_content",
+    "tests/test_defs_repair_bluedot_grant_1119.py::test_legend_carries_the_source_definition[defs-bluedot-grant-1-1119]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "m6",
+   "language": "Python (test guard)",
+   "file": "tests/test_bluedot_grant.py",
+   "behaviour": "_without_quoted_source drops a quoted run only when source.md has it verbatim",
+   "change": "the condition 'm.group(1) in source' becomes 'm.group(1) in source or True' (every quote dropped)",
+   "test": [
+    "tests/test_bluedot_grant.py::test_only_a_verbatim_source_quote_leaves_the_grounding_check"
+   ],
+   "killed": true
+  }
+ ]
+}
