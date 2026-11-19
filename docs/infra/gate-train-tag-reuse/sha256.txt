@@ -1,0 +1,4 @@
+7383a13ee4dd396b19e7b2f916b6dbcb7d0282ef0135ebf9561a3361524675eb  gate-train.sh
+fb24f0ccbc0e8934d0e85291b277082f38c05dee5ea92a2e48c9a721e5ac2362  gate-train.sh.bak-20261108etsync
+3b929402508789bd4fdf81da0fc42fab4472695949f95e1ed9f588cf7598bb19  gate-train.sh.bak-20261108etsync2
+dc5c05c29c99f1272cd46040cc6bc4ef42a46350c1a9fa62f853ececfcb38fd0  test-harness/gatetrain/test-gatetrain.zsh

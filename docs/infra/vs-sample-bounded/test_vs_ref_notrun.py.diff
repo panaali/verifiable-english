@@ -1,0 +1,40 @@
+--- tools-local/test_vs_ref_notrun.py	2026-11-17 18:15:06.728715046 +0000
++++ tools-local/test_vs_ref_notrun.py.new-vsw	2026-11-19 07:44:45.473648982 +0000
+@@ -314,27 +314,29 @@
+         self.assertEqual(s["streak"], 3)
+ 
+     def test_reference_args_drop_the_jobs_deadline_and_budget(self):
+-        """(3) vmrun's argument list for p9's job.json: no --deadline/--budget of the job; its own --budget instead."""
+-        self.vs(ref=PARTIAL, rc=4, VS_REF_BUDGET="7200")
++        """(3) vmrun's argument list for p9's job.json: no --deadline/--budget of the job; its own --budget instead,
++        vs-sample-bounded: sized from the cloud record (ceil(2 x tm_s 3205.3 x jobs 4 / 6) = 4274), VS_REF_BUDGET its cap."""
++        self.vs(ref=PARTIAL, rc=4, VS_REF_BUDGET="3000")
+         a = rt(f"{self.T}/tm.args").split("\n")
+         self.assertNotIn("--deadline", a)
+         self.assertNotIn("1794880865", a)
+         self.assertNotIn("4532", a)
+-        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["7200"])
++        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["3000"])
+         self.assertIn("--only", a)  # the rest stands: --only, --base, worktree-relative --test
+         self.assertEqual(a[a.index("--base") + 1], "039d3dd5190e5eea878d24c4f88af811dfd05914")
+         self.assertFalse([x for x in a if x.startswith("/home/seyran/code/ve-tm-nightly/")])
+-        self.vs(ref=PARTIAL, rc=4)  # the default budget
++        self.vs(ref=PARTIAL, rc=4)  # the default: sized from the cloud record, under the cap 21600
+         a = rt(f"{self.T}/tm.args").split("\n")
+-        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["21600"])
++        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["4274"])
+ 
+     def test_partial_reference_is_set_aside_and_never_reused(self):
+-        """(4) a reference exiting 4 with a partial json: renamed aside, findref empty, a second call does not reuse it."""
++        """(4) a reference exiting 4 with a partial json: renamed aside, findref empty, a second call does not reuse it.
++        vs-sample-bounded: the cut is resumed once; that run judged no more, so it stops with 2 cuts set aside."""
+         self.vs(ref=PARTIAL, rc=4)
+         self.assertFalse(os.path.exists(f"{self.D}/vm-ref.json"))
+         aside = glob.glob(f"{self.D}/vm-ref.partial-deadline-*.json")
+-        self.assertEqual(len(aside), 1)
+-        self.assertTrue(rj(aside[0]).get("partial"))
++        self.assertEqual(len(aside), 2)
++        self.assertTrue(all(rj(p).get("partial") for p in aside))
+         self.assertEqual(self.findref(), "")
+         self.vs(ref=PARTIAL, rc=4)
+         self.assertNotIn("reusing the VM/Mac reference", rt(f"{self.J}/cloud-jobs.log"))
