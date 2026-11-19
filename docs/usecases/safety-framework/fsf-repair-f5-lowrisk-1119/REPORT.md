@@ -6,8 +6,8 @@ pinned source, so "or organizations" is back. The files that hash the legend are
 Open: the reads-1119 counter (R16 C5) is not installed, so the prompt-size dry-run could not be run (see "Prompt size").
 Base: main c9295c9c94 (the merge base). The VE commit this merges at is the branch's final HEAD on that base (see "Merge commit").
 
-SIZE: 3 product, 20 tests, 30 other hand-written lines (product means the `vocabulary.py` legend; other means
-DELTA.md and this REPORT; generated or recorded outputs are not counted).
+SIZE: 5 product, 21 tests, 140 other hand-written lines (`git diff --numstat` against the merge base: vocabulary.py 3+/2-,
+tests/test_safety_framework.py 21+, DELTA.md and this REPORT; generated or recorded outputs not counted).
 
 ## Source passage (the source wins)
 
@@ -71,7 +71,10 @@ trusted +0 / PASS". So there is no R6 or R16 record and no FOLLOW-UPS.md row.
 
 - Selected run 1 (`mac-pytest.sh --select`, run on the VM, 2058 s; `/tmp/f5-select.log`) on bd6553d499 failed 5 ids. Each failure was a recorded output that hashes this environment and was stale: `test_span_accounting_is_complete`, `test_rerun_equals_committed_results` and `test_build_check_writes_nothing_beside_the_source` (all in test_safety_framework.py), `test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` and `test_english_statement_blocks.py::test_the_route_fixtures_are_recorded`. The run stopped early (--maxfail 5), and 129 units did not run.
 - Fix d1bbb7b3ae regenerated those outputs. Rerun of the 5 failed ids plus the new test: `6 passed in 377.84s` (`/tmp/f5-rerun.log`).
-- The final selected run on the final code is recorded in "Final selected run" below.
+- Final selected run (`mac-pytest.sh --select --base c9295c9c94 --run`, run on the VM, 3792 s; `/tmp/f5-select2.log`)
+  on dbc3bce39e (the code of the final HEAD; only this REPORT changed after it): exit=0, "recorded 70 units ... 0 failed".
+  `tests/test_safety_framework.py: exit 0 in 500.7 s`, and that file holds the new condition test.
+- The full gate was not run by me (the task says not to): the chain runs it on the final HEAD.
 
 ## Prompt size
 
