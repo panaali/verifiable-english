@@ -1,0 +1,230 @@
+--- cloud2-job.sh	2026-11-16 15:52:39.791036773 +0000
++++ cloud2-job.sh.new-remotew	2026-11-19 09:14:51.183036941 +0000
+@@ -4,7 +4,7 @@
+ # no secrets on the host (no Claude/Codex/gh logins, tokens, deploy keys; code arrives only as git objects pushed by the
+ # VM to ~/ve.git). Every job's work runs in its own systemd --user scope with MemoryMax and CPUQuota (as iso.sh on the VM).
+ # usage:
+-#   cloud2-job.sh health                                     "ok <1/5/15 load> mem=<GB avail> disk=<GB free> tm=<busy>/<n> gate=<busy>/<n>"
++#   cloud2-job.sh health                                     "ok <1/5/15 load> mem=<GB avail> disk=<GB free> tm=<busy>/<n> gate=<busy>/<n> killed=<n>"
+ #   cloud2-job.sh tm <key> <commit> <head> <slot-wait-s> -- <trust_mutants args>
+ #       persistent checkout ~/c2/pyt/<key>/w (incremental: fetch, checkout -f <commit>, reset --soft <head> so git answers as
+ #       in the caller's worktree, uv sync, lake build when the tree changed); one of TM_SLOTS (~/c2/TM_SLOTS, default 2)
+@@ -38,6 +38,15 @@
+ #       C2_REC_MAX bytes, default 256 MB) into ~/c2/rec/<name>.tar.gz: "REC <tar> <sha256> <files> <bytes> <inode>" | "NOREC <dir> <why>"
+ #   echo "<dir> <sha256> <inode> <note>" | cloud2-job.sh mark   under <dir>.lock: the same checks, the dir is the same inode and the tar still
+ #       has that sha -> <dir>/records-archived (copy then rename), tar removed: "MARKED <dir>" | "NOMARK <dir> <why>"
++#   2026-11-19 remote-dead-job-reaper (row remote-dead-job-reaper; reviews/remote-dead-job-reaper-20261119.md): archive+mark ON KILL.
++#     Before a job's scope is stopped (its caller's ssh went away, or `stop`), killrec writes ~/c2/killed/<unit>.<epoch>.rec:
++#     "unit <unit> <epoch>", then "<dir> <inode>" for every reap-prefix dir the scope's processes use (cwd, root, fds,
++#     environment) and, for a c2-gate unit, its ~/jobs/gate-* dir. Such a dir (same path AND inode, the record's scope no longer
++#     active) is dead without the 12-h wait FOR THE ARCHIVE ONLY: deadlist/records/mark take it at once (every other check
++#     stands: no done, nothing open, lock, same inode, sha), so the VM archives and marks it at its next pass, which
++#     cloud2-health.sh starts within minutes because `health` now ends in "killed=<n>" (dirs of kill records younger than 12 h
++#     with no marker and no done). REMOVAL IS UNCHANGED: reapone still keeps every dir modified within 12 h.
++#     Kill records older than 2 days are dropped by the job-start sweep.
+ # The work stage watches stdin: when the caller's ssh goes away the scope is stopped (an abandoned run keeps no CPUs).
+ # exit: the tool's exit code | 75 slot/lock wait exceeded | 76 setup failure on ve-cloud-2 (callers fall back to the VM)
+ # 2026-11-15 actions-pinned-sources-arm (reviews/dri-decisions-20261114-adv0205.md item 2; dri-pinned-arm-1115): the gate runs with
+@@ -158,7 +167,7 @@
+ # 100 = every tm/sel/builder scope); gatework sets it to C2_GATE_WEIGHT (default 1000), so a gate takes the cores it can use first.
+ scoped(){ local u=$1 mem=$2 cpu=$3; shift 3; local wt=(); [[ ${C2_SCOPE_WEIGHT:-} =~ ^[0-9]+$ ]] && wt=(-p CPUWeight=$C2_SCOPE_WEIGHT)
+   systemd-run --user --scope --quiet --collect --unit=$u -p MemoryMax=$mem -p MemorySwapMax=0 -p CPUQuota=$cpu "${wt[@]}" -- setsid "$@" < /dev/null & local P=$!
+-  exec 3<&0; ( cat <&3 > /dev/null; systemctl --user stop $u.scope 2>/dev/null || kill -TERM -- -$P ) > /dev/null 2>&1 & local W=$!; exec 3<&-
++  exec 3<&0; ( cat <&3 > /dev/null; killrec $u; systemctl --user stop $u.scope 2>/dev/null || kill -TERM -- -$P ) > /dev/null 2>&1 & local W=$!; exec 3<&-
+   wait $P; local rc=$?; pkill -P $W 2>/dev/null; kill $W 2>/dev/null
+   case $rc in 73|75) rc=76;; esac; return $rc; }
+ slots(){ local f=$C/$1; local d=$2; [ -s $f ] && cat $f || echo $d; }
+@@ -185,13 +194,42 @@
+   find "$1" \( -newer "$1/records-archived" -o \( -cnewer "$1/records-archived" \( -type d -o -links 1 \) \) \) \
+     ! -path "$1" ! -path "$1/records-archived" -print -quit 2>/dev/null; }
+ scopeon(){ case $1 in gate-*) systemctl --user is-active -q c2-gate-${1#gate-}.scope 2>/dev/null;; *) return 1;; esac; }
++# on-kill records (2026-11-19 remote-dead-job-reaper): ~/c2/killed/<unit>.<epoch>.rec, written only by killrec here
++KD=$C/killed; UNITRE='^c2-(gate|tm)-[A-Za-z0-9._-]+$'
++ere(){ printf '%s' "$1" | sed 's/[][\.*^$+?(){}|]/\\&/g'; }
++killrec(){  # <unit>: before the unit's scope is stopped, record the reap-prefix dirs its processes use, each with its inode
++  local u=$1 cg t=$(date +%s) p d ino ps=() ds=()
++  [[ $u =~ $UNITRE ]] || return 0
++  cg=$(systemctl --user show -p ControlGroup --value $u.scope 2>/dev/null)
++  [ -n "$cg" ] && [ -d "/sys/fs/cgroup$cg" ] && ps=($(find "/sys/fs/cgroup$cg" -name cgroup.procs -exec cat {} + 2>/dev/null))
++  ds=($( { for p in "${ps[@]}"; do readlink /proc/$p/cwd /proc/$p/root /proc/$p/fd/* 2>/dev/null; tr '\0' '\n' < /proc/$p/environ 2>/dev/null; done
++           case $u in c2-gate-*) echo "$JR/gate-${u#c2-gate-}";; esac; } \
++         | grep -oE "($(ere "$TR")/(trust-mutants|ve-gate)-|$(ere "$JR")/(gate|old)-)[A-Za-z0-9._-]+" | sort -u))
++  mkdir -p $KD || return 0
++  { echo "unit $u $t"; for d in "${ds[@]}"; do inprefix "$d" && realdir "$d" && ino=$(stat -c %i -- "$d") && echo "$d $ino"; done; } > $KD/.$u.$t.$$ \
++    && [ "$(wc -l < $KD/.$u.$t.$$)" -gt 1 ] && mv -f $KD/.$u.$t.$$ $KD/$u.$t.rec; rm -f $KD/.$u.$t.$$; return 0; }
++killedrec(){  # <dir>: prints the unit of a kill record that names <dir> with its current inode and whose scope is no longer
++  # active; 1 if none (the pattern goes to grep by a file: openby greps every command line)
++  local d=$1 ino f w u t; ino=$(stat -c %i -- "$d" 2>/dev/null) || return 1
++  for f in $KD/*.rec; do [ -f "$f" ] && [ ! -L "$f" ] || continue
++    grep -qxFf <(printf '%s %s\n' "$d" "$ino") "$f" 2>/dev/null || continue
++    read -r w u t < "$f"; [ "$w" = unit ] && [[ $u =~ $UNITRE ]] || continue
++    systemctl --user is-active -q $u.scope 2>/dev/null && continue
++    echo $u; return 0; done; return 1; }
++kpend(){  # the dirs (same path and inode) named by kill records younger than 12 h with no marker and no done (`health`: killed=<n>)
++  local f d i n=0
++  for f in $(find $KD -maxdepth 1 -type f -name '*.rec' -newermt @$(( $(date +%s) - IDLE )) 2>/dev/null); do
++    while read -r d i; do [ -d "$d" ] && [ ! -e "$d/done" ] && [ ! -e "$d/records-archived" ] && [ "$(stat -c %i -- "$d" 2>/dev/null)" = "$i" ] \
++      && n=$((n+1)); done < <(tail -n +2 "$f"); done
++  echo $n; }
+ deadwhy(){  # <dir>: prints why <dir> must not be archived now (nothing = dead and unarchived, or written after its marker)
+   local d=$1 n=${1##*/} y p
+   inprefix "$d" || { echo "outside the reap prefixes"; return; }
+   realdir "$d" || { echo "not a real directory"; return; }
+   [ -e "$d/done" ] && { echo "has done (the rotation owns it)"; return; }
+   [ -f "$d/records-archived" ] && [ -z "$(afterm "$d")" ] && { echo "already marked"; return; }
+-  y=$(young "$d"); [ -n "$y" ] && { echo "modified within 12 h (${y#$d/})"; return; }
++  if ! killedrec "$d" > /dev/null; then  # a killed job's dir (kill record, same inode, scope gone) skips only the 12-h wait
++    y=$(young "$d"); [ -n "$y" ] && { echo "modified within 12 h (${y#$d/})"; return; }; fi
+   scopeon $n && { echo "its scope is active"; return; }
+   p=$(openby "$d") && { echo "open by pid $p"; return; }; return 0; }
+ RECPRUNE=(-name .lake -o -name .venv -o -name target -o -name .cargo-home -o -name cargo-home -o -name cargo -o -name .git -o -name w
+@@ -216,13 +254,14 @@
+     elif [ -z "$(find "$d" -maxdepth 0 -newermt @$(( $(date +%s) - IDLE )))" ]; then m=$((m+1)); fi; done
+   [ $m -gt 0 ] && say "reap: $m dead-looking dir(s) older than 12 h without a records-archived marker: kept (the VM archives dead ones: c2-archive-dead.sh)"
+   for d in $(find $TR $JR -maxdepth 1 -type f \( -name 'trust-mutants-*.lock' -o -name 've-gate-*.lock' -o -name 'gate-*.lock' -o -name 'old-*.lock' \) -mtime +7 2>/dev/null); do
+-    [ -e "${d%.lock}" ] || rm -f -- "$d"; done; return 0; }
++    [ -e "${d%.lock}" ] || rm -f -- "$d"; done
++  find $KD -maxdepth 1 -type f -name '*.rec' -mtime +2 -delete 2>/dev/null; return 0; }  # kill records 2 days old
+ mode=${1:-}; shift || true
+ case $mode in
+ health)
+   l=$(cut -d' ' -f1-3 /proc/loadavg); m=$(awk '/^MemAvailable:/ {print int($2/1048576)}' /proc/meminfo)
+   nt=$(slots TM_SLOTS 2); ng=$(slots GATE_SLOTS 2)
+-  echo "ok $l mem=$m disk=$(fg) tm=$(busy tm $nt)/$nt gate=$(busy gate $ng)/$ng"; exit 0;;
++  echo "ok $l mem=$m disk=$(fg) tm=$(busy tm $nt)/$nt gate=$(busy gate $ng)/$ng killed=$(kpend)"; exit 0;;
+ tm)
+   key=$1; c=$2; h=$3; sw=$4; shift 4; [ "${1:-}" = -- ] && shift
+   [[ $key =~ ^[A-Za-z0-9._-]+$ ]] || { say "bad key"; exit 76; }
+@@ -311,7 +350,7 @@
+   echo "GATE $gt lake=$lk" > $J/done; echo "$(( $(date +%s) - t0 ))" > $J/seconds; exit $gt;;
+ stop)
+   label=$1; c=$2; u=c2-gate-$label-${c:0:8}
+-  if systemctl --user is-active -q $u.scope 2>/dev/null; then systemctl --user stop $u.scope; echo "CANCELLED running" > $JB/gate-$label-${c:0:8}/done; echo STOPPED; else echo STOP-NOTRUNNING; fi; exit 0;;
++  if systemctl --user is-active -q $u.scope 2>/dev/null; then killrec $u; systemctl --user stop $u.scope; echo "CANCELLED running" > $JB/gate-$label-${c:0:8}/done; echo STOPPED; else echo STOP-NOTRUNNING; fi; exit 0;;
+ reap)
+   [ -f "${1:-}" ] || { echo "usage: cloud2-job.sh reap <listfile>" >&2; exit 2; }
+   while IFS= read -r d || [ -n "$d" ]; do [ -n "$d" ] && reapone "$d"; done < "$1"; exit 0;;
+@@ -333,10 +372,10 @@
+   [[ $sha =~ ^[0-9a-f]{64}$ && $ino =~ ^[0-9]+$ ]] || { echo "NOMARK $d bad sha/inode"; exit 0; }
+   inprefix "$d" && realdir "$d" || { echo "NOMARK $d outside the reap prefixes or not a real directory"; exit 0; }
+   exec 8>> "$d.lock"; flock -n 8 || { echo "NOMARK $d lock held"; exit 0; }
+-  w=$(deadwhy "$d"); [ -n "$w" ] && { echo "NOMARK $d $w"; exit 0; }
++  w=$(deadwhy "$d"); [ -n "$w" ] && { echo "NOMARK $d $w"; exit 0; }; k=$(killedrec "$d")
+   [ "$(stat -c %i -- "$d")" = "$ino" ] || { echo "NOMARK $d not the dir whose records were taken (renamed or recreated)"; exit 0; }
+   [ -f $tz ] && [ "$(sha256sum < $tz | cut -c1-64)" = "$sha" ] || { echo "NOMARK $d its records tar is gone or changed"; exit 0; }
+-  { echo "records archived $(date -u +%FT%H:%M:%SZ) by the VM (c2-archive-dead.sh): $note sha256 $sha" > "$d/records-archived.new.$$" &&
++  { echo "records archived $(date -u +%FT%H:%M:%SZ) by the VM (c2-archive-dead.sh): $note sha256 $sha${k:+ (on kill: $k)}" > "$d/records-archived.new.$$" &&
+     mv -f "$d/records-archived.new.$$" "$d/records-archived"; } || { rm -f "$d/records-archived.new.$$"; echo "NOMARK $d write failed"; exit 0; }
+   rm -f $tz; echo "MARKED $d"; exit 0;;
+ *) echo "usage: cloud2-job.sh health | tm ... | gate ... | stop <label> <commit> | reap <listfile> | deadlist | records (dir on stdin) | mark (dir sha inode note on stdin)" >&2; exit 2;;
+--- cloud2-health.sh	2026-11-16 15:18:57.146865063 +0000
++++ cloud2-health.sh.new-remotew	2026-11-19 09:13:57.740906151 +0000
+@@ -16,15 +16,21 @@
+ # lock: one pass per host at a time): it copies the records of dead job dirs there to archive/remote-reap/<host>-auto/, verifies
+ # the copy and only then marks them, so the next job start's reapsweep removes them (log: cloud2-archive.log). Off in the
+ # hooked test runs (CLOUD2_HEALTH_STATE set) unless C2_ARCHIVE_SH names the archiver; C2_ARCHIVE=0 turns it off.
++# 2026-11-19 remote-dead-job-reaper (reviews/remote-dead-job-reaper-20261119.md): ON KILL. When the health line ends in
++# killed=<n> with n > 0 (dirs of jobs killed in the last 12 h, recorded by the host's cloud2-job.sh, not yet marked), the pass
++# starts once the last one is C2_ARCHIVE_KILL_EVERY (600) s old instead of C2_ARCHIVE_EVERY: a killed job's dirs are archived and
++# marked within ~10 min of the kill (removal still waits for the host's 12-h idle rule).
+ M=/home/seyran/code/manage-agents; H=${CLOUD2_HOST:-ve-cloud-2}
+ ST=${CLOUD2_HEALTH_STATE:-$M/cloud2-health.state}; DOWN=${CLOUD2_DOWN_FLAG:-$M/CLOUD2_DOWN}; LOG=$M/cloud2-health.log
+ lim=$(( ${CLOUD2_DOWN_MIN:-10} * 60 ))
+ msg(){ ${=CLOUD2_MSG:-zsh $M/msg.sh} orchestrator cloud2-health "$*" > /dev/null 2>&1; }
+ note(){ [ -n "$CLOUD2_HEALTH_STATE" ] || print -r -- "$(date -u +%FT%H:%MZ) $*" >> $LOG; }
+-arch(){  # <host> <state>: start the dead-dir archive pass for <host> when its last start is C2_ARCHIVE_EVERY s old
+-  local H=$1 ST=$2 now=$(date +%s) l sh=${C2_ARCHIVE_SH:-$M/c2-archive-dead.sh}
++arch(){  # <host> <state> <health line>: start the dead-dir archive pass for <host> when its last start is C2_ARCHIVE_EVERY s
++  # old, or C2_ARCHIVE_KILL_EVERY s when the line reports killed=<n>, n > 0 (killed jobs' dirs wait)
++  local H=$1 ST=$2 now=$(date +%s) l sh=${C2_ARCHIVE_SH:-$M/c2-archive-dead.sh} ev=${C2_ARCHIVE_EVERY:-3600} k=${${3##* killed=}%% *}
++  [[ $3 == *\ killed=* && $k == <-> ]] && (( k > 0 )) && ev=${C2_ARCHIVE_KILL_EVERY:-600}
+   [ "${C2_ARCHIVE:-1}" = 0 ] && return 0; [ -n "$CLOUD2_HEALTH_STATE" ] && [ -z "$C2_ARCHIVE_SH" ] && return 0
+-  l=$(cat $ST.archive 2>/dev/null); [[ $l == <-> ]] && (( now - l < ${C2_ARCHIVE_EVERY:-3600} )) && return 0
++  l=$(cat $ST.archive 2>/dev/null); [[ $l == <-> ]] && (( now - l < ev )) && return 0
+   print -r -- $now > $ST.archive
+   ( zsh $sh $H < /dev/null >> ${C2_ARCHIVE_LOG:-$M/cloud2-archive.log} 2>&1 & ) ; return 0; }
+ once(){  # [host flag down state]: one host; no args = the CLOUD2_* hooks / ve-cloud-2 defaults
+@@ -36,7 +42,7 @@
+     if [ -f $DOWN ]; then rm -f $DOWN; note "$H UP again: $h"; msg "$H reachable again ($h): ${DOWN:t} removed; trust_mutants fallbacks, verdict references and x86 legs go there again (cloud2-health.sh)."; fi
+     d=${${h##*disk=}%% *}; if [[ $d == <-> ]] && (( d < 40 )); then [ -f $ST.disk ] || { : > $ST.disk; note "$H disk low: $d GB"; msg "$H has only $d GB free (cloud2-job.sh evicts below 80 and refuses below 30): look at ~/c2/pyt and ~/jobs there."; }
+     else rm -f $ST.disk; fi
+-    arch $H $ST; return 0; fi
++    arch $H $ST "$h"; return 0; fi
+   last=$(cut -d' ' -f1 $ST 2>/dev/null); [[ $last == <-> ]] || { last=$now; print -r -- "$now (first probe failed)" > $ST; }
+   if (( now - last > lim )) && [ ! -f $DOWN ]; then
+     print -r -- "unreachable since $(date -u -d @$last +%FT%H:%MZ) (cloud2-health.sh)" > $DOWN
+--- tools-local/test_c2_reap.sh	2026-11-16 15:25:53.348257331 +0000
++++ tools-local/test_c2_reap.sh.new-remotew	2026-11-19 09:15:41.518889100 +0000
+@@ -6,6 +6,10 @@
+ # starts one `sleep` in a transient systemd --user scope named c2-gate-t<pid>-scope-ffff8888 and stops it at the end).
+ # 2026-11-16 dri-c2-reap-hardlink (reviews/c2-reap-hardlink-20261116.md): hardlinked (uv cache) files after the marker, ~/jobs/old-*,
+ # the VM's dead-dir archive (c2-archive-dead.sh with a local stand-in for ssh) and cloud2-health.sh's hourly start of it.
++# 2026-11-19 remote-dead-job-reaper (reviews/remote-dead-job-reaper-20261119.md), cases (d): the on-kill path (kill records written by
++# `stop` and by scoped's watcher; their dirs archived and marked at once, removal unchanged; health killed=<n> and its 10-min pass);
++# a uv-hardlinked .venv file is no write after the marker for the archive either. These cases start transient user scopes
++# c2-gate-t<pid>k1-abcd1234 and c2-gate-t<pid>k2-dcba4321 (each a `sleep`), and stop them.
+ S=$(realpath -e "${1:-cloud2-job.sh}") || exit 2
+ ARCH=$(realpath -e "${2:-c2-archive-dead.sh}" 2>/dev/null) || ARCH=missing-archiver; HL=$(realpath -e "${3:-cloud2-health.sh}") || exit 2
+ R=$(mktemp -d /tmp/test-c2-reap.XXXXXX); R=$(realpath -e $R); H=$R/home; T=$R/tmp; mkdir -p $H/jobs $H/c2/pyt $T $R/keep
+@@ -129,6 +133,48 @@
+ run tm t2 c h 0 -- x > $R/out
+ grep -qF "reap: REMOVED $m" $R/err && [ ! -e $m ] && grep -qF "reap: REMOVED $T/ve-gate-dead13" $R/err && ok "(c) the next job start removes the dirs the VM marked" || bad "(c) sweep after archive: $(grep reap $R/err | head -5)"
+ [ -d $H/jobs/gate-chain-young1-ffff7777 ] && ok "(c) the young dir survives the sweep" || bad "(c) young dir removed"
++# (d) 2026-11-19 remote-dead-job-reaper: archive+mark ON KILL. A killed job's dirs (named in the host's kill record with the same
++# inode, the scope gone) are archived and marked at once; removal still waits for the 12-h idle rule.
++mkd $H/jobs/gate-chain-uvmk-ffff9999 13; VM9=$H/jobs/gate-chain-uvmk-ffff9999; echo "records archived (test)" > $VM9/records-archived
++sleep 0.1; ln $VM9/w/.venv/v $R/keep/uvcache-v  # a uv-cache link made after the marker: links > 1, ctime after the marker
++echo $VM9 | HOME=$H C2_TMP=$T bash $S records 2>/dev/null > $R/out
++has "NOREC $VM9 already marked" && ok "(d) uv-hardlinked .venv file (links > 1) after the marker is no write: no re-archive" || bad "(d) hardlinked .venv: $(cat $R/out)"
++if [ -n "$SC" ]; then
++  K1=t$$k1; K2=t$$k2; J1=$H/jobs/gate-$K1-abcd1234; J2=$H/jobs/gate-$K2-dcba4321
++  mkd $J1 0; mkd $T/ve-gate-kill1 0; mkd $T/ve-gate-kill2 0; mkd $T/ve-gate-kill3 0; mkd $T/ve-gate-nokill 0; mkd $T/ve-gate-kill4 0
++  # (d1) merge-train cancel: `stop` records the scope's dirs (cwd, an open fd) before it stops the scope
++  systemd-run --user --scope --quiet --collect --unit=c2-gate-$K1-abcd1234 -- bash -c "exec 3< $T/ve-gate-kill3/gate.log; cd $T/ve-gate-kill1 && exec sleep 300" > /dev/null 2>&1 & P+=($!)
++  # (d2) the caller's ssh goes away: scoped's watcher records the dirs, then stops the scope (gateinner is a stand-in here)
++  { echo '#!/bin/bash'; echo 'case $1 in gateinner) J=$HOME/jobs/gate-$2-${3:0:8}; mkdir -p $J/w; echo log > $J/gate.log; cd $C2_TMP/ve-gate-kill2 && exec sleep 300;; esac; exit 76'; } > $H/c2/cloud2-job.sh
++  ( for i in $(seq 1 150); do [ -e $R/go ] && break; sleep 0.2; done ) | HOME=$H C2_TMP=$T bash $S gatework $K2 dcba4321ffff 1 gate -- x > $R/gwout 2>&1 & GW=$!
++  for i in $(seq 1 100); do [ -n "$(find /proc/[0-9]*/cwd -maxdepth 0 \( -lname $T/ve-gate-kill1 -o -lname $T/ve-gate-kill2 \) 2>/dev/null | wc -l | grep -x 2)" ] && break; sleep 0.2; done
++  run stop $K1 abcd1234ffff > $R/out
++  has STOPPED && ! systemctl --user is-active -q c2-gate-$K1-abcd1234.scope && ok "(d1) stop: STOPPED, scope gone" || bad "(d1) stop: $(cat $R/out) $(head -c 300 $R/err)"
++  touch $R/go; wait $GW
++  ! systemctl --user is-active -q c2-gate-$K2-dcba4321.scope && ok "(d2) caller gone: scope stopped" || bad "(d2) scope still active: $(cat $R/gwout | head -5)"
++  i1=$(stat -c %i $T/ve-gate-kill1); i2=$(stat -c %i $T/ve-gate-kill2); i3=$(stat -c %i $T/ve-gate-kill3); ij=$(stat -c %i $J2)
++  grep -qx "$T/ve-gate-kill1 $i1" $H/c2/killed/c2-gate-$K1-abcd1234.*.rec 2>/dev/null && grep -qx "$T/ve-gate-kill3 $i3" $H/c2/killed/c2-gate-$K1-abcd1234.*.rec \
++    && ok "(d1) kill record names the scope's cwd and open-fd dirs with their inodes" || bad "(d1) kill record: $(cat $H/c2/killed/*$K1* 2>&1 | head -5)"
++  grep -qx "$T/ve-gate-kill2 $i2" $H/c2/killed/c2-gate-$K2-dcba4321.*.rec 2>/dev/null && grep -qx "$J2 $ij" $H/c2/killed/c2-gate-$K2-dcba4321.*.rec \
++    && ok "(d2) kill record names the scope's cwd dir and the gate's job dir" || bad "(d2) kill record: $(cat $H/c2/killed/*$K2* 2>&1 | head -5)"
++  ! grep -qs nokill $H/c2/killed/*.rec && ok "(d) a dir no killed process used is in no kill record" || bad "(d) nokill recorded"
++  [ "$(cat $J1/done 2>/dev/null)" = "CANCELLED running" ] && ok "(d1) the cancelled gate dir has done (the rotation owns it)" || bad "(d1) J1 done: $(cat $J1/done 2>&1)"
++  mv $T/ve-gate-kill3 $T/ve-gate-kill3-old; mkd $T/ve-gate-kill3 0  # recreated after the kill: another inode
++  run health > $R/out; grep -q ' killed=3$' $R/out && ok "(d) health reports killed=3 (kill1, kill2, the gate dir; not the recreated one)" || bad "(d) health: $(cat $R/out)"
++  cp $S $H/c2/cloud2-job.sh; arun
++  for d in $T/ve-gate-kill1 $T/ve-gate-kill2 $J2; do
++    [ -f $d/records-archived ] && grep -q "MARKED $d" $R/aout && grep -q "(on kill: c2-gate-" $d/records-archived && ok "(d) killed job's dir minutes old: archived and marked on kill (${d##*/})" || bad "(d) not marked on kill: $d $(grep -F "$d" $R/aout | head -2)"; done
++  tz=$(ls $R/vm/ve-gate-kill1-*.tar.gz 2>/dev/null | head -1); [ -n "$tz" ] && tar -tzPf $tz | grep -qx "$T/ve-gate-kill1/gate.log" && ok "(d) its records are on the VM side" || bad "(d) VM-side records of kill1: $tz"
++  [ ! -e $T/ve-gate-nokill/records-archived ] && [ ! -e $J1/records-archived ] && ok "(d) a young dir of no kill record, and the done dir: not marked" || bad "(d) nokill or J1 marked"
++  [ ! -e $T/ve-gate-kill3/records-archived ] && echo $T/ve-gate-kill3 | HOME=$H C2_TMP=$T bash $S records 2>/dev/null | grep -q "modified within 12 h" && ok "(d) same path, another inode: the kill record does not apply" || bad "(d) recreated dir: marked or wrong reason"
++  run health > $R/out; grep -q ' killed=0$' $R/out && ok "(d) health reports killed=0 after the pass" || bad "(d) health after: $(cat $R/out)"
++  echo "unit c2-gate-$U $(date +%s)" > $H/c2/killed/c2-gate-$U.1.rec; echo "$T/ve-gate-kill4 $(stat -c %i $T/ve-gate-kill4)" >> $H/c2/killed/c2-gate-$U.1.rec
++  echo $T/ve-gate-kill4 | HOME=$H C2_TMP=$T bash $S records 2>/dev/null | grep -q "modified within 12 h" && ok "(d) a kill record whose scope is still active does not apply" || bad "(d) live-scope record applied"
++  rm -f $H/c2/cloud2-job.sh; run tm t3 c h 0 -- x > $R/out
++  grep -qF "reap: KEPT $T/ve-gate-kill1 modified within 12 h" $R/err && [ -d $T/ve-gate-kill1 ] && [ -d $J2 ] && ok "(d) removal unchanged: the marked killed dirs stay until 12 h idle" || bad "(d) sweep: $(grep kill $R/err | head -3)"
++  touch -d '3 days ago' $H/c2/killed/c2-gate-$U.1.rec; run tm t4 c h 0 -- x > $R/out
++  [ ! -e $H/c2/killed/c2-gate-$U.1.rec ] && [ -n "$(ls $H/c2/killed/c2-gate-$K1-*.rec 2>/dev/null)" ] && ok "(d) the job-start sweep drops kill records 2 days old, keeps new ones" || bad "(d) kill record expiry: $(ls $H/c2/killed)"
++fi
+ systemctl --user stop c2-gate-$U.scope 2>/dev/null
+ 
+ # cloud2-health.sh starts the archive pass after an OK probe, at most once per C2_ARCHIVE_EVERY per host
+@@ -139,5 +185,12 @@
+ [ "$(cat $R/archcalls 2>/dev/null)" = testhost ] && ok "health: one archive pass for testhost after two OK probes" || bad "health: archive calls '$(cat $R/archcalls 2>/dev/null | tr '\n' ' ')'"
+ echo $(( $(date +%s) - 4000 )) > $R/hst.archive; hrun; sleep 1
+ [ "$(grep -c . $R/archcalls 2>/dev/null)" = 2 ] && ok "health: a new pass once the last one is an hour old" || bad "health: no second pass"
++# (d) on kill: a health line with killed=<n>, n > 0, starts a pass once the last one is C2_ARCHIVE_KILL_EVERY (600) s old
++printf '#!/bin/sh\ncat %s/hline\n' $R > $R/bin/ssh; : > $R/archcalls
++echo "ok 0.1 0.1 0.1 mem=100 disk=200 tm=0/3 gate=0/2 killed=0" > $R/hline; echo $(( $(date +%s) - 700 )) > $R/hst.archive; hrun; sleep 1
++[ ! -s $R/archcalls ] && ok "health: killed=0 and a pass 700 s ago: no pass (hourly)" || bad "health: killed=0 started a pass"
++echo "ok 0.1 0.1 0.1 mem=100 disk=200 tm=0/3 gate=0/2 killed=2" > $R/hline; hrun; sleep 1
++[ "$(cat $R/archcalls 2>/dev/null)" = testhost ] && ok "health: killed=2 and a pass 700 s ago: a pass starts (on kill)" || bad "health: killed=2 calls '$(cat $R/archcalls 2>/dev/null | tr '\n' ' ')'"
++hrun; sleep 1; [ "$(grep -c . $R/archcalls)" = 1 ] && ok "health: killed=2 right after a pass: no second pass" || bad "health: on-kill passes not spaced"
+ [ $fail = 0 ] && echo "PASS test_c2_reap" || echo "FAILED test_c2_reap"
+ exit $fail
