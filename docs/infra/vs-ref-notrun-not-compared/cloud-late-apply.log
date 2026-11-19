@@ -1,0 +1,14 @@
+staged: FAIL: test_no_reuse_cloud_pool_0 (__main__.MacPytest.test_no_reuse_cloud_pool_0)
+staged: FAIL: test_no_reuse_flag_off (__main__.MacPytest.test_no_reuse_flag_off)
+staged: FAIL: test_no_reuse_other_options (__main__.MacPytest.test_no_reuse_other_options)
+staged: FAIL: test_no_reuse_without_json (__main__.MacPytest.test_no_reuse_without_json)
+staged: FAIL: test_reuse_on_exact_key (__main__.MacPytest.test_reuse_on_exact_key)
+staged: Ran 28 tests in 14.617s
+staged: FAILED (failures=5)
+installed: FAIL: test_no_reuse_cloud_pool_0 (__main__.MacPytest.test_no_reuse_cloud_pool_0)
+installed: FAIL: test_no_reuse_flag_off (__main__.MacPytest.test_no_reuse_flag_off)
+installed: FAIL: test_no_reuse_other_options (__main__.MacPytest.test_no_reuse_other_options)
+installed: FAIL: test_no_reuse_without_json (__main__.MacPytest.test_no_reuse_without_json)
+installed: FAIL: test_reuse_on_exact_key (__main__.MacPytest.test_reuse_on_exact_key)
+installed: Ran 28 tests in 14.663s
+installed: FAILED (failures=5)
