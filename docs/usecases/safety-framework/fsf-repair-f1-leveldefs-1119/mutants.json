@@ -1,0 +1,17 @@
+{
+ "item": "fsf-repair-f1-leveldefs-1119",
+ "note": "Seeded bugs, each planted in the worktree, run against tests/test_fsf_repair_f1_leveldefs_1119.py, then restored (git checkout HEAD). Logs /tmp/f1-s1.log ... /tmp/f1-s5.log. tools/trust_mutants.py --plan: 0 definitions, 0 mutants (no Lean changed).",
+ "mutants": [
+  {"id": "S1", "file": "usecases/safety-framework/vocabulary.py", "also": ["usecases/safety-framework/environment.d1.json", "usecases/safety-framework/facts.d1.ve"],
+   "change": "main's three files (no definition carried anywhere): the item undone",
+   "test": ["tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_has_its_definition_in_the_legend_of_a_predicate_its_block_uses", "tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_legend_quotes_the_pinned_source_definition_verbatim"], "result": "killed"},
+  {"id": "S2", "file": "usecases/safety-framework/vocabulary.py", "change": "footnote mark 8 dropped from the CBRN uplift level 1 quote (environment regenerated)",
+   "test": ["tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_legend_quotes_the_pinned_source_definition_verbatim"], "result": "killed"},
+  {"id": "S3", "file": "usecases/safety-framework/vocabulary.py", "change": "the names cbrn_uplift_level_1 and cyber_uplift_level_1 swapped in the legend, so each sentence sits under the wrong level (environment regenerated)",
+   "test": ["tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_has_its_definition_in_the_legend_of_a_predicate_its_block_uses", "tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_legend_quotes_the_pinned_source_definition_verbatim"], "result": "killed"},
+  {"id": "S4", "file": "usecases/safety-framework/facts.d1.ve", "change": "the fact \"stealth_and_situational_awareness_tcl\" is defined. removed from levels-stealth (the block no longer uses the predicate)",
+   "test": ["tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_has_its_definition_in_the_legend_of_a_predicate_its_block_uses"], "result": "killed"},
+  {"id": "S5", "file": "usecases/safety-framework/vocabulary.py", "change": "a word cut from the ML R&D automation quote in vocabulary.py only; environment.d1.json left stale",
+   "test": ["tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_has_its_definition_in_the_legend_of_a_predicate_its_block_uses", "tests/test_fsf_repair_f1_leveldefs_1119.py::test_every_level_legend_quotes_the_pinned_source_definition_verbatim"], "result": "killed"}
+ ]
+}
