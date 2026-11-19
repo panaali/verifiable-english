@@ -1,0 +1,98 @@
+{
+ "item": "tm-cache-asset-pick",
+ "planted_in": "temporary copies of the staged file; the staged file is never edited",
+ "command": "python3 -I docs/infra/tm-cache-asset-pick/seed_run.py",
+ "mutants": [
+  {
+   "id": "B1-release-prune-ignores-pin",
+   "behaviour": "(1) the release prune never deletes the nightly's asset",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)",
+   "failing_tests": [
+    "(1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)",
+    "(1) exact tree: nothing deleted: the release keeps the newest 5 (lean-build-602ee25f6749.tar.zst the oldest of them) + the nightly's",
+    "(1) exact tree: manifest.json still lists it with its url",
+    "(1) exact tree: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)",
+    "(1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted",
+    "(1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst",
+    "(1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)",
+    "(1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's",
+    "(1) nearest ancestor within K: manifest.json still lists it with its url",
+    "(1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)",
+    "(1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted",
+    "(1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst",
+    "(3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)",
+    "(3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B2-manifest-slice-drops-pin",
+   "behaviour": "(1) manifest.json keeps the nightly's row (and url) past its 6-row cut",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted",
+   "failing_tests": [
+    "(1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted",
+    "(1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst",
+    "(1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted",
+    "(1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B3-no-resume-check",
+   "behaviour": "(2) only a head tm-nightly.py resume would resume is pinned (complete/old/no-resume: as today)",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(2) record complete (nightly.jsonl): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned",
+   "failing_tests": [
+    "(2) record complete (nightly.jsonl): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned",
+    "(2) record over 4 days old: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned",
+    "(2) head on the no-resume list: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B4-quarantine-ignored",
+   "behaviour": "(2) a quarantined asset is never the pin (the dispatcher's own quarantine)",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(2) the head's asset quarantined: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned",
+   "failing_tests": [
+    "(2) the head's asset quarantined: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B5-platform-suffix-ignored",
+   "behaviour": "(3) the pin is of this platform's manifest and name (aarch64 --pack)",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)",
+   "failing_tests": [
+    "(3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)",
+    "(3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written"
+   ],
+   "caught": true
+  },
+  {
+   "id": "B6-exact-tree-only",
+   "behaviour": "(1) the pin is lean-near's within K from the record's base (the dispatcher's), not the exact tree only",
+   "language": "shell (zsh) with embedded Python",
+   "file": "/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py::(1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)",
+   "failing_tests": [
+    "(1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)",
+    "(1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's",
+    "(1) nearest ancestor within K: manifest.json still lists it with its url",
+    "(1) nearest ancestor within K: the log names the kept asset and the head",
+    "(1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)",
+    "(1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted",
+    "(1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst"
+   ],
+   "caught": true
+  }
+ ]
+}
