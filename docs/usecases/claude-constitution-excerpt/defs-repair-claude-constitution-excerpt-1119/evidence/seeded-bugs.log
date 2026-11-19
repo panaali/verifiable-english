@@ -20,3 +20,10 @@ M5-byte-for-byte rc 1 5 failed
     test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-8-1119-environment.json]
     test_reviewed_overlays_preserve_all_historical_views_and_identities
 clean
+
+== 2026-11-19 rerun after the DRI finding F1 (record replaced by the Opus overlay read, no carried_from) ==
+F1 probe: the updated overlay test on the previous Astra-carrying record -> 1 failed (Extra items in the left set: 'carried_from')
+M4-review-record (new record's digest a0a89357... -> b0a89357...) -> 2 failed:
+    test_the_overlay_review_is_carried_only_by_the_environment_id_rebind
+    test_reviewed_overlays_preserve_all_historical_views_and_identities
+restored; tests/test_defs_repair_claude_constitution_excerpt_1119.py: 24 passed

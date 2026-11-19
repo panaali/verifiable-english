@@ -105,7 +105,8 @@ def test_the_only_environment_change_is_the_appended_source_spans():
 
 def test_the_overlay_review_is_carried_only_by_the_environment_id_rebind():
     """DRI decision 2026-11-19 (defs-repair-claude-constitution-excerpt-1119, item 1): the rebound overlay differs
-    from the reviewed one only in environment_id, and the new pinned record names the reviewed digest it carries."""
+    from the reviewed one only in environment_id. DRI note 2026-11-19 (supersedes item 1(a)): the new pinned record
+    is the Opus read of the appended descriptions, not a carried 2026-09-21 review; the old record is unchanged."""
     from ve.environment import Environment
     from ve.english_vocabulary import overlay_provenance
     overlay = json.loads((CASE / "environment.english.json").read_text(encoding="utf-8"))
@@ -123,9 +124,19 @@ def test_the_overlay_review_is_carried_only_by_the_environment_id_rebind():
     records = json.loads((REPO / "ve/reviewed-overlays.json").read_text(encoding="utf-8"))
     mine = [r for r in records if r["overlay"] == "usecases/claude-constitution-excerpt/environment.english.json"]
     assert [r["overlay_digest"] for r in mine] == [REVIEWED_OVERLAY_DIGEST, provenance["overlay_digest"]]
-    assert mine[0]["reviewer"] == "GPT-6 Astra (Worker X)" and mine[0]["date"] == "2026-09-21"
-    assert mine[1]["carried_from"] == REVIEWED_OVERLAY_DIGEST
-    assert "rebind" in mine[1]["reviewer"] and REVIEWED_OVERLAY_DIGEST in mine[1]["scope"]
+    assert mine[0] == {
+        "overlay_digest": REVIEWED_OVERLAY_DIGEST, "reviewer": "GPT-6 Astra (Worker X)", "date": "2026-09-21",
+        "overlay": "usecases/claude-constitution-excerpt/environment.english.json",
+        "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque "
+                 "qualifications remain in the declarations and GAPS.md."}
+    new = mine[1]
+    assert set(new) == {"overlay_digest", "reviewer", "date", "overlay", "scope"}  # no carried_from
+    assert "Astra" not in json.dumps(new) and REVIEWED_OVERLAY_DIGEST not in json.dumps(new)
+    assert new["reviewer"] == "Claude Opus 5.5 (claude-opus-5-5), seat dri-decider" and new["date"] == "2026-11-19"
+    assert "reviews/defs-repair-claude-constitution-excerpt-1119-overlay-read.md" in new["scope"]
+    for name in ("property", "ought_have_core_values", "appropriate", "undermines", "honest", "relevant",
+                 "benefits", "outranks", "overseer"):
+        assert name in new["scope"], name
 
 
 def test_the_generated_environment_keeps_every_owner_description():

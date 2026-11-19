@@ -39,7 +39,7 @@
   {
    "id": "M4-review-record",
    "file": "ve/reviewed-overlays.json",
-   "mutation": "the carried review record's overlay_digest a0a89357... -> b0a89357...",
+   "mutation": "the 2026-11-19 review record's overlay_digest a0a89357... -> b0a89357...",
    "killed": true,
    "tests": [
     "test_the_overlay_review_is_carried_only_by_the_environment_id_rebind",
