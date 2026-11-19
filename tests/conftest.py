@@ -402,8 +402,8 @@ def interrupted_gate_reaches_its_injected_build(request, monkeypatch):
 # harnesses import some siblings lazily, at call time). A harness module is a bare-named module, not a
 # package, whose file lies outside the shared directories below and outside the interpreter's prefixes:
 # packages (`ve`, `tools`, `tests`), the stdlib and site-packages are never taken out.
-# (No directory is named by a string here: tools/source_graph.py reads this file's constants as data it
-# reads, and this file is in every test's closure.)
+# (Only directory words tools/source_graph.py counts as generic are strings here: it reads this file's
+# constants as paths it reads, and this file is in every test's closure.)
 _SHARED_DIRS = frozenset({ROOT, ROOT / "tests", ROOT / "tools", ROOT / "lean"})
 _SYSTEM_DIRS = tuple({Path(prefix).resolve() for prefix in (sys.prefix, sys.base_prefix, sys.exec_prefix)})
 _HARNESS_RECORDS = {}  # test module path -> (its harness sys.path entries, its harness modules by name)

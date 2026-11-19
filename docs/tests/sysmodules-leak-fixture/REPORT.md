@@ -61,7 +61,7 @@ import line, `from contextlib import contextmanager`.
   or `sys.exec_prefix` (stdlib, the venv and its site-packages). So `ve.*`, `tools.*`, the test modules, `subprocesses` and every
   installed package are never dropped. A harness `sys.path` entry is an added entry whose directory is outside those same
   shared and system directories. Added shared entries, such as `tools/`, are left as they were before this item.
-- The rule names no directory in a string. `tools/source_graph.py` reads the string constants of `tests/conftest.py` as paths, and
+- The rule names no directory in a string except the generic words `tests`, `tools` and `lean` (`GENERIC_DIRECTORIES` in `tools/source_graph.py`). `tools/source_graph.py` reads the string constants of `tests/conftest.py` as paths, and
   that file is in every test's closure. My first version had `Path(entry or ".")` and `ROOT / "usecases"`. The `"."` named every
   file, which broke two `tests/test_select_tests.py` checks (see Notes). Because the rule is directory-based rather than
   usecases-based, it also catches a use-case module whose directory already left `sys.path` before the scope ended
@@ -116,7 +116,7 @@ No existing test had passed only because of a leaked module, so no test's own im
 
 Selected run: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at d6fa3a1683 (clean tree; it ran
 locally on the VM) gave exit=0. The plan was `648/648 test units ... FULL: tests/conftest.py`, and the run `recorded 648 units for tree
-17347e22e7; 0 others left to the static graph until they run; 0 failed` (`/tmp/smleak-select.log`). Only this report changed after it.
+17347e22e7; 0 others left to the static graph until they run; 0 failed` (`/tmp/smleak-select.log`). After it, only this report and one comment in `tests/conftest.py` changed (b344cf437f and the final commit; no code line).
 
 ## Seeded bugs (Python; tests/conftest.py is the only changed file with code)
 
