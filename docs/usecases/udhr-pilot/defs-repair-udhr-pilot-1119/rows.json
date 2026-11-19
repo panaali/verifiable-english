@@ -1,0 +1,46 @@
+{
+ "item": "defs-repair-udhr-pilot-1119",
+ "audit": "manage-agents reviews/defs-carried-1119/rows-udhr-pilot.tsv (read at VE pin 3d6b459df4)",
+ "document": "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md",
+ "sealed_by": {
+  "snapshot": "usecases/udhr-pilot/run-20261010T1400Z/frozen-run.json",
+  "snapshot_pin": "usecases/udhr-pilot/run-20261010T1400Z/migrate.py FROZEN_SHA256",
+  "reproduction_test": "tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
+  "measured_record": "usecases/udhr-pilot/run-20261010T1400Z/metrics.json after.document_bytes"
+ },
+ "rows": [
+  {
+   "id": "defs-udhr-pilot-1-1119",
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "term": "asylum_right_covers_case (This right)",
+   "rules": ["u052"],
+   "source_line": 86,
+   "quote": "Everyone has the right to seek and to enjoy in other countries asylum from persecution.",
+   "carrier": {"kind": "predicate-description", "key": "asylum_right_covers_case"},
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation; no live translation or legend exists elsewhere"
+  },
+  {
+   "id": "defs-udhr-pilot-2-1119",
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "term": "discrimination",
+   "rules": ["u032", "u033a", "u033b"],
+   "source_line": 34,
+   "quote": "Everyone is entitled to all the rights and freedoms set forth in this Declaration, without distinction of any kind, such as race, colour, sex, language, religion, political or other opinion, national or social origin, property, birth or other status.",
+   "carrier": {"kind": "open-term-factors", "key": "discrimination"},
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation; no live translation or legend exists elsewhere"
+  },
+  {
+   "id": "defs-udhr-pilot-3-1119",
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "term": "protection_of_the_family (family)",
+   "rules": ["u061"],
+   "source_line": 102,
+   "quote": "The family is the natural and fundamental group unit of society and is entitled to protection by society and the State.",
+   "carrier": {"kind": "open-term-factors", "key": "protection_of_the_family"},
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation; no live translation or legend exists elsewhere"
+  }
+ ]
+}
