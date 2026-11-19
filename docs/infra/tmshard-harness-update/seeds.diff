@@ -1,0 +1,33 @@
+--- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
++++ tm-shard.sh (seed A)	2026-11-19 10:02:14.500326196 +0000
+@@ -510,7 +510,7 @@
+ }
+ recw=""; rspm=""  # tm-shard-actions-120 (header (1), (2)): the caller's pool actions, read once (fit's retry reads the same)
+ if [ $pool = actions ] && [ ! -f ${TM_SPM_OFF_FLAG:-$M/TM-SPM-OFF} ]; then
+-  aline=$(( ${TM_SHARD_ACTIONS_LIMIT:-7200} - ${TM_SHARD_ACTIONS_PRE:-300} - ${TM_SHARD_ACTIONS_POST:-600} - ${TM_SHARD_ACTIONS_HEADROOM:-1200} ))
++  aline=$(( ${TM_SHARD_ACTIONS_LIMIT:-7200} - ${TM_SHARD_ACTIONS_PRE:-300} - ${TM_SHARD_ACTIONS_POST:-600} - ${TM_SHARD_ACTIONS_HEADROOM:-1100} ))
+   export TM_SHARD_ACTIONS_HARD=${TM_SHARD_ACTIONS_HARD:-$aline} TM_SHARD_ACTIONS_CANCEL=${TM_SHARD_ACTIONS_CANCEL:-$aline}
+   rc_=($(arecs 2>>$log)); recw="; part line $aline s (limit ${TM_SHARD_ACTIONS_LIMIT:-7200} - pre ${TM_SHARD_ACTIONS_PRE:-300} - post ${TM_SHARD_ACTIONS_POST:-600} - headroom ${TM_SHARD_ACTIONS_HEADROOM:-1200})"
+   if [[ ${rc_[1]} == <-> && ${rc_[2]} == <-> ]] && (( rc_[2] > 0 )); then
+--- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
++++ tm-shard.sh (seed B)	2026-11-19 10:02:14.500660056 +0000
+@@ -511,7 +511,7 @@
+ recw=""; rspm=""  # tm-shard-actions-120 (header (1), (2)): the caller's pool actions, read once (fit's retry reads the same)
+ if [ $pool = actions ] && [ ! -f ${TM_SPM_OFF_FLAG:-$M/TM-SPM-OFF} ]; then
+   aline=$(( ${TM_SHARD_ACTIONS_LIMIT:-7200} - ${TM_SHARD_ACTIONS_PRE:-300} - ${TM_SHARD_ACTIONS_POST:-600} - ${TM_SHARD_ACTIONS_HEADROOM:-1200} ))
+-  export TM_SHARD_ACTIONS_HARD=${TM_SHARD_ACTIONS_HARD:-$aline} TM_SHARD_ACTIONS_CANCEL=${TM_SHARD_ACTIONS_CANCEL:-$aline}
++  export TM_SHARD_ACTIONS_HARD=${TM_SHARD_ACTIONS_HARD:-$aline} TM_SHARD_ACTIONS_CANCEL=${TM_SHARD_ACTIONS_CANCEL:-6600}
+   rc_=($(arecs 2>>$log)); recw="; part line $aline s (limit ${TM_SHARD_ACTIONS_LIMIT:-7200} - pre ${TM_SHARD_ACTIONS_PRE:-300} - post ${TM_SHARD_ACTIONS_POST:-600} - headroom ${TM_SHARD_ACTIONS_HEADROOM:-1200})"
+   if [[ ${rc_[1]} == <-> && ${rc_[2]} == <-> ]] && (( rc_[2] > 0 )); then
+     s0=${TM_SHARD_ACTIONS_SETUP:-500}
+--- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
++++ tm-shard.sh (seed C)	2026-11-19 10:02:14.500929897 +0000
+@@ -538,7 +538,7 @@
+ (( n > 1 )) || plain "$tr mutants to run fit one part on $pool (~${sz[2]} s; <= ${sz[3]} per part; $rw$spmw)" fits
+ budget=()  # eff-tm-partial (header): an Actions part stops itself before the 120-min cancel and publishes what it judged
+ # tm-shard-actions-120 (header (3)): also beside a caller's own --budget/--deadline (cloud-tm-job.sh takes the earliest)
+-[ $pool = actions ] && abudget $sha && spmw="$spmw; each part --budget ${budget[2]} s (a partial record before the cancel)"
++[ $pool = actions ] && [[ "$args" != *--budget* && "$args" != *--deadline* ]] && abudget $sha && spmw="$spmw; each part --budget ${budget[2]} s (a partial record before the cancel)"
+ parent=$item-${sha[1,8]}; P=$J/$parent; [ -e $P ] && plain "job $parent exists already"
+ mkdir -p $P; dest=${dest:-$P/trust-mutants.json}
+ python3 -I - $P/job.json $parent $item $sha $n $pool "$dest" "$wt" "${CLOUD_WAITER:-0}" "${(pj:\n:)args}" <<'PY' || plain "cannot write the parent job"
