@@ -264,9 +264,19 @@ def _grounding_violations(unit, vocabulary):
                 continue  # profile words and defined terms carry their own definitions
             text = declaration["verbalisation"].replace("{0}", "").replace("{1}", "")
         else:
-            text = vocabulary["constants"][name]["description"]
+            text = _without_quoted_source(vocabulary["constants"][name]["description"])
         bad += [(name, w) for w in words(text) if w[:4] not in allowed]
     return bad
+
+
+def _without_quoted_source(text):
+    """A legend without the source sentences it quotes (defs-repair-bluedot-grant-1119).
+
+    A quoted run is the source's own definition of the term, carried byte for byte, not content the
+    reading adds; it is dropped only when it occurs in source.md exactly.  Any other quoted run stays.
+    """
+    source = (ROOT / "source.md").read_text(encoding="utf-8")
+    return re.sub(r'"([^"]+)"', lambda m: " " if m.group(1) in source else m.group(0), text)
 
 
 def test_no_invented_content(doc, vocabulary):
