@@ -1,3 +1,5 @@
+- `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
+- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
 - `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
 - `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
 - `tests/test_profiles.py` — (no module docstring)
@@ -75,4 +77,3 @@
 - `tests/test_readings_verdicts_lean.py` — `readings-verdicts` through the service (docs/spec/readings-defaults.md 3, 4.4, 2.4 and 8.2; plan RD-3).
 - `tests/test_readings_verdicts_split.py` — AR-16b split `ve/readings_verdicts.py` into the package `ve/readings_verdicts/`; these pin what the split must keep.
 - `tests/test_regen_generated.py` — tools/regen_generated.py: the generated-file inventory, its merge strategies and the merge-train flow.
-- `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).

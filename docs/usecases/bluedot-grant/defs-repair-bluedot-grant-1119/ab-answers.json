@@ -1,0 +1,27 @@
+{
+ "base": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
+ "rows": [
+  {
+   "document": "usecases/bluedot-grant/document.ve.md",
+   "base_sha256": "4ec8652552c84fb44c78ec9b6c756bec67d8ed4faed628d8ed9b2efff1a80173",
+   "head_sha256": "e896a62b6772dc1d004111452d6bc4f61a1b17c20ccecd6242c31e584a65710f",
+   "raw_differing_keys": [
+    "document_id"
+   ],
+   "identical_after_masking_digests": true,
+   "differing_paths": []
+  },
+  {
+   "document": "usecases/bluedot-grant/causal.ve.md",
+   "base_sha256": "e9dbd3bc211f3e554e3274349b447e9facafb7aa8c482f00a7f2ad66a9ffeb5f",
+   "head_sha256": "d3a81371ca65f6b94b971e1425ed3034114dae289fb900c3ca68244195a6c8ee",
+   "raw_differing_keys": [
+    "core_report_id",
+    "document_id",
+    "report_id"
+   ],
+   "identical_after_masking_digests": true,
+   "differing_paths": []
+  }
+ ]
+}
