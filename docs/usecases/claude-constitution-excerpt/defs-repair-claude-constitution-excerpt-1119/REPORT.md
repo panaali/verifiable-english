@@ -3,7 +3,7 @@
 **Summary.**
 - Status: all 7 P1 rows are KEPT and CARRIED word for word in the environment.json legends of the terms their rules use. Every derived file is regenerated with the project's tools except `conformance/english-lean/s0-report.json` (see Deliverable 2). No DRI signature is outstanding.
 - Merges at VE main `f03cafb9d2` (merged into the branch; corpus seal: main's taken and regenerated). Answers touched: 1 of 2 keyed (model-false.json, through C3 / row 5; rows 1-4, 8, 9: 0 of 2).
-- DRI decision used: reviews/dri-decisions-20261119-defs-repair-claude-constitution-excerpt-1119.md item 1 (option A, the overlay review carried across the environment_id rebind).
+- DRI decision used: reviews/dri-decisions-20261119-defs-repair-claude-constitution-excerpt-1119.md item 1, with item 1(a) superseded by reviews/defs-repair-claude-constitution-excerpt-1119-dri-note-20261119.md: the 2026-09-21 Astra review is NOT carried across the environment_id rebind (Astra never read the appended descriptions). The new pinned record is the 2026-11-19 read by Claude Opus 5.5 (claude-opus-5-5), seat dri-decider, of the nine predicates' and sorts' overlay wording against the appended descriptions (reviews/defs-repair-claude-constitution-excerpt-1119-overlay-read.md, manage-agents repo; all nine consistent). The builder is not that reviewer.
 - Trust +0 (`uv run python tools/trust_map.py --check`: "K +0, S +0, D +0, G +0, tied +0 ... PASS"). No Lean, Python or Rust code changed.
 - The full gate has not been run here; the chain runs it on the final HEAD.
 
@@ -38,7 +38,7 @@ P2 rows 6 and 7 (optional, FORMALISED) were not taken, as the task says. I found
 | usecases/.../definitions-environment.json, definitions-report.md | `uv run python usecases/claude-constitution-excerpt/verify_definitions.py` | 7 descriptions. In the report, "Python, Lean and Rust" becomes "Python, Lean" because the current Rust runner answers `unknown case: Rust checks search cases only` to this evaluate case. That comes from main, not from this item. |
 | usecases/.../rendered.md | the `ve render ... --view ve_fluent --with-legend --legend-style compact` command the file records (the output block from the old environment reproduced the committed block byte for byte first) | environment id + 7 legend lines |
 | usecases/.../environment.english.json | rebind of `environment_id` to the new `Environment.environment_id` (no rebind tool exists; one-line mechanical change, proved by the rebind test) | 98dbed69... -> 467d3440... |
-| ve/reviewed-overlays.json | new record per the DRI decision (`carried_from` 8411f393..., reviewer text and scope as the decision words them); the 2026-09-21 record is unchanged | +8 lines |
+| ve/reviewed-overlays.json | new record per the DRI note (reviewer "Claude Opus 5.5 (claude-opus-5-5), seat dri-decider", date 2026-11-19, no `carried_from`, scope citing the overlay-read file); the 2026-09-21 record is unchanged byte for byte | +7 lines |
 | usecases/.../rendered-english.md | `uv run python -m conformance.english_artifacts` (the three other use cases and docs/english-surface.md came out unchanged) | environment id, overlay digest (review status stays `reviewed`), 7 legend lines |
 | conformance/english-surface-report.json | `uv run python -m conformance.english_surface` (all 17 vocabularies, about 4 h on the loaded VM) | excerpt environment_id and overlay_digest. `grammar_sha256` moves in all 17 rows because main's report predates later grammar changes. Every count and corpus hash is unchanged and `ambiguous_texts` stays 0. |
 | conformance/english-lean/lexicon-report.json | `uv run python -m conformance.english_lean_lexicon` (valid 43, invalid 0) | the excerpt's 2 x 2 lexicon_id lines. The audit's derived_files did not list this file; the selected run found it. |
@@ -51,7 +51,7 @@ P2 rows 6 and 7 (optional, FORMALISED) were not taken, as the task says. I found
 - `test_the_source_definition_is_carried_word_for_word`: 7 rows x {environment.json, definitions-environment.json}. Each case checks a raw substring, then a substring after `omit_norm`.
 - `test_the_carrier_is_a_term_the_rule_uses`
 - `test_the_only_environment_change_is_the_appended_source_spans`: removing the 7 spans gives environment id 98dbed69..., the id the review was bound to.
-- `test_the_overlay_review_is_carried_only_by_the_environment_id_rebind`: the DRI's two proofs, digest with the old id == 8411f393... and a key-by-key comparison with the saved reviewed overlay `evidence/reviewed-overlay-20260921.json`.
+- `test_the_overlay_review_is_carried_only_by_the_environment_id_rebind`: the DRI's two proofs, digest with the old id == 8411f393... and a key-by-key comparison with the saved reviewed overlay `evidence/reviewed-overlay-20260921.json`; then the records: the 2026-09-21 Astra record equals its pinned fields exactly, and the new record has exactly the keys overlay_digest, reviewer, date, overlay, scope (no `carried_from`), no "Astra" and no 8411f393... in it, reviewer Claude Opus 5.5 / dri-decider, date 2026-11-19, and a scope that names the nine terms and the overlay-read file. On the earlier Astra-carrying record it fails (`Extra items in the left set: 'carried_from'`).
 - `test_the_generated_environment_keeps_every_owner_description`
 
 It fails on pre-change main (14 failed, 8 passed: `evidence/condition-test-on-main.log`; the two rebind tests were added later and fail there too, because the evidence file does not exist on main). On the final tree: 24 passed (`uv run pytest -q tests/test_defs_repair_claude_constitution_excerpt_1119.py`).
@@ -72,14 +72,14 @@ All of these are in data files; no Lean, Python or Rust product code changed. Li
 | M1 | usecases/claude-constitution-excerpt/environment.json | drop "in forming an overall judgment, " from the outranks span | 5, incl. `...carried_word_for_word[...-8-1119-environment.json]` |
 | M2 | usecases/claude-constitution-excerpt/definitions-environment.json | generated copy desynchronised (property span shortened) | `..._keeps_every_owner_description`, `...[...-1-1119-definitions-environment.json]` |
 | M3 | usecases/claude-constitution-excerpt/environment.english.json | an overlay byte other than environment_id | `..._carried_only_by_the_environment_id_rebind`, `test_reviewed_overlays_preserve_all_historical_views_and_identities` |
-| M4 | ve/reviewed-overlays.json | the carried record's digest changed | the same two |
+| M4 | ve/reviewed-overlays.json | the new record's digest changed | the same two |
 | M5 | usecases/claude-constitution-excerpt/environment.json | curly quotes around "tie-breakers" (equal after normalisation, not byte for byte) | 5, incl. `...[...-8-1119-environment.json]` |
 
 ## Spec re-read
 
 - The rows' quote column against source.md:16-19, 21, 30, 32-33 (script `span==quote` for all 7).
 - The carrier rule against METHOD.md section 3 and amendment 3 (complete span, defined term included).
-- The overlay record and test against the DRI decision item 1 (a) and (b), word for word: reviewer text, `carried_from`, scope, both proofs.
+- The overlay record and test against the DRI note 2026-11-19 (superseding decision item 1(a)) and decision item 1(b): reviewer text, date, no `carried_from`, scope citing the overlay-read file, both proofs.
 - The DELTA cells against DRI-RULINGS.md R3 and the decision's DELTA line.
 
 ## Pilot bytes expected to move (estimate, not claimed)
