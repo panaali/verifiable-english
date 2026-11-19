@@ -53,8 +53,9 @@ def _counted(text):
 
 # --- X36: the D2D3 accounting line ----------------------------------------------------------------------------------
 
-D2D3_LOSSES = ("A Risk Report will cover the risks of Anthropic's models and actions",
-               "refers generally to risks of the most severe potential harms from advanced AI")
+# Footnote 1's clause is no longer a loss: D2's catastrophic legend carries the footnote whole
+# (rsp-repair-r1-catastrophic-1119).
+D2D3_LOSSES = ("A Risk Report will cover the risks of Anthropic's models and actions",)
 
 
 def _d2d3_carriers():
@@ -69,7 +70,7 @@ def _d2d3_carriers():
 
 def test_d2d3_line_exists_parses_and_is_saved():
     """One D2D3 line, the last of the sidecar, read by the tool as the D2D3 collection with no problem; the saved
-    --source report agrees; its losses are exactly the two clauses below, class 1."""
+    --source report agrees; its losses are exactly the clause below, class 1."""
     acc = fix._accounting()
     lines = acc.read_sidecar(RSP / "accounting.d1.txt")
     d2d3 = [line for line in lines if line[1] == "D2D3"]

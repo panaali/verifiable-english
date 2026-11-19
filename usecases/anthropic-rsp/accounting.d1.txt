@@ -84,4 +84,4 @@ t4-only-if | omits: nothing
 s2-suff-third | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
 s2-only-if-third | omits: nothing
 CASES | omits: nothing
-D2D3 | omits: "Scope." exposition ; "A Risk Report will cover the risks of Anthropic's models and actions" loss 1 ; "refers generally to risks of the most severe potential harms from advanced AI" loss 1
+D2D3 | omits: "Scope." exposition ; "A Risk Report will cover the risks of Anthropic's models and actions" loss 1
