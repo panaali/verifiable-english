@@ -70,6 +70,16 @@ was not edited: its sha256 is in `sha256.txt` and matches the "installed" run.
 | s3-no-tmback | `tmback` does nothing | 8 passed, 1 failed |
 | s4-redirect-always | redirect `a[2]` even when it is not `$out` | 8 passed, 1 failed |
 
+## Repository checks
+
+- Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 24f9050892. It ran 10
+  units with 0 failed, exit 0 (`selected-run.log`). The branch changes only `docs/infra/gate-train-tag-reuse/`.
+- Trust mutants: `light-lane.py check` printed `NOT 464 changed lines outside generated files > 150 (11 files)`. All of
+  those lines are this directory's evidence logs, and no trusted-core file changed. The sweep's plan is empty, so no
+  sweep was run: `tools/trust_mutants.py --base <merge-base> --plan` printed `"definitions": 0, "mutants": 0`
+  (`trust-mutants-plan.log`).
+- The full gate is not run here. The chain runs it on the final HEAD.
+
 ## SIZE
 
 SIZE: 0 product, 86 tests (`test-gatetrain.zsh`), about 190 other hand-written lines (this report and `seeded-bugs.json`).
@@ -81,3 +91,30 @@ SIZE: 0 product, 86 tests (`test-gatetrain.zsh`), about 190 other hand-written l
 - A run killed with SIGKILL between the move and `tmback` leaves `$out` missing and `$out.old-<t0>` behind, and
   `tm-barrier.py`'s glob (`<item>-*.json`) does not match `.old-<t0>`, so the next run judges only the records still
   in place. UNVERIFIED: read from the code, not probed. This is outside this row and not filed.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no relayed Lean answer is added or changed.
+2. PASS: the row's two deliverables. The fix was already installed; `run-installed.log` shows 9 passed. The stub test is
+   `test-gatetrain.zsh` case 1. Breaking the task's HOW (no staged file) is explained under "Deviation".
+3. PASS: the tests can fail. `run-pre-fix-etsync.log` has 6 failed, and seeds s1-s4 each fail at least one check
+   (`seed-*.log`).
+4. N.A.: no Python, Lean or Rust code changed.
+5. N.A.: no R8 binding.
+6. PASS: evidence and HEAD match. `selected-run.log` is from the committed tree. The full gate runs in the chain on the
+   final HEAD.
+7. PASS: no unsigned item is left. There is no DELTA row and no signature; the item is docs only (`git diff --stat main...HEAD`).
+8. N.A.: no user-visible change in VE.
+9. PASS: test selection still works. `selected-run.log` (10 units, 0 failed) shows `select_tests` ran on this branch.
+10. N.A.: no Lean.
+11. PASS: limits are untouched. `gate-train.sh`'s budgets (TM_TARGETED_BUDGET, TM_TARGETED_RETURN) are not touched.
+    The harness has no sleep or timeout.
+12. N.A.: no product code. The harness runs in under a minute (the four runs above).
+13. N.A.: no test is removed or renamed.
+14. PASS: both directions are tested. Case 1 and case 2 are the same-tag redirect; cases 3 and 4 are records that must
+    not be redirected or moved. Seed s4 kills the "always redirect" mutant. Every claim cites a log in this directory.
+    Spec re-read: "pass $out.old-$t0 to tm-inventory when a[2] == $out" against BACKLOG.jsonl row
+    gate-train-tag-reuse and `gate-train.sh:26`: the condition and the path match exactly.
+15. PASS: no overclaim. The universal words here ("no install", "never edited", "0 mutants") each cite
+    `sha256.txt`/`run-installed.log` or `trust-mutants-plan.log`. Nothing was cut. Every new check has a seed. N.A. for
+    limits.
