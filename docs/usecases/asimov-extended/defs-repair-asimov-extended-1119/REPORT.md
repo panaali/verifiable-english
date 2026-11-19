@@ -62,6 +62,7 @@ It fails on main (`/tmp/defs-ae-main.log`: 7 failed) and passes after (`/tmp/def
 ## Tests run
 
 - **Selected run** (`mac-pytest.sh --select`, HEAD d444f1c4): 37 units. The only failure was `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` (stale derived id). It was regenerated, and that file then passed locally: 56 passed (`/tmp/defs-ae-lex.log`).
+- **Final selected run** (after the lexicon regeneration and the docs commit): it ran on ve-cloud-2 and recorded "372 units for tree f81a7e5783 … 0 failed", exit=0 (`/tmp/defs-ae-select2.log`).
 - **Records rerun:** `tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results` ran against the Lean service after a `lake build` (1478 jobs, ok). It passed in 168.82 s, not skipped (`/tmp/defs-ae-rerun.log`). So Lean's base, ext and permission-default answers on every record are unchanged.
 - **Not run:** the nightly `test_rerun_document_*`, `test_rerun_mutant_*` and `test_rerun_sample_*`. Legends do not enter those formulas, but this is not verified. The full gate is left to the chain, as instructed.
 - **Light lane:** "LIGHT 100 changed lines outside generated files <= 150 (5 files), no trusted-core file", so there was no trust_mutants sweep.
