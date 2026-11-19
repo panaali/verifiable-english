@@ -2,9 +2,19 @@
 
 No DRI signature is reserved: DELTA.md has no rows (no user-visible change of VE).
 
-**Merge commit.** This branch is based on main at d8758ce968. The product change is b540787792 (legends + regenerated
-files), and c5fba4282d adds the condition test; the docs commit follows. The VE commit it merges at is the merge train's
-merge commit of this branch. The R16 C2/C3 pins are per commit, so the counted read must re-pin at that commit. A merge
+**Merge commit.** The branch commits are:
+- b540787792: the legends and the regenerated files;
+- c5fba4282d: the condition test;
+- 4b454ca49a: the docs;
+- 1530594a48: a merge of main at 0ce720e46b.
+
+That merge brought in fsf-repair-f5-lowrisk-1119's `low_risk` legend. vocabulary.py merged cleanly. The generated files
+were taken from main and regenerated with their generators: results.json is still 257/262 against the key, and its diff
+against main is certificate hashes only. After the merge, the new tests plus tests/test_safety_framework.py,
+tests/test_english_lean_lexicon.py and the route-fixture test ran on ve-mac-1 through mac-pytest.sh at HEAD 1530594a:
+"108 passed", exit 0. `trust_map.py --check` against 0ce720e46b7f gives "trusted +0, PASS".
+
+The VE commit this merges at is the merge train's merge commit of this branch (on main after 0ce720e46b). The R16 C2/C3 pins are per commit, so the counted read must re-pin at that commit. A merge
 after the R16 diagnostic voids that diagnostic for the answers that read the touched units: f3, f8, f9-acc, f10-acc,
 f11-acc, f12-p, f12-u, f13-p and f13-u (`c5check.log`). These include A-L*-EXT/GOV, C5 and the R family (R*/ACCEPTABLE).
 
