@@ -1,32 +1,42 @@
 # R16 C5 dry-run evidence (counter tools-local/uc-audit.py.reads-1119, runner omission-seq-read.py.reads-1119, oseq-r16-1)
 
-## --dry-run-all, run debates/uc-audit-safety-framework-20261115T1505Z with manifest ve_commit set per line (copy in /tmp); pins: /tmp copy of uc-audit-r16-pins.reads-1119 with the da0822ae80 entry keyed to the commit (dry-run only, not a pin)
-counted commit as is:
-safety-framework at da0822ae80: 196 answers rendered (no call); max step-1 prompt 113909 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 31, runner render == counter frozen render: 31/31; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
-merge base:
-safety-framework at d8758ce968: 238 answers rendered (no call); max step-1 prompt 113909 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
-this branch (content commit):
-safety-framework at 44100262e4: 238 answers rendered (no call); max step-1 prompt 116232 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+Taken after review F1 at a4d0f5be2f, the commit that moves the S:15 passages out of the citation parenthesis. The first
+dry-run (at 44100262e4) checked only the C5 render, which shows a legend uncut. It reported 5/5 although the counter
+cut four of the five passages as a citation. The counted-text section below is the check that run lacked.
 
-## --dry-run --answers <one target>: the five F6 passages on the '- recommends:' line of the FACTS unit's VOCABULARY LEGENDS section
-A-L2-EXT/SEC	prompt_bytes=91847	in FACTS legend recommends: 5/5	OK
-G1	prompt_bytes=91141	in FACTS legend recommends: 5/5	OK
-N2	prompt_bytes=68439	in FACTS legend recommends: 5/5	OK
-R8/ACCEPTABLE	prompt_bytes=98128	in FACTS legend recommends: 5/5	OK
-S4	prompt_bytes=116200	in FACTS legend recommends: 5/5	OK
+## counted text: the counter's own omit_carrier_texts('safety-framework', commit), FACTS unit, legend recommends
+Each passage is looked up (omit_norm) in the counter's meaning text: what is left after its citation cut. "citation-only"
+means the passage is only in the raw text, which the counter classes as a citation: NONE read.
+S:9 is checked on the run after its inner quote mark: the counter cuts the source's own "(SL2)" and keeps the \"
+escapes in its meaning text (review note C1, counter side).
+d32556b34a FACTS legend recommends: 1 /5 counted; {'S:9 (run after its inner quote; (SL2) cut, C1)': 'counted', 'S:15 SL3 cell': 'citation-only', 'S:15 fn12': 'citation-only', 'S:15 SL4': 'citation-only', 'S:15 fn13': 'citation-only'}
+a4d0f5be2f FACTS legend recommends: 5 /5 counted; {'S:9 (run after its inner quote; (SL2) cut, C1)': 'counted', 'S:15 SL3 cell': 'counted', 'S:15 fn12': 'counted', 'S:15 SL4': 'counted', 'S:15 fn13': 'counted'}
 
-## plan.json, --dry-run --answers A-L2-EXT/SEC,G1,N2,R8/ACCEPTABLE,S4, merge base vs this branch (diff of python3 -m json.tool)
+## --dry-run-all; run: a /tmp copy of debates/uc-audit-safety-framework-20261115T1505Z with manifest ve_commit set per line; pins: /tmp copy of uc-audit-r16-pins.reads-1119 with the da0822ae80 entry keyed to the commit (dry-run only, not a pin)
+merge base (synced main):
+safety-framework at f5553bc894: 238 answers rendered (no call); max step-1 prompt 113909 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+this branch (fix commit):
+safety-framework at a4d0f5be2f: 238 answers rendered (no call); max step-1 prompt 116226 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+
+## --dry-run --answers <one target>: the five F6 passages, quoted whole, on the '- recommends:' line of the FACTS unit's VOCABULARY LEGENDS section (render)
+A-L2-EXT/SEC	prompt_bytes=91844	in FACTS legend recommends: 5/5	OK
+G1	prompt_bytes=91138	in FACTS legend recommends: 5/5	OK
+N2	prompt_bytes=68436	in FACTS legend recommends: 5/5	OK
+R8/ACCEPTABLE	prompt_bytes=98119	in FACTS legend recommends: 5/5	OK
+S4	prompt_bytes=116194	in FACTS legend recommends: 5/5	OK
+
+## plan.json, --dry-run --answers A-L2-EXT/SEC,G1,N2,R8/ACCEPTABLE,S4, merge base (run /tmp/f6-run2b) vs this branch (run /tmp/f6-run2) (diff of python3 -m json.tool)
 3,4c3,4
-<     "ve_commit": "d8758ce96837db7780caddb9f498e36fd7f511ba",
-<     "run": "/tmp/f6-run-base",
+<     "ve_commit": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
+<     "run": "/tmp/f6-run2b",
 ---
->     "ve_commit": "44100262e4b999ca1b2b8a84d168fd0e46ebc72a",
->     "run": "/tmp/f6-run",
+>     "ve_commit": "a4d0f5be2fd55f2ec5f93bf5ebbf0740246c2bb3",
+>     "run": "/tmp/f6-run2",
 90c90
-<         "commit": "d8758ce96837db7780caddb9f498e36fd7f511ba",
+<         "commit": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
 ---
->         "commit": "44100262e4b999ca1b2b8a84d168fd0e46ebc72a",
+>         "commit": "a4d0f5be2fd55f2ec5f93bf5ebbf0740246c2bb3",
 141c141
-<     "written": "2026-11-19T13:51:58Z"
+<     "written": "2026-11-19T16:33:28Z"
 ---
->     "written": "2026-11-19T13:51:57Z"
+>     "written": "2026-11-19T16:33:30Z"
