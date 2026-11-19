@@ -1,0 +1,25 @@
+rc 0 wall s 660
+21:13:04Z order (trains first): 2 jobs
+21:13:04Z   1. train t1 -> scope t1 (1G): zsh /tmp/vmsr-an4q6x26/manage-agents/infra-item.sh t1 feature/t1 /tmp/vmsr-an4q6x26/manage-agents/prompts/task-t1.txt
+21:13:04Z   2. job b1 -> scope b1 (1G): zsh /tmp/vmsr-an4q6x26/manage-agents/infra-item.sh b1 feature/b1 /tmp/vmsr-an4q6x26/manage-agents/prompts/task-b1.txt
+21:13:04Z pause: CHAIN_WATCH -> CHAIN_WATCH.paused-recovery-20261117
+21:13:04Z pause: FEATURE_FEED -> FEATURE_FEED.paused-recovery-20261117
+21:13:04Z pause: INFRA_FEED -> INFRA_FEED.paused-recovery-20261117
+21:13:04Z launch train t1 (t1): 1-min load 12.50, 1/6 in their first 15 min, held 0 s (log t1.recover.log)
+21:14:04Z launch job b1 (b1): 1-min load 12.50, 2/6 in their first 15 min, held 60 s (log b1.recover.log)
+21:14:04Z restore waits until the last relaunch (b1) has run 10 min
+21:24:04Z restore: CHAIN_WATCH.paused-recovery-20261117 -> CHAIN_WATCH
+21:24:04Z restore: FEATURE_FEED.paused-recovery-20261117 -> FEATURE_FEED
+21:24:04Z restore: INFRA_FEED.paused-recovery-20261117 -> INFRA_FEED
+21:24:04Z done: relaunched 2, skipped 0
+
+iso-calls:
+t1 1G | none | lock:no | -- zsh /tmp/vmsr-an4q6x26/manage-agents/infra-item.sh t1 feature/t1 /tmp/vmsr-an4q6x26/manage-agents/prompts/task-t1.txt
+b1 1G | none | lock:no | -- zsh /tmp/vmsr-an4q6x26/manage-agents/infra-item.sh b1 feature/b1 /tmp/vmsr-an4q6x26/manage-agents/prompts/task-b1.txt
+CURRENT-STATE tail:
+- 2026-11-17 21:13Z (vm-stop-recover 20261117): recovery start: paused CHAIN_WATCH, FEATURE_FEED, INFRA_FEED (as <flag>.paused-recovery-20261117); 2 jobs, trains first; a relaunch waits for 1-min load < 48, < 6 relaunches in their first 15 min and 60 s since the last.
+- 2026-11-17 21:13Z (vm-stop-recover 20261117): recovery: relaunched train t1 (t1; 1-min load 12.50, 1/6 in their first 15 min, held 0 s).
+- 2026-11-17 21:14Z (vm-stop-recover 20261117): recovery: relaunched job b1 (b1; 1-min load 12.50, 2/6 in their first 15 min, held 60 s).
+- 2026-11-17 21:24Z (vm-stop-recover 20261117): recovery end: restored CHAIN_WATCH, FEATURE_FEED, INFRA_FEED; relaunched 2, skipped 0.
+
+flags after: {'CHAIN_WATCH': 'CHAIN_WATCH on (test original)', 'FEATURE_FEED': 'FEATURE_FEED on (test original)', 'INFRA_FEED': 'INFRA_FEED on (test original)'} paused left: []
