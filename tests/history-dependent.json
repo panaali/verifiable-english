@@ -331,14 +331,15 @@
   },
   {
    "test": "tests/test_definitions_carried.py",
-   "why": "starts git (git cat-file, git ls-tree, git rev-parse) in tools/defs_carried.py",
+   "why": "starts git (git cat-file, git ls-tree, git rev-parse) in tools/defs_carried.py, tools/defs_carried_known.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tools/defs_carried.py:GitTree.__init__: git ls-tree, git rev-parse",
     "tools/defs_carried.py:GitTree.read: git cat-file",
-    "tools/defs_carried.py:MemTree.read: git cat-file"
+    "tools/defs_carried.py:MemTree.read: git cat-file",
+    "tools/defs_carried_known.py:repair_commits: git cat-file"
    ]
   },
   {

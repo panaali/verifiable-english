@@ -33,7 +33,10 @@ import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(1, str(Path(__file__).resolve().parents[1]))
 import defs_carried_counter as counter  # noqa: E402  (the counter's own code, byte-pinned by a test)
+from ve.errors import VEError  # noqa: E402
+from ve.surface.softnorms import parse_header_options  # noqa: E402  (VE's rule-header grammar: one owner)
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL_VERSION = 'defs-carried-stage1-1'
@@ -65,6 +68,10 @@ class FsTree:
     def names(self, d):
         p = self.root / d
         return sorted(x.name for x in p.iterdir() if x.is_file()) if p.is_dir() else []
+
+    def subdirs(self, d):
+        p = self.root / d
+        return sorted(x.name for x in p.iterdir() if x.is_dir()) if p.is_dir() else []
 
     def describe(self):
         return {'kind': 'checkout', 'root': str(self.root)}
@@ -98,6 +105,9 @@ class GitTree:
         d = d.rstrip('/') + '/'
         return sorted(p[len(d):] for p in self._paths if p.startswith(d) and '/' not in p[len(d):])
 
+    def subdirs(self, d):
+        return _child_dirs(self._paths, d)
+
     def describe(self):
         return {'kind': 'commit', 'commit': self.commit}
 
@@ -122,8 +132,16 @@ class MemTree:
         d = d.rstrip('/') + '/'
         return sorted(p[len(d):] for p in self.files if p.startswith(d) and '/' not in p[len(d):])
 
+    def subdirs(self, d):
+        return _child_dirs(self.files, d)
+
     def describe(self):
         return {'kind': 'files', 'key': self.key}
+
+
+def _child_dirs(paths, d):
+    d = d.rstrip('/') + '/'
+    return sorted({p[len(d):].split('/', 1)[0] for p in paths if p.startswith(d) and '/' in p[len(d):]})
 
 
 # --------------------------------------------------------------------------------------------------- normalisation ---
@@ -247,6 +265,15 @@ OUT_OF_SCOPE = {
     'webapp-commands': 'a fixture with no source document (a lexicon only, no VE text)',
     'closure-induction': 'its premises are math-mini-paper T9/T9e (checked there) plus two policy fixtures with no source',
 }
+
+
+def unscoped_use_cases(tree):
+    """Use-case directories of the tree with no adapter (DOCS) and no out-of-scope reason. REPORT MODE: they are listed
+    in the report and printed, never failed on, so a later item that adds a use case is not blocked by this tool."""
+    scoped = {DOCS[n]['dir'].split('/')[1] for n in DOCS} | set(OUT_OF_SCOPE)
+    return [d for d in tree.subdirs('usecases') if d not in scoped and not d.startswith(('_', '.'))]
+
+
 NARROW_SURFACE = ('rule/fact lines with comments stripped, the code the check executes (comments, docstrings and the '
                   'vocabulary legend strings stripped), and the description of each predicate the rule uses; never sort '
                   'or constant legends, verbalisations, open-term factors or unused predicates\' legends')
@@ -302,6 +329,24 @@ def front_matter(text):
     if end < 0:
         return None, text
     return _json(text[4:end]), text[end + 5:]
+
+
+_RULE_HEADER = re.compile(r'Rule ([1-9][0-9]*)(?: \(([^()]*)\))?\.(?=\s|\Z)')
+_PRECEDENCE = re.compile(r'Rule ([1-9][0-9]*) takes precedence over rule ([1-9][0-9]*)\.')
+
+
+def rule_header_refs(line):
+    """The rules a rules.ve rule line's header names ("Rule 10 (exception to rules 8, 9)." -> ['R8', 'R9']), read by
+    VE's own header grammar (ve.surface.softnorms.parse_header_options, the one owner of "exception to rule(s) ...");
+    () for a header with no parentheses, None when the header is not one the grammar reads (the rule is UNPARSED)."""
+    m = _RULE_HEADER.match(line)
+    if m is None:
+        return None
+    try:
+        refs, _parties = parse_header_options(m[2] or '')
+    except VEError:
+        return None
+    return [f'R{n}' for n in refs]
 
 
 def _strip_comment_lines(text):
@@ -439,9 +484,14 @@ def adapt_rules_ve(doc, tree):
     _declare_vocab(doc, voc)
     for f in s.get('read_with', ()):
         _read(doc, tree, f'{s["dir"]}/{f}', required=False)
+    precedence = {}
     for f in s['rules']:
         text = _read(doc, tree, f'{s["dir"]}/{f}') or ''
         for i, line in enumerate(text.split('\n'), 1):
+            p = _PRECEDENCE.fullmatch(line.strip())
+            if p:
+                precedence.setdefault(f'R{int(p[1])}', set()).add(f'R{int(p[2])}')
+                continue
             m = re.match(r'^Rule (\d+)\b', line)
             if not m:
                 if line.lstrip().startswith(('#', '--', '//')):
@@ -449,10 +499,17 @@ def adapt_rules_ve(doc, tree):
                 continue
             body = _strip_comment_lines(line)
             terms = _with_arg_sorts(_english_terms(body, voc), voc, ())
-            refs = sorted({f'R{n}' for n in re.findall(r'(?i)\brules? (\d+)\b', body[m.end():])} - {f'R{m.group(1)}'})
-            doc.add_rule(f'R{m.group(1)}', f'{f}:{i}', body, terms, [('rule', body)], extra={'refs': refs})
-    # A rule's wording that points to another rule ("exception to rule 8") puts that rule on its dependency path; the
-    # path's terms are the rule's terms (transitively), as a .ve.md unit's graph/uses path is.
+            refs = rule_header_refs(body)
+            rid = f'R{int(m.group(1))}'
+            doc.add_rule(rid, f'{f}:{i}', body, terms, [('rule', body)], parsed=refs is not None,
+                         extra={'refs': sorted(set(refs or ()) - {rid})})
+    for rid, targets in precedence.items():
+        if rid in doc.rules:
+            doc.rules[rid]['refs'] = sorted(set(doc.rules[rid]['refs']) | (targets - {rid}))
+    # A rule's header that names other rules ("exception to rules 8, 9") and a precedence sentence ("Rule 3 takes
+    # precedence over rule 5.") put those rules on its dependency path, read with VE's own header grammar; the path's
+    # terms are the rule's terms (transitively), as a .ve.md unit's graph/uses path is. A header the grammar does not
+    # read leaves the rule UNPARSED (its dependencies unknown), never silently short of a reference.
     own = {rid: set(r['terms']) for rid, r in doc.rules.items()}
     for rid, r in doc.rules.items():
         seen, todo, path = {rid}, list(r['refs']), []
@@ -1183,6 +1240,7 @@ def run(tree, names, known):
     return {
         'tool': TOOL_VERSION, 'mode': 'report', 'tree': tree.describe(), 'arg_limit': ARG_LIMIT,
         'marker_version': MARKER_VERSION, 'out_of_scope': OUT_OF_SCOPE,
+        'unscoped_use_cases': unscoped_use_cases(tree),
         'known_summary': {'pairs': len(allk), 'hits': sum(1 for x in allk if x['hit']),
                           'misses': [{k: x[k] for k in ('case', 'rule', 'term', 'verdict', 'reach')}
                                      for x in allk if not x['hit']]},
@@ -1241,6 +1299,9 @@ def main(argv=None):
             (Path(a.summary_dir) / f'{n}.txt').write_text(summary_text(r) + '\n', encoding='utf-8')
     for r in rep['documents'].values():
         print(summary_text(r))
+    if rep['unscoped_use_cases']:
+        print(f'unscoped use cases (no adapter and no out-of-scope reason; reported, never failed): '
+              f'{", ".join(rep["unscoped_use_cases"])}')
     ks = rep['known_summary']
     print(f'known cases: {ks["pairs"]} pairs, {ks["hits"]} detected not carried, {len(ks["misses"])} missed; '
           f'total {rep["seconds"]} s; report mode: exit 0')
