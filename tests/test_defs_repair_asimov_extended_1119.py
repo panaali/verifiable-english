@@ -80,3 +80,36 @@ def test_a_sort_carrier_keeps_its_noun():
     for key in ("action", "harm"):
         sort = ENV["vocabulary"]["sorts"][key]
         assert "verbalisation" not in sort and sort["description"].startswith(key + ". "), sort
+
+
+# Saved evidence: every file this item changes (`git diff --name-only` against main 53de6068d7 at 9f28830637, plus
+# this test file). Kept here, not read from a live diff, so the test passes after a sync with main.
+ITEM_FILES = (
+    "conformance/english-lean/lexicon-report.json",
+    "docs/usecases/asimov-extended/defs-repair-asimov-extended-1119/REPORT.md",
+    "docs/usecases/asimov-extended/defs-repair-asimov-extended-1119/mutants.json",
+    "tests/test_defs_repair_asimov_extended_1119.py",
+    "usecases/asimov-extended/base.manifest.json",
+    "usecases/asimov-extended/environment.json",
+    "usecases/asimov-extended/rules.manifest.json",
+)
+REPORT = REPO / "docs" / "usecases" / "asimov-extended" / "defs-repair-asimov-extended-1119" / "REPORT.md"
+
+
+def test_the_report_states_the_seal_status_of_every_changed_file():
+    """F1: the REPORT once said `corpus-seal.json` did not list `environment.json`, which the seal pins by content hash.
+    For every file this item changes, the REPORT names each one the seal lists, records each drift line the seal's own
+    check (`conformance/english_lean_seal.py` `check`) gives for it, and never says the seal omits a listed file."""
+    from conformance import english_lean_seal as seal_tool
+
+    report = REPORT.read_text(encoding="utf-8")
+    seal = json.loads(seal_tool.SEAL.read_text(encoding="utf-8"))
+    listed = {entry["path"] for entry in seal["sources"]}
+    assert all((REPO / path).exists() for path in ITEM_FILES)
+    ours = [line for line in seal_tool.check(seal) if line.split(": ", 1)[1] in ITEM_FILES]
+    for path in sorted(listed & set(ITEM_FILES)):
+        assert f"`{path}`" in report and "`conformance/english-lean/corpus-seal.json`" in report, path
+    for line in ours:
+        assert f"`{line}`" in report and "conformance.english_lean_seal --check" in report, line
+    for phrase in ("does not list", "no seal", "not sealed", "nor seal", "or seal covers"):
+        assert phrase not in report.lower(), phrase
