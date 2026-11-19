@@ -342,7 +342,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve_experiments/runner.py",
+   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -353,6 +353,9 @@
     "docs/defeasible/df-e1/runner.py:prereg_committed: git show",
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "docs/judgment-terms/jt-e1s/runner.py:committed: git show",
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
@@ -563,6 +566,18 @@
    ],
    "via": [
     "tests/test_fidmech_records.py:git: git",
+    "tools/fidmech/records.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_runner.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
     "tools/fidmech/records.py:_git: git"
    ]
   },
