@@ -692,13 +692,16 @@ def _quote_normal(text):
 def test_the_low_risk_legend_quotes_the_glossary_sentence_whole():
     """fsf-repair-f5-lowrisk-1119 (row F5): the `low_risk` legend carries the Glossary sentence on Low-Risk External
     Deployments byte for byte, read from the pinned source (not a paraphrase that drops "or organizations"), in the
-    vocabulary and in the committed environment.d1.json; the predicate keeps its open term OT8."""
+    vocabulary and in the committed environment.d1.json. DELTA row 1 (R1): the base legend's names stay, namely its
+    subject "{0} is a low-risk external deployment", its open term OT8 and its decider."""
     text = _quote_normal(pinned_source("safety-framework").read_text())
     sentences = re.findall(r"Low-Risk External Deployments: [^.]*\.", text)
     assert len(sentences) == 1 and sentences[0].endswith("external groups or organizations.")
     committed = json.loads((HERE / "environment.d1.json").read_text())["vocabulary"]["predicates"]["low_risk"]
     for legend in (_legend("low_risk"), committed["description"]):
         assert f'"{sentences[0]}"' in _quote_normal(legend)
+        assert legend.startswith("{0} is a low-risk external deployment ")
+        assert legend.endswith(". Open term OT8, decided by no one the text names (unstated)")
     assert vocabulary.OPEN_PREDICATES["low_risk"] == "OT8"
 
 
