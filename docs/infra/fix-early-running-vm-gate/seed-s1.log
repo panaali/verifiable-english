@@ -1,0 +1,24 @@
+chain-gate.sh under test: /tmp/vmcx-ev/seeds/s1.sh
+  FAIL (1) the stub VM gate started in its own session (setsid)  {'cg_sid': 2290470, 'gone': None, 'exited': None, 'rc': None, 'log': '', 'events': [('gate-start', 'vm c19dbbaf')], 'rows': [{'mode': 'full', 'pid': 2290707, 'pgid': 2290470, 'sid': 2290470, 'child': 2290862, 'cwd': '/tmp/tmpfvwsis6c/wt', 'pinned': '1', 'argv': ['--workers', '8']}], 'result': True}
+  FAIL (1) the stub gate's process group is gone within 70 s of the cancel file  gone=None [('gate-start', 'vm c19dbbaf')]
+  FAIL (1) chain-gate exits 4  rc=None exited=None 
+  FAIL (1) event gate-cancelled 'vm gate stopped: <file> (FIX_EARLY)'  [('gate-start', 'vm c19dbbaf')]
+  FAIL (1) no gate-result.json left (the stub's failed placeholder removed)  
+  ok   (1) the gate never completed
+  FAIL (1k) TERM ignored: the group is gone (KILL) within 70 s, exit 4, cancel event, no record  gone=None rc=None [('gate-start', 'vm c19dbbaf')] result=True
+  FAIL (2) the R13 rerun started (--rerun-failed) in its own session  [{'mode': 'full', 'pid': 2462283, 'pgid': 2462259, 'sid': 2462259, 'child': 2462312, 'cwd': '/tmp/tmpfvwsis6c/wt', 'pinned': '1', 'argv': ['--workers', '8']}, {'mode': 'full', 'done': 1}, {'mode': 'rerun', 'pid': 2462789, 'pgid': 2462259, 'sid': 2462259, 'child': 2462819, 'cwd': '/tmp/tmpfvwsis6c/wt', 'pinned': '1', 'argv': ['--rerun-failed', '--workers', '8']}]
+  FAIL (2) the rerun's process group is gone within 70 s of the cancel file  gone=None [('gate-start', 'vm c19dbbaf'), ('gate-end', 'vm rc=1'), ('gate-start', 'vm-rerun c19dbbaf')]
+  FAIL (2) chain-gate exits 4  rc=None 
+  FAIL (2) event gate-cancelled 'vm gate stopped: <file> (FIX_EARLY; R13 rerun)'  [('gate-start', 'vm c19dbbaf'), ('gate-end', 'vm rc=1'), ('gate-start', 'vm-rerun c19dbbaf')]
+  FAIL (2) no gate-result.json left; the full record kept as vm-gate-t.full.json  result=True
+  ok   (3) unset, rc 0: completed, rc 0, no cancel event, record kept
+  ok   (3) unset: gate.py runs in chain-gate's own session (the plain foreground run), in the worktree, pinned sources on
+  ok   (3) unset: events exactly gate-start vm / gate-end vm rc=0
+  ok   (3) unset, rc 1 (not R13-eligible): rc 1, no rerun, no cancel event
+  ok   (3) unset, R13: the rerun runs in chain-gate's session and decides (rc 0), no cancel event
+  ok   (3s) set, no cancel file, rc 0: rc 0, completed, no cancel event, record kept
+  ok   (3s) set, no cancel file, rc 1: rc 1, completed, no cancel event, record kept
+  ok   (3s) set, no cancel file, R13 rerun rc 1: rc 1, both ran, no cancel event
+  ok   (4) cancel file before start: exit 4, 'no VM gate' event, gate.py never started
+FAIL: 11 failure(s)
+rc=1
