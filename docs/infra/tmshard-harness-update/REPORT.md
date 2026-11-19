@@ -93,7 +93,8 @@ The seeds were never in the live file: its sha256 (sha256.txt) is the same befor
 ## Tests
 
 - The harness itself, as above (runs/*.log).
-- Selected VE tests: the branch adds only `docs/infra/tmshard-harness-update/`; the selected run is recorded in the build final.
+- Selected VE tests (`mac-pytest.sh --select`, on ecaa912a65, the evidence commit; the branch adds only
+  `docs/infra/tmshard-harness-update/`): 10 units, 0 failed, exit 0 (ran on the VM, 223 s).
 - No DELTA rows: no Lean, trust-base or user-visible VE change.
 
 ## Notes for the DRI
