@@ -141,6 +141,19 @@ BASE = {
 OPEN_PREDICATES = {name: entry.pop("_open") for name, entry in BASE.items() if "_open" in entry}
 
 
+# Source sentences two legends quote whole, verbatim from the pinned fsf-3.1.txt (page 17), each written once here.
+REVIEW_PROCESS = ("The process will involve (i) an assessment of the Framework’s appropriateness for the management of "
+                  "significant and severe risk, drawing on information sources such as record of adherence to the "
+                  "framework, relevant high-quality research, information shared through industry forums, and "
+                  "evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.")
+DISCLOSED_INFORMATION = (
+    "Where appropriate, and subject to adequate confidentiality and security measures and considerations around "
+    "proprietary and sensitive information, this information may include: ● Model information : characteristics of "
+    "the AI model relevant to the risk it may pose with its critical capabilities. ● Evaluation results : such as "
+    "details about the evaluation design, the results, and any robustness tests. ● Mitigation plans : descriptions of "
+    "our mitigation plans and how they are expected to reduce the risk.")
+
+
 def _obligation(args, act, description):
     return {"arguments": list(args), "description": description,
             "regulated": {"role": "obligation", "default": "deny", "act": act}}
@@ -221,12 +234,15 @@ REGULATED = {
     "applied": _obligation(["proposal", "measure"], "{0} apply {1} to the model weights",
                            "{1} is applied to the model weights of {0} (2.1.1, 2.2, 3.2.2)"),
     "yearly_review": _obligation(["proposal"], "{0} be covered by a review of the framework at least once a year",
-                                 "the framework is reviewed at least once a year, at the time of {0} (5.1)"),
+                                 "the framework is reviewed at least once a year, at the time of {0} "
+                                 f"(5.1: \"{REVIEW_PROCESS}\")"),
     "frequent_review": _obligation(["proposal"], "{0} be covered by a more frequent review of the framework",
-                                   "the framework is reviewed more often than yearly, at the time of {0} (5.1)"),
+                                   "the framework is reviewed more often than yearly, at the time of {0} "
+                                   f"(5.1: \"{REVIEW_PROCESS}\")"),
     "shared": _obligation(
         ["proposal"], "{0} share relevant information with appropriate government authorities",
-        "relevant information about the model of {0} is shared with appropriate government authorities (5.2)"),
+        "relevant information about the model of {0} is shared with appropriate government authorities "
+        f"(5.2: \"{DISCLOSED_INFORMATION}\")"),
     "holistic": _obligation(
         ["proposal"], "{0} have holistically assessed mitigations proportionate with expected impact",
         "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and "

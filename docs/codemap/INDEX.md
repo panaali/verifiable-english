@@ -79,7 +79,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-speed-b5/](docs__test-speed-b5.md) — 2 modules — -
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
 - [docs/translim/](docs__translim.md) — 4 modules — -
-- [docs/usecases/](docs__usecases.md) — 2 modules — -
+- [docs/usecases/](docs__usecases.md) — 1 modules — -
 - [docs/weighing/](docs__weighing.md) — 1 modules — -
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
@@ -145,7 +145,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 82 modules — -
 - [tests/ part 5](tests--part-5.md) — 89 modules — -
 - [tests/ part 6](tests--part-6.md) — 79 modules — -
-- [tests/ part 7](tests--part-7.md) — 81 modules — -
+- [tests/ part 7](tests--part-7.md) — 82 modules — -
 - [tests/ part 8](tests--part-8.md) — 88 modules — -
 - [tests/ part 9](tests--part-9.md) — 9 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.

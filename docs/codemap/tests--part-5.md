@@ -1,3 +1,4 @@
+- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
 - `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
 - `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 - `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
@@ -86,4 +87,3 @@
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
-- `tests/test_presupposition_rule_ob.py` — ps-2ab-rule-firstob: `admit`'s rule check names the rule's first obligation, else none (ps-2ac review F2).

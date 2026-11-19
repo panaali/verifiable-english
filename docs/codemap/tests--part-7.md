@@ -1,3 +1,4 @@
+- `tests/test_regen_generated.py` — tools/regen_generated.py: the generated-file inventory, its merge strategies and the merge-train flow.
 - `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).
 - `tests/test_relay.py` — `ve/backends/relay.py`, the one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batch 0): Lean's code chooses the exception class and Lean's…
 - `tests/test_relay_binding_inventory.py` — Every field of every RD-9 relayed answer is classified, and every bound field is fuzzed (DRI ruling R8).

@@ -1,4 +1,3 @@
-- `tests/test_discourse_constitution.py` — The constitution example of docs/spec/discourse.md 2.5 (u0214.s02) as a regression fixture.
 - `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
@@ -83,3 +82,4 @@
 - `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
 - `tests/test_fidmech_wording.py` — fid-mech-b4: the wording generator moved into VE (plan 9), its harness mode and the actors.json matcher (plan 5.2).
 - `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
+- `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
