@@ -1,0 +1,4 @@
+433c433
+<       for f in ${(f)"$(git -C $wt ls-files --others --exclude-standard)"}; do (( ${u0[(Ie)$f]} )) || rm -f -- $wt/$f; done; fi
+---
+>       for f in ${(f)"$(git -C $wt ls-files --others --exclude-standard)"}; do :; done; fi

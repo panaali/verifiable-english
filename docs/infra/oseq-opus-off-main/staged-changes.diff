@@ -1,0 +1,8 @@
+336a337,343
+>     # 2026-11-17 oseq-opus-off-main (reads-window Amendment K2, reviews/dri-ruling-reads-window-20261116.md Amendment K; K1: no Opus
+>     # read job runs on main, at any pass): a PICK_OSEQ_OPUS caller (the Opus steps of omission-seq-read.py) is refused main here, before
+>     # every gate, lift, rule and fallback that could admit it (PICK_AVOID unset, the run-codex lift, the released-row and rank-1
+>     # rules, the critical fallback, the PICK_MGMT main-only fallback); no other account: the usual no-pick (PICK_NOWAIT: exit 1,
+>     # PICK_WHY). An own refusal of the caller: no released-row main waiter (relwant False). Tests: tools-local/test_pick_oseq_opus_main.py
+>     if os.environ.get("PICK_OSEQ_OPUS") and (a == "main" or os.path.basename(d) == "claude-panaali2"):
+>         relwant = False; no(a, f, w, "held out (PICK_OSEQ_OPUS: no Opus read job on main, reads-window Amendment K1)"); continue

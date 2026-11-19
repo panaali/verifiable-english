@@ -1,0 +1,4 @@
+new-m5h2: git merge-file conflicts=0; zsh -n: clean; gate line: 1
+new-placec: git merge-file conflicts=0; zsh -n: clean; gate line: 1
+new-m5h2 merged: test_pick_main_rank.py.new-pickw Ran 18 tests in 24.641s OK
+new-placec merged: test_pick_main_rank.py.new-pickw Ran 18 tests in 22.916s OK

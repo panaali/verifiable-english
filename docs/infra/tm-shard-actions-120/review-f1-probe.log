@@ -1,0 +1,7 @@
+# review F1 probe (PROBE F1 of tm-shard-actions-120-review.final.md), TSH = the staged tm-shard.sh.new-tsa
+## before the fix (the staged file of 7805f90e19, sha256 1575882155b4...)
+arecs ['900', '1', '240', '1']
+exit 1
+## after the fix (sha256.txt)
+arecs ['900', '1', '1800', '1']
+exit 0

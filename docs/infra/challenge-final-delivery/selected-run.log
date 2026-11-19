@@ -1,0 +1,40 @@
+[mac-pytest 21:17:55Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[gha-select 21:17:56Z] not on Actions: cloud-jobs/ACTIONS_MISMATCH
+[mac-pytest 21:17:56Z] MAC_LAST_RESORT: the VM is full (load 29.26 + 6 workers >= 32): up to 900 s for a remote slot or VM room before ve-mac-1
+[mac-pytest 21:17:56Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 1)
+[cloud2 21:17:57Z] not used: ve-cloud-2: 5-min load 82.77 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:17:57Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 21:18:57Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 2)
+[cloud2 21:18:58Z] not used: ve-cloud-2: 5-min load 108.51 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:18:58Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 21:19:58Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 3)
+[cloud2 21:20:00Z] not used: ve-cloud-2: 5-min load 126.97 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:20:00Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 21:21:00Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 4)
+[cloud2 21:21:01Z] not used: ve-cloud-2: 5-min load 116.72 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:21:01Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 21:21:01Z] running on the VM instead (local): MAC_LAST_RESORT: VM load 23.18 + 6 workers < 32 after 185 s
+10/646 test units (map 20cf38f542, 9.57 s)
+deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (1678.9 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+changed: docs/infra/challenge-final-delivery/REPORT.md, docs/infra/challenge-final-delivery/live-dry-run.log, docs/infra/challenge-final-delivery/run-before.log, docs/infra/challenge-final-delivery/run-p1-staged.log, docs/infra/challenge-final-delivery/run-staged.log, docs/infra/challenge-final-delivery/seeded-bugs.json, docs/infra/challenge-final-delivery/staged-changes.diff
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
++ uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_answer_cutoff.py tests/test_code_map.py tests/test_conformance.py tests/test_definitions.py tests/test_history_tests.py tests/test_judgments_answer.py tests/test_regen_generated.py tests/test_run_order.py tests/test_surface_registry.py tests/test_test_chunks.py
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+    Finished `release` profile [optimized] target(s) in 24.18s
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/seyran/code/ve-challenge-final-delivery/rust/target/release/ve: pinned in /home/seyran/code/ve-challenge-final-delivery/lean/checkers.lock
+    Finished `release` profile [optimized] target(s) in 0.06s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.49s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 10 units with 6 jobs in /tmp/ve-select-run-y5i_8bvv
+  tests/test_definitions.py: exit 0 in 19.3 s, 740 functions
+  tests/test_code_map.py: exit 0 in 13.1 s, 193 functions
+  tests/test_judgments_answer.py: exit 0 in 32.5 s, 968 functions
+  tests/test_conformance.py: exit 0 in 2.4 s, 615 functions
+  tests/test_surface_registry.py: exit 0 in 1.6 s, 435 functions
+  tests/test_answer_cutoff.py: exit 0 in 43.5 s, 562 functions, OPAQUE
+  tests/test_test_chunks.py: exit 0 in 49.8 s, 385 functions, OPAQUE
+  tests/test_run_order.py: exit 0 in 25.5 s, 553 functions, OPAQUE
+  tests/test_regen_generated.py: exit 0 in 78.3 s, 821 functions
+  tests/test_history_tests.py: exit 0 in 150.2 s, 349 functions
+recorded 10 units for tree a80c608e17; 2 others left to the static graph until they run; 0 failed
+[mac-pytest 21:24:53Z] summary: ran LOCALLY (VM) because: MAC_LAST_RESORT: VM load 23.18 + 6 workers < 32 after 185 s; exit=0; 419s

@@ -1,0 +1,11 @@
+# test-harness/cloudplumb/test-advfix6.zsh on a temp copy holding the staged files
+== verdict-sample-load-gate: age cap (flag VS_AGE_CAP, VS_AGE_H 4) and the 12-h alert of a pending rate sample
+
+68 passed, 0 failed
+# test-harness/comparators/test-comparators.zsh: CVC/AH = the staged copies, then the installed ones (the same 1 pre-existing FAIL, review note F8)
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+comparators: 37 passed, 1 failed
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+comparators: 37 passed, 1 failed

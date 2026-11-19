@@ -1,0 +1,15 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.83s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 10 units with 6 jobs in /tmp/ve-select-run-82a7joz_
+  tests/test_definitions.py: exit 0 in 18.1 s, 740 functions
+  tests/test_judgments_answer.py: exit 0 in 25.4 s, 969 functions
+  tests/test_code_map.py: exit 0 in 13.3 s, 193 functions
+  tests/test_conformance.py: exit 0 in 1.9 s, 615 functions
+  tests/test_surface_registry.py: exit 0 in 1.5 s, 435 functions
+  tests/test_answer_cutoff.py: exit 0 in 36.6 s, 562 functions, OPAQUE
+  tests/test_test_chunks.py: exit 0 in 43.3 s, 385 functions, OPAQUE
+  tests/test_run_order.py: exit 0 in 22.1 s, 553 functions, OPAQUE
+  tests/test_regen_generated.py: exit 0 in 67.1 s, 802 functions
+  tests/test_history_tests.py: exit 0 in 138.7 s, 349 functions
+recorded 10 units for tree 5f85d5cad7; 2 others left to the static graph until they run; 0 failed
+[mac-pytest 16:32:02Z] summary: ran LOCALLY (VM) because: MAC_LAST: VM load 8.22 + 6 workers < 32 (the Mac is the last resort); exit=0; 219s

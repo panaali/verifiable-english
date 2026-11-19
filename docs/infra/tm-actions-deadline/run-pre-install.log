@@ -1,0 +1,17 @@
+     ['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--deadline', '1800000600', '--deadline', '1800050000', '--json', '/tmp/tmpjoh0vc6c/1-budget-plus-far-deadline/out/trust-mutants.json']
+FAIL 1-budget-plus-far-deadline
+     ['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--deadline', '1800000300', '--deadline', '1800009000', '--json', '/tmp/tmpjoh0vc6c/2-near-deadline-plus-large-budget/out/trust-mutants.json']
+FAIL 2-near-deadline-plus-large-budget
+ok   3-budget-only
+ok   4-deadline-only
+     ['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--deadline', '1800050000', '--deadline', '1800000500', '--deadline', '1800000600', '--json', '/tmp/tmpjoh0vc6c/5-two-deadlines-plus-budget/out/trust-mutants.json']
+FAIL 5-two-deadlines-plus-budget
+     [['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--budget', 'abc', '--deadline', '1800050000', '--json', '/tmp/tmpjoh0vc6c/6-budget-abc-refused/out/trust-mutants.json']]
+FAIL 6-budget-abc-refused
+     ['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--shard', '2/3', '--deadline=1800050000', '--max-mutants', '9', '--budget=600', '--json', '/tmp/tmpjoh0vc6c/7-equals-forms-and-order/out/trust-mutants.json']
+FAIL 7-equals-forms-and-order
+     [['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', 'f29e00a209f6ba79687d59c43125fcdddeed6488', '--deadline', '1800000600', '--deadline', '--json', '/tmp/tmpjoh0vc6c/8a-deadline-no-value-refused/out/trust-mutants.json']]
+FAIL 8a-deadline-no-value-refused
+     [['run', '--frozen', 'python', 'tools/trust_mutants.py', '--base', '6f3b3239dfa4408a34566cf1eab5d8b54877f6dd', '--deadline', 'soon', '--deadline', '1800000600', '--json', '/tmp/tmpjoh0vc6c/8b-deadline-bad-value-refused/out/trust-mutants.json']]
+FAIL 8b-deadline-bad-value-refused
+7 failed

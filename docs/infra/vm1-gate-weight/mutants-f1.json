@@ -1,0 +1,96 @@
+{
+ "S7": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "  if [[ \"$(pst $p)\" != $ps ]]; then echo \"vmgate: chain",
+  "to": "  if false; then echo \"vmgate: chain",
+  "what": "watcher never sees its chain gone",
+  "failing_checks": [
+   "(8a) the chain's full gate.py is gone after its chain was stopped",
+   "(8a) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8a) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8b) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8b) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8b) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8c) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8c) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8c) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(9r) the full gate started"
+  ],
+  "result": "rc=1"
+ },
+ "S8": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "vglive(){  #",
+  "to": "vglive(){ return 1;  #",
+  "what": "the slot ignores a stopped chain's still-running gate",
+  "failing_checks": [
+   "(8a) the second chain's gate.py starts only after the first gate.py exited, rc 0",
+   "(8b) the second chain's gate.py starts only after the first gate.py exited, rc 0",
+   "(9r) the second chain's gate.py starts only after the first gate.py exited, rc 0"
+  ],
+  "result": "rc=1"
+ },
+ "S9": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "-- zsh -f -c $vwatch vmgate-watch $$ $vps ${vheld:--} $vunit $c)",
+  "to": "-- $c)",
+  "what": "no watcher in the gate's scope (the pre-F1 command)",
+  "failing_checks": [
+   "(8a) the chain's full gate.py is gone after its chain was stopped",
+   "(8a) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8a) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8a) the second chain's gate.py starts only after the first gate.py exited, rc 0",
+   "(8b) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8b) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8b) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8b) the second chain's gate.py starts only after the first gate.py exited, rc 0",
+   "(8c) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8c) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8c) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(9r) the chain's full gate.py is gone after its chain was stopped",
+   "(9r) the second chain's gate.py starts only after the first gate.py exited, rc 0"
+  ],
+  "result": "rc=1"
+ },
+ "S10": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "[[ $s[1] != [ZX] ]] && print -r -- $s[20]",
+  "to": "print -r -- $s[20]",
+  "what": "a zombie chain counts as alive",
+  "failing_checks": [
+   "(8a) the chain's full gate.py is gone after its chain was stopped",
+   "(8a) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8a) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8b) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8b) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8b) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(8c) the chain's rerun gate.py is gone after its chain was stopped",
+   "(8c) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8c) the gate was TERMed (it ran its 2 s TERM delay)",
+   "(9r) the chain's full gate.py is gone after its chain was stopped"
+  ],
+  "result": "rc=1"
+ },
+ "S11": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "wait $k; r=$?; [ \"$slot\" != - ] && rm -f $slot.gate; exit $r",
+  "to": "wait $k; r=$?; exit $r",
+  "what": "a gate that ended by itself keeps its record",
+  "failing_checks": [
+   "(9s) a gate that ended by itself and left a stray in its (still live) scope keeps no slot: the next gate ran, no gate-wait"
+  ],
+  "result": "rc=1"
+ },
+ "S12": {
+  "file": "chain-gate.sh.new-vm1w",
+  "from": "    ${VM_GATE_SYSTEMCTL:-systemctl} --user stop \"$unit\" > /dev/null 2>&1; stopgate;",
+  "to": "    stopgate;",
+  "what": "the watcher does not stop its scope",
+  "failing_checks": [
+   "(8a) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8b) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>",
+   "(8c) the watcher stopped the gate's scope: systemctl --user stop <pattern matching its unit>"
+  ],
+  "result": "rc=1"
+ }
+}

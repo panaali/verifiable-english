@@ -1,0 +1,15 @@
+test_pick_crit_fallback staged: Ran 18 tests in 25.340s OK | installed: OK
+test_pick_critical staged: Ran 10 tests in 5.506s OK | installed: OK
+test_pick_longroom staged: Ran 5 tests in 2.751s OK | installed: OK
+test_pick_main5h_nowindow staged: Ran 20 tests in 3.300s FAILED (failures=11) | installed: FAILED (failures=11)
+test_pick_main5h_unknown staged: Ran 30 tests in 17.473s OK | installed: OK
+test_pick_main_rank staged: Ran 8 tests in 3.825s OK | installed: OK
+test_pick_mgmt staged: Ran 9 tests in 5.256s OK | installed: OK
+test_pick_oseq_opus_main staged: Ran 18 tests in 8.777s OK | installed: OK
+test_pick_prefer staged: Ran 5 tests in 1.034s OK | installed: OK
+test_pick_rcx_main_pace staged: Ran 13 tests in 3.217s OK | installed: OK
+test_pick_released_main staged: Ran 25 tests in 23.772s OK | installed: OK
+test_pick_released_yield staged: Ran 13 tests in 5.745s OK | installed: OK
+test_pick_room_i10 staged: Ran 3 tests in 1.538s OK | installed: OK
+test_pick_tell staged: Ran 5 tests in 21.024s OK | installed: OK
+test_pick_why staged: Ran 15 tests in 25.026s OK | installed: OK

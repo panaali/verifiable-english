@@ -1,0 +1,5 @@
+# PROBE F1 before the fix (staged scan before review F1)
+AssertionError: feed capacity waits (row-h): no task file 169.0
+rc=1
+# PROBE F1 after the fix
+rc=0 (no output)
