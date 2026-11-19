@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 
 import pytest
 
@@ -62,6 +63,27 @@ def test_each_carrier_holds_the_source_definition_word_for_word(row):
     assert omit_norm(term) in omit_norm(sentence), (row, term)
     for name in names:
         assert omit_norm(sentence) in omit_norm(shown[name]), (row, name)
+
+
+DELTA = (Path(__file__).resolve().parents[1] / "docs/usecases/eligibility/defs-repair-eligibility-1119"
+         / "evidence/results-delta.json")
+
+
+def test_saved_results_delta_keeps_verdicts_and_the_base_messages_names():
+    """R1 evidence over the saved delta of results.json (DELTA.md): the answers, the summary and the
+    mutant kills are equal, and every changed message keeps each name the base quoted and the base's
+    position, if it had one."""
+    delta = json.loads(DELTA.read_text(encoding="utf-8"))
+    assert delta["summary_equal"] and delta["answers_equal"] and delta["mutants_equal"]
+    assert set(delta["identity"]) == {"/environment_id", "/seconds"}
+    assert delta["message_changes"]
+    for change in delta["message_changes"]:
+        base, head = change["base"], change["head"]
+        assert base.split(":")[0] == head.split(":")[0], change  # the outcome word (rejected, no wording)
+        for name in re.findall(r"'[^']+'|\"[^\"]+\"|\b[A-Z][A-Za-z]+\(", base):
+            assert name in head, (change, name)
+        if re.search(r"position \d+", base):
+            assert re.search(r"position \d+", head), change
 
 
 @pytest.mark.parametrize("row", sorted(ROWS))
