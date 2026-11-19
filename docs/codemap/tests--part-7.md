@@ -1,3 +1,14 @@
+- `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).
+- `tests/test_relay.py` — `ve/backends/relay.py`, the one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batch 0): Lean's code chooses the exception class and Lean's…
+- `tests/test_relay_binding_inventory.py` — Every field of every RD-9 relayed answer is classified, and every bound field is fuzzed (DRI ruling R8).
+- `tests/test_relay_english_scale.py` — lf-10bc recheck: the 60-act reached-default repro renders from Lean's report line.
+- `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
+- `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
+- `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
+- `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
+- `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
+- `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
+- `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
 - `tests/test_reports_agreement.py` — The Python reports relay preserves Lean's answers and diagnostics.
 - `tests/test_reports_fault_order.py` — The public fault order and texts of malformed reports documents (lf-8 recheck B1).
 - `tests/test_reports_lean.py` — The Lean `ve_reports_route` on hand-written fixtures of attribution.md section 10.
@@ -68,12 +79,3 @@
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
 - `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
 - `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
-- `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
-- `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
-- `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
-- `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
-- `tests/test_since_pass.py` — Selection against the branch's last passing tree (tools/since_pass.py, test-speed batch B3): the rule's choice of base, its step and age bounds, the shadow row…
-- `tests/test_single_owner.py` — A differential never compares an engine with itself (lean-first batch 15b, review B2).
-- `tests/test_slot_premises.py` — The premise slot of the soft route on the wire (kb-3): the `slot-certificate` and `slot-conflict` kinds.
-- `tests/test_soft_candidate_economy.py` — Batch 6 latency: a document's candidates cost Lean a fixed number of soft requests, not one per candidate (docs/lean-first/b6/DELTA.md, Latency; recheck findin…
-- `tests/test_soft_decision_keys.py` — Each soft decision's key in Lean's soft-norms row (`SoftNorms.keyedDecisions`; rd-9 soft-chain plan SC-8).
