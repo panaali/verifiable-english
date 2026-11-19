@@ -7,47 +7,47 @@
    {
     "fact": "applicant.shares_home",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.partner_of",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.state_pension",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.attendance_allowance",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.income_support",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.income_based_jsa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.pension_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.income_related_esa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.universal_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.pa_date",
@@ -62,7 +62,7 @@
    {
     "fact": "applicant.ever_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.ew_from",
@@ -72,37 +72,37 @@
    {
     "fact": "applicant.remains_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.moved",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.in_care_setting",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.inpatient",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.detained",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid_without_claim",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.claimed",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.income",
@@ -112,12 +112,12 @@
    {
     "fact": "housemate.shares_home",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partner_of",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.pa_date",
@@ -132,97 +132,97 @@
    {
     "fact": "applicant.shares_home",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.partner_of",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.home_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.home_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.partnership_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.partnership_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.shares_home",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partner_of",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.home_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.home_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partnership_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partnership_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.state_pension",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.attendance_allowance",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.income_support",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.income_based_jsa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.pension_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.income_related_esa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.universal_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.pa_date",
@@ -237,7 +237,7 @@
    {
     "fact": "housemate.ever_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.ew_from",
@@ -247,37 +247,37 @@
    {
     "fact": "housemate.remains_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.moved",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.in_care_setting",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.inpatient",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.detained",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid_without_claim",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.claimed",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.income",
@@ -312,12 +312,12 @@
    {
     "fact": "applicant.paid.pension_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.in_care_setting",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.care_from",
@@ -327,7 +327,7 @@
    {
     "fact": "applicant.care_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.pa_date",
@@ -342,17 +342,17 @@
    {
     "fact": "housemate.paid.pension_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.state_pension",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.universal_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.pa_date",
@@ -367,7 +367,7 @@
    {
     "fact": "applicant.paid.attendance_allowance",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.care_from",
@@ -377,12 +377,12 @@
    {
     "fact": "applicant.detained",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.under_sentence",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.custody_from",
@@ -397,7 +397,7 @@
    {
     "fact": "applicant.under_sentence",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.custody_from",
@@ -412,12 +412,12 @@
    {
     "fact": "applicant.ever_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.remains_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.ew_last_day",
@@ -427,7 +427,7 @@
    {
     "fact": "housemate.moved",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.scot_ni_from",
@@ -437,22 +437,22 @@
    {
     "fact": "applicant.paid.income_support",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.paid.income_based_jsa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.income_related_esa",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.paid.universal_credit",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.ew_from",
@@ -462,7 +462,7 @@
    {
     "fact": "applicant.moved",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.scot_ni_from",
@@ -472,7 +472,7 @@
    {
     "fact": "applicant.remains_resident_ew",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.ew_last_day",
@@ -492,7 +492,7 @@
    {
     "fact": "housemate.in_care_setting",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.care_from",
@@ -502,7 +502,7 @@
    {
     "fact": "housemate.care_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.ew_from",
@@ -517,7 +517,7 @@
    {
     "fact": "applicant.care_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.care_until",
@@ -527,7 +527,7 @@
    {
     "fact": "housemate.care_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.care_until",
@@ -537,12 +537,12 @@
    {
     "fact": "applicant.home_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.home_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "household.home_from",
@@ -552,12 +552,12 @@
    {
     "fact": "applicant.home_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.home_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "household.home_until",
@@ -567,12 +567,12 @@
    {
     "fact": "applicant.partnership_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partnership_start_dated",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "household.partner_from",
@@ -582,12 +582,12 @@
    {
     "fact": "applicant.partnership_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "housemate.partnership_ended",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "household.partner_until",
@@ -692,7 +692,7 @@
    {
     "fact": "applicant.inpatient",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.admitted",
@@ -762,12 +762,12 @@
    {
     "fact": "applicant.paid_without_claim",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.claimed",
     "round_trip": false,
-    "sentence": "no wording: No controlled W6 wording for this operation"
+    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
     "fact": "applicant.claim_date",
@@ -836,7 +836,7 @@
    }
   ]
  },
- "environment_id": "d5cad9b8af36f278fe8784caa0f24003b6b037a7fd89036ace9831734e271181",
+ "environment_id": "b3325267dc0f3c19a030a71ee5457b6a4dbee611eb27f7b8909f8087a170abbd",
  "format": "wfp-eligibility-results@1",
  "mutants": {
   "M1": {
@@ -1291,7 +1291,7 @@
    "python": "admitted"
   },
   "P3": {
-   "conditional": "rejected: No W6 reading in any grammar",
+   "conditional": "rejected: The number at position 52 is not written in canonical form.",
    "expected": "facts parse uniquely and round-trip; the conditional is rejected",
    "facts": [
     {
@@ -20634,7 +20634,7 @@
   "calls": 5910,
   "searches": 512
  },
- "seconds": 352,
+ "seconds": 866,
  "summary": {
   "answered": 269,
   "correct_answered": 269,
