@@ -1,0 +1,4 @@
+# seeded: replace <<g=($D/vm-ref.partial-${pre}deadline-*.json(Nom[1]))>> with <<g=($D/vm-ref.partial-*deadline-*.json(Nom[1]))>> in verdict-sample.sh.new-vsw
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL resume: the VM never resumes a ve-cloud-2 cut (no --resume)
+comparators: 51 passed, 2 failed

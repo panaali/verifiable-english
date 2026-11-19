@@ -1,0 +1,16 @@
+== gha/gate-compare.py (ARM_GATE_SHADOW, ARM_LEG_MAC_OFFLINE): /home/seyran/code/manage-agents/gha/gate-compare.py with /home/seyran/code/manage-agents/gaterec.py
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
+== cloud-tm-verify.py (ACTIONS_POOL, CODEX_CLOUD_POOL, CLAUDE_CLOUD_POOL, CLOUD_TRIAL): /home/seyran/code/manage-agents/cloud-tm-verify.py
+== cloud-verdict-compare.py (verdict-sample.sh: a difference removes the pool's flag): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+    KILLED BY ANOTHER CHECK (both KILLED; not a mismatch): m1
+    mutants: 1 vm, 1 cloud, 0 with a differing identity or verdict field, 0 undecided (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status, raw_status, detail, killed_at; not compared: -)
+    counts: vm {'KILLED': 1} cloud {'KILLED': 1}
+    definitions: equal (0 vm, 0 cloud)
+    seconds: vm None cloud None; jobs vm None cloud None
+    VERDICTS EQUAL
+== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+== actions-health.py (ACTIONS_SUSPENDED streak; findref): /home/seyran/code/manage-agents/actions-health.py
+== another nightly part as the reference (orchestrator ruling 2026-11-14 093053Z (b); tm-nightly.r2-9ccbf3fd)
+== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): /home/seyran/code/manage-agents/verdict-sample.sh.new-vsw
+comparators: 52 passed, 1 failed
