@@ -1,10 +1,10 @@
 # defs-repair-bluedot-grant-1119 REPORT
 
-No DRI signature is reserved; no DELTA row (DELTA.md: no user-visible change of VE). Branch merges at VE main
-`f5553bc894` (merge base). Answers touched: `unknown` for every row (the audit's `answers_touched`; bluedot-grant
+No DRI signature is reserved; no DELTA row (DELTA.md: no user-visible change of VE). Built on VE main
+`f5553bc894`, rebased onto main `0ce720e46b` (merge base) before the final gate; it merges at `0ce720e46b`. Answers touched: `unknown` for every row (the audit's `answers_touched`; bluedot-grant
 has no keyed answers). Later reads re-pin at the merge commit of this branch.
 
-## 0. Verify first (every P1 candidate, at main f5553bc894)
+## 0. Verify first (every P1 candidate, at main f5553bc894; main to 0ce720e46b changes no bluedot file)
 
 Checked against the in-repo source `usecases/bluedot-grant/source.md` (no hash-pinned source: METHOD.md
 amendment 8) and the legends the reader is shown (the front matter of `document.ve.md` and `causal.ve.md` at main).
@@ -68,6 +68,13 @@ run directory or frozen-run.json).
   fields record the bytes that batch checked. Rewriting them would misstate that evidence, and no test reads them
   against the tree (`git grep ab-documents`: DELTA.md, REPORT.md, the codemap, shadow.json only). This item's own
   A/B is `ab-answers.json` (below).
+- `docs/wire-contract/sa-wire-purposes0/shadow-main.json` (outside the task's path list, regenerated because the
+  selected run failed on it): `tests/test_purposes_contract.py` uses causal.ve.md as its document and compares answers
+  with this recording. Re-recorded with that test's own `record(lean_routes.SERVICE)`; the service is main's (lean/
+  unchanged; `lake build --no-build ve_service`: "All targets up-to-date"). Only the `plain` row changes, its
+  `document_id` and answer `sha256`; status and errors of all 26 rows are the same.
+- After the rebase onto 0ce720e46b: the seal reran (main had changed `usecases/safety-framework/environment.d1.json`;
+  `--check`: 0 differences); build_document.py reproduces the committed documents (`git status` clean).
 - `uv run python tools/regen_generated.py --check`: rc 0, "checked 41 entries" (bluedot files are not in its list).
 
 ## 3. Tests
@@ -87,7 +94,14 @@ run directory or frozen-run.json).
 - A/B (`ab_answers.py --base main`, saved `ab-answers.json`): `check_document` answers of both documents identical
   on main's bytes and this branch's after masking 64-hex digests; the raw differences are only `document_id`
   (document.ve.md) and `document_id`, `report_id`, `core_report_id` (causal.ve.md).
-- Selected run: SELECTED_RESULT
+- Selected run (`mac-pytest.sh --select -- --base f5553bc894 --run`, before the rebase; ran on ve-cloud-2, 4586 s):
+  exit 1 with 2 failures, one cause: `tests/test_purposes_contract.py::test_the_contract_is_off_the_verdict_and_identity_paths`
+  (shadow-main.json held causal.ve.md's old `document_id`) and
+  `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit` (it reruns the first). Every
+  other selected test passed. After the re-recording, `mac-pytest.sh -- -q` on those two ids plus
+  tests/test_purposes_contract.py: "12 passed" (ve-mac-1, exit 0). After the rebase:
+  `uv run pytest -q` on the new test, tests/test_bluedot_grant.py, tests/test_purposes_contract.py,
+  tests/test_english_lean_seal.py: "37 passed". The chain's gate on the final HEAD is the full check after the rebase.
 
 ## Seeded bugs (mutants.json; Python is the only product language changed)
 
@@ -111,7 +125,7 @@ then restored (`git status` clean afterwards).
   files). trust_mutants sweep: N.A., `tools/trust_mutants.py --plan` gives `{"definitions": 0, "mutants": 0}` (no
   Lean changes).
 - SIZE: 29 product (semantic_readings.py: 23 added, 6 removed), 104 tests, 168 other hand-written lines (DELTA 11, ab_answers.py 79, mutants.json 78), plus this
-  REPORT; generated: corpus-seal.json 206, document.ve.md 128, causal.ve.md 12, ab-answers.json 27.
+  REPORT; generated: corpus-seal.json, document.ve.md 128, causal.ve.md 12, shadow-main.json 2, ab-answers.json 27.
 - Pilot bytes expected to move: about +1.2 KB of legend text across the two documents' front matter (three source
   sentences, G3 four times); nothing is claimed before a pilot audit.
 
