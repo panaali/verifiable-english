@@ -1,0 +1,41 @@
+import subprocess, sys
+from pathlib import Path
+SEEDS = [
+ ("S1 resume keeps unconfirmed", "tools/fidmech/runner.py",
+  'if R.confirmed(line["record"])}', 'if line["record"]["verdict"]["K"] != "not-run"}',
+  "tests/test_fidmech_runner.py -k 'resume_runs_again or invalid_twice'"),
+ ("S2 budget keeps invalid outcome", "tools/fidmech/runner.py",
+  "                    outcomes.pop(m.id, None)\n", "                    pass\n",
+  "tests/test_fidmech_runner.py -k budget_cuts"),
+ ("S3 status ignores outcomes", "tools/fidmech/worker.py",
+  "and all(o.sentinel_ok is True for o in outcomes)", "",
+  "tests/test_fidmech_worker.py tests/test_fidmech_runner.py -k 'invalid_twice or batch_status'"),
+ ("S4 report reads raw K", "tools/fidmech/report.py",
+  '"K": R.k_reading(line["record"])}', '"K": line["record"]["verdict"]["K"]}',
+  "tests/test_fidmech_report.py -k 'invalid'"),
+ ("S5 plant row reads raw verdict", "tools/fidmech/report.py",
+  "                v = verdicts(x)\n", '                v = x["record"]["verdict"]\n',
+  "tests/test_fidmech_report.py -k 'document_report_reads_an_invalid or only_records'"),
+ ("S6 declared override turns INVALID into survived", "tools/fidmech/report.py",
+  ' if v[k] not in R.UNCONFIRMED})', '})',
+  "tests/test_fidmech_report.py -k declared_equivalent_counted"),
+ ("S7 k_reading fails open on a missing sentinel_ok", "tools/fidmech/records.py",
+  'record.get("sentinel_ok") is True', 'record.get("sentinel_ok", True) is not False',
+  "tests/test_fidmech_report.py -k left_out_of_every_k"),
+ ("S8 blind spot reads raw K", "tools/fidmech/report.py",
+  'not any(verdicts(x)[i] == KILL[i]', 'not any(x["record"]["verdict"][i] == KILL[i]',
+  "tests/test_fidmech_report.py -k 'document_report_reads_an_invalid or only_records'"),
+]
+rows = []
+for name, path, old, new, sel in SEEDS:
+    p = Path(path); orig = p.read_text()
+    assert orig.count(old) == 1, name
+    p.write_text(orig.replace(old, new))
+    try:
+        r = subprocess.run(f"uv run pytest -q -p no:cacheprovider {sel}", shell=True, capture_output=True, text=True)
+    finally:
+        p.write_text(orig)
+    failed = [l.split(" - ")[0] for l in r.stdout.splitlines() if l.startswith("FAILED")]
+    rows.append({"seed": name, "file": path, "killed": r.returncode != 0, "failing": failed})
+    print(name, "KILLED" if r.returncode else "SURVIVED", failed)
+import json; Path("/tmp/b5f1-seeds/result.json").write_text(json.dumps(rows, indent=1))

@@ -1,0 +1,8 @@
+== cloud-verdict-compare.py: same head, base, options and input digests before any verdict
+== actions-health.py findref: whole inputs must match
+== obligations: met only by a completed comparison; retried; one in-flight sample per fingerprint
+== verdict-sample.sh: records its outcome; INVALID REFERENCE is neither EQUAL nor a mismatch
+== cloud-pull.sh: restarts a pending sample in a low-load window, sends alerts
+== verdict-sample-load-gate: age cap (flag VS_AGE_CAP, VS_AGE_H 4) and the 12-h alert of a pending rate sample
+
+68 passed, 0 failed

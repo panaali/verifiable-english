@@ -1,0 +1,138 @@
+--- verdict-sample.sh	2026-11-17 18:14:06.270471597 +0000
++++ verdict-sample.sh.new-vsw	2026-11-19 08:13:31.099122708 +0000
+@@ -38,9 +38,22 @@
+ # the cloud gave a verdict for, it says NOT COMPARED (exit 3): row "not run", vdone notrun (the
+ # obligation stays pending and is retried), never a MISMATCH, the pool and the streak untouched. (b) The reference drops the
+ # job's --deadline and --budget (an absolute nightly deadline was long past when the reference started: 31 of 31 NOT RUN)
+-# as it drops --json/--jobs, and runs with its own --budget VS_REF_BUDGET s (default 21600; 0 = none) from its own start.
++# as it drops --json/--jobs, and runs with its own --budget VS_REF_BUDGET s (default 21600) from its own start.
+ # (c) A reference that exits outside 0|1 or writes a "partial" record is renamed aside (vm-ref.partial-<why>-<UTC>.json):
+ # findref never reuses it (it also skips any record with "partial"). VS_MANAGE_DIR (tests only): this directory.
++# 2026-11-19 vs-sample-bounded (reviews/dri-decisions-20261114-lp1701.md item 1; the 12-mutant cut WITHDRAWN): the reference
++# keeps the FULL part (compare stays every id). (a) A run cut by its deadline (exit 4 with a partial record) is set aside as in
++# (c) and RESUMED with trust_mutants --resume <that partial> in the same worktree, not restarted; a later sample of the part
++# resumes the newest cut of its own host's (vm-ref.partial-deadline-*, ve-cloud-2: vm-ref.partial-c2-deadline-*) when it
++# runs in the same job dir (a retry of the same job; a later result is a new job dir and starts fresh). ve-cloud-2 runs
++# with CLOUD2_SHIP_TAG=vs: trust_mutants resumes a cut only under the same --rescore file name, and cloud2-run.sh names the
++# shipped --rescore copy ../ship-rescore-<tag>.json (default tag: its pid, new each run; the key is this job's worktree,
++# so jobs never share the copy). It stops
++# (row "not run", pending, as before) when a resumed run judges no more ids or after VS_REF_PASSES (6) runs. (b) The
++# reference's --budget is no longer the fixed VS_REF_BUDGET: it is sized from the cloud part's own run time, ceil(VS_REF_K (2)
++# x wall x cloud jobs / the reference's jobs), wall = the job record's tm_s, else the cloud JSON's seconds; cloud jobs = the
++# cloud JSON's jobs (else the reference's); at least VS_REF_MIN_S (900) s, at most VS_REF_BUDGET (21600; 0 = no cap), which is
++# also the budget when the cloud gives no run time. The reference's jobs: VM VS_REF_JOBS (6), ve-cloud-2 8.
+ M=${VS_MANAGE_DIR:-/home/seyran/code/manage-agents}
+ f=${1:A}; [ -f "$f" ] || { print -u2 "usage: verdict-sample.sh <job.json>"; exit 2; }
+ D=${f:h}; J=${CLOUD_JOBS_DIR:-$M/cloud-jobs}; SRC=${VE_EXPORT_SRC:-$HOME/code/verifiable-english}
+@@ -55,8 +68,8 @@
+ python3 -I $M/actions-health.py vstart $J $f $$ >> $log 2>&1
+ [ -s $cj ] || { row "not run" "no cloud-verdicts.json in $D"; msg "verdict sample of $job not run: no cloud-verdicts.json in $D"; vdone notrun "no cloud-verdicts.json"; exit 1; }
+ c2src=""; pa=""
+-refargs(){  # args = the job's vm_args for a reference run: without --json/--jobs and the job's --deadline/--budget
+-  local a i x v owt=$(jget $f worktree)  # (vs-ref-notrun-not-compared: its own --budget VS_REF_BUDGET instead); --test/--allow
++refargs(){  # args = the job's vm_args for a reference run at $1 jobs: without --json/--jobs and the job's --deadline/--budget
++  local a i x v b owt=$(jget $f worktree)  # (vs-sample-bounded: its own --budget sized by refbudget instead); --test/--allow
+   a=(${(f)"$(jget $f vm_args)"}); args=(); i=1  # made worktree-relative
+   while [ $i -le ${#a} ]; do x=${a[$i]}
+     case $x in --json|--jobs|--deadline|--budget) i=$((i+2)); continue;; --json=*|--jobs=*|--deadline=*|--budget=*) i=$((i+1)); continue;;
+@@ -67,22 +80,67 @@
+   # verdict-compare-base-map: trust_mutants' default base is merge-base HEAD main, which is HEAD itself once the branch has
+   # merged (an empty diff, 0 mutants, INVALID REFERENCE on base); the reference runs against the base the job was run on.
+   local vb=$(jget $f vm_base); (( ${args[(I)--base]} )) || [[ -n ${args[(r)--base=*]} || -z $vb ]] || args+=(--base $vb)
+-  [[ ${VS_REF_BUDGET:-21600} == <-> ]] && (( ${VS_REF_BUDGET:-21600} > 0 )) && args+=(--budget ${VS_REF_BUDGET:-21600}); }
++  b=$(refbudget $1); [[ $b == <-> ]] && (( b > 0 )) && args+=(--budget $b); }
++refbudget(){  # vs-sample-bounded (b): the reference's --budget at $1 jobs, sized from the cloud part's own run time (header)
++  python3 -I - $f $cj $1 "${VS_REF_K:-2}" "${VS_REF_MIN_S:-900}" "${VS_REF_BUDGET:-21600}" <<'PY'
++import json, math, sys
++jf, cf, jobs, k, lo, cap = sys.argv[1:7]
++def num(v, d=None):
++    try:
++        v = float(v)
++    except (TypeError, ValueError):
++        return d
++    return v if math.isfinite(v) and v > 0 else d
++def load(p):
++    try:
++        with open(p) as fh:
++            d = json.load(fh)
++        return d if isinstance(d, dict) else {}
++    except (OSError, ValueError):
++        return {}
++j, c = load(jf), load(cf)
++jobs, k, lo, cap = num(jobs, 6.0), num(k, 2.0), num(lo, 0.0), num(cap, 0.0)
++wall = num(j.get("tm_s")) or num(c.get("seconds"))
++if wall is None:
++    print(int(cap) if cap else "")
++else:
++    b = max(math.ceil(k * wall * num(c.get("jobs"), jobs) / jobs), math.ceil(lo))
++    print(min(b, int(cap)) if cap else b)
++PY
++}
++unjudged(){ python3 -I -c 'import json,sys; d=json.load(open(sys.argv[1])); u=(d.get("partial") or {}).get("unjudged"); print(len(u) if isinstance(u,list) else sum(m.get("status") in ("NOT RUN","UNKNOWN") for m in d.get("mutants",[])))' $1 2>/dev/null || print 999999; }
++refpasses(){  # vs-sample-bounded (a): $1 the cut's name prefix ("" VM, c2- ve-cloud-2), $2 the run (called with $args
++  # [--resume P], writes $ref): runs it until it is not a deadline cut, resuming each cut; sets trc, pa (the last cut), rnote
++  local pre=$1 run=$2 n=0 max=${VS_REF_PASSES:-6} left prev="" rp; local -a g
++  [[ $max == <-> ]] && (( max > 0 )) || max=6
++  g=($D/vm-ref.partial-${pre}deadline-*.json(Nom[1])); rp=${g[1]}; rnote=""  # an earlier sample's cut of this part
++  [ -n "$rp" ] && { prev=$(unjudged $rp); say "resuming the earlier cut ${rp:t} ($prev unjudged), not restarting"; }
++  while :; do n=$((n+1)); rm -f $ref; pa=""; rnote=""
++    $run $args ${rp:+--resume} $rp; trc=$?
++    [[ $trc == 4 ]] && [ -s $ref ] && ispartial $ref || return 0  # only a deadline cut (exit 4, a partial record) resumes
++    aside $trc $pre; [ -n "$pa" ] || return 0
++    left=$(unjudged $pa)
++    (( n >= max )) && { rnote="cut by its deadline in each of $n runs, $left unjudged"; say "reference $rnote: stops at VS_REF_PASSES $max"; return 0; }
++    [ -n "$prev" ] && (( left >= prev )) && { rnote="cut by its deadline in each of $n runs, $left unjudged ($prev before the last)"
++      say "reference $rnote: the last resumed run judged no more: stops"; return 0; }
++    say "reference run $n cut by its deadline, $left unjudged: resuming ${pa:t} (trust_mutants --resume, no restart)"
++    rp=$pa; prev=$left; done; }
+ ispartial(){ python3 -I -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1])).get("partial") else 1)' $1 2>/dev/null; }
+ aside(){  # $1 exit code, $2 name prefix: $ref (a partial or failed reference) renamed so findref never takes it; pa = new name
+-  local why=exit$1; ispartial $ref && why=deadline
+-  pa=$D/vm-ref.partial-$2$why-$(date -u +%Y%m%dT%H%M%SZ).json; mv -f $ref $pa && say "reference record set aside: ${pa:t} (exit $1)" || pa=""; }
++  local why=exit$1 b k=1; ispartial $ref && why=deadline
++  b=$D/vm-ref.partial-$2$why-$(date -u +%Y%m%dT%H%M%SZ); pa=$b.json; while [ -e $pa ]; do k=$((k+1)); pa=$b-$k.json; done; mv -f $ref $pa && say "reference record set aside: ${pa:t} (exit $1)" || pa=""; }
+ c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by ve-cloud-2 (src set); 1 = not there (the VM path)
+   [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
+   local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
+-  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs
++  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs 8
+   [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
+   git -C $SRC worktree add -q --detach $W $vh 2>> $log || return 1
+   say "CLOUD2_RUNNER: reference run on ve-cloud-2 (no VM load wait)"
+-  (cd $W && zsh $M/cloud2-run.sh tm --worktree $W -- $args --jobs 8 --json $ref > $D/vm-ref-tm.log 2>&1); trc=$?
++  c2tm(){ (cd $W && CLOUD2_SHIP_TAG=vs zsh $M/cloud2-run.sh tm --worktree $W -- "$@" --jobs 8 --json $ref >> $D/vm-ref-tm.log 2>&1); }
++  : > $D/vm-ref-tm.log; refpasses c2- c2tm  # vs-sample-bounded (a): a deadline cut is resumed there
+   git -C $SRC worktree remove --force $W 2>> $log
+   [[ $trc == (0|1) ]] && [ -s $ref ] && ! ispartial $ref || { [ -s $ref ] && aside $trc c2-
+-    say "CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit $trc${pa:+; its partial set aside as ${pa:t}}): the VM path"; rm -f $ref; return 1; }
++    say "CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit $trc${rnote:+, $rnote}${pa:+; its partial set aside as ${pa:t}}): the VM path"; rm -f $ref; pa=""; return 1; }
+   c2src=1; l="-"; src="ve-cloud-2 x86 run (exit $trc)"; return 0; }
+ vmrun(){  # a fresh VM reference run into $D/vm-ref.json; sets ref, src; 1 = not run (row, message, vdone written)
+   [ -z "$1" ] && c2ref && return 0  # CLOUD2_RUNNER (header); "$1" = vm: the VM only
+@@ -97,18 +155,20 @@
+     sleep ${VS_POLL:-120}; done
+   if [ -n "$capped" ]; then say "age cap: result $(printf %.1f $(( age / 3600.0 ))) h old >= $ah h (VS_AGE_CAP), VM 1-min load $l >= $lim after $(( (SECONDS - t0) / 60 )) min: VM reference run (age-capped)"
+   else say "VM 1-min load $l < $lim after $(( (SECONDS - t0) / 60 )) min: VM reference run"; fi
+-  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs  # the job's vm_args (refargs)
+-  if [ -n "$VS_TM" ]; then ${=VS_TM} $D $ref $args; trc=$?
++  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; vj=${VS_REF_JOBS:-6}; [[ $vj == <-> ]] && (( vj > 0 )) || vj=6
++  refargs $vj; pa=""  # the job's vm_args (refargs)
++  if [ -n "$VS_TM" ]; then vmtm(){ ${=VS_TM} $D $ref "$@"; }; : > $D/vm-ref-tm.log; refpasses "" vmtm
+   else W=$HOME/code/ve-vs-$job
+     [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
+     git -C $SRC worktree add -q --detach $W $vh 2>> $log || { row "not run" "cannot make worktree $W at ${vh[1,9]}"; msg "verdict sample of $job not run: worktree"; vdone notrun "cannot make worktree"; return 1; }
+     cp -a --reflink=auto ${VS_SHARE_MAIN:-$HOME/code/ve-share-main}/lean/.lake $W/lean/.lake 2>> $log
+-    (cd $W && uv sync --frozen -q && (cd lean && lake build > $D/vm-ref-lake.log 2>&1); \
+-      uv run --frozen python tools/trust_mutants.py $args --jobs 6 --json $ref > $D/vm-ref-tm.log 2>&1); trc=$?
++    (cd $W && uv sync --frozen -q && (cd lean && lake build > $D/vm-ref-lake.log 2>&1))
++    vmtm(){ (cd $W && uv run --frozen python tools/trust_mutants.py "$@" --jobs $vj --json $ref >> $D/vm-ref-tm.log 2>&1); }
++    : > $D/vm-ref-tm.log; refpasses "" vmtm  # vs-sample-bounded (a): a deadline cut is resumed in this worktree
+     git -C $SRC worktree remove --force $W 2>> $log; fi
+   [ -s $ref ] && { [[ $trc != (0|1) ]] || ispartial $ref; } && aside $trc  # (c): a partial never stays as vm-ref.json
+-  [[ $trc == (0|1) ]] && [ -s $ref ] || { row "not run" "VM reference run failed (exit $trc; $D/vm-ref-tm.log${pa:+; partial set aside as ${pa:t}})"
+-    msg "verdict sample of $job not run: the VM reference run failed (exit $trc; $D/vm-ref-tm.log${pa:+; its partial record set aside as $pa}). Not a mismatch; the sampled check is still pending (retried by cloud-pull.sh)."
++  [[ $trc == (0|1) ]] && [ -s $ref ] || { row "not run" "VM reference run failed (exit $trc${rnote:+, $rnote}; $D/vm-ref-tm.log${pa:+; partial set aside as ${pa:t}})"
++    msg "verdict sample of $job not run: the VM reference run failed (exit $trc${rnote:+, $rnote}; $D/vm-ref-tm.log${pa:+; its partial record set aside as $pa}). Not a mismatch; the sampled check is still pending (retried by cloud-pull.sh; it resumes that partial)."
+     vdone notrun "VM reference run failed (exit $trc)"; return 1; }
+   src="VM run (exit $trc, ${capped:+age-capped, }load $l at start)"; }
+ cmpv(){ python3 -I $M/cloud-verdict-compare.py $ref $cj > $D/verdict-compare.txt 2>&1; crc=$?
