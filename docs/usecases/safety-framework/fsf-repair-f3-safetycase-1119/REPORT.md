@@ -6,7 +6,8 @@ carries the Glossary's Safety Cases sentence, copied verbatim from the pinned so
 legend were regenerated.
 Open: the reads-1119 counter (R16 C5) is not the installed counter, so I could not run the prompt-size dry-run (see
 "Prompt size").
-Base: main d8758ce968, the merge base. This item merges at its branch's final HEAD on that base (see "Merge commit").
+Base: main f5553bc894 (merged in at e9f70b1e95; built on d8758ce968). This item merges at its branch's final HEAD on
+that base (see "Merge commit").
 
 SIZE: 3 product, 64 tests, about 150 other hand-written lines. Counted with `git diff --numstat` against the merge
 base: vocabulary.py +3/-1, the new test file +64, plus DELTA.md and this REPORT. Generated or recorded outputs are not
@@ -83,7 +84,7 @@ trusted-core file, against d8758ce9", so I ran no trust_mutants sweep.
 ## Trust
 
 `uv run python tools/trust_map.py --check`: "against d8758ce96837: K +0, S +0, D +0, G +0, tied +0, unclassified +0,
-trusted +0 / PASS". So there is no R6 or R16 record and no FOLLOW-UPS.md row.
+trusted +0 / PASS", and the same against f5553bc894cf after the merge of main. So there is no R6 or R16 record and no FOLLOW-UPS.md row.
 
 ## Tests run
 
@@ -114,7 +115,10 @@ comparer's upper-bound count. B-L0/SC and B-L2/SC belong to F4. Nothing is claim
 
 ## Merge commit
 
-This item merges at the branch's final HEAD on base main d8758ce968. The task names VE commit 7cbec4b340b8, which is
+This item merges at the branch's final HEAD on base main f5553bc894. I merged main in at e9f70b1e95; main's new
+commits since d8758ce968 touch only infra tooling and docs and none of this item's files (`git diff --name-only`), and
+after the merge `regen_generated.py --check` gives rc=0 and the new test passes (/tmp/f3-regen3.log, /tmp/f3-t3.log).
+The task names VE commit 7cbec4b340b8, which is
 not an ancestor of local main. At that commit and at d8758ce968, `vocabulary.py`, `environment.d1.json` and
 `rules.d1.ve` are identical (`git diff --stat`: empty). So seeded bug S1 (main's text) shows the test failing on the
 pinned commit. The R16 C2/C3 pinned lists are per commit and re-pin at the counted read. A merge after the R16
