@@ -153,7 +153,9 @@ REGULATED = {
     "assessed": _obligation(["proposal"], "{0} be preceded by a critical capability assessment",
                             "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); "
                             "critical capability assessments \"determine a model's proximity to T/CCLs through the use "
-                            "of early warning evaluations and other sources of evidence\" (Glossary)"),
+                            "of early warning evaluations and other sources of evidence\" (Glossary); on models not on "
+                            "the frontier, 1.3.2 \"We may also apply material capability change assessments to models "
+                            "not on the frontier, to understand whether a critical capability assessment is required.\""),
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
@@ -165,7 +167,9 @@ REGULATED = {
     "change_assessed": _obligation(
         ["proposal"], "{0} be followed by material capability change assessments on various checkpoints",
         "material capability change assessments on various checkpoints follow {0} (1.3.2); the checkpoints are "
-        "part of the act, not a situation variable"),
+        "part of the act, not a situation variable; their content, 1.3.2 \"These assessments draw on model "
+        "characteristics, such as its provenance, size, modality, and performance on general capability "
+        "benchmarks.\""),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
         "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
