@@ -1,0 +1,29 @@
+PASS the replay inputs exist (et-4b part records, the DRI's merge, the scripts)
+PASS TMPAR_SH is zsh -n clean
+== (a) before (/home/seyran/code/manage-agents/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
+PASS (a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json
+== (b) after (/tmp/tmparw-mut/m2-no-pathcheck.sh): the same parts, through tm-lock-align.py
+PASS (b) merged, not refused: exit = the merge's (not 86), no guard count
+PASS (b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on ve-mac-1
+PASS (b) --json = the DRI's hand merge (counts, every status, inputs): 326 KILLED, 5 SURVIVOR, 0 NOT RUN
+PASS (b) the merged line names the aligned copies part-2.norm.json, part-6.norm.json; the reason on stderr
+== (c) Mac part 2 also differs in a .lean file's digest
+PASS (c) still refused 'disagree on inputs' (exit 86), counted once, nothing at --json
+PASS (c) no aligned copy went to the merge: the kept inputs are the parts (part 2 = the Mac's own record) + lockalign.err
+== (d) the helper fails or prints a path that is not the part or its copy
+FAIL (d) helper fails: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+     rc=86 ['2026-11-19T11:04:18Z ve-et-4b.tmpar-1119T110417-4108108 merge refused (exit 2)'] h's host stamp "where": ve-cloud-2 -> /tmp/tmparw.jl9fjkcf/tmpar.8oycS6/m/4-part-4.json
+       tm-unstamp: /tmp/tmparw.jl9fjkcf/tmpar.8oycS6/part-5.json: removed cloud2-run.sh's host stamp "where": ve-cloud-2 -> /tmp/tmparw.jl9fjkcf/tmpar.8oycS6/m/5-part-5.json
+     --merge OUT.json PART.json...: at least one part, and no --shard or --plan
+     [tmpar 11:04:18Z] ve-et-4b.tmpar-1119T110417-4108108: trust_mutants --merge REFUSED the 6 parts (exit 2: --merge OUT.json PART.json...: at least one part, and no --shard or --plan)
+     [tmpar 11:04:18Z] ve-et-4b.tmpar-1119T110417-4108108: the refused merge's inputs kept in /tmp/tmparw.jl9fjkcf/cj-m2-no-pathcheck.sh--15/tmpar-refused/ve-et-4b.tmpar-1119T110417-4108108
+     [tmpar 11:04:18Z] ve-et-4b.tmpar-1119T110417-4108108: GUARD count (merge refused (exit 2)); 1 in 24 h
+     
+FAIL (d) helper prints other paths: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+     rc=86 ['2026-11-19T11:04:19Z ve-et-4b.tmpar-1119T110418-4108451 merge refused (exit 2)']   tm-unstamp: /tmp/tmparw.jl9fjkcf/tmpar.DkvlC0/part-5.json: removed cloud2-run.sh's host stamp "where": ve-cloud-2 -> /tmp/tmparw.jl9fjkcf/tmpar.DkvlC0/m/5-part-5.json
+     trust_mutants --merge: a part cannot be read (FileNotFoundError: [Errno 2] No such file or directory: '/etc/hostname')
+     [tmpar 11:04:19Z] ve-et-4b.tmpar-1119T110418-4108451: trust_mutants --merge REFUSED the 6 parts (exit 2: trust_mutants --merge: a part cannot be read (FileNotFoundError: [Errno 2] No such file or directory: '/etc/hostname'))
+     [tmpar 11:04:19Z] ve-et-4b.tmpar-1119T110418-4108451: the refused merge's inputs kept in /tmp/tmparw.jl9fjkcf/cj-m2-no-pathcheck.sh--16/tmpar-refused/ve-et-4b.tmpar-1119T110418-4108451
+     [tmpar 11:04:19Z] ve-et-4b.tmpar-1119T110418-4108451: GUARD count (merge refused (exit 2)); 1 in 24 h
+     
+9/11 passed
