@@ -1,0 +1,22 @@
+M1-carry-environment rc 1 5 failed
+    test_the_generated_environment_keeps_every_owner_description
+    test_the_only_environment_change_is_the_appended_source_spans
+    test_the_overlay_review_is_carried_only_by_the_environment_id_rebind
+    test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-8-1119-environment.json]
+    test_reviewed_overlays_preserve_all_historical_views_and_identities
+M2-carry-generated rc 1 2 failed
+    test_the_generated_environment_keeps_every_owner_description
+    test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-1-1119-definitions-enviro
+M3-overlay-other-byte rc 1 2 failed
+    test_the_overlay_review_is_carried_only_by_the_environment_id_rebind
+    test_reviewed_overlays_preserve_all_historical_views_and_identities
+M4-review-record rc 1 2 failed
+    test_the_overlay_review_is_carried_only_by_the_environment_id_rebind
+    test_reviewed_overlays_preserve_all_historical_views_and_identities
+M5-byte-for-byte rc 1 5 failed
+    test_the_generated_environment_keeps_every_owner_description
+    test_the_only_environment_change_is_the_appended_source_spans
+    test_the_overlay_review_is_carried_only_by_the_environment_id_rebind
+    test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-8-1119-environment.json]
+    test_reviewed_overlays_preserve_all_historical_views_and_identities
+clean
