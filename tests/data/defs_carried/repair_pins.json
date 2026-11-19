@@ -1,0 +1,95 @@
+{
+ "about": "The 9 FSF/RSP repairs the known-case fixture reads (tools/defs_carried_known.py). tip, base and merge are the commit ids the fixture records (labels only, never given to git); tip_tree and base_tree are the content-addressed trees of that tip and base, which the builder reads. Pinned when the fixture was built; refresh deliberately (--resolve-branches prints how the branches resolve today).",
+ "repairs": [
+  {
+   "id": "F1",
+   "branch": "feature/fsf-repair-f1-leveldefs-1119",
+   "doc": "safety-framework",
+   "tip": "e09136236176238629c5cab0d59af83a70a85919",
+   "base": "d8758ce96837db7780caddb9f498e36fd7f511ba",
+   "merge": null,
+   "tip_tree": "72a24fafabb8469099bd2938c77793f1940c5077",
+   "base_tree": "929d31f4be48ef1b3879dc0d02b98eca6a56173c"
+  },
+  {
+   "id": "F2",
+   "branch": "feature/fsf-repair-f2-glossary-1119",
+   "doc": "safety-framework",
+   "tip": "74b5259fba1c4f393b495bab911e6a12c7cfdfd3",
+   "base": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
+   "merge": null,
+   "tip_tree": "416381c9178d698c569f9c0833aa2d8243a68912",
+   "base_tree": "dc0b1c87f7edee1d3b319702ccc3f636e9c6507b"
+  },
+  {
+   "id": "F3",
+   "branch": "feature/fsf-repair-f3-safetycase-1119",
+   "doc": "safety-framework",
+   "tip": "1ad3fe3cb7941be5a485d071784ed59a1517a4dd",
+   "base": "0ce720e46b7f885bceece8766860732c20f9bbe4",
+   "merge": null,
+   "tip_tree": "96403957a175cd4291fa92c7685609f7228b7c92",
+   "base_tree": "e89d41b5538b415c04ffc0c5e4199c5bc13998cc"
+  },
+  {
+   "id": "F5",
+   "branch": "feature/fsf-repair-f5-lowrisk-1119",
+   "doc": "safety-framework",
+   "tip": "d16497ac4126ecba0dd65a4bff4e563bd65f539a",
+   "base": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
+   "merge": "53de6068d728a11fb3d89dc3bc001a51ef8cbe8c",
+   "tip_tree": "e9f291b37ec8abf1f326fb9b4c67d230b191f081",
+   "base_tree": "dc0b1c87f7edee1d3b319702ccc3f636e9c6507b"
+  },
+  {
+   "id": "F6",
+   "branch": "feature/fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "tip": "127fc87d0413dca3354bc8d3cedbad400127849c",
+   "base": "f5553bc894cfc0de73b98581a853bbe59cb5aab1",
+   "merge": null,
+   "tip_tree": "0be81c9071a7eee3776cee8c60d1d62f599de6ed",
+   "base_tree": "dc0b1c87f7edee1d3b319702ccc3f636e9c6507b"
+  },
+  {
+   "id": "F7",
+   "branch": "feature/fsf-repair-f7-govadequacy-1119",
+   "doc": "safety-framework",
+   "tip": "ed5e3852019e846ab011745bacbeba9a6e2b3ebe",
+   "base": "0ce720e46b7f885bceece8766860732c20f9bbe4",
+   "merge": null,
+   "tip_tree": "a1bcdcec15762cd3166e0a74d7f074cd004da67e",
+   "base_tree": "e89d41b5538b415c04ffc0c5e4199c5bc13998cc"
+  },
+  {
+   "id": "F8",
+   "branch": "feature/fsf-repair-f8-disclosure-1119",
+   "doc": "safety-framework",
+   "tip": "c5781618bc9668c22495d878fffce0d092d7eaa2",
+   "base": "d8758ce96837db7780caddb9f498e36fd7f511ba",
+   "merge": null,
+   "tip_tree": "e9005138bf775cd4b45ecfb99df6533b089b26ff",
+   "base_tree": "929d31f4be48ef1b3879dc0d02b98eca6a56173c"
+  },
+  {
+   "id": "F9",
+   "branch": "feature/fsf-repair-f9-mcca-1119",
+   "doc": "safety-framework",
+   "tip": "236d3366e88e8b3836591b63be86cae522a2babc",
+   "base": "0ce720e46b7f885bceece8766860732c20f9bbe4",
+   "merge": null,
+   "tip_tree": "a32a664e2963abacf711b6395d007e4ea4227074",
+   "base_tree": "e89d41b5538b415c04ffc0c5e4199c5bc13998cc"
+  },
+  {
+   "id": "R1",
+   "branch": "feature/rsp-repair-r1-catastrophic-1119",
+   "doc": "anthropic-rsp",
+   "tip": "f7a6e5f7545e5fb5b369c9ba445339bb32b5b634",
+   "base": "0ce720e46b7f885bceece8766860732c20f9bbe4",
+   "merge": null,
+   "tip_tree": "430d44d030b845743dc832c1a81a8d4332ec617a",
+   "base_tree": "e89d41b5538b415c04ffc0c5e4199c5bc13998cc"
+  }
+ ]
+}
