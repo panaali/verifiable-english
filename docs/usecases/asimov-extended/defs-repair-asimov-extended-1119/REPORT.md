@@ -1,7 +1,7 @@
 # defs-repair-asimov-extended-1119: REPORT
 
 - **Status:** all 6 P1 rows KEPT and carried. Nothing waits on a DRI signature. Trust +0. No DELTA row.
-- **VE commit:** built on main `f5553bc894`. HEAD is the last commit on `feature/defs-repair-asimov-extended-1119`.
+- **VE commit:** built on main `f5553bc894` and rebased onto main `53de6068d7`, which this merges at (main's change touches only another line of `lexicon-report.json`; regenerating gave no diff). HEAD is the last commit on `feature/defs-repair-asimov-extended-1119`.
 - **What changed:** four legends in `usecases/asimov-extended/environment.json` now carry source definitions E1, E2a, E2b and E3 word for word. The derived ids were regenerated with the project's tools. A new condition test: `tests/test_defs_repair_asimov_extended_1119.py`.
 - **Carrier deviation:** rows 3, 5 and 6 named v2 predicates. Their legends are pinned identical to asimov-laws, so these rows are carried on the sort legend (`harm`, `action`) that their rules quantify over. Row 4 is the planner-decides row, and it shares row 3's carrier. Reason below.
 - **Answers touched:** each row touches 51 of 51 keyed records (rows 1-2: the ext answers). Lean's answers on every record are unchanged (`test_rerun_records_equal_the_committed_results` passed).
@@ -82,7 +82,7 @@ No Lean, Python or Rust product code changed, so there is no per-language produc
 
 ## Trust and DELTA
 
-- `uv run python tools/trust_map.py --check` against f5553bc894cf gives "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0", PASS.
+- `uv run python tools/trust_map.py --check` against f5553bc894cf gives "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0", PASS. After the rebase, against 53de6068d728, it gives the same, PASS. The new test and `test_english_lean_lexicon.py` gave 69 passed (`/tmp/defs-ae-post.log`).
 - No DELTA.md. There is no verdict, diagnostic, refusal or acceptance change, only legend text in one use-case environment and the ids derived from it. The records rerun shows the answers are unchanged.
 
 SIZE: 0 product, 82 tests, 8 other hand-written lines (environment.json legends), plus this REPORT and mutants.json. Generated: 4 manifest lines and 1 lexicon-report line.
