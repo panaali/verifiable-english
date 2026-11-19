@@ -1,0 +1,274 @@
+--- cloud-late.py	2026-10-29 20:23:50.621112932 +0000
++++ cloud-late.py.new-vsnr	2026-11-17 16:45:25.836033170 +0000
+@@ -27,7 +27,10 @@
+  local-done (mac-pytest.sh after a VM/Mac trust_mutants run of a key it looked up): keeps a copy as <key>.local.json and,
+             when a cloud entry has the key, compares them as store does; a difference also removes CLOUD_LATE_APPLY (the
+             flag's guard: a reuse whose later VM/Mac run of the same tree differs); INVALID REFERENCE (exit 3: inputs
+-            differ under one key) = a non-exact key: CLOUD_LATE_APPLY removed.
++            differ under one key) = a non-exact key: CLOUD_LATE_APPLY removed. NOT COMPARED (also exit 3: no shared
++            mutant judged on both sides, vs-ref-notrun-not-compared) = comparison not made: logged, nothing removed.
++ Outcomes (store and local-done alike): the comparator's verdict line, checked against its exit code (OUTCOMES); a line
++ and an exit code that do not agree, or no verdict line, is "not made" (never an alarm, never an EQUAL).
+ Tests only: VE_EXPORT_SRC, CLOUD_LATE_APPLY_FLAG, CLOUD_TRIAL_FLAG, ACTIONS_POOL_FLAG, CODEX_POOL_FLAG, CCLOUD_POOL_FLAG,
+ CLOUD_MSG, CLOUD_SNAPSHOT, CLOUD_LATE_NOW.
+ """
+@@ -179,11 +182,29 @@
+     return text
+ 
+ 
++# vs-ref-notrun-not-compared F1: cloud-verdict-compare.py's verdict lines, the one table of what its result means here.
++# Exit 3 carries two outcomes (INVALID REFERENCE: inputs differ; NOT COMPARED: nothing judged on both sides), so a caller
++# decides on the verdict line, and the exit code must agree with it (an "INVALID REFERENCE: NOT COMPARED: 0 shared mutant
++# ids" line starts with INVALID REFERENCE: an input difference).
++OUTCOMES = (("VERDICTS EQUAL", "equal", 0), ("VERDICTS DIFFER", "differ", 1), ("INVALID REFERENCE", "invalid", 3),
++            ("NOT COMPARED", "not compared", 3), ("COMPARE FAILED", "failed", 4))
++SUMMARY = ("mutants:", "counts:")
++
++
++def outcome(rc, out):
++    """The comparator's (exit code, output) as one of OUTCOMES' names; anything else (no verdict line, two verdict lines,
++    a line its exit code does not match) is "failed": the comparison was not made."""
++    found = [(name, want) for ln in out.splitlines() for pre, name, want in OUTCOMES if ln.startswith(pre)]
++    if len(found) != 1 or found[0][1] != rc:
++        return "failed"
++    return found[0][0]
++
++
+ def compare(J, k, cloud_e, local_p):
+-    """Cloud entry vs a VM/Mac record of the same key: 0 equal, 1 verdicts differ, 3 inputs differ, 4 failed."""
++    """Cloud entry vs a VM/Mac record of the same key: (outcome, summary), outcome one of OUTCOMES' names."""
+     loc = load(local_p)
+     if not isinstance(loc, dict):
+-        return 4, "unreadable VM/Mac record"
++        return "failed", "unreadable VM/Mac record"
+     rec = json.dumps(cloud_e["record"])
+     rec = rebase_text(rec, [(cloud_e.get("vm_head"), loc.get("head")), (cloud_e.get("vm_base"), loc.get("base"))])
+     cp = f"{J}/by-tree/{k}.cmp-cloud.json"
+@@ -191,8 +212,11 @@
+     r = subprocess.run([sys.executable, "-I", f"{M}/cloud-verdict-compare.py", local_p, cp], capture_output=True, text=True)
+     out = r.stdout + r.stderr
+     write(f"{J}/by-tree/{k}.compare.txt", out)
+-    s = " ".join(ln for ln in out.splitlines() if ln.startswith(("mutants:", "counts:", "VERDICTS", "INVALID REFERENCE", "COMPARE FAILED")))[:240]
+-    return r.returncode, s
++    lines = out.splitlines()  # the verdict line first, so the cut never drops it (review F5)
++    s = " ".join([ln for ln in lines if ln.startswith(tuple(p for p, _, _ in OUTCOMES))]
++                 + [ln for ln in lines if ln.startswith(SUMMARY)])[:240]
++    o = outcome(r.returncode, out)
++    return o, (s if o != "failed" else f"exit {r.returncode}: {s}")
+ 
+ 
+ def counts(rec):
+@@ -226,14 +250,14 @@
+     if os.path.exists(lp):
+         e = load(p)
+         c, s = compare(J, k, e, lp)
+-        if c == 0:
++        if c == "equal":
+             say(J, f"{job['job']}: cloud result and the VM/Mac run of the same tree: VERDICTS EQUAL ({s})")
+-        elif c == 1:
++        elif c == "differ":
+             os.remove(p)
+             pool_off(J, e["pool"], e["job"], f"the VM/Mac run of the same tree ({lp}; {s})")
+             return 1
+         else:
+-            say(J, f"{job['job']}: comparison with the VM/Mac run of the same tree not made (exit {c}: {s})")
++            say(J, f"{job['job']}: comparison with the VM/Mac run of the same tree not made ({c}: {s})")
+     print(f"stored key={k}")
+     return 0
+ 
+@@ -288,19 +312,19 @@
+     if not e:
+         return 0
+     c, s = compare(J, k, e, lp)
+-    if c == 0:
++    if c == "equal":
+         say(J, f"{e['job']}: stored cloud result and a {where} run of the same tree ({wt}): VERDICTS EQUAL ({s})")
+-    elif c == 1:
++    elif c == "differ":
+         os.remove(p)
+         pool_off(J, e["pool"], e["job"], f"a {where} run of the same tree ({wt}; {s})")
+         flag_off(J, f"a {where} run of tree {e['key']['head_tree'][:12]} ({wt}) differs from the stored cloud result of {e['job']} ({s})")
+         return 1
+-    elif c == 3:
++    elif c == "invalid":
+         os.remove(p)
+         flag_off(J, f"by-tree/{k}.json and a {where} run under the same key have different inputs ({s}): the key is not exact")
+         return 1
+-    else:
+-        say(J, f"{e['job']}: comparison with a {where} run not made (exit {c}: {s})")
++    else:  # "not compared" (nothing judged on both sides) or "failed": not made, never an alarm
++        say(J, f"{e['job']}: comparison with a {where} run not made ({c}: {s})")
+     return 0
+ 
+ 
+--- /tmp/vsnr-f1/test_vs_ref_notrun.py.orig	2026-11-17 16:14:20.574389530 +0000
++++ tools-local/test_vs_ref_notrun.py	2026-11-17 16:46:21.485194494 +0000
+@@ -8,19 +8,24 @@
+     streak and pool untouched); a judged-vs-judged difference is still a MISMATCH.
+ (b) verdict-sample.sh: the reference run gets neither the job's --deadline nor its --budget, but its own --budget.
+ (c) a reference exiting outside 0|1 or writing a partial record is renamed aside; findref never returns a partial.
++Review F1 (class: a caller of cloud-verdict-compare.py that reads exit 3 as "inputs differ"): cloud-late.py decides on the
++comparator's verdict line checked against its exit code (OUTCOMES); NOT COMPARED, a crash or a line/exit disagreement is
++"not made", never CLOUD_LATE_APPLY off nor POOL OFF (class CloudLate).
+ Fixture: cloud-jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd (job.json, cloud-verdicts.json,
+ vm-ref.partial-deadline-20261117T0534Z.json), read only and copied into a temp dir; nothing live is written. The VM run is
+ the VS_TM stub hook of verdict-sample.sh.
+ run: python3 -I tools-local/test_vs_ref_notrun.py [-v]            (the installed files: these tests FAIL there)
+      VSNR_SFX=.new-vsnr python3 -I tools-local/test_vs_ref_notrun.py  (the staged copies, <file><sfx> where present)"""
+-import glob, json, os, shutil, subprocess, tempfile, unittest
++import glob, importlib.machinery, importlib.util, io, json, os, re, shutil, subprocess, tempfile, unittest
++from contextlib import redirect_stdout
++from unittest import mock
+ 
+ M = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ SFX = os.environ.get("VSNR_SFX", "")
+ P9 = f"{M}/cloud-jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd"
+ JOB = "tm-nightly-20261116T1607Z-p9-9ccbf3fd"
+ PARTIAL = f"{P9}/vm-ref.partial-deadline-20261117T0534Z.json"
+-FILES = ("verdict-sample.sh", "cloud-verdict-compare.py", "actions-health.py")
++FILES = ("verdict-sample.sh", "cloud-verdict-compare.py", "actions-health.py", "cloud-late.py")
+ 
+ 
+ def rj(p):
+@@ -269,5 +274,141 @@
+         self.assertEqual(self.findref(), f"{self.J}/other/vm-ref.json")
+ 
+ 
++def timed_out(ms):  # review F1's probe: the cloud side's KILLED become UNKNOWN past --build-timeout (not judged)
++    for m in ms:
++        if m["status"] == "KILLED":
++            m.update(status="UNKNOWN", raw_status="UNKNOWN", detail="lake build did not finish in 900 s (--build-timeout)",
++                     reads=None, killed_at=None)
++
++
++class CloudLate(Base):
++    """Review F1: cloud-late.py's local-done/store branch on the comparator's outcome, not on its exit code alone."""
++
++    def setUp(self):
++        super().setUp()
++        loader = importlib.machinery.SourceFileLoader("cloud_late_under_test", f"{self.md}/cloud-late.py")
++        self.c = importlib.util.module_from_spec(importlib.util.spec_from_loader(loader.name, loader))
++        loader.exec_module(self.c)
++        self.c.M = self.md  # its comparator: the copy under test
++        self.c.FLAG = f"{self.T}/CLOUD_LATE_APPLY"
++        open(self.c.FLAG, "w").close()
++        self.told = []
++        self.c.tell = self.told.append
++        self.LJ = f"{self.T}/late"
++        os.makedirs(f"{self.LJ}/by-tree")
++        env = mock.patch.dict(os.environ, {"ACTIONS_POOL_FLAG": self.pool, "CLOUD_TRIAL_FLAG": f"{self.T}/CLOUD_TRIAL"})
++        env.start()
++        self.addCleanup(env.stop)
++
++    def entry(self, edit=None):
++        """by-tree/k.json: p9's cloud record (edited), stored for the VM head and base of p9's cloud-verdicts.json."""
++        cl = rj(self.cj)
++        rec = json.loads(json.dumps(cl))
++        if edit:
++            edit(rec["mutants"])
++            rec["counts"] = counts(rec["mutants"])
++        wj(f"{self.LJ}/by-tree/k.json", dict(key={"head_tree": "0" * 40}, job="j", pool="actions", vm_head=cl["head"],
++                                             vm_base=cl["base"], tm_rc=1, record=rec))
++
++    def local_done(self, local=None):
++        out = io.StringIO()
++        with redirect_stdout(out):
++            rc = self.c.cmd_local_done(self.LJ, "k", local or self.cj, "1", "VM", "/wt")
++        return rc, out.getvalue()
++
++    def assertNothingOff(self, out):
++        self.assertTrue(os.path.exists(self.c.FLAG), f"CLOUD_LATE_APPLY turned off: {out}")
++        self.assertTrue(os.path.exists(self.pool), f"ACTIONS_POOL removed: {out}")
++        self.assertTrue(os.path.exists(f"{self.LJ}/by-tree/k.json"), "the stored entry was deleted")
++        self.assertFalse(os.path.exists(f"{self.LJ}/CLOUD_MISMATCH"))
++        self.assertEqual(self.told, [])
++
++    def test_local_done_not_compared_is_not_made(self):
++        """PROBE F1: the stored cloud record judged none of the shared mutants (KILLED -> UNKNOWN past --build-timeout,
++        the rest NOT RUN) vs a VM run that judged them: NOT COMPARED (exit 3) is "not made", the flag stays."""
++        self.entry(timed_out)
++        rc, out = self.local_done()
++        self.assertEqual(rc, 0, out)
++        self.assertIn("comparison with a VM run not made (not compared: NOT COMPARED: 0 of 31", out)
++        self.assertNotIn("key is not exact", out)
++        self.assertNothingOff(out)
++
++    def test_local_done_input_difference_still_turns_the_flag_off(self):
++        """INVALID REFERENCE (exit 3, inputs differ under one key) keeps its meaning: flag off, entry deleted."""
++        self.entry()
++        loc = rj(self.cj)
++        loc["inputs"] = dict(loc["inputs"], tool="another tool digest")
++        wj(f"{self.T}/loc.json", loc)
++        rc, out = self.local_done(f"{self.T}/loc.json")
++        self.assertEqual(rc, 1, out)
++        self.assertIn("the key is not exact", out)
++        self.assertFalse(os.path.exists(self.c.FLAG))
++        self.assertFalse(os.path.exists(f"{self.LJ}/by-tree/k.json"))
++
++    def test_local_done_judged_difference_still_turns_pool_and_flag_off(self):
++        """VERDICTS DIFFER (exit 1) keeps its meaning: POOL OFF and flag off."""
++        self.entry(killed_vs_survivor)
++        rc, out = self.local_done()
++        self.assertEqual(rc, 1, out)
++        self.assertIn("POOL OFF", out)
++        self.assertFalse(os.path.exists(self.pool))
++        self.assertFalse(os.path.exists(self.c.FLAG))
++
++    def test_local_done_equal(self):
++        self.entry()
++        rc, out = self.local_done()
++        self.assertEqual(rc, 0, out)
++        self.assertIn("VERDICTS EQUAL", out)
++        self.assertNothingOff(out)
++
++    def test_a_crashing_comparator_is_not_a_mismatch(self):
++        """The class beyond exit 3: a comparator that dies with a traceback exits 1 with no VERDICTS DIFFER line; that is
++        "not made" (the installed cloud-late read every exit 1 as a verdict difference: POOL OFF)."""
++        self.entry()
++        with open(f"{self.md}/cloud-verdict-compare.py", "w") as fh:
++            fh.write("raise IndexError('boom')\n")
++        rc, out = self.local_done()
++        self.assertEqual(rc, 0, out)
++        self.assertIn("not made (failed: exit 1", out)
++        self.assertNothingOff(out)
++
++    def test_summary_names_the_verdict_line_first(self):
++        """Review F5: the 240-character summary starts with the verdict line, so a long mutants: line never cuts it."""
++        self.entry(timed_out)
++        o, s = self.c.compare(self.LJ, "k", rj(f"{self.LJ}/by-tree/k.json"), self.cj)
++        self.assertEqual(o, "not compared")
++        self.assertTrue(s.startswith("NOT COMPARED: "), s)
++
++    def test_outcome_line_and_exit_code_fuzz(self):
++        """Every (verdict line, exit code) pair: the outcome is the line's only when the exit code agrees; no line, two
++        lines, a traceback or any other exit code is "failed" (not made)."""
++        names = {n for _, n, _ in self.c.OUTCOMES}
++        self.assertEqual(names, {"equal", "differ", "invalid", "not compared", "failed"})
++        for pre, name, want in self.c.OUTCOMES:
++            for rc in range(-1, 7):
++                for out in (f"mutants: x\n{pre}: y\ncounts: z\n", f"{pre} (3 undecided)"):
++                    self.assertEqual(self.c.outcome(rc, out), name if rc == want else "failed", (pre, rc))
++            for other, _, orc in self.c.OUTCOMES:
++                if other != pre:
++                    self.assertEqual(self.c.outcome(want, f"{pre}\n{other}\n"), "failed", (pre, other))
++        for rc in range(0, 5):
++            self.assertEqual(self.c.outcome(rc, "Traceback (most recent call last):\nIndexError: boom\n"), "failed")
++            self.assertEqual(self.c.outcome(rc, ""), "failed")
++        self.assertEqual(self.c.outcome(3, "INVALID REFERENCE: NOT COMPARED: 0 shared mutant ids (1 vm, 1 cloud)"),
++                         "invalid")
++
++    def test_every_comparator_verdict_line_is_in_the_outcome_table(self):
++        """Two-way: each upper-case line the comparator prints is a verdict line in OUTCOMES or one of its info lines,
++        and each OUTCOMES prefix is a line the comparator prints."""
++        src = rt(f"{self.md}/cloud-verdict-compare.py")
++        code = src.split('"""', 2)[2]  # past the module docstring
++        lines = set(re.findall(r'(?:print\(\(?f?|else )"([A-Z]{2,}(?: [A-Z]{2,})+)', code))  # a line it prints
++        info = {"MUTANT IDS DIFFER", "NOT JUDGED", "KILLED BY ANOTHER CHECK"}
++        prefixes = {p for p, _, _ in self.c.OUTCOMES}
++        self.assertEqual({ln for ln in lines if not any(ln.startswith(p) for p in prefixes)}, info, lines)
++        for p in prefixes:
++            self.assertIn(p, lines)
++
++
+ if __name__ == "__main__":
+     unittest.main()

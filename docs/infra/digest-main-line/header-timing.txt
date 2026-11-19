@@ -1,0 +1,2 @@
+main week 50% (usage-watch.log 12:19Z) vs line 59.1% (PICK_MAIN_PACE via pick-claude-account.sh pace_line()) gap -9.1 pt
+header call on the live files: 0.070 s

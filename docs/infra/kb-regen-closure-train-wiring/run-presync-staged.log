@@ -1,0 +1,38 @@
+== (A) train side: library mode, branchregen + psrnote
+PASS A0 library mode: branchregen and psrnote defined, no train step ran
+PASS A1 driver: PSLR regen line, probe 1 -> 0, one commit
+PASS A1 driver: cpu_s is a count of CPU seconds (read outside a subshell)
+PASS A1 driver: the regen commit is branchregen's (message, only declarations.txt)
+PASS A1 driver: (presync) tag in its log, nothing in merge-train.log
+PASS A2 flag on, presync regen head: train probe 0 -> 'used' line, lean fresh, no train regen
+PASS A2 flag still on, no message
+PASS A3 difference: DIFFERENCE line, flag renamed .off-<stamp>
+PASS A3 difference: orchestrator messaged, the train regenerated as today
+Auto-merging lean/mods.txt
+CONFLICT (content): Merge conflict in lean/mods.txt
+Automatic merge failed; fix conflicts and then commit the result.
+PASS A4 moved main: 'stale (main moved)' line, flag stays on, no message
+PASS A4 moved main: the train regenerated as today
+PASS A5 no ref, flag off: train regen as today, no presync line
+PASS A6 flag off: 'used' line still written for the measurement, no flag file created
+== (B) presync-watch-job.sh lregen
+PASS B1 lregen, no remote host: regen on VM1; S = one regen commit on the plain merge
+PASS B1 refs: regen = S, regen-main = m, base = H
+PASS B1 probe of S is 0; record + jsonl row where=vm1
+PASS B1 merge-train.log line
+PASS B2 train after the presync regen: probe 0, 'used', no train regen
+PASS B3 flag off: plain pre-sync, no regen commit, regen refs deleted
+PASS B4 no lean/ change: no regen
+PASS B5 probe 0: no regen
+PASS B6 hosts over 2x cores: no regen, why names both
+PASS B7 contains main: regen commit on the head itself
+PASS B8 no lregen: unchanged behaviour (already contains main, no pre-sync ref)
+== (C) presync-watch.py decisions (PW_DRY=1)
+PASS C1 MERGE on the head, lean change, clean merge: job with the lean regen
+PASS C2 FIX verdict: no job
+PASS C3 a commit after the review: no job
+PASS C4 a fix round started: no job
+PASS C5 no lean change: no job (clean merge)
+PASS C6 flag off: no job for the clean merge (today's behaviour)
+PASS C7 head = reviewed commit + a merge of main (contains main): still a regen job
+presync-lean-regen: 31 passed, 0 failed
