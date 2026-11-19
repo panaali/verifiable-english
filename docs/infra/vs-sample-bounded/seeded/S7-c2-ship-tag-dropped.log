@@ -1,0 +1,5 @@
+# seeded (F1): replace <<CLOUD2_SHIP_TAG=vs zsh>> with <<zsh>> in verdict-sample.sh.new-vsw (cloud2-run.sh default tag: its pid)
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL c2ref: every ve-cloud-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)
+  FAIL c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL
+comparators: 54 passed, 3 failed
