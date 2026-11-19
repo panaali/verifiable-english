@@ -14,6 +14,14 @@
     "scope": "Wording and ordered argument roles checked against the bound environment declarations; opaque qualifications remain in the declarations and GAPS.md."
   },
   {
+    "overlay_digest": "a0a8935741bffe4e570204a82f926cd3c80c00743536fc3961448efa0883f87a",
+    "reviewer": "GPT-6 Astra (Worker X), review carried by environment_id rebind (defs-repair-claude-constitution-excerpt-1119)",
+    "date": "2026-11-19",
+    "overlay": "usecases/claude-constitution-excerpt/environment.english.json",
+    "carried_from": "8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088",
+    "scope": "environment_id rebind only after verbatim description appends; every other overlay byte identical to the reviewed digest 8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088."
+  },
+  {
     "overlay_digest": "1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6",
     "reviewer": "GPT-6 Astra (Worker X)",
     "date": "2026-09-21",
