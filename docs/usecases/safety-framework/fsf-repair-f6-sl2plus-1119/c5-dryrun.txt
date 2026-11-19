@@ -1,0 +1,32 @@
+# R16 C5 dry-run evidence (counter tools-local/uc-audit.py.reads-1119, runner omission-seq-read.py.reads-1119, oseq-r16-1)
+
+## --dry-run-all, run debates/uc-audit-safety-framework-20261115T1505Z with manifest ve_commit set per line (copy in /tmp); pins: /tmp copy of uc-audit-r16-pins.reads-1119 with the da0822ae80 entry keyed to the commit (dry-run only, not a pin)
+counted commit as is:
+safety-framework at da0822ae80: 196 answers rendered (no call); max step-1 prompt 113909 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 31, runner render == counter frozen render: 31/31; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+merge base:
+safety-framework at d8758ce968: 238 answers rendered (no call); max step-1 prompt 113909 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+this branch (content commit):
+safety-framework at 44100262e4: 238 answers rendered (no call); max step-1 prompt 116232 bytes (D3); ARG_LIMIT 131000; over the limit: 0; units 37, runner render == counter frozen render: 37/37; prompts lacking a frozen unit: 0; counter oseq-r16-1; OK
+
+## --dry-run --answers <one target>: the five F6 passages on the '- recommends:' line of the FACTS unit's VOCABULARY LEGENDS section
+A-L2-EXT/SEC	prompt_bytes=91847	in FACTS legend recommends: 5/5	OK
+G1	prompt_bytes=91141	in FACTS legend recommends: 5/5	OK
+N2	prompt_bytes=68439	in FACTS legend recommends: 5/5	OK
+R8/ACCEPTABLE	prompt_bytes=98128	in FACTS legend recommends: 5/5	OK
+S4	prompt_bytes=116200	in FACTS legend recommends: 5/5	OK
+
+## plan.json, --dry-run --answers A-L2-EXT/SEC,G1,N2,R8/ACCEPTABLE,S4, merge base vs this branch (diff of python3 -m json.tool)
+3,4c3,4
+<     "ve_commit": "d8758ce96837db7780caddb9f498e36fd7f511ba",
+<     "run": "/tmp/f6-run-base",
+---
+>     "ve_commit": "44100262e4b999ca1b2b8a84d168fd0e46ebc72a",
+>     "run": "/tmp/f6-run",
+90c90
+<         "commit": "d8758ce96837db7780caddb9f498e36fd7f511ba",
+---
+>         "commit": "44100262e4b999ca1b2b8a84d168fd0e46ebc72a",
+141c141
+<     "written": "2026-11-19T13:51:58Z"
+---
+>     "written": "2026-11-19T13:51:57Z"
