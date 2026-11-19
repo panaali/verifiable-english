@@ -4,7 +4,9 @@ Each row names a term a claims.ve rule depends on, the source definition (source
 from the source file in the repository, never from a copy) and the legend that carries it: the description of the
 sort or predicate the rule uses, in environment.json (the owner) and in definitions-environment.json (generated from
 it by verify_definitions.py). Each carried description must contain the whole source span byte for byte, and also
-after the omission counter's quote normalisation (tests/omission_rule.py `omit_norm`).
+after the omission counter's quote normalisation (tests/omission_rule.py `omit_norm`). The appends move the
+environment_id; the rebind tests prove the English overlay's 2026-09-21 review is carried only across that rebind
+(DRI decision reviews/dri-decisions-20261119-defs-repair-claude-constitution-excerpt-1119.md item 1).
 """
 import json
 import re
