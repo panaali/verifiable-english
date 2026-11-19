@@ -1,0 +1,40 @@
+{
+ "item": "ps1014-armshard-b1m1",
+ "planted_in": "temporary copies (/tmp/b1m1seed/s<n>.sh) of /home/seyran/code/manage-agents/merge-train.sh; the installed merge-train.sh was never edited",
+ "runner": "SEED_MT=/tmp/b1m1seed/s<n>.sh zsh /tmp/b1m1seed/test-armshard.zsh (a copy of test-harness/ps1014/harness/test-armshard.zsh whose lib.zsh copy takes merge-train.sh from SEED_MT; control s0 = the installed script: 42 ok, 0 FAIL, seed-s0.log)",
+ "mutants": [
+  {
+   "id": "S1-online-deadline-180",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/merge-train.sh",
+   "change": "shleg(): ve-mac-1 online -> shdl=${ARM_SHARD_MAC_FALLBACK_MIN:-180} (was 105: DRI rule lp1201 Q1 lost)",
+   "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh::B1 rc 0, published = the candidate, one blocking sharded run",
+   "failing_tests": ["B1 rc 0, published = the candidate, one blocking sharded run, no Mac job, no VM gate", "M1 flag off: merge-train.log and the stub calls equal the installed script's (no macslot probe)"],
+   "result": "FAIL: 40 ok, 2 FAIL",
+   "log": "seed-s1.log",
+   "patch": "seed-s1.patch"
+  },
+  {
+   "id": "S2-unreachable-deadline-105",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/merge-train.sh",
+   "change": "shleg(): ve-mac-1 unreachable -> shdl=105 (was 180)",
+   "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh::B5b rc 0, published on the blocking sharded leg",
+   "failing_tests": ["B5b rc 0, published on the blocking sharded leg, no validate run, no Mac job, no marker, the skip logged"],
+   "result": "FAIL: 41 ok, 1 FAIL",
+   "log": "seed-s2.log",
+   "patch": "seed-s2.patch"
+  },
+  {
+   "id": "S3-flag-off-extra-probe",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/merge-train.sh",
+   "change": "the ARM_MAC_FIRST branch condition `[ -f $M/ARM_MAC_FIRST ]` -> `{ macup; [ -f $M/ARM_MAC_FIRST ]; }`: with the flag off the train probes ve-mac-1 once more (a flag-off behaviour change the M1 mapping must not hide)",
+   "test": "/home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh::M1 flag off: merge-train.log and the stub calls equal the installed script's",
+   "failing_tests": ["M1 flag off: merge-train.log and the stub calls equal the installed script's (no macslot probe)"],
+   "result": "FAIL: 41 ok, 1 FAIL",
+   "log": "seed-s3.log",
+   "patch": "seed-s3.patch"
+  }
+ ]
+}
