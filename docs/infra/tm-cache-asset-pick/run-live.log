@@ -1,0 +1,45 @@
+lean-cache-publish.sh under test: /home/seyran/code/manage-agents/lean-cache-publish.sh
+reference (live): /home/seyran/code/manage-agents/lean-cache-publish.sh
+cloud-dispatch.sh pick read from: /home/seyran/code/manage-agents/cloud-dispatch.sh
+== case1
+  ok   (1) exact tree: exit 0, main's asset uploaded
+  FAIL (1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)  [deleted ['lean-build-67c95a65c475.tar.zst']]
+  FAIL (1) exact tree: nothing deleted: the release keeps the newest 5 (lean-build-602ee25f6749.tar.zst the oldest of them) + the nightly's  [deleted ['lean-build-67c95a65c475.tar.zst']]
+  FAIL (1) exact tree: manifest.json still lists it with its url  [[('lean-build-65d9f763cbd3.tar.zst', True), ('lean-build-d74456fa8adb.tar.zst', True), ('lean-build-b62f0c362017.tar.zst', True), ('lean-build-9cb1cd4312ba.tar.zst', True), ('lean-build-602ee25f6749.tar.zst', True)]]
+  FAIL (1) exact tree: the log names the kept asset and the head  [2026-11-19T11:39:33Z lean-cache-publish: packed lean-build-65d9f763cbd3.tar.zst: 0 MB, 4 members, sha256 39ce3c177549, 0 s; scans clean
+2026-11-19T11:39:33Z lean-cache-publish: uploaded lean-build-65d9f763cbd3.tar.zst to release lean-cache
+2026-11-19T11:39:33Z lean-cache-publish: old asset lean-build-67c95a65c475.tar.zst deleted (HTTP 204; keep 5; no manifest lists it)
+2026-11-19T11:39:33Z lean-cache-publish: published lean-build-65d9f763cbd3.tar.zst (main 2e227520c)
+]
+  FAIL (1) exact tree: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)  [picked lean-build-65d9f763cbd3.tar.zst; manifest ['lean-build-65d9f763cbd3.tar.zst', 'lean-build-d74456fa8adb.tar.zst', 'lean-build-b62f0c362017.tar.zst', 'lean-build-9cb1cd4312ba.tar.zst', 'lean-build-602ee25f6749.tar.zst']]
+  FAIL (1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted  [deleted ['lean-build-67c95a65c475.tar.zst', 'lean-build-602ee25f6749.tar.zst']; [('lean-build-431c5f442aac.tar.zst', True), ('lean-build-65d9f763cbd3.tar.zst', True), ('lean-build-d74456fa8adb.tar.zst', True), ('lean-build-b62f0c362017.tar.zst', True), ('lean-build-9cb1cd4312ba.tar.zst', True)]]
+  FAIL (1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst  [picked lean-build-431c5f442aac.tar.zst]
+  ok   (1) nearest ancestor within K: exit 0, main's asset uploaded
+  FAIL (1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)  [deleted ['lean-build-67c95a65c475.tar.zst']]
+  FAIL (1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's  [deleted ['lean-build-67c95a65c475.tar.zst']]
+  FAIL (1) nearest ancestor within K: manifest.json still lists it with its url  [[('lean-build-65d9f763cbd3.tar.zst', True), ('lean-build-e222abd55524.tar.zst', True), ('lean-build-d74456fa8adb.tar.zst', True), ('lean-build-b62f0c362017.tar.zst', True), ('lean-build-9cb1cd4312ba.tar.zst', True)]]
+  FAIL (1) nearest ancestor within K: the log names the kept asset and the head  [2026-11-19T11:39:34Z lean-cache-publish: packed lean-build-65d9f763cbd3.tar.zst: 0 MB, 4 members, sha256 4a55653798fe, 0 s; scans clean
+2026-11-19T11:39:35Z lean-cache-publish: uploaded lean-build-65d9f763cbd3.tar.zst to release lean-cache
+2026-11-19T11:39:35Z lean-cache-publish: old asset lean-build-67c95a65c475.tar.zst deleted (HTTP 204; keep 5; no manifest lists it)
+2026-11-19T11:39:35Z lean-cache-publish: published lean-build-65d9f763cbd3.tar.zst (main 07e60cc24)
+]
+  FAIL (1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)  [picked lean-build-65d9f763cbd3.tar.zst; manifest ['lean-build-65d9f763cbd3.tar.zst', 'lean-build-e222abd55524.tar.zst', 'lean-build-d74456fa8adb.tar.zst', 'lean-build-b62f0c362017.tar.zst', 'lean-build-9cb1cd4312ba.tar.zst']]
+  FAIL (1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted  [deleted ['lean-build-67c95a65c475.tar.zst', 'lean-build-9cb1cd4312ba.tar.zst']; [('lean-build-431c5f442aac.tar.zst', True), ('lean-build-65d9f763cbd3.tar.zst', True), ('lean-build-e222abd55524.tar.zst', True), ('lean-build-d74456fa8adb.tar.zst', True), ('lean-build-b62f0c362017.tar.zst', True)]]
+  FAIL (1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst  [picked lean-build-431c5f442aac.tar.zst]
+== case2
+  ok   (2) no asset related (all newer than the head): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) no asset related: 5 kept on the release, the dispatcher pins the newest (main's), as today
+  ok   (2) no nightly record: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) record complete (nightly.jsonl): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) record over 4 days old: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) head on the no-resume list: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) the head's asset quarantined: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) the head's asset among the newest 5: same deletes and kept count as live (5)
+== case3
+  FAIL (3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)  [rc 0 deleted ['lean-build-67c95a65c475-linux-aarch64.tar.zst'] , names checked again
+2026-11-19T11:39:46Z lean-cache-publish: uploaded lean-build-65d9f763cbd3-linux-aarch64.tar.zst to release lean-cache
+2026-11-19T11:39:46Z lean-cache-publish: old asset lean-build-67c95a65c475-linux-aarch64.tar.zst deleted (HTTP 204; keep 5; no manifest lists it)
+2026-11-19T11:39:46Z lean-cache-publish: published lean-build-65d9f763cbd3-linux-aarch64.tar.zst (main 2f57e8af2)
+]
+  FAIL (3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written  [[('lean-build-65d9f763cbd3-linux-aarch64.tar.zst', True), ('lean-build-d74456fa8adb-linux-aarch64.tar.zst', True), ('lean-build-b62f0c362017-linux-aarch64.tar.zst', True), ('lean-build-9cb1cd4312ba-linux-aarch64.tar.zst', True), ('lean-build-7e866972c81f-linux-aarch64.tar.zst', True)]]
+FAILED: 16

@@ -1,0 +1,11 @@
+--- /home/seyran/code/manage-agents/merge-train.sh	2026-11-17 16:48:23.745702096 +0000
++++ /tmp/b1m1seed/s1.sh	2026-11-19 09:01:47.519220879 +0000
+@@ -703,7 +703,7 @@
+   # item 1: passes since Nov 4 run 27-102 min, reviews/dri-decisions-20261108-adv1313.md item 1) min and the Mac leg runs
+   # (rc 4, as before); ve-mac-1 unreachable -> 180 min as before. CAND_ARM_SHARD_DEADLINE_MIN, when set, overrides both.
+   local shdl=${CAND_ARM_SHARD_DEADLINE_MIN:-}
+-  if [ -z "$shdl" ]; then if macup; then shdl=${ARM_SHARD_MAC_FALLBACK_MIN:-105}; else shdl=180; fi
++  if [ -z "$shdl" ]; then if macup; then shdl=${ARM_SHARD_MAC_FALLBACK_MIN:-180}; else shdl=180; fi
+     echo "sharded aarch64 leg of $label: shard deadline $shdl min (ve-mac-1 $([ $shdl = 180 ] && print unreachable || print online): DRI rule lp1201 Q1) $(date -u +%H:%MZ)" >> $log; fi
+   (exec 9>&-; [ -n "$lfd" ] && exec {lfd}>&-; nb=0; while sleep ${CAND_MOVE_POLL:-60}; do candok && { nb=0; continue; }; nb=$((nb + 1)); [ -n "$q" ] && [ $nb -lt 2 ] && continue
+      : > $stl; systemctl --user stop "ve-integ-armsh-$label-[0-9]*.scope" > /dev/null 2>&1; break; done) & wp=$!
