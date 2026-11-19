@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "e31062710c0ccf43e4b6495e9b1e8ca33a573d2ac128e6905068c8ab1087e049",
+ "seal_id": "81f6fccdd1646696c1908d16eb73c8e22c40e69ed9c1cc3105abfdd676b01894",
  "sources": [
   {
    "kind": "corpus source",
@@ -339,6 +339,16 @@
    "sha256": "9149cc7872336b853f8b14dd983f08203dabee1763510691c707438d846e7c0f"
   },
   {
+   "kind": "entry-point caller",
+   "path": "conformance/question_reverse.py",
+   "sha256": "ec923bb410be247eb873b44cebec067c62644d35e1300651cad2c615555956f9"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "conformance/senses_usecases.py",
+   "sha256": "10292c591a7ffdb581a7b24bf27b3c8cc843792dfeace1b3225e832c8fc932f5"
+  },
+  {
    "kind": "corpus source",
    "path": "examples/environment.json",
    "sha256": "5831d53f373939976073ab69f2f7424ab07b6871477b5c2c612e2d57facb9f06"
@@ -351,37 +361,37 @@
   {
    "kind": "entry-point caller",
    "path": "tests/lean_service_corpus.py",
-   "sha256": "58ea9d8a51d987b480a3c73aae3d8078223cf099a5e9dc3ef8b9d7679c57e55e"
+   "sha256": "f26c4100a7b95fac2a0a257c43e2eb7b4ed0fce1502acf748751e2fc0428c1c4"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/probe_matrix.py",
-   "sha256": "3f1d05049a92ccc6e920da6ca10c22d1c9a22636c51bc00bb4e263ebfd33fdb3"
+   "sha256": "f1f903e3cc8d507e46aac0f91d525afee3c16b6ab11a1316eb39a81309e5c10b"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_agent_policy.py",
-   "sha256": "79be7d7b126221d6b5a10bfa0c810da3ff1e41912bd5ebe124d9d2504605659f"
+   "sha256": "7fbc7029591d96406eec034bfcf494e7e793d7032b486d0200b4e6417437c370"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_alternatives_profile.py",
-   "sha256": "9dfc8224e97e6bf99767297d3a5d896cac90f31aec661646f00114d5e6d8e3a8"
+   "sha256": "764f59c1ecfd2b3fc4fe1f653e94fc10c4eb7cfbc0dd5f3b0a824eb0279e1dbc"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_asimov_extended.py",
-   "sha256": "084b3d1a16e7ff19e7a09a7189d87244c86db5415c58a2151286a14621c90078"
+   "sha256": "c85de75ab47353315133bf8804b0f28670687123f8c050e58771a4dde3d0f982"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_asimov_laws.py",
-   "sha256": "50c473228b410d3bf1795730a95444130c02faf7c465dfc52f76fe39d54e7b31"
+   "sha256": "62463c2adffc734d797be05b6720a66a779ae5cc33858c457cb672bd07dc792f"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_assist.py",
-   "sha256": "9dcb789b1c3bdbdf6e65bd7e08631a25595763e1310ab9ea1ac2e83b3f558d2c"
+   "sha256": "f318d286d03c1f3d7d6952ffb944beb7a21a4f83e6761003532d1ba6819fc3fc"
   },
   {
    "kind": "entry-point caller",
@@ -396,22 +406,22 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_cli.py",
-   "sha256": "a29e65ed7f7f634863c49f87ca749846f7613034ca8ff93152a98ed8693a2a31"
+   "sha256": "9c02c39f6d38728a9662d07d8f22f4b60a1b76a4ec626a70bceac3d0a72b6c43"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_data_surface.py",
-   "sha256": "5b99d0392eb44b355cef036f6f9076ee01801c1e8c16e94a3f7e3da253fd38dd"
+   "sha256": "552810b0636f66281a39cf35d7dde143205580bec8558af65e22f22dce381300"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_definitions_english.py",
-   "sha256": "43b59a25fffe8e4ba65a5f9cbeba604bf1d90be5e27e0ef635f395fcdce54b3e"
+   "sha256": "818942a3baff0c6031c8f4dde39252ddfe437765ecd2b8e6b77311f2958e691b"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_discourse_lean.py",
-   "sha256": "f122a5d510da0f98b5dc195637103c2266306e0f7d813c77ed45c99f342d0b84"
+   "sha256": "3af4492e6a4b26e9ec24e9399e80e9e6d82d8b7e13980213612fd6b061c89d77"
   },
   {
    "kind": "entry-point caller",
@@ -421,17 +431,62 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_english.py",
-   "sha256": "e86fce355df2a2776b2543d43d4da63deccdfa433f46f229cc8cd38d121efea3"
+   "sha256": "a1122a85946ddb60f4580119437fbb1a075ead56fa716ac93e8ce5487bc436cb"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_e26_boundary.py",
+   "sha256": "b398aadf16d55af51e5da6d24f05a3d0b84173b7b764a51362982e797efb66d9"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_e26_diagnosis.py",
+   "sha256": "4c88a7ad4d249187bc31b2cbf88f81c739d0c799422ffc5c608d0d83b3ebc5df"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_e2_ledger_sites.py",
+   "sha256": "c39c58307f926a38d08883a5f010416cb1cc35ecce784205b5b02ccceac75416"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_e2_overlay.py",
+   "sha256": "1d389f6522b15855543302f5cb6ca6221ebd50551cbfcc6d0d46b12c789a5c0d"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_e2_responses.py",
+   "sha256": "8d67df5d73cca75e22035f186bdcea169b33c8f1190eb4c74375f9a66f85129c"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_evidence.py",
-   "sha256": "21548743c68f79f76854be59f9d145dd5e463eb117dda17bcd0c633957b25384"
+   "sha256": "062c3b9887f67313f2e3bf6c99f7958a94b093dffd21f588416c01706557af56"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_statement_answer.py",
+   "sha256": "4fbe4ea823c34b67448ace14d59302b8a369c351465727461d5283b314adf020"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_statement_blocks.py",
+   "sha256": "c8e360e630db62654d8c62e39ec8d311032a903a5092db40f8c9cdb44e0ab0e2"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_statement_shadow.py",
+   "sha256": "5f5ce43bb8e99a97a9bef7021113b246a96d58db67d4372b92f9a831ef14fdc7"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_unambiguity.py",
-   "sha256": "ac11b11ba4c1aa29fd78238e76c63d6ef578a6733ad7814a323b8638b53fb7b3"
+   "sha256": "71be611aca8d8e160fb4a54e9fb5ff6a0bfb31957d14a74aa53b3750e02976cd"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_keyed_answers_authority.py",
+   "sha256": "ef7debc4a7eb5650e7cc95c502ec3105a3dd5288034c76ffbba55e1a4cc06ec5"
   },
   {
    "kind": "entry-point caller",
@@ -441,17 +496,17 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_nary.py",
-   "sha256": "f3ad0bfea108b3d1a312e45d6c9203a02692a82635de668e6285fa10a0dc0cd0"
+   "sha256": "e87829521dcd7918a9e0036fba08219359c7f3919d5c5c975cd136026fd4c1f9"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_natural.py",
-   "sha256": "2ec2e13ed6ed054ed358b3a9a0327afa2004d737a69b2b1106d051cfe53e2f2a"
+   "sha256": "e66f4a75b46bf0a4d6c7554e0db9e5f5938670a62bc9cca94d8923b6e4fe3300"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_norm_defaults.py",
-   "sha256": "f898d99798a542e300187ac4c9f1c15cd3ae2dff4b6a535f8329178d5e32205b"
+   "sha256": "1116ef7afc24aa4ee3c313087ae299fff215c6d6557e31fac15125c20b4f0ee7"
   },
   {
    "kind": "entry-point caller",
@@ -461,7 +516,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_numeral_conversion.py",
-   "sha256": "a2697fe6c5e9575fcdde5880854cafd14258f36b809809f19c8e6f82ada56750"
+   "sha256": "a8049022df91de8dc96a47616f2d70e9a74cf7e625cb817a127692a443477ffd"
   },
   {
    "kind": "entry-point caller",
@@ -470,28 +525,58 @@
   },
   {
    "kind": "entry-point caller",
+   "path": "tests/test_presupposition_wordings.py",
+   "sha256": "ec41e720a704f8b870c1b8000821671cc8acb98fdb62016bfb0c6e85fd1dd31f"
+  },
+  {
+   "kind": "entry-point caller",
    "path": "tests/test_propose.py",
-   "sha256": "7ed53df74b089048cb00f529b432d1a6c415b9d1fa69265d0a238392a7ca4964"
+   "sha256": "68e4342b4bff1902caf225e7215ad2c1bc204d29862cc03041ca26bc7a155622"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_relay_lint.py",
+   "sha256": "b9db33411576b5662d5e35a5671367cd4f474eb77093145377d0c46d39dcb5b2"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_risk_english.py",
-   "sha256": "0868da7177ce27ffbe633257d60f639e6e47db693da1a120dd9d6b2130d6d713"
+   "sha256": "593c0e1b073203788cbd6a217e7cfea88d083ce65b4c9a9300cb0fde62b3c160"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_risk_profile.py",
-   "sha256": "cb211fc6e70cb49e5e742265bfbb314e5aa1870589734df4f40d2470d18e04c9"
+   "sha256": "37f0cfc160497ae40437a5a4c9c14c91e7b93af86ce8d5c4f12cf03f52ec8e0b"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_select_defer.py",
+   "sha256": "4633bcef8d62015c566b4ea527011fb1b85235752aaf6a5afe9ccd879a4248bb"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_senses_display.py",
+   "sha256": "f9f6214431bd831f2f6853e26964b8a571e7c8cbc0a8df6ecf9e5549da696244"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_senses_document.py",
+   "sha256": "0697176acab1e867d835dcffe0f48a86c08badf39befed782c844d6e531b642f"
   },
   {
    "kind": "entry-point caller",
    "path": "tests/test_soft_review_regressions.py",
-   "sha256": "e29f81887b6bf260c6fa39eb69047ce1bde330bda287da7f2d08b06d96c04835"
+   "sha256": "295f415cbd147fcdc0f74403841cda1fb3e9f34181053035dc6655a8f6827786"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_w1_delta_suite.py",
+   "sha256": "7d3695367ab0e7dc1a0cacd264bd0ab4b7701ac68f2357d04e5112cfbae68a41"
   },
   {
    "kind": "entry-point caller",
    "path": "usecases/agent-policy/check.py",
-   "sha256": "57fe066468ec8de4f53df62d65dcb55966bddf8bc192a15bad3ad917b06a99f3"
+   "sha256": "5881d1efc8669c98d4e962f344fc9800c6bb45a4a72613ca9908eb3e10942b01"
   },
   {
    "kind": "corpus source",
@@ -529,9 +614,29 @@
    "sha256": "a8ca7af10afd6b1105e363754a91e58ee0edd0da96c281eab4092d1d23891e2a"
   },
   {
+   "kind": "corpus source",
+   "path": "usecases/anthropic-rsp/environment.d1.json",
+   "sha256": "c952874515f34fd8533c2a4a89ac2348abd10ccc6aaa2a5c4def1fd1c9a0a4d1"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/anthropic-rsp/rsp_translation.py",
+   "sha256": "7797b125985916c35a27ff7fc41de2b5fcae744bfe4a7ab64dc3565ea128dd1e"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/anthropic-rsp/run.py",
+   "sha256": "8136b738ba9ff0371612df962512e4c3989fe56f18a1616139502d9f141da8cb"
+  },
+  {
    "kind": "entry-point caller",
    "path": "usecases/asimov-extended/asimov_extended_cases.py",
    "sha256": "7a82d50c073d384b9b8ef9028dc120dea03df4a0edd8d8b0e3bf68e5b5531941"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/asimov-extended/asimov_unspecified.py",
+   "sha256": "9f6c92b8191258896892b61786da8aa6f4fa9d2de306af97ef4f7dc2be48750f"
   },
   {
    "kind": "corpus source",
@@ -606,7 +711,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/eligibility/environment.json",
-   "sha256": "74b7e5351fb3e3a0bfa8c745e41c11ee7b3585acd65877a91acc9b36acffcd54"
+   "sha256": "8202ab9502db3a9633fbb7839c30fac2cfda140815a82e7dd516aef2b20664d2"
   },
   {
    "kind": "corpus source",
@@ -645,13 +750,53 @@
   },
   {
    "kind": "corpus source",
+   "path": "usecases/openai-preparedness/environment.d1.json",
+   "sha256": "38cbcba90656e558767f4c36a05ad96bd426f93620586df800f9d5445f05ee8e"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/openai-preparedness/environment.d2.json",
+   "sha256": "20a986562ba0ecf3fbc9a9d0be46941a6b3ac645a50661b1bc9b77ba204259d9"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/openai-preparedness/environment.d3.json",
+   "sha256": "d90e39ef0ddd57b8795d167fcfd1074d04fbd3db95f60be3d630498b1b3c282d"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/openai-preparedness/pf_translation.py",
+   "sha256": "0209a89f9088944e7cb2aa44c28e94746722c76c3eddfb05d18871b25e0cff12"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/openai-preparedness/run.py",
+   "sha256": "2f8112ab3667f8070fb53ef10c8c87a1a031be216be0737b6c76aa00facc6f97"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/question-answering/agent-policy/build.py",
+   "sha256": "edaa9706ab9d1cdfecb3e7bb699bb537b25eea06fd086e53a669c8d342c44cd9"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/question-answering/group.ve.md",
+   "sha256": "bdb0667dac2a491a87bb9d46f50f66d77304c4cd3311a1c2bb8d89209480adc8"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/question-answering/udhr-part07.ve.md",
+   "sha256": "4f4e8c19c66c8232e8e34e03b53897974e5d8679b0adeef78a2fc5f1e2b825dd"
+  },
+  {
+   "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "931b7a1df901c943bbfc029f4fbf5bd517b5753d72e37b048c2ad58a38edb2f6"
+   "sha256": "820619deb9f53b0d1ca4087fe567dc595b4c3cfa2460b95964416f41158528a1"
   },
   {
    "kind": "entry-point caller",
    "path": "usecases/safety-framework/translation.py",
-   "sha256": "cd780dc599906b5ea713864211c8c22c4e07b6e4b80e1a12fd606ea763a6ba3f"
+   "sha256": "bd2e1d54ba42a2f42f4164bcd22d6cc66680552d1b748ed5351f4971ac0aded6"
   },
   {
    "kind": "corpus source",
@@ -672,6 +817,11 @@
    "kind": "corpus source",
    "path": "usecases/us-constitution-14th-s1/rendered-english.md",
    "sha256": "7c423e070829749f6575d4c660c2eb5be95d4475a93692338179a210f660d242"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/webapp-commands/environment.json",
+   "sha256": "eaedb3cf415b75f07ea643a1fc77aceff74904354376551cc7cd01c3dc695de4"
   }
  ]
 }
