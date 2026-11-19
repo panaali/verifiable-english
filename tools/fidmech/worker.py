@@ -20,11 +20,13 @@ import argparse
 import importlib.util
 import itertools
 import json
+import os
 import resource
 import shutil
 import signal
 import subprocess
 import sys
+import threading
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field, replace
@@ -117,17 +119,47 @@ def evaluate_tree(worktree, tree, document):
         purge(roots)
 
 
-def evaluate_fresh(worktree, tree, document, limit):
-    """The projection computed by a new process (`python -m tools.fidmech.worker evaluate`)."""
-    out = Path(tree) / "projection.json"
+def evaluate_fresh(worktree, tree, document, limit, usage=None):
+    """The projection computed by a new process (`python -m tools.fidmech.worker evaluate`) in its own session.
+    The process is reaped with os.wait4, so its own resource use (with every descendant it reaped, the Lean service
+    included) is exact even when several runs share this process; `usage` (a list) receives (CPU seconds, peak RSS
+    bytes). Past `limit` seconds the whole session is killed, so no Lean service outlives its run."""
+    tree = Path(tree)
+    out, err = tree / "projection.json", tree / "stderr.txt"
+    with open(err, "wb") as stderr:
+        proc = subprocess.Popen([sys.executable, "-m", "tools.fidmech.worker", "evaluate", "--document", document,
+                                 "--tree", str(tree), "--worktree", str(worktree), "--out", str(out)], cwd=REPO,
+                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=stderr,
+                                start_new_session=True)
+    fired = threading.Event()
+
+    def kill():
+        fired.set()
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    timer = threading.Timer(limit, kill) if limit is not None else None
+    if timer:
+        timer.daemon = True
+        timer.start()
     try:
-        done = subprocess.run([sys.executable, "-m", "tools.fidmech.worker", "evaluate", "--document", document,
-                               "--tree", str(tree), "--worktree", str(worktree), "--out", str(out)], cwd=REPO,
-                              capture_output=True, text=True, timeout=limit)
-    except subprocess.TimeoutExpired as e:
-        raise MutantTimeout(f"the process ran over {limit:.0f} s") from e
-    if done.returncode != 0:
-        raise RuntimeError(f"the process exited {done.returncode}: {done.stderr.strip()[-500:]}")
+        _, status, rusage = os.wait4(proc.pid, 0)
+    finally:
+        if timer:
+            timer.cancel()
+    proc.returncode = os.waitstatus_to_exitcode(status)
+    try:  # the session's other processes (a Lean service the run did not stop) end with it
+        os.killpg(proc.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    if usage is not None:
+        usage.append((rusage.ru_utime + rusage.ru_stime, rusage.ru_maxrss * 1024))
+    if fired.is_set():
+        raise MutantTimeout(f"the process ran over {limit:.0f} s")
+    if proc.returncode != 0:
+        tail = err.read_text(encoding="utf-8", errors="replace").strip()[-500:]
+        raise RuntimeError(f"the process exited {proc.returncode}: {tail}")
     return projection_from_json(out.read_text(encoding="utf-8"))
 
 
@@ -184,12 +216,13 @@ class Worker:
         self.fresh, self.clock, self.cpu_clock, self.deadline, self.reset = fresh, clock, cpu_clock, deadline, reset
         self.evaluate = evaluate or self._evaluate
         self.runs = 0
+        self.usage = []  # (CPU seconds, peak RSS bytes) of each fresh process, in run order
 
     def _evaluate(self, mutant, limit):
         tree = scratch_tree(self.worktree, self.scratch / f"{self.name}-{self.runs}", mutant.edits)
         try:
             if self.fresh:
-                return evaluate_fresh(self.worktree, tree, self.document, limit)
+                return evaluate_fresh(self.worktree, tree, self.document, limit, self.usage)
             with self.deadline(limit):
                 return evaluate_tree(self.worktree, tree, self.document)
         finally:
@@ -255,8 +288,16 @@ def run_batch(worker, mutants, *, sentinel_every=SENTINEL_EVERY, timeout_factor=
             worker.reset()
         if not pending:
             break
-    status = "ok" if good else "INVALID"
-    return Batch(status, first, sentinel, {m.id: outcomes[m.id] for m in mutants}, sentinels)
+    return Batch(batch_status([good], outcomes.values()), first, sentinel, {m.id: outcomes[m.id] for m in mutants},
+                 sentinels)
+
+
+def batch_status(last_sentinels, outcomes):
+    """"ok" when no worker's last sentinel failed (None: the worker ran none) and a good sentinel confirmed every
+    outcome; "INVALID" otherwise. An outcome INVALID twice (re-queued once, then its sentinel failed again) makes the
+    batch INVALID even when the worker's last sentinel passed."""
+    return ("ok" if all(s is not False for s in last_sentinels) and all(o.sentinel_ok is True for o in outcomes)
+            else "INVALID")
 
 
 def measure(document, worktree, scratch, runs=2):
