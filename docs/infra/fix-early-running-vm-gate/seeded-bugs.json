@@ -1,0 +1,47 @@
+{
+ "item": "fix-early-running-vm-gate",
+ "planted_in": "temporary copies (/tmp/vmcx-ev/seeds/s<n>.sh) of /home/seyran/code/manage-agents/chain-gate.sh.new-vmcancel; the staged and live files were never edited",
+ "runner": "CG=<copy> python3 -I /home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_cancel.py",
+ "mutants": [
+  {
+   "id": "S1-vm-gate-unwrapped",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "vmg(): `if [ -n \"$CHAIN_GATE_CANCEL\" ]` -> `if false` (the VM gate runs as before, without the cancel poll)",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_cancel.py::(1) cancel 5 s after the VM gate starts",
+   "failing_tests": ["(1) own session", "(1) group gone within 70 s", "(1) exits 4", "(1) gate-cancelled event", "(1) no gate-result.json", "(1k) KILL after 60 s"],
+   "result": "FAIL: 11 failure(s)",
+   "log": "seed-s1.log"
+  },
+  {
+   "id": "S2-partial-record-left",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "vmcx(): drop `rm -f $w/gate-result.json`",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_cancel.py::(1) no gate-result.json left",
+   "failing_tests": ["(1) no gate-result.json left", "(1k) no record", "(2) no gate-result.json left"],
+   "result": "FAIL: 3 failure(s)",
+   "log": "seed-s2.log"
+  },
+  {
+   "id": "S3-r13-rerun-not-cancelled",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "R13 VM rerun: drop `vmcx \"; R13 rerun\"` after the rerun",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_cancel.py::(2) cancel during the R13 rerun",
+   "failing_tests": ["(2) exits 4", "(2) gate-cancelled event (FIX_EARLY; R13 rerun)", "(2) no gate-result.json left"],
+   "result": "FAIL: 3 failure(s)",
+   "log": "seed-s3.log"
+  },
+  {
+   "id": "S4-no-kill-after-grace",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "selrun(): drop `kill -KILL -- -$p` after the 60 s TERM grace",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_cancel.py::(1k) TERM ignored",
+   "failing_tests": ["(1k) TERM ignored: group gone (KILL) within 70 s, exit 4"],
+   "result": "FAIL: 1 failure(s)",
+   "log": "seed-s4.log"
+  }
+ ]
+}
