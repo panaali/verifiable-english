@@ -1,3 +1,10 @@
+- `tests/test_senses_display.py` — The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1, and sn-b7b): each candidate of an open unit is rende…
+- `tests/test_senses_display_cli.py` — The senses display through the CLI (senses plan B7, 6.8 g8-g10; sn-b7b): `ve render --senses` with Lean's texts verbatim, `ve senses resolve` (Lean's line, the…
+- `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
+- `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
+- `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
+- `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
+- `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
 - `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
@@ -78,11 +85,3 @@
 - `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
 - `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
 - `tests/test_webapp_commands_env.py` — CI-8 (iv): `usecases/webapp-commands/environment.json` is Lean's print of `VE.Commands.Examples.E_web` and its lexicon, written only by `tools/webapp_commands_…
-- `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
-- `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
-- `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
-- `tests/test_wire_contract_generator.py` — Selection and oracle rules are independent of any profile catalogue.
-- `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
-- `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…
-- `tests/test_wire_contract_precondition.py` — Ground the S3-pre inherited-profile discrepancy with a reachable case.
-- `tests/test_wire_contract_rust.py` — The generated Rust contract tables and the Rust engine (docs/spec/wire-contract-s4-2.md 9).
