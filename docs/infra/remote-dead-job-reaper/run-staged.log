@@ -1,0 +1,58 @@
+ok   reap exits 0
+ok   dead dir with marker removed
+ok   no marker: kept
+ok   held lock: kept
+ok   done dir: left to the rotation
+ok   pyt dir: refused
+ok   /etc refused
+ok   non-canonical path refused
+ok   younger than 12 h: kept
+ok   open (cwd) dir: kept
+ok   open (fd) dir: kept
+ok   named in a live environment: kept
+ok   record newer than the marker: kept
+ok   symlink: kept, target intact
+ok   (a) hardlinked file, ctime after the marker: removed, the cache copy intact
+ok   (b) one-link file, ctime after the marker: kept
+ok   ~/jobs/old-* (renamed by a rerun) is reaped
+ok   (b) hardlinked file, mtime after the marker: kept
+ok   tm start sweep removes a marked dead dir
+ok   tm start sweep keeps and counts an unmarked dir
+ok   tm sweep leaves done and young dirs
+ok   gate start sweep removes a marked dead gate dir
+ok   gate start: its own new job dir stays
+ok   (c) a copy that does not verify: no marker
+ok   (c) dead dir 13 h idle, no scope: archived and marked
+ok   (c) its records are on the VM side (gate.log, record.json; no checkout)
+ok   (c) the marker names the VM copy's sha256
+ok   (c) dead <tmp>/ve-gate-* dir: marked
+ok   (c) 1-h idle dir: not marked
+ok   (c) dir whose c2-gate scope is active: not marked (its scope is active)
+ok   (c) records refuses the 1-h idle dir (modified within 12 h)
+ok   (c) the host's records tars are removed after marking
+ok   (c) the next job start removes the dirs the VM marked
+ok   (c) the young dir survives the sweep
+ok   (d) uv-hardlinked .venv file (links > 1) after the marker is no write: no re-archive
+ok   (d1) stop: STOPPED, scope gone
+ok   (d2) caller gone: scope stopped
+ok   (d1) kill record names the scope's cwd and open-fd dirs with their inodes
+ok   (d2) kill record names the scope's cwd dir and the gate's job dir
+ok   (d) a dir no killed process used is in no kill record
+ok   (d1) the cancelled gate dir has done (the rotation owns it)
+ok   (d) health reports killed=3 (kill1, kill2, the gate dir; not the recreated one)
+ok   (d) killed job's dir minutes old: archived and marked on kill (ve-gate-kill1)
+ok   (d) killed job's dir minutes old: archived and marked on kill (ve-gate-kill2)
+ok   (d) killed job's dir minutes old: archived and marked on kill (gate-t3881023k2-dcba4321)
+ok   (d) its records are on the VM side
+ok   (d) a young dir of no kill record, and the done dir: not marked
+ok   (d) same path, another inode: the kill record does not apply
+ok   (d) health reports killed=0 after the pass
+ok   (d) a kill record whose scope is still active does not apply
+ok   (d) removal unchanged: the marked killed dirs stay until 12 h idle
+ok   (d) the job-start sweep drops kill records 2 days old, keeps new ones
+ok   health: one archive pass for testhost after two OK probes
+ok   health: a new pass once the last one is an hour old
+ok   health: killed=0 and a pass 700 s ago: no pass (hourly)
+ok   health: killed=2 and a pass 700 s ago: a pass starts (on kill)
+ok   health: killed=2 right after a pass: no second pass
+PASS test_c2_reap
