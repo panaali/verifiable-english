@@ -1,40 +1,29 @@
-[mac-pytest 21:29:17Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
-[gha-select 21:29:18Z] not on Actions: cloud-jobs/ACTIONS_MISMATCH
-[mac-pytest 21:29:18Z] MAC_LAST_RESORT: the VM is full (load 30.91 + 6 workers >= 32): up to 900 s for a remote slot or VM room before ve-mac-1
-[mac-pytest 21:29:18Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 1)
-[cloud2 21:29:19Z] not used: ve-cloud-2: 5-min load 107.29 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:29:19Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
-[mac-pytest 21:30:19Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 2)
-[cloud2 21:30:21Z] not used: ve-cloud-2: 5-min load 89.75 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:30:21Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
-[mac-pytest 21:31:21Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 3)
-[cloud2 21:31:23Z] not used: ve-cloud-2: 5-min load 76.22 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:31:23Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
-[mac-pytest 21:32:23Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 4)
-[cloud2 21:32:24Z] not used: ve-cloud-2: 5-min load 71.10 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:32:24Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
-[mac-pytest 21:32:24Z] running on the VM instead (local): MAC_LAST_RESORT: VM load 24.19 + 6 workers < 32 after 186 s
-10/646 test units (map 20cf38f542, 10.35 s)
+[mac-pytest 07:53:06Z] CLOUD2_RUNNER: trying the remote hosts before the VM (REMOTE_FIRST: remote hosts before the test pools and the Mac)
+[cloud2 07:53:10Z] select_tests on ve-cloud-2: ve-vm-stop-recovery-pacing HEAD 2f5c533b snapshot 2f5c533b: --base 20cf38f5422e8111ea8d0bd5812024f0ae8eeeb6 --run --defer-heavy --jobs 8
+[cloud2@ve-cloud-2 07:53:10Z] reap: 2 dead-looking dir(s) older than 12 h without a records-archived marker: kept (the VM archives dead ones: c2-archive-dead.sh)
+[cloud2@ve-cloud-2 07:53:10Z] all 3 trust_mutants slots busy; waiting until 07:58:10Z
+[cloud2@ve-cloud-2 07:58:11Z] slot wait exceeded
+[cloud2 07:58:11Z] not run there (exit 75): the caller falls back
+[mac-pytest 07:58:11Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[gha-select 07:58:11Z] not on Actions: cloud-jobs/ACTIONS_MISMATCH
+[mac-pytest 07:58:11Z] running on the VM instead (local): MAC_LAST: VM load 4.34 + 6 workers < 32 (the Mac is the last resort)
+    Finished `release` profile [optimized] target(s) in 0.26s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+10/646 test units (map 20cf38f542, 6.14 s)
 deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (1678.9 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
-changed: docs/infra/vm-stop-recovery-pacing/dry-run-1108-live-load.log, docs/infra/vm-stop-recovery-pacing/dry-run-1108-load-profile.log, docs/infra/vm-stop-recovery-pacing/dry-run-flags-after.txt, docs/infra/vm-stop-recovery-pacing/dry-run-flags-before.txt, docs/infra/vm-stop-recovery-pacing/md5.txt, docs/infra/vm-stop-recovery-pacing/new-files.diff, docs/infra/vm-stop-recovery-pacing/real-clock-run.log, docs/infra/vm-stop-recovery-pacing/seed-run.log, docs/infra/vm-stop-recovery-pacing/seed_run.py, docs/infra/vm-stop-recovery-pacing/seeded-bugs.json, docs/infra/vm-stop-recovery-pacing/syntax.txt, docs/infra/vm-stop-recovery-pacing/tests.log
-+ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+changed: docs/infra/vm-stop-recovery-pacing/REPORT.md, docs/infra/vm-stop-recovery-pacing/dry-run-1108-high-load.log, docs/infra/vm-stop-recovery-pacing/dry-run-1108-live-load.log, docs/infra/vm-stop-recovery-pacing/dry-run-1108-load-profile.log, docs/infra/vm-stop-recovery-pacing/dry-run-flags-after.txt, docs/infra/vm-stop-recovery-pacing/dry-run-flags-before.txt, docs/infra/vm-stop-recovery-pacing/f1-old-vs-new.txt, docs/infra/vm-stop-recovery-pacing/f1_differential.py, docs/infra/vm-stop-recovery-pacing/lean-checks.log, docs/infra/vm-stop-recovery-pacing/md5.txt, docs/infra/vm-stop-recovery-pacing/new-files.diff, docs/infra/vm-stop-recovery-pacing/pin_files.py, docs/infra/vm-stop-recovery-pacing/probe-f1.log, docs/infra/vm-stop-recovery-pacing/real-clock-run.log, docs/infra/vm-stop-recovery-pacing/run-selected.log, docs/infra/vm-stop-recovery-pacing/seed-run.log, docs/infra/vm-stop-recovery-pacing/seed_run.py, docs/infra/vm-stop-recovery-pacing/seeded-bugs.json, docs/infra/vm-stop-recovery-pacing/syntax.txt, docs/infra/vm-stop-recovery-pacing/tests.log, docs/infra/vm-stop-recovery-pacing/trust-mutants-plan.log
 + uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_answer_cutoff.py tests/test_code_map.py tests/test_conformance.py tests/test_definitions.py tests/test_history_tests.py tests/test_judgments_answer.py tests/test_regen_generated.py tests/test_run_order.py tests/test_surface_registry.py tests/test_test_chunks.py
-+ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
-    Finished `release` profile [optimized] target(s) in 16.65s
-5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/seyran/code/ve-vm-stop-recovery-pacing/rust/target/release/ve: pinned in /home/seyran/code/ve-vm-stop-recovery-pacing/lean/checkers.lock
-    Finished `release` profile [optimized] target(s) in 0.03s
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.15s
 order: failed last time []; changed []; then the rest; --maxfail 5
-recording 10 units with 6 jobs in /tmp/ve-select-run-kusaaymr
-  tests/test_definitions.py: exit 0 in 13.9 s, 740 functions
-  tests/test_code_map.py: exit 0 in 11.4 s, 193 functions
-  tests/test_judgments_answer.py: exit 0 in 27.6 s, 969 functions
-  tests/test_conformance.py: exit 0 in 1.8 s, 615 functions
-  tests/test_surface_registry.py: exit 0 in 1.5 s, 435 functions
-  tests/test_answer_cutoff.py: exit 0 in 37.5 s, 562 functions, OPAQUE
-  tests/test_test_chunks.py: exit 0 in 40.2 s, 385 functions, OPAQUE
-  tests/test_run_order.py: exit 0 in 21.1 s, 553 functions, OPAQUE
-  tests/test_regen_generated.py: exit 0 in 70.2 s, 820 functions
-  tests/test_history_tests.py: exit 0 in 139.5 s, 349 functions
-recorded 10 units for tree d191884674; 2 others left to the static graph until they run; 0 failed
-[mac-pytest 21:35:48Z] summary: ran LOCALLY (VM) because: MAC_LAST_RESORT: VM load 24.19 + 6 workers < 32 after 186 s; exit=0; 392s
+recording 10 units with 6 jobs in /tmp/ve-select-run-66e_kqp6
+  tests/test_definitions.py: exit 0 in 9.5 s, 740 functions
+  tests/test_judgments_answer.py: exit 0 in 14.4 s, 969 functions
+  tests/test_code_map.py: exit 0 in 5.7 s, 193 functions
+  tests/test_conformance.py: exit 0 in 1.1 s, 615 functions
+  tests/test_surface_registry.py: exit 0 in 0.8 s, 435 functions
+  tests/test_answer_cutoff.py: exit 0 in 19.2 s, 562 functions, OPAQUE
+  tests/test_test_chunks.py: exit 0 in 21.3 s, 385 functions, OPAQUE
+  tests/test_run_order.py: exit 0 in 11.5 s, 553 functions, OPAQUE
+  tests/test_regen_generated.py: exit 0 in 36.6 s, 822 functions
+  tests/test_history_tests.py: exit 0 in 72.1 s, 349 functions
+recorded 10 units for tree 7d50065f8a; 2 others left to the static graph until they run; 0 failed
+[mac-pytest 07:59:49Z] summary: ran LOCALLY (VM) because: MAC_LAST: VM load 4.34 + 6 workers < 32 (the Mac is the last resort); exit=0; 403s
