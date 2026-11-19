@@ -1,0 +1,7 @@
+# PROBE F1 (review vm-stop-recovery-pacing-review.final.md), verbatim; rc 1 = assertion failed
+## before the fix (script md5 12b06170ea9aae5d9e26232c623c184b): rc=1
++0m00s restore waits until the last relaunch (dri-cm-pilot3-fix) has run 10 min
++10m00s   CURRENT-STATE.md line (dry run: not written): recovery end: restored nothing; relaunched 15, skipped 0.
++10m00s done: relaunched 15, skipped 0
+
+## after the fix (script md5 210ad96a6ce8a5651d1ff891d5c5b7c5): rc=0, no output

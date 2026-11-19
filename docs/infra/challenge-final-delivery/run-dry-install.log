@@ -1,0 +1,17 @@
+ran: cp -p decider-ready-alert.py decider-ready-alert.py.bak-20261117-challew
+ran: mv decider-ready-alert.py.new-challew decider-ready-alert.py
+ran: mv decider-ready-alert.py.new-nta decider-ready-alert.py.bak-20261117-nta-stale
+tools-local after the install: ['decider-ready-alert.py', 'decider-ready-alert.py.bak-20261116-lrf', 'decider-ready-alert.py.bak-20261116-p1rua', 'decider-ready-alert.py.bak-20261116-p1rua2', 'decider-ready-alert.py.bak-20261116-pha', 'decider-ready-alert.py.bak-20261117-challew', 'decider-ready-alert.py.bak-20261117-nta-stale', 'decider-ready-alert.py.bak-20261117nta', 'test_decider_ready_alert.py', 'test_p1_ready_alert.py']
+staged() picks: tools-local/decider-ready-alert.py
+== picker: test_decider_ready_alert.py rc=0
+  Ran 46 tests in 5.405s
+  OK
+== DRA_SCRIPT=<installed path>: test_decider_ready_alert.py rc=0
+  Ran 46 tests in 5.058s
+  OK
+== p1 picker: test_p1_ready_alert.py rc=0
+  alert: /tmp/cfd-dry-install-kfbjryp8/tools-local/decider-ready-alert.py
+  Ran 33 tests in 3.898s
+  OK
+dry install: PASS
+rc=0

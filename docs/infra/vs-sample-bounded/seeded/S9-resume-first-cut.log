@@ -1,0 +1,4 @@
+# seeded (F3): replace <<rp=$pa; prev=$left>> with <<rp=${rp:-$pa}; prev=$left>> (each pass resumes the first cut)
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL resume: each run resumes the LAST cut (run 3 resumes run 2's cut, 20 unjudged, not run 1's): EQUAL after 4 runs (F3)
+comparators: 55 passed, 2 failed
