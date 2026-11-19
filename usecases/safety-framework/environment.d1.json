@@ -145,7 +145,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is a low-risk external deployment: a small scale and private release restricted to particular external groups. Open term OT8, decided by no one the text names (unstated)"
+        "description": "{0} is a low-risk external deployment (Glossary: \"Low-Risk External Deployments: represent small scale and private releases restricted to particular external groups or organizations.\"). Open term OT8, decided by no one the text names (unstated)"
       },
       "first_deployment": {
         "arguments": [
