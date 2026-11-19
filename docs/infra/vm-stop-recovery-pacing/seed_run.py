@@ -17,7 +17,7 @@ SEEDS = [
     ("load hold: 48 itself passes (> instead of >=)",
      "[[ -n $L1 ]] && (( L1 >= LOAD_MAX ))", "[[ -n $L1 ]] && (( L1 > LOAD_MAX ))"),
     ("young cap: a 7th relaunch in 15 min passes",
-     "(( young >= YOUNG_MAX )) && why+=", "(( young > YOUNG_MAX )) && why+="),
+     "(( young >= YOUNG_MAX )) && twhy+=", "(( young > YOUNG_MAX )) && twhy+="),
     ("young window counts 10 min, not 15",
      "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=900", "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=600"),
     ("restore: no 10-min wait after the last relaunch",
@@ -43,6 +43,11 @@ SEEDS = [
      " {lockfd}>&- &!", " &!"),
     ("interrupt: flags restored instead of left paused",
      '  exit 130; }', '  restore_flags; exit 130; }'),
+    # review F1 (fix round): the dry-run release of a load that no longer changes must release the load hold only
+    ("F1 dry-run load release also drops the time holds (the reviewed `break`)",
+     "      (( $#twhy )) || break", "      break"),
+    ("F1 class: dry-run load release also drops the 60 s gap",
+     "      noted=1 lwhy=()", "      noted=1 lwhy=() twhy=(${twhy:#*since the last*})"),
 ]
 
 

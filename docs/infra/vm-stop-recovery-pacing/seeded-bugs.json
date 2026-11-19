@@ -8,7 +8,7 @@
    "old": "",
    "new": "",
    "rc": 0,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [],
    "caught": false
   },
@@ -18,7 +18,7 @@
    "old": "ORDER=(); for i in {1..$#CLS}; do [[ $CLS[i] = train ]] && ORDER+=$i; done; for i in {1..$#CLS}; do [[ $CLS[i] = job ]] && ORDER+=$i; done",
    "new": "ORDER=({1..$#CLS})",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_pause_launch_record_restore",
     "test_trains_first_whatever_the_file_order"
@@ -31,8 +31,9 @@
    "old": "[[ -n $L1 ]] && (( L1 >= LOAD_MAX ))",
    "new": "[[ -n $L1 ]] && (( L1 > LOAD_MAX ))",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
     "test_load_hold_at_48_and_release_under_it"
    ],
    "caught": true
@@ -40,11 +41,12 @@
   {
    "seed": "young cap: a 7th relaunch in 15 min passes",
    "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
-   "old": "(( young >= YOUNG_MAX )) && why+=",
-   "new": "(( young > YOUNG_MAX )) && why+=",
+   "old": "(( young >= YOUNG_MAX )) && twhy+=",
+   "new": "(( young > YOUNG_MAX )) && twhy+=",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
     "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last"
    ],
    "caught": true
@@ -55,8 +57,11 @@
    "old": "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=900",
    "new": "LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=600",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
+    "test_1108_moves_no_flag_launches_nothing_writes_nothing",
+    "test_1108_order_trains_first",
     "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
     "test_load_hold_at_48_and_release_under_it"
    ],
@@ -68,8 +73,9 @@
    "old": "while stopped; (( NOW < last + RESTORE_SEC )); do",
    "new": "while stopped; (( 0 )); do",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
     "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
     "test_pause_launch_record_restore"
    ],
@@ -81,7 +87,7 @@
    "old": "if (( dry )); then say \"pause: would move $f -> ${p:t}\"",
    "new": "if (( dry )); then mv -n -- $M/$f $p; say \"pause: would move $f -> ${p:t}\"",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_1108_moves_no_flag_launches_nothing_writes_nothing",
     "test_dry_run_on_a_load_that_stays_high_shows_the_hold_and_ends"
@@ -94,7 +100,7 @@
    "old": "else mv -n -- $M/$f $p && [[ -e $p && ! -e $M/$f ]]",
    "new": "else [[ 1 = 1 ]]",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_absent_flag_stays_off",
     "test_interrupted_run_leaves_flags_paused",
@@ -109,7 +115,7 @@
    "old": "if (( dry )); then say \"launch (dry run: not started)",
    "new": "if (( 0 )); then say \"launch (dry run: not started)",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_1108_moves_no_flag_launches_nothing_writes_nothing",
     "test_1108_six_in_fifteen_minutes_and_restore_ten_minutes_after_the_last",
@@ -123,7 +129,7 @@
    "old": "elif [[ -e $M/$f ]]; then say \"restore: $f exists again",
    "new": "elif false; then say \"restore: $f exists again",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_recreated_flag_wins_and_vetoed_copy_stays_removed"
    ],
@@ -135,7 +141,7 @@
    "old": "if out=$(busy $KEYS[$1]); then",
    "new": "if false; then",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_running_job_is_skipped"
    ],
@@ -147,7 +153,7 @@
    "old": "(( r )) && { print -r -- \"scope list unreadable",
    "new": "(( 0 )) && { print -r -- \"scope list unreadable",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_live_or_unreadable_scope_is_skipped"
    ],
@@ -159,7 +165,7 @@
    "old": "$NOW) (vm-stop-recover $D): $*\" >> $M/CURRENT-STATE.md",
    "new": "$NOW) (vm-stop-recover $D): $*\" >> /dev/null",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_absent_flag_stays_off",
     "test_interrupted_run_leaves_flags_paused",
@@ -176,7 +182,7 @@
    "old": "if [[ $line == *'$'* || $line == *'`'* ]]; then",
    "new": "if false; then",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_bad_jobs_file_refused_before_anything"
    ],
@@ -188,7 +194,7 @@
    "old": " {lockfd}>&- &!",
    "new": " &!",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_absent_flag_stays_off",
     "test_pause_launch_record_restore"
@@ -201,9 +207,35 @@
    "old": "  exit 130; }",
    "new": "  restore_flags; exit 130; }",
    "rc": 1,
-   "ran": 17,
+   "ran": 18,
    "failing_tests": [
     "test_interrupted_run_leaves_flags_paused"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "F1 dry-run load release also drops the time holds (the reviewed `break`)",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "      (( $#twhy )) || break",
+   "new": "      break",
+   "rc": 1,
+   "ran": 18,
+   "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
+    "test_dry_run_on_a_load_that_stays_high_shows_the_hold_and_ends"
+   ],
+   "caught": true
+  },
+  {
+   "seed": "F1 class: dry-run load release also drops the 60 s gap",
+   "file": "/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh",
+   "old": "      noted=1 lwhy=()",
+   "new": "      noted=1 lwhy=() twhy=(${twhy:#*since the last*})",
+   "rc": 1,
+   "ran": 18,
+   "failing_tests": [
+    "test_1108_a_load_that_stays_high_releases_only_the_load_hold",
+    "test_dry_run_on_a_load_that_stays_high_shows_the_hold_and_ends"
    ],
    "caught": true
   }

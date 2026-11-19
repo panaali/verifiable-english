@@ -1,6 +1,6 @@
 --- /dev/null
 +++ tools-local/vm-stop-recover.sh
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,250 @@
 +#!/bin/zsh
 +# vm-stop-recover.sh: relaunch the jobs a VM stop killed, with the feeds held and each start paced on load.
 +# 2026-11-17 row vm-stop-recovery-pacing (L178, DRI improvement review 2026-11-08; decision reviews/recover-20261108.md).
@@ -30,7 +30,8 @@
 +#    vm-stop-recover-<date>.log.
 +# --dry-run: the same steps on a virtual clock (no waiting). It moves no flag, launches nothing and writes no file; the
 +#    process and scope checks only read. Load: --dry-loads gives the 1-min loads read one per check (the last repeats),
-+#    else the live load read once. A load hold on a load that no longer changes is shown, then released with a note.
++#    else the live load read once. A load hold on a load that no longer changes is shown, then released with a note;
++#    only the load is released: the 6-in-15-min and 60 s holds still apply, as in a real run.
 +#
 +# jobs file: one job per line, `#` comments:   <train|job> <key>[,<key>...] <scope> <mem> -- <command...>
 +#   In the command, $M (${M}) and $HOME (${HOME}) are replaced by the manage-agents path and the home directory; the words
@@ -202,22 +203,29 @@
 +for i in $ORDER; do
 +  stopped; k=${KEYS[i]%%,*}; s=$SCOPE[i]
 +  if why=$(why_skip $i); then tick; say "SKIP $s ($k): $why"; state "recovery: skipped $s ($k): $why."; (( ns++ )); continue; fi
-+  tick; held=0 hs=$NOW prev="" lastsaid=0
++  tick; held=0 hs=$NOW prev="" lastsaid=0 noted=0
 +  while true; do
++    # holds in two lists: lwhy (the load) and twhy (time: young relaunches, the gap). The dry-run release below drops
++    # lwhy only, so a time hold present at the same moment still holds (review F1: a `break` there dropped them all).
 +    stopped; young=0; for t in $LT; do (( NOW - t < YOUNG_SEC )) && (( young++ )); done
-+    why=()
-+    load1 || why+="1-min load unreadable ($LOADAVG)"
-+    [[ -n $L1 ]] && (( L1 >= LOAD_MAX )) && why+="1-min load $L1 >= $LOAD_MAX"
-+    (( young >= YOUNG_MAX )) && why+="$young relaunches in their first $(( YOUNG_SEC / 60 )) min (max $YOUNG_MAX)"
-+    (( nl && NOW - last < GAP_SEC )) && why+="$(( NOW - last )) s since the last relaunch (min $GAP_SEC)"
++    lwhy=() twhy=()
++    load1 || lwhy+="1-min load unreadable ($LOADAVG)"
++    [[ -n $L1 ]] && (( L1 >= LOAD_MAX )) && lwhy+="1-min load $L1 >= $LOAD_MAX"
++    (( young >= YOUNG_MAX )) && twhy+="$young relaunches in their first $(( YOUNG_SEC / 60 )) min (max $YOUNG_MAX)"
++    (( nl && NOW - last < GAP_SEC )) && twhy+="$(( NOW - last )) s since the last relaunch (min $GAP_SEC)"
++    why=($lwhy $twhy)
 +    (( $#why )) || break
 +    cur=${(j:; :)why}
++    loud=0; (( $#lwhy || young >= YOUNG_MAX )) && loud=1   # the gap alone is routine: not logged, not "held"
 +    if [[ $cur != $prev ]] || (( NOW - lastsaid >= REMIND_SEC )); then
-+      [[ $cur == *(in their first|1-min load)* ]] && say "HOLD $s: $cur"; prev=$cur lastsaid=$NOW; fi
-+    [[ $cur == *(in their first|1-min load)* ]] && held=1
-+    if (( dry && fixed_load )) && [[ $cur == *'1-min load'* ]]; then
-+      say "  dry run: the load no longer changes here; a real run waits until it is under $LOAD_MAX; continuing"; break; fi
-+    if (( virt )) && [[ $cur != *load* ]]; then   # only time-based holds: jump to the earliest release
++      (( loud )) && say "HOLD $s: $cur"; prev=$cur lastsaid=$NOW; fi
++    (( loud )) && held=1
++    if (( dry && fixed_load && $#lwhy )); then
++      (( noted )) || say "  dry run: the load no longer changes here; a real run waits until it is under $LOAD_MAX; continuing${twhy:+ (the other holds still apply)}"
++      noted=1 lwhy=()
++      (( $#twhy )) || break
++    fi
++    if (( virt && ! $#lwhy )); then   # only time-based holds: jump to the earliest release
 +      nxt=$(( nl ? last + GAP_SEC : NOW ))
 +      (( young >= YOUNG_MAX )) && for t in $LT; do (( NOW - t < YOUNG_SEC )) || continue
 +        (( t + YOUNG_SEC > nxt )) && nxt=$(( t + YOUNG_SEC )); break; done
@@ -269,7 +277,7 @@
 +job dri-cm-pilot3-fix dri-cm-pilot3-fix 8G -- zsh $M/dri-delegate.sh dri-cm-pilot3-fix $M/prompts/dri-task-cm-pilot3-fix.txt
 --- /dev/null
 +++ tools-local/test_vm_stop_recover.py
-@@ -0,0 +1,358 @@
+@@ -0,0 +1,395 @@
 +"""Tests for tools-local/vm-stop-recover.sh (2026-11-17 row vm-stop-recovery-pacing, L178; reviews/recover-20261108.md).
 +usage: python3 -I tools-local/test_vm_stop_recover.py   (VMSR_SCRIPT = another copy of the script)
 +Every run uses a temporary manage-agents dir (VMSR_M) with a stub iso.sh that records its argv and the flag files it sees,
@@ -343,9 +351,9 @@
 +        with open(self.p(name)) as f:
 +            return f.read()
 +
-+    def env(self, virtual=True):
++    def env(self, virtual=True, loadavg=None):
 +        e = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": os.environ.get("HOME", self.h),
-+             "VMSR_M": self.m, "VMSR_LOADAVG": self.p("loadavg"), "VMSR_SYSTEMCTL": self.p("systemctl")}
++             "VMSR_M": self.m, "VMSR_LOADAVG": loadavg or self.p("loadavg"), "VMSR_SYSTEMCTL": self.p("systemctl")}
 +        if virtual:
 +            e["VMSR_VIRTUAL_CLOCK"] = "1"
 +        return e
@@ -357,7 +365,19 @@
 +            argv.append(self.p("jobs.txt"))
 +        r = subprocess.run(argv, env=self.env(virtual), capture_output=True, text=True, timeout=WAIT)
 +        self.out = r.stdout + r.stderr
++        self.assert_paced()
 +        return r
++
++    def assert_paced(self):
++        """The pacing invariant, checked on EVERY run any test makes (dry or real): never a 7th relaunch while 6 are in
++        their first 15 min, and at least 60 s between relaunches. Review F1 (a dry-run load release that also dropped
++        these holds) is one member of the class this catches: any hold release that skips a time hold."""
++        t = [secs(s) for s, _ in self.launches()]
++        t = [x + 86400 * sum(1 for a, b in zip(t, t[1:i + 1]) if b < a) for i, x in enumerate(t)]  # HH:MM:SSZ wrap
++        for i, ti in enumerate(t):
++            self.assertLessEqual(sum(1 for tj in t[:i + 1] if ti - tj < 900), 6, ("6-in-15-min broken", i, t, self.out))
++        self.assertTrue(all(b - a >= 60 for a, b in zip(t, t[1:])), ("60 s gap broken", t, self.out))
++        self.assertNotRegex(self.out, r"\b([7-9]|\d\d+)/6 in their first 15 min")
 +
 +    def iso_calls(self, n=None):
 +        """Lines of the stub iso.sh; waits (bounded) until n lines exist (the launches are detached)."""
@@ -394,12 +414,37 @@
 +    """The task's test: a dry run on the recover-20261108 job list prints the order (trains first), the holds and the
 +    feed pause/restore steps, and launches nothing."""
 +
-+    def dry_1108(self, *extra):
-+        r = subprocess.run(["zsh", SCRIPT, "--dry-run", "--date", D, *extra, JOBS_1108], env=self.env(virtual=False),
-+                           capture_output=True, text=True, timeout=WAIT)
++    def dry_1108(self, *extra, loadavg=None):
++        r = subprocess.run(["zsh", SCRIPT, "--dry-run", "--date", D, *extra, JOBS_1108],
++                           env=self.env(virtual=False, loadavg=loadavg), capture_output=True, text=True, timeout=WAIT)
 +        self.out = r.stdout + r.stderr
 +        self.assertEqual(r.returncode, 0, self.out)
++        self.assert_paced()
 +        return r
++
++    def test_1108_a_load_that_stays_high_releases_only_the_load_hold(self):
++        # review F1 (PROBE F1): with a load >= 48 that no longer changes, the dry-run release broke out of the hold
++        # loop and dropped the 6-in-15-min and 60 s holds too: 15 relaunches at +0m00s ("7/6 ... 15/6"). Every
++        # trigger the review swept must give the low-load schedule: only the load hold is released.
++        self.dry_1108()
++        low = [secs(s) for s, _ in self.launches()]
++        self.assertEqual(low, [0, 60, 120, 180, 240, 300, 900, 960, 1020, 1080, 1140, 1200, 1800, 1860, 1920])
++        triggers = {"live load 60": ((), "60.00 50.00 40.00 3/900 1\n", None),
++                    "live load exactly 48": ((), "48 50.00 40.00 3/900 1\n", None),
++                    "--dry-loads ending high": (("--dry-loads", "10 60"), None, None),
++                    "unreadable load file": ((), None, self.p("no-such-loadavg"))}
++        for name, (extra, text, path) in triggers.items():
++            with self.subTest(name):
++                if text:
++                    self.write("loadavg", text)
++                self.dry_1108(*extra, loadavg=path)
++                self.assertEqual([secs(s) for s, _ in self.launches()], low, self.out)
++                for at, scope in (("5m00s", "cmp-s4a-nested"), ("20m00s", "arch-20261105-1")):  # the 7th and 13th
++                    self.assertRegex(self.out, rf"(?m)^\+{at} HOLD {scope}: 1-min load (unreadable|48 |60)[^\n]*; "
++                                               r"6 relaunches in their first 15 min \(max 6\)")
++                self.assertIn("continuing (the other holds still apply)", self.out)
++                rs = re.findall(r"^(\S+) restore: would move", self.out, re.M)
++                self.assertEqual([secs(x) for x in rs], [1920 + 600] * 3)
 +
 +    def test_1108_order_trains_first(self):
 +        self.dry_1108()
