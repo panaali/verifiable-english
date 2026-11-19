@@ -68,6 +68,10 @@ GH_ALLOWED = re.compile(r'release (view|upload) "\$REL" [^\n]*')
 CURL = re.compile(r"(?<![\w-])curl\s+([^\n|;&)]*)")
 SHA_CHECK = re.compile(r'^[ \t]*echo "([0-9a-f]{64})  (\S+)" \| sha256sum -c -[ \t]*$', re.M)
 RELEASE_ASSET = re.compile(r"https://[^\s/]+/(?:\S*/)?releases/download/(\S+)")
+# The git step's source tarball (x86-shard-toolchain-mix): kernel.org's release of the block's one literal GIT_PIN.
+GIT_SOURCE = re.compile(r"https://mirrors\.edge\.kernel\.org/pub/software/scm/git/git-\$GIT_PIN\.tar\.xz")
+# A check of a file against a variable the block sets once to a literal sha256; it may lead an `&&` chain.
+SHA_CHECK_VAR = re.compile(r'echo "\$([A-Z_]+)  (\S+)" \| sha256sum -c -(?=[ \t]*(?:&&|$))', re.M)
 TOOLS_STEP = "tools"
 KEY = re.compile(r"([A-Za-z0-9_-]+):(?:\s+(.*))?")
 BLOCK_SCALAR = re.compile(r"[|>][-+]?")
@@ -287,10 +291,25 @@ def downloads(block: str) -> tuple[str, list[tuple[str, list[str], int]]]:
     return joined, found
 
 
+VERSION = re.compile(r"[0-9]+(?:\.[0-9]+)+")
+SHA256 = re.compile(r"[0-9a-f]{64}")
+
+
+def literal(block: str, name: str, shape: re.Pattern) -> str:
+    """The value of `name` in a run block that sets it once, on a line of its own, to a literal of `shape`."""
+    sets = re.findall(rf"(?:^|[\s;&|(]){name}=(\S*)", block)
+    assert len(sets) == 1 and shape.fullmatch(sets[0]) and \
+        re.search(rf"^[ \t]*{name}={re.escape(sets[0])}[ \t]*$", block, re.M), \
+        f"{name} is not set once to a literal {shape.pattern}: {sets}"
+    return sets[0]
+
+
 def check_downloads(document: dict) -> None:
     """Every curl that fetches a release asset (gha-uv-mirror) names its file, fetches it over https, and a
     later `sha256sum -c` checks that file against a pinned sha256. A fallback URL into the same file must
-    fetch the same asset (the same `releases/download/<version>/<name>`), so the one pin checks either."""
+    fetch the same asset (the same `releases/download/<version>/<name>`), so the one pin checks either. The git
+    step's source tarball (x86-shard-toolchain-mix) is the one other download: kernel.org's git-$GIT_PIN.tar.xz,
+    GIT_PIN and GIT_SHA each set once to a literal, checked by `echo "$GIT_SHA  <file>" | sha256sum -c -`."""
     for job, block in run_blocks(document):
         joined, found = downloads(block)
         assets: dict[str, set[str]] = {}
@@ -300,11 +319,17 @@ def check_downloads(document: dict) -> None:
                 continue  # not a download (the GitHub API rule covers the publish job's calls)
             assert output and urls,f"{job}: a release download names no file: {urls}"
             for url in urls:
+                if GIT_SOURCE.fullmatch(url):
+                    assets.setdefault(output, set()).add(f"git-{literal(joined, 'GIT_PIN', VERSION)}.tar.xz")
+                    continue
                 asset = RELEASE_ASSET.fullmatch(url)
                 assert asset, f"{job}: {url} is not a release asset over https"
                 assets.setdefault(output, set()).add(asset.group(1))
             last[output] = end
         checked = {match.group(2): match.start() for match in SHA_CHECK.finditer(joined)}
+        for match in SHA_CHECK_VAR.finditer(joined):
+            literal(joined, match.group(1), SHA256)
+            checked[match.group(2)] = match.start()
         for output, names in assets.items():
             assert len(names) == 1, f"{job}: {output} may be one of several assets {sorted(names)}"
             assert checked.get(output, -1) > last[output], f"{job}: {output} is not checked by a pinned sha256"
@@ -504,6 +529,19 @@ SEEDED = [
     ("download after the check", "          command -v zstd",
      "          curl -sSfL -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/"
      "uv-x86_64-unknown-linux-gnu.tar.gz\n          command -v zstd", "uv.tgz is not checked by a pinned sha256"),
+    # the git step (x86-shard-toolchain-mix): its source tarball is checked against its one literal sha256
+    ("pin unchecked", '              && echo "$GIT_SHA  git.tar.xz" | sha256sum -c - \\\n', "",
+     "git.tar.xz is not checked by a pinned sha256"),
+    ("pin check of another file", '"$GIT_SHA  git.tar.xz"', '"$GIT_SHA  git.tar"', "git.tar.xz is not checked"),
+    ("pin check warns only", "sha256sum -c - \\\n              && {", "sha256sum -c - || true \\\n              && {",
+     "git.tar.xz is not checked by a pinned sha256"),
+    ("pin sha set again", "          have=$(git --version", "          GIT_SHA=$1\n          have=$(git --version",
+     "GIT_SHA is not set once to a literal"),
+    ("pin short sha", "a607f\n", "a607\n", "GIT_SHA is not set once to a literal"),
+    ("pin pin set again", "          have=$(git --version", "          GIT_PIN=$1\n          have=$(git --version",
+     "GIT_PIN is not set once to a literal"),
+    ("pin over http", "\"https://mirrors.edge.kernel.org/", "\"http://mirrors.edge.kernel.org/", "is not a release asset"),
+    ("pin from another host", "https://mirrors.edge.kernel.org/", "https://example.org/", "is not a release asset"),
 ]
 
 
@@ -977,3 +1015,141 @@ def test_the_fetch_step_records_its_status_and_never_fails_the_run(tmp_path, cod
     assert done.returncode == 0, f"{done.stdout}{done.stderr}"
     assert (rt / "out/pinned-sources.txt").read_text() == "FAILED doc: said\n"
     assert (rt / "out/gha-setup.tsv").read_text().startswith(f"pinned_sources\t{code}\t")
+
+
+# --- the git pin (x86-shard-toolchain-mix) ---------------------------------------------------------------------------
+# The ubuntu-24.04 pool serves images with git 2.56.0 and 2.56.1 at once; gate.py records `git --version` and
+# gate_shards refuses a leg whose shards differ. The step `git` is run here per simulated shard: a sandbox with that
+# image's /usr/bin/git, and stub sudo, curl, apt-get and make (make installs a git that reports the source's own
+# `version` file). curl serves a small source tarball whose sha256 replaces the pin, so the real `sha256sum -c` runs.
+GIT_STUBS = {
+    "sudo": '#!/bin/bash\necho "sudo $*" >> "$CALLS"; exec "$@"\n',
+    "apt-get": '#!/bin/bash\necho "apt-get $*" >> "$CALLS"\n'
+               'case " $* " in *" install "*) mkdir -p "$SANDBOX/usr/include"; : > "$SANDBOX/usr/include/zlib.h";; esac\n',
+    "curl": '#!/bin/bash\nout=""; url=""\n'
+            'while [ $# -gt 0 ]; do case "$1" in -o) out=$2; shift 2;; --retry) shift 2;; -*) shift;; *) url=$1; shift;; esac; done\n'
+            'echo "curl $url" >> "$CALLS"\n'
+            'case ${CURL_MODE:-ok} in fail) exit 22;; junk) echo junk > "$out";; ok) cp "$TARBALL" "$out";; esac\n',
+    "make": '#!/bin/bash\ndir=.; prefix=""\n[ "$1" = -C ] && dir=$2\n'
+            'for a in "$@"; do case $a in prefix=*) prefix=${a#prefix=};; esac; done\n'
+            'echo "make $*" >> "$CALLS"\n'
+            '[ "${MAKE_MODE:-ok}" = ok ] || { echo "cc: error: stub build failure"; exit 2; }\n'
+            'v=$(cat "$dir/version") || exit 2\n'
+            'mkdir -p "$prefix/bin" && printf \'#!/bin/bash\\necho "git version %s"\\n\' "$v" > "$prefix/bin/git" '
+            '&& chmod +x "$prefix/bin/git"\n',
+}
+
+
+@dataclass
+class Shard:
+    rc: int
+    said: str
+    git: str        # what gate.py's PATH (/usr/bin:/bin) finds
+    calls: list[str]
+    gha: str
+    setup: str
+    sandbox: Path
+
+
+def pin_step() -> dict:
+    """The run job's one step that sets GIT_PIN (the step `git`)."""
+    found = [step for step in steps(parse(VE_JOB.read_text())["jobs"]["run"]) if "GIT_PIN=" in step.get("run", "")]
+    assert len(found) == 1, f"{len(found)} steps set GIT_PIN"
+    return found[0]
+
+
+def git_tarball(tmp_path: Path, pin: str) -> Path:
+    path = tmp_path / "git.tar.xz"
+    if not path.exists():
+        data = pin.encode() + b"\n"
+        with tarfile.open(path, "w:xz") as tar:
+            info = tarfile.TarInfo(f"git-{pin}/version")
+            info.size = len(data)
+            tar.addfile(info, io.BytesIO(data))
+    return path
+
+
+def run_git_step(tmp_path: Path, name: str, image_git: str, *, zlib: bool = True, **modes: str) -> Shard:
+    """The step `git` on a shard whose image has `image_git` as /usr/bin/git, every absolute path in the sandbox."""
+    script = textwrap.dedent(pin_step()["run"])
+    pin = literal(script, "GIT_PIN", VERSION)
+    tarball = git_tarball(tmp_path, pin)
+    script = script.replace(literal(script, "GIT_SHA", SHA256), hashlib.sha256(tarball.read_bytes()).hexdigest())
+    stubs = tmp_path / "stubs"
+    if not stubs.exists():
+        stubs.mkdir()
+        for tool, body in GIT_STUBS.items():
+            (stubs / tool).write_text(body)
+            (stubs / tool).chmod(0o755)
+    box = tmp_path / name
+    for sub in ("usr/bin", "usr/local/bin", "usr/include", "rt/out"):
+        (box / sub).mkdir(parents=True)
+    (box / "usr/bin/git").write_text(f'#!/bin/bash\necho "git version {image_git}"\n')
+    (box / "usr/bin/git").chmod(0o755)
+    if zlib:
+        (box / "usr/include/zlib.h").touch()
+    (box / "rt/out/gha-setup.tsv").write_text("step\trc\tseconds\ntools\t0\t5\n")
+    (box / "rt/out/gha.txt").write_text("run_id=1 image=stub\n")
+    (box / "calls").touch()
+    for path in ("/usr/local/bin", "/usr/bin/git", "/opt/git", "/usr/include/zlib.h"):
+        script = script.replace(path, f"{box}{path}")
+    script = script.replace("PATH=/usr/bin:/bin", f"PATH={box}/usr/bin:/bin")
+    said = "PATH (/usr/bin:/bin) finds"  # gha.txt's wording, not a path the step uses
+    assert not re.search(r"(?<![\w.-])/(?:usr|opt)/", script.replace(said, "")), "a path outside the sandbox"
+    env = clean_env(RUNNER_TEMP=str(box / "rt"), CALLS=str(box / "calls"), SANDBOX=str(box), TARBALL=str(tarball),
+                    PATH=os.pathsep.join([str(box / "usr/local/bin"), str(stubs), str(box / "usr/bin"), "/usr/bin", "/bin"]),
+                    **modes)
+    done = subprocess.run(["bash", "-c", script], cwd=tmp_path, capture_output=True, text=True, env=env,
+                          timeout=HANG_TIMEOUT)
+    found = subprocess.run([str(box / "usr/bin/git"), "--version"], capture_output=True, text=True,
+                           env={"PATH": f"{box}/usr/bin:/bin"}, timeout=HANG_TIMEOUT).stdout.strip()
+    return Shard(done.returncode, done.stdout + done.stderr, found, (box / "calls").read_text().splitlines(),
+                 (box / "rt/out/gha.txt").read_text(), (box / "rt/out/gha-setup.tsv").read_text(), box)
+
+
+def test_the_git_step_is_unconditional_between_tools_and_the_job():
+    run = parse(VE_JOB.read_text())["jobs"]["run"]
+    names = [step.get("name") for step in steps(run)]
+    step = pin_step()
+    assert names.index(TOOLS_STEP) < steps(run).index(step) < names.index("job"), names
+    assert set(step) == {"name", "run"}, sorted(step)
+
+
+def test_every_shard_of_a_mixed_leg_records_the_one_pinned_git(tmp_path):
+    """The bug: s1 2.56.1, s2-s4 2.56.0 (x86sh-nightly-a8b8c0fd-t539141); a 2/2 split had no majority."""
+    pin = literal(pin_step()["run"], "GIT_PIN", VERSION)
+    shards = {image: run_git_step(tmp_path, f"s{i}", image) for i, image in enumerate([pin, "2.56.0", "2.57.0"])}
+    for image, shard in shards.items():
+        assert shard.rc == 0, shard.said
+        assert shard.git == f"git version {pin}", (image, shard.git, shard.said)
+        assert f"gate.py's PATH (/usr/bin:/bin) finds git version {pin} at {shard.sandbox}/usr/bin/git" in shard.gha
+        assert re.search(r"^git\t0\t[0-9]+$", shard.setup, re.M) and shard.setup.startswith("step\trc\tseconds\ntools\t0\t5\n")
+        assert not (shard.sandbox / "rt/git-src").exists() and not (shard.sandbox / "rt/git.tar.xz").exists()
+    same = shards[pin]
+    assert same.calls == [] and f"git: the runner's git is the pin {pin}" in same.gha, same.calls
+    built = shards["2.56.0"]
+    url = f"https://mirrors.edge.kernel.org/pub/software/scm/git/git-{pin}.tar.xz"
+    assert f"curl {url}" in built.calls and any(call.startswith("make -C git-src") for call in built.calls)
+    assert f"git: pin {pin} built from source (the runner has git version 2.56.0)" in built.gha
+    assert (built.sandbox / "usr/bin/git").is_symlink() and (built.sandbox / "usr/local/bin/git").is_symlink()
+
+
+def test_no_zlib_headers_installs_them_before_the_build(tmp_path):
+    shard = run_git_step(tmp_path, "s1", "2.56.0", zlib=False)
+    assert shard.rc == 0 and "apt-get install -y -qq zlib1g-dev" in shard.calls, shard.calls
+    assert shard.git == f"git version {literal(pin_step()['run'], 'GIT_PIN', VERSION)}"
+
+
+@pytest.mark.parametrize("modes, said", [
+    ({"CURL_MODE": "junk"}, ""), ({"CURL_MODE": "fail"}, ""), ({"MAKE_MODE": "fail"}, "stub build failure"),
+], ids=["other bytes", "download fails", "build fails"])
+def test_a_pin_it_cannot_have_keeps_the_runner_git_and_says_so(tmp_path, modes, said):
+    """Never loosened, never a failed run: the leg is as before (a mixed leg is still refused by gate_shards)."""
+    shard = run_git_step(tmp_path, "s1", "2.56.0", **modes)
+    assert shard.rc == 0, shard.said
+    assert shard.git == "git version 2.56.0" and not (shard.sandbox / "usr/local/bin/git").exists()
+    assert re.search(r"^git: PIN FAILED: kept the runner's git version 2\.56\.0 \(pin [0-9.]+;.*" + re.escape(said),
+                     shard.gha, re.M), shard.gha
+    assert "::warning::git PIN FAILED" in shard.said
+    if modes.get("CURL_MODE") == "junk":
+        assert not any(call.startswith("make") for call in shard.calls), shard.calls

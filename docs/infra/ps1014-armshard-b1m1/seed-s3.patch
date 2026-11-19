@@ -1,0 +1,11 @@
+--- /home/seyran/code/manage-agents/merge-train.sh	2026-11-17 16:48:23.745702096 +0000
++++ /tmp/b1m1seed/s3.sh	2026-11-19 09:01:47.521197369 +0000
+@@ -986,7 +986,7 @@
+     mrc=""; shw=$(shweekly)
+     # 2026-11-02 dri-arm-leg-mac-first (flag ARM_MAC_FIRST, header): where shleg would block, the Mac leg when ve-mac-1 answers
+     # and has a gate slot free now; busy or silent -> the sharded leg at once; a Mac leg with no result (2/3) -> the sharded leg
+-    if [ -z "$shw" ] && [ -f $M/ARM_MAC_FIRST ] && shavail > /dev/null; then
++    if [ -z "$shw" ] && { macup; [ -f $M/ARM_MAC_FIRST ]; } && shavail > /dev/null; then
+       if ! macup; then echo "aarch64 leg of $label: ARM_MAC_FIRST: ve-mac-1 unreachable: the sharded Actions leg at once $(date -u +%H:%MZ)" >> $log
+       elif mfw=$(macslot); then
+         echo "aarch64 leg of $label: ve-mac-1 has a free gate slot ($mfw): the Mac leg instead of the sharded Actions leg (ARM_MAC_FIRST; slot wait ${ARM_MAC_FIRST_SLOT_WAIT:-120} s) $(date -u +%H:%MZ)" >> $log

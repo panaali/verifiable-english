@@ -183,3 +183,26 @@ def test_an_edit_outside_the_tree_and_duplicate_mutant_ids_are_refused(tmp_path,
         W.run_batch(toy_worker(tmp_path, evaluate=lambda m, limit: {}), [W.Mutant("a"), W.Mutant("a")])
     with pytest.raises(ValueError, match="no adapter"):
         W.Worker("toy", tmp_path / "toy", tmp_path)
+
+
+def test_a_result_invalid_twice_fails_the_batch_though_the_last_sentinel_holds(tmp_path, toy):
+    """fid-mech-b5 review F1 sweep: m1's sentinel fails twice (re-queued once), the last sentinel holds; the batch
+    is INVALID (worker.batch_status), never ok on an unconfirmed result."""
+    script = iter(["base", "m1", "BAD", "m2", "BAD", "m3", "base", "m1", "BAD", "m2", "base"])
+
+    def evaluate(mutant, limit):
+        step = next(script)
+        return {"answer": "other" if step == "BAD" else "base" if mutant is W.BASELINE else mutant.id}
+
+    worker = toy_worker(tmp_path, evaluate=evaluate)
+    batch = W.run_batch(worker, [W.Mutant("m1"), W.Mutant("m2"), W.Mutant("m3")], sentinel_every=1)
+    assert batch.sentinels == [False, False, True, False, True]
+    assert {k: o.sentinel_ok for k, o in batch.outcomes.items()} == {"m1": False, "m2": True, "m3": True}
+    assert batch.status == "INVALID"
+
+
+def test_batch_status_is_ok_only_on_every_last_sentinel_and_every_outcome_confirmed():
+    ok, bad, unset = (W.Outcome("m", "ok", None, 0, 0, "w", sentinel_ok=v) for v in (True, False, None))
+    assert W.batch_status([True, None], [ok, ok]) == "ok"
+    assert W.batch_status([True], []) == "ok"
+    assert {W.batch_status(s, o) for s, o in (([False], [ok]), ([True], [ok, bad]), ([True], [unset]))} == {"INVALID"}

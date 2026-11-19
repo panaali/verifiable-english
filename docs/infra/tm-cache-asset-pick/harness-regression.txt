@@ -1,0 +1,14 @@
+Existing harnesses that run lean-cache-publish.sh, on the live script and on the staged lean-cache-publish.sh.new-tmcache (temporary harness copies pointed at it), 2026-11-19:
+cp-live: == 187 passed, 8 failed
+cp-new: == 187 passed, 8 failed
+ac-live: armcache: 37 passed, 0 failed
+ac-new: armcache: 37 passed, 0 failed
+test-cloudplumb.zsh: the same 8 FAIL lines on both (all cloud-overflow.sh pool-order cases, pre-existing, none in its lean-cache-publish.sh section):
+  FAIL all conditions true: cloud (exit 0)
+  FAIL Mac slots busy at once (no 600-s wait), VM load 20: cloud
+  FAIL Mac not busy (slot rc 0) but VM load 24.00 >= 24: cloud
+  FAIL Mac not busy and VM load 23.99 < 24: VM
+  FAIL MAC_PYTEST=0 at VM load 20: VM path, nothing dispatched
+  FAIL both pools on: Actions first
+  FAIL Actions on, Mac free and VM load 10: VM
+  FAIL 8 Actions jobs in flight (its cap): the Claude cloud next, which counts only its own jobs
