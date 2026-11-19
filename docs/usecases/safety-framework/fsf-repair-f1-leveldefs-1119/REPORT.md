@@ -5,10 +5,10 @@ the safety-framework case now carries its source definition verbatim, in the voc
 level's `levels-*` fact block uses. LANGUAGE only. No Lean, Python or Rust decision path changes. Trust +0, and no
 DELTA row is reserved for the DRI.
 
-SIZE: 27 product (vocabulary.py) + 6 facts.d1.ve lines changed, 139 tests, about 160 other hand-written lines (this
-report, DELTA.md, mutants.json, one tools/gate-optional.json row); generated or recorded outputs: environment.d1.json
-+7, results.json 3, coverage.json 1, route-cases.jsonl 1, lexicon-report.json 2 (`git diff --numstat
-$(git merge-base HEAD main)`).
+SIZE: 33 product (vocabulary.py 27 added, facts.d1.ve 6 changed), 139 tests, 212 other hand-written lines (REPORT.md
+183 at the count, DELTA.md 11, mutants.json 17, tools/gate-optional.json 1); generated or recorded outputs:
+environment.d1.json +7, results.json 3, coverage.json 1, route-cases.jsonl 1, lexicon-report.json 2 (`git diff
+--numstat $(git merge-base HEAD main)` after the rebase onto e53db4e8fc).
 
 ## Deliverables
 
@@ -90,7 +90,7 @@ come from `data.index(sentence)`.
   Glossary-definition test (`test_every_glossary_definition_is_the_pinned_source_text`). On Actions,
   `VE_REQUIRE_PINNED_SOURCES=1` turns that skip into a failure (`tests/pinned_source.py`), so R18 gains no skip on
   Actions.
-- Selected run (`mac-pytest.sh --select -- --base d8758ce968 --run`): SEE "Selected run" below.
+- Selected run: see "Selected run" below.
 
 ## Regenerated outputs (each from its own writer; none edited by hand)
 
@@ -125,7 +125,7 @@ These cover each changed language: Python (vocabulary.py) and VE text (facts.d1.
 
 ## Trust
 
-- `uv run python tools/trust_map.py --check` reports "against d8758ce96837: K +0, S +0, D +0, G +0, tied +0,
+- `uv run python tools/trust_map.py --check` reports "against e53db4e8fc38 (after the rebase): K +0, S +0, D +0, G +0, tied +0,
   unclassified +0, trusted +0" and PASS.
 - `uv run python tools/trust_mutants.py --plan` reports `{"definitions": 0, "mutants": 0, "to_run": 0}` (no Lean).
 - The light lane reports NOT: "199 changed lines outside generated files > 150", because it counts the test file and
@@ -164,20 +164,74 @@ routed D2) is carried by the levels-cbrn block, the block that holds the TCL's f
 
 ## Selected run
 
-SEE BELOW (filled in after the run).
+- `zsh mac-pytest.sh --select -- --base d8758ce968 --run` ran at e0913623, the pre-rebase HEAD. Its log is
+  /tmp/fsf-repair-f1-leveldefs-1119-select.log, and its exit code is 0.
+  - "recorded 77 units for tree 72a24fafab; 1 others left to the static graph until they run; 0 failed".
+  - The summary reads "ran LOCALLY (VM) because: MAC_LAST_RESORT ...; exit=0; 5751s".
+  - The selection included tests/test_fsf_repair_f1_leveldefs_1119.py, test_safety_framework.py (exit 0, 886 s),
+    test_safetyfw_usecases.py (exit 0), test_pinned_sources.py and the fidmech tests.
+  - The run deferred one file to the chain gate as selected only for weak reasons:
+    tests/test_relay_binding_inventory.py.
+- An earlier attempt was stopped and is not evidence. Another item had written to the same /tmp log name, so I killed
+  only my own job's session and restarted under a unique log name.
+- **Rebase.** After the run, main gained the merges of fsf-repair-f9-mcca-1119 and others, so I rebased onto
+  e53db4e8fc as the task asks.
+  - Main changed nothing under lean/ or rust/ (`git diff --stat d8758ce968 main -- lean rust` is empty), and it did
+    not touch facts.d1.ve or this item's vocabulary.py lines.
+  - The only conflicts were the four recorded outputs. Each was rewritten by its writer on the rebased tree. results.json
+    again moves only `premises` 35 to 42 and two `certificate_sha256` (/tmp/f1-run3.log).
+  - After the rebase: `regen_generated.py --check` returns rc 0. `uv run pytest -q tests/test_fsf_repair_f1_leveldefs_1119.py
+    tests/test_safety_framework.py::test_environment_file_is_generated
+    tests/test_safety_framework.py::test_span_accounting_is_complete
+    tests/test_pinned_sources.py::test_gate_optional_still_allows_the_unset_skips` gives "6 passed"
+    (/tmp/f1-post-rebase.log).
+  - The full gate runs on the final HEAD in the chain.
 
 ## Merge commit
 
-The VE commit this merges at is this branch's final HEAD, on base main d8758ce968, which equals 7cbec4b340b8 for
-every file this item touches. The R16 C2/C3 pinned lists are per commit, so the counted read re-pins. A merge after
+The VE commit this merges at is this branch's final HEAD, rebased on main e53db4e8fc. The task's pinned commit
+7cbec4b340b8 and the first base d8758ce968 have the same vocabulary.py, facts.d1.ve and environment.d1.json, so S1
+is the 7cbec4b340b8 text. Main e53db4e8fc adds F5's and F9's legend changes, which this item keeps. The R16 C2/C3 pinned lists are per commit, so the counted read re-pins. A merge after
 the R16 diagnostic voids that diagnostic for the touched answers.
 
 ## Notes for the DRI
 
-- Main-known-red: none of the selected failures (see Selected run) is in this item's files.
+- Main-known-red: the selected run had 0 failures, so it showed no pre-existing failure.
 - The `defined` legend holds all seven definitions, so a reader of one `levels-*` block also sees the other six. A
   per-level legend is not possible under P7 without a lint violation.
 
 ## Self-review against BUILDER-CHECKLIST
 
-SEE BELOW.
+1. Lean answers typed and contained: N.A. This item adds no relay, mode or Lean answer.
+2. Every required deliverable built, no rule broken: PASS. Both deliverables are built (table above).
+   - The identifier lint stays at 0 violations: results.json `violations` is `[]`, from `run.py`.
+   - The carrier rule holds: `test_every_level_has_its_definition_in_the_legend_of_a_predicate_its_block_uses`.
+3. Tests can fail: PASS. Seeded bugs S1 to S5 each fail a named test (mutants.json). S1 is the 7cbec4b340b8 text.
+4. Python, Lean and Rust agree: N.A. No product decision code changed. `run.py` gives the same verdicts.
+5. R8 binding: N.A. There is no relayed answer.
+6. Gate evidence matches the final HEAD: PASS for what I ran (selected run at e0913623, plus the post-rebase checks
+   above). The chain runs the full gate on the final HEAD.
+7. No unsigned item: PASS. DELTA.md has no row and no signature.
+8. Every user-visible change in DELTA: PASS. DELTA.md states there is no VE change. The results.json diff is
+   premises and two hashes only (`git diff -U0`).
+9. Test selection finds the tests: PASS. `tools/select_tests.py --base ...` listed the new test file,
+   test_safety_framework.py and test_safetyfw_usecases.py, not every unit (/tmp/f1-sel.log). The changed files are in
+   its "changed:" line.
+10. Lean statements: N.A. No Lean changed.
+11. Budgets and limits: N.A. No evaluator, runner or limit is added.
+12. No CPU or memory regression: N.A. Seven more premise facts over a fixed predicate. `run.py` took about 4 min, as
+    before (/tmp/f1-run.log, "real 4m5s").
+13. Test-removed trailers: N.A. No test is removed or renamed.
+14. Both directions, cited evidence, spec re-read: PASS.
+    - Both directions: `test_the_source_definitions_reader_takes_the_whole_sentence_and_one_label_only` accepts the
+      whole sentence, and refuses a missing label and a duplicated one. S2 and S5 show the verbatim check refusing a
+      one-word change.
+    - Spec re-read: the carrier against converge-AB.md section 0 ("a Rule or fact line ... or a vocabulary legend
+      of a predicate that block uses") and uc-audit.py.reads-1119 `used_predicates` / `_omit_legend_segments`.
+      "One sentence per level, with the table's footnote marks" against the task text and compare-report.md row
+      F1.
+15. Overclaim, silent cut, every check can fail, limits: PASS / N.A.
+    - Universal words in this report ("every", "no", "unchanged") each cite a command or test above.
+    - Nothing is cut.
+    - Each new test has a seeded bug.
+    - No limit is involved.
