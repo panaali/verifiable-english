@@ -1,6 +1,6 @@
 # defs-repair-asimov-extended-1119: REPORT
 
-- **Status:** all 6 P1 rows KEPT and carried. Nothing waits on a DRI signature. Trust +0. No DELTA row.
+- **Status:** all 6 P1 rows KEPT and carried. Nothing waits on a DRI signature. Trust +0. No DELTA row. One recorded drift: the seal entry for `environment.json` is stale and left for the shadow corpus's renewal (section 2, review F1).
 - **VE commit:** built on main `f5553bc894` and rebased onto main `53de6068d7`, which this merges at (main's change touches only another line of `lexicon-report.json`; regenerating gave no diff). HEAD is the last commit on `feature/defs-repair-asimov-extended-1119`.
 - **What changed:** four legends in `usecases/asimov-extended/environment.json` now carry source definitions E1, E2a, E2b and E3 word for word. The derived ids were regenerated with the project's tools. A new condition test: `tests/test_defs_repair_asimov_extended_1119.py`.
 - **Carrier deviation:** rows 3, 5 and 6 named v2 predicates. Their legends are pinned identical to asimov-laws, so these rows are carried on the sort legend (`harm`, `action`) that their rules quantify over. Row 4 is the planner-decides row, and it shares row 3's carrier. Reason below.
@@ -46,16 +46,22 @@ Each row's audit quote was checked against the source at main by the new test's 
 
 - `usecases/asimov-extended/rules.manifest.json` and `base.manifest.json`: `environment_id` and `document_hash` changed; `blocks` and `text_digest` stayed byte-equal. They were written with the document's own generator `asimov_extended_cases.render_manifest()`, in the file's existing format (`json.dumps(indent=2)+"\n"`). The script checked that the rendered text still equals `rules.ve` and `base.ve`.
 - `conformance/english-lean/lexicon-report.json`: the asimov-extended `lexicon_id`. It was written by `uv run python -m conformance.english_lean_lexicon` (43 valid, 0 invalid). `LexiconFixtures.lean` is unchanged (`lean_fixtures()` equals the file). The file is outside the row's `derived_files`. The selected run found it: `test_every_corpus_environment_has_a_valid_selected_lexicon` failed before the regeneration and passed after (56 passed).
-- `git grep` finds no file still holding the old `environment_id` (0dbd6881…), `document_hash` values or lexicon id.
+- `git grep` finds no file still holding the old `environment_id` (0dbd6881…), `document_hash` values or lexicon id. The file's content sha256 is pinned only by the seal (below), which is now stale.
 - `uv run python tools/regen_generated.py --check` reports "checked 41 entries", with no stale file.
-- No frozen-run.json or seal covers these files. asimov-extended has no run directory, and `corpus-seal.json` does not list it (`git grep` on the old hashes).
+- No frozen-run.json covers these files: asimov-extended has no run directory.
+- **Seal drift, recorded and left (review F1).** `conformance/english-lean/corpus-seal.json` lists `usecases/asimov-extended/environment.json` as a "corpus source" with main's sha256 `6c8596b9…`. At HEAD the file hashes to `b0f4d368…`, so `uv run python -m conformance.english_lean_seal --check` reports `changed: usecases/asimov-extended/environment.json`. This commit makes that entry stale. It is left stale for three reasons:
+  - The suite does not enforce the seal (`conformance/english_lean_seal.py:13-14`). It is the shadow harness's precondition, renewed before a comparison counts.
+  - Its only writer renews the whole seal. At HEAD, `--check` gives 56 differences: 26 changed (25 already stale on main plus this file) and 30 unsealed files, none of them this item's. Renewing it here would re-pin other items' drift.
+  - Hand-editing the one entry would edit a generated file.
+  The renewal belongs to the shadow corpus's next comparison. No other file of this item is listed in the seal, and the new test calls no English entry point, so it is not unsealed. `e2-evidence.json` and the three `question-reverse*.json` files hold counts only, not this file's hash. The earlier text of this line claimed the seal omitted the file. That was wrong: the sweep searched the old `environment_id` and `document_hash` values, not content hashes. `test_the_report_states_the_seal_status_of_every_changed_file` now checks this line against the seal tool's own `check()` for every file the item changes.
 
 ## 3. Condition test
 
-`tests/test_defs_repair_asimov_extended_1119.py` (13 tests):
+`tests/test_defs_repair_asimov_extended_1119.py` (14 tests):
 - per row: the source span, read from `source.md`, equals the audit quote, and that span occurs in the carrier legend (both normalised with `omit_norm`);
 - per row: each dependent rule line exists and uses both the term phrase and the carrier;
 - sort carriers keep their noun.
+- the REPORT states the seal status of every file the item changes, checked against `conformance/english_lean_seal.py` `check()` (review F1).
 
 It fails on main (`/tmp/defs-ae-main.log`: 7 failed) and passes after (`/tmp/defs-ae-1.log`: 29 passed, together with the fast `tests/test_asimov_extended.py`). The Mac selected run picked it ("changed [...test_defs_repair_asimov_extended_1119.py]", exit 0).
 
@@ -69,7 +75,7 @@ It fails on main (`/tmp/defs-ae-main.log`: 7 failed) and passes after (`/tmp/def
 
 ## Seeded bugs (`mutants.json`)
 
-All 7 were planted in `usecases/asimov-extended/environment.json` (M1-M6) or `source.md` (M7). Each made a named test fail and was then restored with git checkout.
+M1-M7 were planted in `usecases/asimov-extended/environment.json` (M1-M6) or `source.md` (M7). Each made a named test fail and was then restored with git checkout.
 - M1 drops an E3 clause: row-1 test fails.
 - M2 empties row 2's carrier: row-2 test fails.
 - M3 changes E1's "13" to "12": rows 3 and 4 fail.
@@ -78,6 +84,8 @@ All 7 were planted in `usecases/asimov-extended/environment.json` (M1-M6) or `so
 - M6 adds a verbalisation to sort `harm`: `test_a_sort_carrier_keeps_its_noun` fails.
 - M7 changes source drift "may" to "can": row 5 fails.
 
+M8-M10 (review F1) were planted in this REPORT. Each made `test_the_report_states_the_seal_status_of_every_changed_file` fail, and the text was then restored. M8 drops the recorded drift line, M9 adds a claim that the seal omits the file, and M10 is the REPORT text at 9f28830637.
+
 No Lean, Python or Rust product code changed, so there is no per-language product mutant.
 
 ## Trust and DELTA
@@ -85,7 +93,7 @@ No Lean, Python or Rust product code changed, so there is no per-language produc
 - `uv run python tools/trust_map.py --check` against f5553bc894cf gives "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0", PASS. After the rebase, against 53de6068d728, it gives the same, PASS. The new test and `test_english_lean_lexicon.py` gave 69 passed (`/tmp/defs-ae-post.log`).
 - No DELTA.md. There is no verdict, diagnostic, refusal or acceptance change, only legend text in one use-case environment and the ids derived from it. The records rerun shows the answers are unchanged.
 
-SIZE: 0 product, 82 tests, 8 other hand-written lines (environment.json legends), plus this REPORT and mutants.json. Generated: 4 manifest lines and 1 lexicon-report line.
+SIZE: 0 product, 115 tests (33 of them for review F1), 8 other hand-written lines (environment.json legends), plus this REPORT and mutants.json. Generated: 4 manifest lines and 1 lexicon-report line.
 
 Pilot bytes expected to move (estimate, nothing claimed): a definitions-carried read of asimov-extended should move rows 1-6 from NOT CARRIED to CARRIED. That is E1 for R9 and R13, E2a for 7 rules, E2b for 3 rules, and E3 for R18, R19, R20, R28 and R29.
 
@@ -123,4 +131,4 @@ Next item: none.
 12. CPU and memory: N.A. Legend text only.
 13. Test-removed trailers: N.A. No test removed or renamed.
 14. Both directions, cited evidence, spec re-read: PASS. The test fails on main and passes after. M5 checks the opposite direction (v2 predicates must stay unchanged). Evidence logs are cited above, and the spec re-read lines are above.
-15. No overclaim / no silent cut / new checks can fail / limits: PASS. The nightly reruns are stated as not run. No deliverable was cut. M1-M7 cover the new checks. The limits class is N.A.
+15. No overclaim / no silent cut / new checks can fail / limits: PASS after review F1. The earlier seal claim was false, and section 2 now records the drift. `test_the_report_states_the_seal_status_of_every_changed_file` ties the claim to the seal. The nightly reruns are stated as not run. No deliverable was cut. M1-M7 cover the new checks. The limits class is N.A.
