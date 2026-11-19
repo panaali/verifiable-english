@@ -1,0 +1,89 @@
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ test-harness/gatetrain/test-gatetrain.zsh	2026-11-19 08:09:49.763349591 +0000
+@@ -0,0 +1,86 @@
++#!/bin/zsh
++# 2026-11-19 gate-train-tag-reuse (reviews/dri-decisions-20261105-pc-1g-f3.md; fix installed by
++# reviews/dri-decisions-20261108-et-4b-sync.md item 2): stub tests for gate-train.sh's targeted trust-mutant step.
++# usage: zsh test-gatetrain.zsh [script to test] (default: the installed gate-train.sh).
++# Private scratch (mktemp); the script under test gets M=<scratch>/M, so no real record, inbox or train is touched.
++# Stubs: tm-barrier.py (STALE <record> on its first call, covers HEAD after), tm-inventory.py (reads the record it is
++# given, as the real one does, and fails like it on a missing file), msg.sh, mac-pytest.sh, chain-gate.sh,
++# merge-train.sh, and uv (HOME=<scratch>/home, so $HOME/.local/bin/uv is the stub). git is real: W is a scratch repo.
++REAL=/home/seyran/code/manage-agents; UT=${1:-$REAL/gate-train.sh}
++S=$(mktemp -d /tmp/gatetrain-test.XXXXXX); trap 'rm -rf $S' EXIT
++pass=0; fail=0
++ok(){ if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); print -- "  FAIL $1"; print -- "    --- out:"; sed 's/^/    /' $S/out | tail -15; print -- "    --- calls:"; sed 's/^/    /' $S/calls | cut -c1-200 | tail -12; fi; }
++mkdir -p $S/M/reviews/tm-targeted $S/home/.local/bin $S/scen
++sed "s|^M=/home/seyran/code/manage-agents;|M=$S/M;|" $UT > $S/M/ut.sh
++grep -q "^M=$S/M;" $S/M/ut.sh || { print "cannot point M at the scratch"; exit 2; }
++W=$S/wt; git init -q -b main $W; print a > $W/a.txt; git -C $W add -A; git -C $W -c user.name=t -c user.email=t@t commit -q -m init
++for s in msg.sh mac-pytest.sh chain-gate.sh merge-train.sh; do print "print -r -- \"${s%.sh} \$*\" >> $S/calls; exit 0" > $S/M/$s; done
++cat > $S/home/.local/bin/uv <<X
++#!/bin/bash
++# uv run python [-I] <script> <args>: the script under python3; anything else is logged only
++[ "\$1 \$2" = "run python" ] || { echo "uv \$*" >> $S/calls; exit 0; }
++shift 2; exec python3 "\$@"
++X
++chmod +x $S/home/.local/bin/uv
++cat > $S/M/tm-barrier.py <<X
++import os, sys
++c = "$S/scen/barrier-calls"; k = int(open(c).read()) if os.path.exists(c) else 0; open(c, "w").write(str(k + 1))
++open("$S/calls", "a").write(f"tm-barrier {' '.join(sys.argv[1:])}\n")
++if k == 0:
++    print(f"STALE {open('$S/scen/stale').read().strip()} - - --max-mutants 1000"); sys.exit(2)
++print("stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0")
++X
++cat > $S/M/tm-inventory.py <<X
++import json, os, sys
++a = sys.argv[1:]
++open("$S/calls", "a").write(f"tm-inventory {' '.join(a)}\n")
++if a[0] == "apply":
++    rec, out = a[3], a[4]
++    d = json.load(open(rec))  # the real tool reads <record> first: a missing one is FileNotFoundError, exit 1
++    side = os.path.exists(rec + ".inventory.json")
++    open("$S/calls", "a").write(f"read {rec} marker={d.get('marker')} sidecar={int(side)}\n")
++    if not os.path.exists("$S/scen/nowrite"):
++        json.dump({"head": "x", "marker": "new"}, open(out, "w")); json.dump({"record": rec}, open(out + ".inventory.json", "w"))
++    print(f"EMPTY {out}.inventory.json")
++X
++RC=0
++# run <name> <tag>: gate-train.sh <name> W br <tag>, HOME at the scratch, a fresh barrier counter and log
++run(){ rm -f $S/scen/barrier-calls; : > $S/calls; HOME=$S/home zsh $S/M/ut.sh $1 $W feature/$1 $2 > $S/out 2>&1; RC=$?; }
++T=$S/M/reviews/tm-targeted
++rec(){ print -r -- "{\"head\": \"h\", \"marker\": \"$2\"}" > $1; print -r -- '{"record": "earlier"}' > $1.inventory.json; print -r -- '{"cut": []}' > $1.ruling.json; }
++readline(){ grep '^read ' $S/calls | head -1; }
++
++# 1 the bug (pc-1g F3, et-4b 2026-11-08 13:51Z): a rerun with the same tag whose STALE record is that tag's own targeted
++#   record. gate-train moves <out> aside to <out>.old-<t0> first; tm-inventory must be fed that moved copy (the old record,
++#   its sidecar beside it), never the vanished <out> path.
++rec $T/zz-t1.json old; print $T/zz-t1.json > $S/scen/stale; rm -f $S/scen/nowrite
++run zz t1
++ok "same tag: tm-inventory reads the moved old record (<out>.old-<t0>), not the missing <out>" '[[ "$(readline)" == "read $T/zz-t1.json.old-"<->" marker=old sidecar=1" ]]'
++ok "  the inventory call itself names <out>.old-<t0> as the record and <out> as the output" 'grep -qE "^tm-inventory apply zz $W $T/zz-t1\.json\.old-[0-9]+ $T/zz-t1\.json --base [0-9a-f]{40}$" $S/calls'
++ok "  no stop: the barrier passes on the new record and the train runs" '[ $RC = 0 ] && grep -q "^chain-gate $W zz" $S/calls && grep -q "^merge-train feature/zz:$W:zz" $S/calls && [ ! -e $S/M/zz-continue-stop.final.md ] && ! grep -q "^msg" $S/calls'
++ok "  the new record is at <out>; the old one and both its sidecars sit together at <out>.old-<t0>" 'o=($T/zz-t1.json.old-<->(N)); [ ${#o} = 1 ] && [ -f $o[1].inventory.json ] && [ -f $o[1].ruling.json ] && grep -q "\"marker\": \"new\"" $T/zz-t1.json'
++
++# 2 the same rerun when the inventory writes no new record: the old record and its sidecars go back to <out> (tmback)
++rm -rf $T/*(N) $S/M/*-continue-stop.final.md(N)
++rec $T/zz-t2.json old2; print $T/zz-t2.json > $S/scen/stale; : > $S/scen/nowrite
++run zz t2
++ok "same tag, no new record: tm-inventory still read the old record" '[[ "$(readline)" == "read $T/zz-t2.json.old-"<->" marker=old2 sidecar=1" ]]'
++ok "  the old record and its sidecars are back at <out>, nothing left at .old-<t0>" 'grep -q "\"marker\": \"old2\"" $T/zz-t2.json && [ -f $T/zz-t2.json.inventory.json ] && [ -f $T/zz-t2.json.ruling.json ] && o=($T/zz-t2.json.old-*(N)) && [ ${#o} = 0 ]'
++rm -f $S/scen/nowrite
++
++# 3 a new tag (the pc-1g workaround): the STALE record is another tag's, it is read in place and never moved
++rm -rf $T/*(N) $S/M/*-continue-stop.final.md(N)
++rec $T/zz-t3.json old3; print $T/zz-t3.json > $S/scen/stale
++run zz t3b
++ok "new tag: tm-inventory reads the earlier tag's record where it is" '[ "$(readline)" = "read $T/zz-t3.json marker=old3 sidecar=1" ] && [ $RC = 0 ]'
++ok "  the earlier tag's record is not moved; the new one is written at the new tag's path" 'grep -q "\"marker\": \"old3\"" $T/zz-t3.json && o=($T/zz-t3.json.old-*(N)) && [ ${#o} = 0 ] && grep -q "\"marker\": \"new\"" $T/zz-t3b.json'
++
++# 4 a same-tag <out> that exists but is NOT the STALE record (the barrier named a tracked docs/ record): <out> still moves
++#   aside so the run cannot append to it, and tm-inventory reads the record the barrier named, unchanged
++rm -rf $T/*(N) $S/M/*-continue-stop.final.md(N)
++rec $T/zz-t4.json older; mkdir -p $W/docs/x/zz; rec $W/docs/x/zz/trust-mutants.json tracked; print docs/x/zz/trust-mutants.json > $S/scen/stale
++run zz t4
++ok "a STALE record that is not <out>: passed through unchanged" '[ "$(readline)" = "read docs/x/zz/trust-mutants.json marker=tracked sidecar=1" ] && [ $RC = 0 ]'
++rm -rf $W/docs
++
++print "gatetrain: $pass passed, $fail failed"; [ $fail = 0 ]

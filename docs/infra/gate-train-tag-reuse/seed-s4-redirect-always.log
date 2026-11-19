@@ -1,0 +1,21 @@
+# diff gate-train.sh (installed) -> seed s4-redirect-always
+26c26
+<     [ "$a[2]" = $out ] && a[2]=$out.old-$t0; fi
+---
+>     a[2]=$out.old-$t0; fi
+# zsh test-harness/gatetrain/test-gatetrain.zsh <seed copy>
+  FAIL a STALE record that is not <out>: passed through unchanged
+    --- out:
+    tm-barrier zz: rc=2 STALE docs/x/zz/trust-mutants.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.xt8S7N/M/reviews/tm-targeted/zz-t4.json.inventory.json (base b7e7f76aa) 08:10Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.xt8S7N/wt
+    tm-inventory apply zz /tmp/gatetrain-test.xt8S7N/wt /tmp/gatetrain-test.xt8S7N/M/reviews/tm-targeted/zz-t4.json.old-1795075813 /tmp/gatetrain-test.xt8S7N/M/reviews/tm-targeted/zz-t4.json --base b7
+    read /tmp/gatetrain-test.xt8S7N/M/reviews/tm-targeted/zz-t4.json.old-1795075813 marker=older sidecar=1
+    tm-inventory restore /tmp/gatetrain-test.xt8S7N/wt
+    tm-barrier zz /tmp/gatetrain-test.xt8S7N/wt
+    chain-gate /tmp/gatetrain-test.xt8S7N/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.xt8S7N/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.xt8S7N/wt
+gatetrain: 8 passed, 1 failed

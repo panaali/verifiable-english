@@ -1,0 +1,74 @@
+--- lean-cache-publish.sh	2026-10-30 04:16:38.464455353 +0000
++++ lean-cache-publish.sh.new-tmcache	2026-11-19 11:24:40.925012770 +0000
+@@ -30,6 +30,18 @@
+ # Tests only: LEAN_CACHE_KEEP, LEAN_CACHE_REPO, LEAN_CACHE_SHARE_WT, VE_LEAN_SHARE, LEAN_CACHE_OUT, LEAN_CACHE_TOKEN_FILE,
+ # LEAN_CACHE_HOLD, LEAN_CACHE_UPLOAD_FLAG, LEAN_CACHE_API, LEAN_CACHE_UPLOADS, LEAN_CACHE_LOG, LEAN_CACHE_ENTRY (skip the key computation),
+ # LEAN_CACHE_VEPUB (the public-manifest step; default zsh $M/ve-cache-publish.sh).
++# 2026-11-19 tm-cache-asset-pick (reviews/dri-decisions-20261117-tm-shard-actions-120.md item 3): KEEP THE NIGHTLY'S ASSET.
++# MEASURED: the trust-mutant nightly kept resuming its record at head 9ccbf3fdf (lean tree 4acf8387e957), whose asset this
++# script published 2026-11-12 05:26Z and deleted 2026-11-13 05:35Z (keep 5); cloud-dispatch.sh then pinned the newest asset,
++# 99 Lean files away, and every part rebuilt 1,424 Lean jobs (1,000-1,770 s). Now the asset that nightly head restores from
++# stays beside the newest $KEEP of its platform (one more at most; none when it is among them): the local pack is pruned
++# as before, but manifest.json keeps its row and url and the release keeps the asset. The head: `tm-nightly.py resume` (the
++# nightly's own rule: newest record, not complete, under 4 days old, head in the repository, not on the no-resume list)
++# of the newest test-skip/nightly/<stamp>.json with that record's own base. Its asset: lean-near.py <repo> <head> with
++# --base <that base>, this platform's manifest, the quarantine file and ACTIONS_FIRST_NEAR_K (4): the asset
++# cloud-dispatch.sh pins for that nightly's parts (exact lean tree first, then the nearest main ancestor within K).
++# No resumable record, no asset within K, or any step failing: nothing kept beyond the newest $KEEP (as before).
++# Tests only: TEST_SKIP_DIR (the nightly records; tm-nightly.py's own), LEAN_NEAR, ACTIONS_FIRST_NEAR_K, VE_CACHE_QUARANTINE.
+ M=/home/seyran/code/manage-agents; R=${LEAN_CACHE_REPO:-$HOME/code/verifiable-english}; S=${LEAN_CACHE_SHARE_WT:-$HOME/code/ve-share-main}
+ STORE=${VE_LEAN_SHARE:-$HOME/.cache/ve-lean-share}; OUT=${LEAN_CACHE_OUT:-$HOME/.cache/ve-cloud-cache}
+ TOK=${LEAN_CACHE_TOKEN_FILE:-$HOME/.ve-gh-release-token}; HOLD=${LEAN_CACHE_HOLD:-$M/CLOUD_PUSH_HOLD}; UPFLAG=${LEAN_CACHE_UPLOAD_FLAG:-$M/CLOUD_CACHE_UPLOAD}
+@@ -47,6 +59,20 @@
+ mkdir -p $OUT; exec {lk}>>$OUT/.lock
+ if [ -n "$pack" ]; then flock -w ${LEAN_CACHE_LOCK_WAIT:-1800} $lk || die "another lean-cache-publish held the lock ${LEAN_CACHE_LOCK_WAIT:-1800} s: $pack not published"
+ else flock -n $lk || { say "another lean-cache-publish runs: exiting"; exit 0; }; fi
++pin=""; TSD=${TEST_SKIP_DIR:-$M/test-skip}  # 2026-11-19 tm-cache-asset-pick (header): the nightly's asset of this platform
++pinof(){ local rec rb out h nr; local -a rs nw
++  rec=$(ls $TSD/nightly 2>/dev/null | LC_ALL=C grep -E '^[0-9]{8}T[0-9]{4}Z\.json$' | LC_ALL=C sort | tail -n 1); [ -n "$rec" ] || return 0
++  rb=$(python3 -I -c 'import json,sys; b=json.load(open(sys.argv[1])).get("base"); print(b if isinstance(b, str) else "")' $TSD/nightly/$rec 2>/dev/null)
++  [[ $rb =~ '^[0-9a-f]{40}$' ]] || return 0
++  out=$(TEST_SKIP_DIR=$TSD python3 -I $M/tm-nightly.py resume $R $rb 2>/dev/null) || return 0
++  rs=("${(@ps:\t:)out}"); h=${rs[2]}
++  [ "${rs[1]}" = $TSD/nightly/$rec ] && [[ $h =~ '^[0-9a-f]{40}$' ]] || return 0
++  nr=$(python3 -I ${LEAN_NEAR:-$M/lean-near.py} $R $h $MF ${VE_CACHE_QUARANTINE:-$M/ve-cache-quarantine.tsv} --k ${ACTIONS_FIRST_NEAR_K:-4} --base $rb 2>/dev/null) \
++    || { say "the nightly's head ${h[1,9]} ($rec) has no asset within ${ACTIONS_FIRST_NEAR_K:-4} lean trees in ${MF:t}: none kept for it"; return 0; }
++  nw=(${=nr})
++  [[ ${nw[2]} =~ "^lean-build-[0-9a-f]{12}$sfx\\.tar\\.zst\$" ]] || return 0
++  pin=${nw[2]}; say "$pin is kept beside the newest $KEEP ($plat): the nightly's head ${h[1,9]} ($rec) restores from it (lean-near n=${nw[1]})"; }
++pinof
+ if [ -n "$pack" ]; then
+   [[ $ptree =~ '^[0-9a-f]{40}$' && $pmain =~ '^[0-9a-f]{40}$' && $pentry =~ '^[0-9a-f]{64}$' ]] || die "--pack needs --main, --tree (40 hex) and --entry (64 hex)"
+   mc=$pmain; lt=$ptree; entry=$pentry; name=lean-build-${lt[1,12]}$sfx.tar.zst; A=$OUT/$name
+@@ -81,9 +107,9 @@
+ fi
+ for old in ${(f)"$(ls -t $OUT/lean-build-*$sfx.tar.zst 2>/dev/null | grep -E "/lean-build-[0-9a-f]{12}$sfx\.tar\.zst\$" | tail -n +$((KEEP + 1)))"}; do
+   rm -f $old $old.sha256 $old.list $old.json; say "local pack ${old:t} removed (keep $KEEP $plat)"; done
+-manifest(){ python3 -I - $MF $plat "$@" <<'PY'
++manifest(){ python3 -I - $MF $plat "$pin" "$@" <<'PY'
+ import json, sys, time, os
+-path, plat, name, sha, size, main, tree, entry, url = sys.argv[1:10]
++path, plat, pin, name, sha, size, main, tree, entry, url = sys.argv[1:11]
+ try:
+     m = json.load(open(path))
+ except (OSError, ValueError):
+@@ -96,7 +122,8 @@
+ if url:
+     a.update(url=url, uploaded_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+ here = {f for f in os.listdir(os.path.dirname(path))}
+-m["assets"] = [x for x in m["assets"] if x["name"] in here or x.get("url")][:6]
++m["assets"] = [x for x in m["assets"] if x["name"] in here or x.get("url")]
++m["assets"] = m["assets"][:6] + [x for x in m["assets"][6:] if pin and x["name"] == pin]  # tm-cache-asset-pick: the nightly's
+ json.dump(m, open(path + ".new", "w"), indent=1); os.replace(path + ".new", path)
+ PY
+ }
+@@ -149,7 +176,8 @@
+ import json,re,sys
+ a=[x for x in json.load(open(sys.argv[1])) if re.fullmatch("lean-build-[0-9a-f]{12}" + re.escape(sys.argv[3]) + r"\.tar\.zst", x["name"])]
+ a.sort(key=lambda x: x["created_at"], reverse=True)
+-for x in a[int(sys.argv[2]):]: print(x["id"], x["name"])' $tmp/assets.json $KEEP "$sfx")"})
++for x in a[int(sys.argv[2]):]:
++    if x["name"] != sys.argv[4]: print(x["id"], x["name"])' $tmp/assets.json $KEEP "$sfx" "$pin")"})  # tm-cache-asset-pick: never the nightly's
+   if (( $#old )); then
+     # 2026-10-28 dri-tmshard: both manifests drop them first; delete only once the public manifest in force does not list them
+     mdrop ${old#* } || { rm -rf $tmp; die "dropping ${old#* } from manifest.json failed: nothing deleted"; }
