@@ -56,6 +56,8 @@ manifest that is left. It reads the heredoc from the file and runs it with lean-
   - test-cloudplumb.zsh: 187 passed, 8 failed on both, with the same 8 FAIL lines. All 8 are cloud-overflow.sh pool-order
     cases that already fail on the live scripts; none is in its lean-cache-publish.sh section.
   - cloud-dispatch.sh has no `.new`, so its tests were not rerun. Case (1) runs its live pick.
+- **Selected VE tests** (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on 89d4ad6df5, which adds only
+  this directory): exit 0, "recorded 185 units …; 0 failed" (ran on the VM, 1,280 s).
 
 ## Seeded bugs (seed_run.py; seeds.log, seeded-bugs.json): 6 of 6 caught
 Each seed was planted in a temporary copy of the staged file
