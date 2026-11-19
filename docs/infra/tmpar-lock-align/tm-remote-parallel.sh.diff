@@ -1,0 +1,52 @@
+--- /home/seyran/code/manage-agents/tm-remote-parallel.sh	2026-11-10 21:04:11.556045015 +0000
++++ /home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw	2026-11-19 11:01:43.801817243 +0000
+@@ -36,7 +36,14 @@
+ # parents kept: real directories only, never through a symlink). The helper's output is used only when it names, per part, the
+ # part or its copy $T/m/K-part-K.json; else the parts as they are (the merge refuses). The guard
+ # counter skips "#" lines and counts only lines after the last "# reset" line (a reset after a fix).
+-# Test hooks: TMPAR_UNSTAMP (the helper), TM_REMOTE_PARALLEL_FLAG, CLOUD2_RUN, REMOTE_HOSTS_SH, TMPAR_PROBE (`<cmd> <host>` prints the health line and
++# 2026-11-19 tmpar-lock-align (reviews/tm-shard-fallback-overwrite-20261113.md; DRI decider R21 catch-up): a part run on the Mac
++# (the Mac slot, or the part fallback order) records the Mac's lean/checkers.lock digest, so trust_mutants --merge refused "the
++# parts disagree on inputs" as it did in tm-shard.sh merge. After tm-unstamp.py the parts now go through tools-local/tm-lock-align.py
++# (the same call as tm-shard.sh merge: REPO = the worktree, HEAD = its HEAD at the start): a part that differs ONLY in that digest
++# is merged as its copy $T/norm/part-K.norm.json (the digest set to the committed file's, the "lean" aggregate recomputed from
++# HEAD's bytes); any other difference, or a helper failure or path that is not the part or that copy: the parts as they are (the
++# merge refuses, as before). A refused merge also keeps lockalign.err; the merged line names the aligned copies.
++# Test hooks: TMPAR_UNSTAMP (the helper), TMPAR_LOCK_ALIGN (tm-lock-align.py), TM_REMOTE_PARALLEL_FLAG, CLOUD2_RUN, REMOTE_HOSTS_SH, TMPAR_PROBE (`<cmd> <host>` prints the health line and
+ # nproc), TMPAR_MAC_PROBE (prints the Mac's loadavg), TMPAR_MPT (mac-pytest.sh), TMPAR_TOOL (trust_mutants command),
+ # TMPAR_SPM_CMD, TMPAR_MSG, CLOUD_JOBS_DIR, MAC_PYTEST_LOG, MAC_LAST_FLAG.
+ M=/home/seyran/code/manage-agents
+@@ -215,6 +222,15 @@
+ uok=1; (( ${#mp} == N )) || uok=""; [ -n "$uok" ] && for k in {1..$N}; do [[ ${mp[$k]} == ($T/part-$k.json|$T/m/$k-part-$k.json) ]] || uok=""; done
+ [ -n "$uok" ] || { print -r -- "tm-unstamp gave ${#mp} paths for $N parts, not each part or its unstamped copy: the parts as they are" >> $T/unstamp.err; mp=($T/part-{1..$N}.json); }
+ sed 's/^/  /' $T/unstamp.err >&2
++# 2026-11-19 tmpar-lock-align (header): a part (the Mac's) whose inputs differ from the others' ONLY in lean/checkers.lock's digest
++# (and the "lean" aggregate it feeds) goes to the merge as $T/norm/part-K.norm.json, made by tools-local/tm-lock-align.py exactly
++# as tm-shard.sh merge does; any other difference, a helper failure or a printed path that is not the part or that copy: the
++# parts as they are (the merge refuses, as before).
++la=(${(f)"$(${=TMPAR_LOCK_ALIGN:-python3 -I $M/tools-local/tm-lock-align.py} $T/norm $w $head $mp 2> $T/lockalign.err)"})
++lok=1; (( ${#la} == N )) || lok=""; [ -n "$lok" ] && for k in {1..$N}; do [[ ${la[$k]} == (${mp[$k]}|$T/norm/part-$k.norm.json) ]] || lok=""; done
++if [ -n "$lok" ]; then mp=($la); else print -r -- "tm-lock-align gave ${#la} paths for $N parts, not each part or its $T/norm/part-K.norm.json: the parts as they are" >> $T/lockalign.err; fi
++ln=(${(M)mp:#$T/norm/part-<->.norm.json}); ln=(${ln:t})
++sed 's/^/  /' $T/lockalign.err >&2
+ ( cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH timeout -k 10 900 ${=TMPAR_TOOL:-uv run python tools/trust_mutants.py} --merge $T/merged.json $mp > $T/merge.out 2>&1 ); mrc=$?
+ keeprefused(){  # a refused merge keeps its inputs for the next diagnosis (header, 2026-11-10): no remote leftovers needed
+   # (challenge B1: never through a symlink; prune only real directories named <parent> directly in tmpar-refused/)
+@@ -225,7 +241,7 @@
+     else print -r -- "part $k: $x over $cap bytes: not kept" >> $R/skipped.txt; fi
+     # the record as fetched (with cloud2-run.sh's stamp) when the merge read an unstamped copy (challenge C7)
+     [ "$x" != $T/part-$k.json ] && [ -f $T/part-$k.json ] && (( $(stat -c %s $T/part-$k.json) <= cap )) && gzip -n -c $T/part-$k.json > $R/part-$k.fetched.json.gz 2>/dev/null; done
+-  for x in $T/part-*.where $T/merge.out $T/unstamp.err; do [ -f $x ] && (( $(stat -c %s $x) <= cap )) && cp $x $R/ 2>/dev/null; done
++  for x in $T/part-*.where $T/merge.out $T/unstamp.err $T/lockalign.err; do [ -f $x ] && (( $(stat -c %s $x) <= cap )) && cp $x $R/ 2>/dev/null; done
+   print -r -- "$parent ${w:t} head $head exit $mrc; merge inputs part-K.json.gz (K = shard k; part-K.fetched.json.gz = as fetched, stamped); $(date -u +%FT%TZ)" > $R/README
+   old=($D/*.tmpar-*(N/om[$(( ${TMPAR_REFUSED_KEEP:-40} + 1 )),-1])); for x in $old; do [[ ${x:h} == $D && ! -L $x ]] && rm -rf -- $x; done
+   dec "$parent: the refused merge's inputs kept in ${R#$M/}"; }
+@@ -235,7 +251,7 @@
+ [ -n "$tmjson" ] && { mkdir -p ${tmjson:h}; cp $T/merged.json $tmjson.tmpar-new && mv $tmjson.tmpar-new $tmjson; }
+ cat $T/merge.out
+ wall=$(( $(date +%s) - t0 ))
+-dec "$parent: merged $N parts (exit $mrc) in $(( wall / 60 )) min; predicted serial ${pred} min; part-hours $(printf '%.2f' $(( ${cost:-0} / 3600.0 ))) h, serial estimate $(( ${est:-0} / 60 )) min, ratio ${ratio:-?}"
++dec "$parent: merged $N parts (exit $mrc) in $(( wall / 60 )) min; predicted serial ${pred} min; part-hours $(printf '%.2f' $(( ${cost:-0} / 3600.0 ))) h, serial estimate $(( ${est:-0} / 60 )) min, ratio ${ratio:-?}${ln:+; lean/checkers.lock digest aligned (tm-lock-align): ${(j:, :)ln}}"
+ jrow merged $mrc
+ [ -n "$ratio" ] && (( ratio > 1.5 )) && gcount "part-hours ${ratio}x the serial estimate (> 1.5)"
+ wl=(); for k in {1..$N}; do wl+=("$k:$(<$T/part-$k.where)"); done

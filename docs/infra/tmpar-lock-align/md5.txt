@@ -1,0 +1,5 @@
+4b32fe1bfde08b7142b9e85a7e2dd5ba  tm-remote-parallel.sh
+1a551b17098e602aaa53d30e528a997c  tm-remote-parallel.sh.new-tmparw
+2100c97648b00de8c568865703d3101c  tools-local/test_tmpar_lock_align.py.new-tmparw
+fd5628e6492099652e589c1ef1d91cc1  tools-local/tm-lock-align.py
+dc47d6ee8f93e1abcd5cd842bb026fa7  tools-local/tm-unstamp.py
