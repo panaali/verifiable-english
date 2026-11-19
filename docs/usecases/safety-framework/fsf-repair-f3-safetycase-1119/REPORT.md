@@ -9,7 +9,7 @@ Open: the reads-1119 counter (R16 C5) is not the installed counter, so I could n
 Base: main f5553bc894 (merged in at e9f70b1e95; built on d8758ce968). This item merges at its branch's final HEAD on
 that base (see "Merge commit").
 
-SIZE: 3 product, 64 tests, about 150 other hand-written lines. Counted with `git diff --numstat` against the merge
+SIZE: 3 product, 64 tests, 170 other hand-written lines. Counted with `git diff --numstat` against the merge
 base: vocabulary.py +3/-1, the new test file +64, plus DELTA.md and this REPORT. Generated or recorded outputs are not
 counted.
 
