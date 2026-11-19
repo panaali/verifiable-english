@@ -1,0 +1,10 @@
+# seeded: replace <<case $x in --json|--jobs|--deadline|--budget) i=$((i+2))>> with <<case $x in --json|--jobs|--deadline) i=$((i+2))>> in verdict-sample.sh.new-vsw
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL deadline: from the cloud record, not the job's --budget 4532/--deadline: one --budget = ceil(2 x tm_s 3205.3 x cloud jobs 4 / 6) = 4274
+  FAIL deadline: another cloud wall (tm_s 1500) sizes another deadline (2000)
+  FAIL deadline: the factor k (VS_REF_K 3) scales it (6411)
+  FAIL deadline: no tm_s in the job record: the cloud JSON's seconds (900 -> 1200)
+  FAIL deadline: a floor VS_REF_MIN_S (900) for a very short cloud run (100 -> 133)
+  FAIL deadline: no cloud run time at all: the fixed VS_REF_BUDGET (21600)
+  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+comparators: 45 passed, 8 failed
