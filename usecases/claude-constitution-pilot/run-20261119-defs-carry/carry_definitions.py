@@ -2,11 +2,12 @@
 """defs-repair-claude-constitution-pilot-1119: run-20261104T0716Z's probe with the source's definitions in its legends.
 
     uv run python usecases/claude-constitution-pilot/run-20261119-defs-carry/carry_definitions.py
-    uv run python usecases/claude-constitution-pilot/run-20261119-defs-carry/carry_definitions.py --point-status
+    uv run python usecases/claude-constitution-pilot/run-20261119-defs-carry/point_status.py
 
 The run of 20261104T0716Z stays as it was recorded (DRI decision 2026-11-19,
 reviews/dri-decisions-20261119-defs-repair-claude-constitution-pilot-1119.md item 1). This script imports that run's
-`migrate_soft.py` and `measure.py` unchanged. It points their outputs at this directory and adds one rewrite rule:
+`migrate_soft.py` unchanged (`point_status.py` imports its `measure.py`), points its outputs at this directory and
+adds one rewrite rule:
 
 7. The legend of each of 15 terms a rule uses carries the source's own definition of the term, word for word,
    appended to the legend's description (`carry_definitions`). Each passage is cut from the pinned body: it starts
@@ -14,13 +15,12 @@ reviews/dri-decisions-20261119-defs-repair-claude-constitution-pilot-1119.md ite
 
 The first command writes `probe-translation.probe.md` the way `migrate_soft.main` does. It runs rules 1 to 7, gives
 the candidate identities, runs SC-8's search and writes `answers/search.json`, `answers/meaning-ids.json` and
-`changed_units.json`. The second command runs only `measure.py`'s `point-status-c9` steps (after, strict) on this
+`changed_units.json`. The second runs only `measure.py`'s `point-status-c9` steps (after, strict) on this
 probe. The run's whole-translation steps (check, coverage, readings) are not run here (L70).
 """
 from __future__ import annotations
 
 import copy
-import json
 import re
 import sys
 from pathlib import Path
@@ -28,7 +28,6 @@ from pathlib import Path
 RUN = Path(__file__).resolve().parent
 OLD = RUN.parent / "run-20261104T0716Z"
 sys.path.insert(0, str(OLD))
-import measure  # noqa: E402
 import migrate_soft  # noqa: E402
 
 PROBE = RUN / "probe-translation.probe.md"
@@ -112,25 +111,12 @@ def rewrite(meta):
 
 
 def here():
-    """Point the old run's scripts at this directory and its rewrite at `rewrite`."""
+    """Point the old run's `migrate_soft.py` at this directory and its rewrite at `rewrite`."""
     migrate_soft.RUN, migrate_soft.PROBE, migrate_soft.rewrite = RUN, PROBE, rewrite
-    measure.ANSWERS = RUN / "answers"
-
-
-def point_status():
-    """`measure.py --only point-status-c9` on this probe: its after and strict steps, nothing else."""
-    here()
-    record = measure.ANSWERS / "measurements.json"
-    if not record.exists():
-        record.write_text(json.dumps({"steps": []}) + "\n")
-    measure.main(("point-status-c9",))
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] == ["--point-status"]:
-        point_status()
-    elif sys.argv[1:]:
+    if sys.argv[1:]:
         sys.exit(__doc__)
-    else:
-        here()
-        migrate_soft.main()
+    here()
+    migrate_soft.main()

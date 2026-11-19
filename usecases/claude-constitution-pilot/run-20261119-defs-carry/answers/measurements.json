@@ -1,0 +1,45 @@
+{
+ "translation": "76922d6c:usecases/claude-constitution-pilot/run-20261010T1800Z/translation.ve.md",
+ "steps": [
+  {
+   "document": "after",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     91.10888671875,
+     72.86865234375,
+     54.1845703125
+    ],
+    "cpus": 32,
+    "mem_available_kb": 70937872
+   },
+   "memory_limit": "systemd MemoryMax=16G",
+   "wall_s": 36.69,
+   "cpu_s": 65.9,
+   "max_rss_kb": 179980,
+   "stderr_last_line": "",
+   "commit": "8446661c5e606bd238910208ea48800f93b0d3d1"
+  },
+  {
+   "document": "strict",
+   "step": "point-status-c9",
+   "returncode": 0,
+   "host_at_start": {
+    "loadavg": [
+     92.732421875,
+     75.3017578125,
+     55.6904296875
+    ],
+    "cpus": 32,
+    "mem_available_kb": 67298992
+   },
+   "memory_limit": "systemd MemoryMax=16G",
+   "wall_s": 32.55,
+   "cpu_s": 58.6,
+   "max_rss_kb": 188244,
+   "stderr_last_line": "",
+   "commit": "8446661c5e606bd238910208ea48800f93b0d3d1"
+  }
+ ]
+}
