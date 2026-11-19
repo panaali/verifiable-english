@@ -3,8 +3,8 @@
 
 Inputs (all read-only): the audit's candidate rows (rows-<doc>.tsv, one line per row) and two of its pages
 (udhr-pilot.md for the rowless finding D7, claude-constitution-pilot.md for that page's rule numbers R1-R19), a copy of
-which is committed under tests/data/defs_carried/audit/; the VE repository at the audit's pin; and the FSF/RSP repair
-branches (their legend or code appends name the predicate and the source passage of each repair).
+which is committed under tests/data/defs_carried/audit/; the VE repository at the audit's pin; and the FSF/RSP repairs
+at the commits REPAIRS pins (their legend or code appends name the predicate and the source passage of each repair).
 
 Mechanical only. Each row becomes one case per (rule, term): wildcards (`R5b.*`), ranges (`R14.1-R14.3`), "all 49",
 `claims.ve:5` and the pilot's R<n> are resolved against the pin; the term is the row's carrier key when the pin declares
@@ -14,6 +14,7 @@ least 3 words that the source holds are cut from the source verbatim, adjacent r
 and the change listed in the fixture's `recut` list. Nothing here judges meaning.
 
 Usage: python3 tools/defs_carried_known.py --audit DIR --repo VE_REPO [--pin 3d6b459df4] --out FILE
+       python3 tools/defs_carried_known.py --audit DIR --repo VE_REPO --resolve-branches   (refresh aid; prints only)
 """
 from __future__ import annotations
 
@@ -30,17 +31,31 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import defs_carried as dc  # noqa: E402
 
-PIN = '3d6b459df4'
-REPAIRS = [   # (case id, branch, document): the 9 FSF/RSP repair rows the design lists (F1-F3, F5-F9, R1)
-    ('F1', 'feature/fsf-repair-f1-leveldefs-1119', 'safety-framework'),
-    ('F2', 'feature/fsf-repair-f2-glossary-1119', 'safety-framework'),
-    ('F3', 'feature/fsf-repair-f3-safetycase-1119', 'safety-framework'),
-    ('F5', 'feature/fsf-repair-f5-lowrisk-1119', 'safety-framework'),
-    ('F6', 'feature/fsf-repair-f6-sl2plus-1119', 'safety-framework'),
-    ('F7', 'feature/fsf-repair-f7-govadequacy-1119', 'safety-framework'),
-    ('F8', 'feature/fsf-repair-f8-disclosure-1119', 'safety-framework'),
-    ('F9', 'feature/fsf-repair-f9-mcca-1119', 'safety-framework'),
-    ('R1', 'feature/rsp-repair-r1-catastrophic-1119', 'anthropic-rsp'),
+PIN = '3d6b459df40163909537f000b23fbf61c3bc0d48'   # 3d6b459df4, the audit's pin, as a full commit id
+# The 9 FSF/RSP repair rows the design lists (F1-F3, F5-F9, R1): (case id, branch, document, tip, base, merge). The
+# tip, base and merge are full commit ids, pinned when the fixture was built (`--resolve-branches` prints how the branches
+# resolve today, for a deliberate refresh). A rebuild reads only these commits: never a branch name and never `main`, so
+# it gives the same fixture after main moves, after a repair merges and after a branch is deleted.
+REPAIRS = [
+    ('F1', 'feature/fsf-repair-f1-leveldefs-1119', 'safety-framework',
+     'e09136236176238629c5cab0d59af83a70a85919', 'd8758ce96837db7780caddb9f498e36fd7f511ba', None),
+    ('F2', 'feature/fsf-repair-f2-glossary-1119', 'safety-framework',
+     '74b5259fba1c4f393b495bab911e6a12c7cfdfd3', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1', None),
+    ('F3', 'feature/fsf-repair-f3-safetycase-1119', 'safety-framework',
+     '1ad3fe3cb7941be5a485d071784ed59a1517a4dd', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
+    ('F5', 'feature/fsf-repair-f5-lowrisk-1119', 'safety-framework',
+     'd16497ac4126ecba0dd65a4bff4e563bd65f539a', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1',
+     '53de6068d728a11fb3d89dc3bc001a51ef8cbe8c'),
+    ('F6', 'feature/fsf-repair-f6-sl2plus-1119', 'safety-framework',
+     '127fc87d0413dca3354bc8d3cedbad400127849c', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1', None),
+    ('F7', 'feature/fsf-repair-f7-govadequacy-1119', 'safety-framework',
+     'ed5e3852019e846ab011745bacbeba9a6e2b3ebe', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
+    ('F8', 'feature/fsf-repair-f8-disclosure-1119', 'safety-framework',
+     'c5781618bc9668c22495d878fffce0d092d7eaa2', 'd8758ce96837db7780caddb9f498e36fd7f511ba', None),
+    ('F9', 'feature/fsf-repair-f9-mcca-1119', 'safety-framework',
+     '236d3366e88e8b3836591b63be86cae522a2babc', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
+    ('R1', 'feature/rsp-repair-r1-catastrophic-1119', 'anthropic-rsp',
+     'f7a6e5f7545e5fb5b369c9ba445339bb32b5b634', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
 ]
 MIN_RUN = 3          # words: a shorter run shared with the source is not a cut (a wrapper's "Rule 1" is not a quote)
 MIN_REPAIR_RUN = 10  # words: a repair append's source passage (a shorter shared run is a label or a citation)
@@ -284,7 +299,21 @@ def d7_cases(page, doc):
 
 
 # ----------------------------------------------------------------------------------------------- FSF / RSP repairs ---
-def repair_base(repo, branch):
+def repair_commits(repo, rid):
+    """(base, tip, merge) of a repair: the pinned commits of REPAIRS, each checked to exist; no ref is resolved."""
+    for r, _branch, _doc, tip, base, merge in REPAIRS:
+        if r == rid:
+            for c in (tip, base, merge):
+                if c is not None and subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', f'{c}^{{commit}}'],
+                                                    capture_output=True).returncode != 0:
+                    raise SystemExit(f'{rid}: pinned commit {c} is not in {repo}')
+            return base, tip, merge
+    raise SystemExit(f'unknown repair {rid!r}')
+
+
+def branch_commits(repo, branch):
+    """(base, tip, merge) as the branch resolves against main TODAY: the tip, and the first-parent merge's parent when
+    the tip is merged, else the merge base. A refresh aid only (`--resolve-branches`); build() never calls it."""
     tip = git(repo, 'rev-parse', branch)
     merged = subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', tip, 'main']).returncode == 0
     if merged:
@@ -327,7 +356,7 @@ def _source_runs(added, src_tokens, pos, min_run, gap=3):
 
 
 def repair_cases(repo, rid, branch, docname, src_text):
-    base, tip, merge = repair_base(repo, branch)
+    base, tip, merge = repair_commits(repo, rid)
     case = dc.DOCS[docname]['case']
     st = raw_tokens(src_text)
     pos = {}
@@ -459,7 +488,7 @@ def build(audit, repo, pin, src_override=None):
                       'passages': [{'file': next(iter(udoc.sources)), 'text': d7_passage}], 'tree': 'pin'})
     trees['pin']['docs'].add('udhr-pilot')
     repairs = []
-    for rid, branch, docname in REPAIRS:
+    for rid, branch, docname, *_pinned in REPAIRS:
         case = dc.DOCS[docname]['case']
         ps = json.loads(git(repo, 'show', f'{pin}:usecases/pinned_sources.json'))['sources'][case]
         src = Path((src_override or {}).get(case) or (Path.home() / ps['path'])).read_text(encoding='utf-8')
@@ -510,8 +539,18 @@ def main(argv=None):
     ap.add_argument('--audit', required=True)
     ap.add_argument('--repo', required=True)
     ap.add_argument('--pin', default=PIN)
-    ap.add_argument('--out', required=True)
+    ap.add_argument('--out')
+    ap.add_argument('--resolve-branches', action='store_true',
+                    help='print how each repair branch resolves against main today next to its pinned commits, and exit')
     a = ap.parse_args(argv)
+    if a.resolve_branches:
+        for rid, branch, _doc, tip, base, merge in REPAIRS:
+            now = branch_commits(a.repo, branch)
+            print(f'{rid} {branch}: pinned base {base} tip {tip} merge {merge}; today base {now[0]} tip {now[1]} '
+                  f'merge {now[2]}{"" if now == (base, tip, merge) else "  (DIFFERS)"}')
+        return 0
+    if not a.out:
+        ap.error('--out is required')
     data = build(a.audit, a.repo, a.pin)
     Path(a.out).write_text(json.dumps(data, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
     c = data['counts']

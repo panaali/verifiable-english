@@ -101,6 +101,45 @@ def test_the_known_case_fixture_counts_and_rows():
     assert all(k["passages"] and all(p["text"] for p in k["passages"]) for k in FIXTURE["cases"])
 
 
+def test_the_builder_pins_every_commit_the_fixture_records():
+    """Review F3: the fixture builder's pins are exactly the commits the fixture records (the audit pin, and each
+    repair's tip, base and merge, as full commit ids), so a rebuild reads the same commits."""
+    import defs_carried_known as dk
+    full = lambda c: c is None or (len(c) == 40 and all(x in "0123456789abcdef" for x in c))  # noqa: E731
+    assert dk.PIN == FIXTURE["pin"] == FIXTURE["trees"]["pin"]["commit"] and full(dk.PIN)
+    pinned = {rid: (tip, base, merge) for rid, _branch, _doc, tip, base, merge in dk.REPAIRS}
+    assert pinned == {r["id"]: (r["tip"], r["base"], r["merge"]) for r in FIXTURE["repairs"]}
+    assert all(full(c) for t in pinned.values() for c in t)
+    assert {rid: t[1] for rid, t in pinned.items()} == {
+        tid[len("base-"):]: t["commit"] for tid, t in FIXTURE["trees"].items() if tid.startswith("base-")}
+
+
+def test_a_rebuild_resolves_no_branch_and_no_main(monkeypatch):
+    """Review F3, the class: the builder's repair commits come from its pins; it names no branch and no `main` to git
+    (a moving ref would give other commits after main moves, and fail once a branch is deleted). build() reaches the
+    branch resolver nowhere: it is a refresh aid behind --resolve-branches."""
+    import defs_carried_known as dk
+    calls = []
+
+    def fake_run(args, **_kw):
+        calls.append(list(args))
+        return subprocess.CompletedProcess(args, 0, "", "")
+    monkeypatch.setattr(dk.subprocess, "run", fake_run)
+    monkeypatch.setattr(dk, "git", lambda repo, *a: calls.append(list(a)) or "")
+    pins = set()
+    for rid, branch, _doc, tip, base, merge in dk.REPAIRS:
+        assert dk.repair_commits("/nonexistent", rid) == (base, tip, merge)
+        pins |= {tip, base, merge} - {None}
+    branches = {b for _r, b, *_ in dk.REPAIRS}
+    named = {a for call in calls for a in call}
+    assert not named & (branches | {"main", "HEAD"}), named & (branches | {"main", "HEAD"})
+    assert {a.split("^")[0] for a in named if "^{commit}" in a} == pins
+    src = ast.parse(Path(dk.__file__).read_text(encoding="utf-8"))
+    for fn in (n for n in src.body if isinstance(n, ast.FunctionDef) and n.name in ("build", "repair_cases")):
+        used = {getattr(x, "id", None) for x in ast.walk(fn)} | {getattr(x, "value", None) for x in ast.walk(fn)}
+        assert not used & {"branch_commits", "main"}, fn.name
+
+
 def test_every_passage_is_verbatim_source_text_at_its_tree():
     """A quote is the source as written or a re-cut of it: every non-FSF passage occurs in the document's source at
     the pin (under source_norm), and every re-cut is listed with what it dropped."""
@@ -304,23 +343,116 @@ def test_malformed_inputs_never_crash_and_never_pass(bad):
         assert rep["known"][0]["verdict"] not in dc.PASSING
 
 
-def test_every_use_case_is_checked_or_named_out_of_scope():
-    """A new document under usecases/ fails here until it gets an adapter (DOCS) or an out-of-scope reason."""
-    dirs = {p.name for p in (ROOT / "usecases").iterdir() if p.is_dir() and not p.name.startswith(("_", "."))}
-    assert dirs == set(dc.DOCS) | set(dc.OUT_OF_SCOPE)
+def test_the_scope_lists_are_disjoint_and_complete_as_named():
+    """Every use case the tool names is either checked (an adapter in DOCS) or out of scope with a reason, never both."""
+    scoped = {dc.DOCS[n]["dir"].split("/")[1] for n in dc.DOCS}
+    assert not scoped & set(dc.OUT_OF_SCOPE)
+    assert all(isinstance(why, str) and why for why in dc.OUT_OF_SCOPE.values())
     assert len(dc.DOCS) == 15 and len(dc.OUT_OF_SCOPE) == 5
 
 
+def test_a_new_use_case_is_reported_never_failed(tmp_path):
+    """Review F1: a use case with no adapter and no out-of-scope reason is listed in the report and printed, and the tool
+    still exits 0 (report mode); no test reads the live usecases/ directory, so a later item that adds one is not
+    blocked. Every tree kind lists it the same way."""
+    files = {"usecases/zz-probe/README.md": "x\n", "usecases/asimov-laws/rules.ve": "Rule 1. x.\n",
+             "usecases/agent-policy/README.md": "x\n", "usecases/_shared/a.md": "x\n"}
+    assert dc.unscoped_use_cases(dc.MemTree(files)) == ["zz-probe"]
+    _tiny_checkout(tmp_path)
+    for path, text in files.items():
+        (tmp_path / path).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / path).write_text(text, encoding="utf-8")
+    assert dc.unscoped_use_cases(dc.FsTree(tmp_path)) == ["zz-probe"]
+    out = tmp_path / "rep.json"
+    r = subprocess.run([sys.executable, "-I", str(ROOT / "tools" / "defs_carried.py"), "--root", str(tmp_path),
+                        "--doc", "asimov-laws", "--no-known", "--json", str(out)],
+                       capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert r.returncode == 0, r.stderr
+    assert json.loads(out.read_text(encoding="utf-8"))["unscoped_use_cases"] == ["zz-probe"]
+    assert "unscoped use cases" in r.stdout and "zz-probe" in r.stdout and "exit 0" in r.stdout
+
+
+def test_no_test_here_reads_the_live_use_case_tree():
+    """Review F1, the class: a test whose outcome depends on the moving usecases/ directory would block later items.
+    Every tree a test here reads is pinned (fixture blobs), in memory, or under tmp_path: no FsTree(ROOT), no
+    ROOT / "usecases", and every select_documents call passes its tree."""
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    bad = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            name = getattr(node.func, "attr", getattr(node.func, "id", None))
+            if name == "FsTree" and any(isinstance(a, ast.Name) and a.id == "ROOT" for a in node.args):
+                bad.append((node.lineno, "FsTree(ROOT)"))
+            if name == "select_documents" and len(node.args) < 2 and not any(k.arg == "tree" for k in node.keywords):
+                bad.append((node.lineno, "select_documents without a tree"))
+        if (isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div) and isinstance(node.left, ast.Name)
+                and node.left.id == "ROOT" and isinstance(node.right, ast.Constant) and node.right.value == "usecases"):
+            bad.append((node.lineno, 'ROOT / "usecases"'))
+    assert bad == []
+
+
 # ------------------------------------------------------------------------------------------------------- selection ---
+PIN_TREE_FILES = FIXTURE["trees"]["pin"]["files"]
+
+
 def test_selection_shared_input_selects_every_reader():
     """Codex B11: an edit to a shared input selects every document that reads it; the checker, the pinned counter code
-    and the known-case fixture select all."""
-    assert dc.select_documents(["usecases/asimov-laws/source.md"]) == ["asimov-extended", "asimov-laws"]
-    assert dc.select_documents(["usecases/asimov-extended/rules.ve"]) == ["asimov-extended"]
+    and the known-case fixture select all. Read at the pin (fixture blobs), not the live tree."""
+    pin = dc.MemTree(PIN_TREE_FILES, key="blobs:pin", repo=ROOT)
+    assert dc.select_documents(["usecases/asimov-laws/source.md"], pin) == ["asimov-extended", "asimov-laws"]
+    assert dc.select_documents(["usecases/asimov-extended/rules.ve"], pin) == ["asimov-extended"]
     for p in dc.SELECT_ALL:
-        assert dc.select_documents([p]) == sorted(dc.DOCS)
-    assert dc.select_documents(["docs/unrelated.md"]) == []
-    assert "eligibility" in dc.select_documents(["usecases/eligibility/source/wfp-print.txt"])
+        assert dc.select_documents([p], pin) == sorted(dc.DOCS)
+    assert dc.select_documents(["docs/unrelated.md"], pin) == []
+    assert "eligibility" in dc.select_documents(["usecases/eligibility/source/wfp-print.txt"], pin)
+
+
+# ------------------------------------------------------------------------------------------------- rule references ---
+@pytest.mark.parametrize("name", ["asimov-laws", "asimov-extended"])
+def test_a_multi_rule_header_puts_every_named_rule_on_the_path(name):
+    """Review F2: "Rule 10 (exception to rules 8, 9)" puts R8 and R9 (and, through them, R2 and R1) on R10's path, so
+    R9's terms (harms_humanity, has_lawful_option) are in R10's dependency list. Read at the pin (fixture blobs)."""
+    r10 = dc.build_doc(name, dc.MemTree(PIN_TREE_FILES, key="blobs:pin", repo=ROOT)).rules["R10"]
+    assert r10["parsed"] and r10["refs"] == ["R8", "R9"] and r10["path"] == ["R8", "R9", "R2", "R1"]
+    assert {"harms_humanity", "has_lawful_option", "breaks_first_law", "breaks_zeroth_law"} <= set(r10["terms"])
+
+
+@pytest.mark.parametrize("refs", [(1,), (8, 9), (2, 3, 4), (11, 2, 30, 4)])
+def test_rule_header_refs_read_every_header_ve_renders(refs):
+    """The class of F2: every header VE's own renderer writes (one, two, three or four rules; commas and "and") is read
+    back with all its rules, by the same grammar VE parses it with."""
+    from ve.surface.softnorms import render_header_options
+    line = "Rule 12" + render_header_options(refs, ()) + ". Every action may be performed."
+    assert dc.rule_header_refs(line) == [f"R{n}" for n in refs]
+
+
+@pytest.mark.parametrize("header", ["(exception to rules 8, 9, and 10)", "(exception to rules 8 9)",
+                                    "(see rule 3)", "(exception to rule 8", "(exception to rules 8,9)",
+                                    "(exception to rules 08)"])
+def test_a_header_the_grammar_does_not_read_is_unparsed_never_short(header):
+    """A header VE's grammar does not read leaves the rule UNPARSED (dependencies unknown, the full declared-term set
+    printed), never parsed with some of its references dropped."""
+    line = f"Rule 10 {header}. Every robot is classified as \"careful\"."
+    refs = dc.rule_header_refs(line)
+    assert refs is None
+    files = {"usecases/asimov-laws/environment.json": json.dumps(ENV),
+             "usecases/asimov-laws/rules.ve": 'Rule 8. Every robot is classified as "careful".\n' + line + "\n"}
+    doc = dc.build_doc("asimov-laws", dc.MemTree(files))
+    assert doc.rules["R10"]["parsed"] is False and doc.rules["R8"]["parsed"] is True
+    rep = dc.run_document("asimov-laws", dc.MemTree(files), known=[])
+    assert [u["rule"] for u in rep["unparsed"]] == ["R10"]
+
+
+def test_a_precedence_sentence_puts_its_target_on_the_path():
+    """'Rule 3 takes precedence over rule 1.' is a rule reference in VE's grammar (as norm_english reads it): R1 joins
+    R3's path; the sentence is not a second R3."""
+    files = {"usecases/asimov-laws/environment.json": json.dumps(ENV),
+             "usecases/asimov-laws/rules.ve": 'Rule 1. Every robot is classified as "careful".\n'
+                                              "Rule 3. Every action may be performed.\n"
+                                              "Rule 3 takes precedence over rule 1.\n"}
+    doc = dc.build_doc("asimov-laws", dc.MemTree(files))
+    assert doc.rules["R3"]["refs"] == ["R1"] and doc.rules["R3"]["path"] == ["R1"]
+    assert "careful" in doc.rules["R3"]["terms"] and doc.rules["R3"]["text"] == "Rule 3. Every action may be performed."
 
 
 def test_unparsed_rules_print_the_full_set_and_candidates():
