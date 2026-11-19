@@ -79,7 +79,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-speed-b5/](docs__test-speed-b5.md) — 2 modules — -
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
 - [docs/translim/](docs__translim.md) — 4 modules — -
-- [docs/usecases/](docs__usecases.md) — 1 modules — -
+- [docs/usecases/](docs__usecases.md) — 2 modules — -
 - [docs/weighing/](docs__weighing.md) — 1 modules — -
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
@@ -140,14 +140,14 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 89 modules — -
-- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 85 modules — -
 - [tests/ part 4](tests--part-4.md) — 81 modules — -
 - [tests/ part 5](tests--part-5.md) — 89 modules — -
-- [tests/ part 6](tests--part-6.md) — 78 modules — -
+- [tests/ part 6](tests--part-6.md) — 79 modules — -
 - [tests/ part 7](tests--part-7.md) — 81 modules — -
-- [tests/ part 8](tests--part-8.md) — 88 modules — -
-- [tests/ part 9](tests--part-9.md) — 6 modules — -
+- [tests/ part 8](tests--part-8.md) — 87 modules — -
+- [tests/ part 9](tests--part-9.md) — 17 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 95 modules — -
 - [tools/ part 2](tools--part-2.md) — 24 modules — -
@@ -155,7 +155,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 71 modules — -
+- [usecases/](usecases.md) — 73 modules — -
 - [ve/](ve.md) — 84 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.

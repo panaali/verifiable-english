@@ -1,3 +1,11 @@
+- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
+- `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
+- `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
+- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
+- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
+- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
+- `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
+- `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
 - `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
 - `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
 - `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
@@ -79,11 +87,3 @@
 - `tests/test_pinned_sources.py` — usecases/pinned_sources.json, tools/fetch_pinned_sources.py, the test helper tests/pinned_source.py and the gate's seeding of its fresh home (item actions-pinn…
 - `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
-- `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
-- `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
-- `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
-- `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
-- `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
-- `tests/test_presupposition_rule_ob.py` — ps-2ab-rule-firstob: `admit`'s rule check names the rule's first obligation, else none (ps-2ac review F2).
-- `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
-- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.

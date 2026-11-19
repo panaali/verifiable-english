@@ -1,0 +1,28 @@
+== size
+== dispatch
+== dispatch under queue pressure (dri-advfix8: shard-room.py, room = cap - busy - reserve)
+== dispatch on codex (2026-10-28 dri-tmshardon)
+== measured cost per mutant, --rescore on Actions (2026-10-30 dri-improve, L143)
+== first sweep and the 120-min Actions cancel (2026-10-31 dri-improve, L151)
+  FAIL own heavy reading over the hard limit (400 x 216 at 4 parts ~6,500 s): NMAX waived only as far as needed, 5 parts ~5,120 s
+    2026-11-19T09:40:21Z tm-shard: it-b96acf91: 400 mutants to run on actions -> 6 parts (~4418 s each; <= 18 mutants per part; room 8: cap 8 - busy 0 - reserve 0 for 0 arrivals/h; reserve and NMAX waived to 6 parts: ~5100 s per part at most, Actions cancels at 120 min; measured 216 slot-s per mutant (item); part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: none read)
+    2026-11-19T09:40:22Z tm-shard: it-b96acf91: 6 parts dispatched; cloud-pull.sh merges them into /tmp/tmshard-test.SRC6m4/jobs/it-b96acf91/trust-mutants.json
+  FAIL the hard NMAX caps a waiver at cap 8 (2000 mutants)
+    2026-11-19T10:00:24Z tm-shard: it: 2000 mutants need ~5800 s per part in 8 parts (room 8: cap 8 - busy 0 - reserve 0 for 0 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80); part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: none read) on actions, which cancels a job at 120 min: not sent (VM path); TM_FIT_ROOM: claude-cloud: claude-cloud off (no CLAUDE_CLOUD_POOL); codex: codex off (Codex week 83% >= 47%); queue: no, Actions room not forecast within 20 min (~none min: 2 runners short, busy 0, 0 arrivals/h)
+== state and merge
+== cloud-pull.sh: parents and parts
+== cloud-overflow.sh: the flag picks tm-shard.sh; parents are not pool jobs
+== eff-tm-partial (2026-10-31): Actions parts get --budget (flag TM_PART_DEADLINE); a partial part is no result
+  FAIL P4 the caller's own --budget: no second one
+    2026-11-19T10:00:35Z tm-shard: it-ebe522a8: 338 mutants to run on actions -> 3 parts (~1534 s each; <= 153 mutants per part; room 8: cap 8 - busy 0 - reserve 0 for 0 arrivals/h; part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: none read; each part --budget 6300 s (a partial record before the cancel))
+    2026-11-19T10:00:36Z tm-shard: it-ebe522a8: 3 parts dispatched; cloud-pull.sh merges them into /tmp/tmshard-test.SRC6m4/jobs/it-ebe522a8/trust-mutants.json
+  FAIL P5 the caller's own --deadline: no --budget
+    2026-11-19T10:00:36Z tm-shard: it-ebe522a8: 338 mutants to run on actions -> 3 parts (~1534 s each; <= 153 mutants per part; room 8: cap 8 - busy 0 - reserve 0 for 0 arrivals/h; part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: none read; each part --budget 6300 s (a partial record before the cancel))
+    2026-11-19T10:00:37Z tm-shard: it-ebe522a8: 3 parts dispatched; cloud-pull.sh merges them into /tmp/tmshard-test.SRC6m4/jobs/it-ebe522a8/trust-mutants.json
+== shard-room.py: a sharded gate leg counts only its shards with no result (2026-11-02 shard-room-busy-stale)
+== tm-spm.py: own readings last 96 h, a cancelled whole job is a lower bound (2026-11-02 dri-improve, L168)
+== a --test path under lean/, and a no-count names its reason (2026-11-03 tm-test-path-lean-rel)
+== fit room (actions-select-fit-room; flag TM_FIT_ROOM; real cloud-overflow.sh offer, stub picker and pace)
+== ccloud heavy sizing (ccloud-heavy-sizing: cloud-overflow.sh sends a sweep straight to claude-cloud; Actions' reading sizes it)
+== codex before the VM (vm-offload-1108: flag TM_CODEX_VMLOAD; claude-cloud refuses for its line; fake 5-min load and pools; real cloud-overflow.sh offer)
+tmshard: 145 passed, 4 failed
