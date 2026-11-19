@@ -764,8 +764,10 @@ def build_doc(name, tree):
         if d['kind'] == 'predicate' and t not in used and 'description' in d['fields']:
             doc.unshown.append((f'unused-predicate:{t}.description', d['fields']['description']))
     doc.unshown_norm = [(lab, source_norm(t)) for lab, t in doc.unshown if t]
+    doc.unshown_tokens = {lab: ' ' + ' '.join(tokens(t)) + ' ' for lab, t in doc.unshown_norm}
     for r in doc.rules.values():
         r['shown_norm'] = [(lab, source_norm(t)) for lab, t in r['shown'] if t]
+        r['shown_tokens'] = {lab: ' ' + ' '.join(tokens(t)) + ' ' for lab, t in r['shown_norm']}
     return doc
 
 
@@ -774,7 +776,7 @@ MARKER_RE = re.compile(
     r'means|meaning|defined|definition|refers? to|includes?|does not include|excludes?|for the purposes? of|'
     r'in this (?:Act|Part|Schedule|regulation|section|document)|by "|by “|we (?:call|use|mean)|what we call|i\.e\.|'
     r'that is,|known as|\(([A-Z]{2,})\)|has the meaning|construed|treated as|counts? as|qualif', re.I)
-LEAD_RE = re.compile(r'^\s*(?:\d+\.\s+)?\*\*([^*]+?)\*\*\s*:|^\s*(?:[-*]\s+)?([A-Z][A-Za-z’\'\- ]{1,60}):\s+\S')
+LEAD_RE = re.compile(r'^\s*(?:[-*]\s+|\d+\.\s+)?\*\*([^*]+?):?\*\*\s*:?\s|^\s*(?:[-*]\s+)?([A-Z][A-Za-z’\'\- ]{1,60}):\s+\S')
 MARKER_VERSION = 'amendment-2 + bold/numbered lead-ins + table rows (r3)'
 
 
@@ -812,37 +814,40 @@ def marker_grep(path, text):
 
 
 def defined_phrases(passage, marker):
-    """Candidate defined phrases of a passage: quoted or bold phrases, a lead-in label, acronyms in parentheses, and the
-    words just before the marker."""
-    out = []
+    """Candidate defined phrases of a passage: quoted or bold phrases, a lead-in label, all-caps acronyms in
+    parentheses, a table row's first cell, and (at least two content words) the words just before a marker other
+    than 'qualif...' (that marker is printed as a hit; the word it starts names no defined phrase by itself)."""
+    marked = []
     for m in re.finditer(r'[“"]([^”"]{2,80})[”"]', passage):
-        out.append(m.group(1))
-    out += re.findall(r'\*\*([^*]{2,80})\*\*', passage)
-    out += re.findall(r'\(([A-Z][A-Za-z0-9/&\-]{1,12})\)', passage)
+        marked.append(m.group(1))
+    marked += re.findall(r'\*\*([^*]{2,80})\*\*', passage)
+    marked += re.findall(r'\(([A-Z][A-Z0-9/&\-]{1,12})\)', passage)
     lm = LEAD_RE.match(passage)
     if lm:
-        out.append(lm.group(1) or lm.group(2))
+        marked.append(lm.group(1) or lm.group(2))
+    if marker == 'table-row':
+        cells = [c.strip() for c in passage.strip('|').split('|')]
+        if cells and cells[0]:
+            marked.append(cells[0])
+    guessed = []
     if marker not in ('table-row', 'lead-in'):
         m = re.search(re.escape(marker), passage, re.I)
-        if m:
+        if m and not marker.lower().startswith('qualif'):
             before = re.split(r'[,;:.()“”"]', passage[:m.start()])[-1]
             ws = [w for w in re.findall(r"[A-Za-z0-9’'\-]+", before)][-4:]
             while ws and ws[0].lower() in STOP:
                 ws.pop(0)
             if ws:
-                out.append(' '.join(ws))
-    if marker == 'table-row':
-        cells = [c.strip() for c in passage.strip('|').split('|')]
-        if cells and cells[0]:
-            out.append(cells[0])
+                guessed.append(' '.join(ws))
     res = []
-    for p in out:
+    for p, need in [(x, 1) for x in marked] + [(x, 2) for x in guessed]:
         toks = [fold(t) for t in tokens(source_norm(p))]
         while toks and toks[-1] in STOP:
             toks.pop()
         while toks and toks[0] in STOP:
             toks.pop(0)
-        if toks and any(len(t) >= 3 and t not in STOP for t in toks) and len(toks) <= 8 and toks not in res:
+        content = [t for t in toks if len(t) >= 3 and t not in STOP]
+        if len(content) >= need and len(toks) <= 8 and toks not in res:
             res.append(toks)
     return res
 
@@ -871,17 +876,55 @@ def _contains(hay, needle):
     return n > 0 and any(hay[i:i + n] == needle for i in range(len(hay) - n + 1))
 
 
-def lexical_match(idx, phrase):
-    """Detector (c), aliases off: every (term, rule, where) whose text holds the phrase's tokens contiguously. A
-    one-token phrase matches names and acronyms only (a single common word in a legend is not a hit)."""
+def lexical_match(idx, phrase, single_word_legends=True):
+    """Detector (c), aliases off: every (term, rule, where) whose text holds the phrase's tokens contiguously (tokens
+    plural-folded). With single_word_legends False a one-word phrase matches names only: the marker grep's guessed
+    one-word phrases ("claim", "person") would otherwise hit most legends of a document."""
     hits = []
-    single = len(phrase) == 1
+    single = len(phrase) == 1 and not single_word_legends
     for term, rid, where, toks in idx:
         if single and where != 'name':
             continue
         if _contains(toks, phrase):
             hits.append((term, rid, where))
+        elif where == 'name' and len(toks) >= 2 and _contains(phrase, toks):
+            hits.append((term, rid, 'name-in-phrase'))
     return hits
+
+
+def phrase_tokens(p):
+    return [fold(t) for t in tokens(source_norm(p))]
+
+
+def lexical_recall(doc, cases):
+    """The section 5 bar on known cases: per (entry, term), whether a phrase of the entry occurs as tokens in the term's
+    identifier or legend, or a multi-word identifier occurs in the phrase (eligible), and whether detector (c) links the entry to the term. Pairs with no such phrase
+    can be found only through an alias (aliases are off): they are listed."""
+    idx = lexical_index(doc)
+    seen, out = set(), []
+    for k in cases:
+        t = k.get('term')
+        if not t or t not in doc.declared or not k.get('phrases'):
+            continue
+        key = (k.get('row') or k['case'], t)
+        if key in seen:
+            continue
+        seen.add(key)
+        texts = [[fold(x) for x in split_ident(t)]] + [
+            [fold(x) for x in tokens(source_norm(v))] for f, v in doc.declared[t]['fields'].items()
+            if f in ('description', 'verbalisation') or f.startswith(('factors', 'verbalisation'))]
+        eligible = found = False
+        for ph in k['phrases']:
+            pt = phrase_tokens(ph)
+            if not pt:
+                continue
+            if any(_contains(x, pt) for x in texts) or (len(texts[0]) >= 2 and _contains(pt, texts[0])):
+                eligible = True
+            if any(term == t for term, _r, _w in lexical_match(idx, pt)):
+                found = True
+        out.append({'doc': doc.name, 'entry': key[0], 'term': t, 'phrases': k['phrases'], 'eligible': eligible,
+                    'found': found})
+    return out
 
 
 # -------------------------------------------------------------------------------------------------------- verdicts ---
@@ -912,16 +955,21 @@ def verdict(doc, rule, passage):
         else:
             out['verdict'] = 'CARRIED-ASSUMED'
         return out
+    # Off the rule's surface the passage counts as present when its words occur whole and in order (punctuation
+    # ignored): the diagnosis is ELSEWHERE or UNSHOWN, never a pass. On the surface only CARRIED passes.
+    qj = ' ' + ' '.join(qt) + ' '
+    if qt and any(qj in ' ' + ' '.join(tokens(txt)) + ' ' for _l, txt in rule['shown_norm']):
+        out['where'] = 'words whole on the rule surface, punctuation differs'
     own = {lab for lab, _t in rule['shown_norm']}
     for rid, r in doc.rules.items():
         if rid == rule['id']:
             continue
         for lab, txt in r['shown_norm']:
-            if q and lab not in own and q in txt:
+            if qt and lab not in own and qj in r['shown_tokens'][lab]:
                 out['verdict'], out['where'] = 'ELSEWHERE', f'{rid}:{lab}'
                 return out
     for lab, txt in doc.unshown_norm:
-        if q and q in txt:
+        if qt and qj in doc.unshown_tokens[lab]:
             out['verdict'], out['where'] = 'UNSHOWN', lab
             return out
     cl = _clauses(q)
@@ -974,7 +1022,7 @@ def auto_inventory(doc):
             phrases = defined_phrases(h['passage'], h['marker'])
             links = []
             for ph in phrases:
-                for term, rid, where in lexical_match(idx, ph):
+                for term, rid, where in lexical_match(idx, ph, single_word_legends=False):
                     links.append({'phrase': ' '.join(ph), 'term': term, 'rule': rid, 'where': where})
             e = dict(h, id=f'M{len(entries) + 1}', phrases=[' '.join(p) for p in phrases], links=links)
             entries.append(e)
@@ -1043,7 +1091,8 @@ def _count(it):
 
 def summary_text(rep):
     lines = [f'{rep["doc"]} ({rep["format"]}): {rep["rules"]} rules, {rep["declared_terms"]} declared terms; '
-             f'{rep["visibility"]}' + ('' if rep['visibility'] == 'COUNTED' else f' (assumed surface: {rep["surface"]})')]
+             f'{rep["visibility"]}' + ('' if rep['visibility'] == 'COUNTED' else
+                                       ' (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)')]
     if rep['problems']:
         lines.append('  problems: ' + '; '.join(f'{c} {p}' for c, p in rep['problems']))
     if rep['unparsed']:
@@ -1060,8 +1109,12 @@ def summary_text(rep):
         for x in k:
             if not x['hit']:
                 lines.append(f'    MISS {x["case"]} {x["rule"]} {x["term"]}: {x["verdict"]}, reach {x["reach"]}')
-    lines.append(f'  marker hits {rep["marker_hits"]} ({rep["unlinked_marker_hits"]} link no term); pairs '
-                 f'{len(rep["pairs"])}: ' + ', '.join(f'{v} {n}' for v, n in sorted(rep['pairs_by_verdict'].items())))
+    if rep['visibility'] == 'COUNTED':
+        lines.append(f'  marker grep not run: coverage {rep["coverage"]}; max prompt lower bound '
+                     f'{rep["max_prompt_bytes_lower_bound"]} bytes (ARG_LIMIT {ARG_LIMIT})')
+    else:
+        lines.append(f'  marker hits {rep["marker_hits"]} ({rep["unlinked_marker_hits"]} link no term); pairs '
+                     f'{len(rep["pairs"])}: ' + ', '.join(f'{v} {n}' for v, n in sorted(rep['pairs_by_verdict'].items())))
     lines.append(f'  run time {rep["seconds"]} s')
     return '\n'.join(lines)
 
@@ -1079,10 +1132,13 @@ def select_documents(paths, tree=None, docs=None):
     if any(p in SELECT_ALL for p in paths):
         return sorted(docs)
     tree = tree or FsTree(ROOT)
+    cache = tree.__dict__.setdefault('_select_reads', {})
     out = set()
     for name in docs:
-        doc = build_doc(name, tree)
-        reads = set(doc.inputs) | set(doc.sources) | {DOCS[name]['dir']}
+        if name not in cache:
+            doc = build_doc(name, tree)
+            cache[name] = set(doc.inputs) | set(doc.sources) | {DOCS[name]['dir']}
+        reads = cache[name]
         for p in paths:
             if p in reads or any(p.startswith(r.rstrip('/') + '/') for r in reads if r == DOCS[name]['dir']):
                 out.add(name)
@@ -1117,6 +1173,16 @@ def run(tree, names, known):
                                      for x in allk if not x['hit']]},
         'documents': reps, 'seconds': round(time.perf_counter() - t0, 3),
     }
+
+
+def lexical_recall_trees(fixture, repo=None):
+    out = []
+    for tid, t in fixture['trees'].items():
+        tree = MemTree(t['files'], key=f'blobs:{tid}', repo=repo)
+        for name in t['docs']:
+            cases = [k for k in fixture['cases'] if k['tree'] == tid and k['doc'] == name]
+            out += lexical_recall(build_doc(name, tree), cases)
+    return out
 
 
 def main(argv=None):
