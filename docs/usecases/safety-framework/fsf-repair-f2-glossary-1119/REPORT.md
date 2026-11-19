@@ -1,6 +1,10 @@
 # fsf-repair-f2-glossary-1119: REPORT
 
-No DRI-reserved signature; no DELTA row (see "DELTA" below).
+- Status: built; selected run done, its two failures fixed by regeneration and rerun green; full gate left to the chain.
+- Merges at VE main f5553bc894 (merge commit 8ef8bdfdf1 on this branch; the final HEAD is this REPORT's commit).
+- Change: five FSF legends (assessed, secured, residual_assessed, within_levels, frontier) quote their Glossary definition.
+- Open items: none. Prompt-size counter reads-1119 not installed on main (see "Prompt size").
+- DRI signature needed: none; no DELTA row (see "Trust, DELTA, size").
 
 Row F2 of reviews/pathf-q3/flag-analysis-1119/compare-report.md (manage-agents): the FSF Glossary defines four
 terms the case asks to be required (Critical Capability Assessments, Security Mitigations, Residual Risk Assessments,
@@ -9,7 +13,8 @@ Frontier AI Models), and the legends that carry them did not hold the definition
 
 ## Base
 
-Branched at VE main d8758ce968; main merged at 3d6b459df4 (four infra commits, none under usecases/ or tests/). The
+Branched at VE main d8758ce968; main merged at 3d6b459df4 and then f5553bc894 (infra commits only; `git diff
+--name-only HEAD...main` named nothing under usecases/, tests/data/ or conformance/english-lean/). The
 task's plan commit 7cbec4b340b8 is the local `origin/main` ref, not an ancestor of main; `usecases/safety-framework/`
 vocabulary.py and environment.d1.json are identical at 7cbec4b340b8 and at d8758ce968, so the condition test fails
 at both (checked at d8758ce968: 6 failed, 1 passed). The final merge commit is named in the builder's final reply.
@@ -87,7 +92,7 @@ No Lean or Rust product code changed.
 - DELTA: none. No verdict, diagnostic or checker output changes (results.json answers unchanged); the item adds
   source text to five legends and removes nothing but the "(Glossary definition)" placeholder, which the definition
   replaces. The precedent 7227dfad90 (same kind of append) had no DELTA row.
-- SIZE: 14 product (vocabulary.py), 83 tests, about 95 other hand-written lines (this REPORT).
+- SIZE: 14 product (vocabulary.py), 83 tests, 162 other hand-written lines (this REPORT).
 
 ## Prompt size
 
@@ -110,3 +115,48 @@ Row F2's analysts count 13 answers that clear on this row alone (CCA 10, SECM 2,
 ## Next item
 
 None: every deliverable of row F2 is delivered.
+
+## Test runs (commands and logs)
+
+- Condition test at the base: `environment.d1.json` restored from d8758ce968, `uv run pytest -q
+  tests/test_fsf_repair_f2_glossary_1119.py`: "6 failed, 1 passed"; at HEAD: "7 passed".
+- Seeded bugs: each run as `uv run pytest -q tests/test_fsf_repair_f2_glossary_1119.py [tests/test_safety_framework.py
+  -k "glossary or legend or f20 or environment"]`; failing ids in the table above.
+- Selected run (`mac-pytest.sh --select -- --base 3d6b459df4 --run`, VM, 3011 s, tree 0da522db66): 57 units,
+  2 failed: `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` and
+  `tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded`, both artifacts that hash the FSF
+  environment and that this change made stale (not in main-known-red.txt). Regenerated (commit 7eb0068d96); the two
+  ids rerun: "2 passed"; the consumers of the changed route row (`mac-pytest.sh -- -q
+  tests/test_english_statement_blocks.py::test_each_route_fixture_through_the_service tests/test_route_row_schemas.py`,
+  ve-mac-1, HEAD 7eb0068d clean): "33 passed".
+- `tools/select_tests.py --base $(git merge-base HEAD main)` (plan only) selects 76 test files, not every unit,
+  including `tests/test_fsf_repair_f2_glossary_1119.py`, `tests/test_safety_framework.py`,
+  `tests/test_english_lean_lexicon.py` and `tests/test_english_statement_blocks.py`.
+
+## Spec re-read
+
+- Legend 1a against the pinned text line 18 and the task's 1a: same words; apostrophe normalised.
+- Legend 1b against line 19 and 1b: same words.
+- Legend 1c (both predicates) against line 20 and 1c: same words.
+- Legend 1d against line 18: the entry's two definition sentences; apostrophe normalised.
+- CARRIER GUARD (converge-AB.md section 0) against each carrier: all five are predicate legends used by blocks of
+  rules.d1.ve (`grep` of each predicate's wording in rules.d1.ve: assessed 2, secured 2, frontier 1, within_levels 3;
+  f7-rra uses residual_assessed).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained Lean answers: N.A., no relayed answer or schema changed.
+2. Deliverables built, no rule broken: PASS, 1a-1d and 2 in "Delivered"; `test_the_legend_quotes_the_pinned_glossary_sentence[*]`.
+3. Tests and gates can fail: PASS, seeded bugs s1-s6 and the base run (6 failed).
+4. Python, Lean and Rust agree: N.A., no decision path changed; results.json answers unchanged (`run.py`: 257/262, as committed before).
+5. R8 binding: N.A., no relay.
+6. Gate evidence matches final HEAD: PASS, the full gate is the chain's on the final HEAD; the selected run's failures were regenerated and rerun (Test runs).
+7. No unsigned item: PASS, no DELTA row, no SIGNED cell.
+8. Every user-visible change in DELTA: PASS, the checker's outputs do not change (results.json verdicts unchanged); the legend text is the use case's own content, as in 7227dfad90.
+9. Test selection finds the tests: PASS, `tools/select_tests.py` plan (Test runs); seeded bugs s1-s6 fail `tests/test_fsf_repair_f2_glossary_1119.py`, which it selects.
+10. Lean statements: N.A., no Lean change.
+11. Budgets fail closed: N.A., no evaluator or limit.
+12. No CPU or memory regression: N.A., legend text only (955 bytes).
+13. Test-removed trailers: N.A., no test removed or renamed.
+14. Both directions, cited evidence, spec re-read: PASS, accept side (7 passed at HEAD), refuse side (s1-s6, base run); citations in "Test runs"; "Spec re-read" above.
+15. Overclaim, silent cut, checks can fail, limits: PASS, no deliverable cut; every new test broken by a seeded bug (s1-s6); limits N.A.
