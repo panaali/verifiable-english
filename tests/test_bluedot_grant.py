@@ -279,6 +279,15 @@ def _without_quoted_source(text):
     return re.sub(r'"([^"]+)"', lambda m: " " if m.group(1) in source else m.group(0), text)
 
 
+def test_only_a_verbatim_source_quote_leaves_the_grounding_check():
+    carried = 'OLD; "OLD text is copied from FORM-EDITS-2026-09-21.md, the current form text."'
+    assert _without_quoted_source(carried).split() == ["OLD;"]
+    # Kept: a quote source.md does not have, or has only in another case; unquoted words always stay.
+    for kept in ('VEX; "VEX is presented as invented"', 'OLD; "old text is copied from FORM-EDITS-2026-09-21.md"'):
+        assert _without_quoted_source(kept) == kept
+    assert _without_quoted_source('OLD; "OLD text is copied from" extra').split() == ["OLD;", "extra"]
+
+
 def test_no_invented_content(doc, vocabulary):
     causal = load_document(ROOT / "causal.ve.md")
     causal_vocabulary = causal["environment"].to_dict()["vocabulary"]
