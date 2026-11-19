@@ -222,10 +222,12 @@ def carrier_keys(row, doc):
 
 def row_phrases(term_col):
     """Defined phrases of a row's term column: the text outside parentheses, split on ' / ', ';' and ', '."""
-    text = re.sub(r'\([^)]*\)', ' ', term_col)
+    text = term_col
+    while re.search(r'\([^()]*\)', text):
+        text = re.sub(r'\([^()]*\)', ' ', text)
     out = []
     for p in re.split(r'\s/\s|;|,', text):
-        p = p.strip()
+        p = re.sub(r'\s+', ' ', p.replace('(', ' ').replace(')', ' ')).strip()
         if p and p not in out:
             out.append(p)
     return out
@@ -366,6 +368,16 @@ def repair_cases(repo, rid, branch, docname, src_text):
     return {'id': rid, 'branch': branch, 'tip': tip, 'base': base, 'merge': merge}, out
 
 
+def _lead_phrases(passage):
+    """A repair passage's defined phrases: its lead-in label ("Safety Cases: are ...") and acronyms in parentheses."""
+    out = []
+    m = re.match(r'\W*([^:.;]{2,60}?)\s*:', passage)
+    if m and len(m.group(1).split()) <= 6:
+        out.append(m.group(1).strip(' "“”*'))
+    out += [a for a in re.findall(r'\(([A-Z][A-Z0-9+]{1,8})\)', passage) if a not in out]
+    return out
+
+
 def _in_tokens(passage, text):
     """Whether the passage's words occur contiguously in text (a quote the legend already held before the repair)."""
     p = [t for t, _a, _b in raw_tokens(passage)]
@@ -457,7 +469,7 @@ def build(audit, repo, pin, src_override=None):
         doc = doc_at(docname, btree)
         tid = f'base-{rid}'
         trees[tid] = {'commit': info['base'], 'docs': {docname}}
-        for f in found:
+        for n, f in enumerate(found, 1):
             term = f['term']
             if f.get('rule'):
                 rules = [f['rule']]
@@ -466,10 +478,11 @@ def build(audit, repo, pin, src_override=None):
             else:
                 rules = [r for r, x in doc.rules.items() if term in x['terms']]
             for r in rules:
-                cases.append({'case': f'{rid}:{r}:{term}', 'row': info['branch'].split('/')[-1], 'doc': docname,
+                cases.append({'case': f'{rid}:{r}:{term}:p{n}', 'row': info['branch'].split('/')[-1], 'doc': docname,
                               'prio': 'repair', 'kind': rid, 'rule': r, 'term': term,
                               'term_from': f'{f["term_kind"]} the repair appends to',
-                              'terms_listed': [term], 'phrases': [], 'audit_verdict': 'TEXT (repair row)',
+                              'terms_listed': [term], 'phrases': _lead_phrases(f['passage']),
+                              'audit_verdict': 'TEXT (repair row)',
                               'entry': f'{case} pinned source', 'passages': [{'file': f'~/{ps["path"]}',
                                                                             'text': f['passage']}], 'tree': tid})
     for tid, t in trees.items():
@@ -479,6 +492,8 @@ def build(audit, repo, pin, src_override=None):
             paths |= all_paths(doc_at(name, tr), tr)
         t['files'] = {p: {'blob': b} for p, b in tree_blobs(repo, t['commit'], paths).items()}
         t['docs'] = sorted(t['docs'])
+    ids = [c['case'] for c in cases]
+    assert len(ids) == len(set(ids)), 'case ids are not unique'
     counts = {'rows': len(rows), 'rows_P1': sum(r['prio'] == 'P1' for r in rows),
               'rows_P2': sum(r['prio'] == 'P2' for r in rows), 'repairs': len(REPAIRS), 'd7_pairs': len(d7),
               'cases': len(cases), 'known_findings': sum(r['prio'] == 'P1' for r in rows) + len(REPAIRS),

@@ -2519,7 +2519,7 @@
    "kind": "P2",
    "rule": "R19",
    "term": "breaks_first_law",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "breaks_first_law"
    ],
@@ -2745,7 +2745,7 @@
    "kind": "P2",
    "rule": "R8",
    "term": "ordered",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "ordered"
    ],
@@ -2899,7 +2899,7 @@
    "kind": "P2",
    "rule": "R9",
    "term": "breaks_first_law",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "breaks_first_law"
    ],
@@ -3075,7 +3075,7 @@
    "kind": "P2",
    "rule": "R8",
    "term": "ordered",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "ordered"
    ],
@@ -3550,7 +3550,7 @@
    "kind": "P1",
    "rule": "u003",
    "term": "old_text",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "old_text"
    ],
@@ -3575,7 +3575,7 @@
    "kind": "P1",
    "rule": "u030",
    "term": "old_text",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "old_text"
    ],
@@ -3600,7 +3600,7 @@
    "kind": "P1",
    "rule": "u032",
    "term": "old_text",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "old_text"
    ],
@@ -3625,7 +3625,7 @@
    "kind": "P1",
    "rule": "u029",
    "term": "old_text",
-   "term_from": "carrier key (the rule does not use it at the pin)",
+   "term_from": "carrier key used by the rule",
    "terms_listed": [
     "old_text"
    ],
@@ -7940,8 +7940,7 @@
     "in_care_setting"
    ],
    "phrases": [
-    "care home",
-    "limb   is a reference out of source)"
+    "care home"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:17-21",
@@ -7966,8 +7965,7 @@
     "in_care_setting"
    ],
    "phrases": [
-    "care home",
-    "limb   is a reference out of source)"
+    "care home"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:17-21",
@@ -7992,8 +7990,7 @@
     "in_care_setting"
    ],
    "phrases": [
-    "care home",
-    "limb   is a reference out of source)"
+    "care home"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:17-21",
@@ -8018,8 +8015,7 @@
     "in_care_setting"
    ],
    "phrases": [
-    "care home",
-    "limb   is a reference out of source)"
+    "care home"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:17-21",
@@ -8144,7 +8140,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8173,7 +8169,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8202,7 +8198,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8231,7 +8227,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8260,7 +8256,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8289,7 +8285,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment  )"
+    "free in-patient treatment"
    ],
    "audit_verdict": "NOT CARRIED",
    "entry": "source/uksi-2025-969-made.txt:27 -> source/uksi-2005-3360-reg2.txt:9-12",
@@ -8726,7 +8722,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -8751,7 +8747,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -8776,7 +8772,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -8801,7 +8797,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -8826,7 +8822,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -8851,7 +8847,7 @@
     "inpatient"
    ],
    "phrases": [
-    "free in-patient treatment period  )"
+    "free in-patient treatment period"
    ],
    "audit_verdict": "PARTIAL FORMALISED (optional)",
    "entry": "source/uksi-2005-3360-reg2.txt:13",
@@ -9770,7 +9766,7 @@
    "tree": "pin"
   },
   {
-   "case": "F1:levels-cbrn:cbrn_uplift_tcl",
+   "case": "F1:levels-cbrn:cbrn_uplift_tcl:p1",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9793,7 +9789,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:cbrn_uplift_tcl",
+   "case": "F1:D2D3:cbrn_uplift_tcl:p1",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9816,7 +9812,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-cbrn:cbrn_uplift_level_1",
+   "case": "F1:levels-cbrn:cbrn_uplift_level_1:p2",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9839,7 +9835,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:cbrn_uplift_level_1",
+   "case": "F1:D2D3:cbrn_uplift_level_1:p2",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9862,7 +9858,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-cyber:cyber_uplift_level_1",
+   "case": "F1:levels-cyber:cyber_uplift_level_1:p3",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9885,7 +9881,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:cyber_uplift_level_1",
+   "case": "F1:D2D3:cyber_uplift_level_1:p3",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9908,7 +9904,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-manipulation:harmful_manipulation_level_1",
+   "case": "F1:levels-manipulation:harmful_manipulation_level_1:p4",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9931,7 +9927,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:harmful_manipulation_level_1",
+   "case": "F1:D2D3:harmful_manipulation_level_1:p4",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9954,7 +9950,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-stealth:stealth_and_situational_awareness_tcl",
+   "case": "F1:levels-stealth:stealth_and_situational_awareness_tcl:p5",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -9977,7 +9973,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:stealth_and_situational_awareness_tcl",
+   "case": "F1:D2D3:stealth_and_situational_awareness_tcl:p5",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10000,7 +9996,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-ml-rd-acceleration:ml_rd_acceleration_level_1",
+   "case": "F1:levels-ml-rd-acceleration:ml_rd_acceleration_level_1:p6",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10023,7 +10019,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:ml_rd_acceleration_level_1",
+   "case": "F1:D2D3:ml_rd_acceleration_level_1:p6",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10046,7 +10042,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:levels-ml-rd-automation:ml_rd_automation_level_1",
+   "case": "F1:levels-ml-rd-automation:ml_rd_automation_level_1:p7",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10069,7 +10065,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F1:D2D3:ml_rd_automation_level_1",
+   "case": "F1:D2D3:ml_rd_automation_level_1:p7",
    "row": "fsf-repair-f1-leveldefs-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10092,7 +10088,7 @@
    "tree": "base-F1"
   },
   {
-   "case": "F2:f2:assessed",
+   "case": "F2:f2:assessed:p1",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10103,7 +10099,9 @@
    "terms_listed": [
     "assessed"
    ],
-   "phrases": [],
+   "phrases": [
+    "Critical Capability Assessments"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10115,7 +10113,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f3:assessed",
+   "case": "F2:f3:assessed:p1",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10126,7 +10124,9 @@
    "terms_listed": [
     "assessed"
    ],
-   "phrases": [],
+   "phrases": [
+    "Critical Capability Assessments"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10138,7 +10138,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f2:frontier",
+   "case": "F2:f2:frontier:p2",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10149,7 +10149,9 @@
    "terms_listed": [
     "frontier"
    ],
-   "phrases": [],
+   "phrases": [
+    "Models"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10161,7 +10163,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f7-rra:residual_assessed",
+   "case": "F2:f7-rra:residual_assessed:p3",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10184,7 +10186,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f9-sec:secured",
+   "case": "F2:f9-sec:secured:p4",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10195,7 +10197,9 @@
    "terms_listed": [
     "secured"
    ],
-   "phrases": [],
+   "phrases": [
+    "Security Mitigations"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10207,7 +10211,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f10-sec:secured",
+   "case": "F2:f10-sec:secured:p4",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10218,7 +10222,9 @@
    "terms_listed": [
     "secured"
    ],
-   "phrases": [],
+   "phrases": [
+    "Security Mitigations"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10230,7 +10236,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f20-within-strict:within_levels",
+   "case": "F2:f20-within-strict:within_levels:p5",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10253,7 +10259,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F2:f20-within-default:within_levels",
+   "case": "F2:f20-within-default:within_levels:p5",
    "row": "fsf-repair-f2-glossary-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10276,7 +10282,7 @@
    "tree": "base-F2"
   },
   {
-   "case": "F3:f3:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F3:f3:governance_found_acceptable_with_safety_case_where_ccl_reached:p1",
    "row": "fsf-repair-f3-safetycase-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10287,7 +10293,9 @@
    "terms_listed": [
     "governance_found_acceptable_with_safety_case_where_ccl_reached"
    ],
-   "phrases": [],
+   "phrases": [
+    "Safety Cases"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10299,7 +10307,7 @@
    "tree": "base-F3"
   },
   {
-   "case": "F3:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F3:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p1",
    "row": "fsf-repair-f3-safetycase-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10310,7 +10318,9 @@
    "terms_listed": [
     "governance_found_acceptable_with_safety_case_where_ccl_reached"
    ],
-   "phrases": [],
+   "phrases": [
+    "Safety Cases"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10322,7 +10332,7 @@
    "tree": "base-F3"
   },
   {
-   "case": "F3:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F3:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p1",
    "row": "fsf-repair-f3-safetycase-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10333,7 +10343,9 @@
    "terms_listed": [
     "governance_found_acceptable_with_safety_case_where_ccl_reached"
    ],
-   "phrases": [],
+   "phrases": [
+    "Safety Cases"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10345,7 +10357,7 @@
    "tree": "base-F3"
   },
   {
-   "case": "F3:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F3:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p1",
    "row": "fsf-repair-f3-safetycase-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10356,7 +10368,9 @@
    "terms_listed": [
     "governance_found_acceptable_with_safety_case_where_ccl_reached"
    ],
-   "phrases": [],
+   "phrases": [
+    "Safety Cases"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10368,7 +10382,7 @@
    "tree": "base-F3"
   },
   {
-   "case": "F3:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F3:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p1",
    "row": "fsf-repair-f3-safetycase-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10379,7 +10393,9 @@
    "terms_listed": [
     "governance_found_acceptable_with_safety_case_where_ccl_reached"
    ],
-   "phrases": [],
+   "phrases": [
+    "Safety Cases"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10391,7 +10407,7 @@
    "tree": "base-F3"
   },
   {
-   "case": "F5:f3:low_risk",
+   "case": "F5:f3:low_risk:p1",
    "row": "fsf-repair-f5-lowrisk-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10402,7 +10418,9 @@
    "terms_listed": [
     "low_risk"
    ],
-   "phrases": [],
+   "phrases": [
+    "Low-Risk External Deployments"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10414,7 +10432,7 @@
    "tree": "base-F5"
   },
   {
-   "case": "F5:activities-low-risk:low_risk",
+   "case": "F5:activities-low-risk:low_risk:p1",
    "row": "fsf-repair-f5-lowrisk-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10425,7 +10443,9 @@
    "terms_listed": [
     "low_risk"
    ],
-   "phrases": [],
+   "phrases": [
+    "Low-Risk External Deployments"
+   ],
    "audit_verdict": "TEXT (repair row)",
    "entry": "safety-framework pinned source",
    "passages": [
@@ -10437,7 +10457,232 @@
    "tree": "base-F5"
   },
   {
-   "case": "F6:f9-acc:recommends",
+   "case": "F6:f9-acc:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "f9-acc",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:f10-acc:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "f10-acc",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:f16-ds:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "f16-ds",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:f16-ds-strict:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "f16-ds-strict",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:levels-cbrn:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "levels-cbrn",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:levels-cyber:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "levels-cyber",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:levels-manipulation:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "levels-manipulation",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:levels-ml-rd-acceleration:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "levels-ml-rd-acceleration",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:levels-ml-rd-automation:recommends:p1",
+   "row": "fsf-repair-f6-sl2plus-1119",
+   "doc": "safety-framework",
+   "prio": "repair",
+   "kind": "F6",
+   "rule": "levels-ml-rd-automation",
+   "term": "recommends",
+   "term_from": "predicate the repair appends to",
+   "terms_listed": [
+    "recommends"
+   ],
+   "phrases": [
+    "SL2"
+   ],
+   "audit_verdict": "TEXT (repair row)",
+   "entry": "safety-framework pinned source",
+   "passages": [
+    {
+     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
+    }
+   ],
+   "tree": "base-F6"
+  },
+  {
+   "case": "F6:f9-acc:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10454,220 +10699,13 @@
    "passages": [
     {
      "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:f10-acc:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "f10-acc",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:f16-ds:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "f16-ds",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:f16-ds-strict:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "f16-ds-strict",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:levels-cbrn:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "levels-cbrn",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:levels-cyber:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "levels-cyber",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:levels-manipulation:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "levels-manipulation",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:levels-ml-rd-acceleration:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "levels-ml-rd-acceleration",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:levels-ml-rd-automation:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "levels-ml-rd-automation",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
-     "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
-    }
-   ],
-   "tree": "base-F6"
-  },
-  {
-   "case": "F6:f9-acc:recommends",
-   "row": "fsf-repair-f6-sl2plus-1119",
-   "doc": "safety-framework",
-   "prio": "repair",
-   "kind": "F6",
-   "rule": "f9-acc",
-   "term": "recommends",
-   "term_from": "predicate the repair appends to",
-   "terms_listed": [
-    "recommends"
-   ],
-   "phrases": [],
-   "audit_verdict": "TEXT (repair row)",
-   "entry": "safety-framework pinned source",
-   "passages": [
-    {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
    "tree": "base-F6"
   },
   {
-   "case": "F6:f10-acc:recommends",
+   "case": "F6:f10-acc:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10690,7 +10728,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds:recommends",
+   "case": "F6:f16-ds:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10713,7 +10751,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds-strict:recommends",
+   "case": "F6:f16-ds-strict:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10736,7 +10774,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cbrn:recommends",
+   "case": "F6:levels-cbrn:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10759,7 +10797,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cyber:recommends",
+   "case": "F6:levels-cyber:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10782,7 +10820,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-manipulation:recommends",
+   "case": "F6:levels-manipulation:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10805,7 +10843,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-acceleration:recommends",
+   "case": "F6:levels-ml-rd-acceleration:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10828,7 +10866,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-automation:recommends",
+   "case": "F6:levels-ml-rd-automation:recommends:p2",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10851,7 +10889,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f9-acc:recommends",
+   "case": "F6:f9-acc:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10874,7 +10912,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f10-acc:recommends",
+   "case": "F6:f10-acc:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10897,7 +10935,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds:recommends",
+   "case": "F6:f16-ds:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10920,7 +10958,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds-strict:recommends",
+   "case": "F6:f16-ds-strict:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10943,7 +10981,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cbrn:recommends",
+   "case": "F6:levels-cbrn:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10966,7 +11004,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cyber:recommends",
+   "case": "F6:levels-cyber:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -10989,7 +11027,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-manipulation:recommends",
+   "case": "F6:levels-manipulation:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11012,7 +11050,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-acceleration:recommends",
+   "case": "F6:levels-ml-rd-acceleration:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11035,7 +11073,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-automation:recommends",
+   "case": "F6:levels-ml-rd-automation:recommends:p3",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11058,7 +11096,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f9-acc:recommends",
+   "case": "F6:f9-acc:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11081,7 +11119,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f10-acc:recommends",
+   "case": "F6:f10-acc:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11104,7 +11142,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds:recommends",
+   "case": "F6:f16-ds:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11127,7 +11165,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:f16-ds-strict:recommends",
+   "case": "F6:f16-ds-strict:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11150,7 +11188,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cbrn:recommends",
+   "case": "F6:levels-cbrn:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11173,7 +11211,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-cyber:recommends",
+   "case": "F6:levels-cyber:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11196,7 +11234,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-manipulation:recommends",
+   "case": "F6:levels-manipulation:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11219,7 +11257,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-acceleration:recommends",
+   "case": "F6:levels-ml-rd-acceleration:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11242,7 +11280,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F6:levels-ml-rd-automation:recommends",
+   "case": "F6:levels-ml-rd-automation:recommends:p4",
    "row": "fsf-repair-f6-sl2plus-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11265,7 +11303,7 @@
    "tree": "base-F6"
   },
   {
-   "case": "F7:f8:acceptable",
+   "case": "F7:f8:acceptable:p1",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11288,7 +11326,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f9-acc:acceptable",
+   "case": "F7:f9-acc:acceptable:p1",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11311,7 +11349,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f10-acc:acceptable",
+   "case": "F7:f10-acc:acceptable:p1",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11334,7 +11372,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f11-acc:acceptable",
+   "case": "F7:f11-acc:acceptable:p1",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11357,7 +11395,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f3:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F7:f3:governance_found_acceptable_with_safety_case_where_ccl_reached:p2",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11380,7 +11418,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F7:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p2",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11403,7 +11441,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F7:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p2",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11426,7 +11464,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F7:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p2",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11449,7 +11487,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached",
+   "case": "F7:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p2",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11472,7 +11510,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f9-acc:mitigates",
+   "case": "F7:f9-acc:mitigates:p3",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11495,7 +11533,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f10-acc:mitigates",
+   "case": "F7:f10-acc:mitigates:p3",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11518,7 +11556,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f11-acc:mitigates",
+   "case": "F7:f11-acc:mitigates:p3",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11541,7 +11579,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f9-acc:mitigates",
+   "case": "F7:f9-acc:mitigates:p4",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11564,7 +11602,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f10-acc:mitigates",
+   "case": "F7:f10-acc:mitigates:p4",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11587,7 +11625,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f11-acc:mitigates",
+   "case": "F7:f11-acc:mitigates:p4",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11610,7 +11648,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f9-acc:mitigates",
+   "case": "F7:f9-acc:mitigates:p5",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11633,7 +11671,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f10-acc:mitigates",
+   "case": "F7:f10-acc:mitigates:p5",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11656,7 +11694,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F7:f11-acc:mitigates",
+   "case": "F7:f11-acc:mitigates:p5",
    "row": "fsf-repair-f7-govadequacy-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11679,7 +11717,7 @@
    "tree": "base-F7"
   },
   {
-   "case": "F8:f18-frequent:frequent_review",
+   "case": "F8:f18-frequent:frequent_review:p1",
    "row": "fsf-repair-f8-disclosure-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11702,7 +11740,7 @@
    "tree": "base-F8"
   },
   {
-   "case": "F8:f19-default:shared",
+   "case": "F8:f19-default:shared:p2",
    "row": "fsf-repair-f8-disclosure-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11725,7 +11763,7 @@
    "tree": "base-F8"
   },
   {
-   "case": "F8:f18-yearly:yearly_review",
+   "case": "F8:f18-yearly:yearly_review:p3",
    "row": "fsf-repair-f8-disclosure-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11748,7 +11786,7 @@
    "tree": "base-F8"
   },
   {
-   "case": "F9:f2:assessed",
+   "case": "F9:f2:assessed:p1",
    "row": "fsf-repair-f9-mcca-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11771,7 +11809,7 @@
    "tree": "base-F9"
   },
   {
-   "case": "F9:f3:assessed",
+   "case": "F9:f3:assessed:p1",
    "row": "fsf-repair-f9-mcca-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11794,7 +11832,7 @@
    "tree": "base-F9"
   },
   {
-   "case": "F9:f5:change_assessed",
+   "case": "F9:f5:change_assessed:p2",
    "row": "fsf-repair-f9-mcca-1119",
    "doc": "safety-framework",
    "prio": "repair",
@@ -11817,7 +11855,7 @@
    "tree": "base-F9"
   },
   {
-   "case": "R1:D2D3:existential_threats",
+   "case": "R1:D2D3:existential_threats:p1",
    "row": "rsp-repair-r1-catastrophic-1119",
    "doc": "anthropic-rsp",
    "prio": "repair",
