@@ -1,3 +1,6 @@
+- `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
+- `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
+- `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
 - `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
@@ -70,16 +73,13 @@
 - `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
 - `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
 - `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
+- `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
+- `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
 - `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
+- `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…
+- `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
 - `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
+- `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
+- `tests/test_fidmech_wording.py` — fid-mech-b4: the wording generator moved into VE (plan 9), its harness mode and the actors.json matcher (plan 5.2).
 - `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
 - `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
-- `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
-- `tests/test_fol_names.py` — (no module docstring)
-- `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
-- `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
-- `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
-- `tests/test_fsf_proximity_tcl.py` — Safety-framework use case: src:4's TCL proximity commitment (row safety-framework-proximity-tcl).
-- `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
-- `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
-- `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).

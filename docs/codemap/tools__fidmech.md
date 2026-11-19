@@ -2,8 +2,15 @@
 - `tools/fidmech/__main__.py` — The fidmech command line: textcheck (the text-check report), furniture (every furniture match) and boundaries.
 - `tools/fidmech/adapters.py` — Execution adapters: one per document, the deterministic projection of a use case's answers (plan section 6).
 - `tools/fidmech/bindings.py` — Load a use case's case-to-atom tables from its frozen `fidmech/bindings.json`, with their exact Python types.
+- `tools/fidmech/fp1.py` — fp-1, the fingerprint of a case's semantic inputs and of each rule block (item 44/45), ported from manage-agents tools-local/uc-audit.py fingerprints_of (:1246…
+- `tools/fidmech/manifests.py` — The frozen blind inputs of plan 5.3 and 8 (manage-agents reviews/fid-mech-harness/inputs/): loaded by sha256, never written; the plants and real defects turned…
+- `tools/fidmech/mutants.py` — Mutant records of one document (plan 2d): structural (structural.py) and wording (wording.py), their edits, their parse status, their equivalence and the decla…
 - `tools/fidmech/records.py` — The result record of one mutant and the inputs_sha256 that binds it to everything it was computed from (plan 2e).
+- `tools/fidmech/report.py` — The fid-mech report (plan 8): kill tables, units passing the stated checks, lever-off hits, adjudication matching, plants and real defects, and the run cost, f…
+- `tools/fidmech/runner.py` — The parallel batch runner of one document (plan 7): admission, budget, resume, per-mutant K and text verdicts.
 - `tools/fidmech/segment.py` — Page-aware segmentation of a pinned source into sentences, on raw byte offsets (plan sections 2b and 3.1).
 - `tools/fidmech/sentchecks.py` — L1a, L2, L3, L4 and D, the checks against the full source sentence (plan sections 3.2-3.6): a report, never a gate.
+- `tools/fidmech/structural.py` — Structural mutants of one document's rule blocks, made on the parsed rule and written back as VE English (plan 5.1).
 - `tools/fidmech/textchecks.py` — L1, the header-quote checks per rule and fact block (plan section 3.2; L1a is fid-mech-b2's): a report, never a gate.
+- `tools/fidmech/wording.py` — Mechanical wording mutants (moved from manage-agents tools-local/wording-mutants.py, item 47: VE owns it now).
 - `tools/fidmech/worker.py` — Isolated runs of one document's mutants: a scratch tree per mutant, a long-lived worker, sentinels (plan 6).
