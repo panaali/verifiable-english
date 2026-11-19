@@ -5,8 +5,9 @@ pinned source, and the files that hash the legend are regenerated. The carrier c
 the row's FALLBACK (B's unit attribution, adding `measures-sl2plus` to the SEC answers) was **not** used.
 
 **Merge commit.** The VE text this item adds is first in commit 3cfe696a47 and was dry-run at 44100262e4. The later
-commits change only `docs/` and do not touch the rendered text. The item merges at this branch's final HEAD, on main
-d8758ce968 as its base. The train names the exact merge commit. A merge after the R16 diagnostic voids the diagnostic
+commits change only `docs/` and do not touch the rendered text. The work was built on main d8758ce968, then synced with
+main f5553bc894 (merge 5122cdbd6c). Main added only docs/infra files, so nothing rendered changed. The item merges at
+this branch's final HEAD, and the train names the exact merge commit. A merge after the R16 diagnostic voids the diagnostic
 for the touched answers, since the C2/C3 pins are per commit. The counted read re-pins at the merge commit.
 
 SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 76 tests, 149 other hand-written lines
