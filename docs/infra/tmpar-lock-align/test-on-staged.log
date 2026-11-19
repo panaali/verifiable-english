@@ -1,0 +1,16 @@
+PASS the replay inputs exist (et-4b part records, the DRI's merge, the scripts)
+PASS TMPAR_SH is zsh -n clean
+== (a) before (/home/seyran/code/manage-agents/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
+PASS (a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json
+== (b) after (/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw): the same parts, through tm-lock-align.py
+PASS (b) merged, not refused: exit = the merge's (not 86), no guard count
+PASS (b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on ve-mac-1
+PASS (b) --json = the DRI's hand merge (counts, every status, inputs): 326 KILLED, 5 SURVIVOR, 0 NOT RUN
+PASS (b) the merged line names the aligned copies part-2.norm.json, part-6.norm.json; the reason on stderr
+== (c) Mac part 2 also differs in a .lean file's digest
+PASS (c) still refused 'disagree on inputs' (exit 86), counted once, nothing at --json
+PASS (c) no aligned copy went to the merge: the kept inputs are the parts (part 2 = the Mac's own record) + lockalign.err
+== (d) the helper fails or prints a path that is not the part or its copy
+PASS (d) helper fails: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+PASS (d) helper prints other paths: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+11/11 passed

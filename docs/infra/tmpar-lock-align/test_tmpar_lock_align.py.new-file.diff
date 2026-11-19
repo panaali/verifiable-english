@@ -1,0 +1,212 @@
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ /home/seyran/code/manage-agents/tools-local/test_tmpar_lock_align.py.new-tmparw	2026-11-19 11:03:15.394697362 +0000
+@@ -0,0 +1,209 @@
++#!/usr/bin/env python3
++"""Tests for tmpar-lock-align (2026-11-19; reviews/tm-shard-fallback-overwrite-20261113.md section 2; DRI decider R21 catch-up).
++
++tm-remote-parallel.sh (TMPAR_SH, a copy may be given: the staged .new-tmparw) merges its own parts after tm-unstamp.py. A part
++run on the Mac records the Mac's lean/checkers.lock digest, and trust_mutants --merge refuses "the parts disagree on inputs".
++The fix sends the parts through tools-local/tm-lock-align.py (ALIGN) after tm-unstamp.py, as tm-shard.sh merge does.
++
++Replay of et-4b-a97072e6 through tm-remote-parallel.sh itself: the REAL part records (cloud-jobs/et-4b-a97072e6/part-1..5, part 6
++= the DRI's resumed scratch/et4b-p6/part-6r.json), the REAL tm-unstamp.py and tm-lock-align.py, and the REAL trust_mutants.py
++--merge at a97072e60 (git archive of VE_SRC, as tm-shard.sh merge does). The worktree is a --shared clone of VE_SRC with HEAD at
++a97072e60 (no checkout). One fake host with 6 free tm slots (fake cloud2-run.sh: parts 1, 3, 4, 5 come back stamped with
++"where": <host>, as cloud2-run.sh stamps them); parts 2 and 6 (Mac digest) get no result there and take the part fallback order:
++the fake mac-pytest.sh runs them "on ve-mac-1" (they were Mac runs in et-4b).
++  (a) BEFORE (TMPAR_SH_BEFORE: the install's backup when present, else the installed file): the merge is refused "the parts
++      disagree on inputs", counted once in tmpar-guard.log, nothing at --json. (The refusal the fix removes.)
++  (b) TMPAR_SH: merged (the merge's exit, not 86); --json = the DRI's hand merge scratch/et4b-p6/merged.json (counts, every
++      status, inputs: 326 KILLED, 5 SURVIVOR, 0 NOT RUN) + where "tmpar:fallback:ve-mac-1,ve-cloud-2"; the merged line in
++      cloud-overflow.log names part-2.norm.json and part-6.norm.json; no guard count; the lockalign reason on stderr.
++  (c) Mac part 2 ALSO differs in a .lean file's digest: still refused (disagree on inputs), counted, nothing at --json; the
++      refused inputs kept in cloud-jobs/tmpar-refused/<parent>/ include lockalign.err.
++  (d) the helper fails (exit 1, no output) or prints a path that is neither the part nor its $T/norm copy: the parts as they
++      are -> refused, counted; never a merge of something else.
++Scratch dirs only (mktemp); the real cloud-jobs/ and scratch/ records are only read.
++usage: python3 -I tools-local/test_tmpar_lock_align.py   (TMPAR_SH=, TMPAR_SH_BEFORE=, ALIGN=, UNSTAMP=, VE_SRC=)
++"""
++import gzip
++import json
++import os
++import shutil
++import subprocess
++import sys
++import tempfile
++
++M = "/home/seyran/code/manage-agents"
++TSH = os.path.abspath(os.environ.get("TMPAR_SH", f"{M}/tm-remote-parallel.sh"))
++_bak = f"{M}/tm-remote-parallel.sh.bak-20261119tmparw"
++BEFORE = os.path.abspath(os.environ.get("TMPAR_SH_BEFORE", _bak if os.path.exists(_bak) else f"{M}/tm-remote-parallel.sh"))
++ALIGN = os.path.abspath(os.environ.get("ALIGN", f"{M}/tools-local/tm-lock-align.py"))
++UNSTAMP = os.path.abspath(os.environ.get("UNSTAMP", f"{M}/tools-local/tm-unstamp.py"))
++VE = os.environ.get("VE_SRC", "/home/seyran/code/verifiable-english")
++HEAD = "a97072e60132d983a96f5511b6c9bfa4e84a2675"
++PARTS = {k: f"{M}/cloud-jobs/et-4b-a97072e6/part-{k}.json" for k in range(1, 6)}
++PARTS[6] = f"{M}/scratch/et4b-p6/part-6r.json"
++REF = f"{M}/scratch/et4b-p6/merged.json"
++MAC = (2, 6)  # the parts that recorded the Mac's lean/checkers.lock digest
++RESULTS = []
++
++
++def ok(name, cond, info=""):
++    RESULTS.append(bool(cond))
++    print(("PASS " if cond else "FAIL ") + name)
++    if not cond and info:
++        print("     " + info[-1500:].replace("\n", "\n     "))
++
++
++FAKE_C2 = r'''import json, os, sys
++a = sys.argv[1:]
++def val(k):
++    return a[a.index(k) + 1] if k in a else ""
++host = os.environ.get("CLOUD2_HOST") or "ve-cloud-2"
++k = int(val("--shard").split("/")[0]); js = val("--json")
++print(f"[cloud2@{host} 00:00:00Z] trust_mutants on {host} (x86_64), slot 1, commit a97072e6, setup 9s: part {k}", file=sys.stderr)
++if k in (2, 6):  # the Mac's parts: no result on the host, so the part fallback order runs them (fake mac-pytest.sh)
++    sys.exit(2)
++d = json.load(open(os.path.join(os.environ["REPLAY_DIR"], f"part-{k}.json")))
++d["where"] = host  # cloud2-run.sh's tm stamp
++json.dump(d, open(js, "w"), indent=1)
++sys.exit(1)
++'''
++
++FAKE_MPT = r'''import json, os, sys
++a = sys.argv[1:]
++def val(k):
++    return a[a.index(k) + 1] if k in a else ""
++k = int(val("--shard").split("/")[0]); js = val("--json")
++print(f"[mac-pytest 00:00:00Z] trust_mutants on ve-mac-1: part {k} (fallback order)", file=sys.stderr)
++d = json.load(open(os.path.join(os.environ["REPLAY_DIR"], f"part-{k}.json")))
++mut = os.environ.get("REPLAY_TAMPER", "")
++if mut and k == 2:
++    d["inputs"]["files"][mut] = "0" * 64
++json.dump(d, open(js, "w"), indent=1)
++sys.exit(1)
++'''
++
++RTOOL = r'''import json, os, sys
++a = sys.argv[1:]
++if "--merge" in a:
++    os.execvp("python3", ["python3", "-I", os.environ["REAL_TM"]] + a)
++if "--plan" in a:
++    print(json.dumps({"base": "b", "definitions": 9, "mutants": 5000, "to_run": 5000, "not_run": 0}))
++sys.exit(0)
++'''
++
++
++def write(p, text, mode=0o644):
++    open(p, "w").write(text)
++    os.chmod(p, mode)
++
++
++def setup():
++    d = tempfile.mkdtemp(prefix="tmparw.")
++    R = f"{d}/parts"
++    os.makedirs(R)
++    for k, p in PARTS.items():
++        shutil.copyfile(p, f"{R}/part-{k}.json")
++    w = f"{d}/ve-et-4b"
++    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", VE, w], check=True)
++    subprocess.run(["git", "-C", w, "update-ref", "--no-deref", "HEAD", HEAD], check=True)
++    X = f"{d}/vetools"
++    os.makedirs(X)
++    subprocess.run(f"git -C {VE} archive {HEAD} -- ':(glob)**/*.py' ':(glob)tools/**' | tar -x -C {X}", shell=True, check=True)
++    write(f"{d}/fakec2.py", FAKE_C2)
++    write(f"{d}/fakempt.py", FAKE_MPT)
++    write(f"{d}/mpt.zsh", f'exec python3 -I {d}/fakempt.py "$@"\n')
++    write(f"{d}/rtool.py", RTOOL)
++    write(f"{d}/rh.sh", '#!/bin/sh\necho "ve-cloud-2 f2 d2 s2"\n', 0o755)
++    write(f"{d}/probe.sh", '#!/bin/sh\necho "ok 1.0 1.0 1.0 mem=99 disk=200 tm=0/6 gate=0/2"\necho 32\n', 0o755)
++    write(f"{d}/msg.sh", f'#!/bin/sh\necho "$@" >> {d}/msgs\n', 0o755)
++    os.makedirs(f"{d}/fakebin")
++    write(f"{d}/fakebin/ssh", "#!/bin/sh\nexit 255\n", 0o755)  # never a real ssh from a test
++    return d, w, f"{X}/tools/trust_mutants.py"
++
++
++def go(d, w, real, sh, tamper="", extra=None):
++    cj = f"{d}/cj-{os.path.basename(sh)}-{tamper.replace('/', '_')}-{len(os.listdir(d))}"
++    os.makedirs(cj)
++    flag = f"{cj}/TM_REMOTE_PARALLEL"
++    write(flag, "start=2026-11-19T00:00Z\n")
++    nf = f"{d}/nonexistent"
++    e = {k: v for k, v in os.environ.items() if not k.startswith(("PICK_", "TM_", "TMPAR_", "CLOUD", "MAC_", "REMOTE_"))}
++    e.update(PATH=f"{d}/fakebin:" + os.environ["PATH"], TM_REMOTE_PARALLEL_FLAG=flag, CLOUD_JOBS_DIR=cj, REMOTE_HOSTS_SH=f"{d}/rh.sh",
++             TMPAR_PROBE=f"{d}/probe.sh", TMPAR_MAC="0", TMPAR_MPT=f"{d}/mpt.zsh", CLOUD2_RUN=f"python3 -I {d}/fakec2.py",
++             TMPAR_TOOL=f"python3 -I {d}/rtool.py", TMPAR_SPM_CMD="true", TMPAR_MSG=f"{d}/msg.sh", MAC_PYTEST_LOG=f"{cj}/mp.jsonl",
++             MAC_LAST_FLAG=nf, MAC_LAST_RESORT_FLAG=nf, REMOTE_COMBINED_CAP_FILE=nf, TMPAR_UNSTAMP=f"python3 -I {UNSTAMP}",
++             TMPAR_LOCK_ALIGN=f"python3 -I {ALIGN}", REPLAY_DIR=f"{d}/parts", REPLAY_TAMPER=tamper, REAL_TM=real, TMPDIR=d)
++    e.update(extra or {})
++    js = f"{w}/tm.json"
++    if os.path.exists(js):
++        os.remove(js)
++    r = subprocess.run(["zsh", sh, "--worktree", w, "--", "--max-mutants", "1000", "--json", js], cwd=d, env=e,
++                       capture_output=True, text=True, timeout=1800)
++    rd = lambda p: open(p).read() if os.path.exists(p) else ""
++    rec = json.load(open(js)) if os.path.exists(js) else None
++    return r, rec, rd(f"{cj}/cloud-overflow.log"), rd(f"{cj}/tmpar-guard.log").splitlines(), cj
++
++
++def statuses(rec):
++    return [m["status"] for m in rec.get("mutants", [])]
++
++
++def main():
++    missing = [p for p in list(PARTS.values()) + [REF, TSH, BEFORE, ALIGN, UNSTAMP] if not os.path.exists(p)]
++    ok("the replay inputs exist (et-4b part records, the DRI's merge, the scripts)", not missing, " ".join(missing))
++    if missing:
++        return
++    ok("TMPAR_SH is zsh -n clean", subprocess.run(["zsh", "-n", TSH]).returncode == 0, TSH)
++    ref = json.load(open(REF))
++    d, w, real = setup()
++    try:
++        print(f"== (a) before ({BEFORE}): a Mac part + remote parts, lean/checkers.lock digests differ")
++        r, rec, ov, g, _ = go(d, w, real, BEFORE)
++        ok("(a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json",
++           r.returncode == 86 and "REFUSED the 6 parts" in ov and "disagree on inputs" in r.stderr and len(g) == 1 and rec is None,
++           f"rc={r.returncode} {g} {ov[-800:]} {r.stderr[-800:]}")
++
++        print(f"== (b) after ({TSH}): the same parts, through tm-lock-align.py")
++        r, rec, ov, g, _ = go(d, w, real, TSH)
++        ok("(b) merged, not refused: exit = the merge's (not 86), no guard count",
++           r.returncode in (0, 1, 3) and "REFUSED" not in ov and "merged 6 parts" in ov and g == [],
++           f"rc={r.returncode} {g} {ov[-800:]} {r.stderr[-1500:]}")
++        ok("(b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on ve-mac-1",
++           rec is not None and rec.get("where") == "tmpar:fallback:ve-mac-1,ve-cloud-2", str(rec and rec.get("where")))
++        ok("(b) --json = the DRI's hand merge (counts, every status, inputs): 326 KILLED, 5 SURVIVOR, 0 NOT RUN",
++           rec is not None and rec.get("counts") == ref["counts"] and statuses(rec) == statuses(ref)
++           and rec.get("inputs") == ref["inputs"] and rec["counts"].get("SURVIVOR") == 5, json.dumps(rec and rec.get("counts")))
++        ok("(b) the merged line names the aligned copies part-2.norm.json, part-6.norm.json; the reason on stderr",
++           "lean/checkers.lock digest aligned (tm-lock-align): part-2.norm.json, part-6.norm.json" in ov
++           and "no_build_reads" in r.stderr, ov[-600:])
++
++        print("== (c) Mac part 2 also differs in a .lean file's digest")
++        r, rec, ov, g, cj = go(d, w, real, TSH, tamper="lean/VE/Events/RouteExamples.lean")
++        kept = f"{cj}/tmpar-refused"
++        kd = [x for x in os.listdir(kept)] if os.path.isdir(kept) else []
++        kf = set(os.listdir(f"{kept}/{kd[0]}")) if len(kd) == 1 else set()
++        ok("(c) still refused 'disagree on inputs' (exit 86), counted once, nothing at --json",
++           r.returncode == 86 and "REFUSED the 6 parts" in ov and "disagree on inputs" in r.stderr and len(g) == 1 and rec is None,
++           f"rc={r.returncode} {g} {ov[-600:]}")
++        ok("(c) no aligned copy went to the merge: the kept inputs are the parts (part 2 = the Mac's own record) + lockalign.err",
++           {"part-1.json.gz", "part-2.json.gz", "part-6.json.gz", "merge.out", "lockalign.err"} <= kf
++           and json.load(gzip.open(f"{kept}/{kd[0]}/part-2.json.gz"))["inputs"]["files"]["lean/VE/Events/RouteExamples.lean"] == "0" * 64,
++           f"{kd} {sorted(kf)}")
++
++        print("== (d) the helper fails or prints a path that is not the part or its copy")
++        bad = f"{d}/badalign.sh"
++        write(bad, "#!/bin/sh\nfor i in 1 2 3 4 5 6; do echo /etc/hostname; done\n", 0o755)
++        for what, hook in (("fails", "false"), ("prints other paths", bad)):
++            r, rec, ov, g, _ = go(d, w, real, TSH, extra={"TMPAR_LOCK_ALIGN": hook})
++            ok(f"(d) helper {what}: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json",
++               r.returncode == 86 and "disagree on inputs" in r.stderr and len(g) == 1 and rec is None
++               and "the parts as they are" in r.stderr, f"rc={r.returncode} {g} {r.stderr[-800:]}")
++    finally:
++        shutil.rmtree(d, ignore_errors=True)
++
++
++if __name__ == "__main__":
++    main()
++    n = len(RESULTS)
++    print(f"{sum(RESULTS)}/{n} passed")
++    sys.exit(0 if RESULTS and all(RESULTS) else 1)
