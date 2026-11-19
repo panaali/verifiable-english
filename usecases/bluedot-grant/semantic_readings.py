@@ -145,6 +145,22 @@ PREDICATES = {
     "leads_to": rel(["action", "harm"], "{0} leads to {1}"),
 }
 
+# Source definitions carried verbatim in the legends of the terms they define
+# (defs-repair-bluedot-grant-1119): source.md note 4 (VEX), the NEW contribution
+# sentence (mandatory proof) and note 1 (OLD).
+DEFINES_VEX = "VEX is presented as proposed mandatory evidence for statistical and approximate claims."
+DEFINES_MANDATORY_PROOF = ("The contribution here is an implementation and tests of mandatory proof: accepting only "
+                           "what the verified checker derives from declared, reviewed foundations blocks the "
+                           "Barnes-Christiano construction for formalised claims by excluding assumed false "
+                           "sub-claims.")
+DEFINES_OLD = "OLD text is copied from FORM-EDITS-2026-09-21.md, the current form text."
+
+
+def carrying(legend: str, definition: str) -> str:
+    """A legend followed by the source sentence that defines its term, in quotation marks."""
+    return f'{legend}; "{definition}"'
+
+
 CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "verified_checker": ("item", "the verified checker"),
     "evidence_layer": ("item", "the auditable evidence layer"),
@@ -152,9 +168,9 @@ CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "smuggled_premises": ("item", "smuggled premises"),
     "equivocation": ("item", "equivocation"),
     "shifting_definitions": ("item", "shifting definitions"),
-    "mandatory_checked_proofs": ("item", "mandatory checked proofs"),
+    "mandatory_checked_proofs": ("item", carrying("mandatory checked proofs", DEFINES_MANDATORY_PROOF)),
     "obfuscated_arguments": ("item", "obfuscated arguments"),
-    "vex": ("item", "VEX"),
+    "vex": ("item", carrying("VEX", DEFINES_VEX)),
     "statistical_claims": ("item", "statistical claims"),
     "approximate_claims": ("item", "approximate claims"),
     "formalisable_claims": ("item", "formalisable claims"),
@@ -165,7 +181,7 @@ CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "benchmark": ("item", "the benchmark"),
     "harness": ("item", "the harness"),
     "failure_analysis": ("item", "the failure analysis"),
-    "old_text": ("item", "OLD"),
+    "old_text": ("item", carrying("OLD", DEFINES_OLD)),
     "form_edits_file": ("item", "FORM-EDITS-2026-09-21.md"),
     "rapid_draft": ("item", "bluedot-rapid-draft-v3.md"),
     "superseded_wording": ("item", "the superseded wording of bluedot-rapid-draft-v3.md"),
@@ -173,9 +189,10 @@ CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "recheck_section": ("item", "section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md"),
     "positioning_section": ("item", "section 4 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"),
     "positioning_correction": ("item", "Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"),
-    "guarantee": ("item", "the guarantee of mandatory proof"),
+    "guarantee": ("item", carrying("the guarantee of mandatory proof", DEFINES_MANDATORY_PROOF)),
     "declared_foundations": ("item", "the declared foundations"),
-    "prevention": ("item", "mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions"),
+    "prevention": ("item", carrying("mandatory proof preventing arbitrary false sub-claims from being accepted as new "
+                                     "assumptions", DEFINES_MANDATORY_PROOF)),
     "sound_proof_checking": ("item", "sound proof checking in general"),
     "draft": ("item", "this draft"),
     "debate_novelty": ("item", "novelty for proofs plus debate"),
@@ -212,7 +229,7 @@ CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "review": ("item", "review"),
     "revised_comparison": ("comparison", "the matched-cost comparison in the revised form text"),
     "proof_label": ("action", "a proof label"),
-    "mandatory_proof": ("action", "mandatory proof"),
+    "mandatory_proof": ("action", carrying("mandatory proof", DEFINES_MANDATORY_PROOF)),
     "false_confidence": ("harm", "increased false confidence"),
     "premise_confidence": ("harm", "increased false confidence about premise truth"),
     "fidelity_confidence": ("harm", "increased false confidence about faithful formalisation"),

@@ -1,0 +1,34 @@
+{
+  "note": "Test-only infra item: no VE product code (Lean, Python, Rust) changed. Each seed is planted in a /tmp copy of the code under test, manage-agents/tm-shard.sh (sha256 25d77274..., the file tm-shard-actions-120 installed); the updated harness runs against it with TMS_TS=<copy>. The live tm-shard.sh was never edited. Diffs: seeds.diff; logs: runs/seed{A,B,C}.log.",
+  "harness": "/home/seyran/code/manage-agents/test-harness/tmshard/test-tmshard.zsh",
+  "mutants": [
+    {
+      "id": "A",
+      "file": "/home/seyran/code/manage-agents/tm-shard.sh",
+      "seed": "TM_SHARD_ACTIONS_HEADROOM default 1200 -> 1100 (part line 5,200 s: 5 parts ~5,120 s fit again)",
+      "test": "own heavy reading over the hard limit (400 x 216 at 4 parts ~6,500 s): NMAX waived only as far as needed, 6 parts ~4,418 s",
+      "result": "FAIL (148 passed, 1 failed: only this case)"
+    },
+    {
+      "id": "B",
+      "file": "/home/seyran/code/manage-agents/tm-shard.sh",
+      "seed": "TM_SHARD_ACTIONS_CANCEL default back to 6600 (8 parts ~5,800 s sent on actions again)",
+      "test": "the hard NMAX caps a waiver at cap 8 (2000 mutants): 8 parts ~5,800 s are over the 5,100-s part line, not sent on actions",
+      "result": "FAIL (148 passed, 1 failed: only this case)"
+    },
+    {
+      "id": "C",
+      "file": "/home/seyran/code/manage-agents/tm-shard.sh",
+      "seed": "no tm-shard --budget when the caller passes its own --budget or --deadline (the rule before tm-shard-actions-120)",
+      "test": "P4 the caller's own --budget: tm-shard's --budget 6300 beside it; P5 the caller's own --deadline: tm-shard's --budget 6300 beside it",
+      "result": "FAIL (147 passed, 2 failed: P4 and P5 only)"
+    },
+    {
+      "id": "D",
+      "file": "/home/seyran/code/manage-agents/test-harness/tmshard/test-tmshard.zsh",
+      "seed": "without the TM_SHARD_RECORDS=/nonexistent export (the harness as it was): the live export records are read",
+      "test": "the whole harness",
+      "result": "FAIL (106 passed, 42 failed: runs/before.log)"
+    }
+  ]
+}
