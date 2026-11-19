@@ -1,3 +1,17 @@
+- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
+- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
+- `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
+- `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
+- `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
+- `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
+- `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
+- `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
+- `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
+- `tests/test_lf14a_response_shape.py` — Typed parse ASTs and source-bound diagnostics in the shared response schema.
+- `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
+- `tests/test_llm.py` — (no module docstring)
+- `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
+- `tests/test_me_2d_f2_delta.py` — me-2d-f2's saved delta (docs/math-evidence/me-2d-f2/evidence/delta.json, DELTA row D1, standing ruling R1): the calc mode's refusal of the words "the" alone, r…
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
@@ -73,17 +87,3 @@
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
-- `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
-- `tests/test_presupposition_rule_ob.py` — ps-2ab-rule-firstob: `admit`'s rule check names the rule's first obligation, else none (ps-2ac review F2).
-- `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
-- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
-- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
-- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
-- `tests/test_profiles.py` — (no module docstring)
-- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
-- `tests/test_properties.py` — (no module docstring)
-- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
-- `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
-- `tests/test_purposes_contract.py` — The `purposes@0` wire table in shadow (sa-wire-purposes0): `VE.Purposes.Wire`'s decoder still decides; the contract names spec 7.1's row (and 7.2's row 2) of a…
-- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
-- `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
