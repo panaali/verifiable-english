@@ -5806,7 +5806,7 @@
    "rule": "B1",
    "role": null,
    "source": "S1 reg. 1(3), bridge B1",
-   "gloss": "2026-09-27 is 6 days after 2026-09-21.",
+   "gloss": "2026-09-27 is 6 days after 2026-09-21. \u201cqualifying week\u201d means in respect of any year the week beginning on the third Monday in the September of that year; The amount you get is based on when you were born and your circumstances between 21 to 27 September 2026. This is called the \u2018qualifying week\u2019.",
    "formula": [
     "shift_days",
     [
