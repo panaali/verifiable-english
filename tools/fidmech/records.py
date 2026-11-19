@@ -20,8 +20,9 @@ from pathlib import Path
 
 VOCABULARY = {
     "K": ("killed", "survived", "inconclusive", "error", "not-run"),
-    "L1": ("killed", "survived"), "L2": ("killed", "survived"), "L3": ("killed", "survived"),
-    "L4": ("killed", "survived"), "D": ("killed", "survived"),
+    # A text check that raised on a mutant's tree ran to no verdict: "error", left out of its denominator (plan 2e).
+    "L1": ("killed", "survived", "error"), "L2": ("killed", "survived", "error"),
+    "L3": ("killed", "survived", "error"), "L4": ("killed", "survived", "error"), "D": ("killed", "survived", "error"),
     "CR": ("found", "missed", "not-read"),
 }
 RECORD_KEYS = ("id", "verdict", "kernel", "seconds", "cpu_seconds", "worker", "sentinel_ok", "inputs_sha256")
@@ -82,6 +83,29 @@ def result_record(id_, verdict, kernel, seconds, cpu_seconds, worker, sentinel_o
         raise ValueError(f"{id_}: sentinel_ok is a bool and inputs_sha256 a sha256")
     return dict(zip(RECORD_KEYS, (id_, dict(verdict), dict(kernel), seconds, cpu_seconds, worker, sentinel_ok,
                                   inputs_sha256)))
+
+
+# The K a reader takes from a record (plan 10 'sentinel'): a run's K is a verdict only when a good sentinel confirmed
+# its worker after it (sentinel_ok true). A run no good sentinel confirmed is INVALID: a report-level reading, never a
+# record value, left out of every K denominator and counted beside; a resume runs it again. The text checks (L1-L4,
+# D) run outside the Lean worker and CR comes from the recall gate, so the sentinel bears on K alone.
+INVALID = "INVALID"
+UNCONFIRMED = ("not-run", INVALID)
+
+
+def k_reading(record):
+    """The K verdict to read from a result record: its K when a good sentinel confirmed the run (`sentinel_ok` is
+    True), "not-run" when it never ran, INVALID otherwise (a failed sentinel, or a missing or non-bool sentinel_ok).
+    Every reader of a record's K (the resume, the report) reads it here, never from verdict["K"]."""
+    k = record["verdict"]["K"]
+    if k == "not-run" or record.get("sentinel_ok") is True:
+        return k
+    return INVALID
+
+
+def confirmed(record):
+    """Whether a record carries a K verdict a good sentinel confirmed (a resume keeps exactly these)."""
+    return k_reading(record) not in UNCONFIRMED
 
 
 def sha256_file(path):

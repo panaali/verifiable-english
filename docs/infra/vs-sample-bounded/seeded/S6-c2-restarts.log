@@ -1,0 +1,10 @@
+# seeded: replace <<aside $trc $pre; [ -n "$pa" ] || return 0>> with <<return 0>> in verdict-sample.sh.new-vsw
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+  FAIL resume: a budget-cut reference (exit 4, partial) is resumed: a 2nd run with --resume <the cut, set aside>
+  FAIL resume: no restart: the 2nd run's args are the 1st's plus --resume only (the 1st has none)
+  FAIL resume: it ends with all ids judged (vm-ref.json: no partial, the cloud's 31 ids, none NOT RUN/UNKNOWN): EQUAL, exit 0
+  FAIL resume: the set-aside cut is no reference for findref
+  FAIL resume: a resumed run that judges nothing more stops (2 runs, not 3): row not run, exit 1, no MISMATCH, pool kept
+  FAIL resume: VS_REF_PASSES bounds the runs (2): row not run, the sample pending (no vdone equal)
+  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+comparators: 45 passed, 8 failed

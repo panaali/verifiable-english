@@ -1,0 +1,29 @@
+== gha/gate-compare.py (ARM_GATE_SHADOW, ARM_LEG_MAC_OFFLINE): /home/seyran/code/manage-agents/gha/gate-compare.py with /home/seyran/code/manage-agents/gaterec.py
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
+== cloud-tm-verify.py (ACTIONS_POOL, CODEX_CLOUD_POOL, CLAUDE_CLOUD_POOL, CLOUD_TRIAL): /home/seyran/code/manage-agents/cloud-tm-verify.py
+== cloud-verdict-compare.py (verdict-sample.sh: a difference removes the pool's flag): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+  FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
+    KILLED BY ANOTHER CHECK (both KILLED; not a mismatch): m1
+    mutants: 1 vm, 1 cloud, 0 with a differing identity or verdict field, 0 undecided (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status, raw_status, detail, killed_at; not compared: -)
+    counts: vm {'KILLED': 1} cloud {'KILLED': 1}
+    definitions: equal (0 vm, 0 cloud)
+    seconds: vm None cloud None; jobs vm None cloud None
+    VERDICTS EQUAL
+== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+== actions-health.py (ACTIONS_SUSPENDED streak; findref): /home/seyran/code/manage-agents/actions-health.py
+== another nightly part as the reference (orchestrator ruling 2026-11-14 093053Z (b); tm-nightly.r2-9ccbf3fd)
+== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): /home/seyran/code/manage-agents/verdict-sample.sh.new-vsw
+  FAIL c2ref: every ve-cloud-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)
+    verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd running (pid 937114): no pending obligation
+    2026-11-19T08:13:19Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: reference run on ve-cloud-2 (no VM load wait)
+    2026-11-19T08:13:19Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: reference record set aside: vm-ref.partial-c2-deadline-20261119T081319Z.json (exit 4)
+    2026-11-19T08:13:19Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: reference run 1 cut by its deadline, 26 unjudged: resuming vm-ref.partial-c2-deadline-20261119T081319Z.json (trust_mutants --resume, no restart)
+    2026-11-19T08:13:19Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: EQUAL: vs ve-cloud-2 x86 run (exit 0): VERDICTS EQUAL (26 of 31 not judged on both sides (not compared)) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 26 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, befor
+    verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd equal: met 1in5:5; 26 not judged on both sides: a partial comparison, streak unchanged [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
+  FAIL c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL
+    verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd running (pid 937350): no pending obligation
+    2026-11-19T08:13:20Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: reference run on ve-cloud-2 (no VM load wait)
+    2026-11-19T08:13:20Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: resuming the earlier cut vm-ref.partial-c2-deadline-20261101T000000Z.json (20 unjudged), not restarting
+    2026-11-19T08:13:20Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: EQUAL: vs ve-cloud-2 x86 run (exit 0): VERDICTS EQUAL (26 of 31 not judged on both sides (not compared)) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 26 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, befor
+    verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd equal: met 1in5:5; 26 not judged on both sides: a partial comparison, streak unchanged [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
+comparators: 54 passed, 3 failed
