@@ -58,7 +58,7 @@
         },
         "mandatory_proof": {
           "sort": "action",
-          "description": "mandatory proof"
+          "description": "mandatory proof; \"The contribution here is an implementation and tests of mandatory proof: accepting only what the verified checker derives from declared, reviewed foundations blocks the Barnes-Christiano construction for formalised claims by excluding assumed false sub-claims.\""
         },
         "false_confidence": {
           "sort": "harm",
@@ -136,7 +136,7 @@
           ]
         ]
       },
-      "meaning_id": "67284d5e906bc3e10a31b589b41750ce962daf82755be53057bdf9c1f7ab76bb"
+      "meaning_id": "21ef85a6d15aaf6a5be0b04374b17b66f54bb115d99be81d626aa6c07c0935c0"
     },
     {
       "id": "u035",
@@ -171,7 +171,7 @@
           ]
         ]
       },
-      "meaning_id": "142d3556daffce1a832fe061b569a81803272769ea5d1c0880acb25f2f0c5640"
+      "meaning_id": "8813ba5dded76e93fadb4761003d86e262f4f4517a8d55413b3c7649bea91bfc"
     },
     {
       "id": "u047",
@@ -197,7 +197,7 @@
           ]
         ]
       },
-      "meaning_id": "5d6c939e062866877dc4ad35d10d57f40b29161a465e34a6a5d0eb6142b0c055"
+      "meaning_id": "2759a08034f20c782fbdb577408ed1a3dd1b68064c74261289a4ea21f5d8f794"
     },
     {
       "id": "u086",
@@ -232,7 +232,7 @@
           ]
         ]
       },
-      "meaning_id": "142d3556daffce1a832fe061b569a81803272769ea5d1c0880acb25f2f0c5640"
+      "meaning_id": "8813ba5dded76e93fadb4761003d86e262f4f4517a8d55413b3c7649bea91bfc"
     }
   ],
   "reading_sets": [
@@ -246,7 +246,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "5d6c939e062866877dc4ad35d10d57f40b29161a465e34a6a5d0eb6142b0c055",
+          "meaning_id": "2759a08034f20c782fbdb577408ed1a3dd1b68064c74261289a4ea21f5d8f794",
           "content": [
             "binary",
             "prevents",

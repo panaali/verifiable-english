@@ -13,10 +13,10 @@
         "description": "robot"
       },
       "action": {
-        "description": "action"
+        "description": "action. An action that no rule forbids may be performed. An action is not required unless a rule requires it, and a derived name is false unless a rule derives it."
       },
       "harm": {
-        "description": "harm"
+        "description": "harm. `base.ve` is v2's `rules.ve` with one forced rewording: a risk environment rejects the bare word `prevents`, so rules 9 and 13 say `might prevent`. The meaning of the word does not change (risk.md 2.2)."
       }
     },
     "predicates": {
@@ -280,7 +280,7 @@
           "action",
           "action"
         ],
-        "description": "The first action competes with the second and has a less severe worst case, as derived by addition rule 28 (authored, not Asimov's)",
+        "description": "The first action competes with the second and has a less severe worst case, as derived by addition rule 28; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's)",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -290,7 +290,7 @@
         "arguments": [
           "action"
         ],
-        "description": "A candidate action of the same robot has a less severe worst case than the action, as derived by addition rule 29 (authored, not Asimov's)",
+        "description": "A candidate action of the same robot has a less severe worst case than the action, as derived by addition rule 29; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's)",
         "regulated": {
           "role": "plain",
           "default": "deny"

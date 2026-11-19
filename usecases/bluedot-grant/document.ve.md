@@ -1012,7 +1012,7 @@
         },
         "mandatory_checked_proofs": {
           "sort": "item",
-          "description": "mandatory checked proofs"
+          "description": "mandatory checked proofs; \"The contribution here is an implementation and tests of mandatory proof: accepting only what the verified checker derives from declared, reviewed foundations blocks the Barnes-Christiano construction for formalised claims by excluding assumed false sub-claims.\""
         },
         "obfuscated_arguments": {
           "sort": "item",
@@ -1020,7 +1020,7 @@
         },
         "vex": {
           "sort": "item",
-          "description": "VEX"
+          "description": "VEX; \"VEX is presented as proposed mandatory evidence for statistical and approximate claims.\""
         },
         "statistical_claims": {
           "sort": "item",
@@ -1064,7 +1064,7 @@
         },
         "old_text": {
           "sort": "item",
-          "description": "OLD"
+          "description": "OLD; \"OLD text is copied from FORM-EDITS-2026-09-21.md, the current form text.\""
         },
         "form_edits_file": {
           "sort": "item",
@@ -1096,7 +1096,7 @@
         },
         "guarantee": {
           "sort": "item",
-          "description": "the guarantee of mandatory proof"
+          "description": "the guarantee of mandatory proof; \"The contribution here is an implementation and tests of mandatory proof: accepting only what the verified checker derives from declared, reviewed foundations blocks the Barnes-Christiano construction for formalised claims by excluding assumed false sub-claims.\""
         },
         "declared_foundations": {
           "sort": "item",
@@ -1104,7 +1104,7 @@
         },
         "prevention": {
           "sort": "item",
-          "description": "mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions"
+          "description": "mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions; \"The contribution here is an implementation and tests of mandatory proof: accepting only what the verified checker derives from declared, reviewed foundations blocks the Barnes-Christiano construction for formalised claims by excluding assumed false sub-claims.\""
         },
         "sound_proof_checking": {
           "sort": "item",
@@ -1422,7 +1422,7 @@
           ]
         ]
       },
-      "meaning_id": "3f167dfcc53809bb7419e5273f1cc00e59751e3fd25d91d0fcd6334a172b4090"
+      "meaning_id": "311d3bbfa81f312f6d22dc7e52667583f2daca068160130826c00e665ce60842"
     },
     {
       "id": "u004",
@@ -1549,7 +1549,7 @@
           ]
         ]
       },
-      "meaning_id": "6bff4ef20b9f9759c63cf66b03df599a4f69b04cc38d56deac56eac97e528950"
+      "meaning_id": "273813fe5c602b310795be072baaf7bc14eec790ed7a4942affcd59601ef0e6e"
     },
     {
       "id": "u008",
@@ -1673,7 +1673,7 @@
           ]
         ]
       },
-      "meaning_id": "19ebb1e81053364c0221dff065b6b816dcdde2cb008ec4f3ed82f092744ca3f3"
+      "meaning_id": "c5685ab652f3b4772629a7f14736014276af622aeb1bf92ac6dadea3082c1f72"
     },
     {
       "id": "u010",
@@ -2244,7 +2244,7 @@
           ]
         ]
       },
-      "meaning_id": "cd6230d3ca9005cbf5091948a86cae70066786b9a9198a48973e123c00407f8c"
+      "meaning_id": "fbdd79ab062bf6293c8420f4130bc268e2f5b7273539b9810a190da379fe2c74"
     },
     {
       "id": "u031",
@@ -2322,7 +2322,7 @@
           ]
         ]
       },
-      "meaning_id": "5af8f8e26f6971c47957a608c8eda3a2f43597b1cfad11f0cfcff5fdf374eb10"
+      "meaning_id": "c9356bc9f903946b5e0ad48be01fcd476640e1c4a18c754b5d63a213f3ab962f"
     },
     {
       "id": "u033",
@@ -2410,7 +2410,7 @@
           ]
         ]
       },
-      "meaning_id": "2791f77e0646ce20fd420318a65c06a48049d58d7702353b26fd84f2d184ac75"
+      "meaning_id": "ff7ba28fa6246344d042b2c863e615bb337bc070aa5b8922ea48af8572b9fd04"
     },
     {
       "id": "u037",
@@ -2445,7 +2445,7 @@
           ]
         ]
       },
-      "meaning_id": "fa0c0c6ef4c8436c0d2ac9e54fd0724d77b84895d1f292e4df00118e3fd96fb5"
+      "meaning_id": "3d9b99add7b0254b83827b85b19b171c47300b7ab1d228cc9b562c39fc989a6b"
     },
     {
       "id": "u038",
@@ -2520,7 +2520,7 @@
           ]
         ]
       },
-      "meaning_id": "06589d19d138f0f1cb711d2a837d6815669a4702dafb105f377efa13d058f4bb"
+      "meaning_id": "2ffd4012695f07c69d457154cda46f7ad3328ab717dc88b2c311eaaa1640a989"
     },
     {
       "id": "u039",
@@ -2596,7 +2596,7 @@
           ]
         ]
       },
-      "meaning_id": "7dca1515df049cee76a68bdf30a61abb26c0ddbf5641f8bcf996e9712d525228"
+      "meaning_id": "850b5e75b436eccfc98d2834404c406f3598ffb4073d2bdf7aef79c591e62e6c"
     },
     {
       "id": "u040",
@@ -2673,7 +2673,7 @@
           ]
         ]
       },
-      "meaning_id": "642f9361b739d292d337b122f0172c52ba8a7ecdc51272243b201c27db734663"
+      "meaning_id": "ce0ac1ae16dc296a6e0d87b3d9354fc6cbc53769173a234a93f26b3751a8ac53"
     },
     {
       "id": "u042",
@@ -2764,7 +2764,7 @@
           ]
         ]
       },
-      "meaning_id": "74d35899c431b933a702d551c36208d98043e6a7bd3205c22ccf9e05cdfe99f8"
+      "meaning_id": "d2f17fe897d31aed95702a73ba4c62cfd4aa886abd5d75239c6615402e4409c4"
     },
     {
       "id": "u043",
@@ -2823,7 +2823,7 @@
           ]
         ]
       },
-      "meaning_id": "563c60cd8e00c58dffcceda69032062983abd8f3aabebc07c367fa228affa7f5"
+      "meaning_id": "2be843b283b718c12bea5bf3b4de1bab020a069a67dfa235311ca97ad8e3d9d2"
     },
     {
       "id": "u045",
@@ -2852,7 +2852,7 @@
           ]
         ]
       },
-      "meaning_id": "8e411a7a665e00e075ab96f44d34f159b6be1c1887e3d3819e1a792efe79c5c1"
+      "meaning_id": "7dd1167ea67213d955eff246fbb06a8dc07fde5f546aa79d9df705f0f40b2831"
     },
     {
       "id": "u046",
@@ -2908,7 +2908,7 @@
           ]
         ]
       },
-      "meaning_id": "925502592f3b5761980d8933d56de245a4a7e913ed182bfc8002346cd3c70fa5"
+      "meaning_id": "3cb37f0e8fb8ac11d6c399b4b8d77f1ecd4cafa443f230b75854231701a10ee1"
     },
     {
       "id": "u047",
@@ -2950,7 +2950,7 @@
           ]
         ]
       },
-      "meaning_id": "3dbe72072958b242002078dcba4f2a9f761373dc0781594270dad027a80b645b"
+      "meaning_id": "a520bb3aa037ddece29d6f92252519dc8dfbf6b6f79c5785be66a4f7fb31cfe7"
     },
     {
       "id": "u049",
@@ -2997,7 +2997,7 @@
           ]
         ]
       },
-      "meaning_id": "32e8e97593393f15e0b7ff6db58f7d97490f6d4d2979b561c45472dac0db4d0b"
+      "meaning_id": "7c3de1dd6656069da63aa6ccd6391525b49efdc85277fc9d456b4e8d7b43c3ad"
     },
     {
       "id": "u050",
@@ -3067,7 +3067,7 @@
           ]
         ]
       },
-      "meaning_id": "ca34424d51143725115d7c8669c75c886d76d171016c6e9109c8cc3721819e87"
+      "meaning_id": "a5ba7aabdba47416d2c6607c64ecbc81f77accca0adbdbdf817c4bdec45c18c2"
     },
     {
       "id": "u051",
@@ -3145,7 +3145,7 @@
           ]
         ]
       },
-      "meaning_id": "8ac2ae834da731a19e66de7a4a3ad3810ec2363d8abc8d177a3727e631ea041a"
+      "meaning_id": "c1cf8722978db1c1c73c49f4147e3b859597186c93048776acb5cffea99e7dae"
     },
     {
       "id": "u052",
@@ -3171,7 +3171,7 @@
           ]
         ]
       },
-      "meaning_id": "23d0b95337602e844904cf78d02c58114f2ba21fee5168593bee391eb74b1cfb"
+      "meaning_id": "b8cc9ce1127955702e40c04aa62eab367baa54591a1b698495be37b443df24fe"
     },
     {
       "id": "u053",
@@ -3234,7 +3234,7 @@
           ]
         ]
       },
-      "meaning_id": "eb62309fe921d12cd7fd9eacea0a485ce31dfaf213ed15acfcde2733e5ca99fd"
+      "meaning_id": "ed9db84f88f53cdd6624c000eeabe28475777af5ad5ee8ab5595f5d8dc670aee"
     },
     {
       "id": "u055",
@@ -3278,7 +3278,7 @@
           ]
         ]
       },
-      "meaning_id": "0d5c58ebc8c3e7e9633e864b52a87ed9308eaa962fda26e1df0dc97fe1be5f12"
+      "meaning_id": "22c60eb07738a3bd42af09d7af6afe184ef91d1cb584dd071281f8b69b1d4048"
     },
     {
       "id": "u056",
@@ -3357,7 +3357,7 @@
           ]
         ]
       },
-      "meaning_id": "852446402ab0be71d42dad7e0c1505197a3697de32f08c5ac06a9b6e01a4674c"
+      "meaning_id": "f17f709cb44c16983ff3c2e605626b3e70cb05ac6bdc21c45fefd8cc494d398e"
     },
     {
       "id": "u057",
@@ -3386,7 +3386,7 @@
           ]
         ]
       },
-      "meaning_id": "16cc54122728895e1203f3fca71c76a82ae4c3e44d3107e4b37e39a4fbd3c75c"
+      "meaning_id": "996c111f6dbcc2e1a1a5504bb2832c0d665fd018847cee1cd7af6a560ecd3abe"
     },
     {
       "id": "u058",
@@ -3433,7 +3433,7 @@
           ]
         ]
       },
-      "meaning_id": "c4a3257600b098f8c02ee113d35b966eb0699188e7a500f628b8ea55d81ee0a5"
+      "meaning_id": "5cb56c7f4d3d393eb246c6098038a26221ccc38019b04be8ecb6c0f6b8fb0b99"
     },
     {
       "id": "u059",
@@ -3459,7 +3459,7 @@
           ]
         ]
       },
-      "meaning_id": "b39f52d9d50fa0a4c80661745585d3d444259649d3a1e014ebf7ce1d07f82fbc"
+      "meaning_id": "a4ff64e640d598c1ae3ed69095f515a1ce0e07eb3b76763503f5b27fde412807"
     },
     {
       "id": "u060",
@@ -3522,7 +3522,7 @@
           ]
         ]
       },
-      "meaning_id": "5d1091690b7442abd76a3ccda6f224df766693afc4d6f3a4b1b5dda251c3e85d"
+      "meaning_id": "e2ca2b5d91a6dfb6bc879cc462423dfdf374665fa7e397ef7ee10e4a8feedaf5"
     },
     {
       "id": "u062",
@@ -3574,7 +3574,7 @@
           ]
         ]
       },
-      "meaning_id": "a6a666917f8a10b82f72b2e8e8a06134f8acc23123c90f4734d0168e5f5abee4"
+      "meaning_id": "9fe128daaac72e041162d657901d7409d3609ac2f18a3a02d80fd362784ffba2"
     },
     {
       "id": "u063",
@@ -3643,7 +3643,7 @@
           ]
         ]
       },
-      "meaning_id": "cb45f49dbcd75d33fb599296a751f8cbc2f49feb4237a3a22a28c3613bcd6d18"
+      "meaning_id": "e753db8d50dbed15e6eb231cd43ac3e665a11350281e6346a9ea9fe2229e2c46"
     },
     {
       "id": "u066",
@@ -3720,7 +3720,7 @@
           ]
         ]
       },
-      "meaning_id": "3cc38ac6780382f8ff55c400de100ead614fff612c94aa147410265923ca6f1f"
+      "meaning_id": "a9380e0ca376e5be8494af11d0a2f34bd2edbbe3904ab41637af3b7e28ba4ddc"
     },
     {
       "id": "u067",
@@ -3841,7 +3841,7 @@
           ]
         ]
       },
-      "meaning_id": "6d64e69fc0e8533faab035befdff2e741797d08489e9be1cadde6e5bfec85d8f"
+      "meaning_id": "fc3059b4a808ab7c70f70ced16b305b710210ba3c83bbe21de6f5f0cf7455b3d"
     },
     {
       "id": "u068",
@@ -3948,7 +3948,7 @@
           ]
         ]
       },
-      "meaning_id": "79f461dd888be7952d2b2852e8bbe2789dd41cba47bfe322b9a2a382ea8be5df"
+      "meaning_id": "00d614421991af9d6db2db525e505309fc7a8944f1c90193e3683f23b943675d"
     },
     {
       "id": "u069",
@@ -4005,7 +4005,7 @@
           ]
         ]
       },
-      "meaning_id": "891bb11a5ffacbee9bb203d9204e2443fb146608583648ca7cf7c2d3befa4f42"
+      "meaning_id": "780b61c0d0fe9dfd94c52db3362deb02326ab6ec29a68fb05d0777ad6d355a59"
     },
     {
       "id": "u071",
@@ -4132,7 +4132,7 @@
           ]
         ]
       },
-      "meaning_id": "6bff4ef20b9f9759c63cf66b03df599a4f69b04cc38d56deac56eac97e528950"
+      "meaning_id": "273813fe5c602b310795be072baaf7bc14eec790ed7a4942affcd59601ef0e6e"
     },
     {
       "id": "u075",
@@ -4256,7 +4256,7 @@
           ]
         ]
       },
-      "meaning_id": "19ebb1e81053364c0221dff065b6b816dcdde2cb008ec4f3ed82f092744ca3f3"
+      "meaning_id": "c5685ab652f3b4772629a7f14736014276af622aeb1bf92ac6dadea3082c1f72"
     },
     {
       "id": "u077",
@@ -4491,7 +4491,7 @@
           ]
         ]
       },
-      "meaning_id": "2791f77e0646ce20fd420318a65c06a48049d58d7702353b26fd84f2d184ac75"
+      "meaning_id": "ff7ba28fa6246344d042b2c863e615bb337bc070aa5b8922ea48af8572b9fd04"
     },
     {
       "id": "u088",
@@ -4526,7 +4526,7 @@
           ]
         ]
       },
-      "meaning_id": "fa0c0c6ef4c8436c0d2ac9e54fd0724d77b84895d1f292e4df00118e3fd96fb5"
+      "meaning_id": "3d9b99add7b0254b83827b85b19b171c47300b7ab1d228cc9b562c39fc989a6b"
     },
     {
       "id": "u089",
@@ -4601,7 +4601,7 @@
           ]
         ]
       },
-      "meaning_id": "06589d19d138f0f1cb711d2a837d6815669a4702dafb105f377efa13d058f4bb"
+      "meaning_id": "2ffd4012695f07c69d457154cda46f7ad3328ab717dc88b2c311eaaa1640a989"
     },
     {
       "id": "u090",
@@ -4677,7 +4677,7 @@
           ]
         ]
       },
-      "meaning_id": "7dca1515df049cee76a68bdf30a61abb26c0ddbf5641f8bcf996e9712d525228"
+      "meaning_id": "850b5e75b436eccfc98d2834404c406f3598ffb4073d2bdf7aef79c591e62e6c"
     },
     {
       "id": "u091",
@@ -4754,7 +4754,7 @@
           ]
         ]
       },
-      "meaning_id": "642f9361b739d292d337b122f0172c52ba8a7ecdc51272243b201c27db734663"
+      "meaning_id": "ce0ac1ae16dc296a6e0d87b3d9354fc6cbc53769173a234a93f26b3751a8ac53"
     },
     {
       "id": "u093",
@@ -4845,7 +4845,7 @@
           ]
         ]
       },
-      "meaning_id": "74d35899c431b933a702d551c36208d98043e6a7bd3205c22ccf9e05cdfe99f8"
+      "meaning_id": "d2f17fe897d31aed95702a73ba4c62cfd4aa886abd5d75239c6615402e4409c4"
     }
   ],
   "open_terms": [
@@ -4921,7 +4921,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "563c60cd8e00c58dffcceda69032062983abd8f3aabebc07c367fa228affa7f5",
+          "meaning_id": "2be843b283b718c12bea5bf3b4de1bab020a069a67dfa235311ca97ad8e3d9d2",
           "content": [
             "and",
             [
@@ -4974,7 +4974,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "8e411a7a665e00e075ab96f44d34f159b6be1c1887e3d3819e1a792efe79c5c1",
+          "meaning_id": "7dd1167ea67213d955eff246fbb06a8dc07fde5f546aa79d9df705f0f40b2831",
           "content": [
             "not",
             [
@@ -5008,7 +5008,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "925502592f3b5761980d8933d56de245a4a7e913ed182bfc8002346cd3c70fa5",
+          "meaning_id": "3cb37f0e8fb8ac11d6c399b4b8d77f1ecd4cafa443f230b75854231701a10ee1",
           "content": [
             "and",
             [
@@ -5069,7 +5069,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3dbe72072958b242002078dcba4f2a9f761373dc0781594270dad027a80b645b",
+          "meaning_id": "a520bb3aa037ddece29d6f92252519dc8dfbf6b6f79c5785be66a4f7fb31cfe7",
           "content": [
             "binary",
             "conditional_on",
@@ -5100,7 +5100,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "32e8e97593393f15e0b7ff6db58f7d97490f6d4d2979b561c45472dac0db4d0b",
+          "meaning_id": "7c3de1dd6656069da63aa6ccd6391525b49efdc85277fc9d456b4e8d7b43c3ad",
           "content": [
             "and",
             [
@@ -5152,7 +5152,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "ca34424d51143725115d7c8669c75c886d76d171016c6e9109c8cc3721819e87",
+          "meaning_id": "a5ba7aabdba47416d2c6607c64ecbc81f77accca0adbdbdf817c4bdec45c18c2",
           "content": [
             "forall",
             "claim",
@@ -5227,7 +5227,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "8ac2ae834da731a19e66de7a4a3ad3810ec2363d8abc8d177a3727e631ea041a",
+          "meaning_id": "c1cf8722978db1c1c73c49f4147e3b859597186c93048776acb5cffea99e7dae",
           "content": [
             "forall",
             "claim",
@@ -5310,7 +5310,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "23d0b95337602e844904cf78d02c58114f2ba21fee5168593bee391eb74b1cfb",
+          "meaning_id": "b8cc9ce1127955702e40c04aa62eab367baa54591a1b698495be37b443df24fe",
           "content": [
             "binary",
             "benefit_of",
@@ -5341,7 +5341,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "eb62309fe921d12cd7fd9eacea0a485ce31dfaf213ed15acfcde2733e5ca99fd",
+          "meaning_id": "ed9db84f88f53cdd6624c000eeabe28475777af5ad5ee8ab5595f5d8dc670aee",
           "content": [
             "and",
             [
@@ -5393,7 +5393,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "0d5c58ebc8c3e7e9633e864b52a87ed9308eaa962fda26e1df0dc97fe1be5f12",
+          "meaning_id": "22c60eb07738a3bd42af09d7af6afe184ef91d1cb584dd071281f8b69b1d4048",
           "content": [
             "and",
             [
@@ -5442,7 +5442,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "16cc54122728895e1203f3fca71c76a82ae4c3e44d3107e4b37e39a4fbd3c75c",
+          "meaning_id": "996c111f6dbcc2e1a1a5504bb2832c0d665fd018847cee1cd7af6a560ecd3abe",
           "content": [
             "not",
             [
@@ -5476,7 +5476,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "c4a3257600b098f8c02ee113d35b966eb0699188e7a500f628b8ea55d81ee0a5",
+          "meaning_id": "5cb56c7f4d3d393eb246c6098038a26221ccc38019b04be8ecb6c0f6b8fb0b99",
           "content": [
             "and",
             [
@@ -5528,7 +5528,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "b39f52d9d50fa0a4c80661745585d3d444259649d3a1e014ebf7ce1d07f82fbc",
+          "meaning_id": "a4ff64e640d598c1ae3ed69095f515a1ce0e07eb3b76763503f5b27fde412807",
           "content": [
             "binary",
             "schedules",
@@ -5559,7 +5559,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "5d1091690b7442abd76a3ccda6f224df766693afc4d6f3a4b1b5dda251c3e85d",
+          "meaning_id": "e2ca2b5d91a6dfb6bc879cc462423dfdf374665fa7e397ef7ee10e4a8feedaf5",
           "content": [
             "and",
             [
@@ -5611,7 +5611,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a6a666917f8a10b82f72b2e8e8a06134f8acc23123c90f4734d0168e5f5abee4",
+          "meaning_id": "9fe128daaac72e041162d657901d7409d3609ac2f18a3a02d80fd362784ffba2",
           "content": [
             "and",
             [
@@ -5668,7 +5668,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "cb45f49dbcd75d33fb599296a751f8cbc2f49feb4237a3a22a28c3613bcd6d18",
+          "meaning_id": "e753db8d50dbed15e6eb231cd43ac3e665a11350281e6346a9ea9fe2229e2c46",
           "content": [
             "forall",
             "field",
@@ -5702,7 +5702,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3cc38ac6780382f8ff55c400de100ead614fff612c94aa147410265923ca6f1f",
+          "meaning_id": "a9380e0ca376e5be8494af11d0a2f34bd2edbbe3904ab41637af3b7e28ba4ddc",
           "content": [
             "and",
             [
@@ -5784,7 +5784,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "79f461dd888be7952d2b2852e8bbe2789dd41cba47bfe322b9a2a382ea8be5df",
+          "meaning_id": "00d614421991af9d6db2db525e505309fc7a8944f1c90193e3683f23b943675d",
           "content": [
             "and",
             [
@@ -5896,7 +5896,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "891bb11a5ffacbee9bb203d9204e2443fb146608583648ca7cf7c2d3befa4f42",
+          "meaning_id": "780b61c0d0fe9dfd94c52db3362deb02326ab6ec29a68fb05d0777ad6d355a59",
           "content": [
             "and",
             [
