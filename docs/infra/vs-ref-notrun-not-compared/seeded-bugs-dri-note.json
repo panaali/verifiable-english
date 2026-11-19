@@ -1,0 +1,101 @@
+{
+ "item": "vs-ref-notrun-not-compared",
+ "round": "DRI note 2026-11-17 (reference timeout leaves the sample pending)",
+ "run": "VSNR_SFX=<temp suffix> python3 -I -W ignore tools-local/test_vs_ref_notrun.py (the staged set, one seed at a time in cloud-verdict-compare.py)",
+ "seeds": [
+  {
+   "file": "manage-agents/cloud-verdict-compare.py.new-vsnr",
+   "language": "Python",
+   "bug": "gap check removed",
+   "id": "s6-gap-check-removed",
+   "planted": {
+    "from": "if not bad and gaps:",
+    "to": "if False and gaps:"
+   },
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::Compare::test_dri_p9_fin_reference_timeout_is_not_compared",
+    "tools-local/test_vs_ref_notrun.py::Sample::test_dri_p9_fin_reference_timeout_leaves_the_sample_pending",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_reference_timeout_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_reference_gap_class_fuzz"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-verdict-compare.py.new-vsnr",
+   "language": "Python",
+   "bug": "gap read on the cloud side",
+   "id": "s7-gap-on-cloud-side",
+   "planted": {
+    "from": "return [i for i, a, b in pairs if unjudged(a) and not unjudged(b)]",
+    "to": "return [i for i, a, b in pairs if unjudged(b) and not unjudged(a)]"
+   },
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::Compare::test_cloud_only_unjudged_does_not_block_equal",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_dri_p9_fin_reference_timeout_is_not_compared",
+    "tools-local/test_vs_ref_notrun.py::Sample::test_dri_p9_fin_reference_timeout_leaves_the_sample_pending",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_reference_timeout_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_reference_gap_class_fuzz"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-verdict-compare.py.new-vsnr",
+   "language": "Python",
+   "bug": "gap check before a judged difference",
+   "id": "s8-gap-before-judged-difference",
+   "planted": {
+    "from": "if not bad and gaps:",
+    "to": "if gaps:"
+   },
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::Sample::test_judged_difference_is_still_a_mismatch",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_judged_difference_still_trips",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_reference_gap_class_fuzz"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-verdict-compare.py.new-vsnr",
+   "language": "Python",
+   "bug": "gaps count only NOT RUN, not a timeout",
+   "id": "s9-gap-not-run-only",
+   "planted": {
+    "from": "return [i for i, a, b in pairs if unjudged(a) and not unjudged(b)]",
+    "to": "return [i for i, a, b in pairs if a.get('status') == 'NOT RUN' and not unjudged(b)]"
+   },
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::Compare::test_dri_p9_fin_reference_timeout_is_not_compared",
+    "tools-local/test_vs_ref_notrun.py::Sample::test_dri_p9_fin_reference_timeout_leaves_the_sample_pending",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_reference_timeout_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_reference_gap_class_fuzz"
+   ]
+  },
+  {
+   "file": "manage-agents/cloud-verdict-compare.py.new-vsnr",
+   "language": "Python",
+   "bug": "both-unjudged blocks EQUAL",
+   "id": "s10-both-unjudged-blocks",
+   "planted": {
+    "from": "return [i for i, a, b in pairs if unjudged(a) and not unjudged(b)]",
+    "to": "return [i for i, a, b in pairs if unjudged(a)]"
+   },
+   "test_rc": 1,
+   "restored": true,
+   "failing": [
+    "tools-local/test_vs_ref_notrun.py::Compare::test_cloud_only_unjudged_does_not_block_equal",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_dri_p9_fin_reference_timeout_is_not_compared",
+    "tools-local/test_vs_ref_notrun.py::Sample::test_dri_p9_fin_reference_timeout_leaves_the_sample_pending",
+    "tools-local/test_vs_ref_notrun.py::Sample::test_equal_partial_comparison_keeps_the_streak",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_equal",
+    "tools-local/test_vs_ref_notrun.py::CloudLate::test_local_done_reference_timeout_is_not_made",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_partial_with_judged_equal_pairs_compares_only_those",
+    "tools-local/test_vs_ref_notrun.py::Compare::test_reference_gap_class_fuzz"
+   ]
+  }
+ ]
+}

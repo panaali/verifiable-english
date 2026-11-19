@@ -1,0 +1,7 @@
+# DRI note probe: python3 -I cloud-verdict-compare.py<staged> cloud-jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/vm-ref.fin.json .../cloud-verdicts.json
+## before the fix (staged at d4bbf09a): rc=0
+counts: vm {'KILLED': 17, 'SURVIVOR': 1, 'UNKNOWN': 12, 'INVALID': 1, 'ALLOWED': 0, 'NOT RUN': 0} cloud {'KILLED': 5, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 0, 'ALLOWED': 0, 'NOT RUN': 26} differ by the not judged mutants only
+VERDICTS EQUAL (28 of 31 not judged on both sides (not compared))
+## after the fix: rc=3
+counts: vm {'KILLED': 17, 'SURVIVOR': 1, 'UNKNOWN': 12, 'INVALID': 1, 'ALLOWED': 0, 'NOT RUN': 0} cloud {'KILLED': 5, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 0, 'ALLOWED': 0, 'NOT RUN': 26} differ by the not judged mutants only
+NOT COMPARED: the reference did not judge 2 of the cloud's 5 verdicts (NOT RUN or out of time: M3657, M3680); 3 judged on both sides agree (not a mismatch, not a passed sample: rerun the reference so it judges them)

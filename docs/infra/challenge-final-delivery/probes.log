@@ -1,0 +1,12 @@
+== PROBE F1 (review file line, run unchanged) before the fix:
+
+F1 rc=1
+== after the fix:
+to orchestrator: NOW(critical): challenge final not delivered: dri-wg-x-astra-challenge.final.md (finished 2026-11-17T20:52Z, 1h00m ago) for row wg-x-astra-chal
+F1 rc=0
+== PROBE F2 (review file line, run unchanged) before the fix:
+/tmp/tmp955js29h/decider-ready-alert.py.new-nta
+F2 rc=1
+== after the fix:
+/tmp/tmpv_9nh9yp/decider-ready-alert.py
+F2 rc=0

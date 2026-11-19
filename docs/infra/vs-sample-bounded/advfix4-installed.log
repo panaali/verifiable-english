@@ -1,0 +1,13 @@
+== actions-health.py poll: one request per pass at most, <= 20/h, none without an Actions job in flight
+== actions-health.py state: fail at once on a terminal run, wait otherwise
+== cloud-pull.sh: prompt fallback, misses from 2 distinct items -> ACTIONS_SUSPENDED + one probe on a known-good job, probe result -> resume
+== actions-health.py sample: 1 in 5 and the first result after a cache-restore code change
+== verdict-sample.sh: verdict by verdict against a VM run (or an existing one)
+  FAIL   the VM run got the job's vm_args without --json/--jobs, --allow worktree-relative
+  FAIL   no --base in vm_args: the VM run gets the job's vm_base, not trust_mutants' merge-base default
+  FAIL   a --base in vm_args stands; vm_base does not override it
+  FAIL   so does --base=<commit>
+  FAIL   a job with neither runs without --base
+  FAIL verdict sample of a --rescore job: the VM run gets --rescore <the job's kept copy>
+
+46 passed, 6 failed
