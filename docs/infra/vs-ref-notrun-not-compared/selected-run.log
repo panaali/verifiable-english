@@ -1,0 +1,21 @@
+# selected run on 8c6ed86508 (zsh manage-agents/mac-pytest.sh --select -- --base 71c884b25a --run): exit 0
+5:deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (2021.7 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py
+11:[gha-select 16:48:59Z] fast first: the cheap units run on multi-agent-lab meanwhile (log /home/seyran/code/manage-agents/gha-tests/vs-ref-notrun-not-compared-8c6ed865-t934109/fast.log)
+12:[gha-select 16:50:41Z] fast first: the cheap units passed after 132 s; waiting for the shards
+111:SHARD 1/2: exit 0 in 86.7 s; 6 units, 6 passed
+207:SHARD 2/2: exit 0 in 64.9 s; 4 units, 4 passed
+208:[gha-select 16:52:48Z] summary: selected tests ran on GitHub Actions (2 shards, run vs-ref-notrun-not-compared-8c6ed865-t934109); exit=0; 258s
+
+# lake build: exit 0
+Build completed successfully (1478 jobs).
+
+# python3 lean/audit.py: exit 0
+PASS: 898 source files; 10153 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+# DRI-note round, on e83381dc3f (tree af443dac48)
+mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run: exit 0
+recorded 232 units for tree af443dac48; 335 others left to the static graph until they run; 0 failed
+[cloud2 18:41:31Z] summary: ran on ve-cloud-2, select_tests, exit=0, 1185s
+[mac-pytest 18:41:31Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: MAC_LAST_RESORT: VM full, remote attempt 3; exit=0; 1311s
+lake build: exit 0, Build completed successfully (1478 jobs).
+python3 lean/audit.py: exit 0, PASS: 898 source files; 10153 named theorem declarations aud

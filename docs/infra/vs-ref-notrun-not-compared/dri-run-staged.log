@@ -1,0 +1,6 @@
+# VSNR_SFX=.new-vsnr python3 -I tools-local/test_vs_ref_notrun.py  (the staged files after the DRI-note fix)
+.................
+----------------------------------------------------------------------
+Ran 25 tests in 19.993s
+
+OK
