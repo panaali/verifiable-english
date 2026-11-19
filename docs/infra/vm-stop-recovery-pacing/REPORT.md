@@ -128,7 +128,7 @@ trusted-core file, so there was nothing to sweep.
 
 ## VE tree checks
 
-- Selected run: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. First round: 10 units, 0 failed, exit 0. Fix round: rerun on this REPORT's commit; its result is in `run-selected.log` (it replaces the first-round log).
+- Selected run: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. First round: 10 units, 0 failed, exit 0. Fix round, on commit 2f5c533b93: 10 units, 0 failed, exit 0 (ran on the VM). The selector deferred 2 files over 120 s, selected only for weak reasons, to the chain gate (tests/test_select_tests.py, tests/test_wire_gate_corpus.py). Log: `run-selected.log` (it replaces the first-round log); after the run only this line and the log were added.
 - Fix round: `lake build` rc 0 (1478 jobs) and `python3 lean/audit.py` PASS (`lean-checks.log`). There is no Lean change; the task asks for both checks anyway.
 - Not run: the full gate (the chain runs it on the final HEAD).
 - main-known-red: none of its tests were selected or hit.
