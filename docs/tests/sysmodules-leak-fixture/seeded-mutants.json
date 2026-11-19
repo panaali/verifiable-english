@@ -1,0 +1,39 @@
+{
+  "item": "sysmodules-leak-fixture",
+  "note": "Seeded bugs planted in tests/conftest.py (the one changed harness file; no Lean or Rust changed), each run with `uv run pytest -q -p no:xdist tests/test_sysmodules_leak_a.py tests/test_sysmodules_leak_b.py`, then restored with git checkout. Details: docs/tests/sysmodules-leak-fixture/REPORT.md, section Seeded bugs.",
+  "mutants": [
+    {
+      "id": 1,
+      "language": "Python",
+      "file": "tests/conftest.py",
+      "function": "_harness_scope",
+      "change": "no restore: on exit the scope keeps the sys.path entries and harness modules added inside it (both restore statements replaced by pass)",
+      "test": "tests/test_sysmodules_leak_b.py::test_module_a_left_no_harness_module_and_no_use_case_directory",
+      "result": "exit=1, AssertionError: translation is still module A's <module 'translation' from '.../usecases/eligibility/translation.py'>",
+      "log": "/tmp/smleak-seed1.log",
+      "restored": true
+    },
+    {
+      "id": 2,
+      "language": "Python",
+      "file": "tests/conftest.py",
+      "function": "_harness_scope",
+      "change": "restore too much: the module's recorded entries are not put back on entry, so A's tests run without its own modules and directory",
+      "test": "tests/test_sysmodules_leak_a.py::test_a_sibling_the_harness_imports_lazily_at_call_time_comes_from_its_own_use_case",
+      "result": "exit=1, ModuleNotFoundError: No module named 'reference' (run.fixture_model's lazy import); also KeyError: 'translation' in test_its_own_harness_modules_and_directory_are_in_place_while_its_tests_run",
+      "log": "/tmp/smleak-seed2.log",
+      "restored": true
+    },
+    {
+      "id": 3,
+      "language": "Python",
+      "file": "tests/conftest.py",
+      "function": "_harness_module",
+      "change": "package modules counted as harness: the bare-name and non-package conditions removed and the directory test moved one level up, so ve.* modules A's import loaded are dropped",
+      "test": "tests/test_sysmodules_leak_b.py::test_package_modules_stay_loaded_and_bound_to_their_package",
+      "result": "exit=1, AssertionError: ve.backends.lean_runner (assert None is <module 've.backends.lean_runner' ...>)",
+      "log": "/tmp/smleak-seed3.log",
+      "restored": true
+    }
+  ]
+}
