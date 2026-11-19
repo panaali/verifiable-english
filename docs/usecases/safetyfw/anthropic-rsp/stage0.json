@@ -41,7 +41,7 @@
    "harm_of_non_novel_chem_bio_weapons": "catastrophic",
    "harm_of_novel_chem_bio_weapons": "catastrophic"
   },
-  "environment_id": "e64fcee5e0fb01abb86166f27305d28764f0b04982073812b666891944152e84",
+  "environment_id": "14a1bca82b2a4fe96486810ac59e8e802e3c2dbe50a30a3f7afd421030ffcb8e",
   "expected": "admitted, or S3 and S4 move to D1 as plain facts",
   "input": "D2: a risk environment of the four row harms and footnote 1's instance, with the stated might cells",
   "leads_cells": 0,
