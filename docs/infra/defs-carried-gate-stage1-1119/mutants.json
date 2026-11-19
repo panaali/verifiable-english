@@ -171,6 +171,84 @@
     "tests/test_definitions_carried.py::test_the_counter_code_is_a_byte_copy_of_the_pinned_source"
    ],
    "rc": 1
+  },
+  {
+   "id": "review-f1-unscoped-listed",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_a_new_use_case_is_reported_never_failed",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_new_use_case_is_reported_never_failed"
+   ],
+   "rc": 1,
+   "bug": "F1 unscoped use case listed",
+   "run": "1 failed, 58 deselected"
+  },
+  {
+   "id": "review-f2-every-header-ref",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_a_multi_rule_header_puts_every_named_rule_on_the_path",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_multi_rule_header_puts_every_named_rule_on_the_path",
+    "tests/test_definitions_carried.py::test_rule_header_refs_read_every_header_ve_renders"
+   ],
+   "rc": 1,
+   "bug": "F2 every header reference read",
+   "run": "5 failed, 1 passed, 53 deselected"
+  },
+  {
+   "id": "review-f2-unreadable-header-unparsed",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_a_header_the_grammar_does_not_read_is_unparsed_never_short",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_header_the_grammar_does_not_read_is_unparsed_never_short"
+   ],
+   "rc": 1,
+   "bug": "F2 unreadable header is UNPARSED",
+   "run": "5 failed, 1 passed, 53 deselected"
+  },
+  {
+   "id": "review-f2-precedence-followed",
+   "file": "tools/defs_carried.py",
+   "test": "tests/test_definitions_carried.py::test_a_precedence_sentence_puts_its_target_on_the_path",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_precedence_sentence_puts_its_target_on_the_path"
+   ],
+   "rc": 1,
+   "bug": "F2 precedence sentence followed",
+   "run": "1 failed, 58 deselected"
+  },
+  {
+   "id": "review-f3-repair-commits-pinned",
+   "file": "tools/defs_carried_known.py",
+   "test": "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main"
+   ],
+   "rc": 1,
+   "bug": "F3 repair commits pinned",
+   "run": "1 failed, 58 deselected"
+  },
+  {
+   "id": "review-f3-resolver-not-reached",
+   "file": "tools/defs_carried_known.py",
+   "test": "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main",
+   "failed": [
+    "tests/test_definitions_carried.py::test_a_rebuild_resolves_no_branch_and_no_main"
+   ],
+   "rc": 1,
+   "bug": "F3 repair commits pinned (resolver)",
+   "run": "1 failed, 58 deselected"
+  },
+  {
+   "id": "review-f3-pin-full-id",
+   "file": "tools/defs_carried_known.py",
+   "test": "tests/test_definitions_carried.py::test_the_builder_pins_every_commit_the_fixture_records",
+   "failed": [
+    "tests/test_definitions_carried.py::test_the_builder_pins_every_commit_the_fixture_records"
+   ],
+   "rc": 1,
+   "bug": "F3 audit pin a full id",
+   "run": "1 failed, 58 deselected"
   }
  ]
 }
