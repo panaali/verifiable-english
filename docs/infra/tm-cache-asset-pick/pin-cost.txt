@@ -1,0 +1,4 @@
+# the three steps of the staged pinof() on the real 20261117T0600Z record (2,973,997 bytes), /usr/bin/time -f "%e s %M KB", 2026-11-19: record base, tm-nightly.py resume, lean-near.py
+0.09 s 21464 KB
+0.13 s 28916 KB
+0.08 s 16548 KB
