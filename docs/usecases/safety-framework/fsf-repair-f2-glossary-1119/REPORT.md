@@ -29,8 +29,12 @@ table (CARRIER GUARD). Each is added in its own predicate entry, nothing appende
 
 Generated files: `environment.d1.json` (`python usecases/safety-framework/vocabulary.py`), `coverage.json`
 (`build_document.py`; document_sha256 only), `results.json` (`run.py`; answers unchanged, 257/262 as before; the two
-N1 certificate hashes only). These three are not in `tools/regen_generated.py` (its `--list` names no
-safety-framework file); each was written by its own generator, as in 7227dfad90 (FSF fix-3 batch 3).
+N1 certificate hashes only), `conformance/english-lean/lexicon-report.json` (`conformance/english_lean_lexicon.py`;
+the FSF lexicon_id only) and `tests/data/route-cases.jsonl` (`docs/en-e3-norm/en-2b/route_fixtures.py --write`; the
+`stale` fixture, which carries the FSF environment, only). None of these is in `tools/regen_generated.py` (its
+`--list` names none of them); each was written by its own generator, as in 7227dfad90 (FSF fix-3 batch 3) and the
+sibling's d1bbb7b3ae. The selected run found the last two stale (`test_every_corpus_environment_has_a_valid_selected_lexicon`,
+`test_the_route_fixtures_are_recorded`); after regeneration both pass.
 `regen_generated.py --check` reports only route-cases (no Lean build in this worktree) and checker-pins (no pinned
 Rust binary here), both unrelated to this item.
 
