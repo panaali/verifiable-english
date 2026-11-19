@@ -51,6 +51,42 @@ ARM_MAC_FIRST flag-off regressions. Evidence: `zsh test-armshard.zsh` before the
   - S3 (an extra macup probe with ARM_MAC_FIRST off): `41 ok, 1 FAIL`. M1 fails. This shows that `m1probe` hides no more
     than the one ruled probe.
 
+- Selected tests, run once on 9b8257dcd6 plus this evidence: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+  It ran 10 units with exit=0 and `0 failed` (it ran on the VM because of MAC_LAST).
+- Light lane: `light-lane.py check` printed `NOT 603 changed lines ... (13 files)`. All of those lines are evidence logs.
+  `trust_mutants.py --plan` gives `"mutants": 0` (trust-mutants-plan.log): there is no product definition to sweep, so no
+  sweep ran.
+
 No train bug was filed: the triage found none.
 
-SIZE: 0 product, 19 tests (harness lines changed, harness-changes.diff), ~120 other hand-written lines (this report and seeded-bugs.json).
+SIZE: 0 product, 19 tests (harness lines changed, harness-changes.diff), ~96 other hand-written lines (this report and seeded-bugs.json).
+
+## Notes for the DRI
+
+- `delegate-cw.py` printed `own session not found (needs VE_STEP and CLAUDE_CONFIG_DIR from dri-delegate.sh, or a transcript path)`,
+  so the context window is not MEASURED for this item.
+- The manage-agents harness edit is not committed in manage-agents. It is picked up by that repo's periodic snapshot, as for
+  the earlier harness .bak edits.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: N.A., no relay or Lean change.
+2. Deliverables built, no rule broken: PASS, test-armshard 42/42 (after.log) and the triage table above.
+3. Tests and gates can fail: PASS, seeds S1-S3 (seeded-bugs.json, seed-s1..s3.log).
+4. Python, Lean and Rust agree: N.A., no product code changed.
+5. R8 binding: N.A., no binding change.
+6. Gate evidence matches the final HEAD: PASS, the chain runs gate.py on the final HEAD. The harness evidence names the
+   merge-train.sh sha256 it ran against (sha256.txt).
+7. No unsigned item: PASS, there are no DELTA rows and no signature is reserved.
+8. User-visible change in DELTA: N.A., this is an ops harness only, with no VE user-visible change.
+9. Test selection: PASS, the selected run had exit 0 (/tmp/b1m1-select.log summary quoted above).
+10. Lean statements: N.A., no Lean.
+11. Budgets and deadlines fail closed: PASS, B1 (105 online) and B5b (180 unreachable) pin both sides of the lp1201
+    deadline. Seeds S1 and S2 fail them.
+12. CPU or memory: N.A., harness assertions only.
+13. Test removed or renamed: N.A. No ok() was removed. The M1 equality ok's name gained "(no macslot probe)", and the count
+    stays 42.
+14. Both directions and cited evidence: PASS. The deadline is tested online and unreachable (B1, B5b). M1 accepts the
+    installed script (after.log) and refuses a flag-off change (S3). Every claim above cites a log in this directory.
+15. Overclaim, silent cut, a new check that can fail, limits: PASS. There is no cut. Each new assertion has a seed (S1, S2,
+    S3). There are no limits.
