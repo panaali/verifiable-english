@@ -97,8 +97,9 @@ BASE = {
                        "automating ML R&D)\")", "no one the text names (unstated)", term="OT7"),
     "external": _base(["proposal"], "{0} is an external deployment: a model release to entities outside Google",
                       "{0} is external"),
-    "low_risk": _open(["proposal"], "{0} is a low-risk external deployment: a small scale and private release "
-                      "restricted to particular external groups", "no one the text names (unstated)", term="OT8"),
+    "low_risk": _open(["proposal"], "{0} is a low-risk external deployment (Glossary: \"Low-Risk External "
+                      "Deployments: represent small scale and private releases restricted to particular external "
+                      "groups or organizations.\")", "no one the text names (unstated)", term="OT8"),
     "first_deployment": _base(["proposal"], "{0} is the first external deployment of a new model"),
     "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary definition)",
                       "no one the text names (unstated)", "{0} is frontier", "OT9"),
