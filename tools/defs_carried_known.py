@@ -4,7 +4,7 @@
 Inputs (all read-only): the audit's candidate rows (rows-<doc>.tsv, one line per row) and two of its pages
 (udhr-pilot.md for the rowless finding D7, claude-constitution-pilot.md for that page's rule numbers R1-R19), a copy of
 which is committed under tests/data/defs_carried/audit/; the VE repository at the audit's pin; and the FSF/RSP repairs
-at the trees REPAIR_TREES pins (their legend or code appends name the predicate and the source passage of each repair).
+at the trees tests/data/defs_carried/repair_pins.json pins (their legend or code appends name the predicate and the source passage of each repair).
 
 Mechanical only. Each row becomes one case per (rule, term): wildcards (`R5b.*`), ranges (`R14.1-R14.3`), "all 49",
 `claims.ve:5` and the pilot's R<n> are resolved against the pin; the term is the row's carrier key when the pin declares
@@ -32,44 +32,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import defs_carried as dc  # noqa: E402
 
 PIN = '3d6b459df40163909537f000b23fbf61c3bc0d48'   # 3d6b459df4, the audit's pin, as a full commit id
-# The 9 FSF/RSP repair rows the design lists (F1-F3, F5-F9, R1): (case id, branch, document, tip, base, merge). The
-# tip, base and merge are the commit ids the fixture records, pinned when it was built; they are labels only and never
-# reach git. A rebuild reads each repair at the content-addressed trees REPAIR_TREES pins (the trees of that tip and
-# base), never a branch name, a commit or `main`, so it gives the same fixture after main moves, after a repair merges,
-# after a branch is deleted and after the history is rewritten or exported (R18). `--resolve-branches` prints how the
-# branches resolve today, for a deliberate refresh.
-REPAIRS = [
-    ('F1', 'feature/fsf-repair-f1-leveldefs-1119', 'safety-framework',
-     'e09136236176238629c5cab0d59af83a70a85919', 'd8758ce96837db7780caddb9f498e36fd7f511ba', None),
-    ('F2', 'feature/fsf-repair-f2-glossary-1119', 'safety-framework',
-     '74b5259fba1c4f393b495bab911e6a12c7cfdfd3', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1', None),
-    ('F3', 'feature/fsf-repair-f3-safetycase-1119', 'safety-framework',
-     '1ad3fe3cb7941be5a485d071784ed59a1517a4dd', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
-    ('F5', 'feature/fsf-repair-f5-lowrisk-1119', 'safety-framework',
-     'd16497ac4126ecba0dd65a4bff4e563bd65f539a', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1',
-     '53de6068d728a11fb3d89dc3bc001a51ef8cbe8c'),
-    ('F6', 'feature/fsf-repair-f6-sl2plus-1119', 'safety-framework',
-     '127fc87d0413dca3354bc8d3cedbad400127849c', 'f5553bc894cfc0de73b98581a853bbe59cb5aab1', None),
-    ('F7', 'feature/fsf-repair-f7-govadequacy-1119', 'safety-framework',
-     'ed5e3852019e846ab011745bacbeba9a6e2b3ebe', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
-    ('F8', 'feature/fsf-repair-f8-disclosure-1119', 'safety-framework',
-     'c5781618bc9668c22495d878fffce0d092d7eaa2', 'd8758ce96837db7780caddb9f498e36fd7f511ba', None),
-    ('F9', 'feature/fsf-repair-f9-mcca-1119', 'safety-framework',
-     '236d3366e88e8b3836591b63be86cae522a2babc', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
-    ('R1', 'feature/rsp-repair-r1-catastrophic-1119', 'anthropic-rsp',
-     'f7a6e5f7545e5fb5b369c9ba445339bb32b5b634', '0ce720e46b7f885bceece8766860732c20f9bbe4', None),
-]
-REPAIR_TREES = {   # case id -> (tip tree, base tree): what the builder reads
-    'F1': ('72a24fafabb8469099bd2938c77793f1940c5077', '929d31f4be48ef1b3879dc0d02b98eca6a56173c'),
-    'F2': ('416381c9178d698c569f9c0833aa2d8243a68912', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
-    'F3': ('96403957a175cd4291fa92c7685609f7228b7c92', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
-    'F5': ('e9f291b37ec8abf1f326fb9b4c67d230b191f081', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
-    'F6': ('0be81c9071a7eee3776cee8c60d1d62f599de6ed', 'dc0b1c87f7edee1d3b319702ccc3f636e9c6507b'),
-    'F7': ('a1bcdcec15762cd3166e0a74d7f074cd004da67e', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
-    'F8': ('e9005138bf775cd4b45ecfb99df6533b089b26ff', '929d31f4be48ef1b3879dc0d02b98eca6a56173c'),
-    'F9': ('a32a664e2963abacf711b6395d007e4ea4227074', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
-    'R1': ('430d44d030b845743dc832c1a81a8d4332ec617a', 'e89d41b5538b415c04ffc0c5e4199c5bc13998cc'),
-}
+# The 9 FSF/RSP repairs (F1-F3, F5-F9, R1), from tests/data/defs_carried/repair_pins.json: REPAIRS rows are (case id,
+# branch, document, tip, base, merge), where tip, base and merge are the commit ids the fixture records (labels only,
+# never given to git); REPAIR_TREES maps each id to the content-addressed (tip tree, base tree) the builder reads. A
+# rebuild names no branch, repair commit or `main` to git, so it gives the same fixture after main moves, after a repair
+# merges, after a branch is deleted and after the history is rewritten (R18). The pins are saved data, not literals:
+# a repair tip that never reached main is not in every clone. `--resolve-branches` prints how the branches resolve
+# today, for a deliberate refresh.
+REPAIR_PINS = Path(__file__).resolve().parents[1] / 'tests' / 'data' / 'defs_carried' / 'repair_pins.json'
+_PINS = json.loads(REPAIR_PINS.read_text(encoding='utf-8'))['repairs']
+REPAIRS = [(p['id'], p['branch'], p['doc'], p['tip'], p['base'], p['merge']) for p in _PINS]
+REPAIR_TREES = {p['id']: (p['tip_tree'], p['base_tree']) for p in _PINS}   # case id -> (tip tree, base tree)
 MIN_RUN = 3          # words: a shorter run shared with the source is not a cut (a wrapper's "Rule 1" is not a quote)
 MIN_REPAIR_RUN = 10  # words: a repair append's source passage (a shorter shared run is a label or a citation)
 
@@ -315,14 +288,15 @@ def d7_cases(page, doc):
 def repair_commits(repo, rid):
     """A repair's pinned record: (base, tip, merge) commit labels and (base_tree, tip_tree), the trees the builder reads,
     each checked to exist. No ref is resolved and no commit is read."""
-    labels = {r: (base, tip, merge) for r, _branch, _doc, tip, base, merge in REPAIRS}
-    if rid not in labels or rid not in REPAIR_TREES:
-        raise SystemExit(f'unknown repair {rid!r}')
-    tip_tree, base_tree = REPAIR_TREES[rid]
-    for t in (tip_tree, base_tree):
-        if subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', f'{t}^{{tree}}'], capture_output=True).returncode:
-            raise SystemExit(f'{rid}: pinned tree {t} is not in {repo}')
-    return labels[rid] + (base_tree, tip_tree)
+    for pin in _PINS:
+        if pin['id'] == rid:
+            tip_tree, base_tree = pin['tip_tree'], pin['base_tree']
+            for t in (tip_tree, base_tree):
+                if subprocess.run(['git', '-C', str(repo), 'cat-file', '-e', f'{t}^{{tree}}'],
+                                  capture_output=True).returncode:
+                    raise SystemExit(f'{rid}: pinned tree {t} is not in {repo}')
+            return pin['base'], pin['tip'], pin['merge'], base_tree, tip_tree
+    raise SystemExit(f'unknown repair {rid!r}')
 
 
 def branch_commits(repo, branch):
