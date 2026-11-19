@@ -257,7 +257,8 @@ def test_a_result_record_has_the_plans_fields_in_their_vocabulary():
                             "inputs_sha256"]
     assert R.VOCABULARY["K"] == ("killed", "survived", "inconclusive", "error", "not-run")
     assert R.VOCABULARY["CR"] == ("found", "missed", "not-read")
-    assert all(R.VOCABULARY[c] == ("killed", "survived") for c in ("L1", "L2", "L3", "L4", "D"))
+    # B5: a text check that raised on a mutant's tree is "error", outside its denominator.
+    assert all(R.VOCABULARY[c] == ("killed", "survived", "error") for c in ("L1", "L2", "L3", "L4", "D"))
 
 
 @pytest.mark.parametrize("bad", [

@@ -1,0 +1,24 @@
+# review F1: reviewed script (md5 12b06170ea9aae5d9e26232c623c184b) vs fixed script (md5 210ad96a6ce8a5651d1ff891d5c5b7c5);
+# --dry-run --date 20261108 on /home/seyran/code/manage-agents/tools-local/vm-stop-recover-jobs-20261108.txt; VMSR_M = an empty temp dir; VMSR_SYSTEMCTL=true
+
+## low live load 12.50: rc old 0 new 0; output IDENTICAL; max young old 6/6, new 6/6
+   old launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+   new launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+## rising --dry-loads profile ending low: rc old 0 new 0; output IDENTICAL; max young old 6/6, new 6/6
+   old launches: 0m00s 1m00s 2m00s 6m30s 7m30s 8m30s 15m00s 16m00s 17m00s 21m30s 22m30s 23m30s 30m00s 31m00s 32m00s
+   new launches: 0m00s 1m00s 2m00s 6m30s 7m30s 8m30s 15m00s 16m00s 17m00s 21m30s 22m30s 23m30s 30m00s 31m00s 32m00s
+## live load 60 (PROBE F1): rc old 0 new 0; output differs; max young old 15/6, new 6/6
+   old launches: 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s
+   new launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+## live load exactly 48: rc old 0 new 0; output differs; max young old 15/6, new 6/6
+   old launches: 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s
+   new launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+## --dry-loads ending high: rc old 0 new 0; output differs; max young old 15/6, new 6/6
+   old launches: 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s
+   new launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+## unreadable load file: rc old 0 new 0; output differs; max young old 15/6, new 6/6
+   old launches: 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s 0m00s
+   new launches: 0m00s 1m00s 2m00s 3m00s 4m00s 5m00s 15m00s 16m00s 17m00s 18m00s 19m00s 20m00s 30m00s 31m00s 32m00s
+
+files the dry runs left in VMSR_M besides the harness's loadavg: none
+result: OK

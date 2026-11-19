@@ -1,0 +1,100 @@
+[
+ {
+  "case": "anthropic-rsp",
+  "document": "RSP",
+  "defective_commit": "dddddddddddddddddddddddddddddddddddddddd",
+  "finding": "fixture",
+  "fp1_defective": null,
+  "fp1_repaired": null,
+  "repair_record": "fixture",
+  "scored": true,
+  "source": "fixture",
+  "status": "repaired",
+  "id": "D:applied",
+  "unit": "r-records",
+  "repair_commit": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+  "edits": [
+   {
+    "file": "usecases/anthropic-rsp/rules.d1.ve",
+    "what": "rule block",
+    "after": "## r-records | always | section 1 \"We will keep records of every review.\"\nRule 1. Every situation must keep records of every review.",
+    "before": "## r-records | always | section 1 \"We will keep records ...\"\nRule 1. Every situation must keep records of every review."
+   }
+  ]
+ },
+ {
+  "case": "anthropic-rsp",
+  "document": "RSP",
+  "defective_commit": "dddddddddddddddddddddddddddddddddddddddd",
+  "finding": "fixture",
+  "fp1_defective": null,
+  "fp1_repaired": null,
+  "repair_record": "fixture",
+  "scored": false,
+  "source": "fixture",
+  "status": "no repair yet",
+  "id": "D:norepair",
+  "unit": "r-share",
+  "repair_commit": null,
+  "edits": [
+   {
+    "file": "usecases/anthropic-rsp/rules.d1.ve",
+    "what": "rule block",
+    "after": "Rule 1. Every situation must share the final report with the Board.",
+    "before": "Rule 1. Every situation must share the report with the Board."
+   }
+  ]
+ },
+ {
+  "case": "anthropic-rsp",
+  "document": "RSP",
+  "defective_commit": "dddddddddddddddddddddddddddddddddddddddd",
+  "finding": "fixture",
+  "fp1_defective": null,
+  "fp1_repaired": null,
+  "repair_record": "fixture",
+  "scored": true,
+  "source": "fixture",
+  "status": "repaired",
+  "id": "D:later",
+  "unit": "r-publish",
+  "repair_commit": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+  "edits": [
+   {
+    "file": "usecases/anthropic-rsp/rules.d1.ve",
+    "what": "rule block",
+    "after": "Rule 1. Every situation must publish a summary after review.",
+    "before": "Rule 1. Every situation must publish a summary."
+   }
+  ]
+ },
+ {
+  "case": "anthropic-rsp",
+  "document": "RSP",
+  "defective_commit": "dddddddddddddddddddddddddddddddddddddddd",
+  "finding": "fixture",
+  "fp1_defective": null,
+  "fp1_repaired": null,
+  "repair_record": "fixture",
+  "scored": true,
+  "source": "fixture",
+  "status": "repaired",
+  "id": "D:deleted",
+  "unit": "r-share",
+  "repair_commit": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+  "edits": [
+   {
+    "file": "usecases/anthropic-rsp/rules.d1.ve",
+    "what": "rule block",
+    "after": "Rule 1. Every situation must share the final report with the Board.",
+    "before": "Rule 1. Every situation must share the report with the Board."
+   },
+   {
+    "file": "usecases/anthropic-rsp/environment.d1.json",
+    "what": "legend of old_pred",
+    "after": null,
+    "before": "\"old_pred\": {}"
+   }
+  ]
+ }
+]
