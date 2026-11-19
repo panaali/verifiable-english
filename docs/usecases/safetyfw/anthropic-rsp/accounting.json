@@ -1630,11 +1630,6 @@
      "words": "A Risk Report will cover the risks of Anthropic's models and actions",
      "reason": "loss",
      "arg": "1"
-    },
-    {
-     "words": "refers generally to risks of the most severe potential harms from advanced AI",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
