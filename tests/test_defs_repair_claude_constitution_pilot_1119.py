@@ -224,3 +224,39 @@ def test_rule_7_refuses_a_passage_it_cannot_cut(driver):
             driver.carry_definitions(meta, source, {("predicates", "compliance_unsafe"): spans})
     with pytest.raises(ValueError):
         driver.carry_definitions(meta, source, {("predicates", "no_such_predicate"): driver.DECEPTION})
+
+
+HASH = re.compile(r"[0-9a-f]{64}")
+
+
+@pytest.mark.parametrize("document", ["after", "strict"])
+def test_c9_point_status_is_the_old_runs_but_for_identities(document):
+    """Saved evidence: the carried probe's C9 point statuses, measured by run-20261104T0716Z's measure.py, are the old
+    run's record byte for byte once every 64-hex identity is masked; the same 80 statuses (UNDECIDED or SETTLED yes)."""
+    old = (OLD_PROBE.parent / "answers" / document / "point-status-c9.out").read_text()
+    new = (CARRY / "answers" / document / "point-status-c9.out").read_text()
+    assert HASH.sub("#", new) == HASH.sub("#", old) and HASH.findall(new) != HASH.findall(old)
+    statuses = [c["answer"]["inner"]["point_status"] for c in json.loads(new)["cases"]]
+    assert len(statuses) == 80 and set(statuses) <= {"UNDECIDED", "SETTLED yes"}
+    steps = json.loads((CARRY / "answers/measurements.json").read_text())["steps"]
+    assert [(s["document"], s["step"], s["returncode"]) for s in steps] == [
+        ("after", "point-status-c9", 0), ("strict", "point-status-c9", 0)]
+
+
+def test_c9_point_status_records_are_bound_to_the_carried_probe(tmp_path, driver):
+    """Each saved record's inner request is the case the carried probe gives (its environment, so its legends)."""
+    from tests import lean_routes
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
+    spec = importlib.util.spec_from_file_location("defs_carry_c9_status", OLD_PROBE.parent / "c9_status.py")
+    c9_status = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(c9_status)
+    meta, source = read(PROBE)
+    strict = tmp_path / "strict.ve.md"
+    driver.migrate_soft.pilot.write(strict, c9_status.strict_twin(meta), source)
+    for document, path in (("after", PROBE), ("strict", strict)):
+        cases, labels = c9_status.point_status_cases(path)
+        saved = json.loads((CARRY / "answers" / document / "point-status-c9.out").read_text())["cases"]
+        assert len(cases) == len(saved) == 80
+        assert [r["inner_request"] for r in saved] == [c["inner"] for c in cases]
+        assert [r["scenario"] for r in saved] == labels
