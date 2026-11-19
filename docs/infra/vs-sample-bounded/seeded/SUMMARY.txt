@@ -1,0 +1,6 @@
+S1-no-resume-arg: comparators: 49 passed, 4 failed
+S2-no-jobs-scaling: comparators: 47 passed, 6 failed
+S3-no-progress-check: comparators: 51 passed, 2 failed
+S4-vm-takes-c2-cut: comparators: 51 passed, 2 failed
+S5-job-budget-kept: comparators: 45 passed, 8 failed
+S6-c2-restarts: comparators: 45 passed, 8 failed

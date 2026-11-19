@@ -1,0 +1,105 @@
+/tmp/vs-ref-notrun-test-w_mepg79/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-w_mepg79/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-w_mepg79/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-w_mepg79/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-w_mepg79/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-w_mepg79/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-w_mepg79/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-w_mepg79/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/vs-ref-notrun-test-8jdycb2c/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8jdycb2c/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8jdycb2c/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8jdycb2c/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8jdycb2c/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8jdycb2c/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8jdycb2c/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8jdycb2c/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/vs-ref-notrun-test-4m9uk6y2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-4m9uk6y2/loc.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-4m9uk6y2/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-4m9uk6y2/loc.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-4m9uk6y2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-4m9uk6y2/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-4m9uk6y2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-4m9uk6y2/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/vs-ref-notrun-test-6l0l0mt2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-6l0l0mt2/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-6l0l0mt2/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-6l0l0mt2/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-6l0l0mt2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-6l0l0mt2/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-6l0l0mt2/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-6l0l0mt2/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/vs-ref-notrun-test-2g39cxnr/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-2g39cxnr/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-2g39cxnr/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-2g39cxnr/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-2g39cxnr/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-2g39cxnr/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-2g39cxnr/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-2g39cxnr/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./tmp/vs-ref-notrun-test-8tctrbos/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/tools-local/fixtures/vsnr-p9-9ccbf3fd/vm-ref.fin.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8tctrbos/ma/cloud-late.py:307: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/tools-local/fixtures/vsnr-p9-9ccbf3fd/vm-ref.fin.json' mode='r' encoding='UTF-8'>
+  write(lp, open(recp).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8tctrbos/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8tctrbos/late/by-tree/k.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/tmp/vs-ref-notrun-test-8tctrbos/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-8tctrbos/late/by-tree/k.local.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../tmp/vs-ref-notrun-test-lz_u7ga_/ma/cloud-late.py:128: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/vs-ref-notrun-test-lz_u7ga_/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/cloud-verdicts.json' mode='r' encoding='UTF-8'>
+  return json.load(open(p))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..............FF.
+======================================================================
+FAIL: test_partial_reference_is_set_aside_and_never_reused (__main__.Sample.test_partial_reference_is_set_aside_and_never_reused)
+(4) a reference exiting 4 with a partial json: renamed aside, findref empty, a second call does not reuse it.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_vs_ref_notrun.py.new-vsw", line 338, in test_partial_reference_is_set_aside_and_never_reused
+    self.assertEqual(len(aside), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_reference_args_drop_the_jobs_deadline_and_budget (__main__.Sample.test_reference_args_drop_the_jobs_deadline_and_budget)
+(3) vmrun's argument list for p9's job.json: no --deadline/--budget of the job; its own --budget instead,
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_vs_ref_notrun.py.new-vsw", line 330, in test_reference_args_drop_the_jobs_deadline_and_budget
+    self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["4274"])
+AssertionError: Lists differ: ['21600'] != ['4274']
+
+First differing element 0:
+'21600'
+'4274'
+
+- ['21600']
++ ['4274']
+
+----------------------------------------------------------------------
+Ran 25 tests in 8.257s
+
+FAILED (failures=2)

@@ -1,0 +1,123 @@
+--- test-harness/comparators/test-comparators.zsh	2026-11-14 11:29:55.320415015 +0000
++++ test-harness/comparators/test-comparators.zsh.new-vsw	2026-11-19 07:45:18.699008002 +0000
+@@ -4,10 +4,11 @@
+ # must pass, a real difference in the same field must still trip.
+ # usage: zsh test-comparators.zsh        (scripts from the environment, defaults the live ones; seeded runs point one at
+ #   an older copy: GC=gha/gate-compare.py  GR=gaterec.py  CTV=cloud-tm-verify.py  CVC=cloud-verdict-compare.py
+-#   AH=actions-health.py). Private scratch (mktemp), synthetic git repos, no network; no real flag, store or log touched.
++#   AH=actions-health.py  VS=verdict-sample.sh). Private scratch (mktemp), synthetic git repos, no network; no real flag,
++#   store or log touched.
+ M=/home/seyran/code/manage-agents
+ GC=${GC:-$M/gha/gate-compare.py}; GR=${GR:-$M/gaterec.py}; CTV=${CTV:-$M/cloud-tm-verify.py}
+-CVC=${CVC:-$M/cloud-verdict-compare.py}; AH=${AH:-$M/actions-health.py}
++CVC=${CVC:-$M/cloud-verdict-compare.py}; AH=${AH:-$M/actions-health.py}; VS=${VS:-$M/verdict-sample.sh}
+ S=$(mktemp -d /tmp/comparators-test.XXXXXX); [ -n "$KEEP" ] && print "scratch kept: $S" || trap 'rm -rf $S' EXIT
+ pass=0; fail=0; out=$S/out
+ ok(){ if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); print -- "  FAIL $1"; sed 's/^/    /' $out 2>/dev/null | tail -6; fi; }
+@@ -219,5 +220,106 @@
+ cvc partA partA; r=$?
+ ok "compare: the same ids still compare (VERDICTS EQUAL, exit 0)" '[ $r = 0 ] && grep -q "^VERDICTS EQUAL$" $out'
+ 
++print "== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): $VS"
++# reviews/dri-decisions-20261114-lp1701.md item 1. Fixture: a copy of tools-local/fixtures/vsnr-p9-9ccbf3fd (p9's job.json: its
++# own --budget 4532 and --deadline in vm_args, tm_s 3205.3; its cloud record: 31 ids, 5 KILLED, 26 NOT RUN, jobs 4). The VM run
++# is the VS_TM stub (<job dir> <out json> <args...>), ve-cloud-2 a cloud2-run.sh stub: call n writes its args to calls.<n> and
++# line n of the queue (<rc>:<record>) to the out json.
++P9=$M/tools-local/fixtures/vsnr-p9-9ccbf3fd; VJOB=tm-nightly-20261116T1607Z-p9-9ccbf3fd
++python3 -I - $P9/cloud-verdicts.json $S <<'PY'
++import json, sys
++c, S = json.load(open(sys.argv[1])), sys.argv[2]
++def rec(judge, partial):  # the cloud record with the first `judge` NOT RUN ids judged SURVIVOR
++    d = json.loads(json.dumps(c)); left = [m for m in d["mutants"] if m["status"] == "NOT RUN"]
++    for m in left[:judge]:
++        m.update(status="SURVIVOR", raw_status="SURVIVOR", detail="survived")
++    d["counts"] = {k: sum(m["status"] == k for m in d["mutants"]) for k in c["counts"]}
++    if partial:
++        d["partial"]["unjudged"] = [m["id"] for m in left[judge:]]
++    else:
++        d.pop("partial")
++    json.dump(d, open(f"{S}/vs-{'cut' if partial else 'full'}{judge if partial else ''}.json", "w"))
++rec(0, True); rec(6, True); rec(26, False)  # vs-cut0 (26 unjudged), vs-cut6 (20 unjudged), vs-full (every id judged)
++PY
++vsrun(){  # $1 case, the rest the queue; VJ / VC: JSON edits of job.json / cloud-verdicts.json (null = drop the key);
++  # VSE: env words; VPRE=<name>:<file>: an earlier record in the job dir; VC2=1: CLOUD2_RUNNER on (cloud2-run.sh stub, synthetic git repo at vm_head, no VS_TM). Sets V, VD, vrc.
++  V=$S/vs-$1; VD=$V/jobs/$VJOB; mkdir -p $V/ma $V/bin $VD $V/home
++  cp $VS $V/ma/verdict-sample.sh; cp $CVC $V/ma/cloud-verdict-compare.py; cp $AH $V/ma/actions-health.py
++  cp $P9/job.json $P9/cloud-verdicts.json $VD/; [ -n "$VPRE" ] && cp ${VPRE#*:} $VD/${VPRE%%:*}; print -l -- ${@:2} > $V/queue; print '1.00 1.00 1.00 1/1 1' > $V/load; : > $V/POOL
++  local h=""; if [ -n "$VC2" ]; then git init -q -b main $V/src; print x > $V/src/x
++    git -C $V/src add -A; git -C $V/src -c user.name=T -c user.email=t@example.invalid commit -q -m x; h=$(git -C $V/src rev-parse HEAD); : > $V/C2; fi
++  local vj='{}' vc='{}' ve=("VS_TM=zsh $V/tm.zsh"); [ -n "$VJ" ] && vj=$VJ; [ -n "$VC" ] && vc=$VC; [ -n "$VC2" ] && ve=()
++  python3 -I - $VD/job.json $vj $VD/cloud-verdicts.json $vc $V/jobs/verdict-samples.json $h <<'PY'
++import json, sys
++for p, e in ((sys.argv[1], sys.argv[2]), (sys.argv[3], sys.argv[4])):
++    d = json.load(open(p)); d.update(json.loads(e)); json.dump({k: v for k, v in d.items() if v is not None}, open(p, "w"))
++if len(sys.argv) > 6:
++    d = json.load(open(sys.argv[1])); d["vm_head"] = sys.argv[6]; json.dump(d, open(sys.argv[1], "w"))
++json.dump({"n": 5, "fps": [], "sampled": [], "jobs": {}, "done": [], "streak": 3, "unknown": 0,
++           "obl": {"1in5:5": {"kind": "1in5", "rate": 5, "fp": "actions:x", "since": 1, "state": "retry", "attempts": 1,
++                              "last": 1, "why": "", "job": json.load(open(sys.argv[1]))["job"], "jobf": sys.argv[1]}}},
++          open(sys.argv[5], "w"))
++PY
++  print -r -- 'd=${0:h}; n=$(( $(cat $d/n 2>/dev/null || print 0) + 1 )); print $n > $d/n; print -l -- "$@" > $d/calls.$n
++q=$(sed -n ${n}p $d/queue); [ -n "$q" ] && cp ${q#*:} $1; exit ${${q%%:*}:-1}' > $V/run.zsh
++  print -r -- 'shift; o=$1; shift; zsh ${0:h}/run.zsh $o "$@"' > $V/tm.zsh  # VS_TM: <job dir> <out> <args...>
++  print -r -- 'zsh ${0:h:h}/run.zsh ${@[${@[(i)--json]}+1]} "$@"' > $V/ma/cloud2-run.sh  # tm --worktree W -- <args> --json <out>
++  print -r -- 'print -r -- "$*" >> ${0:h}/msgs' > $V/msg.zsh
++  print -r -- 'exit 97' > $V/bin/uv; print -r -- 'exit 97' > $V/bin/lake; chmod +x $V/bin/*  # a VM path on the c2 case: no build
++  env -u VS_REF_BUDGET -u VS_REF_K -u VS_REF_PASSES -u VS_REF_MIN_S -u VS_REF_JOBS -u VS_NO_CLOUD2 -u VS_TM PATH=$V/bin:$PATH \
++    HOME=$V/home CLOUD_JOBS_DIR=$V/jobs ACTIONS_POOL_FLAG=$V/POOL CLOUD_TRIAL_FLAG=$V/CT CLOUD_TRIAL_LOG=$V/trial.md \
++    CLOUD_MSG="zsh $V/msg.zsh" MAC_PYTEST_LOADAVG=$V/load VS_POLL=1 VS_AGE_CAP_FLAG=$V/nocap \
++    VS_MANAGE_DIR=$V/ma VE_EXPORT_SRC=$V/src VS_SHARE_MAIN=$V/share CLOUD2_FLAG=$V/C2 CLOUD2_RUNS_LOG=$V/c2runs \
++    $ve ${=VSE} zsh $V/ma/verdict-sample.sh $VD/job.json > $out 2>&1; vrc=$?
++  cat $V/jobs/cloud-jobs.log >> $out 2>/dev/null; }
++vsn(){ print $(cat $V/n 2>/dev/null || print 0); }
++vsarg(){ awk -v f=$2 'p{print;exit} $0==f{p=1}' $V/calls.$1 2>/dev/null; }  # the value after flag $2 in call $1
++vsall(){ grep -c -x -- $2 $V/calls.$1 2>/dev/null; }
++ispart(){ python3 -I -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1])).get("partial") else 1)' $1 2>/dev/null; }
++alljudged(){ python3 -I - $1 $P9/cloud-verdicts.json <<'PY'
++import json, sys
++r, c = (json.load(open(p)) for p in sys.argv[1:3])
++ids = lambda d: sorted(m["id"] for m in d["mutants"])
++sys.exit(0 if "partial" not in r and ids(r) == ids(c) and all(m["status"] not in ("NOT RUN", "UNKNOWN") for m in r["mutants"]) else 1)
++PY
++}
++noresume(){ awk 'skip{skip=0;next} $0=="--resume"{skip=1;next} 1' $1; }
++vsrun resume "4:$S/vs-cut0.json" "0:$S/vs-full.json"; rp=$(vsarg 2 --resume)
++ok "resume: a budget-cut reference (exit 4, partial) is resumed: a 2nd run with --resume <the cut, set aside>" \
++  '[ $(vsn) = 2 ] && [[ ${rp:t} == vm-ref.partial-deadline-*.json && ${rp:h} == $VD ]] && ispart $rp'
++ok "resume: no restart: the 2nd run's args are the 1st's plus --resume only (the 1st has none)" \
++  '[ $(vsn) = 2 ] && [ -z "$(vsarg 1 --resume)" ] && [ "$(cat $V/calls.1)" = "$(noresume $V/calls.2)" ]'
++ok "resume: it ends with all ids judged (vm-ref.json: no partial, the cloud's 31 ids, none NOT RUN/UNKNOWN): EQUAL, exit 0" \
++  '[ $vrc = 0 ] && alljudged $VD/vm-ref.json && grep -q "verdict sample: EQUAL" $V/trial.md && grep -q "^VERDICTS EQUAL" $VD/verdict-compare.txt'
++ok "resume: the set-aside cut is no reference for findref" \
++  '[ $(vsn) = 2 ] && mv $VD/vm-ref.json $V/final.json && [ -z "$(python3 -I $AH findref $V/jobs $VD/cloud-verdicts.json)" ]'
++vsrun noprog "4:$S/vs-cut0.json" "4:$S/vs-cut0.json" "4:$S/vs-cut0.json"
++ok "resume: a resumed run that judges nothing more stops (2 runs, not 3): row not run, exit 1, no MISMATCH, pool kept" \
++  '[ $(vsn) = 2 ] && [ $vrc = 1 ] && grep -q "verdict sample: not run" $V/trial.md && ! grep -q MISMATCH $V/trial.md $V/msgs && [ -f $V/POOL ] && [ ! -e $VD/vm-ref.json ]'
++VSE="VS_REF_PASSES=2" vsrun passes "4:$S/vs-cut0.json" "4:$S/vs-cut6.json" "0:$S/vs-full.json"
++ok "resume: VS_REF_PASSES bounds the runs (2): row not run, the sample pending (no vdone equal)" \
++  '[ $(vsn) = 2 ] && [ $vrc = 1 ] && grep -q "verdict sample: not run" $V/trial.md && grep -q "1in5:5" $V/jobs/verdict-samples.json'
++vsrun budget "0:$S/vs-full.json"
++ok "deadline: from the cloud record, not the job's --budget 4532/--deadline: one --budget = ceil(2 x tm_s 3205.3 x cloud jobs 4 / 6) = 4274" \
++  '[ "$(vsarg 1 --budget)" = 4274 ] && [ $(vsall 1 --budget) = 1 ] && [ $(vsall 1 --deadline) = 0 ] && [ $(vsall 1 4532) = 0 ] && [ $vrc = 0 ]'
++VJ='{"tm_s": "1500"}' vsrun budget2 "0:$S/vs-full.json"
++ok "deadline: another cloud wall (tm_s 1500) sizes another deadline (2000)" '[ "$(vsarg 1 --budget)" = 2000 ]'
++VSE="VS_REF_K=3" vsrun budgetk "0:$S/vs-full.json"
++ok "deadline: the factor k (VS_REF_K 3) scales it (6411)" '[ "$(vsarg 1 --budget)" = 6411 ]'
++VJ='{"tm_s": null}' VC='{"seconds": 900}' vsrun budget3 "0:$S/vs-full.json"
++ok "deadline: no tm_s in the job record: the cloud JSON's seconds (900 -> 1200)" '[ "$(vsarg 1 --budget)" = 1200 ]'
++VJ='{"tm_s": "100"}' vsrun budget4 "0:$S/vs-full.json"
++ok "deadline: a floor VS_REF_MIN_S (900) for a very short cloud run (100 -> 133)" '[ "$(vsarg 1 --budget)" = 900 ]'
++VJ='{"tm_s": null}' VC='{"seconds": null}' vsrun budget5 "0:$S/vs-full.json"
++ok "deadline: no cloud run time at all: the fixed VS_REF_BUDGET (21600)" '[ "$(vsarg 1 --budget)" = 21600 ]'
++VPRE="vm-ref.partial-deadline-20261101T000000Z.json:$S/vs-cut6.json" vsrun earlier "0:$S/vs-full.json"
++ok "resume: a later sample resumes the part's earlier VM cut (its 1st run has --resume <that cut>): EQUAL" \
++  '[ $(vsn) = 1 ] && [ "$(vsarg 1 --resume)" = $VD/vm-ref.partial-deadline-20261101T000000Z.json ] && [ $vrc = 0 ]'
++VPRE="vm-ref.partial-c2-deadline-20261101T000000Z.json:$S/vs-cut6.json" vsrun otherhost "0:$S/vs-full.json"
++ok "resume: the VM never resumes a ve-cloud-2 cut (no --resume)" '[ $(vsn) = 1 ] && [ -z "$(vsarg 1 --resume)" ] && [ $vrc = 0 ]'
++VC2=1 vsrun c2 "4:$S/vs-cut0.json" "0:$S/vs-full.json"; rp=$(vsarg 2 --resume)
++ok "c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL" \
++  '[ $(vsn) = 2 ] && [[ ${rp:t} == vm-ref.partial-c2-deadline-*.json ]] && [ "$(vsarg 1 --budget)" = 3206 ] && [ "$(cat $V/calls.1)" = "$(noresume $V/calls.2)" ] && [ $vrc = 0 ] && grep -q "EQUAL.*ve-cloud-2" $V/trial.md'
++
+ print "comparators: $pass passed, $fail failed"
+ exit $(( fail > 0 ))
