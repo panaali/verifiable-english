@@ -1,0 +1,426 @@
+{
+ "format": "defs-repair-eligibility-1119-results-delta@1",
+ "base": "main f5553bc894 usecases/eligibility/results.json",
+ "head": "usecases/eligibility/results.json after run.py",
+ "summary_equal": true,
+ "answers_equal": true,
+ "mutants_equal": true,
+ "identity": {
+  "/environment_id": {
+   "base": "d5cad9b8af36f278fe8784caa0f24003b6b037a7fd89036ace9831734e271181",
+   "head": "b3325267dc0f3c19a030a71ee5457b6a4dbee611eb27f7b8909f8087a170abbd"
+  },
+  "/seconds": {
+   "base": 352,
+   "head": 866
+  }
+ },
+ "attribution": "run.english_facts and the P3 conditional give the head messages under main's environment.json too (command in REPORT.md)",
+ "message_changes": [
+  {
+   "path": "/english/rows[0]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[1]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[2]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[3]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[4]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[5]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[6]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[7]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[8]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[11]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[13]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[14]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[15]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[16]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[17]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[18]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[19]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[21]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[22]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[25]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[26]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[27]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[28]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[29]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[30]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[31]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[32]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[33]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[34]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[35]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[36]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[37]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[38]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[39]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[40]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[41]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[42]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[43]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[46]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[48]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[49]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[50]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[51]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[52]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[53]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[54]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[61]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[62]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[64]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[67]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[68]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[69]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[72]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[74]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[75]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[78]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[81]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[82]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[84]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[86]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[87]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[88]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[89]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[91]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[93]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[97]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[99]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[102]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[104]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[106]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[107]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[109]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[110]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[112]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[113]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[115]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[116]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[137]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[151]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/english/rows[152]/sentence",
+   "base": "no wording: No controlled W6 wording for this operation",
+   "head": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+  },
+  {
+   "path": "/probes/P3/conditional",
+   "base": "rejected: No W6 reading in any grammar",
+   "head": "rejected: The number at position 52 is not written in canonical form."
+  }
+ ]
+}

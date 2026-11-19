@@ -1,0 +1,32 @@
+{
+ "format": "seeded-bugs@1",
+ "item": "defs-repair-eligibility-1119",
+ "how": "each mutant applied to the file, environment.json and rules.json rewritten from translation.py the way run.py writes them, the tests run, then git checkout restores the tree",
+ "mutants": [
+  {"id": "M1-clause-dropped", "language": "Python", "file": "usecases/eligibility/translation.py",
+   "behaviour": "the 'lives with' definition is carried word for word (S1:58)",
+   "change": "drop 'and they are not in residential care' from DEFINITIONS['lives with']",
+   "test": "tests/test_defs_repair_eligibility_1119.py::test_each_carrier_holds_the_source_definition_word_for_word[defs-eligibility-7-1119]",
+   "result": "failed"},
+  {"id": "M2-carrier-missing", "language": "Python", "file": "usecases/eligibility/translation.py",
+   "behaviour": "every predicate the partner rules use carries partner, couple and polygamous marriage",
+   "change": "delete the excluded_partner_benefit entry of LEGEND_DEFINITIONS",
+   "test": "tests/test_defs_repair_eligibility_1119.py::test_each_carrier_holds_the_source_definition_word_for_word[defs-eligibility-3-1119] (also -4-, -5-)",
+   "result": "failed"},
+  {"id": "M3-b1-gloss-bare", "language": "Python", "file": "usecases/eligibility/translation.py",
+   "behaviour": "the qualifying week definition is carried on the gloss of bridge fact B1",
+   "change": "B1 gloss without DEFINITIONS['qualifying week']",
+   "test": "tests/test_defs_repair_eligibility_1119.py::test_each_carrier_holds_the_source_definition_word_for_word[defs-eligibility-2-1119]",
+   "result": "failed"},
+  {"id": "M4-word-changed", "language": "Python", "file": "usecases/eligibility/translation.py",
+   "behaviour": "the carried text is the source's, byte for byte after omit_norm",
+   "change": "'£35,000' -> '£35000' in DEFINITIONS['HMRC']",
+   "test": "tests/test_defs_repair_eligibility_1119.py::test_each_carrier_holds_the_source_definition_word_for_word[defs-eligibility-12-1119]",
+   "result": "failed"},
+  {"id": "M5-delta-outcome", "language": "evidence", "file": "docs/usecases/eligibility/defs-repair-eligibility-1119/evidence/results-delta.json",
+   "behaviour": "the R1 evidence test refuses a changed outcome word",
+   "change": "last message_changes head prefixed with 'parsed: '",
+   "test": "tests/test_defs_repair_eligibility_1119.py::test_saved_results_delta_keeps_verdicts_and_the_base_messages_names",
+   "result": "failed"}
+ ]
+}
