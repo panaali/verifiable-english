@@ -103,6 +103,67 @@ FACT_PREDICATES = {
     "claimed": (["person"], "The person made a claim for the winter fuel payment on the claim date."),
     "paid_without_claim": (["person"], "The person is paid without a claim (S1 reg. 5(1))."),
 }
+
+# Source definitions, word for word from source/*.txt (one string per source line, the line
+# breaks as single spaces): S1 = uksi-2025-969-made.txt, S2 = wfp-print.txt, S3 =
+# uksi-2005-3360-reg2.txt. Each is appended to the legend of the predicates that use the term
+# (LEGEND_DEFINITIONS) or, for the qualifying week, to the gloss of bridge B1.
+DEFINITIONS = {
+    "qualifying week": " ".join((  # S1:40; S2:38
+        "“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;",
+        "The amount you get is based on when you were born and your circumstances between 21 to 27 September 2026. This is called the ‘qualifying week’.")),
+    "partner": "“partner” means a member of a couple or a polygamous marriage;",  # S1:33
+    "couple": " ".join((  # S1:22-26
+        "“couple” means—", "(a)",
+        "two people who are married to, or civil partners of, each other and are members of the same household, or", "(b)",
+        "two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners;")),
+    "polygamous marriage": " ".join((  # S1:35-39
+        "“polygamous marriage” means any marriage which took place under the laws of a country which permits polygamy where—", "(a)",
+        "any member of the marriage is for the time being married to more than one person, and", "(b)",
+        "all the members of the marriage are members of the same household;")),
+    "residential care": " ".join((  # S1:52-57
+        "(4) In these Regulations, a person—",
+        "(a)is in residential care if, disregarding any period of temporary absence, they reside in—",
+        "(i)a care home,", "(ii)an independent hospital, or",
+        "(iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14),",
+        "throughout the qualifying week and the period of at least 12 weeks ending immediately before the qualifying week;")),
+    "lives with": "(b)lives with a person if, disregarding any period of temporary absence, they share accommodation with one or more persons as their mutual home and they are not in residential care.",  # S1:58
+    "care home": " ".join((  # S1:17-21
+        "“care home”—", "(a)", "in England, has the meaning assigned to it by section 3 of the Care Standards Act 2000(4);", "(b)",
+        "in Wales, means accommodation the provision of which, together with nursing or care, is a care home service as defined in paragraph 1 of Schedule 1 to the Regulation and Inspection of Social Care (Wales) Act 2016(5) which is provided wholly or mainly to persons aged 18 or over;")),
+    "independent hospital": " ".join((  # S1:28-32
+        "“independent hospital”—", "(a)",
+        "in England, means a hospital as defined by section 275(1) of the National Health Service Act 2006(7) that is not a health service hospital as defined by that section;", "(b)",
+        "in Wales, means a hospital as defined by section 206(1) of the National Health Service (Wales) Act 2006(8) that is not a health service hospital as defined by that section;")),
+    "free in-patient treatment": " ".join((  # S1:27; S3:9-12
+        "“free in-patient treatment” is to be construed in accordance with regulation 2(4) and (5) of the Social Security (Hospital In-Patients) Regulations 2005(6);",
+        "(4) For the purposes of this regulation, a person shall be regarded as receiving or having received free in-patient treatment for any period for which he is or has been maintained free of charge while undergoing medical or other treatment as an in-patient—",
+        "(a)in a hospital or similar institution under the National Health Service Act 1977 M2, the National Health Service (Scotland) Act 1978 M3 or the National Health Service and Community Care Act 1990 M4, or",
+        "(b)in a hospital or similar institution maintained or administered by the Defence Council,",
+        "and such a person shall for the purposes of sub-paragraph (a) be regarded as being maintained free of charge in a hospital or similar institution unless his accommodation and services are provided under section 65 of the National Health Service Act 1977, section 57 of the National Health Service (Scotland) Act 1978 M5 or paragraph 14 of Schedule 2 to the National Health Service and Community Care Act 1990.")),
+    "total income": " ".join((  # S2:140; S2:141, its second sentence
+        "Your partner’s income does not count towards your total income.",
+        "You’ll need to provide the total amount of income you expect to receive in the tax year before any deductions.")),
+    "HMRC": "If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter Fuel Payment back.",  # S2:139
+}
+_PARTNER_TERMS = ("partner", "couple", "polygamous marriage")
+# Predicate -> the DEFINITIONS its legend carries, after its own description.
+LEGEND_DEFINITIONS = {
+    "partner_of": _PARTNER_TERMS, "partners_throughout": _PARTNER_TERMS, "partner_at_home": _PARTNER_TERMS,
+    "excluded_partner_benefit": _PARTNER_TERMS,
+    "in_residential_care": ("residential care",),
+    "lives_with": ("lives with",),
+    "in_care_setting": ("care home", "independent hospital"),
+    "inpatient": ("free in-patient treatment",),
+    "recovered": ("total income", "HMRC"),
+}
+
+
+def legend(name, text):
+    """A predicate's description: its own text, then the source definitions it carries."""
+    return " ".join((text, *(DEFINITIONS[term] for term in LEGEND_DEFINITIONS.get(name, ()))))
+
+
 DERIVED_PREDICATES = {
     "reached_pa": (["person"], "R2: the person reached pensionable age in or before the qualifying week."),
     "reached_80": (["person"], "The person reached the age of 80 in or before the qualifying week."),
@@ -150,7 +211,7 @@ def environment():
     for name, words in APPLICANT_MONEY.items():
         constants[name] = {"sort": "$int", "unit": "gbp_penny", "description": f"The applicant's {words}.",
                            "verbalisation": f"the applicant's {words}"}
-    predicates = {name: {"arguments": args, "description": text}
+    predicates = {name: {"arguments": args, "description": legend(name, text)}
                   for name, (args, text) in {**FACT_PREDICATES, **DERIVED_PREDICATES}.items()}
     return {"language": "ve.core@0.2",
             "profiles": ["documents@1", "order@0", "relational-fol@0", "time@0"],
@@ -426,7 +487,7 @@ def amount_rules(mutant=None):
     return [common_day, *rules]
 
 
-B1 = rule("B1", "S1 reg. 1(3), bridge B1", f"{QW1} is 6 days after {QW0}.", ["shift_days", day(QW1), day(QW0), "6"])
+B1 = rule("B1", "S1 reg. 1(3), bridge B1", f"{QW1} is 6 days after {QW0}. {DEFINITIONS['qualifying week']}", ["shift_days", day(QW1), day(QW0), "6"])
 
 
 def rules(mutant=None):

@@ -1,0 +1,19 @@
+{
+  "seconds": 7.7,
+  "pairs_without_situation": [],
+  "search_limits": [],
+  "situations": {
+    "force-u0036-s05": [
+      "f771f97abf99799f1ca9e83cd84898ec79d65540318f365190ee92d694b640c5"
+    ],
+    "force-u0125-s04-p2": [
+      "7c426dc72289d2834bd6d09505d212bcd4aa63d9a49128f93ad73252531fb032"
+    ],
+    "force-u0156-s03": [
+      "a883e7e01b34314d60122c7846fb3f47df930cf7a8787c18bb37eddb2555b05d"
+    ],
+    "force-u0263-s04-p2": [
+      "7833725cb62781e36ca1b8ca6536eade51fe323e5a47589bf72e1959100a6e36"
+    ]
+  }
+}

@@ -27,3 +27,7 @@
 - `docs/arch/AR-9/measure.py` — Measure the AR-9 split of the assist modules and write the evidence JSON.
 - `docs/arch/AR-9/report.py` — Render the AR-9 outcome block solely from saved evidence (`evidence/*.json`).
 - `docs/arch/AR-9/seed_faults.py` — Plant each AR-9 split fault, prove its named tests fail, then restore the source.
+- `docs/arch/arch-decoder-measure/deps.lean` — arch-decoder-measure: which project constants `VE.CertificateWire.decodeClosureTrace` reaches, and which project constants outside that set use them.
+- `docs/arch/arch-decoder-measure/kernel_cut.py` — arch-decoder-measure, deliverable 3: the kernel total with closure's trace decoder cut out.
+- `docs/arch/arch-decoder-measure/measure.py` — arch-decoder-measure: write MEASURE.json from tools/trust_map.py and the saved evidence.
+- `docs/arch/arch-decoder-measure/switch.lean` — arch-decoder-measure, deliverable 2 (a): what a switch of closure's trace decoder to Core's would have to state.
