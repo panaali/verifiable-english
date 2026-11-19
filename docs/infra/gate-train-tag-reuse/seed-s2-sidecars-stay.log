@@ -1,0 +1,49 @@
+# diff gate-train.sh (installed) -> seed s2-sidecars-stay
+25c25
+<   tmold=""; if [ -f $out ]; then tmold=$out.old-$t0; mv $out $tmold; for s in inventory ruling; do [ -f $out.$s.json ] && mv $out.$s.json $out.old-$t0.$s.json; done
+---
+>   tmold=""; if [ -f $out ]; then tmold=$out.old-$t0; mv $out $tmold; 
+# zsh test-harness/gatetrain/test-gatetrain.zsh <seed copy>
+  FAIL same tag: tm-inventory reads the moved old record (<out>.old-<t0>), not the missing <out>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.inventory.json (base fee7398ab) 08:10Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    tm-inventory apply zz /tmp/gatetrain-test.ijGjTh/wt /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.old-1795075810 /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json --base fe
+    read /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.old-1795075810 marker=old sidecar=0
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    chain-gate /tmp/gatetrain-test.ijGjTh/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.ijGjTh/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+  FAIL   the new record is at <out>; the old one and both its sidecars sit together at <out>.old-<t0>
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.inventory.json (base fee7398ab) 08:10Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    tm-inventory apply zz /tmp/gatetrain-test.ijGjTh/wt /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.old-1795075810 /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json --base fe
+    read /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t1.json.old-1795075810 marker=old sidecar=0
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    chain-gate /tmp/gatetrain-test.ijGjTh/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.ijGjTh/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+  FAIL same tag, no new record: tm-inventory still read the old record
+    --- out:
+    tm-barrier zz: rc=2 STALE /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t2.json - - --max-mutants 1000 08:10Z
+    tm-inventory zz: EMPTY /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t2.json.inventory.json (base fee7398ab) 08:10Z
+    tm-barrier zz: rc=0 stub record covers HEAD: SURVIVOR 0, UNKNOWN 0, NOT RUN 0 08:10Z
+    --- calls:
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    tm-inventory apply zz /tmp/gatetrain-test.ijGjTh/wt /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t2.json.old-1795075810 /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t2.json --base fe
+    read /tmp/gatetrain-test.ijGjTh/M/reviews/tm-targeted/zz-t2.json.old-1795075810 marker=old2 sidecar=0
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+    tm-barrier zz /tmp/gatetrain-test.ijGjTh/wt
+    chain-gate /tmp/gatetrain-test.ijGjTh/wt zz
+    merge-train feature/zz:/tmp/gatetrain-test.ijGjTh/wt:zz
+    tm-inventory restore /tmp/gatetrain-test.ijGjTh/wt
+gatetrain: 6 passed, 3 failed
