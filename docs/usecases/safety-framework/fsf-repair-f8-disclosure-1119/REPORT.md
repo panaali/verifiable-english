@@ -10,8 +10,9 @@ This item carries the text either way, and no action turns on the call. The revi
 whether a NONE key on DISC is cleared by the disclosure conditions at all. K6/YEARLY_REVIEW and K8/FREQUENT_REVIEW
 are TEXT on both sides once B's correction holds (they quote 5.1, not S:17).
 
-**Merges at.** Branch base d8758ce968 (main at the start); the branch HEAD is the commit that holds this REPORT. The
-merge train makes the merge commit. The R16 C2/C3 pins are per commit, so the counted read re-pins at that merge. A
+**Merges at.** The branch is rebased onto main 9b72137abf (after fsf-repair-f5-lowrisk-1119 merged). The VE commit
+that freezes the text is cce9cc345f, and the branch HEAD is the commit that holds this REPORT. The merge train makes
+the merge commit. The R16 C2/C3 pins are per commit, so the counted read re-pins at that merge. A
 merge after the R16 diagnostic voids that diagnostic for the touched answers (B-L0/DISC, B-L4/DISC, K6/YEARLY_REVIEW,
 K8/FREQUENT_REVIEW, and the other DISCL answers whose prompts show these legends).
 
@@ -78,7 +79,7 @@ The 5.1 sentence is in both review legends because K6 and K8 are separate answer
 | legends of 7cbec4b340b8 (`git checkout 7cbec4b340b8 -- vocabulary.py environment.d1.json`; /tmp/f8-base-7cbec4b340b8.log) | 2 failed |
 | legends of main d8758ce968 (/tmp/f8-base-main.log) | 2 failed |
 
-`tools/select_tests.py --base d8758ce968` selects the test (/tmp/f8-plan.log: 67/649 units, including
+`tools/select_tests.py --base d8758ce968` (before the rebase) selects the test (/tmp/f8-plan.log: 67/649 units, including
 tests/test_fsf_repair_f8_disclosure_1119.py, tests/test_safety_framework.py and tests/test_english_statement_blocks.py).
 
 ## 3. Prompt size (R16 C5 dry-run)
@@ -149,6 +150,21 @@ asks for no trust_mutants record, so no sweep was run.
   984.3 s), tests/test_pinned_sources.py and tests/test_fsf_repair_f8_disclosure_1119.py.
 - No test listed in main-known-red.txt failed, because none failed at all.
 
+After the run, main moved: fsf-repair-f5-lowrisk-1119 merged and changes the same generated files. The branch was
+rebased onto 9b72137abf:
+- The three conflicted hash-only files (coverage.json, route-cases.jsonl, lexicon-report.json) were taken from main and
+  regenerated with the commands of section 4. results.json is unchanged.
+- The vocabulary merged cleanly, and environment.d1.json equals vocabulary.py's output.
+- After the rebase, these 9 tests pass (/tmp/f8-post-rebase.log, "9 passed in 694.24s"):
+  - the new test file;
+  - test_safety_framework.py's test_environment_file_is_generated, test_the_low_risk_legend_quotes_the_glossary_sentence_whole,
+    test_build_check_writes_nothing_beside_the_source, test_rerun_equals_committed_results and
+    test_the_open_predicates_are_the_environment_legend_s_open_terms;
+  - test_english_statement_blocks.py::test_the_route_fixtures_are_recorded;
+  - test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon.
+
+The chain's gate runs on the final HEAD.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained Lean answers: N.A. No relayed answer or schema changed.
@@ -158,8 +174,8 @@ asks for no trust_mutants record, so no sweep was run.
 4. Python, Lean and Rust agree; valid inputs pass: PASS. The selected run is 0 failed (section 7), including the
    use case's Lean-backed tests/test_safety_framework.py.
 5. R8 binding: N.A. No binding changed.
-6. Gate evidence matches the final HEAD: PASS. The selected run covers c5781618, and later commits are docs only. The
-   chain runs the gate on the final HEAD.
+6. Gate evidence matches the final HEAD: PASS. The selected run covers c5781618, and the rebase onto 9b72137abf is
+   covered by the 9 tests in section 7. The chain runs the gate on the final HEAD.
 7. No unsigned item: PASS. DELTA.md has no rows; no SIGNED and no reserved cell.
 8. Every user-visible change in DELTA: PASS. VE behaviour is unchanged; the legend text is a use-case change
    (DELTA.md, as fsf-r1 and fsf-repair-f5).
