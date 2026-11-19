@@ -330,6 +330,20 @@
    ]
   },
   {
+   "test": "tests/test_definitions_carried.py",
+   "why": "starts git (git cat-file, git ls-tree, git rev-parse) in tests/test_definitions_carried.py, tools/defs_carried.py, tools/defs_carried_known.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_definitions_carried.py:test_git_tree_reads_a_commit_or_a_tree_by_id: git, git rev-parse",
+    "tools/defs_carried.py:GitTree.__init__: git ls-tree, git rev-parse",
+    "tools/defs_carried.py:GitTree.read: git cat-file",
+    "tools/defs_carried.py:MemTree.read: git cat-file",
+    "tools/defs_carried_known.py:repair_commits: git cat-file"
+   ]
+  },
+  {
    "test": "tests/test_df_e1.py",
    "why": "starts git (git rev-parse, git show) in docs/defeasible/df-e1/prepare.py, docs/defeasible/df-e1/runner.py",
    "recorded": [
