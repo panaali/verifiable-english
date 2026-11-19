@@ -237,7 +237,7 @@ Each bug was planted alone, its tests were run, and the file was restored with `
 - `tools/regen_generated.py --check`: history-tests was stale and is now regenerated. The codemap warning says it is regenerated on merge.
 - `tools/trust_map.py --check`: PASS, trusted +0.
 - `tools/trust_mutants.py --plan`: 0 Lean definitions and 0 mutants, so no sweep is needed. The light lane says NOT, because the fixture JSON counts as changed lines.
-- The selected run (`mac-pytest.sh --select`) result is in the final build report. The full gate is run by the chain on the final HEAD.
+- Selected run: `mac-pytest.sh --select -- --base 0ce720e46b --run` on commit 26c2114b72 (fallback runner ve-cloud-2) exited 0, 0 failed; tests/test_definitions_carried.py exit 0 in 28.2 s. The full gate is run by the chain on the final HEAD.
 - **No DELTA.md.** This change makes no user-visible change to the VE checker: no Lean, no `ve/` code, no verdict, wording, field, fault order or trust budget. The verdict classes here belong to this infra check (DESIGN r3).
 
 ## 6. Stated limits (stage 1)
