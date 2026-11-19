@@ -1,5 +1,5 @@
 --- test-harness/comparators/test-comparators.zsh	2026-11-14 11:29:55.320415015 +0000
-+++ test-harness/comparators/test-comparators.zsh.new-vsw	2026-11-19 07:45:18.699008002 +0000
++++ test-harness/comparators/test-comparators.zsh.new-vsw	2026-11-19 08:13:06.949888052 +0000
 @@ -4,10 +4,11 @@
  # must pass, a real difference in the same field must still trip.
  # usage: zsh test-comparators.zsh        (scripts from the environment, defaults the live ones; seeded runs point one at
@@ -14,7 +14,7 @@
  S=$(mktemp -d /tmp/comparators-test.XXXXXX); [ -n "$KEEP" ] && print "scratch kept: $S" || trap 'rm -rf $S' EXIT
  pass=0; fail=0; out=$S/out
  ok(){ if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); print -- "  FAIL $1"; sed 's/^/    /' $out 2>/dev/null | tail -6; fi; }
-@@ -219,5 +220,106 @@
+@@ -219,5 +220,121 @@
  cvc partA partA; r=$?
  ok "compare: the same ids still compare (VERDICTS EQUAL, exit 0)" '[ $r = 0 ] && grep -q "^VERDICTS EQUAL$" $out'
  
@@ -37,8 +37,10 @@
 +    else:
 +        d.pop("partial")
 +    json.dump(d, open(f"{S}/vs-{'cut' if partial else 'full'}{judge if partial else ''}.json", "w"))
-+rec(0, True); rec(6, True); rec(26, False)  # vs-cut0 (26 unjudged), vs-cut6 (20 unjudged), vs-full (every id judged)
++rec(0, True); rec(6, True); rec(12, True); rec(26, False)  # vs-cut0/6/12 (26/20/14 unjudged), vs-full (every id judged)
 +PY
++C2STAG=$(grep -m1 -E '^ *stag=[$][{]' $M/cloud2-run.sh)  # cloud2-run.sh's ship-tag rule (the stub runs it, F1)
++ok "c2 stub: cloud2-run.sh's own ship-tag rule (stag=, CLOUD2_SHIP_TAG else its pid) is found" '[[ $C2STAG == *CLOUD2_SHIP_TAG* ]]'
 +vsrun(){  # $1 case, the rest the queue; VJ / VC: JSON edits of job.json / cloud-verdicts.json (null = drop the key);
 +  # VSE: env words; VPRE=<name>:<file>: an earlier record in the job dir; VC2=1: CLOUD2_RUNNER on (cloud2-run.sh stub, synthetic git repo at vm_head, no VS_TM). Sets V, VD, vrc.
 +  V=$S/vs-$1; VD=$V/jobs/$VJOB; mkdir -p $V/ma $V/bin $VD $V/home
@@ -61,7 +63,9 @@
 +  print -r -- 'd=${0:h}; n=$(( $(cat $d/n 2>/dev/null || print 0) + 1 )); print $n > $d/n; print -l -- "$@" > $d/calls.$n
 +q=$(sed -n ${n}p $d/queue); [ -n "$q" ] && cp ${q#*:} $1; exit ${${q%%:*}:-1}' > $V/run.zsh
 +  print -r -- 'shift; o=$1; shift; zsh ${0:h}/run.zsh $o "$@"' > $V/tm.zsh  # VS_TM: <job dir> <out> <args...>
-+  print -r -- 'zsh ${0:h:h}/run.zsh ${@[${@[(i)--json]}+1]} "$@"' > $V/ma/cloud2-run.sh  # tm --worktree W -- <args> --json <out>
++  # tm --worktree W -- <args> --json <out>; vs-sample-bounded F1: it takes the ship tag by the real cloud2-run.sh's own rule
++  # (its stag= line, $C2STAG; the name of the shipped --rescore/--resume copies) and appends it to $V/c2tags, one line a run
++  { print -r -- $C2STAG; print -r -- 'print -r -- "$stag" >> ${0:h:h}/c2tags; zsh ${0:h:h}/run.zsh ${@[${@[(i)--json]}+1]} "$@"'; } > $V/ma/cloud2-run.sh
 +  print -r -- 'print -r -- "$*" >> ${0:h}/msgs' > $V/msg.zsh
 +  print -r -- 'exit 97' > $V/bin/uv; print -r -- 'exit 97' > $V/bin/lake; chmod +x $V/bin/*  # a VM path on the c2 case: no build
 +  env -u VS_REF_BUDGET -u VS_REF_K -u VS_REF_PASSES -u VS_REF_MIN_S -u VS_REF_JOBS -u VS_NO_CLOUD2 -u VS_TM PATH=$V/bin:$PATH \
@@ -94,6 +98,9 @@
 +vsrun noprog "4:$S/vs-cut0.json" "4:$S/vs-cut0.json" "4:$S/vs-cut0.json"
 +ok "resume: a resumed run that judges nothing more stops (2 runs, not 3): row not run, exit 1, no MISMATCH, pool kept" \
 +  '[ $(vsn) = 2 ] && [ $vrc = 1 ] && grep -q "verdict sample: not run" $V/trial.md && ! grep -q MISMATCH $V/trial.md $V/msgs && [ -f $V/POOL ] && [ ! -e $VD/vm-ref.json ]'
++vsrun third "4:$S/vs-cut0.json" "4:$S/vs-cut6.json" "4:$S/vs-cut12.json" "0:$S/vs-full.json"
++ok "resume: each run resumes the LAST cut (run 3 resumes run 2's cut, 20 unjudged, not run 1's): EQUAL after 4 runs (F3)" \
++  '[ $(vsn) = 4 ] && [ "$(vsarg 3 --resume)" != "$(vsarg 2 --resume)" ] && [ "$(vsarg 4 --resume)" != "$(vsarg 3 --resume)" ] && [ "$(python3 -I -c "import json,sys; print(len(json.load(open(sys.argv[1]))[\"partial\"][\"unjudged\"]))" $(vsarg 3 --resume))" = 20 ] && [ $vrc = 0 ]'
 +VSE="VS_REF_PASSES=2" vsrun passes "4:$S/vs-cut0.json" "4:$S/vs-cut6.json" "0:$S/vs-full.json"
 +ok "resume: VS_REF_PASSES bounds the runs (2): row not run, the sample pending (no vdone equal)" \
 +  '[ $(vsn) = 2 ] && [ $vrc = 1 ] && grep -q "verdict sample: not run" $V/trial.md && grep -q "1in5:5" $V/jobs/verdict-samples.json'
@@ -118,6 +125,14 @@
 +VC2=1 vsrun c2 "4:$S/vs-cut0.json" "0:$S/vs-full.json"; rp=$(vsarg 2 --resume)
 +ok "c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL" \
 +  '[ $(vsn) = 2 ] && [[ ${rp:t} == vm-ref.partial-c2-deadline-*.json ]] && [ "$(vsarg 1 --budget)" = 3206 ] && [ "$(cat $V/calls.1)" = "$(noresume $V/calls.2)" ] && [ $vrc = 0 ] && grep -q "EQUAL.*ve-cloud-2" $V/trial.md'
++# vs-sample-bounded F1: trust_mutants' resumable compares the --rescore file name, which cloud2-run.sh ships as
++# ../ship-rescore-<tag>.json; with its default tag (its pid) every pass names it anew and the "resume" restarts in full
++c2t=(${(f)"$(cat $V/c2tags 2>/dev/null)"})
++ok "c2ref: every ve-cloud-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)" \
++  '[ ${#c2t} = 2 ] && [ -n "${c2t[1]}" ] && [ "${c2t[1]}" = "${c2t[2]}" ]'
++VPRE="vm-ref.partial-c2-deadline-20261101T000000Z.json:$S/vs-cut6.json" VC2=1 vsrun c2later "0:$S/vs-full.json"
++ok "c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL" \
++  '[ $(vsn) = 1 ] && [ "$(vsarg 1 --resume)" = $VD/vm-ref.partial-c2-deadline-20261101T000000Z.json ] && [ "$(cat $V/c2tags 2>/dev/null)" = "${c2t[1]}" ] && [ -n "${c2t[1]}" ] && [ $vrc = 0 ]'
 +
  print "comparators: $pass passed, $fail failed"
  exit $(( fail > 0 ))
