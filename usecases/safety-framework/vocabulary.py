@@ -63,15 +63,15 @@ BASE = {
                         "(tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend "
                         "\"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional "
                         "security measures designed to address risks from insider threats and well-resourced "
-                        "non-state external actors.\" Security level 3 (table 3.2.2.a, ML R&D acceleration level 1: "
+                        "non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: "
                         "\"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with "
                         "SL 2+, plus additional mitigations designed to prevent unilateral access, harden "
-                        "infrastructure, and prevent data exfiltration.\"). Security level 4 (table 3.2.2.a, ML R&D "
+                        "infrastructure, and prevent data exfiltration.\" Security level 4, table 3.2.2.a, ML R&D "
                         "automation level 1: \"We recommend Security level 4 13 for this capability threshold, but "
                         "emphasize that this must be taken on by the frontier AI field as a whole.\"; footnote 13: "
                         "\"13 This level may include mitigations aligned with SL 2+ and 3, plus additional "
                         "mitigations aimed to isolate model weights, enhanced data center security, further "
-                        "hardening of infrastructure and minimizing potential attack surface.\")",
+                        "hardening of infrastructure and minimizing potential attack surface.\"",
                         "{0} recommends {1}"),
     "includes": _base(["measure", "measure"], "{0} includes {1} (2.1.1: Security Level 2+ adds measures to "
                       "RAND SL2)", "{0} includes {1}"),
