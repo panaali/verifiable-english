@@ -1,0 +1,27 @@
+# read-only replay on the VM's real data, 2026-11-19T11:39Z (nothing written outside this file)
+## manifest.json (dispatcher's), newest first: name main lean_tree
+lean-build-ec87fe990deb.tar.zst c9295c9c9 ec87fe990deb
+lean-build-71a76c375f58.tar.zst baeebe46a 71a76c375f58
+lean-build-f73cacbe6bd8.tar.zst 5fffd41cf f73cacbe6bd8
+lean-build-547a9924ac50.tar.zst 828449f6c 547a9924ac50
+lean-build-d820b947a44d.tar.zst 86152f3b2 d820b947a44d
+## the nightly's record and tm-nightly.py resume (with the record's own base)
+record 20261117T0600Z.json base 039d3dd5190e5eea878d24c4f88af811dfd05914
+resume: test-skip/nightly/20261117T0600Z.json	9ccbf3fdf352de245b41dae5146ee007af4adf55	7038
+head 9ccbf3fdf352de245b41dae5146ee007af4adf55 lean tree 4acf8387e957ecdd5f44162c2bd1f4dd7561d7ee
+## is any kept asset's main an ancestor of the head? (option (a) needs one)
+c9295c9c9 descendant of 9ccbf3fdf
+baeebe46a descendant of 9ccbf3fdf
+5fffd41cf descendant of 9ccbf3fdf
+828449f6c descendant of 9ccbf3fdf
+86152f3b2 descendant of 9ccbf3fdf
+## lean-near.py as the staged pinof runs it (K 4) and with no K limit
+no asset within 4 lean trees (the nearest main ancestor with one is further back, or none of the 5 kept assets is an ancestor)
+exit 1
+no asset within 100000 lean trees (328 lean-tree changes in 615 main commits, none with a kept asset)
+exit 1
+## lean-cache-publish.log: the head's asset was published, then pruned by keep 5
+2026-11-12T05:26:49Z lean-cache-publish: uploaded lean-build-4acf8387e957.tar.zst to release lean-cache
+2026-11-12T05:28:42Z lean-cache-publish: uploaded lean-build-4acf8387e957-linux-aarch64.tar.zst to release lean-cache
+2026-11-13T05:35:23Z lean-cache-publish: old asset lean-build-4acf8387e957.tar.zst deleted (HTTP 204; keep 5; no manifest lists it)
+2026-11-13T05:35:55Z lean-cache-publish: old asset lean-build-4acf8387e957-linux-aarch64.tar.zst deleted (HTTP 204; keep 5; no manifest lists it)

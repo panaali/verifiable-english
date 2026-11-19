@@ -1,0 +1,33 @@
+lean-cache-publish.sh under test: /home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache
+reference (live): /home/seyran/code/manage-agents/lean-cache-publish.sh
+cloud-dispatch.sh pick read from: /home/seyran/code/manage-agents/cloud-dispatch.sh
+== case1
+  ok   (1) exact tree: exit 0, main's asset uploaded
+  ok   (1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)
+  ok   (1) exact tree: nothing deleted: the release keeps the newest 5 (lean-build-602ee25f6749.tar.zst the oldest of them) + the nightly's
+  ok   (1) exact tree: manifest.json still lists it with its url
+  ok   (1) exact tree: the log names the kept asset and the head
+  ok   (1) exact tree: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)
+  ok   (1) exact tree, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-602ee25f6749.tar.zst deleted
+  ok   (1) exact tree, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+  ok   (1) nearest ancestor within K: exit 0, main's asset uploaded
+  ok   (1) nearest ancestor within K: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)
+  ok   (1) nearest ancestor within K: nothing deleted: the release keeps the newest 5 (lean-build-9cb1cd4312ba.tar.zst the oldest of them) + the nightly's
+  ok   (1) nearest ancestor within K: manifest.json still lists it with its url
+  ok   (1) nearest ancestor within K: the log names the kept asset and the head
+  ok   (1) nearest ancestor within K: cloud-dispatch.sh pins the head's asset lean-build-67c95a65c475.tar.zst (live: the newest lean-build-65d9f763cbd3.tar.zst)
+  ok   (1) nearest ancestor within K, next main: lean-build-67c95a65c475.tar.zst still kept on the release and in manifest.json (url); lean-build-9cb1cd4312ba.tar.zst deleted
+  ok   (1) nearest ancestor within K, next main: cloud-dispatch.sh still pins lean-build-67c95a65c475.tar.zst
+== case2
+  ok   (2) no asset related (all newer than the head): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) no asset related: 5 kept on the release, the dispatcher pins the newest (main's), as today
+  ok   (2) no nightly record: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) record complete (nightly.jsonl): same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) record over 4 days old: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) head on the no-resume list: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) the head's asset quarantined: same exit, deletes, manifest, pick and kept count as the live script; nothing pinned
+  ok   (2) the head's asset among the newest 5: same deletes and kept count as live (5)
+== case3
+  ok   (3) --pack: the head's arm asset kept beside the newest 5 arm ones, nothing deleted (the x86 one neither)
+  ok   (3) --pack: manifest-aarch64.json lists it with its url; manifest.json not written
+PASS: 0 failed
