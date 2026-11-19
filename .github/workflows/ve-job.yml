@@ -2,7 +2,7 @@
 # A job is one push of branch ci-job/<job> by the VM dispatcher (gha-dispatch.sh, via github-push.sh only). Its tip is ONE
 # commit on top of the job's exported head that adds only ci-job/job.json, ci-job/job.sh and this file.
 #   run:     read-only token, no credentials kept; checks that shape, checks out the exported head itself, installs the
-#            pinned toolchain (Lean v4.24.0, uv 0.12.19, zstd), then
+#            pinned toolchain (Lean v4.24.0, uv 0.12.19, zstd; git 2.56.1 from 2026-11-19: step "git"), then
 #            bash job.sh run <checkout> <out dir> <job.json "argv"...>   (same contract as the cloud runner's cloud-tm-job.sh)
 #   publish: write token; commits ONLY cloud-results/<job>/ on top of the exported head and pushes ci-result/<job>
 #            (never --force, never another branch). The VM's cloud-pull.sh verifies it like any cloud result.
@@ -100,6 +100,47 @@ jobs:
           sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
           printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
           { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
+      # 2026-11-19 x86-shard-toolchain-mix (manage-agents backlog row x86-shard-toolchain-mix; the same step, byte for byte,
+      # as the installed aarch64 workflow gha/ve-job-arm.yml, row arm-shard-toolchain-mix): ONE git on every shard of a leg.
+      # The ubuntu-24.04 pool serves images with git 2.56.0 and 2.56.1 at once (x86sh-nightly-a8b8c0fd-t539141: s1 2.56.1,
+      # s2-s4 2.56.0); tools/gate.py records `git --version` among its toolchains and tools/gate_shards.py refuses a leg whose
+      # shards differ, so a 2/2 split has no majority and is refused. Like Lean and uv, git is pinned: the runner's own git
+      # when it IS the pin, else the pin built from kernel.org's source tarball (sha256 pinned, from kernel.org's
+      # sha256sums.asc) into /opt/git and linked as /usr/local/bin/git and /usr/bin/git (gate.py builds its own PATH:
+      # toolchain bins, /usr/bin:/bin). A pin that cannot be fetched, checked or built keeps the runner's git and says so
+      # (gha.txt "git: PIN FAILED ...", a workflow warning) and never fails the run: the leg is then exactly as before (a mixed
+      # leg is still refused); the comparison is never loosened. Bump GIT_PIN and GIT_SHA together (here and in
+      # gha/ve-job-arm.yml) when the images move past the pin; test-harness/x86mix/test-gitpin-x86.zsh checks they agree.
+      - name: git
+        run: |
+          set -euo pipefail
+          t0=$(date +%s)
+          GIT_PIN=2.56.1
+          GIT_SHA=f0b0bf89264b9bd2e1c640363e7529643989da76281600473c50745cd34a607f
+          have=$(git --version 2>/dev/null || echo "no git")
+          cd "$RUNNER_TEMP"
+          pin_git() {
+            curl -sSfL --retry 3 -o git.tar.xz "https://mirrors.edge.kernel.org/pub/software/scm/git/git-$GIT_PIN.tar.xz" \
+              && echo "$GIT_SHA  git.tar.xz" | sha256sum -c - \
+              && { [ -f /usr/include/zlib.h ] || { sudo apt-get update -qq && sudo apt-get install -y -qq zlib1g-dev; }; } \
+              && rm -rf git-src && mkdir git-src && tar -xJf git.tar.xz -C git-src --strip-components=1 \
+              && sudo mkdir -p /opt/git && sudo chown "$(id -u)" /opt/git \
+              && make -C git-src -j"$(nproc)" prefix=/opt/git NO_TCLTK=1 NO_GETTEXT=1 NO_PERL=1 NO_PYTHON=1 NO_CURL=1 NO_EXPAT=1 NO_OPENSSL=1 install > git-build.log 2>&1 \
+              && [ "$(/opt/git/bin/git --version)" = "git version $GIT_PIN" ] \
+              && sudo ln -sf /opt/git/bin/git /usr/local/bin/git \
+              && [ "$(/usr/local/bin/git --version)" = "git version $GIT_PIN" ] \
+              && sudo ln -sf /opt/git/bin/git /usr/bin/git \
+              && [ "$(/usr/bin/git --version)" = "git version $GIT_PIN" ]
+          }
+          if [ "$have" = "git version $GIT_PIN" ]; then how="the runner's git is the pin $GIT_PIN"
+          elif pin_git; then how="pin $GIT_PIN built from source (the runner has $have)"
+          else
+            how="PIN FAILED: kept the runner's $have (pin $GIT_PIN; $( { tail -n 3 git-build.log 2>/dev/null || true; } | tr '\n' ' '))"
+            echo "::warning::git $how"
+          fi
+          rm -rf git.tar.xz git-src
+          printf 'git\t0\t%s\n' "$(( $(date +%s) - t0 ))" >> "$RUNNER_TEMP/out/gha-setup.tsv"
+          echo "git: $how; gate.py's PATH (/usr/bin:/bin) finds $(PATH=/usr/bin:/bin git --version) at $(PATH=/usr/bin:/bin command -v git)" >> "$RUNNER_TEMP/out/gha.txt"
       - name: pinned sources
         if: steps.job.outputs.gate == '1'
         run: |
