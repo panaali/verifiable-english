@@ -1,3 +1,8 @@
+- `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
+- `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
+- `tests/test_fidmech_wording.py` — fid-mech-b4: the wording generator moved into VE (plan 9), its harness mode and the actors.json matcher (plan 5.2).
+- `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
+- `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
 - `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
 - `tests/test_fol_names.py` — (no module docstring)
 - `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
@@ -74,9 +79,3 @@
 - `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
 - `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
 - `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
-- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
-- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
-- `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
-- `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
-- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
-- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
