@@ -15,7 +15,7 @@ from tests.pinned_source import pinned_source
 HERE = Path(__file__).resolve().parents[1] / "usecases" / "safety-framework"
 GOV = "governance_found_acceptable_with_safety_case_where_ccl_reached"
 F3_BLOCKS = ("f12-p", "f12-u", "f13-p", "f13-u")
-# The pinned source's sentence (Glossary, fsf-3.1.txt line 19). The test reads it from the source when the source is
+# The pinned source's sentence (Glossary, fsf-3.1.txt line 20, unit g-safety-cases of spans.json). The test reads it from the source when the source is
 # stored and checks that this copy is the same; the copy keeps the legend check running where the source is absent.
 SENTENCE = ("Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have "
             "been reduced to an acceptable level.")
