@@ -1,3 +1,13 @@
+- `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
+- `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
+- `tests/test_fol_names.py` — (no module docstring)
+- `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
+- `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
+- `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
+- `tests/test_fsf_proximity_tcl.py` — Safety-framework use case: src:4's TCL proximity commitment (row safety-framework-proximity-tcl).
+- `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
+- `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
+- `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
 - `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
 - `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
 - `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
@@ -70,15 +80,3 @@
 - `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
 - `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
 - `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
-- `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
-- `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
-- `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
-- `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
-- `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
-- `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
-- `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
-- `tests/test_lf14a_response_shape.py` — Typed parse ASTs and source-bound diagnostics in the shared response schema.
-- `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
-- `tests/test_llm.py` — (no module docstring)
-- `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
-- `tests/test_me_2d_f2_delta.py` — me-2d-f2's saved delta (docs/math-evidence/me-2d-f2/evidence/delta.json, DELTA row D1, standing ruling R1): the calc mode's refusal of the words "the" alone, r…

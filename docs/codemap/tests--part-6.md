@@ -1,3 +1,15 @@
+- `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
+- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
+- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
+- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
+- `tests/test_profiles.py` — (no module docstring)
+- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
+- `tests/test_properties.py` — (no module docstring)
+- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
+- `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
+- `tests/test_purposes_contract.py` — The `purposes@0` wire table in shadow (sa-wire-purposes0): `VE.Purposes.Wire`'s decoder still decides; the contract names spec 7.1's row (and 7.2's row 2) of a…
+- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
+- `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
 - `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
 - `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
@@ -65,14 +77,3 @@
 - `tests/test_readings_verdicts_lean.py` — `readings-verdicts` through the service (docs/spec/readings-defaults.md 3, 4.4, 2.4 and 8.2; plan RD-3).
 - `tests/test_readings_verdicts_split.py` — AR-16b split `ve/readings_verdicts.py` into the package `ve/readings_verdicts/`; these pin what the split must keep.
 - `tests/test_regen_generated.py` — tools/regen_generated.py: the generated-file inventory, its merge strategies and the merge-train flow.
-- `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).
-- `tests/test_relay.py` — `ve/backends/relay.py`, the one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batch 0): Lean's code chooses the exception class and Lean's…
-- `tests/test_relay_binding_inventory.py` — Every field of every RD-9 relayed answer is classified, and every bound field is fuzzed (DRI ruling R8).
-- `tests/test_relay_english_scale.py` — lf-10bc recheck: the 60-act reached-default repro renders from Lean's report line.
-- `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
-- `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
-- `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
-- `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
-- `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
-- `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
-- `tests/test_reports.py` — Reports preparation is untrusted; these tests cover its scope and identity.
