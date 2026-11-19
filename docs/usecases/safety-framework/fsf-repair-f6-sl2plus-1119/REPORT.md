@@ -16,7 +16,7 @@ for the touched answers, since the C2/C3 pins are per commit. The counted read r
 
 SIZE: 13 product (vocabulary.py; environment.d1.json is generated), 187 tests, 200 other hand-written lines
 (REPORT.md 149, DELTA.md 9, c5-dryrun.txt 42: docs and evidence). LIGHT lane: no longer light after review F1.
-`light-lane.py check` prints "NOT 408 changed lines outside generated files > 150 (10 files) against f5553bc8" (it was
+`light-lane.py check` prints "NOT 413 changed lines outside generated files > 150 (10 files) against f5553bc8" (it was
 LIGHT 102 before F1 added the guard tests and evidence). No trusted-core file changes: no Lean file changes, and
 `trust_map.py --check` gives trusted +0. So checklist 13a (trusted Lean growth) does not apply and no trust_mutants
 sweep was run.
