@@ -1,6 +1,6 @@
 {
  "item": "srccov-anthropic-rsp-1119",
- "note": "Seeded bugs planted by hand on the item's product code (Python only: no Lean or Rust changed), each run against the condition test and restored (git checkout); command: uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py.",
+ "note": "Seeded bugs planted by hand on the item's product code (Python only: no Lean or Rust changed), each run against the condition test and restored (git checkout); command: uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py. Review fix (F1, F2): the last eight are planted in the derived records the new tests bind (no product code changed in the fix), each run with uv run pytest -q on the named test and restored by copying the saved file back.",
  "mutants": [
   {
    "kind": "predicate legend carry",
@@ -43,6 +43,62 @@
    "change": "s31-coverage-date's anchor back to \"Scope. A Risk Report will cover the risks\" (the sub-heading falls back into the D3-routed unit); spans.json rebuilt",
    "test": "tests/test_srccov_anthropic_rsp_1119.py::test_every_recorded_unit_lies_in_a_record_that_says_it_is_not_a_rule",
    "result": "1 failed, 2 passed"
+  },
+  {
+   "kind": "review F1: stale results.json metrics",
+   "file": "usecases/anthropic-rsp/results.json",
+   "change": "HEAD 6c3711d635's results.json put back (M3 bytes of before the span change, M10 units 303)",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_saved_metrics_equal_their_recomputation_from_the_committed_files[anthropic-rsp]",
+   "result": "1 failed: anthropic-rsp/results.json is out of date in ['M10', 'M3']"
+  },
+  {
+   "kind": "review F1 class: the sibling use case's metrics",
+   "file": "usecases/openai-preparedness/results.json",
+   "change": "M10 units raised by 1",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_saved_metrics_equal_their_recomputation_from_the_committed_files[openai-preparedness]",
+   "result": "1 failed: out of date in ['M10']"
+  },
+  {
+   "kind": "review F2: stale README sentence",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "HEAD 6c3711d635's README put back (D3 449 B, no-claim 130 / 31,104, JT 11,372)",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: README.md does not say 'Within D1 alone, 4,676 bytes are CHECKED. D3 checks 442 bytes'"
+  },
+  {
+   "kind": "review F2 class: stale table cell",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "JT's alone cell back to '33, 6,892'",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: ('What each byte ...', 'JT judgment terms')"
+  },
+  {
+   "kind": "review F2 class: a family the files lack shows a count",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "AP act phrases row '1 | 5 | 0, 0'",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: the AP row is not zero"
+  },
+  {
+   "kind": "review F2 class: a family row missing",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "the WG weighing and causation row deleted",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: the gaps table lacks a family"
+  },
+  {
+   "kind": "review F2 class: answers table total",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "Total row '111 / 126'",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: ('Answers to the frozen key', '**Total**')"
+  },
+  {
+   "kind": "review F2 class: an unchecked prose figure",
+   "file": "usecases/anthropic-rsp/README.md",
+   "change": "', about 999 bytes' added after 'The plan expected under 10%'",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
+   "result": "1 failed: README.md states '999 bytes' with no check against the committed files"
   }
  ]
 }

@@ -2,7 +2,7 @@
 
 No user-visible change of VE. This item changes no product code under `ve/`, `lean/` or `rust/`, and no gate, test
 selection or tool logic. VE's diagnostics, fault order, fields, verdicts, availability and CPU stay as they are on main
-at 12cb72fa55. All changes are inside one use case:
+at e01c3d6680 (the merge base). All changes are inside one use case:
 
 - its vocabulary legends: text appended to the descriptions in `usecases/anthropic-rsp/rsp_vocabulary.py` (written to
   `environment.d1.json`). There are 21 changed legends (17 predicates, 4 threshold constants). Each keeps every word of
@@ -20,6 +20,9 @@ at 12cb72fa55. All changes are inside one use case:
   - LABELLED 37,248 -> 36,890;
   - UNFORMALISED 3,621 -> 4,128: the three hope records.
 
-No answer in `results.json` changes (the file is unchanged on this branch; `test_rsp_run_recomputes_every_key_item_and_records_causes` is
-in the selected run). This follows the fsf-repair-f1-leveldefs-1119 and fsf-r1 precedents (their DELTA.md files). No
+No answer in `results.json` changes: `run.py` rewrote only the metrics that copy the measurement (M3's
+`bytes_by_status` and `bytes_by_kind`, as above, and M10's units, 303 -> 307), and its items, comparison, mutants
+and section 9 comparisons are byte for byte main's (`run.py --check` exits 0;
+`test_rsp_run_recomputes_every_key_item_and_records_causes` is in the selected run). The use case's README states
+the new byte figures (D3 442 B; the no-claim, JT and readings rows of the gaps table). This follows the fsf-repair-f1-leveldefs-1119 and fsf-r1 precedents (their DELTA.md files). No
 standing ruling is needed, and no row is reserved for the DRI.
