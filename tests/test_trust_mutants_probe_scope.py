@@ -856,11 +856,12 @@ def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(seed_pack
     assert any(r["file"] == "Second.lean" and any(s <= rfl <= e for s, e in r["only"]) for r in dual)
 
 
-def test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts(tmp_path_factory):
+def test_probe_f1_a_check_module_a_target_imports_is_judged_alike_in_both_modes(tmp_path_factory):
     """eff-20261108-1 F1 (real Lean): `Demo/Far/Mid` sits in `Demo.Defs`' cone and `Demo/Check` (a target) imports
-    it, but no target names it (another directory, no statement names `inc`, no --deep), so it is outside the
-    control `files`. Its failing `#guard` is read by `settle`: eager gives UNKNOWN (no control), and lazy must give
-    the same rows, not a KeyError in a worker that loses every verdict of the run."""
+    it; no check of it names `inc` in a statement and it is in another directory (no --deep). Lazy must give eager's
+    rows, not a KeyError in a worker that loses every verdict of the run. tm-nightly-unknown-disposition-3 (the
+    nightly's M2397): Lake builds it with the mutant, so it is a target (`targets`) and has a control in both modes;
+    its failing `#guard` is judged, never "could not elaborate" for want of a control (the old code's UNKNOWN)."""
     root = tmp_path_factory.mktemp("f1") / "p"
     root.mkdir()
     scaffold(root, "Far")
@@ -877,4 +878,32 @@ def test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdic
         assert "Traceback" not in done.stderr, done.stderr[-3000:]
         got[mode] = [(m["id"], m["status"], m["raw_status"], m["detail"]) for m in mutants]
     assert got["eager"] and got["lazy"] == got["eager"], got
-    assert all(s == "UNKNOWN" and "Far/Mid.lean" in d and "could not elaborate" in d for _, s, _, d in got["lazy"])
+    assert not any("could not elaborate" in d for *_, d in got["lazy"]), got
+    assert any(s == "KILLED" and "Far/Mid.lean" in d for _, s, _, d in got["lazy"]), got
+
+
+def cone_tree(**extra: list[tuple[int, int, str, str | None]]) -> tm.Tree:
+    """Demo.Defs (mutated), imported by Demo.Far.Mid (a check; imported by the --test module Demo.T.Uses, through
+    Demo.Far.Plain, which holds none), Demo.Far.Lone (a check no target imports) and Demo.Far.Side (a check, outside
+    the cone: it imports nothing of it)."""
+    files = {x: x.replace(".", "/") + ".lean" for x in (
+        "Demo.Defs", "Demo.Far.Mid", "Demo.Far.Plain", "Demo.Far.Lone", "Demo.Far.Side", "Demo.T.Uses")}
+    check = [(2, 2, "check", None)]
+    roles = {"Demo/Far/Mid.lean": check, "Demo/Far/Lone.lean": check, "Demo/Far/Side.lean": check,
+             "Demo/T/Uses.lean": check, "Demo/Far/Plain.lean": [(1, 1, "other", "p")], **extra}
+    importers = {"Demo.Defs": {"Demo.Far.Mid", "Demo.Far.Lone"}, "Demo.Far.Mid": {"Demo.Far.Plain"},
+                 "Demo.Far.Plain": {"Demo.T.Uses"}, "Demo.Far.Side": {"Demo.T.Uses"}}
+    return tm.Tree(roles, {}, files, importers)
+
+
+def test_a_check_module_of_the_cone_a_target_imports_is_a_target():
+    """tm-nightly-unknown-disposition-3 (M2397): VE/Readings/ActsExamples.lean, which the --test file
+    VE/Service/ActsExamples.lean imports, was built with the mutant but named by no target, so its check had no
+    control ("Lean could not elaborate it in the probe"). A cone module holding a check that a target imports, even
+    through a module with none, is a target; one no target imports, one with no check and one outside the cone are
+    not."""
+    m = tm.Mutant("M1", "Demo/Defs.lean", 1, "Demo.inc", "lit-plus", 0, 1, (1, 1), "1", "2")
+    got = tm.targets(cone_tree(), m, ["Demo/T/Uses.lean"])
+    assert got == ["Demo.Defs", "Demo.Far.Mid", "Demo.T.Uses"], got
+    assert tm.targets(cone_tree(), m, []) == ["Demo.Defs"]  # no target imports Mid: as before
+    assert tm.targets(cone_tree(), m, [], deep=True) == ["Demo.Defs", "Demo.Far.Lone", "Demo.Far.Mid", "Demo.T.Uses"]
