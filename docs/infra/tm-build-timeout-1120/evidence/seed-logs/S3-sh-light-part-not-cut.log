@@ -1,0 +1,87 @@
+.F....F.
+======================================================================
+FAIL: test_heavy_ids_run_last_in_own_parts_at_two_jobs (__main__.Heavy.test_heavy_ids_run_last_in_own_parts_at_two_jobs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 52, in test_heavy_ids_run_last_in_own_parts_at_two_jobs
+    self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M009", "M010"], None), (["M003", "M007"], "2")], log)
+AssertionError: Lists differ: [(['M009', 'M010', 'M003', 'M007'], None)] != [(['M009', 'M010'], None), (['M003', 'M007'], '2')]
+
+First differing element 0:
+(['M009', 'M010', 'M003', 'M007'], None)
+(['M009', 'M010'], None)
+
+Second list contains 1 additional elements.
+First extra element 1:
+(['M003', 'M007'], '2')
+
+- [(['M009', 'M010', 'M003', 'M007'], None)]
+?                                     ^^^^
+
++ [(['M009', 'M010'], None), (['M003', 'M007'], '2')]
+?                  +  +++++++++                 ^^^
+ : 2026-11-20T07:33Z no resume: no nightly record: a sweep of main
+2026-11-20T07:33Z full sweep of main e53ecf2bc since d410a0ca1 (1 merges): /tmp/tmns-test-wk256n3b/home/test-skip/nightly/20261119T1133Z.json
+2026-11-20T07:33Z tests: 0 --test paths from the item records
+2026-11-20T07:33Z plan: 10 mutants
+2026-11-20T07:33Z part 1: python3 -I /tmp/tmns-test-wk256n3b/stub.py --worktree /tmp/tmns-test-wk256n3b/wt --trustmut -- --base d410a0ca17c9fb93921eac179a73d5fd94faeeda --max-mutants 5000 --budget 6300 --deadline 1795195439 --json /tmp/tmns-test-wk256n3b/home/test-skip/nightly/parts-20261119T1133Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-20T07:33Z part 1: mac-pytest.sh --trustmut exit 4 (/tmp/tmns-test-wk256n3b/home/test-skip/nightly-run-20261119T1133Z.log): partial (its deadline cut it; its unjudged ids resume)
+2026-11-20T07:33Z merge of 1 part(s): {"parts": 1, "partial": "part 1: partial", "carried": null}
+2026-11-20T07:34Z classify: {"t": "2026-11-20T07:34Z", "record": "/tmp/tmns-test-wk256n3b/home/test-skip/nightly/20261119T1133Z.json", "head": "e53ecf2bc3b5982b73e695c02aed4276ca21e023", "base": "d410a0ca17c9fb93921eac179a73d5fd94faeeda", "mutants": 10, "counts": {"KILLED": 6, "UNKNOWN": 2, "NOT RUN": 2}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {"VE/A.lean": {"SURVIVOR": 0, "UNKNOWN": 2, "allowed": 0, "item_killed": 0}}, "escapes_new": 0, "escapes_48h": 0, "partial": true, "complete": false, "unresolved": {"NOT RUN": 2, "UNKNOWN": 2}, "guard": null, "steps_wall": {}, "plan
+2026-11-20T07:34Z not complete: 2 unallowed UNKNOWN need a disposition (M003 M007)
+2026-11-20T07:34Z record not complete: the base stays d410a0ca1
+2026-11-20T07:34Z resume of 20261119T1133Z.json at its head e53ecf2bc (not main e53ecf2bc): 4 of 10 planned to judge (2 NOT RUN, 2 unallowed UNKNOWN (2 build timeouts)): /tmp/tmns-test-wk256n3b/home/test-skip/nightly/20261120T0634Z.json
+2026-11-20T07:34Z tests: 0 --test paths from the item records
+2026-11-20T07:34Z plan: 10 mutants
+2026-11-20T07:34Z heavy: 2 of the 4 ids to judge are build timeouts in 20261119T1133Z.json: they run last, in parts of <= 4 at --jobs 2 (tm-build-timeout-1120)
+2026-11-20T07:34Z part 1: python3 -I /tmp/tmns-test-wk256n3b/stub.py --worktree /tmp/tmns-test-wk256n3b/wt --trustmut -- --base d410a0ca17c9fb93921eac179a73d5fd94faeeda --max-mutants 5000 --only <4 ids from M009> --budget 6300 --deadline 1795195440 --json /tmp/tmns-test-wk256n3b/home/test-skip/nightly/parts-20261120T0634Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-20T07:34Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-wk256n3b/home/test-skip/nightly-run-20261120T0634Z.log)
+2026-11-20T07:34Z merge of 1 part(s) (verdicts of 20261119T1133Z.json carried): {"parts": 1, "partial": null, "carried": 6}
+2026-11-20T07:34Z classify: {"t": "2026-11-20T07:34Z", "record": "/tmp/tmns-test-wk256n3b/home/test-skip/nightly/20261120T0634Z.json", "head": "e53ecf2bc3b5982b73e695c02aed4276ca21e023", "base": "d410a0ca17c9fb93921eac179a73d5fd94faeeda", "mutants": 10, "counts": {"KILLED": 10, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 10, "parts": 1, "part_rows": [{"k": 1, "first": "M009", "n": 4, "rc": 0, "where": null, "se
+2026-11-20T07:34Z base -> e53ecf2bc (the resumed head; main e53ecf2bc is the next nightly's)
+
+
+======================================================================
+FAIL: test_remote_pool_heavy_part_carries_jobs (__main__.Heavy.test_remote_pool_heavy_part_carries_jobs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 100, in test_remote_pool_heavy_part_carries_jobs
+    self.assertEqual(got, [("M003,M007", "2"), ("M009,M010", None)], log)
+AssertionError: Lists differ: [('M009,M010,M003,M007', None)] != [('M003,M007', '2'), ('M009,M010', None)]
+
+First differing element 0:
+('M009,M010,M003,M007', None)
+('M003,M007', '2')
+
+Second list contains 1 additional elements.
+First extra element 1:
+('M009,M010', None)
+
+- [('M009,M010,M003,M007', None)]
++ [('M003,M007', '2'), ('M009,M010', None)] : 2026-11-20T07:34Z no resume: no nightly record: a sweep of main
+2026-11-20T07:34Z full sweep of main 2cd43c92b since 8d4bc8ade (1 merges): /tmp/tmns-test-bbambiqj/home/test-skip/nightly/20261119T1134Z.json
+2026-11-20T07:34Z tests: 0 --test paths from the item records
+2026-11-20T07:34Z plan: 10 mutants
+2026-11-20T07:34Z part 1: python3 -I /tmp/tmns-test-bbambiqj/stub.py --worktree /tmp/tmns-test-bbambiqj/wt --trustmut -- --base 8d4bc8ade5e6b1989f7a1e25f072536611ab875d --max-mutants 5000 --budget 6300 --deadline 1795195447 --json /tmp/tmns-test-bbambiqj/home/test-skip/nightly/parts-20261119T1134Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-20T07:34Z part 1: mac-pytest.sh --trustmut exit 4 (/tmp/tmns-test-bbambiqj/home/test-skip/nightly-run-20261119T1134Z.log): partial (its deadline cut it; its unjudged ids resume)
+2026-11-20T07:34Z merge of 1 part(s): {"parts": 1, "partial": "part 1: partial", "carried": null}
+2026-11-20T07:34Z classify: {"t": "2026-11-20T07:34Z", "record": "/tmp/tmns-test-bbambiqj/home/test-skip/nightly/20261119T1134Z.json", "head": "2cd43c92b1aae1640fa2d2d074696b436fc984f6", "base": "8d4bc8ade5e6b1989f7a1e25f072536611ab875d", "mutants": 10, "counts": {"KILLED": 6, "UNKNOWN": 2, "NOT RUN": 2}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {"VE/A.lean": {"SURVIVOR": 0, "UNKNOWN": 2, "allowed": 0, "item_killed": 0}}, "escapes_new": 0, "escapes_48h": 0, "partial": true, "complete": false, "unresolved": {"NOT RUN": 2, "UNKNOWN": 2}, "guard": null, "steps_wall": {}, "plan
+2026-11-20T07:34Z not complete: 2 unallowed UNKNOWN need a disposition (M003 M007)
+2026-11-20T07:34Z record not complete: the base stays 8d4bc8ade
+2026-11-20T07:34Z resume of 20261119T1134Z.json at its head 2cd43c92b (not main 2cd43c92b): 4 of 10 planned to judge (2 NOT RUN, 2 unallowed UNKNOWN (2 build timeouts)): /tmp/tmns-test-bbambiqj/home/test-skip/nightly/20261120T0634Z.json
+2026-11-20T07:34Z tests: 0 --test paths from the item records
+2026-11-20T07:34Z plan: 10 mutants
+2026-11-20T07:34Z heavy: 2 of the 4 ids to judge are build timeouts in 20261119T1134Z.json: they run last, in parts of <= 4 at --jobs 2 (tm-build-timeout-1120)
+2026-11-20T07:34Z pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to 3 at once (/tmp/tmns-test-bbambiqj/wt /tmp/tmns-test-bbambiqj/wt-s2 /tmp/tmns-test-bbambiqj/wt-s3)
+2026-11-20T07:34Z part 1 (slot 1, wt): python3 -I /tmp/tmns-test-bbambiqj/stub.py --worktree /tmp/tmns-test-bbambiqj/wt --trustmut -- --base 8d4bc8ade5e6b1989f7a1e25f072536611ab875d --max-mutants 5000 --only <4 ids from M009> --budget 6300 --deadline 1795195448 --json /tmp/tmns-test-bbambiqj/home/test-skip/nightly/parts-20261120T0634Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
+2026-11-20T07:34Z part 1: mac-pytest.sh --trustmut exit 0 in wt (/tmp/tmns-test-bbambiqj/home/test-skip/nightly-run-20261120T0634Z.log)
+2026-11-20T07:34Z pools remote: all 1 part(s) returned
+2026-11-20T07:34Z merge of 1 part(s) (verdicts of 20261119T1134Z.json carried): {"parts": 1, "partial": null, "carried": 6}
+2026-11-20T07:34Z classify: {"t": "2026-11-20T07:34Z", "record": "/tmp/tmns-test-bbambiqj/home/test-skip/nightly/20261120T0634Z.json", "head": "2cd43c92b1aae1640fa2d2d074696b436fc984f6", "base": "8d4bc8ade5e6b1989f7a1e25f072536611ab875d", "mutants": 10, "counts": {"KILLED": 10, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 10, "parts": 1, "part_rows": [{"k": 1, "first": "M009", "n": 4, "rc": 0, "where": null, "se
+2026-11-20T07:34Z base -> 2cd43c92b (the resumed head; main 2cd43c92b is the next nightly's)
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 9.782s
+
+FAILED (failures=2)

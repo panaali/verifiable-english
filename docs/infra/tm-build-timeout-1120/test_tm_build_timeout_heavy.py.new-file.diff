@@ -1,0 +1,129 @@
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ tools-local/test_tm_build_timeout_heavy.py	2026-11-20 07:30:03.824056204 +0000
+@@ -0,0 +1,126 @@
++#!/usr/bin/env python3
++"""Tests for tm-build-timeout-1120 (reviews/dri-decisions-20261120-tm-final-coverage.md item 2; reviews/tm-build-timeout-1120/
++REPORT.md): a resumed record's build-timeout ids run LAST, in parts of their own (<= TM_NIGHTLY_HEAVY_PART, 4) at trust_mutants
++--jobs TM_NIGHTLY_HEAVY_JOBS (2); every other id runs first with the command as before.
++  (1) resume with 2 NOT RUN and 2 build-timeout ids: part 1 = the NOT RUN ids, no --jobs; part 2 = the timeout ids, --jobs 2.
++  (2) 6 build-timeout ids: parts of 4 and 2, each at --jobs 2 (TM_NIGHTLY_HEAVY_PART).
++  (3) a heavy id that times out again stays a build-timeout UNKNOWN and the record is not complete (no verdict made).
++  (4) TM_NIGHTLY_HEAVY_JOBS=0: as before (one part, plan order, no --jobs, no "heavy:" line).
++  (5) TM_NIGHTLY_HEAVY_JOBS=9 / TM_NIGHTLY_HEAVY_PART=abc: refused in the log, the defaults (2, 4) kept.
++  (6) a sweep with no resumed record: no --jobs, no "heavy:" line (unchanged).
++  (7) TM_NIGHTLY_POOLS=remote: the heavy part's remote command carries --jobs 2, the other part's none.
++  (8) tm-nightly.py heavy: only build-timeout UNKNOWN ids, in numeric id order; an unreadable record: an empty line, exit 0.
++Each of (1)-(3), (5), (7), (8) FAILS on the tm-nightly.sh / tm-nightly.py installed before this item.
++Stub harness: test_tm_nightly_split.py's (synthetic repository, stub plan, stub runner), its stub also records --jobs.
++Run: TMN_SH=tm-nightly.sh.new-tmbto TMN_PY=tm-nightly.py.new-tmbto python3 -I tools-local/test_tm_build_timeout_heavy.py
++(default: the live files)."""
++import json, os, subprocess, sys, unittest
++
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++import test_tm_nightly_split as base  # noqa: E402  (reads TMN_PY / TMN_SH)
++import test_tm_drain_vm1_idle as idle  # noqa: E402  (its remote stub)
++
++OLD = '"resume": "--resume" in a}'
++STUB = base.STUB.replace(OLD, '"resume": "--resume" in a, "jobs": a[a.index("--jobs") + 1] if "--jobs" in a else None}')
++BT = "lake build did not finish in 1800 s (--build-timeout)"
++
++
++class Heavy(base.TmNightlySplit):
++    locals().update({n: None for n in dir(base.TmNightlySplit) if n.startswith("test_")})  # only this file's tests
++
++    def setUp(self):
++        super().setUp()
++        self.assertIn(OLD, base.STUB)  # the harness's stub is the one this file extends
++        base.wr(f"{self.tmp}/stub.py", STUB)
++
++    def first(self, **extra):  # an incomplete record 20 h old: the second run resumes it
++        p, calls, rows, b, log = self.nightly(10, TM_NIGHTLY_STAMP=self.stamp(20), **extra)
++        self.assertEqual(rows[-1]["complete"], False, log)
++        return calls
++
++    def again(self, **extra):
++        n = len(self.calls()) if os.path.exists(f"{self.tmp}/calls") else 0
++        p, calls, rows, b, log = self.nightly(10, TM_NIGHTLY_STAMP=self.stamp(1), **extra)
++        return calls[n:], rows, b, log
++
++    def calls(self):
++        return [json.loads(x) for x in base.rd(f"{self.tmp}/calls").splitlines()]
++
++    def test_heavy_ids_run_last_in_own_parts_at_two_jobs(self):
++        self.first(STUB_BT="1:M003,M007", STUB_PARTIAL="1:8")  # M009, M010 NOT RUN; M003, M007 build timeouts
++        calls, rows, b, log = self.again()
++        self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M009", "M010"], None), (["M003", "M007"], "2")], log)
++        self.assertIn("heavy: 2 of the 4 ids to judge are build timeouts in ", log)
++        self.assertIn("they run last, in parts of <= 4 at --jobs 2 (tm-build-timeout-1120)", log)
++        self.assertRegex(log, r"--only <2 ids from M003> --jobs 2 \(heavy: build timeouts in [0-9TZ]+\.json\)")
++        self.assertEqual((rows[-1]["complete"], b), (True, self.main), log)  # the merge of both parts completes it
++
++    def test_heavy_parts_hold_at_most_heavy_part_ids(self):
++        self.first(STUB_BT="1:M002,M003,M004,M005,M006,M007")
++        calls, rows, b, log = self.again()
++        self.assertEqual([(c["ids"], c["jobs"]) for c in calls],
++                         [(["M002", "M003", "M004", "M005"], "2"), (["M006", "M007"], "2")], log)
++        self.assertEqual(rows[-1]["complete"], True, log)
++
++    def test_heavy_timeout_again_stays_unknown_not_complete(self):
++        self.first(STUB_BT="1:M003,M007")
++        calls, rows, b, log = self.again(STUB_BT="2:M007")
++        self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M003", "M007"], "2")], log)
++        rec = json.loads(base.rd(rows[-1]["record"]))
++        m7 = next(m for m in rec["mutants"] if m["id"] == "M007")
++        self.assertEqual((m7["status"], m7["detail"]), ("UNKNOWN", BT), log)
++        self.assertEqual((rows[-1]["complete"], b), (False, self.base), log)
++
++    def test_off_is_as_before(self):
++        self.first(STUB_BT="1:M003,M007", STUB_PARTIAL="1:8")
++        calls, rows, b, log = self.again(TM_NIGHTLY_HEAVY_JOBS="0")
++        self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M003", "M007", "M009", "M010"], None)], log)
++        self.assertNotIn("heavy:", log)
++
++    def test_refused_values_keep_the_defaults(self):
++        self.first(STUB_BT="1:M002,M003,M004,M005,M006")
++        calls, rows, b, log = self.again(TM_NIGHTLY_HEAVY_JOBS="9", TM_NIGHTLY_HEAVY_PART="abc")
++        self.assertIn("TM_NIGHTLY_HEAVY_JOBS=9 refused (whole 1-8, or 0/off; tm-build-timeout-1120): the default 2", log)
++        self.assertIn("TM_NIGHTLY_HEAVY_PART=abc refused (whole 1-50; tm-build-timeout-1120): the default 4", log)
++        self.assertEqual([(len(c["ids"]), c["jobs"]) for c in calls], [(4, "2"), (1, "2")], log)
++
++    def test_fresh_sweep_unchanged(self):
++        p, calls, rows, b, log = self.nightly(10)
++        self.assertEqual([(c["n"], c["jobs"]) for c in calls], [(10, None)], log)
++        self.assertNotIn("heavy:", log)
++
++    def test_remote_pool_heavy_part_carries_jobs(self):
++        self.first(STUB_BT="1:M003,M007", STUB_PARTIAL="1:8")
++        base.wr(f"{self.tmp}/inner.py", STUB)
++        base.wr(f"{self.tmp}/stub.py", idle.REMOTE)
++        calls, rows, b, log = self.again(STUB_INNER=f"{self.tmp}/inner.py", TM_NIGHTLY_POOLS="remote", TM_NIGHTLY_POLL="1")
++        remote = idle.lines(f"{self.tmp}/calls.remote")
++        got = sorted((a[a.index("--only") + 1], a[a.index("--jobs") + 1] if "--jobs" in a else None)
++                     for a in (r["argv"] for r in remote))
++        self.assertEqual(got, [("M003,M007", "2"), ("M009,M010", None)], log)
++        self.assertEqual(rows[-1]["complete"], True, log)
++
++
++class HeavyIds(unittest.TestCase):
++    def heavy(self, path):
++        return subprocess.run(["python3", "-I", base.PY, "heavy", path], capture_output=True, text=True)
++
++    def test_only_build_timeout_unknowns_in_id_order(self):
++        d = base.tempfile.mkdtemp(prefix="tmbto-heavy-")
++        try:
++            rows = [{"id": "M1000", "status": "UNKNOWN", "detail": BT}, {"id": "M999", "status": "UNKNOWN", "detail": BT},
++                    {"id": "M005", "status": "UNKNOWN", "detail": "Function expected"},
++                    {"id": "M006", "status": "KILLED", "detail": BT},  # a verdict, whatever its text
++                    {"id": "M007", "status": "UNKNOWN", "raw_detail": "lake build did not finish in 3600 s (--build-timeout)"},
++                    {"id": "M008", "status": "NOT RUN", "detail": "not judged: the deadline came before it started"}]
++            base.wr(f"{d}/r.json", json.dumps({"mutants": rows}))
++            p = self.heavy(f"{d}/r.json")
++            self.assertEqual((p.returncode, p.stdout), (0, "M007,M999,M1000\n"), p.stderr)
++            p = self.heavy(f"{d}/missing.json")
++            self.assertEqual((p.returncode, p.stdout), (0, "\n"), p.stderr)
++        finally:
++            base.shutil.rmtree(d, ignore_errors=True)
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=1)
