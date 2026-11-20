@@ -2190,13 +2190,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 46,
    "id": "p13-u219",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2210,13 +2209,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 27,
    "id": "p13-u221",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2416,13 +2414,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 67,
    "id": "p15-u242",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2456,13 +2453,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 79,
    "id": "p15-u246",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2516,13 +2512,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 154,
    "id": "p15-u252",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2598,13 +2593,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 44,
    "id": "p15-u260",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2638,13 +2632,12 @@
   },
   {
    "blockers": [
-    "SC"
+    "no claim to check"
    ],
    "bytes": 243,
    "id": "p15-u264",
-   "kind": "unformalised",
-   "reason": "quantifier_scope",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -2668,23 +2661,21 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 4,
    "id": "p16-u267",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 32,
    "id": "p16-u268",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -3019,13 +3010,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 309,
    "id": "p17-u302",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -3386,13 +3376,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 98,
    "id": "p20-u341",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
@@ -3525,13 +3514,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "no claim to check"
    ],
    "bytes": 37,
    "id": "p20-u356",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "blockers": [
