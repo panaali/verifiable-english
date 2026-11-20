@@ -1,0 +1,23 @@
+import shutil, subprocess, sys, os, re, filecmp
+seeds = [
+ ("S1 tm line allowed", "mismatch-scope.sh.new-amscope", "(tm-*|testmap-*|select-*) ;;", "(tm-*|testmap-*|select-*) return 0;;"),
+ ("S2 gate-leg line blocks", "mismatch-scope.sh.new-amscope", "(armsh-*|x86sh-*|cand-*|post-*|arm-*) return 0;;", "(armsh-*|x86sh-*|cand-*|post-*|arm-*) ;;"),
+ ("S3 empty file blocks", "mismatch-scope.sh.new-amscope", "(( n > 0 )) || return 0", "(( n >= 0 )) || return 0"),
+ ("S4 unparseable line blocks", "mismatch-scope.sh.new-amscope", "Z\\ * ]] || return 0", "Z\\ * ]] || continue"),
+ ("S5 unknown job blocks", "mismatch-scope.sh.new-amscope", "(*) return 0;; esac", "(*) ;; esac"),
+ ("S6 merge-train actoff uses the helper", "merge-train.sh.new-amscope", "then mismatch_blocks_gate $M/$1; [ $? != 1 ];", "then [ -f $M/$1 ];"),
+ ("S7 gha-arm-shard uses the helper", "gha-arm-shard.sh.new-amscope", "{ mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH; [ $? != 1 ]; } && no", "[ -f $M/cloud-jobs/ACTIONS_MISMATCH ] && no"),
+ ("S9 arm-postcheck actoff uses the helper", "arm-postcheck.sh.new-amscope", "then mismatch_blocks_gate $M/$1; [ $? != 1 ];", "then [ -f $M/$1 ];"),
+ ("S8 fallback = old rule", "gha-arm-gate.sh.new-amscope", "|| mismatch_blocks_gate(){ [[ -e $1 ]]; }", "|| mismatch_blocks_gate(){ return 1; }"),
+]
+env = dict(os.environ, AMSCOPE_SFX=".new-amscope")
+for name, f, old, new in [x for x in seeds if x[0].startswith("S9")]:
+    bak = "/tmp/amscope-seed.bak"; shutil.copy(f, bak)
+    s = open(f).read(); assert s.count(old) == 1, (name, s.count(old))
+    open(f, "w").write(s.replace(old, new))
+    try:
+        r = subprocess.run([sys.executable, "-I", "tools-local/test_actions_mismatch_scope.py"], capture_output=True, text=True, env=env, timeout=900)
+        fails = sorted(set(re.findall(r"^(?:FAIL|ERROR): (\w+)", r.stderr, re.M)))
+        print(f"{name} | {f} | rc={r.returncode} | {', '.join(fails) or 'NONE FAILED'}")
+    finally:
+        shutil.copy(bak, f); assert filecmp.cmp(bak, f, shallow=False)
