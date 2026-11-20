@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "c83e260b4ee3b870ea1c12dd972175dda08b273bb6e9bfcd64841ce5cdc8d341",
+ "seal_id": "da4515fa164ed9a8ca1427180e7961adb90179587c25f0179c590f505b7ba097",
  "sources": [
   {
    "kind": "corpus source",
@@ -641,7 +641,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/asimov-extended/environment.json",
-   "sha256": "b0f4d368832ae8a163aba59df194b6b442e3edd49e028fd0cda58a25bea04e87"
+   "sha256": "00726412889e5d6f1b7e7970868df14fbea0c74970051205012d8a0ea4e7b9bc"
   },
   {
    "kind": "corpus source",
@@ -791,7 +791,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "4c18fadd2a55c6b8431f63408285b3133522186afebc11036757b1a9e5a91ad6"
+   "sha256": "86085fb33858cc886a14a954649d81b920fc99cbcd906c13e47b89a4de87d266"
   },
   {
    "kind": "entry-point caller",
