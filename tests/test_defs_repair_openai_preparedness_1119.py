@@ -4,6 +4,11 @@ The definitions audit (manage-agents reviews/defs-carried-1119/openai-preparedne
 lists 48 P1 rows: a term a PF rule depends on, its definition in the pinned Preparedness Framework v2 text, and the
 predicate whose legend carries it. Each row's quote (its inventory entries joined with one space) is appended, after the
 old text and a label naming its section, to that predicate's legend in usecases/openai-preparedness/pf_vocabulary.py.
+Ten rows use another carrier than the row names: existing_at_publication, the one predicate only the FACTS unit uses (shown
+once with every answer, counted for every rule). Rows 18-25 leave `reached` by the DRI decision of 2026-11-20 (manage-agents
+reviews/dri-decisions-20261120-defs-repair-openai-preparedness-1119.md, item 1a: prompt size); rows 11 and 40 leave
+`in_category` and `third_party_evaluation`, which rules f3-* and f15-third-party read, because their quotes would break
+those rules' fidelity tests ("covered" in 2.1; the “…” runs of change log item 6) (docs/.../REPORT.md).
 
 The condition: the quote is in the legend the reader is SHOWN (environment.d1.json `description`, as pf_vocabulary.py
 builds it) and in the legend the counter COUNTS (the entry's literal strings in pf_vocabulary.py, read by the counter's
@@ -312,21 +317,21 @@ ROWS = {
     8: ('CYB-C level (Table 1)', 'critical', 'Table 1, Cybersecurity, Critical', ('E24',)),
     9: ('AIS-C level (Table 1); recursively self improving', 'critical', 'Table 1, AI Self-improvement, Critical', ('E26',)),
     10: ('CDC Class A biological agent', 'critical', 'Table 1, Biological and Chemical, Critical, its risk', ('E27',)),
-    11: ('Tracked Categories', 'in_category', 'introduction and 2.1', ('E02', 'E03')),
+    11: ('Tracked Categories', 'existing_at_publication', 'introduction and 2.1', ('E02', 'E03')),
     12: ('Biological and Chemical (category)', 'in_category', 'Table 1', ('E18',)),
     13: ('Cybersecurity (category)', 'in_category', 'Table 1', ('E19',)),
     14: ('AI Self-improvement (category)', 'in_category', 'Table 1', ('E20',)),
     15: ('Research Categories', 'research_review', 'introduction, 2.1, 2.3 and change log item 5', ('E04', 'E05', 'E06', 'E07')),
     16: ('Research Categories', 'research_category_review', 'introduction, 2.1, 2.3 and change log item 5', ('E04', 'E05', 'E06', 'E07')),
     17: ('Research Categories', 'ara_tracking', 'introduction, 2.1, 2.3 and change log item 5', ('E04', 'E05', 'E06', 'E07')),
-    18: ('capability thresholds', 'reached', '2.2', ('E13',)),
-    19: ('Safety Advisory Group (SAG)', 'reached', 'section 1', ('E40',)),
-    20: ('covered (deployments)', 'reached', '3.2', ('E36',)),
-    21: ('Preparedness Framework', 'reached', 'introduction', ('E49',)),
-    22: ('OpenAI Leadership', 'reached', 'Appendix B', ('E42',)),
-    23: ('malicious user / misaligned model', 'reached', '4.1', ('E44',)),
-    24: ('Safeguards Report (content)', 'reached', '4.2', ('E39',)),
-    25: ('Capabilities Reports and Safeguards Reports (change log 8)', 'reached', 'change log item 8', ('E38',)),
+    18: ('capability thresholds', 'existing_at_publication', '2.2', ('E13',)),
+    19: ('Safety Advisory Group (SAG)', 'existing_at_publication', 'section 1', ('E40',)),
+    20: ('covered (deployments)', 'existing_at_publication', '3.2', ('E36',)),
+    21: ('Preparedness Framework', 'existing_at_publication', 'introduction', ('E49',)),
+    22: ('OpenAI Leadership', 'existing_at_publication', 'Appendix B', ('E42',)),
+    23: ('malicious user / misaligned model', 'existing_at_publication', '4.1', ('E44',)),
+    24: ('Safeguards Report (content)', 'existing_at_publication', '4.2', ('E39',)),
+    25: ('Capabilities Reports and Safeguards Reports (change log 8)', 'existing_at_publication', 'change log item 8', ('E38',)),
     26: ('Capabilities Report', 'capabilities_report', '3.3', ('E37',)),
     27: ('Capabilities Report', 'third_party_evaluation', '3.3', ('E37',)),
     28: ('Plausible (criterion)', 'criteria_tracking', '2.1', ('E08',)),
@@ -341,7 +346,7 @@ ROWS = {
     37: ('Nuclear and Radiological', 'nuclear_safeguards', 'Table 2', ('E32',)),
     38: ('Scalable Evaluations', 'evaluations_before_deployment', '3.1 and change log item 6', ('E33', 'E34')),
     39: ('Scalable Evaluations', 'capabilities_report_submitted', '3.1 and change log item 6', ('E33', 'E34')),
-    40: ('Deep Dives', 'third_party_evaluation', '3.1 and change log item 6', ('E35', 'E34')),
+    40: ('Deep Dives', 'existing_at_publication', '3.1 and change log item 6', ('E35', 'E34')),
     41: ('SAG Chair', 'chair_coordination', 'Appendix B, SAG Membership', ('E41',)),
     42: ('Board (OpenAI Board of Directors)', 'board_finds_necessary', 'Appendix B', ('E43',)),
     43: ('High standard against misuse (Appendix C.1)', 'misuse_safeguards', 'Appendix C.1', ('E45',)),
