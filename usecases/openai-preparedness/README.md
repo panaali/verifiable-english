@@ -50,9 +50,12 @@ mutant and narrowing) from the repository root. Without the pinned source, sourc
 reruns in the fidelity-fix tests use saved evidence and short synthetic source units in the gate;
 other saved evidence invariants remain tested.
 
-## Coverage, 2026-11-15
+## Coverage, 2026-11-20
 
 VE classified 393 contiguous units covering all 67,418 bytes. The master map equals the D1 map.
+srccov-openai-preparedness-1119 records twelve units that state no rule (two 5.1 headings, two Table 5 row labels
+with its header row, seven units of six change-log items and Appendix C.1's opening background sentence) as LABELLED exposition
+(`build_document.py` PLACEMENTS, kind `label`).
 CHECKED covers six Table 1 level markers and the SSC visibility clause. Change log item 2's removal of "low" and
 "medium" (`cl-levels`) stays UNFORMALISED as a blocked unit: its facts translate the removal, not the "because"
 clause, so not every word of the unit is mapped. Three formerly CHECKED rule
@@ -63,8 +66,8 @@ sections remain visible whenever the whole source unit contains a duty or hedge.
 |---|---:|---:|---:|
 | CHECKED | 7 | 170 | 0.3% |
 | OPEN | 46 | 9,335 | 13.8% |
-| LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 292 | 52,586 | 78.0% |
+| LABELLED | 60 | 6,467 | 9.6% |
+| UNFORMALISED | 280 | 51,446 | 76.3% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or
@@ -79,11 +82,11 @@ counts under each. “Alone” means exactly one recorded blocker.
 | ET | 31 | 8,466 | 17, 5,914 | event order and deadlines |
 | JT | 35 | 6,509 | 11, 2,059 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
-| SC | 27 | 4,710 | 23, 3,699 | per-item or universal scope |
+| SC | 26 | 4,467 | 22, 3,456 | per-item or universal scope |
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
-| no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
-| readings | 98 | 14,602 | 85, 11,296 | unselected source readings |
+| no claim to check | 60 | 6,467 | 60, 6,467 | title, contents, pure headings and marked examples |
+| readings | 87 | 13,705 | 74, 10,399 | unselected source readings |
 
 The 292 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
 `not_translated`. VE reports 21 declared open terms and 32 unresolved reading sets as

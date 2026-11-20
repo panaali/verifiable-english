@@ -300,26 +300,12 @@
    "unaccounted": [
     "affect",
     "analys",
-    "artifact",
-    "automat",
-    "biological",
     "capabil",
-    "card",
     "change",
-    "chemical",
     "circumstanc",
-    "determine",
-    "high",
     "how",
     "individual",
-    "misalign",
-    "prior",
-    "production",
-    "propens",
-    "relat",
-    "stak",
-    "system",
-    "weapon"
+    "propens"
    ],
    "entries": [
     {
@@ -364,20 +350,7 @@
     "off_cycle_internal_deployment",
     "off_cycle_published"
    ],
-   "unaccounted": [
-    "30",
-    "artifact",
-    "automat",
-    "card",
-    "days",
-    "determin",
-    "high",
-    "misalign",
-    "prior",
-    "relat",
-    "stak",
-    "system"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "Within 30 days of",
@@ -469,9 +442,7 @@
    "used": [
     "factual_documented"
    ],
-   "unaccounted": [
-    "docu"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "A Risk Report will document the following",
@@ -491,13 +462,8 @@
    "unaccounted": [
     "conclusion",
     "level",
-    "model",
-    "overall",
-    "provide",
     "reason",
-    "regard",
-    "specific",
-    "threat"
+    "regard"
    ],
    "entries": [
     {
@@ -515,20 +481,12 @@
    "used": [
     "past_reviewed"
    ],
-   "unaccounted": [
-    "addres",
-    "decision"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will address",
      "reason": "restates",
      "arg": ""
-    },
-    {
-     "words": "and decisions",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -552,14 +510,7 @@
     "marginal_analysed",
     "marginal_justification"
    ],
-   "unaccounted": [
-    "additional",
-    "addres",
-    "based",
-    "justify",
-    "ours",
-    "system"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "by AI systems such as ours",
@@ -765,16 +716,9 @@
     "redactions_justified"
    ],
    "unaccounted": [
-    "case",
     "disclose",
     "existence",
-    "high",
-    "level",
-    "many",
-    "necessari",
-    "report",
-    "though",
-    "very"
+    "report"
    ],
    "entries": [
     {
@@ -799,11 +743,8 @@
    ],
    "unaccounted": [
     "practice",
-    "report",
-    "risk",
     "seek",
-    "toward",
-    "work"
+    "toward"
    ],
    "entries": [
     {
@@ -1131,8 +1072,7 @@
     "recipient_options"
    ],
    "unaccounted": [
-    "receiv",
-    "staff"
+    "receiv"
    ],
    "entries": [
     {
@@ -1620,38 +1560,27 @@
   },
   {
    "id": "D2D3",
-   "entries": [
-    {
-     "words": "Scope.",
-     "reason": "exposition",
-     "arg": ""
-    },
-    {
-     "words": "A Risk Report will cover the risks of Anthropic's models and actions",
-     "reason": "loss",
-     "arg": "1"
-    }
-   ],
+   "entries": [],
    "problems": []
   }
  ],
  "totals": {
   "blocks": 85,
-  "blocks_with_loss": 3,
+  "blocks_with_loss": 2,
   "losses_by_class": {
-   "1": 2,
+   "1": 1,
    "limit 9": 1
   },
   "entries_by_reason": {
    "exposition": 10,
-   "loss": 3,
+   "loss": 2,
    "open": 5,
    "reading": 6,
    "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 142,
-  "blocks_with_unaccounted_words": 27,
+  "unaccounted_words": 91,
+  "blocks_with_unaccounted_words": 23,
   "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
