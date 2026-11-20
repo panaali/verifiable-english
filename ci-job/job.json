@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-repair-f1-leveldefs-1119-727d1d21-t154071-s7",
+ "head": "b32bd98fe371050e8d5944ad05830387d6b9c20a",
+ "argv": [
+  "armsh-cand-fsf-repair-f1-leveldefs-1119-727d1d21-t154071-s7",
+  "b32bd98fe371050e8d5944ad05830387d6b9c20a",
+  "be577ecc6c94442858e182996b7dab235196cbee",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
