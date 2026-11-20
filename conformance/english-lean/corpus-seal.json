@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "65b10b39d4e7d93a4b1d82d5f25251fce999878bd50e5e19b2b7731dc569749c",
+ "seal_id": "de1f03c4de964c5b158cd3212ea783b9c3bf81408b7ffc05f8ff3754f3688c2f",
  "sources": [
   {
    "kind": "corpus source",
@@ -621,7 +621,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/anthropic-rsp/environment.d1.json",
-   "sha256": "d433bf22adae5056a7f97f476c1c6b84f988b79eaac24d3bde561d82560aba33"
+   "sha256": "e350c371406f054882a21bc2f7c4f20fc330f55977ae24bd6d5c9c1919fd3453"
   },
   {
    "kind": "entry-point caller",
