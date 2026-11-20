@@ -92,6 +92,28 @@ def test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reaso
         assert reason and any(fnmatch.fnmatchcase(name, pattern) for name in TRACKED), pattern
 
 
+def test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict():
+    """genconflict-1120: the four files that carry hashes of a use-case environment are generated; the ones a
+    plain merge would keep stale stop git's driver (`derived`), the recorded route cases merge by key, and the
+    use case's minutes-long harness runs only when its files conflict (tests/test_regen_usecase_merge.py)."""
+    merges = {path: (R.owner(path).name, R.owner(path).merge) for path in (
+        "conformance/english-lean/lexicon-report.json", "tests/data/route-cases.jsonl",
+        "usecases/safety-framework/results.json", "usecases/safety-framework/coverage.json",
+        "usecases/safety-framework/spans.json")}
+    assert merges == {"conformance/english-lean/lexicon-report.json": ("english-lexicon-report", "derived"),
+                      "tests/data/route-cases.jsonl": ("route-cases", "keyed-lines"),
+                      **{f"usecases/safety-framework/{name}.json": ("usecase-safety-framework", "derived")
+                         for name in ("results", "coverage", "spans")}}
+    for entry in R.GENERATED:
+        if entry.on_conflict:
+            assert entry.merge == "derived" and entry.write and entry.check and not entry.at_merge, entry.name
+    assert "docs/en-e3-norm/en-2b/route_fixtures.py" not in R.NOT_REGENERATED  # now route-cases' writer
+    usecase = R.entry_named("usecase-safety-framework")
+    assert usecase.on_conflict and usecase.service == "write" and usecase == R._usecase("safety-framework")
+    assert usecase.write == ((R.PY, "usecases/safety-framework/run.py"),
+                             (R.PY, "usecases/safety-framework/build_document.py"))
+
+
 def test_every_pattern_names_a_tracked_file_and_owns_it():
     for entry in R.GENERATED:
         for pattern in entry.paths:
@@ -212,10 +234,11 @@ def test_the_entries_refreshed_at_merge_are_tree_only_writers(capsys):
     """The merge train refreshes the `at_merge` entries on every candidate, under its queue lock: each is a
     `regenerate` file with a writer and a check that start no Lean service, and `--names --at-merge` lists them."""
     at_merge = [entry.name for entry in R.GENERATED if entry.at_merge]
-    assert {"platform-contract", "binding-census", "history-tests"} <= set(at_merge)
+    assert {"platform-contract", "binding-census", "history-tests", "route-cases"} <= set(at_merge)
     for entry in R.GENERATED:
         if entry.at_merge:
-            assert entry.merge == "regenerate" and entry.write and entry.check and not entry.service, entry.name
+            assert entry.merge in ("regenerate", "keyed-lines") and entry.write and entry.check, entry.name
+            assert not entry.service and not entry.on_conflict, entry.name
             assert entry.name not in BUILD_ENTRIES, entry.name
     assert R.main(["--names", "--at-merge"]) == 0
     assert capsys.readouterr().out.split() == at_merge
