@@ -69,5 +69,6 @@ def test_d2d3_no_longer_records_footnote_1_as_a_loss():
     acc = fix._accounting()
     [line] = [e for _, b, e, _ in acc.read_sidecar(RSP / "accounting.d1.txt") if b == "D2D3"]
     assert not [e for e in line if "refers generally" in e["words"] or "Catastrophic risk" in e["words"]]
+    # srccov-anthropic-rsp-1119 moved the sub-heading "Scope." into the s31-heading unit, so D2D3 no longer records it.
     assert [(e["words"], e["reason"]) for e in line] == [
-        ("Scope.", "exposition"), ("A Risk Report will cover the risks of Anthropic's models and actions", "loss")]
+        ("A Risk Report will cover the risks of Anthropic's models and actions", "loss")]

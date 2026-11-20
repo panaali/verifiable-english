@@ -352,8 +352,9 @@ UNITS = [
     ("We will also keep past Roadmaps available", "s2-keep-past", rule("f6-keep-past")),
     ("3. Risk Reports We will publish Risk Reports", "s3-publish", rule("f7-publish")),
     ("These have signi", "s3-system-cards", label()),
+    # The sub-heading "Scope." is part of the heading (srccov-anthropic-rsp-1119), not of the routed sentence.
     ("3.1. Scope and Timing", "s31-heading", meta()),
-    ("Scope. A Risk Report will cover the risks", "s31-coverage-date",
+    ("A Risk Report will cover the risks", "s31-coverage-date",
      routed("D3", "coverage date no more than 30 days before publication (D3a, D3b)")),
     ("10 It will cover all publicly deployed models", "s31-public", rule("f8-public")),
     (", as well as any internally deployed models", "s31-internal", rule("f8-internal", "ot3a_internal_risk")),

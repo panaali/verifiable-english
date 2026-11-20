@@ -126,6 +126,7 @@ DATES = [("S0299", 47905, 47934, "v1_0_date", "September 19, 2023 (RSP v1.0)"),
 
 # Recorded units: (map unit, start byte, end byte, spans.json unit, kind, reason or None).
 RECORDS = [("S0065", 10576, 10740, "t1-expect", "unformalised", "hope"),
+           ("S0141", 24916, 24939, "s31-heading", "meta", None),
            ("S0182", 30947, 30984, "s33-marginal-heading", "meta", None),
            ("S0211", 35479, 35609, "s36-intent", "unformalised", "hope"),
            ("S0280", 45300, 45510, "appa-priority", "unformalised", "hope"),

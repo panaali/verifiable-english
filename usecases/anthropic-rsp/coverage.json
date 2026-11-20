@@ -22,10 +22,10 @@
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "rsp.d1.ve.md (built locally, not committed)",
- "document_sha256": "a6e7c057071dd2becaf585fe1da52acc38d993a2e4fc29c3c3937df857b68daf",
+ "document_sha256": "390ec23b0bcc6efd1f594416c5fe3992adf97f49422271a0d6f7c01d72c74586",
  "master_bytes_by_status": {
-  "CHECKED": 5327,
-  "LABELLED": 36883,
+  "CHECKED": 5320,
+  "LABELLED": 36890,
   "OPEN": 13072,
   "UNFORMALISED": 4128
  },
