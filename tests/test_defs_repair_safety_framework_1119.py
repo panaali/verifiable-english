@@ -31,7 +31,7 @@ import pytest
 
 from omission_rule import omit_norm
 from tests.pinned_source import pinned_source
-from tools import defs_carried, defs_carried_counter as counter
+from tools import defs_carried_counter as counter
 
 HERE = Path(__file__).resolve().parents[1] / "usecases" / "safety-framework"
 GOV = "governance_found_acceptable_with_safety_case_where_ccl_reached"
@@ -339,9 +339,10 @@ def _counted(key, path=HERE / "vocabulary.py"):
 
 
 def _as_counted(quote):
-    """A quote as the counter's meaning text holds it: its citations cut (the counter's cut, from the one copy that
-    owns it, tools/defs_carried.cite_strip), then the counter's own omit_norm."""
-    return counter.omit_norm(defs_carried.cite_strip(quote))
+    """A quote as the counter's meaning text holds it: the counter's own reading (citations cut, its omit_norm) of a
+    one-string legend holding the quote, its straight quotes written curly as a legend writes them."""
+    [(meaning, _raw)] = counter._omit_legend_segments(['"key": _base([],', '"' + quote.replace('"', "“") + '")'])
+    return meaning
 
 
 def _carried(quote, key, path=HERE / "vocabulary.py"):
