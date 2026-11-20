@@ -42,6 +42,7 @@
 - `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
 - `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
 - `tests/test_srccov_anthropic_rsp_1119.py` — srccov-anthropic-rsp-1119: the RSP source text the coverage map found missing is carried word for word, and the units it found out of scope with no record are …
+- `tests/test_srccov_asimov_extended_1119.py` — srccov-asimov-extended-1119: the source-coverage rows of asimov-extended that need no rule line.
 - `tests/test_srccov_claude_constitution_pilot_1119.py` — srccov-claude-constitution-pilot-1119: the carried probe records 26 source sentences that state no rule.
 - `tests/test_srccov_math_mini_paper_1119.py` — srccov-math-mini-paper-1119: the paper's Definition D1 is carried word for word in the legend its rule uses.
 - `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
@@ -79,4 +80,3 @@
 - `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
 - `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
-- `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
