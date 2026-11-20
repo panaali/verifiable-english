@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Per-pool trust-mutant throughput from the tm-nightly part records of the last 7 days.
 
-Read only. Usage: python3 -I calc.py [MANAGE_AGENTS_DIR]
+Read only. Usage: python3 -I estimate_calc.py [MANAGE_AGENTS_DIR]
 For each sweep dir test-skip/nightly/parts-<stamp> with stamp >= 20261113, each part-<k>.json:
   where, seconds (part wall), jobs, and its rows by status.
 judged = KILLED + SURVIVOR + INVALID + ALLOWED (a verdict that needs no new try);

@@ -8,7 +8,7 @@ this paragraph. The relative paths below (test-skip/, reviews/, cloud-jobs/) are
 the acting DRI dropped the row at 08:25Z (reviews/dri-decisions-20261120-preflight-plants.md item 5): selection stays
 unconfirmed and the gates keep the full suite.
 Method: the train-legs-time-1120 method (reviews/train-legs-time-1120/REPORT.md). Every MEASURED cell comes from a record or log line named
-here, and `calc.py` in this folder recomputes it (`python3 -I calc.py`; output saved as `calc.out`). Cells marked ESTIMATE are not measured.
+here, and `estimate_calc.py` in this folder recomputes it (`python3 -I estimate_calc.py <manage-agents dir>`; output saved as `estimate_calc.out`; named calc.py and calc.out in manage-agents). Cells marked ESTIMATE are not measured.
 
 **Result: 5.8-14.2 days of back-to-back sweeping. With today's pools (ve-cloud-3 unreachable): 8.6-14.2 days. The upper estimate is OVER 5 days, so the sweep is NOT started (STEP 2).**
 
