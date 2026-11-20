@@ -1,0 +1,9 @@
+form [# S0001 left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [-- S0001 left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [// S0001 left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [; S0001 left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [% S0001 left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [/- S0001 left out -/] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [(* S0001 left out *)] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+form [## S0001 | left out] rc=2 => "message": "SyntaxError: expected term", "line": 1,
+control (claims.ve unchanged) rc=0 => for every claude_model L such that L is current_claude_model, L is ought_have_core_values.
