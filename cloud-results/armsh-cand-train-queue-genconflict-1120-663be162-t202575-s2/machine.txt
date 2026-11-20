@@ -1,0 +1,7 @@
+job=armsh-cand-train-queue-genconflict-1120-663be162-t202575-s2 shard=2/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-20T19:25:25Z ulimit_s=16384
+Mem:              15           1           8           0           6          13
+/dev/root       145G   43G  102G  30% /
+ 19:25:25 up 4 min,  0 user,  load average: 1.40, 0.51, 0.19
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 12.9 s
+p1-tokenizers: 443909a61d42 fetched
