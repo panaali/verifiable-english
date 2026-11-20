@@ -201,13 +201,13 @@
   {
    "environment": "usecases/math-mini-paper/environment-closure.json",
    "failures": [],
-   "lexicon_id": "d6b5ecf8b3a0d2e008700b299de483e467672542493154becfe87a248839220e",
+   "lexicon_id": "957fd1e74fda6cca8f598c7ec95f0b924efddc67a37419e6f257bc3dcd2e4f62",
    "symbols": 3
   },
   {
    "environment": "usecases/math-mini-paper/environment.json",
    "failures": [],
-   "lexicon_id": "b93cf4e704ba81233422b0e47274fbd00006c4fe5dd401a01ef7a7e437897e0e",
+   "lexicon_id": "b2834ac29d1f38b30b73c05a3075c4e4f8879f058d63486c29eb2e0fabf50b59",
    "symbols": 10
   },
   {

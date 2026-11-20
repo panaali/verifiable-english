@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "cb4057e202ebbc46dad5b2ff144b797879d0c1308c1c4acab953edd79645b518",
+ "seal_id": "c83e260b4ee3b870ea1c12dd972175dda08b273bb6e9bfcd64841ce5cdc8d341",
  "sources": [
   {
    "kind": "corpus source",
@@ -716,12 +716,12 @@
   {
    "kind": "corpus source",
    "path": "usecases/math-mini-paper/environment-closure.json",
-   "sha256": "9d4b3d1a1376a16d234e5a36153659a71d6721e678a016dde918d7163a467ca7"
+   "sha256": "4c117581123edcb1d9c24c57dba890e9718f4f2ed0eca533e7c075cd41eb6ec2"
   },
   {
    "kind": "corpus source",
    "path": "usecases/math-mini-paper/environment.json",
-   "sha256": "9075b574eaffe19cba475c1f3461a650e9aa393943570808582c9ec0ee828dde"
+   "sha256": "aa276c7083cb634ee31b8ed75b24f118ff36ff1df870bba4da2e84df10c748cd"
   },
   {
    "kind": "corpus source",
