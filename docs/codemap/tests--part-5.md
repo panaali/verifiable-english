@@ -1,3 +1,4 @@
+- `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
 - `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
 - `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
 - `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
@@ -87,4 +88,3 @@
 - `tests/test_pf_f16_without_fix.py` — pf-f16-without-fix: the condition tests of the PF f16-without round (architect ruling pf-f16-without-n2-20261116, reading (c), signed by the DRI 2026-11-16; PL…
 - `tests/test_pf_f7_timed_act.py` — pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings et-5c-5d-coverage-20261115 section 3 and pf-split-unit…
 - `tests/test_pf_f9_order_undo.py` — pf-f9-order-undo: the order of 4.1's two safeguard-selection steps is again a self-declared ET gap.
-- `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.

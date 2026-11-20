@@ -9962,11 +9962,11 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "cba80a1b2fde7f940957e965726c68734dcdf8bfe119de7ca4c35f9238c312d4"
+     "certificate_sha256": "f52029953ce7fa148d4962a9b275fa4115d54614c51fde05d989b3b95f472eb4"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "cd8b488cbd937bae3a4c495e05fe08cd1ee80a26628ce495d8b71dd7af7ce8f7"
+     "certificate_sha256": "904b9b848562ae22f5104b716275d5e69424ae461b0e4f2b53132d42dbdb77f0"
     }
    },
    "own_premises": [
