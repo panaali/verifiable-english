@@ -115,6 +115,7 @@ allowances-test-output.txt, replay.txt, replay-final.txt, replay.zsh.txt, challe
 seeded-bugs.txt, sha256.txt. Documentation only; no VE product code, no generated file, no DELTA row.
 After the DRI's install: `zsh -n merge-train.sh` OK; test_merge_train_specregen.py 10/10 OK; test_allowances_shared.py 18/18 OK
 (test-after-install.txt, installed sha256 ba6957a8).
+Selected tests on the record commit ff6923ee70 (mac-pytest.sh --select): exit 0, 267 units, 0 failed (ve-cloud-2, 1373 s).
 
 ## Notes for the DRI
 
