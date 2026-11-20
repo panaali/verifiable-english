@@ -1,0 +1,13 @@
+....................F.
+======================================================================
+FAIL: test_token_binding_reset_field_is_pacific_and_year_safe (__main__.T.test_token_binding_reset_field_is_pacific_and_year_safe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_review_ab_rule.py", line 217, in test_token_binding_reset_field_is_pacific_and_year_safe
+    self.assertIn("at its reset in 144.0 h", m.token_binding(u, ac, now)[1])
+AssertionError: 'at its reset in 144.0 h' not found in 'main weekly 70%, +1.00 pp/h over the last 24 h -> 206% at its reset in 136.0 h (cap 80%; nearest its cap of 1 pool(s))'
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.093s
+
+FAILED (failures=1)

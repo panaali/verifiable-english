@@ -1,0 +1,7 @@
+# condensed: the result lines of the run (FAIL/ERROR ids, exceptions, assertion rows, summary)
+ERROR: test_clone_has_reviewed_commit_and_base_as_main (__main__.ShadowScript.test_clone_has_reviewed_commit_and_base_as_main)
+FileNotFoundError: [Errno 2] No such file or directory: '<tmp>/refs'
+ERROR: test_end_to_end_never_writes_worktree (__main__.ShadowScript.test_end_to_end_never_writes_worktree)
+FileNotFoundError: [Errno 2] No such file or directory: '<tmp>/stub-args'
+Ran 23 tests in 17.032s
+FAILED (errors=2)
