@@ -1,0 +1,84 @@
+s6-1 S0004: 'Broadly safe: Not undermining appropriate human mechanisms t'...
+   environment.json: raw=True norm=True line=26
+   definitions-environment.json: raw=True norm=True line=30
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=23
+   rendered-english.md: raw=True norm=True line=51
+   claims.ve: raw=False norm=False line=None
+   legend sorts.property: used_by_claims=True
+   legend predicates.ought_have_core_values: used_by_claims=True
+   legend predicates.appropriate: used_by_claims=True
+s6-2 S0005: 'Broadly ethical: Having good personal values, being honest, '...
+   environment.json: raw=True norm=True line=26
+   definitions-environment.json: raw=True norm=True line=30
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=23
+   rendered-english.md: raw=True norm=True line=51
+   claims.ve: raw=False norm=False line=None
+   legend sorts.property: used_by_claims=True
+   legend predicates.ought_have_core_values: used_by_claims=True
+   legend predicates.honest: used_by_claims=True
+s6-3 S0006: "Compliant with Anthropic's guidelines: Acting in accordance "...
+   environment.json: raw=True norm=True line=26
+   definitions-environment.json: raw=True norm=True line=30
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=23
+   rendered-english.md: raw=True norm=True line=51
+   claims.ve: raw=False norm=False line=None
+   legend sorts.property: used_by_claims=True
+   legend predicates.ought_have_core_values: used_by_claims=True
+s6-4 S0007: 'Genuinely helpful: Benefiting the operators and users it int'...
+   environment.json: raw=True norm=True line=26
+   definitions-environment.json: raw=True norm=True line=30
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=23
+   rendered-english.md: raw=True norm=True line=51
+   claims.ve: raw=False norm=False line=None
+   legend sorts.property: used_by_claims=True
+   legend predicates.ought_have_core_values: used_by_claims=True
+s6-5 S0020: 'Being overseeable in our sense does not mean blind obedience'...
+   environment.json: raw=True norm=True line=23
+   definitions-environment.json: raw=True norm=True line=27
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=21
+   rendered-english.md: raw=True norm=True line=49
+   claims.ve: raw=False norm=False line=None
+   legend sorts.overseer: used_by_claims=True
+s6-6 S0021: 'Instead, it means not actively undermining appropriately san'...
+   environment.json: raw=True norm=True line=23
+   definitions-environment.json: raw=True norm=True line=27
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=True norm=True line=21
+   rendered-english.md: raw=True norm=True line=49
+   claims.ve: raw=False norm=False line=None
+   legend sorts.overseer: used_by_claims=True
+s6-8 S0001: 'We believe Claude can demonstrate what a safe, helpful AI ca'...
+   environment.json: raw=False norm=False line=None
+   definitions-environment.json: raw=False norm=False line=None
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=False norm=False line=None
+   rendered-english.md: raw=False norm=False line=None
+   claims.ve: raw=False norm=False line=None
+s6-8 S0016: 'AI training is still far from perfect, which means a given i'...
+   environment.json: raw=False norm=False line=None
+   definitions-environment.json: raw=False norm=False line=None
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=False norm=False line=None
+   rendered-english.md: raw=False norm=False line=None
+   claims.ve: raw=False norm=False line=None
+s6-9 S0010: "This numbered list above doesn't reflect the order in which "...
+   environment.json: raw=False norm=False line=None
+   definitions-environment.json: raw=False norm=False line=None
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=False norm=False line=None
+   rendered-english.md: raw=False norm=False line=None
+   claims.ve: raw=False norm=False line=None
+s6-9 S0013: 'It is also intended to convey what we think is important.'...
+   environment.json: raw=False norm=False line=None
+   definitions-environment.json: raw=False norm=False line=None
+   environment.english.json: raw=False norm=False line=None
+   rendered.md: raw=False norm=False line=None
+   rendered-english.md: raw=False norm=False line=None
+   claims.ve: raw=False norm=False line=None
+claims.ve comment-like lines: []
+claims.ve lines: 11
