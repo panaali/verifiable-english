@@ -1,0 +1,101 @@
+{
+ "item": "fm-move-5h-room",
+ "note": "Product code is in /home/seyran/code/manage-agents (staged .new-fmw copies, not installed, plus the new tools-local/session_rate.py): zsh (freeze-mover.sh, claude-resume-on-limit.sh) and Python (tools-local/session_rate.py, tools-local/limit-resume.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the final staged file and the named test was run with that copy (env PICK_SCRIPT / SRATE_SCRIPT / LR_SCRIPT / LR_HELPER, or the freeze-mover file argument with FMT_WRAPPER/FMT_LR_HELPER = the staged wrapper/helper); every copy was deleted and the staged files never carried a seed (md5.txt).",
+ "mutants": [
+  {
+   "id": "S1-move-inside-60-min",
+   "file": "manage-agents/freeze-mover.sh.new-fmw",
+   "change": "[ $mins -gt ${FM_MOVE_AFTER_MIN:-60} ] -> [ $mins -gt 0 ]",
+   "test": "test-freeze-mover.zsh",
+   "failing": [
+    "F1: moved or picked with the reset 45 min away",
+    "F1: no reset line in the log",
+    "F2: moved with PICK_LONG_ROOM off",
+    "F2: moved without an admitting account",
+    "F2: no picker reason in the log"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S2-picker-not-told-to-avoid",
+   "file": "manage-agents/freeze-mover.sh.new-fmw",
+   "change": "PICK_AVOID=${cfg:t} zsh -> PICK_AVOID= zsh",
+   "test": "test-freeze-mover.zsh",
+   "failing": [
+    "F2: picker args: PICK_AVOID= PICK_NOWAIT=1 PICK_LIGHT=1"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S3-wrapper-resumes-same-account",
+   "file": "manage-agents/claude-resume-on-limit.sh.new-fmw",
+   "change": "ev MOVE \"freeze-mover: to ${b:t}: ${np:t}\"; acct=$b; cfg=$b; -> ev MOVE \"freeze-mover: to ${b:t}: ${np:t}\";",
+   "test": "test_limit_resume.py",
+   "failing": [
+    "test_freeze_mover_move_resumes_on_destination"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S4-frozen-readings-counted",
+   "file": "manage-agents/tools-local/session_rate.py",
+   "change": "v0 >= hold or -> v0 > 100 or",
+   "test": "test_pick_srate.py",
+   "failing": [
+    "test_frozen_reset_gap_and_unsampled_intervals_are_left_out"
+   ],
+   "caught": true,
+   "language": "python"
+  },
+  {
+   "id": "S5-picker-ignores-measured-rate",
+   "file": "manage-agents/pick-claude-account.sh.new-fmw",
+   "change": "mr_ if mr_ is not None else float( -> float(",
+   "test": "test_pick_srate.py",
+   "failing": [
+    "test_idle_account_uses_its_plan_pool_rate",
+    "test_measured_account_rate_refuses_what_the_modelled_rate_admits",
+    "test_measured_low_rate_admits_what_the_modelled_rate_refuses"
+   ],
+   "caught": true,
+   "language": "python"
+  },
+  {
+   "id": "S6-no-endgame-room-order",
+   "file": "manage-agents/pick-claude-account.sh.new-fmw",
+   "change": "if mainew else (pref_, pace_) -> if False else (pref_, pace_)",
+   "test": "test_pick_srate.py",
+   "failing": [
+    "test_main_endgame_overflow_spreads_by_5h_room",
+    "test_main_goes_first_in_its_window"
+   ],
+   "caught": true,
+   "language": "python"
+  },
+  {
+   "id": "S7-where-finds-no-transcript",
+   "file": "manage-agents/tools-local/limit-resume.py.new-fmw",
+   "change": "t = transcript(sys.argv[2], sys.argv[3]); -> t = \"\";",
+   "test": "test_limit_resume.py",
+   "failing": [
+    "test_freeze_mover_move_resumes_on_destination"
+   ],
+   "caught": true,
+   "language": "python"
+  },
+  {
+   "id": "S8-moves-with-long-room-off",
+   "file": "manage-agents/freeze-mover.sh.new-fmw",
+   "change": "[ -e ${FM_LONG_ROOM_FLAG:-$M/PICK_LONG_ROOM} ] || -> true ||",
+   "test": "test-freeze-mover.zsh",
+   "failing": [
+    "F2: moved with PICK_LONG_ROOM off"
+   ],
+   "caught": true,
+   "language": "zsh"
+  }
+ ]
+}
