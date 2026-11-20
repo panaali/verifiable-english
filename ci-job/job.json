@@ -1,0 +1,12 @@
+{
+ "job": "testmap-92d8ec49-t211787-s3",
+ "head": "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+ "argv": [
+  "testmap-92d8ec49-t211787-s3",
+  "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+  "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s3.json.gz\" tests/test_english_statement_blocks.py tests/test_scope_answer.py tests/test_calc_answer.py tests/test_pf_f16_without_fix.py tests/test_gate.py tests/test_srccov_anthropic_rsp_1119.py tests/test_run_order.py tests/test_soft_document_handles.py tests/test_fidmech_records.py tests/test_english_lean_lexicon.py tests/test_fsf_repair_f9_mcca_1119.py tests/test_srccov_openai_preparedness_1119.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
