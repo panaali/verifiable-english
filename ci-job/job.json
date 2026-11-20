@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-defs-repair-anthropic-rsp-1119-21f4d4f8-t190594-s8",
+ "head": "42dd36c829dc94016dafc5d041200ca94b16cc1c",
+ "argv": [
+  "armsh-cand-defs-repair-anthropic-rsp-1119-21f4d4f8-t190594-s8",
+  "42dd36c829dc94016dafc5d041200ca94b16cc1c",
+  "fc36c22580863150d57f5ba97db1de27c14f34c7",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
