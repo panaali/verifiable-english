@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-math-mini-paper-1119-e9b129ed-t180731-s6",
+ "head": "be0ed3aa73f4f3e3f4953ffec5554536b57e0554",
+ "argv": [
+  "armsh-cand-srccov-math-mini-paper-1119-e9b129ed-t180731-s6",
+  "be0ed3aa73f4f3e3f4953ffec5554536b57e0554",
+  "d9abed4ba1b59575b01982f126bae81df3856356",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ]
+}
