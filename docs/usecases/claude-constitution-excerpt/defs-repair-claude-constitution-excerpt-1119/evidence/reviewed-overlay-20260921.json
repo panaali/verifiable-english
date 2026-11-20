@@ -1,0 +1,154 @@
+{
+  "format": "ve.english-vocabulary@1",
+  "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+  "sorts": {
+    "claude_model": {
+      "verbalisation": {
+        "singular": "Claude model",
+        "plural": "Claude models"
+      },
+      "suggested": false
+    },
+    "mechanism": {
+      "verbalisation": {
+        "singular": "mechanism",
+        "plural": "mechanisms"
+      },
+      "suggested": false
+    },
+    "guideline": {
+      "verbalisation": {
+        "singular": "guideline",
+        "plural": "guidelines"
+      },
+      "suggested": false
+    },
+    "principal": {
+      "verbalisation": {
+        "singular": "principal",
+        "plural": "principals"
+      },
+      "suggested": false
+    },
+    "action": {
+      "verbalisation": {
+        "singular": "action",
+        "plural": "actions"
+      },
+      "suggested": false
+    },
+    "overseer": {
+      "verbalisation": {
+        "singular": "overseer",
+        "plural": "overseers"
+      },
+      "suggested": false
+    },
+    "property": {
+      "verbalisation": {
+        "singular": "property",
+        "plural": "properties"
+      },
+      "suggested": false
+    },
+    "situation": {
+      "verbalisation": {
+        "singular": "situation",
+        "plural": "situations"
+      },
+      "suggested": false
+    }
+  },
+  "predicates": {
+    "current_claude_model": {
+      "verbalisation": "{0} is current",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not current"
+    },
+    "ought_have_core_values": {
+      "verbalisation": "{0} is expected to have the core values",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not expected to have the core values"
+    },
+    "appropriate": {
+      "verbalisation": "{0} is appropriate",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not appropriate"
+    },
+    "undermines": {
+      "verbalisation": "{0} undermines {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not undermine {1}"
+    },
+    "honest": {
+      "verbalisation": "{0} is honest",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not honest"
+    },
+    "inappropriately_harmful": {
+      "verbalisation": "{0} is inappropriately dangerous or harmful",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not inappropriately dangerous or harmful"
+    },
+    "performs": {
+      "verbalisation": "{0} performs {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not perform {1}"
+    },
+    "relevant": {
+      "verbalisation": "{0} is relevant",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not relevant"
+    },
+    "follows": {
+      "verbalisation": "{0} follows {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not follow {1}"
+    },
+    "interacts": {
+      "verbalisation": "{0} interacts with {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not interact with {1}"
+    },
+    "benefits": {
+      "verbalisation": "{0} benefits {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not benefit {1}"
+    },
+    "outranks": {
+      "verbalisation": "{0} outranks {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not outrank {1}"
+    },
+    "contends_for": {
+      "verbalisation": "{0} involves apparent conflict over {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not involve apparent conflict over {1}"
+    },
+    "violates_hard_constraint": {
+      "verbalisation": "{0} involves a hard constraint violation",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not involve a hard constraint violation"
+    },
+    "ought_follow": {
+      "verbalisation": "{0} calls for generally prioritizing {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not call for generally prioritizing {1}"
+    },
+    "undermines_check": {
+      "verbalisation": "{0} undermines the oversight role of {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not undermine the oversight role of {1}"
+    },
+    "sanctioned_check": {
+      "verbalisation": "{0} is an appropriately sanctioned human check",
+      "suggested": false,
+      "negative_verbalisation": "{0} is not an appropriately sanctioned human check"
+    },
+    "bound_to_obey": {
+      "verbalisation": "{0} owes unconditional obedience to {1}",
+      "suggested": false,
+      "negative_verbalisation": "{0} does not owe unconditional obedience to {1}"
+    }
+  }
+}

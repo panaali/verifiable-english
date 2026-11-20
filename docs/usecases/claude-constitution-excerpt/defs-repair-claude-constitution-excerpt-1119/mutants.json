@@ -1,0 +1,63 @@
+{
+ "item": "defs-repair-claude-constitution-excerpt-1119",
+ "language": "data (JSON legends; no Lean, Python or Rust product code changed)",
+ "command": "uv run python /tmp/ccx/seed.py (each mutant planted, the new test file plus tests/test_english.py::test_reviewed_overlays_preserve_all_historical_views_and_identities run, then git checkout)",
+ "mutants": [
+  {
+   "id": "M1-carry-environment",
+   "file": "usecases/claude-constitution-excerpt/environment.json",
+   "mutation": "outranks legend: delete 'in forming an overall judgment, ' from the appended source sentence 9",
+   "killed": true,
+   "tests": [
+    "test_the_generated_environment_keeps_every_owner_description",
+    "test_the_only_environment_change_is_the_appended_source_spans",
+    "test_the_overlay_review_is_carried_only_by_the_environment_id_rebind",
+    "test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-8-1119-environment.json]",
+    "test_reviewed_overlays_preserve_all_historical_views_and_identities"
+   ]
+  },
+  {
+   "id": "M2-carry-generated",
+   "file": "usecases/claude-constitution-excerpt/definitions-environment.json",
+   "mutation": "property legend in the generated copy: 'during the current phase of development.' -> 'during development.'",
+   "killed": true,
+   "tests": [
+    "test_the_generated_environment_keeps_every_owner_description",
+    "test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-1-1119-definitions-environment.json]"
+   ]
+  },
+  {
+   "id": "M3-overlay-other-byte",
+   "file": "usecases/claude-constitution-excerpt/environment.english.json",
+   "mutation": "an overlay byte other than environment_id: overseer singular 'overseer' -> 'supervisor'",
+   "killed": true,
+   "tests": [
+    "test_the_overlay_review_is_carried_only_by_the_environment_id_rebind",
+    "test_reviewed_overlays_preserve_all_historical_views_and_identities"
+   ]
+  },
+  {
+   "id": "M4-review-record",
+   "file": "ve/reviewed-overlays.json",
+   "mutation": "the 2026-11-19 review record's overlay_digest a0a89357... -> b0a89357...",
+   "killed": true,
+   "tests": [
+    "test_the_overlay_review_is_carried_only_by_the_environment_id_rebind",
+    "test_reviewed_overlays_preserve_all_historical_views_and_identities"
+   ]
+  },
+  {
+   "id": "M5-byte-for-byte",
+   "file": "usecases/claude-constitution-excerpt/environment.json",
+   "mutation": "outranks legend: straight quotes around tie-breakers -> curly quotes (equal after normalisation, not byte for byte)",
+   "killed": true,
+   "tests": [
+    "test_the_generated_environment_keeps_every_owner_description",
+    "test_the_only_environment_change_is_the_appended_source_spans",
+    "test_the_overlay_review_is_carried_only_by_the_environment_id_rebind",
+    "test_the_source_definition_is_carried_word_for_word[defs-claude-constitution-excerpt-8-1119-environment.json]",
+    "test_reviewed_overlays_preserve_all_historical_views_and_identities"
+   ]
+  }
+ ]
+}
