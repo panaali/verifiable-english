@@ -1,0 +1,1 @@
+{"shard": 3, "shards": 6, "units": ["tests/test_history_tests.py", "tests/test_rsp_fidelity_fix.py", "tests/test_rust_reproducible.py", "tests/test_run_order.py", "tests/test_definitions.py", "tests/test_calc_service.py", "tests/test_conformance.py", "tests/test_select_fast_stage.py"], "rc": 0, "seconds": 96.4, "passed": 8}
