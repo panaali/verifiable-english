@@ -1,0 +1,42 @@
+{
+ "item": "srccov-math-mini-paper-1119",
+ "note": "No Lean, Python or Rust product code changed; tools/trust_mutants.py --plan lists 0 definitions and 0 mutants (trust-mutants-plan.json). Each seeded bug was planted in a file this item changed or reads, the named test run, and the file restored (git status empty afterwards). Script /tmp/smmp/mutants.sh, log /tmp/smmp-mutants.log.",
+ "mutants": [
+  {
+   "id": "m1-lists-legend-drops-carried-sentence",
+   "claim": "the lists legend carries D1 (paper.template.md:123, unit S0001) word for word",
+   "file": "usecases/math-mini-paper/environment.json",
+   "mutation": "lists description: the appended sentence ' A point y is self-listing for a relation R when R(y, y).' removed",
+   "test": "tests/test_srccov_math_mini_paper_1119.py::test_source_unit_is_carried_in_the_rules_legend[srccov-math-mini-paper-s6-1-1119]",
+   "killed": true,
+   "result": "1 failed, 1 passed in 0.54s"
+  },
+  {
+   "id": "m2-lists-legend-changes-a-term",
+   "claim": "the carry is byte-for-byte after omit_norm, not a paraphrase",
+   "file": "usecases/math-mini-paper/environment.json",
+   "mutation": "lists description: 'when R(y, y).' -> 'when R(y, x).'",
+   "test": "tests/test_srccov_math_mini_paper_1119.py::test_source_unit_is_carried_in_the_rules_legend[srccov-math-mini-paper-s6-1-1119]",
+   "killed": true,
+   "result": "1 failed, 1 passed in 0.52s"
+  },
+  {
+   "id": "m3-t1-stops-using-lists-on-the-diagonal",
+   "claim": "the carrier legend belongs to a symbol the rules use (METHOD amendment 4)",
+   "file": "usecases/math-mini-paper/theorems/T1/conclusion.ve",
+   "mutation": "'(x1 lists x1)' -> '(x1 mentions x1)'",
+   "test": "tests/test_srccov_math_mini_paper_1119.py::test_carrier_legend_belongs_to_a_symbol_the_rules_use",
+   "killed": true,
+   "result": "1 failed, 1 passed in 0.56s"
+  },
+  {
+   "id": "m4-t1-certificate-keeps-old-environment-id",
+   "claim": "the regenerated certificates pin the new environment id of environment.json",
+   "file": "usecases/math-mini-paper/theorems/T1/certificate.json",
+   "mutation": "file reverted to its pre-change bytes (old environment_id and meaning ids)",
+   "test": "tests/test_defs_repair_math_mini_paper_1119.py::test_certificates_pin_the_carrier_environments",
+   "killed": true,
+   "result": "1 failed in 0.81s"
+  }
+ ]
+}
