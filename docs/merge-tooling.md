@@ -56,6 +56,9 @@ its merge strategy:
 | platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
 | history-map | `tests/history-map.json` (saved from the coverage map: the units that start git or read `.git`) | json |
 | history-tests | `tests/history-dependent.json` (the tests that read history, from the saved map and the test sources) | regenerate |
+| english-lexicon-report | `conformance/english-lean/lexicon-report.json` (a `lexicon_id` per corpus environment) | derived |
+| recorded-route-cases | `tests/data/route-cases.jsonl` (recorded route cases; the english.statement block from `route_fixtures()`) | keyed-lines |
+| usecase-safety-framework | `usecases/safety-framework/{results,coverage,spans}.json` (run when they conflict: `on_conflict`) | derived |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
