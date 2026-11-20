@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-claude-constitution-excerpt-1119-5c20e2e0-t171423-s2",
+ "head": "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+ "argv": [
+  "armsh-cand-srccov-claude-constitution-excerpt-1119-5c20e2e0-t171423-s2",
+  "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+  "b4e8668fc2044c96004f89051d18575b425d9e55",
+  "-",
+  "-",
+  "4",
+  "2/6"
+ ]
+}
