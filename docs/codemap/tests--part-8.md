@@ -1,3 +1,6 @@
+- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
+- `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
+- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_defer.py` — `select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select to the chain gate, and never records them as passed.
 - `tests/test_select_fast_stage.py` — `select_tests --fast-stage`: the cheap units of a selection, run first on the host that sends the rest to sharded runners, so a failing pin is heard in minutes…
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
@@ -80,6 +83,3 @@
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
 - `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
 - `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
-- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
-- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
-- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
