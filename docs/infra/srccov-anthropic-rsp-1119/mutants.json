@@ -1,6 +1,6 @@
 {
  "item": "srccov-anthropic-rsp-1119",
- "note": "Seeded bugs planted by hand on the item's product code (Python only: no Lean or Rust changed), each run against the condition test and restored (git checkout); command: uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py. Review fix (F1, F2): the last eight are planted in the derived records the new tests bind (no product code changed in the fix), each run with uv run pytest -q on the named test and restored by copying the saved file back.",
+ "note": "Seeded bugs planted by hand on the item's product code (Python only: no Lean or Rust changed), each run against the condition test and restored (git checkout); command: uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py. Review fix (F1, F2): the last eight are planted in the derived records the new tests bind (no product code changed in the fix), each run with uv run pytest -q on the named test and restored by copying the saved file back. The last three (the fix of the selected run's failure) are planted in rsp_vocabulary.py, the only product code the review fix changed (Python; no Lean or Rust), and restored by copying the saved file back.",
  "mutants": [
   {
    "kind": "predicate legend carry",
@@ -99,6 +99,27 @@
    "change": "', about 999 bytes' added after 'The plan expected under 10%'",
    "test": "tests/test_srccov_anthropic_rsp_1119.py::test_readme_figures_are_the_committed_measurements",
    "result": "1 failed: README.md states '999 bytes' with no check against the committed files"
+  },
+  {
+   "kind": "selected-run fix: carried quote inside a citation parenthesis (pre-fix files)",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "change": "6c3711d635's rsp_vocabulary.py and environment.d1.json put back (five quotes inside \"(3.x: ...)\")",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_no_carried_run_sits_inside_a_citation_parenthesis",
+   "result": "1 failed: row16"
+  },
+  {
+   "kind": "selected-run fix: one quote moved back into its citation parenthesis",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "change": "significantly_redacted back to \"(3.6: \\\"Significantly redacted\\\" means ... description.)\"; environment regenerated",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_no_carried_run_sits_inside_a_citation_parenthesis ; tests/test_fsf_repair_f6_sl2plus_1119.py::test_no_legend_gains_a_quote_inside_a_citation_parenthesis",
+   "result": "2 failed (both tests)"
+  },
+  {
+   "kind": "selected-run fix: doubled full stop before 'Open term'",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "change": "_open's end back to '. ' always (a quoted sentence's own full stop doubled); environment regenerated",
+   "test": "tests/test_srccov_anthropic_rsp_1119.py::test_no_carried_run_sits_inside_a_citation_parenthesis",
+   "result": "1 failed: ('row16', 'marginal_justification')"
   }
  ]
 }

@@ -5,7 +5,7 @@ selection or tool logic. VE's diagnostics, fault order, fields, verdicts, availa
 at e01c3d6680 (the merge base). All changes are inside one use case:
 
 - its vocabulary legends: text appended to the descriptions in `usecases/anthropic-rsp/rsp_vocabulary.py` (written to
-  `environment.d1.json`). There are 21 changed legends (17 predicates, 4 threshold constants). Each keeps every word of
+  `environment.d1.json`). A carried quote follows its citation, never inside it. There are 21 changed legends (17 predicates, 4 threshold constants). Each keeps every word of
   its base description, in order, and no other field of the symbol (arguments, act, verbalisation, regulated role)
   changes. Evidence: `python3 docs/infra/srccov-anthropic-rsp-1119/evidence/legend_keep.py` printed "21 changed
   legends; 0 lose base words or change another field" (evidence/legend_keep.txt).
