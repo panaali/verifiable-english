@@ -1,3 +1,4 @@
+- `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
 - `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
 - `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
@@ -38,6 +39,7 @@
 - `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
 - `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
 - `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
+- `tests/test_srccov_claude_constitution_pilot_1119.py` — srccov-claude-constitution-pilot-1119: the carried probe records 26 source sentences that state no rule.
 - `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
 - `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
 - `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
@@ -81,5 +83,3 @@
 - `tests/test_w1_delta_suite.py` — The W1 delta's suite corpus and its tagging plugin (`docs/en-e3-norm/en-2/w1_delta.py`; en-e3bb review F1).
 - `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
-- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
-- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.

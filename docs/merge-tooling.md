@@ -111,6 +111,23 @@ conflicts, it writes nothing and exits 2. Otherwise it merges the conflicted gen
 and exits 0; a failed writer or check exits 1. Run it after a clean merge too: two sides can merge textually
 and still leave a derived file stale. The verify that follows is unchanged.
 
+Files that carry hashes of a use-case environment (genconflict-1120): `conformance/english-lean/lexicon-report.json`
+(a `lexicon_id` per environment), `tests/data/route-cases.jsonl` (the FSF lexicon in the `stale` english.statement
+case) and `usecases/safety-framework/{results,coverage,spans}.json` (certificate and document hashes). Two branches
+that edit different legends of one environment merge cleanly in the source but conflict on one same-key derived
+value, which only regeneration on the merged tree settles. The lexicon report and the use case are `derived`: the
+driver keeps a one-sided change and exits 1 on a two-sided one, so a plain `git merge` that runs no writer (the
+train's spec regen, an agent's merge) stops on them as before instead of keeping a stale copy; `--resolve` takes
+ours and runs the writers. The route cases are `keyed-lines`: recorded lines merge three-way by (mode, case id)
+(lines sharing a key, or one line without an id, form one group; a group both sides changed differently stops the
+merge), the english.statement block takes ours and `route_fixtures.py --write` rewrites it on every merge candidate
+(`at_merge`). The use case's writers take minutes (`run.py`, then `build_document.py`, which needs the pinned FSF
+text outside the repository), so its entry is `on_conflict`: a plain `--write`, `--check` or `--resolve` skips it
+unless both sides of the merge changed one of its files (still known after the train's `--resolve --only lake-build
+--only checker-pins` staged them) or `--only` names it; without the pinned text the resolve exits 1 and the train
+falls back to the agent sync. Replay (`docs/merge-tooling/genconflict-1120/replay.txt`): the three FSF-repair merges
+the train sent to an agent sync (f1, f2, f7) resolve with `--resolve` alone, with the files the agent committed.
+
 Evidence (`docs/merge-tooling/sync-merge-survey.json`, `docs/merge-tooling/survey.py`): of the sync merges in
 main's history, re-merged in memory with `git merge-tree`, the ones with conflicts only in generated files
 would have needed no agent. The replay of one of them (`docs/merge-tooling/replay-dddeb893.json`: sync merge

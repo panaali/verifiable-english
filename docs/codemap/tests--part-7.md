@@ -11,6 +11,7 @@
 - `tests/test_readings_verdicts_lean.py` — `readings-verdicts` through the service (docs/spec/readings-defaults.md 3, 4.4, 2.4 and 8.2; plan RD-3).
 - `tests/test_readings_verdicts_split.py` — AR-16b split `ve/readings_verdicts.py` into the package `ve/readings_verdicts/`; these pin what the split must keep.
 - `tests/test_regen_generated.py` — tools/regen_generated.py: the generated-file inventory, its merge strategies and the merge-train flow.
+- `tests/test_regen_usecase_merge.py` — tools/regen_generated.py on files that carry hashes of a use-case environment (genconflict-1120).
 - `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).
 - `tests/test_relay.py` — `ve/backends/relay.py`, the one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batch 0): Lean's code chooses the exception class and Lean's…
 - `tests/test_relay_binding_inventory.py` — Every field of every RD-9 relayed answer is classified, and every bound field is fuzzed (DRI ruling R8).
@@ -78,4 +79,3 @@
 - `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
 - `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
 - `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
-- `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
