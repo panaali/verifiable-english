@@ -1,0 +1,179 @@
+Document: bluedot-grant
+
+For each flag below, decide: is this term's definition (the source passage given for the flag) shown to the reader of the rule, in the rule's carrier surface (the reader-visible text listed for that rule)? Answer CARRIED, NOT CARRIED or UNSURE, with one line of evidence (quote the surface words that carry it, or name what is missing).
+
+Reply with exactly one line per flag and nothing else, in this form:
+<flag id> | <CARRIED or NOT CARRIED or UNSURE> | <one line of evidence>
+
+A rule's carrier surface is the list of texts under its name in RULE SURFACES; a shared text (used by more than one rule here) is printed once under SHARED SURFACE TEXTS and named by its id. Judge only from the texts given here.
+
+== SHARED SURFACE TEXTS ==
+--- S1 (legend:adopted) ---
+is adopted
+
+--- S2 (legend:is_evidence) ---
+is evidence
+
+--- S3 (legend:mandatory_for) ---
+is mandatory for
+
+--- S4 (legend:proposed) ---
+is proposed
+
+--- S5 (legend:tested_on) ---
+is tested on
+
+--- S6 (legend:affordable_proof) ---
+Author choice signed by grant-author. Rule: proof cost and formalisation cost recorded; the checker accepts a complete certificate; budget and deadline registered before the claim; total cost within that budget and elapsed time within that deadline. Why: Affordability must include the full route to a checked certificate.
+
+--- S7 (legend:honest) ---
+is honest
+
+--- S8 (legend:proof_of) ---
+is a proof of
+
+--- S9 (legend:unresolved) ---
+is unresolved
+
+--- S10 (legend:leads_to) ---
+leads to
+
+--- S11 (legend:matched_cost) ---
+Author choice signed by grant-author. Rule: same task; budget registered before the comparison starts; count authoring, formalisation, proof production, compute and review for both arms; absolute total-cost difference at most 5% of the larger total. Why: A comparison must count the work that each method actually requires.
+
+== RULE SURFACES ==
+--- rule u007 ---
+[legend:adopted] (see S1)
+[legend:is_evidence] (see S2)
+[legend:mandatory_for] (see S3)
+[legend:proposed] (see S4)
+[legend:tested_on] (see S5)
+
+--- rule u056 ---
+[legend:adopted] (see S1)
+[legend:is_evidence] (see S2)
+[legend:mandatory_for] (see S3)
+[legend:proposed] (see S4)
+
+--- rule u058 ---
+[legend:claims] claims
+
+--- rule u074 ---
+[legend:adopted] (see S1)
+[legend:is_evidence] (see S2)
+[legend:mandatory_for] (see S3)
+[legend:proposed] (see S4)
+[legend:tested_on] (see S5)
+
+--- rule u050 ---
+[legend:affordable_proof] (see S6)
+[legend:honest] (see S7)
+[legend:proof_of] (see S8)
+[legend:unresolved] (see S9)
+
+--- rule u089 ---
+[legend:affordable_proof] (see S6)
+[legend:honest] (see S7)
+[legend:proof_of] (see S8)
+[legend:unresolved] (see S9)
+
+--- rule u086 ---
+[legend:leads_to] (see S10)
+
+--- rule u035 ---
+[legend:leads_to] (see S10)
+
+--- rule u013 ---
+[legend:matched_cost] (see S11)
+
+--- rule u018 ---
+[legend:matched_cost] (see S11)
+
+--- rule u062 ---
+[legend:counts_cost] includes the cost of
+[legend:matched_cost] (see S11)
+
+--- rule u079 ---
+[legend:matched_cost] (see S11)
+
+--- rule u051 ---
+[legend:proof_of] (see S8)
+[legend:unresolved] (see S9)
+[legend:within_budget] author-choice clause of affordable_proof: has a total cost within its registered budget
+
+== FLAGS ==
+F001 | rule u007 | term vex | source usecases/bluedot-grant/source.md:8
+  source passage: Verifiable English: testing mandatory checked proofs against obfuscated arguments, with proposed mandatory evidence (VEX) for statistical and approximate claims.
+
+F002 | rule u056 | term vex | source usecases/bluedot-grant/source.md:8
+  source passage: Verifiable English: testing mandatory checked proofs against obfuscated arguments, with proposed mandatory evidence (VEX) for statistical and approximate claims.
+
+F003 | rule u058 | term vex_result | source usecases/bluedot-grant/source.md:8
+  source passage: Verifiable English: testing mandatory checked proofs against obfuscated arguments, with proposed mandatory evidence (VEX) for statistical and approximate claims.
+
+F004 | rule u007 | term vex | source usecases/bluedot-grant/source.md:11
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F005 | rule u074 | term vex | source usecases/bluedot-grant/source.md:11
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F006 | rule u058 | term vex_result | source usecases/bluedot-grant/source.md:11
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F007 | rule u050 | term unresolved | source usecases/bluedot-grant/source.md:35
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F008 | rule u089 | term unresolved | source usecases/bluedot-grant/source.md:35
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F009 | rule u086 | term false_confidence | source usecases/bluedot-grant/source.md:35
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F010 | rule u035 | term proof_label | source usecases/bluedot-grant/source.md:35
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F011 | rule u086 | term proof_label | source usecases/bluedot-grant/source.md:35
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F012 | rule u013 | term matched_cost | source usecases/bluedot-grant/source.md:43
+  source passage: Formalisation and proof production are included in the matched-cost comparison.
+
+F013 | rule u018 | term matched_cost | source usecases/bluedot-grant/source.md:43
+  source passage: Formalisation and proof production are included in the matched-cost comparison.
+
+F014 | rule u062 | term matched_cost | source usecases/bluedot-grant/source.md:43
+  source passage: Formalisation and proof production are included in the matched-cost comparison.
+
+F015 | rule u079 | term matched_cost | source usecases/bluedot-grant/source.md:43
+  source passage: Formalisation and proof production are included in the matched-cost comparison.
+
+F016 | rule u062 | term proof_production | source usecases/bluedot-grant/source.md:43
+  source passage: Formalisation and proof production are included in the matched-cost comparison.
+
+F017 | rule u007 | term vex | source usecases/bluedot-grant/source.md:53
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F018 | rule u074 | term vex | source usecases/bluedot-grant/source.md:53
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F019 | rule u058 | term vex_result | source usecases/bluedot-grant/source.md:53
+  source passage: Testing mandatory checked proofs for formalisable claims and developing mandatory evidence (VEX) for statistical and approximate claims, to improve oversight of untrusted AI work.
+
+F020 | rule u050 | term unresolved | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F021 | rule u051 | term unresolved | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F022 | rule u089 | term unresolved | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F023 | rule u035 | term false_confidence | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F024 | rule u035 | term proof_label | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
+F025 | rule u086 | term proof_label | source usecases/bluedot-grant/source.md:62
+  source passage: A proof label could increase false confidence: foundation leaves remain accepted without proof, and formalisation may misstate the task. Even an honest claim remains "unresolved" without an affordable proof. VEX would require evidence whose quality still needs review. Forged-checker, false-foundation and misleading-formalisation controls test these harms; real artefacts test transfer. Null and negative results will be published, with the benchmark, harness and failure analysis, even if VE provides no advantage.
+
