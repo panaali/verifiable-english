@@ -17,7 +17,18 @@ script only runs them, in order), and how a merge combines two sides of the file
   follows (`lake build`) catches a wrong union;
 * `json`: a hand-curated JSON ledger (the assurance manifest, trust tables, checker pins, layer ledgers);
   a structural three-way merge (`merge_json`) keeps both sides' additions and removals and fails on a
-  value both sides changed differently, which is left to a person or the sync agent.
+  value both sides changed differently, which is left to a person or the sync agent;
+* `derived`: a file of hashes of sources (a use case's results, the lexicon report): two branches that change
+  different parts of one source each regenerate the same hash differently, which no keyed merge can settle. The
+  driver keeps a one-sided change and stops on a two-sided one (a merge that runs no writer must not keep a stale
+  copy); `--resolve` takes ours and runs the writer on the merged tree;
+* `keyed-lines`: a recorded JSON-lines file with a derived block (tests/data/route-cases.jsonl, `merge_keyed_lines`):
+  the recorded lines merge three-way by key and stop on a key both sides changed differently; the derived lines
+  take ours and the writer rewrites them.
+
+`on_conflict` marks an entry whose writer and check take minutes (a use case's harness): `--write`, `--check` and
+`--names` run it only when named with `--only`, and `--resolve` only when both sides of the merge changed one of
+its files (or `--only` names it); a failed writer then fails the resolve (exit 1), never skipped.
 
 `.gitattributes` is generated from the same list (`merge=ve-generated` for every owned pattern). With the
 driver installed, `git merge` resolves those files by their strategy and never stops on them. Without it,
@@ -75,7 +86,7 @@ class Generated:
     paths: tuple[str, ...]            # git attribute patterns, from the repository root
     write: tuple | None               # argv, or a function name of this module; None: merged, never rewritten
     check: tuple | None               # argv, or a function name; None: checked by rewriting and comparing
-    merge: str = "regenerate"         # regenerate | union | json
+    merge: str = "regenerate"         # regenerate | union | json | derived | keyed-lines
     cwd: str = "."
     note: str = ""
     # The automatic run of the check, without a mock: a test node `tests/<file>.py::<function>` or a gate stage
@@ -93,6 +104,19 @@ class Generated:
     # Refreshed on every merge candidate (`--at-merge`, module docstring): the writer reads only the merged tree,
     # starts no Lean build or service and takes seconds (tests/test_regen_generated.py).
     at_merge: bool = False
+    # Run only when its files conflict or `--only` names it (module docstring): its writer and check take minutes.
+    on_conflict: bool = False
+
+
+def _usecase(name: str) -> Generated:
+    """A use case whose harness `run.py` writes `results.json` (`--check` compares) and whose `build_document.py`
+    then writes `coverage.json` and `spans.json` from it (`--check` compares): one line of GENERATED per use case."""
+    here = f"usecases/{name}"
+    return Generated(f"usecase-{name}", tuple(f"{here}/{file}" for file in ("results.json", "coverage.json", "spans.json")),
+                     ((PY, f"{here}/run.py"), (PY, f"{here}/build_document.py")),
+                     ((PY, f"{here}/run.py", "--check"), (PY, f"{here}/build_document.py", "--check")),
+                     merge="derived", service="write", on_conflict=True,
+                     note="hashes of the use case's environment and document; minutes: run when its files conflict")
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
@@ -253,6 +277,19 @@ GENERATED = (
               ((PY, "tools/history_tests.py", "--write"),),
               ((PY, "tools/history_tests.py", "--check"),),
               note="after history-map, which it reads with the test sources", at_merge=True),
+    # Files that carry hashes of a use-case environment: two branches that edit different legends of one
+    # environment conflict on the same derived value (genconflict-1120), settled only by regeneration.
+    Generated("english-lexicon-report", ("conformance/english-lean/lexicon-report.json",),
+              ((PY, "-m", "conformance.english_lean_lexicon"),), None, merge="derived", service="write",
+              note="lexicon_id of every corpus environment",
+              fresh="tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon"),
+    Generated("route-cases", ("tests/data/route-cases.jsonl",),
+              ((PY, "docs/en-e3-norm/en-2b/route_fixtures.py", "--write"),),
+              ((PY, "docs/en-e3-norm/en-2b/route_fixtures.py", "--check"),), merge="keyed-lines",
+              note="recorded route cases merge by (mode, id); the english.statement block is "
+                   "tests/test_english_statement_blocks.py's route_fixtures(), rewritten on every merge candidate",
+              fresh="tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded", at_merge=True),
+    _usecase("safety-framework"),
 )
 # The pin file, `inventory_path`'s name for it.
 PIN_FILE = next(entry for entry in GENERATED if entry.name == "checker-pins").paths[0]
@@ -273,8 +310,6 @@ NOT_REGENERATED = {
     "tools/question_answering_agreement.py": "Q2.6 evidence: the agreement of ask with the existing route, run on corpora and saved",
     "tools/words_ab.py": "Q2.4 evidence: the A/B of Lean's wording against the pre-Q2.4 producers, run on corpora and saved",
     "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
-    "docs/en-e3-norm/en-2b/route_fixtures.py": "en-e3b fixtures: writes english.statement's route cases into "
-        "tests/data/route-cases.jsonl, checked by test_the_route_fixtures_are_recorded",
     "docs/act-phrases/ap-parse-index/seed_bugs.py": "ap-parse-index seeded-bug evidence: each plant is run and restored "
                                                     "(the checker pin with it), then mutants.json is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
@@ -318,7 +353,7 @@ NOT_REGENERATED = {
     "docs/events-time-causation/et-e1/run.py": "et-e1: model-proxy answers scored once into results.json (evidence)",
     "docs/defeasible/df-1bb/evidence/select_route_cases.py": "df-1bb: appends recorded route cases once (append-only)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
-    "usecases/*/*.py": "use-case results, rerun by their harness",
+    "usecases/*/*.py": "use-case results, rerun by their harness (a use case of `_usecase`'s shape is an entry)",
     "usecases/measure_keyed_paths.py": "the keyed harnesses' checker paths, measured once (minutes, with the Lean "
                                        "service) into docs/usecases/keyed-answers.json, the evidence its test reads",
 }
@@ -326,13 +361,19 @@ NOT_REGENERATED = {
 WRITE_FLAGS = ("--write", "--update-baseline", "--lean-fixtures", "--record")
 
 
+def _owns(entry: Generated, path: str) -> bool:
+    return any(fnmatch.fnmatchcase(path, pattern) and pattern.count("/") == path.count("/") for pattern in entry.paths)
+
+
 def owner(path: str) -> Generated | None:
     """The entry that owns `path` (repository-relative), or None."""
-    for entry in GENERATED:
-        if any(fnmatch.fnmatchcase(path, pattern) and (pattern.count("/") == path.count("/"))
-               for pattern in entry.paths):
-            return entry
-    return None
+    return next((entry for entry in GENERATED if _owns(entry, path)), None)
+
+
+def on_demand(entries, only, conflicted=()) -> list[Generated]:
+    """`entries` without each `on_conflict` entry that `only` does not name and that owns no path of `conflicted`."""
+    return [entry for entry in entries if not entry.on_conflict or entry.name in (only or ())
+            or any(_owns(entry, path) for path in conflicted)]
 
 
 def train_only() -> tuple[str, ...]:
@@ -632,20 +673,101 @@ def _derived(path: str, value, new=None):
     return value
 
 
-def merge_text(path: str, base: str, ours: str, theirs: str) -> tuple[str, bool]:
-    """(merged text, clean) of a generated file by its entry's strategy."""
+# The derived block of a `keyed-lines` file: lines whose first element is one of these modes.
+DERIVED_LINES = {"tests/data/route-cases.jsonl": ("english.statement",)}
+
+
+def _line_key(line: str) -> tuple[object, tuple]:
+    """(the line's mode, its group): the group is (mode, case id), or the whole line for a line without an id."""
+    try:
+        value = json.loads(line)
+    except ValueError:
+        raise Conflict(f"not a JSON line: {line[:80]}") from None
+    mode = value[0] if isinstance(value, list) and value else None
+    case = value[1] if isinstance(value, list) and len(value) > 1 else None
+    if isinstance(mode, str) and isinstance(case, dict) and isinstance(case.get("id"), str):
+        return mode, (mode, case["id"])
+    return mode, ("", line)
+
+
+def merge_keyed_lines(base: str, ours: str, theirs: str, derived: tuple = ()) -> str:
+    """Three-way merge of a recorded JSON-lines file. The lines whose first element is in `derived` are the
+    writer's: the merge takes ours, after every recorded line. The recorded lines merge by group (`_line_key`,
+    the lines sharing a key, in order): a group one side changed takes that side, both sides' equal change is
+    taken, and a group both sides changed differently raises Conflict. Ours' lines keep their places, a group
+    changed by theirs replaces ours' first line of it, and theirs' new groups follow, in theirs' order."""
+    def split(text: str) -> tuple[list[str], list[str], dict]:
+        recorded, block, groups = [], [], {}
+        for line in text.splitlines():
+            if not line.strip():
+                continue
+            mode, key = _line_key(line)
+            if mode in derived:
+                block.append(line)
+            else:
+                recorded.append(line)
+                groups.setdefault(key, []).append(line)
+        return recorded, block, groups
+
+    _, _, before = split(base)
+    lines, block, mine = split(ours)
+    other_lines, _, other = split(theirs)
+    merged = {}
+    for key in dict.fromkeys([*mine, *other, *before]):
+        b, o, t = before.get(key, []), mine.get(key, []), other.get(key, [])
+        if o == t or b == t:
+            merged[key] = o
+        elif b == o:
+            merged[key] = t
+        else:
+            raise Conflict(f"recorded case {key[0]}/{key[1][:60]}: both sides changed it differently")
+    out, placed = [], set()
+    for line in lines:
+        key = _line_key(line)[1]
+        if merged[key] == mine[key]:
+            out.append(line)
+        elif key not in placed:
+            out.extend(merged[key])
+            placed.add(key)
+    for key in dict.fromkeys(_line_key(line)[1] for line in other_lines):
+        if key not in mine:
+            out.extend(merged[key])
+    return "".join(f"{line}\n" for line in out + block)
+
+
+def _merge_file(base: str, ours: str, theirs: str, *options: str) -> tuple[str, bool]:
+    """git merge-file's (merged text, clean) of the three texts."""
+    with tempfile.TemporaryDirectory(prefix="ve-merge-") as directory:
+        files = []
+        for name, text in (("ours", ours), ("base", base), ("theirs", theirs)):
+            file = Path(directory) / name
+            file.write_text(text)
+            files.append(str(file))
+        done = subprocess.run(["git", "merge-file", *options, "-p", *files], capture_output=True, text=True)
+        return done.stdout, done.returncode == 0
+
+
+def merge_text(path: str, base: str, ours: str, theirs: str, resolving: bool = False) -> tuple[str, bool]:
+    """(merged text, clean) of a generated file by its entry's strategy. `resolving`: `--resolve`'s merge, whose
+    writers run next (a `derived` file takes ours); otherwise git's driver, after which no writer runs."""
     entry = owner(path)
     if entry is None or entry.merge == "regenerate":
         return ours, True
     if entry.merge == "union":
-        with tempfile.TemporaryDirectory(prefix="ve-merge-") as directory:
-            files = []
-            for name, text in (("ours", ours), ("base", base), ("theirs", theirs)):
-                file = Path(directory) / name
-                file.write_text(text)
-                files.append(str(file))
-            done = subprocess.run(["git", "merge-file", "--union", "-p", *files], capture_output=True, text=True)
-            return done.stdout, done.returncode == 0
+        return _merge_file(base, ours, theirs, "--union")
+    if entry.merge == "derived":
+        if ours == theirs or base == theirs:
+            return ours, True
+        if base == ours:
+            return theirs, True
+        # Both sides changed it differently: only its writer on the merged tree knows the answer.
+        return (ours, True) if resolving else _merge_file(base, ours, theirs)
+    if entry.merge == "keyed-lines":
+        try:
+            return merge_keyed_lines(base, ours, theirs, DERIVED_LINES.get(path, ())), True
+        except Conflict as exc:
+            print(f"{path}: {exc}", file=sys.stderr)
+            return ours if resolving else _merge_file(base, ours, theirs)[0], False
     sides = [_derived(path, json.loads(text), 0) if text.strip() else _MISSING for text in (base, ours, theirs)]
     try:
         if path == "docs/trust-baseline.json":
@@ -960,9 +1082,26 @@ def _stage(root: Path, path: str, number: int) -> str:
     return done.stdout if done.returncode == 0 else ""
 
 
-def resolve(entries, root: Path = ROOT, log: RegenLog | None = None) -> int:
+EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
+
+def changed_on_both_sides(root: Path, patterns) -> set[str]:
+    """The paths matching `patterns` that the merge in progress's two sides each changed, differently: the files
+    whose merge stops without the driver, still known after an earlier `--resolve --only ...` staged them."""
+    if not patterns:
+        return set()
+    base = subprocess.run(["git", "merge-base", "HEAD", "MERGE_HEAD"], cwd=root, capture_output=True,
+                          text=True).stdout.split()
+    specs = [f":(glob){pattern}" for pattern in patterns]
+    diff = lambda a, b: set(_git(root, "diff", "--name-only", "--no-renames", a, b, "--", *specs).split())  # noqa: E731
+    start = base[0] if base else EMPTY_TREE
+    return diff(start, "HEAD") & diff(start, "MERGE_HEAD") & diff("HEAD", "MERGE_HEAD")
+
+
+def resolve(entries, root: Path = ROOT, log: RegenLog | None = None, only=None) -> int:
     """Finish the merge in progress in `root` (see the module docstring); `entries` are the writers and checks
-    to run after the conflicted generated files are merged."""
+    to run after the conflicted generated files are merged, an `on_conflict` one only when `only` names it or
+    both sides changed one of its files."""
     if subprocess.run(["git", "rev-parse", "-q", "--verify", "MERGE_HEAD"], cwd=root,
                       capture_output=True).returncode:
         print("regen_generated --resolve: no merge in progress (run git merge --no-commit first)", file=sys.stderr)
@@ -975,9 +1114,12 @@ def resolve(entries, root: Path = ROOT, log: RegenLog | None = None) -> int:
         print("regen_generated --resolve: conflicts outside the generated files (agent sync needed):",
               *others, sep="\n  ", file=sys.stderr)
         return 2
+    slow = [pattern for entry in entries if entry.on_conflict and entry.name not in (only or ()) for pattern in entry.paths]
+    entries = on_demand(entries, only, set(unmerged) | changed_on_both_sides(root, slow))
     merged = {}
     for path in unmerged:
-        text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3))
+        text, clean = merge_text(path, _stage(root, path, 1), _stage(root, path, 2), _stage(root, path, 3),
+                                 resolving=True)
         if not clean:
             print(f"regen_generated --resolve: {path} needs a person or the sync agent", file=sys.stderr)
             return 2
@@ -1023,6 +1165,7 @@ def listing() -> str:
                     + ("\n    check: advisory on branches" if entry.advisory else "")
                     + ("\n    writer: the merge train (read through inventory_path)" if entry.writer == "train" else "")
                     + ("\n    at merge: refreshed on every merge candidate (--at-merge)" if entry.at_merge else "")
+                    + ("\n    on conflict: run only when its files conflict or --only names it" if entry.on_conflict else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 
@@ -1055,12 +1198,14 @@ def main(argv=None) -> int:
     if args.install_driver:
         return install_driver()
     entries = selected(args.only, args.skip, args.at_merge)
+    if not args.resolve:  # --resolve adds the on_conflict entries whose files conflict
+        entries = on_demand(entries, args.only)
     if args.names:
         print("\n".join(entry.name for entry in entries))
         return 0
     log = RegenLog("resolve" if args.resolve else "write" if args.write else "check")
     if args.resolve:
-        return resolve(entries, log=log)
+        return resolve(entries, log=log, only=args.only)
     failed, unchecked = (write(entries, log), []) if args.write else check(entries, log)
     if failed or unchecked:
         print(f"regen_generated: failed: {', '.join(failed)}"
