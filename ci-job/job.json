@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-ci-3a-record-rerun-e84e44fc-t195672-s7",
+ "head": "4d5d7779b2041659cab643a94071fecfd7fd7acc",
+ "argv": [
+  "armsh-cand-ci-3a-record-rerun-e84e44fc-t195672-s7",
+  "4d5d7779b2041659cab643a94071fecfd7fd7acc",
+  "d341f50eea4d20ae843fd1101385248c6f3cbf6c",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
