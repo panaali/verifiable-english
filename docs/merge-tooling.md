@@ -120,8 +120,8 @@ driver keeps a one-sided change and exits 1 on a two-sided one, so a plain `git 
 train's spec regen, an agent's merge) stops on them as before instead of keeping a stale copy; `--resolve` takes
 ours and runs the writers. The route cases are `keyed-lines`: recorded lines merge three-way by (mode, case id)
 (lines sharing a key, or one line without an id, form one group; a group both sides changed differently stops the
-merge), the english.statement block takes ours and `route_fixtures.py --write` rewrites it on every merge candidate
-(`at_merge`). The use case's writers take minutes (`run.py`, then `build_document.py`, which needs the pinned FSF
+merge), and the english.statement block merges as a `derived` file (`route_fixtures.py --write` rewrites it; it
+loads the use cases' environments, which starts the service, so it is not refreshed `at_merge`). The use case's writers take minutes (`run.py`, then `build_document.py`, which needs the pinned FSF
 text outside the repository), so its entry is `on_conflict`: a plain `--write`, `--check` or `--resolve` skips it
 unless both sides of the merge changed one of its files (still known after the train's `--resolve --only lake-build
 --only checker-pins` staged them) or `--only` names it; without the pinned text the resolve exits 1 and the train

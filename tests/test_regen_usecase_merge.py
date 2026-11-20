@@ -80,7 +80,7 @@ def _no_timing_log(monkeypatch):
     monkeypatch.setenv("VE_REGEN_LOG", "off")
 
 
-STEPS = {"english-lexicon-report": ("lexicon",), "route-cases": ("routes",), "usecase-safety-framework": ("run", "document")}
+STEPS = {"english-lexicon-report": ("lexicon",), "recorded-route-cases": ("routes",), "usecase-safety-framework": ("run", "document")}
 
 
 def _git(root, *args, check=True):
@@ -268,12 +268,23 @@ def test_the_driver_stops_on_a_derived_file_both_sides_changed(tmp_path, stubbed
     root = _repository(tmp_path, _with_route(OURS, NEW_OURS), _with_route(THEIRS, NEW_THEIRS), driver=True)
     stubbed(root)
     assert _git(root, "merge", "--no-commit", "-q", "theirs", check=False).returncode != 0
-    # The recorded route cases merged by key (the derived block is ours until the writer runs).
-    assert set(_git(root, "diff", "--name-only", "--diff-filter=U").stdout.split()) == {LEXICON, RESULTS, COVERAGE,
-                                                                                        SPANS}
-    assert "<<<<<<<" in (root / RESULTS).read_text()
-    rows = [json.loads(line) for line in (root / ROUTES).read_text().splitlines()]
-    assert rows[:len(RECORDED) + 2] == RECORDED + [NEW_OURS, NEW_THEIRS]
+    # The route cases too: both sides rewrote their english.statement block (a fixture each, the stale case's hash).
+    assert set(_git(root, "diff", "--name-only", "--diff-filter=U").stdout.split()) == {*FOUR, SPANS}
+    assert "<<<<<<<" in (root / RESULTS).read_text() and "<<<<<<<" in (root / ROUTES).read_text()
+
+
+@pytest.mark.parametrize("driver", [True, False])
+def test_the_driver_merges_recorded_route_cases_by_key(tmp_path, stubbed, driver):
+    """Both sides append a recorded case and leave the derived block alone: git's own merge stops on the two
+    appends; the driver keeps both, ours' first."""
+    root = _repository(tmp_path, _with_route({}, NEW_OURS), _with_route({}, NEW_THEIRS), driver=driver)
+    stubbed(root)
+    code = _git(root, "merge", "--no-edit", "-q", "theirs", check=False).returncode
+    assert (code == 0) is driver
+    if driver:
+        rows = [json.loads(line) for line in (root / ROUTES).read_text().splitlines()]
+        assert rows[:len(RECORDED) + 2] == RECORDED + [NEW_OURS, NEW_THEIRS]
+        assert [row[0] for row in rows[len(RECORDED) + 2:]] == ["english.statement"] * 3
 
 
 def test_the_driver_takes_a_one_sided_change_of_a_derived_file(tmp_path, stubbed):
@@ -312,8 +323,15 @@ def test_keyed_lines_merge_by_mode_and_id():
     # One side changed a group (both lines of a duplicated key), the other added one: both kept, the derived
     # block is ours', after every recorded line.
     group = ["alternatives", {"id": "admission", "n": 9}]
-    assert _keyed([*RECORDED, block_o], [*RECORDED, new_o, block_o], [group, c0, noid, new_t, block_t]) == _lines(
+    assert _keyed([*RECORDED, block_o], [*RECORDED, new_o, block_o], [group, c0, noid, new_t, block_o]) == _lines(
         [group, c0, noid, new_o, new_t, block_o])
+    # The derived block: a one-sided change is taken; a two-sided one stops git's driver, and --resolve takes
+    # ours (its writer rewrites it next).
+    assert _keyed([a1, block_o], [a1, block_o], [a1, block_t]) == _lines([a1, block_t])
+    with pytest.raises(R.Conflict, match="english.statement block"):
+        _keyed([a1], [a1, block_o], [a1, block_t])
+    assert R.merge_keyed_lines(_lines([a1]), _lines([a1, block_o]), _lines([a1, block_t]), ("english.statement",),
+                               resolving=True) == _lines([a1, block_o])
     # A deletion on one side is taken; the same change on both sides is taken once.
     assert _keyed(RECORDED, [a1, c0, a2], RECORDED) == _lines([a1, c0, a2])
     assert _keyed(RECORDED, [*RECORDED, new_o], [*RECORDED, new_o]) == _lines([*RECORDED, new_o])

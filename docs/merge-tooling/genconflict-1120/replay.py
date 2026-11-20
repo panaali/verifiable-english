@@ -32,7 +32,7 @@ FILES = ("conformance/english-lean/lexicon-report.json", "tests/data/route-cases
          "usecases/safety-framework/spans.json")
 PAIRS = (("f1", "228142ff", "ef7ecd59", "f02219f5"), ("f2", "61b159e4", "727d1d21", "505ec3a5"),
          ("f7", "23d551568", "09bea097", "f4df75c5"))
-NEW = ("english-lexicon-report", "route-cases", "usecase-safety-framework")
+NEW = ("english-lexicon-report", "recorded-route-cases", "usecase-safety-framework")
 ENV = {**os.environ, "PATH": f"{Path.home()}/.local/bin:{Path.home()}/.elan/bin:{Path.home()}/.cargo/bin:"
        + os.environ.get("PATH", "")}
 
