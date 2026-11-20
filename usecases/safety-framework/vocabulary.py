@@ -145,7 +145,22 @@ BASE = {
     # Findings of the risk acceptance determination (1.3.5).
     "mitigates": _open(["proposal", "level"], "the deployment mitigations of {0} have brought the residual risk "
                        "from {1} (of harm, of severe harm or of significant harm, as the bullet for {1} says) to an "
-                       "acceptable level", "the developer (\"We assess\", 1.3.5)", "{0} mitigates {1}", "OT2"),
+                       "acceptable level. The bullets of 1.3.5 state this finding, for a misuse T/CCL: \"We assess "
+                       "that the deployment mitigations have brought the residual risk of harm to an acceptable level, "
+                       "based on considerations such as the effectiveness of mitigations, the scope of the deployment, "
+                       "what capabilities and mitigations are available on other publicly available models (e.g. if "
+                       "other models are similarly capable and have few mitigations, then the marginal risk added by "
+                       "our external deployment is likely low), and the historical incidence and severity of related "
+                       "events.\"; for a ML R&D CCL: \"We assess that the deployment mitigations have brought the "
+                       "residual risk of severe harm to an acceptable level, based on considerations such as the "
+                       "effectiveness of mitigations, and information pertaining to model propensities and the "
+                       "severity of related events.\"; for the TCL for ML R&D and misalignment risk: \"We assess that "
+                       "the deployment mitigations have brought the residual risk of significant harm to an "
+                       "acceptable level, based on considerations such as the effectiveness of mitigations, and "
+                       "information pertaining to model propensities and the severity of related events, or if we "
+                       "assess that the model is very unlikely to possess the propensities that would be required "
+                       "for material risk of significant harm through misalignment risk.\"",
+                       "the developer (\"We assess\", 1.3.5)", "{0} mitigates {1}", "OT2"),
     "unlikely_misalignment_propensities": _open(
         ["proposal"], "the model of {0} is very unlikely to possess the propensities that would be required for "
         "material risk of significant harm through misalignment risk", "the developer (\"we assess\")", term="OT6"),
@@ -164,7 +179,9 @@ BASE = {
         "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
         "case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an "
         "assessable argument showing how severe risks associated with a model's CCLs have been reduced to an "
-        "acceptable level.\"",
+        "acceptable level.\" Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations "
+        "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
+        "harm from the proposed external deployment has been reduced to an acceptable level.\"",
         "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "
@@ -270,9 +287,14 @@ REGULATED = {
         "SEC-t: the level of security applied to the model weights of {0} is assessed adequate (1.3.5 bullet 4)"),
     "proceed": {"arguments": ["proposal"], "description": "{0} may take place",
                 "regulated": {"role": "permission", "default": "deny", "act": "{0} proceed"}},
-    "acceptable": {"arguments": ["proposal"], "verbalisation": "{0} is acceptable",
-                   "description": "{0} is deemed to pose an acceptable level of (residual) risk (1.3.5): a "
-                                  "classification, never a permission to proceed",
+    # The description's lines follow the key line, so a line reader of this entry finds the whole legend.
+    "acceptable": {"arguments": ["proposal"], "verbalisation": "{0} is acceptable", "description":
+                   "{0} is deemed to pose an acceptable level of (residual) risk (1.3.5): a "
+                   "classification, never a permission to proceed. Where no T/CCL is reached, 1.3.5 says: \"A "
+                   "model for which inherent risk assessment indicates no T/CCL is reached will be deemed to pose "
+                   "an acceptable level of risk for further development and deployment, because it should not "
+                   "possess the capabilities required to substantially contribute to significant or severe risk "
+                   "scenarios.\"",
                    "regulated": {"role": "plain", "default": "deny"}},
     "case_submitted": _obligation(
         ["proposal"], "{0} be submitted to review by the appropriate governance function",
