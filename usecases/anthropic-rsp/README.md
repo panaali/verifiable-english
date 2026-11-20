@@ -106,7 +106,7 @@ with its evidence.
 | LABELLED | 170 | 36,890 | 62.1% |
 | UNFORMALISED | 23 | 4,128 | 6.9% |
 
-Within D1 alone, 4,676 bytes are CHECKED. D3 checks 449 bytes (the changelog dates, the effective date and 3.1's
+Within D1 alone, 4,676 bytes are CHECKED. D3 checks 442 bytes (the changelog dates, the effective date and 3.1's
 coverage date) and D2 checks 202 bytes (footnote 1's instance of catastrophic risk). The plan expected under 10%.
 
 The 51 CHECKED units are 5 premise units, the 12 routed units and the 34 commitments whose guards use no open
@@ -126,10 +126,10 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 
 | Family | Units | Bytes | Alone: units, bytes | What it is here |
 |---|---|---|---|---|
-| no claim to check | 130 | 31,104 | 130, 31,104 | layout, exposition, definitions, examples, the changelog's history (N2) |
-| JT judgment terms | 50 | 11,372 | 33, 6,892 | the 28 open terms (whether a threshold is crossed, "highly capable", "significantly redacted", "promptly", ...) and 3.2's degree terms |
+| no claim to check | 134 | 31,253 | 134, 31,253 | layout, exposition, definitions, examples, the changelog's history (N2) |
+| JT judgment terms | 50 | 11,230 | 34, 6,896 | the 28 open terms (whether a threshold is crossed, "highly capable", "significantly redacted", "promptly", ...) and 3.2's degree terms |
 | AT attitudes | 43 | 6,510 | 43, 6,510 | beliefs, expectations, hopes, intents, the hedged "may" and "could", and the aims of RS12 |
-| readings | 17 | 3,989 | 10, 2,106 | RS1 (ov: no rule), RS3o/RS3i/RS3c, RS4, RS6, RS7: readings that differ in which rules hold, and the row parts written in their own units |
+| readings | 16 | 3,884 | 10, 2,106 | RS1 (ov: no rule), RS3o/RS3i/RS3c, RS4, RS6, RS7: readings that differ in which rules hold, and the row parts written in their own units |
 | SC scope | 9 | 1,894 | 4, 693 | RS2 (a recommendation to the field, or the company too), RS5 (existential import), recommendations to others and the reviewer/reporting-chain prohibitions |
 | ET time | 7 | 1,390 | 3, 489 | RS9 (every 3-6 months), RS11 (at deployment or no deadline), "promptly", "prior to or on its effective date", no stated trigger |
 | DF defaults | 4 | 866 | 3, 405 | RS8 and RS13: a "should" or "usually" read as strict or default |
@@ -147,7 +147,7 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 | P3 D2 (`risk@0` with `alternatives@0`) | admitted with the T1 to T3 harms and footnote 1's instance, each catastrophic; three stated `might` cells, no `leads` cell. With T4's harm, which states no class, refused: `HarmUnclassified` |
 | P4 D3 (`ve-units@1`) | the changelog dates increase (D1), v3.4 is effective before retrieval (D2), and the day counts of D3b, D4 and D5 hold, each with a certificate VE replays |
 | P5 D1 over the text | 307 units; `bytes_by_status` totals 59,410 |
-| P6 the routed units | 202 B to D2, 449 B to D3; the master map is total and contiguous |
+| P6 the routed units | 202 B to D2, 442 B to D3; the master map is total and contiguous |
 | P7 identifier lint | 0 violations |
 | P8 D1 with `judgments@0` | refused: `judgments@0 with soft-norms@0 needs its composed Lean route` (jt-2c is not merged) |
 | M6 invention audit | 0 untraced rules or premises; every default rule is a default reading of a set and every permission the P reading of an RS6 set; no order or causal predicate |
