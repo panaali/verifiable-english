@@ -1,3 +1,4 @@
+- `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
 - `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
 - `tests/test_vacuity.py` — (no module docstring)
