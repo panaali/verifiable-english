@@ -1,0 +1,395 @@
+#!/usr/bin/env python3
+"""Tests of the ACTIONS_MISMATCH scope (actions-mismatch-scope-1120; reviews/dri-decisions-20261120-actions-mismatch-scope.md
+item 1), narrowed by actions-mismatch-scope-narrow-1120 (reviews/advisor/20261120T0757Z.md ADV-1; reviews/dri-decisions-
+20261120-adv0757.md item 1): only a tm-*/testmap-* "verdict sample differs" line (verdict-sample.sh:201) leaves the gate legs on.
+Run: python3 -I tools-local/test_actions_mismatch_scope.py   (AMSCOPE_SFX=<sfx> tests the uninstalled copies, <file><sfx>
+where one exists, else the installed file; .new-amscope2 = this item, .new-amscope = the 06:42Z rolled-back copies).
+Each test builds a scratch M (copies of the scripts, mismatch-scope.sh when the variant has it, flag files, a stub msg.sh, a
+one-commit source repo) and never reads or writes the live cloud-jobs/: merge-train.sh's and arm-postcheck.sh's availability
+functions are cut out of the script text and run with M = the scratch; gha-arm-shard.sh runs with ARM_SHARD_M; gha-arm-gate.sh
+runs as a copy with its M= line pointed at the scratch. Every run checks that the cut text or copy names no live path, and the
+live gha-arm logs and cloud-jobs/ACTIONS_MISMATCH are compared before and after.
+Cases: (i) the real 11-17 tm-nightly line (and a testmap verdict-sample line) does not switch the gate legs off (shavail,
+armavail, x86shavail, the arm postcheck's armavail/actok, gha-arm-shard.sh --dry-run in blocking mode, gha-arm-gate.sh
+--dry-run); (ii) an armsh-cand-x line still does; (iii) an empty file, an unparseable line, a blank line and an item-named job
+(not tm-*) still do; (iv) a tm-only line still stops the tm pool (cloud-overflow.sh pool-ok actions; gha-select.sh and
+testmap-gha.sh read the bare file); (v) a tm-* line carrying a cloud-pull.sh provenance MISMATCH (cloud-tm-verify.py's text)
+blocks; (vi) a testmap-* digest MISMATCH line blocks; (vii) every select-* line blocks, its own verdict-sample line included;
+(viii) a file mixing an allowed tm verdict-sample line with a provenance line blocks; (ix) no file: on; (x) the helper
+missing: the old rule (any file blocks). The direct cases run the helper on every cloud-tm-verify.py MISMATCH reason x job kind,
+the cloud-late.py late-compare reason and near-miss spellings of the allowed line."""
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SFX = os.environ.get("AMSCOPE_SFX", "")
+LIVE_PATHS = ("/home/seyran/code/manage-agents", "~/code/manage-agents")
+TIMEOUT = 300
+
+# cloud-jobs/ACTIONS_MISMATCH.resolved-20261120T0309Z line 1 (the 11-17 trust-mutant verdict sample, verdict-sample.sh:201)
+TM_LINE = ("2026-11-17T17:30Z tm-nightly-20261117T0600Z-p10-9ccbf3fd: verdict sample differs "
+           "(/home/seyran/code/manage-agents/cloud-jobs/tm-nightly-20261117T0600Z-p10-9ccbf3fd/verdict-compare.txt)\n")
+TESTMAP_LINE = ("2026-11-18T01:02Z testmap-1a2b3c4d-t123456: verdict sample differs "
+                "(/home/seyran/code/manage-agents/cloud-jobs/testmap-1a2b3c4d-t123456/verdict-compare.txt)\n")
+ARMSH_LINE = "2026-11-18T09:00Z armsh-cand-x-1a2b3c4d-t654321: verdict sample differs (x)\n"
+ITEM_LINE = "2026-11-04T16:19Z ps-1-4f940bd4: verdict sample differs (x)\n"
+# cloud-pull.sh mismatch() (cloud-pull.sh:147, called :264/:338/:354) writes "<stamp> <job>: $out", $out = cloud-tm-verify.py
+# fail(1, why): "cloud-tm-verify <job>: MISMATCH: <why>". Every fail(1) reason, as cloud-tm-verify.py spells it (test_writers_text
+# pins each against the live writer source, so a reworded writer fails here, not silently in the rule).
+VERIFY_WHYS = (
+    "the result commit's parent is not the exported head",  # provenance
+    "the result commit changes files outside ci-results/x",
+    "head/base in the result are not the job's exported commits",
+    "the tree in the result is not the job's exported head's",
+    "options ['--deep'] are not the job's",
+    "lean/ files differ from the commit's: 1 extra, 0 missing",
+    "3 file digests differ from the VM commit, e.g. tests/test_x.py",  # digest
+    "the lean digest does not recompute from the VM commit",
+    "the tests digest does not recompute from the VM commit",
+    "rescore none is not the job's (none)",
+    "the rescore file appears other than once in the result",
+)
+VERIFY_PATTERNS = (  # the literal parts of each fail(1, ...) in cloud-tm-verify.py, in VERIFY_WHYS order
+    "the result commit's parent is not the exported head", "the result commit changes files outside",
+    "head/base in the result are not the job's exported commits", "the tree in the result is not the job's exported head's",
+    "are not the job's\"", "files differ from the commit's:", "file digests differ from the VM commit, e.g.",
+    "the lean digest does not recompute from the VM commit", "the tests digest does not recompute from the VM commit",
+    "is not the job's (", "the rescore file appears other than once in the result",
+)
+TMJ = "tm-nightly-20261120T0600Z-p3-9ccbf3fd"
+TMV = "testmap-9ccbf3fd-t200501"
+
+
+def verify_line(job, why, stamp="2026-11-20T06:50Z"):
+    return f"{stamp} {job}: cloud-tm-verify {job}: MISMATCH: {why}\n"
+
+
+PROV_LINE = verify_line(TMJ, VERIFY_WHYS[0])  # (v)
+DIGEST_LINE = verify_line(TMV, VERIFY_WHYS[6])  # (vi)
+SELECT_VS_LINE = ("2026-11-20T07:01Z select-9ccbf3fd-t200501: verdict sample differs "
+                  "(/home/seyran/code/manage-agents/cloud-jobs/select-9ccbf3fd-t200501/verdict-compare.txt)\n")  # (vii)
+
+
+def src(name):
+    p = os.path.join(R0, name)
+    return p + SFX if SFX and os.path.isfile(p + SFX) else p
+
+
+def funcs(path, names, keep_source=True):
+    """The source line of mismatch-scope.sh and the named functions (def line + its indented continuation lines)."""
+    out, take = [], False
+    for ln in open(path).read().splitlines():
+        if take and ln.startswith("  "):
+            out.append(ln)
+            continue
+        take = False
+        if keep_source and re.match(r"^source \$M/mismatch-scope\.sh", ln):
+            out.append(ln)
+        elif re.match(r"^(%s)\(\)\{" % "|".join(names), ln):
+            out.append(ln)
+            take = True
+    return "\n".join(out) + "\n"
+
+
+def live_state():
+    st = []
+    for p in ("gha-arm/gha-arm-shard.log", "gha-arm/gha-arm.log", "cloud-jobs/ACTIONS_MISMATCH"):
+        try:
+            s = os.stat(os.path.join(R0, p))
+            st.append((p, s.st_size, s.st_mtime_ns))
+        except OSError:
+            st.append((p, None, None))
+    return st
+
+
+class Scratch:
+    def __init__(self, mismatch):
+        self.d = tempfile.mkdtemp(prefix="amscope-")
+        self.M = os.path.join(self.d, "M")
+        for sub in ("cloud-jobs", "gha", "gha-tests", "tools-local"):
+            os.makedirs(os.path.join(self.M, sub))
+        os.makedirs(os.path.join(self.d, "home"))
+        if os.path.isfile(src("mismatch-scope.sh")):
+            shutil.copy(src("mismatch-scope.sh"), os.path.join(self.M, "mismatch-scope.sh"))
+        shutil.copy(src("gha-arm-shard.sh"), os.path.join(self.M, "gha-arm-shard.sh"))
+        txt = open(src("gha-arm-gate.sh")).read()
+        txt, n = re.subn(r"^M=/home/seyran/code/manage-agents;", "M=%s;" % self.M, txt, count=1, flags=re.M)
+        assert n == 1, "gha-arm-gate.sh: no M= line to point at the scratch"
+        open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+        open(os.path.join(self.M, "cloud-runner.conf"), "w").close()
+        with open(os.path.join(self.M, "msg.sh"), "w") as f:
+            f.write('echo "$*" >> %s/msg.calls\n' % self.M)
+        for fl in ("ARM_SHARD_BLOCKING", "X86_SHARD_BLOCKING", "ARM_LEG_MAC_OFFLINE"):
+            open(os.path.join(self.M, fl), "w").close()
+        if mismatch is not None:
+            open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+        self.src = os.path.join(self.d, "src")  # one root commit: both gha scripts stop at "no first parent" after their gates
+        g = ["git", "-c", "user.email=t@t", "-c", "user.name=t", "-C", self.src]
+        os.makedirs(self.src)
+        subprocess.run(["git", "init", "-q", "-b", "main", self.src], check=True)
+        open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+        subprocess.run(g + ["add", "a.txt"], check=True)
+        subprocess.run(g + ["commit", "-qm", "base"], check=True)
+        self.sha = subprocess.run(["git", "-C", self.src, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+
+    def path(self, *a):
+        return os.path.join(self.M, *a)
+
+    def env(self, **kw):
+        e = {k: v for k, v in os.environ.items() if not k.startswith(("ARM_", "CLOUD_", "ACTIONS_", "VE_EXPORT", "X86_"))}
+        e.update(HOME=os.path.join(self.d, "home"), CLOUD_CONF=self.path("cloud-runner.conf"), VE_EXPORT_SRC=self.src,
+                 VE_EXPORT_DIR=self.src, CLOUD_REMOTE=os.path.join(self.d, "remote.git"), CLOUD_JOBS_DIR=self.path("cloud-jobs"),
+                 GHA_TESTS_DIR=self.path("gha-tests"), ARM_SHARD_M=self.M, CLOUD_MSG="zsh %s" % self.path("msg.sh"))
+        e.update(kw)
+        return e
+
+    def avail(self, script, fn, names):
+        body = funcs(src(script), names)
+        for lp in LIVE_PATHS:
+            assert lp not in body, f"{script}: the cut functions name a live path ({lp})"
+        snippet = "M=%s\n%s%s; echo rc=$?\n" % (self.M, body, fn)
+        r = subprocess.run(["zsh", "-f", "-c", snippet], capture_output=True, text=True, env=self.env(), timeout=TIMEOUT)
+        m = re.search(r"rc=(\d+)\s*$", r.stdout)
+        assert m, (r.stdout, r.stderr)
+        return int(m.group(1)), r.stdout[:m.start()].strip()
+
+    def gha(self, script, mode_env):
+        r = subprocess.run(["zsh", self.path(script), "--dry-run", "cand-x", self.sha], capture_output=True, text=True,
+                           env=self.env(**mode_env), timeout=TIMEOUT, cwd=self.d)
+        lg = self.path("gha-arm", {"gha-arm-shard.sh": "gha-arm-shard.log", "gha-arm-gate.sh": "gha-arm.log"}[script])
+        logs = ""
+        if os.path.exists(lg):  # this script's own log only, then gone (the next script of the scratch starts clean)
+            with open(lg) as f:
+                logs = f.read()
+            os.remove(lg)
+        return r.returncode, r.stdout + r.stderr + logs
+
+    def close(self):
+        shutil.rmtree(self.d, ignore_errors=True)
+
+
+MT_FUNCS = ["actoff", "shavail", "armavail", "x86shavail"]
+PC_FUNCS = ["actoff", "armavail", "actok"]
+
+
+class Scope(unittest.TestCase):
+    def setUp(self):
+        self.live0 = live_state()
+
+    def tearDown(self):
+        self.assertEqual(live_state(), self.live0, "a live file changed during the test")
+
+    def legs(self, mismatch, helper=True):
+        """{leg: (on, why)} for every gate leg reader in scratch with cloud-jobs/ACTIONS_MISMATCH = mismatch (None: absent)."""
+        s = Scratch(mismatch)
+        if not helper and os.path.exists(s.path("mismatch-scope.sh")):
+            os.remove(s.path("mismatch-scope.sh"))
+        try:
+            out = {}
+            for fn in ("shavail", "armavail", "x86shavail"):
+                rc, why = s.avail("merge-train.sh", fn, MT_FUNCS)
+                out["merge-train " + fn] = (rc == 0, why)
+            for fn in ("armavail", "actok"):
+                rc, why = s.avail("arm-postcheck.sh", fn, PC_FUNCS)  # prints no reason; every other condition holds here
+                out["arm-postcheck " + fn] = (rc == 0, why or ("cloud-jobs/ACTIONS_MISMATCH" if rc == 1 else f"rc {rc}"))
+            rc, txt = s.gha("gha-arm-shard.sh", {"ARM_SHARD_MODE": "blocking"})
+            out["gha-arm-shard blocking"] = (rc == 3 and "not sent: no first parent" in txt
+                                             and "not sent: cloud-jobs/ACTIONS_MISMATCH" not in txt, txt[-400:])
+            if "not sent: cloud-jobs/ACTIONS_MISMATCH" in txt:
+                out["gha-arm-shard blocking"] = (False, "cloud-jobs/ACTIONS_MISMATCH")
+            rc, txt = s.gha("gha-arm-gate.sh", {"ARM_GATE_MODE": "blocking"})
+            out["gha-arm-gate blocking"] = (rc == 3 and "not sent: no first parent" in txt, txt[-400:])
+            if "not sent: cloud-jobs/ACTIONS_MISMATCH" in txt:
+                out["gha-arm-gate blocking"] = (False, "cloud-jobs/ACTIONS_MISMATCH")
+            return out
+        finally:
+            s.close()
+
+    def assertAllOn(self, legs):
+        off = {k: v[1] for k, v in legs.items() if not v[0]}
+        self.assertEqual(off, {}, "gate legs switched off")
+
+    def assertAllBlocked(self, legs):
+        for k, (on, why) in legs.items():
+            self.assertFalse(on, k)
+            self.assertIn("cloud-jobs/ACTIONS_MISMATCH", why, k)
+
+    def test_i_tm_line_does_not_block(self):
+        self.assertAllOn(self.legs(TM_LINE))
+
+    def test_i_tm_and_testmap_lines_no_newline(self):
+        self.assertAllOn(self.legs(TM_LINE + TESTMAP_LINE.rstrip("\n")))
+
+    def test_ii_armsh_line_blocks(self):
+        self.assertAllBlocked(self.legs(TM_LINE + ARMSH_LINE))
+
+    def test_iii_empty_blocks(self):
+        self.assertAllBlocked(self.legs(""))
+
+    def test_iii_unparseable_blocks(self):
+        self.assertAllBlocked(self.legs(TM_LINE + "verdict sample differs\n"))
+
+    def test_iii_blank_line_and_item_job_block(self):
+        self.assertAllBlocked(self.legs(TM_LINE + "\n"))
+        self.assertAllBlocked(self.legs(ITEM_LINE))
+
+    def test_v_tm_provenance_mismatch_blocks(self):
+        self.assertAllBlocked(self.legs(PROV_LINE))
+
+    def test_vi_testmap_digest_mismatch_blocks(self):
+        self.assertAllBlocked(self.legs(DIGEST_LINE))
+
+    def test_vii_select_verdict_sample_line_blocks(self):
+        self.assertAllBlocked(self.legs(SELECT_VS_LINE))
+
+    def test_viii_mixed_tm_verdict_sample_and_provenance_blocks(self):
+        self.assertAllBlocked(self.legs(TM_LINE + PROV_LINE))
+        self.assertAllBlocked(self.legs(PROV_LINE + TESTMAP_LINE))
+
+    def test_x_no_helper_falls_back_to_the_old_rule(self):
+        # mismatch-scope.sh missing next to a changed script: any file blocks (as before this item), no file: on
+        self.assertAllBlocked(self.legs(TM_LINE, helper=False))
+        self.assertAllOn(self.legs(None, helper=False))
+
+    def test_ix_absent_is_on(self):
+        self.assertAllOn(self.legs(None))
+
+    def test_iv_tm_line_still_stops_the_tm_pool(self):
+        # cloud-overflow.sh is not changed by this item: its rule reads the bare file ($J = CLOUD_JOBS_DIR, the scratch)
+        s = Scratch(TM_LINE)
+        try:
+            open(s.path("ACTIONS_POOL"), "w").close()
+            env = s.env(ACTIONS_POOL_FLAG=s.path("ACTIONS_POOL"), ACTIONS_SUSPENDED_FLAG=s.path("ACTIONS_SUSPENDED"),
+                        MAC_PYTEST_LOADAVG=s.path("loadavg"))
+            open(s.path("loadavg"), "w").write("1.00 1 1 1/100 1\n")
+            r = subprocess.run(["zsh", os.path.join(R0, "cloud-overflow.sh"), "pool-ok", "actions"], capture_output=True,
+                               text=True, env=env, timeout=TIMEOUT, cwd=s.d)
+            self.assertIn("actions off (a result mismatched: cloud-jobs/ACTIONS_MISMATCH)", r.stdout, r.stderr[-400:])
+            os.remove(s.path("cloud-jobs", "ACTIONS_MISMATCH"))
+            r = subprocess.run(["zsh", os.path.join(R0, "cloud-overflow.sh"), "pool-ok", "actions"], capture_output=True,
+                               text=True, env=env, timeout=TIMEOUT, cwd=s.d)
+            self.assertEqual(r.stdout.strip(), "ok", r.stderr[-400:])
+        finally:
+            s.close()
+        # the other pools that read the file: still the bare-file test, never the gate helper
+        for name, pat in (("gha-select.sh", r"\[ -f \$CJ/ACTIONS_MISMATCH \] && ano="),
+                          ("testmap-gha.sh", r"\[ -f \$M/cloud-jobs/ACTIONS_MISMATCH \] && ano="),
+                          ("cloud-overflow.sh", r"elif \[ -f \$J/ACTIONS_MISMATCH \]; then ano\+=")):
+            t = open(src(name)).read()
+            self.assertRegex(t, pat, name)
+            self.assertNotIn("mismatch_blocks_gate", t, name)
+
+    def test_helper_one_copy(self):
+        # the rule's patterns live in mismatch-scope.sh only; the callers source it (fallback: the old any-file rule)
+        if not os.path.isfile(src("mismatch-scope.sh")):
+            self.fail("no mismatch-scope.sh in this variant")
+        for name in ("merge-train.sh", "gha-arm-shard.sh", "arm-postcheck.sh", "gha-arm-gate.sh"):
+            t = open(src(name)).read()
+            self.assertRegex(t, r"(?m)^source \$M/mismatch-scope\.sh 2>/dev/null \|\| mismatch_blocks_gate\(\)\{ \[\[ -e \$1 \]\]; \}", name)
+            code = [ln for ln in t.splitlines() if not ln.lstrip().startswith("#")]
+            self.assertEqual([ln[:120] for ln in code if re.search(r"(tm|testmap|armsh)-\*\)", ln)], [], name)
+            self.assertEqual([ln[:120] for ln in code if re.search(
+                r"\[ -f \$M/cloud-jobs/ACTIONS_MISMATCH \]|ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do \[ -f", ln)], [], name)
+
+
+class Direct(unittest.TestCase):
+    """The helper itself (src("mismatch-scope.sh")), on many lines: rc 1 = leaves the gate legs on, anything else blocks."""
+
+    def rcs(self, contents):
+        if not os.path.isfile(src("mismatch-scope.sh")):
+            self.skipTest("no mismatch-scope.sh in this variant (the legs tests cover the old rule)")
+        d = tempfile.mkdtemp(prefix="amscope-direct-")
+        try:
+            names = []
+            for i, c in enumerate(contents):
+                names.append(os.path.join(d, "m%d" % i))
+                open(names[-1], "w").write(c)
+            snippet = "source %s\nfor f in %s; do mismatch_blocks_gate $f; print -r -- rc=$?; done\n" % (
+                src("mismatch-scope.sh"), " ".join(names))
+            r = subprocess.run(["zsh", "-f", "-c", snippet], capture_output=True, text=True, timeout=TIMEOUT)
+            got = [int(x) for x in re.findall(r"(?m)^rc=(\d+)$", r.stdout)]
+            self.assertEqual(len(got), len(contents), r.stderr[-400:])
+            return got
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def assertBlocks(self, contents):
+        got = self.rcs(contents)
+        self.assertEqual([c[:110] for c, rc in zip(contents, got) if rc == 1], [], "lines that left the gate legs on")
+
+    def test_i_allowed(self):
+        self.assertEqual(self.rcs([TM_LINE, TESTMAP_LINE, TM_LINE + TESTMAP_LINE.rstrip("\n"), TM_LINE + TM_LINE]), [1] * 4)
+
+    def test_v_vi_vii_every_verify_reason_every_job_blocks(self):
+        jobs = (TMJ, TMV, "select-9ccbf3fd-t200501", "armsh-cand-x-1a2b3c4d-t654321", "ps-1-4f940bd4")
+        self.assertBlocks([verify_line(j, w) for j in jobs for w in VERIFY_WHYS])
+        # the same reasons on the late path (cloud-pull.sh:338) and inside a file that also has an allowed line
+        self.assertBlocks([TM_LINE + verify_line(j, w) for j in jobs[:3] for w in VERIFY_WHYS])
+
+    def test_vii_every_select_line_blocks(self):
+        self.assertBlocks([SELECT_VS_LINE, SELECT_VS_LINE.replace("select-", "select-x-"), TM_LINE + SELECT_VS_LINE,
+                           "2026-11-20T07:01Z select-x: verdict sample differs (/a/select-x/verdict-compare.txt)\n"])
+
+    def test_late_compare_and_near_misses_block(self):
+        late = "2026-11-20T07:02Z %s: the VM/Mac run of the same tree (/a/b.json; 3 verdicts differ)\n" % TMJ  # cloud-late.py
+        ok = TM_LINE.rstrip("\n")
+        self.assertBlocks([
+            late, TM_LINE + late,
+            ok + "\r\n",  # a CR: not the writer's text
+            ok.replace(": verdict sample differs (", ": verdict sample differs from x ("),  # :200's CLOUD_MISMATCH text
+            ok.replace("verdict sample differs", "Verdict sample differs"),
+            ok.replace("verdict sample differs", " verdict sample differs"),
+            ok.replace("/verdict-compare.txt)", "/verdict-compare.txt) cloud-tm-verify: MISMATCH"),
+            ok.replace("(/home", "(x) MISMATCH: digest (/home"),  # a ')' inside: not one path
+            ok.replace(" tm-nightly-20261117T0600Z-p10-9ccbf3fd:", " tm-:"), ok.replace(" tm-nightly-", " tmx-"), ok.replace(" tm-nightly-", " TM-"),
+            ok.replace(" tm-nightly-", " testmap"), ok.replace(" tm-nightly-", " x-tm-"),
+            ok.replace("2026-11-17T17:30Z ", ""), ok.replace("Z tm-", "Z  tm-"), ok + "\n\n", "", "\n",
+            # the job charset check: tm-<alnum> then a character no job has
+            ok.replace(" tm-nightly-", " tm-a/b-"), ok.replace(" tm-nightly-", " tm-a$b-"), ok.replace(" tm-nightly-", " tm-a*b-"),
+            ok.replace(" tm-nightly-", " testmap-a(b)-"), ok.replace(" tm-nightly-", " tm-a\tb-"),
+        ])
+
+    def test_iii_unreadable_or_not_a_regular_file_blocks(self):
+        # present but not a readable regular file: blocks (a directory, a broken symlink, a mode-000 file of an allowed line)
+        if not os.path.isfile(src("mismatch-scope.sh")):
+            self.skipTest("no mismatch-scope.sh in this variant (the legs tests cover the old rule)")
+        d = tempfile.mkdtemp(prefix="amscope-direct-")
+        try:
+            os.mkdir(os.path.join(d, "dir"))
+            os.symlink(os.path.join(d, "nowhere"), os.path.join(d, "broken"))
+            ok = os.path.join(d, "ok")
+            open(ok, "w").write(TM_LINE)
+            unread = os.path.join(d, "unread")
+            open(unread, "w").write(TM_LINE)
+            os.chmod(unread, 0)
+            if os.access(unread, os.R_OK):
+                self.skipTest("running as a user who reads mode-000 files")
+            names = [ok, os.path.join(d, "dir"), os.path.join(d, "broken"), unread, os.path.join(d, "absent")]
+            snippet = "source %s\nfor f in %s; do mismatch_blocks_gate $f; print -r -- rc=$?; done\n" % (
+                src("mismatch-scope.sh"), " ".join(names))
+            r = subprocess.run(["zsh", "-f", "-c", snippet], capture_output=True, text=True, timeout=TIMEOUT)
+            self.assertEqual([int(x) for x in re.findall(r"(?m)^rc=(\d+)$", r.stdout)], [1, 0, 0, 0, 1], r.stderr[-400:])
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_writers_text(self):
+        # the rule's allowed text is verdict-sample.sh's ACTIONS_MISMATCH writer, and the blocked reasons are cloud-tm-verify's
+        vs = open(os.path.join(R0, "verdict-sample.sh")).read()
+        self.assertRegex(vs, r'(?m)^if \[ \$pool = actions \]; then print -r -- "\$\(date -u \+%FT%H:%MZ\) \$job: '
+                             r'verdict sample differs \(\$D/verdict-compare\.txt\)" >> \$J/ACTIONS_MISMATCH')
+        cp = open(os.path.join(R0, "cloud-pull.sh")).read()
+        self.assertIn('print -r -- "$(date -u +%FT%H:%MZ) $job: $why" >> $J/ACTIONS_MISMATCH', cp)
+        cv = open(os.path.join(R0, "cloud-tm-verify.py")).read()
+        self.assertIn("""print(f"cloud-tm-verify {J}: {'NO RESULT' if code == 2 else 'MISMATCH'}: {why}")""", cv)
+        fails = re.findall(r"(?m)^\s*fail\(1, (.*)\)$", cv)
+        self.assertEqual(len(fails), len(VERIFY_WHYS), fails)
+        for pat, call in zip(VERIFY_PATTERNS, fails):
+            self.assertIn(pat, call)
+
+
+if __name__ == "__main__":
+    unittest.main()

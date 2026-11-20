@@ -1,0 +1,31 @@
+== per sweep, per pool
+20261113T0600Z ve-cloud-3   parts= 13 part_h=   16.1 judged=  418 bto=  87 unk= 68 notrun= 399 judged/part_h= 26.0 bto_rate=0.15
+20261113T0600Z ve-cloud-2   parts= 11 part_h=   12.5 judged=  481 bto=  40 unk= 62 notrun= 112 judged/part_h= 38.5 bto_rate=0.07
+20261114T0600Z ?            parts=  2 part_h=    2.5 judged=   75 bto=  26 unk= 10 notrun=   0 judged/part_h= 30.2 bto_rate=0.23
+20261114T0600Z ve-cloud-2   parts= 13 part_h=   16.1 judged=  426 bto=  79 unk= 31 notrun= 204 judged/part_h= 26.5 bto_rate=0.15
+20261115T0600Z ve-cloud-2   parts= 14 part_h=   18.7 judged=  466 bto=  84 unk= 30 notrun= 490 judged/part_h= 24.9 bto_rate=0.14
+20261116T0600Z ve-cloud-2   parts=  5 part_h=    8.8 judged=   38 bto=  74 unk= 18 notrun=  56 judged/part_h=  4.3 bto_rate=0.57
+20261116T1607Z ve-cloud-2   parts= 10 part_h=   15.1 judged=   63 bto= 145 unk= 22 notrun= 124 judged/part_h=  4.2 bto_rate=0.63
+20261116T1607Z ?            parts=  1 part_h=    0.9 judged=    5 bto=   0 unk=  0 notrun=  26 judged/part_h=  5.6 bto_rate=0.00
+20261117T0600Z ve-cloud-2   parts=  9 part_h=   14.1 judged=  118 bto= 102 unk=  3 notrun= 137 judged/part_h=  8.4 bto_rate=0.46
+20261117T0600Z ?            parts=  2 part_h=    2.5 judged=   19 bto=   9 unk=  0 notrun=  32 judged/part_h=  7.6 bto_rate=0.32
+20261117T1620Z vm1-idle     parts=  3 part_h=    4.6 judged=    2 bto=   0 unk=  0 notrun=  70 judged/part_h=  0.4 bto_rate=0.00
+20261117T1620Z ve-cloud-2   parts=  4 part_h=    7.0 judged=   17 bto=  21 unk=  2 notrun=  66 judged/part_h=  2.4 bto_rate=0.53
+20261119T0727Z ve-cloud-2   parts= 11 part_h=   17.7 judged=   58 bto= 170 unk=  6 notrun=   8 judged/part_h=  3.3 bto_rate=0.73
+== 7-day totals per pool
+?            parts=   5 part_h=     5.9 judged=    99 bto=   35 unk=  10 notrun=   58 judged/part_h= 16.8 tried/part_h= 24.5 bto_rate=0.24 jobs={'jobs:32': 2, 'jobs:4': 3}
+ve-cloud-2   parts=  77 part_h=   109.9 judged=  1667 bto=  715 unk= 174 notrun= 1197 judged/part_h= 15.2 tried/part_h= 23.3 bto_rate=0.28 jobs={'jobs:8': 77}
+ve-cloud-3   parts=  13 part_h=    16.1 judged=   418 bto=   87 unk=  68 notrun=  399 judged/part_h= 26.0 tried/part_h= 35.6 bto_rate=0.15 jobs={'jobs:8': 13}
+vm1-idle     parts=   3 part_h=     4.6 judged=     2 bto=    0 unk=   0 notrun=   70 judged/part_h=  0.4 tried/part_h=  0.4 bto_rate=0.00 jobs={'jobs:2': 2, 'jobs:6': 1}
+== judged per sweep wall-hour, all remote pools together
+20261113T0600Z wall_h= 9.83 judged= 899 judged/h= 91.4
+20261114T0600Z wall_h= 9.77 judged= 501 judged/h= 51.3
+20261115T0600Z wall_h= 9.83 judged= 466 judged/h= 47.4
+20261116T0600Z wall_h= 9.83 judged=  38 judged/h=  3.9
+20261117T0600Z wall_h= 9.93 judged= 137 judged/h= 13.8
+20261119T0727Z wall_h= 9.83 judged=  58 judged/h=  5.9
+== ESTIMATE (hours of sweep running, back to back)
+cloud-2+cloud-3 (cloud-3 unreachable today)   light   86.9 h + heavy  51.8-172.7 h =  5.8-10.8 days
+cloud-2 (+Actions) today, best                light  154.8 h + heavy  51.8-172.7 h =  8.6-13.6 days
+cloud-2 today, worst                          light  167.6 h + heavy  51.8-172.7 h =  9.1-14.2 days
+one --once launch (36000 s budget) judges 474-914 of 8719 ids (5%-10%)

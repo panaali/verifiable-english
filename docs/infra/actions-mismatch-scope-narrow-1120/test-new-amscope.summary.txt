@@ -1,0 +1,29 @@
+test_i_allowed ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-xyy9usv7/m0' mode='w' encoding='UTF-8'>
+test_iii_unreadable_or_not_a_regular_file_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:365: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-gna9_fxk/ok' mode='w' encoding='UTF-8'>
+test_late_compare_and_near_misses_block ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-h_3kb_wj/m0' mode='w' encoding='UTF-8'>
+test_v_vi_vii_every_verify_reason_every_job_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-dwz4rowh/m0' mode='w' encoding='UTF-8'>
+test_vii_every_select_line_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-v4h1w5h1/m0' mode='w' encoding='UTF-8'>
+test_writers_text ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:381: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/verdict-sample.sh' mode='r' encoding='UTF-8'>
+test_helper_one_copy ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_i_tm_and_testmap_lines_no_newline ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_i_tm_line_does_not_block ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_ii_armsh_line_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_iii_blank_line_and_item_job_block ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_iii_empty_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_iii_unparseable_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_iv_tm_line_still_stops_the_tm_pool ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_ix_absent_is_on ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_v_tm_provenance_mismatch_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_vi_testmap_digest_mismatch_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_vii_select_verdict_sample_line_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_viii_mixed_tm_verdict_sample_and_provenance_blocks ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+test_x_no_helper_falls_back_to_the_old_rule ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope' mode='r' encoding='UTF-8'>
+FAIL: test_late_compare_and_near_misses_block
+FAIL: test_v_vi_vii_every_verify_reason_every_job_blocks
+FAIL: test_vii_every_select_line_blocks
+FAIL: test_v_tm_provenance_mismatch_blocks
+FAIL: test_vi_testmap_digest_mismatch_blocks
+FAIL: test_vii_select_verdict_sample_line_blocks
+FAIL: test_viii_mixed_tm_verdict_sample_and_provenance_blocks
+Ran 20 tests in 2.494s
+FAILED (failures=7)
