@@ -1,0 +1,8 @@
+trust_mutants: 18 definitions, 22 mutants (5 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/RightClauses/Run.lean:26 VE.RightClauses.Run.deepLine (G[V], trusted) list-first: x.2.2.relation.toList -> (x.2.2.relation.toList.take 1)
+SURVIVOR lean/VE/RightClauses/Wire.lean:111 VE.RightClauses.hasKeys (D[V], trusted) list-first: os -> (os.take 1)
+trust_mutants: 1 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 2 NOT RUN, 17 OTHER SHARD in 4561 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 SURVIVOR, 10 OTHER SHARD
+trust_mutants: G[V], trusted: 1 SURVIVOR, 2 NOT RUN, 7 OTHER SHARD
+trust_mutants: PARTIAL: the deadline stopped the run with 2 of its 5 mutants unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those
+trust_mutants: steps: wall plan 19.7 s, scratch 5.2 s, control_build 1.9 s, probe_install 1.4 s, mutants 4528.7 s, cleanup 4.3 s; lake control_build 1.9 s (2), probe_install 1.4 s (1), control_probes 532 s (2), mutant_builds 140.1 s (5), mutant_checks 7905.7 s (8), outside_checks 25.7 s (2), stage_controls 4349.7 s (3), mutant_probes 192.2 s (2)
