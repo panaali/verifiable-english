@@ -59,18 +59,11 @@ BASE = {
                                           "meet a Critical standard\u201d; CYB-C: \u201csafeguards and security "
                                           "controls standards that would meet a Critical standard\u201d)"),
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}"
-                                               "; the Framework's words, introduction and 2.1: We currently focus this work on three areas of frontier capability, which "
-                                               "we call Tracked Categories: • Biological and Chemical capabilities that, in addition to unlocking discoveries and cures, "
-                                               "can also reduce barriers to creating and using biological or chemical weapons. • Cybersecurity capabilities that, in "
-                                               "addition to helping protect vulnerable systems, can also create new risks of scaled cyberattacks and vulnerability "
-                                               "exploitation. • AI Self-improvement capabilities that, in addition to unlocking helpful capabilities faster, could also "
-                                               "create new challenges for human control of AI systems. Tracked Categories are those capabilities which we track most "
-                                               "closely, measuring them during each covered deployment and preparing safeguards for when a threshold level is crossed. "
-                                               "Table 1: Biological and Chemical5: The ability of an AI model to accelerate and expand access to biological and chemical "
-                                               "research, development, and skill-building, including access to expert knowledge and assistance with laboratory work. "
-                                               "Table 1: Cybersecurity: The ability of an AI model to assist in the development of tools and executing operations for "
-                                               "cyberdefense and cyberoffense. Table 1: AI Self-improvement: The ability of an AI system to accelerate AI research, "
-                                               "including to increase the system’s own capability.", "{0} concerns {1}"),
+                                               "; the Framework's words, Table 1: Biological and Chemical5: The ability of an AI model to accelerate and expand access "
+                                               "to biological and chemical research, development, and skill-building, including access to expert knowledge and "
+                                               "assistance with laboratory work. Table 1: Cybersecurity: The ability of an AI model to assist in the development of "
+                                               "tools and executing operations for cyberdefense and cyberoffense. Table 1: AI Self-improvement: The ability of an AI "
+                                               "system to accelerate AI research, including to increase the system’s own capability.", "{0} concerns {1}"),
     "high": base(["level"], "{0} is a High level"
                             "; the Framework's words, footnote 1: 1 By “severe harm” in this document, we mean the death or grave injury of thousands of people or "
                             "hundreds of billions of dollars of economic damage. 2.2 and change log item 2: High capability thresholds mean capabilities that "
@@ -102,31 +95,7 @@ BASE = {
     "medium": base(["level"], "{0} is a \"medium\" level (a term the change log removes)", "{0} is medium"),
     "indicator_for": base(["evaluation", "level"], "{0} is used as an indicator for {1} (footnote 5)", "{0} indicates {1}"),
     "chemical": base(["evaluation"], "{0} evaluates a chemical capability", "{0} is chemical"),
-    "reached": base(["situation", "level"], "the model at {0} has reached {1}; SAG decides this"
-                                            "; the Framework's words, 2.2: Capability thresholds concretely describe things an AI system might be able to help someone "
-                                            "do or might be able to do on its own that could meaningfully increase risk of severe harm. section 1: An internal, "
-                                            "cross-functional group of OpenAI leaders called the Safety Advisory Group (SAG) oversees the Preparedness Framework and "
-                                            "makes expert recommendations on the level and type of safeguards required for deploying frontier capabilities safely and "
-                                            "securely. 3.2: The Preparedness Framework applies to any new or updated deployment that has a plausible chance of reaching "
-                                            "a capability threshold whose corresponding risks are not addressed by an existing Safeguards Report. Examples of such "
-                                            "covered deployments are: • every frontier model (e.g., OpenAI o1 or OpenAI o3) that we plan to deploy externally • any "
-                                            "agentic system (including significant agents deployed only internally) that represents a substantial increase in the "
-                                            "capability frontier • any significant change in the deployment conditions of an existing model (e.g., enabling finetuning, "
-                                            "releasing weights, or significant new features) that makes the existing Capabilities Report or Safeguards Report no longer "
-                                            "reasonably applicable • incremental updates or distilled models with unexpectedly significant increases in capability. 6 "
-                                            "introduction: The Preparedness Framework is OpenAI’s approach to tracking and preparing for frontier capabilities that "
-                                            "create new risks of severe harm.1 Appendix B: OpenAI Leadership, i.e., the CEO or a person designated by them, is "
-                                            "responsible for: • Making all final decisions, including accepting any residual risks and making deployment go/no-go "
-                                            "decisions, informed by SAG’s recommendations. • Resourcing the implementation of the Preparedness Framework (e.g., "
-                                            "additional work on safeguards where necessary). 4.1: We consider separate safeguards for two of the main ways in which "
-                                            "risks can be realized: a malicious user, who can leverage the model to cause the severe harm, and a misaligned model, which "
-                                            "autonomously causes the harm. 4.2: We compile the information on the planned safeguards needed to minimize the risk of "
-                                            "severe harm into a Safeguards Report. The Safeguards Report should include the following information: • Identified ways a "
-                                            "risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and "
-                                            "safeguards • Details about the efficacy of those safeguards • An assessment on the residual risk of severe harm based on "
-                                            "the deployment • Any notable limitations with the information provided change log item 8: Establish Capabilities Reports "
-                                            "and Safeguards Reports, the key artifacts we use to support informed decision-making under the Preparedness Framework in "
-                                            "the context of systems that are capable enough to pose severe risks.", "{0} has reached {1}"),
+    "reached": base(["situation", "level"], "the model at {0} has reached {1}; SAG decides this", "{0} has reached {1}"),
     "proposed": base(["proposal"], "{0} is proposed"),
     "required": base(["requirement"], "{0} is a requirement"),
     "coverage_ambiguous": base(["situation"], "coverage of {0} is ambiguous"),
@@ -159,7 +128,41 @@ BASE = {
     "forecast_critical": base(["situation"], "the model at {0} is forecasted to reach Critical capability; OpenAI decides this"),
     "existing_at_publication": base(["situation"], "the model at {0} is one OpenAI possessed at publication (2025-04-15), "
                                     "the time of 4.4's “We do not currently possess any models that have Critical "
-                                    "levels of capability”"),
+                                    "levels of capability”"
+                                    "; the Framework's words, introduction and 2.1: We currently focus this work on three areas of frontier capability, which we call "
+                                    "Tracked Categories: • Biological and Chemical capabilities that, in addition to unlocking discoveries and cures, can also reduce "
+                                    "barriers to creating and using biological or chemical weapons. • Cybersecurity capabilities that, in addition to helping protect "
+                                    "vulnerable systems, can also create new risks of scaled cyberattacks and vulnerability exploitation. • AI Self-improvement "
+                                    "capabilities that, in addition to unlocking helpful capabilities faster, could also create new challenges for human control of AI "
+                                    "systems. Tracked Categories are those capabilities which we track most closely, measuring them during each covered deployment and "
+                                    "preparing safeguards for when a threshold level is crossed. 2.2: Capability thresholds concretely describe things an AI system "
+                                    "might be able to help someone do or might be able to do on its own that could meaningfully increase risk of severe harm. section 1: "
+                                    "An internal, cross-functional group of OpenAI leaders called the Safety Advisory Group (SAG) oversees the Preparedness Framework "
+                                    "and makes expert recommendations on the level and type of safeguards required for deploying frontier capabilities safely and "
+                                    "securely. 3.2: The Preparedness Framework applies to any new or updated deployment that has a plausible chance of reaching a "
+                                    "capability threshold whose corresponding risks are not addressed by an existing Safeguards Report. Examples of such covered "
+                                    "deployments are: • every frontier model (e.g., OpenAI o1 or OpenAI o3) that we plan to deploy externally • any agentic system "
+                                    "(including significant agents deployed only internally) that represents a substantial increase in the capability frontier • any "
+                                    "significant change in the deployment conditions of an existing model (e.g., enabling finetuning, releasing weights, or significant "
+                                    "new features) that makes the existing Capabilities Report or Safeguards Report no longer reasonably applicable • incremental "
+                                    "updates or distilled models with unexpectedly significant increases in capability. 6 introduction: The Preparedness Framework is "
+                                    "OpenAI’s approach to tracking and preparing for frontier capabilities that create new risks of severe harm.1 Appendix B: OpenAI "
+                                    "Leadership, i.e., the CEO or a person designated by them, is responsible for: • Making all final decisions, including accepting any "
+                                    "residual risks and making deployment go/no-go decisions, informed by SAG’s recommendations. • Resourcing the implementation of the "
+                                    "Preparedness Framework (e.g., additional work on safeguards where necessary). 4.1: We consider separate safeguards for two of the "
+                                    "main ways in which risks can be realized: a malicious user, who can leverage the model to cause the severe harm, and a misaligned "
+                                    "model, which autonomously causes the harm. 4.2: We compile the information on the planned safeguards needed to minimize the risk of "
+                                    "severe harm into a Safeguards Report. The Safeguards Report should include the following information: • Identified ways a risk of "
+                                    "severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards • Details "
+                                    "about the efficacy of those safeguards • An assessment on the residual risk of severe harm based on the deployment • Any notable "
+                                    "limitations with the information provided change log item 8: Establish Capabilities Reports and Safeguards Reports, the key "
+                                    "artifacts we use to support informed decision-making under the Preparedness Framework in the context of systems that are capable "
+                                    "enough to pose severe risks. 3.1 and change log item 6: Deep Dives: designed to provide additional evidence validating the scalable "
+                                    "evaluations’ findings on whether a capability threshold has been crossed. These may include a wide range of evidence gathering "
+                                    "activities, such as human expert red-teaming, expert consultations, resource-intensive third party evaluations (e.g., bio wet lab "
+                                    "studies, assessments by independent third party evaluators), and any other activity requested by SAG. We also define “scalable "
+                                    "evaluations,” which are automated, and distinguish these from “deep dive” evaluations that may include consultation with human "
+                                    "experts and are designed in part to validate the scalable evaluations."),
     "threshold_determined": base(["situation"], "the SAG determines at {0} that a capability threshold has been crossed"),
     "safeguards_already_assessed": base(["situation"], "the corresponding safeguards at {0} have already been implemented and assessed"),
     "rapid_risk": base(["situation"], "a risk of severe harm rapidly develops at {0}"),
@@ -558,12 +561,7 @@ ACTS = {
                                "work with third parties, not a required result; the guards carry the deeming about a "
                                "deployment, OT14, and 'when available and feasible')"
                                "; the Framework's words, 3.3: The results of these evaluations, and any noteworthy observations that should affect interpretation of the "
-                               "results, are compiled into a Capabilities Report that is submitted to the SAG. 3.1 and change log item 6: Deep Dives: designed to "
-                               "provide additional evidence validating the scalable evaluations’ findings on whether a capability threshold has been crossed. These may "
-                               "include a wide range of evidence gathering activities, such as human expert red-teaming, expert consultations, resource-intensive third "
-                               "party evaluations (e.g., bio wet lab studies, assessments by independent third party evaluators), and any other activity requested by "
-                               "SAG. We also define “scalable evaluations,” which are automated, and distinguish these from “deep dive” evaluations that may include "
-                               "consultation with human experts and are designed in part to validate the scalable evaluations."),
+                               "results, are compiled into a Capabilities Report that is submitted to the SAG."),
     "residual_risk_assessment": ("{0} include an assessment of residual severe-harm risk in the Safeguards Report",
                                  "4.2: an assessment on the residual risk of severe harm based on the deployment"),
     "persuasion_handled_outside": ("{0} have persuasion risks handled outside the Preparedness Framework",
