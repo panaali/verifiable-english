@@ -1,0 +1,50 @@
+{
+ "what": "M2397 at 9ccbf3fdf: the nightly record's row (tool at 9ccbf3fdf) and the same mutant run with this branch's targets fix applied on 9ccbf3fdf (scratch commit 4884052810 = 9ccbf3fdf + tools/trust_mutants.py of 2ae03a32c2)",
+ "command": "mac-pytest.sh --worktree <scratch at 4884052810> --trustmut -- --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 <the nightly part 7's 52 --test paths> --only M2397 --jobs 2 --build-timeout 3600 (ran on the VM: the relative --test paths were resolved against the caller's worktree)",
+ "nightly_record": {
+  "record": "test-skip/nightly/20261119T0727Z.json",
+  "head": "9ccbf3fdf352de245b41dae5146ee007af4adf55",
+  "tool": "07102f45a0a4165ce3edefd73918141fdc036885c70e002f1be074e3b25b9e5f",
+  "row": {
+   "id": "M2397",
+   "file": "VE/Norms/Wire.lean",
+   "line": 175,
+   "definition": "VE.Norms.Wire.actsOf",
+   "operator": "list-first",
+   "before": "r.sorts",
+   "after": "(r.sorts.take 1)",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe)"
+  }
+ },
+ "fixed_tool_run": {
+  "head": "4884052810713bb36b00124e5e818ee30b95cbcf",
+  "base": "039d3dd5190e5eea878d24c4f88af811dfd05914",
+  "tool": "8c63d54005e75c321781cfc12a55e72cc7d84c5b1e4884a79217b8c4259af0c3",
+  "seconds": 4059,
+  "where": null,
+  "counts": {
+   "KILLED": 1,
+   "SURVIVOR": 0,
+   "UNKNOWN": 0,
+   "INVALID": 0,
+   "ALLOWED": 0,
+   "NOT RUN": 0
+  },
+  "row": {
+   "id": "M2397",
+   "file": "VE/Norms/Wire.lean",
+   "line": 175,
+   "definition": "VE.Norms.Wire.actsOf",
+   "operator": "list-first",
+   "before": "r.sorts",
+   "after": "(r.sorts.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Acts/DecodeExamples.lean:79: Expression",
+   "killed_at": [
+    79,
+    80
+   ]
+  }
+ }
+}
