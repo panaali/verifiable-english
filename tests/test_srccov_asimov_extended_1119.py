@@ -83,6 +83,16 @@ def test_the_carrier_is_the_legend_of_a_predicate_the_additions_use(key):
     assert not any(f'"{key}"' in line for line in RULES[:13]), key
 
 
+@pytest.mark.parametrize("key", sorted(CARRIERS))
+def test_the_carry_only_inserts_the_clause(key):
+    """Without the clause, the legend is the base shape: it names its own addition rules and ends with the tag."""
+    legend = ENV["vocabulary"]["predicates"][key]["description"]
+    base = legend.replace(f", {CLAUSE} {TAG}", f" {TAG}").replace(f"; {CLAUSE} {TAG}", f"; {TAG}")
+    assert base != legend and CLAUSE not in base and base.endswith(f" {TAG}"), base
+    named = re.search(r"as derived by addition rules? (\d+)(?: and (\d+))?[ ;]", base)
+    assert named and tuple(int(n) for n in named.groups() if n) == CARRIERS[key], base
+
+
 def test_the_carried_clause_is_on_exactly_the_tagged_legends():
     tagged = {key for key, entry in ENV["vocabulary"]["predicates"].items() if TAG in entry.get("description", "")}
     carried = {key for key, entry in ENV["vocabulary"]["predicates"].items()
