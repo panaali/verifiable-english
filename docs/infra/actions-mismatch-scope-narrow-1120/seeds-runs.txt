@@ -1,0 +1,46 @@
+== S1-no-why-check
+FAIL: test_late_compare_and_near_misses_block
+FAIL: test_v_vi_vii_every_verify_reason_every_job_blocks
+FAIL: test_iii_unparseable_blocks
+FAIL: test_iv_tm_line_still_stops_the_tm_pool
+FAIL: test_v_tm_provenance_mismatch_blocks
+FAIL: test_vi_testmap_digest_mismatch_blocks
+FAIL: test_viii_mixed_tm_verdict_sample_and_provenance_blocks
+Ran 19 tests in 3.499s
+FAILED (failures=7)
+== S2-select-allowed
+FAIL: test_vii_every_select_line_blocks
+FAIL: test_vii_select_verdict_sample_line_blocks
+Ran 19 tests in 3.328s
+FAILED (failures=2)
+== S4-empty-on
+FAIL: test_late_compare_and_near_misses_block
+FAIL: test_iii_empty_blocks
+Ran 19 tests in 2.605s
+FAILED (failures=2)
+== S5-gate-callsite-old-rule
+FAIL: test_helper_one_copy
+FAIL: test_i_tm_and_testmap_lines_no_newline
+FAIL: test_i_tm_line_does_not_block
+Ran 19 tests in 2.483s
+FAILED (failures=3)
+== S1
+FAIL: test_late_compare_and_near_misses_block
+FAIL: test_v_vi_vii_every_verify_reason_every_job_blocks
+FAIL: test_v_tm_provenance_mismatch_blocks
+FAIL: test_vi_testmap_digest_mismatch_blocks
+FAIL: test_viii_mixed_tm_verdict_sample_and_provenance_blocks
+Ran 19 tests in 1.985s
+FAILED (failures=5)
+== S3
+FAIL: test_late_compare_and_near_misses_block
+Ran 19 tests in 2.102s
+FAILED (failures=1)
+== S6
+FAIL: test_iii_unreadable_or_not_a_regular_file_blocks
+Ran 20 tests in 2.189s
+FAILED (failures=1)
+== S7
+FAIL: test_late_compare_and_near_misses_block
+Ran 20 tests in 2.189s
+FAILED (failures=1)

@@ -1,0 +1,11 @@
+--- gha-arm-gate.sh.new-amscope	2026-11-20 06:39:00.835219664 +0000
++++ gha-arm-gate.sh.new-amscope2	2026-11-20 08:39:12.260270000 +0000
+@@ -47,7 +47,7 @@
+   say(){ print -r -- "$(date -u +%FT%H:%M:%SZ) $job $*" | tee -a $log; }
+   no(){ say "not sent: $*"; exit 3; }
+   [ -f $M/ACTIONS_SUSPENDED ] && no ACTIONS_SUSPENDED
+-  { mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH; [ $? != 1 ]; } && no cloud-jobs/ACTIONS_MISMATCH  # actions-mismatch-scope-1120: tm-*/testmap-*/select-* lines do not stop it
++  { mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH; [ $? != 1 ]; } && no cloud-jobs/ACTIONS_MISMATCH  # actions-mismatch-scope-narrow-1120: only tm-*/testmap-* "verdict sample differs" lines do not stop it
+   [ -f $M/CLOUD_PUSH_HOLD ] && [ -z "$dry" ] && no CLOUD_PUSH_HOLD
+   # trial flag ARM_GATE_SHADOW (FLAGS.tsv): off = no run; a DIFFERENT comparison removes it (below)
+   # 2026-10-29 dri-armleg: blocking mode (merge-train.sh, Mac offline) reads ARM_LEG_MAC_OFFLINE instead

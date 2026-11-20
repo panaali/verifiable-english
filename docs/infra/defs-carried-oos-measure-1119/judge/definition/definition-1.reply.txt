@@ -1,0 +1,120 @@
+F001 | DEFINES | "mandatory evidence (VEX)" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims.
+F002 | DEFINES | "mandatory evidence (VEX)" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims.
+F003 | DEFINES | "mandatory evidence (VEX)" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims.
+F004 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F005 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F006 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F007 | DOES NOT DEFINE | "remains 'unresolved' without an affordable proof" uses the status label without stating what it means.
+F008 | DOES NOT DEFINE | "remains 'unresolved' without an affordable proof" uses the status label without stating what it means.
+F009 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F010 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F011 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F012 | DOES NOT DEFINE | "proof production are included in the matched-cost comparison" only uses the phrase.
+F013 | DOES NOT DEFINE | "proof production are included in the matched-cost comparison" only uses the phrase.
+F014 | DOES NOT DEFINE | "proof production are included in the matched-cost comparison" only uses the phrase.
+F015 | DOES NOT DEFINE | "proof production are included in the matched-cost comparison" only uses the phrase.
+F016 | DOES NOT DEFINE | "proof production are included in the matched-cost comparison" only uses the phrase.
+F017 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F018 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F019 | DEFINES | "developing mandatory evidence (VEX) for statistical and approximate claims" introduces the abbreviation.
+F020 | DOES NOT DEFINE | "remains 'unresolved' without an affordable proof" uses the status label without stating what it means.
+F021 | DOES NOT DEFINE | "remains 'unresolved' without an affordable proof" uses the status label without stating what it means.
+F022 | DOES NOT DEFINE | "remains 'unresolved' without an affordable proof" uses the status label without stating what it means.
+F023 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F024 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F025 | DOES NOT DEFINE | A risk statement ("could increase false confidence"), not a definition of a term.
+F026 | DOES NOT DEFINE | Quotes the phrase as an example of an exception ("once with an explicit exception (...)") without defining it.
+F027 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F028 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F029 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F030 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F031 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F032 | DEFINES | "**Operators:** Companies and individuals that access Claude's capabilities through our API" is a glossary-style definition.
+F033 | DEFINES | "**Users:** Those who interact with Claude in the human turn of the conversation" is a glossary-style definition.
+F034 | DEFINES | "child sexual abuse material (CSAM)" introduces CSAM as the abbreviation.
+F035 | DEFINES | "child sexual abuse material (CSAM)" introduces an abbreviation for the phrase.
+F036 | DOES NOT DEFINE | "the definition of 'pensionable age' is omitted" amends another Act's definition.
+F037 | DOES NOT DEFINE | "the definition of 'pensionable age' is omitted" amends another Act's definition.
+F038 | DOES NOT DEFINE | "the definition of 'pensionable age' is omitted" amends another Act's definition.
+F039 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F040 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F041 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F042 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F043 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F044 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 122(1) of another Act.
+F045 | DOES NOT DEFINE | Substituted text for another Act that points elsewhere ("has the meaning given by the rules in paragraph 1 of Schedule 4").
+F046 | DOES NOT DEFINE | Substituted text for another Act that points elsewhere ("has the meaning given by the rules in paragraph 1 of Schedule 4").
+F047 | DOES NOT DEFINE | Substituted text for another Act that points elsewhere ("has the meaning given by the rules in paragraph 1 of Schedule 4").
+F048 | DOES NOT DEFINE | Substituted text for another Act that points elsewhere ("has the meaning given by the rules in paragraph 1 of Schedule 4").
+F049 | DOES NOT DEFINE | Substituted text for another Act that points elsewhere ("has the meaning given by the rules in paragraph 1 of Schedule 4").
+F050 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 150(2) of another Act.
+F051 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 150(2) of another Act.
+F052 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 150(2) of another Act.
+F053 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F054 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F055 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F056 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F057 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F058 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 191 of the Social Security Administration Act 1992.
+F059 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 191 of the Social Security Administration Act 1992.
+F060 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 191 of the Social Security Administration Act 1992.
+F061 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F062 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F063 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F064 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F065 | DOES NOT DEFINE | Substituted text for another Act that points to "paragraph 1 of Schedule 4 to the Pensions Act 1995".
+F066 | DOES NOT DEFINE | Amends the 1992 Act's section 58(3)(b) with a pointer ("within the meaning given by the rules in paragraph 1 of Schedule 4").
+F067 | DOES NOT DEFINE | Amends the 1992 Act's section 58(3)(b) with a pointer ("within the meaning given by the rules in paragraph 1 of Schedule 4").
+F068 | DOES NOT DEFINE | Amends the 1992 Act's section 58(3)(b) with a pointer ("within the meaning given by the rules in paragraph 1 of Schedule 4").
+F069 | DOES NOT DEFINE | Amends the 1992 Act's section 58(3)(b) with a pointer ("within the meaning given by the rules in paragraph 1 of Schedule 4").
+F070 | DOES NOT DEFINE | Amends the 1992 Act's section 58(3)(b) with a pointer ("within the meaning given by the rules in paragraph 1 of Schedule 4").
+F071 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 181(1) of another Act.
+F072 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 181(1) of another Act.
+F073 | DOES NOT DEFINE | "for the definition of 'pensionable age' there is substituted" amends section 181(1) of another Act.
+F074 | DOES NOT DEFINE | "has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995" points to a definition elsewhere.
+F075 | DOES NOT DEFINE | "has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995" points to a definition elsewhere.
+F076 | DOES NOT DEFINE | "has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995" points to a definition elsewhere.
+F077 | DOES NOT DEFINE | "has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995" points to a definition elsewhere.
+F078 | DOES NOT DEFINE | "has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995" points to a definition elsewhere.
+F079 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F080 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F081 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F082 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F083 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F084 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F085 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F086 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F087 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F088 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F089 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F090 | DEFINES | "'qualifying week' means ... the week beginning on the third Monday in the September of that year".
+F091 | DEFINES | "'relevant benefit' means—" opens this text's own definition, with the list following.
+F092 | DEFINES | "'relevant benefit' means—" opens this text's own definition, with the list following.
+F093 | DEFINES | "'relevant benefit' means—" opens this text's own definition, with the list following.
+F094 | DEFINES | "'relevant benefit' means—" opens this text's own definition, with the list following.
+F095 | DEFINES | "'relevant benefit' means—" opens this text's own definition, with the list following.
+F096 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F097 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F098 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F099 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F100 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F101 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F102 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F103 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F104 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F105 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F106 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F107 | DEFINES | "the week beginning on the third Monday in September ('the qualifying week')" introduces the label with its meaning.
+F108 | DOES NOT DEFINE | "included in the definition of 'relevant benefit'" refers to the definition without stating it.
+F109 | DOES NOT DEFINE | "included in the definition of 'relevant benefit'" refers to the definition without stating it.
+F110 | DOES NOT DEFINE | "included in the definition of 'relevant benefit'" refers to the definition without stating it.
+F111 | DOES NOT DEFINE | "included in the definition of 'relevant benefit'" refers to the definition without stating it.
+F112 | DOES NOT DEFINE | "state pension credit or another means-tested benefit" is used as a payment condition, not defined.
+F113 | DOES NOT DEFINE | "state pension credit or another means-tested benefit" is used as a payment condition, not defined.
+F114 | DOES NOT DEFINE | "See section 7A(6)(d) for the definition" points to a definition elsewhere.
+F115 | DOES NOT DEFINE | "See section 7A(6)(d) for the definition" points to a definition elsewhere.
+F116 | DOES NOT DEFINE | "See section 7A(6)(d) for the definition" points to a definition elsewhere.
+F117 | DOES NOT DEFINE | "See section 7A(6)(d) for the definition" points to a definition elsewhere.
+F118 | DEFINES | "Employment and Support Allowance (ESA)" introduces ESA as the abbreviation.
+F119 | DEFINES | "Employment and Support Allowance (ESA)" introduces ESA as the abbreviation.
+F120 | DEFINES | "Employment and Support Allowance (ESA)" introduces ESA as the abbreviation.

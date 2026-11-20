@@ -1,0 +1,16 @@
+# Probe: does the strict parser accept a comment line in usecases/birthright-citizenship-debate/claims.ve?
+# VE commit 09bea0972d; for each prefix: /tmp/bcd/t.ve = '<prefix> test comment' + claims.ve (unchanged)
+# command: uv run python -m ve render --env usecases/birthright-citizenship-debate/environment.json --view ve_fluent /tmp/bcd/t.ve
+== prefix '#'
+InvalidInput SyntaxError 'SyntaxError: expected term' line 1 col 1
+== prefix '--'
+InvalidInput SyntaxError 'SyntaxError: expected term' line 1 col 1
+== prefix '//'
+InvalidInput SyntaxError 'SyntaxError: expected term' line 1 col 1
+== prefix '%'
+InvalidInput SyntaxError 'SyntaxError: expected term' line 1 col 1
+== prefix ';'
+InvalidInput SyntaxError 'SyntaxError: expected term' line 1 col 1
+== control: claims.ve unchanged
+for every person P such that (both P is born_in_us and P is subject_to_jurisdiction), P is us_citizen.
+for every person P such that P is has_noncitizen_domiciled_parent, P is subject_to_jurisdiction.

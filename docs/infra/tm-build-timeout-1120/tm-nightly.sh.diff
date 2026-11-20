@@ -1,0 +1,60 @@
+--- tm-nightly.sh.bak-20261120tmbto	2026-11-17 05:31:18.323945999 +0000
++++ tm-nightly.sh	2026-11-20 07:35:15.918646473 +0000
+@@ -63,6 +63,18 @@
+ # not stopped when the load rises (its weight yields; its --budget and --deadline bound it); only new parts move. Tests
+ # only: TM_IDLE_LOADAVG, TM_IDLE_MEMINFO, TM_IDLE_NPROC, TM_IDLE_SCOPE (the scope launcher), TM_IDLE_STOP, TM_IDLE_TM
+ # (the trust_mutants command), TM_IDLE_SETUP (the setup command), TM_IDLE_OFF_FLAG.
++# 2026-11-20 tm-build-timeout-1120 (reviews/dri-decisions-20261120-tm-final-coverage.md item 2; reviews/tm-build-timeout-1120/
++# REPORT.md): HEAVY IDS AT FEWER JOBS. A resumed record's build-timeout ids (`tm-nightly.py heavy`: UNKNOWN "did not finish in
++# N s (--build-timeout)") still to judge run LAST, in parts of their own of at most TM_NIGHTLY_HEAVY_PART (4; whole 1-50) ids,
++# each with trust_mutants --jobs TM_NIGHTLY_HEAVY_JOBS (2; whole 1-8; 0 or off = as before; any other value of either is
++# refused, the default kept, said in the log). Cause (MEASURED, the report): a heavy cone's check needs ~2,600-3,900 CPU-s
++# (VE/Compose/Dispatch.lean's cone: 936 s on 8 cores, 1,753 s on 3), and a remote part ran 8 of them at once in its 9-10-core
++# tm scope (cloud2-run.sh CLOUD2_TM_JOBS 8; cloud2-job.sh C2_TM_CPU), ~1.1 cores a build: on ve-cloud-2 11-16..19, 491 of
++# 817 tries ran past 1800 s, and 21 of 40 past 3600 s; at 2-5 cores a build on VM1 (the 11-17 trials and vm1-idle parts),
++# 0 of 56 check and control builds ran past their limit (53 of them at 3600 s, 3 at 1800 s). The other ids run
++# first, at the pool's own --jobs, as before; a sweep with no resumed record is unchanged. A local vm1-idle part keeps its
++# own --jobs (its cores / TM_IDLE_CORES_PER_JOB, given last). Only the parallelism changes: a build past --build-timeout
++# stays UNKNOWN, and a finished build gives the same verdict at any --jobs.
+ rmt=""; idle=""; case $TM_NIGHTLY_POOLS in (remote) rmt=1;; (remote+idle) rmt=1; idle=1;; esac
+ igate(){ local n=${TM_IDLE_NPROC:-$(nproc)} r=${TM_IDLE_RESERVE:-8} l ma  # tm-drain-vm1-idle (header): sets icores ijobs iwhy
+   icores=0; ijobs=0
+@@ -104,7 +116,7 @@
+   uu=(${(s:,:)$(print -r -- $out | python3 -I -c 'import json,sys; print(",".join(json.load(sys.stdin).get("unresolved_unknown") or []))' 2> /dev/null)})
+   (( ${#uu} )) && say "not complete: ${#uu} unallowed UNKNOWN need a disposition (${uu[*]})"
+   say "record not complete: the base stays ${base[1,9]}"; return 1; }
+-one(){ local main base stamp rec rc out t tl terr cap P pj total t0 dl cpu0 s k n sz szw left pt d1 tgt rrec rplan bud ds C=1 Cr=1 i j wi icores ijobs iwhy iwas; local -a tst tp cmd pre oa rs ids ws rp
++one(){ local main base stamp rec rc out t tl terr cap P pj total t0 dl cpu0 s k n sz szw left pt d1 tgt rrec rplan bud ds C=1 Cr=1 i j wi icores ijobs iwhy iwas hj hp nh=0 nl=0; local -a tst tp cmd pre oa rs ids ws rp hv
+   main=$(git -C $R rev-parse main) || { say "no main in $R"; return 1; }
+   base=$(cat $D/nightly-base 2>/dev/null); [ -n "$base" ] || base=$(cut -d' ' -f2 $D/t1-on 2>/dev/null)
+   [ -n "$base" ] || { say "no base (test-skip/nightly-base or test-skip/t1-on): not run"; return 1; }
+@@ -146,6 +158,14 @@
+   [[ $total == <-> ]] && say "plan: $total mutants" || { say "plan gave no count: one unsplit run, as before"; total=0; }
+   if [ -n "$rrec" ] && [ "$total" != "$rplan" ]; then say "resume dropped: the plan at ${tgt[1,9]} has $total mutants, ${rrec:t} $rplan: all of them run"; rrec=""; ids=(); fi
+   [ -z "$rrec" ] && (( total )) && ids=($(printf 'M%03d ' {1..$total}))
++  hj=${TM_NIGHTLY_HEAVY_JOBS:-2}; hp=${TM_NIGHTLY_HEAVY_PART:-4}; nl=${#ids}  # tm-build-timeout-1120 (header): heavy ids last
++  if [[ $hj == (0|off) ]]; then hj=""
++  elif [[ $hj != <1-8> ]]; then say "TM_NIGHTLY_HEAVY_JOBS=$hj refused (whole 1-8, or 0/off; tm-build-timeout-1120): the default 2"; hj=2; fi
++  [[ $hp == <1-50> ]] || { say "TM_NIGHTLY_HEAVY_PART=$hp refused (whole 1-50; tm-build-timeout-1120): the default 4"; hp=4; }
++  if [ -n "$hj" ] && [ -n "$rrec" ] && (( ${#ids} )); then
++    hv=(${(s:,:)$(python3 -I $M/tm-nightly.py heavy $rrec 2>> $log)}); hv=(${ids:*hv})
++    if (( ${#hv} )); then ids=(${ids:|hv} $hv); nh=${#hv}; nl=$(( ${#ids} - nh ))
++      say "heavy: $nh of the ${#ids} ids to judge are build timeouts in ${rrec:t}: they run last, in parts of <= $hp at --jobs $hj (tm-build-timeout-1120)"; fi; fi
+   if [ -n "$rmt" ]; then C=${TM_NIGHTLY_CONC:-3}; ws=($W); for (( i = 2; i <= C; i++ )); do wi=$W-s$i
+       if [ ! -d $wi ]; then git -C $R worktree add -q --detach $wi $tgt; else [ -z "$(git -C $wi status --porcelain --untracked-files=no)" ] && git -C $wi checkout -q --detach $tgt; fi \
+         && ws+=($wi) || say "pools remote: $wi is not usable at ${tgt[1,9]}: one fewer concurrent part"; done
+@@ -157,10 +177,13 @@
+   t0=$(date +%s); dl=$(( t0 + ${TM_NIGHTLY_TIMEOUT:-36000} )); cpu0=$(cgcpu); s=1; k=0
+   while :; do k=$(( k + 1 )); oa=(); n=${#ids}; sz=$cap; [ -n "$rmt" ] && [ -z "$dry" ] && rslot
+     if (( ${#ids} )); then szw=$(python3 -I $M/tm-nightly.py size $(( ${#ids} - s + 1 )) $cap 2>> $log); sz=${${szw%% *}:-$cap}; [[ $sz == <-> ]] || sz=$cap; fi
+-    if (( ${#ids} > sz || k > 1 )) || [ -n "$rrec" ]; then n=$(( ${#ids} - s + 1 )); (( n > sz )) && n=$sz; oa=(--only ${(j:,:)ids[$s,$(( s + n - 1 ))]}); fi
++    if (( ${#ids} > sz || k > 1 )) || [ -n "$rrec" ]; then n=$(( ${#ids} - s + 1 )); (( n > sz )) && n=$sz
++      if (( nh )); then if (( s > nl )); then (( n > hp )) && n=$hp; elif (( s + n - 1 > nl )); then n=$(( nl - s + 1 )); fi; fi  # heavy ids: parts of their own
++      oa=(--only ${(j:,:)ids[$s,$(( s + n - 1 ))]}); (( nh && s > nl )) && oa+=(--jobs $hj); fi
+     left=$(( dl - $(date +%s) )); (( left > 660 )) || { say "part $k: the ${TM_NIGHTLY_TIMEOUT:-36000}-s budget is spent: ${ids[$s]:-M$s} on not run"; break; }
+     bud=$(( left - 600 )); (( bud > ${TM_PART_BUDGET:-6300} )) && bud=${TM_PART_BUDGET:-6300}; oa+=(--budget $bud --deadline $(( dl - 600 )))
+     ds=""; (( ${oa[(I)--only]} )) && ds=" --only <$n ids from ${ids[$s]}>"
++    (( ${oa[(I)--jobs]} )) && ds+=" --jobs $hj (heavy: build timeouts in ${rrec:t})"
+     pt=$(date +%s); rm -f $P/part-$k.json; d1="${cmd[*]}$ds --budget $bud --deadline $(( dl - 600 )) --json $P/part-$k.json"
+     if [ -n "$rmt" ] && [ -z "$dry" ] && (( j > Cr )); then say "part $k (slot $j, ${ws[$j]:t}, vm1-idle: $iwhy): trust_mutants ${${d1#*--trustmut -- }/ --json / --jobs $ijobs --json }${szw:+ (part size: ${szw#* })}"
+       lpart $k $n $pt $left ${ids[$s]:-M001} "${(j:,:)ids[$s,$(( s + n - 1 ))]}" $oa &

@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "3fd9ccce116dd5574e1b4e879faafea170af7ebef542df7abd2766450efada3b",
+ "seal_id": "65b10b39d4e7d93a4b1d82d5f25251fce999878bd50e5e19b2b7731dc569749c",
  "sources": [
   {
    "kind": "corpus source",
@@ -621,7 +621,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/anthropic-rsp/environment.d1.json",
-   "sha256": "c952874515f34fd8533c2a4a89ac2348abd10ccc6aaa2a5c4def1fd1c9a0a4d1"
+   "sha256": "d433bf22adae5056a7f97f476c1c6b84f988b79eaac24d3bde561d82560aba33"
   },
   {
    "kind": "entry-point caller",
@@ -726,7 +726,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/math-mini-paper/environment.json",
-   "sha256": "aa276c7083cb634ee31b8ed75b24f118ff36ff1df870bba4da2e84df10c748cd"
+   "sha256": "41e6bff9c5a82e1204593edd7b98d6174ef441ed717d4ec6129b8e2254e0d7f6"
   },
   {
    "kind": "corpus source",
@@ -796,7 +796,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "6e7a75e3fba64efdfdba0907678a180421fad01ea3f54578e2fbd681478c46ea"
+   "sha256": "e5a580e517b93fa08790c0bf81b1cc05569f179a9b8ec724cdc09b6286c61bf6"
   },
   {
    "kind": "entry-point caller",
