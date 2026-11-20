@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-repair-f7-govadequacy-1119-17b65fff-t164015-s5",
+ "head": "8da77b6656b9f336c2808b4e31025616ca4acbdc",
+ "argv": [
+  "armsh-cand-fsf-repair-f7-govadequacy-1119-17b65fff-t164015-s5",
+  "8da77b6656b9f336c2808b4e31025616ca4acbdc",
+  "13726140952c9f37d68b886e0bf7e4f2edc543a1",
+  "-",
+  "-",
+  "4",
+  "5/6"
+ ]
+}
