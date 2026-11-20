@@ -113,7 +113,8 @@ def _usecase(name: str) -> Generated:
     """A use case whose harness `run.py` writes `results.json` (`--check` compares) and whose `build_document.py`
     then writes `coverage.json` and `spans.json` from it (`--check` compares): one line of GENERATED per use case."""
     here = f"usecases/{name}"
-    return Generated(f"usecase-{name}", tuple(f"{here}/{file}" for file in ("results.json", "coverage.json", "spans.json")),
+    files = tuple(f"{here}/{file}" for file in ("results.json", "coverage.json", "spans.json"))
+    return Generated(f"usecase-{name}", files,
                      ((PY, f"{here}/run.py"), (PY, f"{here}/build_document.py")),
                      ((PY, f"{here}/run.py", "--check"), (PY, f"{here}/build_document.py", "--check")),
                      merge="derived", service="write", on_conflict=True,
@@ -695,10 +696,11 @@ def _line_key(line: str) -> tuple[object, tuple]:
 def merge_keyed_lines(base: str, ours: str, theirs: str, derived: tuple = (), resolving: bool = False) -> str:
     """Three-way merge of a recorded JSON-lines file. The lines whose first element is in `derived` are the
     writer's block, after every recorded line, merged as a `derived` file: a one-sided change is taken; a
-    two-sided one raises Conflict unless `resolving` (then ours, which the writer rewrites next). The recorded lines merge by group (`_line_key`,
-    the lines sharing a key, in order): a group one side changed takes that side, both sides' equal change is
-    taken, and a group both sides changed differently raises Conflict. Ours' lines keep their places, a group
-    changed by theirs replaces ours' first line of it, and theirs' new groups follow, in theirs' order."""
+    two-sided one raises Conflict unless `resolving` (then ours, which the writer rewrites next). The recorded
+    lines merge by group (`_line_key`, the lines sharing a key, in order): a group one side changed takes that
+    side, both sides' equal change is taken, and a group both sides changed differently raises Conflict. Ours'
+    lines keep their places, a group changed by theirs replaces ours' first line of it, and theirs' new groups
+    follow, in theirs' order."""
     def split(text: str) -> tuple[list[str], list[str], dict]:
         recorded, block, groups = [], [], {}
         for line in text.splitlines():
