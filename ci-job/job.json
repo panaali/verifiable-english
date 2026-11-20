@@ -1,0 +1,12 @@
+{
+ "job": "testmap-12cb72fa-t169563-s0",
+ "head": "0f882a45e40c5442baccf7fbc47dfc0951058dad",
+ "argv": [
+  "testmap-12cb72fa-t169563-s0",
+  "0f882a45e40c5442baccf7fbc47dfc0951058dad",
+  "0f882a45e40c5442baccf7fbc47dfc0951058dad",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_english_statement_blocks.py tests/test_fsf_repair_f7_govadequacy_1119.py tests/test_scope_answer.py tests/test_select_tests.py tests/test_difffuzz.py tests/test_inventory_path.py tests/test_lean_service_schema.py tools/test_layer_policy.py tests/test_cardinality_answer.py tests/test_regen_generated.py tests/test_gate.py tests/test_since_pass.py tests/test_fsf_case_alternatives.py tests/test_lean_handles.py tests/test_test_chunks.py tests/test_soft_document_handles.py tests/test_calc_service.py tests/test_document_split.py tests/test_cardinality_lean.py tests/test_usecase_key_transcription.py tests/test_stage2_validation.py tests/test_discourse_composed_route.py tests/test_cardinality_service.py tests/test_heavy_tests.py tests/test_english_lean_lexicon.py tests/test_fsf_proximity_tcl.py tests/test_fsf_repair_f2_glossary_1119.py tests/test_coverage_dashboard.py tests/test_fsf_repair_f3_safetycase_1119.py tests/test_defs_repair_asimov_extended_1119.py tests/test_select_defer.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
