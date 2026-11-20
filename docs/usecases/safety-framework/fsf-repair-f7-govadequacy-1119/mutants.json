@@ -1,0 +1,52 @@
+{
+ "item": "fsf-repair-f7-govadequacy-1119",
+ "note": "Seeded bugs planted by hand on c5fba4282d, each run with `uv run pytest -q tests/test_fsf_repair_f7_govadequacy_1119.py` and restored with `git checkout HEAD -- usecases/safety-framework/`. tools/trust_mutants.py --plan lists 0 trusted definitions and 0 mutants for this item.",
+ "mutants": [
+  {
+   "id": "S1-gov-internal",
+   "language": "Python",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "the GOV (OT3) legend quotes S:10 whole",
+   "change": "'from the proposed external deployment' -> 'from the proposed deployment' (the 3.1.2 wording of S:14)",
+   "test": [
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_legend_quotes_its_source_sentence_byte_for_byte",
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_sentence_sits_in_the_lines_of_its_vocabulary_entry[governance_found_acceptable_with_safety_case_where_ccl_reached]"
+   ],
+   "result": "killed"
+  },
+  {
+   "id": "S2-mitigates-drop",
+   "language": "Python",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "the mitigates (OT2) legend quotes the three 1.3.5 'We assess' sentences whole",
+   "change": "the severe-harm sentence loses 'information pertaining to model propensities and'",
+   "test": [
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_legend_quotes_its_source_sentence_byte_for_byte",
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_sentence_sits_in_the_lines_of_its_vocabulary_entry[mitigates]"
+   ],
+   "result": "killed"
+  },
+  {
+   "id": "S3-acceptable-line",
+   "language": "Python",
+   "file": "usecases/safety-framework/vocabulary.py",
+   "behaviour": "the acceptable legend is in the lines a line reader of its entry takes (carrier guard)",
+   "change": "the description moves back to its own '\"description\": ...' line after the verbalisation (the main layout); the legend text is unchanged",
+   "test": [
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_sentence_sits_in_the_lines_of_its_vocabulary_entry[acceptable]"
+   ],
+   "result": "killed"
+  },
+  {
+   "id": "S4-env-stale",
+   "language": "generated JSON",
+   "file": "usecases/safety-framework/environment.d1.json",
+   "behaviour": "the committed environment carries the same quotes as vocabulary.py",
+   "change": "'no T/CCL is reached will be deemed' -> 'no T/CCL is reached is deemed' in the committed environment only",
+   "test": [
+    "tests/test_fsf_repair_f7_govadequacy_1119.py::test_each_f7_legend_quotes_its_source_sentence_byte_for_byte"
+   ],
+   "result": "killed"
+  }
+ ]
+}
