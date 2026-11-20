@@ -1,3 +1,5 @@
+- `tests/test_defs_repair_math_mini_paper_1119.py` — defs-repair-math-mini-paper-1119: the paper's own definitions are carried word for word in the legends its rules use.
+- `tests/test_defs_repair_udhr_pilot_1119.py` — defs-repair-udhr-pilot-1119: the saved record of the three P1 'definitions carried' rows of the UDHR pilot.
 - `tests/test_df_e1.py` — DF-E1's preregistered blind reader transport and scoring, without model calls.
 - `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
 - `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
@@ -81,5 +83,3 @@
 - `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
 - `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
 - `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
-- `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
-- `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…

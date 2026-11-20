@@ -1,0 +1,1 @@
+F026 | CARRIED | legend:violates_hard_constraint says "in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'", matching the source's framing of it as an explicit exception to the order.

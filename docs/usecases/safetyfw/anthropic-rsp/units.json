@@ -596,8 +596,9 @@
    ],
    "bytes": 165,
    "id": "t1-expect",
-   "kind": "attributed",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -1342,14 +1343,14 @@
    "blockers": [
     "no claim to check"
    ],
-   "bytes": 22,
+   "bytes": 29,
    "id": "s31-heading",
    "kind": "meta",
    "status": "LABELLED"
   },
   {
    "blockers": [],
-   "bytes": 180,
+   "bytes": 173,
    "id": "s31-coverage-date",
    "kind": "meta",
    "status": "CHECKED"
@@ -1635,9 +1636,18 @@
   },
   {
    "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 38,
+   "id": "s33-marginal-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
     "JT"
    ],
-   "bytes": 287,
+   "bytes": 249,
    "id": "s33-marginal",
    "kind": "norm",
    "status": "OPEN"
@@ -1837,8 +1847,9 @@
    ],
    "bytes": 131,
    "id": "s36-intent",
-   "kind": "attributed",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -2341,14 +2352,24 @@
    ],
    "bytes": 211,
    "id": "appa-priority",
-   "kind": "attributed",
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 43,
+   "id": "appa-lead-heading",
+   "kind": "meta",
    "status": "LABELLED"
   },
   {
    "blockers": [
     "JT"
    ],
-   "bytes": 199,
+   "bytes": 156,
    "id": "appa-lead-scenario",
    "kind": "norm",
    "status": "OPEN"
@@ -2373,10 +2394,19 @@
   },
   {
    "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "appa-strong-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
     "JT",
     "SC"
    ],
-   "bytes": 310,
+   "bytes": 269,
    "id": "appa-strong-scenario",
    "kind": "norm",
    "reading_set": "rs5_all_competitors",
@@ -2402,9 +2432,18 @@
   },
   {
    "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 20,
+   "id": "appa-uplevel-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
     "JT"
    ],
-   "bytes": 307,
+   "bytes": 287,
    "id": "appa-uplevel-scenario",
    "kind": "norm",
    "status": "OPEN"
