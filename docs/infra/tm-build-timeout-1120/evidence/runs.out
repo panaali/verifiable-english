@@ -1,0 +1,13 @@
+20261110T0600Z {'ve-cloud-3': 'judged 318 TO 21 parts 5 part-h 7.7', 've-cloud-2': 'judged 102 TO 4 parts 1 part-h 2.1'}
+20261110T1552Z {'actions?': 'judged 571 TO 5 parts 8 part-h 9.2', 've-cloud-3': 'judged 484 TO 39 parts 11 part-h 14.3', 've-cloud-2': 'judged 288 TO 2 parts 6 part-h 6.0'}
+20261111T0600Z {'ve-cloud-2': 'judged 189 TO 29 parts 4 part-h 6.1', 've-cloud-3': 'judged 29 TO 18 parts 2 part-h 3.7'}
+20261112T0600Z {'ve-cloud-3': 'judged 804 TO 44 parts 16 part-h 17.6', 'actions?': 'judged 235 TO 0 parts 3 part-h 2.3', 've-cloud-2': 'judged 340 TO 32 parts 9 part-h 9.6'}
+20261112T1600Z {'ve-cloud-2': 'judged 499 TO 24 parts 7 part-h 9.2', 've-cloud-3': 'judged 725 TO 80 parts 16 part-h 20.3'}
+20261113T0600Z {'ve-cloud-3': 'judged 486 TO 87 parts 13 part-h 16.2', 've-cloud-2': 'judged 543 TO 40 parts 11 part-h 13.2'}
+20261114T0600Z {'ve-cloud-2': 'judged 457 TO 79 parts 13 part-h 19.3', 'actions?': 'judged 85 TO 26 parts 2 part-h 3.3'}
+20261115T0600Z {'ve-cloud-2': 'judged 496 TO 84 parts 14 part-h 19.6'}
+20261116T0600Z {'ve-cloud-2': 'judged 56 TO 74 parts 5 part-h 12.8'}
+20261116T1607Z {'ve-cloud-2': 'judged 85 TO 145 parts 10 part-h 28.0', 'actions?': 'judged 5 TO 0 parts 1 part-h 1.4'}
+20261117T0600Z {'ve-cloud-2': 'judged 121 TO 102 parts 9 part-h 24.7', 'actions?': 'judged 19 TO 9 parts 2 part-h 3.6'}
+20261117T1620Z {'ve-cloud-2': 'judged 19 TO 21 parts 4 part-h 12.0', 'vm1-idle': 'judged 2 TO 0 parts 3 part-h 5.4'}
+20261119T0727Z {'ve-cloud-2': 'judged 64 TO 170 parts 11 part-h 24.9'}

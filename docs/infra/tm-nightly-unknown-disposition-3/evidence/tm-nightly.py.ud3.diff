@@ -1,0 +1,36 @@
+--- tm-nightly.py	2026-11-20 07:35:26.611632432 +0000
++++ tm-nightly.py.new-ud3	2026-11-20 09:29:20.722351617 +0000
+@@ -106,6 +106,11 @@
+       past 1800 s (491 of 817 tries on ve-cloud-2, 11-16..19) and past 3600 s (21 of 40); at 2-5 cores a build on VM1, 0
+       of 56 did. Only the parallelism changes: a build past --build-timeout stays UNKNOWN, and the same build gives the
+       same verdict at any --jobs.
++  2026-11-20 tm-nightly-unknown-disposition-3 (reviews/dri-decisions-20261120-tm-build-timeout-1120.md item 3; reviews/
++  tm-nightly-unknown-disposition-3.md): a ctor-drop UNKNOWN is INVALID (`invalid_here`, `dropped_ctor`) when Lean
++  refused, in the mutant's own file, a name `<definition>.<c>` of a constructor its edit removed ("Unknown constant
++  `VE.Service.Mode.cardinality`", M954): that module does not compile, so no program runs the mutant. Another file,
++  another name or another operator stays UNKNOWN.
+ Tests only: TEST_SKIP_DIR, TM_TARGETED_ONLY_FLAG, TM_NIGHTLY_NO_SIDE=1 (no backlog row, message or CURRENT-STATE line),
+ TM_NIGHTLY_SPM / TM_NIGHTLY_SETUP (size's s/mutant and setup s), TM_NIGHTLY_MPJ (mac-pytest.jsonl), TM_NIGHTLY_BACKLOG
+ (BACKLOG.jsonl read for existing tm-esc rows and ids), TM_NIGHTLY_SIDE_LOG (with NO_SIDE: each side command as a json line).
+@@ -418,7 +423,20 @@
+     trust_mutants leaves UNKNOWN. Another file or line, or another message (Type mismatch), stays UNKNOWN."""
+     x = re.match(r"lean/(\S+?):([0-9]+): (.*)", str(m.get("detail") or ""))
+     lo, hi = edit_lines(m)
+-    return bool(m.get("status") == "UNKNOWN" and x and x[1] == m.get("file") and lo <= int(x[2]) <= hi and REFUSED.match(x[3]))
++    return bool(m.get("status") == "UNKNOWN" and x and x[1] == m.get("file") and REFUSED.match(x[3])
++                and (lo <= int(x[2]) <= hi or dropped_ctor(m, x[3])))
++
++
++NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_'!?]*")
++
++
++def dropped_ctor(m, message):
++    """tm-nightly-unknown-disposition-3 (M954): Lean's message names `<definition>.<c>`, unknown, for a constructor c
++    the ctor-drop edit removed (a name of `before` that `after` lacks): the refusal is of the mutant's own edit."""
++    x = re.match(r"Unknown (?:constant|identifier) `([^`]+)`", message)
++    gone = set(NAME.findall(str(m.get("before") or ""))) - set(NAME.findall(str(m.get("after") or "")))
++    return bool(m.get("operator") == "ctor-drop" and x and m.get("definition")
++                and any(x[1] == f"{m['definition']}.{c}" for c in gone))
+ 
+ 
+ def span_merges(w, base, m, firsts):
