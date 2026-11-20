@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-claude-constitution-pilot-1119-d5f40214-t175964-s3",
+ "head": "28bef7aa657d7fe89156cc0c679d453e69bc6ecc",
+ "argv": [
+  "armsh-cand-srccov-claude-constitution-pilot-1119-d5f40214-t175964-s3",
+  "28bef7aa657d7fe89156cc0c679d453e69bc6ecc",
+  "5cac5ea4e5ff6a69bda43a92ec44d47c88990283",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ]
+}
