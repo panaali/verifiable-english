@@ -311,6 +311,7 @@ tool too, so an import added by a staged change is caught before its install.
 - `test_usage_reset_fresh.py`: 30/30 on the staged copies (`urf-staged.log`). On the installed copies (`urf-installed.log`) the
   same 6 F1 tests fail as before; both SandboxImports tests pass.
 - The PROBE runs the suite's four F8 tests by id, so the regression tests are those four ids plus `SandboxImports.*`.
+- VE repo (only docs changed): the selected tests on 4b48cc6a22 passed (select_tests on ve-cloud-2, exit 0, 0 failed). `lake build` passed (1478 jobs), and `python3 lean/audit.py` passed (898 files, 10153 theorems).
 
 **Seeded bugs** (`fix-f8/seeded-bugs.json`; each on a /tmp copy, all caught, copies deleted):
 
