@@ -1,0 +1,729 @@
+--- freeze-mover.sh (installed)
++++ freeze-mover.sh.new-fmw (staged)
+@@ -22,9 +22,44 @@
+ #      or over FM_WEEK_LEVEL (90; last usage-watch.log line of the worker's CLAUDE_CONFIG_DIR account), or it has been
+ #      stopped for FM_MAX_WAIT (21600 s) whatever the reason. FM_MOVE_5H=1 = the old rule (move after FM_MIN_AGE).
+ #      Test hook FM_USAGE_LOG (default usage-watch.log).
++# 2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z; reviews/dri-decisions-20261113-thresholds.md item 4; INSTALL READ): rule (c)
++#  waited out every 5-h freeze, which assumed every account near its cap (false 11-13 22:19Z: danielsaeedi37 5h 36 -> 90 in 37 min,
++#  8 sessions frozen 3.5 h while main had room). Now a 5-h-frozen worker is MOVED when its window resets more than FM_MOVE_AFTER_MIN
++#  (60) min from now (accounts.sh reset field of its CLAUDE_CONFIG_DIR) AND the picker admits another account for it
++#  (PICK_NOWAIT=1 PICK_LIGHT=1 PICK_AVOID=<its config dir>, as claude-resume-on-limit.sh asks: PICK_LONG_ROOM projects that
++#  account's 5-h room with its measured rate). The move is not a restart: the worker's claude-resume-on-limit.sh (its parent; it puts
++#  LR_MOVE_FILE=<spool>/<sid>.<its pid>.move into claude's environment) gets the destination in that file, the stopped claude and its
++#  tool commands are killed, and the wrapper copies the transcript and resumes the session there with --resume (chains and
++#  delegates alike; the chain is not killed). Otherwise (a reset within 60 min, no account admits it, or a wrapper without
++#  LR_MOVE_FILE: one installed before this change, or LIMIT_RESUME off) it is waited out as before; the weekly and FM_MAX_WAIT moves
++#  stay chain relaunches. With the flag PICK_LONG_ROOM off (no projection) nothing is moved. Test hooks FM_ACCOUNTS_SH, FM_PICK,
++#  FM_LONG_ROOM_FLAG. Test: tools-local/test-freeze-mover.zsh case F.
+ M=/home/seyran/code/manage-agents; dry=""; once=""; [ "$1" = --dry-run ] && dry=1; [ "$1" = --once ] && once=1; typeset -A seen cur told
+ LOGF=${FM_LOG:-$M/freeze-mover.log}
+ desc(){ local k; for k in $(pgrep -P $1 2>/dev/null); do desc $k; print $k; done; }  # all descendants, deepest first
++rmove(){  # fm-move-5h-room: $1 a 5-h-frozen claude pid, $2 its CLAUDE_CONFIG_DIR -> prints "moved ..." (rc 0) or why it stays (rc 1)
++  local p=$1 cfg=$2 mvf sid pp mins b e w i; local -a av
++  mvf=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | sed -n 's/^LR_MOVE_FILE=//p' | head -1)
++  [ -n "$mvf" ] || { print "its wrapper takes no move (no LR_MOVE_FILE: an older claude-resume-on-limit.sh, LIMIT_RESUME off, or no wrapper)"; return 1; }
++  pp=$(ps -o ppid= -p $p | tr -d ' '); sid=${${mvf:t}%%.*}; av=("${(@0)$(< /proc/$p/cmdline)}")
++  [[ ${mvf:t} == $sid.$pp.move ]] && (( ${av[(Ie)$sid]} )) || { print "LR_MOVE_FILE ${mvf:t} is not its own wrapper's (parent $pp)"; return 1; }
++  [ -n "$cfg" ] || { print "no CLAUDE_CONFIG_DIR"; return 1; }
++  mins=$(zsh ${FM_ACCOUNTS_SH:-$M/accounts.sh} 2>/dev/null | python3 -I -c 'import os, sys; sys.path.insert(0, sys.argv[2]); import endgame
++for l in sys.stdin:
++    x = l.split()
++    if len(x) >= 7 and os.path.basename(x[1]) == os.path.basename(sys.argv[1]):
++        h = endgame.hours_to(x[5]); print(int(h * 60) if h is not None and h >= 0 else ""); break' "$cfg" $M/tools-local 2>/dev/null)
++  [[ $mins == <-> ]] || { print "the 5-h reset of ${cfg:t} is unknown"; return 1; }
++  [ $mins -gt ${FM_MOVE_AFTER_MIN:-60} ] || { print "its 5-h window resets in $mins min (moved only when over ${FM_MOVE_AFTER_MIN:-60})"; return 1; }
++  [ -e ${FM_LONG_ROOM_FLAG:-$M/PICK_LONG_ROOM} ] || { print "PICK_LONG_ROOM is off: the picker projects no room, so nothing is moved"; return 1; }
++  e=$(mktemp); b=$(PICK_NOWAIT=1 PICK_LIGHT=1 PICK_AVOID=${cfg:t} zsh ${FM_PICK:-$M/pick-claude-account.sh} 2> $e < /dev/null); w=$(grep -m1 -o 'PICK_WHY.*' $e | cut -c1-300); rm -f $e
++  [ -n "$b" ] && [ -d "$b" ] && [ "${b:t}" != "${cfg:t}" ] || { print "5-h reset in $mins min, but no other account admits it (${w:-picker gave '${b}'})"; return 1; }
++  print -r -- "$b" > $mvf.tmp && mv -f $mvf.tmp $mvf || { rm -f $mvf.tmp; print "cannot write ${mvf}"; return 1; }
++  [ "$(ps -o stat= -p $p | cut -c1)" = T ] || { rm -f $mvf; print "no longer stopped"; return 1; }
++  kill -KILL $(desc $p) $p 2>/dev/null
++  # let the wrapper resume before the next pick of this pass counts the destination's sessions (at most FM_MOVE_SETTLE_S, 30 s)
++  for i in {1..${FM_MOVE_SETTLE_S:-30}}; do [ ! -e $mvf ] && [ -n "$(pgrep -P $pp)" ] && break; sleep 1; done
++  print "5-h reset in $mins min; moved to ${b:t} by transcript copy + --resume (claude-resume-on-limit.sh pid $pp, session $sid)"; return 0; }
+ killchain(){  # $1 chain pid, $2 stopped worker pid, $3 item: KILL the chain's scope if the chain owns it, else the chain's tree
+   local ch=$1 w=$2 it=${3//[^A-Za-z0-9_-]/_} sc t; sc=$(sed -n 's|.*/\([^/]*\.scope\)$|\1|p' /proc/$ch/cgroup 2>/dev/null | head -1)
+   t=($ch $(desc $ch))
+@@ -48,21 +83,32 @@
+     while [ "$a" -gt 1 ]; do a=$(ps -o ppid= -p $a | tr -d ' '); c=$(tr '\0' ' ' < /proc/$a/cmdline 2>/dev/null); [[ "$c" == *infra-item.sh\ * ]] && { chain=$a; break; }; done
+     # (b) topmost: a ( ... ) & subshell of a chain has the chain's own command line; go on while the parent is the same chain
+     while [ -n "$chain" ]; do pp=$(ps -o ppid= -p $chain | tr -d ' '); [ "${pp:-1}" -gt 1 ] && [ "$(tr '\0' ' ' < /proc/$pp/cmdline 2>/dev/null)" = "$(tr '\0' ' ' < /proc/$chain/cmdline 2>/dev/null)" ] && chain=$pp || break; done
+-    [ -n "$chain" ] || { [ -n "$dry" ] && echo "DRY-RUN: stopped worker $p: no infra-item.sh chain above it -> would leave it"; continue; }
+-    # a chain started by lean-first-run.sh must not be killed (the runner would start the next wave early)
+-    pp=$(ps -o ppid= -p $chain | tr -d ' '); [[ "$(tr '\0' ' ' < /proc/$pp/cmdline 2>/dev/null)" == *lean-first-run* ]] && { [ -n "$dry" ] && echo "DRY-RUN: stopped worker $p: chain $chain was started by lean-first-run.sh -> would leave it"; continue; }
+-    cmd=("${(@0)$(< /proc/$chain/cmdline)}"); cmd=(${cmd[@]:1})  # argv without the leading zsh
+-    if [ -n "$dry" ]; then echo "DRY-RUN: stopped worker $p (seen stopped ${age}s; acts from 300s): would kill chain $chain and its children, then relaunch from $M: nice -n 10 zsh ${cmd[*]}"; continue; fi
++    lfr=""; cmd=()
++    if [ -n "$chain" ]; then
++      # a chain started by lean-first-run.sh must not be killed (the runner would start the next wave early)
++      pp=$(ps -o ppid= -p $chain | tr -d ' '); [[ "$(tr '\0' ' ' < /proc/$pp/cmdline 2>/dev/null)" == *lean-first-run* ]] && lfr=1
++      cmd=("${(@0)$(< /proc/$chain/cmdline)}"); cmd=(${cmd[@]:1})  # argv without the leading zsh
++    fi
++    if [ -n "$dry" ]; then
++      if [ -z "$chain" ]; then echo "DRY-RUN: stopped worker $p: no infra-item.sh chain above it -> would leave it (a 5-h freeze may still be moved by --resume, rule (c))"
++      elif [ -n "$lfr" ]; then echo "DRY-RUN: stopped worker $p: chain $chain was started by lean-first-run.sh -> would leave it"
++      else echo "DRY-RUN: stopped worker $p (seen stopped ${age}s; acts from 300s): would kill chain $chain and its children, then relaunch from $M: nice -n 10 zsh ${cmd[*]}"; fi
++      continue; fi
+     [ $age -ge ${FM_MIN_AGE:-300} ] || continue
+-    # (c) a 5-h-window freeze is waited out; only a weekly-cap freeze (or FM_MAX_WAIT) moves the item
++    # (c) a 5-h-window freeze is moved by --resume when its reset is over 60 min away and another account admits it (rmove), else
++    # waited out; a weekly-cap freeze (or FM_MAX_WAIT) relaunches the chain
+     if [ "${FM_MOVE_5H:-0}" != 1 ] && [ $age -lt ${FM_MAX_WAIT:-21600} ]; then
++      cfgd=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | sed -n 's|^CLAUDE_CONFIG_DIR=||p' | head -1)
+       wd=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | sed -n 's|^CLAUDE_CONFIG_DIR=.*/claude-||p' | head -1)
+       case $wd in (panaali2) wa=main;; (saeedi-danial) wa=saeedi.danial;; (*) wa=$wd;; esac
+       wk=$(tail -40 ${FM_USAGE_LOG:-$M/usage-watch.log} 2>/dev/null | awk -v a="$wa" '$2 == a && match($0, /week=-?[0-9]+/) { v = substr($0, RSTART + 5, RLENGTH - 5) } END { print v }')
+       if [[ "$wk" != <-> ]] || [ $wk -lt ${FM_WEEK_LEVEL:-90} ]; then
+-        [ -z "${told[$p]}" ] && echo "$(date -u +%FT%H:%MZ) frozen worker $p (${cmd[2]}, account ${wa:-unknown}, week ${wk:-?}%): 5-h window freeze, left to resume at the reset (moved only at week >= ${FM_WEEK_LEVEL:-90} or after ${FM_MAX_WAIT:-21600} s stopped)" >> $LOGF
+-        told[$p]=1; continue; fi
++        if why=$(rmove $p "$cfgd"); then
++          echo "$(date -u +%FT%H:%MZ) frozen worker $p (${cmd[2]:-no chain}, account ${wa:-unknown}, week ${wk:-?}%): 5-h window freeze, $why" >> $LOGF; continue; fi
++        [ "${told[$p]}" != "${why//[0-9]/}" ] && echo "$(date -u +%FT%H:%MZ) frozen worker $p (${cmd[2]:-no chain}, account ${wa:-unknown}, week ${wk:-?}%): 5-h window freeze, left to resume at the reset: $why (a chain relaunch only at week >= ${FM_WEEK_LEVEL:-90} or after ${FM_MAX_WAIT:-21600} s stopped)" >> $LOGF
++        told[$p]=${why//[0-9]/}; continue; fi
+     fi
++    [ -n "$chain" ] && [ -z "$lfr" ] || continue  # no chain, or a lean-first-run chain: nothing to relaunch
+     # 2026-11-10 (dri-decider): relaunch in the item's own capped scope via iso.sh (the old setsid nohup put every
+     # relaunched chain in this service's 2G scope: 5 chains OOM-killed together at 12:30Z); VE_STEP (a launcher's step
+     # marker) is never carried into the new chain; memory = the old scope's MemoryMax, else 32G
+@@ -75,7 +121,7 @@
+     [ -n "$other" ] && { echo "$(date -u +%FT%H:%MZ) live chain kept: infra-item.sh ${cmd[2]} still runs (pid $other) outside the killed tree; no relaunch" >> $LOGF; continue; }
+     (cd $M && env -u VE_STEP setsid -f zsh $M/iso.sh fm-${cmd[2]}-$(date -u +%d%H%M) $mem -- nice -n 10 ${FM_RUNNER:-zsh} "${cmd[@]}" >> $LOGF 2>&1 < /dev/null)
+   done
+-  seen=(${(kv)cur})
++  seen=(${(kv)cur}); for p in ${(k)told}; do (( ${+cur[$p]} )) || unset "told[$p]"; done
+   [ -n "$dry" ] && { echo "DRY-RUN: done; $nstopped stopped claude -p worker(s) found"; exit 0; }
+   [ -n "$once" ] && exit 0
+   sleep 300
+--- claude-resume-on-limit.sh (installed)
++++ claude-resume-on-limit.sh.new-fmw (staged)
+@@ -17,6 +17,11 @@
+ # the last attempt's (the report), earlier attempts' stdout is kept in limit-resume/<id>-<n>.out. One line per event in
+ # limit-resume.log. Off switch: rm the flag file LIMIT_RESUME (the wrapper then execs claude unchanged).
+ # Tests: python3 -I tools-local/test_limit_resume.py (stub claude, stub picker).
++# 2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z; reviews/dri-decisions-20261113-thresholds.md item 4): each attempt runs
++# with LR_MOVE_FILE=<spool>/<sid>.<this wrapper's pid>.move in claude's environment. freeze-mover.sh moves a 5-h-frozen session by
++# writing the destination config dir there and killing the stopped claude; an attempt that ends non-zero with that file present is
++# resumed like a limit: transcript copied to the destination (limit-resume.py where + move), then --resume there, never a cold
++# restart. A failed copy resumes on the same account. A zero exit ignores and removes the file. Tests: the same test file.
+ M=/home/seyran/code/manage-agents; C=${LR_CLAUDE:-/home/seyran/.local/bin/claude}
+ [ -f ${LR_FLAG:-$M/LIMIT_RESUME} ] || exec $C "$@"
+ LOG=${LR_LOG:-$M/limit-resume.log}; SPOOL=${LR_SPOOL:-$M/limit-resume}; PICK=${LR_PICK:-$M/pick-claude-account.sh}; HELP=${LR_HELPER:-$M/tools-local/limit-resume.py}
+@@ -43,9 +48,22 @@
+ who=${VE_STEP:-$(tr '\0' ' ' < /proc/$PPID/cmdline 2>/dev/null | cut -c1-120)}
+ ev(){ print -r -- "$(date -u +%FT%H:%M:%SZ)	$1	$sid	${cfg:t}	$2	${who//	/ }" >> $LOG; }
+ cur=("${args[@]}"); in=$tmp/prompt; n=0; waited=0; rc=0
++mkdir -p $SPOOL; export LR_MOVE_FILE=$SPOOL/$sid.$$.move; rm -f $LR_MOVE_FILE
+ while true; do
+   t0=$(date +%s.%N)
+   if [ -n "$acct" ]; then CLAUDE_CONFIG_DIR=$acct $C "${cur[@]}" < $in > $tmp/out; rc=$?; else $C "${cur[@]}" < $in > $tmp/out; rc=$?; fi
++  if [ -f $LR_MOVE_FILE ] && [ $rc -eq 0 ]; then rm -f $LR_MOVE_FILE; fi
++  if [ -f $LR_MOVE_FILE ]; then  # fm-move-5h-room: freeze-mover stopped this attempt to move the session
++    b=$(head -1 $LR_MOVE_FILE); rm -f $LR_MOVE_FILE; n=$((n + 1)); died=$(date -u +%FT%H:%MZ); cp $tmp/out $SPOOL/$sid-$n.out 2>/dev/null
++    tp=$(python3 -I $HELP where "$cfg" $sid 2>/dev/null)
++    if [ -n "$tp" ] && [ -d "$b" ] && [ "${b:t}" != "${cfg:t}" ] && np=$(python3 -I $HELP move $tp $b 2>/dev/null); then
++      ev MOVE "freeze-mover: to ${b:t}: ${np:t}"; acct=$b; cfg=$b; how="${b:t} account (transcript copied; cache cold there)"
++    else ev MOVEFAIL "freeze-mover: to ${b:-?} (transcript ${tp:-not found})"; how="same account (the move failed)"; fi
++    print -r -- "[resume-on-limit] Your previous run was stopped at $died while its account's 5-hour window was frozen, and moved. It is now $(date -u +%FT%H:%MZ); you continue on the $how. Continue the task where you stopped: your previous turns are above. Do not restart from scratch. A command you had running when it stopped was ended: before redoing any step, check the state it left (git status and git log in your worktree, the files you were editing, the logs of commands you had started). Then finish the task and give the final report it asks for." > $tmp/resume
++    cur=("${base[@]}" --resume $sid); in=$tmp/resume
++    ev RESUME "attempt=$((n + 1)) moved by freeze-mover: ${how}"
++    continue
++  fi
+   info=($(python3 -I $HELP check "$cfg" $sid $t0 $tmp/out 2>/dev/null))
+   [ "${info[1]}" = LIMIT ] || break
+   n=$((n + 1)); kind=${info[2]}; reset=${info[3]}; tp=${info[4]}; died=$(date -u +%FT%H:%MZ)
+@@ -81,6 +99,7 @@
+   cur=("${base[@]}" --resume $sid); in=$tmp/resume
+   ev RESUME "attempt=$((n + 1)) ${how}"
+ done
++rm -f $LR_MOVE_FILE
+ [ $n -gt 0 ] && ev DONE "rc=$rc limits=$n waited_min=$((waited / 60))"
+ cat $tmp/out; rm -rf $tmp
+ exit $rc
+--- pick-claude-account.sh (installed)
++++ pick-claude-account.sh.new-fmw (staged)
+@@ -417,8 +417,29 @@
+     except (OSError, subprocess.SubprocessError): rc = -1
+     if rc != 0:
+         with open(ostop_p, "a") as fh: fh.write(f"msg.sh to the orchestrator failed (rc {rc}): tell it by hand\n")
++# 2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z; reviews/dri-decisions-20261113-thresholds.md item 4; INSTALL READ):
++# (i) PICK_LONG_ROOM projects with the MEASURED 5-h points per session-hour of the account (tools-local/session_rate.py: usage-watch.log
++# meter rises over pick.log busy counts, last PICK_RATE_H 6 h, at least PICK_RATE_MIN_SH 2 session-hours), else the pooled rate of the
++# accounts of its plan size read so far (the lines stream: accounts.sh prints main, danielsaeedi37, saeedi.danial, each after its
++# probe), else the modelled default (5x now 8: 11-13 under
++# Fable seats ~8, measured 11-20 7.8 over 6 h / 6.9 over 24 h; main 1.5), never below the last hour per running session (live);
++# (ii) inside the main weekly endgame window (endgame.HOURS before its reset) main goes first and the helpers are ordered by projected
++# 5-h room (PICK_PREFER does not order them), so overflow spreads by 5-h room or waits (PICK_LONG_ROOM) and never fills one
++# helper (11-13: danielsaeedi37 5-h 36 -> 90 in 37 min); the best account is chosen after the loop, when the main line has been read.
++# PICK_PICK_LOG = the pick.log path (tests). Tests: tools-local/test_pick_srate.py
++def plan_size(a): return 2 if a == "main" else 1  # 2026-10-04: main (panaali2) is a 20x plan, the others 5x: one percent of main is 4x the tokens
++acct_pairs, cands, mainew = [], [], False
++def srate(a, d):  # (measured 5-h points per session-hour, its source) or (None, None)
++    try:
++        import session_rate
++        return session_rate.pick_rate(a, os.path.basename(d), [(x, y) for x, y, z in acct_pairs if z == plan_size(a)],
++                                      min_sh=float(os.environ.get("PICK_RATE_MIN_SH", "2")), now=now.timestamp(), hours=float(os.environ.get("PICK_RATE_H", "6")),
++                                      ulog=os.environ.get("PICK_USAGE_LOG") or None, plog=os.environ.get("PICK_PICK_LOG") or None)
++    except Exception: return (None, None)  # no module or no log: the modelled default
+ for line in sys.stdin:
+     a, d, f, w, st, r1, r2 = line.split()
++    acct_pairs.append((a, os.path.basename(d), plan_size(a)))  # fm-move-5h-room (i): the plan pool so far
++    if a == "main" and endgame.inside(endgame.hours_to(r2, now)): mainew = True  # fm-move-5h-room (ii)
+     f, w = int(f), int(w); fraw = f  # placement-c-picker: the 5-h as accounts.sh printed it
+     nowin, mtrip = f == -2, a == "main" and m5trip  # main5h-build-1117 (above)
+     if nowin: f = 0 if (a == "main" and not m5trip) else -1
+@@ -494,7 +515,7 @@
+         reld = d
+     if hold and d == hold:
+         no(a, f, w, "held for a waiting critical builder (pick-waiting/, bs-pick-critical-first)"); continue
+-    size = 2 if a == "main" else 1  # 2026-10-04: main (panaali2) is a 20x plan, the others 5x: one percent of main is 4x the tokens
++    size = plan_size(a)
+     h5, hw = endgame.hours_to(r1, now), endgame.hours_to(r2, now)
+     e5, ew = endgame.inside(h5) and not builder, endgame.inside(hw) and not builder  # 2026-10-28 ENDGAME (see the header)
+     top5, topw = endgame.top(a, "5h"), endgame.top(a, "week")  # 2026-10-30 eg-picker-pools: each pool its own endgame limit
+@@ -555,12 +576,14 @@
+     # f + burn per worker-hour x (running + 1) x min(hours to reset, PICK_SESSION_H 1.5), burn = the larger of the default
+     # (PICK_BURN5 / PICK_BURN5_MAIN, as above) and the last-hour rate of the account per running worker; same for the week.
+     # At PICK_LONG_LIM (100, where sessions die) or more the account is skipped. claude-resume-on-limit.sh resumes what still dies.
++    mr_, msrc_ = srate(a, d)  # fm-move-5h-room (i): measured, else the modelled default; the live last hour per session is the floor
++    b5_ = round(max(mr_ if mr_ is not None else float(os.environ.get("PICK_BURN5" if size == 1 else "PICK_BURN5_MAIN", "8" if size == 1 else "1.5")), (live(a, 0) or 0) / max(n, 1)), 2)
++    proj5_ = f + b5_ * (n + 1) * min(max(h5, 0), float(os.environ.get("PICK_SESSION_H", "1.5"))) if h5 is not None else f
+     if os.path.exists("/home/seyran/code/manage-agents/PICK_LONG_ROOM") and not os.environ.get("PICK_SHORT") and not (os.environ.get("PICK_URGENT") and a != "main"):  # 2026-11-04 DRI: coordinators (decider, critical pilots) go ahead of new builders on a 5x account; claude-resume-on-limit.sh resumes a session that still hits the limit
+         sh_, ll_ = float(os.environ.get("PICK_SESSION_H", "1.5")), float(os.environ.get("PICK_LONG_LIM", "100"))
+-        b5_ = max(float(os.environ.get("PICK_BURN5" if size == 1 else "PICK_BURN5_MAIN", "6" if size == 1 else "1.5")), (live(a, 0) or 0) / max(n, 1))
+         bw_ = max(float(os.environ.get("PICK_BURNW" if size == 1 else "PICK_BURNW_MAIN", "0.7" if size == 1 else "0.25")), (live(a, 1) or 0) / max(n, 1))
+         if h5 is not None and f + b5_ * (n + 1) * min(max(h5, 0), sh_) >= ll_:
+-            no(a, f, w, f"PICK_LONG_ROOM 5-h: {f} + {b5_:g} x {n + 1} x {min(max(h5, 0), sh_):.2f} h = {f + b5_ * (n + 1) * min(max(h5, 0), sh_):.1f} >= {ll_:g}"); continue
++            no(a, f, w, f"PICK_LONG_ROOM 5-h: {f} + {b5_:g} x {n + 1} x {min(max(h5, 0), sh_):.2f} h = {f + b5_ * (n + 1) * min(max(h5, 0), sh_):.1f} >= {ll_:g}" + (f"; {msrc_} rate" if msrc_ else "")); continue
+         if hw is not None and w + bw_ * (n + 1) * min(max(hw, 0), sh_) >= ll_:
+             no(a, f, w, f"PICK_LONG_ROOM week: {w} + {bw_:g} x {n + 1} x {min(max(hw, 0), sh_):.2f} h = {w + bw_ * (n + 1) * min(max(hw, 0), sh_):.1f} >= {ll_:g}"); continue
+     if e5: room.append(int((top5 - f) / (max(float(os.environ.get("PICK_BURN5" if size == 1 else "PICK_BURN5_MAIN", "6" if size == 1 else "1.5")), (live(a, 0) or 0) / max(n, 1)) * max(h5, 0.25))))
+@@ -640,7 +663,10 @@
+                 pref = True
+     except (OSError, ValueError):
+         pass
+-    if best is None or (pref, pace) > (best[2], best[0]): best = (pace, d, pref)
++    cands.append((a, d, pref, pace, lim5 - proj5_))
++for a_, d_, pref_, pace_, room_ in cands:  # fm-move-5h-room (ii): in the main weekly endgame window main first, then helpers by projected 5-h room
++    key_ = ((2, 0, pace_) if a_ == "main" else (1, room_, pace_)) if mainew else (pref_, pace_)
++    if best is None or key_ > best[0]: best = (key_, d_)
+ if r1made and (best[1] if best else fb) != r1d:  # pick-main-rank1: the holder marker taken for main, but main was not picked: give it back
+     try:
+         with r1lock():  # only the grants of this call for its own holder: other holders and other grants of this row stay
+--- tools-local/limit-resume.py (installed)
++++ tools-local/limit-resume.py.new-fmw (staged)
+@@ -9,7 +9,10 @@
+   move <transcript> <destination config dir>
+       -> copies <sid>.jsonl and its <sid>/ folder (subagents, tool results) to <dest>/projects/<same project dir>/ and prints
+       the new path. claude --resume finds a session only under the CLAUDE_CONFIG_DIR it runs with ("No conversation found"
+-      otherwise); with the copy, the session resumes there with its context (measured 2026-10-31: answer intact, cache cold)."""
++      otherwise); with the copy, the session resumes there with its context (measured 2026-10-31: answer intact, cache cold).
++  where <config dir> <session id>
++      -> the session's transcript path under that config dir (the newest if several), or nothing with exit 1 (2026-11-20
++      fm-move-5h-room: claude-resume-on-limit.sh resumes a session freeze-mover moved, which ended without a limit record)."""
+ import datetime, glob, json, os, re, shutil, sys, time
+ 
+ LIMIT_RX = re.compile(r"(?:You've hit your|You have hit your) (?:(5-hour|weekly|Opus weekly|session)\s+)?limit.*?(?:resets\s+([0-9: apm]+?)\s*\((\w+)\))?\s*$", re.I | re.M)
+@@ -101,6 +104,8 @@
+ if __name__ == "__main__":
+     if len(sys.argv) == 6 and sys.argv[1] == "check":
+         print(check(*sys.argv[2:]))
++    elif len(sys.argv) == 4 and sys.argv[1] == "where":
++        t = transcript(sys.argv[2], sys.argv[3]); print(t) if t else sys.exit(1)
+     elif len(sys.argv) == 4 and sys.argv[1] == "move":
+         print(move(sys.argv[2], sys.argv[3]))
+     else:
+--- tools-local/test-freeze-mover.zsh (before, .bak-20261120-fmw)
++++ tools-local/test-freeze-mover.zsh (edited in place)
+@@ -126,6 +126,73 @@
+ [ ${#alive} = 0 ] && ok "E: the topmost chain and its subshell are dead" || bad "E: old chain processes alive (two chains for one item): $alive"
+ [ -f $T/relaunched-fmE$R.txt ] && ok "E: one relaunch" || bad "E: no relaunch"
+ systemctl --user stop "$sc" 2>/dev/null
++
++# ---- 2026-11-20 fm-move-5h-room: case F (fails on the freeze-mover.sh of 2026-11-11, which waits out every 5-h freeze).
++# A worker under a stub chain runs through claude-resume-on-limit.sh (FMT_WRAPPER, default the installed one; FMT_LR_HELPER its
++# limit-resume.py) with a stub claude; its account acctA is 5-h frozen (week 40). F1: reset in 45 min -> kept. F2: reset in 3 h,
++# the picker (stub, FM_PICK) admits no account, or the PICK_LONG_ROOM flag is off -> kept, logged. F3: the picker admits acctB -> the stopped
++# claude is killed, the SAME session resumes on acctB (--resume <sid>, transcript copied), the chain lives on and gets rc 0, no
++# relaunch. F4: a stopped claude with no LR_MOVE_FILE (no wrapper) -> kept, the log says its wrapper takes no move.
++WRAP=${FMT_WRAPPER:-$M/claude-resume-on-limit.sh}; LRH=${FMT_LR_HELPER:-$M/tools-local/limit-resume.py}
++mkdir -p $T/f $T/claude-acctA $T/claude-acctB
++cat > $T/f/fakeclaude-$R <<'EOF2'
++#!/usr/bin/env python3
++import json, os, sys, time
++a = sys.argv[1:]; cfg = os.environ.get("CLAUDE_CONFIG_DIR", ""); sid = a[a.index("--resume") + 1] if "--resume" in a else a[a.index("--session-id") + 1]
++txt = sys.stdin.read()
++open(os.environ["FMT_STATE"] + "/calls", "a").write(json.dumps({"cfg": cfg, "args": a, "move": os.environ.get("LR_MOVE_FILE", ""), "stdin": txt[:120]}) + "\n")
++pd = os.path.join(cfg, "projects", "-tmp-fmtest"); os.makedirs(pd, exist_ok=True)
++open(os.path.join(pd, sid + ".jsonl"), "a").write(json.dumps({"type": "user", "sessionId": sid, "message": {"content": txt[:80]}}) + "\n")
++if "--resume" in a: print("RESUMED REPORT"); sys.exit(0)
++time.sleep(600)
++EOF2
++chmod +x $T/f/fakeclaude-$R; print "DO THE TASK" > $T/f/prompt; : > $T/f/LR_FLAG
++cat > $T/f/infra-item.sh <<EOF2
++#!/bin/zsh
++export FMT_STATE=$T/f LR_CLAUDE=$T/f/fakeclaude-$R LR_FLAG=$T/f/LR_FLAG LR_LOG=$T/f/lr.log LR_SPOOL=$T/f/spool LR_HELPER=$LRH LR_PICK=/bin/false
++CLAUDE_CONFIG_DIR=$T/claude-acctA zsh $WRAP -p --model opus < $T/f/prompt > $T/f/out
++print "rc=\$?" > $T/f/rc
++sleep 600
++EOF2
++cat > $T/f/pick.zsh <<EOF2
++print -r -- "PICK_AVOID=\$PICK_AVOID PICK_NOWAIT=\$PICK_NOWAIT PICK_LIGHT=\$PICK_LIGHT" >> $T/f/pickargs
++[ -f $T/f/pick-none ] && { print -u2 "PICK_WHY: acctB: PICK_LONG_ROOM 5-h: 70 + 8 x 3 x 1.50 h = 106.0 >= 100"; exit 1; }
++print $T/claude-acctB
++EOF2
++acc(){ print "print '$1 $T/claude-acctA 92 40 allowed $(TZ=America/Los_Angeles date -d "+$2 min" +%a_%b%d_%H:%M) Mon_Nov23_03:00'; print 'acctB $T/claude-acctB 10 20 allowed $(TZ=America/Los_Angeles date -d '+200 min' +%a_%b%d_%H:%M) Mon_Nov23_03:00'" > $T/f/accounts.sh; }
++print "$(date -u +%H:%MZ) acctA 5h=92 week=40 allowed_warning" > $T/f/usage.log
++: > $T/f/PICK_LONG_ROOM
++run_f(){ FM_LONG_ROOM_FLAG=$T/f/PICK_LONG_ROOM FM_USAGE_LOG=$T/f/usage.log FM_ACCOUNTS_SH=$T/f/accounts.sh FM_PICK=$T/f/pick.zsh FM_PATTERN="fakeclaude-$R" FM_MIN_AGE=0 FM_RUNNER=$T/runner.zsh FM_LOG=$T/fm.log zsh $FM --once; }
++setsid -f zsh $M/iso.sh fmF$R 2G -- zsh $T/f/infra-item.sh fmF$R br task > /dev/null 2>&1 < /dev/null
++waitfor '[ -s $T/f/calls ] && [ -n "$(pgrep -f fakeclaude-$R)" ]' || bad "F: stub claude did not start"
++w=$(pgrep -f "fakeclaude-$R"); ch=$(pgrep -o -f "$T/f/infra-item.sh fmF$R"); sc=$(scope_of ${ch:-0})
++sid=$(python3 -I -c 'import json, sys; a = json.loads(open(sys.argv[1]).readline())["args"]; print(a[a.index("--session-id") + 1])' $T/f/calls)
++print "F: chain $ch scope $sc, stub claude $w, session $sid"
++kill -STOP $w
++acc acctA 45; run_f
++kill -0 $w 2>/dev/null && [ "$(ps -o stat= -p $w | cut -c1)" = T ] && [ ! -f $T/f/pickargs ] && ok "F1: reset in 45 min: kept stopped, no pick" || bad "F1: moved or picked with the reset 45 min away"
++grep -q "frozen worker $w .*resets in 4[0-9] min (moved only when over 60)" $T/fm.log && ok "F1: the log names the reset" || bad "F1: no reset line in the log"
++acc acctA 180; : > $T/f/pick-none; run_f
++kill -0 $w 2>/dev/null && [ "$(ps -o stat= -p $w | cut -c1)" = T ] && ok "F2: no account admits it: kept stopped" || bad "F2: moved without an admitting account"
++grep -q "PICK_AVOID=claude-acctA PICK_NOWAIT=1 PICK_LIGHT=1" $T/f/pickargs 2>/dev/null && ok "F2: the picker was asked for another account (PICK_AVOID, NOWAIT, LIGHT)" || bad "F2: picker args: $(cat $T/f/pickargs 2>/dev/null)"
++grep -q "frozen worker $w .*no other account admits it (PICK_WHY: acctB: PICK_LONG_ROOM" $T/fm.log && ok "F2: the log carries the picker reason" || bad "F2: no picker reason in the log"
++rm -f $T/f/pick-none $T/f/PICK_LONG_ROOM; run_f
++kill -0 $w 2>/dev/null && [ "$(ps -o stat= -p $w | cut -c1)" = T ] && grep -q "frozen worker $w .*PICK_LONG_ROOM is off" $T/fm.log && ok "F2: flag PICK_LONG_ROOM off (no projection): kept, logged" || bad "F2: moved with PICK_LONG_ROOM off"
++: > $T/f/PICK_LONG_ROOM; run_f
++waitfor '[ -f $T/f/rc ]' || bad "F3: the wrapper did not finish after the move"
++kill -0 $w 2>/dev/null && bad "F3: the stopped claude still lives"
++python3 -I -c 'import json, sys; c = [json.loads(l) for l in open(sys.argv[1])]; a = c[-1]["args"]; sys.exit(0 if len(c) == 2 and c[-1]["cfg"].endswith("/claude-acctB") and a[a.index("--resume") + 1] == sys.argv[2] and "--session-id" not in a else 1)' $T/f/calls $sid \
++  && ok "F3: the same session resumed on acctB (--resume $sid)" || bad "F3: calls: $(tail -1 $T/f/calls)"
++[ -f $T/claude-acctB/projects/-tmp-fmtest/$sid.jsonl ] && ok "F3: transcript copied to acctB" || bad "F3: no transcript on acctB"
++[ "$(cat $T/f/rc 2>/dev/null)" = rc=0 ] && grep -q "RESUMED REPORT" $T/f/out && ok "F3: the chain got the resumed report, rc 0" || bad "F3: chain rc $(cat $T/f/rc 2>/dev/null), out $(cat $T/f/out 2>/dev/null)"
++kill -0 $ch 2>/dev/null && [ ! -f $T/relaunched-fmF$R.txt ] && ok "F3: the chain lives on, no relaunch" || bad "F3: chain killed or relaunched"
++grep -q "frozen worker $w .*moved to claude-acctB by transcript copy + --resume" $T/fm.log && ok "F3: the move is logged" || bad "F3: no move line in the log"
++systemctl --user stop "$sc" 2>/dev/null
++FMT_STATE=$T/f CLAUDE_CONFIG_DIR=$T/claude-acctA setsid -f zsh $M/iso.sh fmG$R 2G -- $T/f/fakeclaude-$R -p --session-id 00000000-0000-0000-0000-00000000000g < $T/f/prompt > /dev/null 2>&1
++waitfor '[ -n "$(pgrep -f fakeclaude-$R)" ]' || bad "F4: stub claude did not start"
++w=$(pgrep -f "fakeclaude-$R"); sc=$(scope_of ${w:-0}); kill -STOP $w; run_f
++kill -0 $w 2>/dev/null && grep -q "frozen worker $w (no chain.*its wrapper takes no move" $T/fm.log && ok "F4: no LR_MOVE_FILE: kept, logged" || bad "F4: a worker without a move file was moved or not logged"
++systemctl --user stop "$sc" 2>/dev/null
+ for f in $T/relaunched-*.txt; do s=$(sed -n 's|^cgroup: .*/\([^/]*\.scope\)$|\1|p' $f); [ -n "$s" ] && systemctl --user stop "$s" 2>/dev/null; done
+ print "log:"; sed 's/^/  /' $T/fm.log
+ rm -rf $T
+--- tools-local/test_limit_resume.py (before, .bak-20261120-fmw)
++++ tools-local/test_limit_resume.py (edited in place)
+@@ -27,6 +27,12 @@
+ now = datetime.datetime.now(datetime.timezone.utc).isoformat()[:23] + "Z"
+ rec = lambda d: open(tp, "a").write(json.dumps(d) + "\n")
+ rec({"type": "user", "sessionId": sid, "timestamp": now, "message": {"role": "user", "content": stdin}})
++if step in ("frozen", "frozenok"):  # fm-move-5h-room: freeze-mover writes the destination into LR_MOVE_FILE and kills the stopped claude
++    mf = os.environ.get("LR_MOVE_FILE", "")
++    open(st + "/movefile", "a").write(mf + "\n")
++    if mf: open(mf, "w").write(os.environ.get("STUB_MOVE_TO", "") + "\n")
++    if step == "frozen": print("partial"); sys.exit(137)
++    print("FINAL REPORT %d" % (k + 1)); sys.exit(0)
+ if step.startswith("limit"):
+     secs = float(step.split(":")[1]) if ":" in step else 3600
+     if step.startswith("limittext"):
+@@ -149,12 +155,42 @@
+         r, calls, log = self.run_rl(["limit:10800", "ok"], LR_SAME_MAX_MIN="0", LR_MAX_WAIT_H="0")
+         self.assertEqual(r.returncode, 1); self.assertEqual(len(calls), 1); self.assertIn("\tGIVEUP\t", log)
+ 
++    # 2026-11-20 fm-move-5h-room: a session freeze-mover.sh moved (LR_MOVE_FILE + kill) resumes on the destination, not cold
++    def test_freeze_mover_move_resumes_on_destination(self):
++        r, calls, log = self.run_rl(["frozen", "ok"], STUB_MOVE_TO=self.B)
++        self.assertEqual((r.returncode, r.stdout.strip()), (0, "FINAL REPORT 2"))
++        self.assertEqual(len(calls), 2)
++        sid = self.val(calls[0]["args"], "--session-id")
++        self.assertEqual((calls[1]["cfg"], self.val(calls[1]["args"], "--resume")), (self.B, sid))
++        self.assertNotIn("--session-id", calls[1]["args"])
++        self.assertIn("5-hour window was frozen, and moved", calls[1]["stdin"])
++        self.assertTrue(os.path.exists(f"{self.B}/projects/-tmp-stubproj/{sid}.jsonl"))
++        mf = open(self.st + "/movefile").read().split()[0]
++        self.assertRegex(os.path.basename(mf), r"^%s\.\d+\.move$" % sid)
++        self.assertEqual(os.path.dirname(mf), f"{self.d}/spool")
++        self.assertFalse(os.path.exists(mf))
++        self.assertIn("\tMOVE\t", log); self.assertIn("freeze-mover: to claude-acctB", log)
++
++    def test_zero_exit_ignores_a_move_file(self):
++        r, calls, log = self.run_rl(["frozenok"], STUB_MOVE_TO=self.B)
++        self.assertEqual((r.returncode, r.stdout.strip(), len(calls)), (0, "FINAL REPORT 1", 1))
++        mf = open(self.st + "/movefile").read().split()[0]
++        self.assertTrue(mf.endswith(".move")); self.assertFalse(os.path.exists(mf)); self.assertEqual(log, "")
++
++    def test_failed_move_resumes_on_the_same_account(self):
++        r, calls, log = self.run_rl(["frozen", "ok"], STUB_MOVE_TO=f"{self.d}/claude-missing")
++        self.assertEqual((r.returncode, len(calls)), (0, 2))
++        sid = self.val(calls[0]["args"], "--session-id")
++        self.assertEqual((calls[1]["cfg"], self.val(calls[1]["args"], "--resume")), (self.A, sid))
++        self.assertIn("\tMOVEFAIL\t", log); self.assertIn("same account (the move failed)", calls[1]["stdin"])
++
+ 
+ class Helper(unittest.TestCase):
+     def test_text_reset_parse(self):
+         sys.path.insert(0, HERE)
+         import importlib.util
+-        spec = importlib.util.spec_from_file_location("lrh", HELPER); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
++        import importlib.machinery  # any file name (a staged .new-* copy too)
++        spec = importlib.util.spec_from_file_location("lrh", HELPER, loader=importlib.machinery.SourceFileLoader("lrh", HELPER)); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+         now = datetime.datetime(2026, 10, 29, 6, 7, tzinfo=datetime.timezone.utc).timestamp()
+         k, r = m.from_text("You've hit your 5-hour limit · resets 10:20am (UTC)\n", now)
+         self.assertEqual(k, "five_hour")
+--- tools-local/test_pick_longroom.py (before, .bak-20261120-fmw)
++++ tools-local/test_pick_longroom.py (edited in place)
+@@ -33,7 +33,8 @@
+         src = src.replace("/home/seyran/code/manage-agents/PICK_LONG_ROOM", fl)
+         p = f"{self.h}/pick.sh"; open(p, "w").write(src)
+         env = dict(os.environ, HOME=self.h, PICK_ACCOUNTS_SH=acc, PICK_LOADAVG=f"{self.h}/load", PICK_BUSY=busy,
+-                   PICK_NOWAIT="1", ENDGAME_NOW=str(te.NOW.timestamp()), PICK_USAGE_LOG=f"{self.h}/none")
++                   PICK_NOWAIT="1", ENDGAME_NOW=str(te.NOW.timestamp()), PICK_USAGE_LOG=f"{self.h}/none",
++                   PICK_BURN5="6")  # 2026-11-20 fm-move-5h-room: the arithmetic below is at the old 5x default 6 (now 8; test_pick_srate.py)
+         for k in ("PICK_MGMT", "PICK_SHORT", "PICK_LIGHT", "PICK_AVOID", "PICK_BUILDER", "PICK_COORD", "PICK_FAST", "PICK_URGENT"):
+             env.pop(k, None)
+         env.update(env_extra)
+--- tools-local/test_pick_why.py (before, .bak-20261120-fmw)
++++ tools-local/test_pick_why.py (edited in place)
+@@ -135,7 +135,7 @@
+                          "x5: held out (PICK_AVOID) (5-h 10%, week 20%)")
+ 
+     def test_long_room_and_endgame_room(self):
+-        self.assertEqual(self.one(f"x5 /x/claude-x5 60 20 allowed {field(h(4))} {field(h(60))}", "/x/claude-x5=5", PICK_LIGHT="1"),
++        self.assertEqual(self.one(f"x5 /x/claude-x5 60 20 allowed {field(h(4))} {field(h(60))}", "/x/claude-x5=5", PICK_LIGHT="1", PICK_BURN5="6"),  # fm-move-5h-room: at the old default 6
+                          "x5: PICK_LONG_ROOM 5-h: 60 + 6 x 6 x 1.50 h = 114.0 >= 100 (5-h 60%, week 20%)")
+         self.assertEqual(self.one(f"x5 /x/claude-x5 80 20 allowed {field(h(1))} {field(h(60))}", "/x/claude-x5=2", PICK_SHORT="1"),
+                          "x5: endgame room: 2 running >= room 1 (5-h reset in 1.0 h) (5-h 80%, week 20%)")
+--- /dev/null
++++ tools-local/session_rate.py (new)
+@@ -0,0 +1,139 @@
++"""2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z item 2; reviews/dri-decisions-20261113-thresholds.md item 4): the MEASURED
++5-h points per session-hour of an account, read by pick-claude-account.sh's PICK_LONG_ROOM projection instead of one modelled rate
++(11-13: a 5x account rose about 8 points a session-hour under Fable seats against 6 modelled; main about 0.45 against 0.77).
++
++  rise         = the sum of the account's 5-h meter rises between consecutive usage-watch.log readings in the last `hours`
++  session-hours = the same intervals x the account's running claude -p sessions then (the busy counts pick.log records at each pick;
++                  the newest sample at or before the interval start, at most STALE_MIN old; an account a sample omits has 0)
++An interval counts only when both readings are known (>= 0), at most GAP_MIN apart, the earlier one is under `hold` (a window at
++its freeze level has stopped sessions that do not burn) and the meter did not fall (a fall is the window's reset). An interval with
++no busy sample is left out of both sums. Meter rises with no counted session (interactive use, the orchestrator on main) are kept:
++the rate errs high. The rate is rise / session-hours, None below `min_sh` session-hours (too little to measure).
++pick_rate(): the account's own rate, else the pooled rate of the accounts of its plan size, else None (the caller's modelled default).
++CLI (read-only): python3 -I tools-local/session_rate.py [hours]  prints each account's and each plan size's measurement.
++Tests: python3 -I tools-local/test_session_rate.py; tools-local/test_pick_srate.py (the picker with it)."""
++import datetime, os, sys
++
++M = os.path.expanduser("~/code/manage-agents")
++GAP_MIN, STALE_MIN, TAIL = 15, 30, 200000  # TAIL bytes: about 18 h of usage-watch.log
++
++
++def _tail(path):
++    with open(path, "rb") as fh:
++        fh.seek(max(os.stat(path).st_size - TAIL, 0))
++        return fh.read().decode(errors="replace").splitlines()[1:]
++
++
++def readings(path, now):
++    """{account: [(epoch, 5-h %)]} from usage-watch.log ("HH:MMZ <account> 5h=<v> week=<w> ..."); the newest line is dated by the
++    file's mtime (the newest earlier time of day), earlier lines walk back across midnight."""
++    try:
++        rows, mt = _tail(path), min(os.stat(path).st_mtime, now)
++    except OSError:
++        return {}
++    parsed = []
++    for r in rows:
++        x = r.split()
++        if len(x) < 4 or not x[0].endswith("Z") or len(x[0]) != 6 or not x[2].startswith("5h="):
++            continue
++        try:
++            parsed.append((int(x[0][:2]) * 60 + int(x[0][3:5]), x[1], int(x[2][3:])))
++        except ValueError:
++            continue
++    if not parsed:
++        return {}
++    d = datetime.datetime.fromtimestamp(mt, datetime.timezone.utc)
++    m0 = parsed[-1][0]
++    t = d.replace(hour=m0 // 60, minute=m0 % 60, second=0, microsecond=0).timestamp()
++    if t > mt + 120:
++        t -= 86400
++    out, prev = {}, m0
++    for m, a, v in reversed(parsed):
++        back = (prev - m) % 1440
++        if back > 720:
++            back -= 1440  # a line a minute or two out of order, not a day back
++        t -= back * 60; prev = m
++        out.setdefault(a, []).append((t, v))
++    for a in out:
++        out[a].reverse()
++    return out
++
++
++def busy(path, since):
++    """[(epoch, {config dir basename: running sessions})] from pick.log lines "<ISO>Z picked <dir> busy: <dir>=<n> ... (caller ...)"."""
++    out = []
++    try:
++        rows = _tail(path)
++    except OSError:
++        return out
++    for r in rows:
++        x = r.split()
++        if len(x) < 4 or x[1] != "picked" or "busy:" not in x:
++            continue
++        try:
++            t = datetime.datetime.strptime(x[0], "%Y-%m-%dT%H:%MZ").replace(tzinfo=datetime.timezone.utc).timestamp()
++        except ValueError:
++            continue
++        if t < since - STALE_MIN * 60:
++            continue
++        c = {}
++        for f in x[x.index("busy:") + 1:]:
++            k, _, n = f.partition("=")
++            if not n or k in ("fast", "light", "crit-fallback"):
++                continue
++            try:
++                c[os.path.basename(k)] = int(n)
++            except ValueError:
++                pass
++        out.append((t, c))
++    out.sort(key=lambda s: s[0])
++    return out
++
++
++def measure(pairs, now=None, hours=6.0, hold=88, ulog=None, plog=None):
++    """(rise, session-hours) summed over pairs [(account, config dir basename)]."""
++    now = now if now is not None else datetime.datetime.now(datetime.timezone.utc).timestamp()
++    since = now - hours * 3600
++    rd = readings(ulog or os.path.join(M, "usage-watch.log"), now)
++    bs = busy(plog or os.path.join(M, "pick.log"), since)
++    rise = sh = 0.0
++    for a, cb in pairs:
++        pts = [p for p in rd.get(a, []) if p[0] <= now]
++        j = 0
++        for (t0, v0), (t1, v1) in zip(pts, pts[1:]):
++            if t0 < since or v0 < 0 or v1 < 0 or v0 >= hold or v1 < v0 or not 0 < t1 - t0 <= GAP_MIN * 60:
++                continue
++            while j + 1 < len(bs) and bs[j + 1][0] <= t0:
++                j += 1
++            if not bs or bs[j][0] > t0 or t0 - bs[j][0] > STALE_MIN * 60:
++                continue
++            rise += v1 - v0
++            sh += bs[j][1].get(cb, 0) * (t1 - t0) / 3600
++    return rise, sh
++
++
++def rate(pairs, min_sh=2.0, **kw):
++    rise, sh = measure(pairs, **kw)
++    return rise / sh if sh >= min_sh else None
++
++
++def pick_rate(a, cb, same_size, min_sh=2.0, **kw):
++    """(rate, source): the account's own measured rate, else its plan size's pooled one, else (None, None)."""
++    r = rate([(a, cb)], min_sh, **kw)
++    if r is not None:
++        return r, "measured " + a
++    r = rate(same_size, min_sh, **kw)
++    return (r, "measured plan pool") if r is not None else (None, None)
++
++
++if __name__ == "__main__":
++    import subprocess
++    h = float(sys.argv[1]) if len(sys.argv) > 1 else 6.0
++    TAIL = max(TAIL, int(h * 12000))
++    acc = [l.split()[:2] for l in subprocess.run(["zsh", os.path.join(M, "accounts.sh")], capture_output=True, text=True).stdout.splitlines() if len(l.split()) >= 7]
++    pairs = [(a, os.path.basename(d)) for a, d in acc]
++    for a, cb in pairs:
++        rise, sh = measure([(a, cb)], hours=h)
++        print(f"{a}: rise {rise:g} points over {sh:.2f} session-hours in {h:g} h -> " + (f"{rise / sh:.2f}" if sh else "-") + " per session-hour")
++    rise, sh = measure([p for p in pairs if p[0] != "main"], hours=h)  # plan size as the picker reads it: main 20x, the others 5x
++    print(f"5x pool: rise {rise:g} over {sh:.2f} session-hours -> " + (f"{rise / sh:.2f}" if sh else "-"))
+--- /dev/null
++++ tools-local/test_pick_srate.py (new)
+@@ -0,0 +1,191 @@
++"""Tests for fm-move-5h-room (2026-11-20; orchestrator ruling 222127Z, reviews/dri-decisions-20261113-thresholds.md item 4):
++tools-local/session_rate.py (measured 5-h points per session-hour from usage-watch.log + pick.log busy counts) and its use in
++pick-claude-account.sh: PICK_LONG_ROOM projects with the account's measured rate (else its plan pool's, else the modelled default,
++5x now 8), and inside main's weekly endgame window main goes first and the helpers are ordered by projected 5-h room.
++usage: python3 -I tools-local/test_pick_srate.py   (PICK_SCRIPT = the staged pick-claude-account.sh.new-fmw before mv;
++SRATE_SCRIPT = another session_rate.py). The picker cases fail on the picker installed before fm-move-5h-room."""
++import datetime, importlib.machinery, importlib.util, os, shutil, subprocess, sys, tempfile, unittest
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++sys.path.insert(0, HERE)
++import test_endgame as te  # fake clock (te.NOW), accounts.sh reset field helper
++
++PICK = os.environ.get("PICK_SCRIPT", te.PICK)
++SRATE = os.environ.get("SRATE_SCRIPT", os.path.join(HERE, "session_rate.py"))
++LIVE = "/home/seyran/code/manage-agents/"
++NOW = te.NOW.timestamp()
++UTC = datetime.timezone.utc
++
++
++def load_srate():
++    spec = importlib.util.spec_from_file_location("srate_t", SRATE, loader=importlib.machinery.SourceFileLoader("srate_t", SRATE))
++    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
++
++
++def hm(t):
++    return datetime.datetime.fromtimestamp(t, UTC).strftime("%H:%MZ")
++
++
++def iso(t):
++    return datetime.datetime.fromtimestamp(t, UTC).strftime("%Y-%m-%dT%H:%MZ")
++
++
++class Logs:
++    """usage-watch.log and pick.log fixtures: series(acct, start_min_ago, [values every step min]), busy(t_min_ago, {dir: n})."""
++    def __init__(self, d, end_min_ago=31):
++        self.u, self.p, self.end = f"{d}/usage-watch.log", f"{d}/pick.log", NOW - end_min_ago * 60
++        self.rows, self.picks = [], []
++
++    def series(self, acct, start_min_ago, vals, step=5):
++        for i, v in enumerate(vals):
++            self.rows.append((NOW - start_min_ago * 60 + i * step * 60, f"{acct} 5h={v} week=20 allowed"))
++
++    def busy(self, min_ago, counts, until_min_ago=None):  # one pick.log sample, or one every 20 min down to until_min_ago
++        for m in range(min_ago, (until_min_ago if until_min_ago is not None else min_ago) - 1, -20):
++            self.picks.append((NOW - m * 60, counts))
++
++    def write(self):
++        rows = sorted(r for r in self.rows if r[0] <= self.end)
++        with open(self.u, "w") as fh:
++            fh.write("first line skipped by the tail reader\n")
++            for t, x in rows: fh.write(f"{hm(t)} {x}\n")
++        os.utime(self.u, (self.end, self.end))
++        with open(self.p, "w") as fh:
++            fh.write("first line skipped by the tail reader\n")
++            for t, c in sorted(self.picks, key=lambda q: q[0]):
++                fh.write(f"{iso(t)} picked claude-x busy: " + "".join(f"{k}={v} " for k, v in c.items()) + "fast=0 light=0 (caller pid 1)\n")
++        return self.u, self.p
++
++
++class Module(unittest.TestCase):
++    def setUp(self):
++        self.d = tempfile.mkdtemp(prefix="srate-"); self.m = load_srate()
++
++    def tearDown(self):
++        shutil.rmtree(self.d, ignore_errors=True)
++
++    def test_rate_is_rise_over_session_hours(self):
++        lg = Logs(self.d)
++        lg.series("x5", 211, list(range(4, 41, 2)))  # 19 readings 5 min apart: rise 36 in 90 min
++        lg.busy(215, {"claude-x5": 2}, 135)  # 2 sessions -> 3 session-hours -> 12 per session-hour
++        u, p = lg.write()
++        rise, sh = self.m.measure([("x5", "claude-x5")], now=NOW, ulog=u, plog=p)
++        self.assertEqual(rise, 36); self.assertAlmostEqual(sh, 3.0)
++        self.assertAlmostEqual(self.m.rate([("x5", "claude-x5")], now=NOW, ulog=u, plog=p), 12.0)
++
++    def test_frozen_reset_gap_and_unsampled_intervals_are_left_out(self):
++        lg = Logs(self.d)
++        lg.series("x5", 300, [10, 20, 30])          # before any busy sample: left out
++        lg.busy(250, {"claude-x5": 1}); lg.busy(205, {"claude-x5": 1}); lg.busy(155, {"claude-x5": 1})
++        lg.series("x5", 240, [88, 95, 99])          # at the freeze level: left out
++        lg.series("x5", 200, [2, 5])                # 99 -> 2 is the reset (a fall): left out; 2 -> 5 counts (3 pts, 5 min)
++        lg.series("x5", 150, [5, 9])                # 5 -> 5 after a 45-min gap: left out; 5 -> 9 counts
++        lg.series("x5", 100, [-1, 50])              # an unknown reading: left out
++        u, p = lg.write()
++        rise, sh = self.m.measure([("x5", "claude-x5")], now=NOW, ulog=u, plog=p)
++        self.assertEqual(rise, 7); self.assertAlmostEqual(sh, 10 / 60)
++
++    def test_stale_sample_and_other_account_count_zero(self):
++        lg = Logs(self.d)
++        lg.busy(200, {"claude-x5": 3})
++        lg.series("x5", 160, [10, 20])              # newest sample 40 min old (> 30): left out
++        lg.busy(120, {"claude-y5": 4})
++        lg.series("x5", 110, [20, 24])              # sample omits x5: 0 sessions, rise kept (errs high)
++        u, p = lg.write()
++        rise, sh = self.m.measure([("x5", "claude-x5")], now=NOW, ulog=u, plog=p)
++        self.assertEqual((rise, sh), (4, 0))
++
++    def test_too_little_is_none_and_pool_fallback(self):
++        lg = Logs(self.d)
++        lg.series("x5", 211, list(range(4, 41, 2))); lg.busy(215, {"claude-x5": 2}, 135)
++        lg.series("y5", 120, [10, 11])
++        u, p = lg.write()
++        kw = dict(now=NOW, ulog=u, plog=p)
++        self.assertIsNone(self.m.rate([("y5", "claude-y5")], **kw))
++        self.assertIsNone(self.m.rate([("x5", "claude-x5")], min_sh=3.5, **kw))
++        r, src = self.m.pick_rate("y5", "claude-y5", [("x5", "claude-x5"), ("y5", "claude-y5")], **kw)
++        self.assertEqual(src, "measured plan pool"); self.assertAlmostEqual(r, 37 / 3.0)
++        self.assertEqual(self.m.pick_rate("x5", "claude-x5", [("x5", "claude-x5")], **kw)[1], "measured x5")
++        self.assertEqual(self.m.pick_rate("z5", "claude-z5", [("z5", "claude-z5")], **kw), (None, None))
++
++    def test_midnight_walk_back(self):
++        u = f"{self.d}/u.log"
++        open(u, "w").write("skip\n23:58Z x5 5h=10 week=1 allowed\n23:59Z x5 5h=11 week=1 allowed\n00:01Z x5 5h=12 week=1 allowed\n00:00Z x5 5h=12 week=1 allowed\n")
++        end = datetime.datetime(2026, 11, 21, 0, 2, tzinfo=UTC).timestamp(); os.utime(u, (end, end))
++        ts = [t for t, v in self.m.readings(u, end + 3600)["x5"]]
++        self.assertEqual([iso(t) for t in ts], ["2026-11-20T23:58Z", "2026-11-20T23:59Z", "2026-11-21T00:01Z", "2026-11-21T00:00Z"])
++
++
++class Picker(unittest.TestCase):
++    def setUp(self):
++        self.h = tempfile.mkdtemp(prefix="srate-pick-")
++        self.m = f"{self.h}/code/manage-agents"
++        os.makedirs(f"{self.m}/tools-local")
++        shutil.copy(te.EG, f"{self.m}/tools-local/endgame.py")
++        shutil.copy(SRATE, f"{self.m}/tools-local/session_rate.py")
++        open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
++        open(f"{self.m}/PICK_LONG_ROOM", "w").write("on\n")
++        self.logs = Logs(self.h)
++
++    def tearDown(self):
++        shutil.rmtree(self.h, ignore_errors=True)
++
++    def pick(self, lines, busy="", prefer=None, **extra):
++        acc = f"{self.h}/accounts.sh"
++        open(acc, "w").write("cat <<'E'\n" + "\n".join(lines) + "\nE\n")
++        if prefer: open(f"{self.m}/PICK_PREFER", "w").write(prefer + " 2027-01-01T00:00Z\n")
++        p = f"{self.h}/pick.sh"; open(p, "w").write(open(PICK).read().replace(LIVE, f"{self.m}/"))  # every fixed path into the sandbox
++        u, pl = self.logs.write()
++        env = {k: v for k, v in os.environ.items() if not k.startswith("PICK_")}
++        env.update(HOME=self.h, PICK_ACCOUNTS_SH=acc, PICK_LOADAVG=f"{self.h}/load", PICK_BUSY=busy, PICK_NOWAIT="1",
++                   ENDGAME_NOW=str(NOW), PICK_USAGE_LOG=u, PICK_PICK_LOG=pl)
++        env.update(extra)
++        r = subprocess.run(["zsh", p], env=env, capture_output=True, text=True, timeout=120)
++        return (r.stdout.strip() if r.returncode == 0 else None), r.stderr
++
++    @staticmethod
++    def line(name, f, w=20, h5=4, hw=60):
++        return f"{name} /x/claude-{name} {f} {w} allowed {te.field(h5)} {te.field(hw)}"
++
++    def high_rate_history(self):  # x5: 36 points over 3 session-hours = 12 per session-hour (the 11-13 Fable-seat evening was ~8)
++        self.logs.series("x5", 211, list(range(4, 41, 2))); self.logs.busy(215, {"claude-x5": 2}, 135)
++
++    def test_measured_account_rate_refuses_what_the_modelled_rate_admits(self):
++        self.high_rate_history()
++        # 40 + 12 x 4 x 1.5 = 112 >= 100 (the modelled 6 or 8 gave 76 / 88: admitted)
++        b, err = self.pick([self.line("x5", 40)], busy="/x/claude-x5=3", PICK_LIGHT="1")
++        self.assertIsNone(b)
++        self.assertIn("PICK_LONG_ROOM 5-h: 40 + 12 x 4 x 1.50 h = 112.0 >= 100; measured x5 rate", err)
++
++    def test_idle_account_uses_its_plan_pool_rate(self):
++        self.high_rate_history()
++        b, err = self.pick([self.line("x5", 40), self.line("y5", 40)], busy="/x/claude-y5=3", PICK_LIGHT="1", PICK_AVOID="claude-x5")
++        self.assertIsNone(b); self.assertIn("measured plan pool rate", err)
++
++    def test_measured_low_rate_admits_what_the_modelled_rate_refuses(self):
++        self.logs.series("x5", 211, list(range(4, 41, 2))); self.logs.busy(215, {"claude-x5": 6}, 135)  # 36 / 9 = 4 per session-hour
++        # 60 + 4 x 6 x 1.5 = 96 < 100 (modelled 6: 114, 8: 132)
++        self.assertEqual(self.pick([self.line("x5", 60)], busy="/x/claude-x5=5", PICK_LIGHT="1")[0], "/x/claude-x5")
++
++    def test_no_measurement_uses_the_recalibrated_5x_default_8(self):
++        # 60 + 8 x 4 x 1.5 = 108 (the old 6: 96, admitted)
++        b, err = self.pick([self.line("x5", 60)], busy="/x/claude-x5=3", PICK_LIGHT="1")
++        self.assertIsNone(b); self.assertIn("60 + 8 x 4 x 1.50 h = 108.0", err)
++        self.assertEqual(self.pick([self.line("x5", 60)], busy="/x/claude-x5=3", PICK_LIGHT="1", PICK_BURN5="6")[0], "/x/claude-x5")
++
++    def test_main_endgame_overflow_spreads_by_5h_room(self):
++        main_full = "main /x/claude-panaali2 10 99 allowed %s %s" % (te.field(3), te.field(1))  # main week 99, its reset in 1 h
++        rows = [main_full, self.line("h1", 20), self.line("h2", 30)]
++        # PICK_PREFER names h1; h1 has 4 sessions: projected 20 + 8 x 5 x 1.5 = 80, h2 30 + 8 x 1 x 1.5 = 42: h2 has more room
++        self.assertEqual(self.pick(rows, busy="/x/claude-h1=4", prefer="h1", PICK_LIGHT="1")[0], "/x/claude-h2")
++        # outside the main window PICK_PREFER still orders: h1
++        main_far = "main /x/claude-panaali2 10 99 allowed %s %s" % (te.field(3), te.field(30))
++        self.assertEqual(self.pick([main_far, self.line("h1", 20), self.line("h2", 30)], busy="/x/claude-h1=4", prefer="h1", PICK_LIGHT="1")[0], "/x/claude-h1")
++
++    def test_main_goes_first_in_its_window(self):
++        main_room = "main /x/claude-panaali2 10 91 allowed %s %s" % (te.field(3), te.field(1))  # week 91 < the endgame top
++        self.assertEqual(self.pick([main_room, self.line("h1", 5)], prefer="h1", PICK_LIGHT="1")[0], "/x/claude-panaali2")
++
++
++if __name__ == "__main__":
++    unittest.main()
