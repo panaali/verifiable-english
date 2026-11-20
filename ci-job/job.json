@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-train-queue-genconflict-1120-663be162-t202575-s2",
+ "head": "9ee9deb38a13de816564cf4758aa664c7e409936",
+ "argv": [
+  "armsh-cand-train-queue-genconflict-1120-663be162-t202575-s2",
+  "9ee9deb38a13de816564cf4758aa664c7e409936",
+  "11589067d8a5f1a69908a4349b44ad8268238651",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
