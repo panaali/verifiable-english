@@ -1,0 +1,12 @@
+{
+ "job": "testmap-e84e44fc-t198763-s4",
+ "head": "4d5d7779b2041659cab643a94071fecfd7fd7acc",
+ "argv": [
+  "testmap-e84e44fc-t198763-s4",
+  "4d5d7779b2041659cab643a94071fecfd7fd7acc",
+  "4d5d7779b2041659cab643a94071fecfd7fd7acc",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s4.json.gz\" tests/test_wire_gate_corpus.py tests/test_lean_dump_cache.py tests/test_calc_answer.py tests/test_gate_quarantine.py tests/test_kb10_shadow.py tests/test_test_chunks.py tests/test_rsp_b_repair_1115.py tests/test_document_split.py tests/test_english_lean_s3.py tests/test_question_reverse.py tests/test_rsp_repair_r1_catastrophic_1119.py tests/test_defs_repair_anthropic_rsp_1119.py tests/test_pf_f9_order_undo.py tests/test_heavy_tests.py tests/test_defs_repair_asimov_extended_1119.py tests/test_keyed_answers_authority.py tests/test_w1_delta_suite.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
