@@ -15,6 +15,11 @@ says it is not a rule: a heading (`meta`) or a hope with no commitment (`unforma
 """
 import hashlib
 import json
+import re
+import sys
+from collections import Counter
+
+import pytest
 
 import test_rsp_fidelity_fix as fix
 import test_safetyfw_usecases as base
@@ -189,3 +194,147 @@ def test_every_recorded_unit_lies_in_a_record_that_says_it_is_not_a_rule():
         assert found["kind"] == kind and found.get("reason") == reason, unit
         assert found["status"] == ("UNFORMALISED" if reason else "LABELLED"), unit
         assert "rule" not in found and "open_terms" not in found and not found.get("waits"), unit
+
+
+# --- The derived records the span changes move (review F1, F2) -------------------------------------------------------
+# results.json copies the byte measurement (coverage.json, spans.json) into its metrics, and the README copies the
+# measurement, stage 0, the gaps and the results into its tables and prose. Each copy is checked against the committed
+# files it comes from, so a span change that leaves one stale fails here instead of in a review.
+
+@pytest.mark.skipif(not base.LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("case", ("anthropic-rsp", "openai-preparedness"))
+def test_saved_metrics_equal_their_recomputation_from_the_committed_files(case, monkeypatch):
+    """Every metric results.json saves (M3's bytes and M10's units included) equals run.metrics() over the saved run
+    and the committed coverage.json and spans.json; no metric is saved that metrics() does not compute."""
+    modules = base.RSP_MODULES if case == "anthropic-rsp" else base.PF_MODULES
+    for name, module in modules.items():
+        monkeypatch.setitem(sys.modules, name, module)
+    saved = json.loads((base.USECASES / case / "results.json").read_text())
+    fresh = modules["run"].metrics(saved)
+    stale = sorted(k for k in fresh.keys() | saved["metrics"].keys() if fresh.get(k) != saved["metrics"].get(k))
+    assert stale == [], f"{case}/results.json is out of date in {stale}: rerun its run.py"
+
+
+def _flat(text):
+    return " ".join(text.split())
+
+
+def _section(readme, heading):
+    start = readme.index(f"\n## {heading}")
+    end = readme.find("\n## ", start + 1)
+    return readme[start:None if end == -1 else end]
+
+
+def _body_rows(section):
+    """The cells of each body row of the section's tables (header and rule rows left out)."""
+    rows, header = [], True
+    for line in section.splitlines():
+        if not line.startswith("|"):
+            header = True
+            continue
+        if not header and not line.startswith("|---"):
+            rows.append([cell.strip() for cell in line.strip().strip("|").split("|")])
+        header = header and not line.startswith("|---")
+    return rows
+
+
+def _and(ids):
+    return ids[0] if len(ids) == 1 else ", ".join(ids[:-1]) + " and " + ids[-1]
+
+
+def readme_figures():
+    """The README's measured sentences, each built from the committed file it reports."""
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    coverage = json.loads((RSP / "coverage.json").read_text())
+    stage0 = json.loads((base.RSP_EVIDENCE / "stage0.json").read_text())
+    results = json.loads((RSP / "results.json").read_text())
+    total, units = stage0["P5"]["total"], stage0["P5"]["units"]
+    routed = stage0["P6"]["routed"]
+    d1 = coverage["bytes_by_status"]["CHECKED"]
+    # The README adds D1's and the routed documents' CHECKED bytes; they must make the master map's CHECKED.
+    assert d1 + routed["D2"] + routed["D3"] == coverage["master_bytes_by_status"]["CHECKED"]
+    checked = [u for u in spans if u["status"] == "CHECKED"]
+    parts = {"premise": [u for u in checked if u["kind"] == "asserted" and "routed" not in u],
+             "routed": [u for u in checked if "routed" in u],
+             "commitment": [u for u in checked if u["kind"] == "norm" and "routed" not in u]}
+    assert sum(map(len, parts.values())) == len(checked)
+    size = {u["id"]: u["span"][1] - u["span"][0] for u in spans}
+    rows = results["comparison"]
+    undecided = results["metrics"]["M8"]["unknown_items"]
+    findings = [r["id"] for r in rows if r["status"] == "disagree" and r["cause"]["kind"] == "key finding"]
+    correct = sum(r["agree"] for r in rows)
+    narrowed = {k: sorted(v["changed"]) for k, v in results["without_narrowings"].items()}
+    return [
+        f"({total:,} bytes, from",
+        f"the byte-by-byte accounting of the source text: {units} units",
+        f"| {results['metrics']['M10']['rules']} VE rules:",
+        f"the {len(rows)} answers of PLAN sections 5 and 6",
+        f"All {total:,} bytes of the source are in exactly one of the document's {units} units.",
+        f"Within D1 alone, {d1:,} bytes are CHECKED. D3 checks {routed['D3']:,} bytes",
+        f"D2 checks {routed['D2']:,} bytes",
+        f"The {len(checked)} CHECKED units are {len(parts['premise'])} premise units, the {len(parts['routed'])} "
+        f"routed units and the {len(parts['commitment'])} commitments",
+        f"Only its {size['s361-financial-interest']}-byte organization clause is CHECKED; the "
+        f"{size['s361-individual-financial-interest']}-byte individual/review-chain financial-interest clause and "
+        f"{size['s361-personal-relationships']}-byte close-personal-relationship clause are UNFORMALISED",
+        f"| P5 D1 over the text | {units} units; `bytes_by_status` totals {total:,} |",
+        f"| P6 the routed units | {routed['D2']:,} B to D2, {routed['D3']:,} B to D3;",
+        f"All {len(undecided)} undecided rows name",
+        f"The {len(findings)} other rows that differ from the frozen key ({', '.join(findings)}) are key findings",
+        f"so {correct + len(findings)} of {len(rows)} match the key",
+        f"The {len(undecided)} faithful undecided rows in `results.json`",
+        f"Removing N1 changes {len(narrowed['N1'])} answer cells",
+        f"removing N2 changes {_and(narrowed['N2'])}; removing N3 changes {_and(narrowed['N3'])}.",
+    ]
+
+
+def readme_tables():
+    """For each measured table: the section, and the expected cells of each family keyed by the row's first cell."""
+    gaps = json.loads((base.RSP_EVIDENCE / "gaps.json").read_text())
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    results = json.loads((RSP / "results.json").read_text())
+    counts = Counter(u["status"] for u in spans)
+    statuses = {s: [str(counts[s]), f"{b:,}", f"{b / gaps['source_bytes']:.1%}"]
+                for s, b in gaps["master_bytes_by_status"].items()}
+    features = {k: [str(f["units"]), f"{f['bytes']:,}", f"{f['sole_units']}, {f['sole_bytes']:,}"]
+                for k, f in gaps["features"].items()}
+    m1 = results["metrics"]["M1"]
+    answers = {k: [f"{v['correct']} / {v['key']}", str(v["faithful_undecided"])] for k, v in m1.items()}
+    answers["**Total**"] = [f"**{sum(v['correct'] for v in m1.values())} / {sum(v['key'] for v in m1.values())}**",
+                            f"**{sum(v['faithful_undecided'] for v in m1.values())}**"]
+    return [("Span accounting", statuses, False), ("What each byte that is not CHECKED waits for", features, True),
+            ("Answers to the frozen key", answers, True)]
+
+
+def _family(label, families):
+    keys = [k for k in families if label == k or label.startswith(k + " ")]
+    assert len(keys) <= 1, label
+    return keys[0] if keys else None
+
+
+def test_readme_figures_are_the_committed_measurements():
+    """Each measured sentence of the README is the one built from today's files, every row of its measured tables
+    shows its family's committed cells (a family the files lack shows zeros), every family has its row, and no byte
+    or unit count is left in the README outside a checked sentence or table row."""
+    readme = (RSP / "README.md").read_text()
+    flat = _flat(readme)
+    bound = []
+    for figure in readme_figures():
+        found = [i for i in range(len(flat)) if flat.startswith(figure, i)]
+        assert found, f"README.md does not say: {figure!r}"
+        bound += [(i, i + len(figure)) for i in found]
+    for heading, families, absent_zero in readme_tables():
+        seen = []
+        for cells in _body_rows(_section(readme, heading)):
+            family = _family(cells[0], families)
+            if family is None:
+                width = len(next(iter(families.values())))
+                assert absent_zero and set("".join(cells[1:width + 1])) <= set("0, "), (heading, cells)
+                continue
+            seen.append(family)
+            assert cells[1:len(families[family]) + 1] == families[family], (heading, cells[0])
+        assert sorted(seen) == sorted(families), heading
+    # Table cells are bare numbers, checked above; a count of bytes or units in prose must sit in a checked sentence.
+    for match in re.finditer(r"\d[\d,]*(?:-byte| bytes?\b| B to| units?\b)", flat):
+        assert any(a <= match.start() < b for a, b in bound), \
+            f"README.md states {match.group()!r} with no check against the committed files"
