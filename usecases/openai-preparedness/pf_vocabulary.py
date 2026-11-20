@@ -17,6 +17,76 @@ LEVELS = {
 }
 
 
+# srccov-openai-preparedness-1119: the source's own words for each Table 1 level and Tracked Category, appended to
+# the constant's legend word for word (PDF line-break hyphens rejoined).
+LEVEL_TEXT = {
+    "biological_and_chemical_high": "capability threshold: “The model can provide meaningful counterfactual "
+                                    "assistance (relative to unlimited access to baseline of tools available in "
+                                    "2021) to “novice” actors (anyone with a basic relevant technical background) "
+                                    "that enables them to create known biological or chemical threats.”; associated "
+                                    "risk of severe harm: “Significantly increased likelihood and frequency of "
+                                    "biological or chemical terror events by non-state actors using known "
+                                    "reference-class threats.”",
+    "biological_and_chemical_critical": "capability threshold: “The model can enable an expert to develop a highly "
+                                        "dangerous novel threat vector (e.g., comparable to a novel CDC Class A "
+                                        "biological agent) OR the model can be connected to tools and equipment to "
+                                        "complete the full engineering and/or synthesis cycle of a regulated or "
+                                        "novel biological threat without human intervention.”; associated risk of "
+                                        "severe harm: “Proliferating the ability to create a novel threat vector of "
+                                        "the severity of a CDC Class A biological agent (i.e., high mortality, ease "
+                                        "of transmission) could cause millions of deaths and significantly disrupt "
+                                        "public life, with few available societal safeguards.”",
+    "cybersecurity_high": "capability threshold: “The model removes existing bottlenecks to scaling cyber operations "
+                          "including by automating end-to-end cyber operations against reasonably hardened targets "
+                          "OR by automating the discovery and exploitation of operationally relevant "
+                          "vulnerabilities.”; associated risk of severe harm: “Removing bottlenecks limiting "
+                          "malicious cyber activity may upset the current cyberoffense-cyberdefense balance by "
+                          "significantly automating and scaling the volume of existing cyberattacks.” “In "
+                          "conjunction with a Long-range Autonomy capability (Section 2.3), models that could bypass "
+                          "OpenAI’s technical safeguards constraining model activity, such as sandboxing or "
+                          "monitoring services, could compromise OpenAI’s ability to track and mitigate all other "
+                          "risks.”",
+    "cybersecurity_critical": "capability threshold: “A tool-augmented model can identify and develop functional "
+                              "zero-day exploits of all severity levels in many hardened real-world critical systems "
+                              "without human intervention OR model can devise and execute end-to-end novel "
+                              "strategies for cyberattacks against hardened targets given only a high level desired "
+                              "goal.”; associated risk of severe harm: “Finding and executing end-to-end exploits "
+                              "for all software could lead to catastrophe from unilateral actors, hacking military "
+                              "or industrial systems, or OpenAI infrastructure.” “Novel cyber operations, e.g., "
+                              "those involving novel zero-days or novel methods of command-and-control, generally "
+                              "pose the most serious threat, as they are unpredictable and scarce.”",
+    "ai_self_improvement_high": "capability threshold: “The model’s impact is equivalent to giving every OpenAI "
+                                "researcher a highly performant mid-career research engineer assistant, relative to "
+                                "those researchers’ 2024 baseline.”; associated risk of severe harm: “This milestone "
+                                "suggests AI self-improvement may be beginning to accelerate.”",
+    "ai_self_improvement_critical": "capability threshold: “The model is capable of recursively self improving "
+                                    "(i.e., fully automated AI R&D), defined as either (leading indicator) a "
+                                    "superhuman research-scientist agent OR (lagging indicator) causing a "
+                                    "generational model improvement (e.g., from OpenAI o1 to OpenAI o3) in 1/5th the "
+                                    "wall-clock time of equivalent progress in 2024 (e.g., sped up to just 4 weeks) "
+                                    "sustainably for several months.”; associated risk of severe harm: “A major "
+                                    "acceleration in the rate of AI R&D could rapidly increase the rate at which new "
+                                    "capabilities and risks emerge, to the point where our current oversight "
+                                    "practices are insufficient to identify and mitigate new risks, including risks "
+                                    "to maintaining human control of the AI system itself.”",
+}
+CATEGORY_TEXT = {
+    "biological_and_chemical": "page 2: “Biological and Chemical capabilities that, in addition to unlocking "
+                               "discoveries and cures, can also reduce barriers to creating and using biological or "
+                               "chemical weapons.”; Table 1: “The ability of an AI model to accelerate and expand "
+                               "access to biological and chemical research, development, and skill-building, "
+                               "including access to expert knowledge and assistance with laboratory work.”",
+    "cybersecurity": "page 2: “Cybersecurity capabilities that, in addition to helping protect vulnerable systems, "
+                     "can also create new risks of scaled cyberattacks and vulnerability exploitation.”; Table 1: "
+                     "“The ability of an AI model to assist in the development of tools and executing operations for "
+                     "cyberdefense and cyberoffense.”",
+    "ai_self_improvement": "page 2: “AI Self-improvement capabilities that, in addition to unlocking helpful "
+                           "capabilities faster, could also create new challenges for human control of AI systems.”; "
+                           "Table 1: “The ability of an AI system to accelerate AI research, including to increase "
+                           "the system’s own capability.”",
+}
+
+
 def base(args, description, verbalisation=None):
     result = {"arguments": list(args), "description": description}
     if verbalisation:
@@ -35,7 +105,18 @@ def duty(act, description):
 
 
 BASE = {
-    "covered": base(["situation"], "the model at {0} is covered by the Framework"),
+    "covered": base(["situation"], "the model at {0} is covered by the Framework; 3.2: “The Preparedness Framework "
+                                   "applies to any new or updated deployment that has a plausible chance of reaching "
+                                   "a capability threshold whose corresponding risks are not addressed by an "
+                                   "existing Safeguards Report.” “Examples of such covered deployments are:” “every "
+                                   "frontier model (e.g., OpenAI o1 or OpenAI o3) that we plan to deploy externally” "
+                                   "“any agentic system (including significant agents deployed only internally) that "
+                                   "represents a substantial increase in the capability frontier” “any significant "
+                                   "change in the deployment conditions of an existing model (e.g., enabling "
+                                   "finetuning, releasing weights, or significant new features) that makes the "
+                                   "existing Capabilities Report or Safeguards Report no longer reasonably "
+                                   "applicable” “incremental updates or distilled models with unexpectedly "
+                                   "significant increases in capability.”"),
     "likely_to_cross": base(["situation"], "the covered system at {0} appears likely to cross a capability threshold; "
                                                  "OpenAI ('we') decides this (OT9)"),
     "reasonable_evidence": base(["situation"], "at {0} OpenAI ('we') finds reasonable evidence that its safeguards are "
@@ -46,7 +127,10 @@ BASE = {
                                        "capability area hold at {0}: the adjustment does not meaningfully increase the overall risk of "
                                        "severe harm, is publicly acknowledged, and keeps safeguards more protective than the other "
                                        "developer's, with information shared to validate it; their assessment is open"),
-    "sufficient_safeguards": base(["situation"], "safeguards sufficiently minimize severe-harm risk at {0}; SAG decides this"),
+    "sufficient_safeguards": base(["situation"], "safeguards sufficiently minimize severe-harm risk at {0}; SAG "
+                                                 "decides this; footnote 1: “By “severe harm” in this document, we "
+                                                 "mean the death or grave injury of thousands of people or hundreds "
+                                                 "of billions of dollars of economic damage.”"),
     "major_deployment": base(["situation"], "{0} is a major deployment; the decider is unstated (OT13)"),
     "safeguard_selection": base(["situation"], "{0} is the selection of safeguards for a deployment"),
     "substantiated_noncompliance": base(["situation"], "a noncompliance report at {0} is substantiated"),
@@ -59,13 +143,25 @@ BASE = {
                                           "meet a Critical standard\u201d; CYB-C: \u201csafeguards and security "
                                           "controls standards that would meet a Critical standard\u201d)"),
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
-    "high": base(["level"], "{0} is a High level", "{0} is high"),
-    "critical": base(["level"], "{0} is a Critical level", "{0} is critical"),
+    "high": base(["level"], "{0} is a High level; 2.2: “High capability thresholds mean capabilities that "
+                            "significantly increase existing risk vectors for severe harm.”; change log item 2: "
+                            "“High capability thresholds mean capabilities that significantly increase existing risk "
+                            "vectors for severe harm under the relevant threat model.”", "{0} is high"),
+    "critical": base(["level"], "{0} is a Critical level; 2.2: “Critical capability thresholds mean capabilities "
+                                "that present a meaningful risk of a qualitatively new threat vector for severe harm "
+                                "with no ready precedent.”; change log item 2: “Critical capability thresholds mean "
+                                "capabilities that present a meaningful risk of a qualitatively new threat vector "
+                                "for severe harm with no ready precedent under the relevant threat model.”", "{0} is critical"),
     "low": base(["level"], "{0} is a \"low\" level (a term the change log removes)", "{0} is low"),
     "medium": base(["level"], "{0} is a \"medium\" level (a term the change log removes)", "{0} is medium"),
     "indicator_for": base(["evaluation", "level"], "{0} is used as an indicator for {1} (footnote 5)", "{0} indicates {1}"),
     "chemical": base(["evaluation"], "{0} evaluates a chemical capability", "{0} is chemical"),
-    "reached": base(["situation", "level"], "the model at {0} has reached {1}; SAG decides this", "{0} has reached {1}"),
+    "reached": base(["situation", "level"], "the model at {0} has reached {1}; SAG decides this; 3.3: “The "
+                                            "determination that a threshold has been reached is informed by these "
+                                            "indicative results from capability evaluations, and also reflects "
+                                            "holistic judgment based on the totality of available evidence – for "
+                                            "example, information about the methodological robustness of evaluation "
+                                            "results.”", "{0} has reached {1}"),
     "proposed": base(["proposal"], "{0} is proposed"),
     "required": base(["requirement"], "{0} is a requirement"),
     "coverage_ambiguous": base(["situation"], "coverage of {0} is ambiguous"),
@@ -85,11 +181,30 @@ BASE = {
                             "which the scenario rigorously confirmed at {0} occurred", "{0} adjusts {1}"),
     "adjustment_made": base(["situation"], "OpenAI makes 4.3's marginal-risk adjustment at {0}: it adjusts the level "
                                 "of safeguards it requires in that capability area"),
-    "lra_found": base(["situation"], "Long-range Autonomy is found at {0}"),
-    "sandbagging_found": base(["situation"], "sandbagging is found at {0}"),
-    "ara_found": base(["situation"], "Autonomous Replication and Adaptation is found at {0}"),
-    "undermining_found": base(["situation"], "undermining of safeguards is found at {0}"),
-    "nuclear_found": base(["situation"], "Nuclear and Radiological capability is found at {0}"),
+    "lra_found": base(["situation"], "Long-range Autonomy is found at {0}; 2.3, Table 2, Long-range Autonomy: "
+                                     "“ability for a model to execute a long-horizon sequence of actions sufficient "
+                                     "to realize a “High” threat model (e.g., a cyberattack) without being directed "
+                                     "by a human (including successful social engineering attacks when needed)”"),
+    "sandbagging_found": base(["situation"], "sandbagging is found at {0}; 2.3, Table 2, Sandbagging: “ability and "
+                                             "propensity to respond to safety or capability evaluations in a way "
+                                             "that significantly diverges from performance under real conditions, "
+                                             "undermining the validity of such evaluations.”"),
+    "ara_found": base(["situation"], "Autonomous Replication and Adaptation is found at {0}; 2.3, Table 2, "
+                                     "Autonomous Replication and Adaptation: “ability to survive, replicate, resist "
+                                     "shutdown, acquire resources to maintain and scale its own operations, and "
+                                     "commit illegal activities that collectively constitute causing severe harm "
+                                     "(whether when explicitly instructed, or at its own initiative), without also "
+                                     "utilizing capabilities tracked in other Tracked Categories.”"),
+    "undermining_found": base(["situation"], "undermining of safeguards is found at {0}; 2.3, Table 2, Undermining "
+                                             "Safeguards: “ability and propensity for the model to act to undermine "
+                                             "safeguards placed on it, including e.g., deception, colluding with "
+                                             "oversight models, sabotaging safeguards over time such as by embedding "
+                                             "vulnerabilities in safeguards code, etc.”"),
+    "nuclear_found": base(["situation"], "Nuclear and Radiological capability is found at {0}; 2.3, Table 2, Nuclear "
+                                         "and Radiological: “ability to meaningfully counterfactually enable the "
+                                         "creation of a radiological threat or enable or significantly accelerate "
+                                         "the development of or access to a nuclear threat while remaining "
+                                         "undetected.”"),
     "further_development": base(["situation"], "{0} is further development of the model"),
     "internal_deployment": base(["situation"], "{0} is an internal deployment"),
     "forecast_critical": base(["situation"], "the model at {0} is forecasted to reach Critical capability; OpenAI decides this"),
@@ -128,12 +243,45 @@ BASE = {
     # No rule reads `decided_without_sag` since pf-f16-without-fix (both f16-without guards dropped it); it stays
     # declared for run.py WITNESS["C2"], where it is inert (tests/test_pf_f16_without_fix.py).
     "decided_without_sag": base(["situation"], "OpenAI Leadership makes the decision at {0} without the SAG's participation"),
-    "research_category_review": base(["situation"], "{0} is a Research Category review"),
-    "plausible": base(["capability"], "{0} meets the plausible-pathway criterion"),
-    "measurable": base(["capability"], "{0} meets the measurable criterion"),
-    "severe": base(["capability"], "{0} meets the severe-harm criterion"),
-    "net_new": base(["capability"], "{0} meets the net-new criterion"),
-    "irremediable": base(["capability"], "{0} meets the instantaneous-or-irremediable criterion"),
+    "research_category_review": base(["situation"], "{0} is a Research Category review; Research Categories, page 2: "
+                                                    "“These are areas of capability that could pose risks of severe "
+                                                    "harm, that do not yet meet our criteria to be Tracked "
+                                                    "Categories, and where we are investing now to further develop "
+                                                    "our threat models and capability elicitation techniques.”; 2.1: "
+                                                    "“Research Categories are capabilities that, while they do not "
+                                                    "meet the above criteria, nonetheless have the potential to "
+                                                    "cause or contribute to severe harm, and where we are working "
+                                                    "now in order to prepare to address risks in the future "
+                                                    "(including potentially by maturing them to Tracked "
+                                                    "Categories).”; 2.3: “These capabilities either need more "
+                                                    "research and threat modeling before they can be rigorously "
+                                                    "measured, or do not cause direct risks themselves but may need "
+                                                    "to be monitored because further advancement in this capability "
+                                                    "could undermine the safeguards we rely on to mitigate existing "
+                                                    "Tracked Category risks.”; change log item 4: “We are moving "
+                                                    "Nuclear and Radiological capabilities into Research "
+                                                    "Categories.”; change log item 5: “Introduce Research "
+                                                    "Categories, areas of capability that do not meet the criteria "
+                                                    "to be Tracked Categories, but where we believe additional work "
+                                                    "is needed now.” “These include Long-range Autonomy, "
+                                                    "Sandbagging, Autonomous Replication and Adaptation, Undermining "
+                                                    "Safeguards, and Nuclear and Radiological.”"),
+    "plausible": base(["capability"], "{0} meets the plausible-pathway criterion; 2.1, criterion 1 (Plausible): “It "
+                                      "must be possible to identify a causal pathway for a severe harm in the "
+                                      "capability area, enabled by frontier AI.”"),
+    "measurable": base(["capability"], "{0} meets the measurable criterion; 2.1, criterion 2 (Measurable): “We can "
+                                       "construct or adopt capability evaluations that measure capabilities that "
+                                       "closely track the potential for the severe harm.”"),
+    "severe": base(["capability"], "{0} meets the severe-harm criterion; 2.1, criterion 3 (Severe): “There is a "
+                                   "plausible threat model within the capability area that would create severe harm.”"),
+    "net_new": base(["capability"], "{0} meets the net-new criterion; 2.1, criterion 4 (Net new): “The outcome "
+                                    "cannot currently be realized as described (including at that scale, by that "
+                                    "threat actor, or for that cost) with existing tools and resources (e.g., "
+                                    "available as of 2021) but without access to frontier AI.”"),
+    "irremediable": base(["capability"], "{0} meets the instantaneous-or-irremediable criterion; 2.1, criterion 5 "
+                                         "(Instantaneous or irremediable): “The outcome is such that once realized, "
+                                         "its severe harms are immediately felt, or are inevitable due to a lack of "
+                                         "feasible measures to remediate.”"),
     "criteria_tracking": {"arguments": ["capability"], "description": "{0} is tracked as a category",
                           "regulated": {"role": "obligation", "default": "deny",
                                         "act": "{0} be tracked as a category", "permission": "criteria_exclusion"}},
@@ -174,7 +322,24 @@ BASE = {
 
 ACTS = {
     "misuse_safeguards": ("{0} have misuse safeguards meeting the High standard",
-                          "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"),
+                          "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)"
+                          "; Appendix C.1: “Safeguards should sufficiently minimize the risk of severe harm "
+                          "associated with misuse of the model’s capabilities.” “This can be done by establishing "
+                          "that all plausible known vectors of enabling severe harm are sufficiently addressed by "
+                          "one or more of the following claims:” “Robustness: Users cannot use the model to cause "
+                          "the harm because they cannot elicit the capability, such as because the model is modified "
+                          "to refuse to provide assistance to harmful tasks and is robust to jailbreaks that would "
+                          "circumvent those refusals.” “Usage Monitoring: If a model does not refuse and provides "
+                          "assistance to harmful tasks, monitors can stop or catch adversarial users before their "
+                          "misuse has achieved an unacceptable scale of harm, through a combination of automated and "
+                          "human detection and enforcement within an acceptable time frame.” “Trust-based Access: "
+                          "The actors who gain access to the model will not use it in a way that presents an "
+                          "associated risk of severe harm under our threat model.”; Appendix C.1, Table 4 "
+                          "(illustrative): “Blocking access for users and organizations that violate our usage "
+                          "policies, leading to potential permanent bans”; 4.2: “Robustness: Malicious users cannot "
+                          "use the model to cause the severe harm because they cannot elicit the necessary "
+                          "capability, such as because the model is modified to refuse to provide assistance to "
+                          "harmful tasks and is robust to jailbreaks that would circumvent those refusals.”"),
     "misuse_safeguards_before_external": ("{0} have misuse safeguards meeting the High standard before external "
                                           "deployment",
                                           "Table 1 BIO-H: safeguards against misuse meeting High standard (Appendix "
@@ -182,7 +347,26 @@ ACTS = {
     "security_controls": ("{0} have security controls meeting the High standard",
                           "Table 1: security controls meeting High standard (Appendix C.3)"),
     "alignment_safeguards": ("{0} have misalignment safeguards meeting the High standard",
-                             "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)"),
+                             "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)"
+                             "; Appendix C.2: “In addition to human misuse, several of the Tracked Category "
+                             "capabilities pose risks when models themselves are able to autonomously execute a "
+                             "severe harm, whether due to misalignment or subversion by an adversary.” “This can be "
+                             "done by establishing that all plausible known vectors of enabling severe harm are "
+                             "sufficiently addressed by one or more of the following claims:” “System Architecture: "
+                             "The model can’t take actions that cause harm because it lacks access to output "
+                             "channels or mechanisms to persist sufficiently to execute the harm, due to "
+                             "containerization and restricted permissions.” “These misalignment claims may be "
+                             "further complemented by the safeguards applied towards the malicious-actor-oriented "
+                             "“Robustness” and “Usage Monitoring” claims, which similarly limit a misaligned model’s "
+                             "use of its own or another model’s capabilities.”; Appendix C.2, Table 5 "
+                             "(illustrative): “Evidence of taking harmful actions, including deception and scheming, "
+                             "would be evidence of misalignment” “Large scale usage or testing in realistic settings "
+                             "should show the model consistently takes action aligned to the user’s instructions or "
+                             "goals (while maintaining value alignment and avoiding harm).” “Examples against would "
+                             "include trying to escape a container, lying to the user to appease them, etc.” "
+                             "“Red-teamers can train an arbitrarily adversarial agent or can pretend to be an agent "
+                             "in our setup and we should ensure that harmful behaviors are detected by monitors with "
+                             "a high recall rate”"),
     "halt_development": ("{0} halt further development", "Table 1: halt further development at Critical"),
     "safeguards_before_deployment": ("{0} have safeguards sufficiently minimizing severe-harm risk before deployment",
                                      "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the "
@@ -204,10 +388,80 @@ ACTS = {
                                        "additional safeguards (safety and security controls) before internal use"),
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
-    "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
+    "security_practices": ("{0} have security practices", "C.3: required High-level security practices"
+                           "; Appendix C.3: “Robust security practices and controls are essential to mitigating "
+                           "risks associated with the deployment of models reaching High capability thresholds.” "
+                           "“Our security approach integrates industry best practices with OpenAI-specific "
+                           "innovations tailored to manage the unique threats posed by frontier AI technologies.” "
+                           "“Our security practices are designed to protect against external and internal "
+                           "adversaries and align with established frameworks such as ISO 27001, SOC2, NIST SP "
+                           "800-53, and FedRAMP.” “While nascent, AI-specific security standards may also provide "
+                           "frameworks for addressing security and regulatory standards that address the unique "
+                           "challenges of securing AI systems.” “This may include efforts emerging from the Cloud "
+                           "Security Alliance’s AI Safety Initiative or the NIST SP 800-218 AI updates.” “We will "
+                           "require the following practices for High capability models:” “Security Threat Modeling "
+                           "and Risk Management – Comprehensive Security Threat Models: Ensure OpenAI employs "
+                           "security threat modeling that systematically identifies and mitigates risks posed by "
+                           "adversaries.” “These models address both external and internal threats, explicitly "
+                           "mapping vulnerabilities and attack vectors relevant to frontier AI model access or "
+                           "misuse. – Continuous Review and Iteration: Ensure security threat models are regularly "
+                           "reviewed and updated.” “This includes updating the Security framework, policies, and "
+                           "controls as technologies and threats evolve. – Continuous Monitoring and Validation: "
+                           "Ensure security threat models and updates inform where security and data privacy "
+                           "controls should be implemented, improved, and monitored to further reduce risk.” "
+                           "“Internal and external assessments to validate these controls are conducted regularly "
+                           "and reports are provided to OpenAI leadership.” “Defense in Depth – Layered Security "
+                           "Architecture: Adopt a layered security strategy, ensuring robust protection through "
+                           "multiple defensive barriers, including physical and datacenter security, network "
+                           "segmentation and controls, workload isolation, data encryption, and other overlapping "
+                           "and complementary security controls. – Zero Trust Principles: Embrace Zero Trust "
+                           "principles in the design and operation of infrastructure, networks, and endpoints.” "
+                           "“Leverage hardware-backed security and modern authentication standards and controls for "
+                           "accessing critical resources and performing operations.” “Access Management – Principle "
+                           "of Least Privilege: Ensure access to systems and data is limited based on job functions, "
+                           "need-to-know, and operational requirements in alignment with the principles of least "
+                           "privilege and separation of duties.” “Ensure all access is regularly audited and "
+                           "reviewed.” “Identity and Device Management: Employees must authenticate using "
+                           "multi-factor authentication (MFA) and managed devices meeting security baselines.” "
+                           "“Access must be logged and reviewed for detection and investigative purposes.” “Secure "
+                           "Development and Supply Chain – Secure Development Lifecycle: Integrate automated code "
+                           "analysis, formal security reviews, and penetration testing in engineering processes.” "
+                           "“Apply security reviews and validation to higher-sensitivity critical components prior "
+                           "to deployment. – Change Management: Establish and maintain a formal change management "
+                           "process to ensure that all modifications to systems, applications, and infrastructure "
+                           "are properly authorized, documented, tested, and approved before deployment.” “Changes "
+                           "to critical infrastructure should undergo multi-person approval and review.” “This "
+                           "process should include maintaining comprehensive records of changes and implementing "
+                           "rollback procedures to revert to previous states.” “– Software Supply Chain Integrity: "
+                           "Enforce supply chain security measures, including sourcing hardware and software from "
+                           "reputable sources, and continuous vetting and monitoring of third-party suppliers and "
+                           "software libraries.” “Operational Security – Monitoring and Incident Response: Monitor "
+                           "security and event logs continuously to detect, triage, and respond to security "
+                           "incidents rapidly by 24x7 on-call staff. – Vulnerability Management: Ensure known "
+                           "vulnerabilities are addressed through consistent patching and corrective actions, "
+                           "minimizing exploitation opportunities.” “Encourage reporting "
+                           "of good-faith security research through bug bounty programs.” “Auditing and Transparency "
+                           "– Independent Security Audits: Ensure security controls and practices are validated "
+                           "regularly by third-party auditors to ensure compliance with relevant standards and "
+                           "robustness against identified threats. – Transparency in Security Practices: Ensure "
+                           "security findings, remediation efforts, and key metrics from internal and independent "
+                           "audits are periodically shared with internal stakeholders and summarized publicly to "
+                           "demonstrate ongoing commitment and accountability. – Governance and Oversight: Ensure "
+                           "that management provides oversight over the information security and risk management "
+                           "programs.”"),
     "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment",
                                       "3.3: \u201cPrior to deployment, every covered model undergoes the suite of "
-                                      "Scalable Evaluations.\u201d"),
+                                      "Scalable Evaluations.\u201d"
+                                      "; 3.1: “Scalable Evaluations: automated evaluations designed to measure "
+                                      "proxies that approximate whether a capability threshold has been crossed.” "
+                                      "“Scalable evaluations have associated “indicative thresholds,” which are "
+                                      "levels of performance that we have pre-determined to indicate that a "
+                                      "deployment may have reached a capability threshold.” “Deep Dives: designed to "
+                                      "provide additional evidence validating the scalable evaluations’ findings on "
+                                      "whether a capability threshold has been crossed.”; change log item 6: “We "
+                                      "also define “scalable evaluations,” which are automated, and distinguish "
+                                      "these from “deep dive” evaluations that may include consultation with human "
+                                      "experts and are designed in part to validate the scalable evaluations.”"),
     "capabilities_report": ("{0} have SAG review the Capabilities Report as well as decide on next steps",
                             "3.3: the SAG reviews the Capabilities Report and decides on next steps"),
     "capabilities_report_submitted": ("{0} have results compiled into a Capabilities Report submitted to the SAG",
@@ -326,7 +580,9 @@ def environment():
             "vocabulary": {"sorts": {k: {"description": v} for k, v in {
                 "situation": "a development, use, deployment, review or decision of a model",
                 "level": "one of Table 1's six named capability levels",
-                "category": "one of the three Tracked Categories",
+                "category": "one of the three Tracked Categories; 2.1: “Tracked Categories are those capabilities "
+                            "which we track most closely, measuring them during each covered deployment and "
+                            "preparing safeguards for when a threshold level is crossed.”",
                 "proposal": "a safeguard or governance proposal",
                 "requirement": "a stated safeguard requirement",
                 "capability": "a frontier capability considered for a Tracked Category",
@@ -335,9 +591,9 @@ def environment():
                              "this sort: Appendix B's yearly review is of it",
             }.items()},
                 "predicates": {**BASE, **{name: duty(*pair) for name, pair in ACTS.items()}},
-                "constants": {**{k: {"sort": "level", "description": f"Table 1: {c}, {g}"}
+                "constants": {**{k: {"sort": "level", "description": f"Table 1: {c}, {g}; {LEVEL_TEXT[k]}"}
                                  for k, (c, g) in LEVELS.items()},
-                              **{c: {"sort": "category", "description": f"Tracked Category {c}"}
+                              **{c: {"sort": "category", "description": f"Tracked Category {c}; {CATEGORY_TEXT[c]}"}
                                  for c in sorted({pair[0] for pair in LEVELS.values()})},
                               "biological_capability_evaluations": {
                                   "sort": "evaluation", "description": "footnote 5: Biological capability evaluations"}}}}

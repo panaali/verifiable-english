@@ -39,7 +39,6 @@
    "unaccounted": [
     "guidelin",
     "require",
-    "risk",
     "specific"
    ],
    "entries": [
@@ -91,7 +90,6 @@
    "unaccounted": [
     "guidelin",
     "require",
-    "risk",
     "specific"
    ],
    "entries": [
@@ -143,7 +141,6 @@
    "unaccounted": [
     "guidelin",
     "require",
-    "risk",
     "specific"
    ],
    "entries": [
@@ -248,7 +245,6 @@
    ],
    "unaccounted": [
     "guidelin",
-    "risk",
     "specific"
    ],
    "entries": [
@@ -284,8 +280,6 @@
    ],
    "unaccounted": [
     "guidelin",
-    "risk",
-    "safeguard",
     "specific"
    ],
    "entries": [
@@ -321,8 +315,6 @@
    ],
    "unaccounted": [
     "guidelin",
-    "risk",
-    "safeguard",
     "specific"
    ],
    "entries": [
@@ -345,14 +337,12 @@
    ],
    "unaccounted": [
     "appropriate",
-    "capabil",
     "control",
     "cros",
     "develop",
     "requir",
     "secur",
-    "system",
-    "threshold"
+    "system"
    ],
    "entries": [
     {
@@ -380,14 +370,12 @@
    ],
    "unaccounted": [
     "appropriate",
-    "capabil",
     "control",
     "cros",
     "develop",
     "requir",
     "secur",
-    "system",
-    "threshold"
+    "system"
    ],
    "entries": [
     {
@@ -413,7 +401,6 @@
     "safeguards_before_deployment"
    ],
    "unaccounted": [
-    "capabil",
     "reminder",
     "system"
    ],
@@ -442,7 +429,6 @@
     "safeguards_before_deployment"
    ],
    "unaccounted": [
-    "capabil",
     "reminder",
     "system"
    ],
@@ -471,7 +457,6 @@
    ],
    "unaccounted": [
     "associat",
-    "capabil",
     "cros",
     "deploy",
     "effective",
@@ -482,8 +467,7 @@
     "robust",
     "safeguard",
     "severe",
-    "sufficient",
-    "threshold"
+    "sufficient"
    ],
    "entries": [
     {
@@ -511,10 +495,8 @@
    ],
    "unaccounted": [
     "associat",
-    "capabil",
     "minimiz",
     "pose",
-    "threshold",
     "until"
    ],
    "entries": [
@@ -539,10 +521,8 @@
    ],
    "unaccounted": [
     "associat",
-    "capabil",
     "minimiz",
     "pose",
-    "threshold",
     "until"
    ],
    "entries": [
@@ -570,8 +550,6 @@
     "extreme",
     "increas",
     "internal",
-    "present",
-    "severe",
     "treat"
    ],
    "entries": [
@@ -677,8 +655,6 @@
     "extreme",
     "increas",
     "internal",
-    "present",
-    "severe",
     "treat"
    ],
    "entries": [
@@ -783,9 +759,7 @@
     "danger",
     "external",
     "extreme",
-    "present",
     "regardles",
-    "severe",
     "treat"
    ],
    "entries": [
@@ -873,10 +847,7 @@
     "reached",
     "security_practices"
    ],
-   "unaccounted": [
-    "capabil",
-    "require"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will require the following practices for High capability models",
@@ -1409,9 +1380,7 @@
     "additional",
     "beyond",
     "disclosur",
-    "include",
-    "result",
-    "threshold"
+    "include"
    ],
    "entries": [
     {
@@ -2123,7 +2092,6 @@
     "scenario",
     "share",
     "sufficient",
-    "threshold",
     "until"
    ],
    "entries": [
@@ -2424,7 +2392,6 @@
    ],
    "unaccounted": [
     "4",
-    "capabil",
     "categor",
     "require",
     "track"
@@ -2454,7 +2421,6 @@
    ],
    "unaccounted": [
     "4",
-    "capabil",
     "categor",
     "require",
     "track"
@@ -2625,7 +2591,6 @@
     "creat",
     "criteria",
     "five",
-    "frontier",
     "risk",
     "treat"
    ],
@@ -2656,7 +2621,6 @@
     "creat",
     "criteria",
     "five",
-    "frontier",
     "risk",
     "treat"
    ],
@@ -2687,7 +2651,6 @@
     "creat",
     "criteria",
     "five",
-    "frontier",
     "risk",
     "treat"
    ],
@@ -2790,10 +2753,7 @@
     "higher",
     "ones",
     "potential",
-    "prioritize",
-    "relative",
-    "sever",
-    "threat"
+    "prioritize"
    ],
    "entries": [
     {
@@ -2897,11 +2857,9 @@
    ],
    "unaccounted": [
     "associat",
-    "capabil",
     "develop",
     "minimize",
     "require",
-    "risk",
     "safeguard",
     "sufficient",
     "system"
@@ -2968,8 +2926,8 @@
    "restates": 93,
    "rule": 21
   },
-  "unaccounted_words": 509,
-  "blocks_with_unaccounted_words": 70,
+  "unaccounted_words": 468,
+  "blocks_with_unaccounted_words": 69,
   "quotes": 118,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
