@@ -487,11 +487,6 @@
      "words": "We will address",
      "reason": "restates",
      "arg": ""
-    },
-    {
-     "words": "and decisions",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -1077,8 +1072,7 @@
     "recipient_options"
    ],
    "unaccounted": [
-    "receiv",
-    "staff"
+    "receiv"
    ],
    "entries": [
     {
@@ -1566,32 +1560,26 @@
   },
   {
    "id": "D2D3",
-   "entries": [
-    {
-     "words": "A Risk Report will cover the risks of Anthropic's models and actions",
-     "reason": "loss",
-     "arg": "1"
-    }
-   ],
+   "entries": [],
    "problems": []
   }
  ],
  "totals": {
   "blocks": 85,
-  "blocks_with_loss": 3,
+  "blocks_with_loss": 2,
   "losses_by_class": {
-   "1": 2,
+   "1": 1,
    "limit 9": 1
   },
   "entries_by_reason": {
    "exposition": 10,
-   "loss": 3,
+   "loss": 2,
    "open": 5,
    "reading": 6,
    "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 92,
+  "unaccounted_words": 91,
   "blocks_with_unaccounted_words": 23,
   "quotes": 141,
   "unanchored_quotes": 0,

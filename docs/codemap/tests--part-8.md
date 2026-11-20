@@ -1,3 +1,6 @@
+- `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
+- `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
+- `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
 - `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
 - `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
@@ -79,7 +82,3 @@
 - `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
 - `tests/test_vacuity.py` — (no module docstring)
 - `tests/test_ve_iface.py` — (no module docstring)
-- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
-- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
-- `tests/test_w1_delta_suite.py` — The W1 delta's suite corpus and its tagging plugin (`docs/en-e3-norm/en-2/w1_delta.py`; en-e3bb review F1).
-- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.

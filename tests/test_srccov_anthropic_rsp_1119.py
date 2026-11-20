@@ -30,7 +30,8 @@ RSP = base.RSP
 
 # (map row, vocabulary section, symbol, runs); a run is ([(map unit, start byte, end byte), ...], the SHA-256 and
 # the byte length of its normalised text). Row 5 has two runs: T2's description (footnote markers 4 to 7 left out)
-# and footnote 4.
+# and footnote 4. Row 8 has two runs, footnote 8's definition and footnote 9: the legend quotes footnote 8 whole
+# (defs-repair-anthropic-rsp-1119), so the two are no longer adjacent there.
 CARRIES = [
     ("row4", "constants", "non_novel_chem_bio_weapons", [
         ([("S0059", 9821, 10070)], "c95d784cea19ddbd5b1eaf84a829bf20cd4e899917a5071aa0f4ba7940173ce7", 248),
@@ -49,8 +50,8 @@ CARRIES = [
         ([("S0096", 16221, 16551)], "0ce19b040d333491559803eba54ecebbc29f6c8ef283459f559b4d0b4268cad1", 328),
     ]),
     ("row8", "predicates", "double_rate", [
-        ([("S0121", 21585, 21702), ("S0120", 21544, 21582)],
-         "da006658a64d9a73cf169b1b2086a0afa34a82e9fa93cf249a59fb51fcdefd0e", 148),
+        ([("S0121", 21585, 21702)], "b189c84f145de42724e5099c26056cfd7cc2ec7063c07a5aa1f0fa1a631a0938", 109),
+        ([("S0120", 21544, 21582)], "81de60d2a0c788abdd5e6f57b832b50b7caf82674002f65e055e18a34790dd9b", 38),
     ]),
     ("row10", "predicates", "more_capable_than_analyzed", [
         ([("S0151", 26348, 26659)], "7276cd5814d8f2710b2df5dd7c980304be1b8e31054c09155df37c1b03dd216a", 310),
