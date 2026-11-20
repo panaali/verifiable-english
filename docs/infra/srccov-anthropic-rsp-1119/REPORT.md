@@ -1,7 +1,7 @@
 # srccov-anthropic-rsp-1119: REPORT
 
 **Summary.** Status: built, ready for the chain gate. No DRI signature is needed and no DELTA row is reserved.
-Branch infra/srccov-anthropic-rsp-1119 is rebased onto main 12cb72fa55.
+Branch infra/srccov-anthropic-rsp-1119 is rebased onto main e01c3d6680.
 - Carries: 21 of the 23 candidate rows are KEPT (row 33 partly) and 2 are DROPPED. The kept rows carry their units'
   source text word for word in the legends the reader is shown.
 - Records: 8 of the 8 OUT-OF-SCOPE-UNRECORDED units are RECORDED in spans.json.
@@ -128,7 +128,7 @@ carry kind and record kind. Each was planted, run with `uv run pytest -q tests/t
 
 ## 4. VE commit and the answers the change touches (so later reads re-pin)
 
-The branch is rebased onto main **12cb72fa55**. No keyed answer changes value: results.json is unchanged on the
+The branch is rebased onto main **e01c3d6680** (first onto 12cb72fa55, then again after main moved during the final selected run). No keyed answer changes value: results.json is unchanged on the
 branch, and tests/test_safetyfw_usecases.py, which recomputes every key item, had no other failure in the selected
 run. What a later read shows does change, so these re-pin:
 - **Rule blocks whose shown legends change (17):** f9-public, f9-internal, f11-factual, f11-analyses, f11-review,
@@ -213,7 +213,7 @@ plus this item's docs.
 4. N.A.: no Python, Lean or Rust decision path changed. results.json is unchanged, and the key recompute is in the
    selected run.
 5. N.A.: no relayed field.
-6. PASS: rebased onto main 12cb72fa55. The derived files were regenerated after the rebase (commit 94e2fda9ab), and
+6. PASS: rebased onto main e01c3d6680. The derived files were regenerated after each rebase (the two "corpus seal regenerated" commits), and
    the commit list comes from `git log main..HEAD --no-merges`. The chain runs the gate on the final HEAD.
 7. PASS: DELTA.md has no rows (no VE delta, per the fsf-repair-f1 precedent) and no trust growth.
 8. PASS: DELTA.md lists every changed record with counts. evidence/legend_keep.py prints "21 changed legends; 0 lose
@@ -245,3 +245,13 @@ multi-agent-lab, then all 95 selected units passed in 5 GitHub Actions shards (r
 srccov-anthropic-rsp-1119-57efa7a0-t170844: 24, 23, 21, 14 and 13 units). tests/test_safety_framework.py was
 deferred to the chain gate (selected only for weak reasons, over 120 s). The summary lines are in
 evidence/final-selected-run.txt.
+
+After this run, main moved to e01c3d6680. The new commits overlap this branch only in the shared generated files
+lexicon-report.json and tests/data/route-cases.jsonl. The branch was rebased; each route-cases conflict was
+resolved by taking main's file and running route_fixtures.py --write. Every derived file was regenerated:
+`regen_generated --check` exits 0, and only corpus-seal.json changed. The tests of those files then passed:
+76 passed (`uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py
+tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded tests/test_english_lean_lexicon.py
+tests/test_english_lean_seal.py tests/test_rsp_repair_r1_catastrophic_1119.py tests/test_rsp_b_repair_1115.py`).
+The commit hashes in sections 1 and 5 are from before this rebase: the commits keep their subjects, and
+`git log main..HEAD --no-merges` lists them on the final HEAD.
