@@ -59,6 +59,33 @@ BASE = {
     "misuse": _base(["level"], "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation "
                     "domains (1.2, Section 2)", "{0} is misuse"),
     "ml_rd_and_misalignment": _base(["level"], "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3)"),
+    # Each level's own definition, verbatim from its table or section, with the footnote mark the extracted source has
+    # inside the sentence (fsf-repair-f1-leveldefs-1119). One fact `"<level>" is defined.` in each level's `levels-*`
+    # block uses this predicate, so the legend is shown with that block. One predicate, not one per level: the
+    # identifier lint P7 (run.identifier_lint) refuses a predicate name that packs a level.
+    "defined": _base(["level"], "{0} is a capability level that the framework defines in its own words, as follows. "
+                     "cbrn_uplift_tcl is the CBRN uplift TCL (2.2.1), defined as \"Provides low to medium resourced "
+                     "actors uplift in reference scenarios, resulting in material risk of CBRN attacks that could "
+                     "result in significant but not severe harm.\" cbrn_uplift_level_1 is CBRN uplift level 1 (table "
+                     "2.2.1.a), defined as \"Provides low to medium resourced actors uplift in reference scenarios "
+                     "resulting in additional 8 expected harm at severe scale.\" (the 8 is the mark of footnote 8). "
+                     "cyber_uplift_level_1 is Cyber uplift level 1 (table 2.2.2.a), defined as \"Provides sufficient "
+                     "uplift with high impact cyber attacks for additional expected harm at severe scale.\" "
+                     "harmful_manipulation_level_1 is Harmful manipulation level 1 (exploratory) (table 2.2.3.a), "
+                     "defined as \"Possesses manipulative capabilities sufficient to enable it to systematically and "
+                     "substantially change beliefs and behavior in identified high stakes contexts over the course of "
+                     "interactions with the model, reasonably resulting in additional expected harm at severe "
+                     "scale.\" stealth_and_situational_awareness_tcl is the Stealth and Situational Awareness TCL "
+                     "(3.2.1), defined as \"The instrumental reasoning abilities of the model enable enough "
+                     "situational awareness (ability to discover and use relevant details of its deployment setting) "
+                     "and stealth (ability to circumvent basic oversight mechanisms) such that, absent additional "
+                     "mitigations, we cannot rule out the model significantly undermining human control.\" "
+                     "ml_rd_acceleration_level_1 is ML R&D acceleration level 1 (table 3.2.2.a), defined as \"Has "
+                     "been used to accelerate AI development, resulting in AI progress substantially accelerating "
+                     "from historical rates.\" "
+                     "ml_rd_automation_level_1 is ML R&D automation level 1 (table 3.2.2.a), defined as \"Can fully "
+                     "automate the work of any team of researchers at Google focused on improving AI capabilities, "
+                     "with approximately comparable all-inclusive costs.\"", "{0} is defined"),
     "recommends": _base(["level", "measure"], "the framework recommends {1} for models reaching {0} "
                         "(tables 2.2.1.a to 3.2.2.a)", "{0} recommends {1}"),
     "includes": _base(["measure", "measure"], "{0} includes {1} (2.1.1: Security Level 2+ adds measures to "
