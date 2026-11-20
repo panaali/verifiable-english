@@ -1,3 +1,9 @@
+- `tests/test_discourse_answer.py` — The Python relay never accepts a Lean discourse answer that is not an answer to the document it asked about (lf-4 review B; FINDING-CLASSES 8 and 15).
+- `tests/test_discourse_composed_route.py` — cmp-s4c: the discourse route's entry on the composed path (docs/spec/discourse.md 14.5, 14.6 and 14.8) through the Lean service: norm content answered on a lis…
+- `tests/test_discourse_constitution.py` — The constitution example of docs/spec/discourse.md 2.5 (u0214.s02) as a regression fixture.
+- `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
+- `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
+- `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
 - `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
@@ -77,9 +83,3 @@
 - `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
 - `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
 - `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
-- `tests/test_fidmech_wording.py` — fid-mech-b4: the wording generator moved into VE (plan 9), its harness mode and the actors.json matcher (plan 5.2).
-- `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
-- `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
-- `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
-- `tests/test_fol_names.py` — (no module docstring)
-- `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.

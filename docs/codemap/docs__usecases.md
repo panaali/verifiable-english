@@ -1,1 +1,3 @@
+- `docs/usecases/bluedot-grant/defs-repair-bluedot-grant-1119/ab_answers.py` — Base against head for the two BlueDot documents this item changes: legends only, same answers.
+- `docs/usecases/safety-framework/fsf-repair-f7-govadequacy-1119/c5check.py` — C5 dry check for F7: render each unit's legend part with the reads-1119 counter's own seq_unit_legends, and the counted legend carrier with legend_raw + _omit_…
 - `docs/usecases/safetyfw/openai-preparedness/pf-f9-order-undo/moved_check.py` — Moved-check for pf-f9-order-undo: which frozen-key answers move between two results.json files.
