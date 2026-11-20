@@ -23,8 +23,9 @@ script only runs them, in order), and how a merge combines two sides of the file
   driver keeps a one-sided change and stops on a two-sided one (a merge that runs no writer must not keep a stale
   copy); `--resolve` takes ours and runs the writer on the merged tree;
 * `keyed-lines`: a recorded JSON-lines file with a derived block (tests/data/route-cases.jsonl, `merge_keyed_lines`):
-  the recorded lines merge three-way by key and stop on a key both sides changed differently; the derived lines
-  take ours and the writer rewrites them.
+  the recorded lines merge three-way by key and stop on a key both sides changed differently; the derived block is
+  merged as a `derived` file (the driver stops on a two-sided change, `--resolve` takes ours and the writer
+  rewrites it).
 
 `on_conflict` marks an entry whose writer and check take minutes (a use case's harness): `--write`, `--check` and
 `--names` run it only when named with `--only`, and `--resolve` only when both sides of the merge changed one of
@@ -283,12 +284,13 @@ GENERATED = (
               ((PY, "-m", "conformance.english_lean_lexicon"),), None, merge="derived", service="write",
               note="lexicon_id of every corpus environment",
               fresh="tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon"),
-    Generated("route-cases", ("tests/data/route-cases.jsonl",),
+    Generated("recorded-route-cases", ("tests/data/route-cases.jsonl",),
               ((PY, "docs/en-e3-norm/en-2b/route_fixtures.py", "--write"),),
-              ((PY, "docs/en-e3-norm/en-2b/route_fixtures.py", "--check"),), merge="keyed-lines",
+              ((PY, "docs/en-e3-norm/en-2b/route_fixtures.py", "--check"),), merge="keyed-lines", service="write",
               note="recorded route cases merge by (mode, id); the english.statement block is "
-                   "tests/test_english_statement_blocks.py's route_fixtures(), rewritten on every merge candidate",
-              fresh="tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded", at_merge=True),
+                   "tests/test_english_statement_blocks.py's route_fixtures(), which loads the use cases' "
+                   "environments (the service selects their lexicons)",
+              fresh="tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded"),
     _usecase("safety-framework"),
 )
 # The pin file, `inventory_path`'s name for it.
@@ -690,9 +692,10 @@ def _line_key(line: str) -> tuple[object, tuple]:
     return mode, ("", line)
 
 
-def merge_keyed_lines(base: str, ours: str, theirs: str, derived: tuple = ()) -> str:
+def merge_keyed_lines(base: str, ours: str, theirs: str, derived: tuple = (), resolving: bool = False) -> str:
     """Three-way merge of a recorded JSON-lines file. The lines whose first element is in `derived` are the
-    writer's: the merge takes ours, after every recorded line. The recorded lines merge by group (`_line_key`,
+    writer's block, after every recorded line, merged as a `derived` file: a one-sided change is taken; a
+    two-sided one raises Conflict unless `resolving` (then ours, which the writer rewrites next). The recorded lines merge by group (`_line_key`,
     the lines sharing a key, in order): a group one side changed takes that side, both sides' equal change is
     taken, and a group both sides changed differently raises Conflict. Ours' lines keep their places, a group
     changed by theirs replaces ours' first line of it, and theirs' new groups follow, in theirs' order."""
@@ -709,9 +712,14 @@ def merge_keyed_lines(base: str, ours: str, theirs: str, derived: tuple = ()) ->
                 groups.setdefault(key, []).append(line)
         return recorded, block, groups
 
-    _, _, before = split(base)
+    _, base_block, before = split(base)
     lines, block, mine = split(ours)
-    other_lines, _, other = split(theirs)
+    other_lines, other_block, other = split(theirs)
+    if block != other_block and base_block != other_block:
+        if base_block == block:
+            block = other_block
+        elif not resolving:
+            raise Conflict(f"the {'/'.join(derived)} block: both sides changed it (its writer settles it)")
     merged = {}
     for key in dict.fromkeys([*mine, *other, *before]):
         b, o, t = before.get(key, []), mine.get(key, []), other.get(key, [])
@@ -764,7 +772,7 @@ def merge_text(path: str, base: str, ours: str, theirs: str, resolving: bool = F
         return (ours, True) if resolving else _merge_file(base, ours, theirs)
     if entry.merge == "keyed-lines":
         try:
-            return merge_keyed_lines(base, ours, theirs, DERIVED_LINES.get(path, ())), True
+            return merge_keyed_lines(base, ours, theirs, DERIVED_LINES.get(path, ()), resolving), True
         except Conflict as exc:
             print(f"{path}: {exc}", file=sys.stderr)
             return ours if resolving else _merge_file(base, ours, theirs)[0], False
