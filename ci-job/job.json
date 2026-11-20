@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-usage-watch-reset-fresh-73cde68b-t210043-s2",
+ "head": "65658cde20a5c5da01cd593cb2ef82753cc3b2df",
+ "argv": [
+  "armsh-cand-usage-watch-reset-fresh-73cde68b-t210043-s2",
+  "65658cde20a5c5da01cd593cb2ef82753cc3b2df",
+  "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
