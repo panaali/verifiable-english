@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "87525de84c66d2ed2cccbd5a151ffc06e0bfbe6bfa458b458b3157434a3157da",
+ "seal_id": "b451f17c7a9e006ddb12573ddd79b0c388418dd90e5a2ba68996be5b258efc04",
  "sources": [
   {
    "kind": "corpus source",
@@ -721,7 +721,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/math-mini-paper/environment.json",
-   "sha256": "aa276c7083cb634ee31b8ed75b24f118ff36ff1df870bba4da2e84df10c748cd"
+   "sha256": "41e6bff9c5a82e1204593edd7b98d6174ef441ed717d4ec6129b8e2254e0d7f6"
   },
   {
    "kind": "corpus source",
