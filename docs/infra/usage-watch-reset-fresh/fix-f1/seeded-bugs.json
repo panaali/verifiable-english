@@ -1,6 +1,6 @@
 {
  "item": "usage-watch-reset-fresh (review fix F1)",
- "note": "Each seed was applied to a /tmp copy of the staged .new-usagew2 file (beside a copy of the staged endgame.py), the named suites were run with that copy through the env overrides (seed-runner.py; ids S8-S12 there are S10-S14 here, S1-S9 being the first build), and the copy deleted. The staged files never carried a seed (md5.txt). S13 also lists the 11 test_burndown ids that fail on the installed and staged copies alike.",
+ "note": "Each seed was applied to a /tmp copy of the staged .new-usagew2 file (beside a copy of the staged endgame.py), the named suites were run with that copy through the env overrides (seed-runner.py.txt; ids S8-S12 there are S10-S14 here, S1-S9 being the first build), and the copy deleted. The staged files never carried a seed (md5.txt). S13 also lists the 11 test_burndown ids that fail on the installed and staged copies alike.",
  "mutants": [
   {
    "id": "S10",
