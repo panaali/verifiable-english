@@ -71,7 +71,7 @@ SIZE: 0 product, 0 tests, about 80 other hand-written lines (this REPORT and the
 3. Tests and gates can fail: N.A., no new check or test (section 3).
 4. Python, Lean and Rust agree: N.A., no code changed.
 5. R8 binding: N.A., no relayed field.
-6. Gate evidence matches final HEAD: PASS. The chain runs the gate on the committed final HEAD. The selected run's result is in the build report.
+6. Gate evidence matches final HEAD: PASS. The branch is level with main (merge base `09bea0972d` = main). The selected run (`mac-pytest.sh --select -- --base 09bea0972d --run`, on commit `0bba3a3bb0`, GitHub Actions run `srccov-birthright-citizenship-debate-1119-0bba3a3b-t165998`) exited 0: 6 shards, 13+11+8+8+7+6 = 53 units passed and 0 failed. The chain runs the full gate on the final HEAD; the only change since that run is this REPORT.
 7. No unsigned item: PASS. There is no DELTA row and no reserved signature.
 8. Every user-visible change in DELTA: N.A., nothing the reader is shown changed.
 9. Test selection still finds tests: N.A., no code or test file changed.
