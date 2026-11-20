@@ -1,0 +1,123 @@
+# fm-move-5h-room test evidence (2026-11-20). INSTALLED = the live files; STAGED = the .new-fmw copies (+ tools-local/session_rate.py).
+
+
+## tools-local/test-freeze-mover.zsh INSTALLED freeze-mover.sh (same staged wrapper): case F fails
+FAIL F1: no reset line in the log
+FAIL F2: picker args: 
+FAIL F2: no picker reason in the log
+FAIL F3: the wrapper did not finish after the move
+FAIL F3: the stopped claude still lives
+FAIL F3: calls: {"cfg": "/tmp/fmtest.X/claude-acctA", "args": ["-p", "--model", "opus", "--session-id", "<sid>"], "move": "/
+FAIL F3: no transcript on acctB
+FAIL F3: chain rc , out 
+FAIL F3: no move line in the log
+FAIL F4: a worker without a move file was moved or not logged
+SOME FAILED
+(cases A-E: 19 PASS)
+
+## tools-local/test_limit_resume.py STAGED (LR_SCRIPT, LR_HELPER .new-fmw)
+Ran 15 tests in 12.279s
+
+OK
+## tools-local/test_limit_resume.py INSTALLED
+ERROR: test_zero_exit_ignores_a_move_file (__main__.Resume.test_zero_exit_ignores_a_move_file)
+FAIL: test_failed_move_resumes_on_the_same_account (__main__.Resume.test_failed_move_resumes_on_the_same_account)
+FAIL: test_freeze_mover_move_resumes_on_destination (__main__.Resume.test_freeze_mover_move_resumes_on_destination)
+Ran 15 tests in 12.047s
+FAILED (failures=2, errors=1)
+
+## tools-local/test_pick_srate.py INSTALLED picker (6 picker cases fail; the module cases pass)
+FAIL: test_idle_account_uses_its_plan_pool_rate (__main__.Picker.test_idle_account_uses_its_plan_pool_rate)
+FAIL: test_main_endgame_overflow_spreads_by_5h_room (__main__.Picker.test_main_endgame_overflow_spreads_by_5h_room)
+FAIL: test_main_goes_first_in_its_window (__main__.Picker.test_main_goes_first_in_its_window)
+FAIL: test_measured_account_rate_refuses_what_the_modelled_rate_admits (__main__.Picker.test_measured_account_rate_refuses_what_the_modelled_rate_admits)
+FAIL: test_measured_low_rate_admits_what_the_modelled_rate_refuses (__main__.Picker.test_measured_low_rate_admits_what_the_modelled_rate_refuses)
+FAIL: test_no_measurement_uses_the_recalibrated_5x_default_8 (__main__.Picker.test_no_measurement_uses_the_recalibrated_5x_default_8)
+Ran 11 tests in 1.825s
+FAILED (failures=6)
+## tools-local/test_pick_srate.py STAGED picker: Ran 11 tests, OK (after the streaming fix; first run before it: Ran 11 tests in 2.252s, OK)
+
+## every tools-local test naming PICK_SCRIPT, run with the STAGED picker: failing tests per file (each set equals the INSTALLED picker's; pre-existing)
+== tools-local/test_ccloud_main88.py 1
+== tools-local/test_endgame.py 1
+== tools-local/test_pick_crit_fallback.py 0
+== tools-local/test_pick_critical.py 0
+== tools-local/test_pick_leaked_decider.py 0
+== tools-local/test_pick_longroom.py 0
+== tools-local/test_pick_main5h_nowindow.py 4
+== tools-local/test_pick_main5h_unknown.py 2
+== tools-local/test_pick_main_rank.py 11
+== tools-local/test_pick_mgmt.py 1
+== tools-local/test_pick_oseq_opus_main.py 0
+== tools-local/test_pick_oseq_opus_placec.py 0
+== tools-local/test_pick_prefer.py 0
+== tools-local/test_pick_rcx_main_pace.py 2
+== tools-local/test_pick_released_main.py 3
+== tools-local/test_pick_released_yield.py 0
+== tools-local/test_pick_room_i10.py 0
+== tools-local/test_pick_srate.py 0
+== tools-local/test_pick_tell.py 0
+== tools-local/test_pick_weekrise_pace.py 0
+== tools-local/test_pick_why.py 0
+== tools-local/test_role_budget.py 1
+== tools-local/test_usage_reset_fresh.py 16
+
+## same-set check, INSTALLED vs STAGED failing names (before the streaming fix; test_pick_main5h_unknown then had one extra, fixed: 2 = 2 after)
+test_ccloud_main88: same failing set (1)
+test_endgame: same failing set (1)
+test_pick_main5h_nowindow: same failing set (4)
+test_pick_main5h_unknown: DIFFERENT
+2a3
+> FAIL: test_same_row_give_back_keeps_other_session (__main__.Rank1Main.test_same_row_give_back_keeps_other_session)
+test_pick_main_rank: same failing set (11)
+test_pick_mgmt: same failing set (1)
+test_pick_rcx_main_pace: same failing set (2)
+test_pick_released_main: same failing set (3)
+test_role_budget: same failing set (1)
+test_usage_reset_fresh: same failing set (16)
+
+## tools-local/test-freeze-mover.zsh STAGED, final (freeze-mover.sh.new-fmw with the PICK_LONG_ROOM flag check; FMT_WRAPPER/FMT_LR_HELPER = the staged wrapper + helper)
+PASS A: every process of the old chain tree is dead (4, grandchild included)
+PASS A: old scope ve-fmtest-a-<R>-<R>.scope gone
+PASS A: log says the scope was stopped
+PASS A: relaunch in its own ve-fm-fmtA<R>-* scope
+PASS A: VE_STEP removed
+PASS A: same argv
+PASS A: relaunch logged (MemoryMax read from the old scope: 2G stub)
+PASS B: the chain's whole tree is dead (4, grandchild included)
+PASS B: the other job's process lives
+PASS B: log says tree kill
+PASS C: the own scope is stopped whole, the reparented stray included
+PASS D: 5-h freeze (week 66%): chain kept, no relaunch
+PASS D: the log says it waits for the reset
+PASS D: weekly-cap freeze (week 91%): moved
+PASS E: the topmost chain and its subshell are dead
+PASS E: one relaunch
+PASS F1: reset in 45 min: kept stopped, no pick
+PASS F1: the log names the reset
+PASS F2: no account admits it: kept stopped
+PASS F2: the picker was asked for another account (PICK_AVOID, NOWAIT, LIGHT)
+PASS F2: the log carries the picker reason
+PASS F2: flag PICK_LONG_ROOM off (no projection): kept, logged
+PASS F3: the same session resumed on acctB (--resume <sid>)
+PASS F3: transcript copied to acctB
+PASS F3: the chain got the resumed report, rc 0
+PASS F3: the chain lives on, no relaunch
+PASS F3: the move is logged
+PASS F4: no LR_MOVE_FILE: kept, logged
+ALL PASS
+
+## tools-local/test-freeze-mover.zsh INSTALLED freeze-mover.sh, rerun with the final test file (F2 flag assertion added)
+FAIL F1: no reset line in the log
+FAIL F2: picker args: 
+FAIL F2: no picker reason in the log
+FAIL F2: moved with PICK_LONG_ROOM off
+FAIL F3: the wrapper did not finish after the move
+FAIL F3: the stopped claude still lives
+FAIL F3: calls: {"cfg": "/tmp/fmtest.X/claude-acctA", "args": ["-p", "--model", "opus", "--session-id", "<sid>"], "move": "/tmp/fmtest.X/f/spool/<sid>.<R>.move"
+FAIL F3: no transcript on acctB
+FAIL F3: chain rc , out 
+FAIL F3: no move line in the log
+FAIL F4: a worker without a move file was moved or not logged
+SOME FAILED
+(cases A-E: 19 PASS)

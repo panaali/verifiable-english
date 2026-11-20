@@ -1,0 +1,7 @@
+import sys
+p, which = sys.argv[1], sys.argv[2]
+t = open(p).read()
+a, b = {"S6": ("[[ -f $f && -r $f ]] || return 0", "[[ -f $f && -r $f ]] || return 1"),
+        "S7": ("    [[ $job == [A-Za-z0-9]* && $job != *[^A-Za-z0-9._-]* ]] || return 0\n", "")}[which]
+assert t.count(a) == 1, a
+open(p, "w").write(t.replace(a, b))

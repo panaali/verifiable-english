@@ -1,0 +1,1411 @@
+{
+ "judged": 120,
+ "unjudged": [],
+ "carried": 50,
+ "unsure": 0,
+ "not_carried": 70,
+ "false_alarm_rate": {
+  "unsure_not_false_alarm": [
+   50,
+   120,
+   [
+    0.3323835207797361,
+    0.5061196737024096
+   ]
+  ],
+  "unsure_as_false_alarm": [
+   50,
+   120,
+   [
+    0.3323835207797361,
+    0.5061196737024096
+   ]
+  ],
+  "unsure_dropped": [
+   50,
+   120,
+   [
+    0.3323835207797361,
+    0.5061196737024096
+   ]
+  ]
+ },
+ "by_doc": {
+  "bluedot-grant": {
+   "NOT CARRIED": 20,
+   "CARRIED": 5
+  },
+  "claude-constitution-excerpt": {
+   "CARRIED": 1
+  },
+  "claude-constitution-pilot": {
+   "NOT CARRIED": 7,
+   "CARRIED": 2
+  },
+  "eligibility": {
+   "NOT CARRIED": 43,
+   "CARRIED": 42
+  }
+ },
+ "by_tool_verdict": {
+  "FRAGMENT": {
+   "CARRIED": 24,
+   "NOT CARRIED": 20
+  },
+  "NOT CARRIED": {
+   "NOT CARRIED": 50,
+   "CARRIED": 26
+  }
+ },
+ "supplementary_definition_pass": {
+  "judged_both": 120,
+  "defines": {
+   "DOES NOT DEFINE": 70,
+   "DEFINES": 50
+  },
+  "cross": {
+   "NOT CARRIED / DOES NOT DEFINE": 54,
+   "CARRIED / DEFINES": 34,
+   "CARRIED / DOES NOT DEFINE": 16,
+   "NOT CARRIED / DEFINES": 16
+  },
+  "broad_false_alarm": [
+   104,
+   120,
+   [
+    0.7943520335972863,
+    0.9162339106812721
+   ]
+  ],
+  "broad_false_alarm_unsure_as_false_alarm": [
+   104,
+   120,
+   [
+    0.7943520335972863,
+    0.9162339106812721
+   ]
+  ]
+ },
+ "rows": [
+  {
+   "id": "F001",
+   "doc": "bluedot-grant",
+   "rule": "u007",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Only bare legend phrases (\"is proposed\", \"is mandatory for\", \"is evidence\"); VEX and \"statistical and approximate claims\" are never named",
+   "defines": "DEFINES",
+   "defines_evidence": "\"mandatory evidence (VEX)\" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims."
+  },
+  {
+   "id": "F002",
+   "doc": "bluedot-grant",
+   "rule": "u056",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Only bare legend phrases (\"is proposed\", \"is mandatory for\", \"is evidence\"); nothing names VEX or its scope of statistical and approximate claims",
+   "defines": "DEFINES",
+   "defines_evidence": "\"mandatory evidence (VEX)\" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims."
+  },
+  {
+   "id": "F003",
+   "doc": "bluedot-grant",
+   "rule": "u058",
+   "term": "vex_result",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"claims\"; nothing says what VEX is or what a VEX result is",
+   "defines": "DEFINES",
+   "defines_evidence": "\"mandatory evidence (VEX)\" introduces VEX as the abbreviation for mandatory evidence for statistical and approximate claims."
+  },
+  {
+   "id": "F004",
+   "doc": "bluedot-grant",
+   "rule": "u007",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Legend phrases (\"is mandatory for\", \"is evidence\", \"is tested on\") never say mandatory evidence for statistical and approximate claims",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F005",
+   "doc": "bluedot-grant",
+   "rule": "u074",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Legend phrases (\"is mandatory for\", \"is evidence\", \"is tested on\") never say mandatory evidence for statistical and approximate claims",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F006",
+   "doc": "bluedot-grant",
+   "rule": "u058",
+   "term": "vex_result",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"claims\"; the VEX definition is absent",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F007",
+   "doc": "bluedot-grant",
+   "rule": "u050",
+   "term": "unresolved",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S9 says only \"is unresolved\"; S6 defines affordable proof but nothing says an honest claim stays unresolved without one",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"remains 'unresolved' without an affordable proof\" uses the status label without stating what it means."
+  },
+  {
+   "id": "F008",
+   "doc": "bluedot-grant",
+   "rule": "u089",
+   "term": "unresolved",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S9 says only \"is unresolved\"; nothing links an honest claim lacking an affordable proof to \"unresolved\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"remains 'unresolved' without an affordable proof\" uses the status label without stating what it means."
+  },
+  {
+   "id": "F009",
+   "doc": "bluedot-grant",
+   "rule": "u086",
+   "term": "false_confidence",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; false confidence from a proof label is not described",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F010",
+   "doc": "bluedot-grant",
+   "rule": "u035",
+   "term": "proof_label",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; what a proof label is or risks is absent",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F011",
+   "doc": "bluedot-grant",
+   "rule": "u086",
+   "term": "proof_label",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; what a proof label is or risks is absent",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F012",
+   "doc": "bluedot-grant",
+   "rule": "u013",
+   "term": "matched_cost",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "S11: \"count authoring, formalisation, proof production, compute and review for both arms\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"proof production are included in the matched-cost comparison\" only uses the phrase."
+  },
+  {
+   "id": "F013",
+   "doc": "bluedot-grant",
+   "rule": "u018",
+   "term": "matched_cost",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "S11: \"count authoring, formalisation, proof production, compute and review for both arms\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"proof production are included in the matched-cost comparison\" only uses the phrase."
+  },
+  {
+   "id": "F014",
+   "doc": "bluedot-grant",
+   "rule": "u062",
+   "term": "matched_cost",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "S11: \"count authoring, formalisation, proof production, compute and review for both arms\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"proof production are included in the matched-cost comparison\" only uses the phrase."
+  },
+  {
+   "id": "F015",
+   "doc": "bluedot-grant",
+   "rule": "u079",
+   "term": "matched_cost",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "S11: \"count authoring, formalisation, proof production, compute and review for both arms\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"proof production are included in the matched-cost comparison\" only uses the phrase."
+  },
+  {
+   "id": "F016",
+   "doc": "bluedot-grant",
+   "rule": "u062",
+   "term": "proof_production",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "S11 \"count ... formalisation, proof production ...\" plus \"includes the cost of\" place proof production in the matched-cost comparison",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"proof production are included in the matched-cost comparison\" only uses the phrase."
+  },
+  {
+   "id": "F017",
+   "doc": "bluedot-grant",
+   "rule": "u007",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Legend phrases (\"is mandatory for\", \"is evidence\", \"is tested on\") never say mandatory evidence for statistical and approximate claims",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F018",
+   "doc": "bluedot-grant",
+   "rule": "u074",
+   "term": "vex",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Legend phrases (\"is mandatory for\", \"is evidence\", \"is tested on\") never say mandatory evidence for statistical and approximate claims",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F019",
+   "doc": "bluedot-grant",
+   "rule": "u058",
+   "term": "vex_result",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"claims\"; the VEX definition is absent",
+   "defines": "DEFINES",
+   "defines_evidence": "\"developing mandatory evidence (VEX) for statistical and approximate claims\" introduces the abbreviation."
+  },
+  {
+   "id": "F020",
+   "doc": "bluedot-grant",
+   "rule": "u050",
+   "term": "unresolved",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S9 says only \"is unresolved\"; nothing says an honest claim without an affordable proof stays unresolved",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"remains 'unresolved' without an affordable proof\" uses the status label without stating what it means."
+  },
+  {
+   "id": "F021",
+   "doc": "bluedot-grant",
+   "rule": "u051",
+   "term": "unresolved",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S9 \"is unresolved\" and the within_budget clause never tie unresolved status to lacking an affordable proof",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"remains 'unresolved' without an affordable proof\" uses the status label without stating what it means."
+  },
+  {
+   "id": "F022",
+   "doc": "bluedot-grant",
+   "rule": "u089",
+   "term": "unresolved",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S9 says only \"is unresolved\"; the honest-claim-without-affordable-proof condition is missing",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"remains 'unresolved' without an affordable proof\" uses the status label without stating what it means."
+  },
+  {
+   "id": "F023",
+   "doc": "bluedot-grant",
+   "rule": "u035",
+   "term": "false_confidence",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; false confidence is not described",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F024",
+   "doc": "bluedot-grant",
+   "rule": "u035",
+   "term": "proof_label",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; the proof label is not described",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F025",
+   "doc": "bluedot-grant",
+   "rule": "u086",
+   "term": "proof_label",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface is only \"leads to\"; the proof label is not described",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "A risk statement (\"could increase false confidence\"), not a definition of a term."
+  },
+  {
+   "id": "F026",
+   "doc": "claude-constitution-excerpt",
+   "rule": "C7",
+   "term": "violates_hard_constraint",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "legend:violates_hard_constraint says \"in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'\", matching the source's framing of it as an explicit exception to the order.",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Quotes the phrase as an example of an exception (\"once with an explicit exception (...)\") without defining it."
+  },
+  {
+   "id": "F027",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0123.s02.p1",
+   "term": "operator_input_permitted",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S7 says \"An operator is permitted to give Claude the input\" but never says who operators are (API customers building products, usually via the system prompt).",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F028",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0123.s03",
+   "term": "operator_input_permitted",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S7 uses \"operator\" with no definition; the API-access, system-prompt and usage-policy description is absent from S1–S7.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F029",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0073.s05",
+   "term": "operator_prompt_addresses_case",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "\"An operator prompt addresses how Claude should behave in the situation\" uses \"operator\" without saying who operators are or that they reach Claude through the API and system prompt.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F030",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0062.s01",
+   "term": "operator_input",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "\"The operator input is information / a persona / a specific set of instructions\" says what the input is, not who the operator is.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F031",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0123.s02.p1",
+   "term": "operator_input",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "The legends repeat \"The operator input is an instruction to…\" but nowhere define operators as companies or individuals using Claude through the API.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F032",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0123.s03",
+   "term": "operator_input",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S1–S7 say \"operator input\" but never describe operators (API access, system prompt, accepting the usage policies).",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Operators:** Companies and individuals that access Claude's capabilities through our API\" is a glossary-style definition."
+  },
+  {
+   "id": "F033",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0123.s02.p1",
+   "term": "instruction_false_information_deceiving_user",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S6 says \"deceive the user\" but never defines users as those in the human turn, or the default of assuming a live human.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"**Users:** Those who interact with Claude in the human turn of the conversation\" is a glossary-style definition."
+  },
+  {
+   "id": "F034",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0165.s07",
+   "term": "csam_generation_permitted_for_claude",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "\"Claude is permitted to do the act in a situation that is a case of Claude generating child sexual abuse material (CSAM)\" matches the source line \"Generate child sexual abuse material (CSAM).\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"child sexual abuse material (CSAM)\" introduces CSAM as the abbreviation."
+  },
+  {
+   "id": "F035",
+   "doc": "claude-constitution-pilot",
+   "rule": "u0165.s07",
+   "term": "child_sexual_abuse_material",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "\"The situation is a case of Claude generating child sexual abuse material (CSAM)\" repeats the source wording.",
+   "defines": "DEFINES",
+   "defines_evidence": "\"child sexual abuse material (CSAM)\" introduces an abbreviation for the phrase."
+  },
+  {
+   "id": "F036",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surface gives only \"the person reached pensionable age in or before the qualifying week\" and a birth-date-to-date table; no Schedule 4 meaning of \"pensionable age\" is stated",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"the definition of 'pensionable age' is omitted\" amends another Act's definition."
+  },
+  {
+   "id": "F037",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R13b gloss and S1 say \"reached pensionable age\" but nothing states what defines \"pensionable age\"; DEFINITIONS has no such entry",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"the definition of 'pensionable age' is omitted\" amends another Act's definition."
+  },
+  {
+   "id": "F038",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R13b gloss and S1 say \"reached pensionable age\" but nothing states what defines \"pensionable age\"; DEFINITIONS has no such entry",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"the definition of 'pensionable age' is omitted\" amends another Act's definition."
+  },
+  {
+   "id": "F039",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F040",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R7 gloss says \"has reached pensionable age\"; no legend or DEFINITIONS entry defines \"pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F041",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F042",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F043",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R7 gloss says \"has reached pensionable age\"; no legend or DEFINITIONS entry defines \"pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F044",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 122(1) of another Act."
+  },
+  {
+   "id": "F045",
+   "doc": "eligibility",
+   "rule": "R2.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points elsewhere (\"has the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F046",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R7 gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points elsewhere (\"has the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F047",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points elsewhere (\"has the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F048",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R7 gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points elsewhere (\"has the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F049",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R13b gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points elsewhere (\"has the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F050",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R7 surfaces say only \"reached pensionable age\"; no definition of \"pensionable age\" is given",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 150(2) of another Act."
+  },
+  {
+   "id": "F051",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "S1 says only \"reached pensionable age\"; S2 has a PENSIONABLE_AGE date table but no definition text",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 150(2) of another Act."
+  },
+  {
+   "id": "F052",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R13b surfaces say only \"reached pensionable age\"; no definition of \"pensionable age\" is given",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 150(2) of another Act."
+  },
+  {
+   "id": "F053",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F054",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R7 gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F055",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R13b gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F056",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F057",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R13b gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F058",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 191 of the Social Security Administration Act 1992."
+  },
+  {
+   "id": "F059",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 191 of the Social Security Administration Act 1992."
+  },
+  {
+   "id": "F060",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R7 gloss says \"has reached pensionable age\"; no legend or DEFINITIONS entry defines \"pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 191 of the Social Security Administration Act 1992."
+  },
+  {
+   "id": "F061",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F062",
+   "doc": "eligibility",
+   "rule": "R2.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F063",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R7 gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F064",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in the R13b gloss, legends or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F065",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No mention of \"paragraph 1 of Schedule 4 to the Pensions Act 1995\" in gloss, S1 or S2",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Substituted text for another Act that points to \"paragraph 1 of Schedule 4 to the Pensions Act 1995\"."
+  },
+  {
+   "id": "F066",
+   "doc": "eligibility",
+   "rule": "R2.applicant",
+   "term": "applicant_pa_date",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surfaces lack \"within the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Amends the 1992 Act's section 58(3)(b) with a pointer (\"within the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F067",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surfaces lack \"within the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Amends the 1992 Act's section 58(3)(b) with a pointer (\"within the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F068",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surfaces lack \"within the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Amends the 1992 Act's section 58(3)(b) with a pointer (\"within the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F069",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surfaces lack \"within the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Amends the 1992 Act's section 58(3)(b) with a pointer (\"within the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F070",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "Surfaces lack \"within the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "Amends the 1992 Act's section 58(3)(b) with a pointer (\"within the meaning given by the rules in paragraph 1 of Schedule 4\")."
+  },
+  {
+   "id": "F071",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": "housemate_pa_date",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 181(1) of another Act."
+  },
+  {
+   "id": "F072",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text gives the substituted definition of \"pensionable age\"; S1 only says \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 181(1) of another Act."
+  },
+  {
+   "id": "F073",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "NOT CARRIED",
+   "evidence": "R7 gloss says \"has reached pensionable age\"; no legend or DEFINITIONS entry defines \"pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"for the definition of 'pensionable age' there is substituted\" amends section 181(1) of another Act."
+  },
+  {
+   "id": "F074",
+   "doc": "eligibility",
+   "rule": "R2.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "DEFINITIONS in S2 has no \"pensionable age\" entry; S1 says only \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\" points to a definition elsewhere."
+  },
+  {
+   "id": "F075",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "DEFINITIONS in S2 has no \"pensionable age\" entry; the R7 legends say only \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\" points to a definition elsewhere."
+  },
+  {
+   "id": "F076",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text cites paragraph 1 of Schedule 4 to the Pensions Act 1995; the S3 legend and code only say \"reached pensionable age\" or \"pensionable-age date\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\" points to a definition elsewhere."
+  },
+  {
+   "id": "F077",
+   "doc": "eligibility",
+   "rule": "R2.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "The gloss and S3 say only \"pensionable-age date is no later than 2026-09-27\"; the code's PENSIONABLE_AGE table gives dates but not the Pensions Act 1995 Sch. 4 definition",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\" points to a definition elsewhere."
+  },
+  {
+   "id": "F078",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "NOT CARRIED",
+   "evidence": "No surface text cites paragraph 1 of Schedule 4 to the Pensions Act 1995; the S3 legend and code only say \"reached pensionable age\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995\" points to a definition elsewhere."
+  },
+  {
+   "id": "F079",
+   "doc": "eligibility",
+   "rule": "R7a.housemate",
+   "term": "home_start_dated",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F080",
+   "doc": "eligibility",
+   "rule": "R7a.applicant",
+   "term": "home_ended",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F081",
+   "doc": "eligibility",
+   "rule": "R7a.housemate",
+   "term": "home_ended",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F082",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "home_ended",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F083",
+   "doc": "eligibility",
+   "rule": "R7b.housemate",
+   "term": "partnership_ended",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F084",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "partnership_ended",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F085",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": "resident_in_week",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F086",
+   "doc": "eligibility",
+   "rule": "R13b.housemate",
+   "term": "resident_in_week",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F087",
+   "doc": "eligibility",
+   "rule": "R7a.applicant",
+   "term": "home_throughout",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F088",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": "home_throughout",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F089",
+   "doc": "eligibility",
+   "rule": "R7b.applicant",
+   "term": "partners_throughout",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F090",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "partner_at_home",
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code DEFINITIONS says \"“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'qualifying week' means ... the week beginning on the third Monday in the September of that year\"."
+  },
+  {
+   "id": "F091",
+   "doc": "eligibility",
+   "rule": "R4.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'relevant benefit' means—\" opens this text's own definition, with the list following."
+  },
+  {
+   "id": "F092",
+   "doc": "eligibility",
+   "rule": "R10.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss and RELEVANT list \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'relevant benefit' means—\" opens this text's own definition, with the list following."
+  },
+  {
+   "id": "F093",
+   "doc": "eligibility",
+   "rule": "R4.housemate",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'relevant benefit' means—\" opens this text's own definition, with the list following."
+  },
+  {
+   "id": "F094",
+   "doc": "eligibility",
+   "rule": "R15.6",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'relevant benefit' means—\" opens this text's own definition, with the list following."
+  },
+  {
+   "id": "F095",
+   "doc": "eligibility",
+   "rule": "R15.5",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"'relevant benefit' means—\" opens this text's own definition, with the list following."
+  },
+  {
+   "id": "F096",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "home_start_dated",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F097",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "partnership_start_dated",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F098",
+   "doc": "eligibility",
+   "rule": "R7b.applicant",
+   "term": "partnership_ended",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F099",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "partnership_ended",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F100",
+   "doc": "eligibility",
+   "rule": "R13b.applicant",
+   "term": "resident_in_week",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F101",
+   "doc": "eligibility",
+   "rule": "R7a.applicant",
+   "term": "home_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F102",
+   "doc": "eligibility",
+   "rule": "R7.applicant",
+   "term": "home_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F103",
+   "doc": "eligibility",
+   "rule": "R7a.housemate",
+   "term": "home_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F104",
+   "doc": "eligibility",
+   "rule": "R7.housemate",
+   "term": "home_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F105",
+   "doc": "eligibility",
+   "rule": "R7b.applicant",
+   "term": "partners_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F106",
+   "doc": "eligibility",
+   "rule": "R7b.housemate",
+   "term": "partners_throughout",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F107",
+   "doc": "eligibility",
+   "rule": "R14a",
+   "term": "partner_at_home",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code says \"the week beginning on the third Monday in the September of that year\" and \"21 to 27 September 2026. This is called the ‘qualifying week’\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"the week beginning on the third Monday in September ('the qualifying week')\" introduces the label with its meaning."
+  },
+  {
+   "id": "F108",
+   "doc": "eligibility",
+   "rule": "R4.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"included in the definition of 'relevant benefit'\" refers to the definition without stating it."
+  },
+  {
+   "id": "F109",
+   "doc": "eligibility",
+   "rule": "R10.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"included in the definition of 'relevant benefit'\" refers to the definition without stating it."
+  },
+  {
+   "id": "F110",
+   "doc": "eligibility",
+   "rule": "R10.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"included in the definition of 'relevant benefit'\" refers to the definition without stating it."
+  },
+  {
+   "id": "F111",
+   "doc": "eligibility",
+   "rule": "R14.2",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"included in the definition of 'relevant benefit'\" refers to the definition without stating it."
+  },
+  {
+   "id": "F112",
+   "doc": "eligibility",
+   "rule": "R4.applicant",
+   "term": "pension_credit",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The gloss names \"state pension credit\" among the relevant benefits paid \"for the week\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"state pension credit or another means-tested benefit\" is used as a payment condition, not defined."
+  },
+  {
+   "id": "F113",
+   "doc": "eligibility",
+   "rule": "R4.housemate",
+   "term": "pension_credit",
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "The gloss names \"state pension credit\" among the relevant benefits paid \"for the week\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"state pension credit or another means-tested benefit\" is used as a payment condition, not defined."
+  },
+  {
+   "id": "F114",
+   "doc": "eligibility",
+   "rule": "R10.applicant",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists the relevant benefits \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"See section 7A(6)(d) for the definition\" points to a definition elsewhere."
+  },
+  {
+   "id": "F115",
+   "doc": "eligibility",
+   "rule": "R14.2",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "The S5 code's R4 gloss lists the relevant benefits \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\"",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"See section 7A(6)(d) for the definition\" points to a definition elsewhere."
+  },
+  {
+   "id": "F116",
+   "doc": "eligibility",
+   "rule": "R14.3",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "translation.py's R4 gloss lists the relevant benefits: \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\" (the pointer to section 7A(6)(d) itself is not shown)",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"See section 7A(6)(d) for the definition\" points to a definition elsewhere."
+  },
+  {
+   "id": "F117",
+   "doc": "eligibility",
+   "rule": "R15.6",
+   "term": null,
+   "tool_verdict": "NOT CARRIED",
+   "judge": "CARRIED",
+   "evidence": "translation.py's R4 gloss lists the relevant benefits: \"income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit\" (the pointer to section 7A(6)(d) itself is not shown)",
+   "defines": "DOES NOT DEFINE",
+   "defines_evidence": "\"See section 7A(6)(d) for the definition\" points to a definition elsewhere."
+  },
+  {
+   "id": "F118",
+   "doc": "eligibility",
+   "rule": "R4.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "the gloss says \"income-related employment and support allowance ... is paid to the housemate for the week\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"Employment and Support Allowance (ESA)\" introduces ESA as the abbreviation."
+  },
+  {
+   "id": "F119",
+   "doc": "eligibility",
+   "rule": "R4.applicant",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "the gloss says \"income-related employment and support allowance ... is paid to the applicant for the week\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"Employment and Support Allowance (ESA)\" introduces ESA as the abbreviation."
+  },
+  {
+   "id": "F120",
+   "doc": "eligibility",
+   "rule": "R4.housemate",
+   "term": null,
+   "tool_verdict": "FRAGMENT",
+   "judge": "CARRIED",
+   "evidence": "the gloss says \"income-related employment and support allowance ... is paid to the housemate for the week\"",
+   "defines": "DEFINES",
+   "defines_evidence": "\"Employment and Support Allowance (ESA)\" introduces ESA as the abbreviation."
+  }
+ ]
+}

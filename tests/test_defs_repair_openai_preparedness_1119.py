@@ -441,11 +441,18 @@ def test_each_row_quote_is_shown_and_counted_in_its_carrier_legend(row):
 
 def test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order():
     """Information added, nothing removed: each new legend is the legend at main, then LEAD, then its rows' labelled
-    quotes in row order (evidence/legends-before.json, saved from main 09bea0972d)."""
+    quotes in row order (evidence/legends-before.json, saved from main 09bea0972d). Seven of the carriers were also
+    extended on main by srccov-openai-preparedness-1119, which only appended too; for them the old legend is the one at
+    the merged ve-integration (evidence/legends-before-merge.json), whose prefix is the 09bea0972d legend."""
     before = json.loads((EVIDENCE / "legends-before.json").read_text(encoding="utf-8"))["descriptions"]
+    merged = json.loads((EVIDENCE / "legends-before-merge.json").read_text(encoding="utf-8"))["descriptions"]
     committed, _built = shown()
     assert sorted(before) == sorted({row[1] for row in ROWS.values()})
-    for key, old in before.items():
+    assert set(merged) <= set(before)
+    for key, extended in merged.items():
+        assert extended.startswith(before[key] + "; "), key
+    for key in before:
+        old = merged.get(key, before[key])
         parts = [f"{ROWS[r][2]}: {row_quote(r)}" for r in sorted(ROWS) if ROWS[r][1] == key]
         assert " ".join(committed[key].split()) == " ".join((old + LEAD + " ".join(parts)).split()), key
 
