@@ -44,6 +44,7 @@
 - `tests/test_srccov_anthropic_rsp_1119.py` — srccov-anthropic-rsp-1119: the RSP source text the coverage map found missing is carried word for word, and the units it found out of scope with no record are …
 - `tests/test_srccov_claude_constitution_pilot_1119.py` — srccov-claude-constitution-pilot-1119: the carried probe records 26 source sentences that state no rule.
 - `tests/test_srccov_math_mini_paper_1119.py` — srccov-math-mini-paper-1119: the paper's Definition D1 is carried word for word in the legend its rule uses.
+- `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
 - `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
 - `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
 - `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
@@ -79,6 +80,3 @@
 - `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
-- `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
-- `tests/test_vacuity.py` — (no module docstring)
-- `tests/test_ve_iface.py` — (no module docstring)
