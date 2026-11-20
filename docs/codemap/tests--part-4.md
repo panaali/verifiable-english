@@ -1,3 +1,4 @@
+- `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
 - `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
 - `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…
 - `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
