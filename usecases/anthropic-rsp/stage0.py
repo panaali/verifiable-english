@@ -50,14 +50,43 @@ RECEIPT_COUNT = ("F16-receipt", "30", "2026-10-08", "f16-ask-commentary")
 
 # --- D2: harm classes and might cells (P3) --------------------------------------------------------------------------
 
+# Each threshold's harm carries its row's left column (the threshold's definition) whole, after the harm words.
 HARMS = {  # harm constant -> (class or None, the text's words)
-    "harm_of_non_novel_chem_bio_weapons": ("catastrophic", "row T1: \"serious potential for catastrophic damages\""),
-    "harm_of_novel_chem_bio_weapons": ("catastrophic", "row T2: \"potential for catastrophic harm\""),
+    "harm_of_non_novel_chem_bio_weapons": ("catastrophic", "row T1: \"serious potential for catastrophic damages\"" + (
+        "; the row's left column, verbatim: “Non-novel chemical/biological weapons production. AI systems with the "
+        "ability to significantly help individuals or groups with basic technical backgrounds (e.g., undergraduate "
+        "STEM degrees) create/obtain and deploy chemical and/or biological weapons with serious potential for "
+        "catastrophic damages.”")),
+    "harm_of_novel_chem_bio_weapons": ("catastrophic", "row T2: \"potential for catastrophic harm\"" + (
+        "; the row's left column, verbatim: “Novel chemical/biological weapons production. AI systems that can "
+        "functionally substitute for the scarce human expertise that is currently the primary barrier to novel "
+        "development of chemical and biological weapons with potential for catastrophic harm. 4 That is, a "
+        "well-resourced team 5 could, using the model, accomplish the end-to-end agent design and deployment "
+        "(including, as relevant, agent design, verification and validation, formulation, and dissemination) that "
+        "would otherwise 6 require recruiting one of a small number 7 of world-leading specialists.” (footnotes 7, "
+        "6, 5 and 4): “7 E.g., hundreds. 6 E.g., in a world with access only to the best AI models as of 2023. 5 "
+        "For example, a program with millions of dollars available and support from recent PhD’s from top-tier "
+        "international programs. We are focused on the sorts of teams that would be realistic for real-world "
+        "threat actors. 4 In particular, weapons with the potential to cause events with consequences comparable "
+        "to or worse than those of COVID-19.”")),
     "harm_of_misaligned_high_stakes": ("catastrophic", "row T3: \"irreversibly and substantially higher odds of a "
                                                        "later "
-                                                       "global catastrophe\""),
+                                                       "global catastrophe\"" + (
+        "; the row's left column, verbatim: “Misaligned AI systems in high-stakes settings. AI systems that are "
+        "highly relied on and have extensive access to sensitive assets as well as moderate capacity for "
+        "autonomous, goal-directed operation and subterfuge—such that it is plausible these AI systems could (if "
+        "directed toward this goal, either deliberately or inadvertently) carry out sabotage leading to "
+        "irreversibly and substantially higher odds of a later global catastrophe. In the near term, this "
+        "possibility will likely be most applicable to AI systems that are extensively used within major AI "
+        "companies, with the opportunity to manipulate how their successor systems are trained and deployed as "
+        "well as the evidence used to assess their safety. Down the line, this possibility may come to apply to AI "
+        "systems deployed within government and other high-stakes settings.”")),
     "harm_of_automated_rd": (None, "row T4: \"threats to international security and/or rapid disruptions to the "
-                                   "global balance of power\" (no harm class word)"),
+                                   "global balance of power\" (no harm class word)" + (
+        "; the row's left column, verbatim: “Automated R&D in key domains. AI systems that can fully automate, or "
+        "otherwise dramatically accelerate, the work of large, top-tier teams of human researchers in domains "
+        "where fast progress could cause threats to international security and/or rapid disruptions to the global "
+        "balance of power—for example, energy, robotics, weapons development, and AI itself.”")),
     # The class "catastrophic" has no legend field of its own on the risk wire (severity.classes is a list of names),
     # so footnote 1, which defines it, is carried whole in the legend of its stated instance.
     "existential_threats": ("catastrophic", "footnote 1 (the catastrophic class, verbatim): \"Catastrophic risk\" as "
@@ -143,9 +172,13 @@ def d2():
 # A date constant whose source words are more than its name: v3.4's date is also the policy's effective date (D2).
 DATE_WORDS = {"v3_4_date": "the v3.4 date, the policy's effective date: page 1 \"Effective July 8, 2026\" and the "
                            "changelog's \"July 8, 2026 (RSP v3.4)\""}
+# The start day of a "publication within" question (D3b) is a Risk Report's coverage date, which 3.1 defines.
+COVERAGE_WORDS = {"start_day": "the coverage date of a Risk Report; 3.1, verbatim: “Scope. A Risk Report will cover "
+                               "the risks of Anthropic's models and actions as of a given coverage date, which will "
+                               "be no more than 30 days prior to the publication of the report. 10”"}
 
 
-def date_environment(extra=()):
+def date_environment(extra=(), words=None):
     from ve.environment import Environment
     from ve.profiles import LANGUAGE, SPEC_REVISION
     names = [f"{v}_date" for v in CHANGELOG] + ["retrieval_date", *extra]
@@ -154,7 +187,8 @@ def date_environment(extra=()):
                         "units": {"day": {"scale": "1", "display": {"kind": "iso_date"}},
                                   "elapsed_day": {"scale": "1", "display": {"kind": "decimal", "label": "days"}}},
                         "vocabulary": {"sorts": {}, "predicates": {}, "constants": {
-                            n: {"sort": "$int", "unit": "day", "description": DATE_WORDS.get(n, n.replace("_", " ")),
+                            n: {"sort": "$int", "unit": "day",
+                                "description": {**DATE_WORDS, **(words or {})}.get(n, n.replace("_", " ")),
                                 "verbalisation": "the " + n.replace("_", " ")} for n in names}}})
 
 
@@ -190,7 +224,7 @@ def d3():
     for item, (start, day, days, question, _) in DATE_QUESTIONS.items():
         if item == "D3a":
             continue  # the failing coverage-date example is checked by date_answer
-        env = date_environment(("start_day", "limit_day"))
+        env = date_environment(("start_day", "limit_day"), COVERAGE_WORDS if question == "publication within" else None)
         facts = [_q(["date_on", _day("start_day"), ["date", start]]),
                  _q(["shift_days", _day("limit_day"), _day("start_day"), days])]
         goal = (["date_no_later", ["date", day], _day("limit_day")] if question == "publication within" else
