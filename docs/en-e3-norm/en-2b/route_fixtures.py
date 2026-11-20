@@ -31,7 +31,7 @@ def main(argv: list[str]) -> int:
     text = "\n".join(kept + lines) + "\n"
     if argv == ["--check"]:
         if text != before:
-            print(f"{TARGET.relative_to(ROOT)} is stale: run {Path(__file__).relative_to(ROOT)} --write", file=sys.stderr)
+            print(f"{TARGET.name} is stale: run docs/en-e3-norm/en-2b/route_fixtures.py --write", file=sys.stderr)
             return 1
         return 0
     TARGET.write_text(text)
