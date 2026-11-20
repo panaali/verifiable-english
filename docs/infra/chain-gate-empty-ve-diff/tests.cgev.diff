@@ -1,0 +1,36 @@
+--- tools-local/test_chain_gate_vm_cancel.py.bak-20261119cgev	2026-11-17 12:24:46.207505316 +0000
++++ tools-local/test_chain_gate_vm_cancel.py	2026-11-19 23:05:26.829310886 +0000
+@@ -92,6 +92,9 @@
+     open(os.path.join(w, ".gitignore"), "w").write("gate-result.json\ngate-result.json.tmp\n")
+     subprocess.run(["git", "-C", w, "add", "-A"], check=True)
+     subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "a"], check=True)
++    # one commit beyond main: chain-gate.sh skips a branch with 0 commits beyond its merge base (chain-gate-empty-ve-diff)
++    subprocess.run(["git", "-C", w, "checkout", "-qb", "infra/t"], check=True)
++    subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "--allow-empty", "-qm", "work"], check=True)
+     return m, cg, home, fb, w
+ 
+ 
+--- tools-local/test_vm1_gate_weight.py.bak-20261119cgev	2026-11-17 14:25:44.934593983 +0000
++++ tools-local/test_vm1_gate_weight.py	2026-11-19 23:05:26.828945616 +0000
+@@ -178,6 +178,9 @@
+             open(os.path.join(w, ".gitignore"), "w").write("gate-result.json\ngate-result.json.tmp\n")
+             subprocess.run(["git", "-C", w, "add", "-A"], check=True)
+             subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "a"], check=True)
++            # one commit beyond main: chain-gate.sh skips a branch with 0 commits beyond its merge base (chain-gate-empty-ve-diff)
++            subprocess.run(["git", "-C", w, "checkout", "-qb", "infra/t"], check=True)
++            subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "--allow-empty", "-qm", "work"], check=True)
+             self.wts[name] = w
+         r = os.path.join(w, "gate-result.json")
+         if os.path.exists(r):
+--- tools-local/test_mac_last_resort.py.bak-20261119cgev	2026-11-12 20:23:25.992676321 +0000
++++ tools-local/test_mac_last_resort.py	2026-11-19 23:05:26.829164546 +0000
+@@ -85,6 +85,9 @@
+         open(os.path.join(w, "a.txt"), "w").write("a\n")
+         subprocess.run(["git", "-C", w, "add", "-A"], check=True)
+         subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "a"], check=True)
++        # one commit beyond main: chain-gate.sh skips a branch with 0 commits beyond its merge base (chain-gate-empty-ve-diff)
++        subprocess.run(["git", "-C", w, "checkout", "-qb", "infra/t"], check=True)
++        subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "--allow-empty", "-qm", "work"], check=True)
+         probe = os.path.join(d, "probe")
+ 
+         def run(lines, more=None):
