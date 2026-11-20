@@ -1,0 +1,31 @@
+--- gha-arm-shard.sh.bak-20261120amscope	2026-11-09 22:38:09.295963585 +0000
++++ gha-arm-shard.sh.new-amscope2	2026-11-20 08:39:12.260043100 +0000
+@@ -13,7 +13,7 @@
+ #   unit-level EQUAL with the Mac + 1 seeded FAIL first), Amendment 02:45Z (queue-aware n: shard-room.py).
+ # ARM_SHARD_MODE: shadow (default; needs the flag file ARM_SHARD_SHADOW), blocking (merge-train.sh; needs ARM_SHARD_BLOCKING),
+ #   validate (a named validation run, e.g. the seeded-fault run; no flag). ARM_SHARD_JOBFILE=<file>: the job dir, once made.
+-#  1. gates: no ACTIONS_SUSPENDED, no cloud-jobs/ACTIONS_MISMATCH, no CLOUD_PUSH_HOLD (unless --dry-run), the mode's flag;
++#  1. gates: no ACTIONS_SUSPENDED, no cloud-jobs/ACTIONS_MISMATCH that blocks the gate (mismatch-scope.sh), no CLOUD_PUSH_HOLD (unless --dry-run), the mode's flag;
+ #  2. N (unless --shards): min(item 1's latency n (gha/arm-shard-n.py, at most ARM_SHARD_NMAX = 8), max(2, room)), room from
+ #     shard-room.py actions (cap ACTIONS_MAX_INFLIGHT 20 - busy - reserve; busy includes these shards: gha-arm/*/run.json);
+ #     the log line names N, the latency n with its H and T, and the room line;
+@@ -88,6 +88,7 @@
+ #        newest quarantine day, else not of the majority value) and merges again; still refused -> exit 1 as before.
+ #    The merged record still needs every shard of this commit (gate_shards): no PASS/FAIL judgement changes.
+ M=${ARM_SHARD_M:-/home/seyran/code/manage-agents}; source ${CLOUD_CONF:-$M/cloud-runner.conf}
++source $M/mismatch-scope.sh 2>/dev/null || mismatch_blocks_gate(){ [[ -e $1 ]]; }  # actions-mismatch-scope-1120: mismatch-scope.sh (helper not sourceable: the old rule, the file blocks)
+ SRC=${VE_EXPORT_SRC:-$HOME/code/verifiable-english}; X=${VE_EXPORT_DIR:-$HOME/code/ve-github-export}
+ REMOTE=${CLOUD_REMOTE:-${CLOUD_REPO_URL:-https://github.com/panaali/verifiable-english}.git}
+ G=$M/gha-arm; mkdir -p $G; log=$G/gha-arm-shard.log; OV=$G/shard-overhead.tsv
+@@ -155,7 +156,10 @@
+ }
+ no(){ say "not sent: $*"; rjs status=not-sent "why=$*" mode=$mode; exit 3; }
+ [ -f $M/ACTIONS_SUSPENDED ] && no ACTIONS_SUSPENDED
+-[ -f $M/cloud-jobs/ACTIONS_MISMATCH ] && no cloud-jobs/ACTIONS_MISMATCH
++# 2026-11-20 actions-mismatch-scope-1120, narrowed by actions-mismatch-scope-narrow-1120 (dri-decisions-20261120-adv0757.md item 1): only
++# a tm-*/testmap-* "verdict sample differs" line does not stop this leg (mismatch-scope.sh); select-*, provenance/digest, empty,
++# unparseable or any other line does (every rc but 1 blocks). Its own guard: arm-compare DIFFERENT.
++{ mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH; [ $? != 1 ]; } && no cloud-jobs/ACTIONS_MISMATCH
+ [ -f $M/CLOUD_PUSH_HOLD ] && [ -z "$dry" ] && no CLOUD_PUSH_HOLD
+ case $mode in shadow) [ -f $M/ARM_SHARD_SHADOW ] || [ -n "$dry" ] || no "ARM_SHARD_SHADOW off";;
+   blocking) [ -f $M/ARM_SHARD_BLOCKING ] || [ -n "$dry" ] || no "ARM_SHARD_BLOCKING off";;
