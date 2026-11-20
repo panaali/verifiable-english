@@ -59,6 +59,33 @@ BASE = {
     "misuse": _base(["level"], "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation "
                     "domains (1.2, Section 2)", "{0} is misuse"),
     "ml_rd_and_misalignment": _base(["level"], "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3)"),
+    # Each level's own definition, verbatim from its table or section, with the footnote mark the extracted source has
+    # inside the sentence (fsf-repair-f1-leveldefs-1119). One fact `"<level>" is defined.` in each level's `levels-*`
+    # block uses this predicate, so the legend is shown with that block. One predicate, not one per level: the
+    # identifier lint P7 (run.identifier_lint) refuses a predicate name that packs a level.
+    "defined": _base(["level"], "{0} is a capability level that the framework defines in its own words, as follows. "
+                     "cbrn_uplift_tcl is the CBRN uplift TCL (2.2.1), defined as \"Provides low to medium resourced "
+                     "actors uplift in reference scenarios, resulting in material risk of CBRN attacks that could "
+                     "result in significant but not severe harm.\" cbrn_uplift_level_1 is CBRN uplift level 1 (table "
+                     "2.2.1.a), defined as \"Provides low to medium resourced actors uplift in reference scenarios "
+                     "resulting in additional 8 expected harm at severe scale.\" (the 8 is the mark of footnote 8). "
+                     "cyber_uplift_level_1 is Cyber uplift level 1 (table 2.2.2.a), defined as \"Provides sufficient "
+                     "uplift with high impact cyber attacks for additional expected harm at severe scale.\" "
+                     "harmful_manipulation_level_1 is Harmful manipulation level 1 (exploratory) (table 2.2.3.a), "
+                     "defined as \"Possesses manipulative capabilities sufficient to enable it to systematically and "
+                     "substantially change beliefs and behavior in identified high stakes contexts over the course of "
+                     "interactions with the model, reasonably resulting in additional expected harm at severe "
+                     "scale.\" stealth_and_situational_awareness_tcl is the Stealth and Situational Awareness TCL "
+                     "(3.2.1), defined as \"The instrumental reasoning abilities of the model enable enough "
+                     "situational awareness (ability to discover and use relevant details of its deployment setting) "
+                     "and stealth (ability to circumvent basic oversight mechanisms) such that, absent additional "
+                     "mitigations, we cannot rule out the model significantly undermining human control.\" "
+                     "ml_rd_acceleration_level_1 is ML R&D acceleration level 1 (table 3.2.2.a), defined as \"Has "
+                     "been used to accelerate AI development, resulting in AI progress substantially accelerating "
+                     "from historical rates.\" "
+                     "ml_rd_automation_level_1 is ML R&D automation level 1 (table 3.2.2.a), defined as \"Can fully "
+                     "automate the work of any team of researchers at Google focused on improving AI capabilities, "
+                     "with approximately comparable all-inclusive costs.\"", "{0} is defined"),
     "recommends": _base(["level", "measure"], "the framework recommends {1} for models reaching {0} "
                         "(tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend "
                         "\"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional "
@@ -101,7 +128,10 @@ BASE = {
                       "Deployments: represent small scale and private releases restricted to particular external "
                       "groups or organizations.\")", "no one the text names (unstated)", term="OT8"),
     "first_deployment": _base(["proposal"], "{0} is the first external deployment of a new model"),
-    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary definition)",
+    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary: Frontier AI Models \"are "
+                      "trained on a large data set, display significant generality, are capable of performing a wide "
+                      "range of distinctive tasks and have high-impact capabilities. Frontier AI models' agentic and "
+                      "reasoning-based general capabilities near or exceed those of other Google models\")",
                       "no one the text names (unstated)", "{0} is frontier", "OT9"),
     "subsequent": _base(["proposal"], "{0} is an external deployment of a subsequent version of a model",
                         "{0} is subsequent"),
@@ -176,10 +206,11 @@ def _obligation(args, act, description):
 
 REGULATED = {
     "assessed": _obligation(["proposal"], "{0} be preceded by a critical capability assessment",
-                            "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); on "
-                            "models not on the frontier, 1.3.2 \"We may also apply material capability change "
-                            "assessments to models not on the frontier, to understand whether a critical capability "
-                            "assessment is required.\""),
+                            "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); "
+                            "critical capability assessments \"determine a model's proximity to T/CCLs through the use "
+                            "of early warning evaluations and other sources of evidence\" (Glossary); on models not on "
+                            "the frontier, 1.3.2 \"We may also apply material capability change assessments to models "
+                            "not on the frontier, to understand whether a critical capability assessment is required.\""),
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
@@ -204,7 +235,8 @@ REGULATED = {
         ["proposal"], "{0} be subject to residual risk assessments in evaluating deployment mitigations",
         "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations "
         "(1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating "
-        "their deployment mitigations\")"),
+        "their deployment mitigations\"); residual risk assessments are \"the process of evaluating the level of risk "
+        "that remains after all planned mitigation strategies have been implemented\" (Glossary)"),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",
                                "the residual risk assessment for {0} is informed by a supplemental safety case "
                                "(1.3.4); safety cases \"are an assessable argument showing how severe risks "
@@ -230,7 +262,9 @@ REGULATED = {
     "secured": _obligation(
         ["proposal"], "{0} have security mitigations that reach the recommended security level",
         "SEC: security mitigations reaching the recommended security level have been applied to the model "
-        "weights of {0} (1.3.5 bullets 2 and 3)"),
+        "weights of {0} (1.3.5 bullets 2 and 3); security mitigations \"are safety measures we implement which are "
+        "intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized "
+        "actors\" (Glossary)"),
     "adequately_secured": _obligation(
         ["proposal"], "{0} have a level of security assessed as adequate",
         "SEC-t: the level of security applied to the model weights of {0} is assessed adequate (1.3.5 bullet 4)"),
@@ -268,7 +302,8 @@ REGULATED = {
         ["proposal"], "{0} have its residual risk brought within the acceptable levels",
         "the residual risk of {0} is brought within the acceptable levels, as determined by the T/CCLs as relevant "
         "(Glossary, Residual Risk Assessments: \"The residual risk should be brought within the acceptable levels, as "
-        "determined by the T/CCLs as relevant\")"),
+        "determined by the T/CCLs as relevant\"); residual risk assessments are \"the process of evaluating the level "
+        "of risk that remains after all planned mitigation strategies have been implemented\" (Glossary)"),
     "elicitation_considered": _obligation(
         ["proposal"], "{0} have its risk assessment conservatively weigh greater elicitation by others",
         "the risk assessment for {0} takes into account the fact that other actors may put significantly more effort "
