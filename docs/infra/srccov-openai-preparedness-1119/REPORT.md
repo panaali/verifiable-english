@@ -2,7 +2,7 @@
 
 No DRI signature is needed and none is reserved. One DELTA row (legend wording), covered by standing ruling R1.
 
-Branch `infra/srccov-openai-preparedness-1119`, rebased onto VE main `12cb72fa55` (merge base); the
+Branch `infra/srccov-openai-preparedness-1119`, rebased onto VE main `b937b17c6c` (merge base); the
 work began at main `09bea0972d`, and nothing under `usecases/openai-preparedness/` changed between them.
 The lines each claim cites from a /tmp log are copied into [evidence.md](evidence.md).
 Map: `reviews/source-coverage-1119/` in manage-agents. I read METHOD.md with amendments 1-17,
@@ -215,7 +215,7 @@ FOLLOW-UP: srccov-openai-preparedness-s0372-1119 carry S0372's "Adversarial Test
 4. N.A.: no Python, Lean or Rust decision path changed. results.json `comparison` and `mutants` are
    identical before and after (section 2).
 5. N.A.: no relayed field is read.
-6. PASS: rebased on main 12cb72fa55 before the final checks. The chain runs the gate on the final HEAD.
+6. PASS: rebased on main b937b17c6c before the final checks (lexicon report unchanged by the rebase; corpus seal regenerated). The chain runs the gate on the final HEAD.
 7. PASS: the single DELTA row cites R1 with its test
    (`test_each_changed_legend_keeps_its_base_text_as_its_prefix`).
 8. PASS: environment, spans and coverage diffs are listed (sections 1, 2 and 5). The keyed-answer diff
