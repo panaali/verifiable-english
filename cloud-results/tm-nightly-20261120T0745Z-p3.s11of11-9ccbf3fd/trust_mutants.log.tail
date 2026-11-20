@@ -1,0 +1,7 @@
+trust_mutants: 18 definitions, 22 mutants (3 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Scope/Authoring.lean:62 VE.Scope.Pinned.clause (D[V], trusted) list-drop-last: w.toList.zip w.toList.tail -> ((w.toList.zip w.toList.tail).dropLast)
+SURVIVOR lean/VE/EnglishGrammar/Norm/Run.lean:128 VE.EnglishGrammar.Norm.Run.outcomeFields (D[V], trusted) list-first: (lexicalSpan source r).toList -> (((lexicalSpan source r).toList).take 1)
+trust_mutants: 1 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 19 OTHER SHARD in 117 s
+trust_mutants: D[V], trusted: 2 SURVIVOR, 10 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 9 OTHER SHARD
+trust_mutants: steps: wall plan 15.5 s, scratch 2.9 s, control_build 1.6 s, probe_install 1.1 s, mutants 91 s, cleanup 5.3 s, reads 0.1 s; lake control_build 1.6 s (2), probe_install 1.1 s (1), control_probes 6.3 s (1), mutant_builds 73.9 s (5), mutant_checks 47.1 s (4), outside_checks 6.2 s (3), stage_controls 15.6 s (3), mutant_probes 7 s (1)
