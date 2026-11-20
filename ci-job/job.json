@@ -1,0 +1,15 @@
+{
+ "job": "probe11200310-9ccbf3fd",
+ "head": "4a1d45122994a925c9c7c874da60d85d206c4a97",
+ "argv": [
+  "probe11200310-9ccbf3fd",
+  "4a1d45122994a925c9c7c874da60d85d206c4a97",
+  "a998c06909c327c10d77341a67013955d5d6b560",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "--max-mutants",
+  "3",
+  "--jobs",
+  "4"
+ ]
+}
