@@ -1,0 +1,6 @@
+trust_mutants: 18 definitions, 22 mutants (1 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Service/Document.lean:2416 VE.Service.Document.cardinalityReport (D[V], trusted) list-drop-last: ? -> (?.dropLast) (lean/VE/Service/Document.lean:2416: don't know how to synthesize placeholder)
+trust_mutants: 0 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 21 OTHER SHARD in 38 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 11 OTHER SHARD
+trust_mutants: G[V], trusted: 10 OTHER SHARD
+trust_mutants: steps: wall plan 19.7 s, scratch 2.2 s, control_build 1.9 s, probe_install 1.4 s, mutants 11.7 s, cleanup 1.1 s; lake control_build 1.9 s (2), probe_install 1.4 s (1), mutant_builds 11.7 s (1)
