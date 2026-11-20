@@ -624,8 +624,9 @@
     10576,
     10741
    ],
-   "kind": "attributed",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
   },
   {
    "id": "t1-argument",
@@ -1804,9 +1805,18 @@
    "status": "CHECKED"
   },
   {
-   "id": "s33-marginal",
+   "id": "s33-marginal-heading",
    "span": [
     30947,
+    30985
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s33-marginal",
+   "span": [
+    30985,
     31234
    ],
    "kind": "norm",
@@ -2034,8 +2044,9 @@
     35479,
     35610
    ],
-   "kind": "attributed",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
   },
   {
    "id": "s36-experiment",
@@ -2646,13 +2657,23 @@
     45300,
     45511
    ],
-   "kind": "attributed",
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "appa-lead-heading",
+   "span": [
+    45511,
+    45554
+   ],
+   "kind": "meta",
    "status": "LABELLED"
   },
   {
    "id": "appa-lead-scenario",
    "span": [
-    45511,
+    45554,
     45710
    ],
    "kind": "norm",
@@ -2693,9 +2714,18 @@
    "status": "OPEN"
   },
   {
-   "id": "appa-strong-scenario",
+   "id": "appa-strong-heading",
    "span": [
     46000,
+    46041
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "appa-strong-scenario",
+   "span": [
+    46041,
     46310
    ],
    "kind": "norm",
@@ -2735,9 +2765,18 @@
    "status": "OPEN"
   },
   {
-   "id": "appa-uplevel-scenario",
+   "id": "appa-uplevel-heading",
    "span": [
     46601,
+    46621
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "appa-uplevel-scenario",
+   "span": [
+    46621,
     46908
    ],
    "kind": "norm",
