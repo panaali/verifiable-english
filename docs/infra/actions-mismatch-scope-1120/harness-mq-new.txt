@@ -1,0 +1,76 @@
+== merge-train.sh MERGE QUEUE (2026-10-16): stacked candidates, own full gate each, publication in queue order
+  ok   c passed but is not published while a and b gate (main unchanged)
+  ok   b passed, still not published (a gates)
+  ok   all three DONE and tagged; main = c's tag
+  ok   stacked: c = b + branch c, b = a + branch b, a = pre-merge main + branch a
+  ok   each published commit is exactly the one commit its Mac gate ran on; one gate each
+  ok   published in queue order a < b < c
+  ok   c's line 1 names its queue base (b's candidate on main + a + b)
+  ok   queue empty afterwards; no rebuild
+  ok   b's gate failed but it waits for a's own record (review F1): no verdict, not stopped
+  ok   c rebuilt on a's candidate (skipping b) after b failed
+  ok   a and c published, b STOP (its own failure: not pre-existing), main = c's second candidate
+  ok   b and c's first candidate never reached main; b gated once
+  ok   order a < c; queue empty
+  ok   a STOP (head: its own failure), b published on main's tip (second candidate)
+  ok   b's first failure not treated as its own (rebuilt, no verify-fix, no STOP)
+  ok   both published, each gated twice; main = b; b = a + branch b; a = moved main + branch a
+  ok   published = the second gates; the first candidates never reached main
+  ok   b passed and waits while a's x86 leg runs (main unchanged)
+  ok   both published in order, gated once each; b stacked on a
+  ok   a had both legs (x86 record kept), b the Mac leg only
+  ok   a STOP; b published = its second candidate on the pre-merge main
+  ok   b's first x86 leg stopped (the candidate left the queue order), no verify-fix
+  ok   b published on main's tip (second candidate); a's entry gone
+  ok   published without the queue
+== merge queue: review fixes (2026-10-16 merge-queue-review.final.md F1, F2, F5, F6; gaps)
+  ok   b's gate ended first and waits for a's own record (no verdict yet, not stopped)
+  ok   a published; b STOP: not pre-existing, compared with a's candidate record
+  ok   both published; b's line 1 names a's candidate run as the comparison
+  ok   b left the queue and waits for a (no gate of b yet)
+  ok   a then b published; b synced by the agent on a's published candidate
+  ok   b logged 'lacks main', synced, published after a
+  ok   a, then b's second candidate published (fix in it, on a); one verify-fix
+  ok   STOP on its own failure after one gate
+  ok   STOP rebuilt 1 times, last gate PASS named, entry gone
+  ok   DONE, a then b, b on a
+  ok   pre-existing via cand-runs
+  ok   a placeholder record (commit "") is not a run of that commit
+== merge queue: an invalid candidate's Mac leg is stopped (2026-10-16 speed #12, L57 / review F3; flag MQ_MAC_CANCEL)
+  ok   b's leg still held, never stopped
+  ok   b's first result read (its Mac FAIL, compared with a's run), rebuilt, second candidate published
+  ok   stop sent for b's first run only; logged as stopped while waiting
+  ok   no FAIL, no verify-fix, no STOP for b; STALE then rebuilt
+  ok   no record of the stopped candidate; b published = its second candidate on main
+  ok   a: its own failure, STOP as before
+  ok   Mac leg stopped while it ran; x86 leg stopped; stop sent once
+  ok   no fallback, no full x86 gate.py, no FAIL/verify-fix
+  ok   b published = second candidate, both legs PASS on it
+  ok   no stop; a published; b STOP on its own failure after one gate
+  ok   the transient invalid was read; no stop; published after one gate
+  ok   b still gating, head now, not stopped
+  ok   b published, one gate, stacked on a
+  ok   stopped while it ran, read from done; no fallback, no FAIL; b published = second candidate
+== publication hold on a red nightly (2026-11-09 nightly-red-train-hold; MQ_PUBLISH_HOLD.<sha>, MQ_PUBLISH_HOLD.off)
+  ok   held: main unchanged, no tag, train alive, one log line for the one hold (the .tmp is not a hold)
+  ok   hold removed -> published (one gate), cleared line logged
+  ok   b's gate ran and passed during the hold; main unchanged
+  ok   a then b published, b on a, one gate each
+  ok   published with the hold file present; no 'publish held'
+  ok   held: main unchanged, no tag
+  ok   published after the hold, no queue
+== merge-train.sh: the kernel closure baseline after a merge of main (2026-11-17 kb-regen-closure-train-wiring)
+  ok   premise: the sync merge kept the branch's baseline: total 6 = the fresh total, rows P and Q stale
+  ok   one regen commit on the sync merge, changing only the baseline
+  ok   published: main = the one gated candidate, its baseline fresh, its second parent the regen commit
+  ok   the log line names the rows; check, write, check on k1's worktree only, once (not again on the new head)
+  ok   published the branch head as it was; one check; fresh line in merge-train.log.candregen
+  ok   skipped (a limit), no write, the branch head is the sync merge
+  ok   skipped (no STALE line, the failure quoted), no write, head unchanged
+  ok   skipped (owner extra), head unchanged, worktree clean, notes untouched, published stale as before
+  ok   skipped (still STALE after the write), head unchanged, check write check
+  ok   skipped (writer failed), out.tmp removed, mine.txt kept, head unchanged
+  ok   no check or write, no kernel closure line; published stale
+  ok   the tree is stale, yet no check ran; PSLR fresh, head unchanged
+  ok   skipped (no failure line, killed at the 1 s timeout), no write, head unchanged, published
+== merge queue: 70 passed, 0 failed

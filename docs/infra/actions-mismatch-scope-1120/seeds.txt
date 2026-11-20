@@ -1,0 +1,9 @@
+S1 tm line allowed | mismatch-scope.sh.new-amscope | rc=1 | test_i_tm_and_testmap_lines_no_newline, test_i_tm_line_does_not_block
+S2 gate-leg line blocks | mismatch-scope.sh.new-amscope | rc=1 | test_ii_armsh_line_blocks
+S3 empty file blocks | mismatch-scope.sh.new-amscope | rc=1 | test_iii_empty_blocks
+S4 unparseable line blocks | mismatch-scope.sh.new-amscope | rc=1 | test_iii_blank_line_and_item_job_block, test_iii_unparseable_blocks
+S5 unknown job blocks | mismatch-scope.sh.new-amscope | rc=1 | test_iii_blank_line_and_item_job_block
+S6 merge-train actoff uses the helper | merge-train.sh.new-amscope | rc=1 | test_i_tm_and_testmap_lines_no_newline, test_i_tm_line_does_not_block
+S7 gha-arm-shard uses the helper | gha-arm-shard.sh.new-amscope | rc=1 | test_helper_one_copy, test_i_tm_and_testmap_lines_no_newline, test_i_tm_line_does_not_block
+S8 fallback = old rule | gha-arm-gate.sh.new-amscope | rc=1 | test_helper_one_copy, test_vi_no_helper_falls_back_to_the_old_rule
+S9 arm-postcheck actoff uses the helper | arm-postcheck.sh.new-amscope | rc=1 | test_i_tm_and_testmap_lines_no_newline, test_i_tm_line_does_not_block

@@ -1,3 +1,4 @@
+- `tests/test_readings_s2_lean.py` — Lean readings route, S2a case kinds (docs/spec/composition-s2.md 3, 8.5) on the fixtures of 9.2.
 - `tests/test_readings_s2_python.py` — S2a's choice algebra and closed English, independent of proof search.
 - `tests/test_readings_sd_ce4.py` — `CE4`, the constitution's four sets, under the soft completion (docs/spec/rd-9-soft-chain-PLAN.md 5.2: C1 to C8; plan SC-4, SC-5 and SC-8; rd-9-looprecheck2 A2…
 - `tests/test_readings_sd_differential.py` — The soft completion's differential (docs/spec/rd-9-soft-chain.md 3.11 and 8.3; plan SC-8; build checklist 2).
@@ -79,4 +80,3 @@
 - `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
 - `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
-- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
