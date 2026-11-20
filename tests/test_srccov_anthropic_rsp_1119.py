@@ -21,6 +21,7 @@ from collections import Counter
 
 import pytest
 
+import test_fsf_repair_f6_sl2plus_1119 as f6
 import test_rsp_fidelity_fix as fix
 import test_safetyfw_usecases as base
 from tests.pinned_source import pinned_source
@@ -175,6 +176,21 @@ def test_every_kept_row_carries_its_source_text_in_its_legend():
                 assert text in legend, (row, name, text)
             assert _holds_hashed_run(legend, digest, length), (row, name)
 
+
+def test_no_carried_run_sits_inside_a_citation_parenthesis():
+    """A carry counts only if the counter reads it: a run quoted inside "(3.5: ...)" is cut whole as a citation
+    (tests/test_fsf_repair_f6_sl2plus_1119.py, tools/defs_carried_counter.py). Each carried run must survive that
+    cut of its legend; the five carries once written as "(3.3: \"...\")" did not. Predicate legends only: the counter
+    shows no constant legend at all (REPORT, Note 1)."""
+    source = _source()
+    for row, section, name, runs in (c for c in CARRIES if c[1] == "predicates"):
+        legend = _legend(section, name)
+        cut = _norm(f6._cut_inside(legend))
+        assert [m.group(0)[:60] for m in f6.CITATION_PARENTHESIS.finditer(legend) if '"' in m.group(0)] == [], row
+        assert ".. " not in legend, (row, name)  # a quoted sentence's full stop is not doubled before "Open term"
+        for pieces, _, _ in runs if source is not None else ():
+            # The run is cut the same way: the source's own "(1)" or "(e.g., ...)" goes on both sides.
+            assert _norm(f6._cut_inside(_run_text(source, pieces))) in cut, (row, name)
 
 def test_every_changelog_date_is_in_its_d3_legend():
     source = _source()
