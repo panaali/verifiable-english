@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-defs-carried-nightly-report-1120-92d8ec49-t206685-s4",
+ "head": "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+ "argv": [
+  "armsh-cand-defs-carried-nightly-report-1120-92d8ec49-t206685-s4",
+  "cd4e5f5682d82b6ce5a9ef29158031735108231a",
+  "3f3a396e969a240261d90ddb07f86c82dccabe71",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
