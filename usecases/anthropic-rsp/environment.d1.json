@@ -212,7 +212,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} material would be redacted for one of the reasons 3.5 lists (3.5: \"Reasons we may redact material include but are not limited to: 1. Legal compliance: To comply with legal obligations on disclosing information, such as export control regulations, national security restrictions, or contractual obligations with third parties. 2. Intellectual property protection: To protect proprietary information, including technical details of our models and training methodologies, trade secrets, or other confidential business information. 3. Public safety considerations: To protect public safety by not disclosing information that could be exploited to cause harm. 4. Privacy: To protect the personal privacy of individuals.\")"
+        "description": "at {0} material would be redacted for one of the reasons 3.5 lists: \"Reasons we may redact material include but are not limited to: 1. Legal compliance: To comply with legal obligations on disclosing information, such as export control regulations, national security restrictions, or contractual obligations with third parties. 2. Intellectual property protection: To protect proprietary information, including technical details of our models and training methodologies, trade secrets, or other confidential business information. 3. Public safety considerations: To protect public safety by not disclosing information that could be exploited to cause harm. 4. Privacy: To protect the personal privacy of individuals.\""
       },
       "scenario_2": {
         "arguments": [
@@ -248,7 +248,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the Risk Report of {0} is significantly redacted (3.6: \"Significantly redacted\" means that the redactions omit information a reasonable external safety researcher would consider important in evaluating the overall level of risk, such that a reader of only the public version could not meaningfully assess whether they agree with our conclusions. A report shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or LTBT, it meets this description.). Open term OT4, decided by the RSO, CEO, Board or LTBT (a sufficient judgment)"
+        "description": "the Risk Report of {0} is significantly redacted (3.6): \"Significantly redacted\" means that the redactions omit information a reasonable external safety researcher would consider important in evaluating the overall level of risk, such that a reader of only the public version could not meaningfully assess whether they agree with our conclusions. A report shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or LTBT, it meets this description. Open term OT4, decided by the RSO, CEO, Board or LTBT (a sufficient judgment)"
       },
       "strong_argument_made": {
         "arguments": [
@@ -321,13 +321,13 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} the absolute level of risk imposed industry-wide is high and our decision to move forward rests partly on a marginal risk analysis (3.3: \"If we determine that the absolute level of risk being imposed industry-wide by AI systems such as ours is high, and are justifying our decision to move forward based partly on a marginal risk analysis,\" footnote 11: By \" marginal risk analysis ,\" we mean arguing that the risks imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed by other AI systems.). Open term OT18, decided by the company (\"we\") (\"If we determine\")"
+        "description": "at {0} the absolute level of risk imposed industry-wide is high and our decision to move forward rests partly on a marginal risk analysis (3.3): \"If we determine that the absolute level of risk being imposed industry-wide by AI systems such as ours is high, and are justifying our decision to move forward based partly on a marginal risk analysis,\" footnote 11: By \" marginal risk analysis ,\" we mean arguing that the risks imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed by other AI systems. Open term OT18, decided by the company (\"we\") (\"If we determine\")"
       },
       "marginal_major_role": {
         "arguments": [
           "situation"
         ],
-        "description": "at {0} marginal risk analysis plays a major role in a decision to move forward (3.4 step 5; footnote 11 of 3.3: By \" marginal risk analysis ,\" we mean arguing that the risks imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed by other AI systems.). Open term OT19, decided by no one the text names (unstated)"
+        "description": "at {0} marginal risk analysis plays a major role in a decision to move forward (3.4 step 5); footnote 11 of 3.3: By \" marginal risk analysis ,\" we mean arguing that the risks imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed by other AI systems. Open term OT19, decided by no one the text names (unstated)"
       },
       "full_substitution_at_competitive_cost": {
         "arguments": [
@@ -573,7 +573,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the four analyses of 3.3's marginal risk paragraph at {0} (3.3: \"If we determine that the absolute level of risk being imposed industry-wide by AI systems such as ours is high, and are justifying our decision to move forward based partly on a marginal risk analysis, we will additionally address the following: 1. Competitive landscape analysis: What we know about how our current and future model capabilities and risk mitigations compare to those of relevant competitors. 2. Role in risk assessment: How these comparisons factored into our risk assessment. 3. Benefits analysis: The benefits, if any, of continuing to maintain our existing models or of advancing frontier capabilities, including considerations related to our mission and our ability to contribute to AI safety research and policy development. 4. Advocacy efforts: The steps we took to raise public awareness of the relevant risks and to encourage appropriate regulatory action, including our engagement with policymakers and other AI developers.\")",
+        "description": "the four analyses of 3.3's marginal risk paragraph at {0}, which reads: \"If we determine that the absolute level of risk being imposed industry-wide by AI systems such as ours is high, and are justifying our decision to move forward based partly on a marginal risk analysis, we will additionally address the following: 1. Competitive landscape analysis: What we know about how our current and future model capabilities and risk mitigations compare to those of relevant competitors. 2. Role in risk assessment: How these comparisons factored into our risk assessment. 3. Benefits analysis: The benefits, if any, of continuing to maintain our existing models or of advancing frontier capabilities, including considerations related to our mission and our ability to contribute to AI safety research and policy development. 4. Advocacy efforts: The steps we took to raise public awareness of the relevant risks and to encourage appropriate regulatory action, including our engagement with policymakers and other AI developers.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
