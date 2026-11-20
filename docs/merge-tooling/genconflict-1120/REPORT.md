@@ -206,3 +206,116 @@ or listing or gitattributes or unique or derived or route_fixtures"` gave 20 pas
 13. Test-removed trailers: N.A., no test removed or renamed.
 14. Both directions: PASS. Each check is tested on both sides: derived one-sided vs two-sided, keyed accept vs refuse, on_conflict skip vs run, route_fixtures --check stale vs fresh.
 15. Overclaim, silent cut, checks can fail, limits: PASS. The universal claims above cite a test or a record; the one deviation (block strictness, no at_merge) is stated with its cause; nothing was cut.
+
+## Addendum: genconflict-hashcheck-1120, the masked-merge check on `--resolve`
+
+Status: built; selected run exit 0; the chain's gate on the final HEAD is pending. Nothing is reserved for the DRI and
+there is no DELTA row (merge tooling only). Trust: none (sweep `hashcheck-trust-mutants.json`: 0 definitions, exit 0).
+Covers reviews/dri-decisions-20261120-genconflict-hashcheck.md item 1, the condition from
+reviews/dri-decisions-20261120-adv1604.md item 1.
+
+SIZE: 133 product, 172 tests, 117 other hand-written lines (`git diff --numstat main...HEAD`, added + removed:
+tools/regen_generated.py 130+3; tests/test_regen_usecase_merge.py 170+2; docs/merge-tooling.md 3+1 and this addendum.
+Left out as generated files or records: tests/history-dependent.json, hashcheck-mutants.json and
+hashcheck-trust-mutants.json).
+
+**The check (tools/regen_generated.py).** The new `Generated.masked` field holds (path, hash keys) pairs, and
+`_usecase` fills it from one constant, `USECASE_HASHES`: results.json `certificate_sha256`, coverage.json
+`document_sha256`, spans.json none. Another use case with the same shape is still one line, `_usecase(name)`.
+In `resolve()`:
+1. Before anything is written, `_masked_merges` takes base, ours and theirs of each masked file both sides changed.
+   It reads the index stages :1/:2/:3 when the path is unmerged. When an earlier `--resolve --only lake-build --only
+   checker-pins` already staged the path (the train's real order), it reads the merge base, HEAD and MERGE_HEAD.
+   It masks the hash keys at any depth (`_mask`) and merges with the existing `merge_json` (one owner of the
+   three-way rule). A key both sides changed differently raises Conflict: exit 2, "needs a person or the sync
+   agent", no writer run, nothing written.
+2. The resolve snapshots the index file and the work-tree bytes of the conflicted paths and of every generated file.
+3. After the writers ran, `_check_masked` masks each regenerated file and compares it with the merge exactly (values
+   compared through `_text`, so `true` is not `1`; object key order is ignored).
+4. On the first difference it restores the snapshot (`_restore`: the index, which keeps the original conflict
+   stages, the files, and the removal of generated files written since). It then exits 2 with
+   `<path> at <key path>: the regenerated file differs from the three-way merge of its two sides outside its hash
+   fields; the conflicted merge is restored (agent sync needed)`. MERGE_HEAD stays, so the train falls back to the
+   agent sync as before.
+5. On acceptance it prints `checked <path>: ...` once per file and goes on to the checks and staging unchanged.
+
+Entries without `masked`, and resolves where none of the use case's files conflicted, take exactly the old path.
+
+**spans.json.** It has no hash-only drift. Its one hash, `source_sha256`, is the constant `TEXT_SHA256` of the
+pinned FSF text (build_document.py:36, :791), and it was identical at base, ours, theirs and the agent's commit in
+f1, f2 and f7 (`git show <c>:usecases/safety-framework/spans.json | sha256sum`: 8de30da4 in all twelve). Its
+non-hash content can change with the source: `master()` sets each unit's status from the measured document and
+results.json (build_document.py:759-770). So the same check applies to it, with nothing masked.
+
+**Tests (tests/test_regen_usecase_merge.py, section (v)).** All are hermetic: a scratch repository, a stub writer
+(`VERDICT_STUB`, with goals that each carry a verdict and nested certificate hashes), no service.
+* (a) `test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output[False|True]`. Both sides change only
+  the hashes, plus one goal each. Expect exit 0; a `checked` line for results, coverage and spans; fresh hashes; the
+  four goals. `[True]` first runs a staging `--resolve`, as the train does.
+* (b) `test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[False|True]`. The writer flips
+  g1's verdict. Expect exit 2 naming `usecases/safety-framework/results.json at $.goals[0].verdict`. The writers ran
+  but the checks did not. Status, unmerged list, `ls-files --stage` and the three files equal the state before the
+  resolve, conflict markers included, and MERGE_HEAD is kept.
+* (c) `test_a_verdict_both_sides_changed_differently_declines_before_the_writers`. Each side overrides g1's verdict
+  in its own source file, so the sources merge cleanly. Expect exit 2 with `results.json: $.goals.g1.verdict: both
+  sides changed it`, no writer run and the state unchanged.
+* Also added: `test_the_use_case_entry_names_its_hash_fields`, and `test_masked_first_difference` (5 cases: a
+  nested hash is masked; a nested value, a list length, an extra key and `true` vs `1` each differ).
+* Changed: the old stub's coverage `units` was a count, which no three-way merge can produce when both sides add a
+  case (both 2, merged tree 3). It is now the case list, so test (i) still exercises an acceptance.
+
+On main's tools/regen_generated.py (copied in for the run, then restored;
+`pytest tests/test_regen_usecase_merge.py -k "hash_only or flipped_verdict or ..."`, /tmp/ghc-main.log), all 11
+failed:
+* (b) and (c) failed with `assert 0 == 2`: main accepts the flipped verdict and the two-sided change.
+* (a) failed with `AttributeError: 'Generated' object has no attribute 'masked'`. Main also exits 0 on this input;
+  the test fails on main through the hash constant and the `checked` lines it asserts.
+* The helper tests failed with AttributeError.
+
+On the branch: tests/test_regen_usecase_merge.py 32 passed (/tmp/ghc-t2.log). Selected run
+`mac-pytest.sh --select -- --base 99f10440 --run` on aa68eef5: exit 0 in 6790 s (ve-cloud-2). The changed file ran
+first (tests/test_regen_usecase_merge.py exit 0, 339 functions). tests/test_regen_generated.py,
+test_history_tests.py and test_merge_tooling_evidence.py exit 0, with no FAILED line in the log (/tmp/ghc-sel-run.log).
+Test selection picks the file for tools/regen_generated.py statically ("imports tools/regen_generated.py; names
+tools/regen_generated.py": `select_tests.py --paths tools/regen_generated.py --explain`).
+
+**Replay of f1 (228142ff + ef7ecd59 -> f02219f5).** The service and the pinned text (sha256 18e3375b...) are on this
+host. replay.py ran with PAIRS cut to f1, using this branch's tool at aa68eef5, in a scratch worktree that was
+removed afterwards. Output (2026-11-20T21:56Z, multi-agent-lab):
+
+    git merge (driver installed): exit 1; conflicted: lexicon-report.json route-cases.jsonl coverage.json results.json
+    --resolve --only lake-build --only checker-pins: exit 0, 48 s
+    --resolve: exit 0, 1376 s; new entries: english-lexicon-report 4.0 s, recorded-route-cases 1.7 s, usecase-safety-framework 451.5 s
+    all five files byte-equal to the agent's result; other files differing: tests/history-dependent.json (as before)
+
+The check therefore accepted f1 on the train's real path (files staged by the first step, sides read from the
+commits). Without the service, the same comparison on the stored blobs (base / ours / theirs / agent result, through
+`_masked_json`, `merge_json` and `_first_difference`) accepts all three files of f1, f2 and f7.
+
+**Seeded bugs (Python; no Lean or Rust changed): docs/merge-tooling/genconflict-1120/hashcheck-mutants.json.** Each
+was planted in tools/regen_generated.py, the test file was run, and the file was restored. All 6 were killed:
+
+| Behaviour broken | Killed by |
+|---|---|
+| mask only top-level hash keys | test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output |
+| skip the post-writer comparison | test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict |
+| swallow a two-sided masked conflict | test_a_verdict_both_sides_changed_differently_declines_before_the_writers |
+| decline without restoring | test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict |
+| compare with `==` (`true == 1`) | test_masked_first_difference |
+| forget files an earlier `--resolve --only` staged | test_a_flipped_verdict_...[True], test_hash_only_...[True] |
+
+trust_mutants: light-lane said NOT (309 changed lines). `mac-pytest.sh --trustmut -- --base 99f10440`: 0
+definitions, 0 mutants, exit 0 (hashcheck-trust-mutants.json).
+
+### Notes for the DRI
+
+* The check is stricter than hash-only. A derived count that both sides moved the same way, while the merged tree
+  moves it further, now declines: for example, both sides add one goal and coverage's residual count goes 1 -> 2 on
+  each side but 3 on the merged tree. That is the accepted condition read literally (the conservative option). f1,
+  f2 and f7 have no such field and accept. A use case whose coverage carries such totals will go to the agent sync
+  on those merges.
+* Only files in the conflicted set are checked, as the condition says. A use-case file only one side changed is
+  still taken from the writers unchecked when the entry runs.
+* results.json also carries `document_hash`, `decision_record_id` and `environment_id` under `d2_d3`. They are not
+  masked, because the condition names only `certificate_sha256` and `document_sha256`. If they drift with the
+  environment, such a merge declines (none did in f1, f2 or f7).
