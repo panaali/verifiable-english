@@ -1,1 +1,2 @@
+- `docs/merge-tooling/genconflict-1120/replay.py` — Replay of three merges the train declined (genconflict-1120), and the time of a plain `--resolve`.
 - `docs/merge-tooling/survey.py` — Evidence: which historical sync merges on main conflicted only in files tools/regen_generated.py owns.

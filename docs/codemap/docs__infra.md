@@ -4,7 +4,6 @@
 - `docs/infra/arch-20261109-2/layer_list.py` — Print every Lean and Python module of this checkout with the layer a tools/layer_policy.py gives it, one per line.
 - `docs/infra/challenge-final-delivery/dry_install.py` — Dry install of REPORT.md section 5 (reviews/challenge-final-delivery-dri-note-20261117.md item 3; review F2).
 - `docs/infra/challenge-final-delivery/run_seeds.py` — Seeded bugs for challenge-final-delivery fix round 1.
-- `docs/infra/defs-carried-oos-measure-1119/measure.py` — Out-of-sample measurement of tools/defs_carried.py (defs-carried-oos-measure-1119): report only, 0 model calls.
 - `docs/infra/digest-main-line/seeded-run.py` — digest-main-line seeded bugs: each mutant is a /tmp copy of the staged waiter; the staged file is never edited.
 - `docs/infra/eff-20261020-1/builder_shape.py` — Plan a small non-Lean change at the base of each replayed main commit whose drift holds a Lean change.
 - `docs/infra/eff-20261020-1/replay.py` — Replay `select_tests.py --commit <c> --json` from one checkout over main's last N first-parent commits.
@@ -26,7 +25,6 @@
 - `docs/infra/released-main-1117/test_pick_released_main.py` — released-main-1117 (reviews/dri-decisions-20261117-released-main.md item 2; orchestrator BATCH 20261117T032312Z item 2): a released row (BACKLOG links.released…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
-- `docs/infra/srccov-anthropic-rsp-1119/evidence/legend_keep.py` — Every legend this item changed keeps its base words in order, and no other field of the symbol changed.
 - `docs/infra/srccov-claude-constitution-excerpt-1119/evidence/verify.py` — Verify-first check for srccov-claude-constitution-excerpt-1119 (run before any edit, on main).
 - `docs/infra/tm-actions-deadline/seed_run.py` — Plant one seeded bug per behaviour in a temporary COPY of cloud-tm-job.sh (argv[1], default the installed one) and run the test file against it.
 - `docs/infra/tm-build-timeout-1120/evidence/corr.py` — (no module docstring)
