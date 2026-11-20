@@ -1,0 +1,93 @@
+--- merge-train.sh	2026-11-20 08:39:12.259403380 +0000
++++ merge-train.sh.new-specregen	2026-11-20 20:46:01.699625918 +0000
+@@ -43,35 +43,41 @@
+   o=$(python3 -I $M/tools-local/allowances_merge.py resolve --repo $1 --commit 2>&1); rc=$?
+   [ -n "$o" ] && echo "allowances resolve in ${1:t}: ${o[1,400]} $(date -u +%H:%MZ)" >> $log
+   [ $rc -eq 0 ]; }
+-regen_merge(){ local w=$1 pre mh out
+-  amerge $w && return 0
++# regen_merge <worktree> [<caller>] (2026-11-20 specregen-resolve-fallback-1120; <caller> "spec regen" from specregen): with a
++# caller, its lines carry " (<caller>)" (the decline ends "<caller> skipped, no agent sync"), no allowances resolve (amerge),
++# both --resolve steps run under timeout ${CAND_REGEN_LEAN_TIMEOUT:-2700} and in the caller's own scope, not an iso.sh scope
++# (a stop of the train must not leave a Lean build writing into the worktree after its restore; challenger F1/F3/F4).
++# Without a caller (the main sync): every command and line exactly as before.
++regen_merge(){ local w=$1 sx=$2 pre mh out; local -a iso tm
++  iso=(zsh $M/iso.sh integ-regen-${w:t} 16G --); tm=(); [ -n "$sx" ] && { iso=(); tm=(timeout ${CAND_REGEN_LEAN_TIMEOUT:-2700}); }
++  [ -z "$sx" ] && amerge $w && return 0
+   [ -f $w/tools/regen_generated.py ] && grep -q -- '"--resolve"' $w/tools/regen_generated.py && git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null || return 1
+   pre=$(git -C $w rev-parse HEAD); mh=$(git -C $w rev-parse MERGE_HEAD)
+   # 2026-10-17 DRI (dri-decisions-20261017, L58): build Lean from the merged files and pin that build BEFORE the writers
+   # (english-lexicon-fixtures starts the worktree's ve_service), when every conflicting file is a generated one
+   # (merge=ve-generated); a failed build is logged and the resolve below runs as before (with its handshake retry).
+-  if allgen $w; then out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH zsh $M/iso.sh integ-regen-${w:t} 16G -- \
++  if allgen $w; then out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH $iso $tm \
+       uv run python tools/regen_generated.py --resolve --only lake-build --only checker-pins 2>&1) \
+-    || { print -r -- "$out" >> $log.regen; echo "generated-file resolve in ${w:t}: Lean build of the merged files failed before the writers; resolving anyway $(date -u +%H:%MZ)" >> $log; }; fi
+-  out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH uv run python tools/regen_generated.py --resolve 2>&1) \
++    || { print -r -- "$out" >> $log.regen; echo "generated-file resolve${sx:+ ($sx)} in ${w:t}: Lean build of the merged files failed before the writers; resolving anyway $(date -u +%H:%MZ)" >> $log; }; fi
++  out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH $tm uv run python tools/regen_generated.py --resolve 2>&1) \
+     && git -C $w commit -q --no-edit && { print -r -- "$out" >> $log.regen
+-      echo "regenerated generated-only conflicts in ${w:t} without an agent $(date -u +%H:%MZ)" >> $log; return 0; }
++      echo "regenerated generated-only conflicts${sx:+ ($sx)} in ${w:t} without an agent $(date -u +%H:%MZ)" >> $log; return 0; }
+   if print -r -- "$out" | grep -q 'unexpected handshake'; then print -r -- "$out" >> $log.regen
+-    echo "generated-file resolve in ${w:t}: stale ve_service (handshake); Lean build of the merged files, then resolve again $(date -u +%H:%MZ)" >> $log
++    echo "generated-file resolve${sx:+ ($sx)} in ${w:t}: stale ve_service (handshake); Lean build of the merged files, then resolve again $(date -u +%H:%MZ)" >> $log
+     git -C $w merge --abort 2>/dev/null; git -C $w reset -q --hard $pre
+     git -C $w merge -q --no-commit --no-ff $mh > /dev/null 2>&1
+-    amerge $w && return 0
++    [ -z "$sx" ] && amerge $w && return 0
+     if git -C $w rev-parse -q --verify MERGE_HEAD > /dev/null; then
+-      out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH zsh $M/iso.sh integ-regen-${w:t} 16G -- \
++      out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH $iso $tm \
+         uv run python tools/regen_generated.py --resolve --only lake-build --only checker-pins 2>&1) \
+-        && out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH uv run python tools/regen_generated.py --resolve 2>&1) \
++        && out=$(cd $w && PATH=$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH $tm uv run python tools/regen_generated.py --resolve 2>&1) \
+         && git -C $w commit -q --no-edit && { print -r -- "$out" >> $log.regen
+-          echo "regenerated generated-only conflicts in ${w:t} without an agent, after a Lean build $(date -u +%H:%MZ)" >> $log; return 0; }
++          echo "regenerated generated-only conflicts${sx:+ ($sx)} in ${w:t} without an agent, after a Lean build $(date -u +%H:%MZ)" >> $log; return 0; }
+     fi
+   fi
+   print -r -- "$out" >> $log.regen
+   # 2026-10-16 (speed #10): the FULL list of files still conflicting (git's unmerged list, while the merge is in progress) on this line
+-  echo "generated-file resolve declined in ${w:t}: $(print -r -- "$out" | grep -m1 -E 'regen_generated|needs a person|both sides' | cut -c1-160); conflicting files: $(ufiles $w); agent sync" >> $log
++  echo "generated-file resolve${sx:+ ($sx)} declined in ${w:t}: $(print -r -- "$out" | grep -m1 -E 'regen_generated|needs a person|both sides' | cut -c1-160); conflicting files: $(ufiles $w); ${sx:+$sx skipped, no }agent sync" >> $log
+   git -C $w merge --abort 2>/dev/null; git -C $w reset -q --hard $pre; return 1; }
+ # 2026-10-14 DRI (pipeline-r2-1014; Astra's re-check test-architecture-astra-recheck.final.md points 3-7, the plan
+ # reviews/test-architecture-2026-10-14.md rank 1 "R2"). Replaces pipeline-safety-1014's verify (verify.sh / mac-verify.sh:
+@@ -453,7 +459,7 @@
+ # merge C into a DETACHED HEAD of the item's worktree (git merge runs the driver) and regenerate there with branchregen's
+ # own steps; the branch ref stays at its head h. specuse fast-forwards the branch to that result S only when main == C
+ # (C published) and the branch is still at h, so the branch never absorbs an unpublished branch; otherwise S is dropped.
+-specregen(){ local c=$1 cl=$2 h sb bp=$brprobed n s0=$(date +%s) why=""
++specregen(){ local c=$1 cl=$2 h sb bp=$brprobed n s0=$(date +%s) why="" u0=() f rr
+   spec=""; specc=""; spech=""
+   [ -f $M/MQ_SPEC_REGEN ] && [ -n "$c" ] || return 1
+   h=$(git -C $wt rev-parse HEAD); sb=$(git -C $wt symbolic-ref -q HEAD)
+@@ -462,7 +468,26 @@
+   git -C $wt checkout -q --detach > /dev/null 2>&1 || return 1
+   specrestore=${sb#refs/heads/}; specrestoreh=$h
+   echo "spec regen of $label: merging the candidate ${c[1,8]} of $cl into a detached copy of branch ${h[1,8]} while $cl gates $(date -u +%H:%MZ)" >> $log
+-  if ! git -C $wt merge -q --no-edit $c > /dev/null 2>&1; then git -C $wt merge --abort > /dev/null 2>&1; why="the merge of ${c[1,8]} conflicts outside the generated files"
++  # 2026-11-20 specregen-resolve-fallback-1120 (reviews/dri-decisions-20261120-train-queue-genconflict.md; evidence
++  # reviews/train-queue-genconflict-1120/REPORT.md): when the merge stops ONLY on generated files (allgen: every unmerged path
++  # is merge=ve-generated), finish it with the main sync's own regen_merge (tools/regen_generated.py --resolve) instead of
++  # skipping, so FSF-style siblings that only collide on derived files can still stack. Kept only when the resolve exited 0,
++  # nothing is left unmerged, no merge is in progress and the commit is exactly <h> + <c> (parents in that order); anything
++  # else is the skip as before (regen_merge itself aborts and resets to <h> when it declines). A conflict on any other file:
++  # unchanged (abort, skip, same log line). No line logged here starts "spec regen of <label>" (stop-train.sh regenbase).
++  # Files the resolve leaves untracked (not ignored) are removed whatever its outcome, as brclosure does (challenger F2).
++  if git -C $wt merge -q --no-edit $c > /dev/null 2>&1; then :
++  elif ! allgen $wt; then git -C $wt merge --abort > /dev/null 2>&1; why="the merge of ${c[1,8]} conflicts outside the generated files"
++  else u0=(${(f)"$(git -C $wt ls-files --others --exclude-standard)"}); echo "spec-regen resolve for $label: the merge of ${c[1,8]} conflicts only in generated files $(ufiles $wt); tools/regen_generated.py --resolve $(date -u +%H:%MZ)" >> $log
++    regen_merge $wt "spec regen"; rr=$?
++    for f in ${(f)"$(git -C $wt ls-files --others --exclude-standard)"}; do (( ${u0[(Ie)$f]} )) || rm -f -- $wt/$f; done
++    if [ $rr != 0 ]; then why="the merge of ${c[1,8]} conflicts only in generated files and tools/regen_generated.py --resolve declined"
++    elif [ "$(git -C $wt rev-parse -q --verify 'HEAD^1')" != "$h" ] || [ "$(git -C $wt rev-parse -q --verify 'HEAD^2')" != "$(git -C $wt rev-parse -q --verify "$c^{commit}")" ] \
++      || git -C $wt rev-parse -q --verify 'HEAD^3' > /dev/null || git -C $wt rev-parse -q --verify MERGE_HEAD > /dev/null \
++      || [ -n "$(git -C $wt ls-files -u)" ]; then why="the resolve of the merge of ${c[1,8]} did not leave branch ${h[1,8]} + candidate ${c[1,8]}"
++    fi
++  fi
++  if [ -n "$why" ]; then :
+   else brprobed=""; brtag=" (speculative, on the candidate ${c[1,8]} of $cl)"; branchregen; brtag=""
+     if n=$(cregen_probe $wt); [ "$n" != 0 ]; then why="${n:-?} stale modules after the regen"
+     elif [ -n "$(git -C $wt status --porcelain --untracked-files=no)" ]; then why="uncommitted changes after the regen"
