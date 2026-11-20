@@ -28,7 +28,7 @@
       "accepted_after": 0,
       "accepted_before": 0,
       "declared_templates": 0,
-      "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+      "environment_id": "467d34405834a743eb1740310274bc428d0ef4b1c1fbeaedfb959529803bf3ab",
       "missing_templates": [
         "appropriate",
         "benefits",
@@ -49,7 +49,7 @@
         "undermines_check",
         "violates_hard_constraint"
       ],
-      "overlay_digest": "8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088",
+      "overlay_digest": "a0a8935741bffe4e570204a82f926cd3c80c00743536fc3961448efa0883f87a",
       "predicates": 18,
       "review_status": "reviewed",
       "reviewed_lint": [],
@@ -116,7 +116,7 @@
       "draws_including_duplicates": 10704,
       "earley_texts": 500,
       "environment_id": "5dc3ed0a1fd9158bce6aa4760681a327838d5586210b1c9ff4a5145256199b97",
-      "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
+      "grammar_sha256": "f0cd78cc912b2703c51d013194ed9017a6718500640124b5b9171bc925bdfc55",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -156,7 +156,7 @@
       "draws_including_duplicates": 9995,
       "earley_texts": 500,
       "environment_id": "2c22626bf7cef0a86ddc4046202f811bdb8d6f63e1a4c3ae4e21a3ebaa2d59a0",
-      "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
+      "grammar_sha256": "f0cd78cc912b2703c51d013194ed9017a6718500640124b5b9171bc925bdfc55",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -197,7 +197,7 @@
       "draws_including_duplicates": 10715,
       "earley_texts": 500,
       "environment_id": "35839fea488199bfc210ecebb67bc8ac28ddec42c0749acb5b27b7ce2f7d8bd9",
-      "grammar_sha256": "2a0c784758dd7dc480bd582cff3e1d34593f9adaaad894abd3ab66b256143ba2",
+      "grammar_sha256": "9c28257c06cb982989cb1afc65f73575f037008d396d7a2ec1e10d73affd72e0",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -237,7 +237,7 @@
       "draws_including_duplicates": 9075,
       "earley_texts": 500,
       "environment_id": "60a3aa181cde157f02a28ac4a8600cfdafabb2dcabf1ead31fce2be22eb05f45",
-      "grammar_sha256": "e4bf8f47d64429797221ffb97d2ed6e317534086fb3c76a309f9ad8481efd97f",
+      "grammar_sha256": "8f1e6d9f89a7bca116011b345b53e35acfa9501686230167c5b4b44152aeed2a",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -277,7 +277,7 @@
       "draws_including_duplicates": 10645,
       "earley_texts": 500,
       "environment_id": "595ff19388c63ebec4d3a324ccaf00d5a261ef4a710df6360bd989cf6c9f678c",
-      "grammar_sha256": "d93e3a95b671f3e5bbfbd49bddf64da5eab6cbe11a41d21c9857bda7af4096b5",
+      "grammar_sha256": "7f8892312a197f9892c4a8b69d23edaa3fdd21306f46b52ac52d5d782d8d7a4f",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -317,7 +317,7 @@
       "draws_including_duplicates": 10690,
       "earley_texts": 500,
       "environment_id": "3953bdcd7da45cb8a8ae6a723592fa10cf6b6e40f99228eb685a1002ac84b884",
-      "grammar_sha256": "26d85f17a9baaad52f2908eb6085d79561eac31bf3b38d408f71e688161e5599",
+      "grammar_sha256": "facd686e69c97780828cb81accd2adc59ab65072b9716b742ff9e36306f55569",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -357,7 +357,7 @@
       "draws_including_duplicates": 10920,
       "earley_texts": 500,
       "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
-      "grammar_sha256": "ced29010328c59af33d3e8b971c92efb90312d7fecf162f38616da907ee74331",
+      "grammar_sha256": "fb1a308af64473dab9300d446d8b6fed36bce6571cdee54083a5f89f8540af54",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -395,8 +395,8 @@
       "document_corpus_sha256": "9c952fb154087b334f900c724d3b0db0e05cb40a44f5f5cd2eedb7365a290c2d",
       "draws_including_duplicates": 8507,
       "earley_texts": 500,
-      "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
-      "grammar_sha256": "d28958cb4890eb58bc315b189270ffe4adb41a0b67cb2cce486d908e9c3b5d62",
+      "environment_id": "467d34405834a743eb1740310274bc428d0ef4b1c1fbeaedfb959529803bf3ab",
+      "grammar_sha256": "386e472e8de9a5c72fed49e7bcc7f7dbfca5f17da74662b8b280133ce5eda6a4",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -437,7 +437,7 @@
       "draws_including_duplicates": 8298,
       "earley_texts": 500,
       "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
-      "grammar_sha256": "488db59084a4e56ce4ed35476eeb7703d72fd31e423f28a33a54f89f61aab5aa",
+      "grammar_sha256": "8f131cd4d2100854fbff39b87a66b40c79e974cd7f7db872e513d8a5a5855178",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -477,7 +477,7 @@
       "draws_including_duplicates": 7072,
       "earley_texts": 500,
       "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
-      "grammar_sha256": "2d8c745b06ee95d43abea8f37b9053f15ad13fefd621475ecd15c775563e1610",
+      "grammar_sha256": "15d6be18ef0e77a135007a5605914c938d9b2344778dff22e3e44565c0409cc5",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
@@ -514,7 +514,7 @@
       "draws_including_duplicates": 10842,
       "earley_texts": 500,
       "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
-      "grammar_sha256": "c2602304c8917b86582c2900c75e70c84fa01f3c99d88ccece7810cf522fbe08",
+      "grammar_sha256": "1d7249b5096e671c9917bcdf9409d3da5e99c839e01282d676ef0214aa9ea9ac",
       "multi_statement_documents": 50,
       "overlay_digest": "6669967f3970d60ef2aaa08ab007b43fa5cda8740a466b489e402d2a0737df3e",
       "random_earley_actual_depths": {
@@ -552,10 +552,10 @@
       "document_corpus_sha256": "46bb9ef9ddd762d653fcd40be09ecfcef3f2010ab3be6dec6ffd3bab475cadf9",
       "draws_including_duplicates": 8150,
       "earley_texts": 500,
-      "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
-      "grammar_sha256": "6109f4d4cb1021e091eabad39f3048ea446e62cffd87375ee710cbc6746aa8e2",
+      "environment_id": "467d34405834a743eb1740310274bc428d0ef4b1c1fbeaedfb959529803bf3ab",
+      "grammar_sha256": "6ffd313354a6948e8cdbb0445630008478e24aead6220836c1d10164f91a76b5",
       "multi_statement_documents": 50,
-      "overlay_digest": "8411f393465a93ed63fdb8de8ee1d78ce32efb7265660ae6458a986ab3062088",
+      "overlay_digest": "a0a8935741bffe4e570204a82f926cd3c80c00743536fc3961448efa0883f87a",
       "random_earley_actual_depths": {
         "6": 43,
         "7": 91,
@@ -594,7 +594,7 @@
       "draws_including_duplicates": 7926,
       "earley_texts": 500,
       "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
-      "grammar_sha256": "af4e51b640ddcc61d3c1a239d2e6cd5d70b47e30f2c279acf973efa16adb867b",
+      "grammar_sha256": "090a56b6f5de86bf2555045b4503eaa85d61d019ef9e9f15dca95bc34749ad84",
       "multi_statement_documents": 50,
       "overlay_digest": "1ac72251627cbccc6fb401eff18cdf8685218444191fbc5c0f43da0c0179e1e6",
       "random_earley_actual_depths": {
@@ -634,7 +634,7 @@
       "draws_including_duplicates": 6976,
       "earley_texts": 500,
       "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
-      "grammar_sha256": "c4f867c307b9a9bc37f62356f3b65075e1323140646643ee2b4e948f0edb1aa8",
+      "grammar_sha256": "7dd06fa7beeaed3d4dd7972c022a35d175f3fb93dfed5bb87fbabc616db00bc0",
       "multi_statement_documents": 50,
       "overlay_digest": "ae4741bfe4a84aab00116945191867317df7b2b58837bfda3c5d11a070c76d64",
       "random_earley_actual_depths": {
@@ -671,7 +671,7 @@
       "draws_including_duplicates": 10915,
       "earley_texts": 500,
       "environment_id": "2d84b403957a06235861cecb1e2d97373caa346fa9b72117eefe4c93672281b5",
-      "grammar_sha256": "20a325132ff9fe7dbe869a2ced7d696854206a4ea2c40542d7bb3f7864c02788",
+      "grammar_sha256": "c6b0d3d901a1e5907eba92490128fb1d20225273f32bb4d5163addac41648cdc",
       "multi_statement_documents": 50,
       "overlay_digest": "9e2b89947803ae0a281c900e7eed9a33e45a2411e8dfae82af07c51b64272e0c",
       "random_earley_actual_depths": {
@@ -711,7 +711,7 @@
       "draws_including_duplicates": 10663,
       "earley_texts": 500,
       "environment_id": "a5df375e45b81944f76843584e74c030fa50f4f66e7ca396ee03334c43c0a88b",
-      "grammar_sha256": "1777761d1201d09cede6e696715358e98c6d6b64fc5d81bfc04d1533318d4735",
+      "grammar_sha256": "d3883f8e3a4216881ed518ca4e301caa65c50dfecbe97313aae31764be7cae21",
       "multi_statement_documents": 50,
       "overlay_digest": "2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da",
       "random_earley_actual_depths": {
@@ -750,7 +750,7 @@
       "draws_including_duplicates": 7568,
       "earley_texts": 500,
       "environment_id": "7c95b110c8219bc172c23b4be91c3761ed2fbe24f8011416010c4a2e8504c84a",
-      "grammar_sha256": "789f434de8cbe0d6e5dc3f632be8a90c13e2f30c17d9745a477f2ab524feab25",
+      "grammar_sha256": "4080009cc32e9a44923120d70222f91babd78131f00a0e5ff590bd4bf6fa0837",
       "multi_statement_documents": 50,
       "overlay_digest": null,
       "random_earley_actual_depths": {
