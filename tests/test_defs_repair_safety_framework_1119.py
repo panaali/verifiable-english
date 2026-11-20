@@ -8,7 +8,7 @@ quote normalisation (`omit_norm`: NFKC, curly quotes, case, whitespace), in the 
 (environment.d1.json, what a reader is shown), in vocabulary.py's output, and in the literal legend strings the
 definitions counter reads (tools/defs_carried_counter.py: a computed or citation-led legend is shown but not
 counted). When the pinned text is stored at its pin, each passage must also be in it, at its line, byte for byte; the
-test never downloads it (tests/pinned_source.py).
+test never downloads it and never skips (tests/pinned_source.py).
 
 Rows x1 and x45 were PARTIAL-COVER (F2, F3): the merged rows already carry their first sentence, so the passage is
 stored in two pieces, each carried. Rows x31, x33 and x34 are dropped: fsf-repair-f6-sl2plus-1119 carries them word
@@ -318,13 +318,18 @@ def test_each_stored_passage_is_in_the_pinned_source_at_its_line(row):
     """With the pinned FSF text stored at its pin: each piece occurs byte for byte, once in the text, on its stated
     line; the pieces follow one another there (separated by one space, or by the full stop a piece leaves out); and the
     passage is whole: it starts at a sentence, list-entry or footnote start and ends at a full stop, with a footnote
-    mark kept. Absent, it skips (it never downloads)."""
-    lines = pinned_source("safety-framework").read_text(encoding="utf-8").split("\n")
+    mark kept. Absent and not required (VE_REQUIRE_PINNED_SOURCES unset), only the stored pieces' own end is checked;
+    the test never downloads and never skips (the fsf-repair-f3-safetycase-1119 pattern)."""
     if row in ROWS:
         line, pieces = ROWS[row].line, ROWS[row].pieces
     else:
         line, _loc, passage = DROPPED[row]
         pieces = (passage,)
+    assert all(pieces) and re.search(r"\.( \d+)?$", pieces[-1]), row
+    path = pinned_source("safety-framework", skip=False)
+    if path is None:
+        return
+    lines = path.read_text(encoding="utf-8").split("\n")
     text = lines[line - 1]
     for piece in pieces:
         assert text.count(piece) == 1 and sum(other.count(piece) for other in lines) == 1, (row, line, piece[:60])
