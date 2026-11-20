@@ -126,9 +126,11 @@ Every FSF read after this merge re-pins at the merge commit.
   opened. A script printed only the JSON paths that differ from main's copy, with no values: `2 changed paths:
   ['/items/N1/goals/cyber/certificate_sha256', '/items/N1/goals/harmful_manipulation/certificate_sha256']`. The
   failed test then passed (`1 passed in 711.13s`, t-rerun.log).
-- `uv run python tools/regen_generated.py --check`: every entry passed except `route-cases` (lean/VE/Route/examples)
-  and `checker-pins`. Both need the Rust release binary, which this worktree has not built (`checker-pins: the Rust
-  release binary is missing or not pinned`). Neither reads FSF files. The chain gate builds the binaries.
+- `uv run python tools/regen_generated.py --check`:
+  - First run, before the checker binaries existed in this worktree: `failed: route-cases, checker-pins`
+    (`the Rust release binary is missing or not pinned`).
+  - At HEAD 90395d9675: exit 0 (/tmp/dsf/regen-check2.log). Its only remark is the advisory `WARN: codemap is
+    stale (regenerated on merge)`. docs/codemap is outside this row's paths and is left to the merge.
 
 Files: usecases/safety-framework/{vocabulary.py, environment.d1.json, coverage.json, results.json},
 tests/data/route-cases.jsonl, conformance/english-lean/{lexicon-report.json, corpus-seal.json},
@@ -177,7 +179,6 @@ Lean and Rust: not changed, so no seed there.
 
 - The full gate: the chain runs it on the final HEAD.
 - lake build and rust_build: no Lean or Rust change.
-- The two binary-dependent regen checks (section 4).
 - Selected run: `mac-pytest.sh --select` on tree 2cf929cef9 recorded 387 units on ve-cloud-2 (4630 s), `1 failed`
   (select.log). The only failure was `test_rerun_equals_committed_results`; results.json was regenerated and the test
   passed on rerun.
