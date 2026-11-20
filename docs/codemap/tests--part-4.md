@@ -1,3 +1,6 @@
+- `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
+- `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
+- `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
 - `tests/test_fidmech_wording.py` — fid-mech-b4: the wording generator moved into VE (plan 9), its harness mode and the actors.json matcher (plan 5.2).
 - `tests/test_fidmech_worker.py` — fid-mech-b3: the isolated worker (plan section 6) on a toy use case, with no Lean.
 - `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
@@ -7,6 +10,7 @@
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
 - `tests/test_fsf_proximity_tcl.py` — Safety-framework use case: src:4's TCL proximity commitment (row safety-framework-proximity-tcl).
+- `tests/test_fsf_repair_f3_safetycase_1119.py` — fsf-repair-f3-safetycase-1119 (row F3): the governance finding's legend carries the Glossary's Safety Cases sentence.
 - `tests/test_fsf_repair_f6_sl2plus_1119.py` — fsf-repair-f6-sl2plus-1119 (row F6): the `recommends` legend carries the source's Security Level 2+, 3 and 4 text.
 - `tests/test_fsf_repair_f8_disclosure_1119.py` — fsf-repair-f8-disclosure-1119 (repair row F8): the legends that carry FSF 3.1's 5.2 disclosure passage and its 5.1 review sentence, byte for byte after this pr…
 - `tests/test_fsf_repair_f9_mcca_1119.py` — fsf-repair-f9-mcca-1119 (row F9): two 1.3.2 sentences of the pinned FSF 3.1 text, verbatim, in the legends of the predicates the target answers' blocks use.
@@ -75,7 +79,3 @@
 - `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
 - `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
 - `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
-- `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
-- `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
-- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
-- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).

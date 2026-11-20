@@ -9,7 +9,7 @@ The four unary definitions encode the excerpt's recorded conditions. `holds_prop
 | `@guidelines` | `guidelines_content` | `True` |
 | `@helpfulness` | `helpfulness_content` | `True` |
 
-Python, Lean and Rust decode the declarations, compute every defined table from its body and agree on all eight values above (four contents, four `holds_property` links).
+Python, Lean decode the declarations, compute every defined table from its body and agree on all eight values above (four contents, four `holds_property` links).
 
 The definitions, as the English surface writes them:
 
