@@ -469,9 +469,7 @@
    "used": [
     "factual_documented"
    ],
-   "unaccounted": [
-    "docu"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "A Risk Report will document the following",
@@ -491,13 +489,8 @@
    "unaccounted": [
     "conclusion",
     "level",
-    "model",
-    "overall",
-    "provide",
     "reason",
-    "regard",
-    "specific",
-    "threat"
+    "regard"
    ],
    "entries": [
     {
@@ -515,20 +508,12 @@
    "used": [
     "past_reviewed"
    ],
-   "unaccounted": [
-    "addres",
-    "decision"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will address",
      "reason": "restates",
      "arg": ""
-    },
-    {
-     "words": "and decisions",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -553,12 +538,9 @@
     "marginal_justification"
    ],
    "unaccounted": [
-    "additional",
-    "addres",
     "based",
     "justify",
-    "ours",
-    "system"
+    "ours"
    ],
    "entries": [
     {
@@ -799,11 +781,8 @@
    ],
    "unaccounted": [
     "practice",
-    "report",
-    "risk",
     "seek",
-    "toward",
-    "work"
+    "toward"
    ],
    "entries": [
     {
@@ -1131,8 +1110,7 @@
     "recipient_options"
    ],
    "unaccounted": [
-    "receiv",
-    "staff"
+    "receiv"
    ],
    "entries": [
     {
@@ -1620,38 +1598,27 @@
   },
   {
    "id": "D2D3",
-   "entries": [
-    {
-     "words": "Scope.",
-     "reason": "exposition",
-     "arg": ""
-    },
-    {
-     "words": "A Risk Report will cover the risks of Anthropic's models and actions",
-     "reason": "loss",
-     "arg": "1"
-    }
-   ],
+   "entries": [],
    "problems": []
   }
  ],
  "totals": {
   "blocks": 85,
-  "blocks_with_loss": 3,
+  "blocks_with_loss": 2,
   "losses_by_class": {
-   "1": 2,
+   "1": 1,
    "limit 9": 1
   },
   "entries_by_reason": {
    "exposition": 10,
-   "loss": 3,
+   "loss": 2,
    "open": 5,
    "reading": 6,
    "restates": 46,
    "rule": 5
   },
-  "unaccounted_words": 142,
-  "blocks_with_unaccounted_words": 27,
+  "unaccounted_words": 127,
+  "blocks_with_unaccounted_words": 25,
   "quotes": 141,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0

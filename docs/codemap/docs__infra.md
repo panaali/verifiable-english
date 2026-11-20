@@ -4,6 +4,7 @@
 - `docs/infra/arch-20261109-2/layer_list.py` — Print every Lean and Python module of this checkout with the layer a tools/layer_policy.py gives it, one per line.
 - `docs/infra/challenge-final-delivery/dry_install.py` — Dry install of REPORT.md section 5 (reviews/challenge-final-delivery-dri-note-20261117.md item 3; review F2).
 - `docs/infra/challenge-final-delivery/run_seeds.py` — Seeded bugs for challenge-final-delivery fix round 1.
+- `docs/infra/defs-carried-oos-measure-1119/measure.py` — Out-of-sample measurement of tools/defs_carried.py (defs-carried-oos-measure-1119): report only, 0 model calls.
 - `docs/infra/digest-main-line/seeded-run.py` — digest-main-line seeded bugs: each mutant is a /tmp copy of the staged waiter; the staged file is never edited.
 - `docs/infra/eff-20261020-1/builder_shape.py` — Plan a small non-Lean change at the base of each replayed main commit whose drift holds a Lean change.
 - `docs/infra/eff-20261020-1/replay.py` — Replay `select_tests.py --commit <c> --json` from one checkout over main's last N first-parent commits.
