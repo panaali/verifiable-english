@@ -1,0 +1,29 @@
+# mismatch-scope.sh: sourced, never run. 2026-11-20 actions-mismatch-scope-1120 (reviews/dri-decisions-20261120-actions-
+# mismatch-scope.md item 1; reviews/train-legs-time-1120/REPORT.md section 3). The ONE copy of the rule.
+# mismatch_blocks_gate [<file>]: does cloud-jobs/ACTIONS_MISMATCH switch off the gate's Actions legs now (merge-train.sh
+# armavail/shavail/x86shavail, gha-arm-shard.sh, gha-arm-gate.sh, arm-postcheck.sh)? rc 0 = blocks, rc 1 = does not; prints
+# nothing. Lines are "<YYYY-MM-DDTHH:MMZ> <job>: <why>" (writers verdict-sample.sh, cloud-pull.sh).
+#   Does not block: the file is absent, or every line names a trust-mutant / testmap / select job (tm-*, testmap-*, select-*).
+#   Blocks (when unsure, block): the file exists but is not a readable regular file; it is empty; a line does not parse to a
+#   job name; a line names any other job (a gate-leg job armsh-*, x86sh-*, cand-*, post-*, arm-*, or one of no known kind,
+#   e.g. an item-named trust_mutants job like ps-1-4f940bd4).
+# Callers treat every rc but 1 as "blocks" (a missing helper, 127, blocks), and fall back to the old rule (the file exists =
+# blocks) when this file cannot be sourced. The tm/testmap/select pools do not call this: they stop on any line, as before
+# (cloud-overflow.sh rule, gha-select.sh, testmap-gha.sh read the bare file; verdict-sample.sh and cloud-pull.sh also remove
+# ACTIONS_POOL).
+mismatch_blocks_gate(){ emulate -L zsh
+  local f=${1:-${M:-/home/seyran/code/manage-agents}/cloud-jobs/ACTIONS_MISMATCH} l rest job n=0
+  [[ -e $f || -L $f ]] || return 1
+  [[ -f $f && -r $f ]] || return 0
+  while IFS= read -r l || [[ -n $l ]]; do n=$((n + 1))
+    [[ $l == [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]Z\ * ]] || return 0
+    rest=${l#* }; [[ $rest == *': '* ]] || return 0
+    job=${rest%%: *}
+    [[ $job == [A-Za-z0-9]* && $job != *[^A-Za-z0-9._-]* ]] || return 0
+    case $job in
+      (armsh-*|x86sh-*|cand-*|post-*|arm-*) return 0;;  # a gate leg's own mismatch
+      (tm-*|testmap-*|select-*) ;;                      # its own pool stops on it; not evidence about gate verdicts
+      (*) return 0;; esac
+  done < $f || return 0
+  (( n > 0 )) || return 0
+  return 1; }
