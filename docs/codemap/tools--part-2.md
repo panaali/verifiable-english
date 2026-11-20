@@ -1,3 +1,7 @@
+- `tools/repo_map.py` — Where a service mode lives: its Lean module, response schema, Python relays and tests.
+- `tools/response_schemas.py` — Write or check the client's response schemas from their one source, the Lean shapes.
+- `tools/run_cache.py` — A cache for a nested pytest run whose output is a function of what it reads: `cached_run`.
+- `tools/run_order.py` — The order an agent's run takes its test units in, and what it remembers of the last run.
 - `tools/rust_build.py` — Reproducible Rust checker builds: the same source gives the same binary in any checkout.
 - `tools/rust_output_diff.py` — Rust output differential (bundle D of docs/ARCHITECTURE-LAYERS-PLAN2.md).
 - `tools/select_tests.py` — Select the tests a change can affect, and the builds and checks they need.
