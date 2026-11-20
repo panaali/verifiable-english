@@ -1,5 +1,10 @@
 # usage-watch-reset-fresh: a pre-reset reading cannot pause workers past the reset (build report)
 
+**Review fix, on bdf43319a6 (this commit's parent).** F1 (B) is fixed at its owner: `endgame.hours_to` now picks the nearest year.
+The fix is staged as five `.new-usagew2` copies, and two more year-less parsers of the reset field now go through it.
+PROBE F1 gives 73.0 (exit 0) on the staged copies and 77.0 on the installed ones. 28/28 pass staged; 6 new tests fail installed.
+The 5 new seeds (S10-S14) are all caught. INSTALL WAITS FOR DECIDER READ (section "Review fix F1" below). No DELTA row.
+
 INSTALL WAITS FOR DECIDER READ. No DELTA row: no Lean, Python, Rust or trust-base file of this repo changed.
 
 Row usage-watch-reset-fresh; decision `reviews/dri-decisions-20261113-thresholds.md` (orchestrator thresholds ruling 230624Z
@@ -154,3 +159,96 @@ SIZE: 121 product, 290 tests, 0 other hand-written lines (plus this report).
     - "Remove: the 1800-s reuse across a reset": `post` gets no cap reuse.
     - "line = 97 - 4 x days ..., flat 90 in the last 1.75 d": min(A - S d, F), checked at 1.75 d by the reader test.
 15. Overclaim, silent cut, every check can fail, limits: PASS. No deliverable was cut, and every new check has a seed (S1-S9).
+
+## Review fix F1 (usage-watch-reset-fresh-review.final.md)
+
+Evidence is in `fix-f1/`: staged diffs (`staged-changes.diff`), test diffs (`test-changes.diff`), md5s, logs, seeds and suite parity.
+Nothing installed was changed. Every product change is a staged `.new-usagew2` copy in `/home/seyran/code/manage-agents`.
+
+**Finding.** The weekly `PICK_MAIN_PACE` form read main's reset field with `endgame.hours_to`. That parser used the clock's year,
+so on Dec 26 the field `Fri_Jan01_15:00` became Jan 1 2026. "+7 d while < 0" then landed a day short, because 365 mod 7 = 1:
+the line read 77.0 instead of 73.
+
+**Class.** The accounts.sh reset field (`%a_%b%d_%H:%M`, America/Los_Angeles, no year) had five parsers:
+- `endgame.hours_to`: no year wrap. It feeds the endgame window (`inside`), usage-watch freezes, accounts.sh and the pace line.
+- `reset_fresh.reset_epoch`: had its own 183-day wrap on top of hours_to.
+- `pick-claude-account.sh:638`: the hours to the weekly reset used for the pace order. It had its own strptime with `now.year`.
+- `tools-local/burndown.py:1651`: the account table. It hard-coded the year 2026.
+- `tools-local/review-ab-rule.py:137`: token binding. It had its own strptime, read the PT field as UTC (7-8 h early), had a
+  one-way wrap, and crashed on a Feb29 field.
+
+**Fix (one owner).** `endgame.hours_to` is the one parser. It tries the clock's year and the years on each side, and keeps the
+reading nearest the clock. A Feb29 field is read in the leap year among the three. Hours are wall-clock hours in TZ, as before.
+The other four now read the field only through it:
+- `reset_epoch` drops its own wrap.
+- Picker line 638 reuses `hw`, which line 512 already computes with `endgame.hours_to(r2, now)`. Unreadable still means 168 h.
+- burndown uses `NOW + hours_to(rs, NOW)`.
+- review-ab-rule uses `now + hours_to(f[6], now)`. This also fixes its zone; burndown's adv0031 ruling already read the field as PT.
+
+`pace_line` keeps its code and only gains a comment, so `inbox-wait.sh` still execs it alone.
+
+**Guard.** `OneParser.test_only_endgame_parses_the_reset_field` scans every live `*.sh`/`*.py` of manage-agents and tools-local
+(the files under test take their live copies' place). It fails on any `strptime` of the `%b%d` form outside endgame.py. That
+scan is how burndown and review-ab-rule were found; the review's sweep named only endgame.py:63 and picker:638.
+
+**Tests** (`fix-f1/*.log`):
+- `test_usage_reset_fresh.py`: 28/28 on the staged copies. 6 fail on the installed ones, all new:
+  - `WeeklyPace.test_december_clock_line_73`: the probe, as a pick.
+  - `WeeklyPace.test_december_week_every_day`: the exec'd def, Dec 25 to 31.
+  - `YearWrap.test_hours_to_nearest_year`.
+  - `YearWrap.test_endgame_window_across_new_year`: endgame.py:63.
+  - `PickOrderYearWrap.test_nearer_reset_first_across_new_year`: picker:638.
+  - `OneParser.test_only_endgame_parses_the_reset_field`.
+  - `YearWrap.test_reset_fresh_across_new_year` passes on both. It is the control: reset_fresh had its own wrap.
+- `test_review_ab_rule.py`: 22/22 staged. On installed, only the new `test_token_binding_reset_field_is_pacific_and_year_safe`
+  fails (136.0 h instead of 144.0 h: the zone).
+  - The fixture's reset fields are now written in PT for the same instants (10:00Z, 16:00Z), so the existing assertions keep
+    their meaning.
+  - `REVIEW_AB_RULE_SCRIPT` and `EG_SCRIPT` select the copies under test.
+- `test_burndown.py`: the new `test_account_table_reset_year_nearest_now` fails on installed (Jan 1 2026) and passes staged. The
+  11 other failing ids are the same on both: pre-existing, not this item.
+- Suite parity (`fix-f1/existing-suites.txt`): 44 tools-local suites that read endgame, the picker, reset_fresh, burndown or
+  review-ab-rule were run on installed and staged copies.
+  - 41 have the same failing ids on both.
+  - The 3 that differ are the suites above, and they differ only by the new tests.
+  - `test_omission_seq_read` and `test_oseq_pathf_marker` stop on missing `.new-oseq`/`.new-pathf` files on both: pre-existing.
+- **PROBE F1:** prints 77.0 and exits 1 before the fix (live files). Run with `PICK_SCRIPT=…new-usagew2` and its
+  `sys.path` entry pointed at a copy of `endgame.py.new-usagew2`, it prints 73.0 and exits 0. The probe hard-codes the live
+  tools-local for `import endgame`, so it passes unmodified once the staged files are installed.
+
+**Seeded bugs** (`fix-f1/seeded-bugs.json`; each on a /tmp copy, all caught, copies deleted):
+
+| id | file | change | failing tests |
+|---|---|---|---|
+| S10 | tools-local/endgame.py.new-usagew2 (Python) | only the clock's year | 7 (YearWrap.*, WeeklyPace.test_december_*, PickOrderYearWrap, Helper.test_year_wrap) |
+| S11 | pick-claude-account.sh.new-usagew2 (Python) | line 638 back to its own year-less strptime | OneParser, PickOrderYearWrap |
+| S12 | tools-local/reset_fresh.py.new-usagew2 (Python) | own year-less strptime | Helper.test_year_wrap, OneParser, YearWrap.test_reset_fresh_across_new_year |
+| S13 | tools-local/burndown.py.new-usagew2 (Python) | year 2026 again | test_account_table_reset_year_nearest_now (+ the 11 pre-existing) |
+| S14 | tools-local/review-ab-rule.py.new-usagew2 (Python) | field read as UTC | test_token_binding_reset_field_is_pacific_and_year_safe |
+
+**Install (for the decider; nothing below has been run).** No restart is needed: every caller runs endgame.py, reset_fresh.py,
+burndown.py and review-ab-rule.py in a fresh `python3`, and the picker runs fresh on each call.
+
+```
+cd /home/seyran/code/manage-agents; S=.new-usagew2
+md5sum tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py   # expect the first 5 rows of fix-f1/md5.txt; any other: rebase the .new-usagew2 first
+E="PICK_SCRIPT=$PWD/pick-claude-account.sh$S RESET_FRESH_SCRIPT=$PWD/tools-local/reset_fresh.py$S EG_SCRIPT=$PWD/tools-local/endgame.py$S BURNDOWN_SCRIPT=$PWD/tools-local/burndown.py$S REVIEW_AB_RULE_SCRIPT=$PWD/tools-local/review-ab-rule.py$S"
+env $E python3 -I tools-local/test_usage_reset_fresh.py; env $E python3 -I tools-local/test_review_ab_rule.py   # 28 OK, 22 OK
+env $E python3 -I tools-local/test_burndown.py 2>&1 | grep -E '^(FAIL|ERROR):'   # the 11 ids of fix-f1/test_burndown-staged.log
+ts=$(date -u +%Y%m%dT%H%MZ); for f in tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py; do cp -p $f $f.bak-$ts-usagew2; done
+zsh -n pick-claude-account.sh$S && for f in tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py; do mv $f$S $f; done
+python3 -I tools-local/test_usage_reset_fresh.py; python3 -I tools-local/test_review_ab_rule.py   # now on the installed files: 28 OK, 22 OK
+```
+
+Rollback: mv each `.bak-$ts-usagew2` back. The three test files were edited in place. Their previous versions are
+`tools-local/test_{usage_reset_fresh,review_ab_rule,burndown}.py.bak-20261120T1930Z-usagew2`.
+
+**Notes.**
+- **For the DRI:** `pick-claude-account.sh.new-fmw` (staged 17:21Z) predates both the usagew `pace_line` hunk and this
+  line-638 hunk. Whichever is installed second must carry the other's hunks.
+- F5 (C): the opening summary above answers it.
+- F6 (C) is not changed. The wall-clock hours across a DST change are the parser's existing meaning. The test fixtures of
+  about 20 picker suites build their fields with wall-clock `timedelta`, so moving to elapsed hours is its own item.
+- F2, F3, F4 and F7 (C) are not filed and not changed.
+
+SIZE (fix): 5 product files, +31 -24 lines. Tests: +134 -8 lines in 3 files.

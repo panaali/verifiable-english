@@ -1,0 +1,66 @@
+{
+ "item": "usage-watch-reset-fresh (review fix F1)",
+ "note": "Each seed was applied to a /tmp copy of the staged .new-usagew2 file (beside a copy of the staged endgame.py), the named suites were run with that copy through the env overrides (seed-runner.py; ids S8-S12 there are S10-S14 here, S1-S9 being the first build), and the copy deleted. The staged files never carried a seed (md5.txt). S13 also lists the 11 test_burndown ids that fail on the installed and staged copies alike.",
+ "mutants": [
+  {
+   "id": "S10",
+   "file": "manage-agents/tools-local/endgame.py.new-usagew2",
+   "change": "endgame year: at.year only",
+   "failing": [
+    "test_year_wrap",
+    "test_nearer_reset_first_across_new_year",
+    "test_december_clock_line_73",
+    "test_december_week_every_day",
+    "test_endgame_window_across_new_year",
+    "test_hours_to_nearest_year",
+    "test_reset_fresh_across_new_year"
+   ]
+  },
+  {
+   "id": "S11",
+   "file": "manage-agents/pick-claude-account.sh.new-usagew2",
+   "change": "picker hours to the weekly reset: own year-less parse again",
+   "failing": [
+    "test_only_endgame_parses_the_reset_field",
+    "test_nearer_reset_first_across_new_year"
+   ]
+  },
+  {
+   "id": "S12",
+   "file": "manage-agents/tools-local/reset_fresh.py.new-usagew2",
+   "change": "reset_fresh: own year-less parse",
+   "failing": [
+    "test_year_wrap",
+    "test_only_endgame_parses_the_reset_field",
+    "test_reset_fresh_across_new_year"
+   ]
+  },
+  {
+   "id": "S13",
+   "file": "manage-agents/tools-local/burndown.py.new-usagew2",
+   "change": "burndown: year 2026",
+   "failing": [
+    "test_account_table_rate_wraps_midnight_and_skips_a_reset",
+    "test_account_table_reset_year_nearest_now",
+    "test_codex_seat_list_is_linked_until_the_loop_ends",
+    "test_matrix_date_is_pc1_merge_plus_steps",
+    "test_matrix_pc_measured_beside_the_optimistic_median",
+    "test_matrix_runs_from_the_next_steps_real_start",
+    "test_protected_line_is_a_range_and_drops_plan_on_this",
+    "test_reaudit_lifts_provisional_at_8_of_10",
+    "test_revise_pause_withholds_dates_and_eligibility_reads_the_table",
+    "test_scope_line_printed_and_pilot_provisional",
+    "test_separate_line",
+    "test_ungated_date_and_the_by_target_line"
+   ]
+  },
+  {
+   "id": "S14",
+   "file": "manage-agents/tools-local/review-ab-rule.py.new-usagew2",
+   "change": "review-ab-rule: field read as UTC",
+   "failing": [
+    "test_token_binding_reset_field_is_pacific_and_year_safe"
+   ]
+  }
+ ]
+}
