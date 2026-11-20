@@ -143,7 +143,8 @@ CARRIES = (
     ('S0370', (65600, 65683), 'predicates', 'security_practices', 'Changes to critical infrastructure should undergo multi-person', 'approval and review.', ''),
     ('S0371', (65684, 66055), 'predicates', 'security_practices', 'This process should include maintaining comprehensive records', 'revert to previous states.', ''),
     ('S0371', (65684, 66055), 'predicates', 'security_practices', '– Software Supply Chain Integrity', 'and software libraries.', ''),
-    ('S0372', (66056, 66692), 'predicates', 'security_practices', 'Operational Security – Monitoring and Incident Response', 'and emerging threats.', ''),
+    ('S0372', (66056, 66692), 'predicates', 'security_practices', 'Operational Security – Monitoring and Incident Response',
+     'minimizing exploitation opportunities.', ''),
     ('S0373', (66693, 66773), 'predicates', 'security_practices', 'Encourage reporting of good-faith security research', 'bug bounty programs.', ''),
     ('S0374', (66774, 67414), 'predicates', 'security_practices', 'Auditing and Transparency – Independent Security Audits', 'risk management programs.', ''),
 )
@@ -163,6 +164,40 @@ RECORDS = (
     ("S0339", (60354, 60390), ("p20-u356",), "Reliable and Robust System Oversight"),
 )
 
+
+# The 30 legends this item changed, with their text at main 09bea0972d (R1 evidence: each is kept as the prefix).
+BASE_LEGENDS = {
+    ('sorts', 'category'): "one of the three Tracked Categories",
+    ('predicates', 'covered'): "the model at {0} is covered by the Framework",
+    ('predicates', 'sufficient_safeguards'): "safeguards sufficiently minimize severe-harm risk at {0}; SAG decides this",
+    ('predicates', 'high'): "{0} is a High level",
+    ('predicates', 'critical'): "{0} is a Critical level",
+    ('predicates', 'reached'): "the model at {0} has reached {1}; SAG decides this",
+    ('predicates', 'lra_found'): "Long-range Autonomy is found at {0}",
+    ('predicates', 'sandbagging_found'): "sandbagging is found at {0}",
+    ('predicates', 'ara_found'): "Autonomous Replication and Adaptation is found at {0}",
+    ('predicates', 'undermining_found'): "undermining of safeguards is found at {0}",
+    ('predicates', 'nuclear_found'): "Nuclear and Radiological capability is found at {0}",
+    ('predicates', 'research_category_review'): "{0} is a Research Category review",
+    ('predicates', 'plausible'): "{0} meets the plausible-pathway criterion",
+    ('predicates', 'measurable'): "{0} meets the measurable criterion",
+    ('predicates', 'severe'): "{0} meets the severe-harm criterion",
+    ('predicates', 'net_new'): "{0} meets the net-new criterion",
+    ('predicates', 'irremediable'): "{0} meets the instantaneous-or-irremediable criterion",
+    ('predicates', 'misuse_safeguards'): "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)",
+    ('predicates', 'alignment_safeguards'): "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)",
+    ('predicates', 'security_practices'): "C.3: required High-level security practices",
+    ('predicates', 'evaluations_before_deployment'): "3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”",
+    ('constants', 'biological_and_chemical_high'): "Table 1: biological_and_chemical, High",
+    ('constants', 'biological_and_chemical_critical'): "Table 1: biological_and_chemical, Critical",
+    ('constants', 'cybersecurity_high'): "Table 1: cybersecurity, High",
+    ('constants', 'cybersecurity_critical'): "Table 1: cybersecurity, Critical",
+    ('constants', 'ai_self_improvement_high'): "Table 1: ai_self_improvement, High",
+    ('constants', 'ai_self_improvement_critical'): "Table 1: ai_self_improvement, Critical",
+    ('constants', 'ai_self_improvement'): "Tracked Category ai_self_improvement",
+    ('constants', 'biological_and_chemical'): "Tracked Category biological_and_chemical",
+    ('constants', 'cybersecurity'): "Tracked Category cybersecurity",
+}
 
 def _environment():
     return json.loads((PF / "environment.d1.json").read_text(encoding="utf-8"))["vocabulary"]
@@ -204,7 +239,8 @@ def test_the_legend_holds_the_passage_without_the_source(entry):
 
 
 def test_the_carries_reach_every_kept_unit_once_per_passage():
-    """The table names 90 source units in 30 legends; no passage is listed twice."""
+    """The table names 90 source units in 30 legends; no passage is listed twice (S0372 in part: its third sub-item
+    is not carried, see the REPORT)."""
     assert len({entry[0] for entry in CARRIES}) == 90
     assert len({(entry[2], entry[3]) for entry in CARRIES}) == 30
     assert len({(entry[3], entry[4], entry[6]) for entry in CARRIES}) == len(CARRIES) == 92
@@ -239,3 +275,13 @@ def test_the_records_are_the_label_placements_of_the_build():
     for unit, (a, b), ids, first in RECORDS:
         assert source[a:b].decode().startswith(first), unit
         assert not B.CLAIM_MARKER.search(source[a:b]), unit
+
+
+def test_each_changed_legend_keeps_its_base_text_as_its_prefix():
+    """R1 evidence (wording; DRI-RULINGS.md): the item only appends. Each of the 30 legends it changed starts with its
+    text at main, then "; " and the carried quotations; every other legend and every other field is unchanged in kind
+    (the table names exactly the legends that hold a CARRIES quotation)."""
+    vocabulary = _environment()
+    for (kind, key), base in BASE_LEGENDS.items():
+        assert vocabulary[kind][key]["description"].startswith(base + "; "), key
+    assert set(BASE_LEGENDS) == {(entry[2], entry[3]) for entry in CARRIES}
