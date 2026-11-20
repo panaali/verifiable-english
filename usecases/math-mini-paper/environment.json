@@ -42,7 +42,7 @@
           "point",
           "point"
         ],
-        "description": "The first point lists the second point; an arbitrary binary relation.",
+        "description": "The first point lists the second point; an arbitrary binary relation. A point y is self-listing for a relation R when R(y, y).",
         "verbalisation": "{0} lists {1}",
         "negative_verbalisation": "{0} does not list {1}"
       },
