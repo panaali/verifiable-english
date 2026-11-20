@@ -1,0 +1,54 @@
+== gha-arm-shard.sh: the sharded arm64 Actions gate leg
+  ok   exit 0, merged status passed, mode full, counts of all 5 ids
+  ok   one push with 3 refspecs, job.json argv k/N per shard
+  ok   each job commit adds only ci-job/job.json, job.sh, the workflow; job.sh carries gate-job.sh and the wrapper
+  ok   compare EQUAL; row mode sharded-shadow, shards 3, tree
+  ok   run.json done; per-shard overhead rows (h_noop for k >= 2); shard dirs s1..s3
+  ok   exit 4, status failed, the reason names the missing shard
+  ok   row NONE (shard missing), flags kept
+  ok   exit 4, status failed, no gate record named with its done.txt
+  ok   exit 4, status failed, 'no shard record'
+  ok   exit 4, s2 another shape
+  ok   exit 1, status failed, failure tests/c.py::test_three
+  ok   DIFFERENT row; ARM_SHARD_SHADOW and ARM_SHARD_BLOCKING moved to .stopped-*; alert; orchestrator message
+  ok   exit 1 (the leg fails), compare EQUAL, flag kept
+  ok   exit 1, failed, tree = candidate's, shard_failures name the Lean build
+  ok   ACTIONS_SUSPENDED -> exit 3, no push
+  ok   ACTIONS_MISMATCH -> exit 3
+  ok   shadow without ARM_SHARD_SHADOW -> exit 3
+  ok   blocking without ARM_SHARD_BLOCKING -> exit 3
+  ok   validate needs no flag -> exit 0
+  ok   push failed -> exit 3, no results waited for
+  ok   exit 0, two syncs, retry logged
+  FAIL logged: shards N, latency n with H/suite/longest, room line; room 20-17-0=3 -> N = min(5, 3) = 3   [[[ $L == *"shards 3: latency n 5 (item 1: H 60 s default, suite 6000 s on 4 workers"* && $L == *"room 3 (cap 20 - busy 17 - reserve 0 for 0 arrivals/h)"* ]] && [ "$(jq_ $D/run.json "r[\"shards\"]")" = 3 ]]
+  FAIL a full pool -> n_min 2 (never below 2)   [grep -q " shards 2: latency n 5" $T/out]
+  FAIL blocking + ARM_LEG_NMIN, full pool -> n 2 raised to 4, run.json shards 4   [grep -q "n 2 raised to 4 (train.s blocking aarch64 leg floor ARM_LEG_NMIN" $T/out && grep -q " shards 4: latency n 5" $T/out && [ "$(jq_ $D/run.json "r[\"shards\"]")" = 4 ]]
+  ok   blocking + ARM_LEG_NMIN, latency n 1 -> raised to 4, no min with latency n (adv0101 item 1)
+  ok   H reads n >= 4 rows only: the 2-shard row of 1,400 s is not read (adv0101 item 1)
+  FAIL validate + ARM_LEG_NMIN, full pool -> still 2 (only the blocking leg is floored)   [grep -q " shards 2: latency n 5" $T/out && ! grep -q "raised to" $T/out]
+  FAIL blocking without ARM_LEG_NMIN, full pool -> 2 (flag off = old rule)   [grep -q " shards 2: latency n 5" $T/out && ! grep -q "raised to" $T/out]
+  ok   shard-room counts the dispatched sharded runs of gha-arm (busy)
+  ok   exit 0, row NONE naming the missing Mac record
+  ok   shard 1 back, shard 2 out, the parent still waiting: s1 made before the wait ended, no s2, busy 1
+  ok   exit 0, PUSH dry with 2 specs, remote empty
+  ok   exit 0, merged passed, job dir x86sh-*
+  ok   each shard: the x86 workflow (ve-job.yml), job.json argv[7] authority, job.sh without the Lean cache; commit names x86_64
+  ok   row EQUAL mode sharded-x86-validate in x86-compare.jsonl; arm rows untouched; gha-x86-shard.jsonl row; x86 overhead rows
+  ok   exit 0; every shard's workflow = the commit's own blob
+  ok   exit 4, failed, missing shard record; row NONE; flag kept
+  ok   exit 1, DIFFERENT; NIGHTLY_X86_ACTIONS -> .stopped-*; nightly-x86-alert.final.md; msg; arm flags kept, no arm alert
+  ok   nightly without the flag -> exit 3, nothing pushed
+  ok   --x86 with mode shadow -> exit 2
+  ok   ACTIONS_SUSPENDED -> exit 3
+  FAIL shards 3: latency n 5 from nightly-runs/0000.x86.json, room 20-17-0=3   [[[ $L == *"shards 3: latency n 5 (item 1: H 60 s default, suite 6000 s on 4 workers"* && $L == *"durations nightly-runs/0000.x86.json"* && $L == *"room 3 (cap 20 - busy 17 - reserve 0 for 0 arrivals/h)"* ]] && [ "$(jq_ $D/run.json "r[\"shards\"]")" = 3 ]]
+  ok   shard-room counts a dispatched x86 sharded run (8 shards) busy
+  ok   arm: no usable durations record (the x86 one is skipped)
+  FAIL leg-validate, room 0: n 2 raised to 3, said; the shards line says 3   [grep -q "n 2 raised to 3 (x86 leg fit floor X86_LEG_NMIN" $T/out && grep -q " shards 3: latency n 5 .* room 0 " $T/out]
+  FAIL validate (the nightly modes), room 0: n 2 as before, no floor line   [! grep -q "raised to 3" $T/out && grep -q " shards 2: latency n 5 .* room 0 " $T/out]
+  FAIL nightly, room 0: n 2 raised to 3 (2026-11-02 nightly-x86-tokenizer: cold Lean, 2 shards reach the job's 120 min)   [grep -q "n 2 raised to 3 (x86 leg fit floor X86_LEG_NMIN" $T/out && grep -q " shards 3: latency n 5 .* room 0 " $T/out]
+  FAIL nightly, room 0 (n 2 -> floor 3), budget met at n 3: the fit line, n kept, exit 0 with 3 shards (no lean/ in the commit: no build job)   [grep -q "fit floor: n 3 predicted [0-9]* s, n 3 " $T/out && ! grep -q "raised to [0-9]* (fit floor" $T/out && [ $RC = 0 ] && [ "$(jq_ $D/run.json "r[\"shards\"]")" = 3 ] && ! grep -q "lean once:" $T/out]
+  FAIL nightly, room 0, no n fits the budget: raised to the n of the smallest prediction (8), the shards line says 8   [grep -q "n 3 raised to 8 (fit floor: n 3 predicted" $T/out && grep -q " shards 8: latency n " $T/out]
+  ok   validate: no fit floor, no Lean build once
+  ok   nightly with lean/ (dry run): the Lean build once by default (the staged workflow has no lean_from: said, cold)
+  ok   nightly with lean/, X86_NIGHTLY_LEAN_ONCE=0 (dry run): cold, no build-once line
+== armshard (gha-arm-shard.sh): 41 ok, 11 FAIL
