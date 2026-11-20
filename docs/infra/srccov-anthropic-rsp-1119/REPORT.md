@@ -304,3 +304,10 @@ compliance_review) count as documentation under the counter's ruling, the shape 
 Not done: C1 (fidmech actor list) stays a note for the fidmech owner (section 6, note 2). C3 and C5 were not
 changed. C6: the two edits outside the path list stay, since the tests need them. Fixed among the notes: C2 (Note 1
 and the summary name row 33), C4 (DELTA base e01c3d6680) and C7 (summary of five lines).
+
+Tests of the review fix. The selected run on 0aa6a2c583 (the final code; only this paragraph and the evidence lines
+came after it) exited 0: 96 units in 4 GitHub Actions shards (run srccov-anthropic-rsp-1119-0aa6a2c5-t182933: 26,
+25, 23 and 22 units); tests/test_safety_framework.py was deferred to the chain gate (weak reasons, over 120 s).
+Summary lines: evidence/final-selected-run.txt. The run on 8e916763e2 before the legend fix had the one failure
+described above. `lake build` (1478 jobs) and `python3 lean/audit.py` (898 files) pass; no Lean file changed. The
+probes: `run.py --check` exits 0 and the F2 probe passes on this code.
