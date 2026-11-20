@@ -1,0 +1,110 @@
+{
+ "item": "usage-watch-reset-fresh",
+ "note": "Product code is in /home/seyran/code/manage-agents (staged .new-usagew copies, not installed): zsh (accounts.sh, usage-watch.sh) and Python (tools-local/reset_fresh.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the staged file and the named tests were run with that copy (runner: the seed list in REPORT.md); every copy was deleted, the staged files never carried a seed (md5.txt).",
+ "mutants": [
+  {
+   "id": "S1-pre-line-reused",
+   "file": "manage-agents/accounts.sh.new-usagew",
+   "change": "rs=$(rstate $f); [ \"$rs\" = pre ] && return 1 -> rs=$(rstate $f); [ \"$rs\" = xpre ] && return 1",
+   "test": "tools-local/test_usage_reset_fresh.py Accounts",
+   "failing": [
+    "test_failed_probe_gives_unknown_not_the_old_97",
+    "test_pre_reset_cap_line_not_reused_probe_at_once",
+    "test_pre_reset_line_inside_ttl_not_reused"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S2-post-line-cap-reuse",
+   "file": "manage-agents/accounts.sh.new-usagew",
+   "change": "[ \"$rs\" != post ] && [ ${w:--1} -ge 88 ] -> [ ${w:--1} -ge 88 ]",
+   "test": "tools-local/test_usage_reset_fresh.py Accounts.test_lagging_post_reset_line_no_cap_reuse",
+   "failing": [
+    "test_lagging_post_reset_line_no_cap_reuse"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S3-old-week-acted-on",
+   "file": "manage-agents/usage-watch.sh.new-usagew",
+   "change": "[ \"$ow\" = 1 ] && w=-1; -> [ \"$ow\" = 1 ] && true;",
+   "test": "tools-local/test_usage_reset_fresh.py UsageWatch",
+   "failing": [
+    "test_old_window_97_after_reset_not_paused",
+    "test_paused_before_reset_resumes_on_old_window_reading"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S4-no-wake-at-reset",
+   "file": "manage-agents/usage-watch.sh.new-usagew",
+   "change": "[ $(( nxr + 5 )) -le $sl ] -> [ $(( nxr + 5 )) -le 0 ]",
+   "test": "tools-local/test_usage_reset_fresh.py UsageWatch.test_wakes_at_the_next_reset_with_cap_ttl_0",
+   "failing": [
+    "test_wakes_at_the_next_reset_with_cap_ttl_0"
+   ],
+   "caught": true,
+   "language": "zsh"
+  },
+  {
+   "id": "S5-py-pre-never",
+   "file": "manage-agents/tools-local/reset_fresh.py.new-usagew",
+   "change": "if taken < e: return \"pre\" -> if taken < e - 86400: return \"pre\"",
+   "test": "tools-local/test_usage_reset_fresh.py Helper Accounts",
+   "failing": [
+    "test_line_states",
+    "test_pre_reset_line_inside_ttl_not_reused"
+   ],
+   "caught": true,
+   "language": "Python"
+  },
+  {
+   "id": "S6-py-grace-10x",
+   "file": "manage-agents/tools-local/reset_fresh.py.new-usagew",
+   "change": "GRACE = 600 -> GRACE = 6000",
+   "test": "tools-local/test_usage_reset_fresh.py Helper.test_watch_grace_and_next UsageWatch.test_control_after_grace_old_reading_acts",
+   "failing": [
+    "test_control_after_grace_old_reading_acts",
+    "test_watch_grace_and_next"
+   ],
+   "caught": true,
+   "language": "Python"
+  },
+  {
+   "id": "S7-py-pace-no-wrap",
+   "file": "manage-agents/pick-claude-account.sh.new-usagew",
+   "change": "while dw < 0: dw += 7 -> (line removed)",
+   "test": "tools-local/test_usage_reset_fresh.py WeeklyPace.test_fresh_week_after_reset_low_line",
+   "failing": [
+    "test_fresh_week_after_reset_low_line"
+   ],
+   "caught": true,
+   "language": "Python (the picker's embedded python3 program)"
+  },
+  {
+   "id": "S8-py-pace-no-flat",
+   "file": "manage-agents/pick-claude-account.sh.new-usagew",
+   "change": "min(dw, 7.0), float(px[3])) -> min(dw, 7.0), 99.0)",
+   "test": "tools-local/test_usage_reset_fresh.py WeeklyPace.test_two_days_out_line_89_then_flat_90 WeeklyPace.test_inbox_wait_reader_gets_the_weekly_line",
+   "failing": [
+    "test_inbox_wait_reader_gets_the_weekly_line"
+   ],
+   "caught": true,
+   "language": "Python (the picker's embedded python3 program)"
+  },
+  {
+   "id": "S9-py-pace-unknown-reset-high",
+   "file": "manage-agents/pick-claude-account.sh.new-usagew",
+   "change": "dw = 7.0 if hw is None -> dw = 0.0 if hw is None",
+   "test": "tools-local/test_usage_reset_fresh.py WeeklyPace.test_no_cache_start_of_week_value",
+   "failing": [
+    "test_no_cache_start_of_week_value"
+   ],
+   "caught": true,
+   "language": "Python (the picker's embedded python3 program)"
+  }
+ ]
+}
