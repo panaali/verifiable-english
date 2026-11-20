@@ -1,5 +1,11 @@
 # usage-watch-reset-fresh: a pre-reset reading cannot pause workers past the reset (build report)
 
+**Recheck fix F8 (B), on 08af61d223.** `test_review_effort_ab.py`'s sandbox now copies the `endgame.py` that the staged
+review-ab-rule imports. The suite also reads staged copies through `REVIEW_AB_RULE_SCRIPT`/`EG_SCRIPT`, and the install steps run
+it. PROBE F8: 4/4 fail before, 4/4 pass after. Class guard `SandboxImports`: every tools-local test sandbox holds the modules its
+copied tools import when they load. 30/30 staged. The 2 `ShadowScript` errors of that suite were already there (same ids before
+and after, installed and staged). Section "Recheck fix F8" below. No DELTA row.
+
 **Review fix, on bdf43319a6 (this commit's parent).** F1 (B) is fixed at its owner: `endgame.hours_to` now picks the nearest year.
 The fix is staged as five `.new-usagew2` copies, and two more year-less parsers of the reset field now go through it.
 PROBE F1 gives 73.0 (exit 0) on the staged copies and 77.0 on the installed ones. 28/28 pass staged; 6 new tests fail installed.
@@ -232,12 +238,14 @@ burndown.py and review-ab-rule.py in a fresh `python3`, and the picker runs fres
 ```
 cd /home/seyran/code/manage-agents; S=.new-usagew2
 md5sum tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py   # expect the first 5 rows of fix-f1/md5.txt; any other: rebase the .new-usagew2 first
-E="PICK_SCRIPT=$PWD/pick-claude-account.sh$S RESET_FRESH_SCRIPT=$PWD/tools-local/reset_fresh.py$S EG_SCRIPT=$PWD/tools-local/endgame.py$S BURNDOWN_SCRIPT=$PWD/tools-local/burndown.py$S REVIEW_AB_RULE_SCRIPT=$PWD/tools-local/review-ab-rule.py$S"
-env $E python3 -I tools-local/test_usage_reset_fresh.py; env $E python3 -I tools-local/test_review_ab_rule.py   # 28 OK, 22 OK
-env $E python3 -I tools-local/test_burndown.py 2>&1 | grep -E '^(FAIL|ERROR):'   # the 11 ids of fix-f1/test_burndown-staged.log
+( export PICK_SCRIPT=$PWD/pick-claude-account.sh$S RESET_FRESH_SCRIPT=$PWD/tools-local/reset_fresh.py$S EG_SCRIPT=$PWD/tools-local/endgame.py$S BURNDOWN_SCRIPT=$PWD/tools-local/burndown.py$S REVIEW_AB_RULE_SCRIPT=$PWD/tools-local/review-ab-rule.py$S   # export: zsh and bash alike (F9)
+python3 -I tools-local/test_usage_reset_fresh.py; python3 -I tools-local/test_review_ab_rule.py   # 30 OK, 22 OK
+python3 -I tools-local/test_review_effort_ab.py 2>&1 | grep -E '^(FAIL|ERROR):'   # F8: only the 2 ShadowScript ids of fix-f8/rvab-staged.log
+python3 -I tools-local/test_burndown.py 2>&1 | grep -E '^(FAIL|ERROR):' )   # the 11 ids of fix-f1/test_burndown-staged.log
 ts=$(date -u +%Y%m%dT%H%MZ); for f in tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py; do cp -p $f $f.bak-$ts-usagew2; done
 zsh -n pick-claude-account.sh$S && for f in tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py; do mv $f$S $f; done
-python3 -I tools-local/test_usage_reset_fresh.py; python3 -I tools-local/test_review_ab_rule.py   # now on the installed files: 28 OK, 22 OK
+python3 -I tools-local/test_usage_reset_fresh.py; python3 -I tools-local/test_review_ab_rule.py   # now on the installed files: 30 OK, 22 OK
+python3 -I tools-local/test_review_effort_ab.py 2>&1 | grep -E '^(FAIL|ERROR):'   # only the 2 ShadowScript ids (F8)
 ```
 
 Rollback: mv each `.bak-$ts-usagew2` back. The three test files were edited in place. Their previous versions are
@@ -252,3 +260,66 @@ Rollback: mv each `.bak-$ts-usagew2` back. The three test files were edited in p
 - F2, F3, F4 and F7 (C) are not filed and not changed.
 
 SIZE (fix): 5 product files, +31 -24 lines. Tests: +134 -8 lines in 3 files.
+
+## Recheck fix F8 (usage-watch-reset-fresh-looprecheck1.final.md)
+
+Evidence is in `fix-f8/`: the test diff (`test-changes.diff`), md5s, logs and seeds. No product file changed in this round.
+Every staged `.new-usagew2` copy has the same md5 as in `fix-f1/md5.txt`. Two live test files in manage-agents were edited in
+place: `tools-local/test_review_effort_ab.py` and `tools-local/test_usage_reset_fresh.py`. Their previous versions are
+`*.bak-20261120T2000Z-usagew2`.
+
+**Finding.** The F1 fix gave `review-ab-rule.py.new-usagew2:57` a top-level `import endgame`. `test_review_effort_ab.py:44`
+copied review-ab-rule.py into its sandbox without endgame.py. So with the staged rule, 4 tests failed with
+`ModuleNotFoundError` (`Guards.test_sample_end_12_decisive` and three `Pair` tests). The suite also always copied the installed
+rule, so F1's "staged" run of it never loaded the staged copy, and the install steps did not run it.
+
+**Class.** A test sandbox copies a tools-local tool but not a tools-local module that the tool imports when it loads, so the
+copy cannot start. The real tool, which sits beside the module, still works. The check reads the staged `.new-*` copy of each
+tool too, so an import added by a staged change is caught before its install.
+
+**Fix.**
+- `test_review_effort_ab.py` copies `REVIEW_AB_RULE_SCRIPT` (default: the installed rule) and `EG_SCRIPT` (default: the
+  installed endgame.py) into the sandbox, as `test_review_ab_rule.py` does. The staged pair can now be tested, and the
+  installed rule works with it unchanged (it does not import endgame).
+- The install steps above run this suite on the staged copies before the `mv`, and again after it.
+- The install block uses `export` in a subshell in place of `env $E`, which does not split under zsh. That is F9 (C); I
+  fixed it here because it sits on the lines this fix touches.
+
+**Guard** (`test_usage_reset_fresh.py`, class `SandboxImports`):
+- `test_every_sandbox_holds_the_modules_its_tools_import` reads every live `tools-local/test_*.py` with `ast`. It takes the
+  tools-local files each test copies (`shutil.copy`/`copy2`/`copyfile`): the strings in the call, in a module-level name or a
+  for-loop iterable it uses, or in `te.EG` of an imported tools-local test module.
+- For each copied tool it takes the tools-local modules that the live copy and every staged `.new-*` copy import when they
+  load, transitively: `import X`, `from X import`, and `spec_from_file_location`/`SourceFileLoader` by file name, outside any
+  `def`. It fails on any module that the sandbox does not hold.
+- `test_guard_sees_the_f8_shape` tests the guard itself on a throwaway directory. It checks a staged-only import, an importlib
+  load by file name, a loop copy list and a module-level name, and that a load inside a `def` is not required.
+- **Scope: load-time imports only.** Run first on every import (`guard-unscoped.log`), it also flagged 5 lazy loads inside a
+  `def`: review-ab-rule's `frs()` (fix-round-stats.py), role-budget's token-ledger scan (in two suites), and burndown's
+  `_endgame()` (test_infra_feed). Each runs only on its own path. The tests that reach those paths stub or copy the module
+  (`test_role_budget.py:399` writes a stub token-ledger.py). test_infra_feed runs only `burndown.py --queue-order`, which never
+  calls `_endgame()`. So those 5 are not this class and were left unchanged. This also leaves the `.new-lwpa` copy of
+  test_infra_feed.py untouched.
+
+**Tests** (`fix-f8/*.log`; the long suite logs are cut to their result lines):
+- **PROBE F8:** 4/4 fail before the fix (`probe-before.log`) and 4/4 pass after (`probe-after.log`).
+- `test_review_effort_ab.py`, 23 tests:
+  - Staged rule (`rvab-staged.log`): only `ShadowScript.test_clone_has_reviewed_commit_and_base_as_main` and
+    `ShadowScript.test_end_to_end_never_writes_worktree` error (a missing `refs` / `stub-args` file from review-ab-shadow.sh).
+  - Installed rule (`rvab-installed.log`): the same 2 errors.
+  - Old test file on the installed rule (`rvab-installed-oldtest.log`): the same 2 errors, so they were there before this item.
+- `test_usage_reset_fresh.py`: 30/30 on the staged copies (`urf-staged.log`). On the installed copies (`urf-installed.log`) the
+  same 6 F1 tests fail as before; both SandboxImports tests pass.
+- The PROBE runs the suite's four F8 tests by id, so the regression tests are those four ids plus `SandboxImports.*`.
+
+**Seeded bugs** (`fix-f8/seeded-bugs.json`; each on a /tmp copy, all caught, copies deleted):
+
+| id | file | change | failing tests |
+|---|---|---|---|
+| S15 | tools-local/test_review_effort_ab.py (Python) | the copy list from before the fix | SandboxImports.test_every_sandbox_holds_the_modules_its_tools_import (`test_review_effort_ab.py: endgame.py`) |
+| S16 | tools-local/test_review_effort_ab.py (Python) | only the endgame.py copy line deleted, staged rule | the 4 PROBE F8 ids |
+
+**Not changed.** The DEFERRED items of the recheck (the install itself, the `.new-fmw` picker's line 638 and `pace_line`, and
+the order of install) stay with the decider. F10 and F11 (C) are not filed and not changed.
+
+SIZE (fix F8): 0 product files. Tests: +110 -3 lines in 2 files (`fix-f8/test-changes.diff`).
