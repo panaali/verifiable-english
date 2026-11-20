@@ -1,0 +1,30 @@
+PASS the replay inputs exist (et-4b part records, the DRI's merge, the scripts)
+PASS TMPAR_SH is zsh -n clean
+== (a) before (/home/seyran/code/manage-agents/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
+PASS (a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json
+== (b) after (/tmp/tmparw-mut/m1-no-align.sh): the same parts, through tm-lock-align.py
+FAIL (b) merged, not refused: exit = the merge's (not 86), no guard count
+     mP/m/5-part-5.json
+       tm-lock-align: /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/part-2.json: lean/checkers.lock digest d46c99f550e0 -> the committed ab9344172a97 and inputs.lean -> f0244b70b70d (recomputed from a97072e60; == the other parts'): /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/norm/part-2.norm.json; why: the Mac rewrites that file, no Lean build or check reads it (no_build_reads), every other input is the other parts'
+       tm-lock-align: /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/part-6.json: lean/checkers.lock digest d46c99f550e0 -> the committed ab9344172a97 and inputs.lean -> f0244b70b70d (recomputed from a97072e60; == the other parts'): /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/norm/part-6.norm.json; why: the Mac rewrites that file, no Lean build or check reads it (no_build_reads), every other input is the other parts'
+     trust_mutants --merge: the parts disagree on inputs: /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/m/1-part-1.json and /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/part-2.json
+     [tmpar 11:04:04Z] ve-et-4b.tmpar-1119T110402-4103319: trust_mutants --merge REFUSED the 6 parts (exit 2: trust_mutants --merge: the parts disagree on inputs: /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/m/1-part-1.json and /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/part-2.json)
+     [tmpar 11:04:04Z] ve-et-4b.tmpar-1119T110402-4103319: the refused merge's inputs kept in /tmp/tmparw.8q2kmdek/cj-m1-no-align.sh--12/tmpar-refused/ve-et-4b.tmpar-1119T110402-4103319
+     [tmpar 11:04:04Z] ve-et-4b.tmpar-1119T110402-4103319: GUARD count (merge refused (exit 2)); 1 in 24 h
+     
+FAIL (b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on ve-mac-1
+     None
+FAIL (b) --json = the DRI's hand merge (counts, every status, inputs): 326 KILLED, 5 SURVIVOR, 0 NOT RUN
+     null
+FAIL (b) the merged line names the aligned copies part-2.norm.json, part-6.norm.json; the reason on stderr
+     mpar-1119T110402-4103319: trust_mutants --merge REFUSED the 6 parts (exit 2: trust_mutants --merge: the parts disagree on inputs: /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/m/1-part-1.json and /tmp/tmparw.8q2kmdek/tmpar.CzLmmP/part-2.json)
+     2026-11-19T11:04:04Z ve-et-4b slot=tmpar TM_REMOTE_PARALLEL: ve-et-4b.tmpar-1119T110402-4103319: the refused merge's inputs kept in /tmp/tmparw.8q2kmdek/cj-m1-no-align.sh--12/tmpar-refused/ve-et-4b.tmpar-1119T110402-4103319
+     2026-11-19T11:04:04Z ve-et-4b slot=tmpar TM_REMOTE_PARALLEL: ve-et-4b.tmpar-1119T110402-4103319: GUARD count (merge refused (exit 2)); 1 in 24 h
+     
+== (c) Mac part 2 also differs in a .lean file's digest
+PASS (c) still refused 'disagree on inputs' (exit 86), counted once, nothing at --json
+PASS (c) no aligned copy went to the merge: the kept inputs are the parts (part 2 = the Mac's own record) + lockalign.err
+== (d) the helper fails or prints a path that is not the part or its copy
+PASS (d) helper fails: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+PASS (d) helper prints other paths: the parts as they are -> refused 'disagree on inputs', counted, nothing at --json
+7/11 passed
