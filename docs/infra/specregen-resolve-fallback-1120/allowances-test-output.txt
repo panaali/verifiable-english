@@ -1,0 +1,9 @@
+# 2026-11-20T21:08Z tools-local/test_allowances_shared.py (sources merge-train.sh in library mode; regen_merge with one argument = the main sync)
+## LWAS_SFX=.new-specregen
+Ran 18 tests in 3.052s
+
+OK
+## LWAS_SFX=.none-xyz (installed merge-train.sh)
+Ran 18 tests in 3.235s
+
+OK

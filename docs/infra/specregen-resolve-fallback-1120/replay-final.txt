@@ -1,0 +1,52 @@
+# replay 2026-11-20T20:51Z on multi-agent-lab; script /home/seyran/code/manage-agents/merge-train.sh.new-specregen sha256 ba6957a800af14d0; overlay tools from main 663be16252
+branch replay/specregen-f1-1120 = 12b303d592 (parent 2767a772f7: H0 2767a772f7); candidate ef7ecd59ac
+plain merge-tree conflicts: conformance/english-lean/lexicon-report.json docs/codemap/tests--part-4.md tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json  
+  (branchregen stub)
+specregen rc=0 in 955 s; spec=13ca8b46be6d9d90f83d4c8d6d794597a535e6dd
+--- scratch merge-train.log
+spec regen of fsf-repair-f1-replay: merging the candidate ef7ecd59 of fsf-repair-f3-safetycase-1119 into a detached copy of branch 12b303d5 while fsf-repair-f3-safetycase-1119 gates 20:51Z
+spec-regen resolve for fsf-repair-f1-replay: the merge of ef7ecd59 conflicts only in generated files (4) conformance/english-lean/lexicon-report.json tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json; tools/regen_generated.py --resolve 20:51Z
+regenerated generated-only conflicts (spec regen) in ve-specregen-replay-1120 without an agent 21:07Z
+spec regen of fsf-repair-f1-replay: 13ca8b46 = branch 12b303d5 + candidate ef7ecd59 of fsf-repair-f3-safetycase-1119, regenerated, in 955 s (used only if that candidate is published) 21:07Z
+--- end
+spec parents: 12b303d5928526063de7ec87f45702a6b5c746ec ef7ecd59ac9e28b0c976d0da23528098cd6b41c0  (want 12b303d5928526063de7ec87f45702a6b5c746ec ef7ecd59ac9e28b0c976d0da23528098cd6b41c0)
+  conformance/english-lean/lexicon-report.json: byte-equal to the agent sync f02219f5
+  tests/data/route-cases.jsonl: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/coverage.json: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/results.json: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/spans.json: byte-equal to the agent sync f02219f5
+other paths that differ from the agent sync's tree (excluding the overlay):
+  tests/history-dependent.json
+tests/history-dependent.json (F5): attribute ve-generated; diff vs the agent sync:
+   tests/history-dependent.json | 14 ++++++++------
+   1 file changed, 8 insertions(+), 6 deletions(-)
+  +    "tools/regen_generated.py:_merge_file: git merge-file",
+  +    "tools/regen_generated.py:changed_on_both_sides: git merge-base",
+  -    "tools/regen_generated.py:merge_text: git merge-file",
+  -   "why": "starts git (git check-attr, git config, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/cache_store.p
+  +   "why": "starts git (git check-attr, git config, git ls-files, git merge-base, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, too
+  +    "tools/regen_generated.py:_merge_file: git merge-file",
+  +    "tools/regen_generated.py:changed_on_both_sides: git merge-base",
+  -    "tools/regen_generated.py:merge_text: git merge-file",
+  the same path, H0 2767a772 vs the agent sync (the agent's own regeneration):
+  spec vs H0 on that path (the resolve did not touch it when empty):
+   tests/history-dependent.json | 14 ++++++++------
+   1 file changed, 8 insertions(+), 6 deletions(-)
+specuse: branch now 13ca8b46be (spec ? yes)
+worktree after: replay/specregen-f1-1120 0 dirty; MERGE_HEAD none
+--- regen output (tail)
+{"valid": 43, "invalid": 0, "failures_by_condition": {}}
+== check recorded-route-cases
+== check usecase-safety-framework
+[21:04:46] conflict clusters
+[21:05:30] document conflicts
+[21:06:26] family N
+[21:06:48] default sensitivity
+[21:06:56] variants
+agreement with the answer key: 257/262 (189.9 s)
+  DISAGREE K2-L1/PROXIMITY key NONE VE ALL
+  DISAGREE K2-L5/PROXIMITY key NONE VE ALL
+  DISAGREE C3 key SOME(G & rel & RS9=same) VE NONE
+  DISAGREE C-doc key SOME(G & rel & RS9=same) VE NONE
+  DISAGREE G3 key ALL VE NONE
+regen_generated --resolve: generated files merged, regenerated and checked; commit with git commit --no-edit
