@@ -2,7 +2,7 @@
 
 No DRI signature is needed and no DELTA row is reserved (DELTA.md has no rows: legend text only, trust +0).
 Status: 53 of the 55 P1 rows KEPT and carried word for word; 2 DROPPED (x62, x63: already shown verbatim). Base main
-12cb72fa55 (the VE commit this merges at unless main moves again). Changed: RSP predicate legends (rsp_vocabulary.py),
+5c20e2e0f8 (the VE commit this merges at unless main moves again). Changed: RSP predicate legends (rsp_vocabulary.py),
 D2 harm and D3 coverage-date legends (stage0.py), two stale accounting losses, every derived file by its tool.
 Open: x4's definition does not reach 5 of its blocks through `listed` (FOLLOW-UP below). The full gate is the chain's.
 
@@ -154,7 +154,7 @@ All 7 FAILED when planted and were restored (`git status` clean after the script
 
 - Trust: `uv run python tools/trust_map.py --check` "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0"
   (PASS). light-lane: NOT (870 lines > 150), so the trust_mutants sweep ran (`mac-pytest.sh --trustmut`): 0
-  definitions, 0 mutants, exit 0 (trust-mutants.json, base 12cb72fa55). No R16 growth, no FOLLOW-UPS.md row.
+  definitions, 0 mutants, exit 0 (trust-mutants.json, base 5c20e2e0f8). No R16 growth, no FOLLOW-UPS.md row.
 - SIZE: 283 product (rsp_vocabulary.py 240, stage0.py 41, accounting.d1.txt 2), 407 tests (new file 395, three
   edited files 12), 294 other hand-written lines (REPORT 219, DELTA.md 13, mutants.json 62); generated: 60 added
   lines in 7 files plus trust-mutants.json (`git diff --numstat $(git merge-base HEAD main)`).
@@ -195,13 +195,15 @@ All 7 FAILED when planted and were restored (`git status` clean after the script
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed Lean answer or schema is added or changed.
-2. PASS: deliverables 0-3 delivered (table above; commits 998b7aef7e, 9318bcf909, 229b965ab7, c29e93d867 and the docs commit;
+2. PASS: deliverables 0-3 delivered (table above; commits a298ece2a6, 2173c6da77, 7cd7523932, d5757b8faa and the seal commits;
    tests/test_defs_repair_anthropic_rsp_1119.py); no Python copy of a Lean decision, no permanent report test.
 3. PASS: 7 seeded bugs, each failing a named test (mutants.json); trust_mutants 0 definitions (trust-mutants.json).
 4. N.A.: no Python/Lean/Rust decision path changed; RSP answers unchanged (selected runs: test_rsp_fidelity_fix,
    test_safetyfw_usecases pass).
 5. N.A.: no field is read from a Lean answer.
-6. PASS: rebased onto main 12cb72fa55 and regenerated; the gate is the chain's, on the final HEAD.
+6. PASS: rebased onto main 12cb72fa55, then onto 5c20e2e0f8 (route-cases.jsonl conflict resolved by its writer; seal
+   renewed); after it 172 targeted tests passed (the new file, test_rsp_fidelity_fix, test_rsp_b_repair_1115, the R1
+   test, both route-fixture tests, test_rsp_every_byte_is_in_exactly_one_unit); the gate is the chain's, on the final HEAD.
 7. PASS: no DELTA row, trust +0 (`tools/trust_map.py --check`).
 8. PASS: DELTA.md states no user-visible VE change; legend text and identity digests listed there.
 9. PASS: the selected runs selected and ran the changed tests (test_rsp_fidelity_fix,
