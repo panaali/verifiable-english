@@ -1,0 +1,12 @@
+{
+ "job": "testmap-d7d062f5-t206742-s3",
+ "head": "f45ffd7865b3c78127aed8997788b420d023fa01",
+ "argv": [
+  "testmap-d7d062f5-t206742-s3",
+  "f45ffd7865b3c78127aed8997788b420d023fa01",
+  "f45ffd7865b3c78127aed8997788b420d023fa01",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s3.json.gz\" tests/test_consolidation_tools.py tests/test_wire_gate_corpus.py tests/test_scope_answer.py tests/test_lean_document_wrapper.py tools/test_layer_policy.py tests/test_risk_generated_policies.py tests/test_readings_s1_differential.py tests/test_views.py tests/test_e1_prompts.py tests/test_p1.py tests/test_assurance_manifest.py tests/test_b16d_norm_roles.py tests/test_p1_amendment9.py tests/test_defs_repair_claude_constitution_pilot_1119.py tests/test_definitions_differential.py tests/test_answer_cutoff.py tests/test_trust_budget.py tests/test_lean_layers_once.py tests/test_assist_recovery.py tests/test_answer_store.py tests/test_soft_document_handles.py tests/test_fidmech_structural.py tests/test_assist_deadline.py tests/test_readings_lean_sharing.py tests/test_softnorms_contract.py tests/test_readings_sd_lean.py tests/test_b17_evidence.py tests/test_norm_defaults.py tests/test_numeral_conversion.py tests/test_definitions_english.py tests/test_document_cli_errors.py tests/test_english_statement_answer.py tests/test_p1_infrastructure.py tests/test_grammar_cli.py tests/test_norm_defaults_switch.py tests/test_readings_nd_lean.py tests/test_pc3_statements.py tests/test_judgments_document.py tests/test_readings_defaults_rd6a.py tests/test_news_w6a_fixtures.py tests/test_english_e26_boundary.py tests/test_readings_s2_lean.py tests/test_readings_component_names.py tests/test_stage2_dispatch.py tests/test_readings_constant_display.py tests/test_units_w6a.py tests/test_merge_tooling_evidence.py tests/test_w6b_gates.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
