@@ -1,0 +1,29 @@
+--- chain-gate.sh.bak-20261119cgev	2026-11-17 14:33:47.104324650 +0000
++++ chain-gate.sh	2026-11-19 22:47:24.897581178 +0000
+@@ -116,6 +116,26 @@
+ EOF
+ ) && [ -n "$prc" ] && { ev gate-skip "HEAD ${h[1,8]} already ran the selected tests (Mac runner unavailable): rc=$prc"; [ "$prc" = 0 ]; exit $?; }
+ [ -z "$(git -C $w status --porcelain --untracked-files=all)" ] || { ev gate-refused "dirty worktree"; exit 2; }
++# 2026-11-19 chain-gate-empty-ve-diff (reviews/dri-decisions-20261119-portfolio1500.md item 1): a branch with no commit beyond
++#    its merge base with main (git rev-list --count <base>..HEAD is 0: HEAD is that base, a commit of main) has no VE change
++#    to gate (host-stop-lost-jobs waited 6 h for the one vm1 slot with 0 commits): event gate-skip "no VE change", record
++#    chain-select-<label>.json (mode selected, rc 0, skip no-ve-change), exit 0, before any slot wait or gate run; no
++#    collection check (HEAD's tree is the base's). Only a clean worktree (refused above otherwise; checked again here). No
++#    merge base, a git error, or any commit beyond the base: the gate exactly as before. The merge train's full gate (R2)
++#    is unchanged; it has nothing of this branch to merge.
++if ev0=$(git -C $w merge-base HEAD main 2>/dev/null) && [ -n "$ev0" ] && evn=$(git -C $w rev-list --count $ev0..HEAD 2>/dev/null) \
++    && [ "$evn" = 0 ] && evs=$(git -C $w status --porcelain --untracked-files=all 2>/dev/null) && [ -z "$evs" ]; then
++  python3 - $M/chain-select-$label.json $h "$(git -C $w rev-parse 'HEAD^{tree}')" $ev0 <<'EOF' || { ev gate-route "no VE change but the record was not written: the gate as before"; ev0=""; }
++import datetime, json, os, sys
++out, sha, tree, base = sys.argv[1:5]
++why = f"no VE change: the branch has no commit beyond its merge base {base[:10]} with main (git rev-list --count = 0)"
++d = {"commit_sha": sha, "tree_sha": tree, "rc": 0, "rc_raw": 0, "mode": "selected", "reason": why, "base": base,
++     "known": [], "rerun": [], "rerun_rc": None, "skip": "no-ve-change", "evidence": {"rev_list_count": 0, "base": base},
++     "t": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
++open(out + ".tmp", "w").write(json.dumps(d, indent=1) + "\n"); os.replace(out + ".tmp", out)
++EOF
++  [ -n "$ev0" ] && { ev gate-skip "HEAD ${h[1,8]}: no VE change (0 commits beyond merge base ${ev0[1,8]} with main)"; exit 0; }
++fi
+ # 2026-11-09 dri-speed-switch-on (DRI ruling 01:05Z at the end of reviews/speed-redteam-20261108.md, SIGNED item 3; flag
+ #    GATE_REUSE_SAME_TREE, trial to 2026-11-12T16:00Z; absent = as before): the builder's passing selected run stands for this
+ #    chain gate when it ran on exactly this committed tree with exactly the selection this gate's selected run would use: a
