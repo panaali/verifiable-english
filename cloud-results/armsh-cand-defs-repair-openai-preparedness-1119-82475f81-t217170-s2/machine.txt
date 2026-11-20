@@ -1,0 +1,7 @@
+job=armsh-cand-defs-repair-openai-preparedness-1119-82475f81-t217170-s2 shard=2/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-20T23:28:29Z ulimit_s=16384
+Mem:              15           1           8           0           6          13
+/dev/root       145G   43G  102G  30% /
+ 23:28:29 up 2 min,  0 user,  load average: 1.39, 0.49, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 19.1 s
+p1-tokenizers: 443909a61d42 fetched
