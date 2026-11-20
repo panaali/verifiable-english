@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-repair-f6-sl2plus-1119-44754d9b-t168728-s8",
+ "head": "aaeda02b6e8d47a74ab33784e2e3e107d6a99f1d",
+ "argv": [
+  "armsh-cand-fsf-repair-f6-sl2plus-1119-44754d9b-t168728-s8",
+  "aaeda02b6e8d47a74ab33784e2e3e107d6a99f1d",
+  "ece777b2fff39658a80dcc7fad74100327e53b12",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
