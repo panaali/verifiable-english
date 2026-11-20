@@ -60,7 +60,11 @@ BASE = {
                       "at which, absent mitigation measures, frontier AI models or systems may pose heightened risk "
                       "of severe harm. CCLs are determined by identifying and analyzing the main foreseeable paths "
                       "through which a model could result in severe harm: we then define the CCLs as the minimal set "
-                      "of capabilities a model must possess to do so.\"", "{0} is critical"),
+                      "of capabilities a model must possess to do so.\" Overview: \"In the Framework, we specify "
+                      "protocols for the detection of capability levels at which frontier AI models may pose "
+                      "significant or severe risks (which we call “Tracked Capability Levels (TCLs)” and “Critical "
+                      "Capability Levels (CCLs)” respectively), and articulate mitigation approaches to address "
+                      "such risks.\"", "{0} is critical"),
     "tracked": _base(["level"], "{0} is a Tracked Capability Level (TCL): absent mitigation, a model at it may pose "
                      "heightened risk of significant but not severe harm (Glossary)"
                      ". Glossary, Thresholds: \"Tracked Capability Levels (TCLs): are capability thresholds which "
@@ -349,7 +353,17 @@ REGULATED = {
                             "aimed at determining whether updated versions of a model have developed material "
                             "capability increases relative to the last checkpoint subject to a critical capability "
                             "assessment. May also be used to assess whether a critical capability assessment is "
-                            "required of non-frontier AI models.\""),
+                            "required of non-frontier AI models.\" Overview: \"Risk assessment will necessarily involve "
+                            "evaluating cross-cutting capabilities such as agency, tool use, reasoning, and "
+                            "scientific understanding.\" Section 1.3.2: \"Central to our critical capability "
+                            "assessments are “early warning evaluations,” which we use to test the specific "
+                            "threats and risk scenarios identified through our threat modeling, determine a "
+                            "model's capability, and assess the proximity of the model to a T/CCL.\" Glossary, "
+                            "Early Warning Evaluations: \"are evaluations which measure the dangerous "
+                            "capabilities of a model. They specifically target the threats and risk scenarios "
+                            "identified through our threat modeling to determine a model's proximity to a CCL "
+                            "or TCL, and they provide the most direct evidence for whether these thresholds "
+                            "have been reached.\""),
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
@@ -374,13 +388,18 @@ REGULATED = {
         "various checkpoints, and they are primarily aimed at determining whether updated versions of a model have "
         "developed material capability increases relative to the last checkpoint subject to a critical capability "
         "assessment. May also be used to assess whether a critical capability assessment is required of non-frontier "
-        "AI models.\""),
+        "AI models.\" Section 1.3.2: \"To understand if a subsequent version of the model has meaningful new "
+        "capabilities or material increases in performance relative to the last checkpoint subject to a critical "
+        "capability assessment, we conduct material capability change assessments on various checkpoints upon the "
+        "completion of a post-training run.\""),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
         "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
         "external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk "
         "posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' "
-        "involvement, which is part of the act, not the assessment and the analysis"),
+        "involvement, which is part of the act, not the assessment and the analysis. Section 1.2, for TCLs: "
+        "\"Similarly to CCLs, early warning evaluations will be used to assess the proximity of a model to a TCL and "
+        "analyze the risk posed, involving internal and external experts as needed.\""),
     "residual_assessed": _obligation(
         ["proposal"], "{0} be subject to residual risk assessments in evaluating deployment mitigations",
         "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations "
@@ -423,7 +442,9 @@ REGULATED = {
         "; Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all "
         "planned mitigation strategies have been implemented. This is part of the risk management process, following "
         "a critical capability assessment and the effect of mitigations. The residual risk should be brought within "
-        "the acceptable levels, as determined by the T/CCLs as relevant.\""),
+        "the acceptable levels, as determined by the T/CCLs as relevant.\" Section 3.2.1: \"Since misalignment "
+        "risks can manifest through internal use, these assessments will also account for the safety "
+        "implications of high-risk internal deployments for such models.\""),
     "safeguards_added": _obligation(["proposal"], "{0} have the additional safeguards applied",
                                     "the additional safeguards the risk assessment calls for are applied to {0} "
                                     "(3.2.1)"),
@@ -456,7 +477,13 @@ REGULATED = {
         "; the Glossary entry goes on: \"They may include identity and access management practices, and hardening "
         "interface-access to unreleased model parameters, among other measures. We communicate the level of security "
         "we consider appropriate to models which cross our thresholds using the RAND model weight security "
-        "framework.\""),
+        "framework.\" Section 1.3.3: \"We have two categories of mitigations: security mitigations (such as "
+        "preventing the exfiltration of model weights), and deployment mitigations (such as safety fine-tuning "
+        "and monitoring and response) intended to counter the misuse or misaligned expression of critical "
+        "capabilities in deployments.\" Section 2.1: \"There are two categories of mitigations to address models "
+        "with misuse critical capabilities: security mitigations intended to prevent the exfiltration or "
+        "unauthorized modification of model weights, and deployment mitigations intended to counter the misuse "
+        "of critical capabilities in external deployments.\""),
     "adequately_secured": _obligation(
         ["proposal"], "{0} have a level of security assessed as adequate",
         "SEC-t: the level of security applied to the model weights of {0} is assessed adequate (1.3.5 bullet 4)"),
@@ -480,7 +507,9 @@ REGULATED = {
     "applied": _obligation(["proposal", "measure"], "{0} apply {1} to the model weights",
                            "{1} is applied to the model weights of {0} (2.1.1, 2.2, 3.2.2)"),
     "yearly_review": _obligation(["proposal"], "{0} be covered by a review of the framework at least once a year",
-                                 "the framework is reviewed at least once a year, at the time of {0} "
+                                 "the framework is reviewed at least once a year, at the time of {0}; Overview: \"We "
+                                 "will review the Framework periodically and we expect it to evolve substantially as "
+                                 "our understanding of the risks and benefits of frontier models improves.\" "
                                  f"(5.1: \"{REVIEW_PROCESS}\")"),
     "frequent_review": _obligation(["proposal"], "{0} be covered by a more frequent review of the framework",
                                    "the framework is reviewed more often than yearly, at the time of {0} "
@@ -494,7 +523,9 @@ REGULATED = {
         "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and "
         "its effects are both proportionate with the expected impact of the model's risk (1.3.5 Note \"The mitigation "
         "and the effects of such mitigation should also be assessed holistically and be proportionate with expected "
-        "impact of a model's risk\": one subject, the mitigation and its effects, with both demands)"),
+        "impact of a model's risk\": one subject, the mitigation and its effects, with both demands). The Note in "
+        "full: \"The mitigation and the effects of such mitigation should also be assessed holistically and be "
+        "proportionate with expected impact of a model's risk, thus balancing safety with innovation.\""),
     "within_levels": _obligation(
         ["proposal"], "{0} have its residual risk brought within the acceptable levels",
         "the residual risk of {0} is brought within the acceptable levels, as determined by the T/CCLs as relevant "
