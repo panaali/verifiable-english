@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-repair-f3-safetycase-1119-ef7ecd59-t150884-s5",
+ "head": "be577ecc6c94442858e182996b7dab235196cbee",
+ "argv": [
+  "armsh-cand-fsf-repair-f3-safetycase-1119-ef7ecd59-t150884-s5",
+  "be577ecc6c94442858e182996b7dab235196cbee",
+  "a00786359ecb2e043343a896006396df32efabb6",
+  "-",
+  "-",
+  "4",
+  "5/7"
+ ]
+}
