@@ -1,0 +1,12 @@
+{
+ "job": "testmap-21f4d4f8-t194130-s5",
+ "head": "42dd36c829dc94016dafc5d041200ca94b16cc1c",
+ "argv": [
+  "testmap-21f4d4f8-t194130-s5",
+  "42dd36c829dc94016dafc5d041200ca94b16cc1c",
+  "42dd36c829dc94016dafc5d041200ca94b16cc1c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s5.json.gz\" tests/test_select_tests.py tests/test_lean_document_wrapper.py tests/test_calc_answer.py tests/test_regen_generated.py tests/test_test_chunks.py tests/test_since_pass.py tests/test_readings_verdicts_split.py tests/test_right_clauses.py tests/test_english_statement_answer.py tests/test_judgments_chain.py tests/test_calc_derive.py tests/test_test_speed_b2.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
