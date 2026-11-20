@@ -1,0 +1,4 @@
+gate 0.2-0.5 @1800 parts 6 judged 57 TO 90 tries 147 TO share 0.61 overlap 0.21-0.48
+gate<0.2 @1800 parts 19 judged 162 TO 266 tries 428 TO share 0.62 overlap 0.00-0.15
+gate>=0.5 @1800 parts 10 judged 107 TO 135 tries 242 TO share 0.56 overlap 0.53-0.98
+gate>=0.5 @3600 parts 4 judged 19 TO 21 tries 40 TO share 0.53 overlap 0.86-1.01

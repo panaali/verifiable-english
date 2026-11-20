@@ -1,0 +1,10 @@
+test_allow_listed_unknown_resolved (__main__.TmNightly.test_allow_listed_unknown_resolved) ... ok
+test_sh_command_line (__main__.TmNightly.test_sh_command_line) ... ok
+test_tests_subcommand (__main__.TmNightly.test_tests_subcommand) ... ok
+test_text_match_blamed_label_only (__main__.TmNightly.test_text_match_blamed_label_only) ... ok
+test_unallowed_unknown_and_not_run_stay (__main__.TmNightly.test_unallowed_unknown_and_not_run_stay) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.067s
+
+OK
