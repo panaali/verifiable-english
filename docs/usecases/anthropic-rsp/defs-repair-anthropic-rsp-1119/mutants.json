@@ -1,0 +1,62 @@
+{
+ "item": "defs-repair-anthropic-rsp-1119",
+ "note": "Seeded bugs, one per claimed behaviour, all in Python product files of this item (the only language it changes). Each was planted by a one-off script at 0aac3fae0d (the carrier and test commits before the rebase onto main; the same file contents as 9318bcf909), run against the named test with `uv run pytest -q -p no:randomly <test>` (which failed: 1 failed), and restored with git checkout.",
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "behaviour": "x29 (3.6 'Significantly redacted' means) carried on significantly_redacted",
+   "change": "'reasonable external safety researcher would' -> 'external safety researcher would'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_vocabulary_legend_carries_the_sentence[x29-SIGNIFICANTLY_REDACTED-significantly_redacted]",
+   "result": "FAILED"
+  },
+  {
+   "id": "M2",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "behaviour": "x44 carried in a counted (not citation-led) legend string of rso_maintained",
+   "change": "'s4-rso-duties)\" + (\\n        \"; in the source\\'s words (4.1): “We will' -> 's4-rso-duties)\" + (\\n        \"4.1 at {0}: “We will'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_vocabulary_legend_carries_the_sentence[x44-RSO-rso_maintained]",
+   "result": "FAILED"
+  },
+  {
+   "id": "M3",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "behaviour": "x6 (footnote 3) carried whole on plans_in_place",
+   "change": "'not as indicating any \"\\n        \"separate or additional plans.' -> 'not as indicating any \"\\n        \"separate plans.'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_vocabulary_legend_carries_the_sentence[x6-FN3-plans_in_place]",
+   "result": "FAILED"
+  },
+  {
+   "id": "M4",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "behaviour": "x18 (row T3 left column) carried on D2's harm_of_misaligned_high_stakes",
+   "change": "'could (if \"\\n        \"directed toward' -> 'could (when \"\\n        \"directed toward'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_d2_harm_legend_carries_its_rows_definition[x18]",
+   "result": "FAILED"
+  },
+  {
+   "id": "M5",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "behaviour": "x22 (T2 footnotes 7-4) carried on D2's harm_of_novel_chem_bio_weapons",
+   "change": "'“7 E.g., hundreds.' -> '“7 E.g., thousands.'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_d2_harm_legend_carries_its_rows_definition[x22]",
+   "result": "FAILED"
+  },
+  {
+   "id": "M6",
+   "file": "usecases/anthropic-rsp/stage0.py",
+   "behaviour": "x31 (3.1 Scope) carried on D3b's coverage-date start day",
+   "change": "'COVERAGE_WORDS if question == \"publication within\" else None)' -> 'None)'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_d3_coverage_date_legend_carries_the_scope_sentence",
+   "result": "FAILED"
+  },
+  {
+   "id": "M7",
+   "file": "usecases/anthropic-rsp/accounting.d1.txt",
+   "behaviour": "no recorded loss is a carried sentence (f11-review 'and decisions')",
+   "change": "'f11-review | omits: \"We will address\" restates\\n' -> 'f11-review | omits: \"We will address\" restates ; \"and decisions\" loss 1\\n'",
+   "test": "tests/test_defs_repair_anthropic_rsp_1119.py::test_no_recorded_loss_is_a_carried_sentence",
+   "result": "FAILED"
+  }
+ ]
+}
