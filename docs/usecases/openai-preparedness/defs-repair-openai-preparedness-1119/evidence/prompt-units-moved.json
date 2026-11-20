@@ -1,7 +1,7 @@
 {
- "about": "Unit render sizes in bytes, as the counter renders each unit into a step-1 prompt (uc-audit.py.reads-1120 seq_unit_text), at main 09bea0972d and at df049e8744 (rows 11, 18-25 and 40 on existing_at_publication, DRI decision 2026-11-20 1a); no read output used. Compare prompt-units.json (all rows on the carriers the rows name, 91c359b7bf).",
+ "about": "Unit render sizes in bytes, as the counter renders each unit into a step-1 prompt (uc-audit.py.reads-1120 seq_unit_text), at main 09bea0972d and at fd322bf099 (rows 11, 18-25 and 40 on existing_at_publication, DRI decision 2026-11-20 1a); no read output used. Compare prompt-units.json (all rows on the carriers the rows name, 9a3fa50db7). Rebased onto main f21b79f71e: df049e8744 became fd322bf099; base 09bea0972d and f21b79f71e give the same table (PF unchanged on main).",
  "base": "09bea0972d",
- "head": "df049e8744",
+ "head": "fd322bf099",
  "units": {
   "FACTS": {
    "main": 3271,

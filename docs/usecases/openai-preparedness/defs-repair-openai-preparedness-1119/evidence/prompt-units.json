@@ -1,7 +1,7 @@
 {
- "about": "Unit render sizes in bytes, as the counter renders each unit into a step-1 prompt (uc-audit.py.reads-1120 seq_unit_text), at main 09bea0972d and at the carrier commit 91c359b7bf; no read output used. A step-1 prompt = head (pinned source 67,418 bytes, PLAN section 5, rule text, quote and bind rules: about 74,000 bytes) + the units the answer uses + its exposure list.",
+ "about": "Unit render sizes in bytes, as the counter renders each unit into a step-1 prompt (uc-audit.py.reads-1120 seq_unit_text), at main 09bea0972d and at the carrier commit 9a3fa50db7; no read output used. A step-1 prompt = head (pinned source 67,418 bytes, PLAN section 5, rule text, quote and bind rules: about 74,000 bytes) + the units the answer uses + its exposure list. Rebased onto main f21b79f71e: 9a3fa50db7 became 9a3fa50db7; base 09bea0972d and f21b79f71e give the same table (PF unchanged on main).",
  "base": "09bea0972d",
- "head": "91c359b7bf",
+ "head": "9a3fa50db7",
  "units": {
   "f1-security-strict": {
    "main": 719,
