@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-safety-framework-1119-99f10440-t205352-s8",
+ "head": "3f3a396e969a240261d90ddb07f86c82dccabe71",
+ "argv": [
+  "armsh-cand-srccov-safety-framework-1119-99f10440-t205352-s8",
+  "3f3a396e969a240261d90ddb07f86c82dccabe71",
+  "f45ffd7865b3c78127aed8997788b420d023fa01",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
