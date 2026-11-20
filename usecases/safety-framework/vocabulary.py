@@ -51,25 +51,61 @@ def _open(args, description, decider, verbalisation=None, term=None):
 BASE = {
     # Level facts (CHECKED premises from the level tables and closure sentences).
     "critical": _base(["level"], "{0} is a Critical Capability Level (CCL): absent mitigation, "
-                      "a model at it may pose heightened risk of severe harm (Glossary). Overview: \"In the "
-                      "Framework, we specify protocols for the detection of capability levels at which frontier AI "
-                      "models may pose significant or severe risks (which we call \"Tracked Capability Levels "
-                      "(TCLs)\" and \"Critical Capability Levels (CCLs)\" respectively), and articulate mitigation "
-                      "approaches to address such risks.\" Glossary, Critical Capability Levels (CCLs): \"are the "
-                      "main capability thresholds around which we have built the Framework process.\"",
-                      "{0} is critical"),
+                      "a model at it may pose heightened risk of severe harm (Glossary)"
+                      ". Glossary, Thresholds: \"Critical Capability Levels (CCLs): are the main capability "
+                      "thresholds around which we have built the Framework process. They represent the capability "
+                      "levels at which, absent mitigation measures, frontier AI models or systems may pose "
+                      "heightened risk of severe harm.\" Section 1.2: \"The Framework is built primarily around "
+                      "capability thresholds called “Critical Capability Levels (CCLs).” These are capability levels "
+                      "at which, absent mitigation measures, frontier AI models or systems may pose heightened risk "
+                      "of severe harm. CCLs are determined by identifying and analyzing the main foreseeable paths "
+                      "through which a model could result in severe harm: we then define the CCLs as the minimal set "
+                      "of capabilities a model must possess to do so.\" Overview: \"In the Framework, we specify "
+                      "protocols for the detection of capability levels at which frontier AI models may pose "
+                      "significant or severe risks (which we call “Tracked Capability Levels (TCLs)” and “Critical "
+                      "Capability Levels (CCLs)” respectively), and articulate mitigation approaches to address "
+                      "such risks.\"", "{0} is critical"),
     "tracked": _base(["level"], "{0} is a Tracked Capability Level (TCL): absent mitigation, a model at it may pose "
-                     "heightened risk of significant but not severe harm (Glossary)", "{0} is tracked"),
-    "concerns": _base(["level", "domain"], "{0} is a level of the risk domain {1} (the section that defines it)",
+                     "heightened risk of significant but not severe harm (Glossary)"
+                     ". Glossary, Thresholds: \"Tracked Capability Levels (TCLs): are capability thresholds which "
+                     "capture a lower level of risks than our CCLs. They represent the capability levels at which, "
+                     "absent mitigation measures, frontier AI models or systems may pose heightened risk of "
+                     "significant but not severe levels of harm.\" Section 1.2: \"This update to the Framework "
+                     "introduces “Tracked Capability Levels (TCLs).” TCLs are meant to capture significant risks "
+                     "that may manifest at a lower capability threshold than our CCLs and we apply our mitigation "
+                     "and risk acceptance determination process proportionately.\"", "{0} is tracked"),
+    "concerns": _base(["level", "domain"], "{0} is a level of the risk domain {1} (the section that defines it)"
+                      ". Glossary, Risk Domains: \"CBRN: risks of models assisting in the development, preparation, "
+                      "and/or execution of a chemical, biological, radiological, or nuclear (“CBRN”) threat. Cyber: "
+                      "risks of models assisting in the development, preparation, and/or execution of a cyber "
+                      "attack. Harmful Manipulation: risks of models with high manipulative capabilities potentially "
+                      "being misused in ways that could reasonably result in large scale harm. ML R&D and "
+                      "Misalignment: risks of models’ ML R&D capabilities or misaligned propensities reducing "
+                      "society’s overall ability to manage AI risks. Such capabilities may serve as a substantial "
+                      "cross-cutting risk factor for several pathways (e.g. through misalignment, misuse or "
+                      "structural risks) to severe harm.\"",
                       "{0} concerns {1}"),
     "misuse": _base(["level"], "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation "
-                    "domains (1.2, Section 2). Misuse risk, footnote 2: \"As in, in the context of the Framework, "
-                    "risks of threat actors using critical capabilities of deployed or exfiltrated models to cause "
-                    "harm.\" Footnote 8, on CBRN uplift level 1: \"Here, and in other misuse T/CCLs, we intend this "
-                    "to mean relative to a baseline without generative AI.\"", "{0} is misuse"),
-    "ml_rd_and_misalignment": _base(["level"], "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3). "
-                                    "Section 3.2.2: \"We define ML R&D CCLs at capability levels at which "
-                                    "misalignment, misuse and structural risks may reach a severe scale.\""),
+                    "domains (1.2, Section 2)"
+                    ". Misuse risk, footnote 2: \"2 As in, in the context of the Framework, risks of threat actors "
+                    "using critical capabilities of deployed or exfiltrated models to cause harm.\" Footnote 8, on "
+                    "the misuse T/CCLs: \"8 Here, and in other misuse T/CCLs, we intend this to mean relative to a "
+                    "baseline without generative AI.\"", "{0} is misuse"),
+    "ml_rd_and_misalignment": _base(["level"], "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3)"
+                                    ". ML R&D and misalignment risk, footnote 3: \"3 In the context of the "
+                                    "Framework, we address specific scenarios where model misalignment may create "
+                                    "the risk of significant or severe harm, and scenarios where ML R&D capabilities "
+                                    "may heighten misalignment, misuse, and structural risks.\" Section 3.2, the "
+                                    "tiered approach: \"We set a Stealth and Situational Awareness TCL that "
+                                    "indicates a baseline level of model capability above which misalignment risks "
+                                    "may begin to arise. At this capability level we apply a proportionate set of "
+                                    "mitigation and risk acceptance determination processes. ● We set ML R&D CCLs "
+                                    "that indicate higher capability levels at which misalignment, misuse and "
+                                    "structural risks are heightened and may reach a severe scale. At these "
+                                    "capability levels we apply a stronger set of mitigations, and follow the risk "
+                                    "acceptance process as detailed in the rest of the framework.\" Section 3.2.2: "
+                                    "\"We define ML R&D CCLs at capability levels at which misalignment, misuse and "
+                                    "structural risks may reach a severe scale.\""),
     # Each level's own definition, verbatim from its table or section, with the footnote mark the extracted source has
     # inside the sentence (fsf-repair-f1-leveldefs-1119). One fact `"<level>" is defined.` in each level's `levels-*`
     # block uses this predicate, so the legend is shown with that block. One predicate, not one per level: the
@@ -99,7 +135,7 @@ BASE = {
                      "with approximately comparable all-inclusive costs.\"", "{0} is defined"),
     "recommends": _base(["level", "measure"], "the framework recommends {1} for models reaching {0} "
                         "(tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend "
-                        "\"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional "
+                        "“Security Level 2+,” which uses RAND Security Level 2 (SL2) as a baseline, with additional "
                         "security measures designed to address risks from insider threats and well-resourced "
                         "non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: "
                         "\"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with "
@@ -109,24 +145,52 @@ BASE = {
                         "emphasize that this must be taken on by the frontier AI field as a whole.\"; footnote 13: "
                         "\"13 This level may include mitigations aligned with SL 2+ and 3, plus additional "
                         "mitigations aimed to isolate model weights, enhanced data center security, further "
-                        "hardening of infrastructure and minimizing potential attack surface.\" Section 2.2: \"We "
-                        "recommend a security level for each CCL, which reflects our assessment of the minimum "
-                        "appropriate level of security the field of frontier AI should apply to models reaching each "
-                        "CCL.\"", "{0} recommends {1}"),
+                        "hardening of infrastructure and minimizing potential attack surface.\""
+                        " Section 2.2: \"We recommend a security level for each CCL, which reflects our assessment "
+                        "of the minimum appropriate level of security the field of frontier AI should apply to "
+                        "models reaching each CCL.\" Security levels, 2.1.1: \"We use security levels to indicate "
+                        "security goals/principles in line with the corresponding level in the RAND model weight "
+                        "security framework. 6\" (the 6 is the mark of footnote 6); footnote 6: \"6 In other words, "
+                        "“security level N ” indicates security controls and detections at a level generally aligned "
+                        "with RAND SL N . See https://www.rand.org/pubs/research_reports/RRA2849-1.html , pp 21-22. "
+                        "In aligning our security levels with RAND’s, we are referring to the security goals and "
+                        "principles in the RAND framework, rather than the benchmarks (i.e. concrete measures) also "
+                        "described in the RAND report.\" Glossary: \"RAND Security Levels: indicate security goals "
+                        "and principles relevant to frontier developers aiming to protect their model weights from "
+                        "various actors - with the strength and type of security measures differing for each "
+                        "category of actor. 14\" (the 14 is the mark of footnote 14)",
+                        "{0} recommends {1}"),
     "includes": _base(["measure", "measure"], "{0} includes {1} (2.1.1: Security Level 2+ adds measures to "
                       "RAND SL2)", "{0} includes {1}"),
     "addresses": _base(["measure", "threat"], "{0} is designed to address risks from {1} (2.1.1)",
                        "{0} addresses {1}"),
     # The model's state. OT1: whether a model has reached a level is decided by the developer.
     "reached": _open(["proposal", "level"], "the model of {0} has reached {1}, as the critical capability "
-                     "assessment found", "the developer (\"we\", 1.3.2)", "{0} has reached {1}", "OT1"),
-    "approaches": _open(["proposal", "level"], "the model of {0} has reached an alert threshold for {1}",
+                     "assessment found"
+                     ". Glossary: \"Critical Capability Assessments: determine a model’s proximity to T/CCLs through "
+                     "the use of early warning evaluations and other sources of evidence.\"",
+                     "the developer (\"we\", 1.3.2)", "{0} has reached {1}", "OT1"),
+    "approaches": _open(["proposal", "level"], "the model of {0} has reached an alert threshold for {1}"
+                        ". Glossary, Thresholds: \"Alert Thresholds: are thresholds which we set marginally earlier "
+                        "than our CCLs. Crossing these thresholds indicates a CCL may be reached in the foreseeable "
+                        "future, due to the speed of capability progress. In particular, they are meant to account "
+                        "for the possibility of models reaching a CCL before the next critical capability assessment "
+                        "cycle.\" Section 1.3.2: \"For CCLs, we define “alert thresholds,” which may draw on "
+                        "evaluation results, expert assessments, and other sources of information; that are designed "
+                        "to flag when a CCL may be reached before a critical capability assessment is conducted "
+                        "again.\"",
                         "the developer (\"we\", 1.3.2)", "{0} approaches {1}", "OT1"),
     "at_least_as_strong": _base(["measure", "measure"], "{0} is at least as strong as {1}. The text states no such "
                                 "order (footnotes 12 and 13 say only \"may include\"); the vocabulary has the word "
                                 "so that question S4 can be asked"),
     "applies": _base(["proposal", "measure"], "security mitigations reaching {1} have been applied to the "
-                     "model weights of {0}", "{0} applies {1}"),
+                     "model weights of {0}"
+                     ". Glossary: \"Security Mitigations: are safety measures we implement which are intended to "
+                     "prevent the unauthorized modification or exfiltration of model weights by unauthorized actors. "
+                     "They may include identity and access management practices, and hardening interface-access to "
+                     "unreleased model parameters, among other measures. We communicate the level of security we "
+                     "consider appropriate to models which cross our thresholds using the RAND model weight security "
+                     "framework.\"", "{0} applies {1}"),
     # The activity proposed (Glossary, p. 19).
     "further_development": _base(["proposal"], "{0} is further development of the model"),
     "internal": _base(["proposal"], "{0} is an internal deployment (Glossary: Internal Deployments \"represent model "
@@ -135,27 +199,51 @@ BASE = {
                        "Deployments \"represent model releases restricted to Google employees for use cases with the "
                        "potential to enable severe threat scenarios (e.g. building internal security infrastructure or "
                        "automating ML R&D)\")", "no one the text names (unstated)", term="OT7"),
-    "external": _base(["proposal"], "{0} is an external deployment: a model release to entities outside Google. "
-                      "Glossary, External Deployments: \"They can include both low-risk external deployments as well "
-                      "as general purpose releases to the broader public.\"", "{0} is external"),
+    "external": _base(["proposal"], "{0} is an external deployment: a model release to entities outside Google"
+                      ". Glossary: \"External Deployments: represent model releases to entities outside of Google. "
+                      "They can include both low-risk external deployments as well as general purpose releases to "
+                      "the broader public.\"",
+                      "{0} is external"),
     "low_risk": _open(["proposal"], "{0} is a low-risk external deployment (Glossary: \"Low-Risk External "
                       "Deployments: represent small scale and private releases restricted to particular external "
                       "groups or organizations.\")", "no one the text names (unstated)", term="OT8"),
     "first_deployment": _base(["proposal"], "{0} is the first external deployment of a new model"),
-    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary: Frontier AI Models \"are "
+    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model. Glossary: Frontier AI Models \"are "
                       "trained on a large data set, display significant generality, are capable of performing a wide "
                       "range of distinctive tasks and have high-impact capabilities. Frontier AI models' agentic and "
-                      "reasoning-based general capabilities near or exceed those of other Google models\")",
+                      "reasoning-based general capabilities near or exceed those of other Google models. There may "
+                      "be many different checkpoints and versions of the "
+                      "same model along the entire model lifecycle: we consider checkpoints and versions the same "
+                      "model if their base capabilities stem primarily from the same foundational training run, but "
+                      "will conduct additional testing on new versions as specified in Section 1.3 . When we refer "
+                      "to “model” in this Framework, we may be referring to a checkpoint or version of the model.\"",
                       "no one the text names (unstated)", "{0} is frontier", "OT9"),
-    "subsequent": _base(["proposal"], "{0} is an external deployment of a subsequent version of a model",
+    "subsequent": _base(["proposal"], "{0} is an external deployment of a subsequent version of a model"
+                        ". Glossary, Frontier AI Models or Models: \"There may be many different checkpoints and "
+                        "versions of the same model along the entire model lifecycle: we consider checkpoints and "
+                        "versions the same model if their base capabilities stem primarily from the same "
+                        "foundational training run, but will conduct additional testing on new versions as specified "
+                        "in Section 1.3 . When we refer to “model” in this Framework, we may be referring to a "
+                        "checkpoint or version of the model.\"",
                         "{0} is subsequent"),
     "new_capabilities": _open(["proposal"], "the model of {0} has meaningful new capabilities or material "
                               "increases in performance", "the developer (\"we\")", term="OT10"),
     "could_undermine_justification": _open(["proposal"], "the capability increase of {0} could materially "
-                                           "undermine the justification for why its risks are acceptable",
+                                           "undermine the justification for why its risks are acceptable"
+                                           ". Glossary: \"Material Capability Increases: are meaningful new "
+                                           "capabilities or material increases in model performance that we believe "
+                                           "could materially undermine our justifications for a model’s level of "
+                                           "risk being acceptable, for example, by reaching a CCL that the previous "
+                                           "version of the model had not reached.\"",
                                            "the developer (\"we believe\")", term="OT10"),
     "post_training_run_completed": _base(["proposal"], "a post-training run of the model of {0} has completed"),
-    "material_safety_case_update": _base(["proposal"], "{0} is a material update to a safety case"),
+    "material_safety_case_update": _base(["proposal"], "{0} is a material update to a safety case"
+        ". Glossary: \"Safety Cases: are an assessable argument showing how severe risks associated with a model's "
+        "CCLs have been reduced to an acceptable level. Residual risk assessments will be supplemented with a safety "
+        "case when a model reaches a CCL, and inform a model’s risk acceptance determination. 15 For misuse risk, "
+        "such an argument may be based, for example, on considerations such as the effectiveness of mitigations, the "
+        "scope of the deployment, what capabilities and mitigations are available on other publicly available "
+        "models, and the historical incidence and severity of related events.\" (the 15 is the mark of footnote 15)"),
     # Findings of the risk acceptance determination (1.3.5).
     "mitigates": _open(["proposal", "level"], "the deployment mitigations of {0} have brought the residual risk "
                        "from {1} (of harm, of severe harm or of significant harm, as the bullet for {1} says) to an "
@@ -173,7 +261,15 @@ BASE = {
                        "acceptable level, based on considerations such as the effectiveness of mitigations, and "
                        "information pertaining to model propensities and the severity of related events, or if we "
                        "assess that the model is very unlikely to possess the propensities that would be required "
-                       "for material risk of significant harm through misalignment risk.\"",
+                       "for material risk of significant harm through misalignment risk.\""
+                       " Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to "
+                       "counter the misuse or misaligned expression of critical capabilities in deployments. They "
+                       "may include safety post-training, input/output/chain-of-thought monitoring and analysis, "
+                       "account moderation, jailbreak detection and patching, user verification, and bug bounties.\" "
+                       "Section 1.3.3: \"We have two categories of mitigations: security mitigations (such as "
+                       "preventing the exfiltration of model weights), and deployment mitigations (such as safety "
+                       "fine-tuning and monitoring and response) intended to counter the misuse or misaligned "
+                       "expression of critical capabilities in deployments.\"",
                        "the developer (\"We assess\", 1.3.5)", "{0} mitigates {1}", "OT2"),
     "unlikely_misalignment_propensities": _open(
         ["proposal"], "the model of {0} is very unlikely to possess the propensities that would be required for "
@@ -193,9 +289,18 @@ BASE = {
         "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
         "case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an "
         "assessable argument showing how severe risks associated with a model's CCLs have been reduced to an "
-        "acceptable level.\" Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations "
+        "acceptable level. Residual "
+        "risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a model’s "
+        "risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on "
+        "considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and "
+        "mitigations are available on other publicly available models, and the historical incidence and severity of "
+        "related events.\" (the 15 is the mark of footnote 15). Step 2 of 2.1.2 then says: \"In particular, we will "
+        "deem deployment mitigations "
         "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
-        "harm from the proposed external deployment has been reduced to an acceptable level.\"",
+        "harm from the proposed external deployment has been reduced to an acceptable level.\""
+        " Step 2 of 3.1.2 says: \"In particular, we will deem deployment mitigations adequate if the evidence "
+        "suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed "
+        "deployment has been reduced to an acceptable level.\"",
         "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "
@@ -241,38 +346,52 @@ REGULATED = {
                             "critical capability assessments \"determine a model's proximity to T/CCLs through the use "
                             "of early warning evaluations and other sources of evidence\" (Glossary); on models not on "
                             "the frontier, 1.3.2 \"We may also apply material capability change assessments to models "
-                            "not on the frontier, to understand whether a critical capability assessment is required.\" "
-                            "Overview: \"Risk assessment will necessarily involve evaluating cross-cutting capabilities "
-                            "such as agency, tool use, reasoning, and scientific understanding.\" Section 1.3.2: "
-                            "\"Central to our critical capability assessments are \"early warning evaluations,\" which "
-                            "we use to test the specific threats and risk scenarios identified through our threat "
-                            "modeling, determine a model's capability, and assess the proximity of the model to a "
-                            "T/CCL.\" Glossary, Early Warning Evaluations: \"are evaluations which measure the dangerous "
+                            "not on the frontier, to understand whether a critical capability assessment is required.\""
+                            "; Glossary: \"Material Capability Change Assessments: indicate whether a critical "
+                            "capability assessment is required. These assessments are typically conducted upon the "
+                            "completion of new post-training runs on various checkpoints, and they are primarily "
+                            "aimed at determining whether updated versions of a model have developed material "
+                            "capability increases relative to the last checkpoint subject to a critical capability "
+                            "assessment. May also be used to assess whether a critical capability assessment is "
+                            "required of non-frontier AI models.\" Overview: \"Risk assessment will necessarily involve "
+                            "evaluating cross-cutting capabilities such as agency, tool use, reasoning, and "
+                            "scientific understanding.\" Section 1.3.2: \"Central to our critical capability "
+                            "assessments are “early warning evaluations,” which we use to test the specific "
+                            "threats and risk scenarios identified through our threat modeling, determine a "
+                            "model's capability, and assess the proximity of the model to a T/CCL.\" Glossary, "
+                            "Early Warning Evaluations: \"are evaluations which measure the dangerous "
                             "capabilities of a model. They specifically target the threats and risk scenarios "
-                            "identified through our threat modeling to determine a model's proximity to a CCL or TCL, "
-                            "and they provide the most direct evidence for whether these thresholds have been "
-                            "reached.\""),
+                            "identified through our threat modeling to determine a model's proximity to a CCL "
+                            "or TCL, and they provide the most direct evidence for whether these thresholds "
+                            "have been reached.\""),
     "modification_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any substantial modification",
         "before {0}, the developer determines whether a substantial modification has been made (1.3.2)"),
     "further_need_checked": _obligation(
         ["proposal"], "{0} be preceded by a determination of any further capability assessment needed",
-        "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2)"),
+        "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2)"
+        "; Glossary: \"Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of "
+        "early warning evaluations and other sources of evidence.\""),
     "further_assessed": _obligation(["proposal"], "{0} be preceded by a further critical capability assessment",
-                                    "a further CCA takes place before {0} (1.3.2)"),
+                                    "a further CCA takes place before {0} (1.3.2)"
+                                    "; Glossary: \"Critical Capability Assessments: determine a model’s proximity to "
+                                    "T/CCLs through the use of early warning evaluations and other sources of "
+                                    "evidence.\""),
     "change_assessed": _obligation(
         ["proposal"], "{0} be followed by material capability change assessments on various checkpoints",
         "material capability change assessments on various checkpoints follow {0} (1.3.2); the checkpoints are "
         "part of the act, not a situation variable; their content, 1.3.2 \"These assessments draw on model "
         "characteristics, such as its provenance, size, modality, and performance on general capability "
-        "benchmarks.\" Section 1.3.2: \"To understand if a subsequent version of the model has meaningful new "
+        "benchmarks.\""
+        "; Glossary: \"Material Capability Change Assessments: indicate whether a critical capability assessment is "
+        "required. These assessments are typically conducted upon the completion of new post-training runs on "
+        "various checkpoints, and they are primarily aimed at determining whether updated versions of a model have "
+        "developed material capability increases relative to the last checkpoint subject to a critical capability "
+        "assessment. May also be used to assess whether a critical capability assessment is required of non-frontier "
+        "AI models.\" Section 1.3.2: \"To understand if a subsequent version of the model has meaningful new "
         "capabilities or material increases in performance relative to the last checkpoint subject to a critical "
         "capability assessment, we conduct material capability change assessments on various checkpoints upon the "
-        "completion of a post-training run.\" Glossary, Material Capability Change Assessments: \"indicate whether a "
-        "critical capability assessment is required. These assessments are typically conducted upon the completion "
-        "of new post-training runs on various checkpoints, and they are primarily aimed at determining whether "
-        "updated versions of a model have developed material capability increases relative to the last checkpoint "
-        "subject to a critical capability assessment.\""),
+        "completion of a post-training run.\""),
     "proximity_assessed": _obligation(
         ["proposal", "level"], "{0} be followed by an assessment of proximity to {1} with a risk analysis",
         "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and "
@@ -286,50 +405,85 @@ REGULATED = {
         "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations "
         "(1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating "
         "their deployment mitigations\"); residual risk assessments are \"the process of evaluating the level of risk "
-        "that remains after all planned mitigation strategies have been implemented\" (Glossary). Glossary, "
-        "Residual Risk Assessments: \"This is part of the risk management process, following a critical capability "
-        "assessment and the effect of mitigations.\""),
+        "that remains after all planned mitigation strategies have been implemented\" (Glossary)"
+        "; Glossary, Risk Mitigation: \"Deployment Mitigations: are safety measures we implement which are intended "
+        "to counter the misuse or misaligned expression of critical capabilities in deployments. They may include "
+        "safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak "
+        "detection and patching, user verification, and bug bounties.\"; the Glossary entry Residual Risk "
+        "Assessments goes on: \"This is part of the risk management process, following a critical capability "
+        "assessment and the effect of mitigations. The residual risk should be brought within the acceptable levels, "
+        "as determined by the T/CCLs as relevant.\""),
     "safety_case": _obligation(["proposal"], "{0} have its residual risk assessment informed by a safety case",
                                "the residual risk assessment for {0} is informed by a supplemental safety case "
                                "(1.3.4); safety cases \"are an assessable argument showing how severe risks "
-                               "associated with a model's CCLs have been reduced to an acceptable level\" "
-                               "(Glossary). Glossary, Safety Cases: \"Residual risk assessments will be supplemented "
-                               "with a safety case when a model reaches a CCL, and inform a model's risk acceptance "
-                               "determination.\""),
+                               "associated with a model's CCLs have been reduced to an acceptable level\" (Glossary)"
+                               "; Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk "
+                               "that remains after all planned mitigation strategies have been implemented. This is "
+                               "part of the risk management process, following a critical capability assessment and "
+                               "the effect of mitigations. The residual risk should be brought within the acceptable "
+                               "levels, as determined by the T/CCLs as relevant.\"; the Glossary entry Safety Cases "
+                               "goes on: \"Residual risk assessments will be supplemented with a safety case when a "
+                               "model reaches a CCL, and inform a model’s risk acceptance determination. 15 For "
+                               "misuse risk, such an argument may be based, for example, on considerations such as "
+                               "the effectiveness of mitigations, the scope of the deployment, what capabilities and "
+                               "mitigations are available on other publicly available models, and the historical "
+                               "incidence and severity of related events.\" (the 15 is the mark of footnote 15)"),
     "periodic_assessed": _obligation(
         ["proposal"], "{0} be subject to periodic residual risk assessments of misalignment risk",
-        "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)"),
+        "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)"
+        "; Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all "
+        "planned mitigation strategies have been implemented. This is part of the risk management process, following "
+        "a critical capability assessment and the effect of mitigations. The residual risk should be brought within "
+        "the acceptable levels, as determined by the T/CCLs as relevant.\""),
     "periodic_covers_internal": _obligation(
         ["proposal"], "{0} have its periodic assessments cover high-risk internal deployments",
         "the periodic residual risk assessments for {0} also account for the safety implications of high-risk "
-        "internal deployments (3.2.1). Section 3.2.1: \"Since misalignment risks can manifest through internal use, "
-        "these assessments will also account for the safety implications of high-risk internal deployments for "
-        "such models.\""),
+        "internal deployments (3.2.1)"
+        "; Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all "
+        "planned mitigation strategies have been implemented. This is part of the risk management process, following "
+        "a critical capability assessment and the effect of mitigations. The residual risk should be brought within "
+        "the acceptable levels, as determined by the T/CCLs as relevant.\" Section 3.2.1: \"Since misalignment "
+        "risks can manifest through internal use, these assessments will also account for the safety "
+        "implications of high-risk internal deployments for such models.\""),
     "safeguards_added": _obligation(["proposal"], "{0} have the additional safeguards applied",
                                     "the additional safeguards the risk assessment calls for are applied to {0} "
                                     "(3.2.1)"),
     "harm_mitigated": _obligation(
         ["proposal"], "{0} have mitigations make the residual risk of harm acceptable",
         "DM-h: the deployment mitigations of {0} bring the residual risk of harm to an acceptable level "
-        "(1.3.5 bullet 2)"),
+        "(1.3.5 bullet 2)"
+        "; Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the "
+        "misuse or misaligned expression of critical capabilities in deployments. They may include safety "
+        "post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak "
+        "detection and patching, user verification, and bug bounties.\""),
     "severe_harm_mitigated": _obligation(
-        ["proposal"], "{0} have mitigations make the residual risk of severe harm acceptable", "DM-s: as DM-h, for the residual risk of severe harm (1.3.5 bullet 3)"),
+        ["proposal"], "{0} have mitigations make the residual risk of severe harm acceptable", "DM-s: as DM-h, for the residual risk of severe harm (1.3.5 bullet 3)"
+        "; Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the "
+        "misuse or misaligned expression of critical capabilities in deployments. They may include safety "
+        "post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak "
+        "detection and patching, user verification, and bug bounties.\""),
     "significant_harm_mitigated": _obligation(
-        ["proposal"], "{0} have mitigations make the residual risk of significant harm acceptable", "DM-g: as DM-h, for the residual risk of significant harm (1.3.5 bullet 4)"),
+        ["proposal"], "{0} have mitigations make the residual risk of significant harm acceptable", "DM-g: as DM-h, for the residual risk of significant harm (1.3.5 bullet 4)"
+        "; Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the "
+        "misuse or misaligned expression of critical capabilities in deployments. They may include safety "
+        "post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak "
+        "detection and patching, user verification, and bug bounties.\""),
     "secured": _obligation(
         ["proposal"], "{0} have security mitigations that reach the recommended security level",
         "SEC: security mitigations reaching the recommended security level have been applied to the model "
         "weights of {0} (1.3.5 bullets 2 and 3); security mitigations \"are safety measures we implement which are "
         "intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized "
-        "actors\" (Glossary). Glossary, Security Mitigations: \"They may include identity and access management "
-        "practices, and hardening interface-access to unreleased model parameters, among other measures.\" Section "
-        "1.3.3: \"We have two categories of mitigations: security mitigations (such as preventing the exfiltration of "
-        "model weights), and deployment mitigations (such as safety fine-tuning and monitoring and response) "
-        "intended to counter the misuse or misaligned expression of critical capabilities in deployments.\" Section "
-        "2.1: \"There are two categories of mitigations to address models with misuse critical capabilities: "
-        "security mitigations intended to prevent the exfiltration or unauthorized modification of model weights, "
-        "and deployment mitigations intended to counter the misuse of critical capabilities in external "
-        "deployments.\""),
+        "actors\" (Glossary)"
+        "; the Glossary entry goes on: \"They may include identity and access management practices, and hardening "
+        "interface-access to unreleased model parameters, among other measures. We communicate the level of security "
+        "we consider appropriate to models which cross our thresholds using the RAND model weight security "
+        "framework.\" Section 1.3.3: \"We have two categories of mitigations: security mitigations (such as "
+        "preventing the exfiltration of model weights), and deployment mitigations (such as safety fine-tuning "
+        "and monitoring and response) intended to counter the misuse or misaligned expression of critical "
+        "capabilities in deployments.\" Section 2.1: \"There are two categories of mitigations to address models "
+        "with misuse critical capabilities: security mitigations intended to prevent the exfiltration or "
+        "unauthorized modification of model weights, and deployment mitigations intended to counter the misuse "
+        "of critical capabilities in external deployments.\""),
     "adequately_secured": _obligation(
         ["proposal"], "{0} have a level of security assessed as adequate",
         "SEC-t: the level of security applied to the model weights of {0} is assessed adequate (1.3.5 bullet 4)"),

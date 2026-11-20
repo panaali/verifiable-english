@@ -1,0 +1,3 @@
+# condensed: the result lines of the run (FAIL/ERROR ids, exceptions, assertion rows, summary)
+Ran 4 tests in 2.515s
+OK
