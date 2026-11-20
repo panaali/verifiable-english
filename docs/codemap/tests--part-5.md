@@ -1,3 +1,8 @@
+- `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
+- `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
+- `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
+- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
+- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
 - `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
 - `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
 - `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
@@ -83,7 +88,3 @@
 - `tests/test_pf_f16_without_fix.py` — pf-f16-without-fix: the condition tests of the PF f16-without round (architect ruling pf-f16-without-n2-20261116, reading (c), signed by the DRI 2026-11-16; PL…
 - `tests/test_pf_f7_timed_act.py` — pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings et-5c-5d-coverage-20261115 section 3 and pf-split-unit…
 - `tests/test_pf_f9_order_undo.py` — pf-f9-order-undo: the order of 4.1's two safeguard-selection steps is again a self-declared ET gap.
-- `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
-- `tests/test_pinned_sources.py` — usecases/pinned_sources.json, tools/fetch_pinned_sources.py, the test helper tests/pinned_source.py and the gate's seeding of its fresh home (item actions-pinn…
-- `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
-- `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
