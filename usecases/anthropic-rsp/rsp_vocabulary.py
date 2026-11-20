@@ -69,7 +69,9 @@ def _base(args, description, verbalisation=None):
 
 def _open(args, description, decider, term, verbalisation=None):
     """An open-term predicate: VE never decides it; the case stipulates the decider's finding."""
-    return _base(args, f"{description}. Open term {term}, decided by {decider}", verbalisation)
+    # A description that ends with a quoted sentence's own full stop takes no second one.
+    end = " " if description.endswith(".") else ". "
+    return _base(args, f"{description}{end}Open term {term}, decided by {decider}", verbalisation)
 
 
 def _regulated(role, args, act, description):
@@ -146,7 +148,7 @@ BASE = {
                                   "reflects \"our evolving understanding of how best to mitigate key risks\" is not",
         "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, "
                        "Anthropic in the lead, the scenario's first conjunct)",
-        "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists (3.5: "
+        "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists: "
                                    "\"Reasons we may redact material include but are not limited to: 1. Legal "
                                    "compliance: To comply with legal obligations on disclosing information, such as "
                                    "export control regulations, national security restrictions, or contractual "
@@ -155,7 +157,7 @@ BASE = {
                                    "methodologies, trade secrets, or other confidential business information. 3. "
                                    "Public safety considerations: To protect public safety by not disclosing "
                                    "information that could be exploited to cause harm. 4. Privacy: To protect the "
-                                   "personal privacy of individuals.\")",
+                                   "personal privacy of individuals.\"",
     }.items()},
     # T4's "if we determine that either (1) ... or (2)" governs both branches: (2) is the company's determination, as
     # (1) is (OT15); it is OT1's T4 determination, met through scenario (2).
@@ -187,13 +189,13 @@ BASE = {
                                   "automated R&D that (2) significantly exceed those of all models for which we have "
                                   "publicly analyzed such risks (e.g., in a prior Risk Report, System Card, or other "
                                   "public artifact).\")", WE, "OT3b"),
-    "significantly_redacted": _open(["situation"], "the Risk Report of {0} is significantly redacted (3.6: "
+    "significantly_redacted": _open(["situation"], "the Risk Report of {0} is significantly redacted (3.6): "
                                     "\"Significantly redacted\" means that the redactions omit information a "
                                     "reasonable external safety researcher would consider important in evaluating the "
                                     "overall level of risk, such that a reader of only the public version could not "
                                     "meaningfully assess whether they agree with our conclusions. A report shall be "
                                     "deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or LTBT, "
-                                    "it meets this description.)",
+                                    "it meets this description.",
                                     "the RSO, CEO, Board or LTBT (a sufficient judgment)", "OT4"),
     "strong_argument_made": _open(["situation"], "a strong argument that catastrophic risk is contained is made at "
                                   "{0}", "no one the text names (unstated)", "OT6"),
@@ -230,13 +232,13 @@ BASE = {
     "noteworthy": _open(["situation"], "the change or deviation at {0} is noteworthy (3.2)", "no one the text names "
                         "(unstated)", "OT11"),
     "marginal_justification": _open(["situation"], "at {0} the absolute level of risk imposed industry-wide is high "
-                                    "and our decision to move forward rests partly on a marginal risk analysis (3.3: "
+                                    "and our decision to move forward rests partly on a marginal risk analysis (3.3): "
                                     "\"If we determine that the absolute level of risk being imposed industry-wide by "
                                     "AI systems such as ours is high, and are justifying our decision to move forward "
-                                    "based partly on a marginal risk analysis,\" footnote 11: " + MARGINAL_FN11 + ")",
+                                    "based partly on a marginal risk analysis,\" footnote 11: " + MARGINAL_FN11,
                                     WE + " (\"If we determine\")", "OT18"),
     "marginal_major_role": _open(["situation"], "at {0} marginal risk analysis plays a major role in a decision to "
-                                 "move forward (3.4 step 5; footnote 11 of 3.3: " + MARGINAL_FN11 + ")",
+                                 "move forward (3.4 step 5); footnote 11 of 3.3: " + MARGINAL_FN11,
                                  "no one the text names (unstated)", "OT19"),
     "full_substitution_at_competitive_cost": _open(["situation"], "at {0} our models would be able to fully "
                                                    "substitute for our entire set of Research Scientists and Research "
@@ -500,7 +502,7 @@ REGULATED = {
                                       "cases where we failed to meet our goals.\" (both parts, with no condition: the "
                                       "changes, and each case of a missed goal there is)"),
     "marginal_analysed": _duty("{0} have the marginal risk analyses provided", "the four analyses of 3.3's marginal "
-                               "risk paragraph at {0} (3.3: \"If we determine that the absolute level of risk being "
+                               "risk paragraph at {0}, which reads: \"If we determine that the absolute level of risk being "
                                "imposed industry-wide by AI systems such as ours is high, and are justifying our "
                                "decision to move forward based partly on a marginal risk analysis, we will "
                                "additionally address the following: 1. Competitive landscape analysis: What we know "
@@ -511,7 +513,7 @@ REGULATED = {
                                "including considerations related to our mission and our ability to contribute to AI "
                                "safety research and policy development. 4. Advocacy efforts: The steps we took to "
                                "raise public awareness of the relevant risks and to encourage appropriate regulatory "
-                               "action, including our engagement with policymakers and other AI developers.\")"),
+                               "action, including our engagement with policymakers and other AI developers.\""),
     "assessed_in_report": _duty("{0} be assessed in a Risk Report", "the assessments of 3.3 are conducted with "
                                 "respect to the model of {0}"),
     "internal_feedback": _duty("{0} have comprehensive internal feedback on the report solicited", "3.4 step 2 at "
