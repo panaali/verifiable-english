@@ -2,6 +2,7 @@
 `tests/data/route-cases.jsonl` as `["english.statement", case]` lines, replacing any earlier ones.
 
     uv run python docs/en-e3-norm/en-2b/route_fixtures.py --write
+    uv run python docs/en-e3-norm/en-2b/route_fixtures.py --check   # exit 1 if --write would change the file
 
 The cases are `tests/test_english_statement_blocks.py`'s `route_fixtures()`; its
 `test_the_route_fixtures_are_recorded` fails when the file differs from them.
@@ -21,12 +22,19 @@ TARGET = ROOT / "tests/data/route-cases.jsonl"
 
 
 def main(argv: list[str]) -> int:
-    if argv != ["--write"]:
+    if argv not in (["--write"], ["--check"]):
         print(__doc__)
         return 2
-    kept = [line for line in TARGET.read_text().splitlines() if json.loads(line)[0] != "english.statement"]
+    before = TARGET.read_text()
+    kept = [line for line in before.splitlines() if json.loads(line)[0] != "english.statement"]
     lines = [json.dumps(["english.statement", case], separators=(",", ":")) for _, case, _ in route_fixtures()]
-    TARGET.write_text("\n".join(kept + lines) + "\n")
+    text = "\n".join(kept + lines) + "\n"
+    if argv == ["--check"]:
+        if text != before:
+            print(f"{TARGET.relative_to(ROOT)} is stale: run {Path(__file__).relative_to(ROOT)} --write", file=sys.stderr)
+            return 1
+        return 0
+    TARGET.write_text(text)
     return 0
 
 
