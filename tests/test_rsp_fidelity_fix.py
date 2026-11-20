@@ -978,6 +978,11 @@ FACTS_ENTRIES = {("highly-capable-t4", "described in Section 1", "restates"): "h
                  ("s2-suff-third", "We would consider scenario (2) to have occurred where", "restates"): "scenario_2",
                  ("s2-suff-third", "in the absence of", "restates"): "double_rate"}
 # Each legend's description before this item: with it, its entry is a mistag (or a loss) again.
+# A later item's legend in the same block that now carries the same words is set back too (defs-repair-anthropic-rsp-1119
+# quotes row T4's scenario (2) sentence whole on automation_attributable, s2-suff-third's other predicate).
+LATER_LEGENDS_BEFORE = {
+    "automation_attributable": "at {0} it is plausible that the doubling is substantially attributable to the "
+                               "automation of research and/or engineering (T4 (2)(b))"}
 FACTS_LEGENDS_BEFORE = {
     "highly_capable": "the model of {0} is highly capable (3.6: it crosses the threshold for automated AI R&D)",
     "scenario_2": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons "
@@ -1077,7 +1082,7 @@ def test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier():
         assert tag == "restates"
         words_needed = _omitted_words(words)
         assert words_needed and any(words_needed <= segment for segment in _carrier(block_id)), (block_id, words)
-        before = _carrier(block_id, {predicate: FACTS_LEGENDS_BEFORE[predicate]})
+        before = _carrier(block_id, {**LATER_LEGENDS_BEFORE, predicate: FACTS_LEGENDS_BEFORE[predicate]})
         assert not any(words_needed <= segment for segment in before), (block_id, words, predicate)
     # The carrying predicates are the blocks' own (no predicate added or renamed for them).
     environment = json.loads((RSP / "environment.d1.json").read_text())
