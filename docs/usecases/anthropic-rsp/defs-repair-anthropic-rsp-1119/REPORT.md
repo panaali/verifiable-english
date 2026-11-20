@@ -156,7 +156,8 @@ All 7 FAILED when planted and were restored (`git status` clean after the script
   (PASS). light-lane: NOT (870 lines > 150), so the trust_mutants sweep ran (`mac-pytest.sh --trustmut`): 0
   definitions, 0 mutants, exit 0 (trust-mutants.json, base 12cb72fa55). No R16 growth, no FOLLOW-UPS.md row.
 - SIZE: 283 product (rsp_vocabulary.py 240, stage0.py 41, accounting.d1.txt 2), 407 tests (new file 395, three
-  edited files 12), about 170 other hand-written lines (this REPORT, DELTA.md, mutants.json); generated: 64 lines.
+  edited files 12), 294 other hand-written lines (REPORT 219, DELTA.md 13, mutants.json 62); generated: 60 added
+  lines in 7 files plus trust-mutants.json (`git diff --numstat $(git merge-base HEAD main)`).
 - Answers the change touches (the audit's answers_touched, per row, in the table above; K = 126 keyed): the widest
   rows are x4 (49 of 126, now reaching fewer blocks), x13-x21 (40 of 126 each) and the D2/D3 rows (17 of 126). Later
   reads re-pin at the merge commit.
