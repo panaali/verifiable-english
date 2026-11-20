@@ -1,0 +1,29 @@
+== seed predicate-legend (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E                   AssertionError: ('row25', 'compliance_review', 'This review will focus on procedural compliance, not substantive outcomes.')
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_kept_row_carries_its_source_text_in_its_legend
+1 failed, 2 passed in 1.98s
+== seed constant-legend (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E                   AssertionError: ('row7', 'automated_rd', 'AI systems that can fully automate, or otherwise dramatically accelerate, the work of large,...r rapid disruptions to the global balance of power-for example, energy, robotics, w
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_kept_row_carries_its_source_text_in_its_legend
+1 failed, 2 passed in 2.10s
+== seed d3-date (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E           AssertionError: S0300
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_changelog_date_is_in_its_d3_legend
+1 failed, 2 passed in 1.97s
+== seed record (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E           AssertionError: S0211
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_recorded_unit_lies_in_a_record_that_says_it_is_not_a_rule
+1 failed, 2 passed in 1.92s
+== seed heading-record (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E           AssertionError: S0290
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_recorded_unit_lies_in_a_record_that_says_it_is_not_a_rule
+1 failed, 2 passed in 1.94s
+== main's carriers (git checkout main -- usecases/anthropic-rsp; same command)
+E                   AssertionError: ('row4', 'non_novel_chem_bio_weapons', 'AI systems with the ability to significantly help individuals or groups with b...degrees) create/obtain and deploy chemical and/or biological weapons with serious p
+E           AssertionError: S0299
+E           AssertionError: S0065
+3 failed in 3.71s
+== seed subheading (uv run pytest -q tests/test_srccov_anthropic_rsp_1119.py)
+E           AssertionError: S0141
+FAILED tests/test_srccov_anthropic_rsp_1119.py::test_every_recorded_unit_lies_in_a_record_that_says_it_is_not_a_rule
+1 failed, 2 passed in 1.91s
