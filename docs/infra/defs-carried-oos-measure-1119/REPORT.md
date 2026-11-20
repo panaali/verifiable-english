@@ -146,7 +146,7 @@ Run time (MEASURED): the tool over all 15 documents at main took 7.8 s; the 6 ju
 - **Condition tests:**
   - `tests/test_defs_carried_oos.py::test_oos_fixture_and_flags_load_and_are_disjoint_from_the_known_cases` (new). Both files load, their counts match, and no case or flag has a known (document, rule, term) key.
   - Five more tests pin the script's counting rules: the Wilson interval, the recall hit rule, the seeded draw and its exclusions, and the reply parser and tally.
-  - `tests/test_definitions_carried.py` is unchanged. The selector does not pick it for this branch, because no changed file reaches it (`tools/select_tests.py` plan, 46 files). It is run explicitly below, and the full gate runs it.
+  - `tests/test_definitions_carried.py` is unchanged. The local plan (`uv run python tools/select_tests.py --base d5f402140f`, 45 test files) does not list it, because no changed file reaches it through the local coverage map. The selected run on the test runner (363 test files) did include it, and it passed (section 7). The full gate runs it too.
 - **Selected run and explicit runs:** see section 7.
 - **`tools/trust_map.py --check`:** PASS, K +0, S +0, trusted +0.
 - **Trust mutants:** light-lane says NOT, because the committed evidence and data are 34,646 lines. `tools/trust_mutants.py --plan` gives 0 definitions and 0 mutants (no Lean changed), so there is nothing to sweep.
@@ -161,7 +161,8 @@ Run time (MEASURED): the tool over all 15 documents at main took 7.8 s; the 6 ju
 
 ## 5. Cost
 - **Judge seat (MEASURED, `delegate-cw.py` over its 8 session transcripts):** 0.25M CW. This is 6 main-question sessions, the definition pass and its superseded first version.
-- **This builder:** see section 7 (MEASURED with `delegate-cw.py` on this session's transcript).
+- **This builder (MEASURED, `delegate-cw.py` on this session's transcript):** 1.20M CW at 2026-11-20T14:24Z (113 calls), taken before the last report edit and commit, so a few calls are not included.
+- **Total:** about 1.45M CW, within the task's estimate.
 - **Estimate in the task:** 1.0-2.0M CW plus 0.3-0.6M for the judge.
 
 SIZE: 0 product, 156 tests, 503 other hand-written lines (measure.py 455, judge.sh 48), plus this report and the one-line relabel. Generated or copied data (the fixture, flags, row copies, judge packets and replies, evidence) is not counted.
@@ -181,8 +182,46 @@ SIZE: 0 product, 156 tests, 503 other hand-written lines (measure.py 455, judge.
   - the main judge pass was not re-run or re-worded after its results were seen.
 - **Disagreement with the stage-1 hand check:** bluedot `matched_cost` (stage-1 S7, TRUE) is CARRIED for this judge (paraphrase). Bluedot "unresolved" (stage-1 S3, a false alarm) is NOT CARRIED for this judge on the main question, and DOES NOT DEFINE on the definition pass.
 
-## 7. Final runs
-Filled in at the end of the build: see the commit that adds this section's results.
+## 7. Final runs (MEASURED)
+- **Selected tests:** `zsh mac-pytest.sh --select -- --base d5f402140f --run`. It ran on ve-cloud-2: exit 0, 1819 s. 363 test files plus `tools/test_layer_policy.py` all exited 0; 29 slow files selected for weak reasons were deferred to the chain gate.
+  - `tests/test_defs_carried_oos.py`: exit 0 in 2.7 s.
+  - `tests/test_definitions_carried.py`: exit 0 in 19.5 s.
+  - `tests/test_history_tests.py`: exit 0.
+  - `tests/test_hang_guards.py`: exit 0.
+  - No test failed, so none is in main-known-red.
+- **Local:** `uv run pytest -q tests/test_defs_carried_oos.py` gives 6 passed.
+- **Gate collection:** `cd lean && lake build` (1478 jobs, built), then `uv run python tools/gate_collection.py --check --prebuilt`: "36378 collected, 36372 at d5f402140f; 6 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
+- **Full gate:** not run here (task rule). The chain runs it on the final HEAD.
+
+## 8. Self-review against BUILDER-CHECKLIST
+1. N.A. No Lean answer or relay is added or changed.
+2. PASS.
+   - Deliverables:
+     - 1: section 1, `oos_cases.json`, `evidence/recall*.json*`;
+     - 2: section 2, `oos_flags.json`, `judge/`, `evidence/tally.json`;
+     - 3: the stage-1 Numbers line;
+     - 4: this report.
+   - Rule grep: no Python copy of a Lean decision and no new permanent report test (D4). The tests read only the fixture, the flags and made-up inputs. No repair-row file is touched (`git diff --stat d5f402140f` lists no `usecases/` path).
+3. PASS. `mutants.json`: 6 seeded bugs, each failing its named test in `tests/test_defs_carried_oos.py`. The comparator tests have both sides: the recall test (hit and three kinds of miss) and the tally test (UNSURE both ways).
+4. N.A. No Python, Lean or Rust behaviour is changed. `tools/defs_carried.py` is untouched (`git diff d5f402140f -- tools/` is empty).
+5. N.A. No relay field and no R8 binding.
+6. PASS. Based on `d5f402140f`, which was main at the start. Main has 11 later commits, and none touches `tools/defs_carried*.py`, `tests/data/defs_carried/`, `tests/test_definitions_carried.py`, `tests/history-dependent.json` or the stage-1 report (`git log HEAD..main -- <those paths>` is empty). Not merged, so the measured commit stays the base; the merge train syncs. The evidence commit is named, and no evidence is taken from a live diff. The gate runs on the final HEAD in the chain.
+7. PASS. No DELTA row and no trust growth (`tools/trust_map.py --check`: trusted +0), so no signature is needed.
+8. N.A. No user-visible output changes (no `ve/`, `lean/`, `rust/` or `usecases/` file).
+9. PASS. Local plan of 45 files, runner plan of 363. `tests/test_defs_carried_oos.py` is selected through its own change, and its seeded bugs fail it (item 3).
+10. N.A. No Lean statement or proof.
+11. N.A. No budget, limit or deadline. The tests use no sleep and no timing (`tests/test_hang_guards.py` passed in the selected run).
+12. N.A. No product code path changed. The tool runs are timed in sections 1-2 as information only.
+13. PASS. No test was removed or renamed: `tools/gate_collection.py --check --prebuilt` reports 0 refused, 0 stale, 0 malformed (section 7).
+14. PASS.
+    - Both directions: recall hit and miss; draw kept and excluded; parser accepted and refused lines; disjointness checked on the fixture and on the excluded list.
+    - Each claim in sections 1-5 names its command or evidence file.
+    - Spec re-read: deliverables 1-4 and the ADV-2 limits, against the task text (`defs-carried-oos-measure-1119` task, DELIVERABLES and BINDING LIMITS).
+15. PASS.
+    - No overclaim. "unchanged": `git diff d5f402140f -- tools/defs_carried.py tests/test_definitions_carried.py` is empty. "0 of 149 unaided": `evidence/tool-all-docs-at-main.txt`, where all three documents print "marker grep not run". "all 120 judged": `evidence/tally.json`, `unjudged` is [].
+    - No silent cut: all four deliverables are built.
+    - Every new check can fail: item 3.
+    - Limits before work: N.A. (no limits).
 
 FOLLOW-UP: defs-carried-cite-strip-code-1120 the citation strip erases parenthesised definition strings in executed code (eligibility translation.py DEFINITIONS), giving a false NOT CARRIED
 FOLLOW-UP: defs-carried-provenance-carried-1120 the counted-document surface counts a citation-led provenance string (RSP rso_maintained, 4.1 RSO sentence) as carrying, giving a false CARRIED
