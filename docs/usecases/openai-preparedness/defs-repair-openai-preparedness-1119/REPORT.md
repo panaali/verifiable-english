@@ -172,7 +172,7 @@ sweep (light-lane.py printed NOT: 1,919 changed lines, most of them verbatim sou
   the lexicon environment test and the five shared tests named above: 59 passed (/tmp/dr-pf/post-rebase.log).
 - Full gate: left to the chain on the final HEAD.
 
-SIZE: 305 product, 482 tests, 309 other hand-written lines (`git diff --numstat` against the merge base; pf_vocabulary.py
+SIZE: 305 product, 482 tests, 311 other hand-written lines (`git diff --numstat` against the merge base; pf_vocabulary.py
 is product, 281 of its lines verbatim source text; plus 1,044 lines of script-written unit-size evidence JSON and 34
 lines of generated files).
 
