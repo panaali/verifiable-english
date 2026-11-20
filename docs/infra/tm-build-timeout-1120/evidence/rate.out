@@ -1,0 +1,45 @@
+20261116T0600Z p 3 ve-cloud-2 j8 conc1 judged  9 TO 21 checkruns 23  38867s buildruns 33  3636s avg_nonTO_run 134s
+20261116T0600Z p 2 ve-cloud-2 j8 conc1 judged 12 TO 13 checkruns 30  34339s buildruns 30  1283s avg_nonTO_run 260s
+20261116T0600Z p 4 ve-cloud-2 j8 conc1 judged 15 TO  7 checkruns 25  29837s buildruns 27  3161s avg_nonTO_run 453s
+20261116T0600Z p 5 ve-cloud-2 j8 conc2 judged  3 TO 17 checkruns 25  37271s buildruns 26  3505s avg_nonTO_run 299s
+20261116T0600Z p 6 ve-cloud-2 j8 conc1 judged 17 TO 16 checkruns 46  32899s buildruns 43  6475s avg_nonTO_run 145s
+20261116T1607Z p 3 ve-cloud-2 j8 conc6 judged  7 TO 18 checkruns 26  37379s buildruns 29  5410s avg_nonTO_run 281s
+20261116T1607Z p 1 ve-cloud-2 j8 conc2 judged  4 TO 19 checkruns 34  38203s buildruns 44  8733s avg_nonTO_run 216s
+20261116T1607Z p 2 ve-cloud-2 j8 conc2 judged  3 TO 22 checkruns 25  40746s buildruns 30  5798s avg_nonTO_run 210s
+20261116T1607Z p 5 ve-cloud-2 j8 conc2 judged 14 TO  7 checkruns 23  34065s buildruns 22  2286s avg_nonTO_run 625s
+20261116T1607Z p 4 ve-cloud-2 j8 conc3 judged  6 TO 21 checkruns 25  40317s buildruns 33  5492s avg_nonTO_run 216s
+20261116T1607Z p 6 ve-cloud-2 j8 conc4 judged  7 TO 14 checkruns 27  35550s buildruns 30  5920s avg_nonTO_run 378s
+20261116T1607Z p 7 ve-cloud-2 j8 conc3 judged  3 TO 17 checkruns 27  35272s buildruns 29  8356s avg_nonTO_run 334s
+20261116T1607Z p 8 ve-cloud-2 j8 conc4 judged  0 TO 22 checkruns 25  41415s buildruns 25  1788s avg_nonTO_run 129s
+20261116T1607Z p 9 actions?   j4 conc0 judged  5 TO  0 checkruns 10   7873s buildruns  6    79s avg_nonTO_run 497s
+20261116T1607Z p10 ve-cloud-2 j8 conc1 judged 31 TO  0 checkruns 21   2029s buildruns 42   135s avg_nonTO_run 34s
+20261116T1607Z p11 ve-cloud-2 j8 conc1 judged 10 TO  5 checkruns 23  16490s buildruns 23  2906s avg_nonTO_run 254s
+20261117T0600Z p 1 ve-cloud-2 j8 conc2 judged 28 TO  7 checkruns 57  38938s buildruns 59  5581s avg_nonTO_run 293s
+20261117T0600Z p 3 ve-cloud-2 j8 conc4 judged 18 TO  7 checkruns 37  29392s buildruns 33  2071s avg_nonTO_run 299s
+20261117T0600Z p 2 ve-cloud-2 j8 conc2 judged 13 TO 18 checkruns 42  36765s buildruns 45  7309s avg_nonTO_run 169s
+20261117T0600Z p 5 ve-cloud-2 j8 conc3 judged  5 TO 17 checkruns 23  35723s buildruns 26  4907s avg_nonTO_run 313s
+20261117T0600Z p 4 ve-cloud-2 j8 conc4 judged 13 TO 14 checkruns 29  36658s buildruns 35  5283s avg_nonTO_run 335s
+20261117T0600Z p 6 ve-cloud-2 j8 conc4 judged 11 TO 16 checkruns 36  33573s buildruns 48  9851s avg_nonTO_run 215s
+20261117T0600Z p 7 ve-cloud-2 j8 conc4 judged 15 TO  2 checkruns 29  26411s buildruns 20   310s avg_nonTO_run 492s
+20261117T0600Z p 8 ve-cloud-2 j8 conc3 judged 10 TO 16 checkruns 31  33783s buildruns 35  9099s avg_nonTO_run 282s
+20261117T0600Z p 9 ve-cloud-2 j8 conc2 judged  8 TO  5 checkruns 23  15950s buildruns 25  1794s avg_nonTO_run 203s
+20261117T0600Z p10 actions?   j4 conc1 judged  5 TO  7 checkruns 15  14403s buildruns 18   779s avg_nonTO_run 99s
+20261117T0600Z p11 actions?   j4 conc1 judged 14 TO  2 checkruns 27  17334s buildruns 29  1085s avg_nonTO_run 274s
+20261117T1620Z p 3 ve-cloud-2 j8 conc3 judged 10 TO  3 checkruns 23  40650s buildruns 21  1711s avg_nonTO_run 770s
+20261117T1620Z p 1 vm1-idle   j2 conc0 judged  0 TO  0 checkruns  4   7324s buildruns  4     9s avg_nonTO_run 917s
+20261117T1620Z p 2 ve-cloud-2 j8 conc3 judged  0 TO  5 checkruns  8  20212s buildruns 10   773s avg_nonTO_run 230s
+20261117T1620Z p 4 ve-cloud-2 j8 conc2 judged  3 TO  6 checkruns 12  28433s buildruns 10   423s avg_nonTO_run 454s
+20261117T1620Z p 5 ve-cloud-2 j8 conc2 judged  6 TO  7 checkruns 20  34668s buildruns 24  4536s avg_nonTO_run 379s
+20261117T1620Z p 6 vm1-idle   j6 conc0 judged  0 TO  0 checkruns 12  22052s buildruns  8   427s avg_nonTO_run 1124s
+20261117T1620Z p10 vm1-idle   j2 conc0 judged  2 TO  0 checkruns  4   5007s buildruns  2    10s avg_nonTO_run 836s
+20261119T0727Z p 1 ve-cloud-2 j8 conc2 judged  8 TO 14 checkruns 25  31437s buildruns 31  8014s avg_nonTO_run 339s
+20261119T0727Z p 3 ve-cloud-2 j8 conc4 judged 13 TO  9 checkruns 29  24251s buildruns 30  4294s avg_nonTO_run 247s
+20261119T0727Z p 2 ve-cloud-2 j8 conc3 judged  3 TO 17 checkruns 25  34768s buildruns 28  3693s avg_nonTO_run 218s
+20261119T0727Z p 4 ve-cloud-2 j8 conc4 judged  5 TO 17 checkruns 24  36219s buildruns 25  5997s avg_nonTO_run 363s
+20261119T0727Z p 5 ve-cloud-2 j8 conc4 judged  5 TO 16 checkruns 23  33614s buildruns 25  8026s avg_nonTO_run 401s
+20261119T0727Z p 6 ve-cloud-2 j8 conc4 judged  8 TO 14 checkruns 26  25676s buildruns 33  3830s avg_nonTO_run 96s
+20261119T0727Z p 7 ve-cloud-2 j8 conc4 judged  4 TO 18 checkruns 23  36536s buildruns 25  3343s avg_nonTO_run 249s
+20261119T0727Z p 8 ve-cloud-2 j8 conc4 judged  5 TO 16 checkruns 26  32337s buildruns 29  3805s avg_nonTO_run 188s
+20261119T0727Z p 9 ve-cloud-2 j8 conc4 judged  9 TO 13 checkruns 30  24934s buildruns 37  5592s avg_nonTO_run 132s
+20261119T0727Z p10 ve-cloud-2 j8 conc3 judged  1 TO 17 checkruns 23  34799s buildruns 27  7001s avg_nonTO_run 339s
+20261119T0727Z p11 ve-cloud-2 j8 conc2 judged  3 TO 19 checkruns 21  34621s buildruns 24  5346s avg_nonTO_run 222s
