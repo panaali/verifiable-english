@@ -1,3 +1,6 @@
+- `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
+- `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
+- `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…
 - `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
 - `tests/test_fidmech_segment.py` — tools/fidmech/segment.py: furniture, footnote pairs, the two streams, sentence ends and boundaries.json validation.
 - `tests/test_fidmech_structural.py` — fid-mech-b4: structural mutants on the parsed rule (plan 5.1) and their equivalence (plan 2d; Opus round 2 point 9).
@@ -13,6 +16,7 @@
 - `tests/test_fsf_repair_f1_leveldefs_1119.py` — fsf-repair-f1-leveldefs-1119: every capability level of the safety-framework case carries its source definition.
 - `tests/test_fsf_repair_f2_glossary_1119.py` — fsf-repair-f2-glossary-1119: the legends of the measures the case asks for carry their FSF Glossary definitions.
 - `tests/test_fsf_repair_f3_safetycase_1119.py` — fsf-repair-f3-safetycase-1119 (row F3): the governance finding's legend carries the Glossary's Safety Cases sentence.
+- `tests/test_fsf_repair_f6_sl2plus_1119.py` — fsf-repair-f6-sl2plus-1119 (row F6): the `recommends` legend carries the source's Security Level 2+, 3 and 4 text.
 - `tests/test_fsf_repair_f7_govadequacy_1119.py` — fsf-repair-f7-govadequacy-1119 (row F7): three FSF legends carry the pinned source's sentences, byte for byte after the quote normalisation below.
 - `tests/test_fsf_repair_f8_disclosure_1119.py` — fsf-repair-f8-disclosure-1119 (repair row F8): the legends that carry FSF 3.1's 5.2 disclosure passage and its 5.1 review sentence, byte for byte after this pr…
 - `tests/test_fsf_repair_f9_mcca_1119.py` — fsf-repair-f9-mcca-1119 (row F9): two 1.3.2 sentences of the pinned FSF 3.1 text, verbatim, in the legends of the predicates the target answers' blocks use.
@@ -76,6 +80,3 @@
 - `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
 - `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
 - `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
-- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
-- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
-- `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…

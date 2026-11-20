@@ -1,0 +1,22 @@
+Context: VE (Verifiable English) is an AI-safety research project; this is an independent pre-install review of operations scripts on our own infrastructure.
+Independent xhigh READ, read-only, no model calls, don't push, edit nothing. Your working directory /tmp/amscope2-review/M is a scratch COPY of the files under review (from /home/seyran/code/manage-agents). Work ONLY inside /tmp/amscope2-review: never write, cd into or run anything under /home/seyran/code (the live copies there are in use; reading them is not needed: everything is copied here). You may run the test in the copy:
+  cd /tmp/amscope2-review/M && AMSCOPE_SFX=.new-amscope2 python3 -I tools-local/test_actions_mismatch_scope.py.new-amscope2 -v
+(AMSCOPE_SFX=.new-amscope runs it on the rolled-back 06:42Z copies; AMSCOPE_SFX= on the live, rolled-back files.) You may plant a bug in a COPY of a copy (cp to a new name under /tmp/amscope2-review/scratch-*), never in the files themselves.
+
+Task: prompts/task-actions-mismatch-scope-narrow-1120.txt (read it first). Background: reviews/advisor/20261120T0757Z.md ADV-1 and reviews/dri-decisions-20261120-adv0757.md item 1.
+
+Under review (the staged, uninstalled copies):
+- mismatch-scope.sh.new-amscope2: the ONE copy of the rule mismatch_blocks_gate. Diff it against mismatch-scope.sh.new-amscope (= the live mismatch-scope.sh, the 06:42Z broad rule).
+- merge-train.sh.new-amscope2, gha-arm-shard.sh.new-amscope2, arm-postcheck.sh.new-amscope2, gha-arm-gate.sh.new-amscope2: diff each against <file>.bak-20261120amscope (= the live file now; identical by cmp) and against <file>.new-amscope (the 06:42Z call-site change; the new copies should differ from it only in comments).
+- tools-local/test_actions_mismatch_scope.py.new-amscope2 (diff against tools-local/test_actions_mismatch_scope.py).
+Writers of cloud-jobs/ACTIONS_MISMATCH for context: verdict-sample.sh:201, cloud-pull.sh mismatch() (~:145-149, called ~:264/:338/:354 with $out = cloud-tm-verify.py's output), cloud-late.py pool_off().
+
+The builder claims:
+1. A file leaves the gate's Actions legs on (rc 1) only when it exists, is a readable regular file, is non-empty, and EVERY line is "<YYYY-MM-DDTHH:MMZ> <job>: verdict sample differs (<no ')'>/verdict-compare.txt)" with <job> = tm-<alnum...> or testmap-<alnum...> (job chars [A-Za-z0-9._-]); stricter than the task's "starts with" (suffix pinned to the verdict-sample.sh:201 text). Everything else blocks (rc 0): every select-* line, every cloud-tm-verify MISMATCH reason under any job, cloud-late.py lines, gate-leg and unknown jobs, unparseable/blank lines, CR line endings, empty or unreadable file. Absent file: rc 1 (on).
+2. setopt extendedglob is local to the function (emulate -L) and does not leak into the sourcing script.
+3. Call sites: every rc but 1 blocks; helper not sourceable -> the old rule (file exists = blocks). The tm/testmap/select pools still read the bare file.
+4. Tests: pass on .new-amscope2 (19); fail on live for (i); fail on .new-amscope for (v)-(viii) and the direct cases; test_writers_text pins the allowed text and every cloud-tm-verify fail(1) reason to the writers' source.
+
+Check each claim and look hard for: any input that leaves the legs on but should block (that is the safety direction: when unsure, block); any way a cloud-pull.sh provenance/digest/head/base/options line, possibly multi-line ($out may span lines), can pass; glob/quoting pitfalls in zsh [[ ]] patterns (e.g. [^\)]#, (tm|testmap)-, unquoted $why); read/IFS edge cases; whether the tests could pass while the rule is wrong; whether a call site differs in behaviour from .new-amscope.
+
+Your FINAL message's first word must be OK (safe to install as staged) or FIX (then a numbered list: file:line, the problem, the input that shows it). Then 3-10 lines of findings. Keep it under 60 lines.

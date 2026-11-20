@@ -1,0 +1,15 @@
+d84ff47255968cb41d14f9434b093832  freeze-mover.sh
+384a26681b2e3bee00fc2cb79e300546  freeze-mover.sh.new-fmw
+fc14a2180dd903459ad512133c3b6317  claude-resume-on-limit.sh
+f726f9cfe7bdd89a10bffd1e7b5c4f81  claude-resume-on-limit.sh.new-fmw
+4b4547aaa96bdb0cd5e33110c9426726  pick-claude-account.sh
+4aa1c9e5a4c311154d1cb82a1da91457  pick-claude-account.sh.new-fmw
+bea25972f34c823f21f1b866fd73b1f7  pick-claude-account.sh.fmw.patch
+a92ec979b45b572d0151c7f70ad8a70e  tools-local/limit-resume.py
+3b81b2fc89e03f07109b834cf4cd13ae  tools-local/limit-resume.py.new-fmw
+3f0d8645ee8461a39c2b3de920d7b1bb  tools-local/session_rate.py
+f28392ab72e5db0203336cbb25d4605f  tools-local/test-freeze-mover.zsh
+b2ee20ffa4c1bab9ceffe853466d7a7e  tools-local/test_limit_resume.py
+6b2db4e430bc51362380fd4d0cd0d33d  tools-local/test_pick_longroom.py
+deff08b2c55996578050d42a232afb8e  tools-local/test_pick_why.py
+16bd911f5b6cd9391857610df5d88fc0  tools-local/test_pick_srate.py

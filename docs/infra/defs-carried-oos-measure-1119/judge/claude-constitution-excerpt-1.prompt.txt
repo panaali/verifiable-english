@@ -1,0 +1,21 @@
+Document: claude-constitution-excerpt
+
+For each flag below, decide: is this term's definition (the source passage given for the flag) shown to the reader of the rule, in the rule's carrier surface (the reader-visible text listed for that rule)? Answer CARRIED, NOT CARRIED or UNSURE, with one line of evidence (quote the surface words that carry it, or name what is missing).
+
+Reply with exactly one line per flag and nothing else, in this form:
+<flag id> | <CARRIED or NOT CARRIED or UNSURE> | <one line of evidence>
+
+A rule's carrier surface is the list of texts under its name in RULE SURFACES; a shared text (used by more than one rule here) is printed once under SHARED SURFACE TEXTS and named by its id. Judge only from the texts given here.
+
+== RULE SURFACES ==
+--- rule C7 ---
+[rule] for every situation x0, (for every property x1, (for every property x2, (if (((x0 contends_for x1) and (x0 contends_for x2)) and ((tc[outranks](x1, x2)) and (not (x0 is violates_hard_constraint)))), then ((x0 ought_follow x1) and (not (x0 ought_follow x2)))))).
+[legend:contends_for] Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1.
+[legend:ought_follow] OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1.
+[legend:outranks] Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order. Here, the notion of prioritization is holistic rather than strict — that is, assuming Claude is not violating any hard constraints, higher-priority considerations should generally dominate lower-priority ones, but we do want Claude to weigh these different priorities in forming an overall judgment, rather than only viewing lower priorities as "tie-breakers" relative to higher ones.
+[legend:violates_hard_constraint] Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag.
+
+== FLAGS ==
+F026 | rule C7 | term violates_hard_constraint | source usecases/claude-constitution-excerpt/source.md:43
+  source passage: This is the passage the constitution itself uses for exactly that purpose: it names four core values, gives an explicit total order over them ("in the order in which they are listed"), then immediately qualifies that order twice — once with an explicit exception ("assuming Claude is not violating any hard constraints") and once with a hedge on the ordering's own force ("holistic rather than strict," "should generally dominate," not "tie-breakers").
+

@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "37541dfc980f399a71130c376d22094f21ea8559a833be06cc343d9bd63eddd5",
+ "seal_id": "4b4806b878173939764e02cc2455a5123c48285be436ef5367dd4c06d521a455",
  "sources": [
   {
    "kind": "corpus source",
@@ -570,6 +570,11 @@
   },
   {
    "kind": "entry-point caller",
+   "path": "tests/test_srccov_asimov_extended_1119.py",
+   "sha256": "13f60ad78223cbdaa977f0e820a28b3d3f2518739030af656748414a642c7818"
+  },
+  {
+   "kind": "entry-point caller",
    "path": "tests/test_w1_delta_suite.py",
    "sha256": "7d3695367ab0e7dc1a0cacd264bd0ab4b7701ac68f2357d04e5112cfbae68a41"
   },
@@ -616,7 +621,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/anthropic-rsp/environment.d1.json",
-   "sha256": "c952874515f34fd8533c2a4a89ac2348abd10ccc6aaa2a5c4def1fd1c9a0a4d1"
+   "sha256": "e350c371406f054882a21bc2f7c4f20fc330f55977ae24bd6d5c9c1919fd3453"
   },
   {
    "kind": "entry-point caller",
@@ -641,7 +646,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/asimov-extended/environment.json",
-   "sha256": "b0f4d368832ae8a163aba59df194b6b442e3edd49e028fd0cda58a25bea04e87"
+   "sha256": "8ccd287ba356a5363bacde0dd78f74372191f411f1b9534f359ee1d600488ac8"
   },
   {
    "kind": "corpus source",
@@ -721,7 +726,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/math-mini-paper/environment.json",
-   "sha256": "aa276c7083cb634ee31b8ed75b24f118ff36ff1df870bba4da2e84df10c748cd"
+   "sha256": "41e6bff9c5a82e1204593edd7b98d6174ef441ed717d4ec6129b8e2254e0d7f6"
   },
   {
    "kind": "corpus source",
@@ -751,7 +756,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "e637221321077760cfad1f0a0242d5b351eb744e78ccf506c672db63021482ab"
+   "sha256": "b4bc7ce5296dcfba236e4510fade70111bc177dcaae1d6d0ac2ee675588bb927"
   },
   {
    "kind": "corpus source",
@@ -791,7 +796,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "6e7a75e3fba64efdfdba0907678a180421fad01ea3f54578e2fbd681478c46ea"
+   "sha256": "42865a8360b36ea60ebd60e22f63d7caef6a04688f2a784475fd750f8562dda2"
   },
   {
    "kind": "entry-point caller",

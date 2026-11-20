@@ -1,0 +1,52 @@
+/tmp/tmbto/parts.py:16: DeprecationWarning: datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.fromtimestamp(timestamp, datetime.UTC).
+  t=tsv.get(k); when=datetime.datetime.utcfromtimestamp(t[0]).strftime('%m-%dT%H:%M') if t else '?'
+== parts-20261116T0600Z
+p  2 11-16T06:04 ve-cloud-2 j8 s6307 K8 S0 U17 I0 NR14 TO13 {'lake build 1800': 13} mb1283 mc34339 sc3786
+p  3 11-16T06:04 ve-cloud-2 j8 s6308 K0 S0 U28 I2 NR9 TO21 {'lake build 1800': 21} mb3636 mc38867 sc1800
+p  4 11-16T09:31 ve-cloud-2 j8 s6311 K8 S0 U13 I1 NR14 TO7 {'lake build 1800': 7} mb3161 mc29837 sc8936
+p  5 11-16T09:31 ve-cloud-2 j8 s6306 K1 S1 U17 I1 NR16 TO17 {'lake build 1800': 17} mb3505 mc37271 sc2316
+p  6 11-16T11:17 ve-cloud-2 j8 s6308 K14 S1 U17 I1 NR3 TO16 {'lake build 1800': 16} mb6475 mc32899 sc58
+== parts-20261116T1607Z
+p  1 11-16T16:11 ve-cloud-2 j8 s6306 K0 S0 U23 I0 NR13 TO19 {'lake build 1800': 19} mb8733 mc38203 sc0
+p  2 11-16T16:11 ve-cloud-2 j8 s6307 K0 S0 U25 I0 NR11 TO22 {'lake build 1800': 22} mb5798 mc40746 sc0
+p  3 11-16T16:11 ve-cloud-2 j8 s6308 K2 S0 U23 I0 NR11 TO18 {'lake build 1800': 18} mb5410 mc37379 sc2607
+p  4 11-16T18:37 ve-cloud-2 j8 s6306 K0 S0 U27 I0 NR4 TO21 {'lake build 1800': 21} mb5492 mc40317 sc0
+p  5 11-16T18:37 ve-cloud-2 j8 s5995 K10 S2 U7 I2 NR10 TO7 {'lake build 1800': 7} mb2286 mc34065 sc4997
+p  6 11-16T20:21 ve-cloud-2 j8 s6305 K4 S0 U14 I3 NR10 TO14 {'lake build 1800': 14} mb5920 mc35550 sc2462
+p  7 11-16T20:27 ve-cloud-2 j8 s6307 K1 S0 U19 I0 NR11 TO17 {'lake build 1800': 17} mb8356 mc35272 sc961
+p  8 11-16T20:37 ve-cloud-2 j8 s6306 K0 S0 U22 I0 NR9 TO22 {'lake build 1800': 22} mb1788 mc41415 sc2146
+p  9 11-17T00:45 ?          j4 s3205 K5 S0 U0 I0 NR26 TO0 {} mb79 mc7873 sc3358
+p 10 11-17T00:46 ve-cloud-2 j8 s666 K29 S1 U0 I1 NR0 TO0 {} mb135 mc2029 sc166
+p 11 11-17T00:58 ve-cloud-2 j8 s3543 K6 S0 U7 I2 NR45 TO5 {'lake build 1800': 5} mb2906 mc16490 sc2776
+== parts-20261117T0600Z
+p  1 11-17T06:08 ve-cloud-2 j8 s6312 K4 S24 U7 I0 NR25 TO7 {'lake build 1800': 7} mb5581 mc38938 sc735
+p  2 11-17T06:08 ve-cloud-2 j8 s6312 K7 S6 U18 I0 NR29 TO18 {'lake build 1800': 18} mb7309 mc36765 sc1042
+p  3 11-17T06:08 ve-cloud-2 j8 s5415 K11 S5 U9 I0 NR35 TO7 {'lake build 1800': 7} mb2071 mc29392 sc5832
+p  4 11-17T08:16 ve-cloud-2 j8 s6218 K2 S11 U14 I0 NR3 TO14 {'lake build 1800': 14} mb5283 mc36658 sc520
+p  5 11-17T08:16 ve-cloud-2 j8 s5591 K0 S5 U17 I0 NR8 TO17 {'lake build 1800': 17} mb4907 mc35723 sc0
+p  6 11-17T10:22 ve-cloud-2 j8 s6309 K6 S4 U17 I0 NR3 TO16 {'lake build 1800': 16} mb9851 mc33573 sc1178
+p  7 11-17T11:56 ve-cloud-2 j8 s5100 K8 S7 U2 I0 NR13 TO2 {'lake build 1800': 2} mb310 mc26411 sc9547
+p  8 11-17T12:06 ve-cloud-2 j8 s6204 K3 S7 U16 I0 NR4 TO16 {'lake build 1800': 16} mb9099 mc33783 sc1194
+p  9 11-17T12:09 ve-cloud-2 j8 s3290 K4 S4 U5 I0 NR17 TO5 {'lake build 1800': 5} mb1794 mc15950 sc6032
+p 10 11-17T13:22 ?          j4 s3962 K3 S2 U7 I0 NR18 TO7 {'lake build 1800': 7} mb779 mc14403 sc188
+p 11 11-17T13:50 ?          j4 s5073 K4 S10 U2 I0 NR14 TO2 {'lake build 1800': 2} mb1085 mc17334 sc1013
+== parts-20261117T1620Z
+p  1 11-17T16:24 vm1-idle   j2 s6302 K0 S0 U0 I0 NR28 TO0 {} mb9 mc7324 sc5155
+p  2 11-17T16:24 ve-cloud-2 j8 s6308 K0 S0 U5 I0 NR23 TO5 {'lake build 3600': 5} mb773 mc20212 sc27801
+p  3 11-17T16:24 ve-cloud-2 j8 s6308 K1 S8 U4 I0 NR15 TO3 {'lake build 3600': 3} mb1711 mc40650 sc2769
+p  4 11-17T16:24 ve-cloud-2 j8 s6160 K1 S1 U7 I0 NR19 TO6 {'lake build 3600': 6} mb423 mc28433 sc2726
+p  5 11-17T18:45 ve-cloud-2 j8 s6306 K2 S4 U7 I0 NR9 TO7 {'lake build 3600': 7} mb4536 mc34668 sc1889
+p  6 11-17T18:58 vm1-idle   j6 s6305 K0 S0 U0 I0 NR22 TO0 {} mb427 mc22052 sc15027
+p 10 11-17T20:52 vm1-idle   j2 s4068 K2 S0 U0 I0 NR20 TO0 {} mb10 mc5007 sc2935
+== parts-20261119T0727Z
+p  1 11-19T07:30 ve-cloud-2 j8 s5895 K1 S6 U15 I0 NR0 TO14 {'lake build 1800': 14} mb8014 mc31437 sc1504
+p  2 11-19T07:30 ve-cloud-2 j8 s6307 K1 S2 U17 I0 NR2 TO17 {'lake build 1800': 17} mb3693 mc34768 sc2035
+p  3 11-19T07:30 ve-cloud-2 j8 s4809 K3 S8 U11 I0 NR0 TO9 {'lake build 1800': 9} mb4294 mc24251 sc1798
+p  4 11-19T09:32 ve-cloud-2 j8 s5903 K0 S4 U18 I0 NR0 TO17 {'lake build 1800': 17} mb5997 mc36219 sc148
+p  5 11-19T09:39 ve-cloud-2 j8 s6308 K3 S1 U17 I0 NR1 TO16 {'lake build 1800': 16} mb8026 mc33614 sc952
+p  6 11-19T11:47 ve-cloud-2 j8 s4887 K4 S4 U14 I0 NR0 TO14 {'lake build 1800': 14} mb3830 mc25676 sc537
+p  7 11-19T12:07 ve-cloud-2 j8 s5972 K1 S2 U19 I0 NR0 TO18 {'lake build 1800': 18} mb3343 mc36536 sc36
+p  8 11-19T12:13 ve-cloud-2 j8 s6307 K0 S5 U16 I0 NR1 TO16 {'lake build 1800': 16} mb3805 mc32337 sc637
+p  9 11-19T13:23 ve-cloud-2 j8 s4995 K6 S3 U13 I0 NR0 TO13 {'lake build 1800': 13} mb5592 mc24934 sc1306
+p 10 11-19T13:47 ve-cloud-2 j8 s6306 K1 S0 U17 I0 NR4 TO17 {'lake build 1800': 17} mb7001 mc34799 sc857
+p 11 11-19T13:59 ve-cloud-2 j8 s6007 K1 S2 U19 I0 NR0 TO19 {'lake build 1800': 19} mb5346 mc34621 sc392

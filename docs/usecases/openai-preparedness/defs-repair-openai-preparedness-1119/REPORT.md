@@ -195,6 +195,31 @@ lines of generated files).
   and misalignment_risk_minimized). The counter counts only an entry's own literal strings, so a shared constant would
   be shown but not counted.
 
+## Merge of ve-integration 92d8ec4986 (srccov-openai-preparedness-1119 landed first)
+
+- pf_vocabulary.py conflicted with srccov-openai-preparedness-1119, which also appends PF source text to legends.
+  Resolution: main's file, plus this item's appended lines on the 24 carriers, added after main's text. On 17 carriers
+  main changed nothing, so they are as on this branch. On the 7 both changed (high, critical, research_category_review,
+  evaluations_before_deployment, misuse_safeguards, alignment_safeguards, security_practices), each legend is main's
+  legend, then "; the Framework's words, " and this item's labelled quotes. Main's legend is kept whole as the prefix
+  (its R1 prefix test and passage tests pass). Every other field of environment.d1.json equals main's (checked by
+  script). The prefix test of this item reads those 7 old legends from evidence/legends-before-merge.json (saved
+  from 92d8ec4986). It also checks that each one starts with its 09bea0972d legend.
+- security_practices: main's 61 lines plus this item's 34 lines went past legend_raw's 41-line window, so row 47
+  was shown but not counted (`test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[47]` failed). The
+  entry's literal was rewrapped to 38 lines, up to 296 characters wide. The text is unchanged and the built
+  description is byte-equal.
+- GAP (as the Notes predicted): on those 7 legends some source sentences now appear twice. Main quotes them one by
+  one in “…” and this item quotes each row as one joined string. Neither copy can go. The counter counts a row only
+  when its whole joined quote is in one literal, and main's tests require main's quoted passages. Bytes this item
+  adds on the 7: alignment_safeguards 1,301; critical 1,881; evaluations_before_deployment 617; high 1,292;
+  misuse_safeguards 1,035; research_category_review 1,849; security_practices 4,677 (12,652 in all, most of it a
+  repeat of main's sentences). The C5 sizes above were measured before the merge, without main's additions. Still
+  open for the DRI: one quoting form both counters accept, then deduplicate.
+- Regenerated: environment.d1.json (pf_vocabulary.py), coverage.json (build_document.py), lexicon-report.json
+  (regen_generated --resolve) and corpus-seal.json (conformance.english_lean_seal). The FSF environment hash in main's
+  seal was stale again (e5a580e5… sealed, 42865a83… at 92d8ec4986, unchanged by this merge). The rewrite fixes it.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Lean answers typed and contained: N.A. (no relayed answer or route changed).

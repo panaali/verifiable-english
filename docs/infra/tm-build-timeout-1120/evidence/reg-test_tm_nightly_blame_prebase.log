@@ -1,0 +1,8 @@
+test_base_commit_line_has_no_label (__main__.BlamePrebase.test_base_commit_line_has_no_label) ... ok
+test_line_since_base_keeps_its_merge_label (__main__.BlamePrebase.test_line_since_base_keeps_its_merge_label) ... ok
+test_older_than_base_line_has_no_label_and_no_borrowed_allow (__main__.BlamePrebase.test_older_than_base_line_has_no_label_and_no_borrowed_allow) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.256s
+
+OK

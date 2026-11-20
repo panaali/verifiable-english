@@ -1,0 +1,5 @@
+F116 | CARRIED | translation.py's R4 gloss lists the relevant benefits: "income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit" (the pointer to section 7A(6)(d) itself is not shown)
+F117 | CARRIED | translation.py's R4 gloss lists the relevant benefits: "income support, income-based jobseeker's allowance, state pension credit, income-related employment and support allowance or universal credit" (the pointer to section 7A(6)(d) itself is not shown)
+F118 | CARRIED | the gloss says "income-related employment and support allowance ... is paid to the housemate for the week"
+F119 | CARRIED | the gloss says "income-related employment and support allowance ... is paid to the applicant for the week"
+F120 | CARRIED | the gloss says "income-related employment and support allowance ... is paid to the housemate for the week"
