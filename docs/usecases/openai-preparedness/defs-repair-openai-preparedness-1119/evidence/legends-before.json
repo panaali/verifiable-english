@@ -1,0 +1,30 @@
+{
+ "about": "The description of each carrier predicate in usecases/openai-preparedness/environment.d1.json at main 09bea0972d, before this item (git show 09bea0972d:usecases/openai-preparedness/environment.d1.json).",
+ "base": "09bea0972d",
+ "descriptions": {
+  "adjustment_confirmed": "it is rigorously confirmed at {0} that another frontier AI developer developed or released a system with High or Critical capability in a Tracked Category without comparable safeguards",
+  "alignment_safeguards": "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)",
+  "ara_tracking": "Table 2: ARA response",
+  "board_finds_necessary": "it is necessary at {0} to act on the decision (Appendix B: “Where necessary”); the source names no decider: the decider is unstated (an open term, as OT13)",
+  "capabilities_report": "3.3: the SAG reviews the Capabilities Report and decides on next steps",
+  "capabilities_report_submitted": "3.3: the Scalable Evaluations' results and any noteworthy observations that should affect their interpretation are compiled into a Capabilities Report submitted to the SAG",
+  "chair_coordination": "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership for immediate reaction as needed to address the risk.”",
+  "criteria_tracking": "{0} is tracked as a category",
+  "critical": "{0} is a Critical level",
+  "evaluations_before_deployment": "3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”",
+  "high": "{0} is a High level",
+  "in_category": "{0} is in Tracked Category {1}",
+  "misalignment_report": "Table 2: Long-range Autonomy response",
+  "misalignment_risk_minimized": "C.2: “Safeguards should sufficiently minimize the risk associated with a misaligned model circumventing human control and oversight and executing severe harms.”",
+  "misuse_safeguards": "Table 1 CYB-H: safeguards against misuse meeting High standard (Appendix C.1)",
+  "nuclear_safeguards": "Table 2: Nuclear and Radiological: heighten safeguards (and consider further actions) in consultation with appropriate US government actors, accounting for the complexity of classified information handling; the further actions remain open",
+  "reached": "the model at {0} has reached {1}; SAG decides this",
+  "research_category_review": "{0} is a Research Category review",
+  "research_review": "2.3: “We will periodically review the latest research and findings for each Research Category.” (the periodicity stays ET-blocked)",
+  "robust_case": "Table 2, Undermining Safeguards: “If a model has High or Critical capabilities in any of the Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or propensity”: what was discovered is the capability, the propensity, or both",
+  "sandbagging_response": "Table 2, Sandbagging: “Adopt elicitation approach that overcomes sandbagging, or use a conservative upper bound of the model’s non-sandbagged evaluation results”: the one duty is met by either alternative, an elicitation approach that overcomes sandbagging or a conservative upper bound of the model's non-sandbagged evaluation results",
+  "security_controls": "Table 1: security controls meeting High standard (Appendix C.3)",
+  "security_practices": "C.3: required High-level security practices",
+  "third_party_evaluation": "5.2: “If we deem that a deployment warrants deeper testing of Tracked Categories of capability (as described in Section 3.1), for example based on results of Capabilities Report presented to them, then when available and feasible, OpenAI will work with third-parties to independently evaluate models.” (the act is OpenAI's work with third parties, not a required result; the guards carry the deeming about a deployment, OT14, and 'when available and feasible')"
+ }
+}
