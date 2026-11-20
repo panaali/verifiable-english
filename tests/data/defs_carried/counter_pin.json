@@ -1,0 +1,94 @@
+{
+ "about": "defs-carried-gate-stage1-1119: the counter code tools/defs_carried_counter.py copies byte for byte; tests/test_definitions_carried.py hashes each copied piece against this record.",
+ "files": [
+  {
+   "path": "manage-agents/tools-local/uc-audit.py.reads-1119",
+   "sha256": "d618d963fcccbc443a33a83dea88c408a59e578f7c143d725ce02ef380d801dc",
+   "pieces": {
+    "OMIT_CODE": {
+     "lines": [
+      1730,
+      1730
+     ],
+     "sha256": "250bb56396cbd0307a330edb127452f761e565f29f917a9aaf637df542af9160"
+    },
+    "OMIT_CODE_SECTION": {
+     "lines": [
+      1737,
+      1737
+     ],
+     "sha256": "15140ba49ddabc5b29c5fc2313f255387fc4b261513a6e808ab8297c36055d19"
+    },
+    "omit_norm": {
+     "lines": [
+      3034,
+      3043
+     ],
+     "sha256": "8f53136dc029eda61cb24cc824d3c0919de36d2846c0a31010a36612554cda21"
+    },
+    "rule_blocks": {
+     "lines": [
+      1159,
+      1167
+     ],
+     "sha256": "b140429b6de4f473d47dbeab8a362b38e70c96185217fa83370f396fd5c7e17c"
+    },
+    "seq_unit_legends": {
+     "lines": [
+      1202,
+      1222
+     ],
+     "sha256": "2b1614ad062240f1701be765daf393a96ca8aef3cd0a18df7d3c3a033b52f745"
+    },
+    "used_predicates": {
+     "lines": [
+      1241,
+      1256
+     ],
+     "sha256": "dbaa43e6124cb1eddd6e23be938105745d7aea6a5efb81be41302b0f3d259434"
+    },
+    "legend_raw": {
+     "lines": [
+      1259,
+      1271
+     ],
+     "sha256": "c206be8ee25d4cf70c71287bebf03ef1dcb139e7f0dd2cc877f49ec69d9c65a3"
+    },
+    "_omit_strip_comments": {
+     "lines": [
+      3289,
+      3298
+     ],
+     "sha256": "acff074dcd2719abd8b6d3c1506320d525a2d69ab381c9535507596306cf0de5"
+    },
+    "_omit_legend_segments": {
+     "lines": [
+      3721,
+      3741
+     ],
+     "sha256": "928c474badb347e178c1d2d5d0d2c87c2f8beb25e9e6e384b279774e4dd1ffc4"
+    },
+    "omit_carrier_texts": {
+     "lines": [
+      3744,
+      3791
+     ],
+     "sha256": "e705894559e132cebe8c33275eef944c373276c785a23aaf90720b7c2beb7774"
+    }
+   }
+  },
+  {
+   "path": "manage-agents/tools-local/omission-seq-read.py",
+   "sha256": "e135844aa7b9362ba059e3e0c56f4cdbf0128868c7bd0b843e9c99eb2cc5dcc7",
+   "pieces": {
+    "ARG_LIMIT": {
+     "lines": [
+      67,
+      67
+     ],
+     "sha256": "209f90650e31f881960af05c77fea81224bb14f3cb09fc70e25ea740eb6c265f"
+    }
+   }
+  }
+ ]
+}
