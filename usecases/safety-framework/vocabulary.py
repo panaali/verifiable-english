@@ -353,10 +353,10 @@ REGULATED = {
     "applied": _obligation(["proposal", "measure"], "{0} apply {1} to the model weights",
                            "{1} is applied to the model weights of {0} (2.1.1, 2.2, 3.2.2)"),
     "yearly_review": _obligation(["proposal"], "{0} be covered by a review of the framework at least once a year",
-                                 "the framework is reviewed at least once a year, at the time of {0} "
-                                 f"(5.1: \"{REVIEW_PROCESS}\"). Overview: \"We will review the Framework "
-                                 "periodically and we expect it to evolve substantially as our understanding of the "
-                                 "risks and benefits of frontier models improves.\""),
+                                 "the framework is reviewed at least once a year, at the time of {0}; Overview: \"We "
+                                 "will review the Framework periodically and we expect it to evolve substantially as "
+                                 "our understanding of the risks and benefits of frontier models improves.\" "
+                                 f"(5.1: \"{REVIEW_PROCESS}\")"),
     "frequent_review": _obligation(["proposal"], "{0} be covered by a more frequent review of the framework",
                                    "the framework is reviewed more often than yearly, at the time of {0} "
                                    f"(5.1: \"{REVIEW_PROCESS}\")"),
