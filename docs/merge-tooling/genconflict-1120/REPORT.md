@@ -173,7 +173,9 @@ the changed test files ran first (tests/test_regen_usecase_merge.py exit 0, test
 tests/test_merge_tooling_evidence.py exit 0); "recorded 663 units ...; 0 failed" (/tmp/genc-select2.log lines 77-81,
 763-765). An earlier selected run on 407c7f2a stopped in its fast stage on
 tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry: the doc's entry table lacked
-the three new rows. Fixed in 50b131dd (5 passed). The commits after cda87704 add only this report.
+the three new rows. Fixed in 50b131dd (5 passed). After cda87704 come this report and c67cf14f: a reflowed docstring and one expression split over two lines in
+tools/regen_generated.py, with no behaviour change. After it, the affected tests passed again: `-k "environment_hash or keyed
+or listing or gitattributes or unique or derived or route_fixtures"` gave 20 passed (/tmp/genc-final.log).
 
 ## Notes for the DRI
 
