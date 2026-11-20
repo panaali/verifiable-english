@@ -1,0 +1,289 @@
+../home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:130: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/calls' mode='r' encoding='UTF-8'>
+  probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:130: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_f/calls' mode='r' encoding='UTF-8'>
+  probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:130: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/calls' mode='r' encoding='UTF-8'>
+  probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:139: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/accounts-cache/main.line' mode='r' encoding='UTF-8'>
+  self.assertEqual(open(f"{self.c}/main.line").read().split()[3], "0")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:130: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/calls' mode='r' encoding='UTF-8'>
+  probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..<tmp>/code/manage-agents/tools-local/endgame.py:37: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK' mode='r' encoding='UTF-8'>
+  n, f, u = open("/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK").read().split()[:3]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..../home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.../home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_2t25keo/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_2t25keo/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_2t25keo/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:180: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:194: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_i2d/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_i2d/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_i2d/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_i2d/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>_i2d/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:308: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(self.p).read(), re.S | re.M).group(0)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+<string>:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:281: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(self.p).read(), re.S | re.M)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+pace_line:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+pace_line:7: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/main.line' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/pick-claude-account.sh.new-usagew2' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_usage_reset_fresh.py:245: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='<tmp>/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..<tmp>_7x4t/code/manage-agents/tools-local/endgame.py:37: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK' mode='r' encoding='UTF-8'>
+  n, f, u = open("/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK").read().split()[:3]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..
+----------------------------------------------------------------------
+Ran 30 tests in 14.244s
+
+OK
