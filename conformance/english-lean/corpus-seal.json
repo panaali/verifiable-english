@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "da4515fa164ed9a8ca1427180e7961adb90179587c25f0179c590f505b7ba097",
+ "seal_id": "d8d9c375ac67a68c49abebbd5b5cbb055433f9615d333421c523a81f3af46288",
  "sources": [
   {
    "kind": "corpus source",
@@ -570,6 +570,11 @@
   },
   {
    "kind": "entry-point caller",
+   "path": "tests/test_srccov_asimov_extended_1119.py",
+   "sha256": "9d5bd8f716d2c0df7dee9ade87fbcec5a6e62361f105644ae4d0f4700799a45d"
+  },
+  {
+   "kind": "entry-point caller",
    "path": "tests/test_w1_delta_suite.py",
    "sha256": "7d3695367ab0e7dc1a0cacd264bd0ab4b7701ac68f2357d04e5112cfbae68a41"
   },
@@ -641,7 +646,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/asimov-extended/environment.json",
-   "sha256": "00726412889e5d6f1b7e7970868df14fbea0c74970051205012d8a0ea4e7b9bc"
+   "sha256": "8ccd287ba356a5363bacde0dd78f74372191f411f1b9534f359ee1d600488ac8"
   },
   {
    "kind": "corpus source",

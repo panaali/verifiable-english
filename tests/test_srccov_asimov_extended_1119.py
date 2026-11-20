@@ -68,8 +68,9 @@ def test_the_clause_is_the_source_text_of_s0005():
 def test_s0005_is_carried_word_for_word_on_the_addition_legend(key):
     legend = ENV["vocabulary"]["predicates"][key]["description"]
     assert omit_norm(CLAUSE) in omit_norm(legend), (key, legend)
-    # The clause attributes the tag it follows, so it comes right after "(authored, not Asimov's)".
-    assert legend.endswith(f"{TAG}, {CLAUSE}"), (key, legend)
+    # The clause attributes the addition rule(s) the legend names, so it comes right before the closing tag
+    # "(authored, not Asimov's)" (tests/test_asimov_extended.py keeps the tag last on every addition legend).
+    assert legend.endswith(f"{CLAUSE} {TAG}"), (key, legend)
 
 
 @pytest.mark.parametrize("key", sorted(CARRIERS))
