@@ -171,7 +171,17 @@ def d2():
 
 # A date constant whose source words are more than its name: v3.4's date is also the policy's effective date (D2).
 DATE_WORDS = {"v3_4_date": "the v3.4 date, the policy's effective date: page 1 \"Effective July 8, 2026\" and the "
-                           "changelog's \"July 8, 2026 (RSP v3.4)\""}
+                           "changelog's \"July 8, 2026 (RSP v3.4)\"",
+              # Every other changelog date in the changelog's own words (srccov-anthropic-rsp-1119).
+              **{f"{v}_date": f"the {label} date: the changelog's \"{words}\"" for v, label, words in (
+                  ("v1_0", "v1.0", "September 19, 2023 (RSP v1.0)"),
+                  ("v2_0", "v2.0", "October 15, 2024 (RSP v2.0)"),
+                  ("v2_1", "v2.1", "March 31, 2025 (RSP v2.1)"),
+                  ("v2_2", "v2.2", "May 14, 2025 (RSP v2.2)"),
+                  ("v3_0", "v3.0", "February 24, 2026 (RSP v3.0)"),
+                  ("v3_1", "v3.1", "April 2, 2026 (RSP v3.1)"),
+                  ("v3_2", "v3.2", "April 29, 2026 (RSP v3.2)"),
+                  ("v3_3", "v3.3", "May 26, 2026 (RSP v3.3)"))}}
 # The start day of a "publication within" question (D3b) is a Risk Report's coverage date, which 3.1 defines.
 COVERAGE_WORDS = {"start_day": "the coverage date of a Risk Report; 3.1, verbatim: “Scope. A Risk Report will cover "
                                "the risks of Anthropic's models and actions as of a given coverage date, which will "

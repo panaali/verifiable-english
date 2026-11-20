@@ -1,3 +1,4 @@
+- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
 - `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
 - `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
 - `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
@@ -87,4 +88,3 @@
 - `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
-- `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
