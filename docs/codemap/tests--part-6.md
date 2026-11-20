@@ -1,3 +1,4 @@
+- `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pf_f16_without_fix.py` — pf-f16-without-fix: the condition tests of the PF f16-without round (architect ruling pf-f16-without-n2-20261116, reading (c), signed by the DRI 2026-11-16; PL…
 - `tests/test_pf_f7_timed_act.py` — pf-f7-timed-act: the condition tests of the PF timed-act and split-unit wording round (architect rulings et-5c-5d-coverage-20261115 section 3 and pf-split-unit…
@@ -73,5 +74,3 @@
 - `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
 - `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
 - `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…
-- `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.
-- `tests/test_readings_s1_lean.py` — Lean readings route (docs/spec/composition-s1.md 8.4) on inputs in the shapes of the item-1 fixtures (9.2).

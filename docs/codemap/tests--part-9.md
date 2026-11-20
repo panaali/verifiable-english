@@ -1,3 +1,6 @@
+- `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
+- `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
+- `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
 - `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
