@@ -1,0 +1,19 @@
+timeouts by file 11-16..19 (part rows):
+  140 VE/Compose/Dispatch.lean
+  92 VE/Cardinality/Wire.lean
+  54 VE/EnglishGrammar/SourceWords.lean
+  52 VE/SpeechActs/Wire.lean
+  41 VE/EnglishGrammar/Advice.lean
+  28 VE/EnglishGrammar/Run.lean
+  16 VE/Service/Standalone.lean
+  15 VE/Acts/Lexical.lean
+  13 VE/NormDefaults/Layered.lean
+  12 VE/Events/Wire.lean
+  9 VE/Closure/Consequence.lean
+  7 VE/NormDefaults/Explain.lean
+  5 VE/Service/DocumentView.lean
+  4 VE/NormDefaults/Packs.lean
+  4 VE/Commands/Steps.lean
+distinct timed-out ids 220
+of them ever judged in any part since 11-09: 106
+[('ve-cloud-2/j8', 70), ('ve-cloud-3/j8', 57), ('actions?/j24', 12), ('actions?/j12', 4), ('actions?/j8', 4), ('actions?/j32', 2), ('vm1-idle/j2', 2), ('actions?/j4', 1)]
