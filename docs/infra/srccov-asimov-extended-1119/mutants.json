@@ -1,6 +1,6 @@
 {
  "item": "srccov-asimov-extended-1119",
- "note": "Seeded bugs, one per claimed behaviour; each was planted by /tmp/ae-mutants.py at bbf27e83ee, run against tests/test_srccov_asimov_extended_1119.py (each run failed), and restored by rewriting the original bytes (git status clean after). No product code (ve/, lean/, rust/) changed: the bugs are in the use case's legend file.",
+ "note": "Seeded bugs, one per claimed behaviour; each was planted by /tmp/ae-mutants.py on the tree of 0c772aea8b, run against tests/test_srccov_asimov_extended_1119.py and tests/test_asimov_extended.py::test_the_environment_extends_v2_without_changing_it (each run failed), and restored by rewriting the original bytes (git status clean after). No product code (ve/, lean/, rust/) changed: the bugs are in the use case's legend file.",
  "mutants": [
   {
    "id": "M1",
@@ -34,18 +34,20 @@
    "test": "tests/test_srccov_asimov_extended_1119.py::test_s0005_is_carried_word_for_word_on_the_addition_legend[lawful_action]",
    "failed": [
     "tests/test_srccov_asimov_extended_1119.py::test_s0005_is_carried_word_for_word_on_the_addition_legend[lawful_action]",
-    "tests/test_srccov_asimov_extended_1119.py::test_the_carried_clause_is_on_exactly_the_tagged_legends"
+    "tests/test_srccov_asimov_extended_1119.py::test_the_carried_clause_is_on_exactly_the_tagged_legends",
+    "tests/test_asimov_extended.py::test_the_environment_extends_v2_without_changing_it"
    ],
    "killed": true
   },
   {
    "id": "M4",
    "file": "usecases/asimov-extended/environment.json",
-   "behaviour": "the clause attributes the tag it follows (competes_with)",
-   "change": "put the clause before the tag on competes_with",
+   "behaviour": "the clause sits right before the closing tag (competes_with)",
+   "change": "put the clause after the tag on competes_with",
    "test": "tests/test_srccov_asimov_extended_1119.py::test_s0005_is_carried_word_for_word_on_the_addition_legend[competes_with]",
    "failed": [
-    "tests/test_srccov_asimov_extended_1119.py::test_s0005_is_carried_word_for_word_on_the_addition_legend[competes_with]"
+    "tests/test_srccov_asimov_extended_1119.py::test_s0005_is_carried_word_for_word_on_the_addition_legend[competes_with]",
+    "tests/test_asimov_extended.py::test_the_environment_extends_v2_without_changing_it"
    ],
    "killed": true
   }
