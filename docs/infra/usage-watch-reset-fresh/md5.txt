@@ -1,0 +1,9 @@
+e8620f912790a399738d42030d9dd809  accounts.sh
+fe58d49c390029436c35cba4ff3ab929  usage-watch.sh
+4b4547aaa96bdb0cd5e33110c9426726  pick-claude-account.sh
+a6aa333437889b4339dba9cbd670e503  tools-local/endgame.py
+596d45ed863b45e6d686f4ca7e1150bd  accounts.sh.new-usagew
+7e18d5a561c378d4229420aba4f9fc6a  usage-watch.sh.new-usagew
+9da01ed1220d0f8e18b331bd437094d5  pick-claude-account.sh.new-usagew
+8cd70f32acc3d6cc83fef17bed5e9da7  tools-local/reset_fresh.py.new-usagew
+a8b5e6150aeefbcff7efca659b0b347b  tools-local/test_usage_reset_fresh.py

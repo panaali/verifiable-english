@@ -1,0 +1,166 @@
+--- tools-local/test_review_effort_ab.py.bak-20261120T2000Z-usagew2
++++ tools-local/test_review_effort_ab.py
+@@ -5,13 +5,17 @@
+ tools-local/review-ab-rule.py scores. Every behaviour is checked in both directions.
+ usage: python3 -I tools-local/test_review_effort_ab.py
+   RVAB_SCRIPT=<path>  tests a copy of review-effort-ab.py   RVAB_SHADOW_SH=<path>  a copy of review-ab-shadow.sh
+-  RVAB_RUNCODEX=<path> a copy of run-codex.sh (default: run-codex.sh.new-reab if present, else run-codex.sh)"""
++  RVAB_RUNCODEX=<path> a copy of run-codex.sh (default: run-codex.sh.new-reab if present, else run-codex.sh)
++  REVIEW_AB_RULE_SCRIPT=<path> / EG_SCRIPT=<path>  a copy of review-ab-rule.py and of the endgame.py it imports (as
++  test_review_ab_rule.py; usage-watch-reset-fresh F8: the sandbox holds every tools-local module its tools import)"""
+ import glob, hashlib, json, os, shutil, subprocess, sys, tempfile, time, unittest
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ MA = os.path.dirname(HERE)
+ TOOL = os.environ.get("RVAB_SCRIPT", os.path.join(HERE, "review-effort-ab.py"))
+ SHADOW = os.environ.get("RVAB_SHADOW_SH", os.path.join(MA, "review-ab-shadow.sh"))
++RULE = os.environ.get("REVIEW_AB_RULE_SCRIPT", os.path.join(HERE, "review-ab-rule.py"))
++EG = os.environ.get("EG_SCRIPT", os.path.join(HERE, "endgame.py"))
+ RUNCODEX = os.environ.get("RVAB_RUNCODEX") or (os.path.join(MA, "run-codex.sh.new-reab") if os.path.exists(os.path.join(MA, "run-codex.sh.new-reab")) else os.path.join(MA, "run-codex.sh"))
+ T0 = 1793260800  # 2026-10-29T08:00:00Z (before the test files' real mtimes)
+ 
+@@ -41,8 +45,10 @@
+         self.d = tempfile.mkdtemp(prefix="rvab-test-")
+         os.makedirs(f"{self.d}/tools-local"); os.makedirs(f"{self.d}/code/review-checkouts"); os.makedirs(f"{self.d}/acct/projects")
+         shutil.copy(TOOL, f"{self.d}/tools-local/review-effort-ab.py")
+-        for f in ("token-ledger.py", "review-ab-rule.py", "fix-round-stats.py"):
++        for f in ("token-ledger.py", "fix-round-stats.py"):
+             shutil.copy(os.path.join(HERE, f), f"{self.d}/tools-local/{f}")
++        shutil.copy(RULE, f"{self.d}/tools-local/review-ab-rule.py")  # F8: with the endgame.py it imports (hours_to)
++        shutil.copy(EG, f"{self.d}/tools-local/endgame.py")
+         open(f"{self.d}/REVIEW_EFFORT_AB", "w").write("on\n")
+         open(f"{self.d}/CURRENT-STATE.md", "w").close()
+         open(f"{self.d}/stub.sh", "w").write(f'echo "shadow $*" >> {self.d}/launch.log\n')
+--- tools-local/test_usage_reset_fresh.py.bak-20261120T2000Z-usagew2
++++ tools-local/test_usage_reset_fresh.py
+@@ -20,7 +20,7 @@
+ the loop after N polls). Fake clock: ENDGAME_NOW = the test's T (read by endgame.py, reset_fresh.py and the new accounts.sh), taken
+ from the wall clock at the start of each test so the installed accounts.sh (wall clock ages) sees the same ages. No live file read
+ or written, no account probe, no model call."""
+-import datetime, importlib.machinery, importlib.util, json, os, re, ast, shutil, stat, subprocess, sys, tempfile, time, unittest, zoneinfo
++import datetime, glob, importlib.machinery, importlib.util, json, os, re, ast, shutil, stat, subprocess, sys, tempfile, time, unittest, zoneinfo
+ 
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ sys.path.insert(0, HERE)
+@@ -384,5 +384,121 @@
+         self.assertEqual(bad, [], "a second parser of the accounts.sh reset field (use endgame.hours_to)")
+ 
+ 
++def _read(f):
++    with open(f, errors="replace") as fh:
++        return fh.read()
++
++
++def _load_time(tree):  # the nodes that run when the module loads: not inside a def or lambda (a lazy load runs only on its path)
++    todo = list(ast.iter_child_nodes(tree))
++    while todo:
++        n = todo.pop()
++        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
++            continue
++        yield n
++        todo += list(ast.iter_child_nodes(n))
++
++
++def _strs(node):  # every str constant under an ast node (f-string parts included)
++    return [n.value for n in ast.walk(node) if isinstance(n, ast.Constant) and isinstance(n.value, str)]
++
++
++def _pyname(s):  # the basenames *.py a string names
++    return re.findall(r"([\w.-]+\.py)\b", s)
++
++
++def sibling_imports(path, here=HERE):
++    """The tools-local modules a tool imports when it loads (import X / from X import / importlib by file name, outside any def),
++    read from its live copy and every staged .new-* copy of it, so a staged import counts before its install."""
++    out = set()
++    for f in [path] + sorted(glob.glob(path + ".new-*")):
++        try:
++            tree = ast.parse(_read(f))
++        except (OSError, SyntaxError, ValueError):
++            continue
++        for n in _load_time(tree):
++            mods = []
++            if isinstance(n, ast.Import):
++                mods = [a.name for a in n.names]
++            elif isinstance(n, ast.ImportFrom) and not n.level and n.module:
++                mods = [n.module]
++            elif isinstance(n, ast.Call) and getattr(n.func, "attr", getattr(n.func, "id", "")) in (
++                    "spec_from_file_location", "SourceFileLoader"):
++                out |= {b for s in _strs(n) for b in _pyname(s) if os.path.isfile(os.path.join(here, b))}
++            out |= {m + ".py" for m in mods if os.path.isfile(os.path.join(here, m + ".py"))}
++    out.discard(os.path.basename(path))
++    return out
++
++
++def sandbox_copies(test_file, here=HERE):
++    """The tools-local file names a test copies (shutil.copy / copy2 / copyfile): the strings in each copy call, in the
++    module-level assignment of a name it uses, in the iterable of a for loop whose variable it uses, and in NAME of an
++    imported tools-local test module (te.EG)."""
++    tree = ast.parse(_read(test_file))
++    assigns, loops, mods = {}, {}, {}
++    for n in tree.body:
++        if isinstance(n, ast.Assign):
++            for t in n.targets:
++                if isinstance(t, ast.Name): assigns[t.id] = n.value
++        elif isinstance(n, ast.Import):
++            mods.update({(a.asname or a.name): a.name for a in n.names if os.path.isfile(os.path.join(here, a.name + ".py"))})
++    for n in ast.walk(tree):
++        if isinstance(n, (ast.For, ast.comprehension)) and isinstance(n.target, ast.Name):
++            loops.setdefault(n.target.id, []).append(n.iter)
++    got = set()
++    for n in ast.walk(tree):
++        if not (isinstance(n, ast.Call) and getattr(n.func, "attr", "") in ("copy", "copy2", "copyfile")):
++            continue
++        parts = [n]
++        for m in ast.walk(n):
++            if isinstance(m, ast.Name):
++                parts += [assigns[m.id]] if m.id in assigns else []
++                parts += loops.get(m.id, [])
++            elif isinstance(m, ast.Attribute) and isinstance(m.value, ast.Name) and m.value.id in mods:
++                other = ast.parse(_read(os.path.join(here, mods[m.value.id] + ".py")))
++                parts += [a.value for a in other.body if isinstance(a, ast.Assign)
++                          and any(isinstance(t, ast.Name) and t.id == m.attr for t in a.targets)]
++        got |= {b for p in parts for s in _strs(p) for b in _pyname(s) if os.path.isfile(os.path.join(here, b))}
++    return got
++
++
++class SandboxImports(unittest.TestCase):
++    """F8 of the recheck: test_review_effort_ab.py copied review-ab-rule.py into its sandbox but not the endgame.py the F1 fix made
++    it import, so 4 of its tests failed with ModuleNotFoundError on the staged copy while the real tools, beside endgame.py, worked.
++    The class: every tools-local test that copies a tools-local tool into a sandbox copies, with it, each tools-local module the
++    tool imports when it loads (transitively; live and staged .new-* copies of the tool), so the copied tool can start. A load inside
++    a def (burndown._endgame, review-ab-rule.frs, role-budget's token-ledger scan) runs only on its own path; the tests of that
++    path stub or copy it. Live test files are read as installed."""
++    def test_every_sandbox_holds_the_modules_its_tools_import(self):
++        missing = []
++        for t in sorted(glob.glob(os.path.join(HERE, "test_*.py"))):
++            try:
++                have = sandbox_copies(t)
++            except (OSError, SyntaxError, ValueError):
++                continue
++            need, todo = set(), list(have)
++            while todo:
++                dep = sibling_imports(os.path.join(HERE, todo.pop())) - need
++                need |= dep; todo += sorted(dep)
++            missing += [f"{os.path.basename(t)}: {d}" for d in sorted(need - have)]
++        self.assertEqual(missing, [], "a sandbox lacks a tools-local module that a tool it copies imports")
++
++    def test_guard_sees_the_f8_shape(self):  # the guard itself, both directions, on a throwaway tools-local
++        d = tempfile.mkdtemp(prefix="sbx-guard-"); self.addCleanup(shutil.rmtree, d, True)
++        def put(name, text):
++            with open(f"{d}/{name}", "w") as fh: fh.write(text)
++        put("endgame.py", "X = 1\n"); put("lazy.py", "Y = 2\n")
++        put("rule.py", "import os\ndef later():\n    import lazy\n")  # a load inside a def: not required
++        put("rule.py.new-x", "import os\nimport endgame  # noqa\ndef later():\n    import lazy\n")  # staged load-time import
++        put("tool.py", "import importlib.util\nimportlib.util.spec_from_file_location('r', 'rule.py')\n")
++        bad = 'import shutil\nfor f in ("tool.py", "rule.py"):\n    shutil.copy(f, "box/" + f)\n'
++        put("test_a.py", bad)
++        self.assertEqual(sandbox_copies(f"{d}/test_a.py", d), {"tool.py", "rule.py"})
++        self.assertEqual(sibling_imports(f"{d}/tool.py", d), {"rule.py"})
++        self.assertEqual(sibling_imports(f"{d}/rule.py", d), {"endgame.py"})
++        put("test_a.py", bad + 'EG = "endgame.py"\nshutil.copy(EG, "box/endgame.py")\n')
++        self.assertEqual(sandbox_copies(f"{d}/test_a.py", d), {"tool.py", "rule.py", "endgame.py"})
++
++
+ if __name__ == "__main__":
+     unittest.main()

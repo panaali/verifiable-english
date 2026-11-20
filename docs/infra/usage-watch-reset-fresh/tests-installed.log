@@ -1,0 +1,311 @@
+..FFFFFFFF~/code/manage-agents/tools-local/test_usage_reset_fresh.py:176: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.~/code/manage-agents/tools-local/test_usage_reset_fresh.py:176: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.~/code/manage-agents/tools-local/test_usage_reset_fresh.py:176: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_usage_reset_fresh.py:176: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_usage_reset_fresh.py:176: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/usage-watch.sh' mode='r' encoding='UTF-8'>
+  src = open(UW).read().replace(LIVE, self.m)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/capttl' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/sleeps' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:190: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/usagew-X/code/manage-agents/usage-watch.log' mode='r' encoding='UTF-8'>
+  rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-eh0dizre/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/pick-claude-account.sh' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-eh0dizre/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-eh0dizre/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-eh0dizre/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-eh0dizre/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-7_52a41r/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/pick-claude-account.sh' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-7_52a41r/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-7_52a41r/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-7_52a41r/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-7_52a41r/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-ma9npxj0/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/pick-claude-account.sh' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-ma9npxj0/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-ma9npxj0/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:277: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-ma9npxj0/pick.sh' mode='r' encoding='UTF-8'>
+  pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(self.p).read(), re.S | re.M)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+pace_line:3: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-ma9npxj0/flag-PICK_MAIN_PACE' mode='r' encoding='UTF-8'>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-pcpbm3go/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-pcpbm3go/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-pcpbm3go/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-pcpbm3go/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-pcpbm3go/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-8mv1cnnl/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/pick-claude-account.sh' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-8mv1cnnl/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-8mv1cnnl/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-8mv1cnnl/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-8mv1cnnl/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:60: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-u5l7hc5z/load' mode='w' encoding='UTF-8'>
+  open(f"{self.h}/load", "w").write("1.0 1.0 1.0 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:61: ResourceWarning: unclosed file <_io.TextIOWrapper name='~/code/manage-agents/pick-claude-account.sh' mode='r' encoding='UTF-8'>
+  src = open(PICK).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:65: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-u5l7hc5z/pick.sh' mode='w' encoding='UTF-8'>
+  open(self.p, "w").write(src)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_usage_reset_fresh.py:241: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-u5l7hc5z/pick.sh' mode='r' encoding='UTF-8'>
+  src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:76: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-u5l7hc5z/accounts.sh' mode='w' encoding='UTF-8'>
+  open(acc, "w").write('if [ -n "$R1_BLOCK" ]; then exec 3<> "$R1_BLOCK"; fi\n' + "cat <<'E'\n" + "\n".join(lines) + "\nE\n"
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+~/code/manage-agents/tools-local/test_pick_main5h_unknown.py:82: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/pm5h-u5l7hc5z/usage-watch.log' mode='w' encoding='UTF-8'>
+  open(ul, "w").write("header line dropped by the reader\n" + log)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+F
+======================================================================
+FAIL: test_failed_probe_gives_unknown_not_the_old_97 (__main__.Accounts.test_failed_probe_gives_unknown_not_the_old_97)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 151, in test_failed_probe_gives_unknown_not_the_old_97
+    self.assertEqual(len(probed), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_lagging_post_reset_line_no_cap_reuse (__main__.Accounts.test_lagging_post_reset_line_no_cap_reuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 145, in test_lagging_post_reset_line_no_cap_reuse
+    self.assertEqual(len(probed), 1, main)
+AssertionError: 0 != 1 : ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 97 allowed ? Fri_Nov20_08:55']
+
+======================================================================
+FAIL: test_pre_reset_cap_line_not_reused_probe_at_once (__main__.Accounts.test_pre_reset_cap_line_not_reused_probe_at_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 133, in test_pre_reset_cap_line_not_reused_probe_at_once
+    self.assertEqual(len(probed), 1, f"no fresh probe of main after its reset: {main} {r.stderr[-400:]}")
+AssertionError: 0 != 1 : no fresh probe of main after its reset: ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 97 allowed ? Fri_Nov20_09:02'] 
+
+======================================================================
+FAIL: test_pre_reset_line_inside_ttl_not_reused (__main__.Accounts.test_pre_reset_line_inside_ttl_not_reused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 140, in test_pre_reset_line_inside_ttl_not_reused
+    self.assertEqual(len(probed), 1, main); self.assertEqual(main[0].split()[3], "0")
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 60 allowed ? Fri_Nov20_09:02']
+
+======================================================================
+FAIL: test_cli_never_fails (__main__.Helper.test_cli_never_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 91, in test_cli_never_fails
+    self.assertTrue(os.path.exists(p), "no reset_fresh.py")
+AssertionError: False is not true : no reset_fresh.py
+
+======================================================================
+FAIL: test_line_states (__main__.Helper.test_line_states)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 71, in test_line_states
+    md = self.mod(); at = datetime.datetime(2026, 11, 13, 15, 0, 6, tzinfo=TZ); r = "Fri_Nov13_15:00"; t = at.timestamp()
+         ^^^^^^^^^^
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 65, in mod
+    self.assertTrue(os.path.exists(p), f"no reset_fresh.py at {RF} (not installed)")
+AssertionError: False is not true : no reset_fresh.py at ~/code/manage-agents/tools-local/reset_fresh.py (not installed)
+
+======================================================================
+FAIL: test_watch_grace_and_next (__main__.Helper.test_watch_grace_and_next)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 79, in test_watch_grace_and_next
+    md = self.mod(); r = datetime.datetime(2026, 11, 13, 15, 0, tzinfo=TZ)
+         ^^^^^^^^^^
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 65, in mod
+    self.assertTrue(os.path.exists(p), f"no reset_fresh.py at {RF} (not installed)")
+AssertionError: False is not true : no reset_fresh.py at ~/code/manage-agents/tools-local/reset_fresh.py (not installed)
+
+======================================================================
+FAIL: test_year_wrap (__main__.Helper.test_year_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 86, in test_year_wrap
+    md = self.mod(); at = datetime.datetime(2027, 1, 1, 0, 30, tzinfo=TZ)
+         ^^^^^^^^^^
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 65, in mod
+    self.assertTrue(os.path.exists(p), f"no reset_fresh.py at {RF} (not installed)")
+AssertionError: False is not true : no reset_fresh.py at ~/code/manage-agents/tools-local/reset_fresh.py (not installed)
+
+======================================================================
+FAIL: test_old_window_97_after_reset_not_paused (__main__.UsageWatch.test_old_window_97_after_reset_not_paused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 197, in test_old_window_97_after_reset_not_paused
+    self.assertNotIn("PAUSED main", out)
+AssertionError: 'PAUSED main' unexpectedly found in 'PAUSED main [] 5h=-2 week=97\nRESUMED main [none]\n'
+
+======================================================================
+FAIL: test_paused_before_reset_resumes_on_old_window_reading (__main__.UsageWatch.test_paused_before_reset_resumes_on_old_window_reading)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 207, in test_paused_before_reset_resumes_on_old_window_reading
+    self.assertIn("RESUMED main", out.split("PAUSED main", 1)[1])
+AssertionError: 'RESUMED main' not found in ' [] 5h=-2 week=96\nWARN main at 97%: no new launches on it\n'
+
+======================================================================
+FAIL: test_wakes_at_the_next_reset_with_cap_ttl_0 (__main__.UsageWatch.test_wakes_at_the_next_reset_with_cap_ttl_0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 213, in test_wakes_at_the_next_reset_with_cap_ttl_0
+    self.assertEqual(sleeps[0], R - self.T + 5, sleeps)
+AssertionError: 300 != 167 : [300, 300]
+
+======================================================================
+FAIL: test_fresh_week_after_reset_low_line (__main__.WeeklyPace.test_fresh_week_after_reset_low_line)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 264, in test_fresh_week_after_reset_low_line
+    got, err = self.at(70, -1); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 69.2% now", err)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '/x/claude-main' is not None : 
+
+======================================================================
+FAIL: test_inbox_wait_reader_gets_the_weekly_line (__main__.WeeklyPace.test_inbox_wait_reader_gets_the_weekly_line)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 283, in test_inbox_wait_reader_gets_the_weekly_line
+    self.assertEqual(ns["pace_line"](), 73.0)
+AssertionError: None != 73.0
+
+======================================================================
+FAIL: test_no_cache_start_of_week_value (__main__.WeeklyPace.test_no_cache_start_of_week_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 267, in test_no_cache_start_of_week_value
+    got, err = self.at(70, 100); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 69.0% now", err)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '/x/claude-main' is not None : 
+
+======================================================================
+FAIL: test_six_days_out_line_73 (__main__.WeeklyPace.test_six_days_out_line_73)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 253, in test_six_days_out_line_73
+    got, err = self.at(74, 144); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 73.0% now", err)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '/x/claude-main' is not None : 
+
+======================================================================
+FAIL: test_two_days_out_line_89_then_flat_90 (__main__.WeeklyPace.test_two_days_out_line_89_then_flat_90)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 258, in test_two_days_out_line_89_then_flat_90
+    got, err = self.at(89, 48); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 89.0% now", err)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '/x/claude-main' is not None : 
+
+----------------------------------------------------------------------
+Ran 21 tests in 5.040s
+
+FAILED (failures=16)

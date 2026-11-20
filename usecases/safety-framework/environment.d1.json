@@ -29,14 +29,14 @@
         "arguments": [
           "level"
         ],
-        "description": "{0} is a Critical Capability Level (CCL): absent mitigation, a model at it may pose heightened risk of severe harm (Glossary)",
+        "description": "{0} is a Critical Capability Level (CCL): absent mitigation, a model at it may pose heightened risk of severe harm (Glossary). Glossary, Thresholds: \"Critical Capability Levels (CCLs): are the main capability thresholds around which we have built the Framework process. They represent the capability levels at which, absent mitigation measures, frontier AI models or systems may pose heightened risk of severe harm.\" Section 1.2: \"The Framework is built primarily around capability thresholds called “Critical Capability Levels (CCLs).” These are capability levels at which, absent mitigation measures, frontier AI models or systems may pose heightened risk of severe harm. CCLs are determined by identifying and analyzing the main foreseeable paths through which a model could result in severe harm: we then define the CCLs as the minimal set of capabilities a model must possess to do so.\" Overview: \"In the Framework, we specify protocols for the detection of capability levels at which frontier AI models may pose significant or severe risks (which we call “Tracked Capability Levels (TCLs)” and “Critical Capability Levels (CCLs)” respectively), and articulate mitigation approaches to address such risks.\"",
         "verbalisation": "{0} is critical"
       },
       "tracked": {
         "arguments": [
           "level"
         ],
-        "description": "{0} is a Tracked Capability Level (TCL): absent mitigation, a model at it may pose heightened risk of significant but not severe harm (Glossary)",
+        "description": "{0} is a Tracked Capability Level (TCL): absent mitigation, a model at it may pose heightened risk of significant but not severe harm (Glossary). Glossary, Thresholds: \"Tracked Capability Levels (TCLs): are capability thresholds which capture a lower level of risks than our CCLs. They represent the capability levels at which, absent mitigation measures, frontier AI models or systems may pose heightened risk of significant but not severe levels of harm.\" Section 1.2: \"This update to the Framework introduces “Tracked Capability Levels (TCLs).” TCLs are meant to capture significant risks that may manifest at a lower capability threshold than our CCLs and we apply our mitigation and risk acceptance determination process proportionately.\"",
         "verbalisation": "{0} is tracked"
       },
       "concerns": {
@@ -44,21 +44,21 @@
           "level",
           "domain"
         ],
-        "description": "{0} is a level of the risk domain {1} (the section that defines it)",
+        "description": "{0} is a level of the risk domain {1} (the section that defines it). Glossary, Risk Domains: \"CBRN: risks of models assisting in the development, preparation, and/or execution of a chemical, biological, radiological, or nuclear (“CBRN”) threat. Cyber: risks of models assisting in the development, preparation, and/or execution of a cyber attack. Harmful Manipulation: risks of models with high manipulative capabilities potentially being misused in ways that could reasonably result in large scale harm. ML R&D and Misalignment: risks of models’ ML R&D capabilities or misaligned propensities reducing society’s overall ability to manage AI risks. Such capabilities may serve as a substantial cross-cutting risk factor for several pathways (e.g. through misalignment, misuse or structural risks) to severe harm.\"",
         "verbalisation": "{0} concerns {1}"
       },
       "misuse": {
         "arguments": [
           "level"
         ],
-        "description": "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation domains (1.2, Section 2)",
+        "description": "{0} is a misuse T/CCL: a level of the CBRN, cyber or harmful manipulation domains (1.2, Section 2). Misuse risk, footnote 2: \"2 As in, in the context of the Framework, risks of threat actors using critical capabilities of deployed or exfiltrated models to cause harm.\" Footnote 8, on the misuse T/CCLs: \"8 Here, and in other misuse T/CCLs, we intend this to mean relative to a baseline without generative AI.\"",
         "verbalisation": "{0} is misuse"
       },
       "ml_rd_and_misalignment": {
         "arguments": [
           "level"
         ],
-        "description": "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3)"
+        "description": "{0} is an ML R&D and misalignment T/CCL (1.2, Section 3). ML R&D and misalignment risk, footnote 3: \"3 In the context of the Framework, we address specific scenarios where model misalignment may create the risk of significant or severe harm, and scenarios where ML R&D capabilities may heighten misalignment, misuse, and structural risks.\" Section 3.2, the tiered approach: \"We set a Stealth and Situational Awareness TCL that indicates a baseline level of model capability above which misalignment risks may begin to arise. At this capability level we apply a proportionate set of mitigation and risk acceptance determination processes. ● We set ML R&D CCLs that indicate higher capability levels at which misalignment, misuse and structural risks are heightened and may reach a severe scale. At these capability levels we apply a stronger set of mitigations, and follow the risk acceptance process as detailed in the rest of the framework.\" Section 3.2.2: \"We define ML R&D CCLs at capability levels at which misalignment, misuse and structural risks may reach a severe scale.\""
       },
       "defined": {
         "arguments": [
@@ -72,7 +72,7 @@
           "level",
           "measure"
         ],
-        "description": "the framework recommends {1} for models reaching {0} (tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: \"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration.\" Security level 4, table 3.2.2.a, ML R&D automation level 1: \"We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole.\"; footnote 13: \"13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface.\"",
+        "description": "the framework recommends {1} for models reaching {0} (tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend “Security Level 2+,” which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: \"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration.\" Security level 4, table 3.2.2.a, ML R&D automation level 1: \"We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole.\"; footnote 13: \"13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface.\" Section 2.2: \"We recommend a security level for each CCL, which reflects our assessment of the minimum appropriate level of security the field of frontier AI should apply to models reaching each CCL.\" Security levels, 2.1.1: \"We use security levels to indicate security goals/principles in line with the corresponding level in the RAND model weight security framework. 6\" (the 6 is the mark of footnote 6); footnote 6: \"6 In other words, “security level N ” indicates security controls and detections at a level generally aligned with RAND SL N . See https://www.rand.org/pubs/research_reports/RRA2849-1.html , pp 21-22. In aligning our security levels with RAND’s, we are referring to the security goals and principles in the RAND framework, rather than the benchmarks (i.e. concrete measures) also described in the RAND report.\" Glossary: \"RAND Security Levels: indicate security goals and principles relevant to frontier developers aiming to protect their model weights from various actors - with the strength and type of security measures differing for each category of actor. 14\" (the 14 is the mark of footnote 14)",
         "verbalisation": "{0} recommends {1}"
       },
       "includes": {
@@ -96,7 +96,7 @@
           "proposal",
           "level"
         ],
-        "description": "the model of {0} has reached {1}, as the critical capability assessment found. Open term OT1, decided by the developer (\"we\", 1.3.2)",
+        "description": "the model of {0} has reached {1}, as the critical capability assessment found. Glossary: \"Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of early warning evaluations and other sources of evidence.\". Open term OT1, decided by the developer (\"we\", 1.3.2)",
         "verbalisation": "{0} has reached {1}"
       },
       "approaches": {
@@ -104,7 +104,7 @@
           "proposal",
           "level"
         ],
-        "description": "the model of {0} has reached an alert threshold for {1}. Open term OT1, decided by the developer (\"we\", 1.3.2)",
+        "description": "the model of {0} has reached an alert threshold for {1}. Glossary, Thresholds: \"Alert Thresholds: are thresholds which we set marginally earlier than our CCLs. Crossing these thresholds indicates a CCL may be reached in the foreseeable future, due to the speed of capability progress. In particular, they are meant to account for the possibility of models reaching a CCL before the next critical capability assessment cycle.\" Section 1.3.2: \"For CCLs, we define “alert thresholds,” which may draw on evaluation results, expert assessments, and other sources of information; that are designed to flag when a CCL may be reached before a critical capability assessment is conducted again.\". Open term OT1, decided by the developer (\"we\", 1.3.2)",
         "verbalisation": "{0} approaches {1}"
       },
       "at_least_as_strong": {
@@ -119,7 +119,7 @@
           "proposal",
           "measure"
         ],
-        "description": "security mitigations reaching {1} have been applied to the model weights of {0}",
+        "description": "security mitigations reaching {1} have been applied to the model weights of {0}. Glossary: \"Security Mitigations: are safety measures we implement which are intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized actors. They may include identity and access management practices, and hardening interface-access to unreleased model parameters, among other measures. We communicate the level of security we consider appropriate to models which cross our thresholds using the RAND model weight security framework.\"",
         "verbalisation": "{0} applies {1}"
       },
       "further_development": {
@@ -145,7 +145,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is an external deployment: a model release to entities outside Google",
+        "description": "{0} is an external deployment: a model release to entities outside Google. Glossary: \"External Deployments: represent model releases to entities outside of Google. They can include both low-risk external deployments as well as general purpose releases to the broader public.\"",
         "verbalisation": "{0} is external"
       },
       "low_risk": {
@@ -164,14 +164,14 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the model of {0} is a frontier AI model (Glossary: Frontier AI Models \"are trained on a large data set, display significant generality, are capable of performing a wide range of distinctive tasks and have high-impact capabilities. Frontier AI models' agentic and reasoning-based general capabilities near or exceed those of other Google models\"). Open term OT9, decided by no one the text names (unstated)",
+        "description": "the model of {0} is a frontier AI model. Glossary: Frontier AI Models \"are trained on a large data set, display significant generality, are capable of performing a wide range of distinctive tasks and have high-impact capabilities. Frontier AI models' agentic and reasoning-based general capabilities near or exceed those of other Google models. There may be many different checkpoints and versions of the same model along the entire model lifecycle: we consider checkpoints and versions the same model if their base capabilities stem primarily from the same foundational training run, but will conduct additional testing on new versions as specified in Section 1.3 . When we refer to “model” in this Framework, we may be referring to a checkpoint or version of the model.\". Open term OT9, decided by no one the text names (unstated)",
         "verbalisation": "{0} is frontier"
       },
       "subsequent": {
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is an external deployment of a subsequent version of a model",
+        "description": "{0} is an external deployment of a subsequent version of a model. Glossary, Frontier AI Models or Models: \"There may be many different checkpoints and versions of the same model along the entire model lifecycle: we consider checkpoints and versions the same model if their base capabilities stem primarily from the same foundational training run, but will conduct additional testing on new versions as specified in Section 1.3 . When we refer to “model” in this Framework, we may be referring to a checkpoint or version of the model.\"",
         "verbalisation": "{0} is subsequent"
       },
       "new_capabilities": {
@@ -184,7 +184,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the capability increase of {0} could materially undermine the justification for why its risks are acceptable. Open term OT10, decided by the developer (\"we believe\")"
+        "description": "the capability increase of {0} could materially undermine the justification for why its risks are acceptable. Glossary: \"Material Capability Increases: are meaningful new capabilities or material increases in model performance that we believe could materially undermine our justifications for a model’s level of risk being acceptable, for example, by reaching a CCL that the previous version of the model had not reached.\". Open term OT10, decided by the developer (\"we believe\")"
       },
       "post_training_run_completed": {
         "arguments": [
@@ -196,14 +196,14 @@
         "arguments": [
           "proposal"
         ],
-        "description": "{0} is a material update to a safety case"
+        "description": "{0} is a material update to a safety case. Glossary: \"Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level. Residual risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a model’s risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models, and the historical incidence and severity of related events.\" (the 15 is the mark of footnote 15)"
       },
       "mitigates": {
         "arguments": [
           "proposal",
           "level"
         ],
-        "description": "the deployment mitigations of {0} have brought the residual risk from {1} (of harm, of severe harm or of significant harm, as the bullet for {1} says) to an acceptable level. The bullets of 1.3.5 state this finding, for a misuse T/CCL: \"We assess that the deployment mitigations have brought the residual risk of harm to an acceptable level, based on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models (e.g. if other models are similarly capable and have few mitigations, then the marginal risk added by our external deployment is likely low), and the historical incidence and severity of related events.\"; for a ML R&D CCL: \"We assess that the deployment mitigations have brought the residual risk of severe harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events.\"; for the TCL for ML R&D and misalignment risk: \"We assess that the deployment mitigations have brought the residual risk of significant harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events, or if we assess that the model is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk.\". Open term OT2, decided by the developer (\"We assess\", 1.3.5)",
+        "description": "the deployment mitigations of {0} have brought the residual risk from {1} (of harm, of severe harm or of significant harm, as the bullet for {1} says) to an acceptable level. The bullets of 1.3.5 state this finding, for a misuse T/CCL: \"We assess that the deployment mitigations have brought the residual risk of harm to an acceptable level, based on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models (e.g. if other models are similarly capable and have few mitigations, then the marginal risk added by our external deployment is likely low), and the historical incidence and severity of related events.\"; for a ML R&D CCL: \"We assess that the deployment mitigations have brought the residual risk of severe harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events.\"; for the TCL for ML R&D and misalignment risk: \"We assess that the deployment mitigations have brought the residual risk of significant harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events, or if we assess that the model is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk.\" Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the misuse or misaligned expression of critical capabilities in deployments. They may include safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak detection and patching, user verification, and bug bounties.\" Section 1.3.3: \"We have two categories of mitigations: security mitigations (such as preventing the exfiltration of model weights), and deployment mitigations (such as safety fine-tuning and monitoring and response) intended to counter the misuse or misaligned expression of critical capabilities in deployments.\". Open term OT2, decided by the developer (\"We assess\", 1.3.5)",
         "verbalisation": "{0} mitigates {1}"
       },
       "unlikely_misalignment_propensities": {
@@ -234,7 +234,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the appropriate governance function has determined the residual risk of {0} to be acceptable, including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: \"including (with) a safety case where a CCL has been reached\"); a determination without that safety case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level.\" Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level.\". Open term OT3, decided by the appropriate governance function (unnamed)"
+        "description": "the appropriate governance function has determined the residual risk of {0} to be acceptable, including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: \"including (with) a safety case where a CCL has been reached\"); a determination without that safety case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level. Residual risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a model’s risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models, and the historical incidence and severity of related events.\" (the 15 is the mark of footnote 15). Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level.\" Step 2 of 3.1.2 says: \"In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed deployment has been reduced to an acceptable level.\". Open term OT3, decided by the appropriate governance function (unnamed)"
       },
       "internal_risk_unacceptable_without_safeguards": {
         "arguments": [
@@ -270,7 +270,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); critical capability assessments \"determine a model's proximity to T/CCLs through the use of early warning evaluations and other sources of evidence\" (Glossary); on models not on the frontier, 1.3.2 \"We may also apply material capability change assessments to models not on the frontier, to understand whether a critical capability assessment is required.\"",
+        "description": "a critical capability assessment (CCA) of the model takes place before {0} (1.3.2); critical capability assessments \"determine a model's proximity to T/CCLs through the use of early warning evaluations and other sources of evidence\" (Glossary); on models not on the frontier, 1.3.2 \"We may also apply material capability change assessments to models not on the frontier, to understand whether a critical capability assessment is required.\"; Glossary: \"Material Capability Change Assessments: indicate whether a critical capability assessment is required. These assessments are typically conducted upon the completion of new post-training runs on various checkpoints, and they are primarily aimed at determining whether updated versions of a model have developed material capability increases relative to the last checkpoint subject to a critical capability assessment. May also be used to assess whether a critical capability assessment is required of non-frontier AI models.\" Overview: \"Risk assessment will necessarily involve evaluating cross-cutting capabilities such as agency, tool use, reasoning, and scientific understanding.\" Section 1.3.2: \"Central to our critical capability assessments are “early warning evaluations,” which we use to test the specific threats and risk scenarios identified through our threat modeling, determine a model's capability, and assess the proximity of the model to a T/CCL.\" Glossary, Early Warning Evaluations: \"are evaluations which measure the dangerous capabilities of a model. They specifically target the threats and risk scenarios identified through our threat modeling to determine a model's proximity to a CCL or TCL, and they provide the most direct evidence for whether these thresholds have been reached.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -292,7 +292,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2)",
+        "description": "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2); Glossary: \"Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of early warning evaluations and other sources of evidence.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -303,7 +303,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "a further CCA takes place before {0} (1.3.2)",
+        "description": "a further CCA takes place before {0} (1.3.2); Glossary: \"Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of early warning evaluations and other sources of evidence.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -314,7 +314,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "material capability change assessments on various checkpoints follow {0} (1.3.2); the checkpoints are part of the act, not a situation variable; their content, 1.3.2 \"These assessments draw on model characteristics, such as its provenance, size, modality, and performance on general capability benchmarks.\"",
+        "description": "material capability change assessments on various checkpoints follow {0} (1.3.2); the checkpoints are part of the act, not a situation variable; their content, 1.3.2 \"These assessments draw on model characteristics, such as its provenance, size, modality, and performance on general capability benchmarks.\"; Glossary: \"Material Capability Change Assessments: indicate whether a critical capability assessment is required. These assessments are typically conducted upon the completion of new post-training runs on various checkpoints, and they are primarily aimed at determining whether updated versions of a model have developed material capability increases relative to the last checkpoint subject to a critical capability assessment. May also be used to assess whether a critical capability assessment is required of non-frontier AI models.\" Section 1.3.2: \"To understand if a subsequent version of the model has meaningful new capabilities or material increases in performance relative to the last checkpoint subject to a critical capability assessment, we conduct material capability change assessments on various checkpoints upon the completion of a post-training run.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -326,7 +326,7 @@
           "proposal",
           "level"
         ],
-        "description": "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' involvement, which is part of the act, not the assessment and the analysis",
+        "description": "the proximity of the model of {0} to {1} is assessed and the risk posed is analysed, involving internal and external experts as needed (1.3.3 \"we will assess the proximity of the model to the CCL and analyze the risk posed, involving internal and external experts as needed\"); \"as needed\" qualifies the experts' involvement, which is part of the act, not the assessment and the analysis. Section 1.2, for TCLs: \"Similarly to CCLs, early warning evaluations will be used to assess the proximity of a model to a TCL and analyze the risk posed, involving internal and external experts as needed.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -337,7 +337,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations (1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating their deployment mitigations\"); residual risk assessments are \"the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented\" (Glossary)",
+        "description": "the model of {0} is subject to residual risk assessments as part of evaluating its deployment mitigations (1.3.4 \"Models reaching TCLs or CCLs will be subject to residual risk assessments as part of evaluating their deployment mitigations\"); residual risk assessments are \"the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented\" (Glossary); Glossary, Risk Mitigation: \"Deployment Mitigations: are safety measures we implement which are intended to counter the misuse or misaligned expression of critical capabilities in deployments. They may include safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak detection and patching, user verification, and bug bounties.\"; the Glossary entry Residual Risk Assessments goes on: \"This is part of the risk management process, following a critical capability assessment and the effect of mitigations. The residual risk should be brought within the acceptable levels, as determined by the T/CCLs as relevant.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -348,7 +348,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the residual risk assessment for {0} is informed by a supplemental safety case (1.3.4); safety cases \"are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level\" (Glossary)",
+        "description": "the residual risk assessment for {0} is informed by a supplemental safety case (1.3.4); safety cases \"are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level\" (Glossary); Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented. This is part of the risk management process, following a critical capability assessment and the effect of mitigations. The residual risk should be brought within the acceptable levels, as determined by the T/CCLs as relevant.\"; the Glossary entry Safety Cases goes on: \"Residual risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a model’s risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models, and the historical incidence and severity of related events.\" (the 15 is the mark of footnote 15)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -359,7 +359,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)",
+        "description": "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1); Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented. This is part of the risk management process, following a critical capability assessment and the effect of mitigations. The residual risk should be brought within the acceptable levels, as determined by the T/CCLs as relevant.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -370,7 +370,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the periodic residual risk assessments for {0} also account for the safety implications of high-risk internal deployments (3.2.1)",
+        "description": "the periodic residual risk assessments for {0} also account for the safety implications of high-risk internal deployments (3.2.1); Glossary: \"Residual Risk Assessments: the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented. This is part of the risk management process, following a critical capability assessment and the effect of mitigations. The residual risk should be brought within the acceptable levels, as determined by the T/CCLs as relevant.\" Section 3.2.1: \"Since misalignment risks can manifest through internal use, these assessments will also account for the safety implications of high-risk internal deployments for such models.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -392,7 +392,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "DM-h: the deployment mitigations of {0} bring the residual risk of harm to an acceptable level (1.3.5 bullet 2)",
+        "description": "DM-h: the deployment mitigations of {0} bring the residual risk of harm to an acceptable level (1.3.5 bullet 2); Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the misuse or misaligned expression of critical capabilities in deployments. They may include safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak detection and patching, user verification, and bug bounties.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -403,7 +403,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "DM-s: as DM-h, for the residual risk of severe harm (1.3.5 bullet 3)",
+        "description": "DM-s: as DM-h, for the residual risk of severe harm (1.3.5 bullet 3); Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the misuse or misaligned expression of critical capabilities in deployments. They may include safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak detection and patching, user verification, and bug bounties.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -414,7 +414,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "DM-g: as DM-h, for the residual risk of significant harm (1.3.5 bullet 4)",
+        "description": "DM-g: as DM-h, for the residual risk of significant harm (1.3.5 bullet 4); Glossary: \"Deployment Mitigations: are safety measures we implement which are intended to counter the misuse or misaligned expression of critical capabilities in deployments. They may include safety post-training, input/output/chain-of-thought monitoring and analysis, account moderation, jailbreak detection and patching, user verification, and bug bounties.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -425,7 +425,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "SEC: security mitigations reaching the recommended security level have been applied to the model weights of {0} (1.3.5 bullets 2 and 3); security mitigations \"are safety measures we implement which are intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized actors\" (Glossary)",
+        "description": "SEC: security mitigations reaching the recommended security level have been applied to the model weights of {0} (1.3.5 bullets 2 and 3); security mitigations \"are safety measures we implement which are intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized actors\" (Glossary); the Glossary entry goes on: \"They may include identity and access management practices, and hardening interface-access to unreleased model parameters, among other measures. We communicate the level of security we consider appropriate to models which cross our thresholds using the RAND model weight security framework.\" Section 1.3.3: \"We have two categories of mitigations: security mitigations (such as preventing the exfiltration of model weights), and deployment mitigations (such as safety fine-tuning and monitoring and response) intended to counter the misuse or misaligned expression of critical capabilities in deployments.\" Section 2.1: \"There are two categories of mitigations to address models with misuse critical capabilities: security mitigations intended to prevent the exfiltration or unauthorized modification of model weights, and deployment mitigations intended to counter the misuse of critical capabilities in external deployments.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -503,7 +503,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the framework is reviewed at least once a year, at the time of {0} (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\")",
+        "description": "the framework is reviewed at least once a year, at the time of {0}; Overview: \"We will review the Framework periodically and we expect it to evolve substantially as our understanding of the risks and benefits of frontier models improves.\" (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -536,7 +536,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and its effects are both proportionate with the expected impact of the model's risk (1.3.5 Note \"The mitigation and the effects of such mitigation should also be assessed holistically and be proportionate with expected impact of a model's risk\": one subject, the mitigation and its effects, with both demands)",
+        "description": "the mitigation for {0} and the effects of such mitigation are assessed holistically, and the mitigation and its effects are both proportionate with the expected impact of the model's risk (1.3.5 Note \"The mitigation and the effects of such mitigation should also be assessed holistically and be proportionate with expected impact of a model's risk\": one subject, the mitigation and its effects, with both demands). The Note in full: \"The mitigation and the effects of such mitigation should also be assessed holistically and be proportionate with expected impact of a model's risk, thus balancing safety with innovation.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",

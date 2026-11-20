@@ -1,0 +1,223 @@
+--- tools-local/test_usage_reset_fresh.py (before, .bak-20261120T1930Z-usagew2)
++++ tools-local/test_usage_reset_fresh.py (now)
+@@ -8,9 +8,13 @@
+               the next reset and that poll runs accounts.sh with ACCOUNTS_CAP_TTL=0.
+   Pace:       PICK_MAIN_PACE "weekly A S F" = min(A - S x days to the main weekly reset in accounts-cache/main.line, F).
+   Helper:     tools-local/reset_fresh.py (line / watch).
++  YearWrap, PickOrderYearWrap, OneParser (F1 of the review): the reset field has no year; endgame.hours_to is its one parser and
++              reads the nearest year (a Fri_Jan01 reset on Dec 26 is 6 d ahead), for the pace line, the endgame window, reset_fresh.py
++              and the picker's pace order.
+ usage: python3 -I tools-local/test_usage_reset_fresh.py      (tests the INSTALLED files: they fail before the install)
+-  ACCOUNTS_SCRIPT=accounts.sh.new-usagew USAGE_WATCH_SCRIPT=usage-watch.sh.new-usagew PICK_SCRIPT=pick-claude-account.sh.new-usagew
+-  RESET_FRESH_SCRIPT=tools-local/reset_fresh.py.new-usagew python3 -I tools-local/test_usage_reset_fresh.py   (the staged copies)
++  PICK_SCRIPT=pick-claude-account.sh.new-usagew2 RESET_FRESH_SCRIPT=tools-local/reset_fresh.py.new-usagew2
++  EG_SCRIPT=tools-local/endgame.py.new-usagew2 python3 -I tools-local/test_usage_reset_fresh.py   (the staged copies; ACCOUNTS_SCRIPT
++  and USAGE_WATCH_SCRIPT likewise for staged copies of those; OneParser also reads BURNDOWN_SCRIPT and REVIEW_AB_RULE_SCRIPT)
+ Sandbox: temp HOME with code/manage-agents (copies of the scripts under test, endgame.py, reset_fresh.py), a stub claude (records
+ each probe), a stub accounts.sh for usage-watch (records ACCOUNTS_CAP_TTL), a stub sleep first on PATH (records the sleep and ends
+ the loop after N polls). Fake clock: ENDGAME_NOW = the test's T (read by endgame.py, reset_fresh.py and the new accounts.sh), taken
+@@ -285,6 +289,100 @@
+         self.reset_in(24); self.assertEqual(ns["pace_line"](), 90.0)
+         self.reset_in(42); self.assertEqual(ns["pace_line"](), 90.0)  # 97 - 4 x 1.75 = 90: the flat part starts here
+ 
++    # F1 of the review (usage-watch-reset-fresh-review.final.md): from Fri Dec 25 15:00 PT the reset field Fri_Jan01_15:00 was read
++    # as Jan 1 2026 (no year), and "+7 d while < 0" is one day short (365 mod 7 = 1): 77.0 on Dec 26 instead of 97 - 4 x 6 = 73.
++    def test_december_clock_line_73(self):  # the review's PROBE F1, as a pick
++        with open(self.cache, "w") as fh: fh.write("main /x/claude-main -2 50 allowed ? Fri_Jan01_15:00\n")
++        row = "main /x/claude-main -2 {} allowed ? Fri_Jan01_15:00"
++        got, err = self.pick_dec([row.format(74)], flat_log(74))
++        self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 73.0% now", err)
++        self.assertEqual(self.pick_dec([row.format(72)], flat_log(72))[0], MAIN)
++
++    def pick_dec(self, lines, log):  # a pick on the DEC26 clock, its usage-watch.log written a minute before it (fresh)
++        env = self.env(lines, log, ENDGAME_NOW=str(DEC26.timestamp()))
++        os.utime(env["PICK_USAGE_LOG"], (DEC26.timestamp() - 60, DEC26.timestamp() - 60))
++        r = subprocess.run(["zsh", self.p], env=env, capture_output=True, text=True, timeout=120)
++        return (r.stdout.strip() if r.returncode == 0 else None), r.stderr
++
++    def test_december_week_every_day(self):  # the pace_line def alone (inbox-wait.sh), each day of the week across the new year
++        pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(self.p).read(), re.S | re.M).group(0)
++        sys.path.insert(0, f"{self.m}/tools-local")
++        with open(self.cache, "w") as fh: fh.write("main /x/claude-main -2 50 allowed ? Fri_Jan01_15:00\n")
++        for k in range(7):  # Fri Dec 25 15:00 PT is 7 d before the reset: 69, then +4 a day, flat 90 from 1.75 d before it
++            ns = {"datetime": datetime, "os": os, "now": DEC26 + datetime.timedelta(days=k - 1)}
++            exec(pk, ns)
++            self.assertEqual(ns["pace_line"](), min(97 - 4 * (7 - k), 90.0), k)
++
++
++DEC26 = datetime.datetime(2026, 12, 26, 15, 0, tzinfo=TZ)
++
++
++class YearWrap(Sandbox):
++    """F1 as a class: the accounts.sh reset field has no year. endgame.hours_to is its one parser and reads the year nearest the
++    clock; reset_fresh.py, the PICK_MAIN_PACE weekly form, the endgame window (endgame.py inside) and the picker's hours to the
++    weekly reset (its pace order) all read the field through it."""
++    def eg(self):
++        ld = importlib.machinery.SourceFileLoader("endgame_yw", f"{self.m}/tools-local/endgame.py")
++        sp = importlib.util.spec_from_loader("endgame_yw", ld); md = importlib.util.module_from_spec(sp); ld.exec_module(md); return md
++
++    def test_hours_to_nearest_year(self):
++        eg = self.eg(); d = datetime.datetime
++        self.assertEqual(eg.hours_to("Fri_Jan01_15:00", DEC26), 144.0)                            # next year's
++        self.assertEqual(eg.hours_to("Thu_Dec31_15:00", d(2027, 1, 1, 15, 0, tzinfo=TZ)), -24.0)  # last year's
++        self.assertEqual(eg.hours_to("Tue_Feb29_12:00", d(2028, 3, 1, 12, 0, tzinfo=TZ)), -24.0)  # leap day, this year
++        self.assertEqual(eg.hours_to("Tue_Feb29_12:00", d(2027, 12, 30, 12, 0, tzinfo=TZ)), 61 * 24.0)  # leap day, next year
++        self.assertEqual(eg.hours_to("Fri_Nov20_15:00", d(2026, 11, 18, 15, 0, tzinfo=TZ)), 48.0)  # mid-year: unchanged
++        for bad in ("?", "", "Fri_Xyz01_15:00", "Fri_Feb30_15:00"):
++            self.assertIsNone(eg.hours_to(bad, DEC26), bad)
++
++    def test_endgame_window_across_new_year(self):  # endgame.py inside(): main's weekly freeze 95 within 2 h of the reset
++        env = {k: v for k, v in os.environ.items() if not k.startswith("ENDGAME_")}
++        env["ENDGAME_NOW"] = str(datetime.datetime(2026, 12, 31, 23, 0, tzinfo=TZ).timestamp())
++        r = subprocess.run([sys.executable, "-I", f"{self.m}/tools-local/endgame.py", "main", "?", "Fri_Jan01_00:00"],
++                           env=env, capture_output=True, text=True, timeout=60)
++        self.assertEqual(r.stdout.split(), ["90", "95", "0", "1"], r.stderr)
++
++    def test_reset_fresh_across_new_year(self):  # the wake 30 s before a New Year reset, its 10-min grace and the line state after it
++        p = f"{self.m}/tools-local/reset_fresh.py"; self.assertTrue(os.path.exists(p), "no reset_fresh.py")
++        sys.path.insert(0, f"{self.m}/tools-local")
++        ld = importlib.machinery.SourceFileLoader("reset_fresh_yw", p); sp = importlib.util.spec_from_loader("reset_fresh_yw", ld)
++        md = importlib.util.module_from_spec(sp); ld.exec_module(md)
++        r = datetime.datetime(2027, 1, 1, 0, 0, tzinfo=TZ)
++        self.assertEqual(md.watch("?", "Fri_Jan01_00:00", r - datetime.timedelta(seconds=30)), (0, 0, 30))
++        self.assertEqual(md.watch("?", "Thu_Dec31_23:55", r), (0, 1, -1))
++        self.assertEqual(md.line_state(r.timestamp() - 600, "?", "Thu_Dec31_23:55", r), "pre")
++
++
++class PickOrderYearWrap(pm.PickCase):  # the picker's hours to the weekly reset (its pace order), read through endgame.hours_to
++    def test_nearer_reset_first_across_new_year(self):
++        # on Dec 26 a 5x account resetting Fri Jan 1 (6 d) has less weekly room per hour than one resetting Wed Dec 30 (4 d): 40/144 <
++        # 30/96. Read as Jan 1 of this year (-359 d -> 1 h), the Jan 1 account had 144 x its pace and was picked first.
++        for w in (50, 60):
++            got, err = self.pick(["danielsaeedi37 /x/claude-danielsaeedi37 0 50 allowed ? Fri_Jan01_15:00",
++                                  f"saeedi.danial /x/claude-saeedi-danial 0 {w} allowed ? Wed_Dec30_15:00"],
++                                 log=None, ENDGAME_NOW=str(DEC26.timestamp()))
++            self.assertEqual(got, "/x/claude-saeedi-danial", (w, err[-400:]))
++
++
++class OneParser(unittest.TestCase):
++    """No reader of the accounts.sh reset field parses it itself (that is how pick-claude-account.sh kept a year-less copy after
++    reset_fresh.py fixed its own): every strptime of the "%a_%b%d" form is endgame.py's. The files under test replace their live
++    copies; every other live *.sh / *.py of manage-agents and tools-local (tests excepted) is read as installed."""
++    def test_only_endgame_parses_the_reset_field(self):
++        under = {os.path.join(LIVE, "pick-claude-account.sh"): pm.PICK, os.path.join(LIVE, "accounts.sh"): ACC,
++                 os.path.join(LIVE, "usage-watch.sh"): UW, os.path.join(HERE, "reset_fresh.py"): RF,
++                 os.path.join(HERE, "burndown.py"): os.environ.get("BURNDOWN_SCRIPT", os.path.join(HERE, "burndown.py")),
++                 os.path.join(HERE, "review-ab-rule.py"): os.environ.get("REVIEW_AB_RULE_SCRIPT", os.path.join(HERE, "review-ab-rule.py"))}
++        files = sorted(set(under.values()) | {f for f in (
++            [os.path.join(LIVE, n) for n in os.listdir(LIVE)] + [os.path.join(HERE, n) for n in os.listdir(HERE)])
++            if f.endswith((".sh", ".py")) and not os.path.basename(f).startswith("test_") and f not in under})
++        bad = []
++        for f in files:
++            if os.path.basename(f) == "endgame.py" or not os.path.isfile(f): continue
++            with open(f, errors="replace") as fh:
++                bad += [f"{f}:{i}" for i, ln in enumerate(fh, 1) if "strptime" in ln and "%b%d" in ln]
++        self.assertEqual(bad, [], "a second parser of the accounts.sh reset field (use endgame.hours_to)")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+--- tools-local/test_review_ab_rule.py (before, .bak-20261120T1930Z-usagew2)
++++ tools-local/test_review_ab_rule.py (now)
+@@ -3,9 +3,15 @@
+ are charged their measured downstream cost; adoption needs the NET saving > 0. dri-advfix14 (ADV-20261029T0327-1/-2):
+ an unadjudicated B/critical finding keeps the verdict INCONCLUSIVE; cycle hours veto only while queue slots bind.
+ usage: python3 -I tools-local/test_review_ab_rule.py"""
+-import contextlib, datetime as dt, importlib.util, io, json, os, subprocess, sys, tempfile, unittest
++import atexit, contextlib, datetime as dt, importlib.machinery, importlib.util, io, json, os, shutil, subprocess, sys, tempfile, unittest
+ 
+-S = os.path.join(os.path.dirname(os.path.abspath(__file__)), "review-ab-rule.py")
++# REVIEW_AB_RULE_SCRIPT / EG_SCRIPT: the review-ab-rule.py and the endgame.py it imports (default: the installed copies; staged .new
++# copies before mv). Both are copied into one temp dir, so the script under test imports the endgame.py under test.
++_HERE = os.path.dirname(os.path.abspath(__file__))
++_BOX = tempfile.mkdtemp(prefix="rab-"); atexit.register(shutil.rmtree, _BOX, True)
++shutil.copy(os.environ.get("REVIEW_AB_RULE_SCRIPT", os.path.join(_HERE, "review-ab-rule.py")), os.path.join(_BOX, "review-ab-rule.py"))
++shutil.copy(os.environ.get("EG_SCRIPT", os.path.join(_HERE, "endgame.py")), os.path.join(_BOX, "endgame.py"))
++S = os.path.join(_BOX, "review-ab-rule.py")
+ CW = {"high": 360000, "xhigh": 770000}
+ 
+ 
+@@ -96,7 +102,7 @@
+         self.assertIn("verdict: XHIGH STAYS (net CW saving 0.47M", out)
+ 
+     def test_measured_cost_shares_a_round_among_the_acting_arms_findings(self):
+-        spec = importlib.util.spec_from_file_location("rab", S)
++        spec = importlib.util.spec_from_file_location("rab", S, loader=importlib.machinery.SourceFileLoader("rab", S))
+         m = importlib.util.module_from_spec(spec)
+         spec.loader.exec_module(m)
+         calls = []
+@@ -161,16 +167,16 @@
+             f.write("\n".join(usage) + "\n")
+         with open(ac, "w") as f:
+             f.write(accounts or "# Claude accounts at 2026-10-29T03:29Z (name dir 5h% week% status 5hReset weekReset)\n"
+-                    "main /x 22 70 allowed Wed_Oct28_23:50 Fri_Oct30_16:00\n"
++                    "main /x 22 70 allowed Wed_Oct28_16:50 Fri_Oct30_09:00\n"
+                     "danielsaeedi37 /y -1 -1 unknown ? ?\n"
+-                    "saeedi.danial /z 44 60 allowed Wed_Oct28_22:10 Wed_Oct29_10:00\n")
++                    "saeedi.danial /z 44 60 allowed Wed_Oct28_15:10 Thu_Oct29_03:00\n")
+         if now_md is not None:
+             with open(nm, "w") as f:
+                 f.write(now_md)
+         return u, ac, nm
+ 
+     def mod(self):
+-        spec = importlib.util.spec_from_file_location("rab", S)
++        spec = importlib.util.spec_from_file_location("rab", S, loader=importlib.machinery.SourceFileLoader("rab", S))
+         m = importlib.util.module_from_spec(spec)
+         spec.loader.exec_module(m)
+         return m
+@@ -199,6 +205,21 @@
+             u, ac, _ = self._files(d, rows("main", (70,)))
+             self.assertEqual(m.token_binding(u, ac, now)[0], None)
+ 
++    def test_token_binding_reset_field_is_pacific_and_year_safe(self):
++        # usage-watch-reset-fresh F1 (class sweep): the reset field (accounts.sh, America/Los_Angeles, no year) is read by
++        # endgame.hours_to. Before: read as UTC (7-8 h early) and a Jan 1 reset read in late December as this year's (in the past)
++        m = self.mod()
++        rows = lambda ws: [f"{c}Z main 5h=10 week={w} allowed" for c, w in zip(("20:00", "21:00", "22:00", "23:00"), ws)]
++        acc = lambda r: f"# Claude accounts\nmain /x 22 70 allowed ? {r}\n"
++        with tempfile.TemporaryDirectory() as d:
++            now = dt.datetime(2026, 12, 26, 23, 0, tzinfo=dt.timezone.utc)  # Sat Dec 26 15:00 PST
++            u, ac, _ = self._files(d, rows((67, 68, 69, 70)), accounts=acc("Fri_Jan01_15:00"))
++            self.assertIn("at its reset in 144.0 h", m.token_binding(u, ac, now)[1])
++            u, ac, _ = self._files(d, rows((67, 68, 69, 70)), accounts=acc("Sat_Dec26_17:00"))  # 01:00Z: 2 h, not 18 h
++            self.assertIn("at its reset in 2.0 h", m.token_binding(u, ac, now)[1])
++            u, ac, _ = self._files(d, rows((67, 68, 69, 70)), accounts=acc("Mon_Feb29_12:00"))  # no Feb 29 near: unknown, no crash
++            self.assertIsNone(m.token_binding(u, ac, now)[0])
++
+     def test_slot_binding_from_now_md(self):
+         m = self.mod()
+         cap = "Capacity: queue items in flight: {} (max 5 = 7 - 2 held for the infra feed); chains: 5; not yet launched: {}; flags\n"
+--- tools-local/test_burndown.py (before, .bak-20261120T1930Z-usagew2)
++++ tools-local/test_burndown.py (now)
+@@ -737,6 +737,30 @@
+         self.b.account_table()
+         self.assertEqual(got[0][2], dt.datetime(2026, 11, 5, 8, 0, tzinfo=dt.timezone.utc))
+ 
++    def test_account_table_reset_year_nearest_now(self):
++        # usage-watch-reset-fresh F1 (class sweep): the table read the accounts.sh reset field as year 2026 (a strptime of its own);
++        # it reads it through endgame.hours_to, the one parser of the field (America/Los_Angeles, the year nearest NOW). burndown.py
++        # and the endgame.py under test (EG_SCRIPT, default the installed one) are loaded side by side from a temp dir.
++        box = tempfile.mkdtemp(prefix="burndown-eg-"); self.addCleanup(shutil.rmtree, box, True)
++        shutil.copy(SCRIPT, f"{box}/burndown.py"); shutil.copy(os.environ.get("EG_SCRIPT", f"{HERE}/endgame.py"), f"{box}/endgame.py")
++        sys.modules.pop("endgame", None); self.addCleanup(sys.modules.pop, "endgame", None)  # not an endgame an earlier test imported
++        ld = importlib.machinery.SourceFileLoader("burndown_yw", f"{box}/burndown.py")
++        b = importlib.util.module_from_spec(importlib.util.spec_from_loader("burndown_yw", ld)); ld.exec_module(b)
++        utc = dt.timezone.utc
++
++        def reset_of(now, field):
++            b.NOW = now
++            open(f"{self.m}/ACCOUNTS.md", "w").write(f"# Claude accounts\nd37 /x 0 50 allowed ? {field}\n")
++            open(f"{self.m}/usage-watch.log", "w").write(f"{now:%H:%M}Z d37 5h=0 week=50 allowed\n")
++            got = []
++            b.account_projection = lambda acc: got.extend(acc) or ""
++            b.account_table()
++            return got[0][2]
++        # Sat Dec 26 15:00 PST: Fri Jan 1 15:00 PST is next year's (read as Jan 1 2026 before, a year in the past)
++        self.assertEqual(reset_of(dt.datetime(2026, 12, 26, 23, 0, tzinfo=utc), "Fri_Jan01_15:00"), dt.datetime(2027, 1, 1, 23, 0, tzinfo=utc))
++        # any reading in 2027 (read as 2026 before); Mar 8 is still PST
++        self.assertEqual(reset_of(dt.datetime(2027, 3, 1, 20, 0, tzinfo=utc), "Mon_Mar08_15:00"), dt.datetime(2027, 3, 8, 23, 0, tzinfo=utc))
++
+     def test_band_is_conditional_and_states_no_expected_finish(self):
+         # adv0236 item 2: pooled CW per point and one window limit are unverified, so the band and the L1 classes read CONDITIONAL, never "expected <n>"
+         self.b.points_24h = lambda: 10

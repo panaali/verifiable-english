@@ -1,0 +1,20 @@
+F.
+======================================================================
+FAIL: test_every_sandbox_holds_the_modules_its_tools_import (__main__.SandboxImports.test_every_sandbox_holds_the_modules_its_tools_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<tmp>XwaF/tools-local/test_usage_reset_fresh.py", line 484, in test_every_sandbox_holds_the_modules_its_tools_import
+    self.assertEqual(missing, [], "a sandbox lacks a tools-local module that a tool it copies imports")
+AssertionError: Lists differ: ['test_review_effort_ab.py: endgame.py'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'test_review_effort_ab.py: endgame.py'
+
+- ['test_review_effort_ab.py: endgame.py']
++ [] : a sandbox lacks a tools-local module that a tool it copies imports
+
+----------------------------------------------------------------------
+Ran 2 tests in 3.509s
+
+FAILED (failures=1)
