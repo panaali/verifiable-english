@@ -85,11 +85,11 @@
    "units": 6
   },
   "no claim to check": {
-   "bytes": 31246,
-   "sole_bytes": 31246,
+   "bytes": 31253,
+   "sole_bytes": 31253,
    "sole_units": 134,
    "statuses": {
-    "LABELLED": 31246
+    "LABELLED": 31253
    },
    "units": 134
   },
@@ -105,15 +105,15 @@
   }
  },
  "master_bytes_by_status": {
-  "CHECKED": 5327,
-  "LABELLED": 36883,
+  "CHECKED": 5320,
+  "LABELLED": 36890,
   "OPEN": 13072,
   "UNFORMALISED": 4128
  },
  "source_bytes": 59410,
  "status_bytes_recomputed": {
-  "CHECKED": 5327,
-  "LABELLED": 36883,
+  "CHECKED": 5320,
+  "LABELLED": 36890,
   "OPEN": 13072,
   "UNFORMALISED": 4128
  },

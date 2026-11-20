@@ -1343,14 +1343,14 @@
    "blockers": [
     "no claim to check"
    ],
-   "bytes": 22,
+   "bytes": 29,
    "id": "s31-heading",
    "kind": "meta",
    "status": "LABELLED"
   },
   {
    "blockers": [],
-   "bytes": 180,
+   "bytes": 173,
    "id": "s31-coverage-date",
    "kind": "meta",
    "status": "CHECKED"
