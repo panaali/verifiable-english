@@ -1,0 +1,12 @@
+{
+ "job": "testmap-fa8c3585-t203547-s0",
+ "head": "a792bd1de2acf5b0d8421addba6d66bf9857a0f8",
+ "argv": [
+  "testmap-fa8c3585-t203547-s0",
+  "a792bd1de2acf5b0d8421addba6d66bf9857a0f8",
+  "a792bd1de2acf5b0d8421addba6d66bf9857a0f8",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_safetyfw_usecases.py tests/test_srccov_openai_preparedness_1119.py tests/test_history_tests.py tests/test_pf_f16_without_fix.py tests/test_gate.py tests/test_platform_contract.py tests/test_pf_f7_timed_act.py tests/test_document_split.py tests/test_fidmech_records.py tests/test_fidmech_segment.py tests/test_defs_repair_asimov_extended_1119.py tests/test_select_defer.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
