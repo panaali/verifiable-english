@@ -21,7 +21,7 @@
           "point",
           "point"
         ],
-        "description": "The base edge relation whose transitive closure is discussed.",
+        "description": "The base edge relation whose transitive closure is discussed. The closure profile adds `tc[r](a, b)` and `rtc[r](a, b)` — the transitive and reflexive-transitive closures of a named homogeneous binary relation — with a least-fixed-point semantics over arbitrary, possibly infinite structures.",
         "verbalisation": "{0} links {1}",
         "negative_verbalisation": "{0} does not link {1}"
       },
