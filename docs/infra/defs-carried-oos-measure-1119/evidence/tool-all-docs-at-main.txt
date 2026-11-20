@@ -1,0 +1,254 @@
+asimov-laws (rules.ve): 13 rules, 21 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 13 pairs, 12 detected not carried, 1 not
+    MISS defs-asimov-laws-2-1119:R9 R9 breaks_zeroth_law: NOT CARRIED, reach term-not-in-rule
+  marker hits 1 (1 link no term); pairs 0: 
+  run time 0.055 s
+asimov-extended (rules.ve): 29 rules, 41 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 35 pairs, 28 detected not carried, 7 not
+    MISS defs-asimov-extended-1-1119:R28 R28 less_severe_competitor: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-1-1119:R29 R29 less_severe_competitor: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-2-1119:R18 R18 beaten_by_a_candidate: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-2-1119:R19 R19 beaten_by_a_candidate: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-2-1119:R20 R20 beaten_by_a_candidate: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-2-1119:R29 R29 beaten_by_a_candidate: CARRIED-ASSUMED, reach parsed
+    MISS defs-asimov-extended-7-1119:R16 R16 breaks_first_law: NOT CARRIED, reach term-not-in-rule
+  marker hits 5 (4 link no term); pairs 6: FRAGMENT 6
+  run time 0.085 s
+birthright-citizenship-debate (claims.ve): 7 rules, 8 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 3 pairs, 3 detected not carried, 0 not
+  marker hits 7 (7 link no term); pairs 0: 
+  run time 0.077 s
+bluedot-grant (.ve.md): 69 rules, 160 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 6 (u012, u019, u020, u033, u080, u081); dependencies unknown: any of the document's 160 declared terms; candidates (terms no parsed rule reaches): 28
+  known cases: 20 pairs, 20 detected not carried, 0 not
+  marker hits 16 (8 link no term); pairs 61: NOT CARRIED 61
+  run time 0.087 s
+claude-constitution-excerpt (claims.ve): 11 rules, 32 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 16 pairs, 7 detected not carried, 9 not
+    MISS defs-claude-constitution-excerpt-2-1119:C1 C1 ought_have_core_values: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-3-1119:C2 C2 appropriate: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-3-1119:C9 C9 appropriate: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-4-1119:C2 C2 undermines: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-4-1119:C9 C9 undermines: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-5-1119:C3 C3 honest: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-8-1119:C6 C6 outranks: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-8-1119:C7 C7 outranks: CARRIED-ASSUMED, reach parsed
+    MISS defs-claude-constitution-excerpt-8-1119:C8 C8 outranks: CARRIED-ASSUMED, reach parsed
+  marker hits 10 (6 link no term); pairs 12: CARRIED-ASSUMED 5, FRAGMENT 4, UNSHOWN 3
+  run time 0.05 s
+claude-constitution-pilot (.ve.md): 19 rules, 54 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 3 (u0125.s04.p2, u0156.s03, u0263.s04.p2); dependencies unknown: any of the document's 54 declared terms; candidates (terms no parsed rule reaches): 7
+  known cases: 37 pairs, 36 detected not carried, 1 not
+    MISS defs-claude-constitution-pilot-1-1119:u0036.s05 u0036.s05 claude_instance: NOT CARRIED, reach term-not-in-rule
+  marker hits 140 (135 link no term); pairs 36: FRAGMENT 2, NOT CARRIED 34
+  run time 0.214 s
+eligibility (rules.json): 49 rules, 85 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 141 pairs, 55 detected not carried, 86 not
+    MISS defs-eligibility-2-1119:R5a.applicant R5a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5b.applicant R5b.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8a.applicant R8a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8b.applicant R8b.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8c.applicant R8c.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R9.applicant R9.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R12.applicant R12.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R13a.applicant R13a.applicant None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5a.housemate R5a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R5b.housemate R5b.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8a.housemate R8a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8b.housemate R8b.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R8c.housemate R8c.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R9.housemate R9.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R12.housemate R12.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R13a.housemate R13a.housemate None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16a R16a None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16b R16b None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:R16c R16c None: NOT CARRIED, reach no-ve-term
+    MISS defs-eligibility-2-1119:B1 B1 None: CARRIED-ASSUMED, reach no-ve-term
+    MISS defs-eligibility-3-1119:R7b.applicant R7b.applicant partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R7b.housemate R7b.housemate partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R7.applicant R7.applicant partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R7.housemate R7.housemate partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R14a R14a partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R14.3 R14.3 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R14.1 R14.1 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R13a.applicant R13a.applicant excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-3-1119:R13a.housemate R13a.housemate excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R7b.applicant R7b.applicant partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R7b.housemate R7b.housemate partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R7.applicant R7.applicant partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R7.housemate R7.housemate partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R14a R14a partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R14.3 R14.3 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R14.1 R14.1 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R13a.applicant R13a.applicant excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-4-1119:R13a.housemate R13a.housemate excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R7b.applicant R7b.applicant partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R7b.housemate R7b.housemate partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R7.applicant R7.applicant partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R7.housemate R7.housemate partners_throughout: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R14a R14a partner_of: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R14.3 R14.3 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R14.1 R14.1 partner_at_home: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R13a.applicant R13a.applicant excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-5-1119:R13a.housemate R13a.housemate excluded_partner_benefit: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R5b.applicant R5b.applicant in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R5b.housemate R5b.housemate in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R6.applicant R6.applicant in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R6.housemate R6.housemate in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R10.applicant R10.applicant in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R10.housemate R10.housemate in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R14.1 R14.1 in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R14.2 R14.2 in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R15.4 R15.4 in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R15.5 R15.5 in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-6-1119:R15.6 R15.6 in_residential_care: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R6.applicant R6.applicant lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R6.housemate R6.housemate lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R7.applicant R7.applicant lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R7.housemate R7.housemate lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R14.1 R14.1 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R14.2 R14.2 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R14.3 R14.3 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R15.4 R15.4 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R15.5 R15.5 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-7-1119:R15.6 R15.6 lives_with: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-8-1119:R5a.applicant R5a.applicant in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-8-1119:R5a.housemate R5a.housemate in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-8-1119:R5b.applicant R5b.applicant in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-8-1119:R5b.housemate R5b.housemate in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-9-1119:R5a.applicant R5a.applicant in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-9-1119:R5a.housemate R5a.housemate in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-9-1119:R5b.applicant R5b.applicant in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-9-1119:R5b.housemate R5b.housemate in_care_setting: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8a.applicant R8a.applicant inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8a.housemate R8a.housemate inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8b.applicant R8b.applicant inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8b.housemate R8b.housemate inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8c.applicant R8c.applicant inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-10-1119:R8c.housemate R8c.housemate inpatient: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-11-1119:R16a R16a recovered: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-11-1119:R16b R16b recovered: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-12-1119:R16a R16a recovered: CARRIED-ASSUMED, reach parsed
+    MISS defs-eligibility-12-1119:R16b R16b recovered: CARRIED-ASSUMED, reach parsed
+  marker hits 117 (90 link no term); pairs 440: CARRIED-ASSUMED 59, FRAGMENT 170, NOT CARRIED 211
+  run time 4.465 s
+math-mini-paper (theorems): 19 rules, 12 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  known cases: 23 pairs, 12 detected not carried, 11 not
+    MISS defs-math-mini-paper-1-1119:T6 T6 sim: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-1-1119:T7 T7 sim: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-1-1119:T7a T7a sim: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-1-1119:T7b T7b sim: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-1-1119:T7mono T7mono sim: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9 T9 r: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9a T9a r: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9b T9b r: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9c T9c r: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9d T9d r: CARRIED-ASSUMED, reach parsed
+    MISS defs-math-mini-paper-2-1119:T9e T9e r: CARRIED-ASSUMED, reach parsed
+  marker hits 122 (119 link no term); pairs 9: NOT CARRIED 9
+  run time 0.356 s
+news-article (claims.ve): 26 rules, 73 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 1 (s12_year); dependencies unknown: any of the document's 73 declared terms; candidates (terms no parsed rule reaches): 1
+  known cases: 1 pairs, 1 detected not carried, 0 not
+  marker hits 5 (5 link no term); pairs 0: 
+  run time 0.046 s
+question-answering (.ve.md): 10 rules, 87 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 2 (u087, u096); dependencies unknown: any of the document's 87 declared terms; candidates (terms no parsed rule reaches): 70
+  marker hits 0 (0 link no term); pairs 0: 
+  run time 0.036 s
+udhr-pilot (.ve.md): 50 rules, 66 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  UNPARSED rules: 20 (u022a, u022b, u022c, u029, u045b, u048, u049, u063 ...); dependencies unknown: any of the document's 66 declared terms; candidates (terms no parsed rule reaches): 26
+  known cases: 10 pairs, 7 detected not carried, 3 not
+    MISS defs-udhr-pilot-1-1119:u052 u052 asylum_right_covers_case: NOT CARRIED, reach term-not-in-rule
+    MISS udhr-D7:u112:exercise_of_declared_right u112 exercise_of_declared_right: NOT CARRIED, reach term-not-in-rule
+    MISS udhr-D7:u114:declaration_implies_destructive_right u114 declaration_implies_destructive_right: NOT CARRIED, reach term-not-in-rule
+  marker hits 4 (3 link no term); pairs 1: NOT CARRIED 1
+  run time 0.063 s
+us-constitution-14th-s1 (claims.ve): 4 rules, 16 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
+  marker hits 8 (8 link no term); pairs 0: 
+  run time 0.019 s
+safety-framework (counter): 62 rules, 174 declared terms; COUNTED
+  known cases: 89 pairs, 16 detected not carried, 73 not
+    MISS F1:levels-cbrn:cbrn_uplift_tcl:p1 levels-cbrn cbrn_uplift_tcl: CARRIED, reach parsed
+    MISS F1:levels-cbrn:cbrn_uplift_level_1:p2 levels-cbrn cbrn_uplift_level_1: CARRIED, reach parsed
+    MISS F1:levels-cyber:cyber_uplift_level_1:p3 levels-cyber cyber_uplift_level_1: CARRIED, reach parsed
+    MISS F1:levels-manipulation:harmful_manipulation_level_1:p4 levels-manipulation harmful_manipulation_level_1: CARRIED, reach parsed
+    MISS F1:levels-stealth:stealth_and_situational_awareness_tcl:p5 levels-stealth stealth_and_situational_awareness_tcl: CARRIED, reach parsed
+    MISS F1:levels-ml-rd-acceleration:ml_rd_acceleration_level_1:p6 levels-ml-rd-acceleration ml_rd_acceleration_level_1: CARRIED, reach parsed
+    MISS F1:levels-ml-rd-automation:ml_rd_automation_level_1:p7 levels-ml-rd-automation ml_rd_automation_level_1: CARRIED, reach parsed
+    MISS F3:f3:governance_found_acceptable_with_safety_case_where_ccl_reached:p1 f3 governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F3:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p1 f12-p governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F3:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p1 f12-u governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F3:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p1 f13-p governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F3:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p1 f13-u governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F5:f3:low_risk:p1 f3 low_risk: CARRIED, reach parsed
+    MISS F5:activities-low-risk:low_risk:p1 activities-low-risk low_risk: CARRIED, reach parsed
+    MISS F6:f9-acc:recommends:p1 f9-acc recommends: CARRIED, reach parsed
+    MISS F6:f10-acc:recommends:p1 f10-acc recommends: CARRIED, reach parsed
+    MISS F6:f16-ds:recommends:p1 f16-ds recommends: CARRIED, reach parsed
+    MISS F6:f16-ds-strict:recommends:p1 f16-ds-strict recommends: CARRIED, reach parsed
+    MISS F6:levels-cbrn:recommends:p1 levels-cbrn recommends: CARRIED, reach parsed
+    MISS F6:levels-cyber:recommends:p1 levels-cyber recommends: CARRIED, reach parsed
+    MISS F6:levels-manipulation:recommends:p1 levels-manipulation recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-acceleration:recommends:p1 levels-ml-rd-acceleration recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-automation:recommends:p1 levels-ml-rd-automation recommends: CARRIED, reach parsed
+    MISS F6:f9-acc:recommends:p2 f9-acc recommends: CARRIED, reach parsed
+    MISS F6:f10-acc:recommends:p2 f10-acc recommends: CARRIED, reach parsed
+    MISS F6:f16-ds:recommends:p2 f16-ds recommends: CARRIED, reach parsed
+    MISS F6:f16-ds-strict:recommends:p2 f16-ds-strict recommends: CARRIED, reach parsed
+    MISS F6:levels-cbrn:recommends:p2 levels-cbrn recommends: CARRIED, reach parsed
+    MISS F6:levels-cyber:recommends:p2 levels-cyber recommends: CARRIED, reach parsed
+    MISS F6:levels-manipulation:recommends:p2 levels-manipulation recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-acceleration:recommends:p2 levels-ml-rd-acceleration recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-automation:recommends:p2 levels-ml-rd-automation recommends: CARRIED, reach parsed
+    MISS F6:f9-acc:recommends:p3 f9-acc recommends: CARRIED, reach parsed
+    MISS F6:f10-acc:recommends:p3 f10-acc recommends: CARRIED, reach parsed
+    MISS F6:f16-ds:recommends:p3 f16-ds recommends: CARRIED, reach parsed
+    MISS F6:f16-ds-strict:recommends:p3 f16-ds-strict recommends: CARRIED, reach parsed
+    MISS F6:levels-cbrn:recommends:p3 levels-cbrn recommends: CARRIED, reach parsed
+    MISS F6:levels-cyber:recommends:p3 levels-cyber recommends: CARRIED, reach parsed
+    MISS F6:levels-manipulation:recommends:p3 levels-manipulation recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-acceleration:recommends:p3 levels-ml-rd-acceleration recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-automation:recommends:p3 levels-ml-rd-automation recommends: CARRIED, reach parsed
+    MISS F6:f9-acc:recommends:p4 f9-acc recommends: CARRIED, reach parsed
+    MISS F6:f10-acc:recommends:p4 f10-acc recommends: CARRIED, reach parsed
+    MISS F6:f16-ds:recommends:p4 f16-ds recommends: CARRIED, reach parsed
+    MISS F6:f16-ds-strict:recommends:p4 f16-ds-strict recommends: CARRIED, reach parsed
+    MISS F6:levels-cbrn:recommends:p4 levels-cbrn recommends: CARRIED, reach parsed
+    MISS F6:levels-cyber:recommends:p4 levels-cyber recommends: CARRIED, reach parsed
+    MISS F6:levels-manipulation:recommends:p4 levels-manipulation recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-acceleration:recommends:p4 levels-ml-rd-acceleration recommends: CARRIED, reach parsed
+    MISS F6:levels-ml-rd-automation:recommends:p4 levels-ml-rd-automation recommends: CARRIED, reach parsed
+    MISS F7:f8:acceptable:p1 f8 acceptable: CARRIED, reach parsed
+    MISS F7:f9-acc:acceptable:p1 f9-acc acceptable: CARRIED, reach parsed
+    MISS F7:f10-acc:acceptable:p1 f10-acc acceptable: CARRIED, reach parsed
+    MISS F7:f11-acc:acceptable:p1 f11-acc acceptable: CARRIED, reach parsed
+    MISS F7:f3:governance_found_acceptable_with_safety_case_where_ccl_reached:p2 f3 governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F7:f12-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p2 f12-p governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F7:f12-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p2 f12-u governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F7:f13-p:governance_found_acceptable_with_safety_case_where_ccl_reached:p2 f13-p governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F7:f13-u:governance_found_acceptable_with_safety_case_where_ccl_reached:p2 f13-u governance_found_acceptable_with_safety_case_where_ccl_reached: CARRIED, reach parsed
+    MISS F7:f9-acc:mitigates:p3 f9-acc mitigates: CARRIED, reach parsed
+    MISS F7:f10-acc:mitigates:p3 f10-acc mitigates: CARRIED, reach parsed
+    MISS F7:f11-acc:mitigates:p3 f11-acc mitigates: CARRIED, reach parsed
+    MISS F7:f9-acc:mitigates:p4 f9-acc mitigates: CARRIED, reach parsed
+    MISS F7:f10-acc:mitigates:p4 f10-acc mitigates: CARRIED, reach parsed
+    MISS F7:f11-acc:mitigates:p4 f11-acc mitigates: CARRIED, reach parsed
+    MISS F7:f9-acc:mitigates:p5 f9-acc mitigates: CARRIED, reach parsed
+    MISS F7:f10-acc:mitigates:p5 f10-acc mitigates: CARRIED, reach parsed
+    MISS F7:f11-acc:mitigates:p5 f11-acc mitigates: CARRIED, reach parsed
+    MISS F8:f18-frequent:frequent_review:p1 f18-frequent frequent_review: CARRIED, reach parsed
+    MISS F8:f18-yearly:yearly_review:p3 f18-yearly yearly_review: CARRIED, reach parsed
+    MISS F9:f2:assessed:p1 f2 assessed: CARRIED, reach parsed
+    MISS F9:f3:assessed:p1 f3 assessed: CARRIED, reach parsed
+    MISS F9:f5:change_assessed:p2 f5 change_assessed: CARRIED, reach parsed
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 66999 bytes (ARG_LIMIT 131000)
+  run time 0.523 s
+anthropic-rsp (counter): 86 rules, 224 declared terms; COUNTED
+  known cases: 1 pairs, 1 detected not carried, 0 not
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 73727 bytes (ARG_LIMIT 131000)
+  run time 0.749 s
+openai-preparedness (counter): 102 rules, 244 declared terms; COUNTED
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 85611 bytes (ARG_LIMIT 131000)
+  run time 0.988 s
+known cases: 389 pairs, 198 detected not carried, 191 missed; total 7.818 s; report mode: exit 0
