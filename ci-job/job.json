@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-t1-fresh-sweep-1120-b937b17c-t172363-s8",
+ "head": "5cac5ea4e5ff6a69bda43a92ec44d47c88990283",
+ "argv": [
+  "armsh-cand-tm-t1-fresh-sweep-1120-b937b17c-t172363-s8",
+  "5cac5ea4e5ff6a69bda43a92ec44d47c88990283",
+  "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
