@@ -1,0 +1,27 @@
+{
+ "item": "usage-watch-reset-fresh (recheck fix F8)",
+ "note": "Each seed was applied to a /tmp copy of manage-agents/tools-local (S15: the whole directory; S16: the suite and the tools it copies), the named tests were run from that copy, and the copy was deleted. No live file carried a seed (md5.txt). The change is Python test code only; no Lean or Rust product code changed.",
+ "mutants": [
+  {
+   "id": "S15",
+   "file": "manage-agents/tools-local/test_review_effort_ab.py",
+   "change": "the sandbox copy list from before the fix (test_review_effort_ab.py.bak-20261120T2000Z-usagew2): review-ab-rule.py without endgame.py",
+   "failing": [
+    "SandboxImports.test_every_sandbox_holds_the_modules_its_tools_import"
+   ],
+   "log": "seed-S15.log"
+  },
+  {
+   "id": "S16",
+   "file": "manage-agents/tools-local/test_review_effort_ab.py",
+   "change": "only the new shutil.copy(EG, .../endgame.py) line deleted; run with REVIEW_AB_RULE_SCRIPT/EG_SCRIPT = the staged .new-usagew2 copies",
+   "failing": [
+    "Guards.test_sample_end_12_decisive",
+    "Pair.test_rerun_replaces_row",
+    "Pair.test_shared_and_false_and_pending",
+    "Pair.test_xhigh_only_confirmed_maps_to_fail"
+   ],
+   "log": "seed-S16.log"
+  }
+ ]
+}

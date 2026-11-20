@@ -19,6 +19,10 @@ F3_BLOCKS = ("f12-p", "f12-u", "f13-p", "f13-u")
 # stored and checks that this copy is the same; the copy keeps the legend check running where the source is absent.
 SENTENCE = ("Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have "
             "been reduced to an acceptable level.")
+# The Glossary entry's next sentence (same line), quote-normalised: the legend's quote may go on with it, as
+# defs-repair-safety-framework-1119 quotes the entry whole (audit row x45).
+NEXT = ("Residual risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a "
+        "model's risk acceptance determination.")
 
 
 def _quote_normal(text):
@@ -41,6 +45,7 @@ def _source_sentence():
         return SENTENCE
     found = re.findall(r"Safety Cases: [^.]*\.", _quote_normal(path.read_text(encoding="utf-8")))
     assert found == [SENTENCE]
+    assert _quote_normal(path.read_text(encoding="utf-8")).count(f"{SENTENCE} {NEXT}") == 1
     return found[0]
 
 
@@ -54,7 +59,7 @@ def test_the_governance_legend_quotes_the_glossary_safety_case_sentence_whole():
     legends = (vocabulary.environment()["vocabulary"]["predicates"][GOV]["description"],
                committed["vocabulary"]["predicates"][GOV]["description"])
     for legend in legends:
-        assert f'"{sentence}"' in _quote_normal(legend)
+        assert f'"{sentence}"' in _quote_normal(legend) or f'"{sentence} {NEXT}' in _quote_normal(legend)
         assert legend.startswith("the appropriate governance function has determined the residual risk of {0} ")
         assert legend.endswith(". Open term OT3, decided by the appropriate governance function (unnamed)")
     assert vocabulary.OPEN_PREDICATES[GOV] == "OT3"
