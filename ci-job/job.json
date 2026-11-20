@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-asimov-extended-1119-a0dac448-t201370-s4",
+ "head": "11589067d8a5f1a69908a4349b44ad8268238651",
+ "argv": [
+  "armsh-cand-srccov-asimov-extended-1119-a0dac448-t201370-s4",
+  "11589067d8a5f1a69908a4349b44ad8268238651",
+  "a792bd1de2acf5b0d8421addba6d66bf9857a0f8",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
