@@ -18,7 +18,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/en-e3-norm/](docs__en-e3-norm.md) — 3 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
-- [docs/infra/](docs__infra.md) — 40 modules — -
+- [docs/infra/](docs__infra.md) — 51 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
 - [docs/kernel/](docs__kernel.md) — 25 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
@@ -78,6 +78,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-speed-b3/](docs__test-speed-b3.md) — 2 modules — -
 - [docs/test-speed-b5/](docs__test-speed-b5.md) — 2 modules — -
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
+- [docs/tm-t1-fresh-sweep-1120/](docs__tm-t1-fresh-sweep-1120.md) — 1 modules — -
 - [docs/translim/](docs__translim.md) — 4 modules — -
 - [docs/usecases/](docs__usecases.md) — 3 modules — -
 - [docs/weighing/](docs__weighing.md) — 1 modules — -
@@ -147,7 +148,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 6](tests--part-6.md) — 78 modules — -
 - [tests/ part 7](tests--part-7.md) — 81 modules — -
 - [tests/ part 8](tests--part-8.md) — 85 modules — -
-- [tests/ part 9](tests--part-9.md) — 26 modules — -
+- [tests/ part 9](tests--part-9.md) — 29 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
 - [tools/ part 2](tools--part-2.md) — 28 modules — -

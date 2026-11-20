@@ -25,7 +25,18 @@
 - `docs/infra/released-main-1117/test_pick_released_main.py` — released-main-1117 (reviews/dri-decisions-20261117-released-main.md item 2; orchestrator BATCH 20261117T032312Z item 2): a released row (BACKLOG links.released…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
+- `docs/infra/srccov-anthropic-rsp-1119/evidence/legend_keep.py` — Every legend this item changed keeps its base words in order, and no other field of the symbol changed.
+- `docs/infra/srccov-claude-constitution-excerpt-1119/evidence/verify.py` — Verify-first check for srccov-claude-constitution-excerpt-1119 (run before any edit, on main).
 - `docs/infra/tm-actions-deadline/seed_run.py` — Plant one seeded bug per behaviour in a temporary COPY of cloud-tm-job.sh (argv[1], default the installed one) and run the test file against it.
+- `docs/infra/tm-build-timeout-1120/evidence/corr.py` — (no module docstring)
+- `docs/infra/tm-build-timeout-1120/evidence/files.py` — (no module docstring)
+- `docs/infra/tm-build-timeout-1120/evidence/gate-overlap.py` — Timeout share of the 11-16..19 ve-cloud-2 parts grouped by gate overlap and by the limit in force (reads corr.out).
+- `docs/infra/tm-build-timeout-1120/evidence/mkscratch.py` — (no module docstring)
+- `docs/infra/tm-build-timeout-1120/evidence/parts.py` — (no module docstring)
+- `docs/infra/tm-build-timeout-1120/evidence/perday.py` — Judged vs build-timeout rows per day (the day a part ended, parts.tsv) and per host, every part record since 11-10; H = a file whose tries end in a build timeo…
+- `docs/infra/tm-build-timeout-1120/evidence/planlist.py` — usage: planlist.py <root> <base> <out.json>: the trust_mutants plan (id, file) at <root> since <base>, trusted classes.
+- `docs/infra/tm-build-timeout-1120/evidence/rate.py` — (no module docstring)
+- `docs/infra/tm-build-timeout-1120/evidence/runs.py` — (no module docstring)
 - `docs/infra/tm-cache-asset-pick/seed_run.py` — Seeded bugs of tm-cache-asset-pick: each is planted in a TEMPORARY copy of the staged lean-cache-publish.sh.new-tmcache (the staged file is never edited), tool…
 - `docs/infra/tm-drain-vm1-idle/part0_measure.py` — Part 0 of tm-drain-vm1-idle: timeouts vs verdicts of the trust-mutant nightly, per host and per hour, from its records.
 - `docs/infra/tm-drain-vm1-idle/seed_run.py` — Seeded bugs for tm-drain-vm1-idle: each seed is one exact find/replace in a /tmp copy of the staged manage-agents/tm-nightly.sh.new-tmidle, run with TMN_SH=<co…
