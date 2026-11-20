@@ -1,0 +1,7 @@
+job=armsh-cand-defs-repair-claude-constitution-excerpt-1119-9c9da90f-t150734-s1 shard=1/7 nproc=4 arch=aarch64 host=runnervm1x7cq date=2026-11-20T05:00:51Z ulimit_s=16384
+Mem:              15           1           8           0           5          14
+/dev/root       145G   43G  102G  30% /
+ 05:00:51 up 2 min,  0 user,  load average: 1.03, 0.39, 0.14
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 28.3 s
+p1-tokenizers: 443909a61d42 fetched
