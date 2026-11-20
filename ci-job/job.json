@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-actions-mismatch-scope-narrow-1120-e01c3d66-t170364-s4",
+ "head": "b4e8668fc2044c96004f89051d18575b425d9e55",
+ "argv": [
+  "armsh-cand-actions-mismatch-scope-narrow-1120-e01c3d66-t170364-s4",
+  "b4e8668fc2044c96004f89051d18575b425d9e55",
+  "aaeda02b6e8d47a74ab33784e2e3e107d6a99f1d",
+  "-",
+  "-",
+  "4",
+  "4/7"
+ ]
+}
