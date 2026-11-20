@@ -5558,7 +5558,7 @@
    "documents_built": 38,
    "prover_calls": 32,
    "rules": 76,
-   "units": 303,
+   "units": 307,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
   "M2": {
@@ -5570,22 +5570,22 @@
   "M3": {
    "bytes_by_kind": {
     "asserted": 301,
-    "attributed": 2552,
+    "attributed": 2045,
     "causal": 551,
     "definition": 5942,
     "example": 3118,
     "explanation": 13478,
     "exposition": 5913,
     "hedged": 1903,
-    "meta": 3078,
-    "norm": 18953,
-    "unformalised": 3621
+    "meta": 3220,
+    "norm": 18811,
+    "unformalised": 4128
    },
    "bytes_by_status": {
-    "CHECKED": 5327,
-    "LABELLED": 37248,
-    "OPEN": 13214,
-    "UNFORMALISED": 3621
+    "CHECKED": 5320,
+    "LABELLED": 36890,
+    "OPEN": 13072,
+    "UNFORMALISED": 4128
    },
    "residual": {
     "assumptions": 0,
