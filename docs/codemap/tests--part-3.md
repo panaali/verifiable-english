@@ -1,3 +1,5 @@
+- `tests/test_df_e1.py` — DF-E1's preregistered blind reader transport and scoring, without model calls.
+- `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
 - `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
 - `tests/test_discourse_answer.py` — The Python relay never accepts a Lean discourse answer that is not an answer to the document it asked about (lf-4 review B; FINDING-CLASSES 8 and 15).
 - `tests/test_discourse_composed_route.py` — cmp-s4c: the discourse route's entry on the composed path (docs/spec/discourse.md 14.5, 14.6 and 14.8) through the Lean service: norm content answered on a lis…
@@ -81,4 +83,3 @@
 - `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
 - `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
 - `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…
-- `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
