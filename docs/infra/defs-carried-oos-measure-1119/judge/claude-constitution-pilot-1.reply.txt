@@ -1,0 +1,9 @@
+F027 | NOT CARRIED | S7 says "An operator is permitted to give Claude the input" but never says who operators are (API customers building products, usually via the system prompt).
+F028 | NOT CARRIED | S7 uses "operator" with no definition; the API-access, system-prompt and usage-policy description is absent from S1–S7.
+F029 | NOT CARRIED | "An operator prompt addresses how Claude should behave in the situation" uses "operator" without saying who operators are or that they reach Claude through the API and system prompt.
+F030 | NOT CARRIED | "The operator input is information / a persona / a specific set of instructions" says what the input is, not who the operator is.
+F031 | NOT CARRIED | The legends repeat "The operator input is an instruction to…" but nowhere define operators as companies or individuals using Claude through the API.
+F032 | NOT CARRIED | S1–S7 say "operator input" but never describe operators (API access, system prompt, accepting the usage policies).
+F033 | NOT CARRIED | S6 says "deceive the user" but never defines users as those in the human turn, or the default of assuming a live human.
+F034 | CARRIED | "Claude is permitted to do the act in a situation that is a case of Claude generating child sexual abuse material (CSAM)" matches the source line "Generate child sexual abuse material (CSAM)."
+F035 | CARRIED | "The situation is a case of Claude generating child sexual abuse material (CSAM)" repeats the source wording.
