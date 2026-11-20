@@ -275,7 +275,7 @@ def _counter_doc(where, text=DEF, source_bytes=1000):
 
 def test_t5_elsewhere_and_oversize():
     """Whole on the legend of a predicate only another block uses: ELSEWHERE. Carried, but in a block whose prompt
-    (pinned source bytes + the unit render) exceeds ARG_LIMIT 131000: OVERSIZE."""
+    (synthetic source bytes + the unit render) exceeds ARG_LIMIT 131000: OVERSIZE."""
     assert _verdict(_counter_doc("elsewhere"), "b1") == "ELSEWHERE"
     big = _counter_doc("legend", source_bytes=dc.ARG_LIMIT)
     assert big.rules["b1"]["oversize"] and _verdict(big, "b1") == "OVERSIZE"
