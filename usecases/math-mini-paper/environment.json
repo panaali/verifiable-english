@@ -78,7 +78,7 @@
           "point",
           "point"
         ],
-        "description": "Symmetrisation candidate of the order, characterised by a definition axiom (rendered as 'matches').",
+        "description": "Symmetrisation candidate of the order, characterised by a definition axiom (rendered as 'matches'). For a preorder (X, ≤) put x ∼ y iff x ≤ y and y ≤ x.",
         "verbalisation": "{0} matches {1}",
         "negative_verbalisation": "{0} does not match {1}"
       },
