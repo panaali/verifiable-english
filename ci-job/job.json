@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-defs-repair-openai-preparedness-1119-82475f81-t217170-s7",
+ "head": "67dd55c12c5a92fd05ce7c61821cc9c6c50d796e",
+ "argv": [
+  "armsh-cand-defs-repair-openai-preparedness-1119-82475f81-t217170-s7",
+  "67dd55c12c5a92fd05ce7c61821cc9c6c50d796e",
+  "eda779e58bd64d52cb6fc8e7cce9bce79afa455f",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
