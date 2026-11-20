@@ -1,0 +1,13 @@
+[cloud-overflow 08:40:07Z] actions pool: VM load 11.01 >= 8, 2 in flight
+2026-11-20T08:40:30Z tm-shard: ud3-evidence: unsharded (1 mutants to run fit one part on actions (~3640 s; <= 1 per part; room 33: cap 40 - busy 2 - reserve 5 for 5 arrivals/h; first sweep: 80 slot-s per mutant (pool reading none, floor 80); sized at the records' p90 5227 slot-s per mutant; part line 5100 s (limit 7200 - pre 300 - post 600 - headroom 1200); records: setup worst 1734 s of 20 runs, per-mutant p90 5227 slot-s of 20 readings); --budget 6300 s)
+2026-11-20T08:40:30Z cloud-dispatch: --test /home/seyran/code/ve-tm-nightly-unknown-disposition-3/lean/VE/Service/ActsExamples.lean: name a file of the commit (worktree-relative)
+[cloud-overflow 08:40:30Z] dispatch did not send ud3-evidence-48840528 (exit 1, status none): VM path
+[mac-pytest 08:40:30Z] CLOUD2_RUNNER: trying the remote hosts before the VM (trust_mutants --test lean/VE/Service/ActsExamples.lean is not in the worktree /home/seyran/code/ve-ud3-evidence)
+[cloud2 08:40:32Z] not used: --test lean/VE/Service/ActsExamples.lean is outside the worktree
+[mac-pytest 08:40:32Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 08:40:32Z] running on the VM instead (local): trust_mutants --test lean/VE/Service/ActsExamples.lean is not in the worktree /home/seyran/code/ve-ud3-evidence
+trust_mutants: 1 definitions, 1 mutants (1 to run), 2 jobs, base 039d3dd5190e
+trust_mutants: 1 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 4059 s
+trust_mutants: D[V], trusted: 1 KILLED
+trust_mutants: steps: wall plan 21.6 s, scratch 1.4 s, control_build 1051.5 s, probe_install 2.3 s, mutants 2981.7 s, cleanup 0.9 s; lake control_build 1051.5 s (2), probe_install 2.2 s (1), control_probes 15.4 s (2), mutant_builds 11.4 s (1), mutant_checks 1941.2 s (2), stage_controls 990.3 s (1), mutant_probes 20.4 s (2)
+[mac-pytest 09:48:11Z] summary: ran LOCALLY (VM) because: trust_mutants --test lean/VE/Service/ActsExamples.lean is not in the worktree /home/seyran/code/ve-ud3-evidence; exit=0; 4152s

@@ -1,0 +1,8 @@
+test_invalid_at_own_line_only (__main__.UnknownDisposition.test_invalid_at_own_line_only) ... ok
+test_span_label_allows_by_text_untouched_never (__main__.UnknownDisposition.test_span_label_allows_by_text_untouched_never) ... ok
+test_unjudged_skips_resolved (__main__.UnknownDisposition.test_unjudged_skips_resolved) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.767s
+
+OK
