@@ -87,7 +87,19 @@ BASE = {
                      "automate the work of any team of researchers at Google focused on improving AI capabilities, "
                      "with approximately comparable all-inclusive costs.\"", "{0} is defined"),
     "recommends": _base(["level", "measure"], "the framework recommends {1} for models reaching {0} "
-                        "(tables 2.2.1.a to 3.2.2.a)", "{0} recommends {1}"),
+                        "(tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend "
+                        "\"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional "
+                        "security measures designed to address risks from insider threats and well-resourced "
+                        "non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: "
+                        "\"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with "
+                        "SL 2+, plus additional mitigations designed to prevent unilateral access, harden "
+                        "infrastructure, and prevent data exfiltration.\" Security level 4, table 3.2.2.a, ML R&D "
+                        "automation level 1: \"We recommend Security level 4 13 for this capability threshold, but "
+                        "emphasize that this must be taken on by the frontier AI field as a whole.\"; footnote 13: "
+                        "\"13 This level may include mitigations aligned with SL 2+ and 3, plus additional "
+                        "mitigations aimed to isolate model weights, enhanced data center security, further "
+                        "hardening of infrastructure and minimizing potential attack surface.\"",
+                        "{0} recommends {1}"),
     "includes": _base(["measure", "measure"], "{0} includes {1} (2.1.1: Security Level 2+ adds measures to "
                       "RAND SL2)", "{0} includes {1}"),
     "addresses": _base(["measure", "threat"], "{0} is designed to address risks from {1} (2.1.1)",
@@ -165,11 +177,11 @@ BASE = {
         ["proposal"], "the appropriate governance function has determined the residual risk of {0} to be acceptable, "
         "including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: "
         "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
-        "case at a CCL is not this finding; a safety case (Glossary: \"Safety Cases: are an assessable argument "
-        "showing how severe risks associated with a model's CCLs have been reduced to an acceptable level.\"). "
-        "Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations adequate if the evidence "
-        "suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed "
-        "external deployment has been reduced to an acceptable level.\"",
+        "case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an "
+        "assessable argument showing how severe risks associated with a model's CCLs have been reduced to an "
+        "acceptable level.\" Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations "
+        "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
+        "harm from the proposed external deployment has been reduced to an acceptable level.\"",
         "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "
