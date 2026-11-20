@@ -1,0 +1,8 @@
+defs-repair-safety-framework-1119	ready	feature	feature planner	feature feed: no paths source: prompts/task-defs-repair-safety-framework-1119.txt has no 'Paths:' line (nor links.paths, SPRINT-ITEMS.tsv)
+defs-carried-oos-measure-1119	ready	infra	infra planner	owner 'infra planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+fm-move-5h-room	ready	infra	operations seat	owner 'operations seat' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+srccov-safety-framework-1119	ready	infra	feature planner	owner 'feature planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+usage-watch-reset-fresh	ready	infra	operations seat	owner 'operations seat' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+exp-g1-vocab-readings	ready	follow-up	-	no owner (follow-up rows are not fed)
+eff-20261104-1-inventories-read	ready	follow-up	-	no owner (follow-up rows are not fed)
+# 7 row(s) ready (or held blocked) with no launcher that would start them (backlog.py START_TABLE)

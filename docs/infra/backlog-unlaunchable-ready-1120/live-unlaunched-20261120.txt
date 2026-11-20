@@ -1,0 +1,15 @@
+defs-repair-safety-framework-1119, 1.2h, feature planner: feature feed: no paths source: prompts/task-defs-repair-safety-framework-1119.txt has no 'Paths:' line (nor links.paths, SPRINT-ITEMS.tsv)
+dri-fable-hold-1112, 9.5d, DRI: decision row (manual): not launched, its owner answers or closes it
+gcp-credit-watch-1119, 11.8d, DRI decider: DRI decider (by hand): not started
+record-void-fix-b-rechallenge, 3.8d, infra feed: design row with no launch link (a research output, a planner row or a DRI go)
+defs-carried-oos-measure-1119, 8.5h, infra planner: owner 'infra planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+fm-move-5h-room, 6.6d, operations seat: owner 'operations seat' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+srccov-safety-framework-1119, 1.2h, feature planner: owner 'feature planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+train-legs-time-1120, 6.3h, dri-decider: DRI decider (by hand): not started
+usage-watch-reset-fresh, 6.5d, operations seat: owner 'operations seat' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+exp-g1-vocab-readings, 17.6d, -: no owner (follow-up rows are not fed)
+dri-defs-gate-rereview-opus-tmpl-1119, 20.1h, delegate dri-defs-gate-rereview-opus-tmpl-1119: named delegate (by hand): not started
+dri-defs-gate-revise-tmpl-1119, 20.1h, delegate dri-defs-gate-revise-tmpl-1119: named delegate (by hand): not started
+dri-srccov-shard-TEMPLATE, 16.7h, delegate dri-srccov-shard-TEMPLATE: named delegate (by hand): not started
+eff-20261104-1-inventories-read, 11.9d, -: no owner (follow-up rows are not fed)
+notask-drain-1117, 2.9d, dri-notask-drain-1117: named delegate (by hand): not started
