@@ -1,41 +1,40 @@
-# tests/test_regen_usecase_merge.py run with main's tools/regen_generated.py (main 941208a12d), 2026-11-20T14:13Z
+# tests/test_regen_usecase_merge.py (as of this branch) run with main's tools/regen_generated.py and route_fixtures.py (main e9b129edce), 2026-11-20T15:40Z
 19:E       AssertionError: regen_generated --resolve: conflicts outside the generated files (agent sync needed):
-26:E       assert 2 == 0
-45:E       AssertionError: assert ('diagnose/c0' in 'regen_generated --resolve: conflicts outside the generated files (agent sync needed):\n  conformance/english-lean/lex...ses/safety-framework/coverage.json\n  usecases/
+45:E       AssertionError: assert ('diagnose/c0' in 'regen_generated --resolve: conflicts outside the generated files (agent sync needed):\n  conformance/english-lean/lex...ses/safety-framework/coverage.json\n  usecases/safety-fra
 64:E       AssertionError: assert ['conformance...k/spans.json'] == ['usecases/sa...ment.d1.json']
-83:E       AssertionError: assert {'conformance...k/spans.json'} == {'conformance...k/spans.json'}
-101:E           AssertionError: conformance/english-lean/lexicon-report.json
-102:E           assert 'unspecified' == 've-generated'
-116:E       AttributeError: 'NoneType' object has no attribute 'merge'
-127:E       AttributeError: 'NoneType' object has no attribute 'merge'
-138:E       AttributeError: 'NoneType' object has no attribute 'merge'
-149:E       AttributeError: 'NoneType' object has no attribute 'merge'
-175:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
-204:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
-233:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
-262:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
-291:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
-371:_______________ test_a_failed_use_case_writer_fails_the_resolve ________________
-373:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3327/test_a_failed_use_case_writer_0')
-377:    def test_a_failed_use_case_writer_fails_the_resolve(tmp_path, monkeypatch, capsys):
-386:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3327/test_a_failed_use_case_writer_0')
-388:root = PosixPath('/tmp/pytest-of-seyran/pytest-3327/test_a_failed_use_case_writer_0/repo')
-399:FAILED tests/test_regen_usecase_merge.py::test_resolve_regenerates_environment_hash_conflicts_to_the_writers_output
-400:FAILED tests/test_regen_usecase_merge.py::test_a_recorded_route_case_both_sides_changed_differently_declines
-401:FAILED tests/test_regen_usecase_merge.py::test_the_same_environment_legend_changed_on_both_sides_declines
-402:FAILED tests/test_regen_usecase_merge.py::test_the_driver_stops_on_a_derived_file_both_sides_changed
-403:FAILED tests/test_regen_usecase_merge.py::test_the_driver_takes_a_one_sided_change_of_a_derived_file
-404:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[conformance/english-lean/lexicon-report.json]
-405:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/results.json]
-406:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/coverage.json]
-407:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/spans.json]
-408:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_merge_by_mode_and_id
-409:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours0-theirs0]
-410:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours1-theirs1]
-411:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours2-theirs2]
-412:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours3-theirs3]
-413:FAILED tests/test_regen_usecase_merge.py::test_plain_write_check_and_names_skip_the_use_case
-414:FAILED tests/test_regen_usecase_merge.py::test_a_resolve_without_a_use_case_conflict_skips_it
-415:FAILED tests/test_regen_usecase_merge.py::test_a_use_case_conflict_runs_it_also_after_a_partial_resolve
-416:FAILED tests/test_regen_usecase_merge.py::test_a_failed_use_case_writer_fails_the_resolve
-417:18 failed in 8.98s
+98:E           AssertionError: conformance/english-lean/lexicon-report.json
+113:E       AttributeError: 'NoneType' object has no attribute 'merge'
+124:E       AttributeError: 'NoneType' object has no attribute 'merge'
+135:E       AttributeError: 'NoneType' object has no attribute 'merge'
+146:E       AttributeError: 'NoneType' object has no attribute 'merge'
+172:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
+201:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
+230:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
+259:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
+288:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
+368:_______________ test_a_failed_use_case_writer_fails_the_resolve ________________
+370:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0')
+374:    def test_a_failed_use_case_writer_fails_the_resolve(tmp_path, monkeypatch, capsys):
+383:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0')
+385:root = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0/repo')
+415:E       AssertionError: assert (2 == 1)
+430:FAILED tests/test_regen_usecase_merge.py::test_resolve_regenerates_environment_hash_conflicts_to_the_writers_output
+431:FAILED tests/test_regen_usecase_merge.py::test_a_recorded_route_case_both_sides_changed_differently_declines
+432:FAILED tests/test_regen_usecase_merge.py::test_the_same_environment_legend_changed_on_both_sides_declines
+433:FAILED tests/test_regen_usecase_merge.py::test_the_driver_merges_recorded_route_cases_by_key[True]
+434:FAILED tests/test_regen_usecase_merge.py::test_the_driver_takes_a_one_sided_change_of_a_derived_file
+435:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[conformance/english-lean/lexicon-report.json]
+436:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/results.json]
+437:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/coverage.json]
+438:FAILED tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file[usecases/safety-framework/spans.json]
+439:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_merge_by_mode_and_id
+440:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours0-theirs0]
+441:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours1-theirs1]
+442:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours2-theirs2]
+443:FAILED tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently[ours3-theirs3]
+444:FAILED tests/test_regen_usecase_merge.py::test_plain_write_check_and_names_skip_the_use_case
+445:FAILED tests/test_regen_usecase_merge.py::test_a_resolve_without_a_use_case_conflict_skips_it
+446:FAILED tests/test_regen_usecase_merge.py::test_a_use_case_conflict_runs_it_also_after_a_partial_resolve
+447:FAILED tests/test_regen_usecase_merge.py::test_a_failed_use_case_writer_fails_the_resolve
+448:FAILED tests/test_regen_usecase_merge.py::test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write
+449:19 failed, 2 passed in 11.32s
