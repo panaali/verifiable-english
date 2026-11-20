@@ -77,13 +77,13 @@
 - `tests/test_defaults_zone_ties.py` — df-5 loop recheck F1: the zone wire's tied definitions are bound to the request's values, not only to its types.
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
-- `tests/test_definitions_carried.py` — defs-carried-gate-stage1-1119: the report-mode definitions-carried checker (tools/defs_carried.py).
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
 - `tests/test_definitions_english.py` — English authoring of definitions, glossaries of synonyms and citations (W3, VISION 'Synonyms and varied wording').
 - `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
 - `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
-- `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.
 - `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
 - `tests/test_defs_repair_eligibility_1119.py` — defs-repair-eligibility-1119: each source definition the rules depend on is carried word for word.
-- `tests/test_defs_repair_math_mini_paper_1119.py` — defs-repair-math-mini-paper-1119: the paper's own definitions are carried word for word in the legends its rules use.
 - `tests/test_defs_repair_udhr_pilot_1119.py` — defs-repair-udhr-pilot-1119: the saved record of the three P1 'definitions carried' rows of the UDHR pilot.
+- `tests/test_df_e1.py` — DF-E1's preregistered blind reader transport and scoring, without model calls.
+- `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
+- `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
