@@ -12,12 +12,12 @@ adds one rewrite rule:
 7. The legend of each of 15 terms a rule uses carries the source's own definition of the term, word for word,
    appended to the legend's description (`carry_definitions`). Each passage is cut from the pinned body: it starts
    with the words given here and ends with the words given here, and nothing in between is written by this script.
-8. Each of 27 unit records whose sentence states no rule (background, rationale, an example or a pointer) is set
+8. Each of 26 unit records whose sentence states no rule (background, rationale, an example or a pointer) is set
    aside for what the sentence is, not for a missing feature: its unformalised reason becomes `other.background`,
    `other.rationale`, `other.example` or `other.navigation` (`record_out_of_scope`; item
    srccov-claude-constitution-pilot-1119).
    Only those units' kind and meaning change. The old run's check that units stay as they were (`unchanged`) runs on
-   the probe with those 27 reasons given back.
+   the probe with those 26 reasons given back.
 
 The first command writes `probe-translation.probe.md` the way `migrate_soft.main` does. It runs rules 1 to 8, gives
 the candidate identities, runs SC-8's search and writes `answers/search.json`, `answers/meaning-ids.json` and
@@ -116,7 +116,7 @@ def carry_definitions(meta, source, definitions=DEFINITIONS):
 BACKGROUND, RATIONALE, EXAMPLE, NAVIGATION = "other.background", "other.rationale", "other.example", "other.navigation"
 OUT_OF_SCOPE = {
     **dict.fromkeys(["u0004.s01", "u0011.s05", "u0022.s01", "u0022.s04", "u0028.s03", "u0030.s01", "u0030.s04",
-                     "u0038.s01", "u0038.s02", "u0051.s01", "u0051.s02", "u0066.s01"], BACKGROUND),
+                     "u0038.s01", "u0038.s02", "u0051.s02", "u0066.s01"], BACKGROUND),
     **dict.fromkeys(["u0010.s02", "u0010.s03", "u0010.s05", "u0012.s03", "u0024.s05", "u0025.s02", "u0038.s05",
                      "u0086.s01"], RATIONALE),
     **dict.fromkeys(["u0029.s04", "u0035.s07", "u0050.s02", "u0058.s03", "u0081.s02"], EXAMPLE),

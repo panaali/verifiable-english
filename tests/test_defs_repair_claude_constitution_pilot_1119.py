@@ -172,7 +172,7 @@ def without_identities(meta):
 
 def test_only_the_rows_legends_and_the_identities_change(driver):
     """Against run-20261104T0716Z's probe: the same body; the same front matter once candidate and situation ids are
-    set aside, the 15 legends given back their old descriptions and the 27 unit records of rule 8
+    set aside, the 15 legends given back their old descriptions and the 26 unit records of rule 8
     (srccov-claude-constitution-pilot-1119) their old reasons. Its formulas and situations stay."""
     old, old_body = read(OLD_PROBE)
     new, new_body = read(PROBE)
@@ -184,7 +184,7 @@ def test_only_the_rows_legends_and_the_identities_change(driver):
         entry = restored["environment"]["vocabulary"][kind][name]
         assert entry["description"] != old["environment"]["vocabulary"][kind][name]["description"]
         entry["description"] = old["environment"]["vocabulary"][kind][name]["description"]
-    assert len(driver.OUT_OF_SCOPE) == 27
+    assert len(driver.OUT_OF_SCOPE) == 26
     old_units = {u["id"]: u for u in _flat(old["units"])}
     for unit in _flat(restored["units"]):
         if unit["id"] in driver.OUT_OF_SCOPE:
