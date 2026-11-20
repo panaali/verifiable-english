@@ -1,0 +1,5 @@
+job=testmap-d7d062f5-t206742-s4 nproc=4 host=ip-10-0-135-85 date=2026-11-20T20:35:16Z
+Mem:              15           1           8           0           5          13
+/dev/mapper/cow-root  145G   61G   84G  42% /
+ 20:35:16 up 1 min,  0 user,  load average: 1.86, 0.63, 0.23
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
