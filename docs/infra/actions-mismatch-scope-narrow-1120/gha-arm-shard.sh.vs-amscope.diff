@@ -1,0 +1,14 @@
+--- gha-arm-shard.sh.new-amscope	2026-11-20 06:38:59.607077897 +0000
++++ gha-arm-shard.sh.new-amscope2	2026-11-20 08:39:12.260043100 +0000
+@@ -156,8 +156,9 @@
+ }
+ no(){ say "not sent: $*"; rjs status=not-sent "why=$*" mode=$mode; exit 3; }
+ [ -f $M/ACTIONS_SUSPENDED ] && no ACTIONS_SUSPENDED
+-# 2026-11-20 actions-mismatch-scope-1120 (dri-decisions-20261120-actions-mismatch-scope.md item 1): a tm-*/testmap-*/select-* line does not
+-# stop this leg (mismatch-scope.sh); empty, unparseable or any other line does (every rc but 1 blocks). Its own guard: arm-compare DIFFERENT.
++# 2026-11-20 actions-mismatch-scope-1120, narrowed by actions-mismatch-scope-narrow-1120 (dri-decisions-20261120-adv0757.md item 1): only
++# a tm-*/testmap-* "verdict sample differs" line does not stop this leg (mismatch-scope.sh); select-*, provenance/digest, empty,
++# unparseable or any other line does (every rc but 1 blocks). Its own guard: arm-compare DIFFERENT.
+ { mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH; [ $? != 1 ]; } && no cloud-jobs/ACTIONS_MISMATCH
+ [ -f $M/CLOUD_PUSH_HOLD ] && [ -z "$dry" ] && no CLOUD_PUSH_HOLD
+ case $mode in shadow) [ -f $M/ARM_SHARD_SHADOW ] || [ -n "$dry" ] || no "ARM_SHARD_SHADOW off";;
