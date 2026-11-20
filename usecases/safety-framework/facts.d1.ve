@@ -1,15 +1,15 @@
 ## levels-cbrn | always | 1.2, 2.2.1, table 2.2.1.a: the CBRN TCL and CBRN uplift level 1
-"cbrn_uplift_tcl" is tracked. "cbrn_uplift_tcl" is misuse. "cbrn_uplift_tcl" concerns cbrn. "cbrn_uplift_level_1" is critical. "cbrn_uplift_level_1" is misuse. "cbrn_uplift_level_1" concerns cbrn. "cbrn_uplift_level_1" recommends "security_level_2_plus".
+"cbrn_uplift_tcl" is tracked. "cbrn_uplift_tcl" is misuse. "cbrn_uplift_tcl" concerns cbrn. "cbrn_uplift_level_1" is critical. "cbrn_uplift_level_1" is misuse. "cbrn_uplift_level_1" concerns cbrn. "cbrn_uplift_level_1" recommends "security_level_2_plus". "cbrn_uplift_tcl" is defined. "cbrn_uplift_level_1" is defined.
 ## levels-cyber | always | table 2.2.2.a: Cyber uplift level 1
-"cyber_uplift_level_1" is critical. "cyber_uplift_level_1" is misuse. "cyber_uplift_level_1" concerns cyber. "cyber_uplift_level_1" recommends "security_level_2_plus".
+"cyber_uplift_level_1" is critical. "cyber_uplift_level_1" is misuse. "cyber_uplift_level_1" concerns cyber. "cyber_uplift_level_1" recommends "security_level_2_plus". "cyber_uplift_level_1" is defined.
 ## levels-manipulation | always | table 2.2.3.a: Harmful manipulation level 1 (exploratory)
-"harmful_manipulation_level_1" is critical. "harmful_manipulation_level_1" is misuse. "harmful_manipulation_level_1" concerns "harmful_manipulation". "harmful_manipulation_level_1" recommends "security_level_2_plus".
+"harmful_manipulation_level_1" is critical. "harmful_manipulation_level_1" is misuse. "harmful_manipulation_level_1" concerns "harmful_manipulation". "harmful_manipulation_level_1" recommends "security_level_2_plus". "harmful_manipulation_level_1" is defined.
 ## levels-stealth | always | 3.2.1: the Stealth and Situational Awareness TCL
-"stealth_and_situational_awareness_tcl" is tracked. "stealth_and_situational_awareness_tcl" is classified as "ml_rd_and_misalignment". "stealth_and_situational_awareness_tcl" concerns "ml_rd_and_misalignment_domain".
+"stealth_and_situational_awareness_tcl" is tracked. "stealth_and_situational_awareness_tcl" is classified as "ml_rd_and_misalignment". "stealth_and_situational_awareness_tcl" concerns "ml_rd_and_misalignment_domain". "stealth_and_situational_awareness_tcl" is defined.
 ## levels-ml-rd-acceleration | always | table 3.2.2.a: ML R&D acceleration level 1
-"ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3".
+"ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3". "ml_rd_acceleration_level_1" is defined.
 ## levels-ml-rd-automation | always | table 3.2.2.a: ML R&D automation level 1 ("We recommend Security level 4")
-"ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4".
+"ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4". "ml_rd_automation_level_1" is defined.
 ## closure-misuse-ccls | always | 1.2 "For misuse risk, we define CCLs in the following risk domains": CBRN, cyber and harmful manipulation
 For every level that is critical and that is misuse, at least one of the following holds: (a) that level concerns cbrn; (b) either that level concerns cyber or that level concerns "harmful_manipulation", or both.
 ## closure-ccl-kinds | always | 1.2 "We identify CCLs for two kinds of risks: misuse risk and risks related to machine learning R&D and misalignment"

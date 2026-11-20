@@ -1,0 +1,7 @@
+import sys
+p, which = sys.argv[1], sys.argv[2]
+t = open(p).read()
+a, b = {"S1": ("    [[ $why == 'verdict", "    true || [[ $why == 'verdict"),
+        "S3": ("'verdict sample differs ('[^\\)]#'/verdict-compare.txt)'", "'verdict sample differs '*")}[which]
+assert t.count(a) == 1, a
+open(p, "w").write(t.replace(a, b))
