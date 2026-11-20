@@ -12,8 +12,14 @@ adds one rewrite rule:
 7. The legend of each of 15 terms a rule uses carries the source's own definition of the term, word for word,
    appended to the legend's description (`carry_definitions`). Each passage is cut from the pinned body: it starts
    with the words given here and ends with the words given here, and nothing in between is written by this script.
+8. Each of 27 unit records whose sentence states no rule (background, rationale, an example or a pointer) is set
+   aside for what the sentence is, not for a missing feature: its unformalised reason becomes `other.background`,
+   `other.rationale`, `other.example` or `other.navigation` (`record_out_of_scope`; item
+   srccov-claude-constitution-pilot-1119).
+   Only those units' kind and meaning change. The old run's check that units stay as they were (`unchanged`) runs on
+   the probe with those 27 reasons given back.
 
-The first command writes `probe-translation.probe.md` the way `migrate_soft.main` does. It runs rules 1 to 7, gives
+The first command writes `probe-translation.probe.md` the way `migrate_soft.main` does. It runs rules 1 to 8, gives
 the candidate identities, runs SC-8's search and writes `answers/search.json`, `answers/meaning-ids.json` and
 `changed_units.json`. The second runs only `measure.py`'s `point-status-c9` steps (after, strict) on this
 probe. The run's whole-translation steps (check, coverage, readings) are not run here (L70).
@@ -32,6 +38,7 @@ import migrate_soft  # noqa: E402
 
 PROBE = RUN / "probe-translation.probe.md"
 _REWRITE = migrate_soft.rewrite
+_UNCHANGED = migrate_soft.unchanged
 
 # (vocabulary kind, name) -> the passages of the body its legend carries, each given by its first and last words.
 # The body is read with its list marks and bold marks dropped and its lines joined by one space (`flat_source`).
@@ -104,15 +111,57 @@ def carry_definitions(meta, source, definitions=DEFINITIONS):
     return meta
 
 
+# Rule 8: unit id -> the reason its record gives. Each unit holds one sentence of the source with no modal, number,
+# condition or definition, and its record covers that sentence only (srccov-claude-constitution-pilot-1119 REPORT).
+BACKGROUND, RATIONALE, EXAMPLE, NAVIGATION = "other.background", "other.rationale", "other.example", "other.navigation"
+OUT_OF_SCOPE = {
+    **dict.fromkeys(["u0004.s01", "u0011.s05", "u0022.s01", "u0022.s04", "u0028.s03", "u0030.s01", "u0030.s04",
+                     "u0038.s01", "u0038.s02", "u0051.s01", "u0051.s02", "u0066.s01"], BACKGROUND),
+    **dict.fromkeys(["u0010.s02", "u0010.s03", "u0010.s05", "u0012.s03", "u0024.s05", "u0025.s02", "u0038.s05",
+                     "u0086.s01"], RATIONALE),
+    **dict.fromkeys(["u0029.s04", "u0035.s07", "u0050.s02", "u0058.s03", "u0081.s02"], EXAMPLE),
+    **dict.fromkeys(["u0041.s02", "u0074"], NAVIGATION),
+}
+
+
+def record_out_of_scope(meta, records=OUT_OF_SCOPE):
+    """Rule 8: each unit of `records` set aside as unformalised for the reason given, in its kind and its meaning. A
+    unit the front matter lacks, or one that is not an unformalised unit without content, is refused."""
+    meta = copy.deepcopy(meta)
+    units = {u["id"]: u for u in migrate_soft.pilot._flat(meta["units"])}
+    for uid, reason in records.items():
+        unit = units.get(uid)
+        if unit is None:
+            raise ValueError(f"no unit {uid}")
+        kind = unit["kind"]
+        if not (isinstance(kind, list) and len(kind) == 2 and kind[0] == "unformalised"
+                and unit["meaning"] == {"unformalised": kind[1]} and "content" not in unit):
+            raise ValueError(f"unit {uid} is not an unformalised unit without content")
+        unit["kind"], unit["meaning"] = ["unformalised", reason], {"unformalised": reason}
+    return meta
+
+
+def unchanged(before, after, source_before, source_after):
+    """The old run's `unchanged` (units, spans, kinds, supports and sets as they were; the body byte for byte) on
+    `after` with rule 8's units given back their kind and meaning from `before`."""
+    after = copy.deepcopy(after)
+    old = {u["id"]: u for u in migrate_soft.pilot._flat(before["units"])}
+    for unit in migrate_soft.pilot._flat(after["units"]):
+        if unit["id"] in OUT_OF_SCOPE:
+            unit["kind"], unit["meaning"] = old[unit["id"]]["kind"], old[unit["id"]]["meaning"]
+    return _UNCHANGED(before, after, source_before, source_after)
+
+
 def rewrite(meta):
-    """run-20261104T0716Z's rules 1 to 4 (its `rewrite`, unchanged), then rule 7 over the pinned body."""
+    """run-20261104T0716Z's rules 1 to 4 (its `rewrite`, unchanged), then rule 7 over the pinned body, then rule 8."""
     after, changed = _REWRITE(meta)
-    return carry_definitions(after, migrate_soft.pinned().split(b"---\n", 2)[2]), changed
+    return record_out_of_scope(carry_definitions(after, migrate_soft.pinned().split(b"---\n", 2)[2])), changed
 
 
 def here():
-    """Point the old run's `migrate_soft.py` at this directory and its rewrite at `rewrite`."""
+    """Point the old run's `migrate_soft.py` at this directory, its rewrite at `rewrite`, its check at `unchanged`."""
     migrate_soft.RUN, migrate_soft.PROBE, migrate_soft.rewrite = RUN, PROBE, rewrite
+    migrate_soft.unchanged = unchanged
 
 
 if __name__ == "__main__":

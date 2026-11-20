@@ -170,9 +170,10 @@ def without_identities(meta):
     return meta
 
 
-def test_only_the_rows_legends_and_the_identities_change():
+def test_only_the_rows_legends_and_the_identities_change(driver):
     """Against run-20261104T0716Z's probe: the same body; the same front matter once candidate and situation ids are
-    set aside and the 15 legends given back their old descriptions. Its units, formulas and situations stay."""
+    set aside, the 15 legends given back their old descriptions and the 27 unit records of rule 8
+    (srccov-claude-constitution-pilot-1119) their old reasons. Its formulas and situations stay."""
     old, old_body = read(OLD_PROBE)
     new, new_body = read(PROBE)
     assert new_body == old_body == ce4.pinned_bytes().split(b"---\n", 2)[2]
@@ -183,6 +184,12 @@ def test_only_the_rows_legends_and_the_identities_change():
         entry = restored["environment"]["vocabulary"][kind][name]
         assert entry["description"] != old["environment"]["vocabulary"][kind][name]["description"]
         entry["description"] = old["environment"]["vocabulary"][kind][name]["description"]
+    assert len(driver.OUT_OF_SCOPE) == 27
+    old_units = {u["id"]: u for u in _flat(old["units"])}
+    for unit in _flat(restored["units"]):
+        if unit["id"] in driver.OUT_OF_SCOPE:
+            assert unit["kind"] != old_units[unit["id"]]["kind"], unit["id"]
+            unit["kind"], unit["meaning"] = old_units[unit["id"]]["kind"], old_units[unit["id"]]["meaning"]
     assert without_identities(restored) == without_identities(old)
     assert [r["meaning_id"] for R in new["reading_sets"] for r in R["readings"]] != \
         [r["meaning_id"] for R in old["reading_sets"] for r in R["readings"]]
