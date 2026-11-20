@@ -1,3 +1,6 @@
+- `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
+- `tests/test_vacuity.py` — (no module docstring)
+- `tests/test_ve_iface.py` — (no module docstring)
 - `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
 - `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
 - `tests/test_w1_delta_suite.py` — The W1 delta's suite corpus and its tagging plugin (`docs/en-e3-norm/en-2/w1_delta.py`; en-e3bb review F1).
