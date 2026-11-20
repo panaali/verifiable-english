@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-defs-repair-safety-framework-1119-0b782d47-t210509-s6",
+ "head": "eda779e58bd64d52cb6fc8e7cce9bce79afa455f",
+ "argv": [
+  "armsh-cand-defs-repair-safety-framework-1119-0b782d47-t210509-s6",
+  "eda779e58bd64d52cb6fc8e7cce9bce79afa455f",
+  "65658cde20a5c5da01cd593cb2ef82753cc3b2df",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ]
+}
