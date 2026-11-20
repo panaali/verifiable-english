@@ -1,0 +1,200 @@
+shard 2/3: 27 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded serde v1.0.229
+  Downloaded block-buffer v0.10.4
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded cfg-if v1.0.5
+  Downloaded num-integer v0.1.47
+  Downloaded autocfg v1.5.1
+  Downloaded digest v0.10.7
+  Downloaded version_check v0.9.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded quote v1.0.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded unicode-ident v1.0.26
+  Downloaded zmij v1.0.23
+  Downloaded num-traits v0.2.19
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_core v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded memchr v2.8.3
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling serde_json v1.0.151
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.47s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.29s
+order: failed last time []; changed ['tests/test_defs_repair_anthropic_rsp_1119.py', 'tests/test_rsp_repair_r1_catastrophic_1119.py']; then the rest; --maxfail 5
+recording 27 units with 4 jobs in /tmp/ve-select-run-6vkm02nk
+  tests/test_rsp_repair_r1_catastrophic_1119.py: exit 0 in 3.4 s, 677 functions
+  tests/test_defs_repair_anthropic_rsp_1119.py: exit 0 in 3.9 s, 714 functions
+  tests/test_history_tests.py: exit 0 in 97.5 s, 354 functions
+  tests/test_gate_quarantine.py: exit 0 in 134.0 s, 3525 functions
+  tests/test_nested_pytest.py: exit 0 in 79.8 s, 746 functions
+  tests/test_lean_dump_cache.py: exit 0 in 315.8 s, 369 functions
+  tests/test_platform_contract.py: exit 0 in 34.2 s, 412 functions
+  tests/test_test_chunks.py: exit 0 in 37.0 s, 391 functions, OPAQUE
+  tests/test_document_split.py: exit 0 in 13.9 s, 286 functions
+  tests/test_english_e2_integer_marks.py: exit 0 in 4.1 s, 700 functions
+  tests/test_question_reverse.py: exit 0 in 11.4 s, 972 functions
+  tests/test_defs_repair_asimov_extended_1119.py: exit 0 in 1.2 s, 189 functions
+  tests/test_fidmech_records.py: exit 0 in 3.0 s, 235 functions
+  tests/test_fsf_repair_f1_leveldefs_1119.py: exit 0 in 13.9 s, 626 functions
+  tests/test_fsf_repair_f2_glossary_1119.py: exit 0 in 1.1 s, 192 functions
+  tests/test_fsf_case_alternatives.py: exit 0 in 24.3 s, 831 functions
+  tests/test_kb10_shadow.py: exit 0 in 30.9 s, 887 functions
+  tests/test_right_clauses.py: exit 0 in 2.9 s, 520 functions
+  tests/test_rights_meaning_id.py: exit 0 in 2.6 s, 984 functions
+  tests/test_rsp_fidelity_fix.py: exit 1 in 48.6 s, 1157 functions
+  tests/test_select_defer.py: exit 0 in 0.8 s, 317 functions
+  tests/test_select_fast_stage.py: exit 0 in 0.7 s, 278 functions
+  tests/test_slot_premises.py: exit 0 in 2.7 s, 624 functions
+  tests/test_w1_delta_suite.py: exit 0 in 0.8 s, 533 functions
+  tests/test_pf_f16_without_fix.py: exit 0 in 89.0 s, 1002 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 610.6 s, 4192 functions
+  tests/test_english_statement_blocks.py: exit 1 in 619.7 s, 632 functions
+FAILED tests/test_english_statement_blocks.py (exit 1): tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded; log /tmp/ve-select-run-6vkm02nk/tests__test_english_statement_blocks.py.log
+                        '"security_level_3"',
+                    ],
+                    [
+                        'security_level_4',
+                        '"security_level_4"',
+                    ],
+                    [
+                        'sl2_plus_additional_measures',
+                        '"sl2_plus_additional_measures"',
+                    ],
+                    [
+                        'stealth_and_situational_awareness_tcl',
+                        '"stealth_and_situational_awareness_tcl"',
+                    ],
+                    [
+                        'well_resourced_non_state_external_actors',
+                        '"well_resourced_non_state_external_actors"',
+                    ],
+                ],
+            },
+            'kind': 'blocks',
+            'source': 'Rule 1. Every instance of Claude must not directly deny being Claude.',
+        },
+    ]
+1 failed, 8 passed in 618.23s (0:10:18)
+FAILED tests/test_rsp_fidelity_fix.py (exit 1): tests/test_rsp_fidelity_fix.py::test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier; log /tmp/ve-select-run-6vkm02nk/tests__test_rsp_fidelity_fix.py.log
+
+=================================== FAILURES ===================================
+_____ test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier _____
+
+    def test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier():
+        """(a) The counter's tag rule, on every FACTS entry: `restates` resolves only when every whole token of the
+        omitted words but the articles is in ONE segment of the block's own carrier (a body statement or one legend).
+        The legends before this item leave each entry unresolved: removing the legend's wording fails here."""
+        assert set(_facts_entries()) == set(FACTS_ENTRIES)
+        for (block_id, words, tag), predicate in FACTS_ENTRIES.items():
+            assert tag == "restates"
+            words_needed = _omitted_words(words)
+            assert words_needed and any(words_needed <= segment for segment in _carrier(block_id)), (block_id, words)
+            before = _carrier(block_id, {predicate: FACTS_LEGENDS_BEFORE[predicate]})
+>           assert not any(words_needed <= segment for segment in before), (block_id, words, predicate)
+E           AssertionError: ('s2-suff-third', 'We would consider scenario (2) to have occurred where', 'scenario_2')
+E           assert not True
+E            +  where True = any(<generator object test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier.<locals>.<genexpr> at 0x7f99b82df840>)
+
+tests/test_rsp_fidelity_fix.py:1081: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_rsp_fidelity_fix.py::test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier - AssertionError: ('s2-suff-third', 'We would consider scenario (2) to have occurred where', 'scenario_2')
+assert not True
+ +  where True = any(<generator object test_facts_repair_each_retagged_entry_is_whole_in_its_blocks_carrier.<locals>.<genexpr> at 0x7f99b82df840>)
+1 failed, 50 passed in 47.72s
+recorded 27 units for tree 132d07774b; 0 others left to the static graph until they run; 2 failed
+UNITLOG tests__test_defs_repair_anthropic_rsp_1119.py.log: 102 passed, 1 skipped in 2.46s
+UNITLOG tests__test_defs_repair_asimov_extended_1119.py.log: 14 passed in 0.43s
+UNITLOG tests__test_document_split.py.log: 48 passed in 12.94s
+UNITLOG tests__test_english_e2_integer_marks.py.log: 2 passed in 2.95s
+UNITLOG tests__test_english_statement_blocks.py.log: 1 failed, 8 passed in 618.23s (0:10:18)
+UNITLOG tests__test_fidmech_records.py.log: 59 passed in 2.02s
+UNITLOG tests__test_fsf_case_alternatives.py.log: 9 passed in 23.19s
+UNITLOG tests__test_fsf_repair_f1_leveldefs_1119.py.log: 2 passed, 1 skipped in 12.87s
+UNITLOG tests__test_fsf_repair_f2_glossary_1119.py.log: 1 passed, 6 skipped in 0.20s
+UNITLOG tests__test_gate_quarantine.py.log: 38 passed in 133.05s (0:02:13)
+UNITLOG tests__test_history_tests.py.log: 27 passed in 96.94s (0:01:36)
+UNITLOG tests__test_kb10_shadow.py.log: 9 passed in 29.61s
+UNITLOG tests__test_lean_dump_cache.py.log: 61 passed in 314.68s (0:05:14)
+UNITLOG tests__test_nested_pytest.py.log: 36 passed in 78.74s (0:01:18)
+UNITLOG tests__test_pf_f16_without_fix.py.log: 13 passed in 87.83s (0:01:27)
+UNITLOG tests__test_platform_contract.py.log: 59 passed in 33.18s
+UNITLOG tests__test_question_reverse.py.log: 97 passed in 10.14s
+UNITLOG tests__test_right_clauses.py.log: 19 passed in 2.42s
+UNITLOG tests__test_rights_meaning_id.py.log: 33 passed in 2.07s
+UNITLOG tests__test_rsp_fidelity_fix.py.log: 1 failed, 50 passed in 47.72s
+UNITLOG tests__test_rsp_repair_r1_catastrophic_1119.py.log: 3 passed in 1.92s
+UNITLOG tests__test_select_defer.py.log: 47 passed in 0.26s
+UNITLOG tests__test_select_fast_stage.py.log: 41 passed in 0.19s
+UNITLOG tests__test_slot_premises.py.log: 35 passed in 2.16s
+UNITLOG tests__test_test_chunks.py.log: 59 passed in 35.97s
+UNITLOG tests__test_w1_delta_suite.py.log: 3 passed in 0.31s
+UNITLOG tests__test_wire_gate_corpus.py.log: 8 passed in 608.35s (0:10:08)
