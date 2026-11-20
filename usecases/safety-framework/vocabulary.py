@@ -131,7 +131,7 @@ BASE = {
                      "with approximately comparable all-inclusive costs.\"", "{0} is defined"),
     "recommends": _base(["level", "measure"], "the framework recommends {1} for models reaching {0} "
                         "(tables 2.2.1.a to 3.2.2.a). Security Level 2+ (2.1.1): \"We also define and recommend "
-                        "\"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional "
+                        "“Security Level 2+,” which uses RAND Security Level 2 (SL2) as a baseline, with additional "
                         "security measures designed to address risks from insider threats and well-resourced "
                         "non-state external actors.\" Security level 3, table 3.2.2.a, ML R&D acceleration level 1: "
                         "\"Security level 3 12\"; footnote 12: \"12 This level may include mitigations aligned with "
@@ -204,11 +204,11 @@ BASE = {
                       "Deployments: represent small scale and private releases restricted to particular external "
                       "groups or organizations.\")", "no one the text names (unstated)", term="OT8"),
     "first_deployment": _base(["proposal"], "{0} is the first external deployment of a new model"),
-    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model (Glossary: Frontier AI Models \"are "
+    "frontier": _open(["proposal"], "the model of {0} is a frontier AI model. Glossary: Frontier AI Models \"are "
                       "trained on a large data set, display significant generality, are capable of performing a wide "
                       "range of distinctive tasks and have high-impact capabilities. Frontier AI models' agentic and "
-                      "reasoning-based general capabilities near or exceed those of other Google models\")"
-                      ". The Glossary entry goes on: \"There may be many different checkpoints and versions of the "
+                      "reasoning-based general capabilities near or exceed those of other Google models. There may "
+                      "be many different checkpoints and versions of the "
                       "same model along the entire model lifecycle: we consider checkpoints and versions the same "
                       "model if their base capabilities stem primarily from the same foundational training run, but "
                       "will conduct additional testing on new versions as specified in Section 1.3 . When we refer "
@@ -285,17 +285,18 @@ BASE = {
         "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
         "case at a CCL is not this finding; a safety case, as the Glossary defines it: \"Safety Cases: are an "
         "assessable argument showing how severe risks associated with a model's CCLs have been reduced to an "
-        "acceptable level.\" Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations "
-        "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
-        "harm from the proposed external deployment has been reduced to an acceptable level.\""
-        " Step 2 of 3.1.2 says: \"In particular, we will deem deployment mitigations adequate if the evidence "
-        "suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed "
-        "deployment has been reduced to an acceptable level.\" The Glossary entry Safety Cases goes on: \"Residual "
+        "acceptable level. Residual "
         "risk assessments will be supplemented with a safety case when a model reaches a CCL, and inform a model’s "
         "risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on "
         "considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and "
         "mitigations are available on other publicly available models, and the historical incidence and severity of "
-        "related events.\" (the 15 is the mark of footnote 15)",
+        "related events.\" (the 15 is the mark of footnote 15). Step 2 of 2.1.2 then says: \"In particular, we will "
+        "deem deployment mitigations "
+        "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
+        "harm from the proposed external deployment has been reduced to an acceptable level.\""
+        " Step 2 of 3.1.2 says: \"In particular, we will deem deployment mitigations adequate if the evidence "
+        "suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed "
+        "deployment has been reduced to an acceptable level.\"",
         "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "

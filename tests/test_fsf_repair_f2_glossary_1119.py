@@ -56,7 +56,10 @@ def test_the_legend_quotes_the_pinned_glossary_sentence(predicate):
     text = pinned_source("safety-framework").read_text(encoding="utf-8")
     sentence = glossary_sentence(text, *GLOSSARY_ENTRIES[predicate])
     legend = _legend(predicate)
-    assert f'"{sentence}"' in legend, (predicate, sentence)
+    # The quote closes after the sentence, or goes on with the entry's next source sentence (defs-repair-safety-
+    # framework-1119 quotes the frontier entry whole: its audit row x1 runs on to the version sentences).
+    longer = glossary_sentence(text, GLOSSARY_ENTRIES[predicate][0], GLOSSARY_ENTRIES[predicate][1] + 1)
+    assert f'"{sentence}"' in legend or f'"{longer}' in legend, (predicate, sentence)
     assert "Glossary" in legend
 
 
@@ -79,5 +82,5 @@ def test_the_frontier_legend_no_longer_stands_in_for_the_definition():
     the open term OT9."""
     legend = _legend("frontier")
     assert "(Glossary definition)" not in legend
-    assert legend.startswith("the model of {0} is a frontier AI model (Glossary: Frontier AI Models \"are trained on")
+    assert legend.startswith("the model of {0} is a frontier AI model. Glossary: Frontier AI Models \"are trained on")
     assert legend.endswith(". Open term OT9, decided by no one the text names (unstated)")
