@@ -1,0 +1,9 @@
+trust_mutants: 18 definitions, 22 mutants (4 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Presupposition/Run.lean:88 VE.Presupposition.lineOf (G[V], trusted) list-first: s -> (s.take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:51 VE.Scope.Pinned.charRef (D[V], trusted) list-first: t.drop r.length -> ((t.drop r.length).take 1)
+SURVIVOR lean/VE/Scope/Authoring.lean:62 VE.Scope.Pinned.clause (D[V], trusted) list-drop-last: w.toList -> (w.toList.dropLast)
+SURVIVOR lean/VE/Compose/Dispatch.lean:894 VE.Compose.environmentProfiles (G[V], trusted) list-first: documentLayers -> (documentLayers.take 1)
+trust_mutants: 0 KILLED, 4 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 18 OTHER SHARD in 593 s
+trust_mutants: D[V], trusted: 2 SURVIVOR, 10 OTHER SHARD
+trust_mutants: G[V], trusted: 2 SURVIVOR, 8 OTHER SHARD
+trust_mutants: steps: wall plan 12.4 s, scratch 2.3 s, control_build 1.4 s, probe_install 1 s, mutants 575.5 s, cleanup 0.5 s; lake control_build 1.4 s (2), probe_install 1 s (1), mutant_builds 24.7 s (4), mutant_checks 571.5 s (4), outside_checks 8.1 s (4)
