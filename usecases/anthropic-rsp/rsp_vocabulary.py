@@ -605,13 +605,14 @@ REGULATED = {
                                   "legal rights.\" (a prohibition unless one of the two grounds holds)"),
     "rso_maintained": _duty("{0} have the position of RSO maintained", "4.1 at {0}: \"We will maintain the position "
                             "of RSO, a designated member of staff who is responsible for the implementation of this "
-                            "policy.\" \"The RSO's duties will include (but are not limited to): (1) as needed, "
-                            "proposing updates to this policy; (2) approving relevant model development or deployment "
-                            "decisions based on our risk assessments; (3) reviewing major contracts (e.g., deployment "
-                            "partnerships) for consistency with this policy; (4) overseeing the implementation of this "
-                            "policy, including the allocation of sufficient resources; (5) receiving and addressing "
-                            "reports of potential instances of noncompliance; and (6) making judgment calls on policy "
-                            "interpretation and application.\""),
+                            "policy.\" (the listed duties are s4-rso-duties: \"The RSO's duties will include (but "
+                            "are not limited to): (1) as needed, proposing updates to this policy; (2) approving "
+                            "relevant model development or deployment decisions based on our risk assessments; (3) "
+                            "reviewing major contracts (e.g., deployment partnerships) for consistency with this "
+                            "policy; (4) overseeing the implementation of this policy, including the allocation of "
+                            "sufficient resources; (5) receiving and addressing reports of potential instances of "
+                            "noncompliance; and (6) making judgment calls on policy interpretation and "
+                            "application.\")"),
     "ltbt_briefed": _duty("{0} have the LTBT regularly briefed on Risk Report plans as well as developments", "4.2 "
                           "at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk "
                           "Reports, including model training, capability evals, mitigations, and risk analyses.\" "
