@@ -1096,9 +1096,11 @@ def test_retagged_legend_quotes_are_verbatim_source_text(pf):
         quoted = [q for q in legend_quotes(predicate) if q.rstrip(".") == words]
         assert len(quoted) == 1, (unit, predicate)
         assert any(words in q for q in Q.quotes(next(b for b in Q.blocks() if b.id == unit))), unit
-    assert legend("existing_at_publication") == (
+    # The FACTS-wide source definitions follow it (defs-repair-openai-preparedness-1119, DRI decision 2026-11-20 1a;
+    # tests/test_defs_repair_openai_preparedness_1119.py checks them).
+    assert legend("existing_at_publication").startswith(
         "the model at {0} is one OpenAI possessed at publication (2025-04-15), the time of 4.4's “We do not currently "
-        "possess any models that have Critical levels of capability”")
+        "possess any models that have Critical levels of capability”; the Framework's words, ")
     if pinned_source("openai-preparedness", skip=False) is not None:
         source = B.DEFAULT_SOURCE.read_bytes()
         B.check_source(source)
