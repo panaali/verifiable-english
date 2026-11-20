@@ -83,7 +83,7 @@
 - `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
 - `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
 - `tests/test_defs_repair_eligibility_1119.py` — defs-repair-eligibility-1119: each source definition the rules depend on is carried word for word.
-- `tests/test_defs_repair_math_mini_paper_1119.py` — defs-repair-math-mini-paper-1119: the paper's own definitions are carried word for word in the legends its rules use.
 - `tests/test_defs_repair_udhr_pilot_1119.py` — defs-repair-udhr-pilot-1119: the saved record of the three P1 'definitions carried' rows of the UDHR pilot.
 - `tests/test_df_e1.py` — DF-E1's preregistered blind reader transport and scoring, without model calls.
 - `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
+- `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
