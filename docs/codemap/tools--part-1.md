@@ -26,6 +26,9 @@
 - `tools/code_map.py` — Build a compact, deterministic index of source modules from the working tree.
 - `tools/coverage_dashboard.py` — Rebuild the use-case baseline table without changing historical audits.
 - `tools/defaults_words.py` — Write `ve/defaults_words.json`, the words of DE10 to DE13, from its Lean owner (`VE.Defaults.Wire.zoneHeads`, `zoneLineWords`, `zoneJoins`; plan DF-5, delivera…
+- `tools/defs_carried.py` — Definitions carried, stage 1: report which source definitions a document's reader is never shown (report mode).
+- `tools/defs_carried_counter.py` — The counter code that decides what an FSF, RSP or PF reader is shown, copied byte for byte (defs-carried-gate-stage1-1119).
+- `tools/defs_carried_known.py` — Build the known-case fixture of tools/defs_carried.py from the definitions-carried audit (defs-carried-gate-stage1-1119).
 - `tools/difffuzz.py` — Cross-language differential fuzzer: Python, the Lean routes and Rust on seeded mutants.
 - `tools/difffuzz_corpus.py` — The differential fuzzer's corpus: every fixture of `conformance/` and `usecases/`, read into seeds.
 - `tools/english_codes.py` — Write or check `ve/english_grammar/codes.json`, Lean's table of codes, classes and statuses.
@@ -89,7 +92,3 @@
 - `tools/regen_generated.py` — Regenerate, check and merge every generated inventory, manifest and lock of the repository.
 - `tools/relay_lint.py` — Fail if a relayed module raises a content diagnostic of its own (docs/LEAN-FIRST-PLAN.md, rule 2 and gate item 3).
 - `tools/relay_mutation_gate.py` — Relay mutation gate: every Lean answer Python relays must refuse every mutant of a genuine answer.
-- `tools/repo_map.py` — Where a service mode lives: its Lean module, response schema, Python relays and tests.
-- `tools/response_schemas.py` — Write or check the client's response schemas from their one source, the Lean shapes.
-- `tools/run_cache.py` — A cache for a nested pytest run whose output is a function of what it reads: `cached_run`.
-- `tools/run_order.py` — The order an agent's run takes its test units in, and what it remembers of the last run.
