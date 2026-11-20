@@ -273,6 +273,15 @@ setsid nohup zsh iso.sh svc-tm-nightly 1G -- env TM_NIGHTLY_POOLS=remote+idle TM
   record completes.
 - A sweep of main itself now (P2): add `TM_NIGHTLY_FRESH=1`. That costs about 2x and drops the carried verdicts.
 
+## Pre-review fix (round 2)
+
+The pre-review gate failed [commits]: the VE branch had 0 commits beyond ef7ecd59ac. Fix: one docs-only commit fc127277a2 that
+adds `docs/infra/tm-build-timeout-1120/` (this report, `evidence/` with `select.log` cut to `select.tail.log`, the
+installed-vs-backup diffs `tm-nightly.sh.diff`, `tm-nightly.py.diff`, `test_tm_build_timeout_heavy.py.new-file.diff`, and
+`installed-sha256.txt`, which equals `evidence/staged-sha256.txt`). Same layout as infra/chain-gate-empty-ve-diff. No product
+code, so no new seeded bugs. Checks: `regen_generated.py --check` rc 0 (41 entries); selected run on HEAD fc127277a2 rc 0
+(ve-cloud-2, 303 units, 0 failed, 2186 s).
+
 ## Notes for the DRI
 
 - Completion at 9ccbf3fdf also needs a disposition for 5 unallowed non-timeout UNKNOWN. They are judged again on each resume
