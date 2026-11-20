@@ -1,0 +1,10 @@
+5:deferred to the chain gate: 1 test files over 120 s selected only for weak reasons (826 s): tests/test_safety_framework.py
+9:gha-select: 95 units in 5 shards (weights 09bea0972dee7c3738557d6799a754b43dd782b1.json.gz + runner seconds for 94 units (ratio 1.08): total 14596 s, longest 1788 s; shard loads [1008, 1070, 1093, 1109, 1788])
+11:[gha-select 10:34:52Z] fast first: the cheap units run on multi-agent-lab meanwhile (log /home/seyran/code/manage-agents/gha-tests/srccov-anthropic-rsp-1119-57efa7a0-t170844/fast.log)
+12:[gha-select 10:36:34Z] fast first: the cheap units passed after 150 s; waiting for the shards
+110:SHARD 2/5: exit 0 in 643.5 s; 23 units, 23 passed
+206:SHARD 3/5: exit 0 in 864.4 s; 21 units, 21 passed
+304:SHARD 1/5: exit 0 in 975.2 s; 24 units, 24 passed
+402:SHARD 4/5: exit 0 in 1198.6 s; 14 units, 14 passed
+498:SHARD 5/5: exit 0 in 1727.3 s; 13 units, 13 passed
+499:[gha-select 11:07:03Z] summary: selected tests ran on GitHub Actions (5 shards, run srccov-anthropic-rsp-1119-57efa7a0-t170844); exit=0; 1979s

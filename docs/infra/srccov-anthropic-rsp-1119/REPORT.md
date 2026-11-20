@@ -239,4 +239,9 @@ plus this item's docs.
 
 ## 8. Final selected run
 
-(filled in after the run on the final code HEAD)
+`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 57efa7a03c
+(the code is final; only this section was committed after it) exited 0. The cheap units passed first on
+multi-agent-lab, then all 95 selected units passed in 5 GitHub Actions shards (run
+srccov-anthropic-rsp-1119-57efa7a0-t170844: 24, 23, 21, 14 and 13 units). tests/test_safety_framework.py was
+deferred to the chain gate (selected only for weak reasons, over 120 s). The summary lines are in
+evidence/final-selected-run.txt.
