@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "6d82323faa529ebf89d474c99d12995a1c2b78ccb5c3dc2d1a60aa739b67df96",
+ "seal_id": "3fd9ccce116dd5574e1b4e879faafea170af7ebef542df7abd2766450efada3b",
  "sources": [
   {
    "kind": "corpus source",
@@ -571,7 +571,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_srccov_asimov_extended_1119.py",
-   "sha256": "9d5bd8f716d2c0df7dee9ade87fbcec5a6e62361f105644ae4d0f4700799a45d"
+   "sha256": "13f60ad78223cbdaa977f0e820a28b3d3f2518739030af656748414a642c7818"
   },
   {
    "kind": "entry-point caller",

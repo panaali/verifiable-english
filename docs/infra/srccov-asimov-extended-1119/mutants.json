@@ -50,6 +50,17 @@
     "tests/test_asimov_extended.py::test_the_environment_extends_v2_without_changing_it"
    ],
    "killed": true
+  },
+  {
+   "id": "M5",
+   "file": "usecases/asimov-extended/environment.json",
+   "behaviour": "the carry only inserts the clause; the base legend text stays (lawful_action)",
+   "change": "drop the rule number from 'as derived by addition rule 14' on lawful_action",
+   "test": "tests/test_srccov_asimov_extended_1119.py::test_the_carry_only_inserts_the_clause[lawful_action]",
+   "failed": [
+    "tests/test_srccov_asimov_extended_1119.py::test_the_carry_only_inserts_the_clause[lawful_action]"
+   ],
+   "killed": true
   }
  ]
 }
