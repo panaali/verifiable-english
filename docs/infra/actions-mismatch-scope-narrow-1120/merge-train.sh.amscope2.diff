@@ -1,0 +1,43 @@
+--- merge-train.sh.bak-20261120amscope	2026-11-20 04:30:23.132806600 +0000
++++ merge-train.sh.new-amscope2	2026-11-20 08:39:12.259403380 +0000
+@@ -5,6 +5,13 @@
+ # ve-integration (main) to the candidate -> tag ve-green-<label>   (2026-10-14: pipeline-r2-1014 below).
+ # Stops at the first failure and writes merge-train.final.md (wakes the orchestrator); also on success.
+ M=~/code/manage-agents; P=$M/prompts; I=~/code/ve-integration; R=~/code/verifiable-english; log=$M/merge-train.log
++# 2026-11-20 actions-mismatch-scope-1120 (reviews/dri-decisions-20261120-actions-mismatch-scope.md item 1): cloud-jobs/ACTIONS_MISMATCH
++# switches off the Actions gate legs (armavail/shavail/x86shavail, via actoff) only as mismatch_blocks_gate says (mismatch-scope.sh:
++# only a tm-*/testmap-* "verdict sample differs" line does not; select-*, provenance/digest, empty, unparseable or any other
++# line does). Narrowed by actions-mismatch-scope-narrow-1120 (dri-decisions-20261120-adv0757.md item 1). Helper not sourceable: the old rule.
++source $M/mismatch-scope.sh 2>/dev/null || mismatch_blocks_gate(){ [[ -e $1 ]]; }
++# actoff <flag under $M>: the flag switches the Actions gate legs off now (ACTIONS_MISMATCH: every rc of the helper but 1 blocks)
++actoff(){ if [ $1 = cloud-jobs/ACTIONS_MISMATCH ]; then mismatch_blocks_gate $M/$1; [ $? != 1 ]; else [ -f $M/$1 ]; fi; }
+ # 2026-10-14 DRI: verifies get CPU priority over builders (GitHub Actions eval); raise the calling scope
+ # 2026-11-09 train bottleneck fix 5 (dri-trainfix-regen; flag PRESYNC_LEAN_REGEN): LIBRARY MODE. presync-lean-regen.zsh sets the
+ # shell variable MT_LIB (never exported) and sources this file to run branchregen itself (the same code path, not a copy); a
+@@ -595,7 +602,7 @@
+   (( ${#ps} )) || return 1
+   nl=(${ps:#(lean/*|lakefile.lean|lakefile.toml|lake-manifest.json)}); (( ${#nl} == 0 )); }  # (an array: a quoted or arithmetic ${..:#..} would match the joined string)
+ # armavail: the Actions arm leg can run now (prints why not, returns 1); macup: ve-mac-1 answers ssh (mac-gate.sh's options)
+-armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && { print -r -- $f; return 1; }; done
++armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && { print -r -- $f; return 1; }; done
+   [ -f $M/ARM_LEG_MAC_OFFLINE ] || { print -r -- "ARM_LEG_MAC_OFFLINE off"; return 1; }; }
+ # mfguard <result|early|noresult> (2026-11-03 arm-mac-first-pins-regen, ADV-20261103T0711-1; header, ARM_MAC_FIRST): one line per
+ # Mac-first leg; the second EARLY in a row moves the flag aside (once: a concurrent train's mv finds no flag) + CURRENT-STATE.md
+@@ -687,7 +694,7 @@
+   mkdir -p $d; print -r -- "$(date -u +%FT%H:%MZ) $label" > $w
+   print -r -- "weekly Mac comparison (last sharded comparison ${le:+$(date -u -d @$le +%FT%H:%MZ)}${le:-none})"; }
+ # shavail: the sharded Actions leg can block now (prints why not, returns 1)
+-shavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && { print -r -- $f; return 1; }; done
++shavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && { print -r -- $f; return 1; }; done
+   [ -f $M/gha-arm-shard.sh ] && [ -f $M/ARM_SHARD_BLOCKING ] || { print -r -- "ARM_SHARD_BLOCKING off"; return 1; }; }
+ # shleg (2026-10-29 dri-actions-gate-arm; DRI ruling 2026-10-29 01:54Z, parallel-actions item 3; flag ARM_SHARD_BLOCKING): the
+ # SHARDED aarch64 leg of $mc on Actions ubuntu-24.04-arm (gha-arm-shard.sh, ARM_SHARD_MODE=blocking, deadline
+@@ -723,7 +730,7 @@
+ # item 2, SIGNED: the x86 leg may run as the full gate.py sharded on Actions; PIPELINE-LIMITS L155/L156: with ve-mac-1 down the
+ # VM's full gate.py decided at load 93/32 while Actions sat idle). x86shavail: the sharded x86 Actions leg can block now
+ # (prints why not, returns 1).
+-x86shavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && { print -r -- $f; return 1; }; done
++x86shavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && { print -r -- $f; return 1; }; done
+   [ -f $M/gha-arm-shard.sh ] && [ -f $M/X86_SHARD_BLOCKING ] || { print -r -- "X86_SHARD_BLOCKING off"; return 1; }; }
+ # x86shleg (flag X86_SHARD_BLOCKING): the full x86 gate.py of $mc in shards on Actions ubuntu-24.04 (gha-arm-shard.sh --x86,
+ # ARM_SHARD_MODE=leg-blocking: committed pins checked, Lean built once, one record merged from all shards; deadline

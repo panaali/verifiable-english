@@ -1,0 +1,16 @@
+unit legend-part growth (bytes), units whose part changed:
+  f3: +272
+  f8: +331
+  f9-acc: +1646
+  f10-acc: +1646
+  f11-acc: +1646
+  f12-p: +272
+  f12-u: +272
+  f13-p: +272
+  f13-u: +272
+  sum over all units: 6629
+governance_found_accepta 'In particular, we will deem deployment m': rendered in 5/5 using units ['f3', 'f12-p', 'f12-u', 'f13-p', 'f13-u']; counted carrier head=True base=False
+mitigates                'We assess that the deployment mitigation': rendered in 3/3 using units ['f9-acc', 'f10-acc', 'f11-acc']; counted carrier head=True base=False
+mitigates                'We assess that the deployment mitigation': rendered in 3/3 using units ['f9-acc', 'f10-acc', 'f11-acc']; counted carrier head=True base=False
+mitigates                'We assess that the deployment mitigation': rendered in 3/3 using units ['f9-acc', 'f10-acc', 'f11-acc']; counted carrier head=True base=False
+acceptable               'A model for which inherent risk assessme': rendered in 4/4 using units ['f8', 'f9-acc', 'f10-acc', 'f11-acc']; counted carrier head=True base=False
