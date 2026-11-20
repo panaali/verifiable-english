@@ -54,8 +54,9 @@ def _counted(text):
 # --- X36: the D2D3 accounting line ----------------------------------------------------------------------------------
 
 # Footnote 1's clause is no longer a loss: D2's catastrophic legend carries the footnote whole
-# (rsp-repair-r1-catastrophic-1119).
-D2D3_LOSSES = ("A Risk Report will cover the risks of Anthropic's models and actions",)
+# (rsp-repair-r1-catastrophic-1119). Nor is 3.1's Scope sentence: D3's coverage-date legend carries it whole
+# (defs-repair-anthropic-rsp-1119), so the D2D3 line omits nothing.
+D2D3_LOSSES = ()
 
 
 def _d2d3_carriers():
