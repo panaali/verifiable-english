@@ -1,0 +1,832 @@
+test_i_allowed (__main__.Direct.test_i_allowed) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-97ou1vp3/m0' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-97ou1vp3/m1' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-97ou1vp3/m2' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-97ou1vp3/m3' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_iii_unreadable_or_not_a_regular_file_blocks (__main__.Direct.test_iii_unreadable_or_not_a_regular_file_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:365: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-7qj6m5vi/ok' mode='w' encoding='UTF-8'>
+  open(ok, "w").write(TM_LINE)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:367: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-7qj6m5vi/unread' mode='w' encoding='UTF-8'>
+  open(unread, "w").write(TM_LINE)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_late_compare_and_near_misses_block (__main__.Direct.test_late_compare_and_near_misses_block) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m0' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m1' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m2' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m3' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m4' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m5' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m6' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m7' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m8' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m9' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m10' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m11' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m12' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m13' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m14' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m15' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m16' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m17' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m18' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m19' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m20' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m21' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-bdy7pad6/m22' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_v_vi_vii_every_verify_reason_every_job_blocks (__main__.Direct.test_v_vi_vii_every_verify_reason_every_job_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m0' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m1' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m2' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m3' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m4' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m5' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m6' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m7' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m8' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m9' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m10' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m11' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m12' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m13' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m14' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m15' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m16' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m17' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m18' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m19' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m20' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m21' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m22' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m23' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m24' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m25' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m26' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m27' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m28' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m29' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m30' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m31' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m32' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m33' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m34' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m35' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m36' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m37' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m38' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m39' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m40' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m41' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m42' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m43' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m44' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m45' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m46' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m47' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m48' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m49' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m50' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m51' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m52' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m53' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-c316p0rf/m54' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m0' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m1' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m2' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m3' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m4' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m5' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m6' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m7' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m8' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m9' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m10' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m11' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m12' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m13' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m14' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m15' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m16' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m17' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m18' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m19' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m20' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m21' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m22' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m23' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m24' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m25' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m26' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m27' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m28' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m29' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m30' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m31' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-3j7oklid/m32' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_vii_every_select_line_blocks (__main__.Direct.test_vii_every_select_line_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-9b361iv9/m0' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-9b361iv9/m1' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-9b361iv9/m2' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:310: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-direct-9b361iv9/m3' mode='w' encoding='UTF-8'>
+  open(names[-1], "w").write(c)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_writers_text (__main__.Direct.test_writers_text) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:381: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/verdict-sample.sh' mode='r' encoding='UTF-8'>
+  vs = open(os.path.join(R0, "verdict-sample.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:384: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-pull.sh' mode='r' encoding='UTF-8'>
+  cp = open(os.path.join(R0, "cloud-pull.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:386: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-tm-verify.py' mode='r' encoding='UTF-8'>
+  cv = open(os.path.join(R0, "cloud-tm-verify.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_helper_one_copy (__main__.Scope.test_helper_one_copy) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-shard.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:291: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_i_tm_and_testmap_lines_no_newline (__main__.Scope.test_i_tm_and_testmap_lines_no_newline) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-dw55o__d/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-dw55o__d/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-dw55o__d/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_i_tm_line_does_not_block (__main__.Scope.test_i_tm_line_does_not_block) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-m3z88y5u/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-m3z88y5u/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-m3z88y5u/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_ii_armsh_line_blocks (__main__.Scope.test_ii_armsh_line_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-txd4fj3x/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-txd4fj3x/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-txd4fj3x/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_iii_blank_line_and_item_job_block (__main__.Scope.test_iii_blank_line_and_item_job_block) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-jcyq6wek/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-jcyq6wek/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-jcyq6wek/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-pm37h7_4/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-pm37h7_4/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-pm37h7_4/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_iii_empty_blocks (__main__.Scope.test_iii_empty_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-wjb7b1o7/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-wjb7b1o7/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-wjb7b1o7/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_iii_unparseable_blocks (__main__.Scope.test_iii_unparseable_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-plzm4o9l/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-plzm4o9l/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-plzm4o9l/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_iv_tm_line_still_stops_the_tm_pool (__main__.Scope.test_iv_tm_line_still_stops_the_tm_pool) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-sjqg24q7/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-sjqg24q7/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-sjqg24q7/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:268: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-sjqg24q7/M/loadavg' mode='w' encoding='UTF-8'>
+  open(s.path("loadavg"), "w").write("1.00 1 1 1/100 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:282: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-select.sh' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:282: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/testmap-gha.sh' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:282: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-overflow.sh' mode='r' encoding='UTF-8'>
+  t = open(src(name)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_ix_absent_is_on (__main__.Scope.test_ix_absent_is_on) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-xafii4ym/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-xafii4ym/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_v_tm_provenance_mismatch_blocks (__main__.Scope.test_v_tm_provenance_mismatch_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-1i9b433r/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-1i9b433r/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-1i9b433r/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_vi_testmap_digest_mismatch_blocks (__main__.Scope.test_vi_testmap_digest_mismatch_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-nwjiudi3/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-nwjiudi3/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-nwjiudi3/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_vii_select_verdict_sample_line_blocks (__main__.Scope.test_vii_select_verdict_sample_line_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-2_x1uzf1/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-2_x1uzf1/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-2_x1uzf1/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_viii_mixed_tm_verdict_sample_and_provenance_blocks (__main__.Scope.test_viii_mixed_tm_verdict_sample_and_provenance_blocks) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rzbukwwt/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rzbukwwt/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rzbukwwt/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rt1f_517/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rt1f_517/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rt1f_517/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_x_no_helper_falls_back_to_the_old_rule (__main__.Scope.test_x_no_helper_falls_back_to_the_old_rule) ... /home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-od8zr_gk/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:129: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-od8zr_gk/M/cloud-jobs/ACTIONS_MISMATCH' mode='w' encoding='UTF-8'>
+  open(self.path("cloud-jobs", "ACTIONS_MISMATCH"), "w").write(mismatch)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-od8zr_gk/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:119: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/gha-arm-gate.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  txt = open(src("gha-arm-gate.sh")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:122: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rf3f0pyu/M/gha-arm-gate.sh' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:134: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/amscope-rf3f0pyu/src/a.txt' mode='w' encoding='UTF-8'>
+  open(os.path.join(self.src, "a.txt"), "w").write("a\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/merge-train.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_actions_mismatch_scope.py.new-amscope2:85: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/arm-postcheck.sh.new-amscope2' mode='r' encoding='UTF-8'>
+  for ln in open(path).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 2.251s
+
+OK
