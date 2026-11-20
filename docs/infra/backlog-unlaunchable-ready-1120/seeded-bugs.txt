@@ -1,0 +1,7 @@
+M1 CLI refusal only on broken updates (explicit ready writes pass): rc=1 FAILED (failures=22) failing: test_add_status_ready_refused_for_each_pair, test_update_status_and_update_refused_row_unchanged
+M2 table: feature planner rule also covers infra (bug a back): rc=1 FAILED (failures=5) failing: test_add_status_ready_refused_for_each_pair, test_blocked_row_turning_ready_by_itself_is_refused, test_item_reason_names_the_missing_launcher, test_rows_already_ready_are_not_rewritten_and_lint_lists_them, test_update_status_and_update_refused_row_unchanged
+M3 paths: feature-feed task without Paths line accepted (bug b back): rc=1 FAILED (failures=7) failing: test_add_status_ready_refused_for_each_pair, test_blocked_row_turning_ready_by_itself_is_refused, test_update_status_and_update_refused_row_unchanged
+M4 seed: blocked row unblocks without the check: rc=1 FAILED (failures=1) failing: test_blocked_row_turning_ready_by_itself_is_refused
+M5 digest: rows in FEATURE-QUEUE.tsv count as not launched: rc=1 FAILED (failures=2) failing: test_digest_lists_them, test_lines_id_age_owner_why
+M6 coord_diet: digest without the unlaunched block: rc=1 FAILED (errors=1) failing: test_digest_lists_them
+M7 infra_feed: owner test back to FEED_OWNER (planner infra row 'starts it, not this feed'): rc=1 FAILED (failures=1) failing: test_item_reason_names_the_missing_launcher

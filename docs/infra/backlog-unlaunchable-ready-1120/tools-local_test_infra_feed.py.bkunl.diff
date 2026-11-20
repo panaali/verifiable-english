@@ -1,0 +1,22 @@
+--- a/tools-local/test_infra_feed.py
++++ b/tools-local/test_infra_feed.py
+@@ -442,12 +442,17 @@
+         rows = rows_of(row("i", 1), row("p", 2, owner="feature planner"), row("n", 3, task=False),
+                        row("o", 4, owner="dri-backlog"), row("q", 5, kind="follow-up", task=False))
+         rows["qq"] = dict(row("qq", 6, kind="feature"), origin="queue")
++        rows["ip"] = row("ip", 7, owner="infra planner")
+         got = {i: bl.launchable(r, rows, {}) for i, r in rows.items()}
+         self.assertEqual(got["i"], (True, "infra feed"))
+-        self.assertEqual(got["p"], (True, "feature planner"))
++        # 2026-11-20 backlog-unlaunchable-ready: the feature planner starts no infra row (infra_feed.py skipped it too), so an
++        # infra row it owns has no launcher (was "feature planner"); a named delegate (dri-<x>) is started by hand
++        self.assertFalse(got["p"][0])
++        self.assertIn("feature planner' has no launcher", got["p"][1])
+         self.assertEqual(got["qq"], (True, "feature feed"))
+         self.assertFalse(got["n"][0])
+-        self.assertIn("has no launcher", got["o"][1])
++        self.assertEqual(got["o"], (True, "named delegate (by hand)"))
++        self.assertIn("has no launcher", got["ip"][1])
+         self.assertIn("not fed", got["q"][1])
+         rows["i"]["blocked_by"] = ["zz"]
+         self.assertEqual(bl.launchable(rows["i"], rows, {}), (False, "prerequisite not merged: zz"))

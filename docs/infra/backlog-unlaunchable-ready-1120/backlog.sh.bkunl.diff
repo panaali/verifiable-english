@@ -1,0 +1,11 @@
+--- a/backlog.sh
++++ b/backlog.sh
+@@ -5,6 +5,8 @@
+ #   zsh backlog.sh add <id> <kind> "<title>" [--status S] [--priority N] [--owner O] [--source S] [--blocked-by a,b] [--link decision=<file>] [--note "<instructions>"]
+ #   zsh backlog.sh update-status <id> <status> [--note T] [--blocked-by a,b]
+ #   zsh backlog.sh update <id> [--title T] [--priority N] [--owner O] [--link k=v] [--note T] [--blocked-by a,b]
++#   zsh backlog.sh lint                      ready rows nobody would start (exit 1 when any); zsh backlog.sh unlaunched [--min-age 60]
++# Status ready is refused (exit 1, row unchanged) when no launcher starts the row (backlog.py START_TABLE; 2026-11-20 backlog-unlaunchable-ready).
+ # kinds: feature infra efficiency trial design follow-up decision lead-question
+ # statuses: proposed ready in-flight blocked review merged done dropped. Priority: lower = sooner (queue ranks 1-99).
+ # NOW.md (the one-screen view) and the seeding from every source are svc-backlog's job (backlog-svc.sh), every 10 min.
