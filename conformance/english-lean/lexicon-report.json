@@ -45,7 +45,7 @@
   {
    "environment": "claude-constitution-excerpt",
    "failures": [],
-   "lexicon_id": "bfa8fbeaa529ff8f01e2a7eababae4f3ca21aba4537697304b985d1a06f984a3",
+   "lexicon_id": "b9f4ddf124d1b06b1de18de829fd6e797c44015b78b2d56e450c45be034adf37",
    "symbols": 32
   },
   {
@@ -69,7 +69,7 @@
   {
    "environment": "claude-constitution-excerpt-reviewed",
    "failures": [],
-   "lexicon_id": "b57353307af0cdb7754c4abcdec1bbf9b0cf0b86fb0a5d897a6b2d47f42032a7",
+   "lexicon_id": "582030fab993e39fa57c844832d25457dd196314f35752e0c6fa6b032d91bfe0",
    "symbols": 32
   },
   {
@@ -183,13 +183,13 @@
   {
    "environment": "usecases/claude-constitution-excerpt/environment.json",
    "failures": [],
-   "lexicon_id": "bfa8fbeaa529ff8f01e2a7eababae4f3ca21aba4537697304b985d1a06f984a3",
+   "lexicon_id": "b9f4ddf124d1b06b1de18de829fd6e797c44015b78b2d56e450c45be034adf37",
    "symbols": 32
   },
   {
    "environment": "usecases/claude-constitution-excerpt/environment.json+overlay",
    "failures": [],
-   "lexicon_id": "b57353307af0cdb7754c4abcdec1bbf9b0cf0b86fb0a5d897a6b2d47f42032a7",
+   "lexicon_id": "582030fab993e39fa57c844832d25457dd196314f35752e0c6fa6b032d91bfe0",
    "symbols": 32
   },
   {
@@ -243,7 +243,7 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "093b88453e69fde13859b74fd4086cc082acc3c5e1bf33fd6e230dcea75c7e54",
+   "lexicon_id": "448ba9343ecdeed256727b2457c8baba5c984681ffe7499957084518da527242",
    "symbols": 85
   },
   {
