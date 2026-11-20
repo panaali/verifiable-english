@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "d849520773f16b84c0074da252386bd45ecc9c99aca3d425cdbe1debcc6189cd",
+ "seal_id": "8b7b58b8150c67689f8e385c8d292fce6d1b614c20f32a55ce12449b494005aa",
  "sources": [
   {
    "kind": "corpus source",
@@ -570,6 +570,11 @@
   },
   {
    "kind": "entry-point caller",
+   "path": "tests/test_srccov_asimov_extended_1119.py",
+   "sha256": "13f60ad78223cbdaa977f0e820a28b3d3f2518739030af656748414a642c7818"
+  },
+  {
+   "kind": "entry-point caller",
    "path": "tests/test_w1_delta_suite.py",
    "sha256": "7d3695367ab0e7dc1a0cacd264bd0ab4b7701ac68f2357d04e5112cfbae68a41"
   },
@@ -641,7 +646,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/asimov-extended/environment.json",
-   "sha256": "b0f4d368832ae8a163aba59df194b6b442e3edd49e028fd0cda58a25bea04e87"
+   "sha256": "8ccd287ba356a5363bacde0dd78f74372191f411f1b9534f359ee1d600488ac8"
   },
   {
    "kind": "corpus source",
@@ -751,7 +756,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "38cbcba90656e558767f4c36a05ad96bd426f93620586df800f9d5445f05ee8e"
+   "sha256": "528d1489effc1b58d748a2c3b6044fa398d6aa2c9ff141ea322655404833c5ae"
   },
   {
    "kind": "corpus source",

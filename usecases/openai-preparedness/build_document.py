@@ -102,6 +102,22 @@ PLACEMENTS = {
     "For these areas, in collaboration with external experts, we commit": ("readings", "rs15-threat-models", ("AT",)),
     "As a reminder, covered systems that reach High capability must have": ("readings", "rs3-reminder", ("JT", "ET")),
     "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
+    # srccov-openai-preparedness-1119: units that state no rule, recorded as LABELLED exposition (out of scope).
+    # Headings and table header rows (title, navigation or page furniture):
+    "Clear internal decision-making practices.": ("label", "exposition", ()),
+    "Internal Transparency.": ("label", "exposition", ()),
+    "Claim Potential safeguards Potential safeguard efficacy assessments Lack of": ("label", "exposition", ()),
+    "Reliable and Robust System Oversight •": ("label", "exposition", ()),
+    # Change log items (history):
+    "Clarify the relationship among capabilities": ("label", "exposition", ()),
+    "Define how High and Critical capability thresholds relate": ("label", "exposition", ()),
+    "Update the Tracked Categories of frontier capability accordingly": ("label", "exposition", ()),
+    "Provide risk-specific safeguard guidelines": ("label", "exposition", ()),
+    "Clarify approach to establishing safeguard efficacy": ("label", "exposition", ()),
+    "12. Clarify the governance": ("label", "exposition", ()),
+    "Clarify the governance process.": ("label", "exposition", ()),
+    # Appendix C.1's opening background sentence:
+    "Several of the Tracked Categories pose risks via malicious users": ("label", "exposition", ()),
 }
 
 F1_UNITS = ("f1-misuse-bio", "f1-misuse-cyb", "f1-alignment-cyb", "f1-security", "f1-halt", "f1-contrib-bio",
@@ -388,6 +404,8 @@ def build(source):
             spec, wait = facts(ident), None
         elif kind == "unformalised":
             spec, wait = unformalised(ident), None
+        elif kind == "label":
+            spec, wait = label(ident), None
         elif kind == "blocked_rule":
             spec, wait = unformalised(BLOCKED_RULE_REASONS.get(ident, "unmapped_clause")), None
         elif kind == "readings":

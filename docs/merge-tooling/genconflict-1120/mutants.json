@@ -1,0 +1,138 @@
+[
+ {
+  "behaviour": "derived: the driver keeps ours on a two-sided change",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "return (ours, True) if resolving else _merge_file(base, ours, theirs)",
+   "to": "return (ours, True)"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file",
+   "tests/test_regen_usecase_merge.py::test_the_driver_stops_on_a_derived_file_both_sides_changed"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_merge_text_of_a_derived_file",
+   "tests/test_regen_usecase_merge.py::test_the_driver_stops_on_a_derived_file_both_sides_changed"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "keyed-lines: a recorded group both sides changed takes ours silently",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "raise Conflict(f\"recorded case {key[0]}/{key[1][:60]}: both sides changed it differently\")",
+   "to": "merged[key] = o"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently",
+   "tests/test_regen_usecase_merge.py::test_a_recorded_route_case_both_sides_changed_differently_declines"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_recorded_route_case_both_sides_changed_differently_declines",
+   "tests/test_regen_usecase_merge.py::test_keyed_lines_refuse_a_group_both_sides_changed_differently"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "keyed-lines: theirs' new groups dropped",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "if key not in mine:\n            out.extend(merged[key])",
+   "to": "if key not in mine:\n            pass"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_keyed_lines_merge_by_mode_and_id",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_keyed_lines_merge_by_mode_and_id",
+   "tests/test_regen_usecase_merge.py::test_resolve_regenerates_environment_hash_conflicts_to_the_writers_output"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_keyed_lines_merge_by_mode_and_id",
+   "tests/test_regen_usecase_merge.py::test_resolve_regenerates_environment_hash_conflicts_to_the_writers_output"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "on_conflict: plain runs include the use case",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "return [entry for entry in entries if not entry.on_conflict or entry.name in (only or ())",
+   "to": "return [entry for entry in entries if True or entry.name in (only or ())"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_plain_write_check_and_names_skip_the_use_case",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_plain_write_check_and_names_skip_the_use_case",
+   "tests/test_regen_usecase_merge.py::test_a_resolve_without_a_use_case_conflict_skips_it"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_resolve_without_a_use_case_conflict_skips_it",
+   "tests/test_regen_usecase_merge.py::test_plain_write_check_and_names_skip_the_use_case"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "on_conflict: the conflict is forgotten after a partial resolve",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "return diff(start, \"HEAD\") & diff(start, \"MERGE_HEAD\") & diff(\"HEAD\", \"MERGE_HEAD\")",
+   "to": "return set()"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_use_case_conflict_runs_it_also_after_a_partial_resolve",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_a_use_case_conflict_runs_it_also_after_a_partial_resolve"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_use_case_conflict_runs_it_also_after_a_partial_resolve"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "registry: the use case entry loses on_conflict",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "merge=\"derived\", service=\"write\", on_conflict=True,",
+   "to": "merge=\"derived\", service=\"write\","
+  },
+  "test": "tests/test_regen_generated.py::test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict",
+  "tests_run": [
+   "tests/test_regen_generated.py::test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict"
+  ],
+  "failed": [
+   "tests/test_regen_generated.py::test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "route_fixtures --check: always passes",
+  "file": "docs/en-e3-norm/en-2b/route_fixtures.py",
+  "mutation": {
+   "from": "if text != before:",
+   "to": "if False:"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write",
+  "tests_run": [
+   "tests/test_regen_usecase_merge.py::test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write"
+  ],
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "registry: two entries share a name (the first draft's route-cases)",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "Generated(\"recorded-route-cases\", (\"tests/data/route-cases.jsonl\",),",
+   "to": "Generated(\"route-cases\", (\"tests/data/route-cases.jsonl\",),"
+  },
+  "test": "tests/test_regen_generated.py::test_entry_names_are_unique",
+  "tests_run": [
+   "tests/test_regen_generated.py::test_entry_names_are_unique"
+  ],
+  "failed": [
+   "tests/test_regen_generated.py::test_entry_names_are_unique"
+  ],
+  "killed": true
+ }
+]
