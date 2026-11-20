@@ -503,7 +503,7 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the framework is reviewed at least once a year, at the time of {0} (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\"). Overview: \"We will review the Framework periodically and we expect it to evolve substantially as our understanding of the risks and benefits of frontier models improves.\"",
+        "description": "the framework is reviewed at least once a year, at the time of {0}; Overview: \"We will review the Framework periodically and we expect it to evolve substantially as our understanding of the risks and benefits of frontier models improves.\" (5.1: \"The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
