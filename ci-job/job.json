@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-build-timeout-1120-941208a1-t178718-s5",
+ "head": "d9abed4ba1b59575b01982f126bae81df3856356",
+ "argv": [
+  "armsh-cand-tm-build-timeout-1120-941208a1-t178718-s5",
+  "d9abed4ba1b59575b01982f126bae81df3856356",
+  "8761e69a6abd00fa12b6216a209a2dabca68d454",
+  "-",
+  "-",
+  "4",
+  "5/6"
+ ]
+}
