@@ -135,9 +135,11 @@ BASE = {
         ["proposal"], "the appropriate governance function has determined the residual risk of {0} to be acceptable, "
         "including a safety case where the model of {0} has reached a CCL (footnote 4, 2.1.2 and 3.1.2 step 2: "
         "\"including (with) a safety case where a CCL has been reached\"); a determination without that safety "
-        "case at a CCL is not this finding. Step 2 of 2.1.2 then says: \"In particular, we will deem deployment "
-        "mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in "
-        "likelihood of harm from the proposed external deployment has been reduced to an acceptable level.\"",
+        "case at a CCL is not this finding; a safety case (Glossary: \"Safety Cases: are an assessable argument "
+        "showing how severe risks associated with a model's CCLs have been reduced to an acceptable level.\"). "
+        "Step 2 of 2.1.2 then says: \"In particular, we will deem deployment mitigations adequate if the evidence "
+        "suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed "
+        "external deployment has been reduced to an acceptable level.\"",
         "the appropriate governance function (unnamed)", term="OT3"),
     "internal_risk_unacceptable_without_safeguards": _open(
         ["proposal"], "the risk assessment deems the residual risk of {0} from internal deployment unacceptable "

@@ -1,0 +1,11 @@
+102:order: failed last time []; changed ['tests/test_defs_repair_claude_constitution_excerpt_1119.py']; then the rest; --maxfail 5
+726:chunked tests/test_consolidation_tools.py: 4 of 4 chunks, exit 0, 3539.4 s in all, longest chunk 1117.4 s; 304 passed, 0 skipped, 0 failed; each of its 304 tests ran in exactly one chunk
+727:chunked tests/test_english_evidence.py: 4 of 4 chunks, exit 0, 697.0 s in all, longest chunk 185.0 s; 77 passed, 0 skipped, 0 failed; each of its 77 tests ran in exactly one chunk
+728:FAILED tests/test_english_lean_lexicon.py (exit 1): tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon; log /tmp/ve-select-run-mjas1ycx/tests__test_english_lean_lexicon.py.log
+752:FAILED tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon
+753:1 failed, 55 passed in 0.90s
+754:recorded 615 units for tree 17211aa06d; 41 others left to the static graph until they run; 1 failed
+756:[mac-pytest 21:14:17Z] summary: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD 7eefe1ef (clean); 3704s; exit=1; failed/error ids=1; known Mac-only failures (mac-known-failures.txt): none
+--- after regenerating lexicon-report.json (commit "regenerate the lexicon report"):
+$ uv run pytest -q tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon tests/test_english_lean_seal.py
+2 passed in 4.51s
