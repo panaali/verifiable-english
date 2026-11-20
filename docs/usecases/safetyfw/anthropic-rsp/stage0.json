@@ -84,14 +84,14 @@
  "P5": {
   "bytes_by_status": {
    "CHECKED": 4676,
-   "LABELLED": 37899,
-   "OPEN": 13214,
-   "UNFORMALISED": 3621
+   "LABELLED": 37534,
+   "OPEN": 13072,
+   "UNFORMALISED": 4128
   },
   "expected": "bytes_by_status totals 59,410",
   "input": "D1 over the 59,410-byte text",
   "total": 59410,
-  "units": 303
+  "units": 307
  },
  "P6": {
   "contiguous": true,
