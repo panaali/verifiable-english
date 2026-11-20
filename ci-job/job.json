@@ -1,0 +1,12 @@
+{
+ "job": "testmap-5c20e2e0-t174322-s1",
+ "head": "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+ "argv": [
+  "testmap-5c20e2e0-t174322-s1",
+  "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+  "ae1a7b6cc41b824916670a1c8291154d4f026b5f",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-ec87fe990deb.tar.zst",
+  "6a623a8d7a32761b9ce96c493175ad8a3cbb363d3aaf29ba310b98d5f08f8c04",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_safetyfw_usecases.py tests/test_fsf_repair_f6_sl2plus_1119.py tests/test_ownership_floor.py tests/test_pf_f16_without_fix.py tests/test_pf_f7_timed_act.py tests/test_readings_sup_verdicts.py tests/test_answer_cutoff.py tests/test_readings_verdicts_split.py tests/test_stage2_validation.py tests/test_rights_meaning_id.py tests/test_fsf_repair_f8_disclosure_1119.py tests/test_w1_delta_suite.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
