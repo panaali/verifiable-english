@@ -3304,14 +3304,9 @@
     40601,
     40647
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
-   "residual": "unmapped_claim-p13-u219-67aaea0b1a79",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p13-u220",
@@ -3334,14 +3329,9 @@
     40747,
     40774
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
-   "residual": "unmapped_claim-p13-u221-781cad8fdf09",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p13-u222",
@@ -3654,14 +3644,9 @@
     43794,
     43861
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
-   "residual": "unmapped_claim-p15-u242-fbd1655e3aec",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p15-u243",
@@ -3714,14 +3699,9 @@
     44452,
     44531
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
-   "residual": "unmapped_claim-p15-u246-5e2b540634b7",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p15-u247",
@@ -3805,14 +3785,9 @@
     45248,
     45402
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
-   "residual": "unmapped_claim-p15-u252-207074d36f8d",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p15-u253",
@@ -3921,14 +3896,9 @@
     46864,
     46908
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
-   "residual": "unmapped_claim-p15-u260-fe6595607bd7",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p15-u261",
@@ -3981,14 +3951,9 @@
     47442,
     47685
    ],
-   "kind": "unformalised",
-   "reason": "quantifier_scope",
-   "detail": "SC: D1's unary situation rule does not bind each source item in change log",
-   "residual": "quantifier_scope-p15-u264-ad155bbbd546",
-   "waits": [
-    "SC"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p15-u265",
@@ -4026,14 +3991,9 @@
     48173,
     48177
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
-   "residual": "unmapped_claim-p16-u267-71faa78434b9",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p16-u268",
@@ -4041,14 +4001,9 @@
     48177,
     48209
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
-   "residual": "unmapped_claim-p16-u268-9e63d8d5894f",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p16-u269",
@@ -4549,14 +4504,9 @@
     52538,
     52847
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard examples",
-   "residual": "unmapped_claim-p17-u302-b7b6b1329d21",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p17-u303",
@@ -5016,14 +4966,9 @@
     58816,
     58914
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
-   "residual": "unmapped_claim-p20-u341-5e74361f2630",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p20-u342",
@@ -5186,14 +5131,9 @@
     60354,
     60391
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
-   "residual": "unmapped_claim-p20-u356-33b9696a8f37",
-   "waits": [
-    "readings"
-   ],
-   "status": "UNFORMALISED"
+   "kind": "exposition",
+   "waits": [],
+   "status": "LABELLED"
   },
   {
    "id": "p20-u357",

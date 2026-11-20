@@ -1,0 +1,105 @@
+{
+ "about": "The judge's CARRIED flags (false alarms) grouped by cause (defs-carried-oos-measure-1119). Group 1 is computed; the others are the builder's grouping by passage shape and the judge's evidence line; the judge's verdicts are not changed.",
+ "false_alarms": 50,
+ "groups": [
+  {
+   "cause": "citation strip erases the definition in executed code",
+   "how": "MECHANICAL: the passage is whole on the rule surface under omit_norm(md_strip(.)) and not after cite_strip; _CITE_PAREN deletes the parenthesised tuple of \" \".join((...)) in eligibility translation.py DEFINITIONS because it holds a digit (\"21 to 27 September 2026\")",
+   "ids": [
+    "F079",
+    "F080",
+    "F081",
+    "F082",
+    "F083",
+    "F084",
+    "F085",
+    "F086",
+    "F087",
+    "F088",
+    "F089",
+    "F090"
+   ],
+   "count": 12
+  },
+  {
+   "cause": "the passage is a longer sentence that introduces or uses the term in passing (an explanatory-note restatement of the rule); the judge found the term's meaning on the surface",
+   "how": "by passage: uksi-2025-969-made.txt:113 (the \"qualifying week\" in a regulation-2 summary) and :116 (\"£100, where P has not been paid ... state pension credit or another means-tested benefit\")",
+   "ids": [
+    "F096",
+    "F097",
+    "F098",
+    "F099",
+    "F100",
+    "F101",
+    "F102",
+    "F103",
+    "F104",
+    "F105",
+    "F106",
+    "F107",
+    "F108",
+    "F109",
+    "F110",
+    "F111",
+    "F112",
+    "F113"
+   ],
+   "count": 18
+  },
+  {
+   "cause": "the passage is a lead-in cut at the line end (\"relevant benefit\" means—); the list that follows is on the surface",
+   "how": "by passage: uksi-2025-969-made.txt:41, 3 tokens",
+   "ids": [
+    "F091",
+    "F092",
+    "F093",
+    "F094",
+    "F095"
+   ],
+   "count": 5
+  },
+  {
+   "cause": "a pointer to a definition (\"See section 7A(6)(d) ...\"); the definition it points to is on the surface",
+   "how": "by passage",
+   "ids": [
+    "F114",
+    "F115",
+    "F116",
+    "F117"
+   ],
+   "count": 4
+  },
+  {
+   "cause": "an abbreviation or inflection: the carrier holds the words without the parenthesised abbreviation, or inflected",
+   "how": "by passage: \"(ESA)\", \"(CSAM)\" / \"Generate\" vs \"generating\"",
+   "ids": [
+    "F118",
+    "F119",
+    "F120",
+    "F034",
+    "F035"
+   ],
+   "count": 5
+  },
+  {
+   "cause": "a paraphrase in the legend accepted by the judge (the verbatim check needs the words whole)",
+   "how": "by evidence: bluedot matched_cost legend \"count authoring, formalisation, proof production, compute and review for both arms\"",
+   "ids": [
+    "F012",
+    "F013",
+    "F014",
+    "F015",
+    "F016"
+   ],
+   "count": 5
+  },
+  {
+   "cause": "commentary that quotes a clause; the legend names the clause",
+   "how": "by passage: claude-constitution-excerpt source.md:43",
+   "ids": [
+    "F026"
+   ],
+   "count": 1
+  }
+ ]
+}

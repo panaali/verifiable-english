@@ -1,0 +1,65 @@
+{
+ "about": "Seeded bugs of defs-carried-oos-measure-1119: each planted alone in the named file, `uv run pytest -q tests/test_defs_carried_oos.py` run, the file restored with git checkout. Python and data only (no Lean or Rust changed).",
+ "mutants": [
+  {
+   "id": "S1-wilson-drops-correction",
+   "file": "docs/infra/defs-carried-oos-measure-1119/measure.py",
+   "what": "wilson(): the z^2/(4n^2) term under the root dropped (a Wald-like interval)",
+   "test": "tests/test_defs_carried_oos.py::test_wilson_interval",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_wilson_interval"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "S2-no-passage-counts-as-hit",
+   "file": "docs/infra/defs-carried-oos-measure-1119/measure.py",
+   "what": "tabulate_recall(): hit = the tool's own hit flag, so a case with no passage (verdict None) is a hit",
+   "test": "tests/test_defs_carried_oos.py::test_recall_counts_a_hit_only_when_reached_with_a_verdict_below_carried",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_recall_counts_a_hit_only_when_reached_with_a_verdict_below_carried"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "S3-draw-keeps-known-keys",
+   "file": "docs/infra/defs-carried-oos-measure-1119/measure.py",
+   "what": "flag_population(): the known-key exclusion removed (known cases join the false-alarm draw)",
+   "test": "tests/test_defs_carried_oos.py::test_draw_excludes_known_keys_and_passing_pairs_and_is_seeded",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_draw_excludes_known_keys_and_passing_pairs_and_is_seeded"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "S4-parser-keeps-last-line",
+   "file": "docs/infra/defs-carried-oos-measure-1119/measure.py",
+   "what": "parse_judge(): a repeated flag id keeps its last line, not its first",
+   "test": "tests/test_defs_carried_oos.py::test_judge_replies_are_parsed_and_tallied_without_edits",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_judge_replies_are_parsed_and_tallied_without_edits"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "S5-unsure-counted-as-false-alarm",
+   "file": "docs/infra/defs-carried-oos-measure-1119/measure.py",
+   "what": "tally(): UNSURE counted as a false alarm in the \"UNSURE not a false alarm\" rate",
+   "test": "tests/test_defs_carried_oos.py::test_judge_replies_are_parsed_and_tallied_without_edits",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_judge_replies_are_parsed_and_tallied_without_edits"
+   ],
+   "rc": 1
+  },
+  {
+   "id": "S6-fixture-holds-a-known-key",
+   "file": "tests/data/defs_carried/oos_cases.json",
+   "what": "the first out-of-sample case given the (doc, rule, term) of a safety-framework known case",
+   "test": "tests/test_defs_carried_oos.py::test_oos_fixture_and_flags_load_and_are_disjoint_from_the_known_cases",
+   "failed": [
+    "tests/test_defs_carried_oos.py::test_oos_fixture_and_flags_load_and_are_disjoint_from_the_known_cases"
+   ],
+   "rc": 1
+  }
+ ]
+}

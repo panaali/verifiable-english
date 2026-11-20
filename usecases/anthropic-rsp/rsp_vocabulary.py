@@ -26,11 +26,32 @@ SORTS = {
     "competitor": "another frontier AI developer (Appendix A, \"competitors\"); the scenario of \"Competitors have strong "
                   "safety measures\" compares the company with each of them",
 }
+# Each row's description is the source's own words (srccov-anthropic-rsp-1119), PDF footnote markers left out; T2 adds
+# footnote 4, and T3's description, which the PDF breaks across a page, is rejoined.
 THRESHOLDS = {
-    "non_novel_chem_bio_weapons": "T1: \"Non-novel chemical/biological weapons production\" (section 1 table, row 1)",
-    "novel_chem_bio_weapons": "T2: \"Novel chemical/biological weapons production\" (row 2)",
-    "misaligned_high_stakes": "T3: \"Misaligned AI systems in high-stakes settings\" (row 3)",
-    "automated_rd": "T4: \"Automated R&D in key domains\" (row 4)",
+    "non_novel_chem_bio_weapons": "T1: \"Non-novel chemical/biological weapons production\" (section 1 table, row 1): "
+                                  "AI systems with the ability to significantly help individuals or groups with basic "
+                                  "technical backgrounds (e.g., undergraduate STEM degrees) create/obtain and deploy "
+                                  "chemical and/or biological weapons with serious potential for catastrophic damages.",
+    "novel_chem_bio_weapons": "T2: \"Novel chemical/biological weapons production\" (row 2): AI systems that can "
+                              "functionally substitute for the scarce human expertise that is currently the primary "
+                              "barrier to novel development of chemical and biological weapons with potential for "
+                              "catastrophic harm. That is, a well-resourced team could, using the model, accomplish the "
+                              "end-to-end agent design and deployment (including, as relevant, agent design, "
+                              "verification and validation, formulation, and dissemination) that would otherwise "
+                              "require recruiting one of a small number of world-leading specialists. (footnote 4: In "
+                              "particular, weapons with the potential to cause events with consequences comparable to "
+                              "or worse than those of COVID-19.)",
+    "misaligned_high_stakes": "T3: \"Misaligned AI systems in high-stakes settings\" (row 3): AI systems that are "
+                              "highly relied on and have extensive access to sensitive assets as well as moderate "
+                              "capacity for autonomous, goal-directed operation and subterfuge—such that it is "
+                              "plausible these AI systems could (if directed toward this goal, either deliberately or "
+                              "inadvertently) carry out sabotage leading to irreversibly and substantially higher odds "
+                              "of a later global catastrophe.",
+    "automated_rd": "T4: \"Automated R&D in key domains\" (row 4): AI systems that can fully automate, or otherwise "
+                    "dramatically accelerate, the work of large, top-tier teams of human researchers in domains where "
+                    "fast progress could cause threats to international security and/or rapid disruptions to the "
+                    "global balance of power—for example, energy, robotics, weapons development, and AI itself.",
 }
 
 
@@ -43,7 +64,9 @@ def _base(args, description, verbalisation=None):
 
 def _open(args, description, decider, term, verbalisation=None):
     """An open-term predicate: VE never decides it; the case stipulates the decider's finding."""
-    return _base(args, f"{description}. Open term {term}, decided by {decider}", verbalisation)
+    # A description that ends with a quoted sentence's own full stop takes no second one.
+    end = " " if description.endswith(".") else ". "
+    return _base(args, f"{description}{end}Open term {term}, decided by {decider}", verbalisation)
 
 
 def _regulated(role, args, act, description):
@@ -62,7 +85,34 @@ def _may(act, description):
 
 WE = "the company (\"we\")"
 BASE = {
-    "listed": _base(["threshold"], "{0} is a threshold of the section 1 table", "{0} is listed"),
+    "listed": _base(["threshold"], "{0} is a threshold of the section 1 table" + (
+        "; in the source's words (section 1): “The left column identifies capability thresholds that would call for "
+        "heightened mitigations.” (row T1, left column): “Non-novel chemical/biological weapons production. AI "
+        "systems with the ability to significantly help individuals or groups with basic technical backgrounds "
+        "(e.g., undergraduate STEM degrees) create/obtain and deploy chemical and/or biological weapons with serious "
+        "potential for catastrophic damages.” (row T2, left column): “Novel chemical/biological weapons production. "
+        "AI systems that can functionally substitute for the scarce human expertise that is currently the primary "
+        "barrier to novel development of chemical and biological weapons with potential for catastrophic harm. 4 "
+        "That is, a well-resourced team 5 could, using the model, accomplish the end-to-end agent design and "
+        "deployment (including, as relevant, agent design, verification and validation, formulation, and "
+        "dissemination) that would otherwise 6 require recruiting one of a small number 7 of world-leading "
+        "specialists.” (footnotes 7, 6, 5 and 4 of row T2): “7 E.g., hundreds. 6 E.g., in a world with access only "
+        "to the best AI models as of 2023. 5 For example, a program with millions of dollars available and support "
+        "from recent PhD’s from top-tier international programs. We are focused on the sorts of teams that would be "
+        "realistic for real-world threat actors. 4 In particular, weapons with the potential to cause events with "
+        "consequences comparable to or worse than those of COVID-19.” (row T3, left column): “Misaligned AI systems "
+        "in high-stakes settings. AI systems that are highly relied on and have extensive access to sensitive assets "
+        "as well as moderate capacity for autonomous, goal-directed operation and subterfuge—such that it is "
+        "plausible these AI systems could (if directed toward this goal, either deliberately or inadvertently) carry "
+        "out sabotage leading to irreversibly and substantially higher odds of a later global catastrophe. In the "
+        "near term, this possibility will likely be most applicable to AI systems that are extensively used within "
+        "major AI companies, with the opportunity to manipulate how their successor systems are trained and deployed "
+        "as well as the evidence used to assess their safety. Down the line, this possibility may come to apply to "
+        "AI systems deployed within government and other high-stakes settings.” (row T4, left column): “Automated "
+        "R&D in key domains. AI systems that can fully automate, or otherwise dramatically accelerate, the work of "
+        "large, top-tier teams of human researchers in domains where fast progress could cause threats to "
+        "international security and/or rapid disruptions to the global balance of power—for example, energy, "
+        "robotics, weapons development, and AI itself.”"), "{0} is listed"),
     "crossed": _open(["situation", "threshold"], "the model of {0} has crossed {1}", WE + " (3.3 \"whether we "
                      "believe we've crossed relevant thresholds\"; T4: \"if we determine\")", "OT1",
                      "{0} has crossed {1}"),
@@ -84,7 +134,10 @@ BASE = {
                             "manipulation and obfuscation of evidence (row T4, right column, the condition of \"in "
                             "which case\")",
         "legal_prohibition_redaction": "at {0} the redaction is necessary to comply with legal prohibitions (3.6.2)",
-        "legal_rights_redaction": "at {0} the redaction is necessary to maintain our legal rights (3.6.2)",
+        "legal_rights_redaction": "at {0} the redaction is necessary to maintain our legal rights (3.6.2)" + (
+            "; in the source's words (footnote 12): “12 For example, we may redact information if sharing it would "
+            "endanger our legal right to treat it as confidential. This would be an uncommon situation. It does not "
+            "mean we would redact information merely because it is sensitive or to reduce the risk of a leak.”"),
         "impedes_safety_concerns": "at {0} a contractual non-disparagement obligation on employees, candidates, or "
                                    "former employees is imposed in a way that could impede or discourage them from "
                                    "publicly raising safety concerns about Anthropic (4.5)",
@@ -99,10 +152,25 @@ BASE = {
         "submitted_under_external_review": "{0} is the submission of a Risk Report to the Board and LTBT under the "
                                            "external review process (3.6.2)",
         "external_review_process": "{0} is a Risk Report under the external review process (3.6.2), including a "
-                                   "review the LTBT requests (3.6: \"subject to the procedures outlined below\")",
+                                   "review the LTBT requests (3.6: \"subject to the procedures outlined below\")" + (
+            "; in the source's words (3.6.3): “The external review will address: 1. Adequacy of information: Whether "
+            "the Risk Report contains sufficient information to assess the identified risks; 2. Analytical rigor: "
+            "The strength of the Risk Report’s reasoning and analysis; 3. Areas of disagreement: Whether the "
+            "external reviewer disagrees with any of the Risk Report’s key claims and, if so, the reasons for any "
+            "such disagreements; and 4. Risk reduction recommendations: Recommendations for further reducing "
+            "identified risks. The external reviewer will also evaluate our redaction decisions while avoiding "
+            "disclosure of the redacted content itself. In particular, the review will cover: 1. Redaction scope: "
+            "The general nature and scope of redactions; 2. Redaction justification: Whether the external reviewer "
+            "generally agrees or disagrees with the publicly stated reasons for the redactions and, if relevant, the "
+            "reasons for any disagreements; 3. Balancing test: Whether the redactions strike a reasonable balance "
+            "between Anthropic’s legitimate interests and society’s interest in transparency; and 4. Materiality: "
+            "Whether any of the redactions in the public report are material to any of the external reviewer’s "
+            "substantive disagreements with the report’s claims.”"),
         "noncompliance_report_received": "at {0} a report of potential noncompliance is received (4.4)",
         "substantiated": "at {0} the noncompliance report is substantiated (4.4)",
-        "concerns_rso": "at {0} the noncompliance report concerns the conduct of the RSO (4.4)",
+        "concerns_rso": "at {0} the noncompliance report concerns the conduct of the RSO (4.4)" + (
+            "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who "
+            "is responsible for the implementation of this policy.”"),
         "non_disparagement_clause_offered": "at {0} an agreement with a non-disparagement clause is offered (4.5)",
         "rsp_change_proposed": "{0} is a change to the RSP (4.8)",
         "rsp_updated": "{0} is an update of the RSP (4.8)",
@@ -119,8 +187,17 @@ BASE = {
                                   "it (section 2: \"simply because we are unable to achieve them\"); a revision that "
                                   "reflects \"our evolving understanding of how best to mitigate key risks\" is not",
         "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, "
-                       "Anthropic in the lead, the scenario's first conjunct)",
-        "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists",
+                       "Anthropic in the lead, the scenario's first conjunct)" + (
+            "; in the source's words (3.6): “A model is “ highly capable” if we conclude that it crosses the "
+            "threshold for automated AI R&D described in Section 1 .”"),
+        "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists" + (
+            "; in the source's words (3.5): “Reasons we may redact material include but are not limited to: 1. Legal "
+            "compliance: To comply with legal obligations on disclosing information, such as export control "
+            "regulations, national security restrictions, or contractual obligations with third parties. 2. "
+            "Intellectual property protection: To protect proprietary information, including technical details of "
+            "our models and training methodologies, trade secrets, or other confidential business information. 3. "
+            "Public safety considerations: To protect public safety by not disclosing information that could be "
+            "exploited to cause harm. 4. Privacy: To protect the personal privacy of individuals.”"),
     }.items()},
     # T4's "if we determine that either (1) ... or (2)" governs both branches: (2) is the company's determination, as
     # (1) is (OT15); it is OT1's T4 determination, met through scenario (2).
@@ -134,17 +211,32 @@ BASE = {
                         "automation of AI R&D.\")", WE + " (\"if we determine\")", "OT1"),
     # Open terms (PLAN 3.2): the decider is the text's own.
     "highly_capable": _open(["situation"], "the model of {0} is highly capable: it crosses \"the threshold for "
-                            "automated AI R&D described in Section 1\" (3.6)", WE + " (\"if we conclude\")", "OT5"),
+                            "automated AI R&D described in Section 1\" (3.6)" + (
+        "; in the source's words (3.6): “A model is “ highly capable” if we conclude that it crosses the threshold "
+        "for automated AI R&D described in Section 1 .”"), WE + " (\"if we conclude\")", "OT5"),
     "more_capable_than_analyzed": _open(["situation"], "the model of {0} is significantly more capable than all "
                                         "models for which we have publicly analyzed the named risks (3.1, off-cycle "
-                                        "bullet 1)", WE, "OT2"),
+                                        "bullet 1: \"When we publicly deploy a model that we determine is (1) "
+                                        "significantly more capable than (2) all models for which we have publicly "
+                                        "analyzed risks related to chemical/biological weapons production, "
+                                        "high-stakes misalignment, or automated R&D (e.g., in a prior Risk Report, "
+                                        "System Card, or other public artifact).\")", WE, "OT2"),
     "exceeds_prior_report": _open(["situation"], "the internal model of {0} could pose risks of high-stakes "
                                   "misalignment or automated R&D that significantly exceed those of models covered "
                                   "by a prior Risk Report (3.1 Scope)", WE, "OT3a"),
     "exceeds_all_analyzed": _open(["situation"], "the internal model of {0} could pose such risks that significantly "
                                   "exceed those of all models for which we have publicly analyzed them (3.1, "
-                                  "off-cycle bullet 2)", WE, "OT3b"),
-    "significantly_redacted": _open(["situation"], "the Risk Report of {0} is significantly redacted (3.6)",
+                                  "off-cycle bullet 2: \"Within 30 days of determining that we have an internally "
+                                  "deployed model that (1) could pose risks related to high-stakes misalignment or "
+                                  "automated R&D that (2) significantly exceed those of all models for which we have "
+                                  "publicly analyzed such risks (e.g., in a prior Risk Report, System Card, or other "
+                                  "public artifact).\")", WE, "OT3b"),
+    "significantly_redacted": _open(["situation"], "the Risk Report of {0} is significantly redacted (3.6)" + (
+        "; in the source's words (3.6): ““Significantly redacted” means that the redactions omit information a "
+        "reasonable external safety researcher would consider important in evaluating the overall level of risk, "
+        "such that a reader of only the public version could not meaningfully assess whether they agree with our "
+        "conclusions. A report shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or "
+        "LTBT, it meets this description.”"),
                                     "the RSO, CEO, Board or LTBT (a sufficient judgment)", "OT4"),
     "strong_argument_made": _open(["situation"], "a strong argument that catastrophic risk is contained is made at "
                                   "{0}", "no one the text names (unstated)", "OT6"),
@@ -156,7 +248,14 @@ BASE = {
                                   "developed, or will soon develop, a highly capable frontier model are able to make "
                                   "strong arguments that catastrophic risk is contained, in the spirit of our "
                                   "recommendations for industry-wide safety (Appendix A, Competitors have strong "
-                                  "safety measures)", WE + " (\"use our best judgment\")", "OT8"),
+                                  "safety measures)" + (
+        "; in the source's words (footnote 1): “1 “Catastrophic risk” as used in our RSP refers generally to risks "
+        "of the most severe potential harms from advanced AI, such as existential threats or fundamental "
+        "destabilization of global systems. We use this term in its plain meaning rather than adopting any specific "
+        "statutory definition. Where laws such as California SB 53 define this or similar terms with specific "
+        "thresholds, we address those requirements in separate compliance frameworks.” (section 1): “The right "
+        "column describes our recommendations for industry-wide safety at each threshold.”"),
+                                  WE + " (\"use our best judgment\")", "OT8"),
     "mitigation_evidence": _open(["situation"], "at {0} we have strong evidence that a competitor has implemented a "
                                  "risk mitigation that: (1) represents a significant improvement on reduction of our "
                                  "prioritized risks relative to our analogous mitigations; and (2) we could implement "
@@ -165,7 +264,12 @@ BASE = {
                                  WE + " (\"use our best judgment\")", "OT8"),
     "lead_delay_needed": _open(["situation"], "a delay is needed at {0} to achieve the strong argument that "
                                "catastrophic risk is contained (Appendix A, Anthropic in the lead, \"as needed to "
-                               "achieve this\")", WE, "OT7"),
+                               "achieve this\")" + (
+        "; in the source's words (footnote 1): “1 “Catastrophic risk” as used in our RSP refers generally to risks "
+        "of the most severe potential harms from advanced AI, such as existential threats or fundamental "
+        "destabilization of global systems. We use this term in its plain meaning rather than adopting any specific "
+        "statutory definition. Where laws such as California SB 53 define this or similar terms with specific "
+        "thresholds, we address those requirements in separate compliance frameworks.”"), WE, "OT7"),
     "posture_delay_needed": _open(["situation"], "a delay is needed at {0} to meet or exceed the overall risk "
                                   "reduction posture of these competitors (Appendix A, Competitors have strong "
                                   "safety measures, \"as needed to achieve this\")", WE, "OT7"),
@@ -181,10 +285,18 @@ BASE = {
     "noteworthy": _open(["situation"], "the change or deviation at {0} is noteworthy (3.2)", "no one the text names "
                         "(unstated)", "OT11"),
     "marginal_justification": _open(["situation"], "at {0} the absolute level of risk imposed industry-wide is high "
-                                    "and our decision to move forward rests partly on a marginal risk analysis (3.3)",
+                                    "and our decision to move forward rests partly on a marginal risk analysis (3.3)" + (
+        "; in the source's words (3.3): “If we determine that the absolute level of risk being imposed industry-wide "
+        "by AI systems such as ours is high, and are justifying our decision to move forward based partly on a "
+        "marginal risk analysis,” (footnote 11): “11 By “ marginal risk analysis ,” we mean arguing that the risks "
+        "imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed "
+        "by other AI systems.”"),
                                     WE + " (\"If we determine\")", "OT18"),
     "marginal_major_role": _open(["situation"], "at {0} marginal risk analysis plays a major role in a decision to "
-                                 "move forward (3.4 step 5)", "no one the text names (unstated)", "OT19"),
+                                 "move forward (3.4 step 5)" + (
+        "; in the source's words (footnote 11): “11 By “ marginal risk analysis ,” we mean arguing that the risks "
+        "imposed by our systems in particular are relatively lower when keeping in mind the risks unavoidably posed "
+        "by other AI systems.”"), "no one the text names (unstated)", "OT19"),
     "full_substitution_at_competitive_cost": _open(["situation"], "at {0} our models would be able to fully "
                                                    "substitute for our entire set of Research Scientists and Research "
                                                    "Engineers at competitive costs, within a factor of 5 (T4 (1); the "
@@ -192,9 +304,22 @@ BASE = {
     "double_rate": _open(["situation"], "at {0} we observe or expect double the rate of progress in AI aggregate "
                          "capabilities compared to both the rate we'd expect and the fastest rate of extended progress "
                          "we've observed \"in the absence of significant AI contributions to AI R&D\" (T4 (2)(a), "
-                         "footnotes 8 and 9)", WE, "OT16"),
+                         "footnotes 8 and 9)" + (
+        "; in the source's words (footnote 8): “8 “Double the rate of progress” means “as much progress in one year "
+        "as one would see in two years at baseline.” For example, if baseline progress involved a 3× scaleup in "
+        "compute and a 3× improvement in algorithmic efficiency (for a 9× “effective scaleup”), “double the rate of "
+        "progress” would entail something like an 81× effective scaleup. This is not the same idea as “doubling "
+        "researchers’ productivity,” since doubling inputs does not necessarily double the rate of progress.” "
+        "(footnote 9): “9 Over at least three model generations.”"), WE, "OT16"),
     "automation_attributable": _open(["situation"], "at {0} it is plausible that the doubling is substantially "
-                                        "attributable to the automation of research and/or engineering (T4 (2)(b))",
+                                        "attributable to the automation of research and/or engineering (T4 (2)(b))" + (
+        "; in the source's words (row T4, left column): “We would consider scenario (2) to have occurred where (a) "
+        "we observe or expect double the rate of progress 8 in AI aggregate capabilities compared to both the rate "
+        "we’d expect and the fastest rate of extended progress 9 we’ve observed in the absence of significant AI "
+        "contributions to AI R&D and (b) it is plausible that this doubling is substantially attributable to the "
+        "automation of research and/or engineering (as opposed to other factors, such as increased headcount, "
+        "compute, or general productivity), such that continuation of the trend in AI progress seems likely to lead "
+        "to even greater acceleration.”"),
                                         WE, "OT17"),
     "continuation_accelerates": _open(["situation"], "at {0} continuation of the trend in AI progress seems likely to "
                                       "lead to even greater acceleration (T4 (2), under RS3c = third)", WE, "OT28"),
@@ -347,14 +472,24 @@ def _row_arguments_legend():
 
 
 REGULATED = {
-    "plans_in_place": _duty("{0} have the plans of the company about {1} in place", _row_plans_legend(),
+    "plans_in_place": _duty("{0} have the plans of the company about {1} in place", _row_plans_legend() + (
+        "; in the source's words (section 1): “The middle column provides an overview of our planned mitigations, "
+        "which we have set forth more fully in our Frontier Safety Roadmap and other sections of this policy.” "
+        "(footnote 3, on the middle column's header): “3 This column summarizes commitments drawn from other "
+        "sections of this policy and associated artifacts. It should be read as an overview, not as indicating any "
+        "separate or additional plans.” (Appendix B): “We still use this concept to refer to, and distinguish "
+        "between, present levels of risk mitigations—those that we maintain for existing AI models.” (Changelog, "
+        "version 2.0): “ASL definition changed: The term “ASL” now refers to groups of technical and operational "
+        "safeguards (it previously also referred to models).”"),
                             ("situation", "threshold")),
     "strong_argument": _duty("{0} make a strong argument about {1}", _row_arguments_legend(),
                              ("situation", "threshold")),
     "advance_recommendations": _duty("{0} advance the industry-wide recommendations", "section 1 at {0}: \"We will "
                                      "strive to advance these recommendations through a mixture of example-setting, "
                                      "addressing unsolved technical problems, advocacy through industry groups, and "
-                                     "policy advocacy.\" (the four means; \"strive\" is RS12)"),
+                                     "policy advocacy.\" (the four means; \"strive\" is RS12)" + (
+        "; in the source's words (section 1): “The right column describes our recommendations for industry-wide "
+        "safety at each threshold.”")),
     "evidentiary_standards": _duty("{0} hold threat analyses to very high evidentiary standards with thorough care",
                                    "section 1, row 4, right column, at {0}: \"In particular, at this point AI systems "
                                    "might be responsible for much of the research and analysis that underpins risk "
@@ -366,19 +501,44 @@ REGULATED = {
     "roadmap_maintained": _duty("{0} have the Frontier Safety Roadmap maintained", "section 2 at {0}: \"We will "
                                 "maintain a Frontier Safety Roadmap laying out ambitious but achievable goals for "
                                 "improving our risk mitigations—charting our progress as a company and raising the "
-                                "bar over time.\""),
+                                "bar over time.\"" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "roadmap_shared": _duty("{0} have the Roadmap shared as the policy states", "the Roadmap is shared with all "
                             "full-time employees, the Board and the LTBT, and published in redacted form, at {0} "
-                            "(section 2)"),
+                            "(section 2)" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "roadmap_updates": _duty("{0} have updates provided on whether the Roadmap goals are achieved", "updates on the "
-                             "goals, with new goals set when they are achieved, at {0} (section 2)"),
+                             "goals, with new goals set when they are achieved, at {0} (section 2)" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "past_roadmaps_kept": _duty("{0} have past Roadmaps kept available at the link of the current Roadmap",
                                 "section 2 at {0}: \"Our current Frontier Safety Roadmap is available at "
                                 "anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps "
-                                "available at that link.\""),
+                                "available at that link.\"" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "goals_kept": _duty("{0} avoid the revision", "the company avoids the revision of the goal at {0} (section 2: "
                         "\"we will strive to avoid situations where we revise the goals in a less ambitious direction "
-                        "simply because we are unable to achieve them\")"),
+                        "simply because we are unable to achieve them\")" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "risk_reports_published": _duty("{0} have Risk Reports on risks as well as continuation determinations published",
                                     "section 3 at {0}: \"We will publish Risk Reports discussing the risks of our "
                                     "systems and how we have made determinations about whether to continue AI "
@@ -391,7 +551,9 @@ REGULATED = {
                  "pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed "
                  "those posed by models covered by a prior Risk Report. While there are a variety of reasons we "
                  "might classify an internal model this way, this will—at a minimum—include any internal models "
-                 "that we are deploying for large-scale, fully autonomous research.\"",
+                 "that we are deploying for large-scale, fully autonomous research.\"" + (
+        "; in the source's words (3.1): “Scope. A Risk Report will cover the risks of Anthropic's models and actions "
+        "as of a given coverage date, which will be no more than 30 days prior to the publication of the report. 10”"),
                  "regulated": {"role": "plain", "default": "deny"}},
     "off_cycle_published": _duty("{0} have an off-cycle analysis of its model published", "an analysis of the "
                                  "model's relevant risks is published at {0} (3.1, off-cycle updates)"),
@@ -408,15 +570,55 @@ REGULATED = {
     "strong_attempt": _duty("{0} make a strong attempt to keep risk from increasing significantly", "ongoing (as "
                             "opposed to temporary) changes do not significantly increase the level of risk (3.2)"),
     "factual_documented": _duty("{0} have the factual information documented in its Risk Report", "the five "
-                                "factual items of 3.3 at {0}"),
-    "risk_analysed": _duty("{0} have the risk analyses provided", "the four risk analyses of 3.3 at {0}"),
-    "past_reviewed": _duty("{0} have past Risk Reports reviewed", "the three review items of 3.3 at {0}"),
+                                "factual items of 3.3 at {0}" + (
+        "; in the source's words (3.3): “We will describe how we identify, evaluate, and mitigate catastrophic risks. "
+        "A Risk Report will document the following: 1. Threat model identification: Our criteria for determining which catastrophic risks (i.e., threat models) we assess. 2. Threat model "
+        "specification: The relevant threat models (which will, at a minimum, include those discussed above ). 3. "
+        "Evidence (including evaluations) about relevant model capabilities and behaviors: For each in-scope model, "
+        "capability and alignment evaluations (conducted internally and by external parties as appropriate), their "
+        "results, and (as appropriate) other evidence we considered in assessing the level of risk. 4. Risk "
+        "mitigations: For each in-scope model, the mitigations we have implemented as of the coverage date across "
+        "security, deployment safeguards, and alignment domains, along with discussion of their effectiveness. 5. "
+        "Additional relevant factors: Any other considerations material to our risk analysis.”")),
+    "risk_analysed": _duty("{0} have the risk analyses provided", "the four risk analyses of 3.3 at {0}" + (
+        "; in the source's words (3.3): “Our analyses will include: 1. Threat-specific risk assessment: For each "
+        "threat model, we will analyze remaining absolute risk–i.e., the leftover risk after accounting for our "
+        "mitigations. We will also discuss whether we believe we’ve crossed relevant thresholds in our "
+        "recommendations for industry-wide safety (see Section 1 ), and (as relevant) whether we believe we’re "
+        "meeting the risk mitigation standards corresponding to them. 2. Overall risk assessment: We will provide an "
+        "overall risk assessment. 3. Risk-benefit determination: We will explain whether, and if so why, we believe "
+        "the identified risks are justified by corresponding benefits. 4. Looking forward: We will outline our plans "
+        "for continuing to monitor and mitigate the relevant risks over time.”")),
+    "past_reviewed": _duty("{0} have past Risk Reports reviewed", "the three review items of 3.3 at {0}" + (
+        "; in the source's words (3.3): “Review of past Risk Reports and decisions. We will address: 1. Changes in "
+        "risk mitigation practices —noteworthy cases in which our risk mitigation practices deviated (including "
+        "temporarily) or changed from what we discussed in our previous Risk Report over the relevant period, and "
+        "their implications for the overall level of risk. 2. Decisions to internally deploy in-scope models that "
+        "would not otherwise be reviewed in a Risk Report (because they happened in between Risk Reports). We will "
+        "discuss how these decisions were made and whether they appear reasonable in light of any noteworthy new "
+        "information that has come to light since then. 3. Changes to our Frontier Safety Roadmap and any cases "
+        "where we failed to meet our goals.”")),
     "roadmap_review_addressed": _duty("{0} have Roadmap changes as well as missed goals addressed in a Risk Report",
                                       "3.3 review item 3 at {0}: \"Changes to our Frontier Safety Roadmap and any "
                                       "cases where we failed to meet our goals.\" (both parts, with no condition: the "
-                                      "changes, and each case of a missed goal there is)"),
+                                      "changes, and each case of a missed goal there is)" + (
+        "; in the source's words (Introduction): “Frontier Safety Roadmaps are a new requirement under our RSP. "
+        "These will describe our concrete plans for making progress across Security, Alignment, Safeguards, and "
+        "Policy. Goals described in the Roadmaps are intended to be ambitious, yet achievable—providing the kind of "
+        "forcing function that we consider to be a past success of our RSP. These are not hard commitments but "
+        "rather public goals against which we will openly grade our progress.”")),
     "marginal_analysed": _duty("{0} have the marginal risk analyses provided", "the four analyses of 3.3's marginal "
-                               "risk paragraph at {0}"),
+                               "risk paragraph at {0}" + (
+        "; in the source's words (3.3): “If we determine that the absolute level of risk being imposed industry-wide "
+        "by AI systems such as ours is high, and are justifying our decision to move forward based partly on a "
+        "marginal risk analysis, we will additionally address the following: 1. Competitive landscape "
+        "analysis: What we know about how our current and future model capabilities and risk mitigations compare to "
+        "those of relevant competitors. 2. Role in risk assessment: How these comparisons factored into our risk "
+        "assessment. 3. Benefits analysis: The benefits, if any, of continuing to maintain our existing models or of "
+        "advancing frontier capabilities, including considerations related to our mission and our ability to "
+        "contribute to AI safety research and policy development. 4. Advocacy efforts: The steps we took to raise "
+        "public awareness of the relevant risks and to encourage appropriate regulatory action, including our "
+        "engagement with policymakers and other AI developers.”")),
     "assessed_in_report": _duty("{0} be assessed in a Risk Report", "the assessments of 3.3 are conducted with "
                                 "respect to the model of {0}"),
     "internal_feedback": _duty("{0} have comprehensive internal feedback on the report solicited", "3.4 step 2 at "
@@ -430,13 +632,19 @@ REGULATED = {
                                  "feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3: "
                                  "\"The Risk Report, along with the internal feedback and any available external "
                                  "feedback, will be sent to the CEO and Responsible Scaling Officer (RSO) for final "
-                                 "review and approval.\"); the duty is the submission, not an approval obtained"),
+                                 "review and approval.\" \"The CEO and RSO will make the ultimate determination "
+                                 "regarding the adequacy of the risk assessment and any downstream deployment or "
+                                 "development plans.\"); the duty is the submission, not an approval obtained" + (
+        "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who is "
+        "responsible for the implementation of this policy.”")),
     "board_approved": _duty("{0} have its Risk Report approved by the Board as well as the LTBT", "explicit "
                             "approval by the Board and the LTBT (3.4 step 5)"),
     "governance_notified": _duty("{0} have the decision promptly shared with the Board as well as the LTBT", "3.4 "
                                  "step 4 at {0}: \"Following approval of a Risk Report, the CEO and RSO will "
                                  "promptly share their decision(s), the underlying Risk Report, and internal feedback "
-                                 "with both the Board and the LTBT.\" (\"promptly\" is OT12)"),
+                                 "with both the Board and the LTBT.\" (\"promptly\" is OT12)" + (
+        "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who is "
+        "responsible for the implementation of this policy.”")),
     "redactions_minimized": _duty("{0} have redactions minimized in public as well as regular-clearance versions",
                                   "3.5 at {0}: \"We will aim to minimize redactions to the public version of the "
                                   "report or to the version of the report shared with all regular-clearance "
@@ -445,18 +653,37 @@ REGULATED = {
                                   "will disclose the existence of each redaction made in the public version of the "
                                   "report\""),
     "redactions_justified": _duty("{0} have a brief justification of each public-version redaction given", "3.5 at "
-                                  "{0}: \"and aim to give a brief justification for such redactions\" (the "
-                                  "redactions made in the public version)"),
+                                  "{0}: \"and aim to give a brief justification for such redactions, though in many "
+                                  "cases this will necessarily be very high-level.\" (the redactions made in the "
+                                  "public version)"),
     "redaction": _may("{0} have material redacted from the public as well as regular-clearance versions", "3.5 at "
                       "{0}: \"We will publish a public version of our Risk Report. We will aim to minimize redactions "
                       "to the public version of the report or to the version of the report shared with all "
                       "regular-clearance Anthropic employees. Reasons we may redact material include but are not "
                       "limited to:\" (both versions; the four listed reasons do not close the class)"),
-    "public_review_sought": _duty("{0} have comprehensive public external review sought", "3.6 at {0}"),
+    "public_review_sought": _duty("{0} have comprehensive public external review sought", "3.6 at {0}" + (
+        "; in the source's words (3.6): “This means working with one or more third-party organizations that will "
+        "receive private versions of our Risk Reports (unredacted or with minimal redactions, as discussed below) "
+        "and publish comprehensive commentary on them. Commentary will address topics including the quality of our "
+        "reasoning, the validity of our risk assessments, the overall level of risk, and whether the redactions "
+        "we’ve made for the public version are reasonable and appropriate.”")),
     "full_review": _duty("{0} have a full external review completed with at least one external reviewer", "3.6 at "
                          "{0}: \"At a minimum, we will complete a full external review process (described below) "
                          "with at least one external reviewer anytime a Risk Report covers highly capable models and "
-                         "is significantly redacted\" (F14; 3.6 defines the two terms next: OT5 and OT4)"),
+                         "is significantly redacted\" (F14; 3.6 defines the two terms next: OT5 and OT4)" + (
+        "; in the source's words (3.6.3): “The external review will address: 1. Adequacy of information: Whether the "
+        "Risk Report contains sufficient information to assess the identified risks; 2. Analytical rigor: The "
+        "strength of the Risk Report’s reasoning and analysis; 3. Areas of disagreement: Whether the external "
+        "reviewer disagrees with any of the Risk Report’s key claims and, if so, the reasons for any such "
+        "disagreements; and 4. Risk reduction recommendations: Recommendations for further reducing identified "
+        "risks. The external reviewer will also evaluate our redaction decisions while avoiding disclosure of the "
+        "redacted content itself. In particular, the review will cover: 1. Redaction scope: The general nature and "
+        "scope of redactions; 2. Redaction justification: Whether the external reviewer generally agrees or "
+        "disagrees with the publicly stated reasons for the redactions and, if relevant, the reasons for any "
+        "disagreements; 3. Balancing test: Whether the redactions strike a reasonable balance between Anthropic’s "
+        "legitimate interests and society’s interest in transparency; and 4. Materiality: Whether any of the "
+        "redactions in the public report are material to any of the external reviewer’s substantive disagreements "
+        "with the report’s claims.”")),
     "ltbt_review": _duty("{0} have an external review conducted subject to the outlined procedures", "3.6 at {0}: "
                          "\"In addition, upon the LTBT's request, we will conduct a public or private external review "
                          "of our Risk Report or sections thereof, subject to the procedures outlined below.\" (the "
@@ -474,7 +701,22 @@ REGULATED = {
                               "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on "
                               "our report within 30 days of receipt.\" 3.6.3: \"Public comments. We will ask the "
                               "external reviewer to memorialize its findings on the topics above in a written report "
-                              "that is made public.\" (the day count is D3's)"),
+                              "that is made public.\" (the day count is D3's); the topics, 3.6.3: \"The external "
+                              "review will address: 1. Adequacy of information: Whether the Risk Report contains "
+                              "sufficient information to assess the identified risks; 2. Analytical rigor: The "
+                              "strength of the Risk Report's reasoning and analysis; 3. Areas of disagreement: Whether "
+                              "the external reviewer disagrees with any of the Risk Report's key claims and, if so, "
+                              "the reasons for any such disagreements; and 4. Risk reduction recommendations: "
+                              "Recommendations for further reducing identified risks. The external reviewer will also "
+                              "evaluate our redaction decisions while avoiding disclosure of the redacted content "
+                              "itself. In particular, the review will cover: 1. Redaction scope: The general nature "
+                              "and scope of redactions; 2. Redaction justification: Whether the external reviewer "
+                              "generally agrees or disagrees with the publicly stated reasons for the redactions and, "
+                              "if relevant, the reasons for any disagreements; 3. Balancing test: Whether the "
+                              "redactions strike a reasonable balance between Anthropic's legitimate interests and "
+                              "society's interest in transparency; and 4. Materiality: Whether any of the redactions "
+                              "in the public report are material to any of the external reviewer's substantive "
+                              "disagreements with the report's claims.\""),
     "early_full_review": _duty("{0} have the full external review done before the Board as well as LTBT review",
                                "3.6.2 at {0}: \"We will try to work toward a process that involves the full "
                                "external review being completed prior to Board/LTBT review (and may require this "
@@ -489,7 +731,14 @@ REGULATED = {
                                   "legal rights.\" (a prohibition unless one of the two grounds holds)"),
     "rso_maintained": _duty("{0} have the position of RSO maintained", "4.1 at {0}: \"We will maintain the position "
                             "of RSO, a designated member of staff who is responsible for the implementation of this "
-                            "policy.\" (the listed duties are s4-rso-duties)"),
+                            "policy.\" (the listed duties are s4-rso-duties)" + (
+        "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who is "
+        "responsible for the implementation of this policy.” (4.1): “The RSO’s duties will include (but are not "
+        "limited to): (1) as needed, proposing updates to this policy; (2) approving relevant model development or "
+        "deployment decisions based on our risk assessments; (3) reviewing major contracts (e.g., deployment "
+        "partnerships) for consistency with this policy; (4) overseeing the implementation of this policy, including "
+        "the allocation of sufficient resources; (5) receiving and addressing reports of potential instances of "
+        "noncompliance; and (6) making judgment calls on policy interpretation and application.”")),
     "ltbt_briefed": _duty("{0} have the LTBT regularly briefed on Risk Report plans as well as developments", "4.2 "
                           "at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk "
                           "Reports, including model training, capability evals, mitigations, and risk analyses.\" "
@@ -504,7 +753,9 @@ REGULATED = {
                                "at {0}: \"We will maintain a process for Anthropic staff to submit anonymous or "
                                "identified reports regarding potential noncompliance with this policy.\""),
     "recipient_options": _duty("{0} offer more than one option of recipient", "4.4 at {0}: including the RSO and at "
-                               "least one executive who does not report to the RSO"),
+                               "least one executive who does not report to the RSO" + (
+        "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who is "
+        "responsible for the implementation of this policy.”")),
     "investigated": _duty("{0} have the report promptly investigated", "4.4 at {0}: \"When we receive a report, "
                           "we will promptly investigate, take appropriate and proportional corrective action if it is "
                           "substantiated, and document the report and our findings.\" (\"promptly\" is OT12, the "
@@ -530,9 +781,12 @@ REGULATED = {
     "compliance_review": _duty("{0} commission a third-party procedural compliance review about once a year", "4.7 "
                                "at {0}: \"On approximately an annual basis, we will commission a third-party review "
                                "that assesses whether we adhered to this policy's main procedural commitments.\" "
-                               "(the cadence is OT12)"),
+                               "\"This review will focus on procedural compliance, not substantive outcomes.\" (the "
+                               "cadence is OT12)"),
     "change_approved": _duty("{0} have the change approved by the Board", "4.8: proposed by the CEO and RSO, "
-                             "approved by the Board in consultation with the LTBT"),
+                             "approved by the Board in consultation with the LTBT" + (
+        "; in the source's words (4.1): “We will maintain the position of RSO, a designated member of staff who is "
+        "responsible for the implementation of this policy.”")),
     "update_published": _duty("{0} have the update published with its prior-draft differences in the Change Log",
                               "4.8 at {0}: \"If we update the RSP, we will publicly share the updated version prior "
                               "to or on its effective date and will record the differences from the prior draft in "
@@ -540,7 +794,13 @@ REGULATED = {
     "website_version": _duty("{0} have the current version kept on the website", "4.8 at {0}"),
     "argument_required": _duty("{0} require a strong argument about catastrophic risk", "Appendix A at {0}: \"We "
                                "will require a strong argument that catastrophic risk is contained, along the lines "
-                               "of our recommendations for industry-wide safety (see Section 1).\""),
+                               "of our recommendations for industry-wide safety (see Section 1).\"" + (
+        "; in the source's words (footnote 1): “1 “Catastrophic risk” as used in our RSP refers generally to risks "
+        "of the most severe potential harms from advanced AI, such as existential threats or fundamental "
+        "destabilization of global systems. We use this term in its plain meaning rather than adopting any specific "
+        "statutory definition. Where laws such as California SB 53 define this or similar terms with specific "
+        "thresholds, we address those requirements in separate compliance frameworks.” (section 1): “The right "
+        "column describes our recommendations for industry-wide safety at each threshold.”")),
     "delay": _duty("{0} delay AI development as well as deployment", "Appendix A at {0}: \"We will delay AI "
                    "development and deployment as needed to achieve this\" (Anthropic in the lead; Competitors have "
                    "strong safety measures)"),
