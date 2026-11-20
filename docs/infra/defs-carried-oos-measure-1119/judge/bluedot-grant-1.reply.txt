@@ -1,0 +1,25 @@
+F001 | NOT CARRIED | Only bare legend phrases ("is proposed", "is mandatory for", "is evidence"); VEX and "statistical and approximate claims" are never named
+F002 | NOT CARRIED | Only bare legend phrases ("is proposed", "is mandatory for", "is evidence"); nothing names VEX or its scope of statistical and approximate claims
+F003 | NOT CARRIED | Surface is only "claims"; nothing says what VEX is or what a VEX result is
+F004 | NOT CARRIED | Legend phrases ("is mandatory for", "is evidence", "is tested on") never say mandatory evidence for statistical and approximate claims
+F005 | NOT CARRIED | Legend phrases ("is mandatory for", "is evidence", "is tested on") never say mandatory evidence for statistical and approximate claims
+F006 | NOT CARRIED | Surface is only "claims"; the VEX definition is absent
+F007 | NOT CARRIED | S9 says only "is unresolved"; S6 defines affordable proof but nothing says an honest claim stays unresolved without one
+F008 | NOT CARRIED | S9 says only "is unresolved"; nothing links an honest claim lacking an affordable proof to "unresolved"
+F009 | NOT CARRIED | Surface is only "leads to"; false confidence from a proof label is not described
+F010 | NOT CARRIED | Surface is only "leads to"; what a proof label is or risks is absent
+F011 | NOT CARRIED | Surface is only "leads to"; what a proof label is or risks is absent
+F012 | CARRIED | S11: "count authoring, formalisation, proof production, compute and review for both arms"
+F013 | CARRIED | S11: "count authoring, formalisation, proof production, compute and review for both arms"
+F014 | CARRIED | S11: "count authoring, formalisation, proof production, compute and review for both arms"
+F015 | CARRIED | S11: "count authoring, formalisation, proof production, compute and review for both arms"
+F016 | CARRIED | S11 "count ... formalisation, proof production ..." plus "includes the cost of" place proof production in the matched-cost comparison
+F017 | NOT CARRIED | Legend phrases ("is mandatory for", "is evidence", "is tested on") never say mandatory evidence for statistical and approximate claims
+F018 | NOT CARRIED | Legend phrases ("is mandatory for", "is evidence", "is tested on") never say mandatory evidence for statistical and approximate claims
+F019 | NOT CARRIED | Surface is only "claims"; the VEX definition is absent
+F020 | NOT CARRIED | S9 says only "is unresolved"; nothing says an honest claim without an affordable proof stays unresolved
+F021 | NOT CARRIED | S9 "is unresolved" and the within_budget clause never tie unresolved status to lacking an affordable proof
+F022 | NOT CARRIED | S9 says only "is unresolved"; the honest-claim-without-affordable-proof condition is missing
+F023 | NOT CARRIED | Surface is only "leads to"; false confidence is not described
+F024 | NOT CARRIED | Surface is only "leads to"; the proof label is not described
+F025 | NOT CARRIED | Surface is only "leads to"; the proof label is not described

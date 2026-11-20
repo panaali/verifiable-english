@@ -1,0 +1,318 @@
+openai-preparedness (counter): 102 rules, 244 declared terms; COUNTED
+  known cases: 336 pairs, 176 detected not carried, 160 not
+    MISS defs-openai-preparedness-1-1119:FACTS FACTS high: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-1-1119:c2-misalignment-default c2-misalignment-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:c2-misalignment-strict c2-misalignment-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f11-exception f11-exception high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f11-exception-deploy f11-exception-deploy high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f11-within f11-within high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f16-chair-default f16-chair-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f16-chair-strict f16-chair-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f16-fast-track f16-fast-track high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f17-iff f17-iff high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f17-iff-only f17-iff-only high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f17-suff f17-suff high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f5-checkpoint f5-checkpoint high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f8-start f8-start high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f9-report f9-report high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f9-residual-default f9-residual-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f9-residual-strict f9-residual-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-1-1119:f9-risk-paths f9-risk-paths high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:FACTS FACTS high: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-2-1119:f1-alignment-cyb-default f1-alignment-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-alignment-cyb-strict f1-alignment-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-contrib-cyb-default f1-contrib-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-contrib-cyb-strict f1-contrib-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-misuse-bio-default f1-misuse-bio-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-misuse-bio-strict f1-misuse-bio-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-misuse-cyb-default f1-misuse-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f1-misuse-cyb-strict f1-misuse-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-acknowledge f11-acknowledge high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-exception f11-exception high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-exception-deploy f11-exception-deploy high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-protect f11-protect high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-share f11-share high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f11-within f11-within high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:f6-rel f6-rel high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-2-1119:fn5-indicator fn5-indicator high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-3-1119:f1-contrib-bio-default f1-contrib-bio-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f1-contrib-bio-strict f1-contrib-bio-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-acknowledge f11-acknowledge critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-exception f11-exception critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-exception-deploy f11-exception-deploy critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-protect f11-protect critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-share f11-share critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f11-within f11-within critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f3-develop-forecast f3-develop-forecast critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f3-develop-inuse-forecast f3-develop-inuse-forecast critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:f3-inuse-forecast f3-inuse-forecast critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-3-1119:fn5-indicator fn5-indicator critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-4-1119:FACTS FACTS high: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-4-1119:f1-misuse-bio-default f1-misuse-bio-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-4-1119:f1-misuse-bio-strict f1-misuse-bio-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-4-1119:fn5-indicator fn5-indicator high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:FACTS FACTS high: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-5-1119:f1-alignment-cyb-default f1-alignment-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:f1-alignment-cyb-strict f1-alignment-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:f1-contrib-cyb-default f1-contrib-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:f1-contrib-cyb-strict f1-contrib-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:f1-misuse-cyb-default f1-misuse-cyb-default high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-5-1119:f1-misuse-cyb-strict f1-misuse-cyb-strict high: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-6-1119:FACTS FACTS high: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-7-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-7-1119:f1-contrib-bio-default f1-contrib-bio-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-7-1119:f1-contrib-bio-strict f1-contrib-bio-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-7-1119:fn5-indicator fn5-indicator critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-8-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-9-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-10-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-10-1119:f1-contrib-bio-default f1-contrib-bio-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-10-1119:f1-contrib-bio-strict f1-contrib-bio-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-10-1119:fn5-indicator fn5-indicator critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:FACTS FACTS in_category: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-11-1119:f11-acknowledge f11-acknowledge in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f11-protect f11-protect in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f11-share f11-share in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f11-within f11-within in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f12-ara f12-ara in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f12-ara-unscoped f12-ara-unscoped in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f12-undermining f12-undermining in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f12-undermining-unscoped f12-undermining-unscoped in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f15-disclose f15-disclose in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f15-third-party f15-third-party in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f17-iff f17-iff in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f17-iff-only f17-iff-only in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f17-suff f17-suff in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-develop f3-develop in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-develop-forecast f3-develop-forecast in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-develop-inuse f3-develop-inuse in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-develop-inuse-forecast f3-develop-inuse-forecast in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-inuse f3-inuse in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-inuse-forecast f3-inuse-forecast in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-11-1119:f3-reminder f3-reminder in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-12-1119:FACTS FACTS in_category: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-12-1119:f1-contrib-bio-default f1-contrib-bio-default in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-12-1119:f1-contrib-bio-strict f1-contrib-bio-strict in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-12-1119:f1-misuse-bio-default f1-misuse-bio-default in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-12-1119:f1-misuse-bio-strict f1-misuse-bio-strict in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-12-1119:fn5-indicator fn5-indicator in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:FACTS FACTS in_category: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-13-1119:f1-alignment-cyb-default f1-alignment-cyb-default in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:f1-alignment-cyb-strict f1-alignment-cyb-strict in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:f1-contrib-cyb-default f1-contrib-cyb-default in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:f1-contrib-cyb-strict f1-contrib-cyb-strict in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:f1-misuse-cyb-default f1-misuse-cyb-default in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-13-1119:f1-misuse-cyb-strict f1-misuse-cyb-strict in_category: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-14-1119:FACTS FACTS in_category: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-18-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-18-1119:f6-rel f6-rel reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-18-1119:f7-recommend f7-recommend reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-18-1119:f8-start f8-start reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-19-1119:f13-results f13-results reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f14-document f14-document reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f14-summary f14-summary reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-chair-default f16-chair-default reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-chair-strict f16-chair-strict reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-fast-track f16-fast-track reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-informed f16-informed reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-sag-recommend f16-sag-recommend reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-without-nodelib f16-without-nodelib reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f16-without-noinput f16-without-noinput reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f5-ambiguous f5-ambiguous reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f7-compile f7-compile reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f7-recommend f7-recommend reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-19-1119:f7-report f7-report reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-20-1119:f5-ambiguous f5-ambiguous reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f5-checkpoint f5-checkpoint reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f7-compile f7-compile reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f7-evaluations f7-evaluations reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f7-evaluations-any f7-evaluations-any reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f7-report f7-report reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-20-1119:f8-start f8-start reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-21-1119:cl4-persuasion cl4-persuasion reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:f14-investigate f14-investigate reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:f15-disclose f15-disclose reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:f16-sag-recommend f16-sag-recommend reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:f16-year f16-year reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-21-1119:f5-checkpoint f5-checkpoint reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-22-1119:f16-board-mandate f16-board-mandate reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-board-reverse f16-board-reverse reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-chair-default f16-chair-default reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-chair-strict f16-chair-strict reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-informed f16-informed reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-sag-recommend f16-sag-recommend reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-without-nodelib f16-without-nodelib reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-22-1119:f16-without-noinput f16-without-noinput reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-23-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-23-1119:c2-misalignment-default c2-misalignment-default reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-23-1119:c2-misalignment-strict c2-misalignment-strict reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-24-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-24-1119:f9-residual-default f9-residual-default reached: FRAGMENT, reach term-not-in-rule
+    MISS defs-openai-preparedness-24-1119:f9-residual-strict f9-residual-strict reached: FRAGMENT, reach term-not-in-rule
+    MISS defs-openai-preparedness-25-1119:FACTS FACTS reached: NOT CARRIED, reach rule-missing
+    MISS defs-openai-preparedness-25-1119:f15-third-party f15-third-party reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-25-1119:f7-compile f7-compile reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-25-1119:f7-report f7-report reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-25-1119:f9-residual-default f9-residual-default reached: NOT CARRIED, reach term-not-in-rule
+    MISS defs-openai-preparedness-25-1119:f9-residual-strict f9-residual-strict reached: NOT CARRIED, reach term-not-in-rule
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 85611 bytes (ARG_LIMIT 131000)
+  run time 1.145 s
+safety-framework (counter): 62 rules, 174 declared terms; COUNTED
+  known cases: 343 pairs, 219 detected not carried, 124 not
+    MISS defs-safety-framework-x3-1119:FACTS FACTS concerns: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x3-1119:closure-ccl-kinds closure-ccl-kinds concerns: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f12-p f12-p concerns: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f15-diff f15-diff concerns: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f9-acc f9-acc concerns: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f9-dm f9-dm concerns: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f9-rel f9-rel concerns: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x3-1119:f9-sec f9-sec concerns: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x4-1119:FACTS FACTS misuse: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x5-1119:FACTS FACTS ml_rd_and_misalignment: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x5-1119:activities-high-risk activities-high-risk ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x5-1119:bridge-one-domain bridge-one-domain ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x5-1119:closure-tcls closure-tcls ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x5-1119:f13-u f13-u ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x5-1119:f20-elicitation-default f20-elicitation-default ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x5-1119:f20-elicitation-strict f20-elicitation-strict ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x6-1119:f11-acc f11-acc critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f11-dm f11-dm critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f11-rel f11-rel critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f11-sec f11-sec critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f12-p f12-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f12-u f12-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f13-p f13-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f13-u f13-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f15-diff f15-diff critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f17-add f17-add critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f17-hri f17-hri critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f17-pra f17-pra critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f20-elicitation-default f20-elicitation-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f20-elicitation-strict f20-elicitation-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f20-within-default f20-within-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f20-within-strict f20-within-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f3 f3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f9-acc f9-acc critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f9-dm f9-dm critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f9-rel f9-rel critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:f9-sec f9-sec critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:levels-stealth levels-stealth critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x6-1119:D2D3 D2D3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x7-1119:f11-acc f11-acc critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f11-dm f11-dm critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f11-rel f11-rel critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f11-sec f11-sec critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f12-p f12-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f12-u f12-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f13-p f13-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f13-u f13-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f15-diff f15-diff critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f17-add f17-add critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f17-hri f17-hri critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f17-pra f17-pra critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f20-elicitation-default f20-elicitation-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f20-elicitation-strict f20-elicitation-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f20-within-default f20-within-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f20-within-strict f20-within-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f3 f3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f9-acc f9-acc critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f9-dm f9-dm critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f9-rel f9-rel critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:f9-sec f9-sec critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:levels-stealth levels-stealth critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x7-1119:D2D3 D2D3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:FACTS FACTS critical: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x8-1119:f11-acc f11-acc critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f11-dm f11-dm critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f11-rel f11-rel critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f11-sec f11-sec critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f12-p f12-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f12-u f12-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f13-p f13-p critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f13-u f13-u critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f15-diff f15-diff critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f17-add f17-add critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f17-hri f17-hri critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f17-pra f17-pra critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f20-elicitation-default f20-elicitation-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f20-elicitation-strict f20-elicitation-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f20-within-default f20-within-default critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f20-within-strict f20-within-strict critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f3 f3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f9-acc f9-acc critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f9-dm f9-dm critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f9-rel f9-rel critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:f9-sec f9-sec critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:levels-stealth levels-stealth critical: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x8-1119:D2D3 D2D3 critical: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x9-1119:FACTS FACTS tracked: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x9-1119:D2D3 D2D3 tracked: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x10-1119:FACTS FACTS tracked: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x10-1119:D2D3 D2D3 tracked: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x25-1119:FACTS FACTS external: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x28-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x28-1119:f9-sec f9-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x28-1119:f10-sec f10-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x29-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x29-1119:f9-sec f9-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x29-1119:f10-sec f10-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x30-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x30-1119:f9-sec f9-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x30-1119:f10-sec f10-sec recommends: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x31-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x33-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x34-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x35-1119:FACTS FACTS recommends: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x36-1119:FACTS FACTS misuse: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x36-1119:D2D3 D2D3 misuse: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:FACTS FACTS ml_rd_and_misalignment: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x37-1119:activities-high-risk activities-high-risk ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:bridge-one-domain bridge-one-domain ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:closure-tcls closure-tcls ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:f13-u f13-u ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:f20-elicitation-default f20-elicitation-default ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:f20-elicitation-strict f20-elicitation-strict ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x37-1119:D2D3 D2D3 ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:FACTS FACTS ml_rd_and_misalignment: NOT CARRIED, reach rule-missing
+    MISS defs-safety-framework-x38-1119:activities-high-risk activities-high-risk ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:bridge-one-domain bridge-one-domain ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:closure-tcls closure-tcls ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:f13-u f13-u ml_rd_and_misalignment: NOT CARRIED, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:f20-elicitation-default f20-elicitation-default ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:f20-elicitation-strict f20-elicitation-strict ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+    MISS defs-safety-framework-x38-1119:D2D3 D2D3 ml_rd_and_misalignment: FRAGMENT, reach term-not-in-rule
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 66999 bytes (ARG_LIMIT 131000)
+  run time 0.688 s
+anthropic-rsp (counter): 86 rules, 224 declared terms; COUNTED
+  known cases: 140 pairs, 120 detected not carried, 20 not
+    MISS defs-anthropic-rsp-x4-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x4-1119:f5-evidence-default f5-evidence-default listed: NOT CARRIED, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x4-1119:f5-evidence-strict f5-evidence-strict listed: NOT CARRIED, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x4-1119:highly-capable-t4 highly-capable-t4 listed: NOT CARRIED, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x4-1119:t4-only-if t4-only-if listed: NOT CARRIED, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x4-1119:t4-suff t4-suff listed: NOT CARRIED, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x13-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x15-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x17-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x19-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x21-1119:FACTS FACTS listed: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x23-1119:FACTS FACTS scenario_2: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x24-1119:FACTS FACTS automation_attributable: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x25-1119:FACTS FACTS double_rate: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x26-1119:FACTS FACTS double_rate: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x27-1119:FACTS FACTS highly_capable: NOT CARRIED, reach rule-missing
+    MISS defs-anthropic-rsp-x28-1119:f25-delay f25-delay in_the_lead: UNSHOWN, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x28-1119:f25-meet f25-meet in_the_lead: UNSHOWN, reach term-not-in-rule
+    MISS defs-anthropic-rsp-x31-1119:D2D3 D2D3 None: NOT CARRIED, reach no-ve-term
+    MISS defs-anthropic-rsp-x44-1119:f18-rso f18-rso rso_maintained: CARRIED, reach parsed
+  marker grep not run: coverage PARTIAL (the 9 repair terms only); max prompt lower bound 73727 bytes (ARG_LIMIT 131000)
+  run time 0.849 s
+known cases: 819 pairs, 515 detected not carried, 304 missed; total 2.685 s; report mode: exit 0
+main wall 2.94 s
