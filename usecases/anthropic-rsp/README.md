@@ -101,9 +101,9 @@ with its evidence.
 
 | Status | Units | Bytes | Share |
 |---|---|---|---|
-| CHECKED | 51 | 5,327 | 9.0% |
+| CHECKED | 51 | 5,320 | 9.0% |
 | OPEN | 63 | 13,072 | 22.0% |
-| LABELLED | 170 | 36,883 | 62.1% |
+| LABELLED | 170 | 36,890 | 62.1% |
 | UNFORMALISED | 23 | 4,128 | 6.9% |
 
 Within D1 alone, 4,676 bytes are CHECKED. D3 checks 449 bytes (the changelog dates, the effective date and 3.1's
