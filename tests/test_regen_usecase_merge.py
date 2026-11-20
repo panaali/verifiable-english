@@ -423,3 +423,24 @@ def test_a_failed_use_case_writer_fails_the_resolve(tmp_path, monkeypatch, capsy
     _git(root, "merge", "--no-commit", "-q", "theirs", check=False)
     assert R.resolve(R.GENERATED, root) == 1
     assert "usecase-safety-framework" in capsys.readouterr().err
+
+
+def test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write(tmp_path, monkeypatch, capsys):
+    """`route_fixtures.py --check` (the recorded-route-cases entry's check) compares what `--write` would write;
+    `route_fixtures()` stubbed, the file a copy under tmp_path."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("route_fixtures_under_test",
+                                                  ROOT / "docs/en-e3-norm/en-2b/route_fixtures.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    target = tmp_path / "route-cases.jsonl"
+    target.write_text(_lines([*RECORDED, ["english.statement", {"id": "old"}]]))
+    monkeypatch.setattr(module, "TARGET", target)
+    monkeypatch.setattr(module, "route_fixtures", lambda: [("new", {"id": "new"}, "")])
+    before = target.read_text()
+    assert module.main(["--check"]) == 1 and target.read_text() == before
+    assert "is stale" in capsys.readouterr().err
+    assert module.main(["--write"]) == 0
+    assert target.read_text() == _lines([*RECORDED, ["english.statement", {"id": "new"}]])
+    assert module.main(["--check"]) == 0
+    assert module.main([]) == 2
