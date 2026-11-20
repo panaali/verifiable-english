@@ -2,7 +2,7 @@
 
 **Summary.**
 - Status: no change to any carrier. All 8 candidate rows are DROPPED. Rows 1-6 (S0004-S0007, S0020, S0021): each unit is already carried word for word at main, in the legend of a sort that claims.ve uses (defs-repair-claude-constitution-excerpt-1119 carried them). Rows 8-9 and all 4 RECORDING units (S0001, S0010, S0013, S0016): the map's only allowed record file for this document is "comments in claims.ve", and claims.ve cannot hold a comment. Writing one needs a new language feature, which this task puts out of scope. No DRI signature is outstanding.
-- HEAD: branch `infra/srccov-claude-constitution-excerpt-1119` on VE main `09bea0972d` (the merge base; the branch adds this report and its evidence only). Answers touched: none (no carrier byte changes, so environment_id `467d3440...` and model-true.json / model-false.json stay the same).
+- HEAD: branch `infra/srccov-claude-constitution-excerpt-1119`, rebased onto VE main `12cb72fa55` (the merge base). The verify step ran on `09bea0972d`. `git diff --stat 09bea0972d 12cb72fa55 -- usecases/claude-constitution-excerpt/ tests/omission_rule.py` is empty, and verify.py's output on `12cb72fa55` is byte-identical to evidence/verify.log. The branch adds only this report and its evidence. Answers touched: none (no carrier byte changes, so environment_id `467d3440...` and model-true.json / model-false.json stay the same).
 - Open: one FOLLOW-UP for the unfinished RECORDING deliverable (end of report). Trust +0. No DELTA rows: nothing the user sees changes.
 - I did not run the full gate. The chain runs it on the final HEAD.
 
@@ -60,7 +60,8 @@ None, because no product code or carrier changed in any language (Lean, Python o
 
 ## Tests run
 
-- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: see "Selected run" below.
+- Selected run: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on commit `b4cd2b203b` (base `09bea0972d`). It ran on GitHub Actions in 6 shards, 53 units, 53 passed, 0 failed, exit 0 (run srccov-claude-constitution-excerpt-1119-b4cd2b20-t166195; shard lines "SHARD 1/6: ... 13 units, 13 passed" through "SHARD 6/6: ... 6 units, 6 passed"). After the rebase onto `12cb72fa55` the branch diff is the same (docs/infra only), so I did not repeat the run. The chain's gate runs on the final HEAD.
+- No test in main-known-red.txt was touched.
 
 ## Notes for the DRI
 
@@ -78,7 +79,7 @@ None, because no product code or carrier changed in any language (Lean, Python o
 6. Gate evidence matches final HEAD: PASS. The branch sits on current main. The chain runs the gate on the committed final HEAD, and I ran no gate here.
 7. No unsigned item: PASS. There is no DELTA row and no trust growth (no Lean file changed).
 8. Every user-visible change in DELTA: N.A. (no carrier, output or derived file changed).
-9. Test selection: PASS. See the selected run below.
+9. Test selection: PASS. The selected run under "Tests run" chose 53 units for a docs-only diff, not every unit.
 10. Lean statements: N.A. (no Lean change).
 11. Budgets fail closed: N.A. (no code).
 12. No CPU or memory regression: N.A. (no code).
