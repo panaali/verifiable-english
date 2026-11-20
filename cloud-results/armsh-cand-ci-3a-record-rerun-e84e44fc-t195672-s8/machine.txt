@@ -1,0 +1,7 @@
+job=armsh-cand-ci-3a-record-rerun-e84e44fc-t195672-s8 shard=8/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-20T17:30:13Z ulimit_s=16384
+Mem:              15           1           8           0           6          13
+/dev/root       145G   43G  102G  30% /
+ 17:30:14 up 4 min,  0 user,  load average: 1.39, 0.45, 0.15
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 12.1 s
+p1-tokenizers: 443909a61d42 fetched
