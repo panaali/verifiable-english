@@ -106,9 +106,22 @@ record had them UNKNOWN. One line each (old / new, line, definition, operator: L
 No mutant is newly SURVIVOR; the full record's 20 SURVIVOR are the old record's 20, all ALLOWED as before.
 
 Condition test: `python3 -I tools-local/test_tm_nightly_unknown_disposition_3.py` (manage-agents) passes, 3 tests.
+The nightly's own rows, both ways: `tm-nightly.py classify` on M465/M1082/M1423 of
+test-skip/nightly/20261119T0727Z.json (base 039d3dd5190e) against this checkout gives `allowed` UNKNOWN 3,
+`complete` true; with the old trust-mutants.json put back for the run, the three are `unresolved_unknown`,
+`complete` false. Selected tests (`mac-pytest.sh --select`, base 5f6979256074): exit 0, 0 failed. No test in tests/
+or tools/ reads this directory's records.
 Product code: none changed (record files only), so no seeded bugs; trust +0; no DELTA row.
 SIZE: 0 product, 0 tests, about 50 other hand-written lines (this section); the records and the id list are tool output.
 
 Notes for the DRI: the original invocation cannot be repeated as it was at this head (same base, 7539 mutants), so
 the re-run adds `--only` (the narrower reading: exactly the record's 13 definitions). The id list is committed beside
 the records.
+
+Self-review against BUILDER-CHECKLIST (this re-run):
+1 typed answers N.A. (no route); 2 deliverables PASS (records, id list, this section; allow list untouched);
+3 can fail PASS (condition test (c) and the old-record classify above); 4 three-way N.A.; 5 R8 N.A.;
+6 evidence at HEAD PASS (records at 5f6979256074, this branch's base; only docs follow); 7 unsigned N.A. (no DELTA
+row); 8 DELTA N.A. (no user-visible change); 9 selection PASS (selected run above); 10 Lean statements N.A.;
+11 budgets N.A.; 12 CPU N.A.; 13 removed tests N.A. (none); 14 both directions PASS (classify above);
+15 PASS (spec re-read: same base and options, `--only` noted, three rows ALLOWED through the existing pair).
