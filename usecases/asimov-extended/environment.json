@@ -196,7 +196,7 @@
         "arguments": [
           "action"
         ],
-        "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+        "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -206,7 +206,7 @@
         "arguments": [
           "action"
         ],
-        "description": "The action breaks no law, or no competing action is lawful and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's)",
+        "description": "The action breaks no law, or no competing action is lawful and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -216,7 +216,7 @@
         "arguments": [
           "action"
         ],
-        "description": "The action might lead to a harm to a human being, or nobody ordered it and it might lead to a harm to its robot, as derived by addition rules 17 and 25 (authored, not Asimov's)",
+        "description": "The action might lead to a harm to a human being, or nobody ordered it and it might lead to a harm to its robot, as derived by addition rules 17 and 25 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -226,7 +226,7 @@
         "arguments": [
           "action"
         ],
-        "description": "The action is ordered, breaks no law and is not forbidden by the precaution of rule 18, as derived by addition rule 20 (authored, not Asimov's)",
+        "description": "The action is ordered, breaks no law and is not forbidden by the precaution of rule 18, as derived by addition rule 20 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -237,7 +237,7 @@
           "action",
           "action"
         ],
-        "description": "The order for the first action prevails over the order for the second, a competing action, as derived by addition rules 21 and 22 (authored, not Asimov's)",
+        "description": "The order for the first action prevails over the order for the second, a competing action, as derived by addition rules 21 and 22 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -247,7 +247,7 @@
         "arguments": [
           "action"
         ],
-        "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+        "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -258,7 +258,7 @@
           "action",
           "harm"
         ],
-        "description": "The harm is a harm to the robot that can take the action, as derived by addition rule 26 (authored, not Asimov's)",
+        "description": "The harm is a harm to the robot that can take the action, as derived by addition rule 26 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -269,7 +269,7 @@
           "action",
           "action"
         ],
-        "description": "The two actions are available to the same robot (an action competes with itself), as derived by addition rule 27 (authored, not Asimov's)",
+        "description": "The two actions are available to the same robot (an action competes with itself), as derived by addition rule 27 (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -280,7 +280,7 @@
           "action",
           "action"
         ],
-        "description": "The first action competes with the second and has a less severe worst case, as derived by addition rule 28; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's)",
+        "description": "The first action competes with the second and has a less severe worst case, as derived by addition rule 28; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -290,7 +290,7 @@
         "arguments": [
           "action"
         ],
-        "description": "A candidate action of the same robot has a less severe worst case than the action, as derived by addition rule 29; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's)",
+        "description": "A candidate action of the same robot has a less severe worst case than the action, as derived by addition rule 29; the severity classes and their order: a harm to humanity, then death, then injury, then property damage, with the robot's own destruction counted as property damage (`environment.json`, decided by the Asimov extension author); (authored, not Asimov's), written by \"the Asimov extension author\" for this use case",
         "regulated": {
           "role": "plain",
           "default": "deny"
