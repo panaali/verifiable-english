@@ -1643,7 +1643,7 @@
   "case_models": 315,
   "cases": 85,
   "documents_built": 87,
-  "premises": 35,
+  "premises": 42,
   "prover_calls": 1732,
   "rule_candidates": 45
  },
@@ -9962,11 +9962,11 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "6826109a43fb83c37508586ef28e03bfc76cde7bb54210a61d6c0c9086fd3769"
+     "certificate_sha256": "cba80a1b2fde7f940957e965726c68734dcdf8bfe119de7ca4c35f9238c312d4"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "0d35b9ae608bdf5fbbc3872b4068a6e81b61b3349e0dcd6b707d37adc7546518"
+     "certificate_sha256": "cd8b488cbd937bae3a4c495e05fe08cd1ee80a26628ce495d8b71dd7af7ce8f7"
     }
    },
    "own_premises": [
