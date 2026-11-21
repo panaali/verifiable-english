@@ -1,0 +1,72 @@
+--- chain-gate.sh	2026-11-19 22:47:24.897581178 +0000
++++ chain-gate.sh.new-cgwidth	2026-11-21 10:55:10.762800624 +0000
+@@ -4,7 +4,11 @@
+ #  - skipped when <worktree>/gate-result.json already is a completed full gate of this HEAD (never rerun the full gate on
+ #    an unchanged commit); its status decides the exit code;
+ #  - with $M/MAC_GATE: mac-gate.sh first (Mac runner); on its exit 3 (runner unreachable / runner-side problem) the VM gate;
+-#  - without it: the VM gate (uv run python tools/gate.py --workers ${VM_GATE_WORKERS:-8}, log $M/vm-gate-<label>.log).
++#  - without it: the VM gate (uv run python tools/gate.py --workers ${VM_GATE_WORKERS:-14}, log $M/vm-gate-<label>.log).
++# 2026-11-21 cg-vm-gate-width-1121 (reviews/chain-gate-20-20261121.md section 7, Fix 2): the VM gate and its R13 rerun default
++#    to 14 gate.py workers (was 8; VM gate-start->gate-end 111-148 min at 8, gate50's 14-worker gates on the same EPYC 7B12
++#    71-84 min). VM_GATE_MAX (1 slot) and the vmgate-* CPUWeight 1000 are unchanged. The MAC_LAST_RESORT route below keeps
++#    counting 8 workers: its own VM_ROUTE_WORKERS (default 8), not VM_GATE_WORKERS. Test: tools-local/test_chain_gate_vm_width.py.
+ # exit: 0 passed | 1 failed | 2 refused (dirty worktree). Events go to stage-events.jsonl (stages gate-start / gate-end).
+ # 2026-10-16 (speed program, SPEED-PROGRAM.md; PIPELINE-LIMITS L56): with the flag file $M/CHAIN-GATE-SELECTED-FALLBACK,
+ #    the chain's mac-gate.sh call waits at most CHAIN_GATE_SLOT_WAIT s (default 2700) for a Mac slot (MAC_GATE_MAX, slot wait
+@@ -257,7 +261,7 @@
+ # 2026-11-10 MAC_LAST_RESORT (lead request: the MacBook only when the other compute is not sufficient; acting DRI for infra
+ #    dri-mac-last; flag $M/MAC_LAST_RESORT, header of mac-pytest.sh; absent = as before): with MAC_GATE the full gate.py of HEAD
+ #    runs first on ve-cloud-2 (cloud2-run.sh gate, as the CLOUD2_RUNNER path below; slot wait MAC_LAST_RESORT_GATE_SLOT_WAIT,
+-#    1800 s), then on the VM while its 1-min load + VM_GATE_WORKERS (8) < MAC_LAST_VM_LOAD (32); only when both are full or
++#    1800 s), then on the VM while its 1-min load + VM_ROUTE_WORKERS (8) < MAC_LAST_VM_LOAD (32); only when both are full or
+ #    unavailable the Mac gate exactly as before (its selected-tests fallback routed by mac-pytest.sh, Mac last there too). The
+ #    CHAIN_GATE_RISKY_ONLY selected route (nogate) is unchanged. A FIX_EARLY cancel during the ve-cloud-2 gate: exit 4.
+ # 2026-11-10 mac-last-chaingate (DRI decision reviews/dri-decisions-20261110-mac-last-chaingate.md; tunable
+@@ -293,7 +297,7 @@
+     elif [ $rc = 4 ]; then ev gate-cancelled "ve-cloud-2 gate cancelled: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4
+     else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc)"; fi
+   else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 not usable ($(zsh $M/cloud2-run.sh ok 2>&1 | tr -d '"\\' | head -c 160))"; fi
+-  if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_GATE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
++  if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_ROUTE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
+     if (( mvl + mvw < mvlim )); then mlrg=vm; ev gate-route "MAC_LAST_RESORT: VM load $mvl + $mvw workers < $mvlim: the VM gate"
+     else ev gate-route "MAC_LAST_RESORT: no ve-cloud-2 record and the VM is full (load $mvl + $mvw >= $mvlim): the Mac gate"; fi; fi
+ fi
+@@ -464,7 +468,7 @@
+ if [ -z "$c2g" ]; then
+ vlock
+ ev gate-start "vm ${h[1,8]}"
+-vmg --workers ${VM_GATE_WORKERS:-8} > $M/vm-gate-$label.log 2>&1; rc=$?
++vmg --workers ${VM_GATE_WORKERS:-14} > $M/vm-gate-$label.log 2>&1; rc=$?
+ ev gate-end "vm rc=$rc"; vmcx; fi
+ # 2026-10-14 (eff daily, PIPELINE-LIMITS L13): DRI-RULINGS R13 in the chain. A VM gate that failed only on tests (at most
+ # 10, the suite completed) gets ONE same-commit rerun of its failed tests (tools/gate.py --rerun-failed; gate.py decides,
+@@ -484,7 +488,7 @@
+ raise SystemExit(0 if ok else 1)
+ EOF
+ then cp $w/gate-result.json $M/vm-gate-$label.full.json; vlock "; R13 rerun"; ev gate-start "vm-rerun ${h[1,8]}"
+-  vmg --rerun-failed --workers ${VM_GATE_WORKERS:-8} >> $M/vm-gate-$label.log 2>&1; rc=$?
++  vmg --rerun-failed --workers ${VM_GATE_WORKERS:-14} >> $M/vm-gate-$label.log 2>&1; rc=$?
+   ev gate-end "vm-rerun rc=$rc"; vmcx "; R13 rerun"; fi
+ [ -n "$vheld" ] && zsystem flock -u $vfd 2>/dev/null  # vm1-gate-weight: the slot is free (it would be at exit too)
+ [ $rc -eq 0 ]
+--- tools-local/test_chain_gate_vm_cancel.py	2026-11-19 23:05:26.829310886 +0000
++++ tools-local/test_chain_gate_vm_cancel.py.new-cgwidth	2026-11-21 10:55:16.781793447 +0000
+@@ -14,7 +14,8 @@
+       event "... (FIX_EARLY; R13 rerun)", no gate-result.json, the full record kept as vm-gate-<label>.full.json;
+   (3) CHAIN_GATE_CANCEL unset: the stub runs to completion in chain-gate's own session (the plain foreground subshell),
+       rc 0 and 1 passed through, an R13 rerun decides as before, no cancel event; (3s) set but the file never made: rc
+-      0 and 1 (and the R13 rerun) passed through, gate-result.json kept;
++      0 and 1 (and the R13 rerun) passed through, gate-result.json kept; (3) also pins the default --workers 14
++      (cg-vm-gate-width-1121; was 8);
+   (4) cancel file present before start: exit 4, event "no VM gate", gate.py never started.
+ 
+ usage: python3 -I tools-local/test_chain_gate_vm_cancel.py     (CG=<chain-gate.sh copy>, e.g. chain-gate.sh.new-vmcancel)
+@@ -189,7 +190,7 @@
+               o["rc"] == 0 and [r.get("done") for r in o["rows"] if "done" in r] == [0] and not cancelled(o) and o["result"], f"{o}")
+         check("(3) unset: gate.py runs in chain-gate's own session (the plain foreground run), in the worktree, pinned sources on",
+               len(st) == 1 and st[0]["sid"] == o["cg_sid"] and os.path.realpath(st[0]["cwd"]) == os.path.realpath(w) and st[0]["pinned"] == "1"
+-              and st[0]["argv"] == ["--workers", "8"], f"{st} cg_sid={o['cg_sid']}")
++              and st[0]["argv"] == ["--workers", "14"], f"{st} cg_sid={o['cg_sid']}")
+         check("(3) unset: events exactly gate-start vm / gate-end vm rc=0",
+               [s for s, _ in o["events"]] == ["gate-start", "gate-end"] and o["events"][1][1] == "vm rc=0", f"{o['events']}")
+         o = run({"sleep": 1, "rc": 1, "record": "fail_other"}, cancel=False)

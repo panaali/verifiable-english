@@ -1,0 +1,4 @@
+  tests/test_fidmech_adapters.py: exit 0 in 702.7 s, 983 functions
+recorded 251 units for tree 5667e72c9d; 433 others left to the static graph until they run; 0 failed
+[cloud2 11:21:32Z] summary: ran on ve-cloud-2, select_tests, exit=0, 1266s
+[mac-pytest 11:21:32Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 1267s
