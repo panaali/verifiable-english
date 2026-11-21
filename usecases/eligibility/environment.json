@@ -136,7 +136,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person and the person's partner jointly claim any of the benefits (S2: \u201cIf you and your partner jointly claim any of the benefits\u201d)."
+    "description": "The person and the person's partner jointly claim any of the benefits, which are Pension Credit, Universal Credit and income-related Employment and Support Allowance (S2: \u201cIf you and your partner jointly claim any of the benefits\u201d; \u201cPension Credit\u201d; \u201cUniversal Credit\u201d; \u201cincome-related Employment and Support Allowance (ESA)\u201d)."
    },
    "paid_into_usual_account": {
     "arguments": [
@@ -174,11 +174,23 @@
     ],
     "description": "The person pays more tax each month (S2: \u201cyou will pay more tax each month\u201d)."
    },
-   "added_to_tax_return": {
+   "completes_self_assessment": {
     "arguments": [
      "person"
     ],
-    "description": "The amount of the person's winter fuel payment is added to the person's Self Assessment tax return (S2: \u201cadding the amount to your Self Assessment tax return\u201d)."
+    "description": "The person completes a Self Assessment tax return (S2: \u201cIf you complete a Self Assessment tax return\u201d)."
+   },
+   "files_online": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person files tax returns online (S2: \u201cIf you file tax returns online\u201d)."
+   },
+   "included_automatically": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC includes the amount of the person's winter fuel payment in the person's tax return automatically (S2: \u201cHMRC will usually include the amount automatically\u201d)."
    },
    "shown_as_wfp_charge": {
     "arguments": [

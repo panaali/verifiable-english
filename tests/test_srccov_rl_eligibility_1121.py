@@ -5,12 +5,15 @@ line the reader is shown (usecases/eligibility/rules.json) must exist, its gloss
 sentence word for word (after the counter's quote normalisation, `omit_norm`), the sentence must be on its line
 of usecases/eligibility/source/wfp-print.txt (read from the repo), the document's unit record
 (translation.GUIDE_SENTENCES) must route the unit to that rule, and every new predicate the rule uses must have
-a shown legend (environment.json) whose quoted words are in the source. Verify table, drops and reasons:
-docs/infra/srccov-rl-eligibility-1121/REPORT.md.
+a shown legend (environment.json) whose quoted words are in the source, and every condition the sentence sits
+under in the pinned page (usecases/eligibility/source/wfp-print.html: each "If ..." heading above it, and the
+"If ..." clause of the sentence an anaphoric "It"/"This" refers to) must be carried by the rule's antecedent.
+Verify table, drops and reasons: docs/infra/srccov-rl-eligibility-1121/REPORT.md.
 """
 from __future__ import annotations
 
 import functools
+from html.parser import HTMLParser
 import importlib.util
 import json
 from pathlib import Path
@@ -22,6 +25,7 @@ from omission_rule import omit_norm
 
 HERE = Path(__file__).resolve().parents[1] / "usecases" / "eligibility"
 SOURCE = HERE / "source" / "wfp-print.txt"
+PAGE = HERE / "source" / "wfp-print.html"
 
 # unit -> (map rows, rule id, S2 line, source sentence, the new predicates the rule uses)
 KEPT = {
@@ -35,19 +39,22 @@ KEPT = {
               {"tax_code_changed", "tax_deducted_increases"}),
     "S0467": (("srccov-eligibility-26-1119",), "G4", 148,
               "HMRC will collect 2 payments through your tax code at the same time.",
-              {"two_payments_to_collect", "two_payments_through_tax_code"}),
+              {"tax_code_changed", "two_payments_to_collect", "two_payments_through_tax_code"}),
     "S0468": (("srccov-eligibility-26-1119",), "G5", 148,
               "This means you will pay more tax each month.",
-              {"two_payments_through_tax_code", "more_tax_each_month"}),
+              {"tax_code_changed", "two_payments_to_collect", "two_payments_through_tax_code",
+               "more_tax_each_month"}),
     "S0474": (("srccov-eligibility-26-1119",), "G6", 154,
               "It will show as the ‘Winter Fuel Payment charge’ and will be included in your tax calculation.",
-              {"added_to_tax_return", "shown_as_wfp_charge", "in_tax_calculation"}),
+              {"completes_self_assessment", "files_online", "included_automatically", "shown_as_wfp_charge",
+               "in_tax_calculation"}),
     "S0483": (("srccov-eligibility-27-1119",), "G7", 166,
               "If you do not opt out and your total income is over £35,000, you’ll receive the Winter Fuel "
               "Payment but HMRC will take it back.", {"opted_out"}),
 }
 NEW_PREDICATES = set().union(*(v[4] for v in KEPT.values()))
-QUOTE = re.compile(r"\(S2: “(.+)”\)\.$")
+QUOTE = re.compile(r"\(S2: (“[^”]+”(?:; “[^”]+”)*)\)\.$")
+ANAPHOR = ("It ", "This ", "They ", "That ")
 
 
 def source_lines():
@@ -79,13 +86,114 @@ def carried(gloss, sentence):
     return omit_norm(gloss).endswith(omit_norm(sentence))
 
 
+def quotes(legend):
+    """The S2 words a legend quotes (its closing `(S2: “…”; “…”).`), or () if it has none."""
+    match = QUOTE.search(legend)
+    return tuple(re.findall(r"“([^”]+)”", match.group(1))) if match else ()
+
+
 def quoted_in_source(legend, lines):
     """The legend's quoted S2 words, if each occurs in the source after `omit_norm`; else None."""
-    match = QUOTE.search(legend)
-    if match is None:
+    words = quotes(legend)
+    if not words or not all(any(omit_norm(w) in omit_norm(line) for line in lines) for w in words):
         return None
-    words = match.group(1)
-    return words if any(omit_norm(words) in omit_norm(line) for line in lines) else None
+    return words
+
+
+class Blocks(HTMLParser):
+    """The <main> text of the pinned page as blocks (tag, text), one per heading, paragraph or list
+    item, in page order (the blocks source/extract_text.py writes one per line)."""
+
+    TAGS = {"h1", "h2", "h3", "h4", "p", "li"}
+
+    def __init__(self):
+        super().__init__()
+        self.depth, self.tag, self.text, self.blocks = 0, None, [], []
+
+    def flush(self):
+        text = " ".join("".join(self.text).split())
+        if self.tag and text:
+            self.blocks.append((self.tag, text))
+        self.tag, self.text = None, []
+
+    def handle_starttag(self, tag, attrs):
+        self.depth += tag == "main"
+        if self.depth and tag in self.TAGS:
+            self.flush()
+            self.tag = tag
+
+    def handle_endtag(self, tag):
+        if self.depth and tag in self.TAGS:
+            self.flush()
+        self.depth -= tag == "main"
+
+    def handle_data(self, data):
+        if self.depth and self.tag:
+            self.text.append(data)
+
+
+@functools.cache
+def page_blocks():
+    """Each body block of the page with the headings in force over it: (h2, h3, text)."""
+    parser = Blocks()
+    parser.feed(PAGE.read_text(encoding="utf-8"))
+    parser.flush()
+    heads, out = {}, []
+    for tag, text in parser.blocks:
+        if tag[0] == "h":
+            level = int(tag[1])
+            heads = {k: v for k, v in heads.items() if k < level}
+            heads[level] = text
+        else:
+            out.append((heads.get(2), heads.get(3), text))
+    return tuple(out)
+
+
+def sentences(text):
+    return re.split(r"(?<=[.!?])\s+(?=[A-Z‘“])", text)
+
+
+def conditions(sentence):
+    """The conditions a page sentence sits under: each "If …" heading in force over its block, and,
+    when it opens with an anaphor, the "If …" clause of the sentence before it in the block (or that
+    whole sentence, when it states no condition: the referent)."""
+    found = []
+    for h2, h3, text in page_blocks():
+        parts = sentences(text)
+        hits = [i for i, part in enumerate(parts) if omit_norm(part) == omit_norm(sentence)]
+        if not hits:
+            continue
+        found += [h for h in (h2, h3) if h and h.startswith("If ")]
+        i = hits[0]
+        if i and sentence.startswith(ANAPHOR):
+            before = parts[i - 1]
+            found.append(before.split(",")[0] if before.startswith("If ") else before.rstrip("."))
+        return tuple(found)
+    raise AssertionError(f"sentence not on the page: {sentence}")
+
+
+def conjunct_atoms(formula):
+    """The atoms a formula asserts as conjuncts (each `and` opened, nothing under `not` or `or`)."""
+    if formula[0] == "and":
+        return conjunct_atoms(formula[1]) | conjunct_atoms(formula[2])
+    return {json.dumps(formula)} if formula[0] in ("unary", "binary") else set()
+
+
+def missing_conditions(formula, wanted, legends):
+    """The conditions in `wanted` the rule's antecedent does not carry. One is carried when a guide
+    predicate the antecedent asserts has a legend quoting its words, or when it is a condition the
+    rules read with existing predicates (translation.SOURCE_CONDITIONS) and the antecedent asserts
+    each of that reading's atoms."""
+    if formula[0] != "implies":
+        return tuple(wanted)
+    atoms = conjunct_atoms(formula[1])
+    quoted = [omit_norm(w) for atom in map(json.loads, atoms) for w in quotes(legends.get(atom[1], ""))]
+    readings = {words: conjunct_atoms(translation().source_condition(words))
+                for words in translation().SOURCE_CONDITIONS}
+    def carried_by(words):
+        bare = omit_norm(words.removeprefix("If "))
+        return any(bare in q for q in quoted) or (words in readings and readings[words] <= atoms)
+    return tuple(w for w in wanted if not carried_by(w))
 
 
 @functools.cache
@@ -160,6 +268,88 @@ def test_the_carry_check_refuses_a_gloss_without_the_sentence():
 def test_the_legend_check_refuses_words_not_in_the_source():
     lines = source_lines()
     legend = shown_legends()["opted_out"]
-    assert quoted_in_source(legend, lines) == "opt out of receiving Winter Fuel Payment"
+    assert quoted_in_source(legend, lines) == ("opt out of receiving Winter Fuel Payment",)
     assert quoted_in_source(legend.replace("opt out of", "opt in to"), lines) is None
     assert quoted_in_source(legend.replace("(S2: “", "(“"), lines) is None
+
+
+# unit -> the conditions it sits under on the page, read by hand (srccov-rl-eligibility-1121 review F1:
+# G2 had dropped its h2 and G6 its h2 and lead-in clause).
+CONTEXT = {
+    "S0406": (),
+    "S0424": ("If you live with someone else who’s eligible for the Winter Fuel Payment",
+              "If you and your partner jointly claim any of the benefits"),
+    "S0465": ("If HMRC changes your tax code", "If HMRC changes your tax code to pay back your Winter Fuel Payment"),
+    "S0467": ("If HMRC changes your tax code", "If HMRC needs to collect 2 payments"),
+    "S0468": ("If HMRC changes your tax code", "If HMRC needs to collect 2 payments",
+              "HMRC will collect 2 payments through your tax code at the same time"),
+    "S0474": ("If you complete a Self Assessment tax return", "If you file tax returns online"),
+    "S0483": (),
+}
+
+
+@pytest.mark.parametrize("unit", sorted(KEPT))
+def test_the_page_reader_finds_the_conditions_each_kept_unit_sits_under(unit):
+    """The conditions read from the pinned HTML are the ones read by hand."""
+    assert conditions(KEPT[unit][3]) == CONTEXT[unit]
+
+
+@pytest.mark.parametrize("unit", sorted(KEPT))
+def test_each_kept_rule_carries_the_conditions_its_sentence_sits_under(unit):
+    """No rule line states more than its source: each heading or lead-in condition over the sentence on
+    the page is in the rule's antecedent (review F1: G2, G6)."""
+    rid, sentence = KEPT[unit][1], KEPT[unit][3]
+    formula = shown_rules()[rid]["formula"]
+    assert missing_conditions(formula, conditions(sentence), shown_legends()) == (), (unit, rid)
+
+
+# The review's failing examples (srccov-rl-eligibility-1121 F1): G2 and G6 as they were at 4d3cfa95.
+U = lambda pred: ["unary", pred, ["const", "applicant"]]
+WIDE = {
+    "S0424": ["implies", ["and", U("jointly_claims_benefits"), U("entitled")], U("paid_into_usual_account")],
+    "S0474": ["implies", U("added_to_tax_return"), ["and", U("shown_as_wfp_charge"), U("in_tax_calculation")]],
+    "S0467": ["implies", U("two_payments_to_collect"), U("two_payments_through_tax_code")],
+}
+WIDE_LEGENDS = {"added_to_tax_return": "The amount … (S2: “adding the amount to your Self Assessment tax return”)."}
+
+
+@pytest.mark.parametrize("unit, missing", [
+    ("S0424", ("If you live with someone else who’s eligible for the Winter Fuel Payment",)),
+    ("S0474", ("If you complete a Self Assessment tax return", "If you file tax returns online")),
+    ("S0467", ("If HMRC changes your tax code",)),
+])
+def test_the_context_check_refuses_the_wider_lines(unit, missing):
+    """The check finds each condition the wider line dropped, and only those."""
+    legends = {**shown_legends(), **WIDE_LEGENDS}
+    assert missing_conditions(WIDE[unit], conditions(KEPT[unit][3]), legends) == missing
+
+
+def test_the_context_check_refuses_a_rule_without_an_antecedent():
+    assert missing_conditions(U("affects_other_benefits"), ("If x",), {}) == ("If x",)
+
+
+def test_a_condition_under_not_or_or_is_not_carried():
+    """A condition is carried only as a conjunct of the antecedent, never negated or in a disjunction."""
+    legends = shown_legends()
+    wanted = ("If you file tax returns online",)
+    assert missing_conditions(["implies", U("files_online"), U("in_tax_calculation")], wanted, legends) == ()
+    assert missing_conditions(["implies", ["not", U("files_online")], U("in_tax_calculation")], wanted, legends) == wanted
+    assert missing_conditions(["implies", ["or", U("files_online"), U("entitled")], U("in_tax_calculation")],
+                              wanted, legends) == wanted
+
+
+def test_the_amount_rules_and_g2_share_one_reading_of_the_lives_with_heading():
+    """The S2:49 heading is read once (translation.SOURCE_CONDITIONS); the amount rules use that reading."""
+    t = translation()
+    reading = t.source_condition(t.LIVES_WITH_ELIGIBLE)
+    shown = json.dumps(shown_rules())
+    assert json.dumps(reading) in shown
+    assert conjunct_atoms(reading) == {json.dumps(["binary", "lives_with", ["const", "applicant"], ["const", "housemate"]]),
+                                       json.dumps(["unary", "entitled", ["const", "housemate"]])}
+
+
+def test_the_benefits_legend_names_the_benefits():
+    """`jointly_claims_benefits` quotes the benefits "any of the benefits" refers to (S2:51-53)."""
+    words = quoted_in_source(shown_legends()["jointly_claims_benefits"], source_lines())
+    assert words is not None
+    assert {"Pension Credit", "Universal Credit", "income-related Employment and Support Allowance (ESA)"} <= set(words)

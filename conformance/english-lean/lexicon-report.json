@@ -195,8 +195,8 @@
   {
    "environment": "usecases/eligibility/environment.json",
    "failures": [],
-   "lexicon_id": "8307042b976d00d480e17be7adeb6065f8af74be920bce770883781b7fa5beec",
-   "symbols": 97
+   "lexicon_id": "0d5d3f8e3e9c7f8aecbd944d5ff6212f578ced07431f71c1a4ba48355fb5ba56",
+   "symbols": 99
   },
   {
    "environment": "usecases/math-mini-paper/environment-closure.json",
