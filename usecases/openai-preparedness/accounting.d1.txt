@@ -49,7 +49,7 @@ f14-summary | omits: "Employees" restates ; "on capability levels and safeguards
 f15-disclose | omits: "We will release information about our Preparedness Framework results" restates ; "in order to facilitate public awareness of the state of frontier AI capabilities" exposition ; "This published information will include" restates
 f15-safeguards | omits: "Additionally" exposition ; "if the model is beyond a High threshold, we will include information about" restates ; "Such disclosures about results and safeguards" restates
 f15-third-party | omits: "(as described in Section 3.1)" exposition ; "for example based on results of Capabilities Report presented to them" exposition ; "If we deem that a deployment warrants" restates ; "OpenAI will work with third-parties to" restates
-f16-sag-recommend | omits: nothing
+f16-sag-recommend | omits: "The Safety Advisory Group (SAG) is responsible for" restates ; "Overseeing the effective design, implementation, and adherence to the Preparedness Framework in partnership with the safety organization leader" loss 1 ; "For each deployment in scope under the Preparedness Framework, reviewing relevant reports and all other relevant materials and assessing of the level of Tracked Category capabilities and any post-safeguards residual risks" loss 1 ; "Making other recommendations to OpenAI Leadership on longer-term changes or investments that are forecasted to be necessary for upcoming models to continue to keep residual risks at acceptable levels" loss 1
 c2-misalignment-strict | omits: nothing
 c2-misalignment-default | omits: nothing
 c3-access-strict | omits: "especially those presenting High capabilities" exposition ; "protected with strong multi-factor authentication" restates ; "and may require additional approvals for access" loss 1
@@ -91,6 +91,7 @@ f13-review | omits: nothing
 f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
 cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
 fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
+sr-sufficiency | omits: "The baseline risk from other deployments, based on a review of any non-OpenAI deployments of models which have crossed the capability thresholds and any public evidence of the safeguards applied for those models" loss 1
 bio-high | omits: nothing
 bio-critical | omits: nothing
 cyb-high | omits: nothing

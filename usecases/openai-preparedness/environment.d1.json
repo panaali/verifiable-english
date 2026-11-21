@@ -1089,6 +1089,17 @@
           "default": "deny",
           "act": "{0} have SAG receive the research results"
         }
+      },
+      "sufficiency_basis": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.2: “The SAG will make this determination based on:” “The level of capability in the Tracked Category based on the Capabilities Report.” “The associated risks of severe harm, as described in the threat model and where needed, advice of internal or external experts.” “The safeguards in place and their effectiveness based on the Safeguards Report.”",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have SAG base safeguard sufficiency on capability plus risks plus safeguards"
+        }
       }
     },
     "constants": {

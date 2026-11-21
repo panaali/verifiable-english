@@ -1813,27 +1813,27 @@
    "bytes": 47,
    "id": "p11-u181",
    "kind": "unformalised",
-   "reason": "unmapped_duty",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 86,
    "id": "p11-u182",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 135,
    "id": "p11-u183",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
@@ -1958,12 +1958,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 84,
    "id": "p12-u196",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
@@ -2709,12 +2709,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 52,
    "id": "p16-u272",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {

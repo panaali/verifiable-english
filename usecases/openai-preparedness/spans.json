@@ -2728,9 +2728,9 @@
     34633
    ],
    "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
-   "residual": "unmapped_duty-p11-u181-52c325693fea",
+   "blocked_rule": "sr-sufficiency",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in safeguard selection",
    "waits": [
     "AP"
    ],
@@ -2743,11 +2743,11 @@
     34719
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
-   "residual": "unmapped_claim-p11-u182-bfffde0b81c9",
+   "blocked_rule": "sr-sufficiency",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2758,11 +2758,11 @@
     34854
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
-   "residual": "unmapped_claim-p11-u183-b1ef01dad48b",
+   "blocked_rule": "sr-sufficiency",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2953,11 +2953,11 @@
     36823
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
-   "residual": "unmapped_claim-p12-u196-78df1dfa5e98",
+   "blocked_rule": "sr-sufficiency",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4057,11 +4057,11 @@
     48765
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
-   "residual": "unmapped_claim-p16-u272-5fd8776e67b2",
+   "blocked_rule": "f16-sag-recommend",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },

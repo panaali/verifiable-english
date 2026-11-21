@@ -770,6 +770,14 @@ ACTS = {
     "access_limited": ("{0} have model access strictly limited with strong multifactor authentication",
                        "C.3: access for all models"),
     "research_results_received": ("{0} have SAG receive the research results", "2.3: SAG receives Research Category review results"),
+    # srccov-rl-openai-preparedness-1121: the act of block sr-sufficiency of rules.d1.ve. Its legend is the section
+    # and the source sentences the block carries, word for word.
+    "sufficiency_basis": ("{0} have SAG base safeguard sufficiency on capability plus risks plus safeguards",
+                          "4.2: “The SAG will make this determination based on:” “The level of "
+                          "capability in the Tracked Category based on the Capabilities Report.” “The "
+                          "associated risks of severe harm, as described in the threat model and where needed, advice "
+                          "of internal or external experts.” “The safeguards in place and their "
+                          "effectiveness based on the Safeguards Report.”"),
 }
 
 

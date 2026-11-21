@@ -1,0 +1,137 @@
+--- chain-gate.sh	2026-11-21 10:55:10.762800624 +0000
++++ chain-gate.sh.new-cgshard	2026-11-21 11:41:49.389243255 +0000
+@@ -278,12 +278,126 @@
+     print -r -- ve-cloud-2 ${(f)"$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=10 ve-cloud-2 "cut -d' ' -f2 /proc/loadavg; nproc" < /dev/null 2>/dev/null | head -n 2)"}
+   else print -r -- "ve-cloud-2 off"; fi
+   print -r -- vm $(cut -d' ' -f2 /proc/loadavg) $(nproc); }
++# 2026-11-21 cg-actions-shard-1121 (reviews/chain-gate-20-20261121.md sections 6-7, Fix 1; DRI ruling gha-gate-shard item 2,
++#    reviews/dri-decisions-20261028-gha-gate-shard.md: the full gate.py sharded on Actions, within the minutes already in use).
++#    In the MAC_LAST_RESORT route, after the ve-cloud-2 step (not usable, or no verified record) and BEFORE the VM step, the
++#    full gate.py of HEAD runs sharded on GitHub Actions: gha-arm-shard.sh, unchanged, as the train's blocking legs run it
++#    (CHAIN_GATE_ACTIONS_LEG arm, the default: ARM_SHARD_MODE=blocking, flag ARM_SHARD_BLOCKING, ubuntu-24.04-arm, pinned
++#    sources fetched and required; x86: --x86 ARM_SHARD_MODE=leg-blocking, flag X86_SHARD_BLOCKING), label chain-<label> (never
++#    seeded: ARM_GATE_SEED is cand-* only; no reference record: no compare), in iso.sh scope chaingha-<label>-<pid> (2G), log
++#    $M/chain-gha-<label>.log. The leg merges its shards into ONE record (gate.py --merge-shards); gha/arm-leg-record.py
++#    (tree checked; commit_sha := HEAD, export_commit kept; where=actions-<arm|x86>) writes it to <worktree>/gate-result.json,
++#    the format review-ready.py and merge-train.sh read. It passes only when the leg exits 0 AND the record is passed, mode
++#    full, clean, with stages, of HEAD and its tree; anything else with a leg verdict (exit 0/1; exit 4 for a shard that
++#    failed, came back of another shape or with no record) is a FAILED record and exit 1 (a missing shard is a FAIL, never a
++#    pass; no R13 rerun: gate.py refuses to rerun another runner's record). No verdict -> the VM step, then the Mac, as before:
++#    not tried (CHAIN_GATE_ACTIONS_OFF veto file, the leg's flag off, ACTIONS_SUSPENDED, cloud-jobs/ACTIONS_MISMATCH that
++#    blocks per mismatch-scope.sh read live, CLOUD_PUSH_HOLD, no gha-arm-shard.sh, shard-room.py actions room unreadable or
++#    under CHAIN_GATE_ACTIONS_MIN_ROOM, default 10 = one train leg's 8 shards + this leg's 2), not sent (exit 3), every missing
++#    shard "no result by the deadline" (exit 4; the leg's deadline CHAIN_GATE_ACTIONS_DEADLINE_MIN, default 75 min: 117
++#    blocking arm legs Nov 14-21 took median 35.0, p90 57.2, p95 68.0, max 106.2 min), the chain's hard limit
++#    CHAIN_GATE_ACTIONS_HARD_S (default (deadline + 15) * 60 s) or any other exit. On a deadline, the hard limit or another exit
++#    the leg's runs still out are cancelled (gha/cancel-leg-runs.py). A CHAIN_GATE_CANCEL file (FIX_EARLY): before the step,
++#    exit 4 and no leg; while it runs (polled every CHAIN_GATE_ACTIONS_POLL s, 5): TERM to the leg's session (KILL after 60 s),
++#    its scope stopped, its runs cancelled, gate-result.json removed, event gate-cancelled, exit 4. Cloud saturated (the
++#    mac-last-chaingate check below): the step runs before the Mac's one slot is taken (CHAIN_GATE_ACTIONS_SAT=0: the Mac at
++#    once as before); it runs at most once per chain gate. Events: gate-route "ACTIONS: ...", gate-start/gate-end
++#    "actions-<arm|x86> ...". Test: tools-local/test_chain_gate_actions_shard.py.
++ghleg=${CHAIN_GATE_ACTIONS_LEG:-arm}; ghtried=""
++ghavail(){  # prints why the Actions shard step cannot run now and returns 1; prints the room and returns 0 when it can
++  local fl=ARM_SHARD_BLOCKING r min=${CHAIN_GATE_ACTIONS_MIN_ROOM:-10}
++  [[ $ghleg == (arm|x86) ]] || { print -r -- "CHAIN_GATE_ACTIONS_LEG=$ghleg is not arm or x86"; return 1; }
++  [ $ghleg = x86 ] && fl=X86_SHARD_BLOCKING
++  [ -f $M/CHAIN_GATE_ACTIONS_OFF ] && { print -r -- "CHAIN_GATE_ACTIONS_OFF"; return 1; }
++  [ -f $M/gha-arm-shard.sh ] || { print -r -- "no gha-arm-shard.sh"; return 1; }
++  [ -f $M/$fl ] || { print -r -- "$fl off"; return 1; }
++  [ -f $M/ACTIONS_SUSPENDED ] && { print -r -- "ACTIONS_SUSPENDED"; return 1; }
++  # mismatch-scope.sh read live at each use (the one copy of the rule); not sourceable: the old rule, the file blocks
++  ( if source $M/mismatch-scope.sh > /dev/null 2>&1 && (( $+functions[mismatch_blocks_gate] )); then mismatch_blocks_gate $M/cloud-jobs/ACTIONS_MISMATCH
++    else [[ -e $M/cloud-jobs/ACTIONS_MISMATCH || -L $M/cloud-jobs/ACTIONS_MISMATCH ]] && exit 0; exit 1; fi )
++  [ $? != 1 ] && { print -r -- "cloud-jobs/ACTIONS_MISMATCH"; return 1; }
++  [ -f $M/CLOUD_PUSH_HOLD ] && { print -r -- "CLOUD_PUSH_HOLD"; return 1; }
++  [[ $min == <-> ]] || min=10
++  r=(${=$(python3 -I $M/shard-room.py actions ${ACTIONS_MAX_INFLIGHT:-40} ${CLOUD_JOBS_DIR:-$M/cloud-jobs} ${GHA_TESTS_DIR:-$M/gha-tests} "" ${ARM_SHARD_TARGET_S:-3600} 2>/dev/null)})
++  [[ ${r[1]} == (-|)<-> ]] || { print -r -- "shard room unreadable (shard-room.py)"; return 1; }
++  (( r[1] >= min )) || { print -r -- "over the shard cap: Actions room ${r[1]} < CHAIN_GATE_ACTIONS_MIN_ROOM $min (busy ${r[2]}, reserve ${r[3]})"; return 1; }
++  print -r -- "room ${r[1]}"; }
++ghcx(){ [ -n "$CHAIN_GATE_CANCEL" ] && [ -e "$CHAIN_GATE_CANCEL" ]; }
++ghstep(){  # 0 passed, 1 failed (gate-result.json written); 2 no verdict (the next step); exit 4 on a FIX_EARLY cancel
++  local why gw=actions-$ghleg md=blocking arg=() jf=$M/chain-gha-$label.job alog=$M/chain-gha-$label.log d="" lrc p k=0 \
++    t0 dl=${CHAIN_GATE_ACTIONS_DEADLINE_MIN:-75} hard stop="" ms tr fl=ARM_SHARD_BLOCKING c
++  [ -n "$ghtried" ] && return 2; ghtried=1
++  ghcx && { ev gate-cancelled "no actions gate: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4; }
++  why=$(ghavail) || { ev gate-route "ACTIONS: not tried ($why): the next step"; return 2; }
++  [[ $dl == <1-> ]] || dl=75; hard=${CHAIN_GATE_ACTIONS_HARD_S:-$(( (dl + 15) * 60 ))}; [[ $hard == <1-> ]] || hard=$(( (dl + 15) * 60 ))
++  [ $ghleg = x86 ] && { md=leg-blocking; arg=(--x86); fl=X86_SHARD_BLOCKING; }
++  rm -f $jf; : > $alog; tr=$(git -C $w rev-parse 'HEAD^{tree}')
++  c=(env ARM_SHARD_MODE=$md ARM_SHARD_JOBFILE=$jf ARM_SHARD_DEADLINE_MIN=$dl zsh $M/gha-arm-shard.sh $arg chain-$label $h)
++  [ -f $M/iso.sh ] && c=(zsh $M/iso.sh chaingha-$label-$$ 2G -- $c)
++  ev gate-route "ACTIONS: the full gate.py of ${h[1,8]} sharded on Actions ($gw, ARM_SHARD_MODE=$md, $why, deadline $dl min): before the VM step"
++  ev gate-start "$gw ${h[1,8]}"; t0=$(date +%s)
++  setsid $c >> $alog 2>&1 & p=$!
++  while kill -0 $p 2>/dev/null; do
++    ghcx && { stop=cancel; break; }
++    (( $(date +%s) - t0 >= hard )) && { stop=hard; break; }
++    sleep ${CHAIN_GATE_ACTIONS_POLL:-5}; done
++  if [ -n "$stop" ]; then kill -TERM -- -$p 2>/dev/null || kill -TERM $p 2>/dev/null
++    while kill -0 -- -$p 2>/dev/null && [ $k -lt 60 ]; do sleep 2; k=$((k+2)); done
++    kill -KILL -- -$p 2>/dev/null
++    [ -f $M/iso.sh ] && ${VM_GATE_SYSTEMCTL:-systemctl} --user stop "ve-chaingha-${label//[^A-Za-z0-9_-]/_}-$$-*.scope" > /dev/null 2>&1; fi
++  wait $p 2>/dev/null; lrc=$?
++  d=$(head -n 1 $jf 2>/dev/null); rm -f $jf
++  ghrc(){ [ -n "$d" ] && [ -d "$d" ] || { echo "chain-gate.sh: no job dir: no runs to cancel" >> $alog; return 0; }
++    echo "=== chain-gate.sh: cancelling the runs of ${d:t} ($1)" >> $alog
++    timeout 300 python3 -I $M/gha/cancel-leg-runs.py $d $t0 >> $alog 2>&1 || echo "chain-gate.sh: cancel-leg-runs.py exit $?" >> $alog; }
++  if [ "$stop" = cancel ]; then ghrc "FIX_EARLY"; rm -f $w/gate-result.json
++    ev gate-cancelled "actions gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4; fi
++  if [ "$stop" = hard ]; then ghrc "hard limit"; ev gate-end "$gw rc=timeout"
++    ev gate-route "ACTIONS: no verdict within $hard s (CHAIN_GATE_ACTIONS_HARD_S): leg stopped, runs cancelled: the next step"; return 2; fi
++  ev gate-end "$gw rc=$lrc"
++  ms=$(grep -oE 'MISSING: .*' $alog | tail -n 1 | sed -E 's/; wall [0-9]+ s$//')
++  if [ $lrc = 3 ]; then ev gate-route "ACTIONS: not sent ($(grep -oE 'not sent: .*' $alog | tail -n 1 | cut -c11-170 | tr -d '"\\')): the next step"; return 2; fi
++  if [ $lrc = 4 ] && [ -n "$ms" ] && [ -z "$(print -r -- ${ms#MISSING: } | sed 's/; /\n/g' | grep -vxE 's[0-9]+: no result by the deadline')" ]; then
++    ghrc "deadline"; ev gate-route "ACTIONS: $(print -r -- $ms | cut -c1-160 | tr -d '"\\') ($dl min): runs cancelled: the next step"; return 2; fi
++  if [[ $lrc != (0|1|4) ]]; then ghrc "exit $lrc"; ev gate-route "ACTIONS: gha-arm-shard.sh exit $lrc (no verdict): runs cancelled: the next step"; return 2; fi
++  ARM_LEG_WHERE=$gw ARM_LEG_KIND=${${ghleg:#arm}:-arm64} ARM_LEG_REASON="chain gate (cg-actions-shard; $fl)" \
++    python3 -I $M/gha/arm-leg-record.py "${d:--}" $w/gate-result.json $h $tr "gha-arm-shard.sh exit $lrc; $alog" > /dev/null 2>> $alog
++  # the pass needs exit 0 AND a passed full clean record of HEAD and its tree; anything else: a FAILED record (never a pass)
++  python3 -I - $w/gate-result.json $h $tr $lrc "$ms" $gw <<'EOF'
++import json, os, sys
++p, sha, tree, lrc, ms, where = sys.argv[1:7]
++try:
++    d = json.load(open(p))
++except (OSError, ValueError):
++    d = None
++if not isinstance(d, dict):
++    d = {"status": "failed", "mode": "full", "stages": [], "where": where,
++         "failures": [{"stage": "gate", "reason": "the Actions leg wrote no record"}]}
++why = [w for w, bad in [(f"gha-arm-shard.sh exit {lrc}", lrc != "0"), (ms, bool(ms)),
++                         (f"status {d.get('status')!r}", d.get("status") != "passed"),
++                         (f"mode {d.get('mode')!r}", d.get("mode") != "full"),
++                         ("not a clean worktree", d.get("dirty") is not False), ("no stages", not d.get("stages")),
++                         ("not of HEAD", d.get("commit_sha") != sha), ("not of HEAD's tree", d.get("tree_sha") != tree)] if bad]
++if not why:
++    sys.exit(0)
++if d.get("status") != "failed" or d.get("commit_sha") != sha or d.get("tree_sha") != tree or ms or not os.path.exists(p):
++    f = d.get("failures") if isinstance(d.get("failures"), list) else []
++    d.update(status="failed", commit_sha=sha, tree_sha=tree,
++             failures=f + [{"stage": "gate", "reason": "chain gate on Actions: no pass (" + "; ".join(why)[:600] + ")"}])
++    open(p + ".tmp", "w").write(json.dumps(d, indent=1)); os.replace(p + ".tmp", p)
++sys.exit(1)
++EOF
++  }
+ mlrg=""; mlsat=""; mlfd=""
+ if [ -f ${MAC_LAST_RESORT_FLAG:-$M/MAC_LAST_RESORT} ] && [ -f $M/MAC_GATE ] && [ -z "$nogate" ] && [ "${MAC_LAST_CHAINGATE_SAT:-1}" != 0 ]; then
+   mlh=(); mlfree=""
+   for mll in ${(f)"$(mlcg_probe)"}; do mla=(${=mll}); [ -n "${mla[1]}" ] || continue
+     if [[ "${mla[2]}" == <->(.<->|) && "${mla[3]}" == <-> ]] && (( ${mla[3]} > 0 )); then mlh+=("${mla[1]} ${mla[2]}/${mla[3]}"); (( ${mla[2]} < ${mla[3]} )) && mlfree=1
+     else mlh+=("${mla[1]} unreachable"); fi; done
++  # cg-actions-shard-1121: cloud saturated -> the Actions shard step before the Mac's one slot (CHAIN_GATE_ACTIONS_SAT=0: as before)
++  if [ ${#mlh} -gt 0 ] && [ -z "$mlfree" ] && [ "${CHAIN_GATE_ACTIONS_SAT:-1}" != 0 ]; then
++    ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}): the Actions shard step before the Mac"
++    ghstep; case $? in 0) exit 0;; 1) exit 1;; esac; fi
+   if [ ${#mlh} -gt 0 ] && [ -z "$mlfree" ]; then mlk=${MAC_LAST_CHAINGATE_LOCK:-$M/locks/mac-last-chaingate.lock}; mkdir -p ${mlk:h}; : >> $mlk
+     if zmodload zsh/system 2>/dev/null && zsystem flock -t 0 -f mlfd $mlk 2>/dev/null; then mlsat=1; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}): the Mac's one slot"
+     else mlfd=""; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}) but the Mac's one slot is held by another chain: cloud-first"; fi; fi
+@@ -297,6 +411,7 @@
+     elif [ $rc = 4 ]; then ev gate-cancelled "ve-cloud-2 gate cancelled: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4
+     else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc)"; fi
+   else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 not usable ($(zsh $M/cloud2-run.sh ok 2>&1 | tr -d '"\\' | head -c 160))"; fi
++  if [ -z "$mlrg" ]; then ghstep; case $? in 0) exit 0;; 1) exit 1;; esac; fi  # cg-actions-shard-1121: Actions before the VM step
+   if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_ROUTE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
+     if (( mvl + mvw < mvlim )); then mlrg=vm; ev gate-route "MAC_LAST_RESORT: VM load $mvl + $mvw workers < $mvlim: the VM gate"
+     else ev gate-route "MAC_LAST_RESORT: no ve-cloud-2 record and the VM is full (load $mvl + $mvw >= $mvlim): the Mac gate"; fi; fi

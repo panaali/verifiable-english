@@ -1,0 +1,2 @@
+zsh -n chain-gate.sh.new-cgshard: ok
+python ast.parse helper + test: ok

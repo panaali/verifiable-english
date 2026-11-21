@@ -1,0 +1,20 @@
+chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth
+  ok   (1) exit 0
+  ok   (1) event gate-skip 'no VE change'
+  ok   (1) record: mode selected, rc 0, skip no-ve-change, this HEAD
+  ok   (1) no gate run: gate.py never started, no gate-result.json, no gate-start event
+  ok   (1b) exit 0
+  ok   (1b) event gate-skip 'no VE change'
+  ok   (1b) record: mode selected, rc 0, skip no-ve-change, this HEAD
+  ok   (1b) no gate run: gate.py never started, no gate-result.json, no gate-start event
+  ok   (2) no skip: no 'no VE change' event or record
+  ok   (2) the gate ran as before: gate.py started once on HEAD, exit 0
+  ok   (3u) dirty 0-commit tree: no skip
+  ok   (3u) dirty 0-commit tree: as before, gate-refused 'dirty worktree', exit 2
+  ok   (3m) dirty 0-commit tree: no skip
+  ok   (3m) dirty 0-commit tree: as before, gate-refused 'dirty worktree', exit 2
+  ok   (4) no skip: no 'no VE change' event or record
+  ok   (4) the gate ran as before: gate.py started once on HEAD, exit 0
+  ok   (4b) no skip: no 'no VE change' event or record
+  ok   (4b) the gate ran as before: gate.py started once on HEAD, exit 0
+all passed (0 failures)

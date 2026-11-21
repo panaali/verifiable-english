@@ -1,0 +1,191 @@
+chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgshard
+  ok   (i) exit 0
+  ok   (i) the shard leg ran once
+  ok   (i) ARM_SHARD_MODE=blocking, deadline 75 min
+  ok   (i) ARM_SHARD_JOBFILE given
+  ok   (i) gate-start actions-arm <HEAD>
+  ok   (i) gate-end actions-arm rc=0
+  ok   (i) the ve-cloud-2 step came first
+  ok   (i) no VM gate, no Mac gate
+  ok   (i) gate-result.json: passed, HEAD, tree, where=actions-arm, export_commit
+  ok   (i) the job named in the record
+  ok   (i) review-ready.py's gate_candidates: a usable passing gate of HEAD
+  ok   (i) no runs cancelled
+  ok   (i) a gate-route event names the Actions step
+  ok   (i) the same HEAD again: gate-skip (chain-gate reads the record as its own)
+  ok   (ix) x86: exit 0, --x86 leg-blocking
+  ok   (ix) x86: where=actions-x86, gate-start actions-x86
+  ok   (ix) x86 without X86_SHARD_BLOCKING: the VM step
+  ok   (ii) merged FAIL: exit 1
+  ok   (ii) merged FAIL: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) merged FAIL: failure reason names 'tests/test_a.py::test_x'
+  ok   (ii) merged FAIL: no VM gate
+  ok   (ii) merged FAIL: no Mac gate
+  ok   (ii) merged FAIL: gate-end actions-arm rc
+  ok   (ii) a shard of another shape (exit 4): exit 1
+  ok   (ii) a shard of another shape (exit 4): gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) a shard of another shape (exit 4): no VM gate
+  ok   (ii) a shard of another shape (exit 4): no Mac gate
+  ok   (ii) a shard of another shape (exit 4): gate-end actions-arm rc
+  ok   (ii) missing shard: not the deadline route
+  ok   (ii) one failed + one deadline shard (exit 4): exit 1
+  ok   (ii) one failed + one deadline shard (exit 4): gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) one failed + one deadline shard (exit 4): no VM gate
+  ok   (ii) one failed + one deadline shard (exit 4): no Mac gate
+  ok   (ii) one failed + one deadline shard (exit 4): gate-end actions-arm rc
+  ok   (ii) exit 0 but no record: exit 1
+  ok   (ii) exit 0 but no record: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) exit 0 but no record: failure reason names 'wrote no record'
+  ok   (ii) exit 0 but no record: no VM gate
+  ok   (ii) exit 0 but no record: no Mac gate
+  ok   (ii) exit 0 but no record: gate-end actions-arm rc
+  ok   (ii) unparseable record: exit 1
+  ok   (ii) unparseable record: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) unparseable record: failure reason names 'unreadable'
+  ok   (ii) unparseable record: no VM gate
+  ok   (ii) unparseable record: no Mac gate
+  ok   (ii) unparseable record: gate-end actions-arm rc
+  ok   (ii) record of another tree: exit 1
+  ok   (ii) record of another tree: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) record of another tree: failure reason names 'of this tree'
+  ok   (ii) record of another tree: no VM gate
+  ok   (ii) record of another tree: no Mac gate
+  ok   (ii) record of another tree: gate-end actions-arm rc
+  ok   (ii) exit 0 with a failed record: exit 1
+  ok   (ii) exit 0 with a failed record: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) exit 0 with a failed record: no VM gate
+  ok   (ii) exit 0 with a failed record: no Mac gate
+  ok   (ii) exit 0 with a failed record: gate-end actions-arm rc
+  ok   (ii) exit 1 with a passed record: exit 1
+  ok   (ii) exit 1 with a passed record: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) exit 1 with a passed record: failure reason names 'exit 1'
+  ok   (ii) exit 1 with a passed record: no VM gate
+  ok   (ii) exit 1 with a passed record: no Mac gate
+  ok   (ii) exit 1 with a passed record: gate-end actions-arm rc
+  ok   (ii) passed record with no stages: exit 1
+  ok   (ii) passed record with no stages: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) passed record with no stages: no VM gate
+  ok   (ii) passed record with no stages: no Mac gate
+  ok   (ii) passed record with no stages: gate-end actions-arm rc
+  ok   (ii) passed record not clean: exit 1
+  ok   (ii) passed record not clean: gate-result.json FAILED, of HEAD, where=actions-arm
+  ok   (ii) passed record not clean: no VM gate
+  ok   (ii) passed record not clean: no Mac gate
+  ok   (ii) passed record not clean: gate-end actions-arm rc
+  ok   (iii) ACTIONS_SUSPENDED: shard stub not started
+  ok   (iii) ACTIONS_SUSPENDED: exit 0 from the VM gate
+  ok   (iii) ACTIONS_SUSPENDED: the VM gate ran
+  ok   (iii) ACTIONS_SUSPENDED: gate-start vm
+  ok   (iii) ACTIONS_SUSPENDED: gate-result.json is the VM's
+  ok   (iii) ACTIONS_SUSPENDED: no Mac gate
+  ok   (iii) ACTIONS_SUSPENDED: gate-route says why
+  ok   (iii) CLOUD_PUSH_HOLD: shard stub not started
+  ok   (iii) CLOUD_PUSH_HOLD: exit 0 from the VM gate
+  ok   (iii) CLOUD_PUSH_HOLD: the VM gate ran
+  ok   (iii) CLOUD_PUSH_HOLD: gate-start vm
+  ok   (iii) CLOUD_PUSH_HOLD: gate-result.json is the VM's
+  ok   (iii) CLOUD_PUSH_HOLD: no Mac gate
+  ok   (iii) CLOUD_PUSH_HOLD: gate-route says why
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: shard stub not started
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: exit 0 from the VM gate
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: the VM gate ran
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: gate-start vm
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: gate-result.json is the VM's
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: no Mac gate
+  ok   (iii) CHAIN_GATE_ACTIONS_OFF: gate-route says why
+  ok   (iii) room 9 < 10: shard stub not started
+  ok   (iii) room 9 < 10: exit 0 from the VM gate
+  ok   (iii) room 9 < 10: the VM gate ran
+  ok   (iii) room 9 < 10: gate-start vm
+  ok   (iii) room 9 < 10: gate-result.json is the VM's
+  ok   (iii) room 9 < 10: no Mac gate
+  ok   (iii) room 9 < 10: gate-route says why
+  ok   (iii) room unreadable: shard stub not started
+  ok   (iii) room unreadable: exit 0 from the VM gate
+  ok   (iii) room unreadable: the VM gate ran
+  ok   (iii) room unreadable: gate-start vm
+  ok   (iii) room unreadable: gate-result.json is the VM's
+  ok   (iii) room unreadable: no Mac gate
+  ok   (iii) room unreadable: gate-route says why
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: shard stub not started
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: exit 0 from the VM gate
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: the VM gate ran
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: gate-start vm
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: gate-result.json is the VM's
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: no Mac gate
+  ok   (iii) room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4: gate-route says why
+  ok   (iii) room 4 = CHAIN_GATE_ACTIONS_MIN_ROOM 4: the Actions step
+  ok   (iii) ARM_SHARD_BLOCKING off: shard stub not started
+  ok   (iii) ARM_SHARD_BLOCKING off: exit 0 from the VM gate
+  ok   (iii) ARM_SHARD_BLOCKING off: the VM gate ran
+  ok   (iii) ARM_SHARD_BLOCKING off: gate-start vm
+  ok   (iii) ARM_SHARD_BLOCKING off: gate-result.json is the VM's
+  ok   (iii) ARM_SHARD_BLOCKING off: no Mac gate
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): shard stub not started
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): exit 0 from the VM gate
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): the VM gate ran
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): gate-start vm
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): gate-result.json is the VM's
+  ok   (iii) ACTIONS_MISMATCH empty (blocks): no Mac gate
+  ok   (iii) ACTIONS_MISMATCH select-* line: shard stub not started
+  ok   (iii) ACTIONS_MISMATCH select-* line: exit 0 from the VM gate
+  ok   (iii) ACTIONS_MISMATCH select-* line: the VM gate ran
+  ok   (iii) ACTIONS_MISMATCH select-* line: gate-start vm
+  ok   (iii) ACTIONS_MISMATCH select-* line: gate-result.json is the VM's
+  ok   (iii) ACTIONS_MISMATCH select-* line: no Mac gate
+  ok   (iii) ACTIONS_MISMATCH tm-* verdict sample only: does not block (mismatch-scope.sh): the Actions step
+  ok   (iii) gha-arm-shard.sh not sent (exit 3): exit 0 from the VM gate
+  ok   (iii) gha-arm-shard.sh not sent (exit 3): the VM gate ran
+  ok   (iii) gha-arm-shard.sh not sent (exit 3): gate-start vm
+  ok   (iii) gha-arm-shard.sh not sent (exit 3): gate-result.json is the VM's
+  ok   (iii) gha-arm-shard.sh not sent (exit 3): no Mac gate
+  ok   (iii) not sent: route event, no cancel
+  ok   (iv) leg deadline: exit 0 from the VM gate
+  ok   (iv) leg deadline: the VM gate ran
+  ok   (iv) leg deadline: gate-start vm
+  ok   (iv) leg deadline: gate-result.json is the VM's
+  ok   (iv) leg deadline: no Mac gate
+  ok   (iv) leg deadline: runs cancelled (helper got the job dir)
+  ok   (iv) leg deadline: gate-route names the deadline
+  ok   (iv) chain hard limit: exit 0 from the VM gate
+  ok   (iv) chain hard limit: the VM gate ran
+  ok   (iv) chain hard limit: gate-start vm
+  ok   (iv) chain hard limit: gate-result.json is the VM's
+  ok   (iv) chain hard limit: no Mac gate
+  ok   (iv) hard limit: the leg stopped before its end (no done row)
+  ok   (iv) hard limit: its process group gone
+  ok   (iv) hard limit: runs cancelled
+  ok   (iv) hard limit: gate-end actions-arm rc=timeout
+  ok   (iv) CHAIN_GATE_ACTIONS_DEADLINE_MIN passed to the leg
+  ok   (v) cancel: exit 4
+  ok   (v) cancel: within 70 s of the file
+  ok   (v) cancel: the leg's process group gone
+  ok   (v) cancel: the leg did not finish
+  ok   (v) cancel: runs cancelled with the job dir
+  ok   (v) cancel: no gate-result.json
+  ok   (v) cancel: event gate-cancelled
+  ok   (v) cancel: no VM gate, no Mac gate
+  ok   (v) cancel file before: exit 4, the leg never started
+  ok   (v) cancel file before: no gate-result.json
+  ok   (vi) no MAC_LAST_RESORT: shard stub not started
+  ok   (vi) no MAC_LAST_RESORT: exit 0 from the VM gate
+  ok   (vi) no MAC_LAST_RESORT: the VM gate ran
+  ok   (vi) no MAC_LAST_RESORT: gate-start vm
+  ok   (vi) no MAC_LAST_RESORT: gate-result.json is the VM's
+  ok   (vi) no MAC_LAST_RESORT: no Mac gate
+  ok   (vi) no ACTIONS route event
+  ok   (vii) saturated: the Actions step, exit 0, no Mac
+  ok   (vii) saturated, CHAIN_GATE_ACTIONS_SAT=0: the Mac gate as before, no Actions step
+  ok   (vii) saturated, Actions unavailable: the Mac gate as before
+  ok   (vii) saturated, not sent: the Mac gate as before (the leg tried once)
+cancel-leg-runs.py under test: /home/seyran/code/manage-agents/gha/cancel-leg-runs.py.new-cgshard
+  ok   (h) running runs cancelled, the completed one not
+  ok   (h) all accepted: exit 0, 'cancelled 4 of 4'
+  ok   (h) branches read: s1..s3, s1r1..s3r1, lean
+  ok   (h) the token only in the Authorization header
+  ok   (h) one cancel refused (403): exit 1, named
+  ok   (h) lookup failed: exit 1, nothing cancelled
+  ok   (h) nothing running: exit 0, 'cancelled 0 of 0'
+  ok   (h) no shards in run.json: 20 + 20 + lean branches read
+  ok   (h) usage: exit 2
+all passed (0 failures)
