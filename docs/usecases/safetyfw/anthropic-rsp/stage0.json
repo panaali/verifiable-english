@@ -143,6 +143,9 @@
     "f14-ltbt-request"
    ],
    "F15": [
+    "f15-expertise",
+    "f15-candid",
+    "f15-conflicts",
     "f15-financial-interest",
     "f15-revenue-strict",
     "f15-revenue-default",

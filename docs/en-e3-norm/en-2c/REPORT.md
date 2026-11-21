@@ -87,14 +87,32 @@ Rerun after srccov-rl-safety-framework-1121 added the FSF rule blocks `f7-eval` 
 not ruled out). All 123 pinned blocks `agree`. The 137 rows of a class other than `agree` are the same records as
 before (corpus, class, Python's and Lean's answers); three of them now name another first test that made them. The
 larger derived suite adds records: suite 3 more (`both-refuse`), suite-subprocess 192 more and soft-rights 39 more,
-all `agree`. The table below is that run's.
+all `agree`.
+
+Rerun after srccov-rl-anthropic-rsp-1121 added the RSP rule blocks `f15-expertise`, `f15-candid` and `f15-conflicts`
+to `tests/data/norm-blocks/rsp.jsonl`, so the saved `pinned` corpus lacked three blocks (that item's selected run
+failed `test_the_saved_delta_report_records_every_disagreement_with_its_class`): `VE_NATIVE_PREBUILT=1 uv run python
+docs/en-e3-norm/en-2/w1_delta.py --workers 8` at `d555134e8b` on a clean tree, pytest's summary "33019 passed, 7
+skipped, 83 xfailed". The map is now the one at `e331b45943`, which derives 520 test units (39 recorded, 481 not
+ruled out, most because that branch changed test tooling since the map). All 124 pinned blocks `agree`. The larger
+suite adds records of two classes only: suite 3 more `both-refuse`, soft-rights 40 more `agree`. No `suite`,
+`soft-rights`, `udhr`, `constitution` or `known` row of another class changed, and the 63 `lean-unavailable` ids are
+the same.
+
+`suite-subprocess` is now 193 records, all `agree`, and the 23 records of the runs above (16 `agree`, 6
+`both-refuse` and the `lean-looser` row of a stale English export) are not among them. They come from the native
+build a session runs at its start when its stamp is stale (`tests/conftest.py` `pytest_sessionstart`; that build's
+processes inherit the shadow's variables), not from a test: a run at the same commit without `VE_NATIVE_PREBUILT` and
+with a fresh stamp gave the same 193 records and the same rows (it was not kept: two of its nested pytest runs
+deadlocked on the native build lock, as did a first run, whose session started with a stale stamp and recorded the
+23 again). `VE_NATIVE_PREBUILT=1` keeps every session on the shared lock. The table below is that run's.
 
 | corpus | records | lean-unavailable | agree | lean-stricter | lean-looser | both-refuse |
 |---|---|---|---|---|---|---|
-| pinned (123 blocks) | 123 | 0 | 123 | 0 | 0 | 0 |
-| suite (112 test units, derived from coverage) | 213 | 1 | 144 | 18 | 3 | 47 |
-| suite-subprocess (`ve` processes the suite starts) | 215 | 0 | 208 | 0 | 1 | 6 |
-| soft-rights (`_w1=True` calls) | 304 | 47 | 253 | 0 | 4 | 0 |
+| pinned (124 blocks) | 124 | 0 | 124 | 0 | 0 | 0 |
+| suite (520 test units, derived from coverage) | 213 | 1 | 144 | 18 | 3 | 47 |
+| suite-subprocess (`ve` processes the suite starts) | 193 | 0 | 193 | 0 | 0 | 0 |
+| soft-rights (`_w1=True` calls) | 305 | 47 | 254 | 0 | 4 | 0 |
 | udhr (norm units and readings, one at a time) | 47 | 1 | 0 | 37 | 0 | 9 |
 | constitution (the probe translation's) | 14 | 14 | 0 | 0 | 0 | 0 |
 | known (english-lean-s6.md section 5) | 15 | 0 | 3 | 2 | 9 | 1 |
@@ -109,8 +127,6 @@ table against `delta.json`):
   and 2 texts of `test_english_statement_answer.py`'s fuzz test that Python refuses as layout.
 - `suite` `lean-unavailable` (1): `CheckerUnavailable: Lean refused the request: UnsupportedProfile: alternatives@0 with norm-defaults@0`,
   in `test_et8_completion.py`.
-- `suite-subprocess` `lean-looser` (1): `one`, where Python's `ve` process refuses a stale English export
-  (`IdentityMetadataMismatch`).
 - `soft-rights` `lean-unavailable` (47): `InvalidGrammar`, Lean's refusal of the request's lexicon (45 from
   `test_rights.py`, 2 from `test_english_unambiguity.py`).
 - `soft-rights` `lean-looser` (4): `one`, rights lines with two carve-outs that Python refuses.
@@ -201,7 +217,7 @@ No Lean or Rust product code changed.
   (`LEAN`), and the inventory classes `result.statements` as Lean's count.
 - **The span end:** where a block ends inside the source is Lean's (`statementSpans`). The span is bound inside the
   source, on boundaries, at its header and in order.
-- **Soft environments:** Lean answers W1 text in a `soft-norms@0` environment: 214 soft-rights records `agree` and
+- **Soft environments:** Lean answers W1 text in a `soft-norms@0` environment: 254 soft-rights records `agree` and
   4 are `lean-looser`. The 47 soft-rights `lean-unavailable` rows are Lean's `InvalidGrammar` refusal of the request's
   lexicon (review F2's probe: V6, predicate `rights__lim__1`), not a profile refusal. Lean refuses `soft-norms@0` with
   `UnsupportedProfile` only when `norm-defaults@0` is also in the environment, as in the constitution's, so the 14
@@ -246,7 +262,7 @@ en-e3a-cutback, then en-e3 (EN-3) after the DRI's W1 delta decision.
 2. **Deliverables:** PASS. The table above; `git diff main...HEAD` holds no new Python copy of a Lean decision and no
    new report test of git.
 3. **Tests can fail:** PASS. `mutants.json`: 10 of 10 caught; `test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement`.
-4. **Agreement:** PASS. `delta.json`: pinned 123 of 123 agree; the rest are listed for the DRI.
+4. **Agreement:** PASS. `delta.json`: pinned 124 of 124 agree; the rest are listed for the DRI.
 5. **R8 binding:** PASS. `test_every_named_mutant_is_unavailable` (undeclared predicate, shifted number, extra and
    duplicated rows); `test_relay_binding_inventory.py[english.statement]`.
 6. **Gate evidence on final HEAD:** N.A. The chain runs the gate. The final selected run is below.

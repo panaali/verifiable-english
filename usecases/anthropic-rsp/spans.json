@@ -2130,6 +2130,7 @@
     37109
    ],
    "kind": "norm",
+   "rule": "f15-expertise",
    "open_terms": [
     "ot25_reviewer_criteria"
    ],
@@ -2151,6 +2152,7 @@
     37438
    ],
    "kind": "norm",
+   "rule": "f15-candid",
    "open_terms": [
     "ot25_reviewer_criteria"
    ],
@@ -2173,6 +2175,7 @@
     37680
    ],
    "kind": "norm",
+   "rule": "f15-conflicts",
    "open_terms": [
     "ot24_conflicts_of_interest"
    ],

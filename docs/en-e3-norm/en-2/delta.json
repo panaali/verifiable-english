@@ -1,5 +1,5 @@
 {
- "commit": "53dca160b2479e10e0b4e985700853c86685034d",
+ "commit": "d555134e8b469516af72b93977756e36b6c83e3f",
  "corpora": [
   {
    "name": "constitution",
@@ -14,12 +14,12 @@
   {
    "name": "pinned",
    "no_round_trip": 0,
-   "size": 123
+   "size": 124
   },
   {
    "name": "soft-rights",
    "no_round_trip": 0,
-   "size": 304
+   "size": 305
   },
   {
    "name": "suite",
@@ -29,7 +29,7 @@
   {
    "name": "suite-subprocess",
    "no_round_trip": 0,
-   "size": 215
+   "size": 193
   },
   {
    "name": "udhr",
@@ -57,7 +57,7 @@
    "lean-unknown": 0
   },
   "pinned": {
-   "agree": 123,
+   "agree": 124,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 0,
@@ -66,7 +66,7 @@
    "lean-unknown": 0
   },
   "soft-rights": {
-   "agree": 253,
+   "agree": 254,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 4,
@@ -84,10 +84,10 @@
    "lean-unknown": 0
   },
   "suite-subprocess": {
-   "agree": 208,
-   "both-refuse": 6,
+   "agree": 193,
+   "both-refuse": 0,
    "different-node": 0,
-   "lean-looser": 1,
+   "lean-looser": 0,
    "lean-stricter": 0,
    "lean-unavailable": 0,
    "lean-unknown": 0
@@ -210,8 +210,6 @@
   "fsf/f5": "agree",
   "fsf/f6": "agree",
   "fsf/f6-tcl": "agree",
-  "fsf/f7-eval": "agree",
-  "fsf/f7-eval-dm": "agree",
   "fsf/f7-rra": "agree",
   "fsf/f7-sc": "agree",
   "fsf/f8": "agree",
@@ -242,6 +240,9 @@
   "rsp/f14-full-review": "agree",
   "rsp/f14-ltbt-request": "agree",
   "rsp/f14-public-review-default": "agree",
+  "rsp/f15-candid": "agree",
+  "rsp/f15-conflicts": "agree",
+  "rsp/f15-expertise": "agree",
   "rsp/f15-financial-interest": "agree",
   "rsp/f15-revenue-default": "agree",
   "rsp/f15-revenue-strict": "agree",
@@ -3459,592 +3460,9 @@
    "source_sha256": "a74693d883c679437aa44b659191fa704ceb6a0ad3ca9d82cfd9fc02eea299dc"
   },
   {
-   "class": "lean-looser",
-   "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-2",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "7ccf9f5cab77b0e565d9d4e591c1b560efff7734ccf24566f5122d1d7ae0171b"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 1 with its own block"
-   },
-   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
-  },
-  {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": "EmptyDocument",
-    "nodes": [],
-    "status": "rejected"
-   },
-   "python": {
-    "nodes": []
-   },
-   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "suite",
-   "id": "tests/test_et8_completion.py::test_v2_rules_stay_checked_and_conflict_free_under_unspecified",
-   "lean": {
-    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
-    "status": "unavailable"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "protects_robot",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "ordered",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-2",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "injures_human",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-3",
-      "over": [],
-      "predicate": "breaks_first_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_human",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "allows",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-4",
-      "over": [],
-      "predicate": "breaks_first_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "injures_humanity",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-5",
-      "over": [],
-      "predicate": "breaks_zeroth_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_humanity",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "allows",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-6",
-      "over": [],
-      "predicate": "breaks_zeroth_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "not",
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "var",
-           1
-          ]
-         ],
-         [
-          "or",
-          [
-           "unary",
-           "breaks_first_law",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "breaks_zeroth_law",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-7",
-      "over": [],
-      "predicate": "has_lawful_option",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "breaks_first_law",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-8",
-      "over": [
-       "rule-2"
-      ],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_humanity",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-9",
-      "over": [
-       "rule-8"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": [
-       [
-        "exists",
-        "robot",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           1
-          ],
-          [
-           "var",
-           0
-          ]
-         ],
-         [
-          "unary",
-          "has_lawful_option",
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     },
-     {
-      "guard": [
-       "unary",
-       "breaks_zeroth_law",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-10",
-      "over": [
-       "rule-8",
-       "rule-9"
-      ],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "and",
-       [
-        "unary",
-        "ordered",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "permitted",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-11",
-      "over": [],
-      "predicate": "required",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "binary",
-       "harm_to",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-12",
-      "over": [],
-      "predicate": "lawfully_avoidable_threat",
-      "sign": true,
-      "unless": [
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "binary",
-           "available",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ],
-          [
-           "unary",
-           "permitted",
-           [
-            "var",
-            0
-           ]
-          ]
-         ],
-         [
-          "binary",
-          "leads_to",
-          [
-           "var",
-           0
-          ],
-          [
-           "var",
-           2
-          ]
-         ]
-        ]
-       ]
-      ]
-     },
-     {
-      "guard": [
-       "binary",
-       "lawfully_avoidable_threat",
-       [
-        "var",
-        0
-       ],
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-13",
-      "over": [],
-      "predicate": "prevent_required",
-      "sign": true,
-      "unless": [
-       [
-        "not",
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             2
-            ]
-           ],
-           [
-            "unary",
-            "required",
-            [
-             "var",
-             0
-            ]
-           ]
-          ],
-          [
-           "binary",
-           "prevents",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ]
-       ],
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "binary",
-           "available",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            2
-           ]
-          ],
-          [
-           "unary",
-           "permitted",
-           [
-            "var",
-            0
-           ]
-          ]
-         ],
-         [
-          "exists",
-          "harm",
-          [
-           "and",
-           [
-            "binary",
-            "lawfully_avoidable_threat",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             3
-            ]
-           ],
-           [
-            "binary",
-            "leads_to",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
+   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -5109,7 +4527,7 @@
   {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
+   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -5615,7 +5033,7 @@
   {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
+   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -6117,6 +5535,589 @@
     ]
    },
    "source_sha256": "e717de1b5aea59a195143173f40b64021012c8ce60aef37f6279f58f67547c80"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "suite",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-2",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "7ccf9f5cab77b0e565d9d4e591c1b560efff7734ccf24566f5122d1d7ae0171b"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "suite",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 1 with its own block"
+   },
+   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": "EmptyDocument",
+    "nodes": [],
+    "status": "rejected"
+   },
+   "python": {
+    "nodes": []
+   },
+   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "suite",
+   "id": "tests/test_et8_completion.py::test_v2_rules_stay_checked_and_conflict_free_under_unspecified",
+   "lean": {
+    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
+    "status": "unavailable"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "protects_robot",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "ordered",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-2",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "injures_human",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-3",
+      "over": [],
+      "predicate": "breaks_first_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_human",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "allows",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-4",
+      "over": [],
+      "predicate": "breaks_first_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "injures_humanity",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-5",
+      "over": [],
+      "predicate": "breaks_zeroth_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_humanity",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "allows",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-6",
+      "over": [],
+      "predicate": "breaks_zeroth_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "not",
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           1
+          ]
+         ],
+         [
+          "or",
+          [
+           "unary",
+           "breaks_first_law",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "unary",
+           "breaks_zeroth_law",
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-7",
+      "over": [],
+      "predicate": "has_lawful_option",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "breaks_first_law",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-8",
+      "over": [
+       "rule-2"
+      ],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_humanity",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-9",
+      "over": [
+       "rule-8"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": [
+       [
+        "exists",
+        "robot",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          "has_lawful_option",
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     },
+     {
+      "guard": [
+       "unary",
+       "breaks_zeroth_law",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-10",
+      "over": [
+       "rule-8",
+       "rule-9"
+      ],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "and",
+       [
+        "unary",
+        "ordered",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "permitted",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      "name": "rule-11",
+      "over": [],
+      "predicate": "required",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "binary",
+       "harm_to",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-12",
+      "over": [],
+      "predicate": "lawfully_avoidable_threat",
+      "sign": true,
+      "unless": [
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "available",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ],
+          [
+           "unary",
+           "permitted",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "binary",
+          "leads_to",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           2
+          ]
+         ]
+        ]
+       ]
+      ]
+     },
+     {
+      "guard": [
+       "binary",
+       "lawfully_avoidable_threat",
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-13",
+      "over": [],
+      "predicate": "prevent_required",
+      "sign": true,
+      "unless": [
+       [
+        "not",
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             2
+            ]
+           ],
+           [
+            "unary",
+            "required",
+            [
+             "var",
+             0
+            ]
+           ]
+          ],
+          [
+           "binary",
+           "prevents",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "available",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            2
+           ]
+          ],
+          [
+           "unary",
+           "permitted",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "exists",
+          "harm",
+          [
+           "and",
+           [
+            "binary",
+            "lawfully_avoidable_threat",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             3
+            ]
+           ],
+           [
+            "binary",
+            "leads_to",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5"
   },
   {
    "class": "lean-looser",
@@ -8525,64 +8526,6 @@
    "source_sha256": "7ff31d4e83591e6fad4911032c358c4be1f7ba70e5460341660f12f5385346a9"
   },
   {
-   "class": "lean-looser",
-   "corpus": "suite-subprocess",
-   "id": "subprocess/04108ffd685b",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-2",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-3",
-      "over": [],
-      "predicate": "required",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-4",
-      "over": [],
-      "predicate": "required",
-      "sign": false,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "VEError",
-    "message": "IdentityMetadataMismatch: stale English export"
-   },
-   "source_sha256": "04108ffd685b1151e297d6c4953921f6033589f7d977baea68e57c34da157084"
-  },
-  {
    "class": "lean-stricter",
    "corpus": "udhr",
    "id": "udhr/u025/practice_prohibited",
@@ -9698,121 +9641,529 @@
  ],
  "suite": {
   "files": [
+   "tests/test_acts_contract.py",
+   "tests/test_acts_elaborate_relay.py",
+   "tests/test_acts_joined_route.py",
+   "tests/test_acts_lexical.py",
+   "tests/test_acts_profile.py",
+   "tests/test_acts_readings_answer.py",
+   "tests/test_acts_readings_lean.py",
    "tests/test_agent_policy.py",
    "tests/test_agent_policy_rerun.py",
    "tests/test_agent_policy_unspecified.py",
+   "tests/test_alternatives_fill.py",
    "tests/test_alternatives_profile.py",
+   "tests/test_alternatives_three_way.py",
    "tests/test_answer_cutoff.py",
+   "tests/test_answer_store.py",
+   "tests/test_ap56_statements.py",
+   "tests/test_ap_parse_index.py",
+   "tests/test_ar8_evidence.py",
+   "tests/test_argument.py",
+   "tests/test_argument_adversarial.py",
+   "tests/test_argument_fixtures.py",
    "tests/test_asimov_extended.py",
    "tests/test_asimov_laws.py",
+   "tests/test_ask_cli.py",
+   "tests/test_ask_fixtures.py",
+   "tests/test_ask_null_free.py",
+   "tests/test_ask_relay.py",
+   "tests/test_assist.py",
+   "tests/test_assist_deadline.py",
+   "tests/test_assist_invariants.py",
+   "tests/test_assist_recovery.py",
+   "tests/test_assist_recovery_replay.py",
+   "tests/test_assurance_manifest.py",
+   "tests/test_attacks.py",
+   "tests/test_attitudes_at1_report.py",
+   "tests/test_authoring.py",
+   "tests/test_b14c.py",
+   "tests/test_b15b_evidence.py",
+   "tests/test_b16d_document.py",
+   "tests/test_b16d_norm_roles.py",
+   "tests/test_b16e_rights_document.py",
+   "tests/test_b16f_document.py",
+   "tests/test_b16f_senses_document.py",
+   "tests/test_b17_evidence.py",
+   "tests/test_b17_owner.py",
+   "tests/test_background.py",
+   "tests/test_batch_evidence.py",
+   "tests/test_batch_scope.py",
+   "tests/test_binding_census.py",
+   "tests/test_bluedot_grant.py",
+   "tests/test_bundle.py",
    "tests/test_calc_answer.py",
+   "tests/test_calc_consistency.py",
    "tests/test_calc_derive.py",
    "tests/test_calc_lean.py",
    "tests/test_calc_service.py",
    "tests/test_cardinality_answer.py",
+   "tests/test_cardinality_exercised.py",
    "tests/test_cardinality_lean.py",
    "tests/test_cardinality_service.py",
+   "tests/test_cedar_attributes.py",
+   "tests/test_cedar_norms.py",
+   "tests/test_ci_workflow.py",
+   "tests/test_cli.py",
+   "tests/test_closure.py",
+   "tests/test_closure_certificates.py",
+   "tests/test_closure_core_replay.py",
+   "tests/test_closure_induction.py",
+   "tests/test_closure_witnesses.py",
    "tests/test_code_map.py",
+   "tests/test_colab.py",
+   "tests/test_command_relay.py",
+   "tests/test_commands_steps.py",
+   "tests/test_compose_integration.py",
+   "tests/test_conformance.py",
    "tests/test_consolidation_tools.py",
+   "tests/test_constitution_w6a_controls.py",
+   "tests/test_count_w6a.py",
    "tests/test_coverage_dashboard.py",
+   "tests/test_data_flags.py",
+   "tests/test_data_surface.py",
+   "tests/test_data_three_way.py",
+   "tests/test_defaults_answer.py",
+   "tests/test_defaults_checks.py",
+   "tests/test_defaults_english.py",
+   "tests/test_defaults_lean.py",
+   "tests/test_defaults_readings.py",
+   "tests/test_defaults_zone.py",
+   "tests/test_defaults_zone_cli.py",
+   "tests/test_definitions.py",
+   "tests/test_definitions_carried.py",
+   "tests/test_definitions_differential.py",
+   "tests/test_definitions_english.py",
+   "tests/test_defs_repair_anthropic_rsp_1119.py",
    "tests/test_defs_repair_asimov_extended_1119.py",
+   "tests/test_defs_repair_claude_constitution_excerpt_1119.py",
+   "tests/test_defs_repair_claude_constitution_pilot_1119.py",
+   "tests/test_defs_repair_math_mini_paper_1119.py",
    "tests/test_defs_repair_safety_framework_1119.py",
+   "tests/test_df_e1.py",
    "tests/test_difffuzz.py",
+   "tests/test_discourse.py",
+   "tests/test_discourse_answer.py",
    "tests/test_discourse_composed_route.py",
+   "tests/test_discourse_constitution.py",
+   "tests/test_discourse_lean.py",
+   "tests/test_discourse_three_way.py",
+   "tests/test_document.py",
+   "tests/test_document_chain.py",
+   "tests/test_document_cli_errors.py",
+   "tests/test_document_lean_switch.py",
    "tests/test_document_split.py",
+   "tests/test_e1_core.py",
+   "tests/test_e1_prompts.py",
+   "tests/test_eligibility_wfp.py",
+   "tests/test_english.py",
+   "tests/test_english_e26_ab.py",
+   "tests/test_english_e26_boundary.py",
+   "tests/test_english_e26_diagnosis.py",
+   "tests/test_english_e2_boundary.py",
    "tests/test_english_e2_integer_marks.py",
+   "tests/test_english_e2_overlay.py",
+   "tests/test_english_e2_profile_matrix.py",
+   "tests/test_english_e2_python.py",
+   "tests/test_english_e2_relay.py",
+   "tests/test_english_e2_responses.py",
+   "tests/test_english_e2_selection.py",
+   "tests/test_english_evidence.py",
+   "tests/test_english_grammar_gen.py",
+   "tests/test_english_lean_adapter.py",
    "tests/test_english_lean_lexicon.py",
+   "tests/test_english_lean_rejections.py",
+   "tests/test_english_lean_route.py",
+   "tests/test_english_lean_s0.py",
+   "tests/test_english_lean_s2.py",
    "tests/test_english_lean_s3.py",
+   "tests/test_english_lean_s3_compare.py",
    "tests/test_english_lean_seal.py",
+   "tests/test_english_lean_tokens.py",
    "tests/test_english_statement_answer.py",
    "tests/test_english_statement_blocks.py",
    "tests/test_english_statement_shadow.py",
    "tests/test_english_unambiguity.py",
+   "tests/test_entailment.py",
+   "tests/test_entailment_adversarial.py",
+   "tests/test_entailment_properties.py",
+   "tests/test_environment_field_types.py",
+   "tests/test_equivalence.py",
+   "tests/test_equivalence_properties.py",
    "tests/test_et8_completion.py",
+   "tests/test_evaluate_search.py",
+   "tests/test_events_answer.py",
+   "tests/test_events_document.py",
+   "tests/test_events_document_cli.py",
+   "tests/test_events_route.py",
+   "tests/test_events_wordings.py",
+   "tests/test_evidence_toolkit.py",
    "tests/test_fidmech_adapters.py",
+   "tests/test_fidmech_mutants.py",
    "tests/test_fidmech_prune.py",
    "tests/test_fidmech_records.py",
    "tests/test_fidmech_segment.py",
    "tests/test_fidmech_structural.py",
    "tests/test_fidmech_wording.py",
+   "tests/test_fluent.py",
+   "tests/test_fol_names.py",
+   "tests/test_fret_w6a_rerating.py",
+   "tests/test_frozen_sources.py",
    "tests/test_fsf_case_alternatives.py",
    "tests/test_fsf_proximity_tcl.py",
    "tests/test_fsf_repair_f1_leveldefs_1119.py",
-   "tests/test_fsf_repair_f2_glossary_1119.py",
-   "tests/test_fsf_repair_f3_safetycase_1119.py",
    "tests/test_fsf_repair_f6_sl2plus_1119.py",
-   "tests/test_fsf_repair_f7_govadequacy_1119.py",
-   "tests/test_fsf_repair_f8_disclosure_1119.py",
-   "tests/test_fsf_repair_f9_mcca_1119.py",
    "tests/test_gate.py",
+   "tests/test_gate_collection.py",
+   "tests/test_gate_collection_renumber.py",
+   "tests/test_gate_durations.py",
+   "tests/test_gate_integrity.py",
    "tests/test_gate_quarantine.py",
+   "tests/test_gate_rerun.py",
+   "tests/test_gate_shards.py",
+   "tests/test_gate_trust.py",
+   "tests/test_gen_inv_design.py",
+   "tests/test_grammar.py",
+   "tests/test_grammar_backends.py",
+   "tests/test_grammar_cli.py",
    "tests/test_hang_guards.py",
    "tests/test_heavy_tests.py",
    "tests/test_history_tests.py",
+   "tests/test_identity_lint.py",
    "tests/test_inventory_path.py",
+   "tests/test_jt3_english.py",
+   "tests/test_jt_e1r.py",
+   "tests/test_jt_e1s.py",
    "tests/test_judgments_answer.py",
+   "tests/test_judgments_chain.py",
+   "tests/test_judgments_compose.py",
+   "tests/test_judgments_document.py",
+   "tests/test_judgments_exercised.py",
+   "tests/test_judgments_undeclared.py",
    "tests/test_kb10_shadow.py",
+   "tests/test_kb10b_switch.py",
+   "tests/test_kb10c_conflict_shadow.py",
+   "tests/test_kb10c_soft_conflict.py",
+   "tests/test_kb2a_document.py",
+   "tests/test_kb9_selected_facts.py",
+   "tests/test_kernel_closure.py",
    "tests/test_keyed_answers_authority.py",
+   "tests/test_lean_audit_record.py",
+   "tests/test_lean_authority_values.py",
+   "tests/test_lean_budget_types.py",
+   "tests/test_lean_certificates.py",
+   "tests/test_lean_conformance.py",
+   "tests/test_lean_decided_share.py",
+   "tests/test_lean_document_wrapper.py",
    "tests/test_lean_dump_cache.py",
+   "tests/test_lean_first_b12_report.py",
+   "tests/test_lean_first_b13a.py",
+   "tests/test_lean_first_b13b.py",
+   "tests/test_lean_first_b14a.py",
+   "tests/test_lean_first_diff.py",
+   "tests/test_lean_first_diff_cache.py",
+   "tests/test_lean_first_oracle.py",
+   "tests/test_lean_first_rule3_measurement.py",
+   "tests/test_lean_first_triage.py",
    "tests/test_lean_handles.py",
+   "tests/test_lean_layers_once.py",
+   "tests/test_lean_service.py",
    "tests/test_lean_service_schema.py",
+   "tests/test_lean_share.py",
+   "tests/test_lean_statements_parts.py",
+   "tests/test_legend.py",
+   "tests/test_lexicon.py",
+   "tests/test_lf14a_long_parse.py",
+   "tests/test_lineage_lint.py",
+   "tests/test_me_2d_f2_delta.py",
+   "tests/test_merge_tooling_evidence.py",
+   "tests/test_metered_answer.py",
+   "tests/test_metered_differential.py",
+   "tests/test_metered_handles.py",
+   "tests/test_metered_lean.py",
+   "tests/test_metered_profile.py",
+   "tests/test_model_environment.py",
+   "tests/test_nary.py",
+   "tests/test_nary_differential.py",
+   "tests/test_nary_folio.py",
+   "tests/test_native_build_lock.py",
    "tests/test_natural.py",
    "tests/test_nested_pytest.py",
+   "tests/test_news_w6a_fixtures.py",
+   "tests/test_norm_admission.py",
+   "tests/test_norm_defaults.py",
+   "tests/test_norm_defaults_contract.py",
+   "tests/test_norm_defaults_differential.py",
+   "tests/test_norm_defaults_layered.py",
+   "tests/test_norm_defaults_relay_english.py",
+   "tests/test_norm_defaults_report.py",
+   "tests/test_norm_defaults_response_binding.py",
+   "tests/test_norm_defaults_soft_kinds.py",
+   "tests/test_norm_defaults_switch.py",
+   "tests/test_norm_defaults_three_way.py",
    "tests/test_norm_english.py",
+   "tests/test_norms.py",
+   "tests/test_norms_contract.py",
+   "tests/test_norms_three_way.py",
    "tests/test_numeral_conversion.py",
+   "tests/test_order.py",
+   "tests/test_order_gate.py",
+   "tests/test_order_grammar.py",
+   "tests/test_order_round2.py",
    "tests/test_ownership_floor.py",
+   "tests/test_p0_three_way.py",
+   "tests/test_p1.py",
+   "tests/test_p1_amendment11.py",
+   "tests/test_p1_amendment12.py",
+   "tests/test_p1_amendment13.py",
+   "tests/test_p1_amendment14.py",
+   "tests/test_p1_amendment15.py",
+   "tests/test_p1_amendment7.py",
+   "tests/test_p1_amendment8.py",
+   "tests/test_p1_amendment9.py",
+   "tests/test_p1_history.py",
+   "tests/test_p1_infrastructure.py",
+   "tests/test_p1_preflight.py",
+   "tests/test_p1_reconcile.py",
+   "tests/test_parser_renderer.py",
+   "tests/test_pc3_statements.py",
+   "tests/test_pc9_statements.py",
    "tests/test_pf_f16_without_fix.py",
    "tests/test_pf_f7_timed_act.py",
+   "tests/test_pf_f9_order_undo.py",
    "tests/test_pf_fidelity_fix.py",
    "tests/test_pinned_sources.py",
    "tests/test_platform_contract.py",
    "tests/test_precommit_hook.py",
+   "tests/test_premise_packs_stub.py",
+   "tests/test_premise_scale.py",
+   "tests/test_presupposition_wordings.py",
+   "tests/test_profiles.py",
+   "tests/test_properties.py",
+   "tests/test_propose.py",
+   "tests/test_purposes_contract.py",
+   "tests/test_question_answering_measure_report.py",
+   "tests/test_question_differential.py",
    "tests/test_question_fixture_sources.py",
+   "tests/test_question_lean_relay.py",
+   "tests/test_question_reading.py",
    "tests/test_question_reverse.py",
+   "tests/test_question_statements.py",
+   "tests/test_question_statements_scanner.py",
+   "tests/test_rd9_chain_relay.py",
+   "tests/test_rd9_docroute.py",
+   "tests/test_rd9_dri_signatures.py",
+   "tests/test_rd9_followup_bindings.py",
+   "tests/test_rd9_gap_relay.py",
+   "tests/test_rd9_soft_split.py",
+   "tests/test_rd9_statements.py",
+   "tests/test_readings_budget_zero.py",
+   "tests/test_readings_companions_lean.py",
+   "tests/test_readings_component_names.py",
+   "tests/test_readings_components_document.py",
+   "tests/test_readings_components_lean.py",
+   "tests/test_readings_components_load.py",
+   "tests/test_readings_constant_display.py",
+   "tests/test_readings_defaults_english.py",
+   "tests/test_readings_defaults_names.py",
+   "tests/test_readings_defaults_rd3_report.py",
+   "tests/test_readings_defaults_rd6a.py",
+   "tests/test_readings_defaults_rd6b_report.py",
+   "tests/test_readings_defaults_rd8_report.py",
+   "tests/test_readings_defaults_statements.py",
+   "tests/test_readings_lazy_pairs.py",
+   "tests/test_readings_lean_sharing.py",
+   "tests/test_readings_nd_document.py",
+   "tests/test_readings_nd_lean.py",
+   "tests/test_readings_rd5_plain_probe.py",
+   "tests/test_readings_rd5_udhr.py",
+   "tests/test_readings_rd6b_differential.py",
+   "tests/test_readings_route_fuzz.py",
+   "tests/test_readings_route_relay.py",
+   "tests/test_readings_s1_differential.py",
+   "tests/test_readings_s1_document.py",
+   "tests/test_readings_s1_integration.py",
+   "tests/test_readings_s1_lean.py",
+   "tests/test_readings_s1_pilot_rebuild.py",
+   "tests/test_readings_s1_python.py",
    "tests/test_readings_s2_answer.py",
+   "tests/test_readings_s2_document.py",
+   "tests/test_readings_s2_lean.py",
+   "tests/test_readings_sd_ce4.py",
+   "tests/test_readings_sd_differential.py",
+   "tests/test_readings_sd_document.py",
+   "tests/test_readings_sd_lean.py",
+   "tests/test_readings_sd_relay.py",
+   "tests/test_readings_stage_trace.py",
    "tests/test_readings_sup_verdicts.py",
+   "tests/test_readings_verdicts_lean.py",
    "tests/test_readings_verdicts_split.py",
    "tests/test_regen_generated.py",
    "tests/test_regen_usecase_merge.py",
+   "tests/test_regulated_limit.py",
+   "tests/test_relay.py",
    "tests/test_relay_binding_inventory.py",
+   "tests/test_relay_english_scale.py",
+   "tests/test_relay_mutation_gate.py",
+   "tests/test_relay_wire_check.py",
+   "tests/test_replay_conservativity.py",
    "tests/test_repo_map.py",
+   "tests/test_report_english.py",
+   "tests/test_reports.py",
+   "tests/test_reports_agreement.py",
+   "tests/test_reports_fault_order.py",
+   "tests/test_reports_lean.py",
+   "tests/test_reports_status.py",
+   "tests/test_reports_wants.py",
    "tests/test_right_clauses.py",
+   "tests/test_right_clauses_lean.py",
    "tests/test_rights.py",
+   "tests/test_rights_lean.py",
+   "tests/test_rights_licence_relay.py",
    "tests/test_rights_meaning_id.py",
+   "tests/test_rights_open_act_is_open.py",
+   "tests/test_rights_render_status.py",
+   "tests/test_rights_report_parts.py",
+   "tests/test_rights_three_way.py",
+   "tests/test_risk_diagnostics.py",
+   "tests/test_risk_differential.py",
    "tests/test_risk_english.py",
+   "tests/test_risk_every_diagnostic.py",
+   "tests/test_risk_fixtures.py",
+   "tests/test_risk_generated_policies.py",
+   "tests/test_risk_integration.py",
+   "tests/test_risk_lean_route.py",
+   "tests/test_risk_margins.py",
    "tests/test_risk_profile.py",
+   "tests/test_risk_w6_extension.py",
    "tests/test_route_row_schemas.py",
+   "tests/test_route_transport.py",
    "tests/test_rsp_b_repair_1115.py",
    "tests/test_rsp_fidelity_fix.py",
+   "tests/test_rsp_repair_r1_catastrophic_1119.py",
+   "tests/test_run_cache.py",
    "tests/test_run_order.py",
+   "tests/test_runner.py",
+   "tests/test_rust_conformance.py",
+   "tests/test_rust_jsonl_schema.py",
+   "tests/test_rust_memory_budget.py",
    "tests/test_rust_reproducible.py",
+   "tests/test_sa_checked_view.py",
    "tests/test_safety_framework.py",
    "tests/test_safetyfw_accounting.py",
    "tests/test_safetyfw_usecases.py",
+   "tests/test_sc9_migrate.py",
+   "tests/test_scales_exercised.py",
+   "tests/test_scope_5_4_statements.py",
+   "tests/test_scope_5_6_statements.py",
    "tests/test_scope_answer.py",
+   "tests/test_scope_authoring.py",
+   "tests/test_scope_document.py",
+   "tests/test_scope_forward.py",
+   "tests/test_scope_lean.py",
+   "tests/test_scope_readings_document.py",
+   "tests/test_scope_rights_reach.py",
+   "tests/test_search_budget_answer.py",
+   "tests/test_search_options.py",
    "tests/test_select_defer.py",
    "tests/test_select_fast_stage.py",
    "tests/test_select_tests.py",
+   "tests/test_senses_contract_doc.py",
+   "tests/test_senses_display.py",
+   "tests/test_senses_display_cli.py",
+   "tests/test_senses_document.py",
+   "tests/test_senses_lean.py",
+   "tests/test_senses_packs.py",
+   "tests/test_senses_project.py",
+   "tests/test_senses_read_members.py",
+   "tests/test_senses_route.py",
    "tests/test_since_pass.py",
    "tests/test_single_owner.py",
    "tests/test_slot_premises.py",
+   "tests/test_soft_candidate_economy.py",
+   "tests/test_soft_decision_keys.py",
    "tests/test_soft_document_handles.py",
+   "tests/test_soft_norms_conformance.py",
+   "tests/test_soft_norms_lean.py",
+   "tests/test_soft_request_economy.py",
    "tests/test_soft_review_regressions.py",
+   "tests/test_soft_selected.py",
+   "tests/test_softnorms_contract.py",
+   "tests/test_softnorms_public_contract.py",
+   "tests/test_speech_acts.py",
+   "tests/test_speech_acts_acts0.py",
+   "tests/test_speech_acts_conformance.py",
+   "tests/test_speech_acts_lean.py",
+   "tests/test_speech_polar_lean.py",
+   "tests/test_speech_source_lean.py",
+   "tests/test_speech_source_relay.py",
+   "tests/test_speech_source_switch.py",
    "tests/test_srccov_anthropic_rsp_1119.py",
    "tests/test_srccov_asimov_extended_1119.py",
-   "tests/test_srccov_rl_claude_constitution_pilot_1121.py",
-   "tests/test_srccov_rl_safety_framework_1121.py",
-   "tests/test_srccov_safety_framework_1119.py",
+   "tests/test_srccov_rl_anthropic_rsp_1121.py",
    "tests/test_stage0_inventory.py",
+   "tests/test_stage0_probe_matrix.py",
+   "tests/test_stage2_bundle.py",
+   "tests/test_stage2_dispatch.py",
+   "tests/test_stage2_evaluation.py",
+   "tests/test_stage2_faults.py",
+   "tests/test_stage2_graph.py",
+   "tests/test_stage2_norms.py",
+   "tests/test_stage2_parse.py",
+   "tests/test_stage2_readings.py",
+   "tests/test_stage2_standalone.py",
    "tests/test_stage2_validation.py",
+   "tests/test_statement_block_environment.py",
+   "tests/test_statement_scanner.py",
+   "tests/test_suite_tail.py",
+   "tests/test_surface_registry.py",
+   "tests/test_t1c.py",
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
+   "tests/test_time_surface_w6a.py",
+   "tests/test_time_w6a.py",
+   "tests/test_trust_budget.py",
+   "tests/test_trust_mutants.py",
+   "tests/test_trust_mutants_max_errors.py",
+   "tests/test_trust_mutants_probe_scope.py",
+   "tests/test_trust_ratchet.py",
+   "tests/test_units_lean_w6a.py",
+   "tests/test_units_relay_w6a.py",
+   "tests/test_units_w6a.py",
+   "tests/test_usecase_key_transcription.py",
+   "tests/test_vacuity.py",
+   "tests/test_ve_iface.py",
+   "tests/test_views.py",
+   "tests/test_views_polish.py",
    "tests/test_w1_delta_suite.py",
+   "tests/test_w6a2_looprecheck1.py",
+   "tests/test_w6a2_numeral_characters.py",
+   "tests/test_w6a_certificate_steps.py",
+   "tests/test_w6a_citations.py",
+   "tests/test_w6a_documents.py",
+   "tests/test_w6a_limit_generator.py",
+   "tests/test_w6a_limits.py",
+   "tests/test_w6a_looprecheck1.py",
+   "tests/test_w6a_looprecheck2.py",
+   "tests/test_w6a_review_regressions.py",
+   "tests/test_w6a_route_limits.py",
+   "tests/test_w6b_gates.py",
+   "tests/test_webapp_commands_env.py",
+   "tests/test_wire_contract_faults.py",
+   "tests/test_wire_contract_lean.py",
+   "tests/test_wire_contract_lint.py",
+   "tests/test_wire_contract_precondition.py",
+   "tests/test_wire_contract_s4_lean.py",
+   "tests/test_wire_contract_s5_admission.py",
+   "tests/test_wire_contract_s5_lean.py",
+   "tests/test_wire_contract_soft_lean.py",
+   "tests/test_wire_contract_three_way.py",
    "tests/test_wire_gate_corpus.py",
+   "tests/test_words.py",
    "tools/test_layer_policy.py"
   ],
   "function": "ve/norm_english.py:parse_english",
-  "map": "cd6d4579127f54d100556e3efb3289bb840f2e01",
+  "map": "e331b459436c0a4b0727d7092a4141ed9e9fd601",
   "reached": [
    "tests/test_agent_policy.py",
    "tests/test_agent_policy_rerun.py",
@@ -9854,80 +10205,488 @@
    "tests/test_w1_delta_suite.py",
    "tests/test_wire_gate_corpus.py"
   ],
-  "result": "4729 passed, 7 warnings",
+  "result": "33019 passed, 7 skipped, 83 xfailed, 75 warnings",
   "unknown": [
+   "tests/test_acts_contract.py",
+   "tests/test_acts_elaborate_relay.py",
+   "tests/test_acts_joined_route.py",
+   "tests/test_acts_lexical.py",
+   "tests/test_acts_profile.py",
+   "tests/test_acts_readings_answer.py",
+   "tests/test_acts_readings_lean.py",
+   "tests/test_alternatives_fill.py",
+   "tests/test_alternatives_three_way.py",
    "tests/test_answer_cutoff.py",
+   "tests/test_answer_store.py",
+   "tests/test_ap56_statements.py",
+   "tests/test_ap_parse_index.py",
+   "tests/test_ar8_evidence.py",
+   "tests/test_argument.py",
+   "tests/test_argument_adversarial.py",
+   "tests/test_argument_fixtures.py",
+   "tests/test_ask_cli.py",
+   "tests/test_ask_fixtures.py",
+   "tests/test_ask_null_free.py",
+   "tests/test_ask_relay.py",
+   "tests/test_assist.py",
+   "tests/test_assist_deadline.py",
+   "tests/test_assist_invariants.py",
+   "tests/test_assist_recovery.py",
+   "tests/test_assist_recovery_replay.py",
+   "tests/test_assurance_manifest.py",
+   "tests/test_attacks.py",
+   "tests/test_attitudes_at1_report.py",
+   "tests/test_authoring.py",
+   "tests/test_b14c.py",
+   "tests/test_b15b_evidence.py",
+   "tests/test_b16d_document.py",
+   "tests/test_b16d_norm_roles.py",
+   "tests/test_b16e_rights_document.py",
+   "tests/test_b16f_document.py",
+   "tests/test_b16f_senses_document.py",
+   "tests/test_b17_evidence.py",
+   "tests/test_b17_owner.py",
+   "tests/test_background.py",
+   "tests/test_batch_evidence.py",
+   "tests/test_batch_scope.py",
+   "tests/test_binding_census.py",
+   "tests/test_bluedot_grant.py",
+   "tests/test_bundle.py",
    "tests/test_calc_answer.py",
+   "tests/test_calc_consistency.py",
    "tests/test_calc_derive.py",
    "tests/test_calc_lean.py",
    "tests/test_calc_service.py",
    "tests/test_cardinality_answer.py",
+   "tests/test_cardinality_exercised.py",
    "tests/test_cardinality_lean.py",
    "tests/test_cardinality_service.py",
+   "tests/test_cedar_attributes.py",
+   "tests/test_cedar_norms.py",
+   "tests/test_ci_workflow.py",
+   "tests/test_cli.py",
+   "tests/test_closure.py",
+   "tests/test_closure_certificates.py",
+   "tests/test_closure_core_replay.py",
+   "tests/test_closure_induction.py",
+   "tests/test_closure_witnesses.py",
    "tests/test_code_map.py",
+   "tests/test_colab.py",
+   "tests/test_command_relay.py",
+   "tests/test_commands_steps.py",
+   "tests/test_compose_integration.py",
+   "tests/test_conformance.py",
    "tests/test_consolidation_tools.py",
+   "tests/test_constitution_w6a_controls.py",
+   "tests/test_count_w6a.py",
    "tests/test_coverage_dashboard.py",
+   "tests/test_data_flags.py",
+   "tests/test_data_surface.py",
+   "tests/test_data_three_way.py",
+   "tests/test_defaults_answer.py",
+   "tests/test_defaults_checks.py",
+   "tests/test_defaults_english.py",
+   "tests/test_defaults_lean.py",
+   "tests/test_defaults_readings.py",
+   "tests/test_defaults_zone.py",
+   "tests/test_defaults_zone_cli.py",
+   "tests/test_definitions.py",
+   "tests/test_definitions_carried.py",
+   "tests/test_definitions_differential.py",
+   "tests/test_definitions_english.py",
+   "tests/test_defs_repair_anthropic_rsp_1119.py",
    "tests/test_defs_repair_asimov_extended_1119.py",
+   "tests/test_defs_repair_claude_constitution_excerpt_1119.py",
+   "tests/test_defs_repair_claude_constitution_pilot_1119.py",
+   "tests/test_defs_repair_math_mini_paper_1119.py",
    "tests/test_defs_repair_safety_framework_1119.py",
+   "tests/test_df_e1.py",
    "tests/test_difffuzz.py",
+   "tests/test_discourse.py",
+   "tests/test_discourse_answer.py",
    "tests/test_discourse_composed_route.py",
+   "tests/test_discourse_constitution.py",
+   "tests/test_discourse_lean.py",
+   "tests/test_discourse_three_way.py",
+   "tests/test_document.py",
+   "tests/test_document_chain.py",
+   "tests/test_document_cli_errors.py",
+   "tests/test_document_lean_switch.py",
    "tests/test_document_split.py",
+   "tests/test_e1_core.py",
+   "tests/test_e1_prompts.py",
+   "tests/test_eligibility_wfp.py",
+   "tests/test_english.py",
+   "tests/test_english_e26_ab.py",
+   "tests/test_english_e26_boundary.py",
+   "tests/test_english_e26_diagnosis.py",
+   "tests/test_english_e2_boundary.py",
    "tests/test_english_e2_integer_marks.py",
+   "tests/test_english_e2_overlay.py",
+   "tests/test_english_e2_profile_matrix.py",
+   "tests/test_english_e2_python.py",
+   "tests/test_english_e2_relay.py",
+   "tests/test_english_e2_responses.py",
+   "tests/test_english_e2_selection.py",
+   "tests/test_english_evidence.py",
+   "tests/test_english_grammar_gen.py",
+   "tests/test_english_lean_adapter.py",
    "tests/test_english_lean_lexicon.py",
+   "tests/test_english_lean_rejections.py",
+   "tests/test_english_lean_route.py",
+   "tests/test_english_lean_s0.py",
+   "tests/test_english_lean_s2.py",
    "tests/test_english_lean_s3.py",
+   "tests/test_english_lean_s3_compare.py",
    "tests/test_english_lean_seal.py",
+   "tests/test_english_lean_tokens.py",
+   "tests/test_entailment.py",
+   "tests/test_entailment_adversarial.py",
+   "tests/test_entailment_properties.py",
+   "tests/test_environment_field_types.py",
+   "tests/test_equivalence.py",
+   "tests/test_equivalence_properties.py",
+   "tests/test_evaluate_search.py",
+   "tests/test_events_answer.py",
+   "tests/test_events_document.py",
+   "tests/test_events_document_cli.py",
+   "tests/test_events_route.py",
+   "tests/test_events_wordings.py",
+   "tests/test_evidence_toolkit.py",
+   "tests/test_fidmech_mutants.py",
    "tests/test_fidmech_records.py",
    "tests/test_fidmech_segment.py",
+   "tests/test_fluent.py",
+   "tests/test_fol_names.py",
+   "tests/test_fret_w6a_rerating.py",
+   "tests/test_frozen_sources.py",
    "tests/test_fsf_repair_f1_leveldefs_1119.py",
-   "tests/test_fsf_repair_f2_glossary_1119.py",
-   "tests/test_fsf_repair_f3_safetycase_1119.py",
    "tests/test_fsf_repair_f6_sl2plus_1119.py",
-   "tests/test_fsf_repair_f7_govadequacy_1119.py",
-   "tests/test_fsf_repair_f8_disclosure_1119.py",
-   "tests/test_fsf_repair_f9_mcca_1119.py",
    "tests/test_gate.py",
+   "tests/test_gate_collection.py",
+   "tests/test_gate_collection_renumber.py",
+   "tests/test_gate_durations.py",
+   "tests/test_gate_integrity.py",
    "tests/test_gate_quarantine.py",
+   "tests/test_gate_rerun.py",
+   "tests/test_gate_shards.py",
+   "tests/test_gate_trust.py",
+   "tests/test_gen_inv_design.py",
+   "tests/test_grammar.py",
+   "tests/test_grammar_backends.py",
+   "tests/test_grammar_cli.py",
    "tests/test_hang_guards.py",
    "tests/test_heavy_tests.py",
    "tests/test_history_tests.py",
+   "tests/test_identity_lint.py",
    "tests/test_inventory_path.py",
+   "tests/test_jt3_english.py",
+   "tests/test_jt_e1r.py",
+   "tests/test_jt_e1s.py",
    "tests/test_judgments_answer.py",
+   "tests/test_judgments_chain.py",
+   "tests/test_judgments_compose.py",
+   "tests/test_judgments_document.py",
+   "tests/test_judgments_exercised.py",
+   "tests/test_judgments_undeclared.py",
+   "tests/test_kb10b_switch.py",
+   "tests/test_kb10c_conflict_shadow.py",
+   "tests/test_kb10c_soft_conflict.py",
+   "tests/test_kb2a_document.py",
+   "tests/test_kb9_selected_facts.py",
+   "tests/test_kernel_closure.py",
+   "tests/test_lean_audit_record.py",
+   "tests/test_lean_authority_values.py",
+   "tests/test_lean_budget_types.py",
+   "tests/test_lean_certificates.py",
+   "tests/test_lean_conformance.py",
+   "tests/test_lean_decided_share.py",
+   "tests/test_lean_document_wrapper.py",
    "tests/test_lean_dump_cache.py",
+   "tests/test_lean_first_b12_report.py",
+   "tests/test_lean_first_b13a.py",
+   "tests/test_lean_first_b13b.py",
+   "tests/test_lean_first_b14a.py",
+   "tests/test_lean_first_diff.py",
+   "tests/test_lean_first_diff_cache.py",
+   "tests/test_lean_first_oracle.py",
+   "tests/test_lean_first_rule3_measurement.py",
+   "tests/test_lean_first_triage.py",
    "tests/test_lean_handles.py",
+   "tests/test_lean_layers_once.py",
+   "tests/test_lean_service.py",
    "tests/test_lean_service_schema.py",
+   "tests/test_lean_share.py",
+   "tests/test_lean_statements_parts.py",
+   "tests/test_legend.py",
+   "tests/test_lexicon.py",
+   "tests/test_lf14a_long_parse.py",
+   "tests/test_lineage_lint.py",
+   "tests/test_me_2d_f2_delta.py",
+   "tests/test_merge_tooling_evidence.py",
+   "tests/test_metered_answer.py",
+   "tests/test_metered_differential.py",
+   "tests/test_metered_handles.py",
+   "tests/test_metered_lean.py",
+   "tests/test_metered_profile.py",
+   "tests/test_model_environment.py",
+   "tests/test_nary.py",
+   "tests/test_nary_differential.py",
+   "tests/test_nary_folio.py",
+   "tests/test_native_build_lock.py",
    "tests/test_nested_pytest.py",
+   "tests/test_news_w6a_fixtures.py",
+   "tests/test_norm_admission.py",
+   "tests/test_norm_defaults.py",
+   "tests/test_norm_defaults_contract.py",
+   "tests/test_norm_defaults_differential.py",
+   "tests/test_norm_defaults_layered.py",
+   "tests/test_norm_defaults_relay_english.py",
+   "tests/test_norm_defaults_report.py",
+   "tests/test_norm_defaults_response_binding.py",
+   "tests/test_norm_defaults_soft_kinds.py",
+   "tests/test_norm_defaults_switch.py",
+   "tests/test_norm_defaults_three_way.py",
+   "tests/test_norms.py",
+   "tests/test_norms_contract.py",
+   "tests/test_norms_three_way.py",
+   "tests/test_order.py",
+   "tests/test_order_gate.py",
+   "tests/test_order_grammar.py",
+   "tests/test_order_round2.py",
+   "tests/test_p0_three_way.py",
+   "tests/test_p1.py",
+   "tests/test_p1_amendment11.py",
+   "tests/test_p1_amendment12.py",
+   "tests/test_p1_amendment13.py",
+   "tests/test_p1_amendment14.py",
+   "tests/test_p1_amendment15.py",
+   "tests/test_p1_amendment7.py",
+   "tests/test_p1_amendment8.py",
+   "tests/test_p1_amendment9.py",
+   "tests/test_p1_history.py",
+   "tests/test_p1_infrastructure.py",
+   "tests/test_p1_preflight.py",
+   "tests/test_p1_reconcile.py",
+   "tests/test_parser_renderer.py",
+   "tests/test_pc3_statements.py",
+   "tests/test_pc9_statements.py",
+   "tests/test_pf_f9_order_undo.py",
    "tests/test_pinned_sources.py",
    "tests/test_platform_contract.py",
    "tests/test_precommit_hook.py",
+   "tests/test_premise_packs_stub.py",
+   "tests/test_premise_scale.py",
+   "tests/test_presupposition_wordings.py",
+   "tests/test_profiles.py",
+   "tests/test_properties.py",
+   "tests/test_propose.py",
+   "tests/test_purposes_contract.py",
+   "tests/test_question_answering_measure_report.py",
+   "tests/test_question_differential.py",
+   "tests/test_question_lean_relay.py",
+   "tests/test_question_reading.py",
    "tests/test_question_reverse.py",
+   "tests/test_question_statements.py",
+   "tests/test_question_statements_scanner.py",
+   "tests/test_rd9_chain_relay.py",
+   "tests/test_rd9_docroute.py",
+   "tests/test_rd9_dri_signatures.py",
+   "tests/test_rd9_followup_bindings.py",
+   "tests/test_rd9_gap_relay.py",
+   "tests/test_rd9_soft_split.py",
+   "tests/test_rd9_statements.py",
+   "tests/test_readings_budget_zero.py",
+   "tests/test_readings_companions_lean.py",
+   "tests/test_readings_component_names.py",
+   "tests/test_readings_components_document.py",
+   "tests/test_readings_components_lean.py",
+   "tests/test_readings_components_load.py",
+   "tests/test_readings_constant_display.py",
+   "tests/test_readings_defaults_english.py",
+   "tests/test_readings_defaults_names.py",
+   "tests/test_readings_defaults_rd3_report.py",
+   "tests/test_readings_defaults_rd6a.py",
+   "tests/test_readings_defaults_rd6b_report.py",
+   "tests/test_readings_defaults_rd8_report.py",
+   "tests/test_readings_defaults_statements.py",
+   "tests/test_readings_lazy_pairs.py",
+   "tests/test_readings_lean_sharing.py",
+   "tests/test_readings_nd_document.py",
+   "tests/test_readings_nd_lean.py",
+   "tests/test_readings_rd5_plain_probe.py",
+   "tests/test_readings_rd5_udhr.py",
+   "tests/test_readings_rd6b_differential.py",
+   "tests/test_readings_route_fuzz.py",
+   "tests/test_readings_route_relay.py",
+   "tests/test_readings_s1_differential.py",
+   "tests/test_readings_s1_document.py",
+   "tests/test_readings_s1_integration.py",
+   "tests/test_readings_s1_lean.py",
+   "tests/test_readings_s1_pilot_rebuild.py",
+   "tests/test_readings_s1_python.py",
    "tests/test_readings_s2_answer.py",
+   "tests/test_readings_s2_document.py",
+   "tests/test_readings_s2_lean.py",
+   "tests/test_readings_sd_ce4.py",
+   "tests/test_readings_sd_differential.py",
+   "tests/test_readings_sd_document.py",
+   "tests/test_readings_sd_lean.py",
+   "tests/test_readings_sd_relay.py",
+   "tests/test_readings_stage_trace.py",
    "tests/test_readings_sup_verdicts.py",
+   "tests/test_readings_verdicts_lean.py",
    "tests/test_readings_verdicts_split.py",
    "tests/test_regen_generated.py",
    "tests/test_regen_usecase_merge.py",
+   "tests/test_regulated_limit.py",
+   "tests/test_relay.py",
    "tests/test_relay_binding_inventory.py",
+   "tests/test_relay_english_scale.py",
+   "tests/test_relay_mutation_gate.py",
+   "tests/test_relay_wire_check.py",
+   "tests/test_replay_conservativity.py",
    "tests/test_repo_map.py",
+   "tests/test_report_english.py",
+   "tests/test_reports.py",
+   "tests/test_reports_agreement.py",
+   "tests/test_reports_fault_order.py",
+   "tests/test_reports_lean.py",
+   "tests/test_reports_status.py",
+   "tests/test_reports_wants.py",
    "tests/test_right_clauses.py",
+   "tests/test_right_clauses_lean.py",
+   "tests/test_rights_lean.py",
+   "tests/test_rights_licence_relay.py",
    "tests/test_rights_meaning_id.py",
+   "tests/test_rights_open_act_is_open.py",
+   "tests/test_rights_render_status.py",
+   "tests/test_rights_report_parts.py",
+   "tests/test_rights_three_way.py",
+   "tests/test_risk_diagnostics.py",
+   "tests/test_risk_differential.py",
+   "tests/test_risk_every_diagnostic.py",
+   "tests/test_risk_fixtures.py",
+   "tests/test_risk_generated_policies.py",
+   "tests/test_risk_integration.py",
+   "tests/test_risk_lean_route.py",
+   "tests/test_risk_margins.py",
+   "tests/test_risk_w6_extension.py",
    "tests/test_route_row_schemas.py",
+   "tests/test_route_transport.py",
+   "tests/test_rsp_repair_r1_catastrophic_1119.py",
+   "tests/test_run_cache.py",
    "tests/test_run_order.py",
+   "tests/test_runner.py",
+   "tests/test_rust_conformance.py",
+   "tests/test_rust_jsonl_schema.py",
+   "tests/test_rust_memory_budget.py",
    "tests/test_rust_reproducible.py",
+   "tests/test_sa_checked_view.py",
    "tests/test_safetyfw_accounting.py",
+   "tests/test_sc9_migrate.py",
+   "tests/test_scales_exercised.py",
+   "tests/test_scope_5_4_statements.py",
+   "tests/test_scope_5_6_statements.py",
    "tests/test_scope_answer.py",
+   "tests/test_scope_authoring.py",
+   "tests/test_scope_document.py",
+   "tests/test_scope_forward.py",
+   "tests/test_scope_lean.py",
+   "tests/test_scope_readings_document.py",
+   "tests/test_scope_rights_reach.py",
+   "tests/test_search_budget_answer.py",
+   "tests/test_search_options.py",
    "tests/test_select_defer.py",
    "tests/test_select_fast_stage.py",
    "tests/test_select_tests.py",
+   "tests/test_senses_contract_doc.py",
+   "tests/test_senses_display.py",
+   "tests/test_senses_display_cli.py",
+   "tests/test_senses_document.py",
+   "tests/test_senses_lean.py",
+   "tests/test_senses_packs.py",
+   "tests/test_senses_project.py",
+   "tests/test_senses_read_members.py",
+   "tests/test_senses_route.py",
    "tests/test_since_pass.py",
    "tests/test_single_owner.py",
    "tests/test_slot_premises.py",
+   "tests/test_soft_candidate_economy.py",
+   "tests/test_soft_decision_keys.py",
    "tests/test_soft_document_handles.py",
-   "tests/test_srccov_rl_claude_constitution_pilot_1121.py",
-   "tests/test_srccov_rl_safety_framework_1121.py",
-   "tests/test_srccov_safety_framework_1119.py",
+   "tests/test_soft_norms_conformance.py",
+   "tests/test_soft_norms_lean.py",
+   "tests/test_soft_request_economy.py",
+   "tests/test_soft_selected.py",
+   "tests/test_softnorms_contract.py",
+   "tests/test_softnorms_public_contract.py",
+   "tests/test_speech_acts.py",
+   "tests/test_speech_acts_acts0.py",
+   "tests/test_speech_acts_conformance.py",
+   "tests/test_speech_acts_lean.py",
+   "tests/test_speech_polar_lean.py",
+   "tests/test_speech_source_lean.py",
+   "tests/test_speech_source_relay.py",
+   "tests/test_speech_source_switch.py",
+   "tests/test_srccov_rl_anthropic_rsp_1121.py",
    "tests/test_stage0_inventory.py",
+   "tests/test_stage0_probe_matrix.py",
+   "tests/test_stage2_bundle.py",
+   "tests/test_stage2_dispatch.py",
+   "tests/test_stage2_evaluation.py",
+   "tests/test_stage2_faults.py",
+   "tests/test_stage2_graph.py",
+   "tests/test_stage2_norms.py",
+   "tests/test_stage2_parse.py",
+   "tests/test_stage2_readings.py",
+   "tests/test_stage2_standalone.py",
    "tests/test_stage2_validation.py",
+   "tests/test_statement_block_environment.py",
+   "tests/test_statement_scanner.py",
+   "tests/test_suite_tail.py",
+   "tests/test_surface_registry.py",
+   "tests/test_t1c.py",
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
+   "tests/test_time_surface_w6a.py",
+   "tests/test_time_w6a.py",
+   "tests/test_trust_budget.py",
+   "tests/test_trust_mutants.py",
+   "tests/test_trust_mutants_max_errors.py",
+   "tests/test_trust_mutants_probe_scope.py",
+   "tests/test_trust_ratchet.py",
+   "tests/test_units_lean_w6a.py",
+   "tests/test_units_relay_w6a.py",
+   "tests/test_units_w6a.py",
+   "tests/test_usecase_key_transcription.py",
+   "tests/test_vacuity.py",
+   "tests/test_ve_iface.py",
+   "tests/test_views.py",
+   "tests/test_views_polish.py",
+   "tests/test_w6a2_looprecheck1.py",
+   "tests/test_w6a2_numeral_characters.py",
+   "tests/test_w6a_certificate_steps.py",
+   "tests/test_w6a_citations.py",
+   "tests/test_w6a_documents.py",
+   "tests/test_w6a_limit_generator.py",
+   "tests/test_w6a_limits.py",
+   "tests/test_w6a_looprecheck1.py",
+   "tests/test_w6a_looprecheck2.py",
+   "tests/test_w6a_review_regressions.py",
+   "tests/test_w6a_route_limits.py",
+   "tests/test_w6b_gates.py",
+   "tests/test_webapp_commands_env.py",
+   "tests/test_wire_contract_faults.py",
+   "tests/test_wire_contract_lean.py",
+   "tests/test_wire_contract_lint.py",
+   "tests/test_wire_contract_precondition.py",
+   "tests/test_wire_contract_s4_lean.py",
+   "tests/test_wire_contract_s5_admission.py",
+   "tests/test_wire_contract_s5_lean.py",
+   "tests/test_wire_contract_soft_lean.py",
+   "tests/test_wire_contract_three_way.py",
+   "tests/test_words.py",
    "tools/test_layer_policy.py"
   ]
  }

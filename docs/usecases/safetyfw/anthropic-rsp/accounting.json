@@ -813,6 +813,42 @@
    "problems": []
   },
   {
+   "id": "f15-expertise",
+   "file": "rules.d1.ve",
+   "span_length": 149,
+   "used": [
+    "candidate_lacks_expertise",
+    "candidate_selected"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f15-candid",
+   "file": "rules.d1.ve",
+   "span_length": 213,
+   "used": [
+    "candidate_lacks_candid_incentives",
+    "candidate_selected"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f15-conflicts",
+   "file": "rules.d1.ve",
+   "span_length": 98,
+   "used": [
+    "candidate_has_conflict_of_interest",
+    "candidate_selected"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
    "id": "f15-financial-interest",
    "file": "rules.d1.ve",
    "span_length": 92,
@@ -1565,7 +1601,7 @@
   }
  ],
  "totals": {
-  "blocks": 85,
+  "blocks": 88,
   "blocks_with_loss": 2,
   "losses_by_class": {
    "1": 1,
@@ -1581,7 +1617,7 @@
   },
   "unaccounted_words": 91,
   "blocks_with_unaccounted_words": 23,
-  "quotes": 141,
+  "quotes": 147,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

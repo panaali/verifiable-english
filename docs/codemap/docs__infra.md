@@ -2,6 +2,9 @@
 - `docs/infra/arch-20261105-2/measure.py` — Measure what raising `actions_version` rewrote in recorded test files (arch-20261105-2, the "why now" figures).
 - `docs/infra/arch-20261105-2/rerun_timeouts.py` — Re-record the pilot documents a recording lost to the 600 s timeout under machine load (A/B evidence aid).
 - `docs/infra/arch-20261109-2/layer_list.py` — Print every Lean and Python module of this checkout with the layer a tools/layer_policy.py gives it, one per line.
+- `docs/infra/cg-actions-shard-1121/leg-times.py` — Wall minutes of the train's blocking arm shard legs (gha-arm/gha-arm-shard.jsonl rows mode blocking, wall_s set), rows with 2026-11-14T00:00Z <= t < 2026-11-21…
+- `docs/infra/cg-actions-shard-1121/measure.py` — Chain-gate minutes per host from stage-events.jsonl (cg-actions-shard-1121 measurement; target: median of the actions-* host <= 45 min over the gates after the…
+- `docs/infra/cg-actions-shard-1121/seeded-bugs-mk.py` — (no module docstring)
 - `docs/infra/challenge-final-delivery/dry_install.py` — Dry install of REPORT.md section 5 (reviews/challenge-final-delivery-dri-note-20261117.md item 3; review F2).
 - `docs/infra/challenge-final-delivery/run_seeds.py` — Seeded bugs for challenge-final-delivery fix round 1.
 - `docs/infra/defs-carried-oos-measure-1119/measure.py` — Out-of-sample measurement of tools/defs_carried.py (defs-carried-oos-measure-1119): report only, 0 model calls.
