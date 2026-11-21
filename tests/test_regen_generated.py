@@ -68,11 +68,25 @@ def _writes_a_file(node: ast.AST) -> bool:
     return False
 
 
+def _declares_check(tree: ast.AST) -> bool:
+    """The script has a `--check` mode of its own: `add_argument("--check", ...)` or a comparison with "--check"
+    (`"--check" in sys.argv`). A script that only passes `--check` to another tool (the gate, the pre-commit hook)
+    is not a writer with a check mode."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "add_argument" \
+                and any(isinstance(arg, ast.Constant) and arg.value == "--check" for arg in node.args):
+            return True
+        if isinstance(node, ast.Compare) and any(isinstance(side, ast.Constant) and side.value == "--check"
+                                                 for side in (node.left, *node.comparators)):
+            return True
+    return False
+
+
 def _write_mode_scripts() -> set[str]:
     """Tracked scripts (outside tests and experiments) with a flag that writes a committed file, or with a
-    `--check` mode beside a call that writes a file: a writer whose default run writes and whose `--check`
-    compares has no write flag (conformance/english_lean_seal.py slipped past the flag test, so its seal went
-    stale unnoticed: srccov-rl-anthropic-rsp-1121 F1)."""
+    `--check` mode of their own beside a call that writes a file: a writer whose default run writes and whose
+    `--check` compares has no write flag (conformance/english_lean_seal.py slipped past the flag test, so its seal
+    went stale unnoticed: srccov-rl-anthropic-rsp-1121 F1)."""
     found = set()
     for name in TRACKED:
         if not name.endswith(".py") or name.startswith(("tests/test_", "experiments/", "ve_experiments/")):
@@ -84,7 +98,7 @@ def _write_mode_scripts() -> set[str]:
         flags = {node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and isinstance(node.value, str)}
         if any(flag in R.WRITE_FLAGS or flag.startswith("--write-") for flag in flags):
             found.add(name)
-        elif "--check" in flags and any(_writes_a_file(node) for node in ast.walk(tree)):
+        elif _declares_check(tree) and any(_writes_a_file(node) for node in ast.walk(tree)):
             found.add(name)
     return found
 
@@ -132,14 +146,28 @@ def test_a_writer_without_a_write_flag_is_found_and_the_corpus_seal_is_registere
     # no check mode (a one-off script), is not.
     def detected(source: str) -> bool:
         tree = ast.parse(source)
-        flags = {n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
-        return "--check" in flags and any(_writes_a_file(node) for node in ast.walk(tree))
+        return _declares_check(tree) and any(_writes_a_file(node) for node in ast.walk(tree))
     assert detected("import sys\nif '--check' not in sys.argv: OUT.write_text('x')")
-    assert detected("p.add_argument('--check')\nwith open(OUT, mode='w') as f: pass")
+    assert detected("p.add_argument('--check', action='store_true')\nwith open(OUT, mode='w') as f: pass")
     assert detected("p.add_argument('--check')\njson.dump(d, OUT.open('w'))")
     assert not detected("p.add_argument('--check')\nprint(OUT.read_text())")
     assert not detected("p.add_argument('--check')\nwith open(OUT) as f: pass")
     assert not detected("OUT.write_text('x')")
+    # Passing --check to another tool is not a check mode of one's own (tools/gate.py, tools/hooks/precommit.py).
+    assert not detected("subprocess.run([PY, 'tools/trust_map.py', '--check'])\nRESULT.write_text('x')")
+    assert {"tools/gate.py", "tools/hooks/precommit.py"}.isdisjoint(_write_mode_scripts())
+
+
+def test_the_corpus_seal_writer_never_loads_the_service_client():
+    """english-lean-seal is an `at_merge` entry (no service): the static graph reaches the client only through
+    function-level imports (IMPORTS_ONLY), and a build and a check of the seal, run as its commands run, load no
+    module of ve.backends."""
+    probe = ("import json, sys\nfrom conformance import english_lean_seal as Z\nZ.build()\n"
+             "Z.check(json.loads(Z.SEAL.read_text()))\n"
+             "print(sorted(m for m in sys.modules if m.startswith('ve.backends')))")
+    run = subprocess.run([sys.executable, "-c", probe], cwd=ROOT, capture_output=True, text=True,
+                         timeout=HANG_TIMEOUT, check=True)
+    assert run.stdout.strip() == "[]", run.stdout
 
 
 def test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict():
@@ -1074,6 +1102,8 @@ SERVICE_CLIENT = "ve/backends/lean_service.py"
 IMPORTS_ONLY = {
     "binding-census": "imports LeanService inside record_answers, which only --record and --refresh run",
     "history-tests": "reaches it through tools/test_map.py -> select_tests.py -> answer_replay.py, never called",
+    "english-lean-seal": "reaches it through ve/wire.py -> ve/ast.py -> ve/backends/relay.py, function-level imports "
+                         "that `digest` never runs (test_the_corpus_seal_writer_never_loads_the_service_client)",
 }
 
 
