@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-cg-vm-gate-width-1121-59241938-t265381-s2",
+ "head": "d27d16322c913f4333c13cacbea615817543dd3d",
+ "argv": [
+  "armsh-cand-cg-vm-gate-width-1121-59241938-t265381-s2",
+  "d27d16322c913f4333c13cacbea615817543dd3d",
+  "a1ac75d1cd1a0631c6181f637e4d11a40d4361d7",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
