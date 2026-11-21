@@ -236,7 +236,7 @@ def _texts(source):
 
 
 def _without_fourth_bullet(blocks):
-    """Review F1's commit: the header quotes the lead-in and three bullets only."""
+    """Review F1's commit d6b73703: the header quotes the lead-in and three bullets only."""
     block = blocks[BLOCK]
     source = block.source.replace(f" “{OMITTED[3]}”", "")
     assert source != block.source
