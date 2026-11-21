@@ -1,6 +1,6 @@
 {
  "item": "srccov-rl-news-article-1121",
- "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item. M1 was rerun and M5, M6 added for the F1 fix (planted with sed, restored with git checkout -- ve/; log /tmp/na-f1-mutants.log). M7, M8 and M9 were added for F2 and M5 rechecked (planted with sed or git show on 978e1af00b, restored with git checkout; git status clean after; logs /tmp/f2-m5.log, /tmp/f2-m7.log, /tmp/f2-m8.log, /tmp/f2-m9.log).",
+ "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item. M1 was rerun and M5, M6 added for the F1 fix (planted with sed, restored with git checkout -- ve/; log /tmp/na-f1-mutants.log). M7, M8 and M9 were added for F2 and M5 rechecked (planted with sed or git show on 978e1af00b, restored with git checkout; git status clean after; logs /tmp/f2-m5.log, /tmp/f2-m7.log, /tmp/f2-m8.log, /tmp/f2-m9.log). M14-M17 were added for F4 (planted by /tmp/f4-mutants.sh with sed, or the REPORT of b798e345f6 copied in; restored with git checkout -- ve/english.py or a saved copy; git status showed only this item's two files after; log /tmp/f4-mutants.log).",
  "mutants": [
   {
    "id": "M1",
@@ -201,6 +201,50 @@
    "test": "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions",
    "failed": [
     "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M14",
+   "file": "ve/english.py",
+   "behaviour": "F4: an idiom may end in 'by' only under a predicate name ending in _by",
+   "change": "converse = False (line 345)",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[idiom-final-by-needs-_by]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[idiom-final-by-needs-_by]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M15",
+   "file": "ve/english.py",
+   "behaviour": "F4: an idiom must share a content word with the predicate's name or description",
+   "change": "drop 'and anchored' (line 350)",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[idiom-IDIOM_UNRELATED]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[idiom-IDIOM_UNRELATED]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M16",
+   "file": "ve/english.py",
+   "behaviour": "F4: an _ACTIVE phrase must not name another predicate or constant",
+   "change": "drop 'not collision' (line 318)",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[active-symbol-collision]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_and_active_exceptions_keep_their_conditions[active-symbol-collision]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M17",
+   "file": "docs/infra/srccov-rl-news-article-1121/REPORT.md",
+   "behaviour": "F4: the REPORT names the conditions of the idiom and _ACTIVE exceptions",
+   "change": "restore the REPORT of b798e345f6",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_exception_claims_name_their_conditions",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_exception_claims_name_their_conditions"
    ],
    "killed": true
   }
