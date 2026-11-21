@@ -1,0 +1,146 @@
+shard 5/6: 12 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded num-traits v0.2.19
+  Downloaded itoa v1.0.18
+  Downloaded version_check v0.9.5
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded sha2 v0.10.9
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded serde_json v1.0.151
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.68s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.72s
+order: failed last time []; changed ['tests/test_safety_framework.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_consolidation_tools.py::chunk(2/4)
+recording 12 units with 4 jobs in /tmp/ve-select-run-__rg3lab
+  tests/test_nested_pytest.py: exit 0 in 30.0 s, 751 functions
+  tests/test_test_chunks.py: exit 0 in 18.9 s, 393 functions, OPAQUE
+  tests/test_heavy_tests.py: exit 0 in 2.8 s, 348 functions
+  tests/test_defs_repair_asimov_extended_1119.py: exit 0 in 0.8 s, 189 functions
+  tests/test_english_statement_shadow.py: exit 1 in 0.8 s, 542 functions
+  tests/test_fsf_proximity_tcl.py: exit 0 in 1.1 s, 628 functions
+  tests/test_fsf_repair_f1_leveldefs_1119.py: exit 0 in 8.2 s, 630 functions
+  tests/test_fsf_repair_f2_glossary_1119.py: exit 0 in 0.6 s, 192 functions
+  tools/test_layer_policy.py: exit 0 in 93.8 s, 321 functions
+  tests/test_scope_answer.py: exit 0 in 188.6 s, 899 functions
+  tests/test_safety_framework.py: exit 0 in 244.5 s, 1222 functions
+  tests/test_consolidation_tools.py::chunk(2/4): exit 0 in 601.8 s, 380 functions
+chunked tests/test_consolidation_tools.py: 1 of 4 chunks, exit 0, 601.8 s in all, longest chunk 601.8 s; 78 passed, 0 skipped, 0 failed; each of its 78 tests ran in exactly one chunk
+FAILED tests/test_english_statement_shadow.py (exit 1): tests/test_english_statement_shadow.py::test_the_saved_delta_report_records_every_disagreement_with_its_class; log /tmp/ve-select-run-__rg3lab/tests__test_english_statement_shadow.py.log
+        'rsp/f24-delay',
+        'rsp/f25-delay',
+        'rsp/f25-meet',
+        'rsp/f26-effort',
+        'rsp/f26-need-not-delay',
+        'rsp/f5-default',
+        'rsp/f5-evidence-default',
+        'rsp/f5-evidence-strict',
+        'rsp/f5-strict',
+        'rsp/f6-keep-past',
+        'rsp/f6-maintain',
+        'rsp/f6-share',
+        'rsp/f6-strive-default',
+        'rsp/f6-updates',
+        'rsp/f7-publish',
+        'rsp/f8-autonomous',
+        'rsp/f8-internal',
+        'rsp/f8-public',
+        'rsp/f9-internal',
+        'rsp/f9-public',
+        'rsp/rows-cond',
+        'rsp/rows-uncond',
+        'rsp/s1-advance-default',
+    ]
+1 failed, 21 passed in 0.30s
+recorded 11 units for tree 6e92fbfed6; 1 others left to the static graph until they run (1 with only some of their chunks here); 1 failed
+UNITLOG tests__test_consolidation_tools.py::chunk(2__4).log: 78 passed, 226 deselected in 601.20s (0:10:01)
+UNITLOG tests__test_defs_repair_asimov_extended_1119.py.log: 14 passed in 0.24s
+UNITLOG tests__test_english_statement_shadow.py.log: 1 failed, 21 passed in 0.30s
+UNITLOG tests__test_fsf_proximity_tcl.py.log: 3 passed in 0.48s
+UNITLOG tests__test_fsf_repair_f1_leveldefs_1119.py.log: 2 passed, 1 skipped in 7.63s
+UNITLOG tests__test_fsf_repair_f2_glossary_1119.py.log: 1 passed, 6 skipped in 0.08s
+UNITLOG tests__test_heavy_tests.py.log: 10 passed in 2.01s
+UNITLOG tests__test_nested_pytest.py.log: 36 passed in 29.40s
+UNITLOG tests__test_safety_framework.py.log: 42 passed, 5 skipped in 242.89s (0:04:02)
+UNITLOG tests__test_scope_answer.py.log: 40 passed in 188.02s (0:03:08)
+UNITLOG tests__test_test_chunks.py.log: 59 passed in 18.29s
+UNITLOG tools__test_layer_policy.py.log: (no count line)
