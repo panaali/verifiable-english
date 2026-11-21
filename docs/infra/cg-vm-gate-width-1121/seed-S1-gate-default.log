@@ -1,0 +1,15 @@
+chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth
+  FAIL (i) default: the VM gate runs gate.py --workers 14, rc 0  {'rc': 0, 'rows': [{'gate': 'full', 'argv': ['--workers', '8']}], 'events': [('gate-start', 'vm 7fc67304'), ('gate-end', 'vm rc=0')], 'log': 'chain-gate.sh: no /tmp/tmprzjix4et/M/iso.sh: the VM gate runs unscoped\n'}
+  FAIL (i) default: the R13 rerun runs gate.py --rerun-failed --workers 14 and decides (rc 0)  {'rc': 0, 'rows': [{'gate': 'full', 'argv': ['--workers', '8']}, {'gate': 'rerun', 'argv': ['--rerun-failed', '--workers', '14']}], 'events': [('gate-start', 'vm 7fc67304'), ('gate-end', 'vm rc=1'), ('gate-start', 'vm-rerun 7fc67304'), ('gate-end', 'vm-rerun rc=0')], 'log': 'chain-gate.sh: no /tmp/tmprzjix4et/M/iso.sh: the VM gate runs unscoped\n'}
+  ok   (ii) VM_GATE_WORKERS=5: the gate and the R13 rerun both get --workers 5
+  ok   (ii) VM_GATE_WORKERS=20: the gate and the R13 rerun both get --workers 20
+  FAIL (iii) VM_GATE_WORKERS=None: load 23.00 + 8 < 32 routes to the VM gate (--workers 14), no Mac gate  {'rc': 0, 'rows': [{'gate': 'full', 'argv': ['--workers', '8']}], 'events': [('gate-route', "MAC_LAST_RESORT: ve-cloud-2 not usable (zsh: can't open input file: /tmp/tmprzjix4et/M/cloud2-run.sh)"), ('gate-route', 'MAC_LAST_RESORT: VM load 23.00 + 8 workers < 32: the VM gate'), ('gate-start', 'vm 7fc67304'), ('gate-end', 'vm rc=0')], 'log': 'chain-gate.sh: no /tmp/tmprzjix4et/M/iso.sh: the VM gate runs unscoped\n'}
+  ok   (iii) VM_GATE_WORKERS=None: load 24.00 + 8 >= 32 routes to the Mac gate, no VM gate
+  ok   (iii) VM_GATE_WORKERS=1: load 23.00 + 8 < 32 routes to the VM gate (--workers 1), no Mac gate
+  ok   (iii) VM_GATE_WORKERS=1: load 24.00 + 8 >= 32 routes to the Mac gate, no VM gate
+  ok   (iii) VM_GATE_WORKERS=14: load 23.00 + 8 < 32 routes to the VM gate (--workers 14), no Mac gate
+  ok   (iii) VM_GATE_WORKERS=14: load 24.00 + 8 >= 32 routes to the Mac gate, no VM gate
+  ok   (iii) VM_GATE_WORKERS=30: load 23.00 + 8 < 32 routes to the VM gate (--workers 30), no Mac gate
+  ok   (iii) VM_GATE_WORKERS=30: load 24.00 + 8 >= 32 routes to the Mac gate, no VM gate
+  ok   (iv) VM_ROUTE_WORKERS=9: load 23.00 + 9 >= 32 routes to the Mac gate
+FAIL (3)
