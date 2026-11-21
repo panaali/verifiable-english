@@ -1,0 +1,121 @@
+[
+ {
+  "id": "M1",
+  "file": "usecases/eligibility/translation.py",
+  "change": "rule line G7 removed (the task's seeded check)",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0483]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_new_predicate_has_a_shown_legend_quoting_the_source[opted_out]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_carry_check_refuses_a_gloss_without_the_sentence",
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_guide_rules_define_nothing"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M2",
+  "file": "usecases/eligibility/translation.py",
+  "change": "one word of the carried sentence changed",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0483]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_routes_to_its_rule[S0483]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_carry_check_refuses_a_gloss_without_the_sentence"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M3",
+  "file": "usecases/eligibility/translation.py",
+  "change": "legend quote no longer the source's words",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_new_predicate_has_a_shown_legend_quoting_the_source[opted_out]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_legend_check_refuses_words_not_in_the_source"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M4",
+  "file": "usecases/eligibility/translation.py",
+  "change": "rule G2 without the joint-claim condition",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0424]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_new_predicate_has_a_shown_legend_quoting_the_source[jointly_claims_benefits]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M5",
+  "file": "usecases/eligibility/translation.py",
+  "change": "guide rules define a staged target",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_guide_rules_define_nothing"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M6",
+  "file": "usecases/eligibility/translation.py",
+  "change": "unit routed to the wrong S2 line",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0406]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_routes_to_its_rule[S0406]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M7",
+  "file": "usecases/eligibility/translation.py",
+  "change": "G6 without its lead-in condition files_online (review F1)",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_rule_carries_the_conditions_its_sentence_sits_under[S0474]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0474]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_new_predicate_has_a_shown_legend_quoting_the_source[files_online]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M8",
+  "file": "usecases/eligibility/translation.py",
+  "change": "G2 without its heading condition (lives with an entitled housemate; review F1)",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_rule_carries_the_conditions_its_sentence_sits_under[S0424]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M9",
+  "file": "usecases/eligibility/translation.py",
+  "change": "G4 without its h2 condition tax_code_changed",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_rule_carries_the_conditions_its_sentence_sits_under[S0467]",
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_unit_has_its_rule_line_in_the_shown_rules[S0467]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M10",
+  "file": "usecases/eligibility/translation.py",
+  "change": "G6's lead-in condition negated",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_each_kept_rule_carries_the_conditions_its_sentence_sits_under[S0474]"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M11",
+  "file": "usecases/eligibility/translation.py",
+  "change": "jointly_claims_benefits legend no longer names the benefits",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_benefits_legend_names_the_benefits"
+  ],
+  "killed": true
+ },
+ {
+  "id": "M12",
+  "file": "usecases/eligibility/translation.py",
+  "change": "the shared reading of the S2:49 heading changed (entitled applicant, not housemate)",
+  "test": [
+   "tests/test_srccov_rl_eligibility_1121.py::test_the_amount_rules_and_g2_share_one_reading_of_the_lives_with_heading"
+  ],
+  "killed": true
+ }
+]
