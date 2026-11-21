@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-rl-udhr-pilot-1121-aa9755d2-t234830-s1",
+ "head": "9c33803b022f3363d3f20030f042b518ef3b91e0",
+ "argv": [
+  "armsh-cand-srccov-rl-udhr-pilot-1121-aa9755d2-t234830-s1",
+  "9c33803b022f3363d3f20030f042b518ef3b91e0",
+  "9cab06ae3e4a0c98400e692346b9774466248408",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
