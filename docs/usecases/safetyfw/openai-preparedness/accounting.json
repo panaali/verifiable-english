@@ -2764,12 +2764,29 @@
   {
    "id": "sr-sufficiency",
    "file": "rules.d1.ve",
-   "span_length": 332,
+   "span_length": 544,
    "used": [
     "sufficiency_basis"
    ],
-   "unaccounted": [],
-   "entries": [],
+   "unaccounted": [
+    "appl",
+    "baseline",
+    "cross",
+    "deploy",
+    "evidence",
+    "non",
+    "openai",
+    "public",
+    "review",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "The baseline risk from other deployments, based on a review of any non-OpenAI deployments of models which have crossed the capability thresholds and any public evidence of the safeguards applied for those models",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
    "problems": []
   },
   {
@@ -2906,22 +2923,22 @@
  ],
  "totals": {
   "blocks": 102,
-  "blocks_with_loss": 15,
+  "blocks_with_loss": 16,
   "losses_by_class": {
-   "1": 17,
+   "1": 18,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
    "exposition": 39,
-   "loss": 19,
+   "loss": 20,
    "reading": 29,
    "restates": 93,
    "rule": 21
   },
-  "unaccounted_words": 451,
-  "blocks_with_unaccounted_words": 68,
-  "quotes": 122,
+  "unaccounted_words": 461,
+  "blocks_with_unaccounted_words": 69,
+  "quotes": 123,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },
