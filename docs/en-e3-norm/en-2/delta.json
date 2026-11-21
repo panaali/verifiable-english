@@ -1,5 +1,5 @@
 {
- "commit": "d555134e8b469516af72b93977756e36b6c83e3f",
+ "commit": "90c5ae5657227fe9606bb7769d222d6f2f3f67c3",
  "corpora": [
   {
    "name": "constitution",
@@ -14,12 +14,12 @@
   {
    "name": "pinned",
    "no_round_trip": 0,
-   "size": 124
+   "size": 126
   },
   {
    "name": "soft-rights",
    "no_round_trip": 0,
-   "size": 305
+   "size": 308
   },
   {
    "name": "suite",
@@ -29,7 +29,7 @@
   {
    "name": "suite-subprocess",
    "no_round_trip": 0,
-   "size": 193
+   "size": 219
   },
   {
    "name": "udhr",
@@ -57,7 +57,7 @@
    "lean-unknown": 0
   },
   "pinned": {
-   "agree": 124,
+   "agree": 126,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 0,
@@ -66,7 +66,7 @@
    "lean-unknown": 0
   },
   "soft-rights": {
-   "agree": 254,
+   "agree": 257,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 4,
@@ -84,10 +84,10 @@
    "lean-unknown": 0
   },
   "suite-subprocess": {
-   "agree": 193,
-   "both-refuse": 0,
+   "agree": 212,
+   "both-refuse": 6,
    "different-node": 0,
-   "lean-looser": 0,
+   "lean-looser": 1,
    "lean-stricter": 0,
    "lean-unavailable": 0,
    "lean-unknown": 0
@@ -210,6 +210,8 @@
   "fsf/f5": "agree",
   "fsf/f6": "agree",
   "fsf/f6-tcl": "agree",
+  "fsf/f7-eval": "agree",
+  "fsf/f7-eval-dm": "agree",
   "fsf/f7-rra": "agree",
   "fsf/f7-sc": "agree",
   "fsf/f8": "agree",
@@ -8526,6 +8528,64 @@
    "source_sha256": "7ff31d4e83591e6fad4911032c358c4be1f7ba70e5460341660f12f5385346a9"
   },
   {
+   "class": "lean-looser",
+   "corpus": "suite-subprocess",
+   "id": "subprocess/04108ffd685b",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-2",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-3",
+      "over": [],
+      "predicate": "required",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-4",
+      "over": [],
+      "predicate": "required",
+      "sign": false,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "VEError",
+    "message": "IdentityMetadataMismatch: stale English export"
+   },
+   "source_sha256": "04108ffd685b1151e297d6c4953921f6033589f7d977baea68e57c34da157084"
+  },
+  {
    "class": "lean-stricter",
    "corpus": "udhr",
    "id": "udhr/u025/practice_prohibited",
@@ -10101,6 +10161,8 @@
    "tests/test_srccov_anthropic_rsp_1119.py",
    "tests/test_srccov_asimov_extended_1119.py",
    "tests/test_srccov_rl_anthropic_rsp_1121.py",
+   "tests/test_srccov_rl_news_article_1121.py",
+   "tests/test_srccov_rl_openai_preparedness_1121.py",
    "tests/test_stage0_inventory.py",
    "tests/test_stage0_probe_matrix.py",
    "tests/test_stage2_bundle.py",
@@ -10163,7 +10225,7 @@
    "tools/test_layer_policy.py"
   ],
   "function": "ve/norm_english.py:parse_english",
-  "map": "e331b459436c0a4b0727d7092a4141ed9e9fd601",
+  "map": "66cfd79cb9884e990b51185e46ef6562de15bb78",
   "reached": [
    "tests/test_agent_policy.py",
    "tests/test_agent_policy_rerun.py",
@@ -10202,10 +10264,11 @@
    "tests/test_soft_review_regressions.py",
    "tests/test_srccov_anthropic_rsp_1119.py",
    "tests/test_srccov_asimov_extended_1119.py",
+   "tests/test_srccov_rl_openai_preparedness_1121.py",
    "tests/test_w1_delta_suite.py",
    "tests/test_wire_gate_corpus.py"
   ],
-  "result": "33019 passed, 7 skipped, 83 xfailed, 75 warnings",
+  "result": "33107 passed, 7 skipped, 83 xfailed, 83 warnings",
   "unknown": [
    "tests/test_acts_contract.py",
    "tests/test_acts_elaborate_relay.py",
@@ -10630,6 +10693,7 @@
    "tests/test_speech_source_relay.py",
    "tests/test_speech_source_switch.py",
    "tests/test_srccov_rl_anthropic_rsp_1121.py",
+   "tests/test_srccov_rl_news_article_1121.py",
    "tests/test_stage0_inventory.py",
    "tests/test_stage0_probe_matrix.py",
    "tests/test_stage2_bundle.py",
