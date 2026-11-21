@@ -1,0 +1,8 @@
+$ python3 -I measure.py /home/seyran/code/manage-agents/stage-events.jsonl 2026-11-14   (run 2026-11-21, before any install)
+collection n=13 open=0 median=1.9 p90=2.3 max=3.0
+mac n=48 open=0 median=10.5 p90=59.8 max=91.8
+selected n=21 open=5 median=70.3 p90=187.3 max=195.6
+selected-rerun n=1 open=0 median=3.5 p90=3.5 max=3.5
+ve-cloud-2 n=88 open=1 median=41.5 p90=110.1 max=130.6
+vm n=32 open=0 median=130.4 p90=160.2 max=189.6
+vm-rerun n=3 open=0 median=6.9 p90=120.7 max=120.7

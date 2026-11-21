@@ -1,0 +1,92 @@
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ gha/cancel-leg-runs.py.new-cgshard	2026-11-21 11:02:36.322885794 +0000
+@@ -0,0 +1,89 @@
++"""cancel-leg-runs.py: cancel the GitHub Actions runs of one sharded gate leg of gha-arm-shard.sh (2026-11-21
++cg-actions-shard-1121; chain-gate.sh's Actions shard step on a FIX_EARLY cancel, its deadline, its hard limit or a leg
++exit with no verdict; reviews/chain-gate-20-20261121.md Fix 1).
++
++usage: python3 -I gha/cancel-leg-runs.py <job dir> <since epoch>
++  The leg's job is <job dir>/run.json "job" (else the dir's name); its branches are ci-job/<job>-s<k> and
++  ci-job/<job>-s<k>r1 for k = 1..run.json "shards" (absent: 1..20) and ci-job/<job>-lean. The newest push run of each
++  branch created since <since> - 120 s is read with gha/shard-run-status.py (the one owner of that lookup, same API, slug,
++  token and timeout settings); each one not completed gets POST /repos/<slug>/actions/runs/<id>/cancel.
++stdout: one line per run acted on, "<branch> <run id> cancel <HTTP status or error class>", then "cancelled <n> of <m>".
++exit 0: every cancel was accepted (HTTP 202) or nothing was running; 1: a lookup or a cancel failed (a token without
++  Actions write access answers 403: the run then goes on to its own end); 2: usage.
++The token (ARM_SHARD_RS_TOKEN_FILE or ~/.ve-gh-release-token) goes only into a request header, never argv, stdout, stderr or
++a file. Env: ARM_SHARD_RS_API (default https://api.github.com), ARM_SHARD_RS_SLUG (panaali/verifiable-english),
++ARM_SHARD_RS_TIMEOUT (20 s). Test: tools-local/test_chain_gate_actions_shard.py (a local HTTP server, no network)."""
++import json
++import os
++import subprocess
++import sys
++import urllib.error
++import urllib.request
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++
++
++def token():
++    p = os.environ.get("ARM_SHARD_RS_TOKEN_FILE") or os.path.expanduser("~/.ve-gh-release-token")
++    try:
++        with open(p) as f:
++            t = f.read().strip()
++    except OSError:
++        return ""
++    return t if t and all(c.isalnum() or c in "_-" for c in t) else ""
++
++
++def cancel(run_id, tok):
++    api = os.environ.get("ARM_SHARD_RS_API", "https://api.github.com")
++    slug = os.environ.get("ARM_SHARD_RS_SLUG", "panaali/verifiable-english")
++    h = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "ve-cancel-leg-runs"}
++    if tok:
++        h["Authorization"] = "Bearer " + tok
++    req = urllib.request.Request(f"{api}/repos/{slug}/actions/runs/{int(run_id)}/cancel", data=b"", headers=h, method="POST")
++    try:
++        with urllib.request.urlopen(req, timeout=float(os.environ.get("ARM_SHARD_RS_TIMEOUT", "20"))) as r:
++            return str(r.status)
++    except urllib.error.HTTPError as e:  # urllib errors carry no request headers: never the token
++        return str(e.code)
++    except Exception as e:  # noqa: BLE001 - any other failure is a failed cancel
++        return type(e).__name__
++
++
++def main(argv):
++    if len(argv) != 2 or not argv[1].isdigit() or not os.path.isdir(argv[0]):
++        print(__doc__.split("\n")[4], file=sys.stderr)
++        return 2
++    d, since = argv
++    try:
++        run = json.load(open(os.path.join(d, "run.json")))
++    except (OSError, ValueError):
++        run = {}
++    run = run if isinstance(run, dict) else {}
++    job = run.get("job") if isinstance(run.get("job"), str) and run.get("job") else os.path.basename(d.rstrip("/"))
++    n = run.get("shards") if isinstance(run.get("shards"), int) and 1 <= run.get("shards") <= 20 else 20
++    keys = [f"s{k}" for k in range(1, n + 1)] + [f"s{k}r1" for k in range(1, n + 1)] + ["lean"]
++    rs = os.path.join(HERE, "shard-run-status.py")
++    p = subprocess.run([sys.executable, "-I", rs, since] + [f"{k}:ci-job/{job}-{k}" for k in keys],
++                       capture_output=True, text=True, timeout=600)
++    if p.returncode != 0:
++        print(f"cancel-leg-runs: run lookup failed (shard-run-status.py exit {p.returncode}): "
++              f"{p.stderr.strip()[-200:]}", file=sys.stderr)
++        return 1
++    tok, bad, done, todo = token(), 0, 0, 0
++    for line in p.stdout.splitlines():
++        f = line.split()
++        if len(f) != 5 or f[1] != "running" or not f[2].isdigit():
++            continue
++        todo += 1
++        st = cancel(f[2], tok)
++        print(f"ci-job/{job}-{f[0]} {f[2]} cancel {st}")
++        if st == "202":
++            done += 1
++        else:
++            bad += 1
++    print(f"cancelled {done} of {todo}")
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    sys.exit(main(sys.argv[1:]))
