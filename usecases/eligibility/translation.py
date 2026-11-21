@@ -104,11 +104,15 @@ FACT_PREDICATES = {
     "paid_without_claim": (["person"], "The person is paid without a claim (S1 reg. 5(1))."),
 }
 
-# Source definitions, word for word from source/*.txt (one string per source line, the line
-# breaks as single spaces): S1 = uksi-2025-969-made.txt, S2 = wfp-print.txt, S3 =
+# Source definitions and wording, word for word from source/*.txt (one string per source line,
+# the line breaks as single spaces): S1 = uksi-2025-969-made.txt, S2 = wfp-print.txt, S3 =
 # uksi-2005-3360-reg2.txt. Each is appended to the legend of the predicates that use the term
 # (LEGEND_DEFINITIONS) or, for the qualifying week, to the gloss of bridge B1.
 DEFINITIONS = {
+    "pensionable age": " ".join((  # S1:16, S1:34
+        "(3) In these Regulations—",
+        "“pensionable age” has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995(9);")),
+    "regulation 2": "2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—",  # S1:60
     "qualifying week": " ".join((  # S1:40; S2:38
         "“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;",
         "The amount you get is based on when you were born and your circumstances between 21 to 27 September 2026. This is called the ‘qualifying week’.")),
@@ -156,7 +160,40 @@ LEGEND_DEFINITIONS = {
     "in_care_setting": ("care home", "independent hospital"),
     "inpatient": ("free in-patient treatment",),
     "recovered": ("total income", "HMRC"),
+    "reached_pa": ("pensionable age",),
+    "entitled": ("regulation 2",),
 }
+
+# Out of scope (srccov-eligibility-1119): source units that state no rule of the winter fuel
+# payment, so no rule, fact or legend carries them. Each group names the content and its kind;
+# each unit is given by its source-coverage unit id and the line where it starts (S1, S2 as
+# above; Sch4 = ukpga-1995-26-sch4.txt).
+# - metadata, out of scope: the enacting formula naming the powers the Regulations are made
+#   under, the impact assessment statement, and the guide's alternative formats notice:
+#   S0001 S1:11, S0092 S1:133, S0374 S2:6.
+# - title, out of scope: the headings of Schedule 4 and of the sections it inserts, and the
+#   chapter headings of the guide: S0114 Sch4:3, S0223 Sch4:252, S0243 Sch4:272,
+#   S0268 Sch4:312, S0293 Sch4:357, S0401 S2:35, S0432 S2:73, S0441 S2:104, S0446 S2:110,
+#   S0480 S2:163.
+# - navigation or page furniture, out of scope: the Explanatory Note's pointer to regulation 3,
+#   the header rows of the Schedule 4 tables, the guide's scam warning and its contact channel
+#   lines: S0073 S1:114, S0164 Sch4:123, S0177 Sch4:152, S0195 Sch4:191, S0386 S2:16,
+#   S0451 S2:121, S0487 S2:175.
+# - bare citation or pointer, out of scope: footnotes that point to a definition in a cited Act,
+#   and the guide's pointers to other pages: S0093 S1:135, S0096 S1:137, S0098 S1:137,
+#   S0455 S2:137, S0459 S2:141, S0479 S2:162.
+# - change log, out of scope: regulations 6 and 7 (a consequential amendment of the Social
+#   Security (Claims and Payments) Regulations 1987, and the revocation of the 2024
+#   Regulations) and the Explanatory Note's summary of them: S0067 S1:100, S0068 S1:102,
+#   S0069 S1:103, S0070 S1:104, S0090 S1:131, S0091 S1:132.
+# - history, out of scope: the footnotes giving the amendment history of the Acts and
+#   instruments S1 cites: S0094 S1:135, S0095 S1:135, S0097 S1:137, S0099 S1:137,
+#   S0100 S1:137, S0101 S1:137, S0102 S1:137, S0103 S1:139, S0104 S1:141, S0105 S1:142,
+#   S0106 S1:147, S0107 S1:151, S0108 S1:161, S0109 S1:163, S0110 S1:164, S0111 S1:165,
+#   S0112 S1:166, S0113 S1:168.
+# - editorial annotation, out of scope: the opening of the Explanatory Note, which is not part
+#   of the Regulations: S0071 S1:112.
+# - rationale, out of scope: why a change of circumstances is reported: S0449 S2:114.
 
 
 def legend(name, text):
