@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "7c744fc9c604d6e8fae7098cb6b19cf167871a37714f798e86f669f52eaa230a",
+ "seal_id": "37d453b5e231cf26eb6472c8373ac22353e3694787382b64fbd023d87c3d6d00",
  "sources": [
   {
    "kind": "corpus source",
@@ -796,7 +796,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "4ffe9dde49b63affd3dd2dfc8c2cf51c83120689a7a1ff1875b141b1dc277ca4"
+   "sha256": "f51bc79242ccde34dcfc341402928ace88139e89ced7314d3ec2ec7c52c1ba2a"
   },
   {
    "kind": "entry-point caller",
