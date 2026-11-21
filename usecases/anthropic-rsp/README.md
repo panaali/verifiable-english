@@ -40,7 +40,7 @@ unit ids and short quotations only.
 
 | File | Contents |
 |---|---|
-| [rules.d1.ve](rules.d1.ve) | 76 VE rules: one per commitment and per reading of it, each with the sentence it translates |
+| [rules.d1.ve](rules.d1.ve) | 79 VE rules: one per commitment and per reading of it, each with the sentence it translates |
 | [facts.d1.ve](facts.d1.ve) | 9 premise blocks (12 premises): the four thresholds, the "highly capable" definition, and T4's definitions under RS3o and RS3i (RS3c = result is excluded: PLAN 12) |
 | [rsp_vocabulary.py](rsp_vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary, with 64 regulated predicates (Lean's limit); each predicate's description is its legend, and each open term names its decider |
 | [rsp_translation.py](rsp_translation.py) | loads and parses the rules and premises with VE's one-reading check |

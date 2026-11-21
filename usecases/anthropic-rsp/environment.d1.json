@@ -250,6 +250,24 @@
         ],
         "description": "the Risk Report of {0} is significantly redacted (3.6); in the source's words (3.6): ““Significantly redacted” means that the redactions omit information a reasonable external safety researcher would consider important in evaluating the overall level of risk, such that a reader of only the public version could not meaningfully assess whether they agree with our conclusions. A report shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or LTBT, it meets this description.”. Open term OT4, decided by the RSO, CEO, Board or LTBT (a sufficient judgment)"
       },
+      "candidate_lacks_expertise": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} a candidate external reviewer does not meet the first selection criterion of 3.6.1; in the source's words (3.6.1): “We will select external reviewers that: Have significant experience and expertise regarding evaluations for dangerous AI capabilities and propensities.”. Open term OT25, decided by the company (\"we\")"
+      },
+      "candidate_lacks_candid_incentives": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} a candidate external reviewer does not meet the second selection criterion of 3.6.1; in the source's words (3.6.1): “We will select external reviewers that: Have reputational and other incentives making them likely to be candid about their assessment of risks, rather than focused on writing comments that Anthropic will approve of.”. Open term OT25, decided by the company (\"we\")"
+      },
+      "candidate_has_conflict_of_interest": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} a candidate external reviewer has conflicts of interest with respect to Anthropic: it does not meet the third selection criterion of 3.6.1; in the source's words (3.6.1): “We will select external reviewers that: Do not have conflicts of interest with respect to Anthropic.”. Open term OT24, decided by the company (\"we\")"
+      },
       "strong_argument_made": {
         "arguments": [
           "situation"

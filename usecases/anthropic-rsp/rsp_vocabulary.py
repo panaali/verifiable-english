@@ -238,6 +238,22 @@ BASE = {
         "conclusions. A report shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or "
         "LTBT, it meets this description.”"),
                                     "the RSO, CEO, Board or LTBT (a sufficient judgment)", "OT4"),
+    # The three selection criteria of 3.6.1 (srccov-rl-anthropic-rsp-1121): each predicate holds when a candidate fails
+    # one; its rule forbids selecting that candidate. The legend quotes the lead-in and the criterion.
+    "candidate_lacks_expertise": _open(["situation"], "at {0} a candidate external reviewer does not meet the first "
+                                       "selection criterion of 3.6.1" + (
+        "; in the source's words (3.6.1): “We will select external reviewers that: Have significant experience and "
+        "expertise regarding evaluations for dangerous AI capabilities and propensities.”"), WE, "OT25"),
+    "candidate_lacks_candid_incentives": _open(["situation"], "at {0} a candidate external reviewer does not meet the "
+                                               "second selection criterion of 3.6.1" + (
+        "; in the source's words (3.6.1): “We will select external reviewers that: Have reputational and other "
+        "incentives making them likely to be candid about their assessment of risks, rather than focused on writing "
+        "comments that Anthropic will approve of.”"), WE, "OT25"),
+    "candidate_has_conflict_of_interest": _open(["situation"], "at {0} a candidate external reviewer has conflicts of "
+                                                "interest with respect to Anthropic: it does not meet the third "
+                                                "selection criterion of 3.6.1" + (
+        "; in the source's words (3.6.1): “We will select external reviewers that: Do not have conflicts of interest "
+        "with respect to Anthropic.”"), WE, "OT24"),
     "strong_argument_made": _open(["situation"], "a strong argument that catastrophic risk is contained is made at "
                                   "{0}", "no one the text names (unstated)", "OT6"),
     # Appendix A: each scenario has its own evidence and its own "as needed" (PLAN 12 item 19).
