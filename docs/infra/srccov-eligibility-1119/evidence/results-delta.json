@@ -1,0 +1,18 @@
+{
+ "format": "srccov-eligibility-1119-results-delta@1",
+ "base": "main 09bea0972d usecases/eligibility/results.json",
+ "head": "usecases/eligibility/results.json after run.py",
+ "summary_equal": true,
+ "answers_equal": true,
+ "mutants_equal": true,
+ "changed_paths": {
+  "/environment_id": {
+   "base": "b3325267dc0f3c19a030a71ee5457b6a4dbee611eb27f7b8909f8087a170abbd",
+   "head": "00315b75bba7b7111c8b992a09295721cb54de6609182c683ef00efbc858d53d"
+  },
+  "/seconds": {
+   "base": 866,
+   "head": 359
+  }
+ }
+}
