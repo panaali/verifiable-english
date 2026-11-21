@@ -5802,6 +5802,347 @@
    ]
   },
   {
+   "id": "G1",
+   "rule": "G1",
+   "role": null,
+   "source": "S2:39, srccov-rl-eligibility-1121",
+   "gloss": "If the applicant is entitled, the money the applicant gets does not affect the applicant's other benefits. Any money you get will not affect your other benefits.",
+   "formula": [
+    "implies",
+    [
+     "unary",
+     "entitled",
+     [
+      "const",
+      "applicant"
+     ]
+    ],
+    [
+     "not",
+     [
+      "unary",
+      "affects_other_benefits",
+      [
+       "const",
+       "applicant"
+      ]
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G2",
+   "rule": "G2",
+   "role": null,
+   "source": "S2:64, srccov-rl-eligibility-1121",
+   "gloss": "If the applicant lives with the housemate, the housemate is entitled, the applicant and the applicant's partner jointly claim any of the benefits, and the applicant is entitled, the applicant is paid into the bank account the applicant's benefits are usually paid into. You\u2019ll be paid into the bank account your benefits are usually paid into.",
+   "formula": [
+    "implies",
+    [
+     "and",
+     [
+      "and",
+      [
+       "binary",
+       "lives_with",
+       [
+        "const",
+        "applicant"
+       ],
+       [
+        "const",
+        "housemate"
+       ]
+      ],
+      [
+       "unary",
+       "entitled",
+       [
+        "const",
+        "housemate"
+       ]
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "jointly_claims_benefits",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "entitled",
+       [
+        "const",
+        "applicant"
+       ]
+      ]
+     ]
+    ],
+    [
+     "unary",
+     "paid_into_usual_account",
+     [
+      "const",
+      "applicant"
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G3",
+   "rule": "G3",
+   "role": null,
+   "source": "S2:145, srccov-rl-eligibility-1121",
+   "gloss": "If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment, the tax deducted from the applicant's wages, salary or pension increases. This means the tax deducted from your wages, salary or pension will increase.",
+   "formula": [
+    "implies",
+    [
+     "unary",
+     "tax_code_changed",
+     [
+      "const",
+      "applicant"
+     ]
+    ],
+    [
+     "unary",
+     "tax_deducted_increases",
+     [
+      "const",
+      "applicant"
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G4",
+   "rule": "G4",
+   "role": null,
+   "source": "S2:148, srccov-rl-eligibility-1121",
+   "gloss": "If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment and needs to collect 2 payments from the applicant, HMRC collects 2 payments through the applicant's tax code at the same time. HMRC will collect 2 payments through your tax code at the same time.",
+   "formula": [
+    "implies",
+    [
+     "and",
+     [
+      "unary",
+      "tax_code_changed",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "unary",
+      "two_payments_to_collect",
+      [
+       "const",
+       "applicant"
+      ]
+     ]
+    ],
+    [
+     "unary",
+     "two_payments_through_tax_code",
+     [
+      "const",
+      "applicant"
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G5",
+   "rule": "G5",
+   "role": null,
+   "source": "S2:148, srccov-rl-eligibility-1121",
+   "gloss": "If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment, needs to collect 2 payments from the applicant, and collects 2 payments through the applicant's tax code at the same time, the applicant pays more tax each month. This means you will pay more tax each month.",
+   "formula": [
+    "implies",
+    [
+     "and",
+     [
+      "unary",
+      "tax_code_changed",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "two_payments_to_collect",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "two_payments_through_tax_code",
+       [
+        "const",
+        "applicant"
+       ]
+      ]
+     ]
+    ],
+    [
+     "unary",
+     "more_tax_each_month",
+     [
+      "const",
+      "applicant"
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G6",
+   "rule": "G6",
+   "role": null,
+   "source": "S2:154, srccov-rl-eligibility-1121",
+   "gloss": "If the applicant completes a Self Assessment tax return, files tax returns online, and HMRC includes the amount of the applicant's winter fuel payment in the applicant's tax return automatically, the amount shows as the Winter Fuel Payment charge and is included in the applicant's tax calculation. It will show as the \u2018Winter Fuel Payment charge\u2019 and will be included in your tax calculation.",
+   "formula": [
+    "implies",
+    [
+     "and",
+     [
+      "unary",
+      "completes_self_assessment",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "files_online",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "included_automatically",
+       [
+        "const",
+        "applicant"
+       ]
+      ]
+     ]
+    ],
+    [
+     "and",
+     [
+      "unary",
+      "shown_as_wfp_charge",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "unary",
+      "in_tax_calculation",
+      [
+       "const",
+       "applicant"
+      ]
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
+   "id": "G7",
+   "rule": "G7",
+   "role": null,
+   "source": "S2:166, srccov-rl-eligibility-1121",
+   "gloss": "If the applicant is entitled, has not opted out, and the applicant's total income is more than GBP 35000.00, the amount is more than GBP 0.00 and HMRC takes the payment back. If you do not opt out and your total income is over \u00a335,000, you\u2019ll receive the Winter Fuel Payment but HMRC will take it back.",
+   "formula": [
+    "implies",
+    [
+     "and",
+     [
+      "unary",
+      "entitled",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "and",
+      [
+       "not",
+       [
+        "unary",
+        "opted_out",
+        [
+         "const",
+         "applicant"
+        ]
+       ]
+      ],
+      [
+       "lt",
+       [
+        "decimal",
+        "gbp_penny",
+        "35000.00"
+       ],
+       [
+        "const",
+        "gbp_penny",
+        "applicant_income"
+       ]
+      ]
+     ]
+    ],
+    [
+     "and",
+     [
+      "lt",
+      [
+       "decimal",
+       "gbp_penny",
+       "0.00"
+      ],
+      [
+       "const",
+       "gbp_penny",
+       "amount"
+      ]
+     ],
+     [
+      "unary",
+      "recovered",
+      [
+       "const",
+       "applicant"
+      ]
+     ]
+    ]
+   ],
+   "defines": []
+  },
+  {
    "id": "B1",
    "rule": "B1",
    "role": null,
