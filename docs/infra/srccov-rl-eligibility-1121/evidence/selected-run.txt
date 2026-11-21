@@ -1,0 +1,17 @@
+# zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, on 542d13d1e4 (pre-rebase HEAD; tree 838efe9782)
+5:deferred to the chain gate: 1 test files over 120 s selected only for weak reasons (340.9 s): tests/test_relay_binding_inventory.py
+108:SHARD 2/3: exit 0 in 434.8 s; 18 units, 18 passed
+204:SHARD 1/3: exit 0 in 654.1 s; 17 units, 17 passed
+300:SHARD 3/3: exit 0 in 714.5 s; 16 units, 16 passed
+301:[gha-select 03:50:20Z] summary: selected tests ran on GitHub Actions (3 shards, run srccov-rl-eligibility-1121-542d13d1-t232105); exit=0; 915s
+
+# review F1 round: zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, on 9d788be2ce (tree efaa644a66)
+458/680 test units (map 828449f6c0, 7.7 s)
+deferred to the chain gate: 29 test files over 120 s selected only for weak reasons (28991.8 s): tests/test_agent_policy_rerun.py, tests/test_ask_cli.py, tests/test_assist.py, tests/test_assist_invariants.py, tests/test_b16e_rights_document.py, tests/test_calc_answer.py, tests/test_consolidation_tools.py, tests/test_english.py, tests/test_english_evidence.py, tests/test_english_statement_blocks.py, tests/test_environment_field_types.py, tests/test_fluent.py, tests/test_gate_collection.py, tests/test_lean_conformance.py, tests/test_lean_document_wrapper.py, tests/test_lean_service_schema.py, tests/test_p1_amendment12.py, tests/test_readings_rd6b_differential.py, tests/test_readings_s2_document.py, tests/test_relay_mutation_gate.py, tests/test_route_row_schemas.py, tests/test_safety_framework.py, tests/test_safetyfw_usecases.py, tests/test_scope_answer.py, tests/test_scope_authoring.py, tests/test_soft_review_regressions.py, tests/test_speech_polar_lean.py, tests/test_trust_mutants.py, tests/test_trust_mutants_probe_scope.py
+  tests/test_srccov_rl_eligibility_1121.py: exit 0 in 2.0 s, 232 functions
+  tests/test_eligibility_wfp.py: exit 0 in 175.5 s, 729 functions
+  tests/test_english_lean_lexicon.py: exit 0 in 3.1 s, 751 functions
+  tests/test_english_lean_seal.py: exit 0 in 0.8 s, 187 functions
+recorded 458 units for tree efaa644a66; 222 others left to the static graph until they run; 0 failed
+[cloud2 05:45:00Z] summary: ran on ve-cloud-2, select_tests, exit=0, 2528s
+[mac-pytest 05:45:01Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 2529s
