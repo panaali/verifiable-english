@@ -1,0 +1,6 @@
+# zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, on 542d13d1e4 (pre-rebase HEAD; tree 838efe9782)
+5:deferred to the chain gate: 1 test files over 120 s selected only for weak reasons (340.9 s): tests/test_relay_binding_inventory.py
+108:SHARD 2/3: exit 0 in 434.8 s; 18 units, 18 passed
+204:SHARD 1/3: exit 0 in 654.1 s; 17 units, 17 passed
+300:SHARD 3/3: exit 0 in 714.5 s; 16 units, 16 passed
+301:[gha-select 03:50:20Z] summary: selected tests ran on GitHub Actions (3 shards, run srccov-rl-eligibility-1121-542d13d1-t232105); exit=0; 915s
