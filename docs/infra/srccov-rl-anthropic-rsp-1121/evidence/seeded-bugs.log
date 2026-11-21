@@ -11,3 +11,11 @@ FAILED tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to
 == M4 build_document.py: s361-conflicts spec loses its open term ot24 (status CHECKED); spans.json, coverage.json regenerated
 FAILED tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to_its_rule_and_keeps_its_open_term[S0224]
 1 failed, 11 passed in 2.50s
+== M5 corpus-seal.json: the seal of 1965f1bcb2 restored (review F1's stale state); uv run pytest -q tests/test_english_lean_seal.py::test_the_committed_seal_is_current
+1 failed in 1.39s
+== M6 english_lean_seal.py: check() returns after the source hashes; uv run pytest -q tests/test_english_lean_seal.py -k drift
+5 failed, 3 passed, 2 deselected in 2.94s
+== M7 regen_generated.py: english-lean-seal entry removed; uv run pytest -q tests/test_regen_generated.py -k "writer_without or writing_mode or at_merge"
+3 failed, 64 deselected in 14.15s
+== M8 test_regen_generated.py: _write_mode_scripts back to write flags only; uv run pytest -q tests/test_regen_generated.py -k writer_without
+1 failed, 66 deselected in 7.21s

@@ -1,9 +1,19 @@
 # srccov-rl-anthropic-rsp-1121 DELTA
 
 No user-visible change of VE, so this file has no rows. The item changes no product code under `ve/`, `lean/` or
-`rust/`, and no gate, test-selection or tool logic. VE's diagnostics, fault order, fields, verdicts, availability and
-CPU are as they are on main at cebf4fd24f (the merge base). All changes are inside one use case (anthropic-rsp) and
-the files derived from it:
+`rust/`. VE's diagnostics, fault order, fields, verdicts, availability and CPU are as they are on main at e331b45943
+(the merge base after the rebase from cebf4fd24f). The use-case changes are inside one use case (anthropic-rsp) and
+the files derived from it (list below).
+
+Review fix F1 (stale corpus seal) changes repository tooling only, none of it read by `ve`: the seal's own check
+(`conformance/english_lean_seal.py` `check`) now also compares the derived parts of the seal with a rebuild; the seal
+is an entry of `tools/regen_generated.py` (`english-lean-seal`, tree only, refreshed by the merge train at merge);
+and the registry's completeness test also counts a script with a `--check` mode beside a file write. These add
+checks and remove none; no answer, diagnostic or limit of VE changes, so no row. One effect on other branches: an
+edit to a sealed file (an English entry-point caller among the tests, a use case's English document or environment)
+now needs `uv run python -m conformance.english_lean_seal`, or the merge train's `--write --at-merge` refresh.
+
+The use-case files:
 
 - `rules.d1.ve`: three new rule blocks, f15-expertise, f15-candid and f15-conflicts (79 blocks; main has 76).
 - `rsp_vocabulary.py` (written to `environment.d1.json`): three new open-term base predicates (OT25, OT25, OT24).
