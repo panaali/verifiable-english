@@ -61,6 +61,10 @@ CHECKED covers six Table 1 level markers and the SSC visibility clause. Change l
 clause, so not every word of the unit is mapped. Three formerly CHECKED rule
 units remain UNFORMALISED because they carry an AT wait or omit a source clause. Claims in headings and illustrative
 sections remain visible whenever the whole source unit contains a duty or hedge.
+srccov-rl-openai-preparedness-1121 adds the rule line `sr-sufficiency` for 4.2's lead-in "The SAG will make this
+determination based on:" and its three bullets: their four units route to it as a blocked rule (UNFORMALISED,
+`unmapped_clause`), so the status counts are unchanged and three units move from the readings family to AP. D1 now
+has 63 regulated predicates; N2's query-only probe adds a 64th, the limit of Lean's soft-norms check.
 
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
@@ -76,7 +80,7 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 118 | 21,327 | 110, 19,451 | D1 has no act or complete rule for these duties |
+| AP | 121 | 21,632 | 113, 19,756 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,311 | 53, 11,438 | hedges, beliefs and expectations |
 | DF | 13 | 2,133 | 1, 35 | default readings |
 | ET | 31 | 8,466 | 17, 5,914 | event order and deadlines |
@@ -86,7 +90,7 @@ counts under each. “Alone” means exactly one recorded blocker.
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 60 | 6,467 | 60, 6,467 | title, contents, pure headings and marked examples |
-| readings | 87 | 13,705 | 74, 10,399 | unselected source readings |
+| readings | 84 | 13,400 | 71, 10,094 | unselected source readings |
 
 The 292 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
 `not_translated`. VE reports 21 declared open terms and 32 unresolved reading sets as
