@@ -1,0 +1,299 @@
+"""Tests for row backlog-unlaunchable-ready-1120 (orchestrator BATCH inbox/dri/done/20261120T085959Z-orchestrator-1582945.md):
+ready rows sat for hours with nobody to start them (11-19/11-20: srccov-*-1119 infra rows owned by "feature planner", which the
+infra feed skips and the seed does not queue; defs-repair-* feature rows whose task file has no "Paths:" line, which the seed
+never queues; defs-carried-oos-measure-1119 owned by "infra planner", which no launcher reads).
+Cases: (1) backlog.sh add --status ready / update --status ready / update-status ready are refused with a one-line reason, exit
+1, row unchanged, for each refused pair and for a feature-feed task file with no Paths line; an update that breaks a ready row's
+launcher is refused; a row already ready and refused is not rewritten (a note update passes) and `backlog.sh lint` lists it;
+(2) each allowed (kind, owner) pair is accepted (START_TABLE, the one table); (3) the seed keeps a blocked row whose blockers
+merged blocked when nobody would start it, with the reason in its state, and unblocks a launchable one; (4) infra_feed.py reads
+the same table; (5) `backlog.sh unlaunched` and the orchestrator's digest (coord_diet.py digest-take) list every ready row
+older than 60 min with no live launch, one line each: id, age, owner, why.
+Everything runs on toy BACKLOG files under a temp dir (BL_M = BL_OUT = CD_M = IF_M = the temp dir); never the live backlog.
+usage: python3 -I tools-local/test_backlog_unlaunchable.py   (BL_SCRIPT / IF_PY / CD_SCRIPT = staged .new copies before mv)"""
+import importlib.machinery, importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
+
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BL = os.environ.get("BL_SCRIPT", f"{HERE}/backlog.py")
+CD = os.environ.get("CD_SCRIPT", f"{HERE}/tools-local/coord_diet.py")
+TMP = tempfile.mkdtemp(prefix="bkunl-test-")
+if not BL.endswith(".py"):                  # infra_feed.py loads IF_BACKLOG by suffix: test a .new-<tag> through a .py copy
+    shutil.copy(BL, f"{TMP}/backlog_under_test.py")
+    BL = f"{TMP}/backlog_under_test.py"
+D = f"{TMP}/m"                              # the toy manage-agents dir: BACKLOG.jsonl, prompts/, FEATURE-QUEUE.tsv, inbox/
+os.makedirs(D)
+ENV = dict(os.environ, BL_M=D, BL_OUT=D, BL_REPO=f"{TMP}/code/repo", IF_M=D, IF_BACKLOG=BL, FEED_MAC_LOADAVG="1", CD_M=D,
+           CD_BACKLOG=BL)
+os.environ.update(ENV)
+os.environ.setdefault("IF_URGENT_NAMED_END", "2000-01-01T00:00:00Z")
+IF = os.environ.get("IF_PY", f"{HERE}/infra_feed.py")
+spec = importlib.util.spec_from_file_location("infra_feed_bkunl", IF, loader=importlib.machinery.SourceFileLoader("infra_feed_bkunl", IF))
+F = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(F)
+bl = F.bl                                   # one backlog module (BL) for the CLI, the seed, the feed and the digest
+bl.tags = lambda: {}
+bl.procs = lambda: {}
+bl.live_jobs = lambda P: ({}, {}, {})
+
+PATHS = "Task.\nPaths: lean/VE/X.lean, tools/x.py\n"
+NOPATHS = "Task with no paths line.\nNeeds: nothing.\n"
+
+
+def tearDownModule():
+    shutil.rmtree(TMP, True)
+
+
+def write(rel, text):
+    os.makedirs(os.path.dirname(f"{D}/{rel}"), exist_ok=True)
+    with open(f"{D}/{rel}", "w") as f:
+        f.write(text)
+
+
+def row(i, kind="infra", owner="", status="proposed", task=None, ready_h=None, **links):
+    """A toy row; task = the task file's text (prompts/task-<i>.txt), None = no links.task."""
+    r = bl.blank(i, kind, f"title {i}", priority=50, owner=owner, status=status)
+    if task is not None:
+        write(f"prompts/task-{i}.txt", task)
+        r["links"]["task"] = f"prompts/task-{i}.txt"
+    r["links"].update(links)
+    if ready_h is not None:
+        r["ready_t"] = bl.utc(bl.NOW_T - ready_h * 3600)
+    return r
+
+
+def backlog(*rows):
+    write("BACKLOG.jsonl", "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows))
+
+
+def raw():
+    return open(f"{D}/BACKLOG.jsonl").read()
+
+
+def cli(*args):
+    p = subprocess.run([sys.executable, "-I", BL, *args], capture_output=True, text=True, env=ENV, timeout=600)
+    return p.returncode, p.stdout, p.stderr
+
+
+# (kind, owner, task text or None, links): pairs a launcher starts (START_TABLE), each with the launcher's name
+ALLOWED = [
+    ("infra", "", "x", {}, "infra feed"),
+    ("infra", "infra feed", "x", {}, "infra feed"),
+    ("efficiency", "orchestrator", "x", {}, "infra feed"),
+    ("trial", "DRI", "x", {}, "infra feed"),
+    ("infra", "acting DRI", None, {}, "infra feed"),             # no task file yet: decider-ready-alert's case, not refused
+    ("design", "feature planner", "x", {"launch": "delegate"}, "infra feed"),
+    ("feature", "feature planner", PATHS, {}, "feature feed"),
+    ("feature", "", PATHS, {}, "feature feed"),
+    ("feature", "DRI decider", NOPATHS, {"paths": "lean/VE/Y.lean"}, "feature feed"),   # links.paths is a paths source
+    ("feature", "feature planner", None, {}, "feature planner"),
+    ("follow-up", "feature planner (post-sprint)", None, {}, "feature planner"),
+    ("infra", "DRI decider", None, {}, "DRI decider (by hand)"),
+    ("design", "dri-decider", None, {}, "DRI decider (by hand)"),
+    ("infra", "delegate dri-srccov-shard-TEMPLATE", "x", {}, "named delegate (by hand)"),
+    ("infra", "dri-notask-drain-1117", None, {}, "named delegate (by hand)"),
+    ("design", "research wave ap-v2-key-design", None, {}, "named delegate (by hand)"),
+]
+NOT_LAUNCHED = [("decision", "DRI"), ("lead-question", "lead")]
+# (kind, owner, task text or None, links, words the reason must contain)
+REFUSED = [
+    ("infra", "feature planner", "x", {}, "'feature planner' has no launcher for kind infra"),     # srccov-*-1119
+    ("infra", "infra planner", "x", {}, "'infra planner' has no launcher for kind infra"),        # defs-carried-oos-measure-1119
+    ("infra", "operations seat", "x", {}, "'operations seat' has no launcher"),
+    ("efficiency", "eff pass", None, {}, "'eff pass' has no launcher"),
+    ("follow-up", "", None, {}, "no owner (follow-up rows are not fed)"),
+    ("design", "feature planner", None, {}, "feature planner design row, nobody starts it"),
+    ("feature", "lead", PATHS, {}, "the seed never queues the lead's rows"),
+    ("feature", "DRI", None, {}, "no links.task"),
+    ("feature", "", NOPATHS, {}, "has no 'Paths:' line"),                                         # defs-repair-*-1119
+    ("feature", "feature planner", NOPATHS, {}, "has no 'Paths:' line"),
+    ("feature", "", "x", {}, "has no 'Paths:' line"),
+]
+
+
+class Refused(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree(D, True)
+        os.makedirs(D)
+
+    def check_refused(self, rc, out, err, want):
+        self.assertEqual(rc, 1, (out, err))
+        lines = err.strip().splitlines()
+        self.assertEqual(len(lines), 1, err)                       # one line
+        self.assertTrue(lines[0].startswith("refused: "), err)
+        self.assertIn(want, lines[0])
+
+    def test_add_status_ready_refused_for_each_pair(self):
+        for n, (kind, owner, task, links, want) in enumerate(REFUSED):
+            with self.subTest(kind=kind, owner=owner, task=task):
+                backlog(row("other"))
+                before = raw()
+                if task is not None:
+                    write(f"prompts/task-r{n}.txt", task)
+                args = ["add", f"r{n}", kind, "a", "title", "--status", "ready", "--owner", owner]
+                args += ["--link", f"task=prompts/task-r{n}.txt"] if task is not None else []
+                args += [x for k, v in links.items() for x in ("--link", f"{k}={v}")]
+                self.check_refused(*cli(*args), want)
+                self.assertEqual(raw(), before)                    # row not added, file unchanged
+
+    def test_update_status_and_update_refused_row_unchanged(self):
+        for n, (kind, owner, task, links, want) in enumerate(REFUSED):
+            with self.subTest(kind=kind, owner=owner, task=task):
+                backlog(row(f"r{n}", kind, owner, "blocked", task, **links))
+                before = raw()
+                self.check_refused(*cli("update-status", f"r{n}", "ready"), want)
+                self.assertEqual(raw(), before)
+                self.check_refused(*cli("update", f"r{n}", "--status", "ready", "--note", "go"), want)
+                self.assertEqual(raw(), before)
+
+    def test_update_that_breaks_a_ready_rows_launcher_is_refused(self):
+        backlog(row("a", "infra", "infra feed", "ready", "x"))
+        before = raw()
+        self.check_refused(*cli("update", "a", "--owner", "infra planner"), "'infra planner' has no launcher")
+        self.assertEqual(raw(), before)
+        rc, out, err = cli("update", "a", "--owner", "DRI decider")          # another launcher: fine
+        self.assertEqual(rc, 0, err)
+
+    def test_rows_already_ready_are_not_rewritten_and_lint_lists_them(self):
+        backlog(row("old", "infra", "feature planner", "ready", "x"), row("fine", "infra", "", "ready", "x"),
+                row("held", "feature", "", "blocked", NOPATHS), row("dec", "decision", "DRI", "ready"))
+        rc, out, err = cli("update", "old", "--note", "still waiting")       # a note on an already-refused ready row passes
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(bl.load()["old"]["status"], "ready")
+        rc, out, err = cli("lint")
+        self.assertEqual(rc, 1, err)
+        ls = [l for l in out.splitlines() if not l.startswith("#")]
+        self.assertEqual(len(ls), 1, out)
+        self.assertTrue(ls[0].startswith("old\tready\tinfra\tfeature planner\towner 'feature planner' has no launcher"), ls)
+        backlog(row("fine", "infra", "", "ready", "x"))
+        rc, out, err = cli("lint")
+        self.assertEqual(rc, 0, out + err)
+
+
+class Allowed(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree(D, True)
+        os.makedirs(D)
+
+    def test_each_allowed_pair_is_accepted_by_every_command(self):
+        for n, (kind, owner, task, links, who) in enumerate(ALLOWED):
+            with self.subTest(kind=kind, owner=owner):
+                r = row(f"a{n}", kind, owner, "ready", task, **links)
+                self.assertEqual(bl.start_rule(r)[0], who)
+                self.assertEqual(bl.ready_refusal(r), "")
+                backlog()
+                args = ["add", f"a{n}", kind, "t", "--status", "ready", "--owner", owner]
+                args += ["--link", f"task=prompts/task-a{n}.txt"] if task is not None else []
+                args += [x for k, v in links.items() for x in ("--link", f"{k}={v}")]
+                rc, out, err = cli(*args)
+                self.assertEqual((rc, out.strip()), (0, f"add a{n}: ready"), err)
+                backlog(dict(r, status="proposed"))
+                self.assertEqual(cli("update-status", f"a{n}", "ready")[0], 0)
+                self.assertEqual(cli("update", f"a{n}", "--status", "ready")[0], 0)
+                self.assertEqual(bl.load()[f"a{n}"]["status"], "ready")
+
+    def test_answered_rows_are_not_launched_and_not_refused(self):
+        for kind, owner in NOT_LAUNCHED:
+            with self.subTest(kind=kind):
+                backlog(row("q", kind, owner))
+                self.assertEqual(cli("update-status", "q", "ready")[0], 0)
+
+    def test_other_statuses_are_never_refused(self):
+        backlog(row("p", "infra", "infra planner", "ready", "x"))
+        for st in ("blocked", "in-flight", "done"):
+            self.assertEqual(cli("update-status", "p", st)[0], 0, st)
+
+
+class Seed(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree(D, True)
+        os.makedirs(D)
+
+    def test_blocked_row_turning_ready_by_itself_is_refused(self):
+        dep = row("dep", status="merged")
+        bad = row("bad", "infra", "feature planner", "blocked", "x")
+        nopaths = row("np", "feature", "", "blocked", NOPATHS)
+        good = row("good", "infra", "", "blocked", "x")
+        for r in (bad, nopaths, good):
+            r["blocked_by"] = ["dep"]
+        backlog(dep, bad, nopaths, good)
+        bl.seed(quiet=True)
+        rows = bl.load()
+        self.assertEqual(rows["good"]["status"], "ready")
+        for i, want in (("bad", "'feature planner' has no launcher"), ("np", "has no 'Paths:' line")):
+            self.assertEqual(rows[i]["status"], "blocked")
+            self.assertTrue(rows[i]["state"].startswith("blockers merged; not set ready: "), rows[i]["state"])
+            self.assertIn(want, rows[i]["state"])
+            self.assertNotIn("ready_t", rows[i])
+        before = {i: rows[i] for i in ("bad", "np")}
+        bl.seed(quiet=True)                                       # idempotent: the held rows are not rewritten
+        self.assertEqual({i: bl.load()[i] for i in ("bad", "np")}, before)
+        rc, out, _ = cli("lint")
+        self.assertEqual(rc, 1)
+        self.assertIn("bad\tblocked\tinfra\tfeature planner\towner 'feature planner' has no launcher", out)
+
+
+class InfraFeedReadsTheTable(unittest.TestCase):
+    def test_item_reason_names_the_missing_launcher(self):
+        rows = {r["id"]: r for r in (row("fp", "infra", "feature planner", "ready", "x"), row("ok", "infra", "", "ready", "x"),
+                                      row("dg", "infra", "delegate dri-x", "ready", "x"))}
+        why = {i: F.item_reason(r, rows, {}, {}, {}, set(), set(), _Probe())[0] for i, r in rows.items()}
+        self.assertEqual(why["fp"], bl.start_rule(rows["fp"])[1])
+        self.assertIn("'feature planner' has no launcher for kind infra", why["fp"])
+        self.assertEqual(why["ok"], "")
+        self.assertEqual(why["dg"], "owner 'delegate dri-x' starts it, not this feed")
+
+
+class _Probe:
+    def path_exists(self, p):
+        return False
+
+    def branch_exists(self, b):
+        return False
+
+    def diff_files(self, b):
+        return []
+
+
+class Unlaunched(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree(D, True)
+        os.makedirs(D)
+
+    def rows(self):
+        rs = [row("old-bad", "infra", "infra planner", "ready", "x", ready_h=2),
+              row("old-ok", "infra", "", "ready", "x", ready_h=3),
+              row("young", "infra", "infra planner", "ready", "x", ready_h=0.5),
+              row("running", "infra", "", "ready", "x", ready_h=5, job="running"),
+              row("deleg", "infra", "delegate dri-d", "ready", "x", ready_h=5, delegate="dri-d"),
+              row("queued", "feature", "", "ready", PATHS, ready_h=5),
+              row("blocked", "infra", "infra planner", "blocked", "x", ready_h=5)]
+        rs[1]["state"] = "feed: account room"
+        write("FEATURE-QUEUE.tsv", f"5\tqueued\tfeature/queued\t{D}/prompts/task-queued.txt\t-\t32G\tlean/VE/X.lean\n")
+        return {r["id"]: r for r in rs}
+
+    def test_lines_id_age_owner_why(self):
+        rows = self.rows()
+        got = bl.unlaunched_lines(rows, {}, {}, {"dri-d"}, {"running"})
+        self.assertEqual(len(got), 2, got)
+        self.assertEqual(got[0], "old-bad, 2.0h, infra planner: " + bl.short(bl.ready_refusal(rows["old-bad"]), 200))
+        self.assertIn("'infra planner' has no launcher for kind infra", got[0])
+        self.assertEqual(got[1], "old-ok, 3.0h, -: infra feed: not started (state: feed: account room)")
+        self.assertEqual(len(bl.unlaunched_lines(rows, {}, {}, set(), set())), 4)     # the jobs gone: running and deleg listed
+
+    def test_digest_lists_them(self):
+        backlog(*self.rows().values())
+        write("inbox/orchestrator-digest.md", "1794000000\t2026-11-20T10:00Z\tinbox/orchestrator/x.md\tunmarked\tnote\n")
+        p = subprocess.run([sys.executable, "-I", CD, "digest-take"], capture_output=True, text=True, env=ENV, timeout=900)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        out = p.stdout.splitlines()
+        i = next(n for n, l in enumerate(out) if l.startswith("== ready > 60 min with no live launch: "))
+        # running/deleg are not live in this test (no such job), queued is in FEATURE-QUEUE.tsv
+        self.assertEqual(out[i], "== ready > 60 min with no live launch: 4 (backlog.sh unlaunched; refused pairs: backlog.sh lint)")
+        ids = [l[2:].split(",")[0] for l in out[i + 1:i + 5]]
+        self.assertEqual(ids, ["deleg", "old-bad", "old-ok", "running"])
+        self.assertTrue(out[i + 2].startswith("- old-bad, 2.0h, infra planner: owner 'infra planner' has no launcher"), out)
+        self.assertLess(next(n for n, l in enumerate(out) if l.startswith("== digest (")), i)   # after the notices
+
+
+if __name__ == "__main__":
+    unittest.main()

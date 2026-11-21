@@ -1,0 +1,116 @@
+test_stray_file_replaced_by_the_dir (__main__.Cloud2StrayFile.test_stray_file_replaced_by_the_dir) ... /home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:168: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-c2j.fqnd_j9k/bin/uv' mode='w' encoding='UTF-8'>
+  open(f"{d}/bin/uv", "w").write("#!/bin/sh\nexit 1\n"); os.chmod(f"{d}/bin/uv", 0o755)  # stops it right after the checkout
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_invalid_value_ignored (__main__.CloudOverflowJobItem.test_invalid_value_ignored) ... /home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-overflow.sh' mode='r' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/M/cloud-overflow.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:104: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/loadavg' mode='w' encoding='UTF-8'>
+  open(f"{d}/loadavg", "w").write("80.00 80.00 80.00 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:116: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/snap' mode='w' encoding='UTF-8'>
+  open(f"{d}/snap", "w").write(f"#!/bin/bash\necho {sha} {'a' * 40} {sha} 0\n"); os.chmod(f"{d}/snap", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:117: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/disp' mode='w' encoding='UTF-8'>
+  open(f"{d}/disp", "w").write(f"#!/bin/bash\necho \"DISPATCH $*\" >> {d}/calls; exit 3\n"); os.chmod(f"{d}/disp", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/jobs/tm-nightly-e7c58aa2/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/jobs/tm-nightly.r2-e7c58aa2/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.25krdc5b/jobs/tm-nightly.r3-e7c58aa2/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_part_name_is_dispatched_although_the_worktree_names_are_used (__main__.CloudOverflowJobItem.test_part_name_is_dispatched_although_the_worktree_names_are_used) ... /home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-overflow.sh' mode='r' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/M/cloud-overflow.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:104: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/loadavg' mode='w' encoding='UTF-8'>
+  open(f"{d}/loadavg", "w").write("80.00 80.00 80.00 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:116: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/snap' mode='w' encoding='UTF-8'>
+  open(f"{d}/snap", "w").write(f"#!/bin/bash\necho {sha} {'a' * 40} {sha} 0\n"); os.chmod(f"{d}/snap", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:117: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/disp' mode='w' encoding='UTF-8'>
+  open(f"{d}/disp", "w").write(f"#!/bin/bash\necho \"DISPATCH $*\" >> {d}/calls; exit 3\n"); os.chmod(f"{d}/disp", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/jobs/tm-nightly-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/jobs/tm-nightly.r2-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.i6kh9vp6/jobs/tm-nightly.r3-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_the_parts_own_name_keeps_the_one_send_rule (__main__.CloudOverflowJobItem.test_the_parts_own_name_keeps_the_one_send_rule) ... /home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-overflow.sh' mode='r' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/M/cloud-overflow.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:104: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/loadavg' mode='w' encoding='UTF-8'>
+  open(f"{d}/loadavg", "w").write("80.00 80.00 80.00 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:116: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/snap' mode='w' encoding='UTF-8'>
+  open(f"{d}/snap", "w").write(f"#!/bin/bash\necho {sha} {'a' * 40} {sha} 0\n"); os.chmod(f"{d}/snap", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:117: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/disp' mode='w' encoding='UTF-8'>
+  open(f"{d}/disp", "w").write(f"#!/bin/bash\necho \"DISPATCH $*\" >> {d}/calls; exit 3\n"); os.chmod(f"{d}/disp", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/jobs/tm-nightly-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/jobs/tm-nightly.r2-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/jobs/tm-nightly.r3-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.yoxglrck/jobs/tm-nightly-20261117T0600Z-p4-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_without_it_already_sent_once_as_before (__main__.CloudOverflowJobItem.test_without_it_already_sent_once_as_before) ... /home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/cloud-overflow.sh' mode='r' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:100: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/M/cloud-overflow.sh' mode='w' encoding='UTF-8'>
+  open(f"{self.M2}/cloud-overflow.sh", "w").write(open(COS).read().replace("M=/home/seyran/code/manage-agents;", f"M={self.M2};", 1))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:104: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/loadavg' mode='w' encoding='UTF-8'>
+  open(f"{d}/loadavg", "w").write("80.00 80.00 80.00 1/1 1\n")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:116: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/snap' mode='w' encoding='UTF-8'>
+  open(f"{d}/snap", "w").write(f"#!/bin/bash\necho {sha} {'a' * 40} {sha} 0\n"); os.chmod(f"{d}/snap", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:117: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/disp' mode='w' encoding='UTF-8'>
+  open(f"{d}/disp", "w").write(f"#!/bin/bash\necho \"DISPATCH $*\" >> {d}/calls; exit 3\n"); os.chmod(f"{d}/disp", 0o755)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/jobs/tm-nightly-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/jobs/tm-nightly.r2-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/seyran/code/manage-agents/tools-local/test_tm_nightly_complete.py:126: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmnc-cos.558ef9xy/jobs/tm-nightly.r3-0a20d84a/job.json' mode='w' encoding='UTF-8'>
+  json.dump({"job": os.path.basename(j), "status": status, "pool": "actions"}, open(f"{j}/job.json", "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_completed_resume_then_main_at_once (__main__.FinalCoverageLoop.test_completed_resume_then_main_at_once) ... ok
+test_no_progress_waits_for_the_next_slot (__main__.FinalCoverageLoop.test_no_progress_waits_for_the_next_slot) ... ok
+test_remote_parts_each_named (__main__.NightlyParts.test_remote_parts_each_named) ... ok
+test_sequential_parts_each_named (__main__.NightlyParts.test_sequential_parts_each_named) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 67.831s
+
+OK

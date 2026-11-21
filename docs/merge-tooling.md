@@ -56,6 +56,9 @@ its merge strategy:
 | platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
 | history-map | `tests/history-map.json` (saved from the coverage map: the units that start git or read `.git`) | json |
 | history-tests | `tests/history-dependent.json` (the tests that read history, from the saved map and the test sources) | regenerate |
+| english-lexicon-report | `conformance/english-lean/lexicon-report.json` (a `lexicon_id` per corpus environment) | derived |
+| recorded-route-cases | `tests/data/route-cases.jsonl` (recorded route cases; the english.statement block from `route_fixtures()`) | keyed-lines |
+| usecase-safety-framework | `usecases/safety-framework/{results,coverage,spans}.json` (run when they conflict: `on_conflict`) | derived |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
@@ -110,6 +113,25 @@ conflicts, it writes nothing and exits 2. Otherwise it merges the conflicted gen
 (also without the driver, from the index stages), runs every writer and every check, stages the generated files
 and exits 0; a failed writer or check exits 1. Run it after a clean merge too: two sides can merge textually
 and still leave a derived file stale. The verify that follows is unchanged.
+
+Files that carry hashes of a use-case environment (genconflict-1120): `conformance/english-lean/lexicon-report.json`
+(a `lexicon_id` per environment), `tests/data/route-cases.jsonl` (the FSF lexicon in the `stale` english.statement
+case) and `usecases/safety-framework/{results,coverage,spans}.json` (certificate and document hashes). Two branches
+that edit different legends of one environment merge cleanly in the source but conflict on one same-key derived
+value, which only regeneration on the merged tree settles. The lexicon report and the use case are `derived`: the
+driver keeps a one-sided change and exits 1 on a two-sided one, so a plain `git merge` that runs no writer (the
+train's spec regen, an agent's merge) stops on them as before instead of keeping a stale copy; `--resolve` takes
+ours and runs the writers. The route cases are `keyed-lines`: recorded lines merge three-way by (mode, case id)
+(lines sharing a key, or one line without an id, form one group; a group both sides changed differently stops the
+merge), and the english.statement block merges as a `derived` file (`route_fixtures.py --write` rewrites it; it
+loads the use cases' environments, which starts the service, so it is not refreshed `at_merge`). The use case's writers take minutes (`run.py`, then `build_document.py`, which needs the pinned FSF
+text outside the repository), so its entry is `on_conflict`: a plain `--write`, `--check` or `--resolve` skips it
+unless both sides of the merge changed one of its files (still known after the train's `--resolve --only lake-build
+--only checker-pins` staged them) or `--only` names it; without the pinned text the resolve exits 1 and the train
+falls back to the agent sync. Each of its files that both sides changed is accepted from the writers only when,
+its hash fields (`USECASE_HASHES`: results' `certificate_sha256`, coverage's `document_sha256`) masked at any depth,
+it equals the three-way merge of the two sides; otherwise `--resolve` restores the conflicted merge and exits 2. Replay (`docs/merge-tooling/genconflict-1120/replay.txt`): the three FSF-repair merges
+the train sent to an agent sync (f1, f2, f7) resolve with `--resolve` alone, with the files the agent committed.
 
 Evidence (`docs/merge-tooling/sync-merge-survey.json`, `docs/merge-tooling/survey.py`): of the sync merges in
 main's history, re-merged in memory with `git merge-tree`, the ones with conflicts only in generated files

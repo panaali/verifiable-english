@@ -1,0 +1,35 @@
+--- arm-postcheck.sh.bak-20261120amscope	2026-11-08 15:53:03.199828626 +0000
++++ arm-postcheck.sh.new-amscope2	2026-11-20 06:39:02.245149252 +0000
+@@ -6,7 +6,7 @@
+ # main it fast-forwarded from, t=, tries=) and starts this, detached, at each candidate gate and publication (armpost_kick).
+ # One at a time (arm-postcheck/lock), oldest first; each on the first runner that answers:
+ #  - ve-mac-1 (ssh true): mac-gate.sh with MAC_GATE_SHA=<C>, label post-<label> -> integ-runs/<C>.mac.json;
+-#  - else the Actions arm leg (ARM_LEG_MAC_OFFLINE on; no ACTIONS_SUSPENDED, cloud-jobs/ACTIONS_MISMATCH, CLOUD_PUSH_HOLD):
++#  - else the Actions arm leg (ARM_LEG_MAC_OFFLINE on; no ACTIONS_SUSPENDED, cloud-jobs/ACTIONS_MISMATCH that blocks the gate (mismatch-scope.sh), CLOUD_PUSH_HOLD):
+ #    gha-arm-gate.sh (ARM_GATE_MODE=blocking) + gha/arm-leg-record.py (tree checked) -> integ-runs/<C>.arm.json;
+ #  - neither: nothing runs; the rows stay pending (the next train kicks again).
+ # The record is then main's aarch64 run of <C> for main-red-check. PASS, or only failures main-red-check finds on <pre>'s own
+@@ -22,11 +22,13 @@
+ # orchestrator, beside the RED MAIN alert. A PASS of any row whose commit contains the hold's commit clears the hold
+ # (ARM_POSTMERGE_HOLD.cleared-<stamp>). Each t2 verdict: one row in test-skip/t2.jsonl (the ledger).
+ M=/home/seyran/code/manage-agents; I=$HOME/code/ve-integration; R=$HOME/code/verifiable-english; log=$M/merge-train.log
++source $M/mismatch-scope.sh 2>/dev/null || mismatch_blocks_gate(){ [[ -e $1 ]]; }  # actions-mismatch-scope-1120: mismatch-scope.sh (helper not sourceable: the old rule, the file blocks)
++actoff(){ if [ $1 = cloud-jobs/ACTIONS_MISMATCH ]; then mismatch_blocks_gate $M/$1; [ $? != 1 ]; else [ -f $M/$1 ]; fi; }  # every rc of the helper but 1 blocks
+ d=$M/arm-postcheck; mkdir -p $d $M/integ-runs
+ exec {lk}>$d/lock; flock -n $lk || { echo "$(date -u +%FT%H:%MZ) another arm-postcheck.sh runs"; exit 0; }
+ say(){ print -r -- "$(date -u +%FT%H:%MZ) $*"; }
+ macup(){ ssh -o BatchMode=yes -o ConnectTimeout=20 ve-mac-1 true > /dev/null 2>&1 < /dev/null; }
+-armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && return 1; done; [ -f $M/ARM_LEG_MAC_OFFLINE ]; }
++armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && return 1; done; [ -f $M/ARM_LEG_MAC_OFFLINE ]; }
+ kv(){ sed -n "s/^$1=//p" $2 | head -1; }
+ alert(){ local c=$1 lb=$2 what=$3 f=$M/arm-postcheck-alert-$2.final.md
+   { echo "RED MAIN (aarch64): the post-merge aarch64 check of $lb's merge ${c[1,8]} (published on the VM leg with no aarch64 result; DRI ruling 2026-10-29 03:07Z): $what"
+@@ -34,7 +36,7 @@
+     [ -n "$4" ] && cat $4; } > $f
+   echo "aarch64 post-merge check of $lb (${c[1,8]}): RED MAIN: $what ($f) $(date -u +%H:%MZ)" >> $log
+   zsh $M/msg.sh orchestrator arm-postcheck "RED MAIN (aarch64): $lb's merge ${c[1,8]} failed its post-merge aarch64 check: ${what[1,200]} ($f)" > /dev/null 2>&1; }
+-actok(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && return 1; done; [ -f $M/gha-arm-shard.sh ] && [ -f $M/ARM_SHARD_BLOCKING ]; }
++actok(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && return 1; done; [ -f $M/gha-arm-shard.sh ] && [ -f $M/ARM_SHARD_BLOCKING ]; }
+ t2row(){ mkdir -p $M/test-skip; print -r -- "{\"t\":\"$(date -u +%FT%TZ)\",\"event\":\"aarch64\",\"label\":\"$lb\",\"c\":\"$c\",\"verdict\":\"$1\",\"kind\":\"$kind\",\"arm_min\":$(( ($(date +%s) - t0) / 60 )),\"lag_h\":$( [[ $pub == <-> ]] && print -r -- $(( ($(date +%s) - pub) / 36 ))e-2 || print null)}" >> $M/test-skip/t2.jsonl; }
+ holdclear(){ local hc; [ -f $M/ARM_POSTMERGE_HOLD ] || return 0; hc=$(sed -n 's/^c=//p' $M/ARM_POSTMERGE_HOLD | head -1)
+   [ -n "$hc" ] && ! git -C $R merge-base --is-ancestor $hc $c 2>/dev/null && return 0

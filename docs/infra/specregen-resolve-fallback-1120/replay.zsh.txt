@@ -1,0 +1,60 @@
+#!/bin/zsh
+# Replay (task step 3) of one real spec-regen decline against merge-train.sh.new-specregen's specregen/specuse.
+# merge-train.log line 28823 (2026-11-20 05:06Z): "spec regen of fsf-repair-f1-leveldefs-1119 skipped (the merge of ef7ecd59
+# conflicts outside the generated files)", branch 2767a772 + the candidate ef7ecd59 of fsf-repair-f3-safetycase-1119.
+# The agent sync later made f02219f5 = 228142ff (= 2767a772 + 9c9da90f, an ancestor of ef7ecd59) + ef7ecd59.
+# Scratch: worktree $T (branch replay/specregen-f1-1120 = 2767a772 + an overlay commit of main's tools/regen_generated.py,
+# .gitattributes and docs/en-e3-norm/en-2b/route_fixtures.py, as the genconflict-1120 replay did), a scratch M (flag
+# MQ_SPEC_REGEN, an iso.sh that just runs the command: this whole script runs in one iso.sh scope), its own log.
+# branchregen and cregen_probe are stubs (unchanged code; this replay is about the merge step). Never touches ve-integration.
+# usage: replay.zsh <script under test> <main commit for the overlay> <out>
+SRC=$1; MAINC=$2; OUT=$3
+R=/home/seyran/code/verifiable-english; T=/home/seyran/code/ve-specregen-replay-1120; S=/tmp/specregen-replay-1120
+H0=2767a772f72b5b1cf1fc3cef2a248832e3cb9e8a; C=ef7ecd59ac9e28b0c976d0da23528098cd6b41c0; AGENT=f02219f5f6856a85075006cdc08882f3dfc6146a
+FILES=(conformance/english-lean/lexicon-report.json tests/data/route-cases.jsonl usecases/safety-framework/coverage.json
+  usecases/safety-framework/results.json usecases/safety-framework/spans.json)
+rm -rf $S; mkdir -p $S/M; touch $S/M/MQ_SPEC_REGEN
+print -r -- 'shift; [ "$1" != "--" ] && shift; [ "$1" = "--" ] && shift; exec "$@"' > $S/M/iso.sh
+{
+echo "# replay $(date -u +%FT%H:%MZ) on $(hostname); script $SRC sha256 $(sha256sum $SRC | cut -c1-16); overlay tools from main ${MAINC[1,10]}"
+[ -d $T ] || { echo "no scratch worktree $T"; exit 3; }
+H=$(git -C $T rev-parse HEAD); echo "branch replay/specregen-f1-1120 = ${H[1,10]} (parent ${$(git -C $T rev-parse HEAD^)[1,10]}: H0 ${H0[1,10]}); candidate ${C[1,10]}"
+echo "plain merge-tree conflicts: $(git -C $R merge-tree --write-tree --name-only $H $C 2>/dev/null | sed -n '2,/^$/p' | tr '\n' ' ')"
+eval "$(python3 -I - $SRC <<'EOF'
+import re, sys
+out, take = [], False
+for ln in open(sys.argv[1]).read().splitlines():
+    if take and ln.startswith("  "):
+        out.append(ln); continue
+    take = False
+    if re.match(r"^(ufiles|allgen|amerge|regen_merge|specregen|specuse)\(\)\{", ln):
+        out.append(ln); take = True
+print("\n".join(out))
+EOF
+)"
+M=$S/M; log=$M/merge-train.log; wt=$T; I=$S/integ; label=fsf-repair-f1-replay; brprobed=""; brtag=""
+branchregen(){ echo "  (branchregen stub)"; }; cregen_probe(){ echo 0; }
+git -C $R worktree add -q --detach $I $C  # "main" for specuse: the candidate was published
+s0=$(date +%s); specregen $C fsf-repair-f3-safetycase-1119; rc=$?; echo "specregen rc=$rc in $(( $(date +%s) - s0 )) s; spec=$spec"
+echo "--- scratch merge-train.log"; cat $log; echo "--- end"
+if [ -n "$spec" ]; then
+  echo "spec parents: $(git -C $R rev-list --parents -n1 $spec | cut -d' ' -f2- )  (want $H $C)"
+  for f in $FILES; do
+    a=$(git -C $R rev-parse $spec:$f 2>/dev/null); b=$(git -C $R rev-parse $AGENT:$f 2>/dev/null)
+    [ "$a" = "$b" ] && echo "  $f: byte-equal to the agent sync f02219f5" || echo "  $f: DIFFERS from the agent sync (spec ${a[1,10]}, agent ${b[1,10]})"
+  done
+  echo "other paths that differ from the agent sync's tree (excluding the overlay):"
+  git -C $R diff --name-only $AGENT $spec | grep -vxF -e tools/regen_generated.py -e .gitattributes -e docs/en-e3-norm/en-2b/route_fixtures.py | sed 's/^/  /'
+  echo "tests/history-dependent.json (F5): attribute $(git -C $T check-attr merge -- tests/history-dependent.json | sed 's/.*: merge: //'); diff vs the agent sync:"
+  git -C $R diff --stat $AGENT $spec -- tests/history-dependent.json | sed 's/^/  /'
+  git -C $R diff -U0 $AGENT $spec -- tests/history-dependent.json | grep -E '^[-+][^-+]' | head -8 | cut -c1-160 | sed 's/^/  /'
+  echo "  the same path, H0 2767a772 vs the agent sync (the agent's own regeneration):"
+  git -C $R diff --stat $H0 $AGENT -- tests/history-dependent.json | sed 's/^/  /'
+  echo "  spec vs H0 on that path (the resolve did not touch it when empty):"
+  git -C $R diff --stat $H0 $spec -- tests/history-dependent.json | sed 's/^/  /'
+  specuse; echo "specuse: branch now ${$(git -C $T rev-parse HEAD)[1,10]} (spec ${spec[1,10]}? $([ "$(git -C $T rev-parse HEAD)" = "$(git -C $R rev-parse $brprobed 2>/dev/null)" ] && echo yes))"
+fi
+echo "worktree after: $(git -C $T symbolic-ref -q --short HEAD) $(git -C $T status --porcelain --untracked-files=no | wc -l) dirty; MERGE_HEAD $(git -C $T rev-parse -q --verify MERGE_HEAD || echo none)"
+git -C $R worktree remove --force $I
+echo "--- regen output (tail)"; tail -n 15 $log.regen 2>/dev/null
+} > $OUT 2>&1

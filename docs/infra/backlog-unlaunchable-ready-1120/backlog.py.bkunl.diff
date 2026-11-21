@@ -1,0 +1,335 @@
+--- a/backlog.py
++++ b/backlog.py
+@@ -9,6 +9,11 @@
+   update-status <id> <status> [--note T] [--blocked-by a,b]
+   update <id> [--title T] [--kind K] [--priority N] [--owner O] [--source S] [--blocked-by a,b] [--link k=v]... [--note T]
+   launchable [--none] [--json]   ready rows and who can start them (feature feed, feature planner, infra feed) or why nobody can
++  lint            ready rows nobody would start (START_TABLE: no launcher for the (kind, owner) pair, or a feature-feed row whose
++                  task file has no "Paths:" line) and blocked rows the seed held for that reason; exit 1 when any
++  unlaunched [--min-age 60]   ready rows older than N min with no live launch: id, age, owner, why (the hourly digest)
++  Setting status ready (add --status ready, update --status ready, update-status ready, the seed unblocking a row) is refused
++  with a one-line reason (exit 1, row unchanged) when START_TABLE names no launcher or the launcher's task-file test fails.
+   seed            read every source and upsert rows (idempotent; never deletes; keeps CLI statuses unless evidence wins)
+   now             write NOW.md (< ~4k tokens): in flight, blocked, waiting on the DRI / lead, next ready, merged 24 h, flags
+   rotate-state [--keep-days 3] [--dry-run]   CURRENT-STATE.md keeps its header + the last N days; older lines are
+@@ -619,6 +624,33 @@
+ LAUNCH_HOW = {"infra-item": ("", "32G"), "delegate": ("", "8G"), "research-wave": ("research-", "16G"),
+               "design-item": ("design-", "16G"), "research-refresh": ("refresh-", "16G")}
+ 
++# 2026-11-20 backlog-unlaunchable-ready-1120 (orchestrator BATCH inbox/dri/done/20261120T085959Z-orchestrator-1582945.md): ready
++# rows sat for hours with nobody to start them (infra rows owned by "feature planner", feature rows whose task file has no
++# "Paths:" line, owner "infra planner"). START_TABLE is the ONE table of who starts a ready row, read by launcher() (launchable,
++# NOW.md), ready_refusal() (backlog.sh add/update/update-status and the seed's unblock step refuse a ready row nobody starts),
++# infra_feed.py item_reason (the infra feed acts for its own rows only) and queue_gap (the seed queues feature-feed rows only).
++# Each row is taken from its launcher's own selection code; the first matching row wins:
++#   kinds (None = any), owner (re.fullmatch, case-insensitive), when (""; "task" = links.task and no links.launch/links.delegate;
++#   "launch" = links.launch), launcher, needs ("paths" = feed_task(): an existing prompts/task-<x>.txt and a paths source).
++# Not launched, never refused by ready_refusal: decision and lead-question rows (answered, not started) and origin limits/flag
++# rows (NOW.md skips them too). Origin queue rows are the feature feed's; origin chain rows follow their infra-item.sh chain.
++START_TABLE = (
++    # the seed's queue gap (queue_gap below): kind feature, links.task, not owned by the lead; it needs a paths source
++    (("feature",), re.compile(r"(?!lead\b).*", re.I | re.S), "task", "feature feed", "paths"),
++    # the daily feature planner (prompts/dri-task-featureplan.txt: `backlog.sh list --status ready --kind feature,follow-up,design`)
++    # queues the feature and follow-up rows it owns and writes their task files; it starts no design row (dri-lp0847)
++    (("feature", "follow-up"), re.compile(r"feature planner\b.*", re.I | re.S), "", "feature planner", ""),
++    # infra_feed.py: FEED_KINDS rows whose owner it may act for; a planner's design row only with a launch link (dri-lp0847)
++    (FEED_KINDS, FEED_OWNER, "", "infra feed", ""),
++    (("design",), re.compile(r"feature planner\b.*", re.I | re.S), "launch", "infra feed", ""),
++    # the DRI decider starts its own rows by hand (dri-decider.sh wakes; tools-local/decider-ready-alert.py: owner "DRI decider")
++    (None, re.compile(r".*decider.*", re.I | re.S), "", "DRI decider (by hand)", ""),
++    # a named delegate, template, research wave or scope, started by hand (src_delegates seeds owner "delegate <name>" ready)
++    (None, re.compile(r"(dri-|research wave\b|scope\b).*|.*\bdelegate\b.*", re.I | re.S), "", "named delegate (by hand)", ""),
++)
++NOT_LAUNCHED_KINDS = ("decision", "lead-question")
++NOT_LAUNCHED_ORIGINS = ("limits", "flag")
++
+ 
+ def post_sprint(rows):
+     """Ids NOW.md leaves out of its lists (dri-lp2000 Q6, display only: the feeds still read every row): ready or blocked experiment rows outside the
+@@ -689,24 +721,67 @@
+     return [x for x in r.get("blocked_by") or [] if x not in T and rows.get(x, {}).get("status") not in ("merged", "done")]
+ 
+ 
+-def launcher(r, rows, T):
+-    """(who, "") when someone can start this ready row, else (None, reason)."""
++def start_rule(r):
++    """(launcher, "", needs) from START_TABLE for this row's (kind, owner, links), or (None, reason, "") when no launcher starts
++    the pair. Pair level only: whether the launcher can start this row now (launch_spec, feed_task) is launcher()'s question."""
++    kind, own, L = r.get("kind"), (r.get("owner") or "").strip(), r.get("links") or {}
+     if r.get("origin") == "queue":
+-        return "feature feed", ""
+-    own = (r.get("owner") or "").strip()
+-    if own.lower().startswith("feature planner"):
+-        if r.get("kind") != "design":
+-            return "feature planner", ""
++        return "feature feed", "", ""
++    if r.get("origin") == "chain":
++        return "infra-item.sh chain", "", ""
++    for kinds, owner, when, who, needs in START_TABLE:
++        if kinds is not None and kind not in kinds or not owner.fullmatch(own):
++            continue
++        if when == "task" and not (L.get("task") and not L.get("launch") and not L.get("delegate")):
++            continue
++        if when == "launch" and not L.get("launch"):
++            continue
++        return who, "", needs
++    if kind == "design" and own.lower().startswith("feature planner"):
+         # 2026-11-02 dri-lp0847 (LP-20261102T0847-3): the planner queues feature rows but starts no design row, so a signed
+-        # design row sat "launchable" for 74 h. With a launch link the infra feed starts it; without one it is on the no-launcher list
+-        s, why = launch_spec(r)
+-        return ("infra feed", "") if s else (None, f"feature planner design row, nobody starts it: {why}")
+-    if r.get("kind") in FEED_KINDS and FEED_OWNER.match(own):
++        # design row sat "launchable" for 74 h. With a launch link the infra feed starts it; without one nobody does
++        return None, "feature planner design row, nobody starts it: design row with no launch link", ""
++    if not own:
++        return None, f"no owner ({kind} rows are not fed)", ""
++    if kind == "feature":
++        return None, (f"owner '{short(own, 40)}' has no launcher for a feature row " +
++                      ("(the seed never queues the lead's rows)" if re.match(r"lead\b", own, re.I) else
++                       "with no links.task (the seed queues feature rows with a task file; the feature planner its own rows)")), ""
++    return None, (f"owner '{short(own, 40)}' has no launcher for kind {kind} (infra feed: owner empty, infra feed, orchestrator or "
++                  "DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)"), ""
++
++
++def ready_refusal(r):
++    """"" when status ready may be set on this row, else the one-line reason it is refused: no launcher starts its (kind, owner)
++    pair (start_rule), or its launcher needs a "Paths:" line (or another paths source) and links.task has none (feed_task)."""
++    if r.get("kind") in NOT_LAUNCHED_KINDS or r.get("origin") in NOT_LAUNCHED_ORIGINS:
++        return ""
++    who, why, needs = start_rule(r)
++    if not who:
++        return why
++    if needs == "paths":
++        _, ps, err = feed_task(r)
++        if not ps:
++            return f"{who}: {err}"
++    return ""
++
++
++def launcher(r, rows, T):
++    """(who, "") when someone can start this ready row, else (None, reason). START_TABLE decides who; the infra feed also needs
++    a launch spec and the feature feed a task file with a paths source."""
++    who, why, needs = start_rule(r)
++    if not who:
++        return None, why
++    if who == "infra feed":
+         s, why = launch_spec(r)
+-        return ("infra feed", "") if s else (None, why)
+-    if r.get("kind") not in FEED_KINDS and not own:
+-        return None, f"no owner ({r.get('kind')} rows are not fed)"
+-    return None, f"owner '{short(own, 40)}' has no launcher"
++        if not s:
++            return None, (f"feature planner design row, nobody starts it: {why}" if r.get("kind") == "design" and
++                          (r.get("owner") or "").strip().lower().startswith("feature planner") else why)
++    if needs == "paths":
++        _, ps, err = feed_task(r)
++        if not ps:
++            return None, f"{who}: {err}"
++    return who, ""
+ 
+ 
+ def launchable(r, rows, T):
+@@ -720,6 +795,73 @@
+     return (True, who) if who else (False, why)
+ 
+ 
++# ---------------------------------------------------------------- ready with nobody to start it (2026-11-20 backlog-unlaunchable-ready)
++# lint: the rows ready_refusal would refuse today (rows already ready are never rewritten; this lists them) and blocked rows the
++# seed did not unblock for that reason. unlaunched: the orchestrator's hourly digest (tools-local/coord_diet.py digest-take) lists
++# every ready row older than UNL_MIN minutes (since ready_t, else status_t, else created) with no live launch: no running job of
++# its links.job / links.delegate / launch spec (a chain, a delegate, a ve-<name>-<n>.scope) and not in FEATURE-QUEUE.tsv or
++# started by the feature feed (feed-state/<id>.launched).
++UNL_MIN = 60
++BL_HELD = "blockers merged; not set ready: "
++
++
++def lint_lines(rows):
++    out = []
++    for r in sorted(rows.values(), key=lambda r: (r.get("priority", 500) if isinstance(r.get("priority"), (int, float)) else 500, r["id"])):
++        if r.get("status") == "ready":
++            why = ready_refusal(r)
++            if why:
++                out.append(f"{r['id']}\tready\t{r.get('kind')}\t{r.get('owner') or '-'}\t{why}")
++        elif r.get("status") == "blocked" and (r.get("state") or "").startswith(BL_HELD):
++            out.append(f"{r['id']}\tblocked\t{r.get('kind')}\t{r.get('owner') or '-'}\t{r['state'][len(BL_HELD):]}")
++    return out
++
++
++def live_scopes():
++    """Names <x> of active ve-<x>-<n>.scope units (iso.sh), as infra_feed.py reads them; empty when systemctl cannot answer."""
++    try:
++        out = subprocess.run(["systemctl", "--user", "list-units", "--type=scope", "--state=active", "--no-legend"],
++                             capture_output=True, text=True, timeout=60).stdout
++    except Exception:
++        return set()
++    return {m.group(1) for m in (re.match(r"ve-(.+)-\d{9,}\.scope$", (l.split() or [""])[0]) for l in out.splitlines()) if m}
++
++
++def live_launch(r, chains, delegates, scopes, queued):
++    """The live launch of a ready row ("" = none): its job running, or the feature feed holding it."""
++    L = r.get("links") or {}
++    s, _ = launch_spec(r)
++    for j in (L.get("job"), L.get("delegate"), (s or {}).get("iso"), r["id"]):
++        if j and (j in chains or j in delegates or j in scopes):
++            return f"job {j} running"
++    if r["id"] in queued:
++        return "in FEATURE-QUEUE.tsv"
++    if os.path.exists(f"{M}/feed-state/{r['id']}.launched"):
++        return "started by the feature feed"
++    return ""
++
++
++def unlaunched_lines(rows, T, chains, delegates, scopes, min_age=UNL_MIN):
++    """One line per ready row older than min_age minutes with no live launch: id, age, owner, why not launched."""
++    queued = queue_names()
++    out = []
++    for r in sorted(rows.values(), key=lambda r: (r.get("priority", 500) if isinstance(r.get("priority"), (int, float)) else 500, r["id"])):
++        if r.get("status") != "ready":
++            continue
++        t = parse_t(r.get("ready_t") or "") or parse_ts(r.get("status_t") or "") or parse_t(r.get("created") or "")
++        if not t or NOW_T - t < min_age * 60 or live_launch(r, chains, delegates, scopes, queued):
++            continue
++        why = ready_refusal(r)
++        if r.get("kind") in NOT_LAUNCHED_KINDS or r.get("origin") in NOT_LAUNCHED_ORIGINS:
++            why = f"{r.get('kind')} row ({r.get('origin')}): not launched, its owner answers or closes it"
++        elif not why:
++            ok, who = launchable(r, rows, T)
++            st = (r.get("state") or "").strip()
++            why = (f"{who}: not started" + (f" (state: {short(st, 80)})" if st else "")) if ok else who
++        out.append(f"{r['id']}, {age(t)}, {r.get('owner') or '-'}: {short(why, 200)}")
++    return out
++
++
+ def limit_rows(text):
+     for l in text.splitlines():
+         m = re.match(r"^\|\s*(L\d+)\s*\|", l)
+@@ -1092,14 +1234,38 @@
+             if len(c) >= 4}
+ 
+ 
+-def queue_gap(rows, T):
+-    """([(row, queue line, paths source)], [(id, reason)]): ready feature rows with a task file outside FEATURE-QUEUE.tsv."""
+-    queued = queue_names()
++def sprint_paths():
++    """SPRINT-ITEMS.tsv's paths column by item id (sprint-queue.py), a paths source of qg_paths."""
+     sprint = {}
+     for l in rd(f"{M}/SPRINT-ITEMS.tsv").splitlines():
+         c = l.split("\t")
+         if not l.startswith("#") and len(c) >= 10:
+             sprint[c[1]] = c[9].strip()
++    return sprint
++
++
++def feed_task(r, sprint=None):
++    """(task path, [paths], paths source) or (None, None, reason): the feature feed's own test of a row's links.task (queue_gap
++    queues the row only when it passes; ready_refusal refuses status ready when it fails). 2026-11-20 backlog-unlaunchable-ready."""
++    L = r.get("links") or {}
++    if not L.get("task"):
++        return None, None, "no links.task"
++    task = L["task"] if L["task"].startswith("/") else f"{M}/{L['task']}"
++    if not os.path.isfile(task):
++        return None, None, f"task file missing ({short(L['task'], 80)})"
++    if not re.match(r"^task-[A-Za-z0-9._:+-]+\.txt$", os.path.basename(task)) or "\t" in task or "\t" in r["id"]:
++        return None, None, "task file is not prompts/task-<x>.txt"
++    ps, src = qg_paths(r, task, sprint_paths() if sprint is None else sprint)
++    if not ps:
++        return None, None, (f"no paths source: {short(L['task'], 80)} has no 'Paths:' line (nor links.paths, SPRINT-ITEMS.tsv)"
++                            if src == "no paths" else src)
++    return task, ps, src
++
++
++def queue_gap(rows, T):
++    """([(row, queue line, paths source)], [(id, reason)]): ready feature rows with a task file outside FEATURE-QUEUE.tsv."""
++    queued = queue_names()
++    sprint = sprint_paths()
+     wtd = os.path.dirname(REPO)
+     add, skip = [], []
+     for r in sorted(rows.values(), key=lambda r: (r.get("priority", 500) if isinstance(r.get("priority"), (int, float)) else 500, r["id"])):
+@@ -1110,17 +1276,14 @@
+         task = L["task"] if L["task"].startswith("/") else f"{M}/{L['task']}"
+         if not os.path.isfile(task):
+             continue
+-        if (os.path.exists(f"{M}/feed-state/{i}.launched") or os.path.exists(f"{wtd}/ve-{i}") or L.get("launch") or L.get("delegate")
+-                or re.match(r"lead\b", r.get("owner") or "", re.I)):
++        # START_TABLE (start_rule): the feature feed's rows (no links.launch / links.delegate; not owned by the lead)
++        if os.path.exists(f"{M}/feed-state/{i}.launched") or os.path.exists(f"{wtd}/ve-{i}") or start_rule(r)[0] != "feature feed":
+             continue
+         if any(b not in T and (rows.get(b) or {}).get("status") not in CLOSED for b in r.get("blocked_by") or []):
+             continue
+-        if not re.match(r"^task-[A-Za-z0-9._:+-]+\.txt$", os.path.basename(task)) or "\t" in task or "\t" in i:
+-            skip.append((i, "task file is not prompts/task-<x>.txt"))
+-            continue
+-        ps, src = qg_paths(r, task, sprint)
++        task, ps, src = feed_task(r, sprint)
+         if not ps:
+-            skip.append((i, src))
++            skip.append((i, "no paths" if src.startswith("no paths source") else src))   # NOW.md groups by these words
+             continue
+         pr = r.get("priority")
+         rank = str(int(pr)) if isinstance(pr, (int, float)) and pr == int(pr) else str(pr if isinstance(pr, (int, float)) else 500)
+@@ -1198,6 +1361,14 @@
+                     continue    # seed-delegate-blocked-done: blocked by backlog.sh after its delegate's run started
+                     # (a CLI write that named --blocked-by sets status_wait: "wait for these", which still unblocks; decider 11-14)
+                 if all((x in T) or rows.get(x, {}).get("status") in ("merged", "done") for x in r["blocked_by"]):
++                    # 2026-11-20 backlog-unlaunchable-ready: a row nobody would start stays blocked, its state says why (lint lists it)
++                    why = ready_refusal(r)
++                    if why:
++                        if r.get("state") != short(BL_HELD + why, 300):
++                            r.update(updated=utc(), state=short(BL_HELD + why, 300))
++                            print(f"{utc()} seed: {r['id']} not set ready: {why}", file=sys.stderr)
++                            changed += 1
++                        continue
+                     r.update(status="ready", status_by="seed", updated=utc(), ready_t=utc(), state="unblocked: " + ",".join(r["blocked_by"]) + " merged")
+                     changed += 1
+         # 2026-10-29 dri-infrafeed (LP-20261029T0000-5): a row run by a delegate (links.delegate) follows that delegate's
+@@ -1826,6 +1997,9 @@
+     sp.add_parser("post-sprint")
+     p = sp.add_parser("launchable")
+     p.add_argument("--none", action="store_true", help="only ready rows nobody can start"), p.add_argument("--json", action="store_true")
++    sp.add_parser("lint")
++    p = sp.add_parser("unlaunched")
++    p.add_argument("--min-age", type=int, default=UNL_MIN, help="minutes since ready_t (default 60)")
+     p = sp.add_parser("rotate-state")
+     p.add_argument("--keep-days", type=int, default=3), p.add_argument("--dry-run", action="store_true")
+     p = sp.add_parser("split-limits")
+@@ -1872,6 +2046,18 @@
+             if not a.json:
+                 print(f"# blocked rows with an empty blocked_by: {len(bb)}")
+         return
++    if a.cmd == "lint":   # 2026-11-20 backlog-unlaunchable-ready: rows a ready write would be refused for today (exit 1 if any)
++        ls = lint_lines(load())
++        for l in ls:
++            print(l)
++        print(f"# {len(ls)} row(s) ready (or held blocked) with no launcher that would start them (backlog.py START_TABLE)")
++        sys.exit(1 if ls else 0)
++    if a.cmd == "unlaunched":
++        P = procs()
++        chains, _trains, delegates = live_jobs(P)
++        for l in unlaunched_lines(load(), tags(), chains, delegates, live_scopes(), a.min_age):
++            print(l)
++        return
+     if a.cmd == "rotate-state":
+         return rotate_state(a.keep_days, a.dry_run)
+     if a.cmd == "split-limits":
+@@ -1881,6 +2067,7 @@
+     bb = [x.strip() for x in a.blocked_by.split(",") if x.strip()] if a.blocked_by else None
+     with Locked():
+         rows = load()
++        before = json.loads(json.dumps(rows[a.id])) if a.id in rows else None
+         if a.cmd == "add":
+             if a.id in rows:
+                 sys.exit(f"row {a.id} exists ({rows[a.id]['status']}); use update / update-status")
+@@ -1915,6 +2102,13 @@
+             r["status_wait"] = True                                  # blockers named later: still a wait (decider 11-14)
+         if r["status"] == "ready" and (a.cmd == "add" or getattr(a, "status", None) == "ready"):
+             r["ready_t"] = utc()
++        # 2026-11-20 backlog-unlaunchable-ready: status ready is refused (row unchanged, exit 1) when nobody would start the row:
++        # set now, or kept by an update that breaks the row's launcher (a row already ready and refused stays: `backlog.sh lint`)
++        if r["status"] == "ready":
++            why = ready_refusal(r)
++            broke = before is not None and before.get("status") == "ready" and not ready_refusal(before)
++            if why and (getattr(a, "status", None) == "ready" or broke):
++                sys.exit(f"refused: {a.cmd} {a.id}: status ready, but {why}")
+         save(rows)
+     if a.cmd in ("add", "update"):
+         p1_filing_warn(a.cmd, r)

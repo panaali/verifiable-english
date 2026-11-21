@@ -1,0 +1,88 @@
+[
+ {
+  "behaviour": "hash fields are masked at any depth, not only at the top",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "{key: _HASH if key in keys else _mask(item, keys) for key, item in value.items()}",
+   "to": "{key: _HASH if key in keys else item for key, item in value.items()}"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[False]",
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[True]",
+   "tests/test_regen_usecase_merge.py::test_a_verdict_both_sides_changed_differently_declines_before_the_writers",
+   "tests/test_regen_usecase_merge.py::test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output[False]",
+   "tests/test_regen_usecase_merge.py::test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output[True]",
+   "tests/test_regen_usecase_merge.py::test_masked_first_difference[a0-b0-None]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "the regenerated files are compared with the masked merge after the writers",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "declined = None if failed or not merges else _check_masked(root, entries, merges)",
+   "to": "declined = None"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[False]",
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[True]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "a masked key both sides changed differently declines before the writers",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "raise Conflict(f\"{path}: {exc}\") from None",
+   "to": "continue"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_verdict_both_sides_changed_differently_declines_before_the_writers",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_verdict_both_sides_changed_differently_declines_before_the_writers"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "a decline restores the conflicted merge",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "_restore(root, saved)",
+   "to": ""
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[False]",
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[True]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "the comparison is exact (true is not 1)",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "return None if _text(a) == _text(b) else path",
+   "to": "return None if a == b else path"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_masked_first_difference",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_masked_first_difference[a4-b4-$.x]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "a file staged by an earlier partial --resolve is still checked",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "conflicted = set(unmerged) | changed_on_both_sides(root, list(masked))",
+   "to": "conflicted = set(unmerged)"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[True]",
+   "tests/test_regen_usecase_merge.py::test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output[True]"
+  ],
+  "killed": true
+ }
+]

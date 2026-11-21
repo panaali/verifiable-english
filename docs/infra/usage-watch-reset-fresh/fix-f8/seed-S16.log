@@ -1,0 +1,14 @@
+# condensed: the result lines of the run (FAIL/ERROR ids, exceptions, assertion rows, summary)
+FAIL: test_sample_end_12_decisive (__main__.Guards.test_sample_end_12_decisive)
+AssertionError: Lists differ: ['shadow it-1 6f65cf0c6331c2685dadaffb83e1[50 chars]a50'] != []
++ []
+- ['shadow it-1 6f65cf0c6331c2685dadaffb83e1593dd10c3aca '
+-  '97ca4749d12f589bc0bd353b3100546591f10a50']
+FAIL: test_rerun_replaces_row (__main__.Pair.test_rerun_replaces_row)
+AssertionError: '1 pairs; confirmed B/critical blockers 0' not found in ''
+FAIL: test_shared_and_false_and_pending (__main__.Pair.test_shared_and_false_and_pending)
+AssertionError: 'false B/critical blockers 1; pending (not adjudicated) 1' not found in ''
+FAIL: test_xhigh_only_confirmed_maps_to_fail (__main__.Pair.test_xhigh_only_confirmed_maps_to_fail)
+AssertionError: '1 pairs; confirmed B/critical blockers 1' not found in ''
+Ran 4 tests in 3.073s
+FAILED (failures=4)

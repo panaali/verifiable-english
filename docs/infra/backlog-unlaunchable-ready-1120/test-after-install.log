@@ -1,0 +1,13 @@
+..../home/seyran/code/manage-agents/tools-local/test_backlog_unlaunchable.py:69: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/bkunl-test-397m7mar/m/BACKLOG.jsonl' mode='r' encoding='UTF-8'>
+  return open(f"{D}/BACKLOG.jsonl").read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....2026-11-20T12:42Z seed: bad not set ready: owner 'feature planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)
+2026-11-20T12:42Z seed: np not set ready: feature feed: no paths source: prompts/task-np.txt has no 'Paths:' line (nor links.paths, SPRINT-ITEMS.tsv)
+/home/seyran/code/manage-agents/backlog.py:1327: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/bkunl-test-397m7mar/m/backlog-state.json' mode='r' encoding='UTF-8'>
+  st = json.load(open(STATE))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+...
+----------------------------------------------------------------------
+Ran 11 tests in 9.398s
+
+OK
