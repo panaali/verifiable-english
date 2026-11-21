@@ -141,3 +141,12 @@ openai-preparedness: 102 blocks, 498 unaccounted words in 70 blocks, 17 blocks w
 ```
 236 / 239 (2327.9 s) ; exit 0
 ```
+## review F2: selected run, lake, audit, collection
+```
+SHARD 1/3: exit 0 in 777.3 s; 24 units, 24 passed
+SHARD 2/3: exit 0 in 1124.0 s; 20 units, 20 passed
+SHARD 3/3: exit 0 in 1321.1 s; 19 units, 19 passed
+lake build: Build completed successfully (1478 jobs).
+audit: PASS: 898 source files; 10153 named theorem declarations audited
+gate_collection: 37027 collected, 36991 at cebf4fd24f37; 36 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
+```

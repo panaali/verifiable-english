@@ -319,6 +319,11 @@ F2 (B, introduced by the F1 round): the S0020 and S0259 rows and section 0's par
 - **Citations:** the four lines inserted into build_document.py moved every later line, so the REPORT's citations into it now point at their current lines. Six of them (`:159`, `:177`, `:282`, `:383-387`, `:386`, `:402-406`) were already 2 or 3 lines off before this round. Review note C (S3 named a renamed test) is fixed in section 4.
 - **Seeded bugs:** S6-S8 in section 4.
 - **No DELTA row:** only translation records changed. No verdict, answer, diagnostic or trust moves.
+- **Tests of the fix round** (on 658ea83ffc, before this record was added):
+  - the selected run through `mac-pytest.sh --select`: 3 shards on GitHub Actions, 63 units, 63 passed, exit 0. The changed test files ran first (/tmp/f2-select.log);
+  - `tests/test_srccov_rl_openai_preparedness_1121.py`: 36 passed;
+  - `lake build`: exit 0, 1478 jobs. `python3 lean/audit.py`: PASS;
+  - `gate_collection.py --check --prebuilt`: 36 added, 0 refused, 0 stale, 0 malformed.
 
 ## Notes for the DRI
 
