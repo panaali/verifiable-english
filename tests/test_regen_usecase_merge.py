@@ -454,7 +454,8 @@ def test_route_fixtures_check_fails_on_a_stale_block_and_passes_after_write(tmp_
 # A use case whose goals each carry a verdict: `run` writes results.json (a certificate hash at the top and in
 # every goal), `document` writes coverage.json (a document hash) and spans.json (no hash) from it. A goal's verdict
 # is its goals/<id>.json one, overridden by overrides/*.json in name order; a file `flip` beside the repository
-# makes the writer flip g1's verdict, a change neither side made.
+# makes the writer flip g1's verdict, a change neither side made. spans.json, one line, also names the texts of
+# document/*.txt (read by `document` alone): two sides that change it differently conflict on it in git.
 VERDICT_STUB = r'''
 import hashlib, json, pathlib, sys
 mode, check = sys.argv[1], sys.argv[2:] == ["--check"]
@@ -465,7 +466,8 @@ env = (case / "environment.d1.json").read_bytes()
 with open(here.parent / "ran.log", "a") as log:
     log.write(mode + (" --check" if check else "") + "\n")
 def emit(files):
-    texts = {name: json.dumps(value, indent=1, sort_keys=True) + "\n" for name, value in files.items()}
+    texts = {name: json.dumps(value, indent=None if name == "spans.json" else 1, sort_keys=True) + "\n"
+             for name, value in files.items()}
     if check:
         sys.exit(0 if all((case / name).read_text() == text for name, text in texts.items()) else 1)
     for name, text in texts.items():
@@ -485,7 +487,8 @@ else:
     goals = json.loads(results)["goals"]
     emit({"coverage.json": {"document_sha256": digest(env + results),
                             "verdicts": {goal["id"]: goal["verdict"] for goal in goals}},
-          "spans.json": {"units": [goal["id"] for goal in goals]}})
+          "spans.json": {"inputs": {p.name: p.read_text() for p in sorted(case.glob("document/*.txt"))},
+                         "units": [goal["id"] for goal in goals]}})
 '''
 
 GOALS = "usecases/safety-framework/goals"
@@ -612,3 +615,66 @@ def test_a_verdict_both_sides_changed_differently_declines_before_the_writers(tm
 def test_masked_first_difference(a, b, path):
     keys = ("certificate_sha256",)
     assert R._first_difference(R._mask(a, keys), R._mask(b, keys)) == path
+
+
+# One side changes only an input of spans.json (DOCUMENT); the other adds a goal (results, coverage and spans) or
+# another input: spans.json conflicts in git, results.json and coverage.json merge cleanly (one side's, or base).
+DOCUMENT = "usecases/safety-framework/document"
+ONE_SIDED = {"onesided": ({f"{DOCUMENT}/o.txt": "ours\n"}, {f"{GOALS}/t.json": '{"verdict": "unknown"}\n'}),
+             "untouched": ({f"{DOCUMENT}/o.txt": "ours\n"}, {f"{DOCUMENT}/t.txt": "theirs\n"})}
+
+
+def _one_sided_repository(tmp_path, monkeypatch, case: str, partial: bool):
+    root, entries, conflicted = _verdict_repository(tmp_path, monkeypatch, *ONE_SIDED[case], partial=partial)
+    assert conflicted == {SPANS}
+    changed = lambda a, b: set(_git(root, "diff", "--name-only", a, b, "--", RESULTS, COVERAGE).stdout.split())  # noqa: E731
+    assert changed("base", "ours") == set()
+    assert changed("base", "theirs") == ({RESULTS, COVERAGE} if case == "onesided" else set())
+    return root, entries
+
+
+@pytest.mark.parametrize("partial", [False, True])
+def test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines(tmp_path, monkeypatch, capsys, partial):
+    """DRI condition (adv0013 item 1): only theirs changed results.json, so git merged it cleanly; the conflict is on
+    spans.json. A writer that flips a goal's verdict there is declined, the conflicted merge left as it was."""
+    root, entries = _one_sided_repository(tmp_path, monkeypatch, "onesided", partial)
+    (tmp_path / "flip").write_text("")
+    before = _state(root)
+    assert R.resolve(entries, root) == 2
+    err = capsys.readouterr().err
+    assert f"{RESULTS} at $.goals[0].verdict" in err and "agent sync" in err
+    assert _ran(tmp_path) == ["run", "document"]  # declined after the writers, before the checks
+    assert _state(root) == before  # the conflicted merge, not the stub's output
+    assert (root / RESULTS).read_text() == _git(root, "show", f"theirs:{RESULTS}").stdout
+    assert _git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).returncode == 0
+    if not partial:
+        assert "<<<<<<<" in (root / SPANS).read_text()
+
+
+@pytest.mark.parametrize("partial", [False, True])
+def test_an_untouched_flip_of_a_results_file_neither_side_changed_declines(tmp_path, monkeypatch, capsys, partial):
+    """Neither side changed results.json (each changed an input of spans.json alone): its merge is base's."""
+    root, entries = _one_sided_repository(tmp_path, monkeypatch, "untouched", partial)
+    (tmp_path / "flip").write_text("")
+    before = _state(root)
+    assert R.resolve(entries, root) == 2
+    err = capsys.readouterr().err
+    assert f"{RESULTS} at $.goals[0].verdict" in err and "agent sync" in err
+    assert _state(root) == before
+    assert (root / RESULTS).read_text() == _git(root, "show", f"base:{RESULTS}").stdout
+
+
+@pytest.mark.parametrize("case", ["onesided", "untouched"])
+def test_one_sided_and_untouched_files_equal_to_their_merge_resolve(tmp_path, monkeypatch, capsys, case):
+    """Without a flip the same merges resolve: every file of the entry is checked, conflicted or not, then staged."""
+    root, entries = _one_sided_repository(tmp_path, monkeypatch, case, partial=False)
+    capsys.readouterr()
+    code, out = R.resolve(entries, root), capsys.readouterr()
+    assert code == 0, out.err
+    assert [line.split(":")[0] for line in out.out.splitlines() if line.startswith("checked ")] == [
+        f"checked {path}" for path in (RESULTS, COVERAGE, SPANS)]
+    goals = [(goal["id"], goal["verdict"]) for goal in json.loads((root / RESULTS).read_text())["goals"]]
+    assert goals == [("g1", "holds"), ("g2", "fails"), *([("t", "unknown")] if case == "onesided" else [])]
+    assert set(json.loads((root / SPANS).read_text())["inputs"]) == {"o.txt", *(["t.txt"] if case == "untouched" else [])}
+    assert _git(root, "commit", "-q", "--no-edit", check=False).returncode == 0
+    assert _git(root, "status", "--porcelain").stdout == ""

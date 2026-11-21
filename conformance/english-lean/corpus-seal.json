@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "f7fd65aa67848fc3b34fd1f397faff1d0032d119ecee76fec74c1962a788ee56",
+ "seal_id": "2ada86752cd097f3769e0565f275117a8733598800fffe2f2b37a0b2c4921732",
  "sources": [
   {
    "kind": "corpus source",
@@ -471,7 +471,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_statement_blocks.py",
-   "sha256": "c8e360e630db62654d8c62e39ec8d311032a903a5092db40f8c9cdb44e0ab0e2"
+   "sha256": "3c75253196dcf75b385270abbdace97a62bd0b9253b88bf5cf36f9211b0925ce"
   },
   {
    "kind": "entry-point caller",
@@ -572,6 +572,11 @@
    "kind": "entry-point caller",
    "path": "tests/test_srccov_asimov_extended_1119.py",
    "sha256": "13f60ad78223cbdaa977f0e820a28b3d3f2518739030af656748414a642c7818"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_srccov_rl_news_article_1121.py",
+   "sha256": "f770add435ed9f99e3be628cec602252709cda58a0c158dec8522b57e191636a"
   },
   {
    "kind": "entry-point caller",
@@ -716,7 +721,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/eligibility/environment.json",
-   "sha256": "8202ab9502db3a9633fbb7839c30fac2cfda140815a82e7dd516aef2b20664d2"
+   "sha256": "47129b909e44ee1db4c94ba7bed958462557a1b36c7929684354405af4c09f59"
   },
   {
    "kind": "corpus source",
@@ -796,7 +801,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "4ffe9dde49b63affd3dd2dfc8c2cf51c83120689a7a1ff1875b141b1dc277ca4"
+   "sha256": "f51bc79242ccde34dcfc341402928ace88139e89ced7314d3ec2ec7c52c1ba2a"
   },
   {
    "kind": "entry-point caller",

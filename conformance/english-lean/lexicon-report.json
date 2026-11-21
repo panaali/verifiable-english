@@ -195,8 +195,8 @@
   {
    "environment": "usecases/eligibility/environment.json",
    "failures": [],
-   "lexicon_id": "933ff074fe14241750feeb6c6074d49f5f831ddb69e411a39a95971e69097cf5",
-   "symbols": 85
+   "lexicon_id": "0d5d3f8e3e9c7f8aecbd944d5ff6212f578ced07431f71c1a4ba48355fb5ba56",
+   "symbols": 99
   },
   {
    "environment": "usecases/math-mini-paper/environment-closure.json",
@@ -243,8 +243,8 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "bdf9cbe5a48c2faa66cd262f271b0750e36f57b8762007f3ff0177e20d458d0b",
-   "symbols": 86
+   "lexicon_id": "11b876a9b9ce7482035c28b2127c1278316078bc2c6461c2df7f5843398eccb2",
+   "symbols": 88
   },
   {
    "environment": "usecases/us-constitution-14th-s1/environment.json",
