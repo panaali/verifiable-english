@@ -102,6 +102,13 @@ PLACEMENTS = {
     "For these areas, in collaboration with external experts, we commit": ("readings", "rs15-threat-models", ("AT",)),
     "As a reminder, covered systems that reach High capability must have": ("readings", "rs3-reminder", ("JT", "ET")),
     "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
+    # srccov-rl-openai-preparedness-1121: a sentence a plain rule line carries (block sr-sufficiency). No clause map is
+    # claimed, so each unit is a blocked rule that routes to the block (UNFORMALISED, unmapped_clause).
+    # 4.2's lead-in and its three bullets (the Table 3 units between them are not part of the list).
+    "The SAG will make this determination based on:": ("rule", "sr-sufficiency", ()),
+    "The level of capability in the Tracked Category based on the Capabilities Report": ("rule", "sr-sufficiency", ()),
+    "The associated risks of severe harm, as described in the threat model": ("rule", "sr-sufficiency", ()),
+    "The safeguards in place and their effectiveness based on the Safeguards Report": ("rule", "sr-sufficiency", ()),
     # srccov-openai-preparedness-1119: units that state no rule, recorded as LABELLED exposition (out of scope).
     # Headings and table header rows (title, navigation or page furniture):
     "Clear internal decision-making practices.": ("label", "exposition", ()),

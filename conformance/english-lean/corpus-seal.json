@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "cc72e1bdfc0f2c05233a7e411716b57ad3e33528800de760c52b36c503664e2f",
+ "seal_id": "f7fd65aa67848fc3b34fd1f397faff1d0032d119ecee76fec74c1962a788ee56",
  "sources": [
   {
    "kind": "corpus source",
@@ -756,7 +756,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "b4bc7ce5296dcfba236e4510fade70111bc177dcaae1d6d0ac2ee675588bb927"
+   "sha256": "0c884cbc5569a09152bcd508b15cd3f384022acad0aa32d010831c0bf9f5d345"
   },
   {
    "kind": "corpus source",
@@ -771,7 +771,7 @@
   {
    "kind": "entry-point caller",
    "path": "usecases/openai-preparedness/pf_translation.py",
-   "sha256": "0209a89f9088944e7cb2aa44c28e94746722c76c3eddfb05d18871b25e0cff12"
+   "sha256": "01afc5441a5e34f68b0cc9417e9f1419661f5b83d4d4a8f9c55d03ee5614b386"
   },
   {
    "kind": "entry-point caller",

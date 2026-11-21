@@ -165,9 +165,7 @@
     "reached",
     "security_controls"
    ],
-   "unaccounted": [
-    "require"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "Require",
@@ -187,8 +185,6 @@
    ],
    "unaccounted": [
     "guidelin",
-    "require",
-    "risk",
     "safeguard",
     "specific"
    ],
@@ -913,7 +909,6 @@
     "capabilities_report_submitted"
    ],
    "unaccounted": [
-    "deploy",
     "model",
     "prior",
     "suite",
@@ -2391,7 +2386,6 @@
     "reached"
    ],
    "unaccounted": [
-    "4",
     "categor",
     "require",
     "track"
@@ -2420,7 +2414,6 @@
     "reached"
    ],
    "unaccounted": [
-    "4",
     "categor",
     "require",
     "track"
@@ -2502,10 +2495,7 @@
     "ara_tracking"
    ],
    "unaccounted": [
-    "adapt",
-    "autonomou",
-    "convert",
-    "replic"
+    "convert"
    ],
    "entries": [
     {
@@ -2690,13 +2680,10 @@
    "unaccounted": [
     "evaluate",
     "evidence",
-    "framework",
-    "internal",
     "practic",
     "preparednes",
     "recommend",
-    "sufficient",
-    "updat"
+    "sufficient"
    ],
    "entries": [
     {
@@ -2772,6 +2759,17 @@
      "arg": ""
     }
    ],
+   "problems": []
+  },
+  {
+   "id": "sr-sufficiency",
+   "file": "rules.d1.ve",
+   "span_length": 332,
+   "used": [
+    "sufficiency_basis"
+   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -2857,12 +2855,9 @@
    ],
    "unaccounted": [
     "associat",
-    "develop",
     "minimize",
     "require",
-    "safeguard",
-    "sufficient",
-    "system"
+    "sufficient"
    ],
    "entries": [
     {
@@ -2884,9 +2879,7 @@
    ],
    "unaccounted": [
     "expect",
-    "framework",
     "further",
-    "preparednes",
     "update"
    ],
    "entries": [
@@ -2912,7 +2905,7 @@
   }
  ],
  "totals": {
-  "blocks": 101,
+  "blocks": 102,
   "blocks_with_loss": 15,
   "losses_by_class": {
    "1": 17,
@@ -2926,9 +2919,9 @@
    "restates": 93,
    "rule": 21
   },
-  "unaccounted_words": 468,
-  "blocks_with_unaccounted_words": 69,
-  "quotes": 118,
+  "unaccounted_words": 451,
+  "blocks_with_unaccounted_words": 68,
+  "quotes": 122,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

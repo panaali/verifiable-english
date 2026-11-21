@@ -26060,7 +26060,7 @@
    "choices": 1045,
    "documents_built": 354,
    "prover_calls": 13,
-   "rules": 91,
+   "rules": 92,
    "units": 393,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
@@ -26107,7 +26107,7 @@
    }
   },
   "M5": {
-   "regulated_predicates": 62,
+   "regulated_predicates": 63,
    "violations": []
   },
   "M6": {
