@@ -1,0 +1,495 @@
+--- accounts.sh	2026-11-17 16:07:51.070209836 +0000
++++ accounts.sh.new-usagew	2026-11-20 16:47:22.983440140 +0000
+@@ -14,6 +14,12 @@
+ # the sticky state file accounts-cache/main5h-tripwire is written once (a human clears it with rm) and one NOW(critical) goes to
+ # the orchestrator. While that file exists main prints -1 instead of -2 (unknown, picker worker cap 2). A stub CLAUDE_BIN (tests)
+ # trips only through an explicit M5H_TRIP_SH. Tests: python3 -I tools-local/test_pick_main5h_nowindow.py
++# 2026-11-20 usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; thresholds ruling 230624Z item 4): at 23:00:06Z
++# 11-13 a cached main line with weekly 97, taken before main's weekly reset, was reused past it (the 1800-s >= 88 reuse) and
++# usage-watch paused main's 6 sessions until a forced probe at 23:09Z read 0. Now (tools-local/reset_fresh.py line): a cached line
++# taken BEFORE a reset it names (5-h or weekly) that has passed is dropped and the account is probed at once, and the .last fallback
++# skips it the same way; a line taken after that reset that still names it (the service lags) is reused for ACCOUNTS_TTL only, never
++# for ACCOUNTS_CAP_TTL. The clock is ENDGAME_NOW when set (tests), else date. Tests: python3 -I tools-local/test_usage_reset_fresh.py
+ m5real=""; [ -z "${CLAUDE_BIN:-}" ] && m5real=1
+ M=${ACCOUNTS_DIR:-~/code/manage-agents}; C=$M/accounts-cache; CLAUDE_BIN=${CLAUDE_BIN:-~/.local/bin/claude}
+ m5trip=${M5H_TRIP_SH:-}; [ -z "$m5trip" ] && [ -n "$m5real" ] && m5trip=$M/tools-local/main5h-trip.sh
+@@ -44,21 +50,26 @@
+ except Exception: print(a, d, -1, -1, "unknown", "?", "?")
+ PY
+ }
+-fresh(){ local f=$C/$1.line age w   # 0 if the cached line may be reused
++nowe(){ local n=${ENDGAME_NOW:-$(date +%s)}; print -r -- ${n%.*}; }
++rstate(){ python3 -I $M/tools-local/reset_fresh.py line $(stat -c %Y $1) $(awk '{print $6, $7}' $1) 2>/dev/null; }  # pre / post / none
++fresh(){ local f=$C/$1.line age w rs   # 0 if the cached line may be reused
+   [ -s $f ] || return 1
+-  age=$(( $(date +%s) - $(stat -c %Y $f) )); w=$(awk '{print $4}' $f)
++  age=$(( $(nowe) - $(stat -c %Y $f) )); w=$(awk '{print $4}' $f)
++  # usage-watch-reset-fresh (header): taken before a reset it names that has passed: never reused
++  rs=$(rstate $f); [ "$rs" = pre ] && return 1
+   # 2026-10-28 dri-advfix1 (L120 overshoot replay): inside an endgame window within 15 points of the freeze (endgame.py --fast)
+   # a line is reused for 50 s only, so usage-watch's 60-s polls there see fresh readings
+   [ $age -ge 50 ] && python3 -I $M/tools-local/endgame.py --fast $(awk '{print $1, $3, $4, $6, $7}' $f) 2>/dev/null && return 1
+   [ $age -lt $ttl ] && return 0
+   # 2026-10-28 dri-endgame (L120): not inside 2 h of the weekly reset, where new work may run to endgame.py's limits on fresh readings
+-  [ ${w:--1} -ge 88 ] && [ $age -lt $capttl ] && [ "$(python3 -I $M/tools-local/endgame.py $(awk '{print $1, $6, $7}' $f) 2>/dev/null | awk '{print $4}')" != 1 ] && return 0
++  # usage-watch-reset-fresh: never for a line that names a passed reset ("post": the service still reports the old window)
++  [ "$rs" != post ] && [ ${w:--1} -ge 88 ] && [ $age -lt $capttl ] && [ "$(python3 -I $M/tools-local/endgame.py $(awk '{print $1, $6, $7}' $f) 2>/dev/null | awk '{print $4}')" != 1 ] && return 0
+   return 1; }
+ [ -e $M/ACCOUNTS_NOCACHE ] && { for a in main danielsaeedi37 saeedi.danial; do probe $a ${DIRS[$a]}; done; exit 0; }
+ mkdir -p $C
+ for a in main danielsaeedi37 saeedi.danial; do d=${DIRS[$a]}
+   if ! fresh $a; then
+     ( flock -w 180 9; fresh $a || { l=$(probe $a $d); case $l in (*" -1 -1 unknown "*) ;; (*) print -r -- "$l" > $C/$a.line.$$ && mv -f $C/$a.line.$$ $C/$a.line;; esac; print -r -- "$l" > $C/$a.last.$$; mv -f $C/$a.last.$$ $C/$a.last; } ) 9> $C/probe.lock
+-    { fresh $a && cat $C/$a.line; } || cat $C/$a.last 2>/dev/null || probe $a $d
++    { fresh $a && cat $C/$a.line; } || { [ -s $C/$a.last ] && [ "$(rstate $C/$a.last)" != pre ] && cat $C/$a.last; } || probe $a $d
+   else cat $C/$a.line; fi
+ done
+--- usage-watch.sh	2026-11-16 20:10:06.313737766 +0000
++++ usage-watch.sh.new-usagew	2026-11-20 16:49:14.559206318 +0000
+@@ -5,8 +5,16 @@
+ # early: when the reading plus its last rise reaches the level (the % lags). Inside the window a paused account resumes only
+ # 3 points under the level (or at the reset); outside it, as before, under 90. dri-advfix1: inside a window, while a reading
+ # is within 15 points of its freeze (endgame.py --fast), the next poll comes after 60 s instead of N.
++# 2026-11-20 usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; thresholds ruling 230624Z item 4): at 23:00:06Z
++# 11-13 this loop paused main's 6 sessions on a weekly 97 read before main's weekly reset (accounts.sh reused it) until a forced
++# probe at 23:09Z read 0. Per account and pool (tools-local/reset_fresh.py watch): while the reading names a reset that passed less
++# than 10 min ago it is the old window's reading: that pool's % counts as unknown (-1) for PAUSE / RESUME / HOLD / WARN (one
++# RESET-FRESH event; usage-watch.log keeps the raw %), and the next poll comes after 60 s. The loop also wakes 5 s after the nearest
++# reset still ahead (when that is sooner than the next poll). A poll at or within 10 min after a reset runs accounts.sh with
++# ACCOUNTS_CAP_TTL=0 (accounts.sh itself drops a cached line taken before a passed reset and probes at once).
++# Tests: python3 -I tools-local/test_usage_reset_fresh.py
+ # Codex weekly >= 90 -> SIGSTOP codex exec workers. Never touches the interactive orchestrator. Events -> stdout (usage-events.log).
+-M=~/code/manage-agents; iv=${1:-300}; typeset -A stopped held prev5 prevw eg; stopped_x=""
++M=~/code/manage-agents; iv=${1:-300}; typeset -A stopped held prev5 prevw eg rf; stopped_x=""; capz=""
+ pids_for(){ for p in $(pgrep -x claude); do tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q -- ' -p ' && tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -qx "CLAUDE_CONFIG_DIR=$1" && echo $p; done; }
+ pids_codex(){ for p in $(pgrep -f 'codex exec'); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && echo $p; done; }
+ # 2026-11-11 codex-meter-stale-reset (DRI 2026-11-08 codex-alloc): the Codex week comes from the newest session log, which nothing
+@@ -23,8 +31,16 @@
+ cxline(){ read xw xs <<< "$(cxweek)"; echo "$(date -u +%H:%MZ) codexWeek=${xw:-?}${xs:+ (stale: reset passed at $xs)}"; }
+ [ "${1:-}" = --codex-line ] && { cxline; exit 0; }
+ while true; do
+-  fastp=0
+-  zsh $M/accounts.sh | while read a d f w st r1 r2; do
++  fastp=0; nxr=""; capn=""
++  ACCOUNTS_CAP_TTL=${capz:-${ACCOUNTS_CAP_TTL:-}} zsh $M/accounts.sh | while read a d f w st r1 r2; do
++    # usage-watch-reset-fresh (header): a pool whose named reset passed < 10 min ago is the old window: its % is unknown here
++    read o5 ow nx <<< "$(python3 -I $M/tools-local/reset_fresh.py watch $r1 $r2 2>/dev/null || echo 0 0 -1)"
++    [[ $nx == <-> ]] && { [ -z "$nxr" ] || [ $nx -lt $nxr ]; } && nxr=$nx
++    f0=$f; w0=$w
++    if [ "$o5" = 1 ] || [ "$ow" = 1 ]; then
++      [ "$o5" = 1 ] && f=-1; [ "$ow" = 1 ] && w=-1; fastp=1; capn=0
++      [ -z "${rf[$a]}" ] && echo "RESET-FRESH $a: reading 5h=$f0 week=$w0 names a reset that passed < 10 min ago (5h=$o5 week=$ow: $r1 $r2); that % is not acted on for 10 min, fresh probes forced (ACCOUNTS_CAP_TTL=0)"; rf[$a]=1
++    else unset "rf[$a]"; fi
+     mx=$(( f > w ? f : w )); key=$a
+     python3 -I $M/tools-local/endgame.py --fast $a $f $w $r1 $r2 2>/dev/null && fastp=1  # 2026-10-28 dri-advfix1
+     read l5 lw e5 ew <<< "$(python3 -I $M/tools-local/endgame.py $a $r1 $r2 2>/dev/null || echo 90 90 0 0)"
+@@ -33,7 +49,7 @@
+     t5=$(( e5 && p5 >= 0 && f > p5 ? 2 * f - p5 : f )); tw=$(( ew && pw >= 0 && w > pw ? 2 * w - pw : w ))
+     r5=$(( e5 ? l5 - 3 : l5 )); rw=$(( ew ? lw - 3 : lw ))
+     [ -n "${held[$key]}" ] && [ $f -lt 80 ] && { echo "UNHOLD $a 5h=$f: new work may go to it again"; unset "held[$key]"; }
+-    echo "$(date -u +%H:%MZ) $a 5h=$f week=$w $st" >> $M/usage-watch.log
++    echo "$(date -u +%H:%MZ) $a 5h=$f0 week=$w0 $st" >> $M/usage-watch.log
+     if { [ $t5 -ge $l5 ] || [ $tw -ge $lw ]; } && [ -z "${stopped[$key]}" ]; then s=$(pids_for $d | tr '\n' ' '); [ -n "$s" ] && kill -STOP ${=s}; stopped[$key]=${s:-none}; echo "PAUSED $a [$s] 5h=$f week=$w"
+     elif [ $f -lt $r5 ] && [ $w -lt $rw ] && [ -n "${stopped[$key]}" ]; then [ "${stopped[$key]}" != none ] && kill -CONT ${=stopped[$key]} 2>/dev/null; echo "RESUMED $a [${stopped[$key]}]"; unset "stopped[$key]"
+     elif [ "$a" != main ] && [ $f -ge $(( e5 ? l5 : 80 )) ]; then [ -z "${held[$key]}" ] && echo "HOLD $a 5h=$f week=$w: no new work on this 5x account from 80% of its 5-h window (pick-claude-account.sh skips it; running workers continue, freeze stays at 90)"; held[$key]=1  # 2026-10-10
+@@ -45,5 +61,8 @@
+   timeout 120 python3 -I $M/tools-local/codex-meter.py balance-log > /dev/null 2>&1
+   if [ ${xw:-0} -ge 90 ] && [ -z "$stopped_x" ] && ! zsh $M/codex-allowed.sh > /dev/null; then  # credits (lead 2026-10-01) keep Codex running past the plan cap stopped_x=$(pids_codex | tr '\n' ' '); [ -n "$stopped_x" ] && kill -STOP ${=stopped_x}; echo "PAUSED codex [$stopped_x]"; stopped_x=${stopped_x:-none}
+   elif [ -n "$stopped_x" ] && { [ ${xw:-0} -lt 90 ] || zsh $M/codex-allowed.sh > /dev/null; }; then [ "$stopped_x" != none ] && kill -CONT ${=stopped_x} 2>/dev/null; echo "RESUMED codex"; stopped_x=""; fi
+-  sleep $(( fastp ? 60 : iv ))
++  sl=$(( fastp ? 60 : iv ))
++  [ -n "$nxr" ] && [ $(( nxr + 5 )) -le $sl ] && { sl=$(( nxr + 5 )); capn=0; }  # usage-watch-reset-fresh: wake at the next reset
++  capz=$capn  # the next poll's ACCOUNTS_CAP_TTL: 0 at or within 10 min after a reset, else accounts.sh's default
++  sleep $sl
+ done
+--- pick-claude-account.sh	2026-11-20 15:31:13.643697498 +0000
++++ pick-claude-account.sh.new-usagew	2026-11-20 16:48:22.399226997 +0000
+@@ -178,10 +178,24 @@
+     if not pts: return None
+     t1 = pts[-1][0]; win = [q for q in pts if t1 - q[0] <= span]
+     return (win[-1][1] - min(v for _, v in win), t1 - win[0][0])
++# 2026-11-20 usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; challenge NOTE 5): PICK_MAIN_PACE may also hold the
++# week-relative form "weekly <A> <S> <F>" (e.g. "weekly 97 4 90"): the line is min(A - S x days to the main weekly reset, F), the reset
++# being field 7 of the accounts cache main line (accounts-cache/main.line; a reset already passed counts from the next one, 7 days on).
++# With 97 4 90 that is 69 at the reset, rising 4 a day, flat 90 in the last 1.75 d, so the flat 90 never carries into a fresh week
++# and nobody rewrites the file at the main reset. No readable reset: d = 7 (the start-of-week value, the lowest line). The dated form
++# is unchanged. Self-contained (inbox-wait.sh execs this def alone with datetime, os and now). Tests: tools-local/test_usage_reset_fresh.py
+ def pace_line():  # the PICK_MAIN_PACE line now (% of the main week), None: no flag file or not "<start UTC> <start %> <end UTC> <end %>"
+     try:
+         px = open("/home/seyran/code/manage-agents/PICK_MAIN_PACE").read().split()
+         if len(px) != 4: return None
++        if px[0] == "weekly":  # usage-watch-reset-fresh (above)
++            import endgame
++            try: rw = open("/home/seyran/code/manage-agents/accounts-cache/main.line").read().split()[6]
++            except (OSError, IndexError): rw = "?"
++            hw = endgame.hours_to(rw, now)
++            dw = 7.0 if hw is None else hw / 24
++            while dw < 0: dw += 7
++            return min(float(px[1]) - float(px[2]) * min(dw, 7.0), float(px[3]))
+         t0p = datetime.datetime.strptime(px[0], "%Y-%m-%dT%H:%MZ").replace(tzinfo=datetime.timezone.utc)
+         t1p = datetime.datetime.strptime(px[2], "%Y-%m-%dT%H:%MZ").replace(tzinfo=datetime.timezone.utc)
+         fr = min(max((now - t0p).total_seconds() / max((t1p - t0p).total_seconds(), 1), 0), 1)
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ tools-local/reset_fresh.py.new-usagew	2026-11-20 16:47:00.641185156 +0000
+@@ -0,0 +1,68 @@
++#!/usr/bin/env python3
++"""usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; orchestrator thresholds ruling 230624Z item 4 and its
++23:09Z note): a reading that names a reset time that has already passed describes the OLD window of that pool. At 23:00:06Z
++11-13 usage-watch paused main's 6 sessions on a cached weekly 97 (accounts.sh reused a >= 88 line for 1800 s past main's
++weekly reset) until a forced probe at 23:09Z read 0. One owner of the "has this reading's reset passed" rule for accounts.sh
++(the cache) and usage-watch.sh (the pause); the reset fields are parsed by endgame.py's parser (one owner of that format).
++
++CLI (accounts.sh fields, e.g. Fri_Nov20_15:00 in America/Los_Angeles; "?" = no such window):
++  reset_fresh.py line <taken epoch s> <5hReset> <weekReset>
++      "pre"  a reset named in the line has passed and the line was taken before it: drop it, probe at once;
++      "post" a reset named in the line has passed but the line was taken after it (the service still reports the old window):
++             the line may be reused for ACCOUNTS_TTL only, never for the >= 88 ACCOUNTS_CAP_TTL;
++      "none" no reset named in the line has passed.
++  reset_fresh.py watch <5hReset> <weekReset>
++      "<old5> <oldW> <next>": oldX = 1 while that pool's named reset passed less than GRACE (600 s) ago (usage-watch ignores that
++      pool's % for pausing: it is a pre-reset reading); next = whole seconds until the nearest named reset still ahead, -1 none.
++Fake clock for tests: ENDGAME_NOW=<epoch s> (as endgame.py). Never fails a caller: any error prints the neutral answer
++("none" / "0 0 -1") and exits 0."""
++import datetime, os, sys
++
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++import endgame  # noqa: E402  (hours_to: the accounts.sh reset field parser; now: the shared fake clock)
++
++GRACE = 600  # s after a reset during which usage-watch does not act on a reading that still names that reset
++
++
++def reset_epoch(r, at):
++    """Epoch s of an accounts.sh reset field, None if unknown. The field has no year: the year of `at` is tried and the
++    result moved by one year when it lands more than 183 days away (a Dec 31 reset read on Jan 1)."""
++    h = endgame.hours_to(r, at)
++    if h is None: return None
++    t = at.timestamp(); e = t + h * 3600
++    if abs(h) > 183 * 24:
++        for y in (at.year - 1, at.year + 1):
++            try: ay = at.replace(year=y)
++            except ValueError: continue  # Feb 29
++            hy = endgame.hours_to(r, ay)
++            if hy is not None and abs(ay.timestamp() + hy * 3600 - t) < abs(e - t): e = ay.timestamp() + hy * 3600
++    return e
++
++
++def line_state(taken, r1, r2, at=None):
++    at = at or endgame.now(); t = at.timestamp(); state = "none"
++    for r in (r1, r2):
++        e = reset_epoch(r, at)
++        if e is None or e > t: continue
++        if taken < e: return "pre"
++        state = "post"
++    return state
++
++
++def watch(r1, r2, at=None):
++    at = at or endgame.now(); t = at.timestamp(); old = []; nxt = None
++    for r in (r1, r2):
++        e = reset_epoch(r, at)
++        old.append(1 if e is not None and t - GRACE < e <= t else 0)
++        if e is not None and e > t: nxt = e - t if nxt is None else min(nxt, e - t)
++    return old[0], old[1], (-1 if nxt is None else int(nxt + 0.999))
++
++
++if __name__ == "__main__":
++    a = sys.argv[1:]
++    try:
++        if a[:1] == ["line"]: print(line_state(float(a[1]), a[2], a[3]))
++        elif a[:1] == ["watch"]: print(*watch(a[1], a[2]))
++        else: sys.exit("usage: reset_fresh.py line <taken epoch s> <5hReset> <weekReset> | watch <5hReset> <weekReset>")
++    except (IndexError, ValueError, OverflowError):
++        print("none" if a[:1] == ["line"] else "0 0 -1")
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ tools-local/test_usage_reset_fresh.py	2026-11-20 17:01:53.349013257 +0000
+@@ -0,0 +1,290 @@
++#!/usr/bin/env python3
++"""usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; thresholds ruling 230624Z item 4 and its 23:09Z note;
++challenge NOTE 5). At 23:00:06Z 11-13 usage-watch paused main's 6 sessions on a weekly 97 read before main's weekly reset
++(accounts.sh reused a >= 88 line for 1800 s) until a forced probe at 23:09Z read 0.
++  Accounts:   a cached line taken before a reset it names that has passed is never reused: a fresh probe runs at once; a line
++              taken after that reset that still names it is not reused for the >= 88 ACCOUNTS_CAP_TTL.
++  UsageWatch: a pool whose named reset passed < 10 min ago is not acted on (no PAUSE; a paused account RESUMES); the loop wakes at
++              the next reset and that poll runs accounts.sh with ACCOUNTS_CAP_TTL=0.
++  Pace:       PICK_MAIN_PACE "weekly A S F" = min(A - S x days to the main weekly reset in accounts-cache/main.line, F).
++  Helper:     tools-local/reset_fresh.py (line / watch).
++usage: python3 -I tools-local/test_usage_reset_fresh.py      (tests the INSTALLED files: they fail before the install)
++  ACCOUNTS_SCRIPT=accounts.sh.new-usagew USAGE_WATCH_SCRIPT=usage-watch.sh.new-usagew PICK_SCRIPT=pick-claude-account.sh.new-usagew
++  RESET_FRESH_SCRIPT=tools-local/reset_fresh.py.new-usagew python3 -I tools-local/test_usage_reset_fresh.py   (the staged copies)
++Sandbox: temp HOME with code/manage-agents (copies of the scripts under test, endgame.py, reset_fresh.py), a stub claude (records
++each probe), a stub accounts.sh for usage-watch (records ACCOUNTS_CAP_TTL), a stub sleep first on PATH (records the sleep and ends
++the loop after N polls). Fake clock: ENDGAME_NOW = the test's T (read by endgame.py, reset_fresh.py and the new accounts.sh), taken
++from the wall clock at the start of each test so the installed accounts.sh (wall clock ages) sees the same ages. No live file read
++or written, no account probe, no model call."""
++import datetime, importlib.machinery, importlib.util, json, os, re, ast, shutil, stat, subprocess, sys, tempfile, time, unittest, zoneinfo
++
++HERE = os.path.dirname(os.path.abspath(__file__))
++sys.path.insert(0, HERE)
++LIVE = "/home/seyran/code/manage-agents"
++ACC = os.environ.get("ACCOUNTS_SCRIPT", os.path.join(LIVE, "accounts.sh"))
++UW = os.environ.get("USAGE_WATCH_SCRIPT", os.path.join(LIVE, "usage-watch.sh"))
++RF = os.environ.get("RESET_FRESH_SCRIPT", os.path.join(HERE, "reset_fresh.py"))
++os.environ.setdefault("PICK_SCRIPT", os.path.join(LIVE, "pick-claude-account.sh"))
++import test_endgame as te  # noqa: E402
++import test_pick_main5h_unknown as pm  # noqa: E402
++
++pm.PICK = os.environ["PICK_SCRIPT"]
++TZ = zoneinfo.ZoneInfo("America/Los_Angeles")
++OTHERS = ("danielsaeedi37", "saeedi.danial")
++DIRNAME = {"main": "claude-panaali2", "danielsaeedi37": "claude-danielsaeedi37", "saeedi.danial": "claude-saeedi-danial"}
++
++
++def fld(epoch):  # accounts.sh reset field of an epoch (minute resolution, America/Los_Angeles)
++    return datetime.datetime.fromtimestamp(epoch, TZ).strftime("%a_%b%d_%H:%M")
++
++
++def floor_min(epoch):  # the field of this epoch names this instant
++    return int(epoch) // 60 * 60
++
++
++class Sandbox(unittest.TestCase):
++    def setUp(self):
++        self.h = tempfile.mkdtemp(prefix="usagew-")
++        self.m = f"{self.h}/code/manage-agents"
++        os.makedirs(f"{self.m}/tools-local"); os.makedirs(f"{self.h}/bin")
++        shutil.copy(te.EG, f"{self.m}/tools-local/endgame.py")
++        if os.path.exists(RF): shutil.copy(RF, f"{self.m}/tools-local/reset_fresh.py")
++        self.T = int(time.time())
++
++    def tearDown(self):
++        shutil.rmtree(self.h, ignore_errors=True)
++
++    def exe(self, path, text):
++        with open(path, "w") as fh: fh.write(text)
++        os.chmod(path, os.stat(path).st_mode | stat.S_IXUSR)
++
++
++class Helper(Sandbox):  # tools-local/reset_fresh.py, loaded from the sandbox copy
++    def mod(self):
++        p = f"{self.m}/tools-local/reset_fresh.py"
++        self.assertTrue(os.path.exists(p), f"no reset_fresh.py at {RF} (not installed)")
++        sys.path.insert(0, f"{self.m}/tools-local")
++        ld = importlib.machinery.SourceFileLoader("reset_fresh_t", p); sp = importlib.util.spec_from_loader("reset_fresh_t", ld)
++        md = importlib.util.module_from_spec(sp); ld.exec_module(md); return md
++
++    def test_line_states(self):
++        md = self.mod(); at = datetime.datetime(2026, 11, 13, 15, 0, 6, tzinfo=TZ); r = "Fri_Nov13_15:00"; t = at.timestamp()
++        self.assertEqual(md.line_state(t - 300, "?", r, at), "pre")      # the incident line: taken 22:55Z, reset 23:00Z passed
++        self.assertEqual(md.line_state(t - 3, "?", r, at), "post")       # taken after the reset, still names it
++        self.assertEqual(md.line_state(t - 300, "?", "Fri_Nov20_15:00", at), "none")
++        self.assertEqual(md.line_state(t - 300, r, "Fri_Nov20_15:00", at), "pre")  # a passed 5-h reset counts the same
++        self.assertEqual(md.line_state(t - 300, "?", "?", at), "none")
++
++    def test_watch_grace_and_next(self):
++        md = self.mod(); r = datetime.datetime(2026, 11, 13, 15, 0, tzinfo=TZ)
++        self.assertEqual(md.watch("?", "Fri_Nov13_15:00", r + datetime.timedelta(seconds=599)), (0, 1, -1))
++        self.assertEqual(md.watch("?", "Fri_Nov13_15:00", r + datetime.timedelta(seconds=600)), (0, 0, -1))
++        self.assertEqual(md.watch("?", "Fri_Nov13_15:00", r), (0, 1, -1))  # at the reset instant
++        self.assertEqual(md.watch("Fri_Nov13_15:00", "Fri_Nov20_15:00", r - datetime.timedelta(seconds=120)), (0, 0, 120))
++
++    def test_year_wrap(self):
++        md = self.mod(); at = datetime.datetime(2027, 1, 1, 0, 30, tzinfo=TZ)
++        self.assertEqual(md.reset_epoch("Thu_Dec31_23:00", at) - at.timestamp(), -5400)
++
++    def test_cli_never_fails(self):
++        p = f"{self.m}/tools-local/reset_fresh.py"
++        self.assertTrue(os.path.exists(p), "no reset_fresh.py")
++        for args, want in ((["line", "x", "y", "z"], "none"), (["watch"], "0 0 -1"), (["watch", "bad", "?"], "0 0 -1")):
++            r = subprocess.run([sys.executable, "-I", p] + args, capture_output=True, text=True, timeout=60)
++            self.assertEqual((r.returncode, r.stdout.strip()), (0, want), args)
++
++
++class Accounts(Sandbox):
++    """accounts.sh with a stub claude; the two 5x accounts have fresh cached lines, only main is in question."""
++    def setUp(self):
++        super().setUp()
++        self.c = f"{self.m}/accounts-cache"; os.makedirs(self.c)
++        self.calls = f"{self.h}/calls"; self.reply = f"{self.h}/reply"
++        self.exe(f"{self.h}/claude", f'#!/bin/sh\necho "$CLAUDE_CONFIG_DIR" >> {self.calls}\ncat {self.reply} 2>/dev/null\nexit 0\n')
++        for a in OTHERS:
++            self.cache(a, f"{a} {self.h}/.agent-accounts/{DIRNAME[a]} 10 40 allowed {fld(self.T + 7200)} {fld(self.T + 3 * 86400)}", self.T - 10)
++        self.probe_reply(0, self.T + 7 * 86400)
++
++    def cache(self, a, line, mtime, kind="line"):
++        p = f"{self.c}/{a}.{kind}"
++        with open(p, "w") as fh: fh.write(line + "\n")
++        os.utime(p, (mtime, mtime))
++
++    def probe_reply(self, week, reset):
++        with open(self.reply, "w") as fh:
++            fh.write(json.dumps({"type": "system", "rate_limit_info": {"status": "allowed", "unifiedWindows": {
++                "seven_day": {"utilization": week / 100, "resetsAt": reset}}}}) + "\n")
++
++    def main_line(self, week, r2):
++        return f"main {self.h}/.agent-accounts/claude-panaali2 -2 {week} allowed ? {r2}"
++
++    def run_acc(self):
++        env = {k: v for k, v in os.environ.items() if not k.startswith(("ACCOUNTS_", "ENDGAME_"))}
++        env.update(HOME=self.h, ACCOUNTS_DIR=self.m, CLAUDE_BIN=f"{self.h}/claude", ENDGAME_NOW=str(self.T))
++        r = subprocess.run(["zsh", ACC], env=env, capture_output=True, text=True, timeout=300)
++        main = [x for x in r.stdout.splitlines() if x.startswith("main ")]
++        probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
++        return main, [p for p in probed if p.endswith("claude-panaali2")], r
++
++    # The incident: a weekly 97 cached 5 min before main's weekly reset; the reset passed (< 1 min ago). Live: reused (1800 s).
++    def test_pre_reset_cap_line_not_reused_probe_at_once(self):
++        R = floor_min(self.T); self.cache("main", self.main_line(97, fld(R)), R - 300)
++        main, probed, r = self.run_acc()
++        self.assertEqual(len(probed), 1, f"no fresh probe of main after its reset: {main} {r.stderr[-400:]}")
++        self.assertEqual(len(main), 1); self.assertEqual(main[0].split()[3], "0", main)
++        self.assertEqual(open(f"{self.c}/main.line").read().split()[3], "0")
++
++    def test_pre_reset_line_inside_ttl_not_reused(self):  # taken 30 s before the reset, read < 1 min after: age < ACCOUNTS_TTL
++        R = floor_min(self.T); self.cache("main", self.main_line(60, fld(R)), R - 30)
++        main, probed, _ = self.run_acc()
++        self.assertEqual(len(probed), 1, main); self.assertEqual(main[0].split()[3], "0")
++
++    def test_lagging_post_reset_line_no_cap_reuse(self):  # taken after the reset but still naming it (service lag), 300 s old
++        R = floor_min(self.T - 400); self.cache("main", self.main_line(97, fld(R)), self.T - 300)
++        main, probed, _ = self.run_acc()
++        self.assertEqual(len(probed), 1, main)
++
++    def test_failed_probe_gives_unknown_not_the_old_97(self):
++        R = floor_min(self.T); self.cache("main", self.main_line(97, fld(R)), R - 300)
++        os.remove(self.reply)  # the probe prints no rate_limit_info: "-1 -1 unknown"
++        main, probed, _ = self.run_acc()
++        self.assertEqual(len(probed), 1)
++        self.assertEqual(main[0].split()[2:5], ["-1", "-1", "unknown"], main)
++
++    def test_control_cap_reuse_before_the_reset_unchanged(self):  # >= 88, reset 3 d ahead, 300 s old: reused, no probe
++        self.cache("main", self.main_line(97, fld(self.T + 3 * 86400)), self.T - 300)
++        main, probed, _ = self.run_acc()
++        self.assertEqual(probed, []); self.assertEqual(main[0].split()[3], "97")
++
++    def test_control_ttl_reuse_unchanged(self):
++        self.cache("main", self.main_line(50, fld(self.T + 3 * 86400)), self.T - 100)
++        main, probed, _ = self.run_acc()
++        self.assertEqual(probed, []); self.assertEqual(main[0].split()[3], "50")
++
++
++class UsageWatch(Sandbox):
++    """usage-watch.sh (sandbox copy) on a stub accounts.sh that serves acc.<n> to call n and records ACCOUNTS_CAP_TTL; a stub sleep
++    records each sleep and ends the loop after self.polls sleeps. No real worker matches the sandbox config dirs."""
++    def setUp(self):
++        super().setUp()
++        self.d = f"{self.h}/.agent-accounts/claude-panaali2"
++        self.exe(f"{self.m}/accounts.sh", f'n=$(( $(cat {self.m}/ncalls 2>/dev/null || echo 0) + 1 )); echo $n > {self.m}/ncalls\n'
++                 f'echo "${{ACCOUNTS_CAP_TTL-unset}}" >> {self.m}/capttl\n'
++                 f'[ -f {self.m}/acc.$n ] && cat {self.m}/acc.$n || cat {self.m}/acc.last\n')
++        self.exe(f"{self.h}/bin/sleep", f'#!/bin/sh\necho "$1" >> {self.m}/sleeps\n'
++                 f'[ "$(wc -l < {self.m}/sleeps)" -ge "$(cat {self.m}/polls)" ] && kill -TERM $PPID\nexit 0\n')
++        src = open(UW).read().replace(LIVE, self.m)
++        self.uw = f"{self.h}/usage-watch.sh"
++        with open(self.uw, "w") as fh: fh.write(src)
++
++    def serve(self, *polls):  # polls[i]: the main week and weekly reset epoch served to accounts.sh call i+1
++        for i, (week, r2) in enumerate(polls, 1):
++            with open(f"{self.m}/acc.{i}", "w") as fh: fh.write(f"main {self.d} -2 {week} allowed ? {fld(r2)}\n")
++        shutil.copy(f"{self.m}/acc.{len(polls)}", f"{self.m}/acc.last")
++        with open(f"{self.m}/polls", "w") as fh: fh.write(str(len(polls)))
++
++    def run_uw(self):
++        env = {k: v for k, v in os.environ.items() if not k.startswith(("ACCOUNTS_", "ENDGAME_", "CODEX_"))}
++        env.update(HOME=self.h, ENDGAME_NOW=str(self.T), PATH=f"{self.h}/bin:" + os.environ.get("PATH", "/usr/bin:/bin"))
++        r = subprocess.run(["zsh", self.uw, "300"], env=env, capture_output=True, text=True, timeout=600)
++        rd = lambda n: open(f"{self.m}/{n}").read().split("\n")[:-1] if os.path.exists(f"{self.m}/{n}") else []
++        capttl = ["" if x == "unset" else x for x in rd("capttl")]  # unset and empty both mean accounts.sh's default (1800)
++        return r.stdout, [int(x) for x in rd("sleeps")], capttl, rd("usage-watch.log")
++
++    def test_old_window_97_after_reset_not_paused(self):  # the incident replay: weekly reset passed < 1 min ago, reading 97
++        R = floor_min(self.T); self.serve((97, R), (0, R + 7 * 86400))
++        out, sleeps, capttl, log = self.run_uw()
++        self.assertNotIn("PAUSED main", out)
++        self.assertIn("RESET-FRESH main", out)
++        self.assertEqual(sleeps[0], 60, sleeps)        # the next poll comes after 60 s
++        self.assertEqual(capttl[1], "0", capttl)       # and runs accounts.sh with ACCOUNTS_CAP_TTL=0
++        self.assertIn("main 5h=-2 week=97 allowed", log[0])  # usage-watch.log keeps the raw reading
++
++    def test_paused_before_reset_resumes_on_old_window_reading(self):  # paused on 96; then a lagging 97 that names a passed reset
++        R = floor_min(self.T); self.serve((96, self.T + 3 * 86400), (97, R))
++        out, _, _, _ = self.run_uw()
++        self.assertIn("PAUSED main", out)
++        self.assertIn("RESUMED main", out.split("PAUSED main", 1)[1])
++
++    def test_wakes_at_the_next_reset_with_cap_ttl_0(self):
++        # reset 2-3 min ahead; 50 is outside endgame.py's 60-s fast band, so the poll would come after 300 s (live: past the reset)
++        R = floor_min(self.T) + 180; self.serve((50, R), (0, R + 7 * 86400))
++        out, sleeps, capttl, _ = self.run_uw()
++        self.assertEqual(sleeps[0], R - self.T + 5, sleeps)
++        self.assertEqual(capttl, ["", "0"])
++
++    def test_control_after_grace_old_reading_acts(self):  # the reset passed 11 min ago: the reading is acted on as before
++        R = floor_min(self.T - 660); self.serve((97, R))
++        out, sleeps, capttl, _ = self.run_uw()
++        self.assertIn("PAUSED main", out); self.assertNotIn("RESET-FRESH", out)
++        self.assertEqual((sleeps, capttl), ([300], [""]))
++
++    def test_control_no_reset_near(self):
++        self.serve((50, self.T + 3 * 86400))
++        out, sleeps, capttl, _ = self.run_uw()
++        self.assertEqual((sleeps, capttl), ([300], [""]))
++        self.assertNotIn("PAUSED", out)
++
++
++def flat_log(week):  # usage-watch.log rows: main flat at week (no rise), so the stand-in week-rise guard passes
++    return "".join(f"{t} main 5h=-2 week={week} allowed\n" for t in ("14:05Z", "15:10Z", "16:20Z", "17:30Z", "18:20Z", "18:55Z"))
++
++
++MAIN = "/x/claude-main"
++
++
++class WeeklyPace(pm.PickCase):
++    """PICK_MAIN_PACE "weekly 97 4 90"; the main weekly reset comes from accounts-cache/main.line (fake clock te.NOW)."""
++    def setUp(self):
++        super().setUp()
++        self.cache = f"{self.h}/main.line"
++        src = open(self.p).read().replace(LIVE + "/accounts-cache/main.line", self.cache)
++        with open(self.p, "w") as fh: fh.write(src)
++        with open(f"{self.h}/flag-PICK_MAIN_PACE", "w") as fh: fh.write("weekly 97 4 90\n")
++
++    def reset_in(self, hours):
++        with open(self.cache, "w") as fh: fh.write(f"main /x/claude-main -2 50 allowed ? {te.field(hours)}\n")
++
++    def at(self, week, hours):
++        return self.pick([f"main /x/claude-main -2 {week} allowed ? " + te.field(hours)], log=flat_log(week))
++
++    def test_six_days_out_line_73(self):  # 97 - 4 x 6 = 73
++        self.reset_in(144)
++        got, err = self.at(74, 144); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 73.0% now", err)
++        self.assertEqual(self.at(72, 144)[0], MAIN)
++
++    def test_two_days_out_line_89_then_flat_90(self):
++        self.reset_in(48)
++        got, err = self.at(89, 48); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 89.0% now", err)
++        self.reset_in(24)  # 97 - 4 = 93 > 90: flat 90
++        self.assertEqual(self.at(89, 24)[0], MAIN)
++
++    def test_fresh_week_after_reset_low_line(self):  # cache still names the reset that passed 1 h ago: the next one is 7 d on
++        self.reset_in(-1)
++        got, err = self.at(70, -1); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 69.2% now", err)
++
++    def test_no_cache_start_of_week_value(self):
++        got, err = self.at(70, 100); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 69.0% now", err)
++        self.assertEqual(self.at(68, 100)[0], MAIN)
++
++    def test_dated_form_unchanged(self):  # 66 at 09:00Z 10-28 to 86 at 05:00Z 10-29: 76.0 at te.NOW
++        with open(f"{self.h}/flag-PICK_MAIN_PACE", "w") as fh: fh.write("2026-10-28T09:00Z 66 2026-10-29T05:00Z 86\n")
++        self.reset_in(144)
++        got, err = self.at(77, 144); self.assertIsNone(got, err); self.assertIn("PICK_MAIN_PACE line 76.0% now", err)
++
++    def test_inbox_wait_reader_gets_the_weekly_line(self):  # inbox-wait.sh execs `def pace_line` alone (ast: exactly one def)
++        self.reset_in(144)
++        pk = re.search(r"^def pace_line\(\):.*?\n(?=\S)", open(self.p).read(), re.S | re.M)
++        tree = ast.parse(pk.group(0))
++        self.assertEqual([type(n).__name__ + ":" + getattr(n, "name", "") for n in tree.body], ["FunctionDef:pace_line"])
++        sys.path.insert(0, f"{self.m}/tools-local")
++        ns = {"datetime": datetime, "os": os, "now": te.NOW}
++        exec(compile(tree, "pace_line", "exec"), ns)
++        self.assertEqual(ns["pace_line"](), 73.0)
++        # the flat F in the last days: 97 - 4 x 1 = 93 is capped at 90 (in a pick the 90 worker ceiling hides this cap)
++        self.reset_in(24); self.assertEqual(ns["pace_line"](), 90.0)
++        self.reset_in(42); self.assertEqual(ns["pace_line"](), 90.0)  # 97 - 4 x 1.75 = 90: the flat part starts here
++
++
++if __name__ == "__main__":
++    unittest.main()

@@ -1,0 +1,32 @@
+{
+ "format": "seeded-bugs@1",
+ "item": "defs-repair-openai-preparedness-1119",
+ "how": "each mutant applied to the file (environment.d1.json rewritten by pf_vocabulary.py where marked), the tests run with uv run pytest -q -p no:randomly, then git checkout restores the tree (output saved in evidence/seeded-bugs.log)",
+ "mutants": [
+  {"id": "M1-shown", "language": "Python", "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "behaviour": "the shown legend carries the row's quote word for word (row 1, footnote 1 on high)",
+   "change": "'death or grave injury' -> 'death or injury', environment.d1.json regenerated",
+   "test": "tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[1]",
+   "result": "failed (and test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order)"},
+  {"id": "M2-counted", "language": "Python", "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "behaviour": "the counted legend (the counter's legend_raw, 41 lines) holds the whole quote, not only the shown one (row 40)",
+   "change": "five empty string literals after the old existing_at_publication text: the shown description is unchanged, the entry passes 41 lines",
+   "test": "tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[40]",
+   "result": "failed"},
+  {"id": "M3-old-legend", "language": "Python", "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "behaviour": "the old legend is kept whole and the rows are only appended (R3: nothing removed)",
+   "change": "'{0} is a High level' -> '{0} is a high level', environment.d1.json regenerated",
+   "test": "tests/test_defs_repair_openai_preparedness_1119.py::test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order",
+   "result": "failed"},
+  {"id": "M4-not-regenerated", "language": "Python", "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "behaviour": "the committed environment.d1.json is the one pf_vocabulary.py builds",
+   "change": "M1's edit without rewriting environment.d1.json",
+   "test": "tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[1]",
+   "result": "failed (rows 1, 2, 4, 5, 6: every row on high)"},
+  {"id": "M5-third-value", "language": "Python", "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "behaviour": "the fidmech scan's new SOURCE_QUOTES allowance passes only the quoted C.3 phrase, not another 'unknown'",
+   "change": "'{0} is a High level' -> '{0} is a High level; result unknown'",
+   "test": "tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule",
+   "result": "failed"}
+ ]
+}

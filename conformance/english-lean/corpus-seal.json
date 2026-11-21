@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "8b7b58b8150c67689f8e385c8d292fce6d1b614c20f32a55ce12449b494005aa",
+ "seal_id": "cc72e1bdfc0f2c05233a7e411716b57ad3e33528800de760c52b36c503664e2f",
  "sources": [
   {
    "kind": "corpus source",
@@ -756,7 +756,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "528d1489effc1b58d748a2c3b6044fa398d6aa2c9ff141ea322655404833c5ae"
+   "sha256": "b4bc7ce5296dcfba236e4510fade70111bc177dcaae1d6d0ac2ee675588bb927"
   },
   {
    "kind": "corpus source",
@@ -796,7 +796,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "e5a580e517b93fa08790c0bf81b1cc05569f179a9b8ec724cdc09b6286c61bf6"
+   "sha256": "4ffe9dde49b63affd3dd2dfc8c2cf51c83120689a7a1ff1875b141b1dc277ca4"
   },
   {
    "kind": "entry-point caller",

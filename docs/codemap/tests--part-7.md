@@ -1,3 +1,8 @@
+- `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.
+- `tests/test_readings_s1_lean.py` — Lean readings route (docs/spec/composition-s1.md 8.4) on inputs in the shapes of the item-1 fixtures (9.2).
+- `tests/test_readings_s1_pilot_rebuild.py` — The pilot's shared reading-set rebuild command after an environment edit.
+- `tests/test_readings_s1_python.py` — Python entry points opened by the S1 wrapper profile.
+- `tests/test_readings_s2_answer.py` — S2's row (`readings-elaborate`) is relayed as Lean's answer bound to the request it asked about (R8; AR-17).
 - `tests/test_readings_s2_document.py` — S2a through the document path (docs/spec/composition-s2.md 1.1, 4, 6, 9): the route, the refusals before any verdict, the verdicts across readings and the repo…
 - `tests/test_readings_s2_lean.py` — Lean readings route, S2a case kinds (docs/spec/composition-s2.md 3, 8.5) on the fixtures of 9.2.
 - `tests/test_readings_s2_python.py` — S2a's choice algebra and closed English, independent of proof search.
@@ -75,7 +80,3 @@
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
-- `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
-- `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
-- `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
-- `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
