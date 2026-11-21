@@ -269,7 +269,18 @@ No row. What changed is translation content: one rule line, one predicate with i
 - `uv run python tools/gate_collection.py --check --prebuilt`: "17 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers". No test was removed.
 - No test in main-known-red.txt was touched. The full gate is the chain's, on the final HEAD.
 
-SIZE: 22 product (pf_vocabulary.py 8, build_document.py 7, pf_translation.py 4, rules.d1.ve 2, accounting.d1.txt 1), 161 tests (new file 155, test_pf_fidelity_fix.py 6), README 8 plus this REPORT (other hand-written).
+- **Fix round (review F1), on commit 560b05ea52:**
+  - `mac-pytest.sh --select -- --base cebf4fd24f --run` ran on GitHub Actions in 3 shards (run `srccov-rl-openai-preparedness-1121-560b05ea-t235537`): 63 of 678 units, 25 + 20 + 18 passed, exit 0 (/tmp/f1-select.log).
+    - It selected `test_srccov_rl_openai_preparedness_1121.py`, `test_safetyfw_accounting.py`, `test_pf_fidelity_fix.py` and `test_srccov_openai_preparedness_1119.py`.
+    - The selector deferred `tests/test_gate_quarantine.py` (weak reason, over 120 s) to the chain gate.
+  - The condition file alone: 26 passed; on d6b73703's two PF files, 6 failed (S5).
+  - `lake build`: "Build completed successfully (1478 jobs)". `python3 lean/audit.py`: PASS (898 files), with no Lean change.
+  - `gate_collection.py --check --prebuilt`: "26 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
+  - Not run: the full gate (the chain's) and `run.py --check`, since `run.py` reads neither headers nor sidecars.
+
+SIZE (fix round, `git diff --stat d6b73703`): rules.d1.ve 1 line changed, accounting.d1.txt 1, build_document.py comment +3 -1, README +4 -2, test file +174 -2, plus this REPORT and evidence.md.
+
+SIZE (build): 22 product (pf_vocabulary.py 8, build_document.py 7, pf_translation.py 4, rules.d1.ve 2, accounting.d1.txt 1), 161 tests (new file 155, test_pf_fidelity_fix.py 6), README 8 plus this REPORT (other hand-written).
 
 ## 7. Review fix (F1)
 
