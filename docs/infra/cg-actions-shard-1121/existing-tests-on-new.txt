@@ -1,0 +1,8 @@
+test_chain_gate_vm_cancel (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): PASS: 0 failure(s)
+test_chain_gate_empty_ve_diff (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): all passed (0 failures)
+test_gate_reuse (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): all passed (0 failures)
+test_mac_last_resort (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): all passed (0 failures)
+test_vm1_gate_weight (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): PASSED: 0 failure(s)
+test_chain_gate_vm_width (CG=chain-gate.sh.new-cgshard, re-ported onto live e2964a76): PASS
+test_defer_heavy (CHAIN_GATE_SCRIPT=same): OK
+test-harness/l128/test-collcheck.zsh same: l128 collcheck: 11/11
