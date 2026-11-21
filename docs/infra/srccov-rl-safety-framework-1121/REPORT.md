@@ -184,7 +184,10 @@ Each one is regenerated, or is a pin or saved-evidence citation that the change 
 
 ## 7. Final selected run
 
-(filled in below after the run on the final HEAD)
+`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 638181a628 ran on GitHub Actions, run
+srccov-rl-safety-framework-1121-638181a6-t240524, with exit 0 in 1156 s. The fast stage passed after 141 s. The
+shards passed 19 + 18 + 13 + 13 + 13 + 12 units ("SHARD n/6: exit 0"). Only this report section changed after that
+run. The chain runs the full gate on the final HEAD.
 
 ## Self-review against BUILDER-CHECKLIST
 
