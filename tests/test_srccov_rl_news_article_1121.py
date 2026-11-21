@@ -251,9 +251,13 @@ ACTIVE_EXCEPTIONS = sorted(phrase for pattern in _ACTIVE for phrase in expand(pa
 
 
 def test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape():
-    """F3: a wording the base shape refuses still passes the public path when it is an idiom (this document's own
-    overlay keeps `{0} was appointed by {1}`, `{0} voted for {1}`, ...) or an `_ACTIVE` phrase (`{0} reports to
-    {1}`, ...): no error and no lint issue."""
+    """F3: in this environment, a wording the base shape refuses can pass the public path as an idiom (this
+    document's own overlay keeps `{0} was appointed by {1}`, `{0} voted for {1}`, ...) or an `_ACTIVE` phrase
+    (`{0} reports to {1}`, ...) under a fresh predicate: no error and no lint issue. Neither exception is
+    unconditional (F4): an idiom must share a content word with the predicate's name or description (else
+    `IDIOM_UNRELATED`), may end in "by" only under a predicate name ending in `_by`, and, like an `_ACTIVE`
+    phrase, must not name another predicate or constant; see
+    test_the_idiom_and_active_exceptions_keep_their_conditions."""
     assert {"{0} was appointed by {1}", "{0} voted for {1}", "{0} raised its policy rate to {1}"} <= {
         t for _, t in IDIOM_EXCEPTIONS}
     assert {"reports to", "communicates with", "has responsibility for"} <= set(ACTIVE_EXCEPTIONS)
@@ -269,6 +273,68 @@ def test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape():
         deferred = EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
         assert not deferred.issues, template
 
+
+
+def renamed(data, old, new):
+    """`data` (an environment or its overlay) with the predicate `old` renamed to `new` everywhere it is named."""
+    return json.loads(json.dumps(data).replace(json.dumps(old), json.dumps(new)))
+
+
+def appointed_without_by():
+    """The idiom `{0} was appointed by {1}` under `appointed`: a final "by" needs a name ending in `_by`."""
+    return renamed(json.loads(ENV_RAW), "appointed_by", "appointed"), renamed(OVERLAY, "appointed_by", "appointed"), \
+        "appointed", "BINARY_CONVERSE"
+
+
+def voted_for_unanchored():
+    """The idiom `{0} voted for {1}` under a predicate whose name and description do not mention voting."""
+    data = renamed(json.loads(ENV_RAW), "voted_for", "joined")
+    data["vocabulary"]["predicates"]["joined"]["description"] = "Recorded as the person having joined this decision."
+    return data, renamed(OVERLAY, "voted_for", "joined"), "joined", "IDIOM_UNRELATED"
+
+
+def reports_to_beside_reports():
+    """The `_ACTIVE` phrase `{0} reports to {1}` when another predicate is named `reports`."""
+    data = json.loads(ENV_RAW)
+    data["vocabulary"]["predicates"]["signals_new"] = {
+        "arguments": ["institution", "text"], "description": "Recorded as the subject reports to this."}
+    data["vocabulary"]["predicates"]["reports"] = {
+        "arguments": ["institution"], "description": "Recorded as the subject reporting."}
+    overlay = json.loads(json.dumps(OVERLAY))
+    overlay["predicates"]["signals_new"] = {"verbalisation": "{0} reports to {1}", "suggested": False}
+    overlay["predicates"]["reports"] = {"verbalisation": "{0} is reporting", "suggested": False}
+    return data, overlay, "signals_new", "SYMBOL_COLLISION"
+
+
+CONDITIONS = {"idiom-final-by-needs-_by": appointed_without_by, "idiom-IDIOM_UNRELATED": voted_for_unanchored,
+              "active-symbol-collision": reports_to_beside_reports}
+
+
+@pytest.mark.parametrize("case", sorted(CONDITIONS))
+def test_the_idiom_and_active_exceptions_keep_their_conditions(case):
+    """F4: the idiom list and `_ACTIVE` are not unconditional passes. Each case breaks one condition of the
+    public path (ve/english.py:286-350) on a wording this document or test_the_idiom_list_... shows passing:
+    the public path raises and the deferred lint names the refusal."""
+    data, overlay, name, code = CONDITIONS[case]()
+    env = Environment.from_json(json.dumps(data).encode())
+    overlay["environment_id"] = env.environment_id
+    with pytest.raises(VEError, match=f"fails the template linter: predicates/{name}$"):
+        EnglishVocabulary(env, vocabulary=overlay)
+    words = EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
+    assert code in {i.code for i in words.issues if i.path.startswith(f"/vocabulary/predicates/{name}/")}
+
+
+def test_the_exception_claims_name_their_conditions():
+    """F4: probe F4 as a test. Neither this file nor the REPORT says an idiom or `_ACTIVE` wording passes
+    unconditionally, and both name the conditions (`IDIOM_UNRELATED`, the `_by` name for a final "by")."""
+    import ast
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    docs = " ".join(" ".join((ast.get_docstring(f) or "").split()) for f in tree.body if isinstance(f, ast.FunctionDef))
+    report = " ".join(REPORT.read_text(encoding="utf-8").split())
+    for text in (docs, report):
+        assert "passes " + "anyway" not in text and "still passes the public path when it is an " + "idiom" not in text
+        assert "IDIOM_UNRELATED" in text and "`_by`" in text and "another predicate or constant" in text
+    assert "test_the_idiom_and_active_exceptions_keep_their_conditions" in report
 
 def test_the_refusal_claims_name_the_idiom_and_active_exceptions():
     """F3: probe F3 as a test. Wherever this file or the REPORT says the public path raises on the base-shape
