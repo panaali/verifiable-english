@@ -1,0 +1,7 @@
+job=armsh-cand-srccov-rl-safety-framework-1121-1f785cd6-t244664-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-21T07:06:39Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 07:06:39 up 1 min,  0 user,  load average: 1.55, 0.50, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 17.0 s
+p1-tokenizers: 443909a61d42 fetched
