@@ -8,7 +8,7 @@ DRI signature needed: none. DELTA.md has no row and reserves no signature. Trust
   Each rule's predicate has a legend that quotes the source word for word. The spans.json records route each unit to
   its rule, and the units move from UNFORMALISED to CHECKED.
 - **Answers:** no keyed answer or item verdict moves (section 3).
-- **Merges at:** the branch is rebased onto VE main `e331b45943`. The merge commit is the merge train's, made after this
+- **Merges at:** the branch is rebased onto VE main `7bb317174b`. The merge commit is the merge train's, made after this
   report. Later FSF reads re-pin to it (FREEZE note, section 3).
 - **Open items:** none. No FOLLOW-UP.
 
@@ -99,7 +99,7 @@ I computed statuses only with the document's own entry points (`run.py`, `build_
   - `s134-deployment` goes UNFORMALISED → CHECKED, justified by "Deployment mitigations : we will use a combination
     of threat modeling, empirical testing, and other sources of information to assess the effectiveness and
     limitations of our deployment mitigations."
-- **FREEZE:** the item merges after VE main `e331b45943` (rebase base). The answers it touches are the two span
+- **FREEZE:** the item merges after VE main `7bb317174b` (rebase base). The answers it touches are the two span
   records above and results.json's N3 witnesses and two conflict rows. A read pinned before the merge commit does not
   see rules f7-eval and f7-eval-dm. The Monday 2026-11-23 freeze takes them only if the merge lands before the commit
   the orchestrator names.
@@ -154,6 +154,10 @@ changed lines outside generated files > 150". `uv run python tools/trust_mutants
   same records as before. The en-2c REPORT's table and a rerun paragraph follow the run (`check_report` reads them).
   The shadow file's five saved-evidence tests: "5 passed".
 - Final selected run: section 7.
+- Commits named by saved evidence are pre-rebase. `tests/data/norm-blocks/fsf.jsonl` names 2d09151f21, which is
+  b7502d1486 on the branch. The W1 delta was run at 53dca160b2, which is 76d67d09fd on the branch. For both pairs,
+  `git diff --stat <old> <new> -- usecases/safety-framework tests/data/norm-blocks` is empty, so the files the
+  evidence read are identical.
 
 SIZE: 17 product (use-case translation: vocabulary.py 11, rules.d1.ve 4, build_document.py 2), 139 tests (131 new
 file, 8 edited pins), 0 other hand-written lines (the rest is regenerated or captured data, plus this report and
@@ -193,7 +197,7 @@ Each one is regenerated, or is a pin or saved-evidence citation that the change 
    `test_each_pinned_block_through_the_mode` passed on the 47 FSF blocks: Lean's node equals Python's for f7-eval and
    f7-eval-dm.
 5. R8 binding: N.A. No relayed field was added.
-6. Gate evidence matches the final HEAD: PASS. The branch is rebased onto main e331b45943 and the shared files are
+6. Gate evidence matches the final HEAD: PASS. The branch is rebased onto main 7bb317174b and the shared files are
    regenerated after it (corpus seal `--check` exits 0). The chain runs the full gate on the final HEAD.
 7. No unsigned item: PASS. DELTA.md has no row; trust +0 (`trust_mutants.py --plan`: 0 definitions).
 8. Every user-visible change in DELTA: PASS. The results.json structural diff (section 3) shows no verdict, diagnostic
