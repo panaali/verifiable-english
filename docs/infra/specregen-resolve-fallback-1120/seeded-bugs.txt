@@ -1,0 +1,12 @@
+# seeded bugs in merge-train.sh.new-specregen (scratch copy /tmp/mt-seed.sh; staged file sha256 ba6957a800af14d0 unchanged)
+M1 no allgen gate: any conflict goes to --resolve: failing tests ['test_b_source_conflict_unchanged_skip'] -> CAUGHT (expected test_b*)
+M2 no parents/unfinished check after a --resolve exit 0 (its why is never set): failing tests ['test_d_resolve_exit0_unfinished_merge_refused'] -> CAUGHT (expected test_d*)
+M3 spec regen calls regen_merge without its caller tag: failing tests ['test_a_generated_only_conflict_resolved', 'test_c_resolve_declines_skip_no_commit', 'test_d_resolve_exit0_unfinished_merge_refused', 'test_i_resolve_timeout_skip', 'test_j_handshake_retry_in_spec_regen'] -> CAUGHT (expected test_c*)
+M4 regen_merge tags the main sync's decline line too: failing tests ['test_f_main_sync_regen_merge_line_unchanged'] -> CAUGHT (expected test_f*)
+M5 spec regen keeps the old skip on a generated-only conflict: failing tests ['test_a_generated_only_conflict_resolved', 'test_h_untracked_leftovers_removed_own_kept', 'test_j_handshake_retry_in_spec_regen'] -> CAUGHT (expected test_a*)
+M6 F1: the spec regen's --resolve runs without a timeout: failing tests ['test_a_generated_only_conflict_resolved', 'test_i_resolve_timeout_skip'] -> CAUGHT (expected test_i*)
+M7 F2: untracked leftovers of the resolve are not removed: failing tests ['test_h_untracked_leftovers_removed_own_kept'] -> CAUGHT (expected test_h*)
+M8 F3: the spec regen's Lean pre-build still runs in an iso.sh scope: failing tests ['test_a_generated_only_conflict_resolved', 'test_j_handshake_retry_in_spec_regen'] -> CAUGHT (expected test_a*)
+M9 the spec regen still runs the allowances resolve (amerge): failing tests ['test_a_generated_only_conflict_resolved'] -> CAUGHT (expected test_a*)
+M10 F4: the success line is not tagged (spec regen): failing tests ['test_a_generated_only_conflict_resolved', 'test_d_resolve_exit0_unfinished_merge_refused'] -> CAUGHT (expected test_a*)
+restored: the staged file was never edited; sha256 ba6957a800af14d0

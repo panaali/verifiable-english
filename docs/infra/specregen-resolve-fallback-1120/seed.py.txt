@@ -1,0 +1,25 @@
+import subprocess, sys, os, re, hashlib
+M = "/home/seyran/code/manage-agents"; src = M + "/merge-train.sh.new-specregen"; base = open(src).read()
+muts = [
+ ("M1 no allgen gate: any conflict goes to --resolve", 'elif ! allgen $wt; then git -C $wt merge --abort', 'elif false; then git -C $wt merge --abort', "test_b"),
+ ("M2 no parents/unfinished check after a --resolve exit 0 (its why is never set)", 'then why="the resolve of the merge of ${c[1,8]} did not leave branch ${h[1,8]} + candidate ${c[1,8]}"', 'then :', "test_d"),
+ ("M3 spec regen calls regen_merge without its caller tag", 'regen_merge $wt "spec regen"; rr=$?', 'regen_merge $wt; rr=$?', "test_c"),
+ ("M4 regen_merge tags the main sync's decline line too", 'generated-file resolve${sx:+ ($sx)} declined', 'generated-file resolve ($sx) declined', "test_f"),
+ ("M5 spec regen keeps the old skip on a generated-only conflict", '; echo "spec-regen resolve for $label:', '; why="x"; echo "spec-regen resolve for $label:', "test_a"),
+ ("M6 F1: the spec regen's --resolve runs without a timeout", 'tm=(timeout ${CAND_REGEN_LEAN_TIMEOUT:-2700}); }', 'tm=(); }', "test_i"),
+ ("M7 F2: untracked leftovers of the resolve are not removed", '|| rm -f -- $wt/$f; done\n    if [ $rr != 0 ]', '|| :; done\n    if [ $rr != 0 ]', "test_h"),
+ ("M8 F3: the spec regen's Lean pre-build still runs in an iso.sh scope", '[ -n "$sx" ] && { iso=(); tm=', '[ -n "$sx" ] && { tm=', "test_a"),
+ ("M9 the spec regen still runs the allowances resolve (amerge)", '  [ -z "$sx" ] && amerge $w && return 0\n  [ -f', '  amerge $w && return 0\n  [ -f', "test_a"),
+ ("M10 F4: the success line is not tagged (spec regen)", 'echo "regenerated generated-only conflicts${sx:+ ($sx)} in ${w:t} without an agent $(date', 'echo "regenerated generated-only conflicts in ${w:t} without an agent $(date', "test_a"),
+]
+print("# seeded bugs in merge-train.sh.new-specregen (scratch copy /tmp/mt-seed.sh; staged file sha256 %s unchanged)" % hashlib.sha256(base.encode()).hexdigest()[:16])
+for name, a, b, want in muts:
+    assert base.count(a) == 1, name
+    open("/tmp/mt-seed.sh", "w").write(base.replace(a, b))
+    r = subprocess.run([sys.executable, "-I", M + "/tools-local/test_merge_train_specregen.py"], capture_output=True, text=True,
+                       env=dict(os.environ, MT_SPECREGEN_SRC="/tmp/mt-seed.sh"), timeout=900)
+    failed = sorted(set(re.findall(r"^(?:FAIL|ERROR): (test_\w+)", r.stderr, re.M)))
+    ok = any(f.startswith(want) for f in failed)
+    print(f"{name}: failing tests {failed} -> {'CAUGHT' if ok else 'NOT CAUGHT'} (expected {want}*)")
+os.remove("/tmp/mt-seed.sh")
+print("restored: the staged file was never edited; sha256", hashlib.sha256(open(src).read().encode()).hexdigest()[:16])

@@ -1,0 +1,30 @@
+zsh -n OK
+ba6957a800af14d05337f9dd65a71f87057ba405ce38d937d4123bb255c6dfdd  merge-train.sh
+script under test: /home/seyran/code/manage-agents/merge-train.sh
+test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved) ... ok
+test_b_source_conflict_unchanged_skip (__main__.SpecRegen.test_b_source_conflict_unchanged_skip) ... ok
+test_c_resolve_declines_skip_no_commit (__main__.SpecRegen.test_c_resolve_declines_skip_no_commit) ... ok
+test_d_resolve_exit0_unfinished_merge_refused (__main__.SpecRegen.test_d_resolve_exit0_unfinished_merge_refused) ... ok
+test_e_clean_merge_unchanged (__main__.SpecRegen.test_e_clean_merge_unchanged) ... ok
+test_f_main_sync_regen_merge_line_unchanged (__main__.SpecRegen.test_f_main_sync_regen_merge_line_unchanged)
+regen_merge with one argument (syncbranch, the main sync): the decline line is exactly as before. ... ok
+test_g_main_sync_regen_merge_success_unchanged (__main__.SpecRegen.test_g_main_sync_regen_merge_success_unchanged)
+regen_merge with one argument, resolve succeeds: the same lines, iso.sh scope and no timeout as before. ... ok
+test_h_untracked_leftovers_removed_own_kept (__main__.SpecRegen.test_h_untracked_leftovers_removed_own_kept)
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... ok
+test_i_resolve_timeout_skip (__main__.SpecRegen.test_i_resolve_timeout_skip)
+F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit. ... ok
+test_j_handshake_retry_in_spec_regen (__main__.SpecRegen.test_j_handshake_retry_in_spec_regen)
+regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 5.541s
+
+OK
+exit=0
+..................
+----------------------------------------------------------------------
+Ran 18 tests in 1.675s
+
+OK
+allowances exit=0

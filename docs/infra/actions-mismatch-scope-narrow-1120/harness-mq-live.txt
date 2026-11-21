@@ -1,0 +1,104 @@
+Q1 queue of 3, all pass; released in reverse order -> published a, b, c in order, each gated once
+  ok   c passed but is not published while a and b gate (main unchanged)
+  ok   b passed, still not published (a gates)
+  ok   all three DONE and tagged; main = c's tag
+  ok   stacked: c = b + branch c, b = a + branch b, a = pre-merge main + branch a
+  ok   each published commit is exactly the one commit its Mac gate ran on; one gate each
+  ok   published in queue order a < b < c
+  ok   c's line 1 names its queue base (b's candidate on main + a + b)
+  ok   queue empty afterwards; no rebuild
+Q2 middle fails (its own failure) -> the one behind it is rebuilt on a's candidate; b STOPs after a publishes
+  ok   b's gate failed but it waits for a's own record (review F1): no verdict, not stopped
+  ok   c rebuilt on a's candidate (skipping b) after b failed
+  ok   a and c published, b STOP (its own failure: not pre-existing), main = c's second candidate
+  ok   b and c's first candidate never reached main; b gated once
+  ok   order a < c; queue empty
+  ok   a STOP (head: its own failure), b published on main's tip (second candidate)
+  ok   b's first failure not treated as its own (rebuilt, no verify-fix, no STOP)
+Q3 main moved by a publish outside the queue -> both rebuilt (a on the new tip, b on a's new candidate), order kept
+  ok   both published, each gated twice; main = b; b = a + branch b; a = moved main + branch a
+  ok   published = the second gates; the first candidates never reached main
+Q4 native and non-native mixed: native a (Mac + x86), non-native b behind it passes first, waits, publishes after a
+  ok   b passed and waits while a's x86 leg runs (main unchanged)
+  ok   both published in order, gated once each; b stacked on a
+  ok   a had both legs (x86 record kept), b the Mac leg only
+Q5 non-native a fails; native b stacked on it -> b's running x86 leg is stopped, b rebuilt on main and published
+  ok   a STOP; b published = its second candidate on the pre-merge main
+  ok   b's first x86 leg stopped (the candidate left the queue order), no verify-fix
+Q6 a train dies (kill -9) -> its entry is dropped; the train behind it is rebuilt on main and published
+  ok   b published on main's tip (second candidate); a's entry gone
+Q7 flag off -> no queue (mq dir never written)
+  ok   published without the queue
+  ok   b's gate ended first and waits for a's own record (no verdict yet, not stopped)
+  ok   a published; b STOP: not pre-existing, compared with a's candidate record
+  ok   both published; b's line 1 names a's candidate run as the comparison
+  ok   b left the queue and waits for a (no gate of b yet)
+  ok   a then b published; b synced by the agent on a's published candidate
+  ok   b logged 'lacks main', synced, published after a
+V1 queue mode verify-fix: b fails its own gate (after a publishes), the fix commits, b enters again at the tail and is published
+  ok   a, then b's second candidate published (fix in it, on a); one verify-fix
+F5 a's gate fails while main moves outside the queue -> its own failure (base in main): STOP, no rebuild
+  ok   STOP on its own failure after one gate
+T1 tries limit: MERGE_QUEUE_TRIES=1, main moves outside the queue during a passing gate -> STOP naming the last gate; queue left
+  ok   STOP rebuilt 1 times, last gate PASS named, entry gone
+T2 one train with two items in queue mode -> both published in order
+  ok   DONE, a then b, b on a
+R1 main-red-check reads cand-runs/<sha>.<kind>.json of exactly that commit (an unpublished queue base); never a placeholder
+  ok   pre-existing via cand-runs
+  ok   a placeholder record (commit "") is not a run of that commit
+C0 flag off: a fails below b -> b's held Mac leg is NOT stopped; its result is read, then rebuilt as before
+  ok   b's leg still held, never stopped
+  ok   b's first result read (its Mac FAIL, compared with a's run), rebuilt, second candidate published
+C1 invalid while WAITING for a runner slot: a fails -> b's request withdrawn (job session stopped), rebuilt at once, published; no FAIL, no verify-fix
+  ok   stop sent for b's first run only; logged as stopped while waiting
+  ok   no FAIL, no verify-fix, no STOP for b; STALE then rebuilt
+  ok   no record of the stopped candidate; b published = its second candidate on main
+  ok   a: its own failure, STOP as before
+C2 invalid while RUNNING, native b (x86 leg held too): a fails -> b's Mac job stopped, its x86 leg stopped; no VM fallback, no full x86 gate.py; rebuilt and published
+  ok   Mac leg stopped while it ran; x86 leg stopped; stop sent once
+  ok   no fallback, no full x86 gate.py, no FAIL/verify-fix
+  ok   b published = second candidate, both legs PASS on it
+C3 valid candidates, flag on: a passes, b fails on its own -> nothing stopped; b's early Mac FAIL kept (STOP, not rebuilt)
+  ok   no stop; a published; b STOP on its own failure after one gate
+C4 one invalid poll (transient status) -> not stopped
+  ok   the transient invalid was read; no stop; published after one gate
+C5 the base publishes during b's leg (b becomes head) -> not stopped; b published after one gate
+  ok   b still gating, head now, not stopped
+  ok   b published, one gate, stacked on a
+C6 the stop's answer is lost (ssh fails) but the runner wrote done = CANCELLED (review F1) -> still exit 4: stopped, no VM fallback, rebuilt
+  ok   stopped while it ran, read from done; no fallback, no FAIL; b published = second candidate
+H1 queue mode: a hold file present -> a passes its gate but does not publish; hold removed -> published
+  ok   held: main unchanged, no tag, train alive, one log line for the one hold (the .tmp is not a hold)
+  ok   hold removed -> published (one gate), cleared line logged
+H2 queue mode: b stacked on a gates while a is held; both published in order after the hold goes
+  ok   b's gate ran and passed during the hold; main unchanged
+  ok   a then b published, b on a, one gate each
+H3 MQ_PUBLISH_HOLD.off -> the hold is ignored: published, no held line
+  ok   published with the hold file present; no 'publish held'
+H4 without the queue (MERGE_QUEUE off): held, then published once the hold goes
+  ok   held: main unchanged, no tag
+  ok   published after the hold, no queue
+K1 the train's sync merge keeps a per-path stale baseline with equal totals -> rewritten, one commit, published fresh
+  ok   premise: the sync merge kept the branch's baseline: total 6 = the fresh total, rows P and Q stale
+  ok   one regen commit on the sync merge, changing only the baseline
+  ok   published: main = the one gated candidate, its baseline fresh, its second parent the regen commit
+  ok   the log line names the rows; check, write, check on k1's worktree only, once (not again on the new head)
+K2 a fresh tree -> checked once, logged fresh, no commit
+  ok   published the branch head as it was; one check; fresh line in merge-train.log.candregen
+K3 STALE and a FAIL line (a limit) -> never rewritten here: no write, gated as is
+  ok   skipped (a limit), no write, the branch head is the sync merge
+K4 the check fails with no STALE line (a broken build) -> no write
+  ok   skipped (no STALE line, the failure quoted), no write, head unchanged
+K5 the write changes a file of another entry -> refused, the branch reset to its head
+  ok   skipped (owner extra), head unchanged, worktree clean, notes untouched, published stale as before
+K6 the write leaves it stale -> refused, reset
+  ok   skipped (still STALE after the write), head unchanged, check write check
+K7 the writer fails after leaving an untracked file -> that file removed, the builder's own untracked file kept
+  ok   skipped (writer failed), out.tmp removed, mine.txt kept, head unchanged
+K8 off switch KERNEL_CLOSURE_REGEN.off -> no check; the stale baseline is gated as before
+  ok   no check or write, no kernel closure line; published stale
+K9 library mode (presync-lean-regen.zsh run, MT_LIB): branchregen never runs the kernel closure step
+  ok   the tree is stale, yet no check ran; PSLR fresh, head unchanged
+K10 the check outlasts KERNEL_CLOSURE_TIMEOUT (1 s here) -> killed, no write, the timeout named; gated as is
+  ok   skipped (no failure line, killed at the 1 s timeout), no write, head unchanged, published
+== merge queue: 70 passed, 0 failed

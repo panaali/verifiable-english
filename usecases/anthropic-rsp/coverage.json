@@ -2,32 +2,32 @@
  "accounted_bytes": 59410,
  "bytes_by_kind": {
   "asserted": 301,
-  "attributed": 2552,
+  "attributed": 2045,
   "causal": 551,
   "definition": 5942,
   "example": 3118,
   "explanation": 13478,
   "exposition": 5913,
   "hedged": 1903,
-  "meta": 3078,
-  "norm": 18953,
-  "unformalised": 3621
+  "meta": 3220,
+  "norm": 18811,
+  "unformalised": 4128
  },
  "bytes_by_status": {
   "CHECKED": 4676,
-  "LABELLED": 37899,
-  "OPEN": 13214,
-  "UNFORMALISED": 3621
+  "LABELLED": 37534,
+  "OPEN": 13072,
+  "UNFORMALISED": 4128
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "rsp.d1.ve.md (built locally, not committed)",
- "document_sha256": "5c6f42b8f13cef3fedd1520f0752949215b6f1b761818f98ffbca441a23a16a5",
+ "document_sha256": "78e58a0c2fb4537327d2d4f6b9461b26c9dfe296d6cc2e0476136d5d7bfd294c",
  "master_bytes_by_status": {
-  "CHECKED": 5327,
-  "LABELLED": 37248,
-  "OPEN": 13214,
-  "UNFORMALISED": 3621
+  "CHECKED": 5320,
+  "LABELLED": 36890,
+  "OPEN": 13072,
+  "UNFORMALISED": 4128
  },
  "residual": {
   "assumptions": 0,
@@ -50,7 +50,7 @@
   "as_appropriate": 1,
   "degree_term": 2,
   "external_reference": 6,
-  "hope": 2,
+  "hope": 5,
   "no_deadline_or_trigger": 1,
   "preference": 1,
   "process_description": 1

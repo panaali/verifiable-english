@@ -1,0 +1,48 @@
+{
+ "account_class": "5x",
+ "exit": 0,
+ "wall_seconds": 8,
+ "session_id": "6c93e842-973d-48e0-ac5b-6f727c50056e",
+ "models": [
+  "claude-opus-5-5"
+ ],
+ "num_turns": 1,
+ "is_error": false,
+ "duration_ms": 7342,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 4617,
+  "cache_read_input_tokens": 1711,
+  "output_tokens": 748,
+  "output_tokens_details": {
+   "thinking_tokens": 243
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 4617,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 748,
+    "cache_read_input_tokens": 1711,
+    "cache_creation_input_tokens": 4617,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 4617
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.05224619999999999,
+ "cw": "0.01M CW (ledger weights: tools-local/token-ledger.py KIND_W x MODEL_W), raw context 0.01M, 1 calls"
+}

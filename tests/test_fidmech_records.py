@@ -202,6 +202,11 @@ NOT_ANSWERS = {
     "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate": "an undecided reason; the answer is UNDECIDED",
     "comparison[].agree; comparison[].status == 'UNDECIDED-faithful' marks the rest": "a summary field description",
 }
+# Source words a legend quotes verbatim, never an answer: a string holding one is not a third-value spelling.
+SOURCE_QUOTES = {
+    "ensuring resilience against unknown vulnerabilities": "PF Appendix C.3, quoted whole in the security_controls and "
+                                                           "security_practices legends (defs-repair-openai-preparedness-1119)",
+}
 
 
 def _source_strings(path):
@@ -227,9 +232,11 @@ def test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognise
             for line, value in _source_strings(path):
                 if THIRD_VALUE_WORDS.search(value):
                     seen.add(value)
-                    if not R._undecided(value) and value not in NOT_ANSWERS:
+                    if not R._undecided(value) and value not in NOT_ANSWERS and \
+                            not any(quote in value for quote in SOURCE_QUOTES):
                         unknown.append(f"{path.relative_to(root)}:{line}: {value!r}")
     assert not unknown, unknown
+    assert all(any(quote in value for value in seen) for quote in SOURCE_QUOTES)
     assert {"UNKNOWN", "UNDECIDED", "NOT RUN", "resource-limit"} <= seen
     assert set(NOT_ANSWERS) <= seen, sorted(set(NOT_ANSWERS) - seen)
 

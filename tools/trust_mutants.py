@@ -72,8 +72,10 @@ checks `settle` reads and drops the text after the last of them (`probe`'s `only
 lazy: a dedicated unmutated scratch probes a check only when `reading` needs it, with the same scope and whole-file
 fallback. `--control-probes eager` probes whole files before mutants as before. The mode is recorded beside `jobs`;
 old records read as eager. It is not a verdict input: --rescore, --resume and --merge may cross modes. A check file
-`settle` reads that is no target's (in a mutated module's cone, imported by a target) has no control in either mode,
-so its check is UNKNOWN in both (eff-20261108-1 F1). Each entry
+of the mutated module's cone that a target imports is a target too (`targets`; tm-nightly-unknown-disposition-3: the
+nightly's M2397, whose --test file imported such a module, ended UNKNOWN with no control for it), so it has a control
+in either mode; a check file `settle` reads that is still no target's has none, and its check is UNKNOWN in both
+(eff-20261108-1 F1). Each entry
 it reads is the whole file's, so every verdict is the same but in two
 cases, where the whole file's probe has no entry for the check and the scoped one has its own: then UNKNOWN becomes
 KILLED, on that entry, checked against a control that finished (the verdict the whole file gives when its probe
@@ -915,16 +917,32 @@ def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:
 def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list[str]:
     """The mutated module, then the --test modules, the modules of its cone that hold checks for it and those an
     outside --test file imports (review F13: `lake env lean` builds nothing, so without them the file reads their
-    pre-mutant `.olean`, and a proof the mutant broke there is never rechecked, cut or seen by the probe)."""
+    pre-mutant `.olean`, and a proof the mutant broke there is never rechecked, cut or seen by the probe), and each
+    module of its cone that holds a check and that one of these imports, however indirectly: Lake builds it with the
+    mutant before them, so `settle` reads its errors, and as a target it has a control (`ControlProbes`, eager's
+    `hashes`; tm-nightly-unknown-disposition-3: the nightly's M2397, VE/Readings/ActsExamples.lean, which the --test
+    file VE/Service/ActsExamples.lean imports, read "Lean could not elaborate it in the probe" for want of one)."""
     module, home = module_name(m.file), m.file.rpartition("/")[0]
     cone, todo = {module}, [module]
     while todo:
         new = tree.importers.get(todo.pop(), set()) - cone
         cone |= new
         todo += new
-    checks = {x for x in cone for s, e, r, n in tree.roles.get(tree.files[x], ())
+    holds = {x for x in cone if any(r == "check" for _, _, r, _ in tree.roles.get(tree.files.get(x, ""), ()))}
+    checks = {x for x in holds for s, e, r, n in tree.roles.get(tree.files[x], ())
               if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home or stated(tree, n, m))}
-    return [module, *sorted((checks | {module_name(t) for t in tests} | tree.imported) - {module})]
+    chosen = (checks | {module_name(t) for t in tests} | tree.imported) - {module}
+    # what a chosen module imports in the cone (a module that imports one of the cone is in it): x -> its imports there
+    under: dict[str, set[str]] = {}
+    for y in cone:
+        for x in tree.importers.get(y, set()) & cone:
+            under.setdefault(x, set()).add(y)
+    reached, todo = set(), sorted(chosen & cone)
+    while todo:
+        new = under.get(todo.pop(), set()) - reached
+        reached |= new
+        todo += new
+    return [module, *sorted((chosen | (reached & holds)) - {module})]
 
 
 def moved(before: str, after: str, lines: tuple[int, int]) -> int | None:

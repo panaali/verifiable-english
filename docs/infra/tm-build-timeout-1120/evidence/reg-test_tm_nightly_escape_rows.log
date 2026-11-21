@@ -1,0 +1,20 @@
+test_allowed_survivor_files_no_row (__main__.EscapeRows.test_allowed_survivor_files_no_row) ... ok
+test_hand_filed_backlog_row_kept_and_ids_not_reused (__main__.EscapeRows.test_hand_filed_backlog_row_kept_and_ids_not_reused) ... ok
+test_idempotent_across_runs (__main__.EscapeRows.test_idempotent_across_runs) ... ok
+test_no_t1_on_still_files (__main__.EscapeRows.test_no_t1_on_still_files) ... ok
+test_rows_filed_once_with_owner_priority_reason (__main__.EscapeRows.test_rows_filed_once_with_owner_priority_reason) ... ok
+test_allowed_survivor_alone_completes (__main__.SurvivorNeverComplete.test_allowed_survivor_alone_completes) ... ok
+test_resume_old_complete_row_with_survivors (__main__.SurvivorNeverComplete.test_resume_old_complete_row_with_survivors) ... ok
+test_unallowed_survivor_not_complete (__main__.SurvivorNeverComplete.test_unallowed_survivor_not_complete) ... ok
+test_malformed_t1_line_is_an_error (__main__.T1LedgerStrict.test_malformed_t1_line_is_an_error) ... ok
+test_missing_t1_jsonl_is_an_error (__main__.T1LedgerStrict.test_missing_t1_jsonl_is_an_error) ... ok
+test_no_t1_on_needs_no_ledger (__main__.T1LedgerStrict.test_no_t1_on_needs_no_ledger) ... ok
+test_unreadable_t1_jsonl_is_an_error (__main__.T1LedgerStrict.test_unreadable_t1_jsonl_is_an_error) ... ok
+test_missing_t1_jsonl_base_stays (__main__.ThroughTheService.test_missing_t1_jsonl_base_stays) ... ok
+test_stub_has_survivor_hook (__main__.ThroughTheService.test_stub_has_survivor_hook) ... ok
+test_unallowed_survivor_base_stays (__main__.ThroughTheService.test_unallowed_survivor_base_stays) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 3.757s
+
+OK

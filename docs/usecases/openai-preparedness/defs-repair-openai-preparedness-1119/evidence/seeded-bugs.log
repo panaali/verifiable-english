@@ -1,0 +1,18 @@
+== M1 shown: drop 'grave' from footnote 1 in the high legend (regenerated)
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[1]
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order
+2 failed, 50 passed in 1.02s
+== M2 counted only: five empty literals push existing_at_publication past legend_raw's 41 lines (shown text unchanged)
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[40]
+1 failed, 51 passed in 1.01s
+== M3 old legend changed: 'is a High level' -> 'is a high level'
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order
+1 failed, 51 passed in 0.89s
+== M4 not regenerated: M1's edit without writing environment.d1.json
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[1]
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[2]
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[4]
+FAILED tests/test_defs_repair_openai_preparedness_1119.py::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[5]
+== M5 third-value: '{0} is a High level' -> '{0} is a High level; result unknown'
+FAILED tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule
+1 failed in 1.10s

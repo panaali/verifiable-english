@@ -1,0 +1,19 @@
+# failing-first for the challenger's B findings: tests added, run on .new-specregen v1 (sha256 1e209574f67eb7d2) before the fix, 2026-11-20T20:45Z
+test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved) ... FAIL
+test_b_source_conflict_unchanged_skip (__main__.SpecRegen.test_b_source_conflict_unchanged_skip) ... ok
+test_c_resolve_declines_skip_no_commit (__main__.SpecRegen.test_c_resolve_declines_skip_no_commit) ... ok
+test_d_resolve_exit0_unfinished_merge_refused (__main__.SpecRegen.test_d_resolve_exit0_unfinished_merge_refused) ... ok
+test_e_clean_merge_unchanged (__main__.SpecRegen.test_e_clean_merge_unchanged) ... ok
+regen_merge with one argument (syncbranch, the main sync): the decline line is exactly as before. ... ok
+regen_merge with one argument, resolve succeeds: the same lines, iso.sh scope and no timeout as before. ... ok
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... FAIL
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... FAIL
+F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit. ... FAIL
+regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c. ... FAIL
+AssertionError: Regex didn't match: '(?m)^regenerated generated-only conflicts \\(spec regen\\) in wt without an agent \\d\\d:\\d\\dZ$' not found in 'spec regen of item: merging the candidate c3ea8438 of cand into a detached copy of branch bac83162 while cand gates 20:45Z\nspec-regen resolve for item: the merge of c3ea8438 conflicts only in generated files (1) gen/report.json; tools/regen_generated.py --resolve 20:45Z\nregenerated generated-only conflicts in wt without an agent 20:45Z\nspec regen of item: 4d1a62ae = branch bac83162 + candidate c3ea8438 of cand, regenerated, in 0 s (used only if that candidate is published) 20:45Z\nspec regen of item used: fast-forwarded to 4d1a62ae (main c3ea8438 is the candidate it was made on) 20:45Z\n'
+AssertionError: True is not false
+AssertionError: True is not false
+AssertionError: 0 != 1 : {'rc': 0, 'spec': '2079a9baecc7ac8edff89abfa16f61ad9a01ba75', 'specc': 'e467922c20ff26e784441f9c3d5a08a7998f6896', 'spech': 'e13e5cb21bd8300daba86a463d476c81a8573ccd', 'after': '2079a9baecc7ac8edff89abfa16f61ad9a01ba75', 'brprobed': '2079a9baecc7ac8edff89abfa16f61ad9a01ba75', 'out': 'rc=0 spec=2079a9baecc7ac8edff89abfa16f61ad9a01ba75 specc=e467922c20ff26e784441f9c3d5a08a7998f6896 spech=e13e5cb21bd8300daba86a463d476c81a8573ccd\nafter=2079a9baecc7ac8edff89abfa16f61ad9a01ba75 brprobed=2079a9baecc7ac8edff89abfa16f61ad9a01ba75\n', 'err': ''}
+AssertionError: Regex didn't match: '(?m)^generated-file resolve \\(spec regen\\) in wt: stale ve_service \\(handshake\\)' not found in 'spec regen of item: merging the candidate f6517d9b of cand into a detached copy of branch a18b3318 while cand gates 20:45Z\nspec-regen resolve for item: the merge of f6517d9b conflicts only in generated files (1) gen/report.json; tools/regen_generated.py --resolve 20:45Z\ngenerated-file resolve in wt: stale ve_service (handshake); Lean build of the merged files, then resolve again 20:45Z\nregenerated generated-only conflicts in wt without an agent, after a Lean build 20:45Z\nspec regen of item: b709fe0b = branch a18b3318 + candidate f6517d9b of cand, regenerated, in 1 s (used only if that candidate is published) 20:45Z\nspec regen of item used: fast-forwarded to b709fe0b (main f6517d9b is the candidate it was made on) 20:45Z\n'
+Ran 10 tests in 12.089s
+FAILED (failures=5)
