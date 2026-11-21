@@ -81,7 +81,13 @@ SIZE: 0 product, 0 tests, about 90 other hand-written lines (this REPORT).
 
 ## Tests
 
-Selected run (once, on the committed HEAD): see "Selected run" below.
+- **Selected run.** One run on the committed HEAD `7e1cb3e637`:
+  `zsh mac-pytest.sh --select -- --base cebf4fd24f --run`. It ran on ve-cloud-2 and exited 0 in 1469 s. The log
+  ends "recorded 267 units for tree 55d6607930; ... 0 failed". The selector left 24 slow, weakly selected
+  files to the chain gate.
+- **Light lane.** `light-lane.py check` printed "LIGHT 125 changed lines outside generated files <= 150
+  (1 files), no trusted-core file", so no trust_mutants sweep was needed.
+- **Known red.** No bluedot test is in main-known-red.txt.
 
 ## Notes for the DRI
 
