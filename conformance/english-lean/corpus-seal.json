@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "9ced3b1dc16108bd38967410b93c005c2bd16275eb6a086d492ceb240648650e",
+ "seal_id": "2ada86752cd097f3769e0565f275117a8733598800fffe2f2b37a0b2c4921732",
  "sources": [
   {
    "kind": "corpus source",
@@ -575,6 +575,11 @@
   },
   {
    "kind": "entry-point caller",
+   "path": "tests/test_srccov_rl_news_article_1121.py",
+   "sha256": "f770add435ed9f99e3be628cec602252709cda58a0c158dec8522b57e191636a"
+  },
+  {
+   "kind": "entry-point caller",
    "path": "tests/test_w1_delta_suite.py",
    "sha256": "7d3695367ab0e7dc1a0cacd264bd0ab4b7701ac68f2357d04e5112cfbae68a41"
   },
@@ -756,7 +761,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "b4bc7ce5296dcfba236e4510fade70111bc177dcaae1d6d0ac2ee675588bb927"
+   "sha256": "0c884cbc5569a09152bcd508b15cd3f384022acad0aa32d010831c0bf9f5d345"
   },
   {
    "kind": "corpus source",
@@ -771,7 +776,7 @@
   {
    "kind": "entry-point caller",
    "path": "usecases/openai-preparedness/pf_translation.py",
-   "sha256": "0209a89f9088944e7cb2aa44c28e94746722c76c3eddfb05d18871b25e0cff12"
+   "sha256": "01afc5441a5e34f68b0cc9417e9f1419661f5b83d4d4a8f9c55d03ee5614b386"
   },
   {
    "kind": "entry-point caller",

@@ -89,6 +89,10 @@ PLACEMENTS = {
     "Additionally, if the model is beyond a High threshold": ("rule", "f15-safeguards", ("JT",)),
     "Third-party evaluation of tracked model capabilities": ("rule", "f15-third-party", ("JT",)),
     "For each deployment under the Preparedness Framework, providing recommendations": ("rule", "f16-sag-recommend", ()),
+    # srccov-rl-openai-preparedness-1121 (review F2, METHOD amendment 8): Appendix B's lead-in routes to the one line
+    # that carries one of its items with its force. Its other three bullets are not placed here: they are quoted in the
+    # block's header and recorded as losses in accounting.d1.txt.
+    "The Safety Advisory Group (SAG) is responsible for:": ("rule", "f16-sag-recommend", ()),
     "The Safety and Security Committee (SSC)": ("rule", "f16-ssc-visibility", ()),
     "Safeguards should sufficiently minimize the risk associated with a misaligned model": ("readings", "rs9-c2-misalignment", ("JT", "DF")),
     "informed by SAG’s recommendations": ("readings", "rs6-informed", ("readings",)),
@@ -102,6 +106,15 @@ PLACEMENTS = {
     "For these areas, in collaboration with external experts, we commit": ("readings", "rs15-threat-models", ("AT",)),
     "As a reminder, covered systems that reach High capability must have": ("readings", "rs3-reminder", ("JT", "ET")),
     "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
+    # srccov-rl-openai-preparedness-1121: a sentence a plain rule line carries (block sr-sufficiency). No clause map is
+    # claimed, so each unit is a blocked rule that routes to the block (UNFORMALISED, unmapped_clause).
+    # 4.2's lead-in and the three of its four bullets the line carries (the Table 3 units between them are not part of
+    # the list). The fourth bullet, "The baseline risk ...", is quantifier scope: not placed here, quoted in the block's
+    # header and recorded as a loss in accounting.d1.txt.
+    "The SAG will make this determination based on:": ("rule", "sr-sufficiency", ()),
+    "The level of capability in the Tracked Category based on the Capabilities Report": ("rule", "sr-sufficiency", ()),
+    "The associated risks of severe harm, as described in the threat model": ("rule", "sr-sufficiency", ()),
+    "The safeguards in place and their effectiveness based on the Safeguards Report": ("rule", "sr-sufficiency", ()),
     # srccov-openai-preparedness-1119: units that state no rule, recorded as LABELLED exposition (out of scope).
     # Headings and table header rows (title, navigation or page furniture):
     "Clear internal decision-making practices.": ("label", "exposition", ()),

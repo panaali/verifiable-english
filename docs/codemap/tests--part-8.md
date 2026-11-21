@@ -51,6 +51,8 @@
 - `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
 - `tests/test_srccov_rl_claude_constitution_pilot_1121.py` — srccov-rl-claude-constitution-pilot-1121: the three 'translation omission' units are reading choices, not omissions.
 - `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
+- `tests/test_srccov_rl_news_article_1121.py` — srccov-rl-news-article-1121: the news-article units tagged 'none: translation omission' and why none is carried.
+- `tests/test_srccov_rl_openai_preparedness_1121.py` — srccov-rl-openai-preparedness-1121: the condition test for the rule line that carries 4.2's sufficiency basis.
 - `tests/test_srccov_rl_safety_framework_1121.py` — srccov-rl-safety-framework-1121: FSF 1.3.4's two mitigation-evaluation sentences, carried by rule lines.
 - `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
 - `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
@@ -78,5 +80,3 @@
 - `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
 - `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
 - `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
-- `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
-- `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
