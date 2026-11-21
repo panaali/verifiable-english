@@ -1,0 +1,28 @@
+{
+ "item": "tm-nightly-unknown-disposition-3",
+ "note": "Each bug was planted, the named test run and seen to fail, then the file restored (logs /tmp/ud3-seed-B<n>.log at build time). B4-B6 are in the manage-agents staged copy (not in this repository).",
+ "seeded": [
+  {"id": "B1", "language": "Python", "file": "tools/trust_mutants.py", "behaviour": "a cone check module a target imports is a target (has a control)",
+   "bug": "targets returns `chosen` only (the reached check modules dropped: the old code)",
+   "test": ["tests/test_trust_mutants_probe_scope.py::test_a_check_module_of_the_cone_a_target_imports_is_a_target",
+            "tests/test_trust_mutants_probe_scope.py::test_probe_f1_a_check_module_a_target_imports_is_judged_alike_in_both_modes"],
+   "result": "2 failed"},
+  {"id": "B2", "language": "Python", "file": "tools/trust_mutants.py", "behaviour": "only a reached module that holds a check is added",
+   "bug": "targets returns `chosen | reached` (Demo.Far.Plain, no check, added)",
+   "test": ["tests/test_trust_mutants_probe_scope.py::test_a_check_module_of_the_cone_a_target_imports_is_a_target"],
+   "result": "1 failed"},
+  {"id": "B3", "language": "Python", "file": "tools/trust_mutants.py", "behaviour": "only what a target imports is reached, never every cone module",
+   "bug": "the walk starts from the whole cone (Demo.Far.Lone, imported by no target, added)",
+   "test": ["tests/test_trust_mutants_probe_scope.py::test_a_check_module_of_the_cone_a_target_imports_is_a_target"],
+   "result": "1 failed"},
+  {"id": "B4", "language": "Python", "file": "manage-agents/tm-nightly.py.new-ud3", "behaviour": "dropped_ctor: ctor-drop only",
+   "bug": "the operator test removed", "test": ["manage-agents/tools-local/test_tm_nightly_unknown_disposition_3.py.new-ud3::test_b_other_refusals_of_a_ctor_drop_stay_unknown"],
+   "result": "FAIL"},
+  {"id": "B5", "language": "Python", "file": "manage-agents/tm-nightly.py.new-ud3", "behaviour": "dropped_ctor: only a constructor the edit removed",
+   "bug": "any `<definition>.<x>` accepted", "test": ["manage-agents/tools-local/test_tm_nightly_unknown_disposition_3.py.new-ud3::test_b_other_refusals_of_a_ctor_drop_stay_unknown"],
+   "result": "FAIL"},
+  {"id": "B6", "language": "Python", "file": "manage-agents/tm-nightly.py.new-ud3", "behaviour": "dropped_ctor: the mutant's own file only",
+   "bug": "the own-file test applied to the edit's lines only", "test": ["manage-agents/tools-local/test_tm_nightly_unknown_disposition_3.py.new-ud3::test_b_other_refusals_of_a_ctor_drop_stay_unknown"],
+   "result": "FAIL"}
+ ]
+}

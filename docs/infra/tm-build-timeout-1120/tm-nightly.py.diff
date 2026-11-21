@@ -1,0 +1,43 @@
+--- tm-nightly.py.bak-20261120tmbto	2026-11-17 12:09:51.806679500 +0000
++++ tm-nightly.py	2026-11-20 07:35:26.611632432 +0000
+@@ -96,6 +96,16 @@
+       survivor row and the nightly.jsonl row cite "forward-kill: <record> @ <H2>" (record, head, sha256 kept in "forward_kill").
+       A T1 escape stays an escape (escapes.jsonl, its tm-esc row); any other forward-killed SURVIVOR files no tm-esc row.
+       complete and row_complete subtract forward_killed. UNKNOWN rows are never forward-killed.
++  2026-11-20 tm-build-timeout-1120 (reviews/dri-decisions-20261120-tm-final-coverage.md item 2; reviews/tm-build-timeout-1120/
++  REPORT.md):
++  heavy <record>
++      The ids of <record> whose row is a build-timeout UNKNOWN (`build_timeout`: "did not finish in N s (--build-timeout)"),
++      plan order, comma-separated (nothing: an empty line). tm-nightly.sh runs these ids last, in parts of their own at
++      TM_NIGHTLY_HEAVY_JOBS (2) trust_mutants --jobs: a heavy cone's check needs ~2,600-3,900 CPU-s (MEASURED: the
++      VE/Compose/Dispatch.lean cone, 936 s on 8 cores, 1,753 s on 3), so 8 such builds in a 9-10-core remote tm scope ran
++      past 1800 s (491 of 817 tries on ve-cloud-2, 11-16..19) and past 3600 s (21 of 40); at 2-5 cores a build on VM1, 0
++      of 56 did. Only the parallelism changes: a build past --build-timeout stays UNKNOWN, and the same build gives the
++      same verdict at any --jobs.
+ Tests only: TEST_SKIP_DIR, TM_TARGETED_ONLY_FLAG, TM_NIGHTLY_NO_SIDE=1 (no backlog row, message or CURRENT-STATE line),
+ TM_NIGHTLY_SPM / TM_NIGHTLY_SETUP (size's s/mutant and setup s), TM_NIGHTLY_MPJ (mac-pytest.jsonl), TM_NIGHTLY_BACKLOG
+ (BACKLOG.jsonl read for existing tm-esc rows and ids), TM_NIGHTLY_SIDE_LOG (with NO_SIDE: each side command as a json line).
+@@ -652,6 +662,11 @@
+     return float(t[1]) if m.get("status") == "UNKNOWN" and t else 0
+ 
+ 
++def idnum(i):
++    """tm-build-timeout-1120: the number of a mutant id "M<digits>" (plan order), else a large number (last)."""
++    return int(i[1:]) if re.fullmatch(r"M[0-9]+", i) else 1 << 30
++
++
+ def row_complete(r):
+     """tm-nightly-fix (2): a nightly.jsonl row is complete only with no unallowed SURVIVOR (older rows: survivors - allowed;
+     tm-sc7-rejudge: - forward_killed)."""
+@@ -874,6 +889,11 @@
+         print(why, file=sys.stderr)
+         print(",".join(out))
+         return 0
++    if len(sys.argv) == 3 and sys.argv[1] == "heavy":  # tm-build-timeout-1120 (doc): the build-timeout ids, run last
++        d = load(sys.argv[2]) or {}
++        rows = [m for m in d.get("mutants") or [] if isinstance(m, dict) and isinstance(m.get("id"), str)]
++        print(",".join(m["id"] for m in sorted(rows, key=lambda m: idnum(m["id"])) if build_timeout(m)))
++        return 0
+     if len(sys.argv) in (7, 8) and sys.argv[1] == "merge":
+         cpu = int(sys.argv[6]) if sys.argv[6].isdigit() else None
+         r = merge(sys.argv[2], os.path.abspath(sys.argv[3]), sys.argv[4], int(sys.argv[5] or 0), cpu, (sys.argv[7:] or [""])[0] or None)

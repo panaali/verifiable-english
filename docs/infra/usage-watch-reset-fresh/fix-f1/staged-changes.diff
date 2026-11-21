@@ -1,0 +1,126 @@
+--- tools-local/endgame.py (installed)
++++ tools-local/endgame.py.new-usagew2 (staged)
+@@ -58,10 +58,18 @@
+     return NEW[kind(a)][pool] if pool else min(NEW[kind(a)].values())
+ 
+ 
++# 2026-11-20 usage-watch-reset-fresh F1: the one parser of the accounts.sh reset field (reset_fresh.py and pick-claude-account.sh
++# read it only through hours_to; tools-local/test_usage_reset_fresh.py OneParser checks no other strptime of it exists). The field has
++# no year: of at.year - 1, at.year and at.year + 1 the reading nearest `at` is taken, so a Fri_Jan01 reset read on Dec 26 is next
++# year's (6 d, not -359 d; 365 mod 7 = 1 made a weekly "+7 d while < 0" one day short) and a Dec 31 one read on Jan 1 is last
++# year's. A Feb29 field is read in the leap year among the three. Hours are wall-clock hours in TZ, as before.
+ def hours_to(r, at=None):  # hours until an accounts.sh reset field, None if unknown
+-    at = at or now()
+-    try: return (datetime.datetime.strptime(f"{at.year} {r}", "%Y %a_%b%d_%H:%M").replace(tzinfo=TZ) - at).total_seconds() / 3600
+-    except ValueError: return None
++    at = at or now(); best = None
++    for y in (at.year - 1, at.year, at.year + 1):
++        try: h = (datetime.datetime.strptime(f"{y} {r}", "%Y %a_%b%d_%H:%M").replace(tzinfo=TZ) - at).total_seconds() / 3600
++        except ValueError: continue
++        if best is None or abs(h) < abs(best): best = h
++    return best
+ 
+ 
+ def inside(h):
+--- tools-local/reset_fresh.py (installed)
++++ tools-local/reset_fresh.py.new-usagew2 (staged)
+@@ -25,18 +25,10 @@
+ 
+ 
+ def reset_epoch(r, at):
+-    """Epoch s of an accounts.sh reset field, None if unknown. The field has no year: the year of `at` is tried and the
+-    result moved by one year when it lands more than 183 days away (a Dec 31 reset read on Jan 1)."""
++    """Epoch s of an accounts.sh reset field, None if unknown. The year of the field is endgame.hours_to's (its one owner since
++    F1 of the review of this item: the reading nearest `at`); this file keeps no second year rule."""
+     h = endgame.hours_to(r, at)
+-    if h is None: return None
+-    t = at.timestamp(); e = t + h * 3600
+-    if abs(h) > 183 * 24:
+-        for y in (at.year - 1, at.year + 1):
+-            try: ay = at.replace(year=y)
+-            except ValueError: continue  # Feb 29
+-            hy = endgame.hours_to(r, ay)
+-            if hy is not None and abs(ay.timestamp() + hy * 3600 - t) < abs(e - t): e = ay.timestamp() + hy * 3600
+-    return e
++    return None if h is None else at.timestamp() + h * 3600
+ 
+ 
+ def line_state(taken, r1, r2, at=None):
+--- pick-claude-account.sh (installed)
++++ pick-claude-account.sh.new-usagew2 (staged)
+@@ -180,7 +180,8 @@
+     return (win[-1][1] - min(v for _, v in win), t1 - win[0][0])
+ # 2026-11-20 usage-watch-reset-fresh (reviews/dri-decisions-20261113-thresholds.md; challenge NOTE 5): PICK_MAIN_PACE may also hold the
+ # week-relative form "weekly <A> <S> <F>" (e.g. "weekly 97 4 90"): the line is min(A - S x days to the main weekly reset, F), the reset
+-# being field 7 of the accounts cache main line (accounts-cache/main.line; a reset already passed counts from the next one, 7 days on).
++# being field 7 of the accounts cache main line (accounts-cache/main.line; a reset already passed counts from the next one, 7 days on;
++# its year is the one endgame.hours_to reads, the nearest: F1 of the review, a Fri_Jan01 reset read on Dec 26 is 6 d ahead, not 5).
+ # With 97 4 90 that is 69 at the reset, rising 4 a day, flat 90 in the last 1.75 d, so the flat 90 never carries into a fresh week
+ # and nobody rewrites the file at the main reset. No readable reset: d = 7 (the start-of-week value, the lowest line). The dated form
+ # is unchanged. Self-contained (inbox-wait.sh execs this def alone with datetime, os and now). Tests: tools-local/test_usage_reset_fresh.py
+@@ -635,9 +636,7 @@
+         ofb, ofbw = d, w; continue
+     if a == "main" and os.environ.get("PICK_MGMT") and not ew and w >= int(os.environ.get("PICK_MGMT_MAIN_WEEK", "75")):
+         fb = fb or d; continue
+-    try: reset = datetime.datetime.strptime(f"{now.year} {r2}", "%Y %a_%b%d_%H:%M").replace(tzinfo=tz)
+-    except ValueError: reset = now + datetime.timedelta(days=7)
+-    hours = max((reset - now).total_seconds() / 3600, 1)
++    hours = max(168.0 if hw is None else hw, 1)  # hours to the weekly reset (hw: endgame.hours_to above, the one parser of the field, year-safe since usage-watch-reset-fresh F1); unreadable: 7 d as before
+     # 2026-10-10: headroom relative to the time left before each reset: weekly room per hour to the weekly reset, times the
+     # share of the usable 5-h window left (limit 80 on 5x, 85 on main), which counts as refilled when the window resets within the hour
+     head5 = max(lim5 - max(f, 0), 0) / lim5  # pace order only (no gate): an unknown 5-h counts as before (1.0)
+--- tools-local/burndown.py (installed)
++++ tools-local/burndown.py.new-usagew2 (staged)
+@@ -62,6 +62,12 @@
+ NOW = dt.datetime.now(dt.timezone.utc)
+ 
+ 
++def _endgame():  # tools-local/endgame.py beside this file: the one parser of the accounts.sh reset field (hours_to)
++    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++    import endgame
++    return endgame
++
++
+ def items():
+     f = f"{M}/SPRINT-ITEMS.tsv"
+     if not os.path.exists(f) or time.time() - os.stat(f).st_mtime > 3600:
+@@ -1648,7 +1654,9 @@
+         wk = h[-1][1] if h else wk
+         try:
+             # accounts.sh prints resets in America/Los_Angeles; read as UTC they fell 7-8 h early (DRI reviews/dri-decisions-20261105-adv0031.md item 1)
+-            rt = dt.datetime.strptime(f"2026 {rs}", "%Y %a_%b%d_%H:%M").replace(tzinfo=zoneinfo.ZoneInfo("America/Los_Angeles")).astimezone(dt.timezone.utc)
++            # usage-watch-reset-fresh F1: read through endgame.hours_to, the one parser of the field (PT, and the year nearest NOW, not 2026)
++            hr_ = _endgame().hours_to(rs, NOW)
++            rt = None if hr_ is None else NOW + dt.timedelta(seconds=round(hr_ * 3600))
+         except ValueError:
+             rt = None
+         cap = ACCT_CAP.get(name, 88)
+--- tools-local/review-ab-rule.py (installed)
++++ tools-local/review-ab-rule.py.new-usagew2 (staged)
+@@ -53,6 +53,9 @@
+ import re
+ import sys
+ 
++sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
++import endgame  # noqa: E402  (hours_to: the one parser of the accounts.sh reset field)
++
+ M = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ WORKER_CAP = {"main": 80}  # weekly worker cap per account (pick-claude-account.sh); others 88
+ MIN_BLOCKERS, EXTEND_TO = 3, 24
+@@ -133,11 +136,11 @@
+             resets = {}
+             for line in fh:
+                 f = line.split()
+-                if len(f) >= 7 and re.match(r"^[A-Z][a-z]{2}_[A-Z][a-z]{2}\d+_\d\d:\d\d$", f[6]):
+-                    t = dt.datetime.strptime(f"{now.year} {f[6][4:]}", "%Y %b%d_%H:%M").replace(tzinfo=dt.timezone.utc)
+-                    if t < now - dt.timedelta(days=180):
+-                        t = t.replace(year=now.year + 1)
+-                    resets[f[0]] = t
++                # usage-watch-reset-fresh F1: the field is read by endgame.hours_to, its one parser: America/Los_Angeles (read
++                # as UTC here before, so 7-8 h early) and the year nearest now; an unreadable field (a Feb29 out of a leap year) is skipped
++                h = endgame.hours_to(f[6], now) if len(f) >= 7 else None
++                if h is not None:
++                    resets[f[0]] = now + dt.timedelta(seconds=round(h * 3600))
+         with open(usage_log, errors="replace") as fh:
+             lines = fh.readlines()[-3000:]
+     except OSError as e:

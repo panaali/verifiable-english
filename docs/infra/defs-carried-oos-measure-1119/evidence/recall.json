@@ -1,0 +1,156 @@
+{
+ "pin": {
+  "tree": {
+   "kind": "commit",
+   "commit": "e53db4e8fc387d0fda31a11257a2b74dd5153f95"
+  },
+  "tool_seconds": 2.585,
+  "cases": 819,
+  "hits": 511,
+  "misses": 308,
+  "recall_pairs_wilson95": [
+   0.5902507382799626,
+   0.6564553529225773
+  ],
+  "findings": 149,
+  "findings_detected": 135,
+  "recall_findings_wilson95": [
+   0.8484661889171139,
+   0.9432038257873021
+  ],
+  "verdict_only": {
+   "note": "the passage verdict on the rule surface alone, reach ignored: not the recall definition, shown to separate the term-link misses from the verdict misses",
+   "pairs_below_carried": 814,
+   "findings_with_one": 146
+  },
+  "tool_hit_count": 515,
+  "by_doc": {
+   "anthropic-rsp": {
+    "cases": 140,
+    "hits": 116,
+    "findings": 63,
+    "findings_detected": 59
+   },
+   "openai-preparedness": {
+    "cases": 336,
+    "hits": 176,
+    "findings": 50,
+    "findings_detected": 47
+   },
+   "safety-framework": {
+    "cases": 343,
+    "hits": 219,
+    "findings": 36,
+    "findings_detected": 29
+   }
+  },
+  "miss_reasons": {
+   "never reached: term-not-in-rule": 250,
+   "never reached: rule-missing": 52,
+   "no passage: the row quotes no source text (a pointer), the tool compares nothing": 4,
+   "never reached: no-ve-term": 1,
+   "tool verdict CARRIED": 1
+  },
+  "verdicts": {
+   "NOT CARRIED": 668,
+   "FRAGMENT": 120,
+   "UNSHOWN": 21,
+   "ELSEWHERE": 5,
+   "null": 4,
+   "CARRIED": 1
+  },
+  "missed_findings": [
+   "defs-anthropic-rsp-x31-1119",
+   "defs-anthropic-rsp-x44-1119",
+   "defs-anthropic-rsp-x62-1119",
+   "defs-anthropic-rsp-x63-1119",
+   "defs-openai-preparedness-18-1119",
+   "defs-openai-preparedness-21-1119",
+   "defs-openai-preparedness-22-1119",
+   "defs-safety-framework-x28-1119",
+   "defs-safety-framework-x29-1119",
+   "defs-safety-framework-x30-1119",
+   "defs-safety-framework-x31-1119",
+   "defs-safety-framework-x33-1119",
+   "defs-safety-framework-x34-1119",
+   "defs-safety-framework-x35-1119"
+  ]
+ },
+ "main": {
+  "tree": {
+   "kind": "commit",
+   "commit": "d5f402140f50399a595c7fe15dc8a073a19714ba"
+  },
+  "tool_seconds": 2.685,
+  "cases": 819,
+  "hits": 511,
+  "misses": 308,
+  "recall_pairs_wilson95": [
+   0.5902507382799626,
+   0.6564553529225773
+  ],
+  "findings": 149,
+  "findings_detected": 135,
+  "recall_findings_wilson95": [
+   0.8484661889171139,
+   0.9432038257873021
+  ],
+  "verdict_only": {
+   "note": "the passage verdict on the rule surface alone, reach ignored: not the recall definition, shown to separate the term-link misses from the verdict misses",
+   "pairs_below_carried": 814,
+   "findings_with_one": 146
+  },
+  "tool_hit_count": 515,
+  "by_doc": {
+   "anthropic-rsp": {
+    "cases": 140,
+    "hits": 116,
+    "findings": 63,
+    "findings_detected": 59
+   },
+   "openai-preparedness": {
+    "cases": 336,
+    "hits": 176,
+    "findings": 50,
+    "findings_detected": 47
+   },
+   "safety-framework": {
+    "cases": 343,
+    "hits": 219,
+    "findings": 36,
+    "findings_detected": 29
+   }
+  },
+  "miss_reasons": {
+   "never reached: term-not-in-rule": 250,
+   "never reached: rule-missing": 52,
+   "no passage: the row quotes no source text (a pointer), the tool compares nothing": 4,
+   "never reached: no-ve-term": 1,
+   "tool verdict CARRIED": 1
+  },
+  "verdicts": {
+   "NOT CARRIED": 636,
+   "FRAGMENT": 125,
+   "ELSEWHERE": 33,
+   "UNSHOWN": 20,
+   "null": 4,
+   "CARRIED": 1
+  },
+  "missed_findings": [
+   "defs-anthropic-rsp-x31-1119",
+   "defs-anthropic-rsp-x44-1119",
+   "defs-anthropic-rsp-x62-1119",
+   "defs-anthropic-rsp-x63-1119",
+   "defs-openai-preparedness-18-1119",
+   "defs-openai-preparedness-21-1119",
+   "defs-openai-preparedness-22-1119",
+   "defs-safety-framework-x28-1119",
+   "defs-safety-framework-x29-1119",
+   "defs-safety-framework-x30-1119",
+   "defs-safety-framework-x31-1119",
+   "defs-safety-framework-x33-1119",
+   "defs-safety-framework-x34-1119",
+   "defs-safety-framework-x35-1119"
+  ]
+ }
+}

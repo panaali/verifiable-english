@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""Tests for tm-nightly-unknown-disposition-3 (reviews/tm-nightly-unknown-disposition-3.md; DRI decision
+reviews/dri-decisions-20261120-tm-build-timeout-1120.md item 3), tm-nightly.py classify on the five unallowed
+non-timeout UNKNOWN rows of test-skip/nightly/20261119T0727Z.json (head 9ccbf3fdf), copied here as they are:
+(a) M954 (ctor-drop of VE.Service.Mode, "Unknown constant `VE.Service.Mode.cardinality`" at Registry.lean:59, its own
+    file, outside its edit) is INVALID (`dropped_ctor`): the old code left it UNKNOWN;
+(b) a ctor-drop refusal of a name the edit did not remove, in another file, of another operator or with another
+    message stays UNKNOWN;
+(c) M465, M1082, M1423 (shapeOutcome bool-flip: the probe reaches the cut `@[csimp] shapeOutcome_charged`) and M2397
+    (actsOf list-first: no control for VE/Readings/ActsExamples.lean) are not INVALID; M465/M1082/M1423 are allowed
+    once ci-3a's own record holds them ALLOWED (their disposition, the label's next item) and not before; the record
+    is complete only when all five are disposed.
+Stub git repository, no Lean. Run: TMN_PY=<staged tm-nightly.py> python3 -I tools-local/test_tm_nightly_unknown_disposition_3.py"""
+import json, os, shutil, subprocess, tempfile, unittest
+
+PY = os.environ.get("TMN_PY", "/home/seyran/code/manage-agents/tm-nightly.py")
+CTORS = "  | cardinality | scope | sensesProject | englishCommand | actReadings | clausesElaborate | englishStatement"
+CSIMP = ("Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))")
+# the record's five rows (test-skip/nightly/20261119T0727Z.json), fields classify reads
+ROWS = [
+    {"id": "M465", "file": "VE/Commands/Steps.lean", "line": 85, "definition": "VE.Commands.shapeOutcome",
+     "operator": "bool-flip", "before": "false", "after": "true", "status": "UNKNOWN",
+     "detail": f"lean/VE/Commands/StepsExamples.lean:77: {CSIMP}"},
+    {"id": "M954", "file": "VE/Service/Registry.lean", "line": 17, "definition": "VE.Service.Mode",
+     "operator": "ctor-drop", "before": CTORS, "after": "", "status": "UNKNOWN",
+     "detail": "lean/VE/Service/Registry.lean:59: Unknown constant `VE.Service.Mode.cardinality`"},
+    {"id": "M1082", "file": "VE/Commands/Steps.lean", "line": 88, "definition": "VE.Commands.shapeOutcome",
+     "operator": "bool-flip", "before": "false", "after": "true", "status": "UNKNOWN",
+     "detail": f"lean/VE/Commands/StepsExamples.lean:60: {CSIMP}"},
+    {"id": "M1423", "file": "VE/Commands/Steps.lean", "line": 89, "definition": "VE.Commands.shapeOutcome",
+     "operator": "bool-flip", "before": "true", "after": "false", "status": "UNKNOWN",
+     "detail": f"lean/VE/Commands/StepsExamples.lean:57: {CSIMP}"},
+    {"id": "M2397", "file": "VE/Norms/Wire.lean", "line": 175, "definition": "VE.Norms.Wire.actsOf",
+     "operator": "list-first", "before": "r.sorts", "after": "(r.sorts.take 1)", "status": "UNKNOWN",
+     "detail": "lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe)"},
+]
+
+
+def run(*a, env=None):
+    return subprocess.run(list(a), env=env, capture_output=True, text=True, check=True)
+
+
+def put(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        f.write(obj if isinstance(obj, str) else json.dumps(obj))
+
+
+def lines(n, at):
+    """A file of n lines: line k is at[k] when given, else a filler."""
+    return "".join(f"{at.get(k, f'-- {k}')}\n" for k in range(1, n + 1))
+
+
+def rows(*ids, **change):
+    return [{**r, **change.get(r["id"], {})} for r in ROWS if r["id"] in ids]
+
+
+class UnknownDisposition3(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.mkdtemp(prefix="tmnud3-test-")
+        r = cls.repo = os.path.join(cls.tmp, "repo")
+        os.makedirs(r)
+        g = lambda *a: run("git", "-C", r, *a).stdout
+        g("init", "-q", "-b", "main"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+        put(f"{r}/lean/VE/Base.lean", "def base := 1\n")
+        g("add", "-A"); g("commit", "-qm", "base")
+        cls.base = g("rev-parse", "HEAD").strip()
+        # the labels git blame gives each line at 9ccbf3fdf: ci-3a (Steps 85/88/89), en-e3b (Registry 17), ap-parse-index (Wire 175)
+        for label, path, text in (
+                ("ci-3a", "VE/Commands/Steps.lean", lines(120, {85: "  | .core s => lift (.core s) false x",
+                                                                 88: "    else lift (.preposed c x) false y",
+                                                                 89: "  | .after x => lift (.after x) true z"})),
+                ("en-e3b", "VE/Service/Registry.lean", lines(70, {17: CTORS})),
+                ("ap-parse-index", "VE/Norms/Wire.lean", lines(180, {175: "      let (_, A) <- f r.sorts.length"}))):
+            put(f"{r}/lean/{path}", text)
+            g("add", "-A"); g("commit", "-qm", f"Merge feature/{label} ({label}): approved")
+        cls.skip = os.path.join(cls.tmp, "skip")
+        os.makedirs(cls.skip)
+        cls.env = {**os.environ, "TEST_SKIP_DIR": cls.skip, "TM_TARGETED_ONLY_FLAG": f"{cls.tmp}/noflag",
+                   "TM_NIGHTLY_NO_SIDE": "1"}
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def classify(self, rs):
+        rec, counts = os.path.join(self.tmp, f"rec-{len(os.listdir(self.tmp))}.json"), {"NOT RUN": 0}
+        for m in rs:
+            counts[m["status"]] = counts.get(m["status"], 0) + 1
+        put(rec, {"tests": [], "counts": counts, "mutants": rs})
+        out = json.loads(run("python3", "-I", PY, "classify", rec, self.repo, self.base, env=self.env).stdout)
+        with open(os.path.join(self.skip, "nightly-survivors.jsonl")) as f:
+            return out, {x["id"]: x for x in map(json.loads, f) if x["record"] == rec}
+
+    def test_a_m954_dropped_constructor_refused_in_its_own_file_is_invalid(self):
+        out, s = self.classify(rows("M954"))
+        self.assertEqual((s["M954"]["label"], bool(s["M954"].get("invalid_here"))), ("en-e3b", True), s)
+        self.assertTrue(out["complete"], out)
+
+    def test_b_other_refusals_of_a_ctor_drop_stay_unknown(self):
+        d = "lean/VE/Service/Registry.lean:59: Unknown constant `VE.Service.Mode.cardinality`"
+        out, s = self.classify([
+            {**ROWS[1], "id": "N1", "detail": "lean/VE/Service/Protocol.lean:59: Unknown constant "
+                                              "`VE.Service.Mode.cardinality`"},              # another file
+            {**ROWS[1], "id": "N2", "detail": "lean/VE/Service/Registry.lean:59: Unknown constant "
+                                              "`VE.Service.Mode.evaluate`"},                 # a name it did not drop
+            {**ROWS[1], "id": "N3", "detail": "lean/VE/Service/Registry.lean:59: Unknown constant "
+                                              "`VE.Service.Other.cardinality`"},             # another definition's
+            {**ROWS[1], "id": "N4", "operator": "list-empty", "detail": d},                   # another operator
+            {**ROWS[1], "id": "N5", "detail": "lean/VE/Service/Registry.lean:59: Type mismatch"},  # no refusal
+            {**ROWS[1], "id": "N6", "detail": "lean/VE/Service/Registry.lean:59: no answer: Unknown constant "
+                                              "`VE.Service.Mode.cardinality`"}])               # Lean gave no answer
+        self.assertFalse(any(x.get("invalid_here") for x in s.values()), s)
+        self.assertEqual(out["unresolved"], {"UNKNOWN": 6})
+
+    def test_c_the_record_counts_the_five_disposed_only_with_each_disposition(self):
+        out, s = self.classify(rows(*(r["id"] for r in ROWS)))  # as main has them today: M954 INVALID only
+        self.assertEqual(sorted(out["unresolved_unknown"]), ["M1082", "M1423", "M2397", "M465"], out)
+        self.assertEqual({i for i, x in s.items() if x.get("invalid_here")}, {"M954"})
+        self.assertEqual((s["M465"]["label"], s["M2397"]["label"]), ("ci-3a", "ap-parse-index"))
+        d = f"{self.repo}/docs/commands-imperatives/ci-3a"
+        try:  # ci-3a's next item: its record re-run, the three texts ALLOWED under its (shapeOutcome, bool-flip) reason
+            put(f"{d}/trust-mutants-allow.json", {"allow": [{"definition": "VE.Commands.shapeOutcome",
+                                                             "operator": "bool-flip", "reason": "breaks the csimp"}]})
+            put(f"{d}/trust-mutants.json", {"head": None, "mutants": [{**r, "status": "ALLOWED"} for r in ROWS[:4]
+                                                                      if r["id"] != "M954"]})
+            judged = rows(*(r["id"] for r in ROWS), M2397={"status": "KILLED",  # the fixed tool's verdict (its own rerun)
+                                                          "detail": "lean/VE/Readings/ActsExamples.lean:78: Expression"})
+            out, s = self.classify(judged)
+            self.assertEqual({i for i, x in s.items() if x.get("allowed")}, {"M465", "M1082", "M1423"}, s)
+            self.assertTrue(out["complete"], out)
+            put(f"{d}/trust-mutants.json", {"head": None, "mutants": [{**r, "status": "KILLED"} for r in ROWS[:4]
+                                                                      if r["id"] != "M954"]})  # its record today
+            out, s = self.classify(judged)
+            self.assertEqual(sorted(out["unresolved_unknown"]), ["M1082", "M1423", "M465"], out)
+        finally:
+            shutil.rmtree(f"{self.repo}/docs", ignore_errors=True)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

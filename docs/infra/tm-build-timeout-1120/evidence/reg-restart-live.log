@@ -1,0 +1,50 @@
+test_pools_absent_routes_as_before (__main__.MacPytestRemoteOnly.test_pools_absent_routes_as_before) ... FAIL
+test_remote_actions_asks_actions_first (__main__.MacPytestRemoteOnly.test_remote_actions_asks_actions_first) ... ok
+test_remote_every_pool_refusing_no_vm_no_mac (__main__.MacPytestRemoteOnly.test_remote_every_pool_refusing_no_vm_no_mac) ... ERROR
+test_12000_cap_5000_three_parts_complete (__main__.RestartNightly.test_12000_cap_5000_three_parts_complete) ... ok
+test_budget_cut_part_is_partial_and_resumed_not_rerun (__main__.RestartNightly.test_budget_cut_part_is_partial_and_resumed_not_rerun) ... ok
+test_build_timeout_unknowns_leave_seconds_per_mutant (__main__.RestartNightly.test_build_timeout_unknowns_leave_seconds_per_mutant) ... ok
+test_fresh_never_resumes_even_an_unlisted_newer_record (__main__.RestartNightly.test_fresh_never_resumes_even_an_unlisted_newer_record) ... ok
+test_head_not_listed_resumes_as_before (__main__.RestartNightly.test_head_not_listed_resumes_as_before) ... ok
+test_incomplete_record_resumes_at_its_head_then_base_is_that_head (__main__.RestartNightly.test_incomplete_record_resumes_at_its_head_then_base_is_that_head) ... ok
+test_ledger_cost_lines (__main__.RestartNightly.test_ledger_cost_lines) ... ok
+test_no_resume_head_sweeps_main_no_carry (__main__.RestartNightly.test_no_resume_head_sweeps_main_no_carry) ... ok
+test_non_timeout_unknowns_are_resumed_and_leave_it_not_complete (__main__.RestartNightly.test_non_timeout_unknowns_are_resumed_and_leave_it_not_complete) ... ok
+test_one_part_failing_incomplete_base_stays (__main__.RestartNightly.test_one_part_failing_incomplete_base_stays) ... ok
+test_pools_absent_old_command_line_byte_for_byte (__main__.RestartNightly.test_pools_absent_old_command_line_byte_for_byte) ... ok
+test_remote_every_pool_refusing_part_is_partial (__main__.RestartNightly.test_remote_every_pool_refusing_part_is_partial) ... ok
+test_remote_parts_run_at_once_one_worktree_each (__main__.RestartNightly.test_remote_parts_run_at_once_one_worktree_each) ... ok
+test_size_from_records (__main__.RestartNightly.test_size_from_records) ... ok
+test_small_plan_one_unsplit_run (__main__.RestartNightly.test_small_plan_one_unsplit_run) ... ok
+test_stale_record_sweeps_main_as_before (__main__.RestartNightly.test_stale_record_sweeps_main_as_before) ... ok
+test_wall_budget_splits_below_cap (__main__.RestartNightly.test_wall_budget_splits_below_cap) ... ok
+
+======================================================================
+ERROR: test_remote_every_pool_refusing_no_vm_no_mac (__main__.MacPytestRemoteOnly.test_remote_every_pool_refusing_no_vm_no_mac)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_restart_main.py", line 139, in test_remote_every_pool_refusing_no_vm_no_mac
+    self.assertTrue(calls[0].startswith("c2 tm ") and any(c.startswith("overflow run ") for c in calls), calls)
+                    ~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_pools_absent_routes_as_before (__main__.MacPytestRemoteOnly.test_pools_absent_routes_as_before)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_restart_main.py", line 149, in test_pools_absent_routes_as_before
+    self.assertEqual(([c.split()[0] for c in calls], [r["where"] for r in rows]), (["c2"], ["vm"]), p.stderr[-2000:])
+AssertionError: Tuples differ: ([], ['none']) != (['c2'], ['vm'])
+
+First differing element 0:
+[]
+['c2']
+
+- ([], ['none'])
++ (['c2'], ['vm']) : [mac-pytest 07:33:07Z] NOT starting the whole run: the caller's --deadline 1795159991 leaves under 300 s (it would judge nothing and write an all-NOT RUN record over --json, which stays as it was; tm-shard-fallback-overwrite): MAC_PYTEST off
+
+
+----------------------------------------------------------------------
+Ran 20 tests in 19.858s
+
+FAILED (failures=1, errors=1)
