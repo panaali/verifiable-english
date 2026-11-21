@@ -6,19 +6,19 @@ The source-coverage map (row srccov-news-article-s7-1-1119, pin e53db4e8fc) tags
 
 - S0001 c2, S0010 c2, S0011 c1 need a new predicate in `environment.json`. Every claims.ve predicate
   must have reviewed English wording in `environment.english.json` (tests/test_english.py
-  test_reviewed_overlays_preserve_all_historical_views_and_identities), and the overlay linter
-  accepts a binary template only from the fixed idiom list (`IDIOMS`, ve/english_vocabulary.py, with
-  its Lean copy `idioms2` in lean/VE/EnglishGrammar/Lexicon.lean). Every source-worded template is
-  refused, so the carry needs a Lean and Python change, which this row does not allow. Also, any
-  vocabulary change rebinds the overlay digest and drops it to 'unreviewed', and the builder cannot
-  write the review record.
+  test_reviewed_overlays_preserve_all_historical_views_and_identities). The overlay linter does not
+  block a carry: its base shape (ve/printer.py) accepts a present-tense two-place wording such as
+  `{0} signals {1}`; only the article's past-tense wordings (`{0} signaled {1}`, `{0} was issued
+  after {1}`) would need an idiom. What blocks the carry is the review binding: any vocabulary change
+  rebinds the overlay digest and drops it to 'unreviewed', and the new `ve/reviewed-overlays.json`
+  record needs a reviewer who is not the builder, in a file outside this row's paths.
 - S0008 c3 (an expectation, and the sentence does not say who held it), S0011 c2 (a preference) and
   S0014 c2 (a purpose) are attitude or purpose content. They wait for srccov-design-attributed-1119
   or for a purpose design.
 
 These tests read the source and the carriers from the repository. They pin the drop reasons, so a
-test fails when a reason stops holding (for example, an idiom is added), which means a unit can now
-be carried.
+test fails when a reason stops holding (for example, the overlay review stops being bound to the
+environment id), which means a unit can now be carried.
 """
 import json
 from pathlib import Path
@@ -26,10 +26,12 @@ from pathlib import Path
 import pytest
 
 from tests.omission_rule import omit_norm
+from ve import parse, render
 from ve.environment import Environment
-from ve.english import EnglishVocabulary
+from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning, parse_english
 from ve.english_vocabulary import overlay_provenance
 from ve.errors import VEError
+from ve.identity import meaning_id
 
 REPO = Path(__file__).resolve().parents[1]
 CASE = REPO / "usecases" / "news-article"
@@ -54,8 +56,9 @@ NEW_WORDS = {
     "S0011": ("forward guidance", "future decisions", "preference"),
     "S0014": ("explain the decision",),
 }
-# The clauses that need a new predicate, with source-worded English templates for it.
-NEEDS_PREDICATE = [
+# The clauses that need a new predicate, with the article's past-tense wordings for it. These are not
+# the base shape, so they would need an idiom; they are not the drop reason (see PRESENT_TENSE).
+PAST_TENSE = [
     ("S0001", "signaled", ["institution", "text"], "{0} signaled {1}"),
     ("S0001", "signaled", ["institution", "text"], "{0} signaled that {1}"),
     ("S0010", "issued_after", ["text", "moment"], "{0} was issued after {1}"),
@@ -63,6 +66,29 @@ NEEDS_PREDICATE = [
     ("S0011", "gave_forward_guidance", ["text"], "{0} gave forward guidance about future decisions"),
     ("S0011", "gave_forward_guidance_about", ["text", "moment"], "{0} gave forward guidance about {1}"),
 ]
+
+# The same three clauses with a present-tense wording, and a claims.ve line that uses it. The linter's
+# base shape accepts each; the overlay review binding alone keeps them out of claims.ve.
+PRESENT_TENSE = [
+    ("S0001", "signals", ["institution", "text"], "{0} signals {1}", "@fed signals @new_statement."),
+    ("S0010", "follows", ["text", "moment"], "{0} follows {1}", "@new_statement follows @sept_meeting."),
+    ("S0011", "gives_forward_guidance_about", ["text", "moment"], "{0} gives forward guidance about {1}",
+     "@new_statement gives_forward_guidance_about @sept_meeting."),
+]
+REPORT = REPO / "docs" / "infra" / "srccov-rl-news-article-1121" / "REPORT.md"
+
+
+def with_predicate(name, arguments, template):
+    """environment.json plus one predicate, and the overlay rebound to it with `template` for that predicate."""
+    data = json.loads(ENV_RAW)
+    assert name not in data["vocabulary"]["predicates"]
+    description = "Recorded as " + template.replace("{0} ", "the subject ").replace("{1}", "this") + "."
+    data["vocabulary"]["predicates"][name] = {"arguments": arguments, "description": description}
+    env = Environment.from_json(json.dumps(data).encode())
+    overlay = json.loads(json.dumps(OVERLAY))
+    overlay["environment_id"] = env.environment_id
+    overlay["predicates"][name] = {"verbalisation": template, "suggested": False}
+    return env, overlay
 
 
 def numbered_sentence(prefix):
@@ -112,16 +138,45 @@ def test_every_predicate_needs_reviewed_overlay_wording():
     assert overlay_provenance(rebound)["review_status"] == "unreviewed"
 
 
-@pytest.mark.parametrize("unit,name,arguments,template", NEEDS_PREDICATE,
-                         ids=[f"{u}-{t}" for u, _, _, t in NEEDS_PREDICATE])
-def test_the_overlay_linter_refuses_the_wording_a_carry_needs(unit, name, arguments, template):
-    data = json.loads(ENV_RAW)
-    assert name not in data["vocabulary"]["predicates"]
-    description = "Recorded as " + template.replace("{0} ", "the subject ").replace("{1}", "this") + "."
-    data["vocabulary"]["predicates"][name] = {"arguments": arguments, "description": description}
-    env = Environment.from_json(json.dumps(data).encode())
-    overlay = json.loads(json.dumps(OVERLAY))
-    overlay["environment_id"] = env.environment_id
-    overlay["predicates"][name] = {"verbalisation": template, "suggested": False}
+@pytest.mark.parametrize("unit,name,arguments,template", PAST_TENSE,
+                         ids=[f"{u}-{t}" for u, _, _, t in PAST_TENSE])
+def test_the_overlay_linter_refuses_only_the_past_tense_wordings(unit, name, arguments, template):
+    """The article's past-tense wordings are not the base shape (no idiom holds them). Not a drop reason:
+    a present-tense wording passes (test_a_present_tense_wording_passes_and_only_the_review_blocks)."""
+    env, overlay = with_predicate(name, arguments, template)
     with pytest.raises(VEError, match=f"fails the template linter: predicates/{name}$"):
         EnglishVocabulary(env, vocabulary=overlay)
+
+
+@pytest.mark.parametrize("unit,name,arguments,template,line", PRESENT_TENSE,
+                         ids=[f"{u}-{t}" for u, _, _, t, _ in PRESENT_TENSE])
+def test_a_present_tense_wording_passes_and_only_the_review_blocks(unit, name, arguments, template, line):
+    """F1 (review of 73da418189): the drop reason for S0001 c2, S0010 c2 and S0011 c1 is the overlay review
+    binding, not the linter. A present-tense wording has no linter issue and reads back to the same
+    meaning; the one thing that fails is the review status, which only a non-builder record can restore."""
+    env, overlay = with_predicate(name, arguments, template)
+    words = EnglishVocabulary(env, vocabulary=overlay)
+    assert not words.issues
+    assert words.predicates[name] == template
+    document = parse(env, (CLAIMS + line + "\n").encode())
+    with pytest.warns(UnreviewedVocabularyWarning):
+        text = render(document, env, "ve_english", vocabulary=overlay)
+    copied = parse_english(env, text, vocabulary=overlay)
+    assert copied == document and meaning_id(env, copied) == meaning_id(env, document)
+    assert overlay_provenance(overlay)["review_status"] == "unreviewed"
+    assert words.review_status == "unreviewed"
+
+
+# Wordings of the false reason the F1 review found, split so this file does not itself contain them.
+FALSE_REASONS = ("only from the fixed " + "idiom list", "Lean and Python " + "idiom change",
+                 "Every source-worded " + "template is refused", "accepts a binary template only " + "from")
+
+
+def test_the_report_gives_the_review_binding_as_the_drop_reason():
+    """F1: REPORT and this file give the overlay review binding as the reason, never the idiom list."""
+    texts = {path.name: " ".join(path.read_text(encoding="utf-8").split()) for path in (REPORT, Path(__file__))}
+    for name, text in texts.items():
+        for wording in FALSE_REASONS:
+            assert wording not in text, (name, wording)
+    assert "ve/reviewed-overlays.json" in texts["REPORT.md"]
+    assert "test_a_present_tense_wording_passes_and_only_the_review_blocks" in texts["REPORT.md"]
