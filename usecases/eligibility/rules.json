@@ -5836,25 +5836,51 @@
    "rule": "G2",
    "role": null,
    "source": "S2:64, srccov-rl-eligibility-1121",
-   "gloss": "If the applicant and the applicant's partner jointly claim any of the benefits and the applicant is entitled, the applicant is paid into the bank account the applicant's benefits are usually paid into. You\u2019ll be paid into the bank account your benefits are usually paid into.",
+   "gloss": "If the applicant lives with the housemate, the housemate is entitled, the applicant and the applicant's partner jointly claim any of the benefits, and the applicant is entitled, the applicant is paid into the bank account the applicant's benefits are usually paid into. You\u2019ll be paid into the bank account your benefits are usually paid into.",
    "formula": [
     "implies",
     [
      "and",
      [
-      "unary",
-      "jointly_claims_benefits",
+      "and",
       [
-       "const",
-       "applicant"
+       "binary",
+       "lives_with",
+       [
+        "const",
+        "applicant"
+       ],
+       [
+        "const",
+        "housemate"
+       ]
+      ],
+      [
+       "unary",
+       "entitled",
+       [
+        "const",
+        "housemate"
+       ]
       ]
      ],
      [
-      "unary",
-      "entitled",
+      "and",
       [
-       "const",
-       "applicant"
+       "unary",
+       "jointly_claims_benefits",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "entitled",
+       [
+        "const",
+        "applicant"
+       ]
       ]
      ]
     ],
@@ -5901,15 +5927,26 @@
    "rule": "G4",
    "role": null,
    "source": "S2:148, srccov-rl-eligibility-1121",
-   "gloss": "If HMRC needs to collect 2 payments from the applicant, HMRC collects 2 payments through the applicant's tax code at the same time. HMRC will collect 2 payments through your tax code at the same time.",
+   "gloss": "If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment and needs to collect 2 payments from the applicant, HMRC collects 2 payments through the applicant's tax code at the same time. HMRC will collect 2 payments through your tax code at the same time.",
    "formula": [
     "implies",
     [
-     "unary",
-     "two_payments_to_collect",
+     "and",
      [
-      "const",
-      "applicant"
+      "unary",
+      "tax_code_changed",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "unary",
+      "two_payments_to_collect",
+      [
+       "const",
+       "applicant"
+      ]
      ]
     ],
     [
@@ -5928,15 +5965,37 @@
    "rule": "G5",
    "role": null,
    "source": "S2:148, srccov-rl-eligibility-1121",
-   "gloss": "If HMRC collects 2 payments through the applicant's tax code at the same time, the applicant pays more tax each month. This means you will pay more tax each month.",
+   "gloss": "If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment, needs to collect 2 payments from the applicant, and collects 2 payments through the applicant's tax code at the same time, the applicant pays more tax each month. This means you will pay more tax each month.",
    "formula": [
     "implies",
     [
-     "unary",
-     "two_payments_through_tax_code",
+     "and",
      [
-      "const",
-      "applicant"
+      "unary",
+      "tax_code_changed",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "two_payments_to_collect",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "two_payments_through_tax_code",
+       [
+        "const",
+        "applicant"
+       ]
+      ]
      ]
     ],
     [
@@ -5955,15 +6014,37 @@
    "rule": "G6",
    "role": null,
    "source": "S2:154, srccov-rl-eligibility-1121",
-   "gloss": "If the amount of the applicant's winter fuel payment is added to the applicant's Self Assessment tax return, it shows as the Winter Fuel Payment charge and is included in the applicant's tax calculation. It will show as the \u2018Winter Fuel Payment charge\u2019 and will be included in your tax calculation.",
+   "gloss": "If the applicant completes a Self Assessment tax return, files tax returns online, and HMRC includes the amount of the applicant's winter fuel payment in the applicant's tax return automatically, the amount shows as the Winter Fuel Payment charge and is included in the applicant's tax calculation. It will show as the \u2018Winter Fuel Payment charge\u2019 and will be included in your tax calculation.",
    "formula": [
     "implies",
     [
-     "unary",
-     "added_to_tax_return",
+     "and",
      [
-      "const",
-      "applicant"
+      "unary",
+      "completes_self_assessment",
+      [
+       "const",
+       "applicant"
+      ]
+     ],
+     [
+      "and",
+      [
+       "unary",
+       "files_online",
+       [
+        "const",
+        "applicant"
+       ]
+      ],
+      [
+       "unary",
+       "included_automatically",
+       [
+        "const",
+        "applicant"
+       ]
+      ]
      ]
     ],
     [
