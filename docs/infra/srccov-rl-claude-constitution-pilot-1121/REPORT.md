@@ -88,7 +88,11 @@ There are no Lean, Python or Rust product changes, so no language needs a seeded
 
 - New test file: 10 passed (above).
 - Selected run at `b0bffe29f3`: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` exited 0 on 6
-  shards, with 189 units passed and 0 failed. The shard lines are saved in `selected-run.txt` beside this report.
+  shards, with 189 units passed and 0 failed.
+- Selected run at the report commit `f4811fc278`: the report pulls in tests that list `docs/`. Actions ran 4 of 6
+  shards (all passed) before the run moved to the VM path, which recorded 198 units with 0 failed (exit 0). The only
+  later commit adds these evidence lines to this report and `selected-run.txt`. Both runs' lines are saved in
+  `selected-run.txt` beside this report.
 - The new test stays selected: `select_tests.py --paths <probe> --explain` lists
   `tests/test_srccov_rl_claude_constitution_pilot_1121.py: names usecases/claude-constitution-pilot/run-20261119-defs-carry/probe-translation.probe.md (static)`.
 - Full gate: not run by me (task rule). The chain runs it on the final HEAD.
@@ -99,7 +103,7 @@ There are no Lean, Python or Rust product changes, so no language needs a seeded
 The item merges at the merge train's commit on top of `cebf4fd24f` (or a later main). It touches no answer and does
 not change the probe, so later reads of the constitution pilot need no re-pin for this item.
 
-SIZE: 0 product, 95 tests, 162 other hand-written lines (this report and selected-run.txt).
+SIZE: 0 product, 95 tests, 175 other hand-written lines (this report and selected-run.txt).
 
 ## Notes for the DRI
 
