@@ -1,0 +1,87 @@
+# 2026-11-20T21:08Z python3 -I tools-local/test_merge_train_specregen.py (final, after the challenger fixes)
+# installed merge-train.sh sha256 e939d94ab371b749; .new-specregen sha256 ba6957a800af14d0
+
+## 1. MT_SPECREGEN_SRC=merge-train.sh.new-specregen (expected: all 10 pass)
+script under test: /home/seyran/code/manage-agents/merge-train.sh.new-specregen
+test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved) ... ok
+test_b_source_conflict_unchanged_skip (__main__.SpecRegen.test_b_source_conflict_unchanged_skip) ... ok
+test_c_resolve_declines_skip_no_commit (__main__.SpecRegen.test_c_resolve_declines_skip_no_commit) ... ok
+test_d_resolve_exit0_unfinished_merge_refused (__main__.SpecRegen.test_d_resolve_exit0_unfinished_merge_refused) ... ok
+test_e_clean_merge_unchanged (__main__.SpecRegen.test_e_clean_merge_unchanged) ... ok
+test_f_main_sync_regen_merge_line_unchanged (__main__.SpecRegen.test_f_main_sync_regen_merge_line_unchanged)
+regen_merge with one argument (syncbranch, the main sync): the decline line is exactly as before. ... ok
+test_g_main_sync_regen_merge_success_unchanged (__main__.SpecRegen.test_g_main_sync_regen_merge_success_unchanged)
+regen_merge with one argument, resolve succeeds: the same lines, iso.sh scope and no timeout as before. ... ok
+test_h_untracked_leftovers_removed_own_kept (__main__.SpecRegen.test_h_untracked_leftovers_removed_own_kept)
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... ok
+test_i_resolve_timeout_skip (__main__.SpecRegen.test_i_resolve_timeout_skip)
+F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit. ... ok
+test_j_handshake_retry_in_spec_regen (__main__.SpecRegen.test_j_handshake_retry_in_spec_regen)
+regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 9.658s
+
+OK
+exit=0
+
+## 2. MT_SPECREGEN_SRC=merge-train.sh (installed; expected: (a) FAILS; (h) (i) (j), tests of the new path's fixes, fail too; (b)-(g) pass)
+script under test: /home/seyran/code/manage-agents/merge-train.sh
+test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved) ... FAIL
+test_b_source_conflict_unchanged_skip (__main__.SpecRegen.test_b_source_conflict_unchanged_skip) ... ok
+test_c_resolve_declines_skip_no_commit (__main__.SpecRegen.test_c_resolve_declines_skip_no_commit) ... ok
+test_d_resolve_exit0_unfinished_merge_refused (__main__.SpecRegen.test_d_resolve_exit0_unfinished_merge_refused) ... ok
+test_e_clean_merge_unchanged (__main__.SpecRegen.test_e_clean_merge_unchanged) ... ok
+test_f_main_sync_regen_merge_line_unchanged (__main__.SpecRegen.test_f_main_sync_regen_merge_line_unchanged)
+regen_merge with one argument (syncbranch, the main sync): the decline line is exactly as before. ... ok
+test_g_main_sync_regen_merge_success_unchanged (__main__.SpecRegen.test_g_main_sync_regen_merge_success_unchanged)
+regen_merge with one argument, resolve succeeds: the same lines, iso.sh scope and no timeout as before. ... ok
+test_h_untracked_leftovers_removed_own_kept (__main__.SpecRegen.test_h_untracked_leftovers_removed_own_kept)
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... 
+  test_h_untracked_leftovers_removed_own_kept (__main__.SpecRegen.test_h_untracked_leftovers_removed_own_kept) (mode='untracked')
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay. ... FAIL
+test_i_resolve_timeout_skip (__main__.SpecRegen.test_i_resolve_timeout_skip)
+F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit. ... FAIL
+test_j_handshake_retry_in_spec_regen (__main__.SpecRegen.test_j_handshake_retry_in_spec_regen)
+regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c. ... FAIL
+
+======================================================================
+FAIL: test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_merge_train_specregen.py", line 291, in test_a_generated_only_conflict_resolved
+    self.assertEqual(r["rc"], 0, (r, s.logtxt()))
+AssertionError: 1 != 0 : ({'rc': 1, 'spec': '', 'specc': '', 'spech': '', 'after': 'aa7d946a5eb4e01ce1e2c67a598ddf522a2174b7', 'brprobed': 'KEEP', 'out': 'rc=1 spec= specc= spech=\nafter=aa7d946a5eb4e01ce1e2c67a598ddf522a2174b7 brprobed=KEEP\n', 'err': ''}, 'spec regen of item: merging the candidate b1dec1b7 of cand into a detached copy of branch aa7d946a while cand gates 21:08Z\nspec regen of item skipped (the merge of b1dec1b7 conflicts outside the generated files) 21:08Z\n')
+
+======================================================================
+FAIL: test_h_untracked_leftovers_removed_own_kept (__main__.SpecRegen.test_h_untracked_leftovers_removed_own_kept) (mode='untracked')
+F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_merge_train_specregen.py", line 402, in test_h_untracked_leftovers_removed_own_kept
+    self.assertEqual(r["rc"], rc, (r, s.logtxt()))
+AssertionError: 1 != 0 : ({'rc': 1, 'spec': '', 'specc': '', 'spech': '', 'after': '454e5e852234d6cb0335c02047215ae1f7c3045b', 'brprobed': 'KEEP', 'out': 'rc=1 spec= specc= spech=\nafter=454e5e852234d6cb0335c02047215ae1f7c3045b brprobed=KEEP\n', 'err': ''}, 'spec regen of item: merging the candidate 66cb8a0c of cand into a detached copy of branch 454e5e85 while cand gates 21:08Z\nspec regen of item skipped (the merge of 66cb8a0c conflicts outside the generated files) 21:08Z\n')
+
+======================================================================
+FAIL: test_i_resolve_timeout_skip (__main__.SpecRegen.test_i_resolve_timeout_skip)
+F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_merge_train_specregen.py", line 416, in test_i_resolve_timeout_skip
+    self.assertIn("timeout 2700 uv run python tools/regen_generated.py --resolve", s.calltxt())
+AssertionError: 'timeout 2700 uv run python tools/regen_generated.py --resolve' not found in ''
+
+======================================================================
+FAIL: test_j_handshake_retry_in_spec_regen (__main__.SpecRegen.test_j_handshake_retry_in_spec_regen)
+regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/seyran/code/manage-agents/tools-local/test_merge_train_specregen.py", line 423, in test_j_handshake_retry_in_spec_regen
+    self.assertEqual(r["rc"], 0, (r, s.logtxt()))
+AssertionError: 1 != 0 : ({'rc': 1, 'spec': '', 'specc': '', 'spech': '', 'after': '3832b168d4032c65665cd69b6e8cebbed2086455', 'brprobed': 'KEEP', 'out': 'rc=1 spec= specc= spech=\nafter=3832b168d4032c65665cd69b6e8cebbed2086455 brprobed=KEEP\n', 'err': ''}, 'spec regen of item: merging the candidate e75f76f3 of cand into a detached copy of branch 3832b168 while cand gates 21:08Z\nspec regen of item skipped (the merge of e75f76f3 conflicts outside the generated files) 21:08Z\n')
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.057s
+
+FAILED (failures=4)
+exit=1

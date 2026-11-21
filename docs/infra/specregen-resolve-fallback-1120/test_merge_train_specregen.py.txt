@@ -1,0 +1,434 @@
+#!/usr/bin/env python3
+"""Tests of merge-train.sh's spec regen (specregen) when its plain `git merge` of a candidate stops: row
+specregen-resolve-fallback-1120. Run: python3 -I tools-local/test_merge_train_specregen.py
+Script under test: $MT_SPECREGEN_SRC, else merge-train.sh.new-specregen when it exists, else merge-train.sh.
+
+Each test builds throwaway git repos under a temp dir: a base with two sources (src/a.txt, src/b.txt), a generated file
+gen/report.json (merge=ve-generated in .gitattributes; the driver is not installed, so git merges it as text, as the real
+driver does when both sides changed a derived file) and a fake tools/regen_generated.py (writer = sha256 of the sources;
+--resolve = the real tool's contract: exit 2 when an unmerged path is not generated, else regenerate, stage, exit 0). The
+functions ufiles/allgen/amerge/regen_merge/specregen/specuse are cut from the script and run under zsh -f with M, R, I,
+wt and log pointing at the scratch; branchregen and cregen_probe are stubs, uv and iso.sh are stubs in the scratch.
+Nothing live is read or written.
+
+  (a) generated-only conflict: resolved by --resolve, spec = branch + candidate with the regenerated file, specuse
+      fast-forwards the branch (the item stays in the stack). FAILS on the installed script (it skips).
+  (b) a conflict on a source file: unchanged skip ("conflicts outside the generated files"), --resolve never runs.
+  (c) generated-only conflict, --resolve exits 2: skip, branch restored, no merge commit of branch + candidate exists.
+  (d) generated-only conflict, --resolve exits 0 but did not finish the merge (aborted it, staged its own tree): skip,
+      no spec (the commit regen_merge made is single-parent and is refused).
+  (e) no conflict: spec as before, --resolve never runs.
+  (f) regen_merge called by the main sync (one argument): its decline line, iso.sh scope and no timeout, as before.
+  (g) the same for the main sync's success line.
+  Challenger findings (challenge-out.md), failing first on the first .new-specregen:
+  (h) F2 untracked files --resolve leaves are removed (decline and success); the worktree's own untracked files stay.
+  (i) F1 the spec regen's --resolve runs under timeout 2700 (CAND_REGEN_LEAN_TIMEOUT); expiry = decline.
+  (j) F6b the stale-ve_service retry inside a spec regen keeps parents h, c; F4 its lines are tagged "(spec regen)".
+"""
+import hashlib
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LIVE_PATHS = ("/home/seyran/code/manage-agents", "~/code/manage-agents", "~/code/ve-integration", "~/code/verifiable-english")
+TIMEOUT = 300
+FUNCS = ("ufiles", "allgen", "amerge", "regen_merge", "specregen", "specuse")
+
+
+def rd(p):
+    with open(p) as f:
+        return f.read()
+
+
+def wr(p, t, mode="w"):
+    with open(p, mode) as f:
+        f.write(t)
+
+
+def script():
+    s = os.environ.get("MT_SPECREGEN_SRC")
+    if s:
+        return s
+    n = os.path.join(R0, "merge-train.sh.new-specregen")
+    return n if os.path.isfile(n) else os.path.join(R0, "merge-train.sh")
+
+
+def funcs(path, names):
+    """The named functions of a zsh script (def line + its indented continuation lines)."""
+    out, take = [], False
+    for ln in rd(path).splitlines():
+        if take and ln.startswith("  "):
+            out.append(ln)
+            continue
+        take = False
+        if re.match(r"^(%s)\(\)\{" % "|".join(names), ln):
+            out.append(ln)
+            take = True
+    body = "\n".join(out) + "\n"
+    for n in names:
+        assert re.search(r"^%s\(\)\{" % n, body, re.M), f"{path}: no function {n}"
+    for lp in LIVE_PATHS:
+        assert lp not in body, f"{path}: the cut functions name a live path ({lp})"
+    return body
+
+
+FAKE_REGEN = r'''#!/usr/bin/env python3
+"""Fake tools/regen_generated.py: "--resolve" and --write, the real tool's exit contract."""
+import hashlib, json, os, subprocess, sys
+GENERATED = ["gen/report.json"]
+def git(*a):
+    return subprocess.run(["git", *a], capture_output=True, text=True).stdout
+def write():
+    src = sorted(f for f in os.listdir("src"))
+    rep = {f: hashlib.sha256(open(os.path.join("src", f), "rb").read()).hexdigest() for f in src}
+    open("gen/report.json", "w").write(json.dumps(rep, indent=1, sort_keys=True) + "\n")
+a = sys.argv[1:]
+if "--write" in a:
+    write(); sys.exit(0)
+if "--resolve" not in a:
+    sys.exit(2)
+if "--only" in a:
+    print("regen_generated --resolve --only: nothing to build (fake)"); sys.exit(0)
+if not git("rev-parse", "-q", "--verify", "MERGE_HEAD").strip():
+    print("regen_generated --resolve: no merge in progress", file=sys.stderr); sys.exit(2)
+u = [p for p in git("diff", "--name-only", "--diff-filter=U").split("\n") if p]
+out = [p for p in u if p not in GENERATED]
+if out:
+    print("regen_generated --resolve: conflicts outside the generated files (agent sync needed):", *out, file=sys.stderr)
+    sys.exit(2)
+mode = os.environ.get("FAKE_REGEN_MODE", "")
+if mode.startswith("untracked"):  # leaves files git does not track (not staged, not ignored)
+    open("gen/leftover.tmp", "w").write("x\n"); open("src/leftover.txt", "w").write("x\n")
+    mode = mode[len("untracked"):].lstrip("-")
+if mode == "handshake-once":
+    mark = git("rev-parse", "--git-path", "fake-handshake").strip()
+    if not os.path.exists(mark):
+        open(mark, "w").write("1\n")
+        print("english-lexicon-fixtures: unexpected handshake from ve_service", file=sys.stderr); sys.exit(1)
+if mode == "decline":
+    print("regen_generated --resolve: gen/report.json needs a person or the sync agent", file=sys.stderr); sys.exit(2)
+if mode == "abort-and-stage":
+    subprocess.run(["git", "merge", "--abort"]); open("src/a.txt", "a").write("not the merge\n")
+    write(); subprocess.run(["git", "add", "-A", "src", "gen"])
+    open(git("rev-parse", "--git-path", "MERGE_MSG").strip(), "w").write("not the merge\n")  # so commit --no-edit succeeds
+    sys.exit(0)
+write()
+subprocess.run(["git", "add", *GENERATED], check=True)
+print("regen_generated --resolve: generated files merged, regenerated and checked")
+'''
+
+
+def report(srcs):
+    import json
+    rep = {f: hashlib.sha256(srcs[f].encode()).hexdigest() for f in sorted(srcs)}
+    return json.dumps(rep, indent=1, sort_keys=True) + "\n"
+
+
+class Scratch:
+    def __init__(self):
+        self.d = tempfile.mkdtemp(prefix="specregen-")
+        self.M = os.path.join(self.d, "M")
+        self.home = os.path.join(self.d, "home")
+        os.makedirs(self.M)
+        os.makedirs(os.path.join(self.home, ".local", "bin"))
+        wr(os.path.join(self.M, "MQ_SPEC_REGEN"), "")
+        self.log = os.path.join(self.M, "merge-train.log")
+        wr(self.log, "")
+        self.calls = os.path.join(self.d, "uv.calls")
+        with open(os.path.join(self.M, "iso.sh"), "w") as f:  # iso.sh <name> [<mem>] -- <cmd...>: run it here
+            f.write('echo "iso.sh $*" >> %s\nshift; [ "$1" != "--" ] && shift; [ "$1" = "--" ] && shift; exec "$@"\n' % self.calls)
+        uv = os.path.join(self.home, ".local", "bin", "uv")
+        with open(uv, "w") as f:  # uv run python <args...> -> python3 <args...>
+            f.write('#!/bin/sh\necho "uv $*" >> %s\n[ "$1" = run ] && shift; [ "$1" = python ] && shift\nexec %s "$@"\n'
+                    % (self.calls, sys.executable))
+        os.chmod(uv, 0o755)
+        to = os.path.join(self.home, ".local", "bin", "timeout")
+        with open(to, "w") as f:  # timeout <s> <cmd...>: logs; FAKE_TIMEOUT_RC set -> that exit (as if it had expired)
+            f.write('#!/bin/sh\necho "timeout $*" >> %s\n[ -n "$FAKE_TIMEOUT_RC" ] && exit $FAKE_TIMEOUT_RC\nshift\nexec "$@"\n'
+                    % self.calls)
+        os.chmod(to, 0o755)
+        os.makedirs(os.path.join(self.M, "tools-local"))  # amerge's script: logs the call, resolves nothing (exit 1, silent)
+        wr(os.path.join(self.M, "tools-local", "allowances_merge.py"),
+           'open(%r, "a").write("allowances_merge\\n")\nraise SystemExit(1)\n' % self.calls)
+        self.R = os.path.join(self.d, "repo")
+        self.git("init", "-q", "-b", "main", self.R, cwd=self.d)
+        for p, t in (("src/a.txt", "a0\n"), ("src/b.txt", "b0\n"), ("tools/regen_generated.py", FAKE_REGEN),
+                     (".gitattributes", "gen/report.json merge=ve-generated\n")):
+            self.put(self.R, p, t)
+        os.makedirs(os.path.join(self.R, "gen"))
+        self.regen(self.R)
+        self.commit(self.R, "base")
+        self.base = self.rev(self.R, "HEAD")
+
+    def git(self, *a, cwd=None, check=True):
+        r = subprocess.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", *a], cwd=cwd or self.R,
+                           capture_output=True, text=True, timeout=TIMEOUT)
+        if check:
+            assert r.returncode == 0, (a, r.stdout, r.stderr)
+        return r.stdout.strip()
+
+    def put(self, w, p, t):
+        os.makedirs(os.path.dirname(os.path.join(w, p)), exist_ok=True)
+        wr(os.path.join(w, p), t)
+
+    def regen(self, w):
+        subprocess.run([sys.executable, "tools/regen_generated.py", "--write"], cwd=w, check=True, timeout=TIMEOUT)
+
+    def commit(self, w, msg):
+        self.git("add", "-A", cwd=w)
+        self.git("commit", "-qm", msg, cwd=w)
+
+    def rev(self, w, r):
+        return self.git("rev-parse", r, cwd=w)
+
+    def side(self, name, edits):
+        """A commit off base on branch <name>: the edits to sources, then the writer (as each sibling regenerates)."""
+        self.git("checkout", "-q", "-b", name, self.base)
+        for p, t in edits.items():
+            self.put(self.R, p, t)
+        self.regen(self.R)
+        self.commit(self.R, name)
+        sha = self.rev(self.R, "HEAD")
+        self.git("checkout", "-q", "main")
+        return sha
+
+    def setup(self, item_edits, cand_edits):
+        self.h = self.side("item", item_edits)
+        self.c = self.side("cand", cand_edits)
+        self.wt = os.path.join(self.d, "wt")
+        self.git("worktree", "add", "-q", self.wt, "item")
+        self.I = os.path.join(self.d, "integ")
+        self.git("worktree", "add", "-q", "--detach", self.I, self.c)  # main == the candidate (published)
+
+    def zsh(self, body, **env):
+        fn = funcs(script(), FUNCS)
+        snippet = ("M=%s; R=%s; I=%s; wt=%s; log=%s; label=item; brprobed=KEEP; brtag=''; spec=''; specc=''; spech=''\n"
+                   "specrestore=''; specrestoreh=''\n%s"
+                   "branchregen(){ echo branchregen >> %s; }\ncregen_probe(){ echo 0; }\n%s\n"
+                   % (self.M, self.R, self.I, self.wt, self.log, fn, self.calls, body))
+        e = {k: v for k, v in os.environ.items() if not k.startswith(("GIT_", "FAKE_"))}
+        e.update(HOME=self.home, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t",
+                 GIT_COMMITTER_EMAIL="t@t", **env)
+        r = subprocess.run(["zsh", "-f", "-c", snippet], capture_output=True, text=True, env=e, timeout=TIMEOUT)
+        return r
+
+    def specregen(self, **env):
+        r = self.zsh('specregen %s cand; rc=$?; print -r -- "rc=$rc spec=$spec specc=$specc spech=$spech"\n'
+                     'specuse; print -r -- "after=$(git -C $wt rev-parse HEAD) brprobed=$brprobed"' % self.c, **env)
+        m = re.search(r"rc=(\d+) spec=(\S*) specc=(\S*) spech=(\S*)\nafter=(\S+) brprobed=(\S*)", r.stdout)
+        assert m, (r.stdout, r.stderr)
+        return dict(rc=int(m.group(1)), spec=m.group(2), specc=m.group(3), spech=m.group(4), after=m.group(5),
+                    brprobed=m.group(6), out=r.stdout, err=r.stderr)
+
+    def logtxt(self):
+        return rd(self.log)
+
+    def calltxt(self):
+        return rd(self.calls) if os.path.exists(self.calls) else ""
+
+    def hc_merges(self):
+        """Every commit object in the repo whose parents are exactly (h, c), reachable or not."""
+        o = subprocess.run(["git", "cat-file", "--batch-all-objects", "--batch-check=%(objecttype) %(objectname)"],
+                           cwd=self.R, capture_output=True, text=True, timeout=TIMEOUT).stdout.split("\n")
+        out = []
+        for ln in o:
+            if ln.startswith("commit "):
+                sha = ln.split()[1]
+                ps = self.git("rev-list", "--parents", "-n", "1", sha).split()[1:]
+                if ps[:1] == [self.h] and self.c in ps:
+                    out.append(sha)
+        return out
+
+    def restored(self):
+        """The worktree is back on branch item at h, clean, with no merge in progress."""
+        return (self.git("symbolic-ref", "-q", "--short", "HEAD", cwd=self.wt) == "item"
+                and self.rev(self.wt, "HEAD") == self.h
+                and self.git("status", "--porcelain", "--untracked-files=no", cwd=self.wt) == ""
+                and self.git("rev-parse", "-q", "--verify", "MERGE_HEAD", cwd=self.wt, check=False) == "")
+
+    def close(self):
+        shutil.rmtree(self.d, ignore_errors=True)
+
+
+GEN_ONLY = ({"src/a.txt": "a1 item\n"}, {"src/b.txt": "b1 cand\n"})       # different sources, same derived file
+SRC_CONFLICT = ({"src/a.txt": "a1 item\n"}, {"src/a.txt": "a2 cand\n"})   # the same source, both sides
+
+
+class SpecRegen(unittest.TestCase):
+    def setUp(self):
+        self.s = Scratch()
+
+    def tearDown(self):
+        self.s.close()
+
+    def skipline(self):
+        return [ln for ln in self.s.logtxt().splitlines() if ln.startswith("spec regen of item skipped (")]
+
+    def assert_skip(self, r):
+        s = self.s
+        self.assertEqual(r["rc"], 1, r)
+        self.assertEqual(r["spec"], "", r)
+        self.assertEqual(r["after"], s.h, "specuse must not move the branch")
+        self.assertEqual(r["brprobed"], "KEEP", "brprobed restored")
+        self.assertTrue(s.restored(), s.git("status", "--short", cwd=s.wt))
+        self.assertEqual(len(self.skipline()), 1, s.logtxt())
+        self.assertNotIn("branchregen", s.calltxt(), "no regen after a skip")
+
+    def test_a_generated_only_conflict_resolved(self):
+        s = self.s
+        s.setup(*GEN_ONLY)
+        # precondition: a plain merge stops on exactly the generated file
+        mt = subprocess.run(["git", "merge-tree", "--write-tree", "--name-only", s.h, s.c], cwd=s.R,
+                            capture_output=True, text=True).stdout.split("\n")
+        self.assertIn("gen/report.json", mt)
+        self.assertNotIn("src/a.txt", mt[1:])
+        r = s.specregen()
+        self.assertEqual(r["rc"], 0, (r, s.logtxt()))
+        spec = s.rev(s.R, r["spec"])
+        self.assertEqual((r["specc"], r["spech"]), (s.c, s.h))
+        self.assertEqual(s.git("rev-list", "--parents", "-n", "1", spec).split()[1:], [s.h, s.c])
+        want = report({"a.txt": "a1 item\n", "b.txt": "b1 cand\n"})
+        self.assertEqual(s.git("show", spec + ":gen/report.json") + "\n", want, "the regenerated file of the merged tree")
+        self.assertEqual(s.git("show", spec + ":src/a.txt"), "a1 item")
+        self.assertEqual(s.git("show", spec + ":src/b.txt"), "b1 cand")
+        # specuse (main == the candidate): the branch fast-forwards to the spec regen, the item stays in the stack
+        self.assertEqual(r["after"], spec)
+        self.assertEqual(r["brprobed"], spec)
+        log = s.logtxt()
+        self.assertIn("spec regen of item: %s = branch %s + candidate %s of cand, regenerated" % (spec[:8], s.h[:8], s.c[:8]), log)
+        self.assertIn("spec regen of item used: fast-forwarded to %s" % spec[:8], log)
+        self.assertRegex(log, r"(?m)^regenerated generated-only conflicts \(spec regen\) in wt without an agent \d\d:\d\dZ$")
+        self.assertEqual(self.skipline(), [])
+        calls = s.calltxt()
+        # F1: both --resolve steps under a timeout; F3: in the train's own scope (no iso.sh scope a stop would leave running)
+        self.assertIn("timeout 2700 uv run python tools/regen_generated.py --resolve --only lake-build --only checker-pins\n", calls)
+        self.assertIn("timeout 2700 uv run python tools/regen_generated.py --resolve\n", calls)
+        self.assertNotIn("iso.sh", calls)
+        self.assertNotIn("allowances_merge", calls, "no allowances resolve inside a spec regen")
+        self.assertIn("branchregen", calls)
+        # stop-train.sh regenbase: the last "spec regen of item" line during the regen is still its start line
+        during = [ln for ln in log.splitlines() if re.match(r"^spec regen of item[: ]", ln)]
+        self.assertTrue(during[0].startswith("spec regen of item: merging the candidate "), during)
+        self.assertTrue(during[1].startswith("spec regen of item: %s = branch" % spec[:8]), during)
+
+    def test_b_source_conflict_unchanged_skip(self):
+        s = self.s
+        s.setup(*SRC_CONFLICT)
+        r = s.specregen()
+        self.assert_skip(r)
+        self.assertRegex(self.skipline()[0], r"^spec regen of item skipped \(the merge of %s conflicts outside the generated "
+                         r"files\) \d\d:\d\dZ$" % s.c[:8])
+        self.assertEqual(s.calltxt(), "", "--resolve never runs on a source conflict")
+        self.assertEqual(s.hc_merges(), [])
+        self.assertNotIn("resolve", s.logtxt().replace("spec regen of", ""))
+
+    def test_c_resolve_declines_skip_no_commit(self):
+        s = self.s
+        s.setup(*GEN_ONLY)
+        r = s.specregen(FAKE_REGEN_MODE="decline")
+        self.assert_skip(r)
+        self.assertEqual(s.hc_merges(), [], "no commit of branch + candidate after a declined --resolve")
+        if "regen_merge(){ local w=$1 sx=$2" in rd(script()):  # the new script: its decline is logged as the spec regen's
+            log = s.logtxt()
+            self.assertRegex(log, r"(?m)^generated-file resolve \(spec regen\) declined in wt: .*needs a person.*; conflicting "
+                             r"files: \(1\) gen/report.json; spec regen skipped, no agent sync$")
+            self.assertRegex(self.skipline()[0], r"^spec regen of item skipped \(the merge of %s conflicts only in generated "
+                             r"files and tools/regen_generated.py --resolve declined\)" % s.c[:8])
+
+    def test_d_resolve_exit0_unfinished_merge_refused(self):
+        s = self.s
+        s.setup(*GEN_ONLY)
+        r = s.specregen(FAKE_REGEN_MODE="abort-and-stage")
+        self.assert_skip(r)
+        self.assertEqual(s.hc_merges(), [])
+        if "regen_merge(){ local w=$1 sx=$2" in rd(script()):  # the new script: regen_merge committed it, the check refused it
+            self.assertIn("regenerated generated-only conflicts (spec regen) in wt without an agent", s.logtxt())
+            self.assertRegex(self.skipline()[0], r"^spec regen of item skipped \(the resolve of the merge of %s did not leave "
+                             r"branch %s \+ candidate %s\)" % (s.c[:8], s.h[:8], s.c[:8]))
+
+    def test_e_clean_merge_unchanged(self):
+        s = self.s
+        s.setup({"src/a.txt": "a1 item\n"}, {".gitattributes": "gen/report.json merge=ve-generated\n# c\n"})
+        r = s.specregen()
+        self.assertEqual(r["rc"], 0, (r, s.logtxt()))
+        spec = s.rev(s.R, r["spec"])
+        self.assertEqual(s.git("rev-list", "--parents", "-n", "1", spec).split()[1:], [s.h, s.c])
+        self.assertEqual(r["after"], spec)
+        self.assertNotIn("uv ", s.calltxt(), "--resolve never runs on a clean merge")
+        self.assertNotIn("resolve", s.logtxt())
+
+    def test_f_main_sync_regen_merge_line_unchanged(self):
+        """regen_merge with one argument (syncbranch, the main sync): the decline line is exactly as before."""
+        s = self.s
+        s.setup(*GEN_ONLY)
+        s.git("merge", "-q", "--no-edit", s.c, cwd=s.wt, check=False)
+        r = s.zsh('regen_merge $wt; print -r -- "rc=$?"', FAKE_REGEN_MODE="decline")
+        self.assertIn("rc=1", r.stdout, (r.stdout, r.stderr))
+        self.assertRegex(s.logtxt(), r"(?m)^generated-file resolve declined in wt: .*needs a person.*; conflicting files: "
+                         r"\(1\) gen/report.json; agent sync$")
+        self.assertTrue(s.restored())
+        calls = s.calltxt()
+        self.assertIn("iso.sh integ-regen-wt 16G -- uv run python tools/regen_generated.py --resolve --only lake-build", calls)
+        self.assertNotIn("timeout", calls)
+
+    def test_g_main_sync_regen_merge_success_unchanged(self):
+        """regen_merge with one argument, resolve succeeds: the same lines, iso.sh scope and no timeout as before."""
+        s = self.s
+        s.setup(*GEN_ONLY)
+        s.git("merge", "-q", "--no-edit", s.c, cwd=s.wt, check=False)
+        r = s.zsh('regen_merge $wt; print -r -- "rc=$?"')
+        self.assertIn("rc=0", r.stdout, (r.stdout, r.stderr))
+        self.assertIn("allowances_merge", s.calltxt(), "the main sync still tries the allowances resolve first")
+        self.assertRegex(s.logtxt(), r"^regenerated generated-only conflicts in wt without an agent \d\d:\d\dZ\n$")
+        self.assertEqual(s.git("rev-list", "--parents", "-n", "1", "HEAD", cwd=s.wt).split()[1:], [s.h, s.c])
+        calls = s.calltxt()
+        self.assertIn("iso.sh integ-regen-wt 16G -- uv run python tools/regen_generated.py --resolve --only lake-build", calls)
+        self.assertNotIn("timeout", calls)
+
+    def test_h_untracked_leftovers_removed_own_kept(self):
+        """F2: files --resolve leaves untracked are removed, on a decline and on success; the worktree's own stay."""
+        for mode, rc in (("untracked-decline", 1), ("untracked", 0)):
+            with self.subTest(mode=mode):
+                s = Scratch()
+                try:
+                    s.setup(*GEN_ONLY)
+                    wr(os.path.join(s.wt, "mine.txt"), "the worktree's own untracked file\n")
+                    r = s.specregen(FAKE_REGEN_MODE=mode)
+                    self.assertEqual(r["rc"], rc, (r, s.logtxt()))
+                    self.assertFalse(os.path.exists(os.path.join(s.wt, "gen", "leftover.tmp")))
+                    self.assertFalse(os.path.exists(os.path.join(s.wt, "src", "leftover.txt")))
+                    self.assertTrue(os.path.exists(os.path.join(s.wt, "mine.txt")))
+                finally:
+                    s.close()
+
+    def test_i_resolve_timeout_skip(self):
+        """F1: a --resolve that runs out of time (timeout exits 124) is a decline: skip, no commit."""
+        s = self.s
+        s.setup(*GEN_ONLY)
+        r = s.specregen(FAKE_TIMEOUT_RC="124")
+        self.assert_skip(r)
+        self.assertEqual(s.hc_merges(), [])
+        self.assertIn("timeout 2700 uv run python tools/regen_generated.py --resolve", s.calltxt())
+
+    def test_j_handshake_retry_in_spec_regen(self):
+        """regen_merge's stale-ve_service retry (merge again --no-commit --no-ff, build, resolve) keeps parents h, c."""
+        s = self.s
+        s.setup(*GEN_ONLY)
+        r = s.specregen(FAKE_REGEN_MODE="handshake-once")
+        self.assertEqual(r["rc"], 0, (r, s.logtxt()))
+        spec = s.rev(s.R, r["spec"])
+        self.assertEqual(s.git("rev-list", "--parents", "-n", "1", spec).split()[1:], [s.h, s.c])
+        log = s.logtxt()
+        self.assertRegex(log, r"(?m)^generated-file resolve \(spec regen\) in wt: stale ve_service \(handshake\)")
+        self.assertRegex(log, r"(?m)^regenerated generated-only conflicts \(spec regen\) in wt without an agent, after a Lean build")
+        self.assertNotIn("iso.sh", s.calltxt())
+
+
+if __name__ == "__main__":
+    print("script under test:", script(), flush=True)
+    unittest.main(verbosity=2)
