@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-backlog-unlaunchable-ready-1120-dece28fa-t220185-s3",
+ "head": "a371712cd4ae04162040873c657d110496d2f9b7",
+ "argv": [
+  "armsh-cand-backlog-unlaunchable-ready-1120-dece28fa-t220185-s3",
+  "a371712cd4ae04162040873c657d110496d2f9b7",
+  "2aa2ae1cce30006f2a721a4b49d8eae9b846e507",
+  "-",
+  "-",
+  "4",
+  "3/7"
+ ]
+}
