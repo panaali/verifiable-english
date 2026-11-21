@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-rl-openai-preparedness-1121-c3c954b5-t252299-s4",
+ "head": "41579068d1240b2e64726b415056f2352923bf1a",
+ "argv": [
+  "armsh-cand-srccov-rl-openai-preparedness-1121-c3c954b5-t252299-s4",
+  "41579068d1240b2e64726b415056f2352923bf1a",
+  "aacf1c8365de9527c6409b28bb76903aeffadb3c",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
