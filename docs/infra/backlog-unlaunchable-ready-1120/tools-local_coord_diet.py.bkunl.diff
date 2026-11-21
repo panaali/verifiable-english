@@ -1,0 +1,45 @@
+--- a/tools-local/coord_diet.py
++++ b/tools-local/coord_diet.py
+@@ -32,7 +32,7 @@
+                                off (<FLAG> -> <FLAG>.off-<stamp>) and messages the orchestrator; at the end time all four go off
+   tables                     -> OPS-TABLES.md: the shared tables the daily eff pass reads instead of recomputing them
+                                (bottleneck waterfall, token ledger 24 h, management CW per loop, trial ledgers)
+-Test hooks: CD_M (base dir), CD_NOW (epoch). Tests: python3 -I tools-local/test_coord_diet.py
++Test hooks: CD_M (base dir), CD_NOW (epoch), CD_BACKLOG (backlog.py for the digest's unlaunched lines). Tests: python3 -I tools-local/test_coord_diet.py
+ """
+ import calendar, collections, glob, importlib.util, json, os, re, subprocess, sys, time
+ 
+@@ -338,6 +338,24 @@
+         return f"== trust-mutant drain: no reading ({type(e).__name__}; test-skip/nightly/parts-*)"
+ 
+ 
++def unlaunched_lines():
++    # 2026-11-20 backlog-unlaunchable-ready-1120 (orchestrator BATCH 20261120T085959Z item 2): ready rows sat for hours with nobody to
++    # start them. Every digest lists each ready row whose ready_t is >= 60 min old and that has no live launch, one line each: id,
++    # age, owner, why not launched (backlog.py unlaunched, the one owner of the rule; START_TABLE's reason when no launcher starts
++    # it). Fail open: a "no reading" line.
++    tool = os.environ.get("CD_BACKLOG", f"{M}/backlog.py")
++    try:
++        r = subprocess.run([sys.executable, "-I", tool, "unlaunched", "--min-age", "60"], capture_output=True, text=True, timeout=120)
++        if r.returncode == 0:
++            ls = [ln for ln in r.stdout.splitlines() if ln.strip()]
++            return [f"== ready > 60 min with no live launch: {len(ls)} (backlog.sh unlaunched; refused pairs: backlog.sh lint)"] + \
++                [f"- {ln}" for ln in ls[:40]] + ([f"- ... {len(ls) - 40} more: zsh backlog.sh unlaunched"] if len(ls) > 40 else [])
++        why = f"exit {r.returncode}"
++    except Exception as e:
++        why = type(e).__name__
++    return [f"== ready > 60 min with no live launch: no reading ({why}; backlog.sh unlaunched)"]
++
++
+ def digest_take():
+     ls = digest_lines()
+     if not ls:
+@@ -352,6 +370,8 @@
+             t, u, p, why, first = (ln.split("\t") + ["", "", "", "", ""])[:5]
+             print(f"- {u} {p} [{why}] {first[:160]}")
+             f.write(ln + "\n")
++    for ln in unlaunched_lines():   # after the notices: the budget, drain and notice header lines keep their places
++        print(ln)
+     bl = backup_age_line()
+     if bl:
+         print(bl)

@@ -1,0 +1,15 @@
+--- a/infra_feed.py
++++ b/infra_feed.py
+@@ -393,9 +393,9 @@
+     nb = (r.get("links") or {}).get("not_before")  # 2026-11-03 adv0101 item 3: a row held to a time starts by itself after it
+     if nb and bl.utc() < nb:
+         return f"held to {nb} (links.not_before)", None
+-    own = (r.get("owner") or "").strip()
+-    if not bl.FEED_OWNER.match(own) and not (r.get("kind") == "design" and own.lower().startswith("feature planner")):  # dri-lp0847: backlog.launcher
+-        return f"owner '{bl.short(r.get('owner'), 40)}' starts it, not this feed", None
++    who, why, _ = bl.start_rule(r)  # backlog.py START_TABLE, the one table of who starts a ready row (backlog-unlaunchable-ready 11-20)
++    if who != "infra feed":
++        return (f"owner '{bl.short(r.get('owner'), 40)}' starts it, not this feed" if who else why), None
+     s, why = bl.launch_spec(r)
+     if not s:
+         return why, None
