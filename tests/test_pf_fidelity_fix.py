@@ -479,8 +479,10 @@ def test_regulated_predicates_stay_within_64():
     stage0 = json.loads((REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json").read_text())
     count = sum("regulated" in p for p in V.environment()["vocabulary"]["predicates"].values())
     # fix-5 adds fast_track_request, the fast-track permission (PLAN 12 item 26); pf-f7-timed-act adds
-    # misuse_safeguards_before_external, BIO-H's own act (PLAN 12 item 29)
-    assert stage0["P7"]["regulated_predicates"] == count == 62 <= 64
+    # misuse_safeguards_before_external, BIO-H's own act (PLAN 12 item 29); srccov-rl-openai-preparedness-1121 adds
+    # sufficiency_basis, 4.2's sufficiency basis (block sr-sufficiency). N2's query-only probe (run.py
+    # persuasion_probe) adds one more at run time, so 63 is the most Lean's limit of 64 admits.
+    assert stage0["P7"]["regulated_predicates"] == count == 63 <= 64 - 1
 
 
 # --- openai-preparedness-fidelity-fix-3: the six round-B units both adjudicators judged REAL ---------------------
