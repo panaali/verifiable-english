@@ -1,0 +1,522 @@
+{
+ "about": "Unit render sizes in bytes, as the counter renders each unit into a step-1 prompt (uc-audit.py.reads-1120 seq_unit_text), at main 09bea0972d and at fd322bf099 (rows 11, 18-25 and 40 on existing_at_publication, DRI decision 2026-11-20 1a); no read output used. Compare prompt-units.json (all rows on the carriers the rows name, 9a3fa50db7). Rebased onto main f21b79f71e: df049e8744 became fd322bf099; base 09bea0972d and f21b79f71e give the same table (PF unchanged on main).",
+ "base": "09bea0972d",
+ "head": "fd322bf099",
+ "units": {
+  "FACTS": {
+   "main": 3271,
+   "head": 11339,
+   "delta": 8068
+  },
+  "no-critical-models": {
+   "main": 1185,
+   "head": 7412,
+   "delta": 6227
+  },
+  "f1-security-strict": {
+   "main": 719,
+   "head": 6688,
+   "delta": 5969
+  },
+  "f1-security-default": {
+   "main": 810,
+   "head": 6779,
+   "delta": 5969
+  },
+  "f4-security": {
+   "main": 672,
+   "head": 6641,
+   "delta": 5969
+  },
+  "rs2-nest": {
+   "main": 1140,
+   "head": 4862,
+   "delta": 3722
+  },
+  "f12-undermining": {
+   "main": 1327,
+   "head": 4793,
+   "delta": 3466
+  },
+  "f12-undermining-unscoped": {
+   "main": 1202,
+   "head": 4668,
+   "delta": 3466
+  },
+  "f12-lra": {
+   "main": 1096,
+   "head": 4555,
+   "delta": 3459
+  },
+  "f12-lra-unscoped": {
+   "main": 993,
+   "head": 4452,
+   "delta": 3459
+  },
+  "bio-critical": {
+   "main": 448,
+   "head": 2878,
+   "delta": 2430
+  },
+  "cyb-critical": {
+   "main": 406,
+   "head": 2836,
+   "delta": 2430
+  },
+  "ais-critical": {
+   "main": 432,
+   "head": 2862,
+   "delta": 2430
+  },
+  "f12-ara": {
+   "main": 591,
+   "head": 2812,
+   "delta": 2221
+  },
+  "f12-ara-unscoped": {
+   "main": 535,
+   "head": 2756,
+   "delta": 2221
+  },
+  "f1-halt-strict": {
+   "main": 1377,
+   "head": 3258,
+   "delta": 1881
+  },
+  "f1-halt-default": {
+   "main": 1239,
+   "head": 3120,
+   "delta": 1881
+  },
+  "f3-develop": {
+   "main": 2311,
+   "head": 4192,
+   "delta": 1881
+  },
+  "f3-develop-inuse": {
+   "main": 2214,
+   "head": 4095,
+   "delta": 1881
+  },
+  "f3-inuse": {
+   "main": 1589,
+   "head": 3470,
+   "delta": 1881
+  },
+  "f3-reminder": {
+   "main": 1756,
+   "head": 3637,
+   "delta": 1881
+  },
+  "f13-review": {
+   "main": 580,
+   "head": 2429,
+   "delta": 1849
+  },
+  "f13-results": {
+   "main": 816,
+   "head": 2665,
+   "delta": 1849
+  },
+  "bio-high": {
+   "main": 412,
+   "head": 2253,
+   "delta": 1841
+  },
+  "cyb-high": {
+   "main": 370,
+   "head": 2211,
+   "delta": 1841
+  },
+  "ais-high": {
+   "main": 396,
+   "head": 2237,
+   "delta": 1841
+  },
+  "f1-alignment-cyb-strict": {
+   "main": 818,
+   "head": 2119,
+   "delta": 1301
+  },
+  "f1-alignment-cyb-default": {
+   "main": 946,
+   "head": 2247,
+   "delta": 1301
+  },
+  "c2-misalignment-strict": {
+   "main": 912,
+   "head": 2213,
+   "delta": 1301
+  },
+  "c2-misalignment-default": {
+   "main": 898,
+   "head": 2199,
+   "delta": 1301
+  },
+  "f2-deploy": {
+   "main": 1323,
+   "head": 2615,
+   "delta": 1292
+  },
+  "f2-deploy-any": {
+   "main": 1458,
+   "head": 2750,
+   "delta": 1292
+  },
+  "f2-reminder": {
+   "main": 1164,
+   "head": 2456,
+   "delta": 1292
+  },
+  "f2-reminder-any": {
+   "main": 1299,
+   "head": 2591,
+   "delta": 1292
+  },
+  "f2-security-developed": {
+   "main": 1363,
+   "head": 2655,
+   "delta": 1292
+  },
+  "f2-no-deploy": {
+   "main": 1165,
+   "head": 2457,
+   "delta": 1292
+  },
+  "f2-no-deploy-any": {
+   "main": 1303,
+   "head": 2595,
+   "delta": 1292
+  },
+  "f15-safeguards": {
+   "main": 1468,
+   "head": 2760,
+   "delta": 1292
+  },
+  "f1-misuse-bio-strict": {
+   "main": 918,
+   "head": 1953,
+   "delta": 1035
+  },
+  "f1-misuse-bio-default": {
+   "main": 1046,
+   "head": 2081,
+   "delta": 1035
+  },
+  "f1-misuse-cyb-strict": {
+   "main": 763,
+   "head": 1798,
+   "delta": 1035
+  },
+  "f1-misuse-cyb-default": {
+   "main": 891,
+   "head": 1926,
+   "delta": 1035
+  },
+  "f11-exception": {
+   "main": 3246,
+   "head": 4083,
+   "delta": 837
+  },
+  "f11-exception-deploy": {
+   "main": 3526,
+   "head": 4363,
+   "delta": 837
+  },
+  "f17-suff": {
+   "main": 970,
+   "head": 1791,
+   "delta": 821
+  },
+  "f17-iff": {
+   "main": 1028,
+   "head": 1849,
+   "delta": 821
+  },
+  "f17-iff-only": {
+   "main": 1046,
+   "head": 1867,
+   "delta": 821
+  },
+  "f7-evaluations": {
+   "main": 847,
+   "head": 1464,
+   "delta": 617
+  },
+  "f7-evaluations-any": {
+   "main": 1009,
+   "head": 1626,
+   "delta": 617
+  },
+  "f7-compile": {
+   "main": 913,
+   "head": 1530,
+   "delta": 617
+  },
+  "f16-board-reverse": {
+   "main": 954,
+   "head": 1260,
+   "delta": 306
+  },
+  "f16-board-mandate": {
+   "main": 947,
+   "head": 1253,
+   "delta": 306
+  },
+  "f11-within": {
+   "main": 2116,
+   "head": 2404,
+   "delta": 288
+  },
+  "f11-acknowledge": {
+   "main": 1988,
+   "head": 2276,
+   "delta": 288
+  },
+  "f11-protect": {
+   "main": 1900,
+   "head": 2188,
+   "delta": 288
+  },
+  "f11-share": {
+   "main": 1989,
+   "head": 2277,
+   "delta": 288
+  },
+  "f12-nuclear": {
+   "main": 941,
+   "head": 1201,
+   "delta": 260
+  },
+  "f12-nuclear-unscoped": {
+   "main": 841,
+   "head": 1101,
+   "delta": 260
+  },
+  "f12-sandbagging": {
+   "main": 1022,
+   "head": 1261,
+   "delta": 239
+  },
+  "f12-sandbagging-unscoped": {
+   "main": 938,
+   "head": 1177,
+   "delta": 239
+  },
+  "f7-report": {
+   "main": 492,
+   "head": 707,
+   "delta": 215
+  },
+  "f15-third-party": {
+   "main": 1660,
+   "head": 1875,
+   "delta": 215
+  },
+  "f16-chair-strict": {
+   "main": 1417,
+   "head": 1597,
+   "delta": 180
+  },
+  "f16-chair-default": {
+   "main": 1395,
+   "head": 1575,
+   "delta": 180
+  },
+  "f1-contrib-bio-strict": {
+   "main": 617,
+   "head": 617,
+   "delta": 0
+  },
+  "f1-contrib-bio-default": {
+   "main": 651,
+   "head": 651,
+   "delta": 0
+  },
+  "f1-contrib-cyb-strict": {
+   "main": 672,
+   "head": 672,
+   "delta": 0
+  },
+  "f1-contrib-cyb-default": {
+   "main": 790,
+   "head": 790,
+   "delta": 0
+  },
+  "f3-develop-forecast": {
+   "main": 2225,
+   "head": 2225,
+   "delta": 0
+  },
+  "f3-develop-inuse-forecast": {
+   "main": 2131,
+   "head": 2131,
+   "delta": 0
+  },
+  "f3-inuse-forecast": {
+   "main": 1576,
+   "head": 1576,
+   "delta": 0
+  },
+  "f7-recommend": {
+   "main": 1279,
+   "head": 1279,
+   "delta": 0
+  },
+  "f8-start": {
+   "main": 997,
+   "head": 997,
+   "delta": 0
+  },
+  "f9-report": {
+   "main": 1097,
+   "head": 1097,
+   "delta": 0
+  },
+  "f9-residual-strict": {
+   "main": 1344,
+   "head": 1344,
+   "delta": 0
+  },
+  "f9-residual-default": {
+   "main": 1363,
+   "head": 1363,
+   "delta": 0
+  },
+  "f9-risk-paths": {
+   "main": 1322,
+   "head": 1322,
+   "delta": 0
+  },
+  "f9-specific": {
+   "main": 1181,
+   "head": 1181,
+   "delta": 0
+  },
+  "f9-efficacy": {
+   "main": 808,
+   "head": 808,
+   "delta": 0
+  },
+  "f9-threshold": {
+   "main": 577,
+   "head": 577,
+   "delta": 0
+  },
+  "f10-validate": {
+   "main": 904,
+   "head": 904,
+   "delta": 0
+  },
+  "f10-review": {
+   "main": 875,
+   "head": 875,
+   "delta": 0
+  },
+  "f14-document": {
+   "main": 516,
+   "head": 516,
+   "delta": 0
+  },
+  "f14-investigate": {
+   "main": 1071,
+   "head": 1071,
+   "delta": 0
+  },
+  "f14-corrective": {
+   "main": 966,
+   "head": 966,
+   "delta": 0
+  },
+  "f14-summary": {
+   "main": 1290,
+   "head": 1290,
+   "delta": 0
+  },
+  "f15-disclose": {
+   "main": 1544,
+   "head": 1544,
+   "delta": 0
+  },
+  "f16-sag-recommend": {
+   "main": 792,
+   "head": 792,
+   "delta": 0
+  },
+  "c3-access-strict": {
+   "main": 1039,
+   "head": 1039,
+   "delta": 0
+  },
+  "c3-access-default": {
+   "main": 1045,
+   "head": 1045,
+   "delta": 0
+  },
+  "cl4-persuasion": {
+   "main": 1134,
+   "head": 1134,
+   "delta": 0
+  },
+  "f16-ssc-visibility": {
+   "main": 971,
+   "head": 971,
+   "delta": 0
+  },
+  "f16-informed": {
+   "main": 762,
+   "head": 762,
+   "delta": 0
+  },
+  "f16-without-noinput": {
+   "main": 1208,
+   "head": 1208,
+   "delta": 0
+  },
+  "f16-without-nodelib": {
+   "main": 937,
+   "head": 937,
+   "delta": 0
+  },
+  "f16-fast-track": {
+   "main": 1173,
+   "head": 1173,
+   "delta": 0
+  },
+  "f16-year": {
+   "main": 840,
+   "head": 840,
+   "delta": 0
+  },
+  "f5-ambiguous": {
+   "main": 729,
+   "head": 729,
+   "delta": 0
+  },
+  "f5-checkpoint": {
+   "main": 955,
+   "head": 955,
+   "delta": 0
+  },
+  "f6-rel": {
+   "main": 1295,
+   "head": 1295,
+   "delta": 0
+  },
+  "cl-levels": {
+   "main": 734,
+   "head": 734,
+   "delta": 0
+  },
+  "fn5-indicator": {
+   "main": 912,
+   "head": 912,
+   "delta": 0
+  },
+  "D2D3": {
+   "main": 24211,
+   "head": 24211,
+   "delta": 0
+  }
+ }
+}
