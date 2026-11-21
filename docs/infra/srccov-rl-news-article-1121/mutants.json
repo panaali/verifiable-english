@@ -1,15 +1,15 @@
 {
  "item": "srccov-rl-news-article-1121",
- "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item.",
+ "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item. M1 was rerun and M5, M6 added for the F1 fix (planted with sed, restored with git checkout -- ve/; log /tmp/na-f1-mutants.log).",
  "mutants": [
   {
    "id": "M1",
    "file": "ve/english_vocabulary.py",
-   "behaviour": "the overlay linter refuses the wording a carry of S0001 needs",
+   "behaviour": "the article's past-tense wording '{0} signaled {1}' is not the base shape and no idiom holds it (a fact about the wording, not the drop reason)",
    "change": "add the idiom '{0} signaled {1}' to IDIOMS[2]",
-   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_the_wording_a_carry_needs[S0001-{0} signaled {1}]",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0001-{0} signaled {1}]",
    "failed": [
-    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_the_wording_a_carry_needs[S0001-{0} signaled {1}]"
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0001-{0} signaled {1}]"
    ],
    "killed": true
   },
@@ -44,6 +44,33 @@
    "test": "tests/test_srccov_rl_news_article_1121.py::test_the_document_declares_only_relational_fol",
    "failed": [
     "tests/test_srccov_rl_news_article_1121.py::test_the_document_declares_only_relational_fol"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M5",
+   "file": "ve/printer.py",
+   "behaviour": "F1: the linter's base shape accepts a present-tense wording for each of the three units, so the linter is not the drop reason",
+   "change": "line 327: the binary '-s' verb check becomes 'if True:' (every non-idiom binary wording refused)",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0001-{0} signals {1}]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0001-{0} signals {1}]",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0010-{0} follows {1}]",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0011-{0} gives forward guidance about {1}]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M6",
+   "file": "ve/english_vocabulary.py",
+   "behaviour": "F1: the drop reason is the overlay review binding; a changed overlay is 'unreviewed'",
+   "change": "line 87: the review record no longer has to match the overlay digest",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0001-{0} signals {1}]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0001-{0} signals {1}]",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0010-{0} follows {1}]",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0011-{0} gives forward guidance about {1}]",
+    "tests/test_srccov_rl_news_article_1121.py::test_every_predicate_needs_reviewed_overlay_wording"
    ],
    "killed": true
   }
