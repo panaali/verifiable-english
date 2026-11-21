@@ -1,0 +1,8 @@
+# Selected run, commit b0bffe29f3 (mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run; exit 0)
+SHARD 3/6: exit 0 in 136.9 s; 33 units, 33 passed
+SHARD 6/6: exit 0 in 138.9 s; 26 units, 26 passed
+SHARD 2/6: exit 0 in 143.2 s; 33 units, 33 passed
+SHARD 5/6: exit 0 in 168.8 s; 28 units, 28 passed
+SHARD 4/6: exit 0 in 189.3 s; 35 units, 35 passed
+SHARD 1/6: exit 0 in 200.1 s; 34 units, 34 passed
+[gha-select 02:12:06Z] summary: selected tests ran on GitHub Actions (6 shards, run srccov-rl-claude-constitution-pilot-1121-b0bffe29-t226721); exit=0; 405s
