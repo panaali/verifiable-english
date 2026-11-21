@@ -22,6 +22,10 @@ Rule 1. Every proposal must be followed by an assessment of proximity to each le
 Rule 1. Every proposal must be subject to residual risk assessments in evaluating deployment mitigations, if there is a level such that all of the following hold: (a) that proposal has reached that level; (b) either that level is tracked or that level is critical, or both.
 ## f7-sc | always | F7, 1.3.4 "For models reaching CCLs, the residual risk assessment will be informed by a supplemental safety case"
 Rule 1. Every proposal must have its residual risk assessment informed by a safety case, if there is a level such that both that proposal has reached that level and that level is critical.
+## f7-eval | always | F7, 1.3.4 "We will use various processes to evaluate the effectiveness and limitations of mitigations": no condition stated; the processes are not named ("various processes", the act's legend)
+Rule 1. Every proposal must have its mitigations evaluated.
+## f7-eval-dm | always | F7, 1.3.4 "Deployment mitigations : we will use a combination of threat modeling, empirical testing, and other sources of information to assess the effectiveness and limitations of our deployment mitigations": no condition stated; the means are the act's legend
+Rule 1. Every proposal must have its deployment mitigations assessed.
 ## f8 | always | F8, 1.3.5 bullet 1: no T/CCL reached, deemed acceptable (a classification)
 Rule 1. Every proposal is acceptable, if it is not the case that there is a level such that that proposal has reached that level.
 ## f9-acc | always | F9, 1.3.5 bullet 2: the classification; DM only for external deployment (RS8, both readings); 2.1.2 step 2 "for the T/CCLs the model has reached": the conditions hold for every misuse level reached
