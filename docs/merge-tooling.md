@@ -128,7 +128,9 @@ loads the use cases' environments, which starts the service, so it is not refres
 text outside the repository), so its entry is `on_conflict`: a plain `--write`, `--check` or `--resolve` skips it
 unless both sides of the merge changed one of its files (still known after the train's `--resolve --only lake-build
 --only checker-pins` staged them) or `--only` names it; without the pinned text the resolve exits 1 and the train
-falls back to the agent sync. Replay (`docs/merge-tooling/genconflict-1120/replay.txt`): the three FSF-repair merges
+falls back to the agent sync. Each of its files that both sides changed is accepted from the writers only when,
+its hash fields (`USECASE_HASHES`: results' `certificate_sha256`, coverage's `document_sha256`) masked at any depth,
+it equals the three-way merge of the two sides; otherwise `--resolve` restores the conflicted merge and exits 2. Replay (`docs/merge-tooling/genconflict-1120/replay.txt`): the three FSF-repair merges
 the train sent to an agent sync (f1, f2, f7) resolve with `--resolve` alone, with the files the agent committed.
 
 Evidence (`docs/merge-tooling/sync-merge-survey.json`, `docs/merge-tooling/survey.py`): of the sync merges in

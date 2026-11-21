@@ -29,7 +29,9 @@ script only runs them, in order), and how a merge combines two sides of the file
 
 `on_conflict` marks an entry whose writer and check take minutes (a use case's harness): `--write`, `--check` and
 `--names` run it only when named with `--only`, and `--resolve` only when both sides of the merge changed one of
-its files (or `--only` names it); a failed writer then fails the resolve (exit 1), never skipped.
+its files (or `--only` names it); a failed writer then fails the resolve (exit 1), never skipped. Its `masked`
+files that both sides changed are accepted from the writers only when, their hash fields masked, they equal the
+three-way merge of the two sides (`_check_masked`); otherwise `--resolve` restores the conflicted merge and exits 2.
 
 `.gitattributes` is generated from the same list (`merge=ve-generated` for every owned pattern). With the
 driver installed, `git merge` resolves those files by their strategy and never stops on them. Without it,
@@ -107,17 +109,27 @@ class Generated:
     at_merge: bool = False
     # Run only when its files conflict or `--only` names it (module docstring): its writer and check take minutes.
     on_conflict: bool = False
+    # (path, hash keys) of each file `--resolve` accepts from the writers, when both sides changed it, only if it
+    # equals the three-way merge of the two sides with those keys masked at any depth (`_check_masked`).
+    masked: tuple = ()
 
 
-def _usecase(name: str) -> Generated:
+# The hash fields of a use case's files (DRI decision 20261120-genconflict-hashcheck item 1). spans.json has none:
+# its source_sha256 is the pinned text's, while its statuses change with the use case's sources.
+USECASE_HASHES = (("results.json", ("certificate_sha256",)), ("coverage.json", ("document_sha256",)),
+                  ("spans.json", ()))
+
+
+def _usecase(name: str, hashes=USECASE_HASHES) -> Generated:
     """A use case whose harness `run.py` writes `results.json` (`--check` compares) and whose `build_document.py`
     then writes `coverage.json` and `spans.json` from it (`--check` compares): one line of GENERATED per use case."""
     here = f"usecases/{name}"
-    files = tuple(f"{here}/{file}" for file in ("results.json", "coverage.json", "spans.json"))
+    files = tuple(f"{here}/{file}" for file, _ in hashes)
     return Generated(f"usecase-{name}", files,
                      ((PY, f"{here}/run.py"), (PY, f"{here}/build_document.py")),
                      ((PY, f"{here}/run.py", "--check"), (PY, f"{here}/build_document.py", "--check")),
                      merge="derived", service="write", on_conflict=True,
+                     masked=tuple((f"{here}/{file}", keys) for file, keys in hashes),
                      note="hashes of the use case's environment and document; minutes: run when its files conflict")
 
 
@@ -1108,6 +1120,106 @@ def changed_on_both_sides(root: Path, patterns) -> set[str]:
     return diff(start, "HEAD") & diff(start, "MERGE_HEAD") & diff("HEAD", "MERGE_HEAD")
 
 
+_HASH = "<hash>"
+
+
+def _mask(value, keys):
+    """`value` with the value of each key in `keys`, at any depth, replaced by one placeholder."""
+    if isinstance(value, dict):
+        return {key: _HASH if key in keys else _mask(item, keys) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_mask(item, keys) for item in value]
+    return value
+
+
+def _first_difference(a, b, path: str = "$") -> str | None:
+    """The first key path at which two JSON values differ (object key order aside), or None."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        keys = [*a, *(key for key in b if key not in a)]
+        found = (_first_difference(a.get(key, _MISSING), b.get(key, _MISSING), f"{path}.{key}") for key in keys)
+    elif isinstance(a, list) and isinstance(b, list):
+        at = lambda items, i: items[i] if i < len(items) else _MISSING  # noqa: E731
+        found = (_first_difference(at(a, i), at(b, i), f"{path}[{i}]") for i in range(max(len(a), len(b))))
+    else:
+        return None if _text(a) == _text(b) else path
+    return next((difference for difference in found if difference is not None), None)
+
+
+def _masked_json(text: str, keys):
+    return _mask(json.loads(text), keys) if text.strip() else _MISSING
+
+
+def _masked_merges(root: Path, entries, unmerged) -> dict:
+    """{path: the three-way merge of its masked base, ours and theirs} for each `masked` file of `entries` that both
+    sides changed: the index stages of a conflicted path, else the commits (an earlier `--resolve --only ...`
+    staged it). Raises Conflict, or ValueError on a side that is not JSON."""
+    masked = {path: keys for entry in entries for path, keys in entry.masked}
+    conflicted = set(unmerged) | changed_on_both_sides(root, list(masked))
+    merges = {}
+    for path, keys in masked.items():
+        if path not in conflicted:
+            continue
+        if path in unmerged:
+            texts = [_stage(root, path, number) for number in (1, 2, 3)]
+        else:
+            bases = subprocess.run(["git", "merge-base", "HEAD", "MERGE_HEAD"], cwd=root, capture_output=True,
+                                   text=True).stdout.split()
+            texts = [_show(root, revision, path) if revision else ""
+                     for revision in (bases[0] if bases else None, "HEAD", "MERGE_HEAD")]
+        try:
+            merges[path] = merge_json(*(_masked_json(text, keys) for text in texts))
+        except Conflict as exc:
+            raise Conflict(f"{path}: {exc}") from None
+        except ValueError as exc:
+            raise ValueError(f"{path}: a side is not JSON ({exc})") from None
+    return merges
+
+
+def _check_masked(root: Path, entries, merges: dict) -> str | None:
+    """None when every file of `merges`, as the writers left it with its hash keys masked, equals its merge; else
+    the file and the first differing key path."""
+    keys = {path: hashes for entry in entries for path, hashes in entry.masked}
+    for path, merged in merges.items():
+        file = root / path
+        try:
+            regenerated = _masked_json(file.read_text() if file.is_file() else "", keys[path])
+        except ValueError:
+            return f"{path}: not JSON"
+        difference = _first_difference(regenerated, merged)
+        if difference is not None:
+            return f"{path} at {difference}"
+    return None
+
+
+def _show(root: Path, revision: str, path: str) -> str:
+    done = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=root, capture_output=True, text=True)
+    return done.stdout if done.returncode == 0 else ""
+
+
+def _snapshot(root: Path, paths) -> tuple:
+    """The index and the work-tree bytes of `paths` and of every generated file, for `_restore`."""
+    index = root / _git(root, "rev-parse", "--git-path", "index").strip()
+    names = {*paths, *(str(file.relative_to(root)) for entry in GENERATED for file in owned_files(entry, root))}
+    return index, index.read_bytes(), {name: (root / name).read_bytes() if (root / name).is_file() else None
+                                       for name in names}
+
+
+def _restore(root: Path, snapshot: tuple) -> None:
+    """Put back the index and work-tree files `_snapshot` saved, removing generated files written since."""
+    index, data, files = snapshot
+    for entry in GENERATED:
+        for file in owned_files(entry, root):
+            if str(file.relative_to(root)) not in files:
+                file.unlink()
+    for name, content in files.items():
+        if content is None:
+            (root / name).unlink(missing_ok=True)
+        else:
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_bytes(content)
+    index.write_bytes(data)
+
+
 def resolve(entries, root: Path = ROOT, log: RegenLog | None = None, only=None) -> int:
     """Finish the merge in progress in `root` (see the module docstring); `entries` are the writers and checks
     to run after the conflicted generated files are merged, an `on_conflict` one only when `only` names it or
@@ -1134,6 +1246,12 @@ def resolve(entries, root: Path = ROOT, log: RegenLog | None = None, only=None) 
             print(f"regen_generated --resolve: {path} needs a person or the sync agent", file=sys.stderr)
             return 2
         merged[path] = text
+    try:  # a value of a masked file both sides changed differently: no writer can settle it
+        merges = _masked_merges(root, entries, unmerged)
+    except (Conflict, ValueError) as exc:
+        print(f"regen_generated --resolve: {exc}: needs a person or the sync agent", file=sys.stderr)
+        return 2
+    saved = _snapshot(root, [*unmerged, *retired]) if merges else None
     for path, text in merged.items():  # nothing is written unless every conflicted file merged
         (root / path).write_text(text)
         print(f"resolved {path} ({owner(path).merge})")
@@ -1141,6 +1259,15 @@ def resolve(entries, root: Path = ROOT, log: RegenLog | None = None, only=None) 
         _git(root, "rm", "-q", "-f", "--", path)
         print(f"resolved {path} (deleted: {RETIRED[path]})")
     failed, unchecked = write(entries, log), []
+    declined = None if failed or not merges else _check_masked(root, entries, merges)
+    if declined is not None:
+        _restore(root, saved)
+        print(f"regen_generated --resolve: {declined}: the regenerated file differs from the three-way merge of "
+              "its two sides outside its hash fields; the conflicted merge is restored (agent sync needed)",
+              file=sys.stderr)
+        return 2
+    for path in merges if not failed else ():
+        print(f"checked {path}: the three-way merge of its two sides outside its hash fields")
     if not failed:
         failed, unchecked = check(entries, log)
     if failed or unchecked:
