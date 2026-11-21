@@ -21,7 +21,9 @@ These tests read the source and the carriers from the repository. They pin the d
 test fails when a reason stops holding (for example, the overlay review stops being bound to the
 environment id), which means a unit can now be carried.
 """
+import itertools
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -29,8 +31,8 @@ import pytest
 from tests.omission_rule import omit_norm
 from ve import parse, render
 from ve.environment import Environment
-from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning, parse_english
-from ve.english_vocabulary import overlay_provenance
+from ve.english import _ACTIVE, EnglishVocabulary, UnreviewedVocabularyWarning, parse_english
+from ve.english_vocabulary import IDIOMS, overlay_provenance
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.printer import _AUXILIARIES, _CONVERSE_ENDINGS
@@ -198,8 +200,10 @@ REFUSED = list(dict.fromkeys(
 
 @pytest.mark.parametrize("template,code", REFUSED, ids=[t for t, _ in REFUSED])
 def test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending(template, code):
-    """F2: an auxiliary first word or a final by/to/of/from/with/for is refused, present tense or not; the
-    public path raises, and the deferred lint names the rule."""
+    """F2: the base shape refuses an auxiliary first word or a final by/to/of/from/with/for, present tense or
+    not. For a wording outside the exceptions, the public path raises and the deferred lint names the rule.
+    The exceptions are the idiom list (`IDIOMS`, ve/english_vocabulary.py) and the `_ACTIVE` phrases
+    (ve/english.py); see test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape (F3)."""
     env, overlay = with_predicate("signals_new", ["institution", "text"], template)
     with pytest.raises(VEError, match="fails the template linter: predicates/signals_new$"):
         EnglishVocabulary(env, vocabulary=overlay)
@@ -221,3 +225,65 @@ def test_the_report_names_both_refusals_of_the_base_shape():
     endings = [set(m.split("/")) for m in re.findall(r"final ([a-z]+(?:/[a-z]+)+)", report)]
     assert _CONVERSE_ENDINGS in endings
     assert "test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending" in report
+
+
+# F3 (review of 092f2ae082): the F2 docstring said the public path refuses every such wording. The idiom list and
+# the `_ACTIVE` phrases are exceptions. Both tables are read from the code, so each exception it adds is tested.
+def base_shape_refuses(template):
+    """True when the base binary shape (ve/printer.py) refuses `template` for an auxiliary or a converse ending."""
+    words = template.split()
+    return words[1] in _AUXILIARIES or words[-2] in _CONVERSE_ENDINGS
+
+
+def expand(pattern):
+    """Every phrase an `_ACTIVE` pattern matches; each pattern is literal words and flat (?:a|b) groups."""
+    parts = re.split(r"\(\?:([^()]*)\)", pattern)
+    phrases = ["".join(choice) for choice in itertools.product(
+        *[part.split("|") if index % 2 else [part] for index, part in enumerate(parts)])]
+    assert all(re.fullmatch(r"[a-z ]+", phrase) and re.fullmatch(pattern, phrase) for phrase in phrases), pattern
+    return phrases
+
+
+IDIOM_EXCEPTIONS = sorted((name, entry["verbalisation"]) for name, entry in OVERLAY["predicates"].items()
+                          if entry["verbalisation"] in IDIOMS[2] and base_shape_refuses(entry["verbalisation"]))
+ACTIVE_EXCEPTIONS = sorted(phrase for pattern in _ACTIVE for phrase in expand(pattern)
+                           if base_shape_refuses("{0} " + phrase + " {1}"))
+
+
+def test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape():
+    """F3: a wording the base shape refuses still passes the public path when it is an idiom (this document's own
+    overlay keeps `{0} was appointed by {1}`, `{0} voted for {1}`, ...) or an `_ACTIVE` phrase (`{0} reports to
+    {1}`, ...): no error and no lint issue."""
+    assert {"{0} was appointed by {1}", "{0} voted for {1}", "{0} raised its policy rate to {1}"} <= {
+        t for _, t in IDIOM_EXCEPTIONS}
+    assert {"reports to", "communicates with", "has responsibility for"} <= set(ACTIVE_EXCEPTIONS)
+    words = EnglishVocabulary(Environment.from_json(ENV_RAW), vocabulary=OVERLAY)
+    assert not words.issues
+    for name, template in IDIOM_EXCEPTIONS:
+        assert words.predicates[name] == template, name
+    for phrase in ACTIVE_EXCEPTIONS:
+        template = "{0} " + phrase + " {1}"
+        env, overlay = with_predicate("signals_new", ["institution", "text"], template)
+        words = EnglishVocabulary(env, vocabulary=overlay)
+        assert not words.issues and words.predicates["signals_new"] == template, template
+        deferred = EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
+        assert not deferred.issues, template
+
+
+def test_the_refusal_claims_name_the_idiom_and_active_exceptions():
+    """F3: probe F3 as a test. Wherever this file or the REPORT says the public path raises on the base-shape
+    refusals, it also names the idiom list and `_ACTIVE` as exceptions."""
+    import ast
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    docs = {f.name: " ".join((ast.get_docstring(f) or "").split()) for f in tree.body if isinstance(f, ast.FunctionDef)}
+    doc = docs["test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending"]
+    assert "public path raises" in doc and "idiom" in doc and "_ACTIVE" in doc
+    for name, text in docs.items():
+        if "public path raises" in text:
+            assert "idiom" in text and "_ACTIVE" in text, name
+    lines = REPORT.read_text(encoding="utf-8").splitlines()
+    claims = [line for line in lines if "refused" in line and ("BINARY_" in line or "_AUXILIARIES" in line)]
+    assert len(claims) >= 2
+    for line in claims:
+        assert "`IDIOMS`" in line and "`_ACTIVE`" in line, line[:120]
+    assert "test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape" in "\n".join(lines)
