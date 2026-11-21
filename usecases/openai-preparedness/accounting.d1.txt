@@ -91,6 +91,7 @@ f13-review | omits: nothing
 f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
 cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
 fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
+sr-sufficiency | omits: nothing
 bio-high | omits: nothing
 bio-critical | omits: nothing
 cyb-high | omits: nothing

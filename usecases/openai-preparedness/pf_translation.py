@@ -36,7 +36,9 @@ RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluat
                   "f8-start",
                   "f9-report", "f9-risk-paths", "f9-specific", "f9-efficacy", "f9-threshold", "f10-validate",
                   "f10-review", "f13-review", "f13-results", "f14-document", "f14-investigate", "f14-corrective",
-                  "f15-disclose", "f15-safeguards", "f15-third-party", "f16-ssc-visibility", "f16-year")
+                  "f15-disclose", "f15-safeguards", "f15-third-party", "f16-ssc-visibility", "f16-year",
+                  # srccov-rl-openai-preparedness-1121: sr-sufficiency states a future tense statement too
+                  "sr-sufficiency")
 
 
 @dataclass(frozen=True)
