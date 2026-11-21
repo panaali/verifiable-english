@@ -200,10 +200,10 @@ REFUSED = list(dict.fromkeys(
 
 @pytest.mark.parametrize("template,code", REFUSED, ids=[t for t, _ in REFUSED])
 def test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending(template, code):
-    """F2: the base shape refuses an auxiliary first word or a final by/to/of/from/with/for, present tense or
-    not. For a wording outside the exceptions, the public path raises and the deferred lint names the rule.
-    The exceptions are the idiom list (`IDIOMS`, ve/english_vocabulary.py) and the `_ACTIVE` phrases
-    (ve/english.py); see test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape (F3)."""
+    """F2: for each wording in REFUSED (each word of `_AUXILIARIES` first, each word of `_CONVERSE_ENDINGS`
+    last) under a fresh predicate `signals_new`, the public path raises and the deferred lint names `code`.
+    Wordings in the idiom list (`IDIOMS`) or matching an `_ACTIVE` phrase are other inputs; see
+    test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape (F3)."""
     env, overlay = with_predicate("signals_new", ["institution", "text"], template)
     with pytest.raises(VEError, match="fails the template linter: predicates/signals_new$"):
         EnglishVocabulary(env, vocabulary=overlay)
@@ -253,11 +253,8 @@ ACTIVE_EXCEPTIONS = sorted(phrase for pattern in _ACTIVE for phrase in expand(pa
 def test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape():
     """F3: in this environment, a wording the base shape refuses can pass the public path as an idiom (this
     document's own overlay keeps `{0} was appointed by {1}`, `{0} voted for {1}`, ...) or an `_ACTIVE` phrase
-    (`{0} reports to {1}`, ...) under a fresh predicate: no error and no lint issue. Neither exception is
-    unconditional (F4): an idiom must share a content word with the predicate's name or description (else
-    `IDIOM_UNRELATED`), may end in "by" only under a predicate name ending in `_by`, and, like an `_ACTIVE`
-    phrase, must not name another predicate or constant; see
-    test_the_idiom_and_active_exceptions_keep_their_conditions."""
+    (`{0} reports to {1}`, ...) under a fresh predicate: no error and no lint issue. Other inputs raise on
+    the same wordings (F4): test_the_idiom_and_active_exceptions_keep_their_conditions."""
     assert {"{0} was appointed by {1}", "{0} voted for {1}", "{0} raised its policy rate to {1}"} <= {
         t for _, t in IDIOM_EXCEPTIONS}
     assert {"reports to", "communicates with", "has responsibility for"} <= set(ACTIVE_EXCEPTIONS)
@@ -312,9 +309,11 @@ CONDITIONS = {"idiom-final-by-needs-_by": appointed_without_by, "idiom-IDIOM_UNR
 
 @pytest.mark.parametrize("case", sorted(CONDITIONS))
 def test_the_idiom_and_active_exceptions_keep_their_conditions(case):
-    """F4: the idiom list and `_ACTIVE` are not unconditional passes. Each case breaks one condition of the
-    public path (ve/english.py:286-350) on a wording this document or test_the_idiom_list_... shows passing:
-    the public path raises and the deferred lint names the refusal."""
+    """F4: each case is an idiom or `_ACTIVE` wording that this document or test_the_idiom_list_... shows
+    passing, under a changed environment: `{0} was appointed by {1}` under `appointed`, `{0} voted for {1}`
+    under `joined` with a description that does not mention voting, `{0} reports to {1}` beside a predicate
+    `reports`. The public
+    path raises and the deferred lint names `BINARY_CONVERSE`, `IDIOM_UNRELATED` or `SYMBOL_COLLISION`."""
     data, overlay, name, code = CONDITIONS[case]()
     env = Environment.from_json(json.dumps(data).encode())
     overlay["environment_id"] = env.environment_id
@@ -325,8 +324,8 @@ def test_the_idiom_and_active_exceptions_keep_their_conditions(case):
 
 
 def test_the_exception_claims_name_their_conditions():
-    """F4: probe F4 as a test. Neither this file nor the REPORT says an idiom or `_ACTIVE` wording passes
-    unconditionally, and both name the conditions (`IDIOM_UNRELATED`, the `_by` name for a final "by")."""
+    """F4: probe F4 as a test. The function docstrings of this file and the REPORT do not contain the two
+    retracted phrases, and each contains `IDIOM_UNRELATED`, `_by` and "another predicate or constant"."""
     import ast
     tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
     docs = " ".join(" ".join((ast.get_docstring(f) or "").split()) for f in tree.body if isinstance(f, ast.FunctionDef))
@@ -353,3 +352,20 @@ def test_the_refusal_claims_name_the_idiom_and_active_exceptions():
     for line in claims:
         assert "`IDIOMS`" in line and "`_ACTIVE`" in line, line[:120]
     assert "test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape" in "\n".join(lines)
+
+
+# F5 (review of c210402): four rounds each replaced one overclaim about the public path's wording conditions with
+# another, so the DRI note of 2026-11-21 deletes the list: the REPORT points to the code instead.
+RETRACTED_CONDITION_PHRASES = ("must not " + "name another predicate or constant",
+                               "must share " + "a content word", "must not " + "contain another predicate",
+                               "within 80 " + "characters")
+
+
+def test_the_report_points_to_the_code_for_the_wording_conditions():
+    """F5: probe F5 as a test. The REPORT and this file do not contain any condition phrase of the F4 list,
+    the REPORT names the shared-word exemption ("both predicate names") and points to ve/english.py:286-377."""
+    report = " ".join(REPORT.read_text(encoding="utf-8").split())
+    text = report + " " + " ".join(Path(__file__).read_text(encoding="utf-8").split())
+    for phrase in RETRACTED_CONDITION_PHRASES:
+        assert phrase not in text, phrase
+    assert "both predicate names" in report and "ve/english.py:286-377" in report
