@@ -67,6 +67,7 @@ No product code changed (ve/, lean/, rust/ are untouched), so no language needs 
 - Selected: `mac-pytest.sh --select -- --base cebf4fd24f --run` ran on GitHub Actions (6 shards, run `srccov-rl-news-article-1121-6b7301ef-t226612`) and exited 0. The shards passed 34, 33, 33, 35, 28 and 26 units (189/678 units planned; 35 heavy files were deferred to the chain gate) (`/tmp/na-select.log`).
 - Selection probe (checklist 9): with M1 planted, and again with a byte appended to source.md, `tools/select_tests.py --base cebf4fd24f` plans `tests/test_srccov_rl_news_article_1121.py` (`/tmp/na-sel-m1.log`, `/tmp/na-sel-m3.log`).
 - Light lane: `LIGHT 127 changed lines ... no trusted-core file`, so no trust_mutants sweep.
+- F1 fix (commit 6630d46c4a): `mac-pytest.sh --select -- --base cebf4fd24f --run` ran on GitHub Actions (5 shards, run `srccov-rl-news-article-1121-6630d46c-t228156`) and exited 0: 38, 39, 40, 40 and 41 units passed; 38 heavy files were deferred to the chain gate (`/tmp/na-f1-select.log`). `lake build`: `Build completed successfully (1478 jobs)`. `python3 lean/audit.py`: PASS, 898 source files.
 - I did not run the full gate (task rule): the chain runs it on the final HEAD.
 
 SIZE: 0 product, 127 tests, 0 other hand-written lines (plus this REPORT and mutants.json).
