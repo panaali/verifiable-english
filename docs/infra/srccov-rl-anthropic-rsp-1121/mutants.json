@@ -1,0 +1,34 @@
+{
+ "item": "srccov-rl-anthropic-rsp-1121",
+ "note": "Seeded bugs planted by hand in the files this item changed, one per claimed behaviour; each run with uv run pytest -q tests/test_srccov_rl_anthropic_rsp_1121.py and restored with git checkout (log: evidence/seeded-bugs.log). Languages changed: Python (rsp_vocabulary.py, build_document.py) and VE (rules.d1.ve); no Lean or Rust product code changed.",
+ "mutants": [
+  {
+   "kind": "rule line in the carrier",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "change": "the f15-conflicts block (header and rule line) removed",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_has_its_rule_line_in_the_carrier[S0224]",
+   "result": "2 failed, 10 passed"
+  },
+  {
+   "kind": "legend quotes the source",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "change": "candidate_lacks_expertise legend: 'Have significant experience' -> 'Have substantial experience'; environment.d1.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_legend_quotes_the_source_word_for_word[S0220]",
+   "result": "1 failed, 11 passed"
+  },
+  {
+   "kind": "span record routes to the rule",
+   "file": "usecases/anthropic-rsp/build_document.py",
+   "change": "s361-candid spec rule(\"f15-candid\", \"ot25_reviewer_criteria\") -> condition(\"ot25_reviewer_criteria\"); spans.json and coverage.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to_its_rule_and_keeps_its_open_term[S0222]",
+   "result": "1 failed, 11 passed"
+  },
+  {
+   "kind": "open term stays open",
+   "file": "usecases/anthropic-rsp/build_document.py",
+   "change": "s361-conflicts spec rule(\"f15-conflicts\", \"ot24_conflicts_of_interest\") -> rule(\"f15-conflicts\") (status CHECKED); spans.json and coverage.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to_its_rule_and_keeps_its_open_term[S0224]",
+   "result": "1 failed, 11 passed"
+  }
+ ]
+}
