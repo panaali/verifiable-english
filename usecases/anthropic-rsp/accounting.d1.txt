@@ -39,6 +39,9 @@ f13-justify-default | omits: "We will disclose the existence of each redaction m
 f14-public-review-default | omits: "We will work toward a practice of seeking" reading RS12review ; "on our Risk Reports" restates
 f14-full-review | omits: "At a minimum" restates ; "complete a full external review process" restates ; "(described below)" exposition ; "anytime a Risk Report covers" restates
 f14-ltbt-request | omits: "upon the LTBT's request" restates
+f15-expertise | omits: nothing
+f15-candid | omits: nothing
+f15-conflicts | omits: nothing
 f15-financial-interest | omits: "At a minimum" restates ; "itself" restates
 f15-revenue-strict | omits: "external review parties should not be teams whose" restates ; "continuing to work with them" restates
 f15-revenue-default | omits: nothing

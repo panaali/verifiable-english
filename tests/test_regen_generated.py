@@ -49,8 +49,44 @@ def _no_timing_log(monkeypatch):
 # The registry
 
 
+def _writes_a_file(node: ast.AST) -> bool:
+    """A call that writes a file: `<path>.write_text/write_bytes(...)`, `json.dump(...)`, or `open(...)` /
+    `<path>.open(...)` in a writing mode."""
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if isinstance(func, ast.Attribute) and func.attr in ("write_text", "write_bytes"):
+        return True
+    if isinstance(func, ast.Attribute) and func.attr == "dump" and isinstance(func.value, ast.Name) \
+            and func.value.id == "json":
+        return True
+    if (isinstance(func, ast.Name) and func.id == "open") or (isinstance(func, ast.Attribute) and func.attr == "open"):
+        modes = [arg for arg in node.args if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
+        modes += [kw.value for kw in node.keywords
+                  if kw.arg == "mode" and isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str)]
+        return any(set(mode.value) & set("wax") for mode in modes)
+    return False
+
+
+def _declares_check(tree: ast.AST) -> bool:
+    """The script has a `--check` mode of its own: `add_argument("--check", ...)` or a comparison with "--check"
+    (`"--check" in sys.argv`). A script that only passes `--check` to another tool (the gate, the pre-commit hook)
+    is not a writer with a check mode."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "add_argument" \
+                and any(isinstance(arg, ast.Constant) and arg.value == "--check" for arg in node.args):
+            return True
+        if isinstance(node, ast.Compare) and any(isinstance(side, ast.Constant) and side.value == "--check"
+                                                 for side in (node.left, *node.comparators)):
+            return True
+    return False
+
+
 def _write_mode_scripts() -> set[str]:
-    """Tracked scripts (outside tests and experiments) with a flag that writes a committed file."""
+    """Tracked scripts (outside tests and experiments) with a flag that writes a committed file, or with a
+    `--check` mode of their own beside a call that writes a file: a writer whose default run writes and whose
+    `--check` compares has no write flag (conformance/english_lean_seal.py slipped past the flag test, so its seal
+    went stale unnoticed: srccov-rl-anthropic-rsp-1121 F1)."""
     found = set()
     for name in TRACKED:
         if not name.endswith(".py") or name.startswith(("tests/test_", "experiments/", "ve_experiments/")):
@@ -59,8 +95,10 @@ def _write_mode_scripts() -> set[str]:
             tree = ast.parse((ROOT / name).read_text())
         except (SyntaxError, UnicodeDecodeError):
             continue
-        if any(isinstance(node, ast.Constant) and isinstance(node.value, str)
-               and (node.value in R.WRITE_FLAGS or node.value.startswith("--write-")) for node in ast.walk(tree)):
+        flags = {node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and isinstance(node.value, str)}
+        if any(flag in R.WRITE_FLAGS or flag.startswith("--write-") for flag in flags):
+            found.add(name)
+        elif _declares_check(tree) and any(_writes_a_file(node) for node in ast.walk(tree)):
             found.add(name)
     return found
 
@@ -90,6 +128,46 @@ def test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reaso
         assert name in TRACKED, f"GENERATED runs a script that is not tracked: {name}"
     for pattern, reason in R.NOT_REGENERATED.items():
         assert reason and any(fnmatch.fnmatchcase(name, pattern) for name in TRACKED), pattern
+
+
+def test_a_writer_without_a_write_flag_is_found_and_the_corpus_seal_is_registered(tmp_path):
+    """srccov-rl-anthropic-rsp-1121 F1: conformance/english_lean_seal.py writes the corpus seal by default and
+    compares with `--check`; with no write flag the completeness test never saw it, so the seal was in no entry,
+    `--check` skipped it and a stale copy reached review. Such a script is a writer now, the seal has an entry
+    (tree only, refreshed on every merge candidate) and that entry's `fresh` test exists."""
+    assert "conformance/english_lean_seal.py" in _write_mode_scripts()
+    entry = R.owner("conformance/english-lean/corpus-seal.json")
+    assert entry is not None and entry.name == "english-lean-seal"
+    assert "conformance/english_lean_seal.py" in _referenced(entry)
+    assert entry.at_merge and entry.merge == "regenerate" and not entry.service and not entry.advisory
+    test_file, test_name = entry.fresh.split("::")
+    assert re.search(rf"^def {test_name}\(", (ROOT / test_file).read_text(), re.M), entry.fresh
+    # The detector itself: a check mode beside a write is a writer; a check mode that only reads, or a write with
+    # no check mode (a one-off script), is not.
+    def detected(source: str) -> bool:
+        tree = ast.parse(source)
+        return _declares_check(tree) and any(_writes_a_file(node) for node in ast.walk(tree))
+    assert detected("import sys\nif '--check' not in sys.argv: OUT.write_text('x')")
+    assert detected("p.add_argument('--check', action='store_true')\nwith open(OUT, mode='w') as f: pass")
+    assert detected("p.add_argument('--check')\njson.dump(d, OUT.open('w'))")
+    assert not detected("p.add_argument('--check')\nprint(OUT.read_text())")
+    assert not detected("p.add_argument('--check')\nwith open(OUT) as f: pass")
+    assert not detected("OUT.write_text('x')")
+    # Passing --check to another tool is not a check mode of one's own (tools/gate.py, tools/hooks/precommit.py).
+    assert not detected("subprocess.run([PY, 'tools/trust_map.py', '--check'])\nRESULT.write_text('x')")
+    assert {"tools/gate.py", "tools/hooks/precommit.py"}.isdisjoint(_write_mode_scripts())
+
+
+def test_the_corpus_seal_writer_never_loads_the_service_client():
+    """english-lean-seal is an `at_merge` entry (no service): the static graph reaches the client only through
+    function-level imports (IMPORTS_ONLY), and a build and a check of the seal, run as its commands run, load no
+    module of ve.backends."""
+    probe = ("import json, sys\nfrom conformance import english_lean_seal as Z\nZ.build()\n"
+             "Z.check(json.loads(Z.SEAL.read_text()))\n"
+             "print(sorted(m for m in sys.modules if m.startswith('ve.backends')))")
+    run = subprocess.run([sys.executable, "-c", probe], cwd=ROOT, capture_output=True, text=True,
+                         timeout=HANG_TIMEOUT, check=True)
+    assert run.stdout.strip() == "[]", run.stdout
 
 
 def test_the_environment_hash_files_are_regenerated_and_slow_ones_only_on_conflict():
@@ -244,7 +322,7 @@ def test_the_entries_refreshed_at_merge_are_tree_only_writers(capsys):
     """The merge train refreshes the `at_merge` entries on every candidate, under its queue lock: each is a
     `regenerate` file with a writer and a check that start no Lean service, and `--names --at-merge` lists them."""
     at_merge = [entry.name for entry in R.GENERATED if entry.at_merge]
-    assert {"platform-contract", "binding-census", "history-tests"} <= set(at_merge)
+    assert {"platform-contract", "binding-census", "history-tests", "english-lean-seal"} <= set(at_merge)
     for entry in R.GENERATED:
         if entry.at_merge:
             assert entry.merge == "regenerate" and entry.write and entry.check and not entry.service, entry.name
@@ -1024,6 +1102,8 @@ SERVICE_CLIENT = "ve/backends/lean_service.py"
 IMPORTS_ONLY = {
     "binding-census": "imports LeanService inside record_answers, which only --record and --refresh run",
     "history-tests": "reaches it through tools/test_map.py -> select_tests.py -> answer_replay.py, never called",
+    "english-lean-seal": "reaches it through ve/wire.py -> ve/ast.py -> ve/backends/relay.py, function-level imports "
+                         "that `digest` never runs (test_the_corpus_seal_writer_never_loads_the_service_client)",
 }
 
 

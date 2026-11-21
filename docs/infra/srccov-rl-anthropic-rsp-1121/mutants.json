@@ -1,0 +1,62 @@
+{
+ "item": "srccov-rl-anthropic-rsp-1121",
+ "note": "Seeded bugs planted by hand in the files this item changed, one per claimed behaviour; each run with uv run pytest -q tests/test_srccov_rl_anthropic_rsp_1121.py and restored with git checkout (log: evidence/seeded-bugs.log). Languages changed: Python (rsp_vocabulary.py, build_document.py) and VE (rules.d1.ve); no Lean or Rust product code changed. Review fix F1 (stale corpus seal) changed Python tooling only (conformance/english_lean_seal.py, tools/regen_generated.py, tests/test_regen_generated.py); its four seeded bugs M5-M8 were run with the named test ids and restored with git checkout; no Lean or Rust product code changed.",
+ "mutants": [
+  {
+   "kind": "rule line in the carrier",
+   "file": "usecases/anthropic-rsp/rules.d1.ve",
+   "change": "the f15-conflicts block (header and rule line) removed",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_has_its_rule_line_in_the_carrier[S0224]",
+   "result": "2 failed, 10 passed"
+  },
+  {
+   "kind": "legend quotes the source",
+   "file": "usecases/anthropic-rsp/rsp_vocabulary.py",
+   "change": "candidate_lacks_expertise legend: 'Have significant experience' -> 'Have substantial experience'; environment.d1.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_legend_quotes_the_source_word_for_word[S0220]",
+   "result": "1 failed, 11 passed"
+  },
+  {
+   "kind": "span record routes to the rule",
+   "file": "usecases/anthropic-rsp/build_document.py",
+   "change": "s361-candid spec rule(\"f15-candid\", \"ot25_reviewer_criteria\") -> condition(\"ot25_reviewer_criteria\"); spans.json and coverage.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to_its_rule_and_keeps_its_open_term[S0222]",
+   "result": "1 failed, 11 passed"
+  },
+  {
+   "kind": "open term stays open",
+   "file": "usecases/anthropic-rsp/build_document.py",
+   "change": "s361-conflicts spec rule(\"f15-conflicts\", \"ot24_conflicts_of_interest\") -> rule(\"f15-conflicts\") (status CHECKED); spans.json and coverage.json regenerated",
+   "test": "tests/test_srccov_rl_anthropic_rsp_1121.py::test_each_kept_unit_routes_to_its_rule_and_keeps_its_open_term[S0224]",
+   "result": "1 failed, 11 passed"
+  },
+  {
+   "kind": "F1: the committed seal is current",
+   "file": "conformance/english-lean/corpus-seal.json",
+   "change": "the seal of 1965f1bcb2 restored (main's hash for tests/test_english_statement_blocks.py)",
+   "test": "tests/test_english_lean_seal.py::test_the_committed_seal_is_current",
+   "result": "1 failed"
+  },
+  {
+   "kind": "F1: the seal's check compares a full rebuild",
+   "file": "conformance/english_lean_seal.py",
+   "change": "check() returns after the source hashes (the pre-fix check)",
+   "test": "tests/test_english_lean_seal.py::test_the_check_reports_each_kind_of_drift",
+   "result": "5 failed, 3 passed (stale stream, pilot, format, forged id, extra key fail; the three source drifts pass)"
+  },
+  {
+   "kind": "F1: the seal is a registered generated file",
+   "file": "tools/regen_generated.py",
+   "change": "the english-lean-seal entry removed from GENERATED",
+   "test": "tests/test_regen_generated.py -k 'writer_without or writing_mode or at_merge'",
+   "result": "3 failed"
+  },
+  {
+   "kind": "F1: the registry test finds a writer with no write flag",
+   "file": "tests/test_regen_generated.py",
+   "change": "_write_mode_scripts back to write flags only (the --check-plus-write branch disabled)",
+   "test": "tests/test_regen_generated.py::test_a_writer_without_a_write_flag_is_found_and_the_corpus_seal_is_registered",
+   "result": "1 failed"
+  }
+ ]
+}

@@ -1,3 +1,4 @@
+- `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
 - `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
 - `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…

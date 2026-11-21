@@ -64,3 +64,4 @@ tests/data/route-cases.jsonl merge=ve-generated
 usecases/safety-framework/results.json merge=ve-generated
 usecases/safety-framework/coverage.json merge=ve-generated
 usecases/safety-framework/spans.json merge=ve-generated
+conformance/english-lean/corpus-seal.json merge=ve-generated
