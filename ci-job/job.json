@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-rl-bluedot-grant-1121-ccfad9bc-t236109-s4",
+ "head": "4f0edeb63658e2ac430c77fdd9b11c49403f32a4",
+ "argv": [
+  "armsh-cand-srccov-rl-bluedot-grant-1121-ccfad9bc-t236109-s4",
+  "4f0edeb63658e2ac430c77fdd9b11c49403f32a4",
+  "9c33803b022f3363d3f20030f042b518ef3b91e0",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
