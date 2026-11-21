@@ -1,0 +1,7 @@
+job=armsh-cand-specregen-reinstall-allregen-1121-2953a654-t239090-s1 shard=1/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-21T05:34:33Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 05:34:34 up 30 min,  0 user,  load average: 1.32, 0.55, 0.25
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 15.6 s
+p1-tokenizers: 443909a61d42 fetched
