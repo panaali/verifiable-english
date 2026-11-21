@@ -36,12 +36,13 @@ None. No line was added, so no answer or question changes status or verdict. I o
 
 ## 4. Condition test and seeded bugs
 
-`tests/test_srccov_rl_news_article_1121.py` reads the source and carriers from the repo and checks five things:
+`tests/test_srccov_rl_news_article_1121.py` reads the source and carriers from the repo and checks these things:
 - `test_the_clause_is_in_its_source_sentence[*]`: each in-scope clause is in its numbered source sentence, after `omit_norm`.
 - `test_the_clause_is_not_carried_by_claims_or_legends[*]`: neither the clause nor the words it adds appear in claims.ve, any environment.json legend or the overlay.
 - `test_every_predicate_needs_reviewed_overlay_wording` and `test_a_present_tense_wording_passes_and_only_the_review_blocks[*]`: these are the drop reason for S0001 c2, S0010 c2 and S0011 c1. The present-tense wording given for each (`{0} signals {1}`, `{0} follows {1}`, `{0} gives forward guidance about {1}`) has no linter issue and round-trips to the same `meaning_id`; only the review status ("unreviewed") fails.
 - `test_the_overlay_linter_refuses_only_the_past_tense_wordings[*]`: the article's past-tense wordings are not the base shape. This is a fact about the wording, not a drop reason.
 - `test_the_report_gives_the_review_binding_as_the_drop_reason`: probe F1 as a test. This REPORT and the test file name the review binding and do not repeat the false linter reason.
+- `test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[*]` and `test_the_report_names_both_refusals_of_the_base_shape` (F2): the base shape does not take every present-tense wording. Each word of `_AUXILIARIES` and `_CONVERSE_ENDINGS` (read from ve/printer.py) is refused, and the REPORT names both word sets exactly.
 - `test_the_document_declares_only_relational_fol`: this is the drop reason for the attitude and purpose clauses.
 
 The task asks for a test that fails on main and passes after. That cannot hold here, because no unit is kept and nothing changes. The test passes on main by design, and a case fails when its drop reason stops holding.
@@ -54,7 +55,10 @@ Seeded bugs (planted by `/tmp/na-proto/mutants.sh`, each run on the new test fil
 | M2 | usecases/news-article/environment.json | carry "a two-day meeting" in the `sept_meeting` legend | `test_the_clause_is_not_carried_by_claims_or_legends[S0010]`, `test_every_predicate_needs_reviewed_overlay_wording` |
 | M3 | usecases/news-article/source.md | "gave no forward guidance" becomes "offered no forward guidance" | `test_the_clause_is_in_its_source_sentence[S0011]` |
 | M4 | usecases/news-article/environment.json | add a second profile key | `test_the_document_declares_only_relational_fol` (plus 7 more) |
-| M5 | ve/printer.py:327 | the base binary shape refuses every wording (`if True:` for the `-s` verb check) | `test_a_present_tense_wording_passes_and_only_the_review_blocks[*]` (all 3) |
+| M5 | ve/printer.py:327 | the base binary shape refuses every wording (`if True:` for the `-s` verb check) | `test_a_present_tense_wording_passes_and_only_the_review_blocks[*]` (all 3) and `test_the_overlay_linter_refuses_only_the_past_tense_wordings[*]` (all 6): the planted check refuses the document's existing predicates too, so 9 fail, not 3 (F2 recheck); all 16 F2 cases fail as well |
+| M7 | ve/printer.py:100 | drop `gets` from `_AUXILIARIES` | `test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0} gets {1}]`, `test_the_report_names_both_refusals_of_the_base_shape` |
+| M8 | ve/printer.py:101 | drop `to` from `_CONVERSE_ENDINGS` | `test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0} signals to {1}]`, `[{0} gives guidance to {1}]`, `test_the_report_names_both_refusals_of_the_base_shape` |
+| M9 | REPORT.md | restore the REPORT of 9f7fa89790 (its overclaim of the base shape) | `test_the_report_names_both_refusals_of_the_base_shape` |
 | M6 | ve/english_vocabulary.py:87 | the review record no longer matches on the overlay digest | `test_a_present_tense_wording_passes_and_only_the_review_blocks[*]` (all 3), `test_every_predicate_needs_reviewed_overlay_wording` |
 
 M1, M5 and M6 for the F1 fix were planted by hand with `sed`, each run on the test file and restored with `git checkout -- ve/`; `git status` showed only this item's two files after (log `/tmp/na-f1-mutants.log`). With M1 and M5, `test_the_report_gives_the_review_binding_as_the_drop_reason` also failed, because the REPORT was not yet corrected at that point.

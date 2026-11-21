@@ -188,12 +188,12 @@ def test_the_report_gives_the_review_binding_as_the_drop_reason():
 
 # F2 (review of 9f7fa89790): the REPORT said the base shape takes all present-tense wordings. These are
 # present-tense wordings it refuses; the tables come from ve/printer.py, so each refusal it adds is tested.
-REFUSED = (
+REFUSED = list(dict.fromkeys(
     [("{0} signals to {1}", "BINARY_CONVERSE"), ("{0} gives guidance to {1}", "BINARY_CONVERSE"),
      ("{0} gets {1}", "BINARY_AUXILIARY")]
     + [(f"{{0}} {word} {{1}}", "BINARY_AUXILIARY") for word in sorted(_AUXILIARIES)]
     + [(f"{{0}} signals {word} {{1}}", "BINARY_CONVERSE") for word in sorted(_CONVERSE_ENDINGS)]
-)
+))
 
 
 @pytest.mark.parametrize("template,code", REFUSED, ids=[t for t, _ in REFUSED])
