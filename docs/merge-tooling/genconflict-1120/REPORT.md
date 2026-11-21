@@ -319,3 +319,68 @@ definitions, 0 mutants, exit 0 (hashcheck-trust-mutants.json).
 * results.json also carries `document_hash`, `decision_record_id` and `environment_id` under `d2_d3`. They are not
   masked, because the condition names only `certificate_sha256` and `document_sha256`. If they drift with the
   environment, such a merge declines (none did in f1, f2 or f7).
+
+## Addendum: specregen-reinstall-allregen-1121, every file of the use case checked
+
+Covers reviews/dri-decisions-20261121-adv0013.md item 1. No DELTA row; trust: none (light lane LIGHT, 97 lines, no
+trusted-core file). Nothing is reserved for the DRI.
+
+SIZE: 25 product, 72 tests, 70 other hand-written lines (this addendum; allregen-mutants.json is a record).
+
+**The check.** `_masked_merges` now takes every `masked` file of the entries the resolve runs, conflicted or not.
+An unmerged path is read from the index stages :1/:2/:3, as before. Every other path is read from the merge base,
+HEAD and MERGE_HEAD. `merge_json` of the masked sides then gives the changed side for a one-sided file and base for
+a file neither side touched. Before this change, a file git merged cleanly was taken from the writers unseen: for
+example, results.json when only theirs changed it and the conflict was on spans.json. Now any difference declines
+exactly as before: exit 2, `<path> at <key path>`, the snapshot restored (index, files, generated files written
+since), MERGE_HEAD kept. Which entries run is unchanged: still a two-sided change of one of the entry's files, or
+`--only`. Nothing else in tools/regen_generated.py changed.
+
+**Tests (tests/test_regen_usecase_merge.py).** The verdict stub's spans.json is now one line and also names the
+texts of document/*.txt, which only `document` reads. Two sides changing it differently therefore conflict in git
+while the JSON still merges.
+* `test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines[False|True]` (the DRI condition test).
+  Ours adds document/o.txt; theirs adds goal t. Only spans.json conflicts, and results/coverage changed on theirs
+  only (both asserted). The writer flips g1. Expect exit 2 naming `results.json at $.goals[0].verdict`, the writers
+  run but not the checks, and `_state` (status, unmerged list, `ls-files --stage`, the three files) equal to the
+  state before the resolve. results.json must equal theirs, not the stub's output, and the conflict markers stay.
+* `test_an_untouched_flip_of_a_results_file_neither_side_changed_declines[False|True]`. Each side adds its own
+  document text. results.json is untouched, so its merge is base's, and the flip declines the same way.
+* `test_one_sided_and_untouched_files_equal_to_their_merge_resolve[onesided|untouched]`. The same merges without a
+  flip exit 0, with a `checked` line for each of the three files, and commit clean.
+* hash_only, flipped_verdict and both-sides tests: unchanged and passing.
+
+On main's tools/regen_generated.py (cebf4fd2, copied in and then restored): 6 failed, 32 passed. Both flip tests
+fail with `assert 0 == 2`, because main accepts the flipped verdict. The control tests fail because main prints
+`checked` for spans.json alone. On the branch: 38 passed. Selection picks the file for tools/regen_generated.py
+alone (`select_tests.py --paths tools/regen_generated.py --explain`: "imports tools/regen_generated.py"). Selected
+run on d641d04f: exit 0 (ve-cloud-2, 2520 s). Records are in
+manage-agents/reviews/specregen-reinstall-allregen-1121/ (onesided-flip-on-main.txt, selected-run.log).
+
+**Replay of f1 (228142ff + ef7ecd59 -> f02219f5)** with this branch's tool d641d04f and the service and pinned text
+on this host (replay.py, PAIRS cut to f1, scratch worktree removed afterwards; 2026-11-21T02:10Z, multi-agent-lab):
+
+    git merge (driver installed): exit 1; conflicted: lexicon-report.json route-cases.jsonl coverage.json results.json
+    --resolve --only lake-build --only checker-pins: exit 0, 31 s
+    --resolve: exit 0, 1014 s; new entries: english-lexicon-report 3.2 s, recorded-route-cases 1.4 s, usecase-safety-framework 297.6 s
+    all five files byte-equal to the agent's result; other files differing: tests/history-dependent.json (as before)
+
+spans.json, untouched in f1, is now checked against base and accepted.
+
+**Seeded bugs (Python only, tools/regen_generated.py; allregen-mutants.json).** Each was killed:
+
+| Behaviour broken | Killed by |
+|---|---|
+| check only conflicted files (main's filter put back) | the onesided_flip, untouched_flip and control tests (6) |
+| read theirs from HEAD for a clean file | test_one_sided_and_untouched_files_equal_to_their_merge_resolve[onesided] (and hash_only[True]) |
+| decline without restoring | the onesided_flip, untouched_flip and flipped_verdict tests (6) |
+
+### Notes for the DRI
+
+* This check is stricter than the conflicted-set check. Under `--resolve --only usecase-<name>` with none of its
+  files changed by either side, any regenerated difference outside the hashes now declines, because the merge is
+  base. That is the condition read literally (the conservative option). The train passes `--only` only for
+  lake-build and checker-pins.
+* The merge-train resolve copy is staged as manage-agents/merge-train.sh.new-allregen. It is a byte copy of
+  merge-train.sh.bak-adv0013-specregen-20261121T0021Z (md5 adf140bb), because the installed file was still md5
+  2b98c9a2. It is not installed; installing it waits for this item to be on VE main.
