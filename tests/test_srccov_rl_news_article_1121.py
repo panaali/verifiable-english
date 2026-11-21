@@ -8,7 +8,8 @@ The source-coverage map (row srccov-news-article-s7-1-1119, pin e53db4e8fc) tags
   must have reviewed English wording in `environment.english.json` (tests/test_english.py
   test_reviewed_overlays_preserve_all_historical_views_and_identities). The overlay linter does not
   block a carry: its base shape (ve/printer.py) accepts a present-tense two-place wording such as
-  `{0} signals {1}`; only the article's past-tense wordings (`{0} signaled {1}`, `{0} was issued
+  `{0} signals {1}` (not every present-tense wording: it refuses an auxiliary first word and a final
+  by/to/of/from/with/for); only the article's past-tense wordings (`{0} signaled {1}`, `{0} was issued
   after {1}`) would need an idiom. What blocks the carry is the review binding: any vocabulary change
   rebinds the overlay digest and drops it to 'unreviewed', and the new `ve/reviewed-overlays.json`
   record needs a reviewer who is not the builder, in a file outside this row's paths.
@@ -32,6 +33,7 @@ from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning, parse_eng
 from ve.english_vocabulary import overlay_provenance
 from ve.errors import VEError
 from ve.identity import meaning_id
+from ve.printer import _AUXILIARIES, _CONVERSE_ENDINGS
 
 REPO = Path(__file__).resolve().parents[1]
 CASE = REPO / "usecases" / "news-article"
@@ -67,8 +69,10 @@ PAST_TENSE = [
     ("S0011", "gave_forward_guidance_about", ["text", "moment"], "{0} gave forward guidance about {1}"),
 ]
 
-# The same three clauses with a present-tense wording, and a claims.ve line that uses it. The linter's
-# base shape accepts each; the overlay review binding alone keeps them out of claims.ve.
+# The same three clauses with a present-tense wording, and a claims.ve test line that uses it. The lines are
+# probes of the linter and the round trip, not proposed carries: the S0011 line states that guidance was
+# given, while the source says none was. The linter's base shape accepts each wording; of the drop reasons,
+# the overlay review binding is the one that a wording cannot avoid.
 PRESENT_TENSE = [
     ("S0001", "signals", ["institution", "text"], "{0} signals {1}", "@fed signals @new_statement."),
     ("S0010", "follows", ["text", "moment"], "{0} follows {1}", "@new_statement follows @sept_meeting."),
@@ -180,3 +184,40 @@ def test_the_report_gives_the_review_binding_as_the_drop_reason():
             assert wording not in text, (name, wording)
     assert "ve/reviewed-overlays.json" in texts["REPORT.md"]
     assert "test_a_present_tense_wording_passes_and_only_the_review_blocks" in texts["REPORT.md"]
+
+
+# F2 (review of 9f7fa89790): the REPORT said the base shape takes all present-tense wordings. These are
+# present-tense wordings it refuses; the tables come from ve/printer.py, so each refusal it adds is tested.
+REFUSED = (
+    [("{0} signals to {1}", "BINARY_CONVERSE"), ("{0} gives guidance to {1}", "BINARY_CONVERSE"),
+     ("{0} gets {1}", "BINARY_AUXILIARY")]
+    + [(f"{{0}} {word} {{1}}", "BINARY_AUXILIARY") for word in sorted(_AUXILIARIES)]
+    + [(f"{{0}} signals {word} {{1}}", "BINARY_CONVERSE") for word in sorted(_CONVERSE_ENDINGS)]
+)
+
+
+@pytest.mark.parametrize("template,code", REFUSED, ids=[t for t, _ in REFUSED])
+def test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending(template, code):
+    """F2: an auxiliary first word or a final by/to/of/from/with/for is refused, present tense or not; the
+    public path raises, and the deferred lint names the rule."""
+    env, overlay = with_predicate("signals_new", ["institution", "text"], template)
+    with pytest.raises(VEError, match="fails the template linter: predicates/signals_new$"):
+        EnglishVocabulary(env, vocabulary=overlay)
+    words = EnglishVocabulary(env, vocabulary=overlay, _defer_overlay_refusals=True)
+    assert code in {i.code for i in words.issues if i.path.startswith("/vocabulary/predicates/signals_new/")}
+
+
+def test_the_report_names_both_refusals_of_the_base_shape():
+    """F2: the REPORT and this file never claim the base shape takes all present-tense wordings, and the
+    REPORT names both refusals with the exact word sets of ve/printer.py."""
+    import re
+    texts = {path.name: " ".join(path.read_text(encoding="utf-8").split()) for path in (REPORT, Path(__file__))}
+    for name, text in texts.items():
+        for wording in ("accepts " + "any present-tense", "accepts " + "every present-tense"):
+            assert wording not in text, (name, wording)
+    report = texts["REPORT.md"]
+    auxiliaries = re.search(r"auxiliary first word \(([^;)]*)", report)
+    assert auxiliaries and set(auxiliaries[1].replace(",", " ").split()) == _AUXILIARIES
+    endings = [set(m.split("/")) for m in re.findall(r"final ([a-z]+(?:/[a-z]+)+)", report)]
+    assert _CONVERSE_ENDINGS in endings
+    assert "test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending" in report
