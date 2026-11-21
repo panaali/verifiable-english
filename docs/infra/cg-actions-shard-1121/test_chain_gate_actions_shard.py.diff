@@ -1,0 +1,485 @@
+--- /dev/null	2026-11-19 00:48:46.719999949 +0000
++++ tools-local/test_chain_gate_actions_shard.py	2026-11-21 11:08:17.397437992 +0000
+@@ -0,0 +1,482 @@
++#!/usr/bin/env python3
++"""Tests of the Actions shard step of chain-gate.sh (2026-11-21 cg-actions-shard-1121; reviews/chain-gate-20-20261121.md
++sections 6-7, Fix 1; DRI ruling gha-gate-shard item 2, reviews/dri-decisions-20261028-gha-gate-shard.md).
++
++A copy of chain-gate.sh with M = a scratch dir holding MAC_LAST_RESORT, MAC_GATE and ARM_SHARD_BLOCKING (no CLOUD2_RUNNER:
++ve-cloud-2 is "not usable"), MAC_LAST_CHAINGATE_SAT=0 unless a case says otherwise, MAC_LAST_VM_LOAD huge (the VM step is
++always chosen after the Actions step). Stubs in the scratch M: gha-arm-shard.sh (logs argv, mode, deadline and process
++group, writes ARM_SHARD_JOBFILE, a job dir with run.json and the configured gate-record.json, prints the configured log
++lines, sleeps, exits with the configured rc), shard-room.py (prints GH_ROOM), gha/cancel-leg-runs.py (logs its argv),
++mac-gate.sh (logs "mac"). Live copies: gha/arm-leg-record.py and mismatch-scope.sh (respected as live). The worktree's
++committed tools/gate.py is the VM gate's stub (logs "vm", writes a passing record). Nothing touches the live cloud-jobs/,
++flags, GitHub or a remote.
++  (i)   Actions available: the shard step runs after the ve-cloud-2 step and before the VM step (gate-start actions-arm,
++        ARM_SHARD_MODE=blocking, label chain-<label>, HEAD, deadline 75), ONE gate-result.json where=actions-arm,
++        commit_sha HEAD, export_commit kept, status passed, exit 0, no VM gate; chain-gate's own prior check then skips
++        the same HEAD; (ix) CHAIN_GATE_ACTIONS_LEG=x86: --x86, leg-blocking, needs X86_SHARD_BLOCKING, where=actions-x86;
++  (ii)  a failed shard (merged FAIL, exit 1), a missing shard (exit 4, not the deadline), no record, an unparseable record,
++        a record of another tree, exit 0 with a failed record, exit 1 with a passed record: gate-result.json FAILED, exit 1,
++        no VM gate (never a pass);
++  (iii) ACTIONS_SUSPENDED, a blocking ACTIONS_MISMATCH (select-* line), CLOUD_PUSH_HOLD, ARM_SHARD_BLOCKING off,
++        CHAIN_GATE_ACTIONS_OFF, room under CHAIN_GATE_ACTIONS_MIN_ROOM, unreadable room, gha-arm-shard.sh "not sent" (exit 3):
++        the VM step as today (shard stub never started for the pre-checks); a tm-* verdict-sample-only ACTIONS_MISMATCH
++        does not block (mismatch-scope.sh live);
++  (iv)  the leg's deadline passed (exit 4, every MISSING shard "no result by the deadline"): runs cancelled, the VM step;
++        the chain's hard limit (CHAIN_GATE_ACTIONS_HARD_S) passed: the leg stopped, runs cancelled, the VM step;
++  (v)   CHAIN_GATE_CANCEL file made while the leg runs: the leg's process group gone, the runs cancelled (helper called with
++        the job dir), event gate-cancelled, exit 4, no gate-result.json, no VM gate; the file present before: exit 4,
++        the leg never started;
++  (vi)  MAC_LAST_RESORT absent: no Actions step (the VM gate as before);
++  (vii) cloud saturated: the Actions step before the Mac's one slot (no Mac gate on a verdict);
++        CHAIN_GATE_ACTIONS_SAT=0: the Mac gate as before, no Actions step; no verdict: the Mac gate as before.
++
++usage: python3 -I tools-local/test_chain_gate_actions_shard.py     (CG=<chain-gate.sh copy>, e.g. chain-gate.sh.new-cgshard)
++"""
++import json, os, shutil, subprocess, sys, tempfile, time
++
++M = "/home/seyran/code/manage-agents"
++CG = os.path.abspath(os.environ.get("CG", f"{M}/chain-gate.sh"))
++fails = 0
++
++GHSTUB = r'''import json, os, subprocess, sys, time
++cfg = json.load(open(os.environ["GH_CFG"]))
++args = sys.argv[1:]
++x86 = "--x86" in args
++pos = [a for a in args if not a.startswith("--")]
++label, sha = pos[0], pos[1]
++job = ("x86sh-" if x86 else "armsh-") + label + "-" + sha[:8] + "-t1"
++D = os.path.join(os.environ["GH_M"], "gha-arm", job)
++os.makedirs(D, exist_ok=True)
++jf = os.environ.get("ARM_SHARD_JOBFILE")
++def row(d):
++    with open(os.environ["GH_LOG"], "a") as f:
++        f.write(json.dumps(d) + "\n")
++row({"argv": args, "mode": os.environ.get("ARM_SHARD_MODE"), "deadline": os.environ.get("ARM_SHARD_DEADLINE_MIN"),
++     "jobfile": jf, "pid": os.getpid(), "pgid": os.getpgid(0), "job_dir": D})
++if jf:
++    open(jf, "w").write(D + "\n")
++json.dump({"job": job, "shards": 3, "status": "dispatched", "created": int(time.time())}, open(os.path.join(D, "run.json"), "w"))
++if cfg.get("sleep"):
++    child = subprocess.Popen(["sleep", str(cfg["sleep"])])
++    end = time.time() + cfg["sleep"]
++    while time.time() < end:
++        time.sleep(0.2)
++    child.wait()
++rec = cfg.get("record")
++if rec == "garbage":
++    open(os.path.join(D, "gate-record.json"), "w").write("{not json")
++elif isinstance(rec, dict):
++    json.dump(rec, open(os.path.join(D, "gate-record.json"), "w"))
++for l in cfg.get("say", []):
++    print(l, flush=True)
++row({"done": cfg.get("rc", 0)})
++sys.exit(cfg.get("rc", 0))
++'''
++
++VMSTUB = r'''import json, os, subprocess, sys
++head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
++with open(os.environ["VM_LOG"], "a") as f:
++    f.write(json.dumps({"vm": sys.argv[1:]}) + "\n")
++json.dump({"commit_sha": head, "dirty": False, "mode": "full", "stages": ["pytest"], "failures": [], "status": "passed",
++           "where": "vm-stub"}, open("gate-result.json", "w"))
++'''
++
++
++def check(name, cond, extra=""):
++    global fails
++    print(("  ok   " if cond else "  FAIL ") + name + ("" if cond else f"  {extra}"))
++    fails += 0 if cond else 1
++
++
++def alive(pgid):
++    try:
++        os.killpg(pgid, 0)
++        return True
++    except ProcessLookupError:
++        return False
++    except PermissionError:
++        return True
++
++
++def setup(d):
++    m = os.path.join(d, "M"); os.makedirs(os.path.join(m, "gha")); os.makedirs(os.path.join(m, "cloud-jobs"))
++    src = open(CG).read().replace("M=/home/seyran/code/manage-agents;", f"M={m};", 1)
++    assert f"M={m};" in src
++    cg = os.path.join(d, "chain-gate.sh"); open(cg, "w").write(src)
++    shutil.copy(f"{M}/gha/arm-leg-record.py", os.path.join(m, "gha", "arm-leg-record.py"))
++    shutil.copy(f"{M}/mismatch-scope.sh", os.path.join(m, "mismatch-scope.sh"))
++    open(os.path.join(d, "ghstub.py"), "w").write(GHSTUB)
++    open(os.path.join(m, "gha-arm-shard.sh"), "w").write(f'#!/bin/zsh\nexec python3 -I {d}/ghstub.py "$@"\n')
++    open(os.path.join(m, "shard-room.py"), "w").write('import os\nprint(os.environ.get("GH_ROOM", "33 5 2 2"))\n')
++    open(os.path.join(m, "gha", "cancel-leg-runs.py"), "w").write(
++        'import json, os, sys\nopen(os.environ["GH_CANCEL_LOG"], "a").write(json.dumps(sys.argv[1:]) + "\\n")\n')
++    open(os.path.join(m, "mac-gate.sh"), "w").write('#!/bin/zsh\necho mac "$@" >> $MAC_LOG\nexit 0\n')
++    home = os.path.join(d, "home"); os.makedirs(home)
++    fb = os.path.join(d, "bin"); os.makedirs(fb)
++    uv = os.path.join(fb, "uv")
++    open(uv, "w").write('#!/bin/sh\n[ "$1" = run ] && [ "$2" = python ] || { echo "stub uv: $*" >&2; exit 97; }\nshift 2\nexec python3 "$@"\n')
++    os.chmod(uv, 0o755)
++    w = os.path.join(d, "wt"); subprocess.run(["git", "init", "-q", "-b", "main", w], check=True)
++    os.makedirs(os.path.join(w, "tools"))
++    open(os.path.join(w, "tools", "gate.py"), "w").write(VMSTUB)
++    open(os.path.join(w, ".gitignore"), "w").write("gate-result.json\ngate-result.json.tmp\n")
++    subprocess.run(["git", "-C", w, "add", "-A"], check=True)
++    subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "a"], check=True)
++    subprocess.run(["git", "-C", w, "checkout", "-qb", "infra/t"], check=True)
++    subprocess.run(["git", "-C", w, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "--allow-empty", "-qm", "work"], check=True)
++    return m, cg, home, fb, w
++
++
++def main():
++    print(f"chain-gate.sh under test: {CG}")
++    with tempfile.TemporaryDirectory() as d:
++        m, cg, home, fb, w = setup(d)
++        head = subprocess.check_output(["git", "-C", w, "rev-parse", "HEAD"], text=True).strip()
++        tree = subprocess.check_output(["git", "-C", w, "rev-parse", "HEAD^{tree}"], text=True).strip()
++        L = {k: os.path.join(d, k + ".log") for k in ("gh", "cancel", "vm", "mac")}
++        cfgf, cf = os.path.join(d, "gh.json"), os.path.join(d, "item-gate.cancel")
++        evf, res = os.path.join(m, "stage-events.jsonl"), os.path.join(w, "gate-result.json")
++        exp = "e" * 40
++
++        def merged(status="passed", t=tree, stages=("toolchains", "pytest"), failures=()):
++            return {"commit_sha": exp, "tree_sha": t, "dirty": False, "mode": "full", "stages": list(stages),
++                    "failures": list(failures), "status": status, "schema_version": 1, "shards": {"n": 3}}
++
++        def rows(k):
++            if not os.path.exists(L[k]):
++                return []
++            return [x.strip() if k == "mac" else json.loads(x) for x in open(L[k])]
++
++        def events():
++            return [json.loads(x) for x in open(evf)] if os.path.exists(evf) else []
++
++        def flags(*names, clear=True):
++            if clear:
++                for f in ("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING", "X86_SHARD_BLOCKING", "ACTIONS_SUSPENDED",
++                          "CLOUD_PUSH_HOLD", "CHAIN_GATE_ACTIONS_OFF", "cloud-jobs/ACTIONS_MISMATCH"):
++                    p = os.path.join(m, f)
++                    if os.path.exists(p):
++                        os.remove(p)
++            for f in names:
++                open(os.path.join(m, f), "w").close()
++
++        def run(gh=None, env=None, pre=False, cancel_after=None, fl=("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING"),
++                keep_res=False):
++            for f in [evf, cf, cfgf, *L.values()] + ([] if keep_res else [res]):
++                if os.path.exists(f):
++                    os.remove(f)
++            shutil.rmtree(os.path.join(m, "gha-arm"), ignore_errors=True)
++            flags(*fl)
++            json.dump(gh or {"rc": 0, "record": merged()}, open(cfgf, "w"))
++            if pre:
++                open(cf, "w").close()
++            e = {"PATH": fb + ":/usr/bin:/bin", "HOME": home, "LANG": "C.UTF-8", "GH_CFG": cfgf, "GH_LOG": L["gh"],
++                 "GH_M": m, "GH_CANCEL_LOG": L["cancel"], "VM_LOG": L["vm"], "MAC_LOG": L["mac"],
++                 "MAC_LAST_CHAINGATE_SAT": "0", "MAC_LAST_VM_LOAD": "100000", "CHAIN_GATE_ACTIONS_POLL": "1"}
++            if pre or cancel_after is not None:
++                e["CHAIN_GATE_CANCEL"] = cf
++            e.update(env or {})
++            t0 = time.time()
++            p = subprocess.Popen(["zsh", cg, w, "t"], env=e, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
++            made = None
++            if cancel_after is not None:
++                while time.time() - t0 < 60 and not rows("gh"):
++                    time.sleep(0.2)
++                time.sleep(cancel_after)
++                open(cf, "w").close()
++                made = time.time()
++            out, _ = p.communicate(timeout=600)
++            return p.returncode, out, (time.time() - made if made else None)
++
++        def res_json():
++            try:
++                return json.load(open(res))
++            except (OSError, ValueError):
++                return None
++
++        def notes(stage):
++            return [x["note"] for x in events() if x["stage"] == stage]
++
++        def idx(stage, prefix):
++            ev = events()
++            return next((i for i, x in enumerate(ev) if x["stage"] == stage and x["note"].startswith(prefix)), -1)
++
++        def vm_path(name):
++            check(f"{name}: shard stub not started", not rows("gh"), rows("gh"))
++
++        def went_vm(name, rc):
++            check(f"{name}: exit 0 from the VM gate", rc == 0, rc)
++            check(f"{name}: the VM gate ran", len(rows("vm")) == 1, rows("vm"))
++            check(f"{name}: gate-start vm", idx("gate-start", "vm ") >= 0, events())
++            r = res_json() or {}
++            check(f"{name}: gate-result.json is the VM's", r.get("where") == "vm-stub", r)
++            check(f"{name}: no Mac gate", not rows("mac"))
++
++        def failed(name, rc, reason_part=None):
++            r = res_json() or {}
++            check(f"{name}: exit 1", rc == 1, rc)
++            check(f"{name}: gate-result.json FAILED, of HEAD, where=actions-arm",
++                  r.get("status") == "failed" and r.get("commit_sha") == head and r.get("where") == "actions-arm", r)
++            if reason_part:
++                check(f"{name}: failure reason names {reason_part!r}", reason_part in json.dumps(r.get("failures")), r.get("failures"))
++            check(f"{name}: no VM gate", not rows("vm"), rows("vm"))
++            check(f"{name}: no Mac gate", not rows("mac"))
++            check(f"{name}: gate-end actions-arm rc", any(n.startswith("actions-arm rc=") for n in notes("gate-end")), events())
++
++        # ---- (i) Actions available: the shard step before the VM step, one merged record
++        rc, out, _ = run()
++        g = rows("gh"); r = res_json() or {}
++        check("(i) exit 0", rc == 0, out[-800:])
++        check("(i) the shard leg ran once", len(g) == 2 and g[0].get("argv") == ["chain-t", head], g)
++        check("(i) ARM_SHARD_MODE=blocking, deadline 75 min", g and g[0].get("mode") == "blocking" and g[0].get("deadline") == "75", g[:1])
++        check("(i) ARM_SHARD_JOBFILE given", g and bool(g[0].get("jobfile")), g[:1])
++        check("(i) gate-start actions-arm <HEAD>", f"actions-arm {head[:8]}" in notes("gate-start"), events())
++        check("(i) gate-end actions-arm rc=0", "actions-arm rc=0" in notes("gate-end"), events())
++        c2 = next((i for i, x in enumerate(events()) if "ve-cloud-2 not usable" in x["note"]), -1)
++        check("(i) the ve-cloud-2 step came first", 0 <= c2 < idx("gate-start", "actions-arm"), events())
++        check("(i) no VM gate, no Mac gate", not rows("vm") and not rows("mac"), (rows("vm"), rows("mac")))
++        check("(i) gate-result.json: passed, HEAD, tree, where=actions-arm, export_commit",
++              r.get("status") == "passed" and r.get("commit_sha") == head and r.get("tree_sha") == tree
++              and r.get("where") == "actions-arm" and r.get("export_commit") == exp and r.get("dirty") is False
++              and r.get("mode") == "full" and "pytest" in r.get("stages", []), r)
++        check("(i) the job named in the record", (r.get("actions_job") or "").startswith("armsh-chain-t-"), r.get("actions_job"))
++        # review-ready.py reads it unchanged: its own gate_candidates finds it, and main()'s filter (status passed or
++        # rerun-passed, not dirty, commit_sha HEAD) keeps it
++        import importlib.util, pathlib
++        sp = importlib.util.spec_from_file_location("review_ready", f"{M}/review-ready.py"); rr = importlib.util.module_from_spec(sp)
++        sp.loader.exec_module(rr)
++        cand = [(n, x) for n, x in rr.gate_candidates(pathlib.Path(w), []) if n == "gate-result.json (worktree)"]
++        check("(i) review-ready.py's gate_candidates: a usable passing gate of HEAD", len(cand) == 1
++              and cand[0][1].get("status") in ("passed", "rerun-passed") and not cand[0][1].get("dirty")
++              and cand[0][1].get("commit_sha") == head, cand)
++        check("(i) no runs cancelled", not rows("cancel"), rows("cancel"))
++        check("(i) a gate-route event names the Actions step", any("ACTIONS:" in n for n in notes("gate-route")), events())
++        rc, out, _ = run(keep_res=True)
++        check("(i) the same HEAD again: gate-skip (chain-gate reads the record as its own)",
++              rc == 0 and any(n.startswith(f"HEAD {head[:8]} already gated: passed") for n in notes("gate-skip"))
++              and not rows("gh"), (rc, events()))
++
++        # (ix) the x86 leg
++        rc, out, _ = run(env={"CHAIN_GATE_ACTIONS_LEG": "x86"}, fl=("MAC_LAST_RESORT", "MAC_GATE", "X86_SHARD_BLOCKING"))
++        g = rows("gh"); r = res_json() or {}
++        check("(ix) x86: exit 0, --x86 leg-blocking", rc == 0 and g and g[0]["argv"] == ["--x86", "chain-t", head]
++              and g[0]["mode"] == "leg-blocking", (rc, g[:1], out[-500:]))
++        check("(ix) x86: where=actions-x86, gate-start actions-x86",
++              r.get("where") == "actions-x86" and f"actions-x86 {head[:8]}" in notes("gate-start"), (r.get("where"), events()))
++        rc, out, _ = run(env={"CHAIN_GATE_ACTIONS_LEG": "x86"})
++        check("(ix) x86 without X86_SHARD_BLOCKING: the VM step", rc == 0 and not rows("gh") and len(rows("vm")) == 1, (rc, rows("gh")))
++
++        # ---- (ii) failed or missing shard -> FAIL, never a pass, no VM gate
++        fr = merged("failed", failures=[{"stage": "pytest", "nodeid": "tests/test_a.py::test_x"}])
++        rc, out, _ = run({"rc": 1, "record": fr, "say": ["merged: failed of 3 shards; wall 100 s"]})
++        failed("(ii) merged FAIL", rc, "tests/test_a.py::test_x")
++        miss = merged("failed", stages=(), failures=[{"stage": "shards", "reason": "shard 2 missing"}])
++        rc, out, _ = run({"rc": 4, "record": miss, "say": ["merged: failed of 3 shards, MISSING: s2: result of another shape; wall 9 s"]})
++        failed("(ii) a shard of another shape (exit 4)", rc)
++        check("(ii) missing shard: not the deadline route", not any(n.startswith("ACTIONS: MISSING") for n in notes("gate-route")), events())
++        rc, out, _ = run({"rc": 4, "record": miss, "say": ["merged: failed of 3 shards, MISSING: s1: no result by the deadline; s2: run 7 failure, wait ended at 30; wall 9 s"]})
++        failed("(ii) one failed + one deadline shard (exit 4)", rc)
++        rc, out, _ = run({"rc": 0, "record": None})
++        failed("(ii) exit 0 but no record", rc, "wrote no record")
++        rc, out, _ = run({"rc": 0, "record": "garbage"})
++        failed("(ii) unparseable record", rc, "unreadable")
++        rc, out, _ = run({"rc": 0, "record": merged(t="f" * 40)})
++        failed("(ii) record of another tree", rc, "of this tree")
++        rc, out, _ = run({"rc": 0, "record": merged("failed", failures=[{"stage": "lint"}])})
++        failed("(ii) exit 0 with a failed record", rc)
++        rc, out, _ = run({"rc": 1, "record": merged()})
++        failed("(ii) exit 1 with a passed record", rc, "exit 1")
++        rc, out, _ = run({"rc": 0, "record": merged(stages=())})
++        failed("(ii) passed record with no stages", rc)
++        rc, out, _ = run({"rc": 0, "record": {**merged(), "dirty": True}})
++        failed("(ii) passed record not clean", rc)
++
++        # ---- (iii) Actions unavailable -> the VM step as today
++        for name, fl, env in [
++                ("ACTIONS_SUSPENDED", ("ACTIONS_SUSPENDED",), {}),
++                ("CLOUD_PUSH_HOLD", ("CLOUD_PUSH_HOLD",), {}),
++                ("CHAIN_GATE_ACTIONS_OFF", ("CHAIN_GATE_ACTIONS_OFF",), {}),
++                ("room 9 < 10", (), {"GH_ROOM": "9 30 1 1"}),
++                ("room unreadable", (), {"GH_ROOM": "x"}),
++                ("room 3 < CHAIN_GATE_ACTIONS_MIN_ROOM 4", (), {"GH_ROOM": "3 30 1 1", "CHAIN_GATE_ACTIONS_MIN_ROOM": "4"})]:
++            rc, out, _ = run(env=env, fl=("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING") + fl)
++            vm_path(f"(iii) {name}"); went_vm(f"(iii) {name}", rc)
++            check(f"(iii) {name}: gate-route says why", any(n.startswith("ACTIONS: not tried") for n in notes("gate-route")), notes("gate-route"))
++        rc, out, _ = run(env={"GH_ROOM": "4 30 1 1", "CHAIN_GATE_ACTIONS_MIN_ROOM": "4"})
++        check("(iii) room 4 = CHAIN_GATE_ACTIONS_MIN_ROOM 4: the Actions step", rc == 0 and len(rows("gh")) == 2 and not rows("vm"), (rc, out[-400:]))
++        rc, out, _ = run(fl=("MAC_LAST_RESORT", "MAC_GATE"))
++        vm_path("(iii) ARM_SHARD_BLOCKING off"); went_vm("(iii) ARM_SHARD_BLOCKING off", rc)
++        mm = os.path.join(m, "cloud-jobs", "ACTIONS_MISMATCH")
++        rc, out, _ = run(fl=("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING", "cloud-jobs/ACTIONS_MISMATCH"))
++        vm_path("(iii) ACTIONS_MISMATCH empty (blocks)"); went_vm("(iii) ACTIONS_MISMATCH empty (blocks)", rc)
++        flags("cloud-jobs/ACTIONS_MISMATCH", clear=False)
++        for name, line, blocks in [("select-* line", "2026-11-21T10:00Z select-abc: verdict sample differs (x/verdict-compare.txt)\n", True),
++                                   ("tm-* verdict sample only", "2026-11-21T10:00Z tm-abc: verdict sample differs (x/verdict-compare.txt)\n", False)]:
++            for f in ("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING"):
++                open(os.path.join(m, f), "w").close()
++            open(mm, "w").write(line)
++            e = {"PATH": fb + ":/usr/bin:/bin", "HOME": home, "LANG": "C.UTF-8", "GH_CFG": cfgf, "GH_LOG": L["gh"], "GH_M": m,
++                 "GH_CANCEL_LOG": L["cancel"], "VM_LOG": L["vm"], "MAC_LOG": L["mac"], "MAC_LAST_CHAINGATE_SAT": "0",
++                 "MAC_LAST_VM_LOAD": "100000", "CHAIN_GATE_ACTIONS_POLL": "1"}
++            for f in [evf, res, *L.values()]:
++                if os.path.exists(f):
++                    os.remove(f)
++            json.dump({"rc": 0, "record": merged()}, open(cfgf, "w"))
++            p = subprocess.run(["zsh", cg, w, "t"], env=e, capture_output=True, text=True, timeout=600)
++            if blocks:
++                vm_path(f"(iii) ACTIONS_MISMATCH {name}"); went_vm(f"(iii) ACTIONS_MISMATCH {name}", p.returncode)
++            else:
++                check(f"(iii) ACTIONS_MISMATCH {name}: does not block (mismatch-scope.sh): the Actions step",
++                      p.returncode == 0 and len(rows("gh")) == 2 and not rows("vm"), (p.returncode, p.stdout[-400:]))
++        os.remove(mm)
++        rc, out, _ = run({"rc": 3, "record": None, "say": ["2026-11-21T10:00:00Z armsh-x not sent: CLOUD_PUSH_HOLD"]})
++        went_vm("(iii) gha-arm-shard.sh not sent (exit 3)", rc)
++        check("(iii) not sent: route event, no cancel", any("not sent" in n for n in notes("gate-route")) and not rows("cancel"), notes("gate-route"))
++
++        # ---- (iv) deadline passed -> runs cancelled, the VM step
++        rc, out, _ = run({"rc": 4, "record": miss, "say": ["2026-11-21T10:00:00Z armsh-x merged: failed of 3 shards, MISSING: s2: no result by the deadline; s3: no result by the deadline; wall 4500 s"]})
++        went_vm("(iv) leg deadline", rc)
++        check("(iv) leg deadline: runs cancelled (helper got the job dir)",
++              len(rows("cancel")) == 1 and rows("cancel")[0][0].endswith("/gha-arm/armsh-chain-t-" + head[:8] + "-t1"), rows("cancel"))
++        check("(iv) leg deadline: gate-route names the deadline", any("deadline" in n and "the VM step" in n for n in notes("gate-route")), notes("gate-route"))
++        rc, out, _ = run({"rc": 0, "record": merged(), "sleep": 40}, env={"CHAIN_GATE_ACTIONS_HARD_S": "3"})
++        went_vm("(iv) chain hard limit", rc)
++        g = rows("gh")
++        check("(iv) hard limit: the leg stopped before its end (no done row)", len(g) == 1, g)
++        check("(iv) hard limit: its process group gone", g and not alive(g[0]["pgid"]), g[:1])
++        check("(iv) hard limit: runs cancelled", len(rows("cancel")) == 1, rows("cancel"))
++        check("(iv) hard limit: gate-end actions-arm rc=timeout", "actions-arm rc=timeout" in notes("gate-end"), events())
++        rc, out, _ = run({"rc": 0, "record": merged()}, env={"CHAIN_GATE_ACTIONS_DEADLINE_MIN": "30"})
++        check("(iv) CHAIN_GATE_ACTIONS_DEADLINE_MIN passed to the leg", rows("gh") and rows("gh")[0]["deadline"] == "30", rows("gh")[:1])
++
++        # ---- (v) CHAIN_GATE_CANCEL -> runs cancelled, no gate pass written
++        rc, out, el = run({"rc": 0, "record": merged(), "sleep": 60}, cancel_after=2)
++        g = rows("gh")
++        check("(v) cancel: exit 4", rc == 4, (rc, out[-600:]))
++        check("(v) cancel: within 70 s of the file", el is not None and el < 70, el)
++        check("(v) cancel: the leg's process group gone", g and not alive(g[0]["pgid"]), g[:1])
++        check("(v) cancel: the leg did not finish", len(g) == 1, g)
++        check("(v) cancel: runs cancelled with the job dir", len(rows("cancel")) == 1
++              and rows("cancel")[0][0].endswith("/gha-arm/armsh-chain-t-" + head[:8] + "-t1"), rows("cancel"))
++        check("(v) cancel: no gate-result.json", not os.path.exists(res))
++        check("(v) cancel: event gate-cancelled", any(n.startswith("actions gate stopped: ") for n in notes("gate-cancelled")), events())
++        check("(v) cancel: no VM gate, no Mac gate", not rows("vm") and not rows("mac"))
++        rc, out, _ = run(pre=True)
++        check("(v) cancel file before: exit 4, the leg never started", rc == 4 and not rows("gh") and not rows("vm"), (rc, rows("gh")))
++        check("(v) cancel file before: no gate-result.json", not os.path.exists(res))
++
++        # ---- (vi) MAC_LAST_RESORT absent: no Actions step
++        rc, out, _ = run(fl=("ARM_SHARD_BLOCKING",))
++        vm_path("(vi) no MAC_LAST_RESORT"); went_vm("(vi) no MAC_LAST_RESORT", rc)
++        check("(vi) no ACTIONS route event", not any("ACTIONS" in n for n in notes("gate-route")), notes("gate-route"))
++
++        # ---- (vii) cloud saturated: Actions before the Mac's one slot
++        pf = os.path.join(d, "probe.txt"); open(pf, "w").write("ve-cloud-2 40 32\nvm 50 32\n")
++        sat = {"MAC_LAST_CHAINGATE_SAT": "1", "MAC_LAST_CHAINGATE_PROBE": pf, "MAC_LAST_CHAINGATE_LOCK": os.path.join(d, "mlc.lock")}
++        rc, out, _ = run(env=sat)
++        r = res_json() or {}
++        check("(vii) saturated: the Actions step, exit 0, no Mac", rc == 0 and len(rows("gh")) == 2 and not rows("mac")
++              and not rows("vm") and r.get("where") == "actions-arm", (rc, rows("mac"), out[-400:]))
++        rc, out, _ = run(env={**sat, "CHAIN_GATE_ACTIONS_SAT": "0"})
++        check("(vii) saturated, CHAIN_GATE_ACTIONS_SAT=0: the Mac gate as before, no Actions step",
++              rc == 0 and not rows("gh") and len(rows("mac")) == 1, (rc, rows("gh"), rows("mac")))
++        rc, out, _ = run(env=sat, fl=("MAC_LAST_RESORT", "MAC_GATE", "ARM_SHARD_BLOCKING", "ACTIONS_SUSPENDED"))
++        check("(vii) saturated, Actions unavailable: the Mac gate as before", rc == 0 and not rows("gh") and len(rows("mac")) == 1,
++              (rc, rows("mac")))
++        rc, out, _ = run({"rc": 3, "record": None, "say": ["x not sent: CLOUD_PUSH_HOLD"]}, env=sat)
++        check("(vii) saturated, not sent: the Mac gate as before (the leg tried once)", rc == 0 and len(rows("gh")) == 2
++              and len(rows("mac")) == 1, (rc, rows("gh"), rows("mac")))
++
++    helper_tests()
++    print("all passed (0 failures)" if not fails else f"FAILED ({fails} failures)")
++    return 1 if fails else 0
++
++
++def helper_tests():
++    """(h) gha/cancel-leg-runs.py (HELPER=, else the staged .new-cgshard while it exists, else the live one) against a
++    local HTTP server standing in for the GitHub REST API (127.0.0.1, no network): runs read via shard-run-status.py,
++    only the running ones cancelled, the token only in the Authorization header, exit 1 on a refused cancel or a failed
++    lookup, 0 when every cancel is accepted or nothing runs; no run.json shards -> 1..20, r1 and lean branches read."""
++    import http.server, threading, datetime, urllib.parse
++    staged = f"{M}/gha/cancel-leg-runs.py.new-cgshard"
++    hp = os.environ.get("HELPER") or (staged if os.path.exists(staged) else f"{M}/gha/cancel-leg-runs.py")
++    print(f"cancel-leg-runs.py under test: {hp}")
++    now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
++    st = {"runs": {}, "gets": [], "posts": [], "auth": set(), "post_code": 202, "get_code": 200}
++
++    class H(http.server.BaseHTTPRequestHandler):
++        def log_message(self, *a):
++            pass
++
++        def _send(self, code, body=b"{}"):
++            self.send_response(code); self.send_header("Content-Type", "application/json")
++            self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
++
++        def do_GET(self):
++            st["auth"].add(self.headers.get("Authorization"))
++            u = urllib.parse.urlparse(self.path); b = urllib.parse.parse_qs(u.query).get("branch", [""])[0]
++            st["gets"].append(b)
++            if st["get_code"] != 200:
++                return self._send(st["get_code"])
++            r = st["runs"].get(b)
++            w = [{"id": r[0], "status": r[1], "conclusion": None, "head_branch": b, "event": "push", "created_at": now,
++                  "updated_at": now}] if r else []
++            self._send(200, json.dumps({"workflow_runs": w}).encode())
++
++        def do_POST(self):
++            st["auth"].add(self.headers.get("Authorization"))
++            st["posts"].append(self.path)
++            code = st["post_code"](self.path) if callable(st["post_code"]) else st["post_code"]
++            self._send(code)
++
++    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
++    threading.Thread(target=srv.serve_forever, daemon=True).start()
++    try:
++        with tempfile.TemporaryDirectory() as d:
++            g = os.path.join(d, "gha"); os.makedirs(g)
++            shutil.copy(hp, os.path.join(g, "cancel-leg-runs.py"))
++            shutil.copy(f"{M}/gha/shard-run-status.py", os.path.join(g, "shard-run-status.py"))
++            tf = os.path.join(d, "tok"); open(tf, "w").write("tok_secret123\n")
++            job = "armsh-chain-t-0123abcd-t1"; jd = os.path.join(d, job); os.makedirs(jd)
++            env = {"PATH": "/usr/bin:/bin", "HOME": d, "ARM_SHARD_RS_API": f"http://127.0.0.1:{srv.server_address[1]}",
++                   "ARM_SHARD_RS_SLUG": "o/r", "ARM_SHARD_RS_TOKEN_FILE": tf}
++
++            def run(shards=3):
++                st["gets"].clear(); st["posts"].clear(); st["auth"].clear()
++                json.dump({"job": job, **({"shards": shards} if shards else {})}, open(os.path.join(jd, "run.json"), "w"))
++                p = subprocess.run([sys.executable, "-I", os.path.join(g, "cancel-leg-runs.py"), jd, str(int(time.time()) - 60)],
++                                   env=env, capture_output=True, text=True, timeout=600)
++                return p.returncode, p.stdout, p.stderr
++
++            st["runs"] = {f"ci-job/{job}-s1": (11, "in_progress"), f"ci-job/{job}-s2": (12, "completed"),
++                          f"ci-job/{job}-s3": (13, "queued"), f"ci-job/{job}-lean": (14, "in_progress"),
++                          f"ci-job/{job}-s2r1": (15, "in_progress")}
++            st["post_code"] = 202
++            rc, out, err = run()
++            check("(h) running runs cancelled, the completed one not",
++                  sorted(st["posts"]) == sorted(f"/repos/o/r/actions/runs/{i}/cancel" for i in (11, 13, 14, 15)), st["posts"])
++            check("(h) all accepted: exit 0, 'cancelled 4 of 4'", rc == 0 and out.strip().endswith("cancelled 4 of 4"), (rc, out, err))
++            check("(h) branches read: s1..s3, s1r1..s3r1, lean", sorted(st["gets"]) == sorted(
++                [f"ci-job/{job}-s{k}" for k in (1, 2, 3)] + [f"ci-job/{job}-s{k}r1" for k in (1, 2, 3)] + [f"ci-job/{job}-lean"]), st["gets"])
++            check("(h) the token only in the Authorization header", st["auth"] == {"Bearer tok_secret123"}
++                  and "tok_secret123" not in out + err, (st["auth"], out, err))
++            st["post_code"] = lambda path: 403 if "/13/" in path else 202
++            rc, out, err = run()
++            check("(h) one cancel refused (403): exit 1, named", rc == 1 and f"ci-job/{job}-s3 13 cancel 403" in out
++                  and "cancelled 3 of 4" in out, (rc, out))
++            st["post_code"] = 202; st["get_code"] = 500
++            rc, out, err = run()
++            check("(h) lookup failed: exit 1, nothing cancelled", rc == 1 and not st["posts"], (rc, st["posts"], err[-200:]))
++            st["get_code"] = 200; st["runs"] = {}
++            rc, out, err = run()
++            check("(h) nothing running: exit 0, 'cancelled 0 of 0'", rc == 0 and "cancelled 0 of 0" in out and not st["posts"], (rc, out))
++            rc, out, err = run(shards=None)
++            check("(h) no shards in run.json: 20 + 20 + lean branches read", len(st["gets"]) == 41 and rc == 0, len(st["gets"]))
++            p = subprocess.run([sys.executable, "-I", os.path.join(g, "cancel-leg-runs.py"), jd], env=env, capture_output=True, text=True)
++            check("(h) usage: exit 2", p.returncode == 2, p.returncode)
++    finally:
++        srv.shutdown()
++
++
++if __name__ == "__main__":
++    sys.exit(main())

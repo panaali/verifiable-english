@@ -1,0 +1,4 @@
+$ zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run   (HEAD b56c9d8764, run once)
+recorded 276 units for tree a9d2b2edfd; 408 others left to the static graph until they run; 0 failed
+[cloud2 11:41:15Z] summary: ran on ve-cloud-2, select_tests, exit=0, 1499s
+[mac-pytest 11:41:15Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 1500s

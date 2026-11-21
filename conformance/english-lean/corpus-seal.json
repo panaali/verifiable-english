@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "9c4ac1355e0775430ec1bf452032ff38395645d11e97f67780f7cb4e5d9318e0",
+ "seal_id": "0280b85b739baafd38864b8f8f7227f6b2c3f8cca28b301be5a883787c18b7a0",
  "sources": [
   {
    "kind": "corpus source",
@@ -471,7 +471,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_statement_blocks.py",
-   "sha256": "c6934e1acd5bd06fba7359264b7d47e4102cc09a66ef58f380f4a88f93641148"
+   "sha256": "db3aec887dc86d9e073075c48aa6542db82208da8abc9e63be9b6e9fd5e35fd4"
   },
   {
    "kind": "entry-point caller",
@@ -572,6 +572,11 @@
    "kind": "entry-point caller",
    "path": "tests/test_srccov_asimov_extended_1119.py",
    "sha256": "13f60ad78223cbdaa977f0e820a28b3d3f2518739030af656748414a642c7818"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_srccov_rl_news_article_1121.py",
+   "sha256": "f770add435ed9f99e3be628cec602252709cda58a0c158dec8522b57e191636a"
   },
   {
    "kind": "entry-point caller",
@@ -716,7 +721,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/eligibility/environment.json",
-   "sha256": "3ce876c8ece9cb169c0044d03b1e7d19d997a294154548fe1d77798be0729684"
+   "sha256": "47129b909e44ee1db4c94ba7bed958462557a1b36c7929684354405af4c09f59"
   },
   {
    "kind": "corpus source",
@@ -756,7 +761,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/openai-preparedness/environment.d1.json",
-   "sha256": "b4bc7ce5296dcfba236e4510fade70111bc177dcaae1d6d0ac2ee675588bb927"
+   "sha256": "0c884cbc5569a09152bcd508b15cd3f384022acad0aa32d010831c0bf9f5d345"
   },
   {
    "kind": "corpus source",
@@ -771,7 +776,7 @@
   {
    "kind": "entry-point caller",
    "path": "usecases/openai-preparedness/pf_translation.py",
-   "sha256": "0209a89f9088944e7cb2aa44c28e94746722c76c3eddfb05d18871b25e0cff12"
+   "sha256": "01afc5441a5e34f68b0cc9417e9f1419661f5b83d4d4a8f9c55d03ee5614b386"
   },
   {
    "kind": "entry-point caller",
@@ -796,7 +801,7 @@
   {
    "kind": "corpus source",
    "path": "usecases/safety-framework/environment.d1.json",
-   "sha256": "4ffe9dde49b63affd3dd2dfc8c2cf51c83120689a7a1ff1875b141b1dc277ca4"
+   "sha256": "f51bc79242ccde34dcfc341402928ace88139e89ced7314d3ec2ec7c52c1ba2a"
   },
   {
    "kind": "entry-point caller",

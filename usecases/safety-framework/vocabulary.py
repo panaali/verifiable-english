@@ -428,6 +428,17 @@ REGULATED = {
                                "the effectiveness of mitigations, the scope of the deployment, what capabilities and "
                                "mitigations are available on other publicly available models, and the historical "
                                "incidence and severity of related events.\" (the 15 is the mark of footnote 15)"),
+    "mitigations_evaluated": _obligation(
+        ["proposal"], "{0} have its mitigations evaluated",
+        "the effectiveness and limitations of the mitigations of {0} are evaluated, by various processes; Section "
+        "1.3.4, Residual Risk Assessment: \"We will use various processes to evaluate the effectiveness and "
+        "limitations of mitigations:\""),
+    "deployment_mitigations_evaluated": _obligation(
+        ["proposal"], "{0} have its deployment mitigations assessed",
+        "the effectiveness and limitations of the deployment mitigations of {0} are assessed, using a combination of "
+        "threat modeling, empirical testing, and other sources of information; Section 1.3.4, Residual Risk "
+        "Assessment: \"Deployment mitigations : we will use a combination of threat modeling, empirical testing, and "
+        "other sources of information to assess the effectiveness and limitations of our deployment mitigations.\""),
     "periodic_assessed": _obligation(
         ["proposal"], "{0} be subject to periodic residual risk assessments of misalignment risk",
         "periodic residual risk assessments of the misalignment risk posed are carried out for {0} (3.2.1)"

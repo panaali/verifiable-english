@@ -29,9 +29,10 @@ script only runs them, in order), and how a merge combines two sides of the file
 
 `on_conflict` marks an entry whose writer and check take minutes (a use case's harness): `--write`, `--check` and
 `--names` run it only when named with `--only`, and `--resolve` only when both sides of the merge changed one of
-its files (or `--only` names it); a failed writer then fails the resolve (exit 1), never skipped. Its `masked`
-files that both sides changed are accepted from the writers only when, their hash fields masked, they equal the
-three-way merge of the two sides (`_check_masked`); otherwise `--resolve` restores the conflicted merge and exits 2.
+its files (or `--only` names it); a failed writer then fails the resolve (exit 1), never skipped. Each of its
+`masked` files, conflicted or not, is accepted from the writers only when, its hash fields masked, it equals the
+three-way merge of base, ours and theirs (one side changed it: that side; neither: base; `_check_masked`);
+otherwise `--resolve` restores the conflicted merge and exits 2.
 
 `.gitattributes` is generated from the same list (`merge=ve-generated` for every owned pattern). With the
 driver installed, `git merge` resolves those files by their strategy and never stops on them. Without it,
@@ -109,8 +110,8 @@ class Generated:
     at_merge: bool = False
     # Run only when its files conflict or `--only` names it (module docstring): its writer and check take minutes.
     on_conflict: bool = False
-    # (path, hash keys) of each file `--resolve` accepts from the writers, when both sides changed it, only if it
-    # equals the three-way merge of the two sides with those keys masked at any depth (`_check_masked`).
+    # (path, hash keys) of each file `--resolve` accepts from the writers, conflicted or not, only if it equals the
+    # three-way merge of base, ours and theirs with those keys masked at any depth (`_check_masked`).
     masked: tuple = ()
 
 
@@ -1167,20 +1168,18 @@ def _masked_json(text: str, keys):
 
 
 def _masked_merges(root: Path, entries, unmerged) -> dict:
-    """{path: the three-way merge of its masked base, ours and theirs} for each `masked` file of `entries` that both
-    sides changed: the index stages of a conflicted path, else the commits (an earlier `--resolve --only ...`
-    staged it). Raises Conflict, or ValueError on a side that is not JSON."""
+    """{path: the three-way merge of its masked base, ours and theirs} for every `masked` file of `entries`, conflicted
+    or not (one side changed it: that side; neither: base): the index stages of a conflicted path, else the commits
+    (a clean path, or one an earlier `--resolve --only ...` staged). Raises Conflict, or ValueError on a side that is
+    not JSON."""
     masked = {path: keys for entry in entries for path, keys in entry.masked}
-    conflicted = set(unmerged) | changed_on_both_sides(root, list(masked))
+    bases = subprocess.run(["git", "merge-base", "HEAD", "MERGE_HEAD"], cwd=root, capture_output=True,
+                           text=True).stdout.split() if masked else []
     merges = {}
     for path, keys in masked.items():
-        if path not in conflicted:
-            continue
         if path in unmerged:
             texts = [_stage(root, path, number) for number in (1, 2, 3)]
         else:
-            bases = subprocess.run(["git", "merge-base", "HEAD", "MERGE_HEAD"], cwd=root, capture_output=True,
-                                   text=True).stdout.split()
             texts = [_show(root, revision, path) if revision else ""
                      for revision in (bases[0] if bases else None, "HEAD", "MERGE_HEAD")]
         try:

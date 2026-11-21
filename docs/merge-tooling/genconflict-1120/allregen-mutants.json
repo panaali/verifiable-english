@@ -1,0 +1,52 @@
+[
+ {
+  "behaviour": "every masked file is checked, not only the conflicted ones (one-sided and untouched files included)",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "        if path in unmerged:",
+   "to": "        if path not in set(unmerged) | changed_on_both_sides(root, list(masked)):\n            continue\n        if path in unmerged:"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines[False]",
+   "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines[True]",
+   "tests/test_regen_usecase_merge.py::test_an_untouched_flip_of_a_results_file_neither_side_changed_declines[False]",
+   "tests/test_regen_usecase_merge.py::test_an_untouched_flip_of_a_results_file_neither_side_changed_declines[True]",
+   "tests/test_regen_usecase_merge.py::test_one_sided_and_untouched_files_equal_to_their_merge_resolve[onesided]",
+   "tests/test_regen_usecase_merge.py::test_one_sided_and_untouched_files_equal_to_their_merge_resolve[untouched]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "a clean file's merge reads theirs from MERGE_HEAD (a one-sided change of theirs is the expected content)",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "for revision in (bases[0] if bases else None, \"HEAD\", \"MERGE_HEAD\")]",
+   "to": "for revision in (bases[0] if bases else None, \"HEAD\", \"HEAD\")]"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_one_sided_and_untouched_files_equal_to_their_merge_resolve",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_hash_only_drift_with_disjoint_goals_resolves_to_the_writers_output[True]",
+   "tests/test_regen_usecase_merge.py::test_one_sided_and_untouched_files_equal_to_their_merge_resolve[onesided]"
+  ],
+  "killed": true
+ },
+ {
+  "behaviour": "a decline on a one-sided or untouched file restores the conflicted merge",
+  "file": "tools/regen_generated.py",
+  "mutation": {
+   "from": "        _restore(root, saved)",
+   "to": "        pass"
+  },
+  "test": "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines",
+  "failed": [
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[False]",
+   "tests/test_regen_usecase_merge.py::test_a_flipped_verdict_neither_side_changed_declines_and_keeps_the_conflict[True]",
+   "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines[False]",
+   "tests/test_regen_usecase_merge.py::test_a_onesided_flip_of_a_results_file_only_theirs_changed_declines[True]",
+   "tests/test_regen_usecase_merge.py::test_an_untouched_flip_of_a_results_file_neither_side_changed_declines[False]",
+   "tests/test_regen_usecase_merge.py::test_an_untouched_flip_of_a_results_file_neither_side_changed_declines[True]"
+  ],
+  "killed": true
+ }
+]

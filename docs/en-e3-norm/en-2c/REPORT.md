@@ -81,6 +81,14 @@ map is now the one at `e51bec7301`, which derives 65 test units (28 recorded, 37
 blocks `agree`; the suite's counts are unchanged; soft-rights has 1 more record, which agrees. No row of any class
 other than `agree` changed.
 
+Rerun after srccov-rl-safety-framework-1121 added the FSF rule blocks `f7-eval` and `f7-eval-dm` to
+`tests/data/norm-blocks/fsf.jsonl` (47 blocks), so the saved `pinned` corpus lacked two blocks: the same command at
+`53dca160b2` on a clean tree. The map is now the one at `cd6d457912`, which derives 112 test units (39 recorded, 73
+not ruled out). All 123 pinned blocks `agree`. The 137 rows of a class other than `agree` are the same records as
+before (corpus, class, Python's and Lean's answers); three of them now name another first test that made them. The
+larger derived suite adds records: suite 3 more (`both-refuse`), suite-subprocess 192 more and soft-rights 39 more,
+all `agree`.
+
 Rerun after srccov-rl-anthropic-rsp-1121 added the RSP rule blocks `f15-expertise`, `f15-candid` and `f15-conflicts`
 to `tests/data/norm-blocks/rsp.jsonl`, so the saved `pinned` corpus lacked three blocks (that item's selected run
 failed `test_the_saved_delta_report_records_every_disagreement_with_its_class`): `VE_NATIVE_PREBUILT=1 uv run python
