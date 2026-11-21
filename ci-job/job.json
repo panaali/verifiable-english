@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-specregen-resolve-fallback-1120-cebf4fd2-t221807-s6",
+ "head": "9ed86bb3194d4771e5af611cff690acf816318e0",
+ "argv": [
+  "armsh-cand-specregen-resolve-fallback-1120-cebf4fd2-t221807-s6",
+  "9ed86bb3194d4771e5af611cff690acf816318e0",
+  "a371712cd4ae04162040873c657d110496d2f9b7",
+  "-",
+  "-",
+  "4",
+  "6/7"
+ ]
+}
