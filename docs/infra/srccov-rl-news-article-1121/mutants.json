@@ -1,6 +1,6 @@
 {
  "item": "srccov-rl-news-article-1121",
- "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item. M1 was rerun and M5, M6 added for the F1 fix (planted with sed, restored with git checkout -- ve/; log /tmp/na-f1-mutants.log). M7, M8 and M9 were added for F2 and M5 rechecked (planted with sed or git show on 978e1af00b, restored with git checkout; git status clean after; logs /tmp/f2-m5.log, /tmp/f2-m7.log, /tmp/f2-m8.log, /tmp/f2-m9.log). M14-M17 were added for F4 (planted by /tmp/f4-mutants.sh with sed, or the REPORT of b798e345f6 copied in; restored with git checkout -- ve/english.py or a saved copy; git status showed only this item's two files after; log /tmp/f4-mutants.log).",
+ "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item. M1 was rerun and M5, M6 added for the F1 fix (planted with sed, restored with git checkout -- ve/; log /tmp/na-f1-mutants.log). M7, M8 and M9 were added for F2 and M5 rechecked (planted with sed or git show on 978e1af00b, restored with git checkout; git status clean after; logs /tmp/f2-m5.log, /tmp/f2-m7.log, /tmp/f2-m8.log, /tmp/f2-m9.log). M14-M17 were added for F4 (planted by /tmp/f4-mutants.sh with sed, or the REPORT of b798e345f6 copied in; restored with git checkout -- ve/english.py or a saved copy; git status showed only this item's two files after; log /tmp/f4-mutants.log). M18 and M19 were added for F5 (a short Python edit of a copy of the REPORT, restored from that copy; logs /tmp/f5-m18.log, /tmp/f5-m19.log).",
  "mutants": [
   {
    "id": "M1",
@@ -245,6 +245,28 @@
    "test": "tests/test_srccov_rl_news_article_1121.py::test_the_exception_claims_name_their_conditions",
    "failed": [
     "tests/test_srccov_rl_news_article_1121.py::test_the_exception_claims_name_their_conditions"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M18",
+   "file": "docs/infra/srccov-rl-news-article-1121/REPORT.md",
+   "behaviour": "F5: the REPORT points to the code for the wording conditions, no condition list",
+   "change": "put the F4 overclaim about naming another predicate or constant back in the pointer sentence",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_report_points_to_the_code_for_the_wording_conditions",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_report_points_to_the_code_for_the_wording_conditions"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M19",
+   "file": "docs/infra/srccov-rl-news-article-1121/REPORT.md",
+   "behaviour": "F5: the REPORT points to the code for the wording conditions, no condition list",
+   "change": "cite ve/english.py:286-350 instead of 286-377",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_report_points_to_the_code_for_the_wording_conditions",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_report_points_to_the_code_for_the_wording_conditions"
    ],
    "killed": true
   }
