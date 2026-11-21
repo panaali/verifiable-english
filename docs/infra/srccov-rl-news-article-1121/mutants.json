@@ -1,0 +1,51 @@
+{
+ "item": "srccov-rl-news-article-1121",
+ "note": "Seeded bugs, one per claimed behaviour; each planted by /tmp/na-proto/mutants.sh on the tree of 6b7301ef09, run against tests/test_srccov_rl_news_article_1121.py (each run failed), restored with git checkout (git status clean after). No product code changed in this item.",
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/english_vocabulary.py",
+   "behaviour": "the overlay linter refuses the wording a carry of S0001 needs",
+   "change": "add the idiom '{0} signaled {1}' to IDIOMS[2]",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_the_wording_a_carry_needs[S0001-{0} signaled {1}]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_the_wording_a_carry_needs[S0001-{0} signaled {1}]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M2",
+   "file": "usecases/news-article/environment.json",
+   "behaviour": "no carrier holds the S0010 clause; the overlay review is bound to the environment id",
+   "change": "carry 'a two-day meeting' in the sept_meeting legend",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_clause_is_not_carried_by_claims_or_legends[S0010]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_clause_is_not_carried_by_claims_or_legends[S0010]",
+    "tests/test_srccov_rl_news_article_1121.py::test_every_predicate_needs_reviewed_overlay_wording"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M3",
+   "file": "usecases/news-article/source.md",
+   "behaviour": "the S0011 clause is the source text",
+   "change": "'gave no forward guidance' -> 'offered no forward guidance'",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_clause_is_in_its_source_sentence[S0011]",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_clause_is_in_its_source_sentence[S0011]"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M4",
+   "file": "usecases/news-article/environment.json",
+   "behaviour": "the document declares relational-fol@0 only",
+   "change": "add a second profile key 'profiles'",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_document_declares_only_relational_fol",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_document_declares_only_relational_fol"
+   ],
+   "killed": true
+  }
+ ]
+}
