@@ -859,9 +859,9 @@
     15691,
     15783
    ],
-   "kind": "unformalised",
-   "reason": "unspecified_process",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "rule": "f7-eval",
+   "status": "CHECKED"
   },
   {
    "id": "s134-security",
@@ -896,9 +896,9 @@
     16018,
     16220
    ],
-   "kind": "unformalised",
-   "reason": "unspecified_process",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "rule": "f7-eval-dm",
+   "status": "CHECKED"
   },
   {
    "id": "s134-rra",
