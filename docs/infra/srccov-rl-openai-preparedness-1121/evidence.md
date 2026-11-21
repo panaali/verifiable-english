@@ -122,3 +122,22 @@ FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_the_accounting_too
 ```
 openai-preparedness: 102 blocks, 461 unaccounted words in 69 blocks, 16 blocks with a loss {'1': 18, '3': 1, 'limit 21': 1}, 0 of 123 quotes unanchored
 ```
+## review F2: probe before and after the fix
+```
+before (2dc12b6f): AssertionError: ['S0020', 'S0259'] ; rc=1
+after: rc=0
+```
+## review F2: seeded bugs (/tmp/f2-seed-S6.log, S7, S8)
+```
+S6 (drop S0259's placement, rebuild spans): 3 failed, 33 passed
+S7 (f16-sag-recommend omits: nothing): 5 failed, 103 passed (with tests/test_safetyfw_accounting.py)
+S8 (REPORT of 2dc12b6f): 6 failed, 30 passed
+```
+## review F2: accounting --check with the pinned source (/tmp/f2-acct.log)
+```
+openai-preparedness: 102 blocks, 498 unaccounted words in 70 blocks, 17 blocks with a loss {'1': 21, '3': 1, 'limit 21': 1}, 0 of 127 quotes unanchored
+```
+## review F2: run.py --check (/tmp/f2-run.log)
+```
+236 / 239 (2327.9 s) ; exit 0
+```
