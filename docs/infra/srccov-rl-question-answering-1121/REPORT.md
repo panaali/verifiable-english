@@ -68,4 +68,4 @@ SIZE: 0 product, 0 tests, 1 other hand-written file (this REPORT).
 14. Both directions, cited evidence, spec re-read: PASS. Every claim above names its command or file:line, and the spec re-read is listed.
 15. Overclaim, silent cut, new checks fail, limits: PASS for overclaim (each "none" or "unchanged" above cites `git diff --stat` or `sha256sum`) and for silent cut (section 4 states the N.A. reason). New checks and limits: N.A.
 
-Selected tests: see the build report for the `mac-pytest.sh --select` result on the committed HEAD.
+Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `add3a109f3` exited 0 (ran on ve-cloud-2 in 1501 s, "0 failed"; log /tmp/qa1121-select.log). `tools/regen_generated.py --check` fails only `route-cases` and `checker-pins`, and both need the Rust release binary, which this worktree has not built ("the Rust release binary is missing or not pinned"). This REPORT feeds neither check. The chain's gate runs with the built binaries.
