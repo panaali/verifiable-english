@@ -1,0 +1,7 @@
+job=armsh-cand-srccov-rl-eligibility-1121-f6dda2aa-t241126-s5 shard=5/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-21T06:08:08Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 06:08:08 up 5 min,  0 user,  load average: 1.57, 0.60, 0.24
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 11.0 s
+p1-tokenizers: 443909a61d42 fetched
