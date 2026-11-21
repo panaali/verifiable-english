@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-specregen-reinstall-allregen-1121-2953a654-t239090-s8",
+ "head": "aea9a97d414e0415672799dcf059fa74a85ba3cb",
+ "argv": [
+  "armsh-cand-specregen-reinstall-allregen-1121-2953a654-t239090-s8",
+  "aea9a97d414e0415672799dcf059fa74a85ba3cb",
+  "febde5bc877add9aae7387b22eb726dae8d27494",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
