@@ -55,7 +55,7 @@
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
 - `tests/test_english_statement_answer.py` — `english.statement`'s relay binding (docs/spec/en-e3-norm.md 2.4, Relay and Fuzz tests; section 8's P2 and P3).
-- `tests/test_english_statement_blocks.py` — The 121 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
+- `tests/test_english_statement_blocks.py` — The 123 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
 - `tests/test_english_statement_shadow.py` — The `english.statement` shadow comparator (docs/spec/en-e3-norm.md 2.4, Shadow; fixtures E14 and P5).
 - `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)

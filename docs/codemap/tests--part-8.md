@@ -49,6 +49,10 @@
 - `tests/test_srccov_eligibility_1119.py` — srccov-eligibility-1119: the source units the coverage map found unshown are now carried or recorded.
 - `tests/test_srccov_math_mini_paper_1119.py` — srccov-math-mini-paper-1119: the paper's Definition D1 is carried word for word in the legend its rule uses.
 - `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
+- `tests/test_srccov_rl_claude_constitution_pilot_1121.py` — srccov-rl-claude-constitution-pilot-1121: the three 'translation omission' units are reading choices, not omissions.
+- `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
+- `tests/test_srccov_rl_safety_framework_1121.py` — srccov-rl-safety-framework-1121: FSF 1.3.4's two mitigation-evaluation sentences, carried by rule lines.
+- `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
 - `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
 - `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
 - `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
@@ -76,6 +80,3 @@
 - `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
 - `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
-- `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
-- `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
-- `tests/test_trust_mutants_max_errors.py` — tools/trust_mutants.py never settles on a list Lean capped at `maxErrors` (tm-nightly-unknown-disposition-2; the nightly's M186 and M417: `lean/VE/Presuppositi…
