@@ -1,0 +1,5 @@
+$ python3 -I /tmp/cgshard-legtimes.py gha-arm/gha-arm-shard.jsonl   (script: leg-times.py in this directory)
+legs 117; labels cand-* 110; merged {'failed': 7, 'passed': 110}
+wall min: median 35.0 p75 38.4 p90 57.2 p95 68.0 max 106.2
+legs over 75 min: 4 (3.4%); over 90 min: 1
+last 8 legs: median 36.1

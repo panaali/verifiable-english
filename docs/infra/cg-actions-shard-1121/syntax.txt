@@ -1,0 +1,3 @@
+zsh -n chain-gate.sh.new-cgshard: ok
+py_compile gha/cancel-leg-runs.py.new-cgshard: ok
+py_compile test: ok
