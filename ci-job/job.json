@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-genconflict-hashcheck-1120-5441186c-t220116-s1",
+ "head": "2aa2ae1cce30006f2a721a4b49d8eae9b846e507",
+ "argv": [
+  "armsh-cand-genconflict-hashcheck-1120-5441186c-t220116-s1",
+  "2aa2ae1cce30006f2a721a4b49d8eae9b846e507",
+  "67dd55c12c5a92fd05ce7c61821cc9c6c50d796e",
+  "-",
+  "-",
+  "4",
+  "1/7"
+ ]
+}
