@@ -1,0 +1,762 @@
+{
+ "item": "srccov-rl-udhr-pilot-1121",
+ "map": "reviews/source-coverage-1119 (manage-agents), pin e53db4e8fc; units tagged none: translation omission in part-udhr-pilot-s4.tsv",
+ "carrier": "usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md",
+ "carrier_sha256": "5151b58b970a434bac39a0173f5126ee6b1a0fca09ca6d40d7f6a12e867d0a44",
+ "sealed_by": {
+  "reproduction_test": "tests/test_readings_rd5_udhr.py::test_the_migration_reproduces_the_committed_document",
+  "decision": "reviews/dri-decisions-20261119-defs-repair.md item 1"
+ },
+ "units": [
+  {
+   "unit": "S0014",
+   "row": "srccov-udhr-pilot-s4-3-1119",
+   "source_line": 34,
+   "body_bytes": [
+    2509,
+    2774
+   ],
+   "quote": "Furthermore, no distinction shall be made on the basis of the political, jurisdictional or international status of the country or territory to which a person belongs, whether it be independent, trust, non-self-governing or under any other limitation of sovereignty.",
+   "front_matter_units": [
+    "u020"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u020"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u020 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u020; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0015",
+   "row": "srccov-udhr-pilot-s4-4-1119",
+   "source_line": 38,
+   "body_bytes": [
+    2790,
+    2853
+   ],
+   "quote": "Everyone has the right to life, liberty and security of person.",
+   "front_matter_units": [
+    "u022a",
+    "u022b",
+    "u022c"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u022a",
+    "rs_u022b",
+    "rs_u022c"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u022a, u022b, u022c are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u022a, rs_u022b, rs_u022c; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0016",
+   "row": "srccov-udhr-pilot-s4-5-1119",
+   "source_line": 42,
+   "body_bytes": [
+    2869,
+    2914
+   ],
+   "quote": "No one shall be held in slavery or servitude;",
+   "front_matter_units": [
+    "u024"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u024"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u024 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u024; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0017",
+   "row": "srccov-udhr-pilot-s4-5-1119",
+   "source_line": 42,
+   "body_bytes": [
+    2915,
+    2982
+   ],
+   "quote": "slavery and the slave trade shall be prohibited in all their forms.",
+   "front_matter_units": [
+    "u025"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u025"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u025 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u025; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0018",
+   "row": "srccov-udhr-pilot-s4-6-1119",
+   "source_line": 46,
+   "body_bytes": [
+    2998,
+    3093
+   ],
+   "quote": "No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.",
+   "front_matter_units": [
+    "u027"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u027"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u027 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u027; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0019",
+   "row": "srccov-udhr-pilot-s4-7-1119",
+   "source_line": 50,
+   "body_bytes": [
+    3109,
+    3185
+   ],
+   "quote": "Everyone has the right to recognition everywhere as a person before the law.",
+   "front_matter_units": [
+    "u029"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u029"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u029 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u029; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0021",
+   "row": "srccov-udhr-pilot-s4-8-1119",
+   "source_line": 54,
+   "body_bytes": [
+    3306,
+    3453
+   ],
+   "quote": "All are entitled to equal protection against any discrimination in violation of this Declaration and against any incitement to such discrimination.",
+   "front_matter_units": [
+    "u033a",
+    "u033b"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u033a",
+    "rs_u033b"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u033a, u033b are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u033a, rs_u033b; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0022",
+   "row": "srccov-udhr-pilot-s4-9-1119",
+   "source_line": 58,
+   "body_bytes": [
+    3469,
+    3635
+   ],
+   "quote": "Everyone has the right to an effective remedy by the competent national tribunals for acts violating the fundamental rights granted him by the constitution or by law.",
+   "front_matter_units": [
+    "u035"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u035"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u035 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u035; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0023",
+   "row": "srccov-udhr-pilot-s4-10-1119",
+   "source_line": 62,
+   "body_bytes": [
+    3651,
+    3717
+   ],
+   "quote": "No one shall be subjected to arbitrary arrest, detention or exile.",
+   "front_matter_units": [
+    "u037"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u037"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u037 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u037; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0028",
+   "row": "srccov-udhr-pilot-s4-13-1119",
+   "source_line": 76,
+   "body_bytes": [
+    4484,
+    4632
+   ],
+   "quote": "No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence, nor to attacks upon his honour and reputation.",
+   "front_matter_units": [
+    "u045a",
+    "u045b"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u045a",
+    "rs_u045b"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u045a, u045b are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u045a, rs_u045b; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0029",
+   "row": "srccov-udhr-pilot-s4-13-1119",
+   "source_line": 76,
+   "body_bytes": [
+    4633,
+    4722
+   ],
+   "quote": "Everyone has the right to the protection of the law against such interference or attacks.",
+   "front_matter_units": [
+    "u046"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u046"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u046 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u046; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0030",
+   "row": "srccov-udhr-pilot-s4-14-1119",
+   "source_line": 80,
+   "body_bytes": [
+    4739,
+    4835
+   ],
+   "quote": "1. Everyone has the right to freedom of movement and residence within the borders of each state.",
+   "front_matter_units": [
+    "u048"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u048"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u048 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u048; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0031",
+   "row": "srccov-udhr-pilot-s4-14-1119",
+   "source_line": 82,
+   "body_bytes": [
+    4837,
+    4933
+   ],
+   "quote": "2. Everyone has the right to leave any country, including his own, and to return to his country.",
+   "front_matter_units": [
+    "u049"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u049"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u049 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u049; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0032",
+   "row": "srccov-udhr-pilot-s4-15-1119",
+   "source_line": 86,
+   "body_bytes": [
+    4950,
+    5040
+   ],
+   "quote": "1. Everyone has the right to seek and to enjoy in other countries asylum from persecution.",
+   "front_matter_units": [
+    "u051"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u051"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u051 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u051; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0033",
+   "row": "srccov-udhr-pilot-s4-15-1119",
+   "source_line": 88,
+   "body_bytes": [
+    5042,
+    5222
+   ],
+   "quote": "2. This right may not be invoked in the case of prosecutions genuinely arising from non-political crimes or from acts contrary to the purposes and principles of the United Nations.",
+   "front_matter_units": [
+    "u052"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u052"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u052 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u052; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0034",
+   "row": "srccov-udhr-pilot-s4-16-1119",
+   "source_line": 92,
+   "body_bytes": [
+    5239,
+    5282
+   ],
+   "quote": "1. Everyone has the right to a nationality.",
+   "front_matter_units": [
+    "u054"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u054"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u054 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u054; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0035",
+   "row": "srccov-udhr-pilot-s4-16-1119",
+   "source_line": 94,
+   "body_bytes": [
+    5284,
+    5390
+   ],
+   "quote": "2. No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality.",
+   "front_matter_units": [
+    "u055"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u055"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u055 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u055; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0038",
+   "row": "srccov-udhr-pilot-s4-17-1119",
+   "source_line": 100,
+   "body_bytes": [
+    5636,
+    5731
+   ],
+   "quote": "2. Marriage shall be entered into only with the free and full consent of the intending spouses.",
+   "front_matter_units": [
+    "u059"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u059"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u059 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u059; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0040",
+   "row": "srccov-udhr-pilot-s4-18-1119",
+   "source_line": 106,
+   "body_bytes": [
+    5872,
+    5958
+   ],
+   "quote": "1. Everyone has the right to own property alone as well as in association with others.",
+   "front_matter_units": [
+    "u063"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u063"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u063 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u063; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0041",
+   "row": "srccov-udhr-pilot-s4-18-1119",
+   "source_line": 108,
+   "body_bytes": [
+    5960,
+    6016
+   ],
+   "quote": "2. No one shall be arbitrarily deprived of his property.",
+   "front_matter_units": [
+    "u064"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u064"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u064 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u064; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0042",
+   "row": "srccov-udhr-pilot-s4-19-1119",
+   "source_line": 112,
+   "body_bytes": [
+    6033,
+    6103
+   ],
+   "quote": "Everyone has the right to freedom of thought, conscience and religion;",
+   "front_matter_units": [
+    "u066"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u066"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u066 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u066; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0044",
+   "row": "srccov-udhr-pilot-s4-20-1119",
+   "source_line": 116,
+   "body_bytes": [
+    6344,
+    6404
+   ],
+   "quote": "Everyone has the right to freedom of opinion and expression;",
+   "front_matter_units": [
+    "u070"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u070"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u070 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u070; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0046",
+   "row": "srccov-udhr-pilot-s4-21-1119",
+   "source_line": 120,
+   "body_bytes": [
+    6588,
+    6662
+   ],
+   "quote": "1. Everyone has the right to freedom of peaceful assembly and association.",
+   "front_matter_units": [
+    "u073"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u073"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u073 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u073; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0047",
+   "row": "srccov-udhr-pilot-s4-21-1119",
+   "source_line": 122,
+   "body_bytes": [
+    6664,
+    6719
+   ],
+   "quote": "2. No one may be compelled to belong to an association.",
+   "front_matter_units": [
+    "u074"
+   ],
+   "verify": "DROPPED",
+   "drop_class": "already-carried",
+   "reason": "already carried at main: u074 is CHECKED with content.norm 'no-compelled-association-membership' (sign false, guard top) over compel_association_membership_permitted, whose legend reads 'The actor is permitted to compel the person to belong to an association' (regulated act '{0} compel {1} to belong to an association')",
+   "blocking_text": "to belong to an association"
+  },
+  {
+   "unit": "S0048",
+   "row": "srccov-udhr-pilot-s4-22-1119",
+   "source_line": 126,
+   "body_bytes": [
+    6736,
+    6859
+   ],
+   "quote": "1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.",
+   "front_matter_units": [
+    "u076"
+   ],
+   "verify": "DROPPED",
+   "drop_class": "needs-feature",
+   "reason": "needs a language feature: its front-matter record u076 is kind ['unformalised', 'other_act_phrase_grammar'] (a known gap) for 'directly or through freely chosen representatives'",
+   "blocking_text": "directly or through freely chosen representatives"
+  },
+  {
+   "unit": "S0049",
+   "row": "srccov-udhr-pilot-s4-22-1119",
+   "source_line": 128,
+   "body_bytes": [
+    6861,
+    6936
+   ],
+   "quote": "2. Everyone has the right of equal access to public service in his country.",
+   "front_matter_units": [
+    "u077"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u077"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u077 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u077; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0053",
+   "row": "srccov-udhr-pilot-s4-24-1119",
+   "source_line": 138,
+   "body_bytes": [
+    7573,
+    7719
+   ],
+   "quote": "1. Everyone has the right to work, to free choice of employment, to just and favourable conditions of work and to protection against unemployment.",
+   "front_matter_units": [
+    "u084a",
+    "u084b",
+    "u084c",
+    "u084d"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u084a",
+    "rs_u084b",
+    "rs_u084c",
+    "rs_u084d"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u084a, u084b, u084c, u084d are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u084a, rs_u084b, rs_u084c, rs_u084d; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0056",
+   "row": "srccov-udhr-pilot-s4-24-1119",
+   "source_line": 144,
+   "body_bytes": [
+    8022,
+    8117
+   ],
+   "quote": "4. Everyone has the right to form and to join trade unions for the protection of his interests.",
+   "front_matter_units": [
+    "u087"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u087"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u087 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u087; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0061",
+   "row": "srccov-udhr-pilot-s4-27-1119",
+   "source_line": 158,
+   "body_bytes": [
+    8817,
+    8856
+   ],
+   "quote": "1. Everyone has the right to education.",
+   "front_matter_units": [
+    "u096"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u096"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u096 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u096; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0063",
+   "row": "srccov-udhr-pilot-s4-27-1119",
+   "source_line": 158,
+   "body_bytes": [
+    8933,
+    8974
+   ],
+   "quote": "Elementary education shall be compulsory.",
+   "front_matter_units": [
+    "u098"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u098"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u098 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u098; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0064",
+   "row": "srccov-udhr-pilot-s4-27-1119",
+   "source_line": 158,
+   "body_bytes": [
+    8975,
+    9124
+   ],
+   "quote": "Technical and professional education shall be made generally available and higher education shall be equally accessible to all on the basis of merit.",
+   "front_matter_units": [
+    "u099a",
+    "u099b"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u099a",
+    "rs_u099b"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u099a, u099b are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u099a, rs_u099b; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0065",
+   "row": "srccov-udhr-pilot-s4-27-1119",
+   "source_line": 160,
+   "body_bytes": [
+    9126,
+    9284
+   ],
+   "quote": "2. Education shall be directed to the full development of the human personality and to the strengthening of respect for human rights and fundamental freedoms.",
+   "front_matter_units": [
+    "u100a",
+    "u100b"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u100a",
+    "rs_u100b"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u100a, u100b are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u100a, rs_u100b; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0068",
+   "row": "srccov-udhr-pilot-s4-28-1119",
+   "source_line": 166,
+   "body_bytes": [
+    9592,
+    9753
+   ],
+   "quote": "1. Everyone has the right freely to participate in the cultural life of the community, to enjoy the arts and to share in scientific advancement and its benefits.",
+   "front_matter_units": [
+    "u105a",
+    "u105b",
+    "u105c"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u105a",
+    "rs_u105b",
+    "rs_u105c"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u105a, u105b, u105c are kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u105a, rs_u105b, rs_u105c; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0071",
+   "row": "srccov-udhr-pilot-s4-30-1119",
+   "source_line": 176,
+   "body_bytes": [
+    10100,
+    10216
+   ],
+   "quote": "1. Everyone has duties to the community in which alone the free and full development of his personality is possible.",
+   "front_matter_units": [
+    "u110"
+   ],
+   "verify": "DROPPED",
+   "drop_class": "needs-feature",
+   "reason": "needs possibility modality: 'in which alone the free and full development of his personality is possible' is a possibility claim, which norms@0 and relational-fol@0 do not express (modality@0 is a planned slot)",
+   "blocking_text": "in which alone the free and full development of his personality is possible"
+  },
+  {
+   "unit": "S0072",
+   "row": "srccov-udhr-pilot-s4-30-1119",
+   "source_line": 178,
+   "body_bytes": [
+    10218,
+    10553
+   ],
+   "quote": "2. In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law solely for the purpose of securing due recognition and respect for the rights and freedoms of others and of meeting the just requirements of morality, public order and the general welfare in a democratic society.",
+   "front_matter_units": [
+    "u111"
+   ],
+   "verify": "DROPPED",
+   "drop_class": "needs-feature",
+   "reason": "needs a purpose clause: 'solely for the purpose of securing ... and of meeting ...' restricts the limitations by their purpose (causation-purpose), which no declared profile of the document expresses",
+   "blocking_text": "solely for the purpose of securing"
+  },
+  {
+   "unit": "S0073",
+   "row": "srccov-udhr-pilot-s4-30-1119",
+   "source_line": 180,
+   "body_bytes": [
+    10555,
+    10674
+   ],
+   "quote": "3. These rights and freedoms may in no case be exercised contrary to the purposes and principles of the United Nations.",
+   "front_matter_units": [
+    "u112"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u112"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u112 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u112; a norms@0 content norm, the form u074 uses, could carry it"
+  },
+  {
+   "unit": "S0074",
+   "row": "srccov-udhr-pilot-s4-31-1119",
+   "source_line": 184,
+   "body_bytes": [
+    10691,
+    10915
+   ],
+   "quote": "Nothing in this Declaration may be interpreted as implying for any State, group or person any right to engage in any activity or to perform any act aimed at the destruction of any of the rights and freedoms set forth herein.",
+   "front_matter_units": [
+    "u114"
+   ],
+   "verify": "KEPT",
+   "carry": "NOT CARRIED",
+   "reading_sets": [
+    "rs_u114"
+   ],
+   "reason": "the only carrier is the front matter of a sealed, measured run's translation (run-20261010T1400Z): a sealed run is never rewritten in place (reviews/dri-decisions-20261119-defs-repair.md item 1) and no live UDHR translation exists in the repo",
+   "verify_note": "at main u114 is kind norm with no VE body (no content); its formal content is only in reading set(s) rs_u114; a norms@0 content norm, the form u074 uses, could carry it"
+  }
+ ]
+}
