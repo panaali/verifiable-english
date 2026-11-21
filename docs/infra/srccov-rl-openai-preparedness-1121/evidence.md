@@ -103,3 +103,22 @@ ve.errors.ResourceLimit: ResourceLimit: regulated predicates
 ```
 NOT 331 changed lines outside generated files > 150 (17 files) against cebf4fd2
 ```
+## review F1: probe before and after the fix
+```
+before (d6b73703): AssertionError: sr-sufficiency carries the 4.2 lead-in without its 4th bullet S0187 ; rc=1
+after: rc=0
+```
+## review F1: seeded bug S5 (d6b73703 rules.d1.ve and accounting.d1.txt), /tmp/t1121_f1.log
+```
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_the_rule_line_is_in_the_carrier_the_reader_is_shown
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_the_legend_quotes_the_carried_sentences_and_the_header_adds_the_fourth_bullet
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_a_carried_lead_in_accounts_for_every_item
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_a_carried_lead_in_accounts_for_every_item_by_its_source_text
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_the_lead_in_check_refuses_review_f1_and_its_variants[no fourth bullet in the header]
+FAILED tests/test_srccov_rl_openai_preparedness_1121.py::test_the_accounting_tool_refuses_omits_nothing_for_the_block
+6 failed, 20 passed in 1.95s
+```
+## review F1: accounting --check with the pinned source
+```
+openai-preparedness: 102 blocks, 461 unaccounted words in 69 blocks, 16 blocks with a loss {'1': 18, '3': 1, 'limit 21': 1}, 0 of 123 quotes unanchored
+```

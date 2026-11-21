@@ -2,8 +2,8 @@
 
 No DRI signature is needed and none is reserved; no DELTA row (section 5).
 
-**Summary.** Status: built; selected tests pass after one fix; the final gate is the chain's. Final commit: see `git log -1` on the branch (base `cebf4fd24f`).
-Of the 104 in-scope units, 4 are KEPT and carried by one new rule line, `sr-sufficiency`: 4.2's lead-in "The SAG will make this determination based on:" and its three bullets. 100 are DROPPED, each with a reason below.
+**Summary.** Status: built, and review F1 is fixed (section 7); the final gate is the chain's. Final commit: see `git log -1` on the branch (base `cebf4fd24f`).
+Of the 104 in-scope units, 4 are KEPT and carried by one new rule line, `sr-sufficiency`: 4.2's lead-in "The SAG will make this determination based on:" and three of its four bullets. The fourth bullet, S0187 (quantifier-scope, out of scope), is quoted in the header and recorded as a loss in accounting.d1.txt. 100 are DROPPED, each with a reason below.
 16 of the dropped units already had a drafted plain rule line. They are dropped only because Lean's limit of 64 regulated predicates is reached: D1 had 62 at main, and N2's probe adds one at run time.
 No keyed answer moved. Open items: none. The predicate budget is under Notes for the DRI.
 
@@ -44,7 +44,7 @@ Two kinds of drop come from limits, not from the map:
 | S0013 | srccov-openai-preparedness-13-1119 | DROPPED | time or cadence ("constantly") inside a soft-norms document: waits for srccov-design-deadline-cadence-1119 |
 | S0016 | srccov-openai-preparedness-13-1119 | DROPPED | a descriptive or background claim, not a duty: a fact line would change PLAN 4.1's FACTS inventory (`tests/test_pf_fidelity_fix.py:432`) or add a rules.d1.ve premise no keyed item names (`tests/test_pf_fidelity_fix.py:450`); a rule line would turn the claim into a duty |
 | S0019 | srccov-openai-preparedness-7-1119 | DROPPED | "particular caution" has no PLAN 3.2 open term, and "in these areas" without the threshold condition would widen the F2 safeguard duties; purpose clause "In order to" |
-| S0020 | srccov-openai-preparedness-7-1119 | DROPPED | lead-in (amendment 8) of S0021-S0029: items S0022 (temporal) and S0024 (modality) are out of scope, so it cannot be carried |
+| S0020 | srccov-openai-preparedness-7-1119 | DROPPED | lead-in (amendment 8) of S0021-S0029: no line carries its items (S0021 and S0027 wait on the predicate budget, S0022 (temporal) and S0024 (modality) are out of scope, the rest are dropped below), so no line can carry its force |
 | S0021 | srccov-openai-preparedness-7-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
 | S0023 | srccov-openai-preparedness-13-1119 | DROPPED | purpose "designed to detect" about a design, not a duty: attributed, attitude or evaluative content waits for srccov-design-attributed-1119 |
 | S0027 | srccov-openai-preparedness-7-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
@@ -101,9 +101,9 @@ Two kinds of drop come from limits, not from the map:
 | S0155 | srccov-openai-preparedness-8-1119,srccov-openai-preparedness-12-1119 | DROPPED | its spans unit already holds placement f8-start (`usecases/openai-preparedness/build_document.py:67`); the build refuses two translations in one unit (`usecases/openai-preparedness/build_document.py:386`) |
 | S0160 | srccov-openai-preparedness-12-1119 | DROPPED | already carried at main: the legend of `existing_at_publication` (`usecases/openai-preparedness/pf_vocabulary.py:244`), used by a rule or fact line, quotes it word for word |
 | S0163 | srccov-openai-preparedness-12-1119 | DROPPED | its spans unit already holds placement f9-report (`usecases/openai-preparedness/build_document.py:68`); the build refuses two translations in one unit (`usecases/openai-preparedness/build_document.py:386`) |
-| S0171 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and its three bullets: block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
-| S0172 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and its three bullets: block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
-| S0173 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and its three bullets: block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
+| S0171 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and three of its four bullets (the fourth, S0187, is quoted and recorded as a loss): block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
+| S0172 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and three of its four bullets (the fourth, S0187, is quoted and recorded as a loss): block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
+| S0173 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and three of its four bullets (the fourth, S0187, is quoted and recorded as a loss): block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
 | S0174 | srccov-openai-preparedness-13-1119 | DROPPED | no claim for a line to carry (navigation, table header, label, caption, pointer or heading); the repair is a record, not a rule line |
 | S0175 | srccov-openai-preparedness-13-1119 | DROPPED | already carried at main: the legend of `misuse_safeguards` (`usecases/openai-preparedness/pf_vocabulary.py:420`), used by a rule or fact line, quotes it word for word |
 | S0177 | srccov-openai-preparedness-13-1119 | DROPPED | Table 3 "Potential claims" cell: a claim a safeguards case may establish, not a duty; Appendix C's own wording of the claim is in the `misuse_safeguards` / `alignment_safeguards` legends (`usecases/openai-preparedness/pf_vocabulary.py:420`, `:487`) |
@@ -114,8 +114,8 @@ Two kinds of drop come from limits, not from the map:
 | S0183 | srccov-openai-preparedness-13-1119 | DROPPED | Table 3 "Potential claims" cell: a claim a safeguards case may establish, not a duty; Appendix C's own wording of the claim is in the `misuse_safeguards` / `alignment_safeguards` legends (`usecases/openai-preparedness/pf_vocabulary.py:420`, `:487`) |
 | S0184 | srccov-openai-preparedness-13-1119 | DROPPED | no claim for a line to carry (navigation, table header, label, caption, pointer or heading); the repair is a record, not a rule line |
 | S0185 | srccov-openai-preparedness-13-1119 | DROPPED | no claim for a line to carry (navigation, table header, label, caption, pointer or heading); the repair is a record, not a rule line |
-| S0186 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and its three bullets: block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
-| S0190 | srccov-openai-preparedness-23-1119 | DROPPED | lead-in of 4.2's decision points: S0191 (attitude) and S0193 (modality) are not carried |
+| S0186 | srccov-openai-preparedness-12-1119 | KEPT | 4.2 lead-in and three of its four bullets (the fourth, S0187, is quoted and recorded as a loss): block sr-sufficiency (`usecases/openai-preparedness/rules.d1.ve:187-188`), act `sufficiency_basis` (`usecases/openai-preparedness/pf_vocabulary.py:775`) |
+| S0190 | srccov-openai-preparedness-23-1119 | DROPPED | lead-in of 4.2's decision points (S0191-S0192): no line carries its items (S0191 attitude, S0192 read through RS16; the following S0193 is modality), so no line can carry its force |
 | S0191 | srccov-openai-preparedness-23-1119 | DROPPED | attitude "confident" in a "can" decision point: attributed, attitude or evaluative content waits for srccov-design-attributed-1119 |
 | S0192 | srccov-openai-preparedness-23-1119 | DROPPED | 4.2's "SAG can …" decision points are options, which PF reads through a reading set for 3.3's list (RS16, `usecases/openai-preparedness/build_document.py:159`) |
 | S0202 | srccov-openai-preparedness-25-1119 | DROPPED | "forecasted to reach" and the hedge "should be treated with extreme caution": attributed, attitude or evaluative content waits for srccov-design-attributed-1119 |
@@ -131,7 +131,7 @@ Two kinds of drop come from limits, not from the map:
 | S0256 | srccov-openai-preparedness-28-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
 | S0257 | srccov-openai-preparedness-28-1119 | DROPPED | "For covered launches" needs the `covered` guard, whose readers are pinned by ruling pf-split-units-20261115 (`tests/test_pf_fidelity_fix.py:523-527`); an unguarded line drops the condition |
 | S0258 | srccov-openai-preparedness-27-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
-| S0259 | srccov-openai-preparedness-27-1119 | DROPPED | lead-in of Appendix B's SAG duties: S0261 (quantifier-scope) is out of scope |
+| S0259 | srccov-openai-preparedness-27-1119 | DROPPED | lead-in of Appendix B's SAG duties (S0260-S0263): no line carries its items (S0260 and S0263 wait on the predicate budget; S0261 (quantifier-scope) and S0262 are out of scope), so no line can carry its force |
 | S0260 | srccov-openai-preparedness-27-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
 | S0263 | srccov-openai-preparedness-27-1119 | DROPPED | its rule line needs a new regulated predicate: Lean's soft-norms limit is 64 (`lean/VE/SoftNorms/Soften.lean:471`), D1 had 62 at main and N2's probe adds one at run time (`usecases/openai-preparedness/run.py:728`); the one free slot carries sr-sufficiency (4 units) |
 | S0264 | srccov-openai-preparedness-27-1119 | DROPPED | its spans unit already holds placement rs7-without-sag (`usecases/openai-preparedness/build_document.py:95`); the build refuses two translations in one unit (`usecases/openai-preparedness/build_document.py:386`) |
@@ -153,7 +153,7 @@ Totals: 4 KEPT. 100 DROPPED, broken down as:
 - 10: time or cadence, waiting for srccov-design-deadline-cadence-1119;
 - 11: attributed, attitude or evaluative content, waiting for srccov-design-attributed-1119;
 - 13: descriptive claims (no fact line);
-- 6: lead-ins;
+- 6: lead-ins (the rule follows the list);
 - 6: no claim (headings, captions);
 - 3: example box;
 - 2: Table 3 claim cells;
@@ -161,22 +161,26 @@ Totals: 4 KEPT. 100 DROPPED, broken down as:
 
 No unit needed definitions beside soft norms, so none waits for srccov-design-defs-softnorms-1119.
 
+**The rule for a lead-in** (METHOD amendment 8, review F1). A lead-in is carried only by a line that carries its items with the lead-in's force. An item that line does not carry (out of scope, or dropped) is quoted in the block's header and recorded as a `loss` in accounting.d1.txt, so the omission is visible. The six dropped lead-ins (S0020, S0030, S0126, S0147, S0190, S0259) have no line that carries their items. S0171 is carried, and its fourth item S0187 is quoted and recorded as `loss 1`. `test_a_carried_lead_in_accounts_for_every_item` checks this over all seven lead-ins, from the map's `lead-in:` notes saved in the test.
+
 ## 1. What is carried
 
 - **Line** (`usecases/openai-preparedness/rules.d1.ve:187-188`):
-  `## sr-sufficiency | always | 4.2: “The SAG will make this determination based on:” “The level of capability …” “The associated risks …” “The safeguards in place …”`
+  `## sr-sufficiency | always | 4.2: “The SAG will make this determination based on:” “The level of capability …” “The associated risks …” “The safeguards in place …” “The baseline risk from other deployments, …” (the fourth bullet is not carried: …)`
   `Rule 1. Every situation must have SAG base safeguard sufficiency on capability plus risks plus safeguards.`
-  - The header quotes the four source sentences.
+  - The header quotes the lead-in and all four bullets, five source sentences. The line names three of the four grounds, and the note after the quotes says that the fourth bullet (S0187) is not carried.
   - VE parses the line as the unconditional duty of `sufficiency_basis`: `test_the_line_parses_to_the_act_with_no_condition`.
-- **Legend** (`pf_vocabulary.py:775`, environment.d1.json): `4.2: ` followed by the same four quotations, word for word from `pf-v2.txt`. Nothing outside the quotations but the section label.
+- **Legend** (`pf_vocabulary.py:775`, environment.d1.json): `4.2: ` followed by the four quotations the line carries (the lead-in and three bullets), word for word from `pf-v2.txt`. Nothing outside the quotations but the section label.
+  - The legend does not quote S0187. The accounting tool counts a used legend's words as carried, so quoting it there would hide the loss. f13-results and fn5-indicator likewise quote their lost words in the header only.
   - The act is `{0} have SAG base safeguard sufficiency on capability plus risks plus safeguards`: 80 characters, the case's act form.
   - The act uses "plus" as the act of `safeguards_during_development` does (`pf_vocabulary.py:522`), because the act form allows no comma.
 - **Routing.** Four placements (`build_document.py:108-111`) put spans units p11-u181 (S0171), p11-u182 (S0172), p11-u183 (S0173) and p12-u196 (S0186) on the block.
   - With no clause map claimed, each is a blocked rule: `blocked_rule: sr-sufficiency`, UNFORMALISED, `unmapped_clause`, waits `["AP"]`. That is the conservative status: no unit becomes CHECKED.
-  - The Table 3 units between the lead-in and the last bullet are not part of the list and are not routed.
+  - The Table 3 units between the lead-in and the third carried bullet are not part of the list and are not routed.
+  - S0187's own record p12-u197 is unchanged: UNFORMALISED, `quantifier_scope`, routed to no block (`test_the_fourth_bullet_keeps_its_own_record`).
   - `git diff` of spans.json changes exactly these four records.
 - **Readings.** `pf_translation.py:40-41` adds the block to `RS0_STATEMENTS`, since "The SAG will make" is a future-tense process statement (PLAN 3.1). Without N1 it carries no norm, like the other RS0 lines.
-- **Accounting.** `accounting.d1.txt:94` reads `sr-sufficiency | omits: nothing`. The tool finds no unaccounted word: "unaccounted": [] for sr-sufficiency in its report.
+- **Accounting.** `accounting.d1.txt:94` reads `sr-sufficiency | omits: "The baseline risk from other deployments, … for those models" loss 1` (class 1, a dropped conjunct). The tool lists S0187's ten content words as unaccounted and finds each in that entry (`--check` exit 0). With `omits: nothing` it refuses the block: `test_the_accounting_tool_refuses_omits_nothing_for_the_block`.
 
 ## 2. Regenerated files (the case's own scripts only)
 
@@ -211,7 +215,7 @@ Neither touches a PF file.
   - N3 counts only `f<N>-` blocks (`run.py:849`).
   - N2 reads persuasion safeguards.
 - **Reader inputs a later read must re-pin to:**
-  - rules.d1.ve sha256 `9a5be7c8…4dbe`;
+  - rules.d1.ve sha256 `583ee110…fbe4` (after review F1; `9a5be7c8…4dbe` before it);
   - environment.d1.json `0c884cbc…d345`;
   - spans.json `4413e7eb…529a`;
   - pf_vocabulary.py `5d6b2f31…8e7b`.
@@ -225,6 +229,7 @@ Neither touches a PF file.
 - its spans.json record routes to the block, and only these four do;
 - its sentence is one whole quotation of the legend and the header;
 - with the pinned source (`tests/pinned_source.py`), the quotation equals the text in the unit's byte span under `quote_evidence.plain`, and the build places exactly these units.
+- (review F1) for each of the item's seven lead-ins: a block that carries it routes each item, or quotes it in the header with a `loss` entry; a lead-in is routed exactly when this REPORT keeps it; the check refuses five mutants; the accounting tool refuses `omits: nothing`; S0187's record is unchanged.
 
 Results:
 - On main's PF files (`git checkout main -- usecases/openai-preparedness`, run, restore): **17 failed** (/tmp/pfwork/cond-main.log).
@@ -240,6 +245,7 @@ Each was planted, the test file run, then restored with `git checkout`. Only Pyt
 | S2 | Python, `usecases/openai-preparedness/build_document.py` | drop S0173's placement, rebuild spans | `test_the_unit_routes_to_the_line[S0173]`, `test_only_these_units_route_to_the_line`, `test_the_build_places_exactly_these_units_on_the_block` (seed-S2.log) |
 | S3 | Python, `usecases/openai-preparedness/pf_vocabulary.py` | legend "advice" → "guidance", regenerate | `test_the_legend_and_header_quote_the_sentence_whole[S0173]`, `test_the_legend_quotes_exactly_the_four_sentences`, `test_the_legend_text_is_the_source_text_of_the_unit[S0173]` (seed-S3.log) |
 | S4 | Python, `usecases/openai-preparedness/pf_translation.py` | drop the block from RS0_STATEMENTS | `test_the_rule_line_is_in_the_carrier_the_reader_is_shown` (seed-S4.log) |
+| S5 (review F1) | VE data, `usecases/openai-preparedness/rules.d1.ve` and `accounting.d1.txt` | the files of commit d6b73703: header without the fourth bullet, `omits: nothing` | 6 failed: `test_a_carried_lead_in_accounts_for_every_item`, `..._by_its_source_text`, `test_the_accounting_tool_refuses_omits_nothing_for_the_block`, `test_the_legend_quotes_the_carried_sentences_and_the_header_adds_the_fourth_bullet`, `test_the_rule_line_is_in_the_carrier_the_reader_is_shown`, and the `no fourth bullet` mutant, whose bullet is already absent (/tmp/t1121_f1.log, copied into evidence.md) |
 
 Trust mutants:
 - the light lane said NOT ("331 changed lines outside generated files > 150");
@@ -264,6 +270,20 @@ No row. What changed is translation content: one rule line, one predicate with i
 - No test in main-known-red.txt was touched. The full gate is the chain's, on the final HEAD.
 
 SIZE: 22 product (pf_vocabulary.py 8, build_document.py 7, pf_translation.py 4, rules.d1.ve 2, accounting.d1.txt 1), 161 tests (new file 155, test_pf_fidelity_fix.py 6), README 8 plus this REPORT (other hand-written).
+
+## 7. Review fix (F1)
+
+F1 (B): the 4.2 list has four bullets, and the kept lead-in S0171 was carried without the fourth, S0187, while the records said `omits: nothing` and "its three bullets".
+- **Fix** (the review's second option): S0171 stays KEPT. The block's header quotes S0187 and says that the line does not carry it. accounting.d1.txt records S0187 as `loss 1`. The REPORT, README, the comment in build_document.py and the test docstring now say three of four bullets.
+  - Why not the first option, dropping the block: that frees the 63rd predicate slot. The 16 drafted lines' reason, "dropped only because the budget is reached", would then be false, and carrying another of them is new work outside this fix.
+- **Class:** a carried lead-in that drops an item without a record. One rule for every lead-in, stated in section 0, and `test_a_carried_lead_in_accounts_for_every_item` checks it over all seven lead-ins of the scope.
+  - The S0020, S0190 and S0259 rows now give the true cause: no line carries their items. An out-of-scope item no longer reads as the cause, since S0171 is carried with one.
+  - The accounting tool enforces the record on its own: with S0187 in the header, `omits: nothing` leaves ten words unaccounted.
+- **Probe F1:** exit 1 before the fix, exit 0 after it. `test_a_carried_lead_in_accounts_for_every_item` covers it, along with the mutant `no fourth bullet in the header`.
+- **Regenerated:** `docs/usecases/safetyfw/openai-preparedness/accounting.json` (blocks with a loss 15 → 16, class 1 17 → 18, quotes 122 → 123; `--check` exit 0) and `quote-hashes.json`. These pass `--check` unchanged: `build_document.py`, `measure.py`, `stage0.py`, `english_lean_seal`, `tools/regen_generated.py` (exit 0), and the lexicon report (byte-identical).
+  - `run.py` reads no block header and no sidecar (grep), so results.json is unchanged.
+- **No DELTA row:** the change is translation records only. No verdict, answer, diagnostic or trust moves.
+- Tests: see section 6, fix round.
 
 ## Notes for the DRI
 

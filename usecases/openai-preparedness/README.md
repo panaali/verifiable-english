@@ -62,8 +62,10 @@ clause, so not every word of the unit is mapped. Three formerly CHECKED rule
 units remain UNFORMALISED because they carry an AT wait or omit a source clause. Claims in headings and illustrative
 sections remain visible whenever the whole source unit contains a duty or hedge.
 srccov-rl-openai-preparedness-1121 adds the rule line `sr-sufficiency` for 4.2's lead-in "The SAG will make this
-determination based on:" and its three bullets: their four units route to it as a blocked rule (UNFORMALISED,
-`unmapped_clause`), so the status counts are unchanged and three units move from the readings family to AP. D1 now
+determination based on:" and three of its four bullets: their four units route to it as a blocked rule (UNFORMALISED,
+`unmapped_clause`), so the status counts are unchanged and three units move from the readings family to AP. The line
+names three grounds; the fourth bullet ("The baseline risk from other deployments, ...", a quantifier-scope unit) is
+quoted in the header and recorded as a loss in `accounting.d1.txt`. D1 now
 has 63 regulated predicates; N2's query-only probe adds a 64th, the limit of Lean's soft-norms check.
 
 | Status | Units | Bytes | Share |

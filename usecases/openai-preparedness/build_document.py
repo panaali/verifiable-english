@@ -104,7 +104,9 @@ PLACEMENTS = {
     "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
     # srccov-rl-openai-preparedness-1121: a sentence a plain rule line carries (block sr-sufficiency). No clause map is
     # claimed, so each unit is a blocked rule that routes to the block (UNFORMALISED, unmapped_clause).
-    # 4.2's lead-in and its three bullets (the Table 3 units between them are not part of the list).
+    # 4.2's lead-in and the three of its four bullets the line carries (the Table 3 units between them are not part of
+    # the list). The fourth bullet, "The baseline risk ...", is quantifier scope: not placed here, quoted in the block's
+    # header and recorded as a loss in accounting.d1.txt.
     "The SAG will make this determination based on:": ("rule", "sr-sufficiency", ()),
     "The level of capability in the Tracked Category based on the Capabilities Report": ("rule", "sr-sufficiency", ()),
     "The associated risks of severe harm, as described in the threat model": ("rule", "sr-sufficiency", ()),
