@@ -79,14 +79,22 @@ Rerun after safety-framework-proximity-tcl added the FSF rule block `f6-tcl` to 
 (45 blocks), so the saved `pinned` corpus lacked one block: the same command at `d255cbd9f4` on a clean tree. The
 map is now the one at `e51bec7301`, which derives 65 test units (28 recorded, 37 not ruled out). All 121 pinned
 blocks `agree`; the suite's counts are unchanged; soft-rights has 1 more record, which agrees. No row of any class
-other than `agree` changed. The table below is that run's.
+other than `agree` changed.
+
+Rerun after srccov-rl-safety-framework-1121 added the FSF rule blocks `f7-eval` and `f7-eval-dm` to
+`tests/data/norm-blocks/fsf.jsonl` (47 blocks), so the saved `pinned` corpus lacked two blocks: the same command at
+`53dca160b2` on a clean tree. The map is now the one at `cd6d457912`, which derives 112 test units (39 recorded, 73
+not ruled out). All 123 pinned blocks `agree`. The 137 rows of a class other than `agree` are the same records as
+before (corpus, class, Python's and Lean's answers); three of them now name another first test that made them. The
+larger derived suite adds records: suite 3 more (`both-refuse`), suite-subprocess 192 more and soft-rights 39 more,
+all `agree`. The table below is that run's.
 
 | corpus | records | lean-unavailable | agree | lean-stricter | lean-looser | both-refuse |
 |---|---|---|---|---|---|---|
-| pinned (121 blocks) | 121 | 0 | 121 | 0 | 0 | 0 |
-| suite (65 test units, derived from coverage) | 210 | 1 | 144 | 18 | 3 | 44 |
-| suite-subprocess (`ve` processes the suite starts) | 23 | 0 | 16 | 0 | 1 | 6 |
-| soft-rights (`_w1=True` calls) | 265 | 47 | 214 | 0 | 4 | 0 |
+| pinned (123 blocks) | 123 | 0 | 123 | 0 | 0 | 0 |
+| suite (112 test units, derived from coverage) | 213 | 1 | 144 | 18 | 3 | 47 |
+| suite-subprocess (`ve` processes the suite starts) | 215 | 0 | 208 | 0 | 1 | 6 |
+| soft-rights (`_w1=True` calls) | 304 | 47 | 253 | 0 | 4 | 0 |
 | udhr (norm units and readings, one at a time) | 47 | 1 | 0 | 37 | 0 | 9 |
 | constitution (the probe translation's) | 14 | 14 | 0 | 0 | 0 | 0 |
 | known (english-lean-s6.md section 5) | 15 | 0 | 3 | 2 | 9 | 1 |
@@ -238,7 +246,7 @@ en-e3a-cutback, then en-e3 (EN-3) after the DRI's W1 delta decision.
 2. **Deliverables:** PASS. The table above; `git diff main...HEAD` holds no new Python copy of a Lean decision and no
    new report test of git.
 3. **Tests can fail:** PASS. `mutants.json`: 10 of 10 caught; `test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement`.
-4. **Agreement:** PASS. `delta.json`: pinned 121 of 121 agree; the rest are listed for the DRI.
+4. **Agreement:** PASS. `delta.json`: pinned 123 of 123 agree; the rest are listed for the DRI.
 5. **R8 binding:** PASS. `test_every_named_mutant_is_unavailable` (undeclared predicate, shifted number, extra and
    duplicated rows); `test_relay_binding_inventory.py[english.statement]`.
 6. **Gate evidence on final HEAD:** N.A. The chain runs the gate. The final selected run is below.
