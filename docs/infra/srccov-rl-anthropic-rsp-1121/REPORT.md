@@ -13,14 +13,13 @@
 
 **Summary.** 4 of the 8 in-scope units are carried and 4 are dropped. No DRI signature is needed and no DELTA row
 is reserved (DELTA.md has no rows). Trust is +0: no Lean, Rust or `ve/` file changed, and `trust_mutants`
-planned 0 definitions. No keyed answer changes. Base: main cebf4fd24f (main had not moved when this was checked:
-`git log HEAD..main` was empty).
+planned 0 definitions. No keyed answer changes. Base: main e331b45943 (rebased from cebf4fd24f; section 7).
 SIZE: 29 product, 136 tests, 50 other hand-written lines (product: rules.d1.ve 6, rsp_vocabulary.py 16,
 build_document.py 3, accounting.d1.txt 3, README.md 1; tests: the new file 129, test_english_statement_blocks.py 7;
 other: this REPORT and DELTA.md are not counted, mutants.json 34, seeded-bugs.log 13. Source: `git diff --numstat
 main...HEAD`).
 
-## 0. Verify first (map pin e53db4e8fc; checked against main cebf4fd24f)
+## 0. Verify first (map pin e53db4e8fc; checked against main cebf4fd24f, rebased onto e331b45943)
 
 - **Scope.** The map lists 8 units tagged `none: translation omission` in the three rows
   (part-anthropic-rsp-s7.tsv rows S0189, S0190, S0192, S0195, S0219, S0220, S0222, S0224). S0195's overlap reading
@@ -144,7 +143,7 @@ Lean or Rust product code changed.
   one failure, `tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[rsp]` (the
   pinned RSP blocks lacked the new rules). Every other selected file exited 0, including the chunked
   test_consolidation_tools.py (304 passed).
-- Fix (235332eac9): the recapture in section 2. Rerun of the failed id plus the two tests whose pins moved
+- Fix (28ba1e408b after the rebase; 235332eac9 before): the recapture in section 2. Rerun of the failed id plus the two tests whose pins moved
   (`test_lean_reads_each_pinned_block_as_python`, `test_each_pinned_block_through_the_mode`): "4 passed in 912.81s".
 - trust_mutants (`mac-pytest.sh --trustmut -- --json /tmp/tm-1121.json`): "0 definitions, 0 mutants ... 0 SURVIVOR ...
   exit=0". The light lane said NOT (284 changed lines), so the sweep was run; `--plan` gave 0 definitions.
@@ -155,8 +154,15 @@ Lean or Rust product code changed.
 
 ## 7. VE commit and freeze
 
-Branch HEAD before this REPORT: 235332eac9, on main cebf4fd24f. The item merges at its merge-train commit on main
-after cebf4fd24f. That commit is not known yet, and the merge train records it. If it lands after Monday's FSF
+The branch was built on main cebf4fd24f and rebased onto main e331b45943 (srccov-rl-claude-constitution-pilot-1121
+merged in between). The only conflict was the shared conformance/english-lean/corpus-seal.json. main's version was
+taken and regenerated with `python -m conformance.english_lean_seal` (64185f5b..., 111 sources), and the lexicon
+report was regenerated. main's new commits change nothing under ve/, lean/, rust/, usecases/anthropic-rsp,
+safetyfw_common.py, safetyfw_accounting.py or tests/data/norm-blocks (`git diff --stat cebf4fd24f main -- ...` is
+empty), so results.json and the selected run's RSP results stand. After the rebase: `tools/regen_generated.py
+--check` checked 43 entries, rc 0; the three builder `--check`s rc 0; the accounting report was rewritten to /tmp and is
+byte-equal (`cmp`); the condition test gave 12 passed. The item merges at its merge-train commit on main after
+e331b45943. That commit is not known yet, and the merge train records it. If it lands after Monday's FSF
 freeze commit, it waits for a later freeze. Later RSP reads re-pin K13 and the hashes in section 3.
 
 ## 8. Notes for the DRI
