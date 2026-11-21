@@ -134,6 +134,75 @@
     "tests/test_srccov_rl_news_article_1121.py::test_the_report_names_both_refusals_of_the_base_shape"
    ],
    "killed": true
+  },
+  {
+   "id": "M10",
+   "file": "tests/test_srccov_rl_news_article_1121.py",
+   "behaviour": "F3: wherever this file says the public path raises on the base-shape refusals, it names the idiom and _ACTIVE exceptions",
+   "change": "restore the F2 docstring of test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M11",
+   "file": "ve/english.py",
+   "behaviour": "F3: an _ACTIVE phrase the base shape refuses passes the public path",
+   "change": "line 309: matches = []",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M12",
+   "file": "ve/english.py",
+   "behaviour": "F3: an idiom the base shape refuses passes the public path",
+   "change": "line 350: accepted = False and (...)",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0001-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0001-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0010-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0010-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0011-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_overlay_linter_refuses_only_the_past_tense_wordings[S0011-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0001-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0010-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_a_present_tense_wording_passes_and_only_the_review_blocks[S0011-{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_base_shape_refuses_an_auxiliary_or_a_converse_ending[{0}",
+    "tests/test_srccov_rl_news_article_1121.py::test_the_idiom_list_and_active_phrases_pass_outside_the_base_shape"
+   ],
+   "killed": true
+  },
+  {
+   "id": "M13",
+   "file": "docs/infra/srccov-rl-news-article-1121/REPORT.md",
+   "behaviour": "F3: the REPORT names the idiom and _ACTIVE exceptions wherever it says such a wording is refused",
+   "change": "restore the REPORT of 092f2ae082",
+   "test": "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions",
+   "failed": [
+    "tests/test_srccov_rl_news_article_1121.py::test_the_refusal_claims_name_the_idiom_and_active_exceptions"
+   ],
+   "killed": true
   }
  ]
 }
