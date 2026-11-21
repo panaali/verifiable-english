@@ -451,7 +451,7 @@ def test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_te
     assert spans["g-external"]["open_terms"] == ["ot8_low_risk_external"]
     assert spans["g-high-risk"]["open_terms"] == ["ot7_high_risk_internal"]
     coverage = json.loads((HERE / "coverage.json").read_text())
-    assert coverage["master_bytes_by_status"]["CHECKED"] == 3959 and coverage["bytes_by_status"]["CHECKED"] == 2851
+    assert coverage["master_bytes_by_status"]["CHECKED"] == 4253 and coverage["bytes_by_status"]["CHECKED"] == 3145
 
 
 def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate():
