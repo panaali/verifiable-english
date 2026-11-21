@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-rl-anthropic-rsp-1121-4e1c3931-t271296-s8",
+ "head": "eaba472c5f739a919e27251a02c77e4c5e02e7a6",
+ "argv": [
+  "armsh-cand-srccov-rl-anthropic-rsp-1121-4e1c3931-t271296-s8",
+  "eaba472c5f739a919e27251a02c77e4c5e02e7a6",
+  "586499132ac700edf6809b2493ecc18d2c03d649",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
