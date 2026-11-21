@@ -3,13 +3,13 @@
 INSTALL WAITS FOR DECIDER READ. Status: BUILT and tested in staged copies; nothing is installed. No DELTA row and no DRI signature is needed.
 HEAD: this branch carries evidence only. The product change is in `manage-agents` as `chain-gate.sh.new-cgshard` and `gha/cancel-leg-runs.py.new-cgshard` (new file).
 What changed: the MAC_LAST_RESORT route now tries a sharded Actions gate (`gha-arm-shard.sh`, unchanged) after the ve-cloud-2 step and before the VM step. It writes one merged `gate-result.json` with `where=actions-arm` (or `actions-x86`). A missing, failed or unparseable shard is a FAIL. Anything else that gives no verdict falls back to the VM step, then the Mac, as today.
-Open: the decider's install read. The sibling `cg-vm-gate-width-1121` has a one-line adjacent conflict with this change; the resolution is described and tested below.
+Open: the decider's install read. The sibling `cg-vm-gate-width-1121` was installed during this build. `chain-gate.sh.new-cgshard` is now re-ported onto that new live file (md5 `e2964a76…`), and against it the change only adds lines (see "Sibling" below).
 
 SIZE: 204 product (115 lines added to `chain-gate.sh`, 0 removed; 89 in the new `gha/cancel-leg-runs.py`), 482 tests (`tools-local/test_chain_gate_actions_shard.py`), 65 other hand-written lines (`measure.py`, `leg-times.py`).
 
 ## Route before and after (MAC_LAST_RESORT + MAC_GATE, not the risky-only selected route)
 
-| step | before (live `chain-gate.sh`, md5 `a2145658…`) | after (`chain-gate.sh.new-cgshard`) |
+| step | before (live `chain-gate.sh`, md5 `e2964a76…`, cgwidth installed) | after (`chain-gate.sh.new-cgshard`, md5 `82909ce1…`) |
 |---|---|---|
 | cloud saturated (mac-last-chaingate probe) | take the Mac's one slot, Mac gate | **Actions shard step**; on no verdict, the Mac's one slot as before (`CHAIN_GATE_ACTIONS_SAT=0` restores the old behaviour) |
 | 1 | ve-cloud-2 (`cloud2-run.sh gate`) | unchanged |
@@ -88,11 +88,11 @@ They do not touch the live `cloud-jobs/`, flags, GitHub or any remote.
 
 | run | command | result |
 |---|---|---|
-| failing first, live script | `python3 -I tools-local/test_chain_gate_actions_shard.py` | `FAILED (82 failures)`, rc 1 (`test-on-live.log`; 106 ok are the fallback cases, which live already routes to the VM) |
-| staged script | `CG=chain-gate.sh.new-cgshard python3 -I tools-local/test_chain_gate_actions_shard.py` | `all passed (0 failures)`, 188 ok, rc 0 (`test-on-new.log`) |
-| existing chain-gate suites on the staged script | `CG=… test_chain_gate_vm_cancel / test_chain_gate_empty_ve_diff / test_gate_reuse / test_mac_last_resort / test_vm1_gate_weight`, `CHAIN_GATE_SCRIPT=… test_defer_heavy`, `test-harness/l128/test-collcheck.zsh <staged>` | all pass (`existing-tests-on-new.txt`) |
-| staged script merged with the sibling's `.new-cgwidth` (see below) | both items' tests with `CG=<merged copy>` | mine `all passed (0 failures)`; `test_chain_gate_vm_width.py` `PASS` (`test-on-combined-cgwidth.log`, `cgwidth-test-on-combined.log`) |
-| syntax | `zsh -n chain-gate.sh.new-cgshard`; `py_compile` of the helper and the test | ok (`syntax.txt`) |
+| failing first, live script (both before and after the cgwidth install) | `python3 -I tools-local/test_chain_gate_actions_shard.py` | `FAILED (82 failures)`, rc 1, on both lives: `test-on-live.log` (live `e2964a76`) and `test-on-live-pre-cgwidth.log` (live `a2145658`). The 106 ok checks are the fallback cases, which live already routes to the VM. |
+| staged script (re-ported) | `CG=chain-gate.sh.new-cgshard python3 -I tools-local/test_chain_gate_actions_shard.py` | `all passed (0 failures)`, 188 ok, rc 0 (`test-on-new.log`) |
+| existing chain-gate suites on the re-ported script | `CG=… test_chain_gate_vm_cancel / test_chain_gate_empty_ve_diff / test_gate_reuse / test_mac_last_resort / test_vm1_gate_weight / test_chain_gate_vm_width`, `CHAIN_GATE_SCRIPT=… test_defer_heavy`, `test-harness/l128/test-collcheck.zsh <staged>` | all pass (`existing-tests-on-new.txt`) |
+| before the re-port: staged on `a2145658`, and the 3-way merge with the then-staged `.new-cgwidth` | the same tests | all pass (`test-on-combined-cgwidth.log`, `cgwidth-test-on-combined.log`). The merge is byte-identical to the re-port (`cmp`). |
+| syntax | `zsh -n chain-gate.sh.new-cgshard`; `ast.parse` of the helper and the test | ok (`syntax.txt`) |
 
 Cases, matching the task's (i)–(v):
 - **(i)** Actions available. The shard step comes after the ve-cloud-2 event and before any VM step. It runs with mode blocking, label `chain-t`, HEAD and deadline 75. The result is one `gate-result.json` with `where=actions-arm`, HEAD, the tree and `export_commit`.
@@ -153,7 +153,9 @@ Cases, matching the task's (i)–(v):
 | h1 | `gha/cancel-leg-runs.py` (Python) | completed runs are cancelled too | (h) 3 failures |
 | h2 | `gha/cancel-leg-runs.py` | a 403 counts as success | (h) "one cancel refused (403)" |
 
-All 7 failed the test, and the staged files are unchanged (`md5.txt`). No VE product code changed (Lean, Python or Rust), so no VE seeded bug applies.
+All 7 failed the test, and the staged files are unchanged (`md5.txt`). The seeds were planted in the staged file before the re-port (md5 in `md5.txt`). The re-port changed no line of the Actions step: `chain-gate.sh.cgshard-pre-report.diff` and `chain-gate.sh.cgshard.diff` add the same 115 lines. No VE product code changed (Lean, Python or Rust), so no VE seeded bug applies. Light lane printed `NOT 1665 changed lines … (17 files)`, all of it evidence (logs and diffs). There is no Lean change, so the R16 trust_mutants sweep (checklist 13a) does not apply.
+
+Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): `recorded 276 units … 0 failed`, exit 0. They ran on ve-cloud-2.
 
 ## How the saving will be measured
 
@@ -168,10 +170,13 @@ All 7 failed the test, and the staged files are unchanged (`md5.txt`). No VE pro
 
 ## Sibling cg-vm-gate-width-1121
 
-- **State.** `chain-gate.sh.new-cgwidth` appeared during this build. It is not installed: live md5 `a214565802a953f6a10e19a6a0888460` is unchanged.
-- **Conflict.** A 3-way merge (`git merge-file -p .new-cgwidth chain-gate.sh .new-cgshard`) conflicts on one pair of adjacent lines. It is my inserted `ghstep` call line next to the sibling's `mvw=${VM_ROUTE_WORKERS:-8}` edit.
-- **Resolution.** Keep both: my call line first, then their line. The resolved copy passes both items' tests.
-- **Install order.** Whichever installs second must be re-ported onto the new live file. If cgwidth is installed first, I re-port this item before the install.
+- **State.** It was INSTALLED during this build. Live `chain-gate.sh` went from md5 `a2145658…` to `e2964a76…`, with backup `chain-gate.sh.bak-20261121cgwidth` (= `a2145658…`, my base).
+- **Re-port.** I re-ported this item onto the new live file with a 3-way merge: `git merge-file -p chain-gate.sh chain-gate.sh.bak-20261121cgwidth chain-gate.sh.new-cgshard`.
+  - It had one adjacent-line conflict: my inserted `ghstep` call line next to the sibling's `mvw=${VM_ROUTE_WORKERS:-8}` line.
+  - I kept both, my call line first.
+  - Against the new live file the result only adds lines: 115 added, 0 removed (`chain-gate.sh.cgshard.diff`).
+  - It is byte-identical to the merge I had tested earlier with the then-staged `.new-cgwidth`.
+- **Tests on the re-port.** Every suite passes, including the sibling's `test_chain_gate_vm_width.py` (`existing-tests-on-new.txt`).
 
 ## Spec re-read
 
@@ -216,6 +221,7 @@ All 7 failed the test, and the staged files are unchanged (`md5.txt`). No VE pro
 
 ```
 cd /home/seyran/code/manage-agents
+md5sum chain-gate.sh   # must print e2964a7681dbb5dcaa145b965483a142 (the base of the re-port); anything else: re-port first
 mv gha/cancel-leg-runs.py.new-cgshard gha/cancel-leg-runs.py
 cp -p chain-gate.sh chain-gate.sh.bak-$(date -u +%Y%m%d)cgshard && mv chain-gate.sh.new-cgshard chain-gate.sh
 ```
