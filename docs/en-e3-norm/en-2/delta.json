@@ -1,5 +1,5 @@
 {
- "commit": "d255cbd9f4e6ceaa4fb104fe56d5cf8e8da493c4",
+ "commit": "53dca160b2479e10e0b4e985700853c86685034d",
  "corpora": [
   {
    "name": "constitution",
@@ -14,22 +14,22 @@
   {
    "name": "pinned",
    "no_round_trip": 0,
-   "size": 121
+   "size": 123
   },
   {
    "name": "soft-rights",
    "no_round_trip": 0,
-   "size": 265
+   "size": 304
   },
   {
    "name": "suite",
    "no_round_trip": 0,
-   "size": 210
+   "size": 213
   },
   {
    "name": "suite-subprocess",
    "no_round_trip": 0,
-   "size": 23
+   "size": 215
   },
   {
    "name": "udhr",
@@ -57,7 +57,7 @@
    "lean-unknown": 0
   },
   "pinned": {
-   "agree": 121,
+   "agree": 123,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 0,
@@ -66,7 +66,7 @@
    "lean-unknown": 0
   },
   "soft-rights": {
-   "agree": 214,
+   "agree": 253,
    "both-refuse": 0,
    "different-node": 0,
    "lean-looser": 4,
@@ -76,7 +76,7 @@
   },
   "suite": {
    "agree": 144,
-   "both-refuse": 44,
+   "both-refuse": 47,
    "different-node": 0,
    "lean-looser": 3,
    "lean-stricter": 18,
@@ -84,7 +84,7 @@
    "lean-unknown": 0
   },
   "suite-subprocess": {
-   "agree": 16,
+   "agree": 208,
    "both-refuse": 6,
    "different-node": 0,
    "lean-looser": 1,
@@ -210,6 +210,8 @@
   "fsf/f5": "agree",
   "fsf/f6": "agree",
   "fsf/f6-tcl": "agree",
+  "fsf/f7-eval": "agree",
+  "fsf/f7-eval-dm": "agree",
   "fsf/f7-rra": "agree",
   "fsf/f7-sc": "agree",
   "fsf/f8": "agree",
@@ -3457,9 +3459,592 @@
    "source_sha256": "a74693d883c679437aa44b659191fa704ceb6a0ad3ca9d82cfd9fc02eea299dc"
   },
   {
+   "class": "lean-looser",
+   "corpus": "suite",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-2",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "7ccf9f5cab77b0e565d9d4e591c1b560efff7734ccf24566f5122d1d7ae0171b"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "suite",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 1 with its own block"
+   },
+   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
+  },
+  {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
+   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
+   "lean": {
+    "code": "EmptyDocument",
+    "nodes": [],
+    "status": "rejected"
+   },
+   "python": {
+    "nodes": []
+   },
+   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "suite",
+   "id": "tests/test_et8_completion.py::test_v2_rules_stay_checked_and_conflict_free_under_unspecified",
+   "lean": {
+    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
+    "status": "unavailable"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "protects_robot",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "ordered",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-2",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "injures_human",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-3",
+      "over": [],
+      "predicate": "breaks_first_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_human",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "allows",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-4",
+      "over": [],
+      "predicate": "breaks_first_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "injures_humanity",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-5",
+      "over": [],
+      "predicate": "breaks_zeroth_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_humanity",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "allows",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-6",
+      "over": [],
+      "predicate": "breaks_zeroth_law",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "not",
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           1
+          ]
+         ],
+         [
+          "or",
+          [
+           "unary",
+           "breaks_first_law",
+           [
+            "var",
+            0
+           ]
+          ],
+          [
+           "unary",
+           "breaks_zeroth_law",
+           [
+            "var",
+            0
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-7",
+      "over": [],
+      "predicate": "has_lawful_option",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "unary",
+       "breaks_first_law",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-8",
+      "over": [
+       "rule-2"
+      ],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "harm",
+       [
+        "and",
+        [
+         "unary",
+         "harms_humanity",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-9",
+      "over": [
+       "rule-8"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": [
+       [
+        "exists",
+        "robot",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          "has_lawful_option",
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ]
+     },
+     {
+      "guard": [
+       "unary",
+       "breaks_zeroth_law",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-10",
+      "over": [
+       "rule-8",
+       "rule-9"
+      ],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "and",
+       [
+        "unary",
+        "ordered",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "permitted",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      "name": "rule-11",
+      "over": [],
+      "predicate": "required",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "binary",
+       "harm_to",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-12",
+      "over": [],
+      "predicate": "lawfully_avoidable_threat",
+      "sign": true,
+      "unless": [
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "available",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ],
+          [
+           "unary",
+           "permitted",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "binary",
+          "leads_to",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           2
+          ]
+         ]
+        ]
+       ]
+      ]
+     },
+     {
+      "guard": [
+       "binary",
+       "lawfully_avoidable_threat",
+       [
+        "var",
+        0
+       ],
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-13",
+      "over": [],
+      "predicate": "prevent_required",
+      "sign": true,
+      "unless": [
+       [
+        "not",
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             2
+            ]
+           ],
+           [
+            "unary",
+            "required",
+            [
+             "var",
+             0
+            ]
+           ]
+          ],
+          [
+           "binary",
+           "prevents",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        "forall",
+        "action",
+        [
+         "implies",
+         [
+          "and",
+          [
+           "binary",
+           "available",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            2
+           ]
+          ],
+          [
+           "unary",
+           "permitted",
+           [
+            "var",
+            0
+           ]
+          ]
+         ],
+         [
+          "exists",
+          "harm",
+          [
+           "and",
+           [
+            "binary",
+            "lawfully_avoidable_threat",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             3
+            ]
+           ],
+           [
+            "binary",
+            "leads_to",
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -4524,7 +5109,7 @@
   {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
+   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -5030,7 +5615,7 @@
   {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_asimov_extended.py::test_base_rules_keep_v2_formulas_and_precedence",
+   "id": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
    "lean": {
     "code": "NoDerivation",
     "nodes": [],
@@ -5532,589 +6117,6 @@
     ]
    },
    "source_sha256": "e717de1b5aea59a195143173f40b64021012c8ce60aef37f6279f58f67547c80"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-2",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "7ccf9f5cab77b0e565d9d4e591c1b560efff7734ccf24566f5122d1d7ae0171b"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 1 with its own block"
-   },
-   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable",
-   "lean": {
-    "code": "EmptyDocument",
-    "nodes": [],
-    "status": "rejected"
-   },
-   "python": {
-    "nodes": []
-   },
-   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "suite",
-   "id": "tests/test_et8_completion.py::test_v2_rules_stay_checked_and_conflict_free_under_unspecified",
-   "lean": {
-    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
-    "status": "unavailable"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "protects_robot",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "ordered",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-2",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "injures_human",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-3",
-      "over": [],
-      "predicate": "breaks_first_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_human",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "allows",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-4",
-      "over": [],
-      "predicate": "breaks_first_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "injures_humanity",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-5",
-      "over": [],
-      "predicate": "breaks_zeroth_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_humanity",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "allows",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-6",
-      "over": [],
-      "predicate": "breaks_zeroth_law",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "not",
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "var",
-           1
-          ]
-         ],
-         [
-          "or",
-          [
-           "unary",
-           "breaks_first_law",
-           [
-            "var",
-            0
-           ]
-          ],
-          [
-           "unary",
-           "breaks_zeroth_law",
-           [
-            "var",
-            0
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-7",
-      "over": [],
-      "predicate": "has_lawful_option",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "unary",
-       "breaks_first_law",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-8",
-      "over": [
-       "rule-2"
-      ],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "harm",
-       [
-        "and",
-        [
-         "unary",
-         "harms_humanity",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-9",
-      "over": [
-       "rule-8"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": [
-       [
-        "exists",
-        "robot",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           1
-          ],
-          [
-           "var",
-           0
-          ]
-         ],
-         [
-          "unary",
-          "has_lawful_option",
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ]
-     },
-     {
-      "guard": [
-       "unary",
-       "breaks_zeroth_law",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-10",
-      "over": [
-       "rule-8",
-       "rule-9"
-      ],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "and",
-       [
-        "unary",
-        "ordered",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "permitted",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-11",
-      "over": [],
-      "predicate": "required",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "binary",
-       "harm_to",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-12",
-      "over": [],
-      "predicate": "lawfully_avoidable_threat",
-      "sign": true,
-      "unless": [
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "binary",
-           "available",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ],
-          [
-           "unary",
-           "permitted",
-           [
-            "var",
-            0
-           ]
-          ]
-         ],
-         [
-          "binary",
-          "leads_to",
-          [
-           "var",
-           0
-          ],
-          [
-           "var",
-           2
-          ]
-         ]
-        ]
-       ]
-      ]
-     },
-     {
-      "guard": [
-       "binary",
-       "lawfully_avoidable_threat",
-       [
-        "var",
-        0
-       ],
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-13",
-      "over": [],
-      "predicate": "prevent_required",
-      "sign": true,
-      "unless": [
-       [
-        "not",
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             2
-            ]
-           ],
-           [
-            "unary",
-            "required",
-            [
-             "var",
-             0
-            ]
-           ]
-          ],
-          [
-           "binary",
-           "prevents",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ]
-       ],
-       [
-        "forall",
-        "action",
-        [
-         "implies",
-         [
-          "and",
-          [
-           "binary",
-           "available",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            2
-           ]
-          ],
-          [
-           "unary",
-           "permitted",
-           [
-            "var",
-            0
-           ]
-          ]
-         ],
-         [
-          "exists",
-          "harm",
-          [
-           "and",
-           [
-            "binary",
-            "lawfully_avoidable_threat",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             3
-            ]
-           ],
-           [
-            "binary",
-            "leads_to",
-            [
-             "var",
-             1
-            ],
-            [
-             "var",
-             0
-            ]
-           ]
-          ]
-         ]
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5"
   },
   {
    "class": "lean-looser",
@@ -9703,18 +9705,45 @@
    "tests/test_answer_cutoff.py",
    "tests/test_asimov_extended.py",
    "tests/test_asimov_laws.py",
+   "tests/test_calc_answer.py",
+   "tests/test_calc_derive.py",
+   "tests/test_calc_lean.py",
+   "tests/test_calc_service.py",
+   "tests/test_cardinality_answer.py",
+   "tests/test_cardinality_lean.py",
+   "tests/test_cardinality_service.py",
    "tests/test_code_map.py",
+   "tests/test_consolidation_tools.py",
    "tests/test_coverage_dashboard.py",
+   "tests/test_defs_repair_asimov_extended_1119.py",
+   "tests/test_defs_repair_safety_framework_1119.py",
    "tests/test_difffuzz.py",
+   "tests/test_discourse_composed_route.py",
    "tests/test_document_split.py",
+   "tests/test_english_e2_integer_marks.py",
+   "tests/test_english_lean_lexicon.py",
+   "tests/test_english_lean_s3.py",
+   "tests/test_english_lean_seal.py",
    "tests/test_english_statement_answer.py",
    "tests/test_english_statement_blocks.py",
    "tests/test_english_statement_shadow.py",
    "tests/test_english_unambiguity.py",
    "tests/test_et8_completion.py",
+   "tests/test_fidmech_adapters.py",
+   "tests/test_fidmech_prune.py",
+   "tests/test_fidmech_records.py",
    "tests/test_fidmech_segment.py",
+   "tests/test_fidmech_structural.py",
+   "tests/test_fidmech_wording.py",
    "tests/test_fsf_case_alternatives.py",
    "tests/test_fsf_proximity_tcl.py",
+   "tests/test_fsf_repair_f1_leveldefs_1119.py",
+   "tests/test_fsf_repair_f2_glossary_1119.py",
+   "tests/test_fsf_repair_f3_safetycase_1119.py",
+   "tests/test_fsf_repair_f6_sl2plus_1119.py",
+   "tests/test_fsf_repair_f7_govadequacy_1119.py",
+   "tests/test_fsf_repair_f8_disclosure_1119.py",
+   "tests/test_fsf_repair_f9_mcca_1119.py",
    "tests/test_gate.py",
    "tests/test_gate_quarantine.py",
    "tests/test_hang_guards.py",
@@ -9725,37 +9754,57 @@
    "tests/test_kb10_shadow.py",
    "tests/test_keyed_answers_authority.py",
    "tests/test_lean_dump_cache.py",
+   "tests/test_lean_handles.py",
+   "tests/test_lean_service_schema.py",
    "tests/test_natural.py",
    "tests/test_nested_pytest.py",
    "tests/test_norm_english.py",
    "tests/test_numeral_conversion.py",
+   "tests/test_ownership_floor.py",
+   "tests/test_pf_f16_without_fix.py",
+   "tests/test_pf_f7_timed_act.py",
    "tests/test_pf_fidelity_fix.py",
    "tests/test_pinned_sources.py",
    "tests/test_platform_contract.py",
    "tests/test_precommit_hook.py",
    "tests/test_question_fixture_sources.py",
+   "tests/test_question_reverse.py",
+   "tests/test_readings_s2_answer.py",
+   "tests/test_readings_sup_verdicts.py",
    "tests/test_readings_verdicts_split.py",
    "tests/test_regen_generated.py",
+   "tests/test_regen_usecase_merge.py",
    "tests/test_relay_binding_inventory.py",
    "tests/test_repo_map.py",
+   "tests/test_right_clauses.py",
    "tests/test_rights.py",
    "tests/test_rights_meaning_id.py",
    "tests/test_risk_english.py",
    "tests/test_risk_profile.py",
+   "tests/test_route_row_schemas.py",
+   "tests/test_rsp_b_repair_1115.py",
    "tests/test_rsp_fidelity_fix.py",
    "tests/test_run_order.py",
    "tests/test_rust_reproducible.py",
    "tests/test_safety_framework.py",
    "tests/test_safetyfw_accounting.py",
    "tests/test_safetyfw_usecases.py",
+   "tests/test_scope_answer.py",
    "tests/test_select_defer.py",
    "tests/test_select_fast_stage.py",
    "tests/test_select_tests.py",
    "tests/test_since_pass.py",
    "tests/test_single_owner.py",
    "tests/test_slot_premises.py",
+   "tests/test_soft_document_handles.py",
    "tests/test_soft_review_regressions.py",
+   "tests/test_srccov_anthropic_rsp_1119.py",
+   "tests/test_srccov_asimov_extended_1119.py",
+   "tests/test_srccov_rl_claude_constitution_pilot_1121.py",
+   "tests/test_srccov_rl_safety_framework_1121.py",
+   "tests/test_srccov_safety_framework_1119.py",
    "tests/test_stage0_inventory.py",
+   "tests/test_stage2_validation.py",
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
    "tests/test_w1_delta_suite.py",
@@ -9763,7 +9812,7 @@
    "tools/test_layer_policy.py"
   ],
   "function": "ve/norm_english.py:parse_english",
-  "map": "e51bec73017c5ff8214b4784b6a6c7d00e58c6ba",
+  "map": "cd6d4579127f54d100556e3efb3289bb840f2e01",
   "reached": [
    "tests/test_agent_policy.py",
    "tests/test_agent_policy_rerun.py",
@@ -9776,33 +9825,66 @@
    "tests/test_english_statement_shadow.py",
    "tests/test_english_unambiguity.py",
    "tests/test_et8_completion.py",
+   "tests/test_fidmech_adapters.py",
+   "tests/test_fidmech_prune.py",
+   "tests/test_fidmech_structural.py",
+   "tests/test_fidmech_wording.py",
    "tests/test_fsf_case_alternatives.py",
+   "tests/test_fsf_proximity_tcl.py",
    "tests/test_kb10_shadow.py",
    "tests/test_keyed_answers_authority.py",
    "tests/test_natural.py",
    "tests/test_norm_english.py",
    "tests/test_numeral_conversion.py",
+   "tests/test_ownership_floor.py",
+   "tests/test_pf_f16_without_fix.py",
+   "tests/test_pf_f7_timed_act.py",
    "tests/test_pf_fidelity_fix.py",
    "tests/test_question_fixture_sources.py",
    "tests/test_rights.py",
    "tests/test_risk_english.py",
    "tests/test_risk_profile.py",
+   "tests/test_rsp_b_repair_1115.py",
    "tests/test_rsp_fidelity_fix.py",
    "tests/test_safety_framework.py",
    "tests/test_safetyfw_usecases.py",
    "tests/test_soft_review_regressions.py",
+   "tests/test_srccov_anthropic_rsp_1119.py",
+   "tests/test_srccov_asimov_extended_1119.py",
    "tests/test_w1_delta_suite.py",
    "tests/test_wire_gate_corpus.py"
   ],
-  "result": "2882 passed, 7 warnings",
+  "result": "4729 passed, 7 warnings",
   "unknown": [
    "tests/test_answer_cutoff.py",
+   "tests/test_calc_answer.py",
+   "tests/test_calc_derive.py",
+   "tests/test_calc_lean.py",
+   "tests/test_calc_service.py",
+   "tests/test_cardinality_answer.py",
+   "tests/test_cardinality_lean.py",
+   "tests/test_cardinality_service.py",
    "tests/test_code_map.py",
+   "tests/test_consolidation_tools.py",
    "tests/test_coverage_dashboard.py",
+   "tests/test_defs_repair_asimov_extended_1119.py",
+   "tests/test_defs_repair_safety_framework_1119.py",
    "tests/test_difffuzz.py",
+   "tests/test_discourse_composed_route.py",
    "tests/test_document_split.py",
+   "tests/test_english_e2_integer_marks.py",
+   "tests/test_english_lean_lexicon.py",
+   "tests/test_english_lean_s3.py",
+   "tests/test_english_lean_seal.py",
+   "tests/test_fidmech_records.py",
    "tests/test_fidmech_segment.py",
-   "tests/test_fsf_proximity_tcl.py",
+   "tests/test_fsf_repair_f1_leveldefs_1119.py",
+   "tests/test_fsf_repair_f2_glossary_1119.py",
+   "tests/test_fsf_repair_f3_safetycase_1119.py",
+   "tests/test_fsf_repair_f6_sl2plus_1119.py",
+   "tests/test_fsf_repair_f7_govadequacy_1119.py",
+   "tests/test_fsf_repair_f8_disclosure_1119.py",
+   "tests/test_fsf_repair_f9_mcca_1119.py",
    "tests/test_gate.py",
    "tests/test_gate_quarantine.py",
    "tests/test_hang_guards.py",
@@ -9811,25 +9893,39 @@
    "tests/test_inventory_path.py",
    "tests/test_judgments_answer.py",
    "tests/test_lean_dump_cache.py",
+   "tests/test_lean_handles.py",
+   "tests/test_lean_service_schema.py",
    "tests/test_nested_pytest.py",
    "tests/test_pinned_sources.py",
    "tests/test_platform_contract.py",
    "tests/test_precommit_hook.py",
+   "tests/test_question_reverse.py",
+   "tests/test_readings_s2_answer.py",
+   "tests/test_readings_sup_verdicts.py",
    "tests/test_readings_verdicts_split.py",
    "tests/test_regen_generated.py",
+   "tests/test_regen_usecase_merge.py",
    "tests/test_relay_binding_inventory.py",
    "tests/test_repo_map.py",
+   "tests/test_right_clauses.py",
    "tests/test_rights_meaning_id.py",
+   "tests/test_route_row_schemas.py",
    "tests/test_run_order.py",
    "tests/test_rust_reproducible.py",
    "tests/test_safetyfw_accounting.py",
+   "tests/test_scope_answer.py",
    "tests/test_select_defer.py",
    "tests/test_select_fast_stage.py",
    "tests/test_select_tests.py",
    "tests/test_since_pass.py",
    "tests/test_single_owner.py",
    "tests/test_slot_premises.py",
+   "tests/test_soft_document_handles.py",
+   "tests/test_srccov_rl_claude_constitution_pilot_1121.py",
+   "tests/test_srccov_rl_safety_framework_1121.py",
+   "tests/test_srccov_safety_framework_1119.py",
    "tests/test_stage0_inventory.py",
+   "tests/test_stage2_validation.py",
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
    "tools/test_layer_policy.py"

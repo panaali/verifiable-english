@@ -1642,10 +1642,10 @@
  "cost": {
   "case_models": 315,
   "cases": 85,
-  "documents_built": 87,
+  "documents_built": 89,
   "premises": 42,
-  "prover_calls": 1732,
-  "rule_candidates": 45
+  "prover_calls": 1918,
+  "rule_candidates": 47
  },
  "d2_d3": {
   "S": {
@@ -3053,6 +3053,19 @@
    },
    "true": []
   },
+  "deployment_mitigations_evaluated": {
+   "cone": [],
+   "details": {
+    "-": {
+     "rules": [
+      "f7-eval-dm"
+     ],
+     "status": "CONFLICT-FREE",
+     "w1_without_premises": "CONFLICT-FREE"
+    }
+   },
+   "true": []
+  },
   "elicitation_considered": {
    "cone": [
     "RS4elicitation"
@@ -3191,6 +3204,19 @@
     "RS6=different": {
      "rules": [
       "f15-diff"
+     ],
+     "status": "CONFLICT-FREE",
+     "w1_without_premises": "CONFLICT-FREE"
+    }
+   },
+   "true": []
+  },
+  "mitigations_evaluated": {
+   "cone": [],
+   "details": {
+    "-": {
+     "rules": [
+      "f7-eval"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
@@ -9988,7 +10014,7 @@
    "verdict": "NOT_CERTIFIABLE"
   },
   "N3": {
-   "rules": 45,
+   "rules": 47,
    "verdict": "NONE",
    "without_witness": [],
    "witnesses": {
@@ -10030,6 +10056,8 @@
     "f5": "K4",
     "f6": "K1-L2",
     "f6-tcl": "K2-L1",
+    "f7-eval": "A-L0-DEV",
+    "f7-eval-dm": "A-L0-DEV",
     "f7-rra": "A-L1-DEV",
     "f7-sc": "A-L2-DEV",
     "f8": "A-L0-DEV",
@@ -10283,7 +10311,9 @@
    ],
    "F7": [
     "f7-rra",
-    "f7-sc"
+    "f7-sc",
+    "f7-eval",
+    "f7-eval-dm"
    ],
    "F8": [
     "f8"
