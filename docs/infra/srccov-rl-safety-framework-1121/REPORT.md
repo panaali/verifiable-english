@@ -146,7 +146,14 @@ changed lines outside generated files > 150". `uv run python tools/trust_mutants
   Every other selected file passed (log /tmp/sf-sel.log).
 - After the fix, run locally: those two ids, `test_lean_reads_each_pinned_block_as_python` and
   `test_each_pinned_block_through_the_mode` gave "5 passed in 1071.93s".
-- Final selected run on the rebased HEAD: see section 7.
+- First selected run on the rebased HEAD 53dca160b2 (fast stage, exit 1): one failure,
+  `tests/test_english_statement_shadow.py::test_the_saved_delta_report_records_every_disagreement_with_its_class`.
+  The saved W1 delta evidence named 121 pinned blocks, and the recapture made it 123. Fixed as 3f1974bb8c did:
+  `docs/en-e3-norm/en-2/w1_delta.py --workers 8` at 53dca160b2 on a clean tree (pytest "4729 passed"). All 123
+  pinned blocks agree. A script compared the 137 non-agree rows by corpus, class and both answers, and they are the
+  same records as before. The en-2c REPORT's table and a rerun paragraph follow the run (`check_report` reads them).
+  The shadow file's five saved-evidence tests: "5 passed".
+- Final selected run: section 7.
 
 SIZE: 17 product (use-case translation: vocabulary.py 11, rules.d1.ve 4, build_document.py 2), 139 tests (131 new
 file, 8 edited pins), 0 other hand-written lines (the rest is regenerated or captured data, plus this report and
@@ -156,10 +163,11 @@ Files (`git diff --numstat main...HEAD`): conformance/english-lean/corpus-seal.j
 tests/data/norm-blocks/fsf.jsonl, tests/data/route-cases.jsonl; tests/test_english_statement_blocks.py,
 tests/test_safety_framework.py, tests/test_srccov_rl_safety_framework_1121.py; usecases/safety-framework/
 build_document.py, coverage.json, environment.d1.json, results.json, rules.d1.ve, spans.json, vocabulary.py; this
-directory. Three of these are outside the task's path list: tests/data/norm-blocks/fsf.jsonl,
-tests/data/route-cases.jsonl, and the two count pins in tests/test_english_statement_blocks.py and
-tests/test_safety_framework.py. Each one is regenerated, or is a pin that the change moves; the f6-tcl precedent
-touched the same files.
+directory; docs/en-e3-norm/en-2/DELTA.md, delta.json (w1_delta.py) and docs/en-e3-norm/en-2c/REPORT.md. These are
+outside the task's path list: tests/data/norm-blocks/fsf.jsonl, tests/data/route-cases.jsonl, the W1 delta evidence
+and its en-2c REPORT, and the two count pins in tests/test_english_statement_blocks.py and tests/test_safety_framework.py.
+Each one is regenerated, or is a pin or saved-evidence citation that the change moves. The f6-tcl precedent
+(d255cbd9f4, 3f1974bb8c, a26d347f57) touched the same files.
 
 ## 6. Notes for the DRI
 
