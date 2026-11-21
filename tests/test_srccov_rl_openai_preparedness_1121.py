@@ -280,8 +280,8 @@ def _routes(spans, a, b):
 def _lead_in_faults(blocks, spans, sidecar_lines, texts=None):
     """METHOD amendment 8 for a carried lead-in: each item is routed to the block that carries the lead-in, or quoted in
     that block's header with a `loss` entry of the block's accounting line that quotes it. `texts` (unit -> source
-    sentence) ties each loss to its own item when the pinned source is at hand; without it, the number of unrouted items
-    is checked against distinct loss entries the header quotes."""
+    sentence) ties each loss to its own item when the caller passes the items' text (this helper opens no file); without
+    it, the number of unrouted items is checked against distinct loss entries the header quotes."""
     faults = []
     lines = {block_id: entries for _n, block_id, entries, _p in A.read_sidecar(_Lines(sidecar_lines))}
     for lead_in, (a, b), verdict, items in LEAD_INS:
