@@ -1,0 +1,33 @@
+{
+ "base": "cd6d457912 usecases/eligibility/results.json",
+ "head": "usecases/eligibility/results.json after usecases/eligibility/run.py",
+ "answers_equal": true,
+ "staged_equal": true,
+ "mutants_equal": true,
+ "single_shot_status_and_certified_equal": true,
+ "summary_equal_except_model_premises": true,
+ "model_premises": [
+  6777,
+  7337
+ ],
+ "model_premises_true": [
+  6777,
+  7337
+ ],
+ "environment_id": [
+  "00315b75bba7b7111c8b992a09295721cb54de6609182c683ef00efbc858d53d",
+  "cf1676b55a163f2af42f76b4ae98ffb3db46178b321214edd09f7ab3b4eb9da3"
+ ],
+ "changed_paths": {
+  "/environment_id": 1,
+  "/probes/P6/single_shot/not_entitled/steps": 1,
+  "/profiles/*/lean/model_premises": 80,
+  "/profiles/*/lean/model_premises_true": 80,
+  "/profiles/*/single_shot/searches/bottom/steps": 12,
+  "/profiles/*/single_shot/searches/entitled/steps": 12,
+  "/profiles/*/single_shot/searches/not_entitled/steps": 79,
+  "/seconds": 1,
+  "/summary/lean/model_premises": 1,
+  "/summary/lean/model_premises_true": 1
+ }
+}
