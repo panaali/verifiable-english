@@ -355,6 +355,28 @@
           "act": "{0} have its residual risk assessment informed by a safety case"
         }
       },
+      "mitigations_evaluated": {
+        "arguments": [
+          "proposal"
+        ],
+        "description": "the effectiveness and limitations of the mitigations of {0} are evaluated, by various processes; Section 1.3.4, Residual Risk Assessment: \"We will use various processes to evaluate the effectiveness and limitations of mitigations:\"",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have its mitigations evaluated"
+        }
+      },
+      "deployment_mitigations_evaluated": {
+        "arguments": [
+          "proposal"
+        ],
+        "description": "the effectiveness and limitations of the deployment mitigations of {0} are assessed, using a combination of threat modeling, empirical testing, and other sources of information; Section 1.3.4, Residual Risk Assessment: \"Deployment mitigations : we will use a combination of threat modeling, empirical testing, and other sources of information to assess the effectiveness and limitations of our deployment mitigations.\"",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have its deployment mitigations assessed"
+        }
+      },
       "periodic_assessed": {
         "arguments": [
           "proposal"
