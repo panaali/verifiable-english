@@ -66,7 +66,10 @@ determination based on:" and three of its four bullets: their four units route t
 `unmapped_clause`), so the status counts are unchanged and three units move from the readings family to AP. The line
 names three grounds; the fourth bullet ("The baseline risk from other deployments, ...", a quantifier-scope unit) is
 quoted in the header and recorded as a loss in `accounting.d1.txt`. D1 now
-has 63 regulated predicates; N2's query-only probe adds a 64th, the limit of Lean's soft-norms check.
+has 63 regulated predicates; N2's query-only probe adds a 64th, the limit of Lean's soft-norms check. Appendix B's
+lead-in "The Safety Advisory Group (SAG) is responsible for:" routes the same way to `f16-sag-recommend`, the one line
+that carries one of its items; its other three bullets are quoted in that header and recorded as losses (one more
+unit moves from the readings family to AP).
 
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
@@ -82,7 +85,7 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 121 | 21,632 | 113, 19,756 | D1 has no act or complete rule for these duties |
+| AP | 122 | 21,684 | 114, 19,808 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,311 | 53, 11,438 | hedges, beliefs and expectations |
 | DF | 13 | 2,133 | 1, 35 | default readings |
 | ET | 31 | 8,466 | 17, 5,914 | event order and deadlines |
@@ -92,7 +95,7 @@ counts under each. “Alone” means exactly one recorded blocker.
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 60 | 6,467 | 60, 6,467 | title, contents, pure headings and marked examples |
-| readings | 84 | 13,400 | 71, 10,094 | unselected source readings |
+| readings | 83 | 13,348 | 70, 10,042 | unselected source readings |
 
 The 292 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
 `not_translated`. VE reports 21 declared open terms and 32 unresolved reading sets as

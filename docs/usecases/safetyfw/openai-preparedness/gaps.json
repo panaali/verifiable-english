@@ -7,14 +7,14 @@
  },
  "features": {
   "AP": {
-   "bytes": 21632,
-   "sole_bytes": 19756,
-   "sole_units": 113,
+   "bytes": 21684,
+   "sole_bytes": 19808,
+   "sole_units": 114,
    "statuses": {
     "OPEN": 1691,
-    "UNFORMALISED": 19941
+    "UNFORMALISED": 19993
    },
-   "units": 121
+   "units": 122
   },
   "AT": {
    "bytes": 12311,
@@ -102,14 +102,14 @@
    "units": 60
   },
   "readings": {
-   "bytes": 13400,
-   "sole_bytes": 10094,
-   "sole_units": 71,
+   "bytes": 13348,
+   "sole_bytes": 10042,
+   "sole_units": 70,
    "statuses": {
     "OPEN": 4117,
-    "UNFORMALISED": 9283
+    "UNFORMALISED": 9231
    },
-   "units": 84
+   "units": 83
   }
  },
  "master_bytes_by_status": {

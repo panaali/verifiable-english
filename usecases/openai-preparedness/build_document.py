@@ -89,6 +89,10 @@ PLACEMENTS = {
     "Additionally, if the model is beyond a High threshold": ("rule", "f15-safeguards", ("JT",)),
     "Third-party evaluation of tracked model capabilities": ("rule", "f15-third-party", ("JT",)),
     "For each deployment under the Preparedness Framework, providing recommendations": ("rule", "f16-sag-recommend", ()),
+    # srccov-rl-openai-preparedness-1121 (review F2, METHOD amendment 8): Appendix B's lead-in routes to the one line
+    # that carries one of its items with its force. Its other three bullets are not placed here: they are quoted in the
+    # block's header and recorded as losses in accounting.d1.txt.
+    "The Safety Advisory Group (SAG) is responsible for:": ("rule", "f16-sag-recommend", ()),
     "The Safety and Security Committee (SSC)": ("rule", "f16-ssc-visibility", ()),
     "Safeguards should sufficiently minimize the risk associated with a misaligned model": ("readings", "rs9-c2-misalignment", ("JT", "DF")),
     "informed by SAG’s recommendations": ("readings", "rs6-informed", ("readings",)),

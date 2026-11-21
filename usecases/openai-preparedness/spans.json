@@ -4057,11 +4057,11 @@
     48765
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
-   "residual": "unmapped_claim-p16-u272-5fd8776e67b2",
+   "blocked_rule": "f16-sag-recommend",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },

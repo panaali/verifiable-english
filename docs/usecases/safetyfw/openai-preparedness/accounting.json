@@ -1433,13 +1433,72 @@
   {
    "id": "f16-sag-recommend",
    "file": "rules.d1.ve",
-   "span_length": 171,
+   "span_length": 788,
    "used": [
     "framework_deployment",
     "sag_recommendation"
    ],
-   "unaccounted": [],
-   "entries": [],
+   "unaccounted": [
+    "acceptable",
+    "adherence",
+    "advisory",
+    "assess",
+    "capabil",
+    "category",
+    "chang",
+    "continue",
+    "design",
+    "effective",
+    "forecast",
+    "group",
+    "implement",
+    "invest",
+    "keep",
+    "leader",
+    "level",
+    "longer",
+    "making",
+    "material",
+    "model",
+    "necessary",
+    "organiz",
+    "oversee",
+    "partnership",
+    "post",
+    "relevant",
+    "report",
+    "residual",
+    "responsible",
+    "review",
+    "safeguard",
+    "safety",
+    "scope",
+    "term",
+    "track",
+    "upcom"
+   ],
+   "entries": [
+    {
+     "words": "The Safety Advisory Group (SAG) is responsible for",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Overseeing the effective design, implementation, and adherence to the Preparedness Framework in partnership with the safety organization leader",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "For each deployment in scope under the Preparedness Framework, reviewing relevant reports and all other relevant materials and assessing of the level of Tracked Category capabilities and any post-safeguards residual risks",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Making other recommendations to OpenAI Leadership on longer-term changes or investments that are forecasted to be necessary for upcoming models to continue to keep residual risks at acceptable levels",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
    "problems": []
   },
   {
@@ -2923,22 +2982,22 @@
  ],
  "totals": {
   "blocks": 102,
-  "blocks_with_loss": 16,
+  "blocks_with_loss": 17,
   "losses_by_class": {
-   "1": 18,
+   "1": 21,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
    "exposition": 39,
-   "loss": 20,
+   "loss": 23,
    "reading": 29,
-   "restates": 93,
+   "restates": 94,
    "rule": 21
   },
-  "unaccounted_words": 461,
-  "blocks_with_unaccounted_words": 69,
-  "quotes": 123,
+  "unaccounted_words": 498,
+  "blocks_with_unaccounted_words": 70,
+  "quotes": 127,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

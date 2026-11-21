@@ -2709,12 +2709,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 52,
    "id": "p16-u272",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
