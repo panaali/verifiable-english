@@ -1,0 +1,43 @@
+{
+ "item": "cg-vm-gate-width-1121",
+ "planted_in": "/home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth (the staged copy; each seed applied alone, the file restored from /tmp/cgwidth-pristine.sh after each and its sha256 checked equal, 0f2a7824...); the live chain-gate.sh was never edited",
+ "runner": "CG=/home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth python3 -I /home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_width.py",
+ "mutants": [
+  {
+   "id": "S1-gate-default",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "VM gate: `vmg --workers ${VM_GATE_WORKERS:-14}` -> `${VM_GATE_WORKERS:-8}`",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_width.py::(i) default: the VM gate runs gate.py --workers 14",
+   "result": "FAIL: 3 failure(s)",
+   "log": "seed-S1-gate-default.log"
+  },
+  {
+   "id": "S2-rerun-default",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "R13 rerun: `vmg --rerun-failed --workers ${VM_GATE_WORKERS:-14}` -> `${VM_GATE_WORKERS:-8}`",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_width.py::(i) default: the R13 rerun runs gate.py --rerun-failed --workers 14",
+   "result": "FAIL: 1 failure(s)",
+   "log": "seed-S2-rerun-default.log"
+  },
+  {
+   "id": "S3-route-reads-gate",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "MAC_LAST_RESORT route: `mvw=${VM_ROUTE_WORKERS:-8}` -> `mvw=${VM_GATE_WORKERS:-8}` (the route follows the gate's width again)",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_width.py::(iii) VM_GATE_WORKERS=1/14/30 load 23.00 / 24.00",
+   "result": "FAIL: 7 failure(s)",
+   "log": "seed-S3-route-reads-gate.log"
+  },
+  {
+   "id": "S4-route-default",
+   "language": "shell (zsh)",
+   "file": "/home/seyran/code/manage-agents/chain-gate.sh",
+   "change": "MAC_LAST_RESORT route: `mvw=${VM_ROUTE_WORKERS:-8}` -> `${VM_ROUTE_WORKERS:-14}` (the route counts the new gate width)",
+   "test": "/home/seyran/code/manage-agents/tools-local/test_chain_gate_vm_width.py::(iii) VM_GATE_WORKERS=None load 23.00 routes to the VM gate",
+   "result": "FAIL: 8 failure(s)",
+   "log": "seed-S4-route-default.log"
+  }
+ ]
+}
