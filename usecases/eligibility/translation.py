@@ -104,6 +104,50 @@ FACT_PREDICATES = {
     "paid_without_claim": (["person"], "The person is paid without a claim (S1 reg. 5(1))."),
 }
 
+# Guide predicates (srccov-rl-eligibility-1121): base predicates of the guide rules G1 to G7
+# (guide_rules). No profile fact fixes one, so each is open in every profile. Each legend quotes
+# the S2 words it stands for, word for word (the line in the comment).
+GUIDE_PREDICATES = {
+    "affects_other_benefits": (["person"], "The money the person gets affects the person's other benefits (S2: “affect your other benefits”)."),  # S2:39
+    "jointly_claims_benefits": (["person"], "The person and the person's partner jointly claim any of the benefits, which are Pension Credit, Universal Credit and income-related Employment and Support Allowance (S2: “If you and your partner jointly claim any of the benefits”; “Pension Credit”; “Universal Credit”; “income-related Employment and Support Allowance (ESA)”)."),  # S2:60; the benefits S2:51-53
+    "paid_into_usual_account": (["person"], "The person is paid into the bank account the person's benefits are usually paid into (S2: “paid into the bank account your benefits are usually paid into”)."),  # S2:64
+    "tax_code_changed": (["person"], "HMRC changes the person's tax code to pay back the person's winter fuel payment (S2: “If HMRC changes your tax code to pay back your Winter Fuel Payment”)."),  # S2:145
+    "tax_deducted_increases": (["person"], "The tax deducted from the person's wages, salary or pension increases (S2: “the tax deducted from your wages, salary or pension will increase”)."),  # S2:145
+    "two_payments_to_collect": (["person"], "HMRC needs to collect 2 payments from the person (S2: “If HMRC needs to collect 2 payments”)."),  # S2:147
+    "two_payments_through_tax_code": (["person"], "HMRC collects 2 payments through the person's tax code at the same time (S2: “HMRC will collect 2 payments through your tax code at the same time”)."),  # S2:148
+    "more_tax_each_month": (["person"], "The person pays more tax each month (S2: “you will pay more tax each month”)."),  # S2:148
+    "completes_self_assessment": (["person"], "The person completes a Self Assessment tax return (S2: “If you complete a Self Assessment tax return”)."),  # S2:152
+    "files_online": (["person"], "The person files tax returns online (S2: “If you file tax returns online”)."),  # S2:154
+    "included_automatically": (["person"], "HMRC includes the amount of the person's winter fuel payment in the person's tax return automatically (S2: “HMRC will usually include the amount automatically”)."),  # S2:154
+    "shown_as_wfp_charge": (["person"], "The amount shows on the person's tax return as the Winter Fuel Payment charge (S2: “It will show as the ‘Winter Fuel Payment charge’”)."),  # S2:154
+    "in_tax_calculation": (["person"], "The amount is included in the person's tax calculation (S2: “will be included in your tax calculation”)."),  # S2:154
+    "opted_out": (["person"], "The person has opted out of receiving the winter fuel payment (S2: “opt out of receiving Winter Fuel Payment”)."),  # S2:143
+}
+FACT_PREDICATES.update(GUIDE_PREDICATES)
+
+# Source conditions the rules read with existing predicates (S2 words -> the formula, built by
+# `source_condition`). The amount rules and the guide rules both read them from here, and the
+# guide-context test (tests/test_srccov_rl_eligibility_1121.py) checks every S2 heading or
+# lead-in condition a guide sentence sits under is either quoted by the legend of a guide
+# predicate in the rule's antecedent or is one of these, conjoined in the antecedent.
+LIVES_WITH_ELIGIBLE = "If you live with someone else who’s eligible for the Winter Fuel Payment"  # S2:49
+SOURCE_CONDITIONS = {
+    LIVES_WITH_ELIGIBLE:
+        (("binary", "lives_with", "applicant", "housemate"), ("unary", "entitled", "housemate")),
+}
+
+# Guide sentences (srccov-rl-eligibility-1121): each S2 sentence a guide rule carries, word for
+# word (rule -> (source-coverage unit, S2 line, sentence)). The rule's gloss ends with it.
+GUIDE_SENTENCES = {
+    "G1": ("S0406", 39, "Any money you get will not affect your other benefits."),
+    "G2": ("S0424", 64, "You’ll be paid into the bank account your benefits are usually paid into."),
+    "G3": ("S0465", 145, "This means the tax deducted from your wages, salary or pension will increase."),
+    "G4": ("S0467", 148, "HMRC will collect 2 payments through your tax code at the same time."),
+    "G5": ("S0468", 148, "This means you will pay more tax each month."),
+    "G6": ("S0474", 154, "It will show as the ‘Winter Fuel Payment charge’ and will be included in your tax calculation."),
+    "G7": ("S0483", 166, "If you do not opt out and your total income is over £35,000, you’ll receive the Winter Fuel Payment but HMRC will take it back."),
+}
+
 # Source definitions and wording, word for word from source/*.txt (one string per source line,
 # the line breaks as single spaces): S1 = uksi-2025-969-made.txt, S2 = wfp-print.txt, S3 =
 # uksi-2005-3360-reg2.txt. Each is appended to the legend of the predicates that use the term
@@ -271,6 +315,12 @@ def num(role, suffix):
 
 def household(name):
     return ["const", HOUSEHOLD_INTEGERS[name][0], name]
+
+
+def source_condition(words):
+    """The formula a SOURCE_CONDITIONS entry reads its S2 words as: the conjunction of its atoms."""
+    return And(*(U(pred, *args) if kind == "unary" else B(pred, *args)
+                 for kind, pred, *args in SOURCE_CONDITIONS[words]))
 
 
 def money_const(name):
@@ -465,7 +515,7 @@ def role_rules(r, mutant=None):
 def amount_rules(mutant=None):
     a, h = "applicant", "housemate"
     entitled, rb, e80, care = U("entitled", a), U("has_rb", a), U("reached_80", a), U("in_residential_care", a)
-    with_entitled = And(B("lives_with", a, h), U("entitled", h))
+    with_entitled = source_condition(LIVES_WITH_ELIGIBLE)
     # AR8: 3(3) "in that week, P is the partner of and living with" asks for one day of
     # QW in the partnership and in the shared home. Each includes a day of QW (AR5), so
     # they share one exactly when each begins no later than the other ends; an undated
@@ -524,12 +574,45 @@ def amount_rules(mutant=None):
     return [common_day, *rules]
 
 
+def guide_rules():
+    """The guide rules G1 to G7 (srccov-rl-eligibility-1121): S2 sentences a plain rule line
+    carries, for the applicant. Each gloss reads the formula, then gives the sentence word for
+    word (GUIDE_SENTENCES). Each rule defines nothing, so no staged step uses it, and each holds
+    when its guide predicates are false, so it is true in every profile's keyed model."""
+    a = "applicant"
+    over = ["lt", gbp("35000.00"), money_const("applicant_income")]
+    lines = {
+        "G1": ("If the applicant is entitled, the money the applicant gets does not affect the applicant's other benefits.",
+               Implies(U("entitled", a), Not(U("affects_other_benefits", a)))),
+        "G2": ("If the applicant lives with the housemate, the housemate is entitled, the applicant and the applicant's partner jointly claim any of the benefits, and the applicant is entitled, the applicant is paid into the bank account the applicant's benefits are usually paid into.",
+               Implies(And(source_condition(LIVES_WITH_ELIGIBLE), U("jointly_claims_benefits", a), U("entitled", a)),
+                       U("paid_into_usual_account", a))),
+        "G3": ("If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment, the tax deducted from the applicant's wages, salary or pension increases.",
+               Implies(U("tax_code_changed", a), U("tax_deducted_increases", a))),
+        "G4": ("If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment and needs to collect 2 payments from the applicant, HMRC collects 2 payments through the applicant's tax code at the same time.",
+               Implies(And(U("tax_code_changed", a), U("two_payments_to_collect", a)), U("two_payments_through_tax_code", a))),
+        "G5": ("If HMRC changes the applicant's tax code to pay back the applicant's winter fuel payment, needs to collect 2 payments from the applicant, and collects 2 payments through the applicant's tax code at the same time, the applicant pays more tax each month.",
+               Implies(And(U("tax_code_changed", a), U("two_payments_to_collect", a), U("two_payments_through_tax_code", a)),
+                       U("more_tax_each_month", a))),
+        "G6": ("If the applicant completes a Self Assessment tax return, files tax returns online, and HMRC includes the amount of the applicant's winter fuel payment in the applicant's tax return automatically, the amount shows as the Winter Fuel Payment charge and is included in the applicant's tax calculation.",
+               Implies(And(U("completes_self_assessment", a), U("files_online", a), U("included_automatically", a)),
+                       And(U("shown_as_wfp_charge", a), U("in_tax_calculation", a)))),
+        "G7": ("If the applicant is entitled, has not opted out, and the applicant's total income is more than GBP 35000.00, the amount is more than GBP 0.00 and HMRC takes the payment back.",
+               Implies(And(U("entitled", a), Not(U("opted_out", a)), over),
+                       And(["lt", gbp("0.00"), money_const("amount")], U("recovered", a)))),
+    }
+    return [rule(rid, f"S2:{GUIDE_SENTENCES[rid][1]}, srccov-rl-eligibility-1121", f"{gloss} {GUIDE_SENTENCES[rid][2]}",
+                 formula, defines=[])
+            for rid, (gloss, formula) in lines.items()]
+
+
 B1 = rule("B1", "S1 reg. 1(3), bridge B1", f"{QW1} is 6 days after {QW0}. {DEFINITIONS['qualifying week']}", ["shift_days", day(QW1), day(QW0), "6"])
 
 
 def rules(mutant=None):
-    """The rule premises in dependency order: each role's rules, then the amounts."""
-    return [*role_rules("applicant", mutant), *role_rules("housemate", mutant), *amount_rules(mutant), B1]
+    """The rule premises in dependency order: each role's rules, the amounts, then the guide rules."""
+    return [*role_rules("applicant", mutant), *role_rules("housemate", mutant), *amount_rules(mutant),
+            *guide_rules(), B1]
 
 
 # --- facts of a profile ------------------------------------------------------

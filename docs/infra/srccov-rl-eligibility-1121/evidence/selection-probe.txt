@@ -1,0 +1,6 @@
+# uv run python tools/select_tests.py --base HEAD~1, on a probe commit that appended one comment line to usecases/eligibility/translation.py (reset afterwards)
+47/680 test units (map cd6d457912, 17.64 s)
+changed: usecases/eligibility/translation.py
+tests/test_eligibility_wfp.py
+tests/test_srccov_eligibility_1119.py
+tests/test_srccov_rl_eligibility_1121.py

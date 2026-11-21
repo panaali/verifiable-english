@@ -126,6 +126,90 @@
     ],
     "description": "The person is paid without a claim (S1 reg. 5(1))."
    },
+   "affects_other_benefits": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The money the person gets affects the person's other benefits (S2: \u201caffect your other benefits\u201d)."
+   },
+   "jointly_claims_benefits": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person and the person's partner jointly claim any of the benefits, which are Pension Credit, Universal Credit and income-related Employment and Support Allowance (S2: \u201cIf you and your partner jointly claim any of the benefits\u201d; \u201cPension Credit\u201d; \u201cUniversal Credit\u201d; \u201cincome-related Employment and Support Allowance (ESA)\u201d)."
+   },
+   "paid_into_usual_account": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is paid into the bank account the person's benefits are usually paid into (S2: \u201cpaid into the bank account your benefits are usually paid into\u201d)."
+   },
+   "tax_code_changed": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC changes the person's tax code to pay back the person's winter fuel payment (S2: \u201cIf HMRC changes your tax code to pay back your Winter Fuel Payment\u201d)."
+   },
+   "tax_deducted_increases": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The tax deducted from the person's wages, salary or pension increases (S2: \u201cthe tax deducted from your wages, salary or pension will increase\u201d)."
+   },
+   "two_payments_to_collect": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC needs to collect 2 payments from the person (S2: \u201cIf HMRC needs to collect 2 payments\u201d)."
+   },
+   "two_payments_through_tax_code": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC collects 2 payments through the person's tax code at the same time (S2: \u201cHMRC will collect 2 payments through your tax code at the same time\u201d)."
+   },
+   "more_tax_each_month": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person pays more tax each month (S2: \u201cyou will pay more tax each month\u201d)."
+   },
+   "completes_self_assessment": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person completes a Self Assessment tax return (S2: \u201cIf you complete a Self Assessment tax return\u201d)."
+   },
+   "files_online": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person files tax returns online (S2: \u201cIf you file tax returns online\u201d)."
+   },
+   "included_automatically": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC includes the amount of the person's winter fuel payment in the person's tax return automatically (S2: \u201cHMRC will usually include the amount automatically\u201d)."
+   },
+   "shown_as_wfp_charge": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The amount shows on the person's tax return as the Winter Fuel Payment charge (S2: \u201cIt will show as the \u2018Winter Fuel Payment charge\u2019\u201d)."
+   },
+   "in_tax_calculation": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The amount is included in the person's tax calculation (S2: \u201cwill be included in your tax calculation\u201d)."
+   },
+   "opted_out": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has opted out of receiving the winter fuel payment (S2: \u201copt out of receiving Winter Fuel Payment\u201d)."
+   },
    "reached_pa": {
     "arguments": [
      "person"
