@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-srccov-rl-eligibility-1121-f6dda2aa-t241126-s7",
+ "head": "3f9b270779345ca43a3c535285addd9a2cc7a94d",
+ "argv": [
+  "armsh-cand-srccov-rl-eligibility-1121-f6dda2aa-t241126-s7",
+  "3f9b270779345ca43a3c535285addd9a2cc7a94d",
+  "aea9a97d414e0415672799dcf059fa74a85ba3cb",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
