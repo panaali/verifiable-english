@@ -1,6 +1,6 @@
---- chain-gate.sh	2026-11-19 22:47:24.897581178 +0000
-+++ chain-gate.sh.new-cgshard	2026-11-21 10:54:54.618491973 +0000
-@@ -274,12 +274,126 @@
+--- chain-gate.sh	2026-11-21 10:55:10.762800624 +0000
++++ chain-gate.sh.new-cgshard	2026-11-21 11:41:49.389243255 +0000
+@@ -278,12 +278,126 @@
      print -r -- ve-cloud-2 ${(f)"$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=10 ve-cloud-2 "cut -d' ' -f2 /proc/loadavg; nproc" < /dev/null 2>/dev/null | head -n 2)"}
    else print -r -- "ve-cloud-2 off"; fi
    print -r -- vm $(cut -d' ' -f2 /proc/loadavg) $(nproc); }
@@ -127,11 +127,11 @@
    if [ ${#mlh} -gt 0 ] && [ -z "$mlfree" ]; then mlk=${MAC_LAST_CHAINGATE_LOCK:-$M/locks/mac-last-chaingate.lock}; mkdir -p ${mlk:h}; : >> $mlk
      if zmodload zsh/system 2>/dev/null && zsystem flock -t 0 -f mlfd $mlk 2>/dev/null; then mlsat=1; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}): the Mac's one slot"
      else mlfd=""; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}) but the Mac's one slot is held by another chain: cloud-first"; fi; fi
-@@ -293,6 +407,7 @@
+@@ -297,6 +411,7 @@
      elif [ $rc = 4 ]; then ev gate-cancelled "ve-cloud-2 gate cancelled: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4
      else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc)"; fi
    else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 not usable ($(zsh $M/cloud2-run.sh ok 2>&1 | tr -d '"\\' | head -c 160))"; fi
 +  if [ -z "$mlrg" ]; then ghstep; case $? in 0) exit 0;; 1) exit 1;; esac; fi  # cg-actions-shard-1121: Actions before the VM step
-   if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_GATE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
+   if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_ROUTE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
      if (( mvl + mvw < mvlim )); then mlrg=vm; ev gate-route "MAC_LAST_RESORT: VM load $mvl + $mvw workers < $mvlim: the VM gate"
      else ev gate-route "MAC_LAST_RESORT: no ve-cloud-2 record and the VM is full (load $mvl + $mvw >= $mvlim): the Mac gate"; fi; fi
