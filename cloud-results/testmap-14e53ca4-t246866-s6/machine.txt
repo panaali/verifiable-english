@@ -1,0 +1,5 @@
+job=testmap-14e53ca4-t246866-s6 nproc=4 host=runnervmeozm8 date=2026-11-21T07:43:12Z
+Mem:              15           1           8           0           5          14
+/dev/root       145G   64G   81G  45% /
+ 07:43:12 up 1 min,  0 user,  load average: 1.95, 0.58, 0.20
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
