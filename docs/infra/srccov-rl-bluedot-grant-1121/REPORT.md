@@ -77,7 +77,7 @@ The branch is based on VE main `cebf4fd24f` and adds only this REPORT. Whatever 
 changes no answer, so no later read needs to re-pin for it. The Monday 2026-11-23 FSF freeze does not involve
 this item.
 
-SIZE: 0 product, 0 tests, about 90 other hand-written lines (this REPORT).
+SIZE: 0 product, 0 tests, 131 other hand-written lines (this REPORT).
 
 ## Tests
 
