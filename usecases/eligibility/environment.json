@@ -130,7 +130,7 @@
     "arguments": [
      "person"
     ],
-    "description": "R2: the person reached pensionable age in or before the qualifying week."
+    "description": "R2: the person reached pensionable age in or before the qualifying week. (3) In these Regulations\u2014 \u201cpensionable age\u201d has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995(9);"
    },
    "reached_80": {
     "arguments": [
@@ -230,7 +230,7 @@
     "arguments": [
      "person"
     ],
-    "description": "R13: the person is entitled to a winter fuel payment for winter 2026 to 2027."
+    "description": "R13: the person is entitled to a winter fuel payment for winter 2026 to 2027. 2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (\u201cP\u201d) where\u2014"
    },
    "recovered": {
     "arguments": [
