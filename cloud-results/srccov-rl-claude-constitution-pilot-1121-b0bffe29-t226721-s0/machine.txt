@@ -1,0 +1,5 @@
+job=srccov-rl-claude-constitution-pilot-1121-b0bffe29-t226721-s0 nproc=4 host=runnervmeozm8 date=2026-11-21T02:07:31Z
+Mem:              15           1           8           0           5          13
+/dev/root       145G   64G   81G  45% /
+ 02:07:31 up 17 min,  0 user,  load average: 1.67, 0.60, 0.27
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
