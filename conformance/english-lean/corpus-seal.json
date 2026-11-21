@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "37d453b5e231cf26eb6472c8373ac22353e3694787382b64fbd023d87c3d6d00",
+ "seal_id": "fc5729c7f24b976944ddef81b9b70d78ed5345c2b8ba0539c1cc53804319a44d",
  "sources": [
   {
    "kind": "corpus source",
@@ -471,7 +471,7 @@
   {
    "kind": "entry-point caller",
    "path": "tests/test_english_statement_blocks.py",
-   "sha256": "c8e360e630db62654d8c62e39ec8d311032a903a5092db40f8c9cdb44e0ab0e2"
+   "sha256": "3c75253196dcf75b385270abbdace97a62bd0b9253b88bf5cf36f9211b0925ce"
   },
   {
    "kind": "entry-point caller",
