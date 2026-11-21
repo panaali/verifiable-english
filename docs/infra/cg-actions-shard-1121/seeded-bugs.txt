@@ -1,0 +1,24 @@
+== h1-cancel-completed: rc 1, FAILED (3 failures)
+  FAIL (h) running runs cancelled, the completed one not  ['/repos/o/r/actions/runs/11/cancel', '/repos/o/r/actions/runs/12/cancel', '/repos
+  FAIL (h) all accepted: exit 0, 'cancelled 4 of 4'  (0, 'ci-job/armsh-chain-t-0123abcd-t1-s1 11 cancel 202\nci-job/armsh-chain-t-0123abcd-t
+  FAIL (h) one cancel refused (403): exit 1, named  (1, 'ci-job/armsh-chain-t-0123abcd-t1-s1 11 cancel 202\nci-job/armsh-chain-t-0123abcd-t1
+== h2-403-is-ok: rc 1, FAILED (1 failures)
+  FAIL (h) one cancel refused (403): exit 1, named  (0, 'ci-job/armsh-chain-t-0123abcd-t1-s1 11 cancel 202\nci-job/armsh-chain-t-0123abcd-t1
+== s1-pass-on-exit1: rc 1, FAILED (3 failures)
+  FAIL (ii) exit 1 with a passed record: exit 1  0
+  FAIL (ii) exit 1 with a passed record: gate-result.json FAILED, of HEAD, where=actions-arm  {'commit_sha': 'c4d224b9cbd36a1cdb90818c462bc5
+  FAIL (ii) exit 1 with a passed record: failure reason names 'exit 1'  []
+== s2-any-exit4-is-deadline: rc 1, FAILED (7 failures)
+  FAIL (ii) a shard of another shape (exit 4): exit 1  0
+  FAIL (ii) a shard of another shape (exit 4): gate-result.json FAILED, of HEAD, where=actions-arm  {'commit_sha': 'c4d224b9cbd36a1cdb90818c
+  FAIL (ii) a shard of another shape (exit 4): no VM gate  [{'vm': ['--workers', '8']}]
+== s3-cancel-keeps-runs: rc 1, FAILED (1 failures)
+  FAIL (v) cancel: runs cancelled with the job dir  []
+== s4-ignore-suspended: rc 1, FAILED (6 failures)
+  FAIL (iii) ACTIONS_SUSPENDED: shard stub not started  [{'argv': ['chain-t', 'c4d224b9cbd36a1cdb90818c462bc52d389a79da'], 'mode': 'blocking
+  FAIL (iii) ACTIONS_SUSPENDED: the VM gate ran  []
+  FAIL (iii) ACTIONS_SUSPENDED: gate-start vm  [{'t': '2026-11-21T11:06:52Z', 'item': 't', 'stage': 'gate-route', 'note': "MAC_LAST_RESORT: 
+== s5-no-hard-limit: rc 1, FAILED (6 failures)
+  FAIL (iv) chain hard limit: the VM gate ran  []
+  FAIL (iv) chain hard limit: gate-start vm  [{'t': '2026-11-21T11:07:00Z', 'item': 't', 'stage': 'gate-route', 'note': "MAC_LAST_RESORT: ve
+  FAIL (iv) chain hard limit: gate-result.json is the VM's  {'commit_sha': 'c4d224b9cbd36a1cdb90818c462bc52d389a79da', 'tree_sha': '53d2bfba
