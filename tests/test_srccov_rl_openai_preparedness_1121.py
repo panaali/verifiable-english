@@ -5,8 +5,9 @@ four PF units "none: translation omission": 4.2's lead-in "The SAG will make thi
 and three of its four bullets (S0172, S0173, S0186). The fourth bullet, S0187 ("The baseline risk from other
 deployments, ..."), is tagged quantifier-scope, out of scope: the line names three of the four grounds, so the block's
 header quotes S0187 too and accounting.d1.txt records its loss (`loss 1`, a dropped conjunct). The REPORT
-(docs/infra/srccov-rl-openai-preparedness-1121/REPORT.md) keeps the four units and drops the other in-scope units
-with a reason each. For each kept unit this file checks that:
+(docs/infra/srccov-rl-openai-preparedness-1121/REPORT.md) keeps the four units and Appendix B's lead-in S0259 (review
+F2: routed to f16-sag-recommend, the one line that carries one of its items) and drops the other in-scope units with a
+reason each. For each kept unit this file checks that:
 
 * the line exists in the carrier the reader is shown: block `sr-sufficiency` of rules.d1.ve, whose act
   `sufficiency_basis` is a regulated predicate of environment.d1.json;
@@ -17,6 +18,9 @@ with a reason each. For each kept unit this file checks that:
 For every lead-in of the item's scope (the map's `lead-in:` notes, saved in LEAD_INS) it checks one rule (review F1,
 METHOD amendment 8): a block that carries a lead-in either routes each of its items or quotes the item in its header
 and records the item's loss in accounting.d1.txt; and a lead-in is routed to a block exactly when the REPORT keeps it.
+Review F2: the verdict and the reason of each lead-in follow from where its items are carried (MAP_CARRIED, the
+REPORT's "already carried at main" legends and the routes of spans.json): no carrying line, dropped; one, kept on that
+line; more than one, dropped because a unit routes to one block. The REPORT's rows and its rule paragraph must say so.
 
 Every test fails on the pre-change main: the block, the act and the routes do not exist there.
 """
@@ -26,6 +30,7 @@ import dataclasses
 import importlib
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -36,6 +41,7 @@ from tests.pinned_source import pinned_source
 
 REPO = Path(__file__).resolve().parents[1]
 PF = REPO / "usecases" / "openai-preparedness"
+REPORT = REPO / "docs" / "infra" / "srccov-rl-openai-preparedness-1121" / "REPORT.md"
 NAMES = ("pf_vocabulary", "pf_translation", "build_document", "quote_evidence")
 
 
@@ -100,9 +106,87 @@ LEAD_INS = (
     ("S0171", (34586, 34632), "KEPT",
      (("S0172", (34633, 34718)), ("S0173", (34719, 34850)), ("S0186", (36739, 36822)), ("S0187", (36823, 37039)))),
     ("S0190", (37321, 37388), "DROPPED", (("S0191", (37389, 37557)), ("S0192", (37558, 37937)))),
-    ("S0259", (48713, 48764), "DROPPED",
+    ("S0259", (48713, 48764), "KEPT",
      (("S0260", (48765, 48912)), ("S0261", (48913, 49138)), ("S0262", (49139, 49314)), ("S0263", (49315, 49518)))),
 )
+
+# Review F2: the map's CARRIED-OTHER-WORDS items among the lead-ins' items, each with the carrier a line reads it
+# through (a rule block or a reading set), saved from openai-preparedness.md and its spans notes. The REPORT's
+# "already carried at main" rows add the legend that carries an item (S0028), and spans.json adds the routes the build
+# gives (this item's sr-sufficiency and f16-sag-recommend lines).
+MAP_CARRIED = {"S0025": "rs3-no-deploy", "S0026": "f3-develop", "S0148": "rs16-recommend", "S0150": "rs8-distilled",
+               "S0262": "f16-sag-recommend"}
+LEGEND_CARRIED = re.compile(r"already carried at main: the legend of `([a-z_]+)`")
+NONE_CARRIES = "no line carries its items"
+SPLIT = "its items are carried by more than one line"
+
+
+def _rows(report):
+    """The verify table: unit -> (verdict, reason)."""
+    cells = (line.split("|") for line in report.splitlines() if line.startswith("| S0"))
+    return {c[1].strip(): (c[3].strip(), c[4].strip()) for c in cells}
+
+
+def _item_carriers(spans, rows, carried):
+    """Lead-in -> item -> the carriers that carry the item (map, REPORT legend row, spans.json route of the item)."""
+    out = {}
+    for lead_in, (a, b), _verdict, items in LEAD_INS:
+        out[lead_in] = {}
+        for item, (c, d) in items:
+            found = {carried[item]} if item in carried else set()
+            found |= set(LEGEND_CARRIED.findall(rows.get(item, ("", ""))[1]))
+            found |= {r.get("blocked_rule") or r.get("rule") for r in spans.values() if c <= r["span"][0] < d
+                      and r["span"][1] <= d + 1 and (r.get("blocked_rule") or r.get("rule"))}
+            out[lead_in][item] = found
+    return out
+
+
+def _names(units):
+    units = sorted(units)
+    return units[0] if len(units) == 1 else ", ".join(units[:-1]) + " and " + units[-1]
+
+
+def _carrier_faults(report, spans, carried=MAP_CARRIED):
+    """Review F2 (METHOD amendment 8): each lead-in's verdict and REPORT reason against the carriers of its items.
+    No carrier: DROPPED, "no line carries its items". One: KEPT and routed to it. More: DROPPED, "its items are carried
+    by more than one line", each carrier named. Every route spans.json gives a unit that overlaps the list's items (and
+    not the lead-in) is a carrier of the list, so a route the saved table misses is refused. The rule paragraph lists
+    each lead-in under its class."""
+    rows, faults, classes = _rows(report), [], {"none": [], "one": [], "split": []}
+    for lead_in, (a, b), _verdict, items in LEAD_INS:
+        per_item = _item_carriers(spans, rows, carried)[lead_in]
+        lines = set().union(*per_item.values())
+        routed = {r.get("blocked_rule") or r.get("rule") or r.get("reading_set") for r in spans.values()
+                  if any(r["span"][0] < d and c < r["span"][1] for _item, (c, d) in items)
+                  and not (r["span"][0] < b and a < r["span"][1])}
+        for route in sorted(routed - {None} - lines):
+            faults.append(f"{lead_in}: spans.json routes an item's unit to {route}, which carries none of its items")
+        verdict, reason = rows[lead_in]
+        kind = "none" if not lines else "one" if len(lines) == 1 else "split"
+        classes[kind].append(lead_in)
+        expected = "KEPT" if kind == "one" else "DROPPED"
+        if verdict != expected:
+            faults.append(f"{lead_in}: carried items {sorted(lines)} make it {expected}, the REPORT says {verdict}")
+        if kind == "none" and NONE_CARRIES not in reason:
+            faults.append(f"{lead_in}: no line carries its items, and its row does not say so")
+        if kind != "none" and NONE_CARRIES in reason:
+            faults.append(f"{lead_in}: its row says no line carries its items, but {sorted(lines)} carry them")
+        if (kind == "split") != (SPLIT in reason):
+            word = "omits" if kind == "split" else "says"
+            faults.append(f"{lead_in}: {len(lines)} carrying lines, and its row {word} '{SPLIT}'")
+        for line in sorted(lines):
+            if kind != "none" and f"`{line}`" not in reason:
+                faults.append(f"{lead_in}: its row does not name the carrier `{line}`")
+        if kind == "one" and _routes(spans, a, b) != lines:
+            faults.append(f"{lead_in}: routed to {sorted(_routes(spans, a, b))}, not to its carrier {sorted(lines)}")
+    expected_sentences = [f"No line carries the items of {_names(classes['none'])}.",
+                          f"The items of {_names(classes['split'])} are carried by more than one line",
+                          f"{_names(classes['one'])} each have one line that carries their items"]
+    for sentence in expected_sentences:
+        if sentence not in report:
+            faults.append(f"the rule paragraph lacks: {sentence}")
+    return faults
+
 
 
 def _predicates():
@@ -271,10 +355,90 @@ def test_the_lead_in_check_refuses_review_f1_and_its_variants(mutant):
     elif mutant == "loss dropped":
         sidecar = [line for line in sidecar if line != OMITS]
     elif mutant == "dropped lead-in routed":
-        spans = {**spans, "p16-u272": {**spans["p16-u272"], "blocked_rule": BLOCK}}
+        spans = {**spans, "p12-u200": {**spans["p12-u200"], "blocked_rule": BLOCK}}
     else:
         spans = {**spans, UNITS[0][2]: {k: v for k, v in spans[UNITS[0][2]].items() if k != "blocked_rule"}}
     assert _lead_in_faults(blocks, spans, sidecar), mutant
+
+
+
+# Review F2: the rows and rule paragraph of commit 2dc12b6f, which said no line carries the items of S0020 and S0259.
+F2_ROWS = {"S0020": ('| S0020 | srccov-openai-preparedness-7-1119 | DROPPED | lead-in (amendment 8) of S0021-S0029: no '
+                     'line carries its items (S0021 and S0027 wait on the predicate budget, S0022 (temporal) and S0024 '
+                     '(modality) are out of scope, the rest are dropped below), so no line can carry its force |'),
+           "S0259": ("| S0259 | srccov-openai-preparedness-27-1119 | DROPPED | lead-in of Appendix B's SAG duties "
+                     '(S0260-S0263): no line carries its items (S0260 and S0263 wait on the predicate budget; S0261 '
+                     '(quantifier-scope) and S0262 are out of scope), so no line can carry its force |')}
+F2_PARAGRAPH = ('**The rule for a lead-in** (METHOD amendment 8, review F1). A lead-in is carried only by a line '
+                "that carries its items with the lead-in's force. An item that line does not carry (out of scope, or "
+                "dropped) is quoted in the block's header and recorded as a `loss` in accounting.d1.txt, so the "
+                'omission is visible. The six dropped lead-ins (S0020, S0030, S0126, S0147, S0190, S0259) have no '
+                'line that carries their items. S0171 is carried, and its fourth item S0187 is quoted and recorded '
+                'as `loss 1`. `test_a_carried_lead_in_accounts_for_every_item` checks this over all seven lead-ins, '
+                "from the map's `lead-in:` notes saved in the test.")
+
+
+def _report():
+    return REPORT.read_text(encoding="utf-8")
+
+
+def test_each_lead_in_has_the_verdict_and_reason_its_items_carriers_give():
+    """Review F2: no carrying line, DROPPED with "no line carries its items"; one, KEPT on that line; more than one,
+    DROPPED with each carrier named. S0259 is kept on f16-sag-recommend, which carries S0262; S0020's carried items
+    are on rs3-no-deploy, f3-develop and the legend of existing_at_publication; S0147's on rs16-recommend and
+    rs8-distilled."""
+    assert _carrier_faults(_report(), _spans()) == []
+    carriers = _item_carriers(_spans(), _rows(_report()), MAP_CARRIED)
+    assert set().union(*carriers["S0259"].values()) == {"f16-sag-recommend"}
+    assert set().union(*carriers["S0020"].values()) == {"rs3-no-deploy", "f3-develop", "existing_at_publication"}
+    assert set().union(*carriers["S0147"].values()) == {"rs16-recommend", "rs8-distilled"}
+
+
+def test_review_f2_probe():
+    """The review's PROBE F2: the S0020 and S0259 rows do not say that no line carries their items, and the REPORT does
+    not say it of all six lead-ins it dropped then."""
+    r = _report()
+    rows = {line.split("|")[1].strip(): line for line in r.splitlines() if line.startswith("| S0")}
+    bad = [k for k in ("S0020", "S0259") if NONE_CARRIES in rows[k]]
+    assert not bad and "(S0020, S0030, S0126, S0147, S0190, S0259) have no line that carries their items" not in r, bad
+
+
+def test_the_carriers_the_test_saves_exist():
+    """Each saved carrier is a block of rules.d1.ve or facts.d1.ve or a reading set the build places, and each legend
+    an "already carried at main" row names is a predicate of environment.d1.json."""
+    sets = {ident for kind, ident, _waits in B.PLACEMENTS.values() if kind == "readings"}
+    assert {c for c in MAP_CARRIED.values()} <= set(_blocks()) | sets
+    legends = set(LEGEND_CARRIED.findall(_report()))
+    assert legends and legends <= set(_predicates())
+
+
+@pytest.mark.parametrize("mutant", ["review F2's rows", "S0259 dropped", "map entry forgotten", "carrier not named",
+                                    "a new route", "kept on another line", "paragraph"])
+def test_the_carrier_check_refuses_review_f2_and_its_variants(mutant):
+    """Each mutant of the fixed tree is refused: F2 itself (the rows and paragraph of commit 2dc12b6f), the kept
+    lead-in turned DROPPED, a carried item missing from the saved table, a carrier the row does not name, a route of an
+    item's unit to a line that carries none of the list, a kept lead-in routed to another line, a stale paragraph."""
+    report, spans, carried = _report(), _spans(), dict(MAP_CARRIED)
+    rows = {line.split("|")[1].strip(): line for line in report.splitlines() if line.startswith("| S0")}
+    if mutant == "review F2's rows":
+        for unit, line in F2_ROWS.items():
+            report = report.replace(rows[unit], line)
+        paragraph = [p for p in report.splitlines() if p.startswith("**The rule for a lead-in**")][0]
+        report = report.replace(paragraph, F2_PARAGRAPH)
+    elif mutant == "S0259 dropped":
+        report = report.replace(rows["S0259"], rows["S0259"].replace("| KEPT |", "| DROPPED |"))
+    elif mutant == "map entry forgotten":
+        del carried["S0150"]
+    elif mutant == "carrier not named":
+        report = report.replace(rows["S0147"], rows["S0147"].replace("`rs8-distilled`", "RS8"))
+    elif mutant == "a new route":
+        spans = {**spans, "p4-u23": {**spans["p4-u23"], "blocked_rule": "f2-deploy"}}
+    elif mutant == "kept on another line":
+        spans = {**spans, "p16-u272": {**spans["p16-u272"], "blocked_rule": "f16-informed"}}
+    else:
+        report = report.replace("No line carries the items of", "No line carries the lists of")
+    assert report != _report() or spans != _spans() or carried != MAP_CARRIED
+    assert _carrier_faults(report, spans, carried), mutant
 
 
 def test_the_accounting_tool_refuses_omits_nothing_for_the_block(tmp_path):
