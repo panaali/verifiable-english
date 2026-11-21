@@ -1,5 +1,11 @@
 # srccov-rl-anthropic-rsp-1121: REPORT
 
+**Fix round (review of 1965f1bcb2, one B finding).** Status: F1 fixed; no DRI signature needed, no DELTA row reserved.
+F1, the stale corpus seal: regenerated (18bc07737d). The class is closed as well: the seal's check also compares a
+rebuild (2e3647d043); the seal is registered in tools/regen_generated.py as a tree-only `at_merge` entry; and the
+registry test now finds writers that have no write flag (b03f63b355). Section 10 has the details; the full gate was
+not run here (the chain runs it).
+
 | unit id | row id | KEPT / DROPPED | reason (file:line) |
 |---|---|---|---|
 | S0189 | srccov-anthropic-rsp-27-1119 | DROPPED | Attitude content: the document records "we will likely analyze ... collectively" as an expectation, `believes("expects")` (usecases/anthropic-rsp/build_document.py:399; spans.json s33-groupings, kind `attributed`). It waits for srccov-design-attributed-1119. A rule line would also have to choose whether "with appropriate justification" sits under "likely". |
@@ -80,7 +86,7 @@ gives the three records a `rule` key. Their status stays OPEN, because the open 
   a loss ..., 0 of 147 quotes unanchored", rc 0. The three new blocks have no unaccounted word.
 - `stage0.py` wrote stage0.json (F15's block list); `measure.py --check` rc 0 (units.json and gaps.json unchanged).
 - `docs/en-e3-norm/en-2b/route_fixtures.py --write` (route-cases.jsonl), `python -m conformance.english_lean_seal`
-  (corpus-seal 8628bed5..., 111 sources), and `python -m conformance.english_lean_lexicon` (43 valid, 0 invalid;
+  (corpus-seal 8628bed5..., 111 sources; stale again after 28ba1e408b, regenerated in the fix round: section 10), and `python -m conformance.english_lean_lexicon` (43 valid, 0 invalid;
   RSP 127 → 130 symbols).
 - `uv run python usecases/anthropic-rsp/run.py` wrote results.json and printed "110 / 126". A structural diff against
   main's results.json shows only `/metrics/M10/rules 76 -> 79` and M5's F15 list.
@@ -157,7 +163,8 @@ Lean or Rust product code changed.
 The branch was built on main cebf4fd24f and rebased onto main e331b45943 (srccov-rl-claude-constitution-pilot-1121
 merged in between). The only conflict was the shared conformance/english-lean/corpus-seal.json. main's version was
 taken and regenerated with `python -m conformance.english_lean_seal` (64185f5b..., 111 sources), and the lexicon
-report was regenerated. main's new commits change nothing under ve/, lean/, rust/, usecases/anthropic-rsp,
+report was regenerated. 28ba1e408b then edited a sealed test without rerunning the seal's writer, and
+`regen_generated --check` did not cover the seal, so the seal was stale on 1965f1bcb2 (review F1, section 10). main's new commits change nothing under ve/, lean/, rust/, usecases/anthropic-rsp,
 safetyfw_common.py, safetyfw_accounting.py or tests/data/norm-blocks (`git diff --stat cebf4fd24f main -- ...` is
 empty), so results.json and the selected run's RSP results stand. After the rebase: `tools/regen_generated.py
 --check` checked 43 entries, rc 0; the three builder `--check`s rc 0; the accounting report was rewritten to /tmp and is
