@@ -306,6 +306,14 @@ GENERATED = (
                    "environments (the service selects their lexicons)",
               fresh="tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded"),
     _usecase("safety-framework"),
+    # Last: it hashes the English entry-point callers among the tests and the use cases' English documents and
+    # environments (webapp-commands-env's among them), so it follows every writer of a sealed file. A writer
+    # that writes by default and checks with `--check` (no write flag) slipped past the registry's completeness
+    # test until srccov-rl-anthropic-rsp-1121 F1 (tests/test_regen_generated.py `_write_mode_scripts`).
+    Generated("english-lean-seal", ("conformance/english-lean/corpus-seal.json",),
+              ((PY, "-m", "conformance.english_lean_seal"),), ((PY, "-m", "conformance.english_lean_seal", "--check"),),
+              note="SHA-256 of every English corpus source and the corpus reports' stream digests; seconds, tree only",
+              fresh="tests/test_english_lean_seal.py::test_the_committed_seal_is_current", at_merge=True),
 )
 # The pin file, `inventory_path`'s name for it.
 PIN_FILE = next(entry for entry in GENERATED if entry.name == "checker-pins").paths[0]
@@ -370,6 +378,15 @@ NOT_REGENERATED = {
     "docs/defeasible/df-1bb/evidence/select_route_cases.py": "df-1bb: appends recorded route cases once (append-only)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness (a use case of `_usecase`'s shape is an entry)",
+    # Scripts with a `--check` mode of their own beside a file write and no write flag (srccov-rl-anthropic-rsp-1121
+    # F1 widened the registry test to them): none writes a file derived from this tree alone.
+    "tools/fetch_pinned_sources.py": "writes the publisher's text outside the tree (home directory) at its sha256 pin",
+    "usecases/safetyfw_accounting.py": "--report saves the accounting of a case, which reads the publisher's pinned text "
+                                       "outside the tree (tools/fetch_pinned_sources.py); --check checks the sidecar",
+    "docs/arch/AR-16a/rename_seed_paths.py": "AR-16a, run once: renamed file names in older seeded-fault scripts",
+    "docs/arch/arch-decoder-measure/measure.py": "measurement against a pinned main commit, saved as MEASURE.json",
+    "docs/infra/vm-stop-recovery-pacing/pin_files.py": "pins files of the manage-agents checkout, outside this tree",
+    "docs/kernel/kb-2a-b/build_rsp_mixed.py": "kb-2a-b acceptance document cut from the pinned RSP text outside the tree",
     "usecases/measure_keyed_paths.py": "the keyed harnesses' checker paths, measured once (minutes, with the Lean "
                                        "service) into docs/usecases/keyed-answers.json, the evidence its test reads",
 }

@@ -10,8 +10,13 @@ the committed corpus reports whose per-configuration digests pin the generated s
 item-1 fixture files. The generated streams are sealed by their recorded digests (seed, corpus, document
 and grammar SHA-256 per configuration), which S2's harness recomputes before it compares.
 
-`--check` is for the shadow harness: a changed source means the seal must be renewed before a comparison
-counts. The test suite does not enforce it, so ordinary edits to tests stay independent of this item.
+`--check` reports every sealed file that changed, is missing or is not sealed yet, and every other part of the
+seal (`format`, `generated`, `pilots`, `seal_id`) that differs from a rebuild of the tree: a changed source means
+the seal must be renewed before a comparison counts. The seal is a generated file (`english-lean-seal` in
+tools/regen_generated.py: `--check` runs this check, the merge train refreshes it on every merge candidate) and
+tests/test_english_lean_seal.py::test_the_committed_seal_is_current enforces it, so a branch that edits a sealed
+file reruns this writer (srccov-rl-anthropic-rsp-1121 F1: a rebase resolved the seal, a later commit edited a
+sealed test, and nothing noticed).
 """
 from __future__ import annotations
 
@@ -93,6 +98,12 @@ def check(seal: dict) -> list[str]:
             drift.append(f"changed: {entry['path']}")
     current = {e['path'] for e in sources()}
     drift += [f'unsealed: {p}' for p in sorted(current - {e['path'] for e in seal['sources']})]
+    # The rest of the seal is derived too: a stale stream digest, pilot pin or seal_id is drift as well.
+    fresh = build()
+    drift += [f'stale: {key}' for key in ('format', 'generated', 'pilots') if seal.get(key) != fresh[key]]
+    body = {k: v for k, v in seal.items() if k != 'seal_id'}
+    if seal.get('seal_id') != digest(DOMAIN, body) or set(seal) != set(fresh):
+        drift.append('stale: seal_id')
     return drift
 
 

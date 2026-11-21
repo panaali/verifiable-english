@@ -59,6 +59,7 @@ its merge strategy:
 | english-lexicon-report | `conformance/english-lean/lexicon-report.json` (a `lexicon_id` per corpus environment) | derived |
 | recorded-route-cases | `tests/data/route-cases.jsonl` (recorded route cases; the english.statement block from `route_fixtures()`) | keyed-lines |
 | usecase-safety-framework | `usecases/safety-framework/{results,coverage,spans}.json` (run when they conflict: `on_conflict`) | derived |
+| english-lean-seal | `conformance/english-lean/corpus-seal.json` (SHA-256 of the English corpus sources; tree only, refreshed `at_merge`) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);

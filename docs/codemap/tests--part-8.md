@@ -49,6 +49,7 @@
 - `tests/test_srccov_eligibility_1119.py` — srccov-eligibility-1119: the source units the coverage map found unshown are now carried or recorded.
 - `tests/test_srccov_math_mini_paper_1119.py` — srccov-math-mini-paper-1119: the paper's Definition D1 is carried word for word in the legend its rule uses.
 - `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
+- `tests/test_srccov_rl_anthropic_rsp_1121.py` — srccov-rl-anthropic-rsp-1121: the 3.6.1 reviewer selection criteria are rule lines the reader is shown.
 - `tests/test_srccov_rl_claude_constitution_pilot_1121.py` — srccov-rl-claude-constitution-pilot-1121: the three 'translation omission' units are reading choices, not omissions.
 - `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
 - `tests/test_srccov_rl_news_article_1121.py` — srccov-rl-news-article-1121: the news-article units tagged 'none: translation omission' and why none is carried.
@@ -79,4 +80,3 @@
 - `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
 - `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
 - `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
-- `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
