@@ -4,7 +4,10 @@ Each kept unit of the map (manage-agents reviews/source-coverage-1119/rows-safet
 17, 20, 24-27 and 30-33) is read from the pinned FSF 3.1 text (tests/pinned_source.py) at its UTF-8 byte span, after the
 project's quote normalisation (usecases/safetyfw_accounting.py `norm`). Its section heading or Glossary label, a list
 bullet and the one PDF running head inside a span are cut by their exact strings; the rest must stand in quotes, byte
-for byte, in the committed legend of the named predicate (environment.d1.json, what a reader is shown).
+for byte, in the committed legend of the named predicate (environment.d1.json, what a reader is shown), after the same
+normalisation. The quoted passage may be the sentence alone or a longer one holding it whole (bounded by the passage's
+ends or spaces): a definition quoted whole with its label or footnote mark (defs-repair-safety-framework-1119) carries it.
+Inner quotes are curly (that branch's escape guard), so the legend's straight quotes open and close its passages.
 
 A legend carries only when a reader is shown it: the predicate is used by a block of rules.d1.ve or facts.d1.ve (the
 counter's `used_predicates`, tests/omission_rule.py), it is not an open term (METHOD amendment 4: an open term carries
@@ -82,6 +85,23 @@ def _legend(predicate: str) -> str:
     return _environment()["vocabulary"]["predicates"][predicate]["description"]
 
 
+def quoted_passages(legend: str) -> list[tuple[int, str]]:
+    """(offset of the opening quote, text) of each quoted passage of a legend: the runs between its straight quotes."""
+    passages, offset = [], 0
+    for k, part in enumerate(legend.split('"')):
+        if k % 2:
+            passages.append((offset - 1, part))
+        offset += len(part) + 1
+    return passages
+
+
+def holds_whole(passage: str, words: str, *, at_start: bool = True) -> bool:
+    """`words` stand in the normalised passage, ending at its end or before a space, and (at_start) starting at its
+    start or after a space: whole sentences, never a piece of a longer word."""
+    start = r"(?:^|(?<= ))" if at_start else ""
+    return re.search(start + re.escape(words) + r"(?:$|(?= ))", A.norm(passage)) is not None
+
+
 def source_sentence(text: bytes, unit: str) -> str:
     """The unit's sentence from the pinned text: its byte span, normalised, its heading or label cut (it must stand
     there), the running head inside the span cut."""
@@ -103,7 +123,8 @@ def test_the_legend_quotes_the_pinned_source_sentence(passage):
         sentences.append(sentence)
     predicate = CARRIES[passage[0]][0]
     assert {CARRIES[unit][0] for unit in passage} == {predicate}
-    assert f'"{" ".join(sentences)}"' in _legend(predicate), (passage, predicate)
+    assert any(holds_whole(quoted, " ".join(sentences)) for _, quoted in quoted_passages(_legend(predicate))), (
+        passage, predicate)
 
 
 def test_every_kept_unit_is_in_one_passage():
@@ -126,11 +147,24 @@ def test_the_carrier_is_a_legend_a_reader_is_shown(passage):
     assert predicate not in vocabulary.OPEN_PREDICATES, predicate
     legend = _legend(predicate)
     assert "Open term" not in legend
-    end = legend.find(f'{last}"')
-    assert end >= 0, (unit, last)
+    opening = [start for start, quoted in quoted_passages(legend) if holds_whole(quoted, last, at_start=False)]
+    assert opening, (unit, last)
+    end = opening[0]
     assert legend[:end].count("(") - legend[:end].count(")") == 0, (unit, "inside a parenthesised citation")
     raw = "\n".join(O.strip_comments(O.legend_raw(predicate, (CASE / "vocabulary.py").read_text().splitlines())))
     assert set(O.content_words(last)) <= set(re.findall(r"[a-z0-9_]+", O.omit_norm(raw))), (unit, predicate)
+
+
+def test_a_passage_carries_only_whole_sentences_inside_one_quote():
+    """The merged reading can fail: a sentence split across two quotes, cut short, or run into a longer word is not
+    carried; one alone or inside a longer quote, with curly inner quotes, is."""
+    sentence = 'We call it "Tracked." It holds.'
+    for legend in ('a "We call it “Tracked.” It holds."', 'a "2 We call it “Tracked.” It holds. More." b'):
+        assert any(holds_whole(q, sentence) for _, q in quoted_passages(legend)), legend
+    for legend in ('a "We call it “Tracked.”" b "It holds."', 'a "We call it “Tracked.” It hold"',
+                   'a "XWe call it “Tracked.” It holds."', 'a We call it “Tracked.” It holds. "b"'):
+        assert not any(holds_whole(q, sentence) for _, q in quoted_passages(legend)), legend
+    assert quoted_passages('a "b" c "d"') == [(2, "b"), (8, "d")]
 
 
 def test_the_cut_strings_are_headings_labels_and_the_running_head_only():

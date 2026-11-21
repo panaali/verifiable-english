@@ -142,16 +142,46 @@ BASE = {
                                           "\u201cUntil we have specified safeguards and security controls that would "
                                           "meet a Critical standard\u201d; CYB-C: \u201csafeguards and security "
                                           "controls standards that would meet a Critical standard\u201d)"),
-    "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
+    "in_category": base(["level", "category"], "{0} is in Tracked Category {1}"
+                                               "; the Framework's words, Table 1: Biological and Chemical5: The ability of an AI model to accelerate and expand access "
+                                               "to biological and chemical research, development, and skill-building, including access to expert knowledge and "
+                                               "assistance with laboratory work. Table 1: Cybersecurity: The ability of an AI model to assist in the development of "
+                                               "tools and executing operations for cyberdefense and cyberoffense. Table 1: AI Self-improvement: The ability of an AI "
+                                               "system to accelerate AI research, including to increase the system’s own capability.", "{0} concerns {1}"),
     "high": base(["level"], "{0} is a High level; 2.2: “High capability thresholds mean capabilities that "
                             "significantly increase existing risk vectors for severe harm.”; change log item 2: "
                             "“High capability thresholds mean capabilities that significantly increase existing risk "
-                            "vectors for severe harm under the relevant threat model.”", "{0} is high"),
+                            "vectors for severe harm under the relevant threat model.”"
+                            "; the Framework's words, footnote 1: 1 By “severe harm” in this document, we mean the death or grave injury of thousands of people or "
+                            "hundreds of billions of dollars of economic damage. 2.2 and change log item 2: High capability thresholds mean capabilities that "
+                            "significantly increase existing risk vectors for severe harm. High capability thresholds mean capabilities that significantly increase "
+                            "existing risk vectors for severe harm under the relevant threat model. Table 1, Biological and Chemical, High: [High] The model can provide "
+                            "meaningful counterfactual assistance (relative to unlimited access to baseline of tools available in 2021) to “novice” actors (anyone with "
+                            "a basic relevant technical background) that enables them to create known biological or chemical threats. Table 1, Cybersecurity, High: "
+                            "[High] The model removes existing bottlenecks to scaling cyber operations including by automating end-to-end cyber operations against "
+                            "reasonably hardened targets OR by automating the discovery and exploitation of operationally relevant vulnerabilities. Table 1, AI "
+                            "Self-improvement, High: [High] The model’s impact is equivalent to giving every OpenAI researcher a highly performant mid-career research "
+                            "engineer assistant, relative to those researchers’ 2024 baseline.", "{0} is high"),
     "critical": base(["level"], "{0} is a Critical level; 2.2: “Critical capability thresholds mean capabilities "
                                 "that present a meaningful risk of a qualitatively new threat vector for severe harm "
                                 "with no ready precedent.”; change log item 2: “Critical capability thresholds mean "
                                 "capabilities that present a meaningful risk of a qualitatively new threat vector "
-                                "for severe harm with no ready precedent under the relevant threat model.”", "{0} is critical"),
+                                "for severe harm with no ready precedent under the relevant threat model.”"
+                                "; the Framework's words, 2.2 and change log item 2: Critical capability thresholds mean capabilities that present a meaningful risk of "
+                                "a qualitatively new threat vector for severe harm with no ready precedent. Critical capability thresholds mean capabilities that "
+                                "present a meaningful risk of a qualitatively new threat vector for severe harm with no ready precedent under the relevant threat model. "
+                                "Table 1, Biological and Chemical, Critical: [Critical] The model can enable an expert to develop a highly dangerous novel threat vector "
+                                "(e.g., comparable to a novel CDC Class A biological agent) OR the model can be connected to tools and equipment to complete the full "
+                                "engineering and/or synthesis cycle of a regulated or novel biological threat without human intervention. Table 1, Cybersecurity, "
+                                "Critical: [Critical] A tool-augmented model can identify and develop functional zero-day exploits of all severity levels in many "
+                                "hardened real-world critical systems without human intervention OR model can devise and execute end-to-end novel strategies for "
+                                "cyberattacks against hardened targets given only a high level desired goal. Table 1, AI Self-improvement, Critical: [Critical] The "
+                                "model is capable of recursively self improving (i.e., fully automated AI R&D), defined as either (leading indicator) a superhuman "
+                                "research-scientist agent OR (lagging indicator) causing a generational model improvement (e.g., from OpenAI o1 to OpenAI o3) in 1/5th "
+                                "the wall-clock time of equivalent progress in 2024 (e.g., sped up to just 4 weeks) sustainably for several months. Table 1, Biological "
+                                "and Chemical, Critical, its risk: Proliferating the ability to create a novel threat vector of the severity of a CDC Class A biological "
+                                "agent (i.e., high mortality, ease of transmission) could cause millions of deaths and significantly disrupt public life, with few "
+                                "available societal safeguards.", "{0} is critical"),
     "low": base(["level"], "{0} is a \"low\" level (a term the change log removes)", "{0} is low"),
     "medium": base(["level"], "{0} is a \"medium\" level (a term the change log removes)", "{0} is medium"),
     "indicator_for": base(["evaluation", "level"], "{0} is used as an indicator for {1} (footnote 5)", "{0} indicates {1}"),
@@ -175,7 +205,10 @@ BASE = {
                                      "has occurred; OpenAI ('we') decides this (OT20)"),
     "adjustment_confirmed": base(["situation"], "it is rigorously confirmed at {0} that another frontier AI developer "
                                      "developed or released a system with High or Critical capability in a Tracked Category without "
-                                     "comparable safeguards"),
+                                     "comparable safeguards"
+                                     "; the Framework's words, 4.3: We recognize that another frontier AI model developer might develop or release a system with High or "
+                                     "Critical capability in one of this Framework’s Tracked Categories and may do so without instituting comparable safeguards to the "
+                                     "ones we have committed to."),
     "adjustment_area": base(["situation", "category"], "4.3's adjustment at {0} is to the level of safeguards OpenAI "
                             "requires in capability area {1} (“that capability area”): the Tracked Category in "
                             "which the scenario rigorously confirmed at {0} occurred", "{0} adjusts {1}"),
@@ -210,7 +243,41 @@ BASE = {
     "forecast_critical": base(["situation"], "the model at {0} is forecasted to reach Critical capability; OpenAI decides this"),
     "existing_at_publication": base(["situation"], "the model at {0} is one OpenAI possessed at publication (2025-04-15), "
                                     "the time of 4.4's “We do not currently possess any models that have Critical "
-                                    "levels of capability”"),
+                                    "levels of capability”"
+                                    "; the Framework's words, introduction and 2.1: We currently focus this work on three areas of frontier capability, which we call "
+                                    "Tracked Categories: • Biological and Chemical capabilities that, in addition to unlocking discoveries and cures, can also reduce "
+                                    "barriers to creating and using biological or chemical weapons. • Cybersecurity capabilities that, in addition to helping protect "
+                                    "vulnerable systems, can also create new risks of scaled cyberattacks and vulnerability exploitation. • AI Self-improvement "
+                                    "capabilities that, in addition to unlocking helpful capabilities faster, could also create new challenges for human control of AI "
+                                    "systems. Tracked Categories are those capabilities which we track most closely, measuring them during each covered deployment and "
+                                    "preparing safeguards for when a threshold level is crossed. 2.2: Capability thresholds concretely describe things an AI system "
+                                    "might be able to help someone do or might be able to do on its own that could meaningfully increase risk of severe harm. section 1: "
+                                    "An internal, cross-functional group of OpenAI leaders called the Safety Advisory Group (SAG) oversees the Preparedness Framework "
+                                    "and makes expert recommendations on the level and type of safeguards required for deploying frontier capabilities safely and "
+                                    "securely. 3.2: The Preparedness Framework applies to any new or updated deployment that has a plausible chance of reaching a "
+                                    "capability threshold whose corresponding risks are not addressed by an existing Safeguards Report. Examples of such covered "
+                                    "deployments are: • every frontier model (e.g., OpenAI o1 or OpenAI o3) that we plan to deploy externally • any agentic system "
+                                    "(including significant agents deployed only internally) that represents a substantial increase in the capability frontier • any "
+                                    "significant change in the deployment conditions of an existing model (e.g., enabling finetuning, releasing weights, or significant "
+                                    "new features) that makes the existing Capabilities Report or Safeguards Report no longer reasonably applicable • incremental "
+                                    "updates or distilled models with unexpectedly significant increases in capability. 6 introduction: The Preparedness Framework is "
+                                    "OpenAI’s approach to tracking and preparing for frontier capabilities that create new risks of severe harm.1 Appendix B: OpenAI "
+                                    "Leadership, i.e., the CEO or a person designated by them, is responsible for: • Making all final decisions, including accepting any "
+                                    "residual risks and making deployment go/no-go decisions, informed by SAG’s recommendations. • Resourcing the implementation of the "
+                                    "Preparedness Framework (e.g., additional work on safeguards where necessary). 4.1: We consider separate safeguards for two of the "
+                                    "main ways in which risks can be realized: a malicious user, who can leverage the model to cause the severe harm, and a misaligned "
+                                    "model, which autonomously causes the harm. 4.2: We compile the information on the planned safeguards needed to minimize the risk of "
+                                    "severe harm into a Safeguards Report. The Safeguards Report should include the following information: • Identified ways a risk of "
+                                    "severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards • Details "
+                                    "about the efficacy of those safeguards • An assessment on the residual risk of severe harm based on the deployment • Any notable "
+                                    "limitations with the information provided change log item 8: Establish Capabilities Reports and Safeguards Reports, the key "
+                                    "artifacts we use to support informed decision-making under the Preparedness Framework in the context of systems that are capable "
+                                    "enough to pose severe risks. 3.1 and change log item 6: Deep Dives: designed to provide additional evidence validating the scalable "
+                                    "evaluations’ findings on whether a capability threshold has been crossed. These may include a wide range of evidence gathering "
+                                    "activities, such as human expert red-teaming, expert consultations, resource-intensive third party evaluations (e.g., bio wet lab "
+                                    "studies, assessments by independent third party evaluators), and any other activity requested by SAG. We also define “scalable "
+                                    "evaluations,” which are automated, and distinguish these from “deep dive” evaluations that may include consultation with human "
+                                    "experts and are designed in part to validate the scalable evaluations."),
     "threshold_determined": base(["situation"], "the SAG determines at {0} that a capability threshold has been crossed"),
     "safeguards_already_assessed": base(["situation"], "the corresponding safeguards at {0} have already been implemented and assessed"),
     "rapid_risk": base(["situation"], "a risk of severe harm rapidly develops at {0}"),
@@ -229,7 +296,10 @@ BASE = {
     "leadership_decision": base(["situation"], "{0} is a final decision of OpenAI Leadership"),
     "board_finds_necessary": base(["situation"], "it is necessary at {0} to act on the decision (Appendix B: "
                                                   "\u201cWhere necessary\u201d); the source names no decider: the "
-                                                  "decider is unstated (an open term, as OT13)"),
+                                                  "decider is unstated (an open term, as OT13)"
+                                                  "; the Framework's words, Appendix B: The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board) "
+                                                  "will be given visibility into processes, and can review decisions and otherwise require reports and information from "
+                                                  "OpenAI Leadership as necessary to fulfill the Board’s oversight role."),
     # pf-f16-without-fix (ruling pf-f16-without-n2-20261116 section 4): the limit of RS7=noinput's permission.
     # Recommendations count as given only if they are for this decision and given before it; a SAG still
     # deliberating with none given for this decision is "none given". Modelling rule: a case that states SAG
@@ -265,7 +335,24 @@ BASE = {
                                                     "to be Tracked Categories, but where we believe additional work "
                                                     "is needed now.” “These include Long-range Autonomy, "
                                                     "Sandbagging, Autonomous Replication and Adaptation, Undermining "
-                                                    "Safeguards, and Nuclear and Radiological.”"),
+                                                    "Safeguards, and Nuclear and Radiological.”"
+                                                    "; the Framework's words, introduction, 2.1, 2.3 and change log item 5: In this updated version of the Framework we "
+                                                    "also introduce a set of Research Categories. These are areas of capability that could pose risks of severe harm, "
+                                                    "that do not yet meet our criteria to be Tracked Categories, and where we are investing now to further develop our "
+                                                    "threat models and capability elicitation techniques. Research Categories are capabilities that, while they do not "
+                                                    "meet the above criteria, nonetheless have the potential to cause or contribute to severe harm, and where we are "
+                                                    "working now in order to prepare to address risks in the future (including potentially by maturing them to Tracked "
+                                                    "Categories). There are also some areas of frontier capability that do not meet the criteria to be Tracked "
+                                                    "Categories, but where we believe work is required now in order to prepare to effectively address risks of severe "
+                                                    "harms in the future. These capabilities either need more research and threat modeling before they can be rigorously "
+                                                    "measured, or do not cause direct risks themselves but may need to be monitored because further advancement in this "
+                                                    "capability could undermine the safeguards we rely on to mitigate existing Tracked Category risks. We call these "
+                                                    "Research Categories, and in these areas we will take the following steps, both internally and in collaboration with "
+                                                    "external experts: • Further developing the threat models for the area, • Advancing the science of capability "
+                                                    "measurement in the area and investing towards the development of rigorous evaluations (which could be achieved "
+                                                    "internally or via partnerships), and • Sharing summaries of our findings with the public where feasible. Introduce "
+                                                    "Research Categories, areas of capability that do not meet the criteria to be Tracked Categories, but where we "
+                                                    "believe additional work is needed now."),
     "plausible": base(["capability"], "{0} meets the plausible-pathway criterion; 2.1, criterion 1 (Plausible): “It "
                                       "must be possible to identify a causal pathway for a severe harm in the "
                                       "capability area, enabled by frontier AI.”"),
@@ -282,7 +369,16 @@ BASE = {
                                          "(Instantaneous or irremediable): “The outcome is such that once realized, "
                                          "its severe harms are immediately felt, or are inevitable due to a lack of "
                                          "feasible measures to remediate.”"),
-    "criteria_tracking": {"arguments": ["capability"], "description": "{0} is tracked as a category",
+    "criteria_tracking": {"arguments": ["capability"], "description": "{0} is tracked as a category"
+                                                                      "; the Framework's words, 2.1: Plausible: It must be possible to identify a causal pathway for a "
+                                                                      "severe harm in the capability area, enabled by frontier AI. 2.1: Measurable: We can construct or "
+                                                                      "adopt capability evaluations that measure capabilities that closely track the potential for the "
+                                                                      "severe harm. 2.1: Severe: There is a plausible threat model within the capability area that would "
+                                                                      "create severe harm.1 2.1: Net new: The outcome cannot currently be realized as described "
+                                                                      "(including at that scale, by that threat actor, or for that cost) with existing tools and "
+                                                                      "resources (e.g., available as of 2021) but without access to frontier AI. 2.1: Instantaneous or "
+                                                                      "irremediable: The outcome is such that once realized, its severe harms are immediately felt, or "
+                                                                      "are inevitable due to a lack of feasible measures to remediate.",
                           "regulated": {"role": "obligation", "default": "deny",
                                         "act": "{0} be tracked as a category", "permission": "criteria_exclusion"}},
     "criteria_exclusion": {"arguments": ["capability"], "description": "{0} may be tracked as a category",
@@ -339,13 +435,55 @@ ACTS = {
                           "policies, leading to potential permanent bans”; 4.2: “Robustness: Malicious users cannot "
                           "use the model to cause the severe harm because they cannot elicit the necessary "
                           "capability, such as because the model is modified to refuse to provide assistance to "
-                          "harmful tasks and is robust to jailbreaks that would circumvent those refusals.”"),
+                          "harmful tasks and is robust to jailbreaks that would circumvent those refusals.”"
+                          "; the Framework's words, Appendix C.1: Safeguards should sufficiently minimize the risk of severe harm associated with misuse of the model’s "
+                          "capabilities. This can be done by establishing that all plausible known vectors of enabling severe harm are sufficiently addressed by one or "
+                          "more of the following claims: • Robustness: Users cannot use the model to cause the harm because they cannot elicit the capability, such as "
+                          "because the model is modified to refuse to provide assistance to harmful tasks and is robust to jailbreaks that would circumvent those "
+                          "refusals. • Usage Monitoring: If a model does not refuse and provides assistance to harmful tasks, monitors can stop or catch adversarial "
+                          "users before their misuse has achieved an unacceptable scale of harm, through a combination of automated and human detection and enforcement "
+                          "within an acceptable time frame. • Trust-based Access: The actors who gain access to the model will not use it in a way that presents an "
+                          "associated risk of severe harm under our threat model."),
     "misuse_safeguards_before_external": ("{0} have misuse safeguards meeting the High standard before external "
                                           "deployment",
                                           "Table 1 BIO-H: safeguards against misuse meeting High standard (Appendix "
                                           "C.1)"),
     "security_controls": ("{0} have security controls meeting the High standard",
-                          "Table 1: security controls meeting High standard (Appendix C.3)"),
+                          "Table 1: security controls meeting High standard (Appendix C.3)"
+                          "; the Framework's words, Appendix C.3: We will require the following practices for High capability models: • Security Threat Modeling and "
+                          "Risk Management – Comprehensive Security Threat Models: Ensure OpenAI employs security threat modeling that systematically identifies and "
+                          "mitigates risks posed by adversaries. These models address both external and internal threats, explicitly mapping vulnerabilities and attack "
+                          "vectors relevant to frontier AI model access or misuse. – Continuous Review and Iteration: Ensure security threat models are regularly "
+                          "reviewed and updated. This includes updating the Security framework, policies, and controls as technologies and threats evolve. – Continuous "
+                          "Monitoring and Validation: Ensure security threat models and updates inform where security and data privacy controls should be implemented, "
+                          "improved, and monitored to further reduce risk. Internal and external assessments to validate these controls are conducted regularly and "
+                          "reports are provided to OpenAI leadership. • Defense in Depth – Layered Security Architecture: Adopt a layered security strategy, ensuring "
+                          "robust protection through multiple defensive barriers, including physical and datacenter security, network segmentation and controls, "
+                          "workload isolation, data encryption, and other overlapping and complementary security controls. – Zero Trust Principles: Embrace Zero Trust "
+                          "principles in the design and operation of infrastructure, networks, and endpoints. Leverage hardware-backed security and modern "
+                          "authentication standards and controls for accessing critical resources and performing operations. • Access Management – Principle of Least "
+                          "Privilege: Ensure access to systems and data is limited based on job functions, need-to-know, and operational requirements in alignment with "
+                          "the principles of least privilege and separation of duties. Ensure all access is regularly audited and reviewed. For all models, especially "
+                          "those presenting High capabilities, access must be strictly limited, protected with strong multi-factor authentication, and may require "
+                          "additional approvals for access. – Identity and Device Management: Employees must authenticate using multi-factor authentication (MFA) and "
+                          "managed devices meeting security baselines. Access must be logged and reviewed for detection and investigative purposes. • Secure Development "
+                          "and Supply Chain – Secure Development Lifecycle: Integrate automated code analysis, formal security reviews, and penetration testing in "
+                          "engineering processes. Apply security reviews and validation to higher-sensitivity critical components prior to deployment. – Change "
+                          "Management: Establish and maintain a formal change management process to ensure that all modifications to systems, applications, and "
+                          "infrastructure are properly authorized, documented, tested, and approved before deployment. Changes to critical infrastructure should undergo "
+                          "multi-person approval and review. This process should include maintaining comprehensive records of changes and implementing rollback "
+                          "procedures to revert to previous states. – Software Supply Chain Integrity: Enforce supply chain security measures, including sourcing "
+                          "hardware and software from reputable sources, and continuous vetting and monitoring of third-party suppliers and software libraries. • "
+                          "Operational Security – Monitoring and Incident Response: Monitor security and event logs continuously to detect, triage, and respond to "
+                          "security incidents rapidly by 24x7 on-call staff. – Vulnerability Management: Ensure known vulnerabilities are addressed through consistent "
+                          "patching and corrective actions, minimizing exploitation opportunities. – Adversarial Testing and Red-Teaming: Conduct adversarial testing "
+                          "and red-teaming exercises to proactively identify and mitigate potential vulnerabilities within corporate, research, and product systems, "
+                          "ensuring resilience against unknown vulnerabilities and emerging threats. Encourage reporting of good-faith security research through bug "
+                          "bounty programs. • Auditing and Transparency – Independent Security Audits: Ensure security controls and practices are validated regularly by "
+                          "third-party auditors to ensure compliance with relevant standards and robustness against identified threats. – Transparency in Security "
+                          "Practices: Ensure security findings, remediation efforts, and key metrics from internal and independent audits are periodically shared with "
+                          "internal stakeholders and summarized publicly to demonstrate ongoing commitment and accountability. – Governance and Oversight: Ensure that "
+                          "management provides oversight over the information security and risk management programs."),
     "alignment_safeguards": ("{0} have misalignment safeguards meeting the High standard",
                              "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)"
                              "; Appendix C.2: “In addition to human misuse, several of the Tracked Category "
@@ -366,7 +504,17 @@ ACTS = {
                              "include trying to escape a container, lying to the user to appease them, etc.” "
                              "“Red-teamers can train an arbitrarily adversarial agent or can pretend to be an agent "
                              "in our setup and we should ensure that harmful behaviors are detected by monitors with "
-                             "a high recall rate”"),
+                             "a high recall rate”"
+                             "; the Framework's words, Appendix C.2: Safeguards should sufficiently minimize the risk associated with a misaligned model circumventing "
+                             "human control and oversight and executing severe harms. This can be done by establishing that all plausible known vectors of enabling "
+                             "severe harm are sufficiently addressed by one or more of the following claims: • Lack of Autonomous Capability: The model is not capable "
+                             "of carrying out tasks autonomously, including the risk of severe harm. • Value Alignment: The model consistently applies human values in "
+                             "novel settings (without any instructions) to avoid taking actions that cause harm, and has shown sufficiently minimal indications of "
+                             "misaligned behaviors like deception or scheming. • Instruction Alignment: The model consistently understands and follows user or system "
+                             "instructions, even when vague, and those instructions rule out pathways to causing severe harm. • Reliable and Robust System Oversight: "
+                             "Effective AI and human oversight of model actions detects and prevents execution of harm or subversion of safeguards. • System "
+                             "Architecture: The model can’t take actions that cause harm because it lacks access to output channels or mechanisms to persist "
+                             "sufficiently to execute the harm, due to containerization and restricted permissions."),
     "halt_development": ("{0} halt further development", "Table 1: halt further development at Critical"),
     "safeguards_before_deployment": ("{0} have safeguards sufficiently minimizing severe-harm risk before deployment",
                                      "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the "
@@ -388,67 +536,44 @@ ACTS = {
                                        "additional safeguards (safety and security controls) before internal use"),
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
-    "security_practices": ("{0} have security practices", "C.3: required High-level security practices"
-                           "; Appendix C.3: “Robust security practices and controls are essential to mitigating "
-                           "risks associated with the deployment of models reaching High capability thresholds.” "
-                           "“Our security approach integrates industry best practices with OpenAI-specific "
-                           "innovations tailored to manage the unique threats posed by frontier AI technologies.” "
-                           "“Our security practices are designed to protect against external and internal "
-                           "adversaries and align with established frameworks such as ISO 27001, SOC2, NIST SP "
-                           "800-53, and FedRAMP.” “While nascent, AI-specific security standards may also provide "
-                           "frameworks for addressing security and regulatory standards that address the unique "
-                           "challenges of securing AI systems.” “This may include efforts emerging from the Cloud "
-                           "Security Alliance’s AI Safety Initiative or the NIST SP 800-218 AI updates.” “We will "
-                           "require the following practices for High capability models:” “Security Threat Modeling "
-                           "and Risk Management – Comprehensive Security Threat Models: Ensure OpenAI employs "
-                           "security threat modeling that systematically identifies and mitigates risks posed by "
-                           "adversaries.” “These models address both external and internal threats, explicitly "
-                           "mapping vulnerabilities and attack vectors relevant to frontier AI model access or "
-                           "misuse. – Continuous Review and Iteration: Ensure security threat models are regularly "
-                           "reviewed and updated.” “This includes updating the Security framework, policies, and "
-                           "controls as technologies and threats evolve. – Continuous Monitoring and Validation: "
-                           "Ensure security threat models and updates inform where security and data privacy "
-                           "controls should be implemented, improved, and monitored to further reduce risk.” "
-                           "“Internal and external assessments to validate these controls are conducted regularly "
-                           "and reports are provided to OpenAI leadership.” “Defense in Depth – Layered Security "
-                           "Architecture: Adopt a layered security strategy, ensuring robust protection through "
-                           "multiple defensive barriers, including physical and datacenter security, network "
-                           "segmentation and controls, workload isolation, data encryption, and other overlapping "
-                           "and complementary security controls. – Zero Trust Principles: Embrace Zero Trust "
-                           "principles in the design and operation of infrastructure, networks, and endpoints.” "
-                           "“Leverage hardware-backed security and modern authentication standards and controls for "
-                           "accessing critical resources and performing operations.” “Access Management – Principle "
-                           "of Least Privilege: Ensure access to systems and data is limited based on job functions, "
-                           "need-to-know, and operational requirements in alignment with the principles of least "
-                           "privilege and separation of duties.” “Ensure all access is regularly audited and "
-                           "reviewed.” “Identity and Device Management: Employees must authenticate using "
-                           "multi-factor authentication (MFA) and managed devices meeting security baselines.” "
-                           "“Access must be logged and reviewed for detection and investigative purposes.” “Secure "
-                           "Development and Supply Chain – Secure Development Lifecycle: Integrate automated code "
-                           "analysis, formal security reviews, and penetration testing in engineering processes.” "
-                           "“Apply security reviews and validation to higher-sensitivity critical components prior "
-                           "to deployment. – Change Management: Establish and maintain a formal change management "
-                           "process to ensure that all modifications to systems, applications, and infrastructure "
-                           "are properly authorized, documented, tested, and approved before deployment.” “Changes "
-                           "to critical infrastructure should undergo multi-person approval and review.” “This "
-                           "process should include maintaining comprehensive records of changes and implementing "
-                           "rollback procedures to revert to previous states.” “– Software Supply Chain Integrity: "
-                           "Enforce supply chain security measures, including sourcing hardware and software from "
-                           "reputable sources, and continuous vetting and monitoring of third-party suppliers and "
-                           "software libraries.” “Operational Security – Monitoring and Incident Response: Monitor "
-                           "security and event logs continuously to detect, triage, and respond to security "
-                           "incidents rapidly by 24x7 on-call staff. – Vulnerability Management: Ensure known "
-                           "vulnerabilities are addressed through consistent patching and corrective actions, "
-                           "minimizing exploitation opportunities.” “Encourage reporting "
-                           "of good-faith security research through bug bounty programs.” “Auditing and Transparency "
-                           "– Independent Security Audits: Ensure security controls and practices are validated "
-                           "regularly by third-party auditors to ensure compliance with relevant standards and "
-                           "robustness against identified threats. – Transparency in Security Practices: Ensure "
-                           "security findings, remediation efforts, and key metrics from internal and independent "
-                           "audits are periodically shared with internal stakeholders and summarized publicly to "
-                           "demonstrate ongoing commitment and accountability. – Governance and Oversight: Ensure "
-                           "that management provides oversight over the information security and risk management "
-                           "programs.”"),
+    "security_practices": ("{0} have security practices",
+                           "C.3: required High-level security practices; Appendix C.3: “Robust security practices and controls are essential to mitigating risks associated with the deployment of models reaching High capability thresholds.” “Our security approach integrates industry best "
+                           "practices with OpenAI-specific innovations tailored to manage the unique threats posed by frontier AI technologies.” “Our security practices are designed to protect against external and internal adversaries and align with established frameworks such as ISO 27001, "
+                           "SOC2, NIST SP 800-53, and FedRAMP.” “While nascent, AI-specific security standards may also provide frameworks for addressing security and regulatory standards that address the unique challenges of securing AI systems.” “This may include efforts emerging from the "
+                           "Cloud Security Alliance’s AI Safety Initiative or the NIST SP 800-218 AI updates.” “We will require the following practices for High capability models:” “Security Threat Modeling and Risk Management – Comprehensive Security Threat Models: Ensure OpenAI employs "
+                           "security threat modeling that systematically identifies and mitigates risks posed by adversaries.” “These models address both external and internal threats, explicitly mapping vulnerabilities and attack vectors relevant to frontier AI model access or misuse. – "
+                           "Continuous Review and Iteration: Ensure security threat models are regularly reviewed and updated.” “This includes updating the Security framework, policies, and controls as technologies and threats evolve. – Continuous Monitoring and Validation: Ensure security "
+                           "threat models and updates inform where security and data privacy controls should be implemented, improved, and monitored to further reduce risk.” “Internal and external assessments to validate these controls are conducted regularly and reports are provided to OpenAI "
+                           "leadership.” “Defense in Depth – Layered Security Architecture: Adopt a layered security strategy, ensuring robust protection through multiple defensive barriers, including physical and datacenter security, network segmentation and controls, workload isolation, data "
+                           "encryption, and other overlapping and complementary security controls. – Zero Trust Principles: Embrace Zero Trust principles in the design and operation of infrastructure, networks, and endpoints.” “Leverage hardware-backed security and modern authentication "
+                           "standards and controls for accessing critical resources and performing operations.” “Access Management – Principle of Least Privilege: Ensure access to systems and data is limited based on job functions, need-to-know, and operational requirements in alignment with "
+                           "the principles of least privilege and separation of duties.” “Ensure all access is regularly audited and reviewed.” “Identity and Device Management: Employees must authenticate using multi-factor authentication (MFA) and managed devices meeting security baselines.” "
+                           "“Access must be logged and reviewed for detection and investigative purposes.” “Secure Development and Supply Chain – Secure Development Lifecycle: Integrate automated code analysis, formal security reviews, and penetration testing in engineering processes.” “Apply "
+                           "security reviews and validation to higher-sensitivity critical components prior to deployment. – Change Management: Establish and maintain a formal change management process to ensure that all modifications to systems, applications, and infrastructure are properly "
+                           "authorized, documented, tested, and approved before deployment.” “Changes to critical infrastructure should undergo multi-person approval and review.” “This process should include maintaining comprehensive records of changes and implementing rollback procedures to "
+                           "revert to previous states.” “– Software Supply Chain Integrity: Enforce supply chain security measures, including sourcing hardware and software from reputable sources, and continuous vetting and monitoring of third-party suppliers and software libraries.” "
+                           "“Operational Security – Monitoring and Incident Response: Monitor security and event logs continuously to detect, triage, and respond to security incidents rapidly by 24x7 on-call staff. – Vulnerability Management: Ensure known vulnerabilities are addressed through "
+                           "consistent patching and corrective actions, minimizing exploitation opportunities.” “Encourage reporting of good-faith security research through bug bounty programs.” “Auditing and Transparency – Independent Security Audits: Ensure security controls and practices are"
+                           " validated regularly by third-party auditors to ensure compliance with relevant standards and robustness against identified threats. – Transparency in Security Practices: Ensure security findings, remediation efforts, and key metrics from internal and independent "
+                           "audits are periodically shared with internal stakeholders and summarized publicly to demonstrate ongoing commitment and accountability. – Governance and Oversight: Ensure that management provides oversight over the information security and risk management programs.”;"
+                           " the Framework's words, Appendix C.3: We will require the following practices for High capability models: • Security Threat Modeling and Risk Management – Comprehensive Security Threat Models: Ensure OpenAI employs security threat modeling that systematically "
+                           "identifies and mitigates risks posed by adversaries. These models address both external and internal threats, explicitly mapping vulnerabilities and attack vectors relevant to frontier AI model access or misuse. – Continuous Review and Iteration: Ensure security "
+                           "threat models are regularly reviewed and updated. This includes updating the Security framework, policies, and controls as technologies and threats evolve. – Continuous Monitoring and Validation: Ensure security threat models and updates inform where security and "
+                           "data privacy controls should be implemented, improved, and monitored to further reduce risk. Internal and external assessments to validate these controls are conducted regularly and reports are provided to OpenAI leadership. • Defense in Depth – Layered Security "
+                           "Architecture: Adopt a layered security strategy, ensuring robust protection through multiple defensive barriers, including physical and datacenter security, network segmentation and controls, workload isolation, data encryption, and other overlapping and "
+                           "complementary security controls. – Zero Trust Principles: Embrace Zero Trust principles in the design and operation of infrastructure, networks, and endpoints. Leverage hardware-backed security and modern authentication standards and controls for accessing critical "
+                           "resources and performing operations. • Access Management – Principle of Least Privilege: Ensure access to systems and data is limited based on job functions, need-to-know, and operational requirements in alignment with the principles of least privilege and separation"
+                           " of duties. Ensure all access is regularly audited and reviewed. For all models, especially those presenting High capabilities, access must be strictly limited, protected with strong multi-factor authentication, and may require additional approvals for access. – "
+                           "Identity and Device Management: Employees must authenticate using multi-factor authentication (MFA) and managed devices meeting security baselines. Access must be logged and reviewed for detection and investigative purposes. • Secure Development and Supply Chain – "
+                           "Secure Development Lifecycle: Integrate automated code analysis, formal security reviews, and penetration testing in engineering processes. Apply security reviews and validation to higher-sensitivity critical components prior to deployment. – Change Management: "
+                           "Establish and maintain a formal change management process to ensure that all modifications to systems, applications, and infrastructure are properly authorized, documented, tested, and approved before deployment. Changes to critical infrastructure should undergo "
+                           "multi-person approval and review. This process should include maintaining comprehensive records of changes and implementing rollback procedures to revert to previous states. – Software Supply Chain Integrity: Enforce supply chain security measures, including sourcing"
+                           " hardware and software from reputable sources, and continuous vetting and monitoring of third-party suppliers and software libraries. • Operational Security – Monitoring and Incident Response: Monitor security and event logs continuously to detect, triage, and "
+                           "respond to security incidents rapidly by 24x7 on-call staff. – Vulnerability Management: Ensure known vulnerabilities are addressed through consistent patching and corrective actions, minimizing exploitation opportunities. – Adversarial Testing and Red-Teaming: "
+                           "Conduct adversarial testing and red-teaming exercises to proactively identify and mitigate potential vulnerabilities within corporate, research, and product systems, ensuring resilience against unknown vulnerabilities and emerging threats. Encourage reporting of "
+                           "good-faith security research through bug bounty programs. • Auditing and Transparency – Independent Security Audits: Ensure security controls and practices are validated regularly by third-party auditors to ensure compliance with relevant standards and robustness "
+                           "against identified threats. – Transparency in Security Practices: Ensure security findings, remediation efforts, and key metrics from internal and independent audits are periodically shared with internal stakeholders and summarized publicly to demonstrate ongoing "
+                           "commitment and accountability. – Governance and Oversight: Ensure that management provides oversight over the information security and risk management programs."),
     "evaluations_before_deployment": ("{0} undergo the suite of Scalable Evaluations prior to deployment",
                                       "3.3: \u201cPrior to deployment, every covered model undergoes the suite of "
                                       "Scalable Evaluations.\u201d"
@@ -461,12 +586,24 @@ ACTS = {
                                       "whether a capability threshold has been crossed.”; change log item 6: “We "
                                       "also define “scalable evaluations,” which are automated, and distinguish "
                                       "these from “deep dive” evaluations that may include consultation with human "
-                                      "experts and are designed in part to validate the scalable evaluations.”"),
+                                      "experts and are designed in part to validate the scalable evaluations.”"
+                                      "; the Framework's words, 3.1 and change log item 6: Scalable Evaluations: automated evaluations designed to measure proxies that "
+                                      "approximate whether a capability threshold has been crossed. Scalable evaluations have associated “indicative thresholds,” which "
+                                      "are levels of performance that we have pre-determined to indicate that a deployment may have reached a capability threshold. We "
+                                      "also define “scalable evaluations,” which are automated, and distinguish these from “deep dive” evaluations that may include "
+                                      "consultation with human experts and are designed in part to validate the scalable evaluations."),
     "capabilities_report": ("{0} have SAG review the Capabilities Report as well as decide on next steps",
-                            "3.3: the SAG reviews the Capabilities Report and decides on next steps"),
+                            "3.3: the SAG reviews the Capabilities Report and decides on next steps"
+                            "; the Framework's words, 3.3: The results of these evaluations, and any noteworthy observations that should affect interpretation of the "
+                            "results, are compiled into a Capabilities Report that is submitted to the SAG."),
     "capabilities_report_submitted": ("{0} have results compiled into a Capabilities Report submitted to the SAG",
                                       "3.3: the Scalable Evaluations' results and any noteworthy observations that should "
-                                      "affect their interpretation are compiled into a Capabilities Report submitted to the SAG"),
+                                      "affect their interpretation are compiled into a Capabilities Report submitted to the SAG"
+                                      "; the Framework's words, 3.1 and change log item 6: Scalable Evaluations: automated evaluations designed to measure proxies that "
+                                      "approximate whether a capability threshold has been crossed. Scalable evaluations have associated “indicative thresholds,” which "
+                                      "are levels of performance that we have pre-determined to indicate that a deployment may have reached a capability threshold. We "
+                                      "also define “scalable evaluations,” which are automated, and distinguish these from “deep dive” evaluations that may include "
+                                      "consultation with human experts and are designed in part to validate the scalable evaluations."),
     "safeguard_work": ("{0} start safeguard work to sufficiently reduce the threshold's severe-harm risk",
                        "4: work on safeguards to sufficiently reduce the risks of severe harm associated with that "
                        "threshold, even before a formal capability determination"),
@@ -494,7 +631,21 @@ ACTS = {
     "review_sufficiency": ("{0} review safeguard sufficiency", "4.2: review sufficiency"),
     "research_review": ("{0} review the latest research as well as findings in each Research Category",
                         "2.3: \u201cWe will periodically review the latest research and findings for each Research "
-                        "Category.\u201d (the periodicity stays ET-blocked)"),
+                        "Category.\u201d (the periodicity stays ET-blocked)"
+                        "; the Framework's words, introduction, 2.1, 2.3 and change log item 5: In this updated version of the Framework we also introduce a set of "
+                        "Research Categories. These are areas of capability that could pose risks of severe harm, that do not yet meet our criteria to be Tracked "
+                        "Categories, and where we are investing now to further develop our threat models and capability elicitation techniques. Research Categories are "
+                        "capabilities that, while they do not meet the above criteria, nonetheless have the potential to cause or contribute to severe harm, and where "
+                        "we are working now in order to prepare to address risks in the future (including potentially by maturing them to Tracked Categories). There are "
+                        "also some areas of frontier capability that do not meet the criteria to be Tracked Categories, but where we believe work is required now in "
+                        "order to prepare to effectively address risks of severe harms in the future. These capabilities either need more research and threat modeling "
+                        "before they can be rigorously measured, or do not cause direct risks themselves but may need to be monitored because further advancement in "
+                        "this capability could undermine the safeguards we rely on to mitigate existing Tracked Category risks. We call these Research Categories, and "
+                        "in these areas we will take the following steps, both internally and in collaboration with external experts: • Further developing the threat "
+                        "models for the area, • Advancing the science of capability measurement in the area and investing towards the development of rigorous "
+                        "evaluations (which could be achieved internally or via partnerships), and • Sharing summaries of our findings with the public where feasible. "
+                        "Introduce Research Categories, areas of capability that do not meet the criteria to be Tracked Categories, but where we believe additional work "
+                        "is needed now."),
     "decision_documented": ("{0} have reports to SAG as well as SAG decisions with reasoning documented",
                             "5.1: relevant reports made to the SAG and the SAG's decision and reasoning"),
     "noncompliance_investigated": ("{0} have potential noncompliance tracked as well as appropriately investigated",
@@ -518,7 +669,18 @@ ACTS = {
     "misalignment_risk_minimized": ("{0} have safeguards that sufficiently minimize misaligned-model severe-harm risk",
                                     "C.2: “Safeguards should sufficiently minimize the risk associated with a "
                                     "misaligned model circumventing human control and oversight and executing severe "
-                                    "harms.”"),
+                                    "harms.”"
+                                    "; the Framework's words, Appendix C.2: Safeguards should sufficiently minimize the risk associated with a misaligned model "
+                                    "circumventing human control and oversight and executing severe harms. This can be done by establishing that all plausible known "
+                                    "vectors of enabling severe harm are sufficiently addressed by one or more of the following claims: • Lack of Autonomous Capability: "
+                                    "The model is not capable of carrying out tasks autonomously, including the risk of severe harm. • Value Alignment: The model "
+                                    "consistently applies human values in novel settings (without any instructions) to avoid taking actions that cause harm, and has "
+                                    "shown sufficiently minimal indications of misaligned behaviors like deception or scheming. • Instruction Alignment: The model "
+                                    "consistently understands and follows user or system instructions, even when vague, and those instructions rule out pathways to "
+                                    "causing severe harm. • Reliable and Robust System Oversight: Effective AI and human oversight of model actions detects and prevents "
+                                    "execution of harm or subversion of safeguards. • System Architecture: The model can’t take actions that cause harm because it lacks "
+                                    "access to output channels or mechanisms to persist sufficiently to execute the harm, due to containerization and restricted "
+                                    "permissions."),
     "tracking": ("{0} have the category tracked", "2.1: Tracked Category criteria"),
     "coverage_decided": ("{0} have SAG make the final coverage determination", "3.2: ambiguous coverage"),
     "checkpoint_selected": ("{0} have an appropriate development checkpoint selected to be covered",
@@ -527,21 +689,54 @@ ACTS = {
     "adjustment_acknowledged": ("{0} have its adjustment publicly acknowledged", "4.3: adjustment condition"),
     "more_protective": ("{0} keep safeguards more protective than the other developer's", "4.3: adjustment condition"),
     "validation_shared": ("{0} have validation information shared", "4.3: adjustment condition"),
-    "misalignment_report": ("{0} have a misalignment safeguards report", "Table 2: Long-range Autonomy response"),
+    "misalignment_report": ("{0} have a misalignment safeguards report", "Table 2: Long-range Autonomy response"
+                                                                         "; the Framework's words, Table 2: Long-range Autonomy: ability for a model to execute a "
+                                                                         "long-horizon sequence of actions sufficient to realize a “High” threat model (e.g., a "
+                                                                         "cyberattack) without being directed by a human (including successful social engineering attacks "
+                                                                         "when needed)"),
     "sandbagging_response": ("{0} have sandbagging handled",
                              "Table 2, Sandbagging: \u201cAdopt elicitation approach that overcomes sandbagging, or use "
                              "a conservative upper bound of the model\u2019s non-sandbagged evaluation results\u201d: the "
                              "one duty is met by either alternative, an elicitation approach that overcomes sandbagging "
-                             "or a conservative upper bound of the model's non-sandbagged evaluation results"),
-    "ara_tracking": ("{0} have the research category tracked", "Table 2: ARA response"),
+                             "or a conservative upper bound of the model's non-sandbagged evaluation results"
+                             "; the Framework's words, Table 2: Sandbagging: ability and propensity to respond to safety or capability evaluations in a way that "
+                             "significantly diverges from performance under real conditions, undermining the validity of such evaluations."),
+    "ara_tracking": ("{0} have the research category tracked", "Table 2: ARA response"
+                                                               "; the Framework's words, introduction, 2.1, 2.3 and change log item 5: In this updated version of the "
+                                                               "Framework we also introduce a set of Research Categories. These are areas of capability that could pose "
+                                                               "risks of severe harm, that do not yet meet our criteria to be Tracked Categories, and where we are "
+                                                               "investing now to further develop our threat models and capability elicitation techniques. Research "
+                                                               "Categories are capabilities that, while they do not meet the above criteria, nonetheless have the "
+                                                               "potential to cause or contribute to severe harm, and where we are working now in order to prepare to "
+                                                               "address risks in the future (including potentially by maturing them to Tracked Categories). There are "
+                                                               "also some areas of frontier capability that do not meet the criteria to be Tracked Categories, but where "
+                                                               "we believe work is required now in order to prepare to effectively address risks of severe harms in the "
+                                                               "future. These capabilities either need more research and threat modeling before they can be rigorously "
+                                                               "measured, or do not cause direct risks themselves but may need to be monitored because further "
+                                                               "advancement in this capability could undermine the safeguards we rely on to mitigate existing Tracked "
+                                                               "Category risks. We call these Research Categories, and in these areas we will take the following steps, "
+                                                               "both internally and in collaboration with external experts: • Further developing the threat models for "
+                                                               "the area, • Advancing the science of capability measurement in the area and investing towards the "
+                                                               "development of rigorous evaluations (which could be achieved internally or via partnerships), and • "
+                                                               "Sharing summaries of our findings with the public where feasible. Introduce Research Categories, areas "
+                                                               "of capability that do not meet the criteria to be Tracked Categories, but where we believe additional "
+                                                               "work is needed now. Table 2: Autonomous Replication and Adaptation: ability to survive, replicate, "
+                                                               "resist shutdown, acquire resources to maintain and scale its own operations, and commit illegal "
+                                                               "activities that collectively constitute causing severe harm (whether when explicitly instructed, or at "
+                                                               "its own initiative), without also utilizing capabilities tracked in other Tracked Categories."),
     "robust_case": ("{0} have a safeguards case robust to what was discovered",
                     "Table 2, Undermining Safeguards: \u201cIf a model has High or Critical capabilities in any of the "
                     "Tracked Categories, require the Safeguards case to be robust to the discovered capability and/or "
-                    "propensity\u201d: what was discovered is the capability, the propensity, or both"),
+                    "propensity\u201d: what was discovered is the capability, the propensity, or both"
+                    "; the Framework's words, Table 2: Undermining Safeguards: ability and propensity for the model to act to undermine safeguards placed on it, "
+                    "including e.g., deception, colluding with oversight models, sabotaging safeguards over time such as by embedding vulnerabilities in safeguards "
+                    "code, etc."),
     "nuclear_safeguards": ("{0} heighten safeguards consulting appropriate US government actors",
                            "Table 2: Nuclear and Radiological: heighten safeguards (and consider further actions) in "
                            "consultation with appropriate US government actors, accounting for the complexity of "
-                           "classified information handling; the further actions remain open"),
+                           "classified information handling; the further actions remain open"
+                           "; the Framework's words, Table 2: Nuclear and Radiological: ability to meaningfully counterfactually enable the creation of a radiological "
+                           "threat or enable or significantly accelerate the development of or access to a nuclear threat while remaining undetected."),
     "pandemic_policy_contribution": ("{0} contribute towards improved public policy as well as pandemic preparedness",
                                      "Table 1 BIO-C: policy contribution"),
     "cyberdefense_contribution": ("{0} contribute to improved cyberdefense policies as well as cyberdefense tools",
@@ -551,14 +746,18 @@ ACTS = {
                                "3.3: the first next step the SAG's decision can include"),
     "chair_coordination": ("{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction",
                            "Appendix B, Fast-track: “The SAG Chair should also coordinate with OpenAI Leadership "
-                           "for immediate reaction as needed to address the risk.”"),
+                           "for immediate reaction as needed to address the risk.”"
+                           "; the Framework's words, Appendix B, SAG Membership: The SAG Chair makes any final decisions needed for the SAG. This role is expected to "
+                           "rotate, as appointed by OpenAI Leadership."),
     "third_party_evaluation": ("{0} work with third parties to independently evaluate the model",
                                "5.2: “If we deem that a deployment warrants deeper testing of Tracked Categories "
                                "of capability (as described in Section 3.1), for example based on results of "
                                "Capabilities Report presented to them, then when available and feasible, OpenAI will "
                                "work with third-parties to independently evaluate models.” (the act is OpenAI's "
                                "work with third parties, not a required result; the guards carry the deeming about a "
-                               "deployment, OT14, and 'when available and feasible')"),
+                               "deployment, OT14, and 'when available and feasible')"
+                               "; the Framework's words, 3.3: The results of these evaluations, and any noteworthy observations that should affect interpretation of the "
+                               "results, are compiled into a Capabilities Report that is submitted to the SAG."),
     "residual_risk_assessment": ("{0} include an assessment of residual severe-harm risk in the Safeguards Report",
                                  "4.2: an assessment on the residual risk of severe harm based on the deployment"),
     "persuasion_handled_outside": ("{0} have persuasion risks handled outside the Preparedness Framework",

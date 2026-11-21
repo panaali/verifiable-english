@@ -1,3 +1,5 @@
+- `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
+- `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
 - `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
 - `tests/test_fidmech_report.py` — fid-mech-b5: kill tables and denominators (plan 2e), units passing the stated checks (plan 8), the plant and defect loader with rebase by unit text (plan 5.3),…
 - `tests/test_fidmech_runner.py` — fid-mech-b5: the batch runner (plan 7, 2e, 10) on the B2 fixture case with an injected evaluator, host and clock.
@@ -78,4 +80,3 @@
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
 - `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
 - `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
-- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
