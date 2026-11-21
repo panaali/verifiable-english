@@ -1,0 +1,8 @@
+........./tmp/rab-3huz4jrp/endgame.py:37: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK' mode='r' encoding='UTF-8'>
+  n, f, u = open("/home/seyran/code/manage-agents/ENDGAME_MAIN_WEEK").read().split()[:3]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.............
+----------------------------------------------------------------------
+Ran 22 tests in 2.541s
+
+OK

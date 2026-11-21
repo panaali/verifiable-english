@@ -1,0 +1,13 @@
+a6aa333437889b4339dba9cbd670e503  tools-local/endgame.py
+8cd70f32acc3d6cc83fef17bed5e9da7  tools-local/reset_fresh.py
+9da01ed1220d0f8e18b331bd437094d5  pick-claude-account.sh
+2f3d499b74e9c4af7c36938b08645a09  tools-local/burndown.py
+f69535c5ce5fee09e2d4331ba3b25e93  tools-local/review-ab-rule.py
+18f759e327507f90e271da3078401641  tools-local/burndown.py.new-usagew2
+19c8abd607c87fb6b534e260be2ed6df  tools-local/endgame.py.new-usagew2
+cc865a6bcfdcaa7eacc8055c8caad6ba  tools-local/reset_fresh.py.new-usagew2
+0b731a1f3f11d1f04a4861f04ca71f53  tools-local/review-ab-rule.py.new-usagew2
+ea310be137d64cd19e7adeef60a284a5  pick-claude-account.sh.new-usagew2
+e1f37808dfb895f729f4e426d5a71d69  tools-local/test_usage_reset_fresh.py
+85d6f696d980dcc376298eaa51977bd7  tools-local/test_review_ab_rule.py
+58acf7c80ea0f988a35ceb916d852b7c  tools-local/test_burndown.py

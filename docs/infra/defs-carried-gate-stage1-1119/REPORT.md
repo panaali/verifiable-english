@@ -2,7 +2,7 @@
 
 **Status:** built; review F1-F3 (`02cd654`) fixed (section 9), ready for recheck; no DRI signature needed (no DELTA row, trusted Lean growth +0).
 **Measured at:** VE main `0ce720e46b` (the merge base; `usecases/` identical to main), the audit pin `3d6b459df4`, and, for the FSF/RSP repairs, each repair's merge base.
-**Numbers:** known cases: 60 of 61 findings detected (363 of 389 pairs; 26 pairs not reached, each named below). All documents: 472 pairs flagged; a hand check of 24 found 10 false alarms and 2 new true findings (both P2-kind). Run time 8.1 s for all 15 documents (bar 60 s).
+**Numbers:** known cases: IN-SAMPLE (the design's own cases, the ones the tool was built against): 60 of 61 findings detected (363 of 389 pairs; 26 pairs not reached, each named below); out-of-sample recall and an independently judged false-alarm rate: docs/infra/defs-carried-oos-measure-1119/REPORT.md. All documents: 472 pairs flagged; a hand check of 24 found 10 false alarms and 2 new true findings (both P2-kind). Run time 8.1 s for all 15 documents (bar 60 s).
 **Changed:** new `tools/defs_carried.py` (report-mode checker), `tools/defs_carried_counter.py` (counter code copied byte for byte), `tools/defs_carried_known.py` (fixture builder), `tests/test_definitions_carried.py`, fixtures under `tests/data/defs_carried/`, and `tests/history-dependent.json` (regenerated).
 **Open:** none blocking. Stage 2 waits for the orchestrator's ruling on these numbers (row defs-carried-gate-stage2-1119).
 

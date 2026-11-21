@@ -1,0 +1,11 @@
+# condensed: the result lines of the run (FAIL/ERROR ids, exceptions, assertion rows, summary)
+FAIL: test_every_sandbox_holds_the_modules_its_tools_import (__main__.SandboxImports.test_every_sandbox_holds_the_modules_its_tools_import)
+AssertionError: Lists differ: ['test_decider_wait_escalate.py: token-led[166 chars].py'] != []
++ []
+- ['test_decider_wait_escalate.py: token-ledger.py',
+-  'test_infra_feed.py: endgame.py',
+-  'test_review_ab_rule.py: fix-round-stats.py',
+-  'test_review_ab_rule.py: token-ledger.py',
+-  'test_role_budget.py: token-ledger.py'] : a sandbox lacks a tools-local module that a tool it copies imports
+Ran 2 tests in 4.451s
+FAILED (failures=1)

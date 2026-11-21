@@ -1,0 +1,11 @@
+# defs-repair-openai-preparedness-1119: DELTA
+
+Base: main f21b79f71e (rebased; first built on 09bea0972d). LANGUAGE only: no rule, fact, formula, act or verbalisation
+changed, and no decision path (`git diff main...HEAD -- usecases/openai-preparedness/rules.d1.ve facts.d1.ve stage0.py
+run.py` is empty). PF verdicts were not re-run: results.json is sealed for this item (task SEAL) and is not among the
+rows' derived files.
+
+| # | Delta | Records | Ruling | Evidence |
+|---|---|---|---|---|
+| 1 | Legends (environment.d1.json `description`, built by pf_vocabulary.py) of high, critical, existing_at_publication, in_category, research_review, research_category_review, ara_tracking, capabilities_report, third_party_evaluation, criteria_tracking, misalignment_report, sandbagging_response, robust_case, nuclear_safeguards, evaluations_before_deployment, capabilities_report_submitted, chair_coordination, board_finds_necessary, misuse_safeguards, alignment_safeguards, misalignment_risk_minimized, security_controls, security_practices, adjustment_confirmed: the old text kept whole, then "; the Framework's words, " and each row's section label and quote | 24 legends, 48 rows | R3 (standing ruling, DRI-RULINGS.md): information added, nothing removed or renamed | `tests/test_defs_repair_openai_preparedness_1119.py::test_each_carrier_keeps_its_old_legend_and_appends_the_rows_in_order` (old legends saved from main in evidence/legends-before.json); `::test_each_row_quote_is_shown_and_counted_in_its_carrier_legend[1..48]` |
+| 2 | Identities that hash the legends: PF environment.d1.json sha256 in conformance/english-lean/corpus-seal.json 38cbcba9… -> e6372213…, its d1 `lexicon_id` in conformance/english-lean/lexicon-report.json 835afea4… -> 1abe6057…, coverage.json one line (build_document.py), and the seal_id. The seal tool also writes FSF's current environment.d1.json sha256 (4c18fadd… -> 6e7a75e3…: main's seal predates the FSF repair merges; not this item's change) | 5 ids | R3 (standing ruling, DRI-RULINGS.md): the ids follow row 1 (descriptions are part of the hashed environment); nothing removed | `uv run python usecases/openai-preparedness/build_document.py --check` exit 0; lexicon writer `{"valid": 43, "invalid": 0}`; selected run exit 0 (REPORT, Test runs) |

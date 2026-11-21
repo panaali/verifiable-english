@@ -147,13 +147,13 @@
   {
    "environment": "usecases/anthropic-rsp/environment.d1.json",
    "failures": [],
-   "lexicon_id": "3e964f5134ca2abdf1ea70e6ac6166f8a648be179b2f5296fededc016534eb43",
+   "lexicon_id": "436849f8396007d83fab32d9d0ed68b197c5e61d32200b6d504959cdb616ddc0",
    "symbols": 127
   },
   {
    "environment": "usecases/asimov-extended/environment.json",
    "failures": [],
-   "lexicon_id": "b0d4315385d7983a5400306ec450bb7737f974a983ea2c43839897e607e9b4c2",
+   "lexicon_id": "d756776371281ebb772ff248e30d208c9a22ec0383adc0c34b6d98b7c11454df",
    "symbols": 55
   },
   {
@@ -207,7 +207,7 @@
   {
    "environment": "usecases/math-mini-paper/environment.json",
    "failures": [],
-   "lexicon_id": "b2834ac29d1f38b30b73c05a3075c4e4f8879f058d63486c29eb2e0fabf50b59",
+   "lexicon_id": "6294829e439e76689c5a440f56d9e40dac0f07455da996a4cd09bc6ad85a09bc",
    "symbols": 10
   },
   {
@@ -225,7 +225,7 @@
   {
    "environment": "usecases/openai-preparedness/environment.d1.json",
    "failures": [],
-   "lexicon_id": "835afea4ebdd97d2c788b1fd01ce2813d4a968b4a80153bd484555a41a148f74",
+   "lexicon_id": "dfc0cddf2b236cc8b439d40934b931b45c80f48d1a91b9c5bedbdba24a438e91",
    "symbols": 140
   },
   {
@@ -243,7 +243,7 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "278a676ee4b3d6e6490b20ecd87bdf070e0b1f5edc9f33f2fca4bc3fce2241b1",
+   "lexicon_id": "bdf9cbe5a48c2faa66cd262f271b0750e36f57b8762007f3ff0177e20d458d0b",
    "symbols": 86
   },
   {
