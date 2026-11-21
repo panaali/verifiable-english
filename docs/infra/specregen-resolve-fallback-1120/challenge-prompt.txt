@@ -1,0 +1,30 @@
+You are a fresh, independent challenger for a control-plane change to the merge train of the VE project (an AI-safety
+research repo). Read only; do not edit any file, run no train, start no build. Working dir: /home/seyran/code/manage-agents.
+
+The change (staged, NOT installed): merge-train.sh.new-specregen vs the installed merge-train.sh.
+Diff: reviews/specregen-resolve-fallback-1120/diff.txt (about 50 lines).
+Intent: in specregen() (the speculative regen that merges a candidate C into a detached copy of an item's branch h while C
+gates), when the plain `git merge` of C stops with conflicts ONLY on generated files (allgen: every unmerged path has
+merge=ve-generated in .gitattributes), run the same regen_merge (tools/regen_generated.py --resolve, then git commit) the
+main sync (syncbranch) already runs, instead of skipping. Any conflict on a non-generated file, or a --resolve exit != 0,
+must keep today's behaviour exactly (abort, skip, later agent sync). Refuse rather than accept: never use a tree --resolve
+did not finish. regen_merge gains an optional 2nd arg that only changes its decline log line.
+
+Evidence: tools-local/test_merge_train_specregen.py (throwaway repos; fake regen tool),
+reviews/specregen-resolve-fallback-1120/test-output.txt (runs on both scripts), seeded-bugs.txt + seed.py (5 mutants),
+replay.zsh + replay.txt (a real 11-20 decline replayed: f1 branch 2767a772 + candidate ef7ecd59).
+Context in the installed script: regen_merge, amerge, allgen, ufiles (lines ~35-75), syncbranch (~232), specregen/specuse
+(~456-485), the EXIT trap (grep specrestoreh), specregen's callers (grep -n 'specregen '), and stop-train.sh's regenbase
+(it reads the label's last line starting "spec regen of <label>" as the regen's start line).
+
+Answer three questions, each with file:line evidence:
+1. Can the new path commit or hand on (spec / specuse fast-forward) a wrong tree: a tree --resolve did not finish, a merge
+   with wrong parents, stale generated files, or leftover state in the worktree after a decline or a stop mid-resolve?
+2. Can it hide a real conflict (a non-generated file resolved silently; a two-sided change that should go to an agent)?
+3. Does it change anything for a train that has NO generated-only conflict (clean merges, source conflicts, the main sync's
+   regen_merge output, logs other tools parse, time on the critical path)?
+Also name any test gap that would let a defect in those three through.
+
+Output format (markdown): first line exactly "VERDICT OK" or "VERDICT FINDINGS". Then each finding as
+"F<n> [A|B|C] <one line>" (A = can publish a wrong tree or hide a real conflict; B = wrong behaviour or a misleading record
+with no wrong publish; C = minor/naming/test-gap), with evidence and a suggested fix. Be concrete; no praise; under 120 lines.

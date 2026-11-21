@@ -1,0 +1,3 @@
+ba6957a800af14d05337f9dd65a71f87057ba405ce38d937d4123bb255c6dfdd  merge-train.sh
+e939d94ab371b74945f28dbbab58cefa453326a4edd23a2fd28dac3b77cd55c5  merge-train.sh.bak-specregen-20261120T2117Z
+5a77b087f650711e6e13c1aa632e5f13f654bd11cb3c0fbf43a1461e9a3948c6  tools-local/test_merge_train_specregen.py

@@ -1,0 +1,37 @@
+# replay 2026-11-20T20:21Z on multi-agent-lab; script /home/seyran/code/manage-agents/merge-train.sh.new-specregen sha256 1e209574f67eb7d2; overlay tools from main 663be16252
+branch replay/specregen-f1-1120 = 4fc0548d81 (parent 2767a772f7: H0 2767a772f7); candidate ef7ecd59ac
+plain merge-tree conflicts: conformance/english-lean/lexicon-report.json docs/codemap/tests--part-4.md tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json  
+  (branchregen stub)
+specregen rc=0 in 1117 s; spec=7044b8bf0b761ff8eb643d6b233f9b0f4413cdb4
+--- scratch merge-train.log
+spec regen of fsf-repair-f1-replay: merging the candidate ef7ecd59 of fsf-repair-f3-safetycase-1119 into a detached copy of branch 4fc0548d while fsf-repair-f3-safetycase-1119 gates 20:21Z
+spec-regen resolve for fsf-repair-f1-replay: the merge of ef7ecd59 conflicts only in generated files (4) conformance/english-lean/lexicon-report.json tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json; tools/regen_generated.py --resolve 20:21Z
+regenerated generated-only conflicts in ve-specregen-replay-1120 without an agent 20:39Z
+spec regen of fsf-repair-f1-replay: 7044b8bf = branch 4fc0548d + candidate ef7ecd59 of fsf-repair-f3-safetycase-1119, regenerated, in 1117 s (used only if that candidate is published) 20:39Z
+--- end
+spec parents: 4fc0548d81992fb32fb0fdee6ee54dc49247246a ef7ecd59ac9e28b0c976d0da23528098cd6b41c0  (want 4fc0548d81992fb32fb0fdee6ee54dc49247246a ef7ecd59ac9e28b0c976d0da23528098cd6b41c0)
+  conformance/english-lean/lexicon-report.json: byte-equal to the agent sync f02219f5
+  tests/data/route-cases.jsonl: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/coverage.json: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/results.json: byte-equal to the agent sync f02219f5
+  usecases/safety-framework/spans.json: byte-equal to the agent sync f02219f5
+other paths that differ from the agent sync's tree (excluding the overlay):
+  tests/history-dependent.json
+specuse: branch now 7044b8bf0b (spec ? yes)
+worktree after: replay/specregen-f1-1120 0 dirty; MERGE_HEAD none
+--- regen output (tail)
+{"valid": 43, "invalid": 0, "failures_by_condition": {}}
+== check recorded-route-cases
+== check usecase-safety-framework
+[20:37:24] conflict clusters
+[20:38:00] document conflicts
+[20:38:45] family N
+[20:39:00] default sensitivity
+[20:39:07] variants
+agreement with the answer key: 257/262 (151.4 s)
+  DISAGREE K2-L1/PROXIMITY key NONE VE ALL
+  DISAGREE K2-L5/PROXIMITY key NONE VE ALL
+  DISAGREE C3 key SOME(G & rel & RS9=same) VE NONE
+  DISAGREE C-doc key SOME(G & rel & RS9=same) VE NONE
+  DISAGREE G3 key ALL VE NONE
+regen_generated --resolve: generated files merged, regenerated and checked; commit with git commit --no-edit
