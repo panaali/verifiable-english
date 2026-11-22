@@ -1,0 +1,7 @@
+job=armsh-chain-relb-explain-aa12c0f6-t307166-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-22T00:27:51Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 00:27:51 up 4 min,  0 user,  load average: 1.51, 0.47, 0.16
+pilot/codex branches: 98
+ve-cache: lean-build exact key ec87fe990deb asset lean-build-ec87fe990deb-linux-aarch64.tar.zst sha256 8d2222a5bab3 ok, seal ok, from download, 13.2 s
+p1-tokenizers: 443909a61d42 fetched
