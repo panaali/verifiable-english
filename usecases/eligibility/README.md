@@ -307,6 +307,8 @@ the statutory reading on each.
 | [`environment.json`](environment.json), [`rules.json`](rules.json) | the generated environment and rules |
 | [`run.py`](run.py) | runs VE on every profile and scores the answers |
 | [`results.json`](results.json), [`RESULTS.md`](RESULTS.md) | the recorded run |
+| [`explain.py`](explain.py) | one profile's answers with the clauses, assumptions and Lean check, in plain English |
+| [`ask.py`](ask.py), [`DEMO.md`](DEMO.md), [`demo/`](demo/) | the demo: one applicant in (a JSON file or flags), the printout out; install and run steps from a fresh Ubuntu machine |
 | [`../../tests/test_eligibility_wfp.py`](../../tests/test_eligibility_wfp.py) | fails on any mismatch or change |
 
 Run `PATH=~/.elan/bin:$PATH lake build` in `lean/` first. Then run
