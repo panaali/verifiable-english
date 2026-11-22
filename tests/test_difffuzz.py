@@ -1083,6 +1083,20 @@ def test_future_pilot_runs_do_not_hide_new_fixtures(tmp_path, monkeypatch):
             assert issue == "unread"
 
 
+def test_demo_inputs_are_excluded_but_cannot_hide_a_fixture():
+    """relb-demo-cli F1: a use case's command-line demo input is no-input; one that holds an environment or a
+    request is still reported (hiding), and a JSON beside the demo directory is still a fixture."""
+    profile = _load("usecases/eligibility/demo/b15.json")
+    assert corpus.excluded("usecases/eligibility/demo/b15.json")[0] == "no-input"
+    assert _coverage_issue("usecases/eligibility/demo/b15.json", profile, []) is None
+    assert corpus.excluded("usecases/other/demo/applicant.json")[0] == "no-input"
+    hiding = {"environment": {"sorts": [], "functions": [], "relations": []}, "model": {}, "ast": {}}
+    assert corpus.environments_of("usecases/other/demo/x.json", hiding) or corpus.requests_of(
+        "usecases/other/demo/x.json", hiding)
+    assert _coverage_issue("usecases/other/demo/x.json", hiding, []) == "hiding"
+    assert corpus.excluded("usecases/eligibility/b15.json") is None
+
+
 def test_gate_result_metadata_is_not_an_environment_seed():
     relative = "conformance/english-lean/e2-gate-result.json"
     assert corpus.excluded(relative)[0] == "artifact"
