@@ -31,9 +31,9 @@ def _rendered(doc):
             return paraphrase(doc["meta"]["environment"], {"format": "ve-cardinality@1",
                                                            "formula": ast["formula"]})["paraphrase"]
         if doc["environment"].unit_schema is not None:
-            from ..surface.time import render_quantity_sentence
+            from ..surface.time import render_w6_sentence
             try:
-                return render_quantity_sentence(doc["environment"], ast)
+                return render_w6_sentence(doc["environment"], ast)
             except VEError:
                 return "The checked quantity statement " + json.dumps(ast["formula"]) + "."
         formula = formula_from_data(render_env, ast)

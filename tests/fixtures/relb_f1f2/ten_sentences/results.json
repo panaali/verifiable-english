@@ -1,0 +1,74 @@
+{
+ "1": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R2.applicant",
+  "spans_read_alone": []
+ },
+ "10": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: The number at position 80 is not written in canonical form.",
+  "rule": "G7",
+  "spans_read_alone": []
+ },
+ "2": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R3.applicant",
+  "spans_read_alone": []
+ },
+ "3": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R14.1",
+  "spans_read_alone": []
+ },
+ "4": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R14.2",
+  "spans_read_alone": []
+ },
+ "5": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R15.4",
+  "spans_read_alone": []
+ },
+ "6": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R9.applicant",
+  "spans_read_alone": []
+ },
+ "7": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R12.applicant",
+  "spans_read_alone": []
+ },
+ "8": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: No W6 reading in any grammar",
+  "rule": "R8a.applicant",
+  "spans_read_alone": []
+ },
+ "9": {
+  "equals_rule": null,
+  "outcome": "refused",
+  "reason": "SyntaxError: The number at position 45 is not written in canonical form.",
+  "rule": "R16a",
+  "spans_read_alone": [
+   "the applicant's recovered amount equals the applicant's winter fuel payment amount"
+  ]
+ }
+}

@@ -1,0 +1,107 @@
+You will read ten short passages from UK legislation and from a GOV.UK guide about the Winter Fuel Payment.
+For each passage, write ONE plain English sentence that states the rule the passage makes, for one person called
+the applicant (the passages call this person "P" or "you").
+
+Some dates and amounts have fixed names, listed at the end. When your sentence mentions one of them, use its name
+exactly as listed (the words in quotes). Otherwise write the sentence as you think best. Write each sentence on its
+own; do not refer to the other passages.
+
+Answer with exactly ten lines and nothing else, one per passage, in this form:
+1. <your sentence>
+2. <your sentence>
+...
+
+Definitions from the same sources:
+- “qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;
+- The amount you get is based on when you were born and your circumstances between 21 to 27 September 2026. This is called the ‘qualifying week’.
+
+Passage 1 (S1 reg. 2(a)):
+2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—
+(a)in or before the qualifying week, P has reached pensionable age, and
+
+Passage 2 (S1 reg. 2(b)):
+2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—
+(b)in respect of any day falling within the qualifying week, P is ordinarily resident in England or Wales.
+
+Passage 3 (S1 reg. 3(1)):
+3.—(1) Subject to paragraphs (2) and (3), where P has not reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £200.
+
+Passage 4 (S1 reg. 3(2)):
+(2) Where P has not reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £100 where—
+(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying week, and
+(b)P is—
+(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in respect of the qualifying week, or
+(ii)in residential care.
+
+Passage 5 (S1 reg. 3(4)):
+(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £300.
+
+Passage 6 (S1 reg. 4(2)(c)):
+(2) This paragraph applies where, throughout the qualifying week, P is—
+(c)detained in custody under a sentence imposed by a court.
+
+Passage 7 (S1 reg. 4(5) and (6)):
+(5) Subject to paragraph (6), this paragraph applies where P has not made a claim for a winter fuel payment on or before the 31st March following the qualifying week.
+(6) Paragraph (5) does not apply where—
+(a)a winter fuel payment has been made by virtue of regulation 5(1) in respect of the qualifying week, or
+(b)regulation 5(2) applies.
+
+Passage 8 (S3 reg. 2(5)):
+(5) For the purposes of paragraph (4), a period during which a person is regarded as receiving or having received free in-patient treatment shall be deemed to begin on the day after the day on which he enters a hospital or similar institution referred to in that paragraph and to end on the day on which he leaves such a hospital or similar institution.
+
+Passage 9 (S2 'If your income is over £35,000'):
+7. If your income is over £35,000
+If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter Fuel Payment back.
+
+Passage 10 (S2:166):
+If you do not opt out and your total income is over £35,000, you’ll receive the Winter Fuel Payment but HMRC will take it back.
+
+Named dates, amounts, people and benefits (name: "words"):
+- amount: "the applicant's winter fuel payment amount"
+- applicant: "the applicant"
+- applicant_admitted: "the applicant's hospital admission date"
+- applicant_care_before_week: "the applicant's care days before the week"
+- applicant_care_from: "the applicant's care start date"
+- applicant_care_until: "the applicant's care end date"
+- applicant_claim_date: "the applicant's claim date"
+- applicant_custody_from: "the applicant's custody start date"
+- applicant_discharged: "the applicant's hospital discharge date"
+- applicant_eightieth: "the applicant's 80th birthday"
+- applicant_ew_from: "the applicant's first day of ordinary residence in England and Wales"
+- applicant_ew_last_day: "the applicant's last day of ordinary residence in England and Wales"
+- applicant_income: "the applicant's total income"
+- applicant_pa_date: "the applicant's pensionable-age date"
+- applicant_release: "the applicant's release date"
+- applicant_scot_ni_from: "the applicant's first day of ordinary residence in Scotland or Northern Ireland"
+- applicant_treatment_before_week: "the applicant's treatment days before the week"
+- applicant_treatment_start: "the applicant's treatment start date"
+- attendance_allowance: "Attendance Allowance"
+- home_from: "the household's home start date"
+- home_until: "the household's home end date"
+- housemate: "the housemate"
+- housemate_admitted: "the housemate's hospital admission date"
+- housemate_care_before_week: "the housemate's care days before the week"
+- housemate_care_from: "the housemate's care start date"
+- housemate_care_until: "the housemate's care end date"
+- housemate_claim_date: "the housemate's claim date"
+- housemate_custody_from: "the housemate's custody start date"
+- housemate_discharged: "the housemate's hospital discharge date"
+- housemate_eightieth: "the housemate's 80th birthday"
+- housemate_ew_from: "the housemate's first day of ordinary residence in England and Wales"
+- housemate_ew_last_day: "the housemate's last day of ordinary residence in England and Wales"
+- housemate_income: "the housemate's total income"
+- housemate_pa_date: "the housemate's pensionable-age date"
+- housemate_release: "the housemate's release date"
+- housemate_scot_ni_from: "the housemate's first day of ordinary residence in Scotland or Northern Ireland"
+- housemate_treatment_before_week: "the housemate's treatment days before the week"
+- housemate_treatment_start: "the housemate's treatment start date"
+- income_based_jsa: "income-based jobseeker's allowance"
+- income_related_esa: "income-related employment and support allowance"
+- income_support: "income support"
+- kept: "the applicant's amount kept"
+- partner_from: "the household's partnership start date"
+- partner_until: "the household's partnership end date"
+- pension_credit: "state pension credit"
+- recovered_amount: "the applicant's recovered amount"
+- state_pension: "the State Pension"
+- universal_credit: "universal credit"
