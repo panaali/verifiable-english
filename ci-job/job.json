@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-demo-cli-b846def6-t325461-s7",
+ "head": "4e39f013712e29ca2f1d919d8da8cc744d7b6ea4",
+ "argv": [
+  "armsh-chain-relb-demo-cli-b846def6-t325461-s7",
+  "4e39f013712e29ca2f1d919d8da8cc744d7b6ea4",
+  "dd9297f4a0986e2f90e016450d885868edae4bc0",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
