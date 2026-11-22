@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-f1f2-grammar-da1347f5-t308990-s1",
+ "head": "10610d407eb5d4c1e523432a10102c40a08a0cbf",
+ "argv": [
+  "armsh-chain-relb-f1f2-grammar-da1347f5-t308990-s1",
+  "10610d407eb5d4c1e523432a10102c40a08a0cbf",
+  "a786ecd4fcbcda06ca8da41d6b67bfd536748a9b",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
