@@ -1,0 +1,632 @@
+{
+ "language": "ve.core@0.2",
+ "profiles": [
+  "documents@1",
+  "order@0",
+  "relational-fol@0",
+  "time@0"
+ ],
+ "spec_revision": "ve-v0.2-expand2-2026-09-25",
+ "unit_schema": "ve-units@1",
+ "units": {
+  "day": {
+   "display": {
+    "kind": "iso_date"
+   },
+   "scale": "1"
+  },
+  "elapsed_day": {
+   "display": {
+    "kind": "decimal",
+    "label": "days"
+   },
+   "scale": "1"
+  },
+  "gbp_penny": {
+   "display": {
+    "currency": "GBP",
+    "input_symbol": "£",
+    "kind": "money"
+   },
+   "scale": "100"
+  }
+ },
+ "vocabulary": {
+  "constants": {
+   "amount": {
+    "description": "The applicant's winter fuel payment amount.",
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "verbalisation": "the applicant's winter fuel payment amount"
+   },
+   "applicant": {
+    "description": "The applicant P.",
+    "sort": "person",
+    "verbalisation": "the applicant"
+   },
+   "applicant_admitted": {
+    "description": "The applicant's hospital admission date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's hospital admission date"
+   },
+   "applicant_care_before_week": {
+    "description": "The applicant's care days before the week.",
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "verbalisation": "the applicant's care days before the week"
+   },
+   "applicant_care_from": {
+    "description": "The applicant's care start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's care start date"
+   },
+   "applicant_care_until": {
+    "description": "The applicant's care end date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's care end date"
+   },
+   "applicant_claim_date": {
+    "description": "The applicant's claim date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's claim date"
+   },
+   "applicant_custody_from": {
+    "description": "The applicant's custody start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's custody start date"
+   },
+   "applicant_discharged": {
+    "description": "The applicant's hospital discharge date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's hospital discharge date"
+   },
+   "applicant_eightieth": {
+    "description": "The applicant's 80th birthday.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's 80th birthday"
+   },
+   "applicant_ew_from": {
+    "description": "The applicant's first day of ordinary residence in England and Wales.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's first day of ordinary residence in England and Wales"
+   },
+   "applicant_ew_last_day": {
+    "description": "The applicant's last day of ordinary residence in England and Wales.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's last day of ordinary residence in England and Wales"
+   },
+   "applicant_income": {
+    "description": "The applicant's total income.",
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "verbalisation": "the applicant's total income"
+   },
+   "applicant_pa_date": {
+    "description": "The applicant's pensionable-age date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's pensionable-age date"
+   },
+   "applicant_release": {
+    "description": "The applicant's release date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's release date"
+   },
+   "applicant_scot_ni_from": {
+    "description": "The applicant's first day of ordinary residence in Scotland or Northern Ireland.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's first day of ordinary residence in Scotland or Northern Ireland"
+   },
+   "applicant_treatment_before_week": {
+    "description": "The applicant's treatment days before the week.",
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "verbalisation": "the applicant's treatment days before the week"
+   },
+   "applicant_treatment_start": {
+    "description": "The applicant's treatment start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the applicant's treatment start date"
+   },
+   "attendance_allowance": {
+    "description": "The benefit Attendance Allowance.",
+    "sort": "benefit",
+    "verbalisation": "Attendance Allowance"
+   },
+   "home_from": {
+    "description": "The household's home start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the household's home start date"
+   },
+   "home_until": {
+    "description": "The household's home end date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the household's home end date"
+   },
+   "housemate": {
+    "description": "The one other person H in P's household, if any.",
+    "sort": "person",
+    "verbalisation": "the housemate"
+   },
+   "housemate_admitted": {
+    "description": "The housemate's hospital admission date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's hospital admission date"
+   },
+   "housemate_care_before_week": {
+    "description": "The housemate's care days before the week.",
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "verbalisation": "the housemate's care days before the week"
+   },
+   "housemate_care_from": {
+    "description": "The housemate's care start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's care start date"
+   },
+   "housemate_care_until": {
+    "description": "The housemate's care end date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's care end date"
+   },
+   "housemate_claim_date": {
+    "description": "The housemate's claim date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's claim date"
+   },
+   "housemate_custody_from": {
+    "description": "The housemate's custody start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's custody start date"
+   },
+   "housemate_discharged": {
+    "description": "The housemate's hospital discharge date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's hospital discharge date"
+   },
+   "housemate_eightieth": {
+    "description": "The housemate's 80th birthday.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's 80th birthday"
+   },
+   "housemate_ew_from": {
+    "description": "The housemate's first day of ordinary residence in England and Wales.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's first day of ordinary residence in England and Wales"
+   },
+   "housemate_ew_last_day": {
+    "description": "The housemate's last day of ordinary residence in England and Wales.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's last day of ordinary residence in England and Wales"
+   },
+   "housemate_income": {
+    "description": "The housemate's total income.",
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "verbalisation": "the housemate's total income"
+   },
+   "housemate_pa_date": {
+    "description": "The housemate's pensionable-age date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's pensionable-age date"
+   },
+   "housemate_release": {
+    "description": "The housemate's release date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's release date"
+   },
+   "housemate_scot_ni_from": {
+    "description": "The housemate's first day of ordinary residence in Scotland or Northern Ireland.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's first day of ordinary residence in Scotland or Northern Ireland"
+   },
+   "housemate_treatment_before_week": {
+    "description": "The housemate's treatment days before the week.",
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "verbalisation": "the housemate's treatment days before the week"
+   },
+   "housemate_treatment_start": {
+    "description": "The housemate's treatment start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the housemate's treatment start date"
+   },
+   "income_based_jsa": {
+    "description": "The benefit income-based jobseeker's allowance.",
+    "sort": "benefit",
+    "verbalisation": "income-based jobseeker's allowance"
+   },
+   "income_related_esa": {
+    "description": "The benefit income-related employment and support allowance.",
+    "sort": "benefit",
+    "verbalisation": "income-related employment and support allowance"
+   },
+   "income_support": {
+    "description": "The benefit income support.",
+    "sort": "benefit",
+    "verbalisation": "income support"
+   },
+   "kept": {
+    "description": "The applicant's amount kept.",
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "verbalisation": "the applicant's amount kept"
+   },
+   "partner_from": {
+    "description": "The household's partnership start date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the household's partnership start date"
+   },
+   "partner_until": {
+    "description": "The household's partnership end date.",
+    "sort": "$int",
+    "unit": "day",
+    "verbalisation": "the household's partnership end date"
+   },
+   "pension_credit": {
+    "description": "The benefit state pension credit.",
+    "sort": "benefit",
+    "verbalisation": "state pension credit"
+   },
+   "recovered_amount": {
+    "description": "The applicant's recovered amount.",
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "verbalisation": "the applicant's recovered amount"
+   },
+   "state_pension": {
+    "description": "The benefit the State Pension.",
+    "sort": "benefit",
+    "verbalisation": "the State Pension"
+   },
+   "universal_credit": {
+    "description": "The benefit universal credit.",
+    "sort": "benefit",
+    "verbalisation": "universal credit"
+   }
+  },
+  "predicates": {
+   "affects_other_benefits": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The money the person gets affects the person's other benefits (S2: “affect your other benefits”)."
+   },
+   "care_ended": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's care stay has a last day, the care end date."
+   },
+   "claimed": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person made a claim for the winter fuel payment on the claim date."
+   },
+   "completes_self_assessment": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person completes a Self Assessment tax return (S2: “If you complete a Self Assessment tax return”)."
+   },
+   "detained_in_custody": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is detained in custody from the custody start date to the release date."
+   },
+   "entitled": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R13: the person is entitled to a winter fuel payment for winter 2026 to 2027. 2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—"
+   },
+   "ever_resident_ew": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has a first day of ordinary residence in England and Wales."
+   },
+   "excluded": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R13: some exclusion in S1 reg. 4(2) to (5) applies to the person."
+   },
+   "excluded_care_benefit": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R10: S1 reg. 4(3) applies to the person."
+   },
+   "excluded_custody": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R9: S1 reg. 4(2)(c) applies to the person."
+   },
+   "excluded_hospital": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R8: S1 reg. 4(2)(b) applies to the person."
+   },
+   "excluded_moved": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R11: S1 reg. 4(4) applies to the person."
+   },
+   "excluded_no_claim": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R12: S1 reg. 4(5) applies to the person."
+   },
+   "excluded_partner_benefit": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R7: S1 reg. 4(2)(a) applies to the person. “partner” means a member of a couple or a polygamous marriage; “couple” means— (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; “polygamous marriage” means any marriage which took place under the laws of a country which permits polygamy where— (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
+   },
+   "files_online": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person files tax returns online (S2: “If you file tax returns online”)."
+   },
+   "has_rb": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R4: a relevant benefit has been, or falls to be, paid to the person for the qualifying week."
+   },
+   "home_ended": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' mutual home has a last day, the household's home end date; otherwise it continues after the qualifying week (AR5)."
+   },
+   "home_start_dated": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' mutual home began on the household's home start date; otherwise it began before the qualifying week (AR5)."
+   },
+   "home_throughout": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R7a: the two persons share their mutual home on every day of the qualifying week (AR7)."
+   },
+   "in_care_setting": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation from the care start date, and to the care end date if the stay has one. “care home”— (a) in England, has the meaning assigned to it by section 3 of the Care Standards Act 2000(4); (b) in Wales, means accommodation the provision of which, together with nursing or care, is a care home service as defined in paragraph 1 of Schedule 1 to the Regulation and Inspection of Social Care (Wales) Act 2016(5) which is provided wholly or mainly to persons aged 18 or over; “independent hospital”— (a) in England, means a hospital as defined by section 275(1) of the National Health Service Act 2006(7) that is not a health service hospital as defined by that section; (b) in Wales, means a hospital as defined by section 206(1) of the National Health Service (Wales) Act 2006(8) that is not a health service hospital as defined by that section;"
+   },
+   "in_residential_care": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R5: the person is in residential care (S1 reg. 1(4)(a)). (4) In these Regulations, a person— (a)is in residential care if, disregarding any period of temporary absence, they reside in— (i)a care home, (ii)an independent hospital, or (iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14), throughout the qualifying week and the period of at least 12 weeks ending immediately before the qualifying week;"
+   },
+   "in_tax_calculation": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The amount is included in the person's tax calculation (S2: “will be included in your tax calculation”)."
+   },
+   "included_automatically": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC includes the amount of the person's winter fuel payment in the person's tax return automatically (S2: “HMRC will usually include the amount automatically”)."
+   },
+   "inpatient": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date. “free in-patient treatment” is to be construed in accordance with regulation 2(4) and (5) of the Social Security (Hospital In-Patients) Regulations 2005(6); (4) For the purposes of this regulation, a person shall be regarded as receiving or having received free in-patient treatment for any period for which he is or has been maintained free of charge while undergoing medical or other treatment as an in-patient— (a)in a hospital or similar institution under the National Health Service Act 1977 M2, the National Health Service (Scotland) Act 1978 M3 or the National Health Service and Community Care Act 1990 M4, or (b)in a hospital or similar institution maintained or administered by the Defence Council, and such a person shall for the purposes of sub-paragraph (a) be regarded as being maintained free of charge in a hospital or similar institution unless his accommodation and services are provided under section 65 of the National Health Service Act 1977, section 57 of the National Health Service (Scotland) Act 1978 M5 or paragraph 14 of Schedule 2 to the National Health Service and Community Care Act 1990."
+   },
+   "jointly_claims_benefits": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person and the person's partner jointly claim any of the benefits, which are Pension Credit, Universal Credit and income-related Employment and Support Allowance (S2: “If you and your partner jointly claim any of the benefits”; “Pension Credit”; “Universal Credit”; “income-related Employment and Support Allowance (ESA)”)."
+   },
+   "lives_with": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R6: the first person lives with the second (S1 reg. 1(4)(b)). (b)lives with a person if, disregarding any period of temporary absence, they share accommodation with one or more persons as their mutual home and they are not in residential care."
+   },
+   "more_tax_each_month": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person pays more tax each month (S2: “you will pay more tax each month”)."
+   },
+   "moved_to_scotland_or_ni": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has become ordinarily resident in Scotland or Northern Ireland."
+   },
+   "opted_out": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has opted out of receiving the winter fuel payment (S2: “opt out of receiving Winter Fuel Payment”)."
+   },
+   "paid_for_week": {
+    "arguments": [
+     "person",
+     "benefit"
+    ],
+    "description": "The benefit has been, or falls to be, paid to the person for the qualifying week."
+   },
+   "paid_into_usual_account": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is paid into the bank account the person's benefits are usually paid into (S2: “paid into the bank account your benefits are usually paid into”)."
+   },
+   "paid_without_claim": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is paid without a claim (S1 reg. 5(1))."
+   },
+   "partner_at_home": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8). “partner” means a member of a couple or a polygamous marriage; “couple” means— (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; “polygamous marriage” means any marriage which took place under the laws of a country which permits polygamy where— (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
+   },
+   "partner_of": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3). “partner” means a member of a couple or a polygamous marriage; “couple” means— (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; “polygamous marriage” means any marriage which took place under the laws of a country which permits polygamy where— (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
+   },
+   "partners_throughout": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7). “partner” means a member of a couple or a polygamous marriage; “couple” means— (a) two people who are married to, or civil partners of, each other and are members of the same household, or (b) two people who are not married to, or civil partners of, each other but are living together as if they were a married couple or civil partners; “polygamous marriage” means any marriage which took place under the laws of a country which permits polygamy where— (a) any member of the marriage is for the time being married to more than one person, and (b) all the members of the marriage are members of the same household;"
+   },
+   "partnership_ended": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons' partnership has a last day, the household's partnership end date; otherwise it continues after the qualifying week (AR5)."
+   },
+   "partnership_start_dated": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons became partners on the household's partnership start date; otherwise before the qualifying week (AR5)."
+   },
+   "reached_80": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person reached the age of 80 in or before the qualifying week."
+   },
+   "reached_pa": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R2: the person reached pensionable age in or before the qualifying week. (3) In these Regulations— “pensionable age” has the meaning given by the rules in paragraph 1 of Schedule 4 to the Pensions Act 1995(9);"
+   },
+   "recovered": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R16: HMRC takes the payment back from the person (S2). Your partner’s income does not count towards your total income. You’ll need to provide the total amount of income you expect to receive in the tax year before any deductions. If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter Fuel Payment back."
+   },
+   "remains_resident_ew": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's ordinary residence in England and Wales has not ended."
+   },
+   "resident_in_week": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R3: the person is ordinarily resident in England or Wales on a day of the qualifying week."
+   },
+   "shares_home": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons share accommodation as their mutual home in the qualifying week (S1 reg. 1(4)(b), taken as a fact)."
+   },
+   "shown_as_wfp_charge": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The amount shows on the person's tax return as the Winter Fuel Payment charge (S2: “It will show as the ‘Winter Fuel Payment charge’”)."
+   },
+   "tax_code_changed": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC changes the person's tax code to pay back the person's winter fuel payment (S2: “If HMRC changes your tax code to pay back your Winter Fuel Payment”)."
+   },
+   "tax_deducted_increases": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The tax deducted from the person's wages, salary or pension increases (S2: “the tax deducted from your wages, salary or pension will increase”)."
+   },
+   "two_payments_through_tax_code": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC collects 2 payments through the person's tax code at the same time (S2: “HMRC will collect 2 payments through your tax code at the same time”)."
+   },
+   "two_payments_to_collect": {
+    "arguments": [
+     "person"
+    ],
+    "description": "HMRC needs to collect 2 payments from the person (S2: “If HMRC needs to collect 2 payments”)."
+   },
+   "under_sentence": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's custody is under a sentence imposed by a court."
+   }
+  },
+  "sorts": {
+   "benefit": {
+    "description": "A social security benefit."
+   },
+   "person": {
+    "description": "A person in the applicant's household."
+   }
+  }
+ }
+}
