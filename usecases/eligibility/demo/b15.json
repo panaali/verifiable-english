@@ -1,0 +1,9 @@
+{
+  "summary": "Born 14 March 1955 (over pensionable age). Ordinarily resident in Scotland from 20 September 2026, then in England from 22 September 2026, a day of the qualifying week. Lives alone; State Pension only; total income GBP 20,000; paid without a claim (the defaults).",
+  "applicant": {
+    "birth": "1955-03-14",
+    "scot_ni_from": "2026-09-20",
+    "ew_from": "2026-09-22"
+  },
+  "housemate": null
+}
