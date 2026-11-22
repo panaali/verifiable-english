@@ -1791,6 +1791,16 @@
    ]
   },
   {
+   "test": "tests/test_relb_demo_cli.py",
+   "why": "starts git in usecases/eligibility/demo/install.sh",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "usecases/eligibility/demo/install.sh:<script>: git"
+   ]
+  },
+  {
    "test": "tests/test_repo_map.py",
    "why": "starts git (git add, git cat-file, git config, git init, git log, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/cache_store.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
