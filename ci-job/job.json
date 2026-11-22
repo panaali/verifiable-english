@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-demo-cli-fc84ed56-t333006-s1",
+ "head": "fcd78bc4e4b21c34368ef2cb6d5bf468b2352f7e",
+ "argv": [
+  "armsh-cand-relb-demo-cli-fc84ed56-t333006-s1",
+  "fcd78bc4e4b21c34368ef2cb6d5bf468b2352f7e",
+  "dd9297f4a0986e2f90e016450d885868edae4bc0",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
