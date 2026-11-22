@@ -1,0 +1,262 @@
+{
+ "clauses": [
+  {
+   "n": 1,
+   "rule": "R2.applicant",
+   "cite": "S1 reg. 2(a)",
+   "text": "2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—\n(a)in or before the qualifying week, P has reached pensionable age, and"
+  },
+  {
+   "n": 2,
+   "rule": "R3.applicant",
+   "cite": "S1 reg. 2(b)",
+   "text": "2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the social fund to a person (“P”) where—\n(b)in respect of any day falling within the qualifying week, P is ordinarily resident in England or Wales."
+  },
+  {
+   "n": 3,
+   "rule": "R14.1",
+   "cite": "S1 reg. 3(1)",
+   "text": "3.—(1) Subject to paragraphs (2) and (3), where P has not reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £200."
+  },
+  {
+   "n": 4,
+   "rule": "R14.2",
+   "cite": "S1 reg. 3(2)",
+   "text": "(2) Where P has not reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £100 where—\n(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying week, and\n(b)P is—\n(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in respect of the qualifying week, or\n(ii)in residential care."
+  },
+  {
+   "n": 5,
+   "rule": "R15.4",
+   "cite": "S1 reg. 3(4)",
+   "text": "(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the qualifying week, the amount of a winter fuel payment is £300."
+  },
+  {
+   "n": 6,
+   "rule": "R9.applicant",
+   "cite": "S1 reg. 4(2)(c)",
+   "text": "(2) This paragraph applies where, throughout the qualifying week, P is—\n(c)detained in custody under a sentence imposed by a court."
+  },
+  {
+   "n": 7,
+   "rule": "R12.applicant",
+   "cite": "S1 reg. 4(5) and (6)",
+   "text": "(5) Subject to paragraph (6), this paragraph applies where P has not made a claim for a winter fuel payment on or before the 31st March following the qualifying week.\n(6) Paragraph (5) does not apply where—\n(a)a winter fuel payment has been made by virtue of regulation 5(1) in respect of the qualifying week, or\n(b)regulation 5(2) applies."
+  },
+  {
+   "n": 8,
+   "rule": "R8a.applicant",
+   "cite": "S3 reg. 2(5)",
+   "text": "(5) For the purposes of paragraph (4), a period during which a person is regarded as receiving or having received free in-patient treatment shall be deemed to begin on the day after the day on which he enters a hospital or similar institution referred to in that paragraph and to end on the day on which he leaves such a hospital or similar institution."
+  },
+  {
+   "n": 9,
+   "rule": "R16a",
+   "cite": "S2 'If your income is over £35,000'",
+   "text": "7. If your income is over £35,000\nIf your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter Fuel Payment back."
+  },
+  {
+   "n": 10,
+   "rule": "G7",
+   "cite": "S2:166",
+   "text": "If you do not opt out and your total income is over £35,000, you’ll receive the Winter Fuel Payment but HMRC will take it back."
+  }
+ ],
+ "definitions": [
+  "“qualifying week” means in respect of any year the week beginning on the third Monday in the September of that year;",
+  "The amount you get is based on when you were born and your circumstances between 21 to 27 September 2026. This is called the ‘qualifying week’."
+ ],
+ "constants": [
+  {
+   "name": "amount",
+   "words": "the applicant's winter fuel payment amount"
+  },
+  {
+   "name": "applicant",
+   "words": "the applicant"
+  },
+  {
+   "name": "applicant_admitted",
+   "words": "the applicant's hospital admission date"
+  },
+  {
+   "name": "applicant_care_before_week",
+   "words": "the applicant's care days before the week"
+  },
+  {
+   "name": "applicant_care_from",
+   "words": "the applicant's care start date"
+  },
+  {
+   "name": "applicant_care_until",
+   "words": "the applicant's care end date"
+  },
+  {
+   "name": "applicant_claim_date",
+   "words": "the applicant's claim date"
+  },
+  {
+   "name": "applicant_custody_from",
+   "words": "the applicant's custody start date"
+  },
+  {
+   "name": "applicant_discharged",
+   "words": "the applicant's hospital discharge date"
+  },
+  {
+   "name": "applicant_eightieth",
+   "words": "the applicant's 80th birthday"
+  },
+  {
+   "name": "applicant_ew_from",
+   "words": "the applicant's first day of ordinary residence in England and Wales"
+  },
+  {
+   "name": "applicant_ew_last_day",
+   "words": "the applicant's last day of ordinary residence in England and Wales"
+  },
+  {
+   "name": "applicant_income",
+   "words": "the applicant's total income"
+  },
+  {
+   "name": "applicant_pa_date",
+   "words": "the applicant's pensionable-age date"
+  },
+  {
+   "name": "applicant_release",
+   "words": "the applicant's release date"
+  },
+  {
+   "name": "applicant_scot_ni_from",
+   "words": "the applicant's first day of ordinary residence in Scotland or Northern Ireland"
+  },
+  {
+   "name": "applicant_treatment_before_week",
+   "words": "the applicant's treatment days before the week"
+  },
+  {
+   "name": "applicant_treatment_start",
+   "words": "the applicant's treatment start date"
+  },
+  {
+   "name": "attendance_allowance",
+   "words": "Attendance Allowance"
+  },
+  {
+   "name": "home_from",
+   "words": "the household's home start date"
+  },
+  {
+   "name": "home_until",
+   "words": "the household's home end date"
+  },
+  {
+   "name": "housemate",
+   "words": "the housemate"
+  },
+  {
+   "name": "housemate_admitted",
+   "words": "the housemate's hospital admission date"
+  },
+  {
+   "name": "housemate_care_before_week",
+   "words": "the housemate's care days before the week"
+  },
+  {
+   "name": "housemate_care_from",
+   "words": "the housemate's care start date"
+  },
+  {
+   "name": "housemate_care_until",
+   "words": "the housemate's care end date"
+  },
+  {
+   "name": "housemate_claim_date",
+   "words": "the housemate's claim date"
+  },
+  {
+   "name": "housemate_custody_from",
+   "words": "the housemate's custody start date"
+  },
+  {
+   "name": "housemate_discharged",
+   "words": "the housemate's hospital discharge date"
+  },
+  {
+   "name": "housemate_eightieth",
+   "words": "the housemate's 80th birthday"
+  },
+  {
+   "name": "housemate_ew_from",
+   "words": "the housemate's first day of ordinary residence in England and Wales"
+  },
+  {
+   "name": "housemate_ew_last_day",
+   "words": "the housemate's last day of ordinary residence in England and Wales"
+  },
+  {
+   "name": "housemate_income",
+   "words": "the housemate's total income"
+  },
+  {
+   "name": "housemate_pa_date",
+   "words": "the housemate's pensionable-age date"
+  },
+  {
+   "name": "housemate_release",
+   "words": "the housemate's release date"
+  },
+  {
+   "name": "housemate_scot_ni_from",
+   "words": "the housemate's first day of ordinary residence in Scotland or Northern Ireland"
+  },
+  {
+   "name": "housemate_treatment_before_week",
+   "words": "the housemate's treatment days before the week"
+  },
+  {
+   "name": "housemate_treatment_start",
+   "words": "the housemate's treatment start date"
+  },
+  {
+   "name": "income_based_jsa",
+   "words": "income-based jobseeker's allowance"
+  },
+  {
+   "name": "income_related_esa",
+   "words": "income-related employment and support allowance"
+  },
+  {
+   "name": "income_support",
+   "words": "income support"
+  },
+  {
+   "name": "kept",
+   "words": "the applicant's amount kept"
+  },
+  {
+   "name": "partner_from",
+   "words": "the household's partnership start date"
+  },
+  {
+   "name": "partner_until",
+   "words": "the household's partnership end date"
+  },
+  {
+   "name": "pension_credit",
+   "words": "state pension credit"
+  },
+  {
+   "name": "recovered_amount",
+   "words": "the applicant's recovered amount"
+  },
+  {
+   "name": "state_pension",
+   "words": "the State Pension"
+  },
+  {
+   "name": "universal_credit",
+   "words": "universal credit"
+  }
+ ]
+}
