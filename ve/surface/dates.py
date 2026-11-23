@@ -7,15 +7,25 @@ formula `["cal_cmp", op, E1, E2]`, with `E` one of `["date", "YYYY-MM-DD"]` (190
 `["month_last", E]` and `["nth_weekday", n, w, month, year]` (w: 0 = Monday).
 
 This lowering is the shell's: it substitutes the case's dates and the `Let` values, expands the age,
-period and week wordings into those nodes, and copies a rule per role. It is tested, not Lean-checked.
+period and week wordings into those nodes, and copies a rule per role (a `Let` sentence that mentions
+"the person" is lowered per role too, so each role's rules read that role's dates). It is tested,
+not Lean-checked.
+
+A fact over a span of days ("throughout the qualifying week", "any day falling within the week") is
+refused (CANNOT): the written form has no reading of it, and the facts map or the W6 grammar must not
+read it as a plain fact (rtt2 S4, S10).
 Lean computes the arithmetic on the dates supplied here and binds them into the statement's meaning
 id (`calInputs`), so a wrong case date is visible in the report, not caught.
 
 Two rules from the design challenge (CHALLENGE.md C2, C3) are enforced here:
 
-* C2: two `If` rules that conclude the same date name are refused unless their conditions are
+* C2: two `If` rules that conclude the same date are refused unless their conditions are
   written exclusive (one rule's condition has, as a top-level `and` part, the negation of a part of
-  the other's), since two different concluded values make the premises inconsistent.
+  the other's), since two different concluded values make the premises inconsistent. A rule
+  concludes every day constant its lowered conclusion mentions, whatever the wording (an equality
+  either way round, "equals", a comparison, a capital letter, the facts map or the W6 grammar): the
+  key is the constant in the formula, not the text. A rule never concludes a case date or a date
+  the case may lack, nor compares fixed dates only; a `Let` sentence never names a day constant.
 * C3: a named date the case may lack (`may_lack`) lowers to an ordinary day constant compared with
   today's nodes (`date_on`, `date_before`, `date_after`, `date_no_later`, `within_days`), never to a
   ground expression; it cannot be offset by months or years or used in a `Let`. A case that gives
@@ -46,6 +56,33 @@ class DateRuleError(SyntaxError):
     """A written date item the lowering refuses (the message names the rule)."""
 
 
+# A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10).
+_SPAN = re.compile(r"\b(?:throughout|any day|every day|each day|some day|all days|a day (?:in|within|falling|of)|"
+                   r"days? falling (?:in|within)|any time|all times|at no time|for the (?:whole|entire)|continuously|"
+                   r"for (?:the |a |any )?(?:[0-9]+ )?(?:days|weeks|months|years) (?:immediately )?"
+                   r"(?:preceding|before|after|following))\b", re.IGNORECASE)
+# The nodes whose arguments are day terms (today's date nodes and ve-units@1 comparisons of days).
+_DAY_TERMS = ("num", "cal", "const")
+
+
+def _day_constants_in(f):
+    """The day constants a formula mentions, in order, and whether it mentions a day term at all."""
+    found, any_day = [], False
+    stack = [f]
+    while stack:
+        x = stack.pop()
+        if not isinstance(x, list) or not x:
+            continue
+        if x[0] == "cal_cmp" or x[0] == "cal" or (x[0] in ("num", "const") and len(x) == 3 and x[1] == "day"):
+            any_day = True
+            if x[0] == "const" and x[2] not in found:
+                found.append(x[2])
+            if x[0] != "cal_cmp":
+                continue
+        stack.extend(reversed(x[1:]))
+    return found, any_day
+
+
 def _ordinal(text):
     m = re.fullmatch(r"([1-9][0-9]*)(?:st|nd|rd|th)", text)
     return int(m[1]) if m else None
@@ -60,9 +97,14 @@ class _Item:
         self.years = dict((case or {}).get("years", {}))
         self.may_lack = {name.replace("the person", role) for name in may_lack or () for role in self.roles} | set(
             may_lack or ())
-        self.lets, self.work = {}, 0
+        self.work, self.scope, self.let_scopes, self.let_years = 0, None, {}, {}
         self.day_constants = {decl.verbalisation: name for name, decl in env.constants.items()
                               if decl.verbalisation and decl.sort == "$int" and decl.unit == "day"}
+
+    @property
+    def lets(self):
+        """The `Let` values of the current scope: None for a rule not copied per role, else the role."""
+        return self.let_scopes.setdefault(self.scope, {})
 
     def tick(self):
         self.work += 1
@@ -148,6 +190,9 @@ class _Item:
         return self.ground(f"the birth date of {role}", f"the birth date of {role}")
 
     def year(self, name):
+        scoped = self.let_years.get(self.scope, {})
+        if name in scoped:
+            return int(scoped[name])
         if name not in self.years:
             raise DateRuleError(f"DateRule: the year {name!r} is not fixed by the case or a Let sentence")
         return int(self.years[name])
@@ -329,42 +374,64 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
         if not sentence.endswith("."):
             raise DateRuleError(f"DateRule: a sentence ends with a full stop: {sentence!r}")
         body = sentence[:-1]
+        span = _SPAN.search(body)
+        if span:
+            raise DateRuleError(f"CANNOT (DateRuleSpan): {span[0]!r} in {sentence!r} is a fact over a span of days; "
+                                "the written form does not read it and it is not read as a plain fact")
         m = re.fullmatch(r"Let (the .+?) be (.+)", body)
         if m:
-            name, value = m[1], m[2]
-            if name in item.lets or name in item.years or name in item.dates or name in item.may_lack:
-                raise DateRuleError(f"DateRule: {name!r} has one value (a case date or a date the case may lack is "
-                                    "never set by a Let sentence)")
-            if re.fullmatch(r"[0-9]{4}", value):
-                item.years[name] = int(value)
-                continue
-            d = item.date(value)
-            if d[0] != "ground":
-                raise DateRuleError(f"DateRule: a Let value needs dates every case gives ({sentence!r}; C3)")
-            item.lets[name] = d
+            # Lowered once for rules not copied per role (the text as written) and once per role, so a rule
+            # copied for the partner reads the partner's dates (Opus H3).
+            for scope in [None, *item.roles]:
+                item.scope = scope
+                name, value = m[1], m[2]
+                if scope is not None:
+                    name, value = name.replace("the person", scope), value.replace("the person", scope)
+                years = item.let_years.setdefault(scope, {})
+                if name in item.lets or name in item.years or name in years or name in item.dates or (
+                        name in item.may_lack):
+                    raise DateRuleError(f"DateRule: {name!r} has one value (a case date or a date the case may lack "
+                                        "is never set by a Let sentence)")
+                if name in item.day_constants:
+                    raise DateRuleError(f"DateRuleLet: {name!r} is a date of the logic (the day constant "
+                                        f"{item.day_constants[name]!r}, which a rule may conclude); a Let sentence "
+                                        "does not set it (C2)")
+                if re.fullmatch(r"[0-9]{4}", value):
+                    years[name] = int(value)
+                    continue
+                d = item.date(value)
+                if d[0] != "ground":
+                    raise DateRuleError(f"DateRule: a Let value needs dates every case gives ({sentence!r}; C3)")
+                item.lets[name] = d
+            item.scope = None
             continue
         m = re.fullmatch(r"If (.+), then (.+)", body)
         if not m:
             raise DateRuleError(f"DateRule: not a Let or If sentence: {sentence!r}")
         copies = [(r, body.replace("the person", r)) for r in item.roles] if "the person" in body else [(None, body)]
-        for _, copy in copies:
+        for scope, copy in copies:
+            item.scope = scope
             m = re.fullmatch(r"If (.+), then (.+)", copy)
             readings = item.conditions(m[1])
             if len(readings) != 1:
                 raise DateRuleError(f"DateRule: the conditions of {sentence!r} have {len(readings)} readings")
             concluded, conclusion = _conclusion(item, m[2])
-            rules.append((concluded, readings[0], conclusion, sentence))
+            rules += [(c, readings[0], conclusion, sentence) for c in concluded] or [
+                (None, readings[0], conclusion, sentence)]
+        item.scope = None
     check_concluded_overlap([(concluded, condition, sentence) for concluded, condition, _, sentence in rules])
-    formulas = [["implies", condition, conclusion] for _, condition, conclusion, _ in rules] + case_facts
+    # A rule that concludes two constants is one rule: one premise, one entry per constant in `concluded`.
+    once = list({(repr(c), repr(k), s): (c, k, s) for _, c, k, s in rules}.values())
+    formulas = [["implies", condition, conclusion] for condition, conclusion, _ in once] + case_facts
     return {"premises": [{"format": "ve-quantity@1", "formula": f} for f in formulas],
-            "rules": [(sentence, ["implies", c, k]) for _, c, k, sentence in rules], "case_facts": case_facts,
+            "rules": [(sentence, ["implies", c, k]) for c, k, sentence in once], "case_facts": case_facts,
             "concluded": [(concluded, condition, sentence) for concluded, condition, _, sentence in rules
                           if concluded is not None]}
 
 
 def check_concluded_overlap(rules):
-    """C2 over (concluded date name or None, condition, sentence) rules: two rules that conclude one date name
-    must have conditions written exclusive."""
+    """C2 over (concluded day constant or None, condition, sentence) rules: two rules that conclude one day
+    constant must have conditions written exclusive."""
     by_name = {}
     for concluded, condition, sentence in rules:
         if concluded is None:
@@ -385,15 +452,38 @@ def lower_date_items(env, texts, case=None, **options):
 
 
 def _conclusion(item, text):
-    """(concluded date name or None, formula)."""
-    m = re.fullmatch(r"(the .+?) is (?:on )?(.+)", text)
-    if m and m[1] in item.day_constants:
-        if m[1] in item.dates or m[1] in item.may_lack:
-            raise DateRuleError(f"DateRule: {m[1]!r} is a case date; a rule does not conclude it (C2)")
-        value = item.date(m[2])
-        if value[0] == "ground" and value[1][0] == "date" and value[1][1] < "1970":
-            raise DateRuleError(f"DateRule: a concluded date lies in 1970..9999 ({text!r})")
-        return m[1], ["date_on", ["const", "day", item.day_constants[m[1]]], item.term(value)]
-    if text in item.facts:
-        return None, item.facts[text]
-    return None, item.fact(text)
+    """([concluded day constants], formula): C2's key is every day constant the lowered formula mentions
+    (Codex H1), whichever path lowered it."""
+    formula, errors = None, []
+    for m in re.finditer(r" is (?:on )?", text):  # every split, so a name with " is " in it is found
+        name, rest = text[:m.start()], text[m.end():]
+        if name.startswith("the ") and name in item.day_constants:
+            try:
+                value = item.date(rest)
+            except DateRuleError as exc:  # e.g. "is before ...": the W6 grammar below may read it
+                errors.append(exc)
+                continue
+            if value[0] == "ground" and value[1][0] == "date" and value[1][1] < "1970":
+                raise DateRuleError(f"DateRule: a concluded date lies in 1970..9999 ({text!r})")
+            formula = ["date_on", ["const", "day", item.day_constants[name]], item.term(value)]
+            break
+    if formula is None and text in item.facts:
+        formula = item.facts[text]
+    elif formula is None:
+        try:
+            formula = item.fact(text)
+        except ResourceLimit:
+            raise
+        except Exception as exc:  # no reading either way: the date rule's refusal says why
+            if errors:
+                raise errors[0] from exc
+            raise
+    concluded, any_day = _day_constants_in(formula)
+    protected = {item.day_constants[n]: n for n in (*item.dates, *item.may_lack) if n in item.day_constants}
+    for c in concluded:
+        if c in protected:
+            raise DateRuleError(f"DateRule: {protected[c]!r} is a case date; a rule does not conclude it (C2)")
+    if any_day and not concluded:
+        raise DateRuleError(f"DateRule: the conclusion {text!r} compares fixed dates only; a rule concludes a date "
+                            "of the logic (C2)")
+    return concluded, formula

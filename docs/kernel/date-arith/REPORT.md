@@ -55,6 +55,7 @@ Listed on `quantity` (tools/kernel-paths.json): `elabCal_sound`, `calDay_sound`,
   `test_a_date_the_case_may_lack_is_a_day_constant_with_todays_nodes`, `test_let_sentences_have_one_value_and_come_first`,
   `test_review_b1_a_conclusion_about_a_day_constant_always_meets_c2`, `test_review_b2_c2_compares_the_rules_of_every_item_of_a_case`,
   `test_review_b9_b10_a_date_the_case_may_lack_stays_a_constant`.
+- The Codex/Opus fix round (section 6) added 18 test cases in 10 tests: failing first at 17775b3795 `test_codex_h1_c2_keys_on_the_lowered_conclusion_not_its_text` (5 wordings), `test_codex_h1_a_name_with_is_in_it_and_reversed_case_dates`, `test_codex_h2_a_let_never_names_a_date_a_rule_concludes`, `test_opus_h3_a_let_is_lowered_per_role`, `test_codex_m1_span_facts_are_refused_cannot` (S4, S10 and three more span wordings); boundary tests of forms real items use (passing at 17775b3795, they pin today's lowering: dropping the `- 1` of the N-day period or turning the period's `on_or_after` into `after` each fails one) `test_opus_m2_period_x_to_y_includes_both_ends`, `test_opus_m2_last_day_of_an_n_day_period`, `test_opus_m2_nth_day_of_a_period`, `test_opus_m2_week_forms`, `test_opus_m2_birthday_and_aged_forms` (birthday, aged N years and M months, minus N months).
 - Failing first: on main the nodes are refused ("Invalid quantity term", "Unknown quantity formula cal_cmp"),
   `ve.surface.dates` does not exist and `CalExamples` does not compile.
 
@@ -103,4 +104,15 @@ claim, `calInputs`, the claim schema and `--test WireSound` turned them into kil
 
 One Opus 5.5 review of the statements and the two lowering rules (manage-agents
 `reviews/spare/date-arith/BUILD-REVIEW-OPUS.md`): SOUND WITH CHANGES, no HIGH; B1-B7, B9, B10 fixed in 42dd981936, B8 and
-B11 kept as stated limits. The Codex review is after the reset (row date-arith-codex-review).
+B11 kept as stated limits.
+
+The Codex review (gpt-6-astra, at 17775b3795, `CODEX-REVIEW.final.md`) and a second Opus review (`OPUS-MISROUTED-REVIEW.final.md`) both found the Lean statements right and both BLOCKed on the shell lowering. Fixed in one round (manage-agents reviews/dri-decisions-20261123-date-arith-codex.md), each with a test that fails at 17775b3795 (section 3):
+
+- H1 (Codex): C2 is keyed on the lowered conclusion: a rule concludes every day constant its formula mentions, whichever path lowered it (the direct wording, the facts map, the W6 grammar: reversed operands, "equals", a capital letter, a comparison), and every `is` split is tried, so a name with "is" in it is found. The same key refuses a conclusion that mentions a case date or a date the case may lack, and a conclusion that compares fixed dates only.
+- H2 (Codex, Opus): a `Let` sentence never names a day constant (`DateRuleLet`), so a name has one value in conditions and conclusions, within an item and across items.
+- H3 (Opus): a `Let` sentence that mentions "the person" is lowered per role as rules are copied per role; each role's copy reads its own `Let` values (the partner aged 56 is no longer answered eligible from the person's pension day).
+- M1 (Codex, Opus): span facts are refused (CANNOT, `DateRuleSpan`), before any facts-map or W6 reading; stated in DELTA's limits.
+- M2 (Opus): one boundary test per form real items use (section 3).
+- L1 (Opus): the section 5 and DELTA row 2 mutation figures were filled at 409cf20c75.
+
+Open (LOW, no fix required by the decision): C2 also refuses two overlapping rules that conclude the same value, and per-role copies of a rule whose concluded date does not depend on the role (`dates.py` C2); a month offset before year 0 reports `MissingDay` instead of `DateRange` (`Calendar.lean`, `Wire.lean`; still refused); `CalDenotes.date` is specified by the parser `parseIsoFrom` (pinned only by `parseIsoFrom_valid` and the guards). The Codex re-check of the fixes is recorded in manage-agents reviews/spare/date-arith/CODEX-RECHECK.final.md.
