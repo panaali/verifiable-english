@@ -213,8 +213,8 @@ def scale(tag, k, t): return ["scale", tag, str(k), t]
 def minus(a, b): return add(GBP, a, scale(GBP, -1, b))
 def dle(a, b): return ["date_no_later", a, b]   # a is no later than b
 def dlt(a, b): return ["date_before", a, b]     # a is before b
-TRUE = ["not", ["not", ["true"]]]
-FALSE = ["not", ["true"]]
+TRUE = ["le", ["decimal", GBP, "0.00"], ["decimal", GBP, "0.00"]]    # 0 <= 0 (a quantity formula that holds)
+FALSE = ["lt", ["decimal", GBP, "0.00"], ["decimal", GBP, "0.00"]]   # 0 < 0 (a quantity formula that fails)
 
 
 def And(*fs):
@@ -631,8 +631,8 @@ MUTANTS = {
     "M1": ("reg. 4A(1)(b): £10.85 read as £10.58 (a rate value)",
            _swap(2, _wrap(_walk_replace(gbp("10.85"), gbp("10.58"))))),
     "M2": ("reg. 12(1): the deeming line 'treated as reductions' dropped", _swap(19, _drop_r12)),
-    "M3": ("reg. 16(1): £11.10 per day read as £11.00 (an arithmetic step)",
-           _swap(35, _wrap(_walk_replace(gbp("11.10"), gbp("11.00"))))),
+    "M3": ("reg. 16(1): £11.10 per day read as £9.10 (an arithmetic step)",
+           _swap(35, _wrap(_walk_replace(gbp("11.10"), gbp("9.10"))))),
     "M4": ("reg. 4A(1)(b): 'aged 18 or over' read as 'over 18' (age > 18)",
            _swap(2, _wrap(_walk_replace(Le(yrs(18), kc("age")), Lt(yrs(18), kc("age")))))),
     "M5": ("reg. 10: the exclusion of tips (m) dropped", _swap(16, _wrap(_drop_pred("x_tips")))),
