@@ -547,6 +547,36 @@ January 1 timestamp or 365 days. “Late May” and “coming months” retain t
 imprecision; news row 20's EDT/GMT equality remains its existing relational
 model rather than a new W6 timezone theorem.
 
+
+### 6.2a Ground date expressions (date-arith, 2026-11-23)
+
+A date the case fixes (a birth date, an examination date, the year of a scheme) can be worked out while the
+statement is decoded. Lean evaluates a *ground date expression* `E` (`VE.Time.Wire.elabCal`; its meaning is the
+relation `CalDenotes`, and `elabCal_sound`, `calDay_sound`, `calCmp_sound` and `calDenotes_unique` are listed
+theorems of the `quantity` path):
+
+| `E` | Meaning |
+|---|---|
+| `["date", "YYYY-MM-DD"]` | the written date, 1900-01-01 to 9999-12-31 (`parseIsoFrom 1900`) |
+| `["plus_months", E, k, reading]` | `E` plus `k` months (signed; years are 12 months): the day is kept; if the target month lacks it, `reading` `last` gives its last day, `next` the day after that, `none` refuses (`MissingDay`). `Civil.MonthsLater` |
+| `["plus_days", E, k]` | `E` plus `k` days, `0 <= k <= 3660`, `E` from 1970 (`num` adds `k`) |
+| `["month_first", E]`, `["month_last", E]` | the first or last day of `E`'s month |
+| `["nth_weekday", n, w, month, year]` | the `n`th weekday `w` (0 = Monday) of that month, year 1970..9999; JSON numbers |
+
+Two nodes use them; nothing else changes (no new constructor, guard, profile or schema version):
+
+* the day term `["cal", E]` is `["num", "day", D]` for `E`'s date, which must be valid (1970 on);
+* the formula `["cal_cmp", op, E1, E2]` (`op`: `before`, `after`, `on`, `on_or_before`, `on_or_after`) is today's
+  `date_before`, `date_after`, `date_on` or `date_no_later` over both day numbers when both dates are from 1970,
+  so `Q` shows them; when a date is before 1970 it is decided while decoding (`top` or `bottom`).
+
+A date before 1970 never becomes a day number. Every `cal` and `cal_cmp` node of a statement, compressed, in order,
+is its `inputs`: they are added to the canonical object its meaning id is computed over and to the document report's
+claim, so other case dates, offsets or operators give another meaning id even where `Q` is the same; a statement with
+no such node has no `inputs` (its object and report are byte for byte as before). The cardinality route refuses
+ground date expressions. The shell's lowering of the written form (`ve/surface/dates.py`) is tested, not checked: it
+supplies the case dates Lean works from.
+
 ### 6.3 Sundays excepted
 
 This entire operation is **gated on numbers2**; the baseline must reject it
@@ -884,6 +914,10 @@ W4 stage 2 retain the plan's deferred status and triggers. No model call or
 new section re-review has been run as part of applying this revision.
 
 ## 10. Change log
+
+* **2026-11-23 — date-arith (section 6.2a).** Ground date expressions (`cal`, `cal_cmp`), worked out while
+  decoding, with their spec relation and listed theorems; dates from 1900 only inside an expression; input
+  binding into the meaning id and report (orchestrator ruling `reviews/dri-ruling-date-arith-20261123.md`).
 
 * **2026-09-28 — selected converged REVISE.** Applied
   [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
