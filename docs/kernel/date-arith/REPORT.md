@@ -73,7 +73,31 @@ The two Calendar plants first break `addMonths_spec`; with that proof cut to `so
 
 ## 5. Mutants
 
-TM_DETAIL
+Final record [trust-mutants.json](trust-mutants.json) (the default selection, the trusted declarations the branch adds or
+changes; `--test lean/VE/Time/WireSound.lean --test lean/ResponseShape/QuantityClaimExamples.lean --allow
+trust-mutants-allow.json`; at 17775b3795, Lean unchanged since): **exit 0, KILLED 43, SURVIVOR 0, UNKNOWN 0, INVALID 1,
+ALLOWED 135**.
+
+| File | KILLED | ALLOWED | INVALID |
+|---|---:|---:|---:|
+| lean/VE/Time/Calendar.lean | 9 | 62 (`MonthsLater` 34, `Ground` 27, `weekday` 1) | 0 |
+| lean/VE/Time/Wire.lean | 3 | 67 (`CalDenotes` 43, `CalOrder` 15, `elabTerm` 6, `decodeQuantity` 2, `calNode` 1) | 0 |
+| lean/VE/Time/Document.lean | 10 | 2 (`claimJson`, equivalent) | 0 |
+| lean/VE/Cardinality/Wire.lean | 2 | 4 (equivalent) | 1 |
+| lean/ResponseShape/Schemas/Quantity.lean | 19 | 0 | 0 |
+
+The allowed mutants of the spec Props (`CalDenotes`, `MonthsLater`, `Ground`) are caught by the proofs only (each breaks
+`elabCal_sound`, `addMonths_spec`, `monthsLater_cases` or `addMonths_ground`, as R16 allows for a Prop no check can
+evaluate); `CalOrder`'s are read through its decidable instance, which the `CalOrder` guards refute; the others are
+mutants Lean refuses (read as UNKNOWN) or equivalent ones. Each entry of
+[trust-mutants-allow.json](trust-mutants-allow.json) gives its reason.
+
+A wider sweep at 42dd981936 selected every new definition, the tied decoders (`elabCal`, `elabCalCmp`, `calDay`,
+`addMonths`, `nthWeekday`) and the check helpers too: KILLED 160, SURVIVOR 4, UNKNOWN 1, INVALID 42, ALLOWED 211. The
+four survivors were on the cardinality refusal line (its fuel plus or minus one under the 64-deep source limit, and
+`take 1` before `isEmpty`: equivalent) and the UNKNOWN a `weekday` mutant the weekday guards refute; all five are allowed
+in the final run with those reasons. A first sweep (before the review) found 113 survivors; the new checks of the report
+claim, `calInputs`, the claim schema and `--test WireSound` turned them into kills or reasoned allowances.
 
 ## 6. Reviews
 
