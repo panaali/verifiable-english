@@ -419,15 +419,24 @@ def run_block(law, bid, block, source):
                                 "report": [f"{a['citation']}: no per-reading answer (quoted words not in the source)."]}
                             for q in a["questions"]}
         return out
-    hits = {r: [0] * len(block[r]["edits"]) for r in ("A", "B")}
-    run = lambda cid, r, **kw: law.answers(cid, block[r]["edits"], label=f"~reading:{bid}:{r}", hits=hits[r], **kw)  # noqa: E731
+    hits, memo = {r: [0] * len(block[r]["edits"]) for r in ("A", "B")}, {}
+
+    def run(cid, r, extra_case=None, lean=True, key=None):
+        """One run per (encoded case as run, reading or None for the translation, lean): the same case under the
+        same rules gives the same run, so the block's questions on one case and an unpatched differ case share it."""
+        i = law.find(cid, key)
+        mk = (i, _canon(extra_case if extra_case is not None else law.K.CASES[i]), r, lean)
+        if mk not in memo:
+            memo[mk] = law.answers(cid, None if r is None else block[r]["edits"], extra_case, lean=lean, key=key,
+                                   label=f"~reading:{bid}:{r}", hits=hits[r] if r else None)
+        return memo[mk]
     dc, exp = a["differ_case"], {r: block[r]["differ_expect"] for r in ("A", "B")}
     fails, cfg = [], law.cfg
     try:
         dq = exp["A"]["q"]
         case = _differ_case(law, dc, dq)
-        base = law.answers(dc["from"], None, case, lean=False, key=dq)[1]
-        runs = {r: run(dc["from"], r, extra_case=case, key=dq) for r in ("A", "B")}
+        base = run(dc["from"], None, case, lean=False, key=dq)[1]
+        runs = {r: run(dc["from"], r, case, key=dq) for r in ("A", "B")}
         said = {r: resolve(runs[r][0], dq, cfg) for r in ("A", "B")}
         fails += compare(block, base, runs)[0]
         if not (said["A"][1] and said["B"][1] and _canon(said["A"][0]) != _canon(said["B"][0])):
@@ -443,7 +452,7 @@ def run_block(law, bid, block, source):
     for q in a["questions"]:
         cid, key = q.split("/", 1)
         try:
-            base = law.answers(cid, None, lean=False, key=key)[1]
+            base = run(cid, None, lean=False, key=key)[1]
             runs = {r: run(cid, r, key=key) for r in ("A", "B")}
             said = {r: resolve(runs[r][0], key, cfg) for r in ("A", "B")}
             qfails, english = compare(block, base, runs)
