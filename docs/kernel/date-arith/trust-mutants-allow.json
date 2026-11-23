@@ -309,6 +309,26 @@
    "definition": "VE.Time.CalExamples.q",
    "operator": "list-empty",
    "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "and-or",
+   "reason": "KILLED by a CalExamples guard in the sweep without --test WireSound (plus-days bounds: CalExamples.lean:124/128/130; cal_cmp valid-date branch: :190); with WireSound built the mutant breaks elabCal_sound or calCmp_sound first and the tool reads UNKNOWN"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "le-lt",
+   "reason": "KILLED by a CalExamples guard in the sweep without --test WireSound (plus-days bounds: CalExamples.lean:124/128/130; cal_cmp valid-date branch: :190); with WireSound built the mutant breaks elabCal_sound or calCmp_sound first and the tool reads UNKNOWN"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "le-eq",
+   "reason": "KILLED by a CalExamples guard in the sweep without --test WireSound (plus-days bounds: CalExamples.lean:124/128/130; cal_cmp valid-date branch: :190); with WireSound built the mutant breaks elabCal_sound or calCmp_sound first and the tool reads UNKNOWN"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCalCmp",
+   "operator": "and-or",
+   "reason": "KILLED by a CalExamples guard in the sweep without --test WireSound (plus-days bounds: CalExamples.lean:124/128/130; cal_cmp valid-date branch: :190); with WireSound built the mutant breaks elabCal_sound or calCmp_sound first and the tool reads UNKNOWN"
   }
  ]
 }
