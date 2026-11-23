@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-tm-esc-sweep-1123-72ee7ac9-t464490-s2",
+ "head": "b11015b500e1390d40582d0a7b97ccef7656f334",
+ "argv": [
+  "armsh-chain-tm-esc-sweep-1123-72ee7ac9-t464490-s2",
+  "b11015b500e1390d40582d0a7b97ccef7656f334",
+  "2754e53b56fd590375169b303b8041b0cea7cc5b",
+  "-",
+  "-",
+  "4",
+  "2/8"
+ ]
+}
