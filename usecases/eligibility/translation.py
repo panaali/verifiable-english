@@ -11,11 +11,26 @@ W6a has no integer binders (PLAN section 6). A rule's `other` is the other role.
 from __future__ import annotations
 
 import json
-from datetime import date
+import importlib.util
+import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-QW0, QW1 = "2026-09-21", "2026-09-27"  # bridge B1: the week from the third Monday of September 2026
+# pensionable_age.py beside this file, loaded by path (this module is also loaded by path, without its
+# directory on sys.path: tests/test_srccov_rl_eligibility_1121.py).
+_PA_SPEC = importlib.util.spec_from_file_location("_eligibility_pensionable_age", HERE / "pensionable_age.py")
+PA = sys.modules.get(_PA_SPEC.name) or importlib.util.module_from_spec(_PA_SPEC)
+if _PA_SPEC.name not in sys.modules:
+    sys.modules[_PA_SPEC.name] = PA
+    _PA_SPEC.loader.exec_module(PA)
+# Bridge B1: the qualifying week of 2026, worked out from its definition in S1 reg. 1(3) ("the week beginning on
+# the third Monday in the September of that year") by pensionable_age.qualifying_week; 2026 is the year of the
+# payment (S2:5 "winter 2026 to 2027"). Lean checks that QW1 is 6 days after QW0 (rule B1).
+QW_YEAR = 2026
+QW0, QW1 = (d.isoformat() for d in PA.qualifying_week(QW_YEAR))
+GUIDE_WEEK_END = "2026-09-27"  # S2:38 "between 21 to 27 September 2026": the week the guide's cut-offs are for
+W6A_FIRST_DAY = date(1970, 1, 1)  # W6a dates start here (ve/units.py day_number; probe P1)
 CLAIM_DEADLINE = "2027-03-31"  # reg. 4(5): 31 March following the qualifying week
 ROLES = ("applicant", "housemate")
 OTHER = {"applicant": "housemate", "housemate": "applicant"}
@@ -95,16 +110,50 @@ def guide_cutoffs(lines=None):
     return pa_cutoff, age80_cutoff
 
 
+def _bound_facts(r, suffix, bounds, kind):
+    """Facts for an (earliest, latest) day: one `date_on` when they are equal, else `date_after` the day before
+    the earliest and `date_no_later` than the latest. A bound before 1970-01-01 (outside W6a) is dropped or
+    raised to that day, which only weakens it."""
+    earliest, latest = bounds
+    if earliest == latest and earliest >= W6A_FIRST_DAY:
+        return [fact(f"{r}.{suffix}", ["date_on", num(r, suffix), day(earliest.isoformat())], kind)]
+    facts = [fact(f"{r}.{suffix}", ["date_no_later", num(r, suffix), day(max(latest, W6A_FIRST_DAY).isoformat())], kind)]
+    before = earliest - timedelta(days=1)
+    if before >= W6A_FIRST_DAY:
+        facts.append(fact(f"{r}.{suffix}_from", ["date_after", num(r, suffix), day(before.isoformat())], kind))
+    return facts
+
+
+def _guide_agrees(what, bounds, by_guide):
+    """Refuse (ValueError) where Sch. 4 decides "by the end of the week" one way and the guide's cut-off the other."""
+    end = date.fromisoformat(QW1)
+    if (bounds[1] <= end and not by_guide) or (bounds[0] > end and by_guide):
+        raise ValueError(f"{what}: Sch. 4 gives {bounds[0]} to {bounds[1]}, the guide's cut-off the other side of {QW1}")
+
+
 def age_facts(r, birth):
-    """Bridges B2 and B3 for role r: whether the pensionable-age date and the 80th birthday fall no later
-    than the last day of the week, from the birth date and the guide's cut-offs (born on or before the
-    first; born before the second). Valid for this qualifying week only (QW1, the guide's S2:38)."""
+    """Bridges B2 and B3 for role r: the pensionable-age date by Pensions Act 1995 Sch. 4 para. 1 and the 80th
+    birthday, worked out from the birth date by `pensionable_age` (which reads Sch. 4's own text), as days or
+    bounds. For the guide's week (S2:38) the guide's cut-offs (born on or before the first; born before the
+    second) must agree with them, else the profile is refused: two readings of the source, one answer."""
     born = date.fromisoformat(birth)
-    pa_cutoff, age80_cutoff = guide_cutoffs()
-    pa_op = "date_no_later" if born <= pa_cutoff else "date_after"
-    age80_op = "date_no_later" if born < age80_cutoff else "date_after"
-    return [fact(f"{r}.pa_date", [pa_op, num(r, "pa_date"), day(QW1)], "bridge B2"),
-            fact(f"{r}.eightieth", [age80_op, num(r, "eightieth"), day(QW1)], "bridge B3")]
+    if born > date.fromisoformat(QW1):
+        raise ValueError(f"{r}: born {birth}, after the qualifying week")
+    pa, age80 = PA.pensionable_age(born, schedule=_schedule4()), PA.eightieth_birthday(born)
+    if QW1 == GUIDE_WEEK_END:
+        pa_cutoff, age80_cutoff = guide_cutoffs()
+        _guide_agrees(f"{r} pensionable age", pa, born <= pa_cutoff)
+        _guide_agrees(f"{r} age 80", age80, born < age80_cutoff)
+    return [*_bound_facts(r, "pa_date", pa, "bridge B2"), *_bound_facts(r, "eightieth", age80, "bridge B3")]
+
+
+_SCHEDULE4 = []
+
+
+def _schedule4():
+    if not _SCHEDULE4:
+        _SCHEDULE4.append(PA.read_schedule4())
+    return _SCHEDULE4[0]
 
 # Integer constants per role: name suffix -> (unit, English words after "the <role>'s").
 ROLE_INTEGERS = {
