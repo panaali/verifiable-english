@@ -30662,6 +30662,20 @@ module VE.Time.Budget d578f3f2a068480036fa9bf0d6e93e559a26c677a9be28d9a8543cbdf9
 262:0-273:63 theorem VE.Time.denote_domains_irrelevant@VE.Time.Budget
 275:0-321:54 theorem VE.Time.eval_domains_perm@VE.Time.Budget
 323:0-327:63 theorem VE.Time.countermodelCheck_domains_perm@VE.Time.Budget
+module VE.Time.CalExamples 7ffe2d4402afbd1019003b109c9e69e3ef781df79ee768254dc4f4113e410712
+11:0-11:63 def VE.Time.CalExamples.p@VE.Time.CalExamples
+13:0-13:82 def VE.Time.CalExamples.cal@VE.Time.CalExamples
+15:0-18:23 def VE.Time.CalExamples.calError@VE.Time.CalExamples
+169:0-169:88 def VE.Time.CalExamples.cmp@VE.Time.CalExamples
+171:0-174:23 def VE.Time.CalExamples.cmpError@VE.Time.CalExamples
+203:0-207:99 def VE.Time.CalExamples.env@VE.Time.CalExamples
+209:0-212:99 def VE.Time.CalExamples.noDay@VE.Time.CalExamples
+214:0-218:72 def VE.Time.CalExamples.stmt@VE.Time.CalExamples
+220:0-220:75 def VE.Time.CalExamples.q@VE.Time.CalExamples
+221:0-221:81 def VE.Time.CalExamples.mid@VE.Time.CalExamples
+222:0-222:93 def VE.Time.CalExamples.inputs@VE.Time.CalExamples
+223:0-223:83 def VE.Time.CalExamples.claim@VE.Time.CalExamples
+224:0-227:23 def VE.Time.CalExamples.refusal@VE.Time.CalExamples
 module VE.Time.Calendar c08fd76b3f64688fe75cabcf180aed63608ea6b6054ab730bcc22599e720f725
 14:0-14:73 def VE.Time.leap@VE.Time.Calendar
 16:0-16:58 def VE.Time.yearLen@VE.Time.Calendar
@@ -31770,4 +31784,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 90db128a3d65e95c50a98fbaaa8f62cd279e3888b595c03370ad41c34b260142
+module VE 2f6a9a29d274fd0585fb4e63f394b62e8e610bbe90752c3ec3da8718194b81c1

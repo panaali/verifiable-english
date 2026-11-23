@@ -865,6 +865,7 @@ module VE.TableauChecker
 module VE.TableauChecks
 module VE.TableauClosure
 module VE.Time.Budget
+module VE.Time.CalExamples
 module VE.Time.Calendar
 module VE.Time.Count
 module VE.Time.Decimal
