@@ -317,3 +317,17 @@ def test_edit_ops():
     build = R.transform([{"op": "replace", "row": 1, "old": ["x", "?a"], "new": ["y", "?a"]}], 1, hits)(
         {1: ("RULE", lambda ctx: [["x", ctx], ["z"]], "")})[1][1]
     assert hits == [0] and build("k") == [["y", "k"], ["z"]] and hits == [1]
+
+
+def test_one_run_per_case_and_reading_in_a_block(tmp_path):
+    """A block's questions on one case, and an unpatched differ case, share one run per reading (a law's Lean replay
+    can take minutes per run)."""
+    law_dir, cfg = toy_law(tmp_path)
+    cfg2, blocks = R.load_table(table(tmp_path, cfg, good_rows(questions="C1/Q1,C1/Q2,C1/Q3",
+                                                                differ={"id": "DW-1", "from": "C1", "patch": []})))
+    law, calls = R.Law(law_dir, cfg2), []
+    main = law.run.main
+    law.run.main = lambda argv: (calls.append(argv), main(argv))[1]
+    out = R.run_block(law, "B1", blocks["B1"], SOURCE)
+    assert [q["status"] for q in out["questions"].values()] == ["per-reading"] * 3
+    assert len(calls) == 3 and sum("--no-lean" in c for c in calls) == 1
