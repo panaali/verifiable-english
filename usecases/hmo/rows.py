@@ -31,6 +31,11 @@ READINGS chosen by the translator (each is listed in RESULT.md as translator jud
  J5 reg. 3(2)(c) "does not pay any rent or other consideration" = no rent or consideration other than the work is payable for
     person A's occupation.
  J6 reg. 3(2)(a) "exclusively domestic": a stated fact, or all of A's work for B being work of a kind listed in reg. 3(3).
+ J7 (amended 2026-11-23 after the encoder's file was read, BEFORE any run; the task's rule "where the text gives two outcomes
+    at once, derive none"): J1's pairwise reading and the grouped reading (households = connected groups) differ only when
+    the single-household relation among the occupiers is not transitive (regs 3-4 pair people; s.258(3)(c) links through a
+    couple). Then VE derives no household answer (not_single, its s.254(4) twin and Sch. 14 para 6 stay open: refused).
+    The change can only turn an answer into a refusal.
 """
 from __future__ import annotations
 
@@ -137,6 +142,9 @@ DERIVED_PLACE1 = {
     "units_non_scf": "s.254(2)(a): consists of one or more units of living accommodation none of which is a self-contained flat",
     "some_non_scf": "s.254(4)(b): contains a unit of living accommodation that is not a self-contained flat",
     "not_single": "its occupiers do not form a single household (s.254(2)(b), art. 4(b))",
+    "intrans": "some three of its occupiers are such that the first and second, and the second and third, form a single "
+               "household but the first and third do not (J7)",
+    "intrans_n": "the same, among the occupiers of its non-flat units (J7)",
     "not_single_n": "the occupiers of its non-flat units do not form a single household (s.254(4)(c))",
     "residence_all": "s.254(2)(c): every occupier occupies as only or main residence or is treated as so occupying",
     "residence_all_n": "s.254(4)(d): the same, for the occupiers of its non-flat units",
@@ -168,6 +176,10 @@ DERIVED_PERSON1 = {
     "owner": "occupies and has the freehold or a lease granted for more than 21 years (Sch. 14 para 6(1)(a))",
     "owner_hh": "occupies and is a member of the household of an occupier within para 6(1)(a) (para 6(1)(b))",
     "other6": "occupies and is neither within para 6(1)(a) nor (b)",
+    "intrans_at": "is the first of three occupiers where the first and second, and second and third, form a single household "
+                  "but the first and third do not (J7)",
+    "intrans_n_at": "the same, among occupiers of non-flat units (J7)",
+    "shares_across": "occupies and shares a basic amenity with an occupier of another household (J3)",
 }
 DERIVED_PERSON2 = {
     "couple": "the two are a couple (s.258(4)(a))",
@@ -264,6 +276,13 @@ def shift(term, by=1):
     return term
 
 
+def intrans_at(occ_pred, p):
+    # J7, one step: p is the first of three occupiers with p~q and q~r but not p~r (p a term one level out of the binders)
+    pp = shift(p, 2)
+    return Ex("person", Ex("person", And(U(occ_pred, pp), U(occ_pred, V(1)), U(occ_pred, V(0)),
+                                         B("same_hh", pp, V(1)), B("same_hh", V(1), V(0)), Not(B("same_hh", pp, V(0))))))
+
+
 def not_single(occ_pred):
     # some two occupiers (by occ_pred) do not form a single household (J1)
     return Ex("person", Ex("person", And(U(occ_pred, V(1)), U(occ_pred, V(0)), Not(B("same_hh", V(1), V(0))))))
@@ -290,16 +309,21 @@ T = {
     7: ("RULE", Iff(U("units_non_scf", P), And(Ex("place", U("within", V(0))),
                                                All("place", Implies(U("within", V(0)), Not(U("scf", V(0))))))),
         "s.254(2)(a)", [3]),
-    8: ("RULE", Iff(U("not_single", P), not_single("occ")), "s.254(2)(b), J1", [3]),
+    8: ("RULE", Implies(Not(U("intrans", P)), Iff(U("not_single", P), not_single("occ"))), "s.254(2)(b), J1, J7", [3]),
+    54: ("RULE", Iff(U("intrans", P), Ex("person", U("intrans_at", V(0)))), "J7: the pairwise and the grouped reading can differ", [11]),
+    55: ("RULE", Iff(U("intrans_n", P), Ex("person", U("intrans_n_at", V(0)))), "J7 for s.254(4)(c)", [11]),
+    56: ("RULE", P1(lambda p: Iff(U("intrans_at", p), intrans_at("occ", p))), "J7, a step of rule 54", [11]),
+    57: ("RULE", P1(lambda p: Iff(U("intrans_n_at", p), intrans_at("occ_n", p))), "J7, a step of rule 55", [11]),
+    58: ("RULE", P1(lambda p: Iff(U("shares_across", p),
+                                  Ex("person", And(U("occ", shift(p)), U("occ", V(0)), Not(B("same_hh", shift(p), V(0))),
+                                                   Ex("amenity", And(U("basic_amenity", V(0)),
+                                                                     ["binary", "shares", shift(p, 2), V(0)],
+                                                                     ["binary", "shares", V(1), V(0)])))))),
+         "J3, a step of rule 12: p shares a basic amenity with an occupier of another household", [3]),
     9: ("RULE", Iff(U("residence_all", P), P1(lambda p: Implies(U("occ", p), U("residence_ok", p)))), "s.254(2)(c)", [3]),
     10: ("RULE", Iff(U("rent_one", P), Ex("person", And(U("occ", V(0)), U("rent_payable", V(0))))), "s.254(2)(e)", [3]),
     11: ("RULE", Iff(U("lacks", P), some_basic(lambda a: Not(["binary", "has_amenity", c(P), a]))), "s.254(2)(f) second limb, J3", [3]),
-    12: ("RULE", Iff(U("shared_between", P),
-                     Ex("person", Ex("person", And(U("occ", V(1)), U("occ", V(0)), Not(B("same_hh", V(1), V(0))),
-                                                   Ex("amenity", And(U("basic_amenity", V(0)),
-                                                                     ["binary", "shares", V(2), V(0)],
-                                                                     ["binary", "shares", V(1), V(0)])))))),
-         "s.254(2)(f) first limb, J3", [3]),
+    12: ("RULE", Iff(U("shared_between", P), Ex("person", U("shares_across", V(0)))), "s.254(2)(f) first limb, J3", [3]),
     13: ("RULE", Iff(U("standard", P), And(U("units_non_scf", P), U("not_single", P), U("residence_all", P),
                                           U("only_use", P), U("rent_one", P),
                                           Or(U("shared_between", P), U("lacks", P)))), "s.254(2)(a)-(f)", [3]),
@@ -311,7 +335,7 @@ T = {
     # ---- s.254(4) (unit 5) ----
     15: ("RULE", P1(lambda p: Iff(U("occ_n", p), occ_some(lambda u: Not(["unary", "scf", u]), p))), "J4", [5]),
     16: ("RULE", Iff(U("some_non_scf", P), Ex("place", And(U("within", V(0)), Not(U("scf", V(0)))))), "s.254(4)(b)", [5]),
-    17: ("RULE", Iff(U("not_single_n", P), not_single("occ_n")), "s.254(4)(c), J1, J4", [5]),
+    17: ("RULE", Implies(Not(U("intrans_n", P)), Iff(U("not_single_n", P), not_single("occ_n"))), "s.254(4)(c), J1, J4, J7", [5]),
     18: ("RULE", Iff(U("residence_all_n", P), P1(lambda p: Implies(U("occ_n", p), U("residence_ok", p)))), "s.254(4)(d)", [5]),
     19: ("RULE", Iff(U("rent_one_n", P), Ex("person", And(U("occ_n", V(0)), U("rent_payable", V(0))))), "s.254(4)(f)", [5]),
     20: ("RULE", Iff(U("converted_test", P), And(U("converted", P), U("some_non_scf", P), U("not_single_n", P),
@@ -394,8 +418,8 @@ T = {
          , "para 6(1)(b), J2", [36]),
     44: ("RULE", P1(lambda p: Iff(U("other6", p), And(U("occ", p), Not(U("owner", p)), Not(U("owner_hh", p))))),
          "para 6(1)(c)", [36]),
-    45: ("RULE", Iff(U("sch14_6", P), And(Ex("person", U("owner", V(0))), Not(AtLeast(3, "person", U("other6", V(0)))),
-                                         Not(U("s257", P)))),
+    45: ("RULE", Implies(Not(U("intrans", P)), Iff(U("sch14_6", P), And(Ex("person", U("owner", V(0))), Not(AtLeast(3, "person", U("other6", V(0)))),
+                                         Not(U("s257", P))))),
          "para 6(1) with reg. 6(2) (no more than two others); 6(2): not for a s.257 block itself (a flat in one is not the "
          "block, so the exception is met), J2", [25, 36, 37]),
     # ---- Sch. 14 paras 1, 2, 2A, 2B, 5, 7 (units 26-35) ----

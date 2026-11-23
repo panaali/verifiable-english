@@ -105,10 +105,7 @@ def simplify(f):
             return zero
         if not parts:
             return unit
-        out = parts[-1]
-        for p in reversed(parts[:-1]):
-            out = ["and" if head == "and" else "or", p, out]
-        return out
+        return balanced("and" if head == "and" else "or", parts)
     if head == "implies":
         a, b = f[1], f[2]
         if a == FALSE or b == TRUE:
@@ -119,6 +116,14 @@ def simplify(f):
             return simplify(["not", a])
         return f
     return f
+
+
+def balanced(op, parts):
+    """A balanced binary tree (depth log2 of the parts: VE's MAX_DEPTH is 64); same meaning as the right-nested chain."""
+    if len(parts) == 1:
+        return parts[0]
+    mid = len(parts) // 2
+    return [op, balanced(op, parts[:mid]), balanced(op, parts[mid:])]
 
 
 def is_iff(f):
@@ -143,6 +148,8 @@ def atoms_in(f, atoms, constants):
 
 
 def defines(f):
+    if type(f) is list and f[:1] == ["implies"] and not is_iff(f):
+        return defines(f[2])  # a guarded definition: guard -> (atom <-> body)
     if is_iff(f):
         lhs = f[1][1]
         if lhs[0] in ("unary", "binary"):
