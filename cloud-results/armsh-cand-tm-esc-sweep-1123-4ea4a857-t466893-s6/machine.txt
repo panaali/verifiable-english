@@ -1,0 +1,7 @@
+job=armsh-cand-tm-esc-sweep-1123-4ea4a857-t466893-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-23T20:50:10Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 20:50:10 up 1 min,  0 user,  load average: 1.61, 0.49, 0.17
+pilot/codex branches: 98
+ve-cache: lean-build exact key e1f456ddd237 asset lean-build-e1f456ddd237-linux-aarch64.tar.zst sha256 07e463011a4f ok, seal ok, from download, 12.5 s
+p1-tokenizers: 443909a61d42 fetched
