@@ -367,7 +367,8 @@ def charge_rules(subject, items, table_rows):
     for k, row in enumerate(table_rows):
         lits = [B("liable_for", subject, i) if i in row["counted"] else Not(B("liable_for", subject, i)) for i in items]
         f = Imp(And(*lits) if lits else TRUE, ["eq", ["const", "gbp_penny", "charge_" + subject], gbp(row["charge"])])
-        out.append({"id": f"c.{k}", "row": "681C", "formula": simplify(f), "defines": ["charge_" + subject]})
+        out.append({"id": f"c.{k}", "row": "681C", "formula": simplify(f), "defines": ["charge_" + subject],
+                    "counted": list(row["counted"])})
     return out
 
 
