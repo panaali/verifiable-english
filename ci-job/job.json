@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-esc-sweep-1123-4ea4a857-t466893-s5",
+ "head": "569a6c446df9e499fa0e84a09715b304a1998b3c",
+ "argv": [
+  "armsh-cand-tm-esc-sweep-1123-4ea4a857-t466893-s5",
+  "569a6c446df9e499fa0e84a09715b304a1998b3c",
+  "2754e53b56fd590375169b303b8041b0cea7cc5b",
+  "-",
+  "-",
+  "4",
+  "5/8"
+ ]
+}
