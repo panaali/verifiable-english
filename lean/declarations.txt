@@ -935,6 +935,7 @@ module ResponseShape.FitsTactic 33faab95cf4b5c231b81885f8747d61c2c7446acc0a8820d
 767:0-824:71 def ResponseShape.FitsTactic.fitsFrom@ResponseShape.FitsTactic
 826:0-828:36 def ResponseShape.FitsTactic._aux_ResponseShape_FitsTactic___elabRules_ResponseShape_FitsTactic_tacticFits_from__1@ResponseShape.FitsTactic
 826:0-828:36 def ResponseShape.FitsTactic.tacticFits_from_@ResponseShape.FitsTactic
+module ResponseShape.QuantityClaimExamples e3bb32776035058206ab5111cfea3d65a7be0619b7d996e73f707cd4fc62e47f
 module ResponseShape.Schemas.ActReadings fc0af2128ab4e77ab252aed0d09a8241c0aba7b99554444b8ad30a19290b8a27
 11:0-11:47 def ResponseShape.Schemas.ActReadings.nat@ResponseShape.Schemas.ActReadings
 13:0-15:72 def ResponseShape.Schemas.ActReadings.act@ResponseShape.Schemas.ActReadings
@@ -30662,7 +30663,7 @@ module VE.Time.Budget d578f3f2a068480036fa9bf0d6e93e559a26c677a9be28d9a8543cbdf9
 262:0-273:63 theorem VE.Time.denote_domains_irrelevant@VE.Time.Budget
 275:0-321:54 theorem VE.Time.eval_domains_perm@VE.Time.Budget
 323:0-327:63 theorem VE.Time.countermodelCheck_domains_perm@VE.Time.Budget
-module VE.Time.CalExamples 7ffe2d4402afbd1019003b109c9e69e3ef781df79ee768254dc4f4113e410712
+module VE.Time.CalExamples 60ab1586310e9f4c44944c0f65be896e9fd30e001ffc4a1b61d16f6a9d7547e5
 11:0-11:63 def VE.Time.CalExamples.p@VE.Time.CalExamples
 13:0-13:82 def VE.Time.CalExamples.cal@VE.Time.CalExamples
 15:0-18:23 def VE.Time.CalExamples.calError@VE.Time.CalExamples
@@ -31035,7 +31036,7 @@ module VE.Time.Syntax 4e46a3606a785d3f5870698b076a1c3c46e045d29f6df97ca45abda82c
 391:0-393:22 theorem VE.Time.guard_wellFormed@VE.Time.Syntax
 395:0-430:49 theorem VE.Time.erase_wellTyped@VE.Time.Syntax
 432:0-435:90 theorem VE.Time.erase_check@VE.Time.Syntax
-module VE.Time.Wire a2dd62d34baad3627a95352f04beee1d0d9af2ab5c40940d76a288a3c8e8d98b
+module VE.Time.Wire 80314d1169e3a028b1ca1f02e3d7c6befc6dca6c307a8b2462b37ede34e6c22f
 33:0-33:38 def VE.Time.Wire.language@VE.Time.Wire
 34:0-34:57 def VE.Time.Wire.specRevision@VE.Time.Wire
 35:0-35:35 def VE.Time.Wire.schema@VE.Time.Wire
