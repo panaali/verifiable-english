@@ -46,6 +46,7 @@ def parse(c):
     def weeks(m):
         n = int(m.group(1))
         wk = [None] * n
+        out["runs"] = []
         for seg in m.group(2).split("; "):
             a = re.fullmatch(r"weeks (\d+) to (\d+): " + MONEY + " each", seg)
             b = re.fullmatch(r"week (\d+): " + MONEY, seg)
@@ -56,6 +57,7 @@ def parse(c):
                 v = money(b.group(2))
             else:
                 raise ValueError(f"{c['id']}: week segment {seg!r}")
+            out["runs"].append([lo, hi])
             for i in range(lo, hi + 1):
                 assert wk[i - 1] is None, (c["id"], i)
                 wk[i - 1] = v

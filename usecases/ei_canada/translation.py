@@ -152,7 +152,7 @@ def unit_of(name):
     if name in CASE_INTS:
         return CASE_INTS[name][0]
     base = name.split("_", 1)[0]
-    if base == "rk":
+    if base in ("ab", "gfirst", "glast", "gsize", "gabove", "weeknum"):
         return WEEK
     for table in (WEEK_INTS, SEP_INTS):
         if base in table:
@@ -172,8 +172,12 @@ def rate_band(lo, hi):
 # --- the case context -------------------------------------------------------------------------------------------
 
 class Ctx:
-    def __init__(self, weeks, seps):
+    """weeks w01..; seps s1..; runs = the question's stated runs of weeks with one amount ("weeks a to b: $X each" or
+    "week a: $X"), in the order stated: [(run id, [week ids])] (encoding E2)."""
+    def __init__(self, weeks, seps, runs=None):
         self.weeks, self.seps = list(weeks), list(seps)
+        self.runs = list(runs) if runs is not None else [(f"g{i:02d}", [w]) for i, w in enumerate(self.weeks, 1)]
+        self.run_of = {w: g for g, ws in self.runs for w in ws}
         self.items = ["c"] + self.weeks + self.seps
 
 
@@ -189,13 +193,14 @@ def _t142_row(n, lo, hi, v):
         b = rate_band(lo, hi)
         return [Implies(b, Eq(k("nweeks"), lit(WEEK, v))),
                 Implies(And(b, Not(U("halfup", CL))), Eq(scale(CAD, v, k("wie")), k("total"))),
-                # the stated half-up convention (D7; only where the question states it): 2N x benefit - N cents <=
-                # 1.1 x total < 2N x benefit + N cents, below the maximum; s. 14(1) 55% with the division by N
+                # the stated half-up convention (D7; only where the question states it): benefit - 1/2 cent <=
+                # 55% x total / N < benefit + 1/2 cent, times 20N (whole-number coefficients): 20N x benefit - 10N cents
+                # <= 11 x total < 20N x benefit + 10N cents, below the maximum; s. 14(1) 55% with the division by N
                 Implies(And(b, U("halfup", CL), Not(U("s23", CL)), Le(k("total"), scale(CAD, v, k("mwie")))),
-                        And(Le(add(CAD, scale(CAD, 2 * v, k("benefit")), cad(f"-{v / 100:.2f}")),
-                               scale(CAD, "1.1", k("total"))),
-                            Lt(scale(CAD, "1.1", k("total")), add(CAD, scale(CAD, 2 * v, k("benefit")),
-                                                                    cad(f"{v / 100:.2f}"))))),
+                        And(Le(add(CAD, scale(CAD, 20 * v, k("benefit")), cad(f"-{v / 10:.2f}")),
+                               scale(CAD, 11, k("total"))),
+                            Lt(scale(CAD, 11, k("total")), add(CAD, scale(CAD, 20 * v, k("benefit")),
+                                                                 cad(f"{v / 10:.2f}"))))),
                 Implies(And(b, U("halfup", CL), Lt(scale(CAD, v, k("mwie")), k("total"))),
                         Eq(k("wiecap"), k("mwie")))]
     return build
@@ -209,21 +214,32 @@ def _sch1_row(n, lo, hi, cells):
     return build
 
 
-def _rank_rules(ctx):
-    """s. 14(4): for each week w, rank_w = the number of other weeks v with higher earnings (or equal earnings and an
-    earlier week: tie-break E1), as a running count rk_w_0..; calc(w) iff rank_w < N."""
+def _rank_rules(ctx, strict=True):
+    """s. 14(4): rank_w = the number of weeks ranked above week w: weeks with higher earnings, or equal earnings and an
+    earlier place (tie-break E1: the total is the same for any choice among equal weeks); calc(w) iff rank_w < N.
+    Grounded over the stated runs (E2: a run is "weeks a to b: $X each"; all its weeks have the run's amount, so a run is
+    ranked by the earnings of its first week): gsize_g = glast_g - gfirst_g + 1; gabove_g = the total size of the runs
+    ranked above run g (running count ab_g_0..); rank_w = gabove_g + (weeknum_w - gfirst_g)."""
     out = []
-    W = ctx.weeks
-    for i, w in enumerate(W):
-        others = [v for v in W if v != w]
-        out.append(Eq(k(f"rk_{w}_0"), lit(WEEK, 0)))
-        for j, v in enumerate(others, 1):
-            above = Le(k(f"earn_{w}"), k(f"earn_{v}")) if W.index(v) < i else Lt(k(f"earn_{w}"), k(f"earn_{v}"))
-            prev, cur = k(f"rk_{w}_{j - 1}"), k(f"rk_{w}_{j}")
-            out.append(Implies(above, Eq(cur, add(WEEK, prev, lit(WEEK, 1)))))
+    R = ctx.runs
+    head = {g: ws[0] for g, ws in R}
+    for g, ws in R:
+        out.append(Eq(k(f"gsize_{g}"), add(WEEK, add(WEEK, k(f"glast_{g}"), scale(WEEK, -1, k(f"gfirst_{g}"))), lit(WEEK, 1))))
+    for i, (g, ws) in enumerate(R):
+        others = [h for h, _ in R if h != g]
+        out.append(Eq(k(f"ab_{g}_0"), lit(WEEK, 0)))
+        for j, h in enumerate(others, 1):
+            hi = [x for x, _ in R].index(h)
+            above = (Le(k(f"earn_{head[g]}"), k(f"earn_{head[h]}")) if hi < i
+                     else Lt(k(f"earn_{head[g]}"), k(f"earn_{head[h]}")))
+            prev, cur = k(f"ab_{g}_{j - 1}"), k(f"ab_{g}_{j}")
+            out.append(Implies(above, Eq(cur, add(WEEK, prev, k(f"gsize_{h}")))))
             out.append(Implies(Not(above), Eq(cur, prev)))
-        out.append(Eq(k(f"rank_{w}"), k(f"rk_{w}_{len(others)}")))
-        out.append(Iff(U("calc", w), Lt(k(f"rank_{w}"), k("nweeks"))))
+        out.append(Eq(k(f"gabove_{g}"), k(f"ab_{g}_{len(others)}")))
+        for w in ws:
+            out.append(Eq(k(f"rank_{w}"), add(WEEK, k(f"gabove_{g}"),
+                                               add(WEEK, k(f"weeknum_{w}"), scale(WEEK, -1, k(f"gfirst_{g}"))))))
+            out.append(Iff(U("calc", w), Lt(k(f"rank_{w}"), k("nweeks")) if strict else Le(k(f"rank_{w}"), k("nweeks"))))
     return out
 
 
@@ -272,8 +288,8 @@ UNITS = {
         Implies(And(Not(U("s23", CL)), Not(U("halfup", CL))), Eq(scale(CAD, 100, k("benefit")), scale(CAD, 55, k("wiecap")))),
         Implies(And(U("s23", CL), Not(U("halfup", CL))), Eq(scale(CAD, 100, k("benefit")), scale(CAD, 33, k("wiecap")))),
         Implies(And(U("halfup", CL), Not(U("s23", CL)), Eq(k("wiecap"), k("mwie"))),
-                And(Le(add(CAD, scale(CAD, 2, k("benefit")), cad("-0.01")), scale(CAD, "1.1", k("mwie"))),
-                    Lt(scale(CAD, "1.1", k("mwie")), add(CAD, scale(CAD, 2, k("benefit")), cad("0.01")))))],
+                And(Le(add(CAD, scale(CAD, 20, k("benefit")), cad("-0.10")), scale(CAD, 11, k("mwie"))),
+                    Lt(scale(CAD, 11, k("mwie")), add(CAD, scale(CAD, 20, k("benefit")), cad("0.10")))))],
         "s. 14(1): 55% (or 33% in the s. 23 case) of weekly insurable earnings, exact on the cent grid (no rounding rule "
         "in the text); the half-up convention (D7) only where the question states it (fact halfup), written per "
         "s. 14(2) row with the division (units 17-25)"),
@@ -296,8 +312,8 @@ UNITS = {
          "stated without lay-off/separation amounts (fixed facts)"),
     27: ("RULE", _rank_rules,
          "s. 14(4): the N weeks (N from the s. 14(2) table), consecutive or not, with the highest insurable earnings: a "
-         "week is in iff fewer than N other weeks rank above it (ties broken by week order, E1: the total is the same "
-         "for any choice among equal weeks)"),
+         "week is in iff fewer than N weeks rank above it (ties broken by place, E1: the total is the same for any "
+         "choice among equal weeks); grounded over the stated runs of weeks (E2)"),
     **{n: ("RULE", _sch1_row(n, lo, hi, cells), f"Schedule I row {lo}-{hi or ''}: {sum(v is not None for v in cells)} "
                                                     f"cells (blank cells: no rule)")
        for n, (lo, hi, cells) in SCH1.items()},
@@ -405,8 +421,13 @@ def int_constants(ctx):
     for w in ctx.weeks:
         for base, (u, words) in WEEK_INTS.items():
             out[f"{base}_{w}"] = (u, f"{words} ({w})")
-        for j in range(n):
-            out[f"rk_{w}_{j}"] = (WEEK, f"other weeks ranked above {w} among the first {j} others")
+        out[f"weeknum_{w}"] = (WEEK, f"the number of week {w} in the qualifying period")
+    for g, ws in ctx.runs:
+        for base, words in (("gfirst", "the first week number of run"), ("glast", "the last week number of run"),
+                            ("gsize", "the number of weeks of run"), ("gabove", "the number of weeks ranked above run")):
+            out[f"{base}_{g}"] = (WEEK, f"{words} {g}")
+        for j in range(len(ctx.runs)):
+            out[f"ab_{g}_{j}"] = (WEEK, f"weeks of the first {j} other runs ranked above run {g}")
     for s in ctx.seps:
         for base, (u, words) in SEP_INTS.items():
             out[f"{base}_{s}"] = (u, f"{words} ({s})")
@@ -481,15 +502,7 @@ MUTANTS = {
 
 
 def _m6(t):
-    def build(ctx):
-        out = []
-        for f in _rank_rules(ctx):
-            if is_iff(f) and f[1][1][1] == "calc":
-                w = f[1][1][2][1]
-                f = Iff(U("calc", w), Le(k(f"rank_{w}"), k("nweeks")))
-            out.append(f)
-        return out
-    return {**t, 27: (t[27][0], build, *t[27][2:])}
+    return {**t, 27: (t[27][0], lambda ctx: _rank_rules(ctx, strict=False), *t[27][2:])}
 
 
 MUTANTS["M6"] = ("TOP-N: s. 14(4) one week more than the table's number (rank <= N)", _m6)

@@ -3,7 +3,8 @@
 Conventions (stated in RESULT.md): every claimant is an insured person (writer prompt, fixed facts); no benefits under
 s. 23 (fixed facts: s23 false); 'halfup' is true exactly where the question states the half-cent-up convention; weekly
 earnings are the stated amounts for weeks 1..M of the qualifying period (week ids w01..); lay-off/separation amounts are
-the listed items s1..; the benefit period's first day and the maximum yearly insurable earnings are copied as stated.
+the listed items s1..; each stated run of weeks ("weeks a to b: $X each") is an item g.. with its
+first and last week numbers as stated, and each week's number is its place in the qualifying period (E2); the benefit period's first day and the maximum yearly insurable earnings are copied as stated.
 """
 from __future__ import annotations
 
@@ -11,7 +12,9 @@ import translation as T
 
 
 def context(case):
-    return T.Ctx([f"w{i:02d}" for i in range(1, len(case["weeks"]) + 1)], [f"s{i}" for i in range(1, len(case["seps"]) + 1)])
+    weeks = [f"w{i:02d}" for i in range(1, len(case["weeks"]) + 1)]
+    runs = [(f"g{j:02d}", [f"w{i:02d}" for i in range(lo, hi + 1)]) for j, (lo, hi) in enumerate(case["runs"], 1)]
+    return T.Ctx(weeks, [f"s{i}" for i in range(1, len(case["seps"]) + 1)], runs)
 
 
 def facts(case):
@@ -32,6 +35,11 @@ def facts(case):
         add("myie", T.Eq(k("myie"), T.cad(case["myie"])))
     for w, amt in zip(ctx.weeks, case["weeks"]):
         add(f"earn_{w}", T.Eq(k(f"earn_{w}"), T.cad(amt)))
+    for i, w in enumerate(ctx.weeks, 1):
+        add(f"weeknum_{w}", T.Eq(k(f"weeknum_{w}"), T.lit(T.WEEK, i)))
+    for (g, ws), (lo, hi) in zip(ctx.runs, case["runs"]):
+        add(f"gfirst_{g}", T.Eq(k(f"gfirst_{g}"), T.lit(T.WEEK, lo)))
+        add(f"glast_{g}", T.Eq(k(f"glast_{g}"), T.lit(T.WEEK, hi)))
     for s, amt in zip(ctx.seps, case["seps"]):
         add(f"sepamt_{s}", T.Eq(k(f"sepamt_{s}"), T.cad(amt)))
     return out
