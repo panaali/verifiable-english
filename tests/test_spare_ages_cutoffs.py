@@ -101,9 +101,20 @@ def test_a_cutoff_moved_in_every_line_is_caught_by_schedule_4(old, new):
 
 
 def bound(facts, fid):
-    (formula,) = [f["formula"] for f in facts if f["id"] == fid]
-    assert formula[1:] == [T.num("applicant", fid.split(".")[1]), T.day(T.QW1)]
-    return formula[0]
+    """"date_no_later" when the facts put the day no later than the week's last day, else "date_after"."""
+    end = date.fromisoformat(T.QW1)
+    sides = set()
+    for f in facts:
+        op, const, (_, iso) = f["formula"]
+        if const != T.num("applicant", fid.split(".")[1]):
+            continue
+        d = date.fromisoformat(iso)
+        if op in ("date_on", "date_no_later") and d <= end:
+            sides.add("date_no_later")
+        if op in ("date_on", "date_after") and d >= end and not (op == "date_on" and d == end):
+            sides.add("date_after")
+    assert len(sides) == 1, (fid, facts)
+    return sides.pop()
 
 
 @pytest.mark.parametrize("case,birth,pa,age80", [
