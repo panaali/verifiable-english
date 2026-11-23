@@ -560,4 +560,20 @@ def test_the_spelling_corpus_has_every_operator_lean_reads():
                                 ("lean/VE/Cardinality/Wire.lean", "def elabBody", "/-! ## Canonical encoding")):
         lean = (Path(__file__).parent.parent / source).read_text(encoding="utf-8")
         found |= set(re.findall(r'\[\.str "(\w+)"', lean[lean.index(first):lean.index(last)]))
-    assert not found - set(re.findall(r'"(\w+)"', json.dumps(EVERY)))
+    assert not found - set(re.findall(r'"(\w+)"', json.dumps(EVERY))) - set(re.findall(r'"(\w+)"', json.dumps(REFUSED_HERE)))
+
+
+# date-arith (review B3): the quantity route's ground date expressions, which the cardinality route refuses (it binds no
+# input dates into a statement's identity).
+REFUSED_HERE = [["quantity", ["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]],
+                ["quantity", ["date_on", ["const", "day", "d1"], ["cal", ["date", "2026-01-01"]]]]]
+
+
+@pytest.mark.parametrize("formula", REFUSED_HERE)
+def test_ground_date_expressions_are_refused_here_by_lean_and_the_relay(formula):
+    lean = _lean_s(formula)
+    assert lean["status"] == "error"
+    assert lean["error"] == "UnsupportedProfile: ground date expressions are not admitted on the cardinality route"
+    with pytest.raises(VEError) as refused:
+        cardinality.paraphrase(PLAIN, _stated(formula))
+    assert (refused.type, str(refused.value)) == (type(rejection(lean)), str(rejection(lean)))
