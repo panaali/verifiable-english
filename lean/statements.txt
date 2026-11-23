@@ -70751,6 +70751,57 @@ theorem VE.Time.Wire.QVocab.core_environment
   ∀ (v : VE.Time.Wire.QVocab), v.core.environment = v.env.erase
   -- uses VE.Order.Environment@VE.Order.Syntax VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.Wire.QVocab.core@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.QVocab@VE.Time.Wire
   -- expr 3034305992
+theorem VE.Time.Wire.arr_of_toList
+  ∀ {xs : Array Lean.Json} {l : List Lean.Json}, xs.toList = l → Lean.Json.arr xs = Lean.Json.arr l.toArray
+  -- uses
+  -- expr 1964310360
+theorem VE.Time.Wire.before_asymm
+  ∀ {a b : VE.Time.Civil}, a.Before b → ¬b.Before a
+  -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 683663504
+theorem VE.Time.Wire.calCmp_agrees
+  ∀ {op : String} {a b : Lean.Json} {f : VE.Time.QFormula} {x y : VE.Time.Civil},
+    VE.Time.Wire.elabCal VE.Limits.maxDepth a = Except.ok x →
+      VE.Time.Wire.elabCal VE.Limits.maxDepth b = Except.ok y →
+        x.Valid →
+          y.Valid →
+            VE.Time.Wire.elabCalCmp op a b = Except.ok f →
+              op = "before" ∧
+                  f =
+                    VE.Time.QFormula.dateBefore (VE.Time.QTerm.num VE.Time.dayTag ↑x.num)
+                      (VE.Time.QTerm.num VE.Time.dayTag ↑y.num) ∨
+                op = "after" ∧
+                    f =
+                      VE.Time.QFormula.dateAfter (VE.Time.QTerm.num VE.Time.dayTag ↑x.num)
+                        (VE.Time.QTerm.num VE.Time.dayTag ↑y.num) ∨
+                  op = "on" ∧
+                      f =
+                        VE.Time.QFormula.dateOn (VE.Time.QTerm.num VE.Time.dayTag ↑x.num)
+                          (VE.Time.QTerm.num VE.Time.dayTag ↑y.num) ∨
+                    op = "on_or_before" ∧
+                        f =
+                          VE.Time.QFormula.dateNoLater (VE.Time.QTerm.num VE.Time.dayTag ↑x.num)
+                            (VE.Time.QTerm.num VE.Time.dayTag ↑y.num) ∨
+                      op = "on_or_after" ∧
+                        f =
+                          VE.Time.QFormula.dateNoLater (VE.Time.QTerm.num VE.Time.dayTag ↑y.num)
+                            (VE.Time.QTerm.num VE.Time.dayTag ↑x.num)
+  -- uses VE.Limits.maxDepth@VE.Limits VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.QFormula.dateAfter@VE.Time.Syntax VE.Time.QFormula.dateBefore@VE.Time.Syntax VE.Time.QFormula.dateNoLater@VE.Time.Syntax VE.Time.QFormula.dateOn@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.QTerm.num@VE.Time.Syntax VE.Time.Wire.elabCal@VE.Time.Wire VE.Time.Wire.elabCalCmp@VE.Time.Wire VE.Time.dayTag@VE.Time.Syntax
+  -- expr 3074414146
+theorem VE.Time.Wire.calCmp_sound
+  ∀ {op : String} {a b : Lean.Json} {f : VE.Time.QFormula},
+    VE.Time.Wire.elabCalCmp op a b = Except.ok f →
+      ∃ x y,
+        VE.Time.Wire.CalDenotes a x ∧
+          VE.Time.Wire.CalDenotes b y ∧
+            ∀ {α : Type u} (T : VE.Time.TStructure α) (ρ : List α),
+              VE.Time.QFormula.tdenote T ρ f ↔ VE.Time.Wire.CalOrder op x y
+  -- uses VE.Time.Civil@VE.Time.Calendar VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QFormula@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.Wire.CalDenotes@VE.Time.Wire VE.Time.Wire.CalOrder@VE.Time.Wire VE.Time.Wire.elabCalCmp@VE.Time.Wire
+  -- expr 3767503550
+theorem VE.Time.Wire.calDay_sound
+  ∀ {e : Lean.Json} {D : VE.Time.Civil}, VE.Time.Wire.calDay e = Except.ok D → VE.Time.Wire.CalDenotes e D ∧ D.Valid
+  -- uses VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.Wire.CalDenotes@VE.Time.Wire VE.Time.Wire.calDay@VE.Time.Wire
+  -- expr 3258909679
 theorem VE.Time.Wire.checkW6Certificate_sound
   ∀ {w : VE.Time.Wire.W6Env} (ps : List (VE.Time.Wire.Admission w)) (c : VE.Time.Wire.Admission w)
     (cert : VE.Time.Wire.W6Certificate),
@@ -70760,6 +70811,15 @@ theorem VE.Time.Wire.checkW6Certificate_sound
           cert.conclusionId = c.meaningId ∧ VE.Time.TEntails w.vocab.env (List.map (fun x => x.formula) ps) c.formula
   -- uses VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics VE.Time.Wire.Admission.formula@VE.Time.Wire VE.Time.Wire.Admission.meaningId@VE.Time.Wire VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Certificate.conclusionId@VE.Time.Wire VE.Time.Wire.W6Certificate.environmentId@VE.Time.Wire VE.Time.Wire.W6Certificate.premiseIds@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.checkW6Certificate@VE.Time.Wire
   -- expr 1725119716
+theorem VE.Time.Wire.coord_num
+  ∀ {x T : VE.Time.Civil}, x.Valid → (VE.Time.Coord (↑x.num) T ↔ T = x)
+  -- uses VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.Coord@VE.Time.Semantics
+  -- expr 478132713
+theorem VE.Time.Wire.elabCal_sound
+  ∀ (fuel : Nat) (j : Lean.Json) (D : VE.Time.Civil),
+    VE.Time.Wire.elabCal fuel j = Except.ok D → VE.Time.Wire.CalDenotes j D ∧ D.Ground
+  -- uses VE.Time.Civil.Ground@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.Wire.CalDenotes@VE.Time.Wire VE.Time.Wire.elabCal@VE.Time.Wire
+  -- expr 2641790819
 theorem VE.Time.Wire.evalB_sorted_sound
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (names : List String) (limit : Nat) (f : VE.Order.Formula) (w : Nat)
     (r : Bool × Nat),
@@ -70767,6 +70827,10 @@ theorem VE.Time.Wire.evalB_sorted_sound
       r.fst = VE.Order.Formula.eval d.toModel [] f
   -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Time.Wire.sortDomains@VE.Time.Wire VE.Time.Wire.tables@VE.Time.Wire VE.Time.evalB@VE.Time.Budget
   -- expr 2766604691
+theorem VE.Time.Wire.except_ok_inj
+  ∀ {ε α : Type} {a b : α}, Except.ok a = Except.ok b → a = b
+  -- uses
+  -- expr 4019648945
 theorem VE.Time.Wire.extension_document_sound
   ∀ (w : VE.Time.Wire.W6Env) (id kind : String) (j answer : Lean.Json),
     VE.Time.Document.extension w id kind j = Except.ok answer →
@@ -70810,6 +70874,14 @@ theorem VE.Time.Wire.extension_document_sound
                             Lean.Json.arr (List.map (fun u => VE.Route.Admission.renderKind u.kind) D.units).toArray)]
   -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Route.Admission.renderKind@VE.Route.Admission VE.Route.Wire.identityVersion@VE.Route.Wire VE.Time.Document.Admitted.doc@VE.Time.Document VE.Time.Document.Admitted.nodes@VE.Time.Document VE.Time.Document.Admitted.root@VE.Time.Document VE.Time.Document.Admitted@VE.Time.Document VE.Time.Document.ChoicesCompatible@VE.Time.Document VE.Time.Document.CitationsClosed@VE.Time.Document VE.Time.Document.Entry.Sound@VE.Time.Document VE.Time.Document.Entry.SoundOverLeaves@VE.Time.Document VE.Time.Document.Entry.adm@VE.Time.Document VE.Time.Document.Entry.assumptions@VE.Time.Document VE.Time.Document.Entry.label@VE.Time.Document VE.Time.Document.Entry.name@VE.Time.Document VE.Time.Document.LeafAdmitted@VE.Time.Document VE.Time.Document.NodeAdmitted@VE.Time.Document VE.Time.Document.QDoc.units@VE.Time.Document VE.Time.Document.QDoc@VE.Time.Document VE.Time.Document.QNode.adm@VE.Time.Document VE.Time.Document.QNode.deduction@VE.Time.Document VE.Time.Document.QNode.label@VE.Time.Document VE.Time.Document.QNode.name@VE.Time.Document VE.Time.Document.QNode@VE.Time.Document VE.Time.Document.QUnit.kind@VE.Time.Document VE.Time.Document.QUnit@VE.Time.Document VE.Time.Document.claimJson@VE.Time.Document VE.Time.Document.decodeDocument@VE.Time.Document VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.Admission@VE.Time.Wire VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.ok@VE.Time.Wire
   -- expr 945645095
+theorem VE.Time.Wire.integer_nat
+  ∀ {s : String} {z : Int}, VE.Time.Wire.integer s = Except.ok z → ¬z < 0 → VE.Time.Wire.integer s = Except.ok ↑z.toNat
+  -- uses VE.Time.Wire.integer@VE.Time.Wire
+  -- expr 1502848692
+theorem VE.Time.Wire.noLater_iff
+  ∀ {a b : VE.Time.Civil}, a.Before b ∨ a = b ↔ ¬b.Before a
+  -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 3178775308
 theorem VE.Time.Wire.quantity_admission_wire_sound_plain
   ∀ (j answer : Lean.Json) (more : VE.Time.Wire.Extension),
     VE.Time.Wire.runCase j more = Except.ok answer →
@@ -70985,6 +71057,24 @@ theorem VE.Time.Wire.sortDomains_perm
     ((VE.Time.Wire.sortDomains d).toModel.domains s).Perm (d.toModel.domains s)
   -- uses VE.Order.FiniteModel.domains@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Time.Wire.sortDomains@VE.Time.Wire
   -- expr 2134213110
+theorem VE.Time.Wire.statementIds_inputs
+  ∀ {w : VE.Time.Wire.W6Env} {f : VE.Time.QFormula} {inputs : List String} {m c : String},
+    VE.Time.Wire.statementIds w f inputs = Except.ok (m, c) →
+      VE.Route.Wire.meaningId w.profiles w.environmentId
+          (Lean.Json.mkObj
+            ([("format", Lean.Json.str "ve-quantity@1"), ("formula", VE.Time.Wire.encQ f),
+                ("traces", Lean.Json.arr #[])] ++
+              VE.Time.Wire.inputsField inputs)) =
+        Except.ok m
+  -- uses VE.Route.Wire.meaningId@VE.Route.Wire VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.W6Env.environmentId@VE.Time.Wire VE.Time.Wire.W6Env.profiles@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire VE.Time.Wire.inputsField@VE.Time.Wire VE.Time.Wire.statementIds@VE.Time.Wire
+  -- expr 3876366911
+theorem VE.Time.Wire.tdates_num
+  ∀ {α : Type u} {R : Int → Int → Prop} {x y : VE.Time.Civil},
+    VE.Time.TDates R (Option.some (VE.Time.TValue.qty VE.Time.dayTag ↑x.num))
+        (Option.some (VE.Time.TValue.qty VE.Time.dayTag ↑y.num)) ↔
+      R ↑x.num ↑y.num
+  -- uses VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.TDates@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics VE.Time.dayTag@VE.Time.Syntax
+  -- expr 1075569737
 theorem VE.Time.addDays_proper
   ∀ {D : VE.Time.Civil}, D.Proper → ∀ (k : Nat), (D.addDays k).Proper
   -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.addDays@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -70997,6 +71087,26 @@ theorem VE.Time.addDays_zero
   ∀ (D : VE.Time.Civil), D.addDays 0 = D
   -- uses VE.Time.Civil.addDays@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
   -- expr 3810919817
+theorem VE.Time.addMonths_ground
+  ∀ {D D' : VE.Time.Civil} {k : Int} {r : Option VE.Time.MonthEnd},
+    D.Ground → D.addMonths k r = Option.some D' → VE.Time.minGroundYear ≤ D'.year → D'.year ≤ 9999 → D'.Ground
+  -- uses VE.Time.Civil.Ground@VE.Time.Calendar VE.Time.Civil.addMonths@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar VE.Time.minGroundYear@VE.Time.Calendar
+  -- expr 1801707209
+theorem VE.Time.addMonths_mono
+  ∀ {D E D' E' : VE.Time.Civil} {k : Int} {r : Option VE.Time.MonthEnd},
+    D.Ground →
+      E.Ground → ¬E.Before D → D.addMonths k r = Option.some D' → E.addMonths k r = Option.some E' → ¬E'.Before D'
+  -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Ground@VE.Time.Calendar VE.Time.Civil.addMonths@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar
+  -- expr 3833173076
+theorem VE.Time.addMonths_none_missing
+  ∀ {D D' : VE.Time.Civil} {k : Int}, D.addMonths k Option.none = Option.some D' → D'.day = D.day
+  -- uses VE.Time.Civil.addMonths@VE.Time.Calendar VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar
+  -- expr 101008951
+theorem VE.Time.addMonths_spec
+  ∀ {D D' : VE.Time.Civil} {k : Int} {r : Option VE.Time.MonthEnd},
+    D.addMonths k r = Option.some D' → D.MonthsLater k r D'
+  -- uses VE.Time.Civil.MonthsLater@VE.Time.Calendar VE.Time.Civil.addMonths@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar
+  -- expr 3668888453
 theorem VE.Time.add_num_denote
   ∀ {S : VE.Order.Structure} {ρ : VE.Order.Valuation S} {d : VE.Order.Term} {y : Int},
     VE.Order.Term.denote S ρ d = Option.some (Sum.inr y) →
@@ -71129,6 +71239,10 @@ theorem VE.Time.daysToYear_tenThousand
   VE.Time.daysToYear 10000 = VE.Time.dateMax + 1
   -- uses VE.Time.dateMax@VE.Time.Calendar VE.Time.daysToYear@VE.Time.Calendar
   -- expr 2320922287
+theorem VE.Time.decide_before
+  ∀ (a b : VE.Time.Civil), Decidable.decide (a.Before b) = Bool.true ↔ a.Before b
+  -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.instDecidableBefore@VE.Time.Calendar
+  -- expr 1538640903
 theorem VE.Time.decimal_exact
   ∀ (d : VE.Time.Dec) (k : Nat) (q : Int),
     VE.Time.lower d k = Option.some q ↔
@@ -71405,6 +71519,23 @@ theorem VE.Time.mem_distinct
       ∃ m, m < j - 1 ∧ a = (VE.Order.Formula.eq (VE.Order.Term.var 0) (VE.Order.Term.var (m + 1))).not
   -- uses VE.Order.Formula.eq@VE.Order.Syntax VE.Order.Formula.not@VE.Order.Syntax VE.Order.Formula@VE.Order.Syntax VE.Order.Term.var@VE.Order.Syntax VE.Time.distinct@VE.Time.Count
   -- expr 2276342557
+theorem VE.Time.monthFirst_proper
+  ∀ {D : VE.Time.Civil}, D.Proper → { year := D.year, month := D.month, day := 1 }.Proper
+  -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.mk@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 2915255844
+theorem VE.Time.monthLast_spec
+  ∀ {D : VE.Time.Civil},
+    D.Proper →
+      { year := D.year, month := D.month, day := VE.Time.monthLen D.year D.month }.Proper ∧
+        { year := D.year, month := D.month, day := VE.Time.monthLen D.year D.month }.succ =
+          if D.month < 12 then { year := D.year, month := D.month + 1, day := 1 }
+          else { year := D.year + 1, month := 1, day := 1 }
+  -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.mk@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.succ@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.monthLen@VE.Time.Calendar
+  -- expr 1968497868
+theorem VE.Time.monthLen_le
+  ∀ {y m : Nat}, VE.Time.monthLen y m ≤ 31
+  -- uses VE.Time.monthLen@VE.Time.Calendar
+  -- expr 2793545665
 theorem VE.Time.monthLen_pos
   ∀ {y m : Nat}, 1 ≤ m → m ≤ 12 → 1 ≤ VE.Time.monthLen y m
   -- uses VE.Time.monthLen@VE.Time.Calendar
@@ -71413,10 +71544,34 @@ theorem VE.Time.monthLen_twelve
   ∀ (y : Nat), VE.Time.monthLen y 12 = 31
   -- uses VE.Time.monthLen@VE.Time.Calendar
   -- expr 3652069739
+theorem VE.Time.monthsLater_cases
+  ∀ {D D' : VE.Time.Civil} {k : Int} {r : Option VE.Time.MonthEnd},
+    D.MonthsLater k r D' →
+      ∃ y m,
+        1 ≤ m ∧
+          m ≤ 12 ∧
+            ↑y * 12 + ↑m = ↑D.year * 12 + ↑D.month + k ∧
+              1 ≤ VE.Time.monthLen y m ∧
+                VE.Time.monthLen y m ≤ 31 ∧
+                  (D.day ≤ VE.Time.monthLen y m ∧ D' = { year := y, month := m, day := D.day } ∨
+                    VE.Time.monthLen y m < D.day ∧
+                        r = Option.some VE.Time.MonthEnd.last ∧
+                          D' = { year := y, month := m, day := VE.Time.monthLen y m } ∨
+                      VE.Time.monthLen y m < D.day ∧
+                        r = Option.some VE.Time.MonthEnd.next ∧
+                          ↑D'.year * 12 + ↑D'.month = ↑y * 12 + ↑m + 1 ∧ 1 ≤ D'.month ∧ D'.month ≤ 12 ∧ D'.day = 1)
+  -- uses VE.Time.Civil.MonthsLater@VE.Time.Calendar VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.mk@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd.last@VE.Time.Calendar VE.Time.MonthEnd.next@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar VE.Time.monthLen@VE.Time.Calendar
+  -- expr 3154512878
 theorem VE.Time.noLater_iff_le
   ∀ (t d : Int), VE.Time.CalNoLater t d ↔ (VE.Time.Guard t ∧ VE.Time.Guard d) ∧ t ≤ d
   -- uses VE.Time.CalNoLater@VE.Time.Semantics VE.Time.Guard@VE.Time.Semantics
   -- expr 1337258318
+theorem VE.Time.nthWeekday_spec
+  ∀ {n w m y : Nat} {D : VE.Time.Civil},
+    VE.Time.nthWeekday n w m y = Option.some D →
+      D.Valid ∧ D.year = y ∧ D.month = m ∧ D.weekday = w ∧ 1 ≤ n ∧ (D.day - 1) / 7 = n - 1
+  -- uses VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.weekday@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.nthWeekday@VE.Time.Calendar
+  -- expr 838648007
 theorem VE.Time.num_addDays
   ∀ {D : VE.Time.Civil}, D.Proper → ∀ (k : Nat), (D.addDays k).num = D.num + k
   -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.addDays@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -71449,6 +71604,16 @@ theorem VE.Time.on_iff
   ∀ (t d : Int), VE.Time.CalOn t d ↔ (VE.Time.Guard t ∧ VE.Time.Guard d) ∧ t = d
   -- uses VE.Time.CalOn@VE.Time.Semantics VE.Time.Guard@VE.Time.Semantics
   -- expr 4207031515
+theorem VE.Time.parseIsoFrom_valid
+  ∀ {lo : Nat} {s : String} {D : VE.Time.Civil},
+    VE.Time.parseIsoFrom lo s = Except.ok D →
+      lo ≤ D.year ∧ D.year ≤ 9999 ∧ 1 ≤ D.month ∧ D.month ≤ 12 ∧ 1 ≤ D.day ∧ D.day ≤ VE.Time.monthLen D.year D.month
+  -- uses VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.monthLen@VE.Time.Calendar VE.Time.parseIsoFrom@VE.Time.Calendar
+  -- expr 967361063
+theorem VE.Time.parseIso_eq
+  ∀ (s : String), VE.Time.parseIso s = VE.Time.parseIsoFrom 1970 s
+  -- uses VE.Time.Civil@VE.Time.Calendar VE.Time.parseIso@VE.Time.Calendar VE.Time.parseIsoFrom@VE.Time.Calendar
+  -- expr 2407776417
 theorem VE.Time.parseIso_valid
   ∀ {s : String} {D : VE.Time.Civil}, VE.Time.parseIso s = Except.ok D → D.Valid
   -- uses VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.parseIso@VE.Time.Calendar
@@ -71492,6 +71657,12 @@ theorem VE.Time.sub_denote
         VE.Order.Term.denote S ρ (t.add (VE.Order.Term.scale (-1) d)) = Option.some (Sum.inr (y + -1 * x))
   -- uses VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Structure@VE.Order.Semantics VE.Order.Term.add@VE.Order.Syntax VE.Order.Term.denote@VE.Order.Semantics VE.Order.Term.scale@VE.Order.Syntax VE.Order.Term@VE.Order.Syntax VE.Order.Valuation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics
   -- expr 2334159190
+theorem VE.Time.succ_monthLast
+  ∀ (y m : Nat),
+    { year := y, month := m, day := VE.Time.monthLen y m }.succ =
+      if m < 12 then { year := y, month := m + 1, day := 1 } else { year := y + 1, month := 1, day := 1 }
+  -- uses VE.Time.Civil.mk@VE.Time.Calendar VE.Time.Civil.succ@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.monthLen@VE.Time.Calendar
+  -- expr 1796449575
 theorem VE.Time.succ_proper
   ∀ {D : VE.Time.Civil}, D.Proper → D.succ.Proper
   -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.succ@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -71578,6 +71749,14 @@ theorem VE.Time.valid_iff
   ∀ {D : VE.Time.Civil}, D.Proper → (D.Valid ↔ D.num ≤ VE.Time.dateMax)
   -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.dateMax@VE.Time.Calendar
   -- expr 782340512
+theorem VE.Time.weekday_epoch
+  VE.Time.epoch.weekday = 3
+  -- uses VE.Time.Civil.weekday@VE.Time.Calendar VE.Time.epoch@VE.Time.Calendar
+  -- expr 1092871597
+theorem VE.Time.weekday_succ
+  ∀ {D : VE.Time.Civil}, D.Proper → D.succ.weekday = (D.weekday + 1) % 7
+  -- uses VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.succ@VE.Time.Calendar VE.Time.Civil.weekday@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 3433222033
 theorem VE.Time.within_iff
   ∀ (t d : Int) (n : Nat), VE.Time.CalWithin t d n ↔ (VE.Time.Guard t ∧ VE.Time.Guard d) ∧ d ≤ t ∧ t ≤ d + ↑n
   -- uses VE.Time.CalWithin@VE.Time.Semantics VE.Time.Guard@VE.Time.Semantics

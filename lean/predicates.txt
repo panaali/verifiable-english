@@ -1723,6 +1723,8 @@ VE.Time.CalOn@VE.Time.Semantics
 VE.Time.CalShift@VE.Time.Semantics
 VE.Time.CalWithin@VE.Time.Semantics
 VE.Time.Civil.Before@VE.Time.Calendar
+VE.Time.Civil.Ground@VE.Time.Calendar
+VE.Time.Civil.MonthsLater@VE.Time.Calendar
 VE.Time.Civil.Proper@VE.Time.Calendar
 VE.Time.Civil.Valid@VE.Time.Calendar
 VE.Time.Coord@VE.Time.Semantics
@@ -1750,6 +1752,9 @@ VE.Time.TStructure.relation@VE.Time.Semantics
 VE.Time.TTuple@VE.Time.Semantics
 VE.Time.TValue.Typed@VE.Time.Semantics
 VE.Time.Typed@VE.Time.Semantics
+VE.Time.Wire.CalDenotes.below@VE.Time.Wire
+VE.Time.Wire.CalDenotes@VE.Time.Wire
+VE.Time.Wire.CalOrder@VE.Time.Wire
 VE.TupleTyped@VE.Semantics
 VE.Valuation.Typed@VE.Semantics
 VE.Weighing.AdmissibleCompletion@VE.Weighing.Zone

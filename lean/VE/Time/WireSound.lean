@@ -293,4 +293,197 @@ theorem runCaseReported_ok (j answer : Json) (more : Extension) (h : runCase j m
     runCaseReported j more = answer := by
   simp [runCaseReported, h]
 
+/-! ## Ground date expressions (date-arith; SIZING section 3, items 10-12 and 14)
+
+`elabCal_sound` and `calCmp_sound` are listed theorems of the `quantity` path: a date worked
+out while decoding is the date `CalDenotes` names, and a decided or shown comparison means the
+order `CalOrder` names between those dates. -/
+
+theorem except_ok_inj {ε α : Type} {a b : α} (h : (Except.ok a : Except ε α) = .ok b) : a = b := by
+  cases h; rfl
+
+theorem integer_nat {s : String} {z : Int} (h : integer s = .ok z) (hz : ¬ z < 0) :
+    integer s = .ok (z.toNat : Int) := by
+  rw [h, Int.toNat_of_nonneg (by omega)]
+
+theorem arr_of_toList {xs : Array Json} {l : List Json} (h : xs.toList = l) : Json.arr xs = .arr l.toArray := by
+  cases xs; simp at h; subst h; rfl
+
+/-- Item 10: every date `elabCal` returns is the date its expression denotes, and lies in
+1900..9999 with a valid month and day. -/
+theorem elabCal_sound : ∀ (fuel : Nat) (j : Json) (D : Civil), elabCal fuel j = .ok D →
+    CalDenotes j D ∧ D.Ground
+  | 0, _, _, h => by cases h
+  | fuel + 1, j, D, h => by
+    unfold elabCal at h
+    split at h
+    · rename_i xs
+      split at h
+      · rename_i s hl
+        rw [arr_of_toList hl]
+        exact ⟨.date h, parseIsoFrom_valid h⟩
+      · rename_i e sk sr hl
+        rw [arr_of_toList hl]
+        obtain ⟨D0, h0, h⟩ := bind_ok h
+        obtain ⟨ih, g0⟩ := elabCal_sound fuel e D0 h0
+        split at h
+        · rename_i r hr
+          obtain ⟨k, hk, h⟩ := bind_ok h
+          split at h
+          · rename_i D' hD'
+            split at h
+            · rename_i hg
+              cases h
+              exact ⟨.plusMonths ih hk hr (addMonths_spec hD') hg, hg⟩
+            · cases h
+          · cases h
+        · cases h
+      · rename_i e sk hl
+        rw [arr_of_toList hl]
+        obtain ⟨D0, h0, h⟩ := bind_ok h
+        obtain ⟨ih, g0⟩ := elabCal_sound fuel e D0 h0
+        obtain ⟨k, hk, h⟩ := bind_ok h
+        dsimp only at h
+        split at h
+        · rename_i hb
+          cases h
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at hb
+          obtain ⟨⟨⟨hpb, hk0⟩, hkm⟩, h9⟩ := hb
+          have hpr := (Civil.properB_iff _).mp hpb
+          have hp' := addDays_proper hpr k.toNat
+          have hn := num_addDays hpr k.toNat
+          refine ⟨.plusDays ih hk hk0 ⟨hpr, g0.2.1⟩ ⟨hp', h9⟩ (by omega), ?_⟩
+          obtain ⟨hy, hm1, hm12, hd1, hdm⟩ := hp'
+          exact ⟨by unfold minGroundYear; omega, h9, hm1, hm12, hd1, hdm⟩
+        · cases h
+      · rename_i e _ hl
+        rw [arr_of_toList hl]
+        obtain ⟨D0, h0, h⟩ := bind_ok h
+        obtain ⟨ih, g0⟩ := elabCal_sound fuel e D0 h0
+        cases h
+        obtain ⟨g1, g2, g3, g4, _, _⟩ := g0
+        exact ⟨.monthFirst ih, g1, g2, g3, g4, Nat.le_refl 1, monthLen_pos g3 g4⟩
+      · rename_i e _ _ hl
+        rw [arr_of_toList hl]
+        obtain ⟨D0, h0, h⟩ := bind_ok h
+        obtain ⟨ih, g0⟩ := elabCal_sound fuel e D0 h0
+        cases h
+        obtain ⟨g1, g2, g3, g4, _, _⟩ := g0
+        exact ⟨.monthLast ih, g1, g2, g3, g4, monthLen_pos g3 g4, Nat.le_refl _⟩
+      · rename_i n w m y hl
+        rw [arr_of_toList hl]
+        obtain ⟨n', hn, h⟩ := bind_ok h
+        obtain ⟨w', hw, h⟩ := bind_ok h
+        obtain ⟨m', hm, h⟩ := bind_ok h
+        obtain ⟨y', hy, h⟩ := bind_ok h
+        split at h
+        · rename_i D' hD'
+          cases h
+          obtain ⟨hv, hyy, hmm, hwd, hn1, hd⟩ := nthWeekday_spec hD'
+          refine ⟨.nthWeekday hn hw (hmm ▸ hm) (hyy ▸ hy) hv hwd hn1 hd, ?_⟩
+          obtain ⟨⟨hy1, hm1, hm12, hd1, hdm⟩, h9⟩ := hv
+          exact ⟨by unfold minGroundYear; omega, h9, hm1, hm12, hd1, hdm⟩
+        · cases h
+      · cases h
+    · cases h
+
+/-- Item 11: a `["cal", E]` day term's date is the date `E` denotes, and it is valid
+(1970..9999), so today's guard holds for its day number. -/
+theorem calDay_sound {e : Json} {D : Civil} (h : calDay e = .ok D) : CalDenotes e D ∧ D.Valid := by
+  unfold calDay at h
+  obtain ⟨D0, h0, h⟩ := bind_ok h
+  obtain ⟨ih, g0⟩ := elabCal_sound _ _ _ h0
+  split at h
+  · rename_i hb
+    cases h
+    exact ⟨ih, (Civil.properB_iff _).mp hb, g0.2.1⟩
+  · cases h
+
+theorem before_asymm {a b : Civil} (h : a.Before b) : ¬ b.Before a := by
+  unfold Civil.Before at *; omega
+
+theorem noLater_iff {a b : Civil} : (a.Before b ∨ a = b) ↔ ¬ b.Before a := by
+  rcases a with ⟨ay, am, ad⟩; rcases b with ⟨by', bm, bd⟩
+  unfold Civil.Before; simp only [Civil.mk.injEq]; omega
+
+theorem coord_num {x T : Civil} (hx : x.Valid) : Coord (x.num : Int) T ↔ T = x := by
+  constructor
+  · rintro ⟨hT, hn⟩; exact num_injective hT.1 hx.1 (by omega)
+  · rintro rfl; exact ⟨hx, rfl⟩
+
+theorem tdates_num.{u} {α : Type u} {R : Int → Int → Prop} {x y : Civil} :
+    TDates (α := α) R (some (.qty dayTag (x.num : Int))) (some (.qty dayTag (y.num : Int))) ↔
+      R x.num y.num := by
+  constructor
+  · rintro ⟨a, b, ha, hb, hr⟩
+    cases ha; cases hb; exact hr
+  · intro hr; exact ⟨_, _, rfl, rfl, hr⟩
+
+/-- Item 12: a `cal_cmp` node means the order its operator names between the dates its two
+expressions denote, in every tagged structure: when both dates are valid it is today's date
+node over their day numbers, else it is decided `top` or `bottom`. -/
+theorem calCmp_sound.{u} {op : String} {a b : Json} {f : QFormula} (h : elabCalCmp op a b = .ok f) :
+    ∃ x y, CalDenotes a x ∧ CalDenotes b y ∧
+      ∀ {α : Type u} (T : TStructure α) (ρ : List α), f.tdenote T ρ ↔ CalOrder op x y := by
+  unfold elabCalCmp at h
+  obtain ⟨x, hx, h⟩ := bind_ok h
+  obtain ⟨y, hy, h⟩ := bind_ok h
+  obtain ⟨dx, gx⟩ := elabCal_sound _ _ _ hx
+  obtain ⟨dy, gy⟩ := elabCal_sound _ _ _ hy
+  refine ⟨x, y, dx, dy, ?_⟩
+  intro α T ρ
+  split at h
+  · rename_i node hm
+    cases h
+    by_cases hv : x.properB = true ∧ y.properB = true
+    · have vx : x.Valid := ⟨(Civil.properB_iff _).mp hv.1, gx.2.1⟩
+      have vy : y.Valid := ⟨(Civil.properB_iff _).mp hv.2, gy.2.1⟩
+      rw [if_pos (by simp [hv.1, hv.2])]
+      unfold calNode at hm
+      split at hm <;> cases hm <;>
+        simp [QFormula.tdenote, QTerm.tdenote, tdates_num, CalOrder, CalBefore, CalAfter, CalOn,
+          CalNoLater, coord_num vx, coord_num vy, noLater_iff]
+    · rw [if_neg (by simpa using hv)]
+      split <;> simp_all [QFormula.tdenote]
+  · cases h
+
+/-- Group 14 (C7): for valid dates `cal_cmp` is exactly today's date node over their day numbers,
+so a sentence lowered as ground dates and one lowered as day constants mean the same. -/
+theorem calCmp_agrees {op : String} {a b : Json} {f : QFormula} {x y : Civil}
+    (ha : elabCal VE.Limits.maxDepth a = .ok x) (hb : elabCal VE.Limits.maxDepth b = .ok y)
+    (vx : x.Valid) (vy : y.Valid) (h : elabCalCmp op a b = .ok f) :
+    (op = "before" ∧ f = .dateBefore (.num dayTag x.num) (.num dayTag y.num)) ∨
+    (op = "after" ∧ f = .dateAfter (.num dayTag x.num) (.num dayTag y.num)) ∨
+    (op = "on" ∧ f = .dateOn (.num dayTag x.num) (.num dayTag y.num)) ∨
+    (op = "on_or_before" ∧ f = .dateNoLater (.num dayTag x.num) (.num dayTag y.num)) ∨
+    (op = "on_or_after" ∧ f = .dateNoLater (.num dayTag y.num) (.num dayTag x.num)) := by
+  unfold elabCalCmp at h
+  rw [ha, hb] at h
+  have hpx := (Civil.properB_iff x).mpr vx.1
+  have hpy := (Civil.properB_iff y).mpr vy.1
+  obtain ⟨_, hx, h⟩ := bind_ok h
+  cases hx
+  obtain ⟨_, hy, h⟩ := bind_ok h
+  cases hy
+  split at h
+  · rename_i node hm
+    cases h
+    rw [if_pos (by simp [hpx, hpy])]
+    unfold calNode at hm
+    split at hm <;> cases hm <;> simp
+  · cases h
+
+/-- Group 14 (C1): a statement's meaning id is the id of its canonical object with the dates its
+ground expressions start from (none: today's object), so other case dates give another id. -/
+theorem statementIds_inputs {w : W6Env} {f : QFormula} {inputs : List String} {m c : String}
+    (h : statementIds w f inputs = .ok (m, c)) :
+    VE.Route.Wire.meaningId w.profiles w.environmentId
+      (Json.mkObj ([("format", .str "ve-quantity@1"), ("formula", encQ f), ("traces", Json.arr #[])] ++
+        inputsField inputs)) = .ok m := by
+  unfold statementIds at h
+  obtain ⟨m', hm, h⟩ := bind_ok h
+  obtain ⟨c', _, h⟩ := bind_ok h
+  cases h
+  exact hm
+
 end VE.Time.Wire
