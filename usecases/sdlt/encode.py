@@ -3,8 +3,9 @@
 Conventions (stated, the same for every case):
 C1 closed world: a unary fact on a transaction or person, and a (person, transaction) fact, that the case record does not
    list as true is stated false (the encoder lists every true fact it reads in the question's facts);
-C2 the (transaction, transaction) links (linked, earlier, gardenof, benefitof) are exactly those the case lists; "linked"
-   is listed in both directions for every pair of transactions the facts say are linked (rules quantify over them);
+C2 the (transaction, transaction) links (linked, earlier, gardenof, benefitof) are exactly those the case lists: every
+   other ordered pair of distinct transactions is stated false for each of them; "linked" is listed in both directions
+   for every pair of transactions the facts say are linked (rules quantify over the listed ones);
 C3 integer constants (chargeable consideration, years a lease has to run) are stated only where the question gives them;
    nothing is computed by the encoder (no bridge in this law: amounts are never bridged);
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder.
@@ -55,6 +56,13 @@ def facts(case):
         if p not in T.TTFACTS or a not in txns or b not in txns:
             raise ValueError(f"{case['id']}: bad link {(p, a, b)}")
         out.append({"id": f"{p}.{a}.{b}", "formula": T.B(p, a, b)})
+    listed = {(p, a, b) for (p, a, b) in case.get("links", ())}
+    for a in txns:
+        for b in txns:
+            if a != b:
+                for p in T.TTFACTS:
+                    if (p, a, b) not in listed:
+                        out.append({"id": f"{p}.{a}.{b}", "formula": ["not", T.B(p, a, b)]})
     links = set(case.get("links", ()))
     for (p, a, b) in links:
         if p == "linked" and ("linked", b, a) not in links:
