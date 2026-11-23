@@ -402,6 +402,60 @@ def test_codex_m1_span_facts_are_refused_cannot(text):
         lower_date_item(env, text, {}, facts=facts)
 
 
+# --- the Codex re-check's two MEDIUMs (reviews/spare/date-arith/CODEX-RECHECK.final.md) --------------------------
+
+RECHECK_SPAN = ("If the person lived in a care home for the week immediately preceding the qualifying week, then the "
+                "deadline is 1 June 2026.")
+RECHECK_SPAN_FACTS = {"the person lived in a care home for the week immediately preceding the qualifying week":
+                      ["unary", "resident", ["const", "p"]]}
+
+
+@pytest.mark.parametrize("text, facts", [
+    # the re-check's exact item and facts map: a singular unit
+    (RECHECK_SPAN, RECHECK_SPAN_FACTS),
+    # a written count
+    ("If the person lived in a care home for twelve weeks immediately preceding the qualifying week, then the "
+     "deadline is 1 June 2026.",
+     {"the person lived in a care home for twelve weeks immediately preceding the qualifying week":
+      ["unary", "resident", ["const", "p"]]}),
+    # "a"/"an", a compound written count, a period of N units
+    ("If the person lived in a care home for a month before the qualifying week, then the deadline is 1 June 2026.",
+     {"the person lived in a care home for a month before the qualifying week": ["unary", "resident", ["const", "p"]]}),
+    ("If the person lived in a care home for the twenty-six weeks ending with the qualifying week, then the deadline "
+     "is 1 June 2026.",
+     {"the person lived in a care home for the twenty-six weeks ending with the qualifying week":
+      ["unary", "resident", ["const", "p"]]}),
+    ("If the person lived in a care home for a period of 52 weeks prior to the qualifying week, then the deadline is "
+     "1 June 2026.",
+     {"the person lived in a care home for a period of 52 weeks prior to the qualifying week":
+      ["unary", "resident", ["const", "p"]]}),
+])
+def test_codex_recheck_med1_singular_and_written_count_spans_are_refused_cannot(text, facts):
+    """Re-check MEDIUM 1: a duration span with a singular unit or a written count is refused with the span's own
+    reason, before the facts map is read."""
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(_deadline_env(), text, {}, roles=["the person"], may_lack=[], facts=facts)
+
+
+def test_codex_recheck_med1_control_a_non_span_sentence_still_lowers():
+    """The span check does not touch a sentence without a span: the same item without the span phrase lowers."""
+    text = "If the person lived in a care home, then the deadline is 1 June 2026."
+    lowered = lower_date_item(_deadline_env(), text, {}, roles=["the person"], may_lack=[],
+                              facts={"the person lived in a care home": ["unary", "resident", ["const", "p"]]})
+    assert [p["formula"] for p in lowered["premises"]] == [
+        ["implies", ["unary", "resident", ["const", "p"]],
+         ["date_on", ["const", "day", "deadline"], ["cal", ["date", "2026-06-01"]]]]]
+
+
+def test_codex_recheck_med2_a_raw_date_term_counts_as_a_fixed_day():
+    """Re-check MEDIUM 2: a conclusion that compares raw ["date", iso] terms only (here from the facts map) is
+    refused as comparing fixed dates only."""
+    text = "If 1 June 2026 is on 1 June 2026, then 2 June 2026 is before 1 June 2026."
+    facts = {"2 June 2026 is before 1 June 2026": ["date_before", ["date", "2026-06-02"], ["date", "2026-06-01"]]}
+    with pytest.raises(DateRuleError, match=r"compares fixed dates only"):
+        lower_date_item(_deadline_env(), text, {}, roles=["the person"], may_lack=[], facts=facts)
+
+
 # --- the Opus review's MEDIUM: one boundary test per form real items use ----------------------------------------
 
 def _payment(text, iso, **case):

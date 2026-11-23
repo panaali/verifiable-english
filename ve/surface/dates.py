@@ -11,9 +11,10 @@ period and week wordings into those nodes, and copies a rule per role (a `Let` s
 "the person" is lowered per role too, so each role's rules read that role's dates). It is tested,
 not Lean-checked.
 
-A fact over a span of days ("throughout the qualifying week", "any day falling within the week") is
-refused (CANNOT): the written form has no reading of it, and the facts map or the W6 grammar must not
-read it as a plain fact (rtt2 S4, S10).
+A fact over a span of days ("throughout the qualifying week", "any day falling within the week", "for the
+week immediately preceding", "for twelve weeks before": a unit singular or plural, a count in digits or
+words) is refused (CANNOT): the written form has no reading of it, and the facts map or the W6 grammar must
+not read it as a plain fact (rtt2 S4, S10).
 Lean computes the arithmetic on the dates supplied here and binds them into the statement's meaning
 id (`calInputs`), so a wrong case date is visible in the report, not caught.
 
@@ -56,11 +57,20 @@ class DateRuleError(SyntaxError):
     """A written date item the lowering refuses (the message names the rule)."""
 
 
-# A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10).
+# A count in a duration-span phrase: digits, or a written count up to "nine hundred and ninety-nine" (Codex
+# re-check MEDIUM 1: "for twelve weeks immediately preceding").
+_ONES = r"one|two|three|four|five|six|seven|eight|nine"
+_UNDER_100 = (rf"(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:[- ](?:{_ONES}))?|ten|eleven|twelve|"
+              rf"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|{_ONES}")
+_COUNT = rf"(?:[0-9]+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100})"
+# A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10). A duration span is
+# "for" + an optional article + an optional count (digits or written) + a unit, singular or plural ("for the
+# week immediately preceding", "for twelve weeks before", "for a period of 12 weeks ending with").
 _SPAN = re.compile(r"\b(?:throughout|any day|every day|each day|some day|all days|a day (?:in|within|falling|of)|"
                    r"days? falling (?:in|within)|any time|all times|at no time|for the (?:whole|entire)|continuously|"
-                   r"for (?:the |a |any )?(?:[0-9]+ )?(?:days|weeks|months|years) (?:immediately )?"
-                   r"(?:preceding|before|after|following))\b", re.IGNORECASE)
+                   rf"for (?:the |a |an |any |each |every )?(?:(?:continuous )?period of )?(?:{_COUNT} )?"
+                   r"(?:day|week|month|year)s? (?:immediately )?"
+                   r"(?:preceding|before|after|following|prior to|ending|beginning|starting))\b", re.IGNORECASE)
 # The nodes whose arguments are day terms (today's date nodes and ve-units@1 comparisons of days).
 _DAY_TERMS = ("num", "cal", "const")
 
@@ -72,6 +82,11 @@ def _day_constants_in(f):
     while stack:
         x = stack.pop()
         if not isinstance(x, list) or not x:
+            continue
+        # A raw ["date", iso] term (the W6 grammar's and the facts map's spelling of a fixed day) is a day term
+        # too (Codex re-check MEDIUM 2), so a conclusion over fixed dates only is refused whichever path lowered it.
+        if x[0] == "date" and len(x) == 2 and isinstance(x[1], str):
+            any_day = True
             continue
         if x[0] == "cal_cmp" or x[0] == "cal" or (x[0] in ("num", "const") and len(x) == 3 and x[1] == "day"):
             any_day = True
