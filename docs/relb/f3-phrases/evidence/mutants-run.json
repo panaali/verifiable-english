@@ -1,0 +1,75 @@
+{
+ "mutants": [
+  {
+   "id": "PY1-drop-reached-pa",
+   "file": "ve/english_vocabulary.py",
+   "claim": "the plain wording of reached_pa is admitted only as an idiom row: without the row it falls back to 'is classified as'",
+   "source_sha256": "c5725800a70cc6e327fa9b2a6a73a79ff8e9fbbb42fd28e1107b0f1d38269d96",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted",
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python",
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.2,
+   "output_tail": "ents@1', 'order@0', 'relational-fol@0', 'time@0'), s... 'input_symbol': '\u00a3'})})}), reports=None, soft=None, rights=None, acts=None, alternatives=None, risk=None, events=None)\n\n    def test_every_plain_wording_is_accepted(env):\n        used = templates(env)\n        refused = {name: used[name] for name, template in WORDINGS.items() if used[name] != template}\n>       assert refused == {}\nE       assert {'reached_pa'...\"reached_pa\"'} == {}\nE         \nE         Left contains 1 more item:\nE         {'reached_pa': '{0} is classified as \"reached_pa\"'}\nE         Use -v to get more diff\n\ntests/test_relb_f3_plain_phrases.py:89: AssertionError\n________________________ test_idiom_tables_equal_python ________________________\n\n    def test_idiom_tables_equal_python():\n>       assert set(_strings(_definition(LEXICON, 'idioms1'))) == IDIOMS[1]\nE       AssertionError: assert {'{0} complet... States', ...} == {'{0} complet... States', ...}\nE         \nE         Extra items in the left set:\nE         '{0} has reached pensionable age'\nE         Use -v to get more diff\n\ntests/test_english_lean_tables.py:34: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted\nFAILED tests/test_english_lean_tables.py::test_idiom_tables_equal_python - As...\n2 failed in 0.42s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ws4c18ay)\n"
+  },
+  {
+   "id": "PY2-drop-lives-with",
+   "file": "ve/english_vocabulary.py",
+   "claim": "the two-place row '{0} lives with {1}' is what lets 'Housemate lives with applicant.' read, in argument order",
+   "source_sha256": "c5725800a70cc6e327fa9b2a6a73a79ff8e9fbbb42fd28e1107b0f1d38269d96",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted",
+    "tests/test_relb_f3_plain_phrases.py::test_each_phrase_has_one_reading_its_own[Housemate lives with applicant.-expected6]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.9,
+   "output_tail": "r of the sentence: the messages of\n            # the two grammars above stay the ones reported.\n            from ..wire import canonical_json\n            try:\n                spliced = _splice_readings(env, source)\n            except (AmbiguousDerivation, ResourceLimit):\n                raise\n            except VEError:\n                spliced = []\n            for canonical in spliced:\n                readings[canonical_json(canonical)] = canonical\n        if len(readings) > 1:\n            raise AmbiguousDerivation(f\"W6 sentence has {len(readings)} derivations across the English grammar\")\n        if not readings:\n            specific = [e for e in rejected\n                        if not str(e).startswith((\"No W6 quantity reading\", \"Unknown English\"))\n                        and getattr(getattr(e, \"lean_reading\", None), \"status\", None) != \"none\"]\n>           raise specific[0] if len(specific) == 1 else SyntaxError(\"No W6 reading in any grammar\")\nE           ve.errors.SyntaxError: No W6 reading in any grammar\n\nve/surface/time.py:442: SyntaxError\n=========================== short test summary info ============================\nFAILED tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted\nFAILED tests/test_relb_f3_plain_phrases.py::test_each_phrase_has_one_reading_its_own[Housemate lives with applicant.-expected6]\n2 failed in 0.63s\n\nve: English comparator: {\"records\": 1, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 1}} (/tmp/ve-english-comparator-vjyze6ss)\n"
+  },
+  {
+   "id": "PY3-idiom-skips-anchor",
+   "file": "ve/english.py",
+   "claim": "an idiom row is accepted only for a predicate whose name or legend shares a content word with it (opted_out may not borrow '{0} has left care')",
+   "source_sha256": "0404d72661c9ddf65673d2a26912a72eedf96909299a57f452ce9be58f6d46aa",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_an_unrelated_wording_is_refused"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relb_f3_plain_phrases.py::test_an_unrelated_wording_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________________ test_an_unrelated_wording_is_refused _____________________\n\n    def test_an_unrelated_wording_is_refused():\n        \"\"\"A wording that shares no content word with its predicate's name or legend is not accepted, even though\n        it is an idiom row: \"{0} has left care\" declared for opted_out (and not for care_ended).\"\"\"\n        wordings = {**WORDINGS, \"opted_out\": WORDINGS[\"care_ended\"]}\n        del wordings[\"care_ended\"]\n        used = templates(environment(wordings))\n>       assert used[\"opted_out\"] != WORDINGS[\"care_ended\"]\nE       AssertionError: assert '{0} has left care' != '{0} has left care'\n\ntests/test_relb_f3_plain_phrases.py:162: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relb_f3_plain_phrases.py::test_an_unrelated_wording_is_refused\n1 failed in 0.44s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vrbq8f60)\n"
+  },
+  {
+   "id": "LEAN1-row-differs",
+   "file": "lean/VE/EnglishGrammar/Lexicon.lean",
+   "claim": "the Lean copy of the rows equals the Python one (a Lean-only change is caught at source level)",
+   "source_sha256": "0dba00c1765c7d1686f11b77d331374e892e8c23dc27419827dcc927be860fc1",
+   "tests": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1145.5,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________________ test_idiom_tables_equal_python ________________________\n\n    def test_idiom_tables_equal_python():\n>       assert set(_strings(_definition(LEXICON, 'idioms1'))) == IDIOMS[1]\nE       AssertionError: assert {'{0} complet... States', ...} == {'{0} complet... States', ...}\nE         \nE         Extra items in the left set:\nE         '{0} has left the care'\nE         Extra items in the right set:\nE         '{0} has left care'\nE         Use -v to get more diff\n\ntests/test_english_lean_tables.py:34: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_english_lean_tables.py::test_idiom_tables_equal_python - As...\n1 failed in 0.19s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tc1tmnrj)\n"
+  }
+ ]
+}
