@@ -253,7 +253,10 @@ class Staged:
                 stack += [p[1], p[2]]
             else:
                 parts.append(p)
-        return any(self.truth(p) is False for p in parts)
+        # also a comparison the forward evaluator reads as false (e.g. a table row's band against the stated rate):
+        # selection only, so the search aid can lose a proof here but never make one
+        return any(self.truth(p) is False or (p[0] in ("lt", "le", "eq", "date_no_later")
+                                               and self.forward.ev(p) is False) for p in parts)
 
     def premises_for(self, target):
         rules, seen, queue = [], set(), [r for r in self.defs.get(target, []) if not self.dead(r["formula"])]
@@ -494,6 +497,20 @@ def _mutant_task(item):
     return mutant, [q for q in got if got[q] != base[q]]
 
 
+def _forward_view(case, mutant=None):
+    import encode as E
+    ctx = E.context(case)
+    fw = Forward(T.rules(ctx, mutant), E.facts(case))
+    return (fw.truths.get(T.key(T.U("qualifies", T.CL))), fw.vals.get("maxweeks"), fw.vals.get("benefit"))
+
+
+def mutant_cases(cases, per=3):
+    """Where each planted error is run with full proofs: the first `per` cases (by id) whose forward-evaluated view
+    (qualifies, maxweeks, benefit) the error changes. Selection only: the kill itself is the staged, proved answers."""
+    base = {c["id"]: _forward_view(c) for c in cases}
+    return {m: [c for c in cases if _forward_view(c, m) != base[c["id"]]][:per] for m in T.MUTANTS}
+
+
 def main(argv=None):
     import cases as K
     ap = argparse.ArgumentParser()
@@ -548,11 +565,13 @@ def main(argv=None):
     if args.mutants:
         base = {q: a for r in records if "staged" in r for q, a in r["staged"].items()}
         changed = {m: [] for m in T.MUTANTS}
+        sel = mutant_cases(cases)
         with ProcessPoolExecutor(max_workers=args.workers) as pool:
-            for m, ch in pool.map(_mutant_task, [(m, c, base) for m in T.MUTANTS for c in cases]):
+            for m, ch in pool.map(_mutant_task, [(m, c, base) for m in T.MUTANTS for c in sel[m]]):
                 changed[m] += ch
         for m, (desc, _) in T.MUTANTS.items():
-            mutants[m] = {"description": desc, "changed": changed[m], "killed": bool(changed[m])}
+            mutants[m] = {"description": desc, "run_on": [c["id"] for c in sel[m]], "changed": changed[m],
+                          "killed": bool(changed[m])}
     commit = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     dirty = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain", "usecases/ei_canada"],
                            capture_output=True, text=True).stdout.strip()
