@@ -1,8 +1,8 @@
 {
  "b1_certified": true,
  "english": {
-  "facts": 149,
-  "round_trip": 69,
+  "facts": 179,
+  "round_trip": 99,
   "rows": [
    {
     "fact": "applicant.shares_home",
@@ -52,12 +52,12 @@
    {
     "fact": "applicant.pa_date",
     "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is no later than 2026-09-27."
+    "sentence": "The applicant's pensionable-age date is on 2021-03-14."
    },
    {
     "fact": "applicant.eightieth",
     "round_trip": true,
-    "sentence": "The applicant's 80th birthday is after 2026-09-27."
+    "sentence": "The applicant's 80th birthday is on 2035-03-14."
    },
    {
     "fact": "applicant.ever_resident_ew",
@@ -120,9 +120,19 @@
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is no later than 2009-05-02."
+   },
+   {
+    "fact": "applicant.pa_date_from",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is after 2004-05-01."
+   },
+   {
     "fact": "applicant.eightieth",
     "round_trip": true,
-    "sentence": "The applicant's 80th birthday is no later than 2026-09-27."
+    "sentence": "The applicant's 80th birthday is on 2024-05-02."
    },
    {
     "fact": "applicant.shares_home",
@@ -222,12 +232,12 @@
    {
     "fact": "housemate.pa_date",
     "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is no later than 2026-09-27."
+    "sentence": "The housemate's pensionable-age date is on 2023-11-02."
    },
    {
     "fact": "housemate.eightieth",
     "round_trip": true,
-    "sentence": "The housemate's 80th birthday is after 2026-09-27."
+    "sentence": "The housemate's 80th birthday is on 2037-11-02."
    },
    {
     "fact": "housemate.ever_resident_ew",
@@ -280,9 +290,44 @@
     "sentence": "The housemate's total income equals GBP 20000.00."
    },
    {
+    "fact": "housemate.pa_date",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is no later than 2009-05-02."
+   },
+   {
+    "fact": "housemate.pa_date_from",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is after 2004-05-01."
+   },
+   {
     "fact": "housemate.eightieth",
     "round_trip": true,
-    "sentence": "The housemate's 80th birthday is no later than 2026-09-27."
+    "sentence": "The housemate's 80th birthday is on 2024-05-02."
+   },
+   {
+    "fact": "housemate.pa_date",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is on 2021-03-14."
+   },
+   {
+    "fact": "housemate.eightieth",
+    "round_trip": true,
+    "sentence": "The housemate's 80th birthday is on 2035-03-14."
+   },
+   {
+    "fact": "housemate.pa_date",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is no later than 2007-01-15."
+   },
+   {
+    "fact": "housemate.pa_date_from",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is after 2002-01-14."
+   },
+   {
+    "fact": "housemate.eightieth",
+    "round_trip": true,
+    "sentence": "The housemate's 80th birthday is on 2022-01-15."
    },
    {
     "fact": "applicant.paid.pension_credit",
@@ -305,6 +350,16 @@
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is on 2023-11-02."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2037-11-02."
+   },
+   {
     "fact": "housemate.paid.pension_credit",
     "round_trip": false,
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
@@ -322,7 +377,12 @@
    {
     "fact": "housemate.pa_date",
     "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is after 2026-09-27."
+    "sentence": "The housemate's pensionable-age date is on 2037-08-19."
+   },
+   {
+    "fact": "housemate.eightieth",
+    "round_trip": true,
+    "sentence": "The housemate's 80th birthday is on 2050-08-19."
    },
    {
     "fact": "applicant.paid.attendance_allowance",
@@ -597,7 +657,97 @@
    {
     "fact": "applicant.pa_date",
     "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is after 2026-09-27."
+    "sentence": "The applicant's pensionable-age date is on 2026-09-27."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2040-06-27."
+   },
+   {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is on 2026-09-28."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2040-06-28."
+   },
+   {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is no later than 2026-03-01."
+   },
+   {
+    "fact": "applicant.pa_date_from",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is after 2026-02-27."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2040-02-29."
+   },
+   {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is no later than 2011-09-27."
+   },
+   {
+    "fact": "applicant.pa_date_from",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is after 2006-09-26."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2026-09-27."
+   },
+   {
+    "fact": "applicant.pa_date",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is no later than 2011-09-28."
+   },
+   {
+    "fact": "applicant.pa_date_from",
+    "round_trip": true,
+    "sentence": "The applicant's pensionable-age date is after 2006-09-27."
+   },
+   {
+    "fact": "applicant.eightieth",
+    "round_trip": true,
+    "sentence": "The applicant's 80th birthday is on 2026-09-28."
+   },
+   {
+    "fact": "housemate.pa_date",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is no later than 2011-09-28."
+   },
+   {
+    "fact": "housemate.pa_date_from",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is after 2006-09-27."
+   },
+   {
+    "fact": "housemate.eightieth",
+    "round_trip": true,
+    "sentence": "The housemate's 80th birthday is on 2026-09-28."
+   },
+   {
+    "fact": "housemate.pa_date",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is no later than 2011-09-27."
+   },
+   {
+    "fact": "housemate.pa_date_from",
+    "round_trip": true,
+    "sentence": "The housemate's pensionable-age date is after 2006-09-26."
+   },
+   {
+    "fact": "housemate.eightieth",
+    "round_trip": true,
+    "sentence": "The housemate's 80th birthday is on 2026-09-27."
    },
    {
     "fact": "applicant.care_from",
@@ -1140,75 +1290,7 @@
   },
   "M5": {
    "changed": [
-    "A01",
-    "A02",
-    "A03",
-    "A04",
-    "A05",
-    "A06",
-    "A07",
-    "A08",
-    "A09",
-    "A10",
-    "A11",
-    "A12",
-    "A13",
-    "B01",
-    "B02",
-    "B03",
-    "B05",
-    "B06",
-    "B10",
-    "B12",
-    "B13",
-    "B14",
-    "B15",
-    "B16",
-    "B17",
-    "B18",
-    "B19",
-    "B20",
-    "B21",
-    "B22",
-    "B23",
-    "B24",
-    "B25",
-    "B26",
-    "B27",
-    "B28",
-    "B29",
-    "B30",
-    "B31",
-    "B32",
-    "B33",
-    "B34",
-    "C01",
-    "C03",
-    "C04",
-    "C05",
-    "C06",
-    "C07",
-    "C08",
-    "C09",
-    "C10",
-    "C11",
-    "C12",
-    "C14",
-    "C15",
-    "C17",
-    "C19",
-    "C21",
-    "C22",
-    "C24",
-    "C25",
-    "C26",
-    "C27",
-    "D01",
-    "D02",
-    "D03",
-    "D04",
-    "D05",
-    "D06"
+    "C01"
    ],
    "description": "R2 'no later than' as 'before'",
    "killed": true,
@@ -1218,22 +1300,9 @@
   },
   "M6": {
    "changed": [
-    "A02",
-    "A05",
-    "A06",
-    "A08",
-    "A09",
-    "A11",
-    "A13",
-    "B14",
-    "B21",
-    "B30",
-    "B33",
-    "B34",
     "C04",
     "C06",
-    "C08",
-    "D06"
+    "C08"
    ],
    "description": "R15 age 80 strict",
    "killed": true,
@@ -1328,17 +1397,17 @@
     "bottom": {
      "certified": false,
      "status": "NotFound",
-     "steps": 128
+     "steps": 124
     },
     "entitled": {
      "certified": false,
      "status": "NotFound",
-     "steps": 128
+     "steps": 124
     },
     "not_entitled": {
      "certified": false,
      "status": "NotFound",
-     "steps": 130
+     "steps": 126
     }
    },
    "staged": {
@@ -1397,17 +1466,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -1628,9 +1697,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -1644,17 +1713,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 126
      }
     }
    },
@@ -1667,7 +1736,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -1891,17 +1960,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -2122,9 +2191,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -2138,17 +2207,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -2186,7 +2255,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -2369,9 +2438,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -2385,17 +2454,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -2408,7 +2477,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -2616,9 +2685,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 108,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 108
    },
    "score": {
     "Q1": true,
@@ -2632,17 +2701,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -2655,7 +2724,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -2680,7 +2749,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -2879,17 +2948,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -3110,9 +3179,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -3126,17 +3195,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -3174,7 +3243,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -3357,9 +3426,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -3373,17 +3442,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 126
      }
     }
    },
@@ -3396,7 +3465,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -3620,17 +3689,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 135
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 135
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 137
+      "steps": 133
      }
     }
    },
@@ -3851,9 +3920,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -3867,17 +3936,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 139
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 139
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 141
+      "steps": 133
      }
     }
    },
@@ -3890,7 +3959,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -4114,17 +4183,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -4345,9 +4414,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 81,
+    "model_premises": 82,
     "model_premises_not_true": [],
-    "model_premises_true": 81
+    "model_premises_true": 82
    },
    "score": {
     "Q1": true,
@@ -4361,17 +4430,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 135
+      "steps": 127
      }
     }
    },
@@ -4384,7 +4453,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -4599,17 +4668,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -4826,17 +4895,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -5073,17 +5142,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -5311,17 +5380,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 138
+      "steps": 134
      }
     }
    },
@@ -5538,17 +5607,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -5785,17 +5854,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -6023,17 +6092,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -6241,17 +6310,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -6459,17 +6528,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -6686,12 +6755,12 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
@@ -6924,17 +6993,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 130
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 130
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      }
     }
    },
@@ -7142,17 +7211,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -7369,17 +7438,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -7600,9 +7669,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -7616,17 +7685,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -7664,7 +7733,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -7863,17 +7932,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -8110,17 +8179,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -8822,17 +8891,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -9069,17 +9138,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 138
+      "steps": 134
      }
     }
    },
@@ -9300,9 +9369,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 82,
+    "model_premises": 83,
     "model_premises_not_true": [],
-    "model_premises_true": 82
+    "model_premises_true": 83
    },
    "score": {
     "Q1": true,
@@ -9316,17 +9385,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 135
+      "steps": 127
      }
     }
    },
@@ -9339,7 +9408,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -10028,17 +10097,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -10275,17 +10344,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -10522,17 +10591,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -10769,17 +10838,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -11007,17 +11076,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -11225,17 +11294,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -11436,9 +11505,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 107,
+    "model_premises": 108,
     "model_premises_not_true": [],
-    "model_premises_true": 107
+    "model_premises_true": 108
    },
    "score": {
     "Q1": true,
@@ -11452,17 +11521,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -11500,7 +11569,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -11683,9 +11752,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 108,
+    "model_premises": 109,
     "model_premises_not_true": [],
-    "model_premises_true": 108
+    "model_premises_true": 109
    },
    "score": {
     "Q1": true,
@@ -11699,17 +11768,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -11747,7 +11816,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -11930,9 +11999,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 108,
+    "model_premises": 109,
     "model_premises_not_true": [],
-    "model_premises_true": 108
+    "model_premises_true": 109
    },
    "score": {
     "Q1": true,
@@ -11946,17 +12015,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -11994,7 +12063,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -12177,9 +12246,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 108,
+    "model_premises": 109,
     "model_premises_not_true": [],
-    "model_premises_true": 108
+    "model_premises_true": 109
    },
    "score": {
     "Q1": true,
@@ -12193,17 +12262,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -12241,7 +12310,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -12424,9 +12493,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 108,
+    "model_premises": 109,
     "model_premises_not_true": [],
-    "model_premises_true": 108
+    "model_premises_true": 109
    },
    "score": {
     "Q1": true,
@@ -12440,17 +12509,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 126
      }
     }
    },
@@ -12488,7 +12557,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -12687,17 +12756,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -13136,9 +13205,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -13152,17 +13221,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -13175,7 +13244,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -13383,9 +13452,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -13399,17 +13468,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 126
      }
     }
    },
@@ -13422,7 +13491,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -13630,9 +13699,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -13646,17 +13715,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -13669,7 +13738,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -13877,9 +13946,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 108,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 108
    },
    "score": {
     "Q1": true,
@@ -13893,17 +13962,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -13916,7 +13985,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -13941,7 +14010,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -14124,9 +14193,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 108,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 108
    },
    "score": {
     "Q1": true,
@@ -14140,17 +14209,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -14163,7 +14232,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -14188,7 +14257,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -14371,9 +14440,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 108,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 108
    },
    "score": {
     "Q1": true,
@@ -14387,17 +14456,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -14410,7 +14479,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -14435,7 +14504,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -14618,9 +14687,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 106,
+    "model_premises": 107,
     "model_premises_not_true": [],
-    "model_premises_true": 106
+    "model_premises_true": 107
    },
    "score": {
     "Q1": true,
@@ -14634,17 +14703,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -14682,7 +14751,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.housemate"
     },
     {
@@ -14881,17 +14950,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -15128,17 +15197,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -15375,17 +15444,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 136
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 138
+      "steps": 134
      }
     }
    },
@@ -15613,17 +15682,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 128
      }
     }
    },
@@ -15840,17 +15909,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 128
      }
     }
    },
@@ -16087,17 +16156,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 128
      }
     }
    },
@@ -16325,17 +16394,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 128
      }
     }
    },
@@ -16552,17 +16621,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -16790,17 +16859,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -17017,17 +17086,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -17255,17 +17324,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -17482,17 +17551,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -17729,17 +17798,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -17967,17 +18036,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -18194,17 +18263,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -18441,17 +18510,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -18688,17 +18757,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -18935,17 +19004,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 129
+      "steps": 125
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 127
      }
     }
    },
@@ -19182,17 +19251,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -19429,17 +19498,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -19676,17 +19745,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -19923,17 +19992,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -20170,17 +20239,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 126
      }
     }
    },
@@ -20401,9 +20470,9 @@
      "Q3": true,
      "Q4": true
     },
-    "model_premises": 79,
+    "model_premises": 80,
     "model_premises_not_true": [],
-    "model_premises_true": 79
+    "model_premises_true": 80
    },
    "score": {
     "Q1": true,
@@ -20417,17 +20486,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 124
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 126
      }
     }
    },
@@ -20440,7 +20509,7 @@
    "steps": [
     {
      "certified": 1,
-     "premise_count": 2,
+     "premise_count": 3,
      "target": "reached_pa.applicant"
     },
     {
@@ -20628,9 +20697,9 @@
  ],
  "prover": {
   "calls": 5910,
-  "searches": 478
+  "searches": 522
  },
- "seconds": 380,
+ "seconds": 528,
  "summary": {
   "answered": 269,
   "correct_answered": 269,
@@ -20654,8 +20723,8 @@
    "certificates_accepted": 2352,
    "documents": 269,
    "documents_admitted": 269,
-   "model_premises": 7337,
-   "model_premises_true": 7337
+   "model_premises": 7364,
+   "model_premises_true": 7364
   },
   "mutants_killed": "32/32",
   "open": [],
