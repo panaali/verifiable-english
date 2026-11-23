@@ -324,31 +324,43 @@ def answer_targets(staged):
 
 
 LINE_LIMIT = 16_000_000  # under the Lean service's 16,777,216-byte line limit (MAX_LINE_BYTES)
+LEAN_TIMEOUT = 600.0     # wall-clock seconds per request (100 certificates, or one document)
 
 
 def lean(cases):
-    """Lean replay in batches; a case over the wire's line limit is not sent: it is recorded as that ResourceLimit and the
-    answer that needs it stays OPEN (refused)."""
+    """Lean replay in small requests, each with a wall-clock limit. A case over the wire's line limit is not sent; a request
+    that fails (time limit, checker unavailable) is recorded as that error for each of its cases. Either way the answer
+    that needs the case stays OPEN (refused)."""
     from ve.backends.relay import rows
-    out, batch, size = [], [], 0
-    def flush():
-        nonlocal batch, size
-        if batch:
-            got = rows("quantity", batch)
-            assert [r["id"] for r in got] == [c["id"] for c in batch]
-            out.extend(got)
-        batch, size = [], 0
+    from ve.errors import VEError
+    out, reqs, certs = [], [], []
     for c in cases:
         n = len(json.dumps(c))
         if n > LINE_LIMIT:
-            flush()
-            out.append({"id": c["id"], "status": "error", "error": f"ResourceLimit: case of {n} bytes exceeds the line limit"})
+            reqs.append(("oversize", [c], n))
+        elif c["kind"] == "certificate":
+            certs.append(c)
+            if len(certs) == 100:
+                reqs.append(("ok", certs, 0))
+                certs = []
+        else:
+            reqs.append(("ok", [c], 0))
+    if certs:
+        reqs.append(("ok", certs, 0))
+    for kind, batch, n in reqs:
+        if kind == "oversize":
+            out.append({"id": batch[0]["id"], "status": "error",
+                        "error": f"ResourceLimit: case of {n} bytes exceeds the line limit"})
             continue
-        if size + n > 200_000_000:
-            flush()
-        batch.append(c)
-        size += n
-    flush()
+        t0 = time.time()
+        try:
+            got = rows("quantity", batch, timeout=LEAN_TIMEOUT)
+            assert [r["id"] for r in got] == [c["id"] for c in batch]
+            out.extend(got)
+        except VEError as e:
+            msg = f"{type(e).__name__}: {str(e)[:160]} (after {round(time.time() - t0)} s)"
+            print("lean request failed:", batch[0]["id"], len(batch), msg, file=sys.stderr, flush=True)
+            out.extend({"id": c["id"], "status": "error", "error": msg} for c in batch)
     return out
 
 
