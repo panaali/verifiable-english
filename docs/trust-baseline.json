@@ -2811,7 +2811,7 @@
    "lines": 48,
    "reason": "relb-f3-phrases: VE/EnglishGrammar/Lexicon.lean V +48 (48 idiom rows for the eligibility use case's plain wordings: 37 in idioms1, 11 in idioms2; no new trusted definition)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), relb-f3-phrases, 2026-11-23",
-   "commit": "2a304030273b598b95b320b1f8d9a9e33bed517a"
+   "commit": "fc84ed56a2c9678f136d6e428380b1398fc75c55"
   }
  ]
 }
