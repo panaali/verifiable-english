@@ -1,0 +1,207 @@
+shard 3/6: 55 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded autocfg v1.5.1
+  Downloaded unicode-ident v1.0.26
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded crypto-common v0.1.7
+  Downloaded itoa v1.0.18
+  Downloaded num-integer v0.1.47
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_derive v1.0.229
+  Downloaded cfg-if v1.0.5
+  Downloaded digest v0.10.7
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded quote v1.0.47
+  Downloaded serde_core v1.0.229
+  Downloaded zmij v1.0.23
+  Downloaded generic-array v0.14.7
+  Downloaded sha2 v0.10.9
+  Downloaded typenum v1.20.1
+  Downloaded syn v3.0.6
+  Downloaded serde_json v1.0.151
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.53s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.24s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_consolidation_tools.py::chunk(1/4), tests/test_english_evidence.py::chunk(2/3)
+recording 55 units with 4 jobs in /tmp/ve-select-run-iaqysin8
+  tests/test_english_evidence.py::chunk(2/3): exit 0 in 404.1 s, 781 functions
+  tests/test_lean_document_wrapper.py: exit 0 in 470.1 s, 1592 functions
+  tests/test_p1_amendment13.py: exit 0 in 60.4 s, 817 functions
+  tests/test_gate_collection.py: exit 0 in 156.3 s, 322 functions
+  tests/test_shape_binding_mutants.py: exit 0 in 70.6 s, 374 functions
+  tests/test_precommit_hook.py: exit 0 in 112.4 s, 273 functions
+  tests/test_p1_amendment9.py: exit 0 in 29.7 s, 807 functions
+  tests/test_senses_document.py: exit 0 in 48.8 s, 922 functions
+  tests/test_p1_preflight.py: exit 0 in 26.6 s, 784 functions
+  tests/test_gate_quarantine.py: exit 0 in 58.8 s, 3589 functions
+  tests/test_cardinality_answer.py: exit 0 in 34.4 s, 800 functions
+  tests/test_repo_map.py: exit 0 in 746.3 s, 478 functions
+  tests/test_lean_first_diff.py: exit 0 in 17.3 s, 911 functions
+  tests/test_trust_ratchet.py: exit 0 in 15.5 s, 319 functions
+  tests/test_english_lean_s3.py: exit 0 in 13.0 s, 861 functions
+  tests/test_jt_e1r.py: exit 0 in 11.4 s, 561 functions
+  tests/test_trust_budget.py: exit 0 in 21.3 s, 282 functions
+  tests/test_p1_amendment7.py: exit 0 in 7.8 s, 869 functions
+  tests/test_p1_history.py: exit 0 in 5.2 s, 739 functions
+  tests/test_code_map.py: exit 0 in 5.9 s, 198 functions
+  tests/test_w6a_certificate_steps.py: exit 0 in 12.0 s, 730 functions
+  tests/test_gate_integrity.py: exit 0 in 7.5 s, 380 functions
+  tests/test_p1_amendment11.py: exit 0 in 2.7 s, 776 functions
+  tests/test_gate_trust.py: exit 0 in 2.7 s, 383 functions
+  tests/test_heavy_tests.py: exit 0 in 3.8 s, 348 functions
+  tests/test_t1c.py: exit 0 in 11.0 s, 629 functions
+  tests/test_b16b_evidence.py: exit 0 in 1.4 s, 201 functions
+  tests/test_b16d_evidence.py: exit 0 in 1.2 s, 191 functions
+  tests/test_acts_elaborate_relay.py: exit 0 in 5.8 s, 678 functions
+  tests/test_b17_owner.py: exit 0 in 1.7 s, 734 functions
+  tests/test_defs_repair_claude_constitution_excerpt_1119.py: exit 0 in 1.2 s, 371 functions
+  tests/test_defs_repair_math_mini_paper_1119.py: exit 0 in 1.0 s, 367 functions
+  tests/test_eff_tests_report.py: exit 0 in 1.7 s, 211 functions
+  tests/test_defs_repair_anthropic_rsp_1119.py: exit 0 in 5.6 s, 718 functions
+  tests/test_fidmech_l1.py: exit 0 in 2.1 s, 299 functions
+  tests/test_fidmech_prune.py: exit 0 in 3.3 s, 579 functions
+  tests/test_evidence_toolkit.py: exit 0 in 7.9 s, 446 functions
+  tests/test_fidmech_runner.py: exit 0 in 2.0 s, 468 functions
+  tests/test_filling_search.py: exit 0 in 1.1 s, 295 functions
+  tests/test_fret_w6a_rerating.py: exit 0 in 1.7 s, 414 functions
+  tests/test_definitions_carried.py: exit 0 in 20.1 s, 375 functions
+  tests/test_order_gate.py: exit 0 in 2.4 s, 457 functions
+  tests/test_p1_infrastructure.py: exit 0 in 4.4 s, 828 functions
+  tests/test_pc3_statements.py: exit 0 in 1.6 s, 229 functions
+  tests/test_premise_packs_stub.py: exit 0 in 3.5 s, 239 functions
+  tests/test_fsf_case_alternatives.py: exit 0 in 27.1 s, 835 functions
+  tests/test_relb_explain.py: exit 0 in 31.0 s, 649 functions
+  tests/test_right_clauses_lean.py: exit 0 in 2.3 s, 218 functions
+  tests/test_scope_forward.py: exit 0 in 2.0 s, 480 functions
+  tests/test_question_reading.py: exit 0 in 46.7 s, 928 functions
+  tests/test_select_defer.py: exit 0 in 1.8 s, 319 functions
+  tests/test_scope_lean.py: exit 0 in 6.0 s, 236 functions
+  tests/test_consolidation_tools.py::chunk(1/4): exit 0 in 887.8 s, 387 functions
+  tests/test_gate_collection_renumber.py: exit 0 in 90.1 s, 257 functions
+  tests/test_trust_mutants_probe_scope.py: exit 0 in 286.2 s, 497 functions
+chunked tests/test_consolidation_tools.py: 1 of 4 chunks, exit 0, 887.8 s in all, longest chunk 887.8 s; 78 passed, 0 skipped, 0 failed; each of its 78 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 1 of 3 chunks, exit 0, 404.1 s in all, longest chunk 404.1 s; 25 passed, 0 skipped, 0 failed; each of its 25 tests ran in exactly one chunk
+recorded 53 units for tree 7c4377dc92; 2 others left to the static graph until they run (2 with only some of their chunks here); 0 failed
+UNITLOG tests__test_acts_elaborate_relay.py.log: 19 passed in 4.92s
+UNITLOG tests__test_b16b_evidence.py.log: 8 passed in 0.29s
+UNITLOG tests__test_b16d_evidence.py.log: 3 passed in 0.21s
+UNITLOG tests__test_b17_owner.py.log: 6 passed in 0.67s
+UNITLOG tests__test_cardinality_answer.py.log: 96 passed in 33.88s
+UNITLOG tests__test_code_map.py.log: 6 passed in 5.37s
+UNITLOG tests__test_consolidation_tools.py::chunk(1__4).log: 78 passed, 226 deselected in 887.26s (0:14:47)
+UNITLOG tests__test_definitions_carried.py.log: 60 passed in 18.87s
+UNITLOG tests__test_defs_repair_anthropic_rsp_1119.py.log: 102 passed, 1 skipped in 4.43s
+UNITLOG tests__test_defs_repair_claude_constitution_excerpt_1119.py.log: 24 passed in 0.25s
+UNITLOG tests__test_defs_repair_math_mini_paper_1119.py.log: 4 passed in 0.23s
+UNITLOG tests__test_eff_tests_report.py.log: 12 passed in 0.68s
+UNITLOG tests__test_english_evidence.py::chunk(2__3).log: 25 passed, 52 deselected, 1 warning in 403.47s (0:06:43)
+UNITLOG tests__test_english_lean_s3.py.log: 57 passed in 12.47s
+UNITLOG tests__test_evidence_toolkit.py.log: 155 passed in 6.56s
+UNITLOG tests__test_fidmech_l1.py.log: 44 passed in 1.09s
+UNITLOG tests__test_fidmech_prune.py.log: 10 passed in 2.39s
+UNITLOG tests__test_fidmech_runner.py.log: 20 passed in 1.15s
+UNITLOG tests__test_filling_search.py.log: 5 passed in 0.15s
+UNITLOG tests__test_fret_w6a_rerating.py.log: 5 passed in 0.51s
+UNITLOG tests__test_fsf_case_alternatives.py.log: 9 passed in 25.67s
+UNITLOG tests__test_gate_collection.py.log: 102 passed in 155.83s (0:02:35)
+UNITLOG tests__test_gate_collection_renumber.py.log: 15 passed in 89.53s (0:01:29)
+UNITLOG tests__test_gate_integrity.py.log: 47 passed in 7.03s
+UNITLOG tests__test_gate_quarantine.py.log: 38 passed in 58.30s
+UNITLOG tests__test_gate_trust.py.log: 37 passed in 2.18s
+UNITLOG tests__test_heavy_tests.py.log: 10 passed in 3.13s
+UNITLOG tests__test_jt_e1r.py.log: 39 passed in 10.88s
+UNITLOG tests__test_lean_document_wrapper.py.log: 91 passed in 469.42s (0:07:49)
+UNITLOG tests__test_lean_first_diff.py.log: 75 passed in 16.77s
+UNITLOG tests__test_order_gate.py.log: 2 passed in 0.81s
+UNITLOG tests__test_p1_amendment11.py.log: 4 passed in 2.06s
+UNITLOG tests__test_p1_amendment13.py.log: 5 passed in 59.82s
+UNITLOG tests__test_p1_amendment7.py.log: 11 passed in 7.23s
+UNITLOG tests__test_p1_amendment9.py.log: 9 passed, 1 warning in 28.76s
+UNITLOG tests__test_p1_history.py.log: 2 passed in 4.63s
+UNITLOG tests__test_p1_infrastructure.py.log: 18 passed, 1 warning in 2.62s
+UNITLOG tests__test_p1_preflight.py.log: 7 passed in 26.04s
+UNITLOG tests__test_pc3_statements.py.log: 3 passed in 0.91s
+UNITLOG tests__test_precommit_hook.py.log: 64 passed in 111.84s (0:01:51)
+UNITLOG tests__test_premise_packs_stub.py.log: 35 passed in 2.69s
+UNITLOG tests__test_question_reading.py.log: 297 passed in 45.46s
+UNITLOG tests__test_relb_explain.py.log: 10 passed in 29.91s
+UNITLOG tests__test_repo_map.py.log: 33 passed in 745.13s (0:12:25)
+UNITLOG tests__test_right_clauses_lean.py.log: 2 passed in 1.46s
+UNITLOG tests__test_scope_forward.py.log: 5 passed in 0.93s
+UNITLOG tests__test_scope_lean.py.log: 18 passed in 4.96s
+UNITLOG tests__test_select_defer.py.log: 47 passed in 0.58s
+UNITLOG tests__test_senses_document.py.log: 95 passed in 48.36s
+UNITLOG tests__test_shape_binding_mutants.py.log: 94 passed in 69.84s (0:01:09)
+UNITLOG tests__test_t1c.py.log: 18 passed in 10.16s
+UNITLOG tests__test_trust_budget.py.log: 8 passed in 20.86s
+UNITLOG tests__test_trust_mutants_probe_scope.py.log: 42 passed in 285.43s (0:04:45)
+UNITLOG tests__test_trust_ratchet.py.log: 105 passed in 14.96s
+UNITLOG tests__test_w6a_certificate_steps.py.log: 11 passed in 11.45s
