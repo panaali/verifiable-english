@@ -376,6 +376,18 @@ def money(term):
 
 # --- answers -------------------------------------------------------------------------------------------------
 
+def grade_part(staged, x, pr):
+    """The prompt's Q1 words: YES none prohibited; PART permitted only up to an amount; NO wholly prohibited (a
+    permitted kind whose whole amount is excess, e.g. a cap of 0, is 'wholly prohibited'). The amount comparison reads
+    the stated amount fact; OPEN if it is not stated."""
+    if pr[2] == "0.00":
+        return "YES"
+    amt = [f["formula"][2][2] for f in staged.fact_constants.get(f"amt_{x}", []) if f["formula"][0] == "eq"]
+    if not amt:
+        return "OPEN"
+    return "NO" if amt[0] == pr[2] else "PART"
+
+
 def answer(staged, question):
     """One question's answer from the established steps -> (answer dict, [targets its documents root at])."""
     x, form = question["item"], question["form"]
@@ -386,7 +398,7 @@ def answer(staged, question):
         if p is False:
             return {"answer": "NO"}, [T.key(U("permitted", x))]
         if p is True and pr is not None:
-            return {"answer": "YES" if pr[2] in ("0.00", "0") else "PART"}, [T.key(U("permitted", x)), f"proh_{x}"]
+            return {"answer": grade_part(staged, x, pr)}, [T.key(U("permitted", x)), f"proh_{x}"]
         return {"answer": "OPEN"}, []
     if form == "s1":  # Q1 "Does section 1 allow the landlord to require <x>?"
         e = staged.truth(U("engaged", x))
@@ -402,8 +414,10 @@ def answer(staged, question):
             p = staged.truth(U("permitted", x))
             if b is True and p is False:
                 return {"answer": "NO"}, [T.key(U("engaged", x)), T.key(U("breach", x)), T.key(U("permitted", x))]
-            if b is True and p is True:
-                return {"answer": "PART"}, [T.key(U("engaged", x)), T.key(U("breach", x)), T.key(U("permitted", x))]
+            pr = staged.value(f"proh_{x}")
+            if b is True and p is True and pr is not None:
+                return ({"answer": grade_part(staged, x, pr)},
+                        [T.key(U("engaged", x)), T.key(U("breach", x)), T.key(U("permitted", x)), f"proh_{x}"])
         return {"answer": "OPEN"}, []
     if form == "amount":  # Q2
         pr = staged.value(f"proh_{x}")
