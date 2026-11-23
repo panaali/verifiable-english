@@ -120,11 +120,15 @@ def load_table(path):
     return {**cfg, "notes": notes}, out
 
 
+EXTENT = re.compile(r"(?:E|W|S|N\.I\.)(?:\+(?:E|W|S|N\.I\.))+")  # UK extent markers glued to the text ("5E+WA payment")
+
+
 def words_in_source(words, source_text):
-    """F4: the quoted words are a verbatim substring of the source, starting and ending at word boundaries."""
+    """F4: the quoted words are a verbatim substring of the source, starting and ending at word boundaries (the
+    source's UK extent markers, e.g. "E+W", are editorial, not words of the law, and count as a boundary)."""
     w = _norm(words)
     lead, trail = (r"(?<!\w)" if w[:1].isalnum() else ""), (r"(?!\w)" if w[-1:].isalnum() else "")
-    return bool(w) and re.search(lead + re.escape(w) + trail, _norm(source_text)) is not None
+    return bool(w) and re.search(lead + re.escape(w) + trail, _norm(EXTENT.sub(" ", source_text))) is not None
 
 
 def _match(p, t, b):

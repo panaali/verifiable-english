@@ -228,6 +228,8 @@ def test_words_must_be_verbatim_at_word_boundaries(tmp_path):
     assert all(q["status"] == "writer-ambiguous" and q["answers"] == {} for q in b["questions"].values())
     assert R.words_in_source("on or before\n 31  March", SOURCE)
     assert not R.words_in_source("or before 31 Mar", SOURCE) and not R.words_in_source("n or before", SOURCE)
+    assert R.words_in_source("A payment of damages", "5E+WA payment of damages for breach")
+    assert not R.words_in_source("A payment of damages", "5WA payment of damages for breach")
 
 
 def test_a_dropped_reading_is_refused(tmp_path):
