@@ -332,7 +332,7 @@ def lean(cases):
     that fails (time limit, checker unavailable) is recorded as that error for each of its cases. Either way the answer
     that needs the case stays OPEN (refused)."""
     from ve.backends.relay import rows
-    from ve.errors import VEError
+    from ve.errors import CheckerUnavailable, VEError
     out, reqs, certs = [], [], []
     for c in cases:
         n = len(json.dumps(c))
@@ -357,7 +357,7 @@ def lean(cases):
             got = rows("quantity", batch, timeout=LEAN_TIMEOUT)
             assert [r["id"] for r in got] == [c["id"] for c in batch]
             out.extend(got)
-        except VEError as e:
+        except (VEError, CheckerUnavailable) as e:
             msg = f"{type(e).__name__}: {str(e)[:160]} (after {round(time.time() - t0)} s)"
             print("lean request failed:", batch[0]["id"], len(batch), msg, file=sys.stderr, flush=True)
             out.extend({"id": c["id"], "status": "error", "error": msg} for c in batch)
