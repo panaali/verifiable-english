@@ -49,6 +49,7 @@ module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
+module ResponseShape.QuantityClaimExamples
 module ResponseShape.Schemas.ActReadings
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
