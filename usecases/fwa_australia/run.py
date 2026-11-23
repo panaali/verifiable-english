@@ -421,6 +421,19 @@ def roots_for(case):
     return out
 
 
+def uses(staged, targets):
+    """The units (rule leaves) and facts (fact leaves) the documents of one answer contain: its actual use."""
+    units, facts = set(), set()
+    for t in targets:
+        for node in staged.document(t)["graph"]["nodes"]:
+            name = node["name"]
+            if name.startswith("rule:u"):
+                units.add(int(name[6:].split(".", 1)[0]))
+            elif name.startswith("fact:"):
+                facts.add(name[5:])
+    return {"units": sorted(units), "facts": sorted(facts)}
+
+
 def lean(cases):
     from ve.backends.relay import rows
     results = rows("quantity", cases)
@@ -484,7 +497,8 @@ def main(argv=None):
                "constraints": staged.check_constraints(),
                "steps": [{k: v for k, v in e.items() if k != "premises"} | {"premise_count": len(e["premises"])}
                          for e in staged.log],
-               "encoder_judgement": case.get("judgement", []), "targets": targets}
+               "encoder_judgement": case.get("judgement", []), "targets": targets,
+               "uses": {qid: uses(staged, ts) for qid, ts in targets.items()}}
         records.append(rec)
         for step in staged.steps.values():
             lean_cases.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
