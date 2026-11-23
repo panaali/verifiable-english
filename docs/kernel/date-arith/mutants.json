@@ -1,0 +1,64 @@
+{
+ "item": "date-arith-build",
+ "command": "seeded bugs: each planted alone in the worktree, the check run (Lean: lake build VE.Time.CalExamples; Python: VE_NATIVE_PREBUILT=1 uv run pytest tests/test_date_arith.py), the plant reverted; the first four are the ruling's planted off-by-one errors (item 2d). Per definition: tools/trust_mutants.py --max-mutants 1000 --test lean/VE/Time/WireSound.lean --test lean/ResponseShape/QuantityClaimExamples.lean --allow docs/kernel/date-arith/trust-mutants-allow.json (trust-mutants.json)",
+ "mutants": [
+  {
+   "definition": "elabCal (plus_days)",
+   "file": "lean/VE/Time/Wire.lean",
+   "from": "(D.addDays k.toNat).year ≤ 9999 then pure (D.addDays k.toNat)",
+   "to": "(D.addDays (k.toNat + 1)).year ≤ 9999 then pure (D.addDays (k.toNat + 1))",
+   "killed": true,
+   "plant": "a day",
+   "test": "#guard cal plus_days(nth_weekday 3 0 9 2026, 6) == 2026-09-27 (and five more plus_days guards)",
+   "fails_at": "lean/VE/Time/CalExamples.lean:124"
+  },
+  {
+   "definition": "Civil.addMonths",
+   "file": "lean/VE/Time/Calendar.lean",
+   "from": "if D.day ≤ monthLen y m then some ⟨y, m, D.day⟩ else",
+   "to": "if D.day < monthLen y m then some ⟨y, m, D.day⟩ else",
+   "killed": true,
+   "plant": "a month end",
+   "test": "#guard Civil.addMonths ⟨2025, 1, 31⟩ 2 none == some ⟨2025, 3, 31⟩ (addMonths_spec cut to sorry, as trust_mutants does: the plant breaks it first)",
+   "fails_at": "lean/VE/Time/CalExamples.lean:52"
+  },
+  {
+   "definition": "Civil.addMonths",
+   "file": "lean/VE/Time/Calendar.lean",
+   "from": "if D.day ≤ monthLen y m then some ⟨y, m, D.day⟩ else",
+   "to": "if D.day ≤ monthLen D.year m then some ⟨y, m, D.day⟩ else",
+   "killed": true,
+   "plant": "a leap day",
+   "test": "#guard Civil.addMonths ⟨1960, 2, 29⟩ 792 (some .last) == some ⟨2026, 2, 28⟩ (addMonths_spec cut to sorry)",
+   "fails_at": "lean/VE/Time/CalExamples.lean:72"
+  },
+  {
+   "definition": "_Item.age",
+   "file": "ve/surface/dates.py",
+   "from": "return self.compare(\"on_or_before\", (\"ground\", [\"plus_months\"",
+   "to": "return self.compare(\"before\", (\"ground\", [\"plus_months\"",
+   "killed": true,
+   "plant": "a birthday on the boundary",
+   "test": "tests/test_date_arith.py::test_week_window_and_birthday_on_the_boundary, ::test_29_february_age_is_refused_and_readings_settle_it",
+   "fails_at": "tests/test_date_arith.py"
+  },
+  {
+   "definition": "written_exclusive (C2)",
+   "file": "ve/surface/dates.py",
+   "from": "return any([\"not\", x] in cb for x in ca) or any([\"not\", x] in ca for x in cb)",
+   "to": "return True",
+   "killed": true,
+   "test": "tests/test_date_arith.py::test_overlapping_rules_concluding_one_date_are_refused_unless_written_exclusive, ::test_review_b1_a_conclusion_about_a_day_constant_always_meets_c2, ::test_review_b2_c2_compares_the_rules_of_every_item_of_a_case",
+   "fails_at": "tests/test_date_arith.py"
+  },
+  {
+   "definition": "_Item.named (C3)",
+   "file": "ve/surface/dates.py",
+   "from": "return (\"const\", self.day_constants[text])  [may-lack branch]",
+   "to": "return (\"ground\", [\"date\", self.dates[text]]) if self.dates.get(text) else (\"const\", self.day_constants[text])",
+   "killed": true,
+   "test": "tests/test_date_arith.py::test_a_date_the_case_may_lack_is_a_day_constant_with_todays_nodes, ::test_review_b9_b10_a_date_the_case_may_lack_stays_a_constant",
+   "fails_at": "tests/test_date_arith.py"
+  }
+ ]
+}

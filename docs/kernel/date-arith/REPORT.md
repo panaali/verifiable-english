@@ -60,11 +60,11 @@ Listed on `quantity` (tools/kernel-paths.json): `elabCal_sound`, `calDay_sound`,
 
 ## 4. Planted off-by-one errors (ruling item 2d)
 
-Each plant was applied to the tree, the check run, and the plant reverted (manage-agents `/tmp/da-build/plant*.out`).
+Each plant was applied to the tree, the check run, and the plant reverted; all six seeded bugs (these four, and the C2 and C3 rules of the shell) are in [mutants.json](mutants.json).
 
 | Plant | Edit | Answer it changes | Caught by |
 |---|---|---|---|
-| a day | `plus_days`: `D.addDays (k.toNat + 1)` | the week beginning 21 Sep 2026 ends 28 Sep, not 27 | `CalExamples.lean` the `plus_days` guards (lines 124-127 at the plant) |
+| a day | `plus_days`: `D.addDays (k.toNat + 1)` | the week beginning 21 Sep 2026 ends 28 Sep, not 27 | `CalExamples.lean` the `plus_days` guards (lines 124-131) |
 | a month end | `addMonths`: `D.day < monthLen y m` | 31 Jan 2025 + 2 months -> refused/rolled, not 31 Mar | `CalExamples.lean` `Civil.addMonths ⟨2025, 1, 31⟩ 2 none == some ⟨2025, 3, 31⟩` (and five more) |
 | a leap day | `addMonths`: month length of the start year | 29 Feb 1960 + 66 years (last) -> refused, not 28 Feb 2026 | `CalExamples.lean` the 29 February guards (lines 72-74, 114-116) |
 | a birthday | shell age: `before` for `on_or_before` | born 18 May 1951: not 75 on 18 May 2026 | `test_week_window_and_birthday_on_the_boundary` (and `test_29_february_age_is_refused_and_readings_settle_it`) |
