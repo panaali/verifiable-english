@@ -211,16 +211,18 @@ class Staged:
         answers = {"Q1": {True: "YES", False: "NO", None: "OPEN"}[entitled]}
         if entitled is not True:
             fill = "N/A" if entitled is False else "OPEN"
-            answers.update(Q2=fill, Q3=fill, Q4=fill)
+            answers.update(Q2=fill, Q3=fill, Q3gbp=fill, Q4=fill)
             return answers
         amount = self.value("amount", T.AMOUNTS)
         recovered = self.atom(T.U("recovered", "applicant"), "recovered.applicant")
         answers["Q2"] = amount or "OPEN"
         answers["Q3"] = {True: "YES", False: "NO", None: "OPEN"}[recovered]
         if amount is None:
-            answers["Q4"] = "OPEN"
+            answers.update(Q3gbp="OPEN", Q4="OPEN")
             return answers
-        self.value("recovered_amount", ["0.00", amount])
+        # Q3 in the questions' form, the GBP amount taken back (relb-fixes, encoder fault F7): its own answer,
+        # carried by the recovered_amount step's document like the others.
+        answers["Q3gbp"] = self.value("recovered_amount", ["0.00", amount]) or "OPEN"
         kept = self.value("kept", [amount, "0.00"])
         answers["Q4"] = kept or "OPEN"
         return answers
@@ -266,6 +268,8 @@ def answer_targets(answers):
         out["Q2"] = "amount"
     if answers.get("Q3") in ("YES", "NO"):
         out["Q3"] = T.key(T.U("recovered", "applicant"))
+    if answers.get("Q3gbp") not in (None, "OPEN", "N/A"):
+        out["Q3gbp"] = "recovered_amount"
     if answers.get("Q4") not in (None, "OPEN", "N/A"):
         out["Q4"] = "kept"
     return out
@@ -306,6 +310,10 @@ def fixture_model(case_with_key, defaults):
         # sexes' days, a man's 65th birthday (Sch. 4 rule (1); a woman's day is earlier).
         born = x["birth"]
         pa_dates = R.anniversaries(born, 65) if born < date(1953, 12, 6) else R.pensionable_age_dates(born)
+        if born < date(1953, 12, 6) and x.get("sex") == "woman":  # a stated sex (relb-fixes F2): rule (2) at 60;
+            # table 1 (6 Apr 1950 to 5 Dec 1953) is not in the reference, so there the translation's day is used.
+            pa_dates = (R.anniversaries(born, 60) if born < date(1950, 4, 6)
+                        else [T.age_bounds(born.isoformat(), "woman")[0][1]])
         values = {"pa_date": max(pa_dates), "eightieth": max(R.anniversaries(born, 80)),
                   "ew_from": x["ew_from"], "ew_last_day": x["ew_last_day"], "scot_ni_from": x["scot_ni_from"]}
         if x["care"]:
@@ -317,9 +325,12 @@ def fixture_model(case_with_key, defaults):
                           treatment_start=start)
             constants[f"{r}_treatment_before_week"] = str((R.QW_START - start).days)
         if x["custody"]:
-            values.update(custody_from=x["custody"]["from"], release=x["custody"]["release"])
+            values.update(custody_from=x["custody"]["from"], release=x["custody"]["release"],
+                          sentence_from=x["custody"].get("sentenced_from", x["custody"]["from"]))
         if x["claim"].get("claimed_on"):
             values["claim_date"] = x["claim"]["claimed_on"]
+        if R.paid_without_claim(x):  # an undated payment: on the deadline (the latest day the facts allow)
+            values["unclaimed_paid"] = x["claim"].get("paid_on") or date(2027, 3, 31)
         for suffix, (unit, _) in T.ROLE_INTEGERS.items():
             name = f"{r}_{suffix}"
             if unit == "day":
@@ -334,7 +345,7 @@ def fixture_model(case_with_key, defaults):
                  "inpatient": x["hospital"] is not None, "detained_in_custody": x["custody"] is not None,
                  "under_sentence": bool(x["custody"] and x["custody"]["sentenced"]),
                  "claimed": x["claim"].get("claimed_on") is not None,
-                 "paid_without_claim": x["claim"]["automatic"]}
+                 "paid_without_claim": R.paid_without_claim(x)}
         lives = R.lives_with(x, other)
         partners = present and h["partner"]  # cases.json records the couple on the housemate
         pairs = {"shares_home": present, "partner_of": partners, "lives_with": lives,
@@ -598,7 +609,8 @@ MUTANT_TARGETS = {"M1": ["C14"], "M2": ["C14"], "M3": ["C10"], "M4": ["D01"], "M
                   "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"],
                   "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"],
                   "M26": ["B24", "B25"], "M27": ["B26", "B27"], "M28": ["B28"], "M29": ["B29"], "M30": ["B30"],
-                  "M31": ["B31", "B32"], "M32": ["B33", "B34"]}
+                  "M31": ["B31", "B32"], "M32": ["B33", "B34"],
+                  "M33": ["C30"], "M34": ["C33"]}  # relb-fixes: R12 (F8), R9 (F3)
 
 
 def mutation_check(cases, profiles, workers):
@@ -732,7 +744,8 @@ def results_markdown(results, keyed):
 # Profiles whose basis is `guide` in PLAN.md section 5 (S2 states the answer).
 GUIDE = {"A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11", "A12", "A13",
          "B01", "B04", "B05", "B07", "B08", "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08",
-         "C09", "C10", "C13", "C15", "C22", "C23", "D01", "D02", "D03", "D04", "D05", "D06"}
+         "C09", "C10", "C13", "C15", "C22", "C23", "C28", "C29", "C32", "D01", "D02", "D03", "D04", "D05",
+         "D06"}  # C28, C29, C32: the guide's own claim list (S2 section 4; relb-fixes)
 
 
 if __name__ == "__main__":

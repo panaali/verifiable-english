@@ -131,15 +131,30 @@ def _guide_agrees(what, bounds, by_guide):
         raise ValueError(f"{what}: Sch. 4 gives {bounds[0]} to {bounds[1]}, the guide's cut-off the other side of {QW1}")
 
 
-def age_facts(r, birth):
+SEXES = ("man", "woman")  # the profile field `sex` (optional): Sch. 4 rules (1) to (4) differ by it
+
+
+def age_bounds(birth, sex=None):
+    """(pensionable-age bounds, 80th-birthday bounds), each (earliest, latest), for a birth date (ISO) and an
+    optional sex. With the sex given, Sch. 4's own rule for that sex decides (relb-fixes, encoder fault F2:
+    born 14 March 1940, a woman attains pensionable age on 14 March 2000 by rule (2), a man on 14 March 2005 by
+    rule (1)); without it both are kept as bounds."""
+    if sex is not None and sex not in SEXES:
+        raise ValueError(f"sex {sex!r}: expected one of {SEXES} or none")
+    born = date.fromisoformat(birth)
+    return PA.pensionable_age(born, sex, schedule=_schedule4()), PA.eightieth_birthday(born)
+
+
+def age_facts(r, birth, sex=None):
     """Bridges B2 and B3 for role r: the pensionable-age date by Pensions Act 1995 Sch. 4 para. 1 and the 80th
-    birthday, worked out from the birth date by `pensionable_age` (which reads Sch. 4's own text), as days or
-    bounds. For the guide's week (S2:38) the guide's cut-offs (born on or before the first; born before the
-    second) must agree with them, else the profile is refused: two readings of the source, one answer."""
+    birthday, worked out from the birth date (and the sex, where given) by `pensionable_age` (which reads
+    Sch. 4's own text), as days or bounds. For the guide's week (S2:38) the guide's cut-offs (born on or before
+    the first; born before the second) must agree with them, else the profile is refused: two readings of the
+    source, one answer."""
     born = date.fromisoformat(birth)
     if born > date.fromisoformat(QW1):
         raise ValueError(f"{r}: born {birth}, after the qualifying week")
-    pa, age80 = PA.pensionable_age(born, schedule=_schedule4()), PA.eightieth_birthday(born)
+    pa, age80 = age_bounds(birth, sex)
     if QW1 == GUIDE_WEEK_END:
         pa_cutoff, age80_cutoff = guide_cutoffs()
         _guide_agrees(f"{r} pensionable age", pa, born <= pa_cutoff)
@@ -147,6 +162,38 @@ def age_facts(r, birth):
     return [*_bound_facts(r, "pa_date", pa, "bridge B2"), *_bound_facts(r, "eightieth", age80, "bridge B3")]
 
 
+# The guide's list of who need not claim (S2 section 4, S2:74-90; relb-fixes, fault O3), read by `guide_no_claim`.
+# Each listed benefit that is a benefit constant maps to it; the others enter as `claim.other_benefits`.
+GUIDE_NO_CLAIM_LEAD_IN = (75, "You do not need to claim if you get any of the following:")
+GUIDE_NO_CLAIM_ITEMS = range(76, 88)  # S2:76-87, one benefit per line
+GUIDE_MUST_CLAIM = {88: "If you do not get any of these, you need to claim if either of the following apply:",
+                    89: "you’ve not got the Winter Fuel Payment before",
+                    90: "you’ve deferred your State Pension since your last Winter Fuel Payment"}
+GUIDE_BENEFIT_NAMES = {"State Pension": "state_pension", "Pension Credit": "pension_credit",
+                       "Universal Credit": "universal_credit", "Attendance Allowance": "attendance_allowance",
+                       "income-related Employment and Support Allowance (ESA)": "income_related_esa"}
+
+
+def guide_no_claim(lines=None):
+    """(benefit constants, other benefit names) on the guide's list of who need not claim (S2:75-87), read from the
+    guide's own lines. The lead-in and the S2:88-90 lines must be word for word, each item line a benefit name;
+    anything else raises ValueError."""
+    if lines is None:
+        lines = (HERE / "source" / "wfp-print.txt").read_text(encoding="utf-8").split("\n")
+    number, text = GUIDE_NO_CLAIM_LEAD_IN
+    for n, words in ((number, text), *GUIDE_MUST_CLAIM.items()):
+        if lines[n - 1] != words:
+            raise ValueError(f"S2:{n}: not {words!r}: {lines[n - 1]!r}")
+    constants, others = [], []
+    for n in GUIDE_NO_CLAIM_ITEMS:
+        name = lines[n - 1]
+        if not name or name.endswith((":", ".")) or " if " in name or len(name.split()) > 8:
+            raise ValueError(f"S2:{n}: not a benefit name: {name!r}")
+        (constants if name in GUIDE_BENEFIT_NAMES else others).append(GUIDE_BENEFIT_NAMES.get(name, name))
+    return tuple(constants), tuple(others)
+
+
+GUIDE_NO_CLAIM_BENEFITS, GUIDE_OTHER_NO_CLAIM = guide_no_claim()
 _SCHEDULE4 = []
 
 
@@ -161,15 +208,19 @@ ROLE_INTEGERS = {
     "eightieth": ("day", "80th birthday"),
     "ew_from": ("day", "first day of ordinary residence in England and Wales"),
     "ew_last_day": ("day", "last day of ordinary residence in England and Wales"),
-    "scot_ni_from": ("day", "first day of ordinary residence in Scotland or Northern Ireland"),
+    # relb-fixes (encoder fault F6): reg. 4(4) "becomes ordinarily resident in Scotland or Northern Ireland", the
+    # day R11 compares with the week and with the E&W residence; not the first day of an earlier spell there.
+    "scot_ni_from": ("day", "day of most recently becoming ordinarily resident in Scotland or Northern Ireland"),
     "care_from": ("day", "care start date"),
     "care_until": ("day", "care end date"),
     "admitted": ("day", "hospital admission date"),
     "treatment_start": ("day", "treatment start date"),
     "discharged": ("day", "hospital discharge date"),
     "custody_from": ("day", "custody start date"),
+    "sentence_from": ("day", "sentence start date"),
     "release": ("day", "release date"),
     "claim_date": ("day", "claim date"),
+    "unclaimed_paid": ("day", "unclaimed payment date"),
     "care_before_week": ("elapsed_day", "care days before the week"),
     "treatment_before_week": ("elapsed_day", "treatment days before the week"),
     "income": ("gbp_penny", "total income"),
@@ -204,9 +255,9 @@ FACT_PREDICATES = {
     "care_ended": (["person"], "The person's care stay has a last day, the care end date."),
     "inpatient": (["person"], "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date."),
     "detained_in_custody": (["person"], "The person is detained in custody from the custody start date to the release date."),
-    "under_sentence": (["person"], "The person's custody is under a sentence imposed by a court."),
+    "under_sentence": (["person"], "The person's custody is under a sentence imposed by a court from the sentence start date to the release date."),
     "claimed": (["person"], "The person made a claim for the winter fuel payment on the claim date."),
-    "paid_without_claim": (["person"], "The person is paid without a claim (S1 reg. 5(1))."),
+    "paid_without_claim": (["person"], "The person is paid a winter fuel payment without a claim (S1 reg. 5(1)), on the unclaimed payment date."),
 }
 
 # Guide predicates (srccov-rl-eligibility-1121): base predicates of the guide rules G1 to G7
@@ -511,6 +562,7 @@ MUTANTS = {
     "M28": "R7 with the first days strictly before the week", "M29": "R7 with the last days strictly after the week",
     "M30": "R14 with 'throughout' read into 3(3)",
     "M31": "R14 without the common day of AR8", "M32": "R14 with the bounds of AR8 strict",
+    "M33": "R12 without the 31 March bound of reg. 5(1)", "M34": "R9 with the custody start for the sentence start",
 }
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
@@ -587,11 +639,14 @@ def role_rules(r, mutant=None):
     rules.append(rule("R8c", "S1 reg. 4(2)(b)", f"Regulation 4(2)(b) applies to the {r} exactly when the {r} is an in-patient whose treatment began no later than {QW0}, whose discharge is no earlier than {QW1}, and whose treatment days before the week are more than 364 days (52 weeks).",
                       Iff(U("excluded_hospital", r), And(U("inpatient", r), ["date_no_later", num(r, "treatment_start"), day(QW0)],
                                                          ["date_no_later", day(QW1), num(r, "discharged")], more)), r))
+    # relb-fixes (encoder fault F3): remand then a sentence in one custody; "under a sentence" throughout the week
+    # needs the sentence, not the custody, to begin before it.
     custody = [U("detained_in_custody", r), U("under_sentence", r),
-               ["date_before", num(r, "custody_from"), day(QW0)], ["date_after", num(r, "release"), day(QW1)]]
+               ["date_before", num(r, "custody_from" if mutant == "M34" else "sentence_from"), day(QW0)],
+               ["date_after", num(r, "release"), day(QW1)]]
     if mutant == "M9":
         custody.pop(1)
-    rules.append(rule("R9", "S1 reg. 4(2)(c), reading AR1", f"Regulation 4(2)(c) applies to the {r} exactly when the {r} is detained in custody under a sentence, the custody began before {QW0}, and the release is after {QW1}.",
+    rules.append(rule("R9", "S1 reg. 4(2)(c), reading AR1", f"Regulation 4(2)(c) applies to the {r} exactly when the {r} is detained in custody under a sentence, the sentence began before {QW0}, and the release is after {QW1}.",
                       Iff(U("excluded_custody", r), And(*custody)), r))
     rules.append(rule("R10", "S1 reg. 4(3)", f"Regulation 4(3) applies to the {r} exactly when the {r} is in residential care and is paid a relevant benefit for the week.",
                       Iff(U("excluded_care_benefit", r), And(U("in_residential_care", r), U("has_rb", r))), r))
@@ -605,8 +660,12 @@ def role_rules(r, mutant=None):
     moved.append(["date_before" if mutant == "M10" else "date_no_later", num(r, "scot_ni_from"), day(QW1)])
     rules.append(rule("R11", "S1 reg. 4(4), reading AR6", f"Regulation 4(4) applies to the {r} exactly when the {r} is resident in England or Wales on a day of the week and, no earlier than the {r}'s first day of that residence and no earlier than {QW0}, became ordinarily resident in Scotland or Northern Ireland no later than {QW1}.",
                       Iff(U("excluded_moved", r), And(*moved)), r))
-    rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1)", f"Regulation 4(5) applies to the {r} exactly when the {r} is not paid without a claim and made no claim on or before {CLAIM_DEADLINE}.",
-                      Iff(U("excluded_no_claim", r), And(Not(U("paid_without_claim", r)),
+    # relb-fixes (fault F8): a reg. 5(1) payment is made "on or before the 31st March following the qualifying
+    # week", so a payment without a claim counts for reg. 4(6)(a) only on or before that day.
+    reg51 = (U("paid_without_claim", r) if mutant == "M33"
+             else And(U("paid_without_claim", r), ["date_no_later", num(r, "unclaimed_paid"), day(CLAIM_DEADLINE)]))
+    rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1)", f"Regulation 4(5) applies to the {r} exactly when the {r} is not paid without a claim on or before {CLAIM_DEADLINE} and made no claim on or before {CLAIM_DEADLINE}.",
+                      Iff(U("excluded_no_claim", r), And(Not(reg51),
                                                          Not(And(U("claimed", r), ["date_before" if mutant == "M11" else "date_no_later",
                                                                                    num(r, "claim_date"), day(CLAIM_DEADLINE)])))), r))
     rules.append(rule("R13a", "S1 reg. 4(1) to (5)", f"The {r} is excluded exactly when one of regulations 4(2)(a), 4(2)(b), 4(2)(c), 4(3), 4(4) and 4(5) applies to the {r}.",
@@ -725,7 +784,7 @@ def rules(mutant=None):
 # Every profile field role_facts reads: person fields, then per record the required
 # and the optional fields. A field outside these would be dropped without a fact, so
 # check_fields rejects it (the eligibility recheck found `care.until` dropped).
-PERSON_FIELDS = {"birth", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "care", "hospital",
+PERSON_FIELDS = {"birth", "sex", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "care", "hospital",
                  "custody", "claim", "income"}
 # Fields read by no rule, each with the reason. `home` names where a person without
 # E&W residence lives (B08, B09); S1 depends on that only through `ew_from`, and the
@@ -737,8 +796,8 @@ PERIODS = {"shared_home": ("home_start_dated", "home_ended", "home_from", "home_
            "partnership": ("partnership_start_dated", "partnership_ended", "partner_from", "partner_until")}
 HOUSEMATE_FIELDS = {"partner", *PERIODS}
 RECORD_FIELDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
-                 "custody": ({"from", "release", "sentenced"}, set()),
-                 "claim": ({"automatic"}, {"claimed_on"}),
+                 "custody": ({"from", "release", "sentenced"}, {"sentenced_from"}),
+                 "claim": (set(), {"automatic", "paid_on", "claimed_on", "must_claim", "other_benefits"}),
                  **{name: (set(), {"from", "until"}) for name in PERIODS}}
 
 
@@ -754,6 +813,11 @@ def check_fields(r, p):
         if record is not None and not required <= set(record) <= required | optional:
             raise ValueError(f"{r}.{name}: fields {sorted(record)}, expected {sorted(required)}"
                              f" and optionally {sorted(optional)}")
+    check_claim(r, p)
+    custody = p.get("custody")
+    if custody is not None and custody.get("sentenced_from") is not None and not (
+            custody["sentenced"] and custody["from"] <= custody["sentenced_from"] <= custody["release"]):
+        raise ValueError(f"{r}.custody: {custody}: a sentence start needs a sentence within the custody")
     if p.get("partnership") is not None and not p.get("partner"):
         raise ValueError(f"{r}: partnership dates without a partner")
     for name in PERIODS:  # AR5: a listed period includes a day of the week
@@ -761,6 +825,40 @@ def check_fields(r, p):
         start, end = (date.fromisoformat(period.get(k, v)) for k, v in (("from", QW0), ("until", QW1)))
         if not start <= end or start > date.fromisoformat(QW1) or end < date.fromisoformat(QW0):
             raise ValueError(f"{r}.{name}: {period} includes no day of the qualifying week")
+
+
+def check_claim(r, p):
+    """The claim record (relb-fixes): `automatic` (true/false) states whether a payment was made without a claim,
+    `paid_on` its day; without `automatic` the guide's list decides (encoding rule O3, `paid_without_claim`): `other_benefits` names list
+    benefits that are not constants, and a person on no list must say `must_claim` (S2:88-90: not had the
+    payment before, or deferred the State Pension since), else the guide does not say and the profile is refused."""
+    claim = p["claim"]
+    if claim.get("automatic") is not None:
+        if not isinstance(claim["automatic"], bool) or {"must_claim", "other_benefits"} & set(claim):
+            raise ValueError(f"{r}.claim: {claim}: a stated payment without a claim takes no guide fields")
+        if claim.get("paid_on") is not None and not claim["automatic"]:
+            raise ValueError(f"{r}.claim: a payment day without a payment")
+        return
+    if "paid_on" in claim:
+        raise ValueError(f"{r}.claim: a payment day without `automatic`")
+    others = claim.get("other_benefits") or []
+    if set(others) - set(GUIDE_OTHER_NO_CLAIM):
+        raise ValueError(f"{r}.claim: {sorted(set(others) - set(GUIDE_OTHER_NO_CLAIM))} not on the guide's list")
+    listed = bool(set(p["benefits"]) & set(GUIDE_NO_CLAIM_BENEFITS)) or bool(others)
+    if listed == bool(claim.get("must_claim")):
+        raise ValueError(f"{r}.claim: {'on the guide list and must_claim' if listed else 'on no guide list and must_claim not said'}"
+                         " (S2:75-90 do not say whether this person is paid without a claim)")
+
+
+def paid_without_claim(p):
+    """Encoding rule O3 (relb-fixes): whether person p is paid without a claim. A stated `claim.automatic` decides;
+    without it, the guide's list of who "do not need to claim" (S2:75-87, `guide_no_claim`) decides: a person
+    paid one of the listed benefits that are constants, or with `claim.other_benefits` naming another listed
+    benefit, is paid without a claim, and a person on no list who must claim (S2:88-90) is not."""
+    claim = p["claim"]
+    if claim.get("automatic") is not None:
+        return claim["automatic"]
+    return bool(set(p["benefits"]) & set(GUIDE_NO_CLAIM_BENEFITS)) or bool(claim.get("other_benefits"))
 
 
 def _person(raw, defaults):
@@ -815,7 +913,7 @@ def role_facts(r, p, other_present, housemate=None):
     check_fields(r, p)
     for b in BENEFITS:
         facts.append(fact(f"{r}.paid.{b}", lit(b in p["benefits"], B("paid_for_week", r, b))))
-    facts += age_facts(r, p["birth"])
+    facts += age_facts(r, p["birth"], p.get("sex"))
     facts.append(fact(f"{r}.ever_resident_ew", lit(p["ew_from"] is not None, U("ever_resident_ew", r))))
     if p["ew_from"] is not None:
         facts.append(fact(f"{r}.ew_from", ["date_on", num(r, "ew_from"), day(p["ew_from"])]))
@@ -843,8 +941,19 @@ def role_facts(r, p, other_present, housemate=None):
         facts.append(fact(f"{r}.under_sentence", lit(custody["sentenced"], U("under_sentence", r))))
         facts.append(fact(f"{r}.custody_from", ["date_on", num(r, "custody_from"), day(custody["from"])]))
         facts.append(fact(f"{r}.release", ["date_on", num(r, "release"), day(custody["release"])]))
+        if custody["sentenced"]:  # the sentence start: `sentenced_from` after a remand, else the custody start
+            facts.append(fact(f"{r}.sentence_from", ["date_on", num(r, "sentence_from"),
+                                                     day(custody.get("sentenced_from") or custody["from"])]))
     claim = p["claim"]
-    facts.append(fact(f"{r}.paid_without_claim", lit(claim["automatic"], U("paid_without_claim", r))))
+    paid = paid_without_claim(p)
+    # Without `automatic`, the guide's list of who need not claim decides (encoding rule O3, `paid_without_claim`).
+    facts.append(fact(f"{r}.paid_without_claim", lit(paid, U("paid_without_claim", r)),
+                      "fact" if claim.get("automatic") is not None else "assumption O3"))
+    if paid and claim.get("paid_on") is not None:
+        facts.append(fact(f"{r}.unclaimed_paid", ["date_on", num(r, "unclaimed_paid"), day(claim["paid_on"])]))
+    elif paid:  # no day given: the payment is taken to be made by the reg. 5(1) deadline (assumption O3)
+        facts.append(fact(f"{r}.unclaimed_paid", ["date_no_later", num(r, "unclaimed_paid"), day(CLAIM_DEADLINE)],
+                          "assumption O3"))
     facts.append(fact(f"{r}.claimed", lit(claim.get("claimed_on") is not None, U("claimed", r))))
     if claim.get("claimed_on") is not None:
         facts.append(fact(f"{r}.claim_date", ["date_on", num(r, "claim_date"), day(claim["claimed_on"])]))

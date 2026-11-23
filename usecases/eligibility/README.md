@@ -8,17 +8,20 @@ of the W6a quantities and dates feature.
   (SI 2025/969, England and Wales), with the GOV.UK guide and two linked
   provisions. All four texts are pinned byte for byte with SHA-256 hashes in
   [PLAN.md](PLAN.md) section 1 and [`source/`](source/).
-- **Cases.** 80 applicant profiles in [`cases.json`](cases.json). Each has an
+- **Cases.** 86 applicant profiles in [`cases.json`](cases.json). Each has an
   answer key that was written by hand before VE was run on it. A separate
   program, [`reference.py`](reference.py), was written from the source text
-  and agrees with the key on all 80. Profiles B15 to B19 were added after the
+  and agrees with the key on all 86. Profiles B15 to B19 were added after the
   first run, by the eligibility review, B20 to B23 and C25 to C27 by the
-  eligibility recheck, B24 to B30 for the review's finding C, and B31 to B34
-  by the R7 recheck (see "Review fixes" below).
+  eligibility recheck, B24 to B30 for the review's finding C, B31 to B34
+  by the R7 recheck (see "Review fixes" below), and C28 to C33 by relb-fixes
+  (see "relb-fixes" below).
 - **Questions.** For each profile: Q1, is the applicant entitled? For an
   entitled applicant, also: Q2, how much? Q3, does HMRC take it back because
   income is over £35,000? Q4, how much does the applicant keep? That makes
-  269 scored questions (PLAN.md section 3).
+  287 scored questions (PLAN.md section 3). Beside Q3, `run.py` also answers
+  how much HMRC takes back (`Q3gbp`), with its own Lean-admitted document; the
+  key has no field for it, so it is not scored.
 
 The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
@@ -26,16 +29,16 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
 | Route | Correct | Answered | Disagreements |
 |---|---|---|---|
-| Staged (the plan's fallback) | **269/269** questions, **80/80** profiles | 269/269 | none |
-| Single shot (the whole problem in one proof search) | 0/269 | 0/269 | none; every answer is OPEN |
+| Staged (the plan's fallback) | **287/287** questions, **86/86** profiles | 287/287 | none |
+| Single shot (the whole problem in one proof search) | 0/287 | 0/287 | none; every answer is OPEN |
 
 - **Staged route.** Every answer rests on proof certificates that Lean checked.
-  All 2,352 step certificates were accepted by the Lean `ve_quantity` checker.
-  All 269 answer documents were admitted by Lean.
-- **Official answers.** On the 38 profiles whose answer the GOV.UK guide states
-  directly, the staged route is correct on 131 of 131 questions.
-- **Unflagged profiles.** On the 67 profiles without a flag, it is correct on
-  226 of 226 questions.
+  All 2,494 step certificates were accepted by the Lean `ve_quantity` checker.
+  All 354 answer documents (287 scored answers and 67 `Q3gbp`) were admitted by Lean.
+- **Official answers.** On the 41 profiles whose answer the GOV.UK guide states
+  directly, the staged route is correct on 140 of 140 questions.
+- **Unflagged profiles.** On the 73 profiles without a flag, it is correct on
+  244 of 244 questions.
 - **Flagged profiles.** Each of the 13 flagged profiles is also correct. This
   means VE followed the reading the key adopted (PLAN.md section 4.2). It does
   not settle which reading of the law is right.
@@ -44,17 +47,18 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
   finding C fix and the R7 recheck only added profiles.
 
 **Why this is not full independence.** One author wrote the key, the reference
-program and the VE translation, all from the same adopted readings. The 38
+program and the VE translation, all from the same adopted readings. The 41
 guide-answered profiles are the part of the key that does not depend on this
 author's reading.
 
-**Does the case set catch translation errors?** Yes, for the 32 planned
+**Does the case set catch translation errors?** Yes, for the 34 planned
 mutants. Each mutant is a deliberate error in the translation, such as ">"
 written as "≥" or one benefit removed from the list. Every mutant changed the
-answer of the profile the plan named for it, so 32/32 were caught. The first
+answer of the profile the plan named for it, so 34/34 were caught. The first
 run had 19 mutants, and the case set missed three real errors that the review
 then found, a fourth that the recheck found, and a fifth that the R7 recheck
-found. Mutants M20 to M32 now reproduce those errors.
+found. Mutants M20 to M32 now reproduce those errors; M33 and M34 cover the
+relb-fixes changes to R12 and R9.
 
 ## Review fixes
 
@@ -215,13 +219,39 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
   works out, in Python, each person's pensionable-age date and 80th birthday,
   which enter as dates, or as earliest and latest days where the source fixes
   none (29 February outside rule (7A); a birth before 6 December 1953, where
-  the rules differ by sex and no profile gives one). For this week the guide's
+  the rules differ by sex, unless the profile gives the person's `sex`). For this week the guide's
   cut-offs (born on or before 27 June 1960; born before 28 September 1946, read
   from the guide's sentences by `guide_cutoffs`) must agree, or the profile is
   refused. tests/test_spare_ages_dates.py checks the working against
   reference.py and with planted errors. Lean does not check the arithmetic.
 - **Weeks as days.** "52 weeks" and "12 weeks" enter as 364 and 84 days,
   because W6a has no week unit.
+
+## relb-fixes
+
+Release B's recorded faults (manage-agents reviews/relb/FAULTS.md, "relb-fixes"):
+
+- **Ages (O2; encoder F1, F2).** No hand table is left: every birth date is
+  worked out from Sch. 4 (above), and an optional person field `sex` ("man" or
+  "woman") picks the rule for that sex where Sch. 4 has two (born 14 March 1940:
+  a woman reaches pensionable age on 14 March 2000, a man on 14 March 2005).
+- **Payment without a claim (O3; encoder F8).** `claim.automatic` is now
+  optional. Stated, it decides as before, and `claim.paid_on` gives the day of
+  the payment: R12 counts a payment without a claim only on or before 31 March
+  2027, the last day reg. 5(1) allows (an undated one is taken to be by then).
+  Not stated, encoding rule O3 (`translation.paid_without_claim`) reads the
+  guide's list of who "do not need to claim" (S2:75-87, from the guide's own
+  lines): a person paid State Pension, Pension Credit, Universal Credit,
+  Attendance Allowance or income-related ESA, or with `claim.other_benefits`
+  naming another listed benefit, is paid without a claim; a person on no list
+  must say `claim.must_claim` (S2:88-90), else the profile is refused, because
+  the guide does not say. Profiles C28 to C32.
+- **Q3 as an amount (encoder F7).** `Q3gbp`, the amount HMRC takes back.
+- **Remand, then a sentence (encoder F3).** `custody.sentenced_from` gives the
+  sentence start inside one custody; R9 reads it (profile C33).
+- **`scot_ni_from` (encoder F6).** Its description now says what R11 reads: the
+  day the person most recently became ordinarily resident in Scotland or
+  Northern Ireland (reg. 4(4) "becomes").
 
 ## Check status of each rule
 
@@ -236,10 +266,10 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
 | R6 lives with | reg. 1(4)(b) | CHECKED | "mutual home" is LABELLED as a fact; the care condition is on the subject only (review B) |
 | R7 partner paid a relevant benefit | reg. 4(2)(a) | CHECKED | "partner" is LABELLED as a fact; the partnership and the shared home must each cover every day of the week, under reading AR7 (review C). An undated household is taken to cover the whole week (AR5) |
 | R8 hospital over 52 weeks | reg. 4(2)(b), SI 2005/3360 reg. 2(5) | CHECKED | "free in-patient treatment" is LABELLED as a fact |
-| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1 |
+| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1; the sentence, not a remand before it, must begin before the week (relb-fixes F3) |
 | R10 care home and relevant benefit | reg. 4(3) | CHECKED | |
 | R11 moved to Scotland or Northern Ireland | reg. 4(4) | CHECKED | under reading AR6: the move comes after a day of residence in England or Wales in the week (review A) |
-| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact |
+| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact, or comes from the guide's list of who need not claim (encoding rule O3); it counts only on or before 31 March 2027 (relb-fixes F8) |
 | R13 entitlement | regs. 2 and 4(1) | CHECKED | |
 | R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition; 3(3) needs the partnership and the shared home on one common day of the week (R14a, reading AR8, R7 recheck) |
 | R16 income charge | GOV.UK guide | CHECKED | its legal basis is not pinned (O6 OPEN) |
@@ -277,10 +307,10 @@ the statutory reading on each.
 
 ## English
 
-- **Facts.** 86 of 166 distinct fact statements have a controlled English
+- **Facts.** 107 of 188 distinct fact statements have a controlled English
   wording. Each of those parses back to the same statement with exactly one
   reading. Example: "The applicant's pensionable-age date is no later than
-  2018-12-05." The other 80 are yes-or-no facts about a person, such as being a
+  2018-12-05." The other 81 are yes-or-no facts about a person, such as being a
   partner. The W6a surface has no wording for these.
 - **Money.** "£35000.01" is accepted as input. The canonical wording is "GBP
   35000.01". "£35,000.00" is rejected, because the surface has no thousands
@@ -313,7 +343,7 @@ the statutory reading on each.
 | Path | Content |
 |---|---|
 | [`PLAN.md`](PLAN.md) | the plan, the adopted readings and the frozen key |
-| [`cases.json`](cases.json) | the 80 profiles and their keys |
+| [`cases.json`](cases.json) | the 86 profiles and their keys |
 | [`reference.py`](reference.py) | the independent reference program |
 | [`translation.py`](translation.py) | the VE translation: environment, rules, facts |
 | [`environment.json`](environment.json), [`rules.json`](rules.json) | the generated environment and rules |

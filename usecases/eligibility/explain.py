@@ -123,7 +123,9 @@ ASSUMPTIONS = {
     "lives_with": "In “lives with”, the words “they are not in residential care” apply only to the person who lives with someone; the other person may be in residential care.",
     "care_stay": "Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day counts only if that day is no earlier than 27 September 2026.",
     "hospital": "For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20 September 2025, because a treatment period begins the day after admission.",
-    "custody": "Custody is “throughout the qualifying week” only if it began before 21 September and release is after 27 September; release on 27 September does not count.",
+    "custody": "Custody under a sentence is “throughout the qualifying week” only if the sentence began before 21 September and release is after 27 September; release on 27 September does not count, and days on remand before the sentence are not under it.",
+    "no_claim": "A person the profile does not say was paid without a claim is taken to be paid without one if they get a benefit on the GOV.UK guide's list of people who do not need to claim, and not if they get none and the guide says they must claim.",
+    "undated_payment": "A payment without a claim with no date given is taken to be made by 31 March 2027, the last day regulation 5(1) allows.",
     "excluded_not_entitled": "A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does not lower the amount.",
     "new_care_resident": "A care-home resident of under 12 weeks is not in residential care and does not “live with” other residents unless a mutual home with a named person is given.",
     "benefit_paid_to": "A relevant benefit is paid to a named person; pension credit is paid to the claimant of a couple.",
@@ -277,6 +279,10 @@ def _assumptions(answer, rules, facts):
         used["household"] = ASSUMPTIONS["household"]
     if "R11" in ids:
         used["move_order"] = ASSUMPTIONS["move_order"]
+    if any(f.get("kind") == "assumption O3" and f["id"].endswith(".paid_without_claim") for f in facts):
+        used["no_claim"] = ASSUMPTIONS["no_claim"]
+    if any(f.get("kind") == "assumption O3" and f["id"].endswith(".unclaimed_paid") for f in facts):
+        used["undated_payment"] = ASSUMPTIONS["undated_payment"]
     if ids & {"R7a", "R7b"}:
         used["throughout"] = ASSUMPTIONS["throughout"]
     if ids & {"R14a", "R14.3"}:
