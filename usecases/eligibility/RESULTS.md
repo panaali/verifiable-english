@@ -49,19 +49,19 @@ Every search stopped with status `NotFound`:
 
 | Search | Status | Steps | Searches |
 |---|---|---|---|
-| bottom | NotFound | 124 | 1 |
-| bottom | NotFound | 125 to 999 | 79 |
-| entitled | NotFound | 124 | 1 |
-| entitled | NotFound | 125 to 999 | 79 |
+| bottom | NotFound | 124 | 57 |
+| bottom | NotFound | 125 to 999 | 23 |
+| entitled | NotFound | 124 | 57 |
+| entitled | NotFound | 125 to 999 | 23 |
 | not_entitled | NotFound | 125 to 999 | 80 |
 
 ## Evidence
 
 - Step certificates produced: 2352; accepted by Lean `ve_quantity`: 2352.
 - Answer documents (`documents@1`): 269; admitted by Lean: 269.
-- Non-vacuity: 7337 of 7337 premise evaluations are true in the reference fixture models (Lean evaluation).
+- Non-vacuity: 7364 of 7364 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 478 distinct, 5910 requested.
+- Proof searches: 522 distinct, 5910 requested.
 
 ## Probes (PLAN section 8, stage 0)
 
@@ -70,7 +70,7 @@ Every search stopped with status `NotFound`:
 - **P3**, expected facts parse uniquely and round-trip; the conditional is rejected: `{"conditional": "parsed", "facts": [{"parsed": true, "rendered": "The applicant's pensionable-age date is no later than 2018-12-05.", "round_trip": true, "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."}, {"parsed": true, "rendered": "The applicant's total income equals GBP 35000.01.", "round_trip": true, "sentence": "The applicant's total income equals £35000.01."}, {"parsed": true, "rendered": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week.", "round_trip": true, "sentence": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."}]}`
 - **P4**, expected both rejected (separator outside the surface; UnitPrecision): `{"results": {"The applicant's total income equals £35,000.00.": "rejected: No W6 quantity reading", "The applicant's total income equals £35000.001.": "rejected: UnitPrecision(gbp_penny, scale=100)"}}`
 - **P5**, expected admitted: `{"elapsed_days": "admitted", "shift_days": "admitted"}`
-- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 128}, "entitled": {"certified": false, "status": "NotFound", "steps": 128}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 130}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q4": true}}}`
+- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 126}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q4": true}}}`
 
 ## Mutants
 
@@ -82,8 +82,8 @@ Killed: 32/32.
 | M2 | R8 counting the admission day | C14 | C14 | yes |
 | M3 | R5 '>= 84' as '> 84' | C10 | C10, C26 | yes |
 | M4 | R16 '> 35,000' as '>= 35,000' | D01 | D01 | yes |
-| M5 | R2 'no later than' as 'before' | C01 | 69 profiles | yes |
-| M6 | R15 age 80 strict | C04 | 16 profiles | yes |
+| M5 | R2 'no later than' as 'before' | C01 | C01 | yes |
+| M6 | R15 age 80 strict | C04 | C04, C06, C08 | yes |
 | M7 | R7 without 'partner' | B02 | B02, B22, B26, B27 | yes |
 | M8 | R7 without the partner's pensionable age | B03 | B03 | yes |
 | M9 | R9 without 'under a sentence' | B06 | B06 | yes |
@@ -113,4 +113,4 @@ Killed: 32/32.
 
 ## English
 
-69 of 149 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+99 of 179 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
