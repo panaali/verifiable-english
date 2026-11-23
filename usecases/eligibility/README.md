@@ -183,8 +183,10 @@ was in all three: the key's reading, `reference.py` and the translation.
 49 rules and the profile's facts. The prover works through the premises in
 order, one branch at a time. Each "exactly when" rule costs several levels on a
 branch: one to separate its two directions, then one split for each direction.
-On profile A01 the search reached the tableau depth limit of 124 levels at its
-124th step, so no branch had closed. Every other single-shot search also ended
+On profile A01, with the hand-worked age dates, the search reached the tableau
+depth limit of 124 levels at its 124th step, so no branch had closed; with the
+guide's cut-offs as bounds (spare-ages-cutoffs) it ends after 128 steps, still
+without a certificate. Every other single-shot search also ended
 without a certificate (status `NotFound`). A larger step budget would not help,
 because the certificate format fixes the depth limit. The plan named this risk
 as O9.
@@ -205,9 +207,15 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
   dates 2026-09-21 to 2026-09-27. VE checks only that they are 6 days apart.
 - **Pensionable age and age 80 (O2).** Every birth date is before 1970, and
   W6a dates cannot go earlier than 1970-01-01. Probe P1 confirms this in Python
-  and Lean. W6a also has no month or year durations. So each birth date enters
-  as a pensionable-age date and an 80th birthday, worked out by hand from the
-  Pensions Act 1995.
+  and Lean. W6a also has no month or year durations. So a birth date is compared
+  in Python with the guide's two cut-offs (born on or before 27 June 1960; born
+  before 28 September 1946; `guide_cutoffs` reads them from the guide's own
+  sentences, S2:5 to S2:72), and enters as a bound: the pensionable-age date and
+  the 80th birthday are no later than, or after, 2026-09-27. Any birth date
+  works. tests/test_spare_ages_cutoffs.py checks the cut-offs against Sch. 4
+  (reference.py) for every birth date it can work out. They hold for this
+  qualifying week only (spare-ages-cutoffs; before it, two tables worked out by
+  hand for 10 birth dates).
 - **Weeks as days.** "52 weeks" and "12 weeks" enter as 364 and 84 days,
   because W6a has no week unit.
 
@@ -216,8 +224,8 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
 | Rule (PLAN 4.1) | Source | Status | Notes |
 |---|---|---|---|
 | R1 qualifying week | reg. 1(3) | LABELLED, with O1 OPEN | the dates are a bridge; "third Monday" is not computed |
-| R2 pensionable age reached | reg. 2(a) | CHECKED | the comparison is checked; the pensionable-age date is a LABELLED bridge (O2 OPEN) |
-| age 80 reached | reg. 3 | CHECKED | the 80th birthday is a LABELLED bridge (O2 OPEN) |
+| R2 pensionable age reached | reg. 2(a) | CHECKED | the comparison is checked; the pensionable-age date is a LABELLED bridge, the guide's cut-off (O2 OPEN) |
+| age 80 reached | reg. 3 | CHECKED | the 80th birthday is a LABELLED bridge, the guide's cut-off (O2 OPEN) |
 | R3 resident on a day of the week | reg. 2(b) | CHECKED | "ordinarily resident" is LABELLED as a fact (O3) |
 | R4 relevant benefit list | reg. 1(3) | CHECKED | all five benefits decide some profile |
 | R5 residential care, 12 weeks | reg. 1(4)(a) | CHECKED | "care home" is LABELLED as a fact; a stay's end date must be no earlier than the week's last day (recheck C) |

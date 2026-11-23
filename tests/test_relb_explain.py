@@ -98,7 +98,7 @@ def test_clauses_show_the_gloss_and_the_quoted_source(runs, texts):
 def test_assumptions_are_the_bridges_and_readings_used(runs, texts):
     b15 = _answer(runs["B15"], "Q1")["assumptions"]
     assert {"week", "ages", "statuses", "glosses", "move_order", "other_schemes"} <= set(b15)
-    assert "the applicant's pensionable-age date is 2021-03-14" in b15["ages"]  # bridge B2, by hand
+    assert "the applicant's pensionable-age date is no later than 2026-09-27" in b15["ages"]  # bridge B2, guide cut-off
     assert "ordinarily resident in Scotland or Northern Ireland" in b15["statuses"]
     assert X.ASSUMPTIONS["move_order"] in flat(texts["B15"])
     # B15 lives alone: the proof still shows reg. 4(2)(a) does not apply, so its reading is used;
