@@ -343,7 +343,6 @@ theorem elabCal_sound : ∀ (fuel : Nat) (j : Json) (D : Civil), elabCal fuel j 
         obtain ⟨D0, h0, h⟩ := bind_ok h
         obtain ⟨ih, g0⟩ := elabCal_sound fuel e D0 h0
         obtain ⟨k, hk, h⟩ := bind_ok h
-        dsimp only at h
         split at h
         · rename_i hb
           cases h
@@ -485,5 +484,70 @@ theorem statementIds_inputs {w : W6Env} {f : QFormula} {inputs : List String} {m
   obtain ⟨c', _, h⟩ := bind_ok h
   cases h
   exact hm
+
+
+theorem monthsLater_unique {D D1 D2 : Civil} {k : Int} {r : Option MonthEnd}
+    (h1 : D.MonthsLater k r D1) (h2 : D.MonthsLater k r D2) : D1 = D2 := by
+  obtain ⟨y, m, m1, m12, hi, hs⟩ := h1
+  obtain ⟨y', m', m1', m12', hi', hs'⟩ := h2
+  obtain ⟨rfl, rfl⟩ : y = y' ∧ m = m' := by omega
+  split at hs <;> rename_i hc <;> simp only [hc, if_true, if_false, not_false_eq_true] at hs'
+  · rw [hs, hs']
+  · rcases hs with ⟨hr, rfl⟩ | ⟨hr, rfl⟩ <;> rcases hs' with ⟨hr', rfl⟩ | ⟨hr', rfl⟩ <;>
+      first | rfl | (rw [hr] at hr'; cases hr')
+
+theorem same_week_day {y m d d' : Nat} (hd : 1 ≤ d) (hd' : 1 ≤ d')
+    (hw : Civil.weekday ⟨y, m, d⟩ = Civil.weekday ⟨y, m, d'⟩) (hq : (d - 1) / 7 = (d' - 1) / 7) : d = d' := by
+  unfold Civil.weekday Civil.num at hw
+  simp only at hw
+  omega
+
+/-- B6: a ground date expression denotes at most one date, so `elabCal_sound` and `calCmp_sound` name the
+date of each expression. -/
+theorem calDenotes_unique {j : Json} {D D' : Civil} (h : CalDenotes j D) (h' : CalDenotes j D') : D = D' := by
+  induction h generalizing D' with
+  | @date s D hp =>
+    generalize hj : Json.arr #[.str "date", .str s] = j' at h'
+    cases h' <;> simp at hj
+    subst hj; rename_i hp'; rw [hp] at hp'; cases hp'; rfl
+  | @plusMonths e sk sr D0 D1 k r _ hk hr hm _ ih =>
+    generalize hj : Json.arr #[.str "plus_months", e, .str sk, .str sr] = j' at h'
+    cases h' <;> simp at hj
+    rename_i he' hk' hr' hm' _
+    obtain ⟨rfl, rfl, rfl⟩ := hj
+    have := ih he'; subst this
+    rw [hk] at hk'; cases hk'; rw [hr] at hr'; cases hr'
+    exact monthsLater_unique hm hm'
+  | @plusDays e sk D0 D1 k _ hk _ _ hv hn ih =>
+    generalize hj : Json.arr #[.str "plus_days", e, .str sk] = j' at h'
+    cases h' <;> simp at hj
+    rename_i he' hk' _ _ hv' hn'
+    obtain ⟨rfl, rfl⟩ := hj
+    have := ih he'; subst this
+    rw [hk] at hk'; cases hk'
+    exact num_injective hv.1 hv'.1 (by omega)
+  | @monthFirst e D0 _ ih =>
+    generalize hj : Json.arr #[.str "month_first", e] = j' at h'
+    cases h' <;> simp at hj
+    subst hj; rename_i he'; rw [ih he']
+  | @monthLast e D0 _ ih =>
+    generalize hj : Json.arr #[.str "month_last", e] = j' at h'
+    cases h' <;> simp at hj
+    subst hj; rename_i he'; rw [ih he']
+  | @nthWeekday n w m y n1 w1 D0 hn hw hm hy hv hwd _ hd =>
+    generalize hj : Json.arr #[.str "nth_weekday", n, w, m, y] = j' at h'
+    cases h' <;> simp at hj
+    rename_i hn' hw' _ hm' hy' hv' hwd' hd'
+    obtain ⟨rfl, rfl, rfl, rfl⟩ := hj
+    rw [hn] at hn'; rw [hw] at hw'; rw [hm] at hm'; rw [hy] at hy'
+    simp only [Except.ok.injEq] at hn' hw' hm' hy'
+    subst hn' hw'
+    obtain ⟨y0, m0, d0⟩ := D0
+    obtain ⟨y1, m1, d1⟩ := D'
+    simp only at hm' hy' hd hd' hwd hwd' ⊢
+    subst hm' hy'
+    have := same_week_day (y := y0) (m := m0) hv.1.2.2.2.1 hv'.1.2.2.2.1 (hwd.trans hwd'.symm) (hd.trans hd'.symm)
+    simp only at this
+    rw [this]
 
 end VE.Time.Wire

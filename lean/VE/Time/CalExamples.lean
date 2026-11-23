@@ -125,8 +125,11 @@ def calError (s : String) : String :=
 #guard cal r#"["plus_days", ["date", "2026-02-28"], "1"]"# == some ⟨2026, 3, 1⟩
 #guard cal r#"["plus_days", ["date", "2024-02-28"], "1"]"# == some ⟨2024, 2, 29⟩
 #guard cal r#"["plus_days", ["date", "2026-12-31"], "0"]"# == some ⟨2026, 12, 31⟩
-#guard cal r#"["plus_days", ["date", "1970-01-01"], "2932896"]"# == some ⟨9999, 12, 31⟩
-#guard calError r#"["plus_days", ["date", "1970-01-01"], "2932897"]"# == "DateRange(day offset)"
+#guard cal r#"["plus_days", ["date", "1970-01-01"], "3660"]"# == some ⟨1980, 1, 9⟩
+#guard calError r#"["plus_days", ["date", "1970-01-01"], "3661"]"# == "DateRange(day offset)"
+#guard calError r#"["plus_days", ["date", "1970-01-01"], "1000000000000"]"# == "DateRange(day offset)"
+#guard cal r#"["plus_days", ["date", "9989-12-23"], "3660"]"# == some ⟨9999, 12, 31⟩
+#guard calError r#"["plus_days", ["date", "9989-12-24"], "3660"]"# == "DateRange(day offset)"
 #guard calError r#"["plus_days", ["date", "9999-12-31"], "1"]"# == "DateRange(day offset)"
 #guard calError r#"["plus_days", ["date", "2026-01-01"], "-1"]"# == "DateRange(day offset)"
 #guard calError r#"["plus_days", ["date", "1969-12-31"], "1"]"# == "DateRange(day offset)"
@@ -236,22 +239,30 @@ def refusal (formula : String) (e : Json := env) : String :=
 #guard refusal r#"["cal_cmp", "before", ["date", "1960-06-26"], ["date", "1960-06-27"]]"# noDay ==
   "UnknownUnit(day)"
 #guard refusal r#"["eq", ["cal", ["date", "2026-01-01"]], ["cal", ["date", "2026-01-01"]]]"# noDay == "UnknownUnit(day)"
--- the input dates: only the `date` leaves under `cal` and `cal_cmp`, in order; none for today's statements.
+-- the inputs: each `cal` and `cal_cmp` node's source, compressed, in order; none for today's statements.
+def c (s : String) : String := (p s).compress
 #guard inputs r#"["date_on", ["const", "day", "pa"], ["date", "2026-06-27"]]"# == some []
 #guard inputs r#"["and", ["date_on", ["const", "day", "pa"], ["date", "2026-06-27"]],
   ["cal_cmp", "before", ["date", "1960-06-26"], ["plus_days", ["date", "1970-01-01"], "1"]]]"# ==
-  some ["1960-06-26", "1970-01-01"]
-#guard inputs r#"["date_on", ["const", "day", "pa"], ["cal", ["month_last", ["date", "2024-02-10"]]]]"# ==
-  some ["2024-02-10"]
-#guard calInputs 257 false (p r#"["x", ["date", "2026-01-01"]]"#) == []
-#guard calInputs 257 true (p r#"["date", "2026-01-01"]"#) == ["2026-01-01"]
-#guard calInputs 0 true (p r#"["date", "2026-01-01"]"#) == []
-#guard calInputs 1 true (p r#"["date", "2026-01-01"]"#) == ["2026-01-01"]
-#guard calInputs 2 false (p r#"["cal", ["date", "2026-01-01"]]"#) == ["2026-01-01"]
-#guard calInputs 257 true (p r#"[["date", "2026-01-01"]]"#) == []
-#guard calInputs 257 false (p r#"["cal_cmp", "on", ["date", "1960-01-01"], ["month_last", ["date", "1961-02-01"]],
-  ["date", "1962-03-01"]]"#) == ["1960-01-01", "1961-02-01", "1962-03-01"]
-#guard calInputs 257 false (p r#"["cal", ["nth_weekday", 3, 0, 9, 2026]]"#) == []
+  some [c r#"["cal_cmp", "before", ["date", "1960-06-26"], ["plus_days", ["date", "1970-01-01"], "1"]]"#]
+#guard inputs r#"["date_on", ["cal", ["month_last", ["date", "2024-02-10"]]], ["cal", ["nth_weekday", 3, 0, 9, 2026]]]"# ==
+  some [c r#"["cal", ["month_last", ["date", "2024-02-10"]]]"#, c r#"["cal", ["nth_weekday", 3, 0, 9, 2026]]"#]
+#guard calInputs 257 (p r#"["x", ["date", "2026-01-01"]]"#) == []
+#guard calInputs 0 (p r#"["cal", ["date", "2026-01-01"]]"#) == []
+#guard calInputs 1 (p r#"["cal", ["date", "2026-01-01"]]"#) == [c r#"["cal", ["date", "2026-01-01"]]"#]
+#guard calInputs 1 (p r#"["not", ["cal_cmp", "on", ["date", "2026-01-01"], ["date", "2026-01-01"]]]"#) == []
+#guard calInputs 2 (p r#"["not", ["cal_cmp", "on", ["date", "2026-01-01"], ["date", "2026-01-01"]]]"#) ==
+  [c r#"["cal_cmp", "on", ["date", "2026-01-01"], ["date", "2026-01-01"]]"#]
+#guard calInputs 257 (p r#"[["cal", ["date", "2026-01-01"]]]"#) == []
+#guard calInputs 257 (p r#"["or", ["cal_cmp", "on", ["date", "1960-01-01"], ["date", "1961-02-01"]],
+  ["cal_cmp", "after", ["date", "1962-03-01"], ["date", "1960-01-01"]]]"#) ==
+  [c r#"["cal_cmp", "on", ["date", "1960-01-01"], ["date", "1961-02-01"]]"#,
+   c r#"["cal_cmp", "after", ["date", "1962-03-01"], ["date", "1960-01-01"]]"#]
+-- B4: the operator, the offset and the reading are bound too, not only the dates.
+#guard mid r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"# !=
+  mid r#"["cal_cmp", "on_or_before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#
+#guard mid r#"["cal_cmp", "before", ["plus_months", ["date", "1940-01-01"], "12", "none"], ["date", "1960-06-27"]]"# !=
+  mid r#"["cal_cmp", "before", ["plus_months", ["date", "1940-01-01"], "24", "none"], ["date", "1960-06-27"]]"#
 -- the same `Q` from other case dates has another meaning id; a statement without them keeps today's object.
 #guard q r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"# ==
   q r#"["cal_cmp", "before", ["date", "1959-01-01"], ["date", "1960-06-27"]]"#
@@ -261,19 +272,19 @@ def refusal (formula : String) (e : Json := env) : String :=
 #guard (do
     let w ← decodeEnvironment env
     let (m, _) ← statementIds w .top
-    let (m', _) ← statementIds w .top ["1960-01-01"]
+    let (m', _) ← statementIds w .top [c r#"["cal", ["date", "1960-01-01"]]"#]
     pure (some m == mid r#"["top"]"# && m != m')).toOption == some true
 #guard inputsField [] == []
 #guard inputsField ["1960-01-01"] == [("inputs", toJson ["1960-01-01"])]
 -- the report claim shows them (and only when there are some).
 #guard (claim r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map
-  (·.getObjValD "inputs") == some (p r#"["1960-01-01", "1960-06-27"]"#)
+  (·.getObjValD "inputs") == some (toJson [c r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#])
 #guard (claim r#"["top"]"#).map (·.getObjVal? "inputs" |>.toOption) == some none
 -- the whole claim, with and without inputs and with a label.
 #guard (claim r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map (·.compress) ==
   (mid r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map fun m =>
     (p (r#"{"name": "n", "quantity": {"format": "ve-quantity@1", "formula": ["top"], "traces": []}, "meaning_id": ""#
-      ++ m ++ r#"", "inputs": ["1960-01-01", "1960-06-27"]}"#)).compress
+      ++ m ++ r#"", "inputs": ["[\"cal_cmp\",\"before\",[\"date\",\"1960-01-01\"],[\"date\",\"1960-06-27\"]]"]}"#)).compress
 #guard ((do
     let w ← decodeEnvironment env
     let a ← decodeQuantity w (Json.mkObj [("format", .str "ve-quantity@1"), ("formula", p r#"["top"]"#)])

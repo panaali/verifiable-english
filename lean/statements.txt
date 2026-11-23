@@ -70802,6 +70802,10 @@ theorem VE.Time.Wire.calDay_sound
   ∀ {e : Lean.Json} {D : VE.Time.Civil}, VE.Time.Wire.calDay e = Except.ok D → VE.Time.Wire.CalDenotes e D ∧ D.Valid
   -- uses VE.Time.Civil.Valid@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.Wire.CalDenotes@VE.Time.Wire VE.Time.Wire.calDay@VE.Time.Wire
   -- expr 3258909679
+theorem VE.Time.Wire.calDenotes_unique
+  ∀ {j : Lean.Json} {D D' : VE.Time.Civil}, VE.Time.Wire.CalDenotes j D → VE.Time.Wire.CalDenotes j D' → D = D'
+  -- uses VE.Time.Civil@VE.Time.Calendar VE.Time.Wire.CalDenotes@VE.Time.Wire
+  -- expr 946235115
 theorem VE.Time.Wire.checkW6Certificate_sound
   ∀ {w : VE.Time.Wire.W6Env} (ps : List (VE.Time.Wire.Admission w)) (c : VE.Time.Wire.Admission w)
     (cert : VE.Time.Wire.W6Certificate),
@@ -70878,6 +70882,11 @@ theorem VE.Time.Wire.integer_nat
   ∀ {s : String} {z : Int}, VE.Time.Wire.integer s = Except.ok z → ¬z < 0 → VE.Time.Wire.integer s = Except.ok ↑z.toNat
   -- uses VE.Time.Wire.integer@VE.Time.Wire
   -- expr 1502848692
+theorem VE.Time.Wire.monthsLater_unique
+  ∀ {D D1 D2 : VE.Time.Civil} {k : Int} {r : Option VE.Time.MonthEnd},
+    D.MonthsLater k r D1 → D.MonthsLater k r D2 → D1 = D2
+  -- uses VE.Time.Civil.MonthsLater@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.MonthEnd@VE.Time.Calendar
+  -- expr 1678708838
 theorem VE.Time.Wire.noLater_iff
   ∀ {a b : VE.Time.Civil}, a.Before b ∨ a = b ↔ ¬b.Before a
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -71052,6 +71061,14 @@ theorem VE.Time.Wire.runCaseReported_ok
     VE.Time.Wire.runCase j more = Except.ok answer → VE.Time.Wire.runCaseReported j more = answer
   -- uses VE.Time.Wire.Extension@VE.Time.Wire VE.Time.Wire.runCase@VE.Time.Wire VE.Time.Wire.runCaseReported@VE.Time.Wire
   -- expr 4206319841
+theorem VE.Time.Wire.same_week_day
+  ∀ {y m d d' : Nat},
+    1 ≤ d →
+      1 ≤ d' →
+        { year := y, month := m, day := d }.weekday = { year := y, month := m, day := d' }.weekday →
+          (d - 1) / 7 = (d' - 1) / 7 → d = d'
+  -- uses VE.Time.Civil.mk@VE.Time.Calendar VE.Time.Civil.weekday@VE.Time.Calendar
+  -- expr 2504607046
 theorem VE.Time.Wire.sortDomains_perm
   ∀ (d : VE.Order.ModelData VE.Order.Wire.Entity) (s : String),
     ((VE.Time.Wire.sortDomains d).toModel.domains s).Perm (d.toModel.domains s)

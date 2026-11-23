@@ -9262,6 +9262,7 @@
 'VE.Time.Wire.calCmp_agrees' depends on axioms: [propext]
 'VE.Time.Wire.calCmp_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.calDay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.calDenotes_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.checkW6Certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.coord_num' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.elabCal_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -9269,6 +9270,7 @@
 'VE.Time.Wire.except_ok_inj' does not depend on any axioms
 'VE.Time.Wire.extension_document_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.integer_nat' depends on axioms: [propext, Quot.sound]
+'VE.Time.Wire.monthsLater_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.noLater_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.quantity_admission_wire_sound_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.quantity_admission_wire_sound_valued' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -9277,6 +9279,7 @@
 'VE.Time.Wire.quantity_document_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.refutesB_sorted_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.runCaseReported_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Time.Wire.same_week_day' depends on axioms: [propext, Quot.sound]
 'VE.Time.Wire.sortDomains_perm' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.statementIds_inputs' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Time.Wire.tdates_num' does not depend on any axioms
