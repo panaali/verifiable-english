@@ -99,6 +99,7 @@ INT_UNITS = {  # per-item integer constants, unit minute: base -> words
     "tend": "the position of the end of the piece (minutes from the log's first clock time; bridge)",
     "pos": "the position of a window start (minutes from the log's first clock time; bridge; negative = before the log)",
     "len": "the duration of a part of a passenger-seat ride (395.2 on-duty (4)(iii))",
+    "xrd": "the minutes of a passenger-seat ride excluded from on-duty time (395.2 on-duty (4)(iii))",
     "sbf": "the sleeper-berth run ending with the piece", "sbb": "the sleeper-berth run beginning with the piece",
     "ndr": "the run of time not in driving status ending with the piece",
     "dsb": "the driving time since the last 30-minute interruption of driving status",
@@ -258,12 +259,14 @@ def _ride(ctx):
         out += [Iff(U("aft", e), aft), Iff(U("bef", e), bef),
                 Iff(U("excl", a), And(U("aft", e), Not(U("bef", e)))),
                 Iff(U("excl", b), And(Not(U("aft", e)), U("bef", e))),
-                Implies(And(U("aft", e), Not(U("bef", e)), Le(d, m(RIDE3))), Eq(k("len", a), d)),
-                Implies(And(U("aft", e), Not(U("bef", e)), Lt(m(RIDE3), d)), Eq(k("len", a), m(RIDE3))),
-                Implies(And(U("aft", e), Not(U("bef", e))), Eq(add(k("len", b), k("len", a)), d)),
-                Implies(And(Not(U("aft", e)), U("bef", e), Le(d, m(RIDE3))), Eq(k("len", b), d)),
-                Implies(And(Not(U("aft", e)), U("bef", e), Lt(m(RIDE3), d)), Eq(k("len", b), m(RIDE3))),
-                Implies(And(Not(U("aft", e)), U("bef", e)), Eq(add(k("len", a), k("len", b)), d)),
+                # xrd = the excluded minutes: min(d, 3 h) next to such a period, else 0
+                Implies(And(Or(U("aft", e), U("bef", e)), Le(d, m(RIDE3))), Eq(k("xrd", e), d)),
+                Implies(And(Or(U("aft", e), U("bef", e)), Lt(m(RIDE3), d)), Eq(k("xrd", e), m(RIDE3))),
+                Implies(And(Not(U("aft", e)), Not(U("bef", e))), Eq(k("xrd", e), m(0))),
+                Implies(And(U("aft", e), Not(U("bef", e))), Eq(k("len", a), k("xrd", e))),
+                Implies(And(U("aft", e), Not(U("bef", e))), Eq(add(k("len", b), k("xrd", e)), d)),
+                Implies(And(Not(U("aft", e)), U("bef", e)), Eq(k("len", b), k("xrd", e))),
+                Implies(And(Not(U("aft", e)), U("bef", e)), Eq(add(k("len", a), k("xrd", e)), d)),
                 Implies(And(Not(U("aft", e)), Not(U("bef", e))), Eq(k("len", a), d)),
                 Implies(And(Not(U("aft", e)), Not(U("bef", e))), Eq(k("len", b), m(0)))]
         # the a-piece's end position (for the 34-hour period's beginning): its start (the previous piece's end) + len
@@ -590,11 +593,14 @@ def defines(f):
 
 # --- the environment for one case ---------------------------------------------------------------------------------
 
-def environment(ctx):
+def environment(ctx, used=None):
+    """The case's environment; `used` (constant names the case's rules and facts mention) keeps it to those."""
     consts = {}
     for x in ctx.items:
         consts[x] = {"sort": "item", "description": f"The case's item {x}.", "verbalisation": f"item {x}"}
         for base, w in INT_UNITS.items():
+            if used is not None and f"{base}_{x}" not in used:
+                continue
             consts[f"{base}_{x}"] = {"sort": "$int", "unit": MIN, "description": f"{w[0].upper() + w[1:]} ({x}).",
                                      "verbalisation": f"{w} ({x})"}
     preds = {n: {"arguments": ["item"], "description": d[0].upper() + d[1:] + "."}

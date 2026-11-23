@@ -481,9 +481,12 @@ def unit_map(ctx):
 def run_case(case, mutant=None, prover=None):
     import encode as E
     ctx, facts, meta = E.encode(case)
-    env_raw = T.environment(ctx)
-    prover = prover or Prover(Environment(env_raw))
     rules = T.rules(ctx, mutant)
+    used = set()
+    for f in [r["formula"] for r in rules] + [f["formula"] for f in facts]:
+        T.atoms_in(f, set(), used)
+    env_raw = T.environment(ctx, used)
+    prover = prover or Prover(Environment(env_raw))
     staged = Staged(prover, rules, facts)
     staged.run(unit_map(ctx), roots_for(ctx, meta))
     answers, targets = {}, {}
@@ -496,7 +499,7 @@ def run_case(case, mutant=None, prover=None):
 
 # the cases each planted error is tried on first (a search order only: a mutant runs case after case until one of its
 # answers changes; chosen from the case facts, never from the sealed answers)
-MUTANT_CASES = {}
+MUTANT_CASES = {"M10": ("H027", "H026", "H028")}   # the passenger-seat rides next to sleeper-berth time
 
 
 def _mutant_task(item):
@@ -551,11 +554,19 @@ def main(argv=None):
         cases = [c for c in cases if c["id"] in args.cases.split(",")]
     from concurrent.futures import ProcessPoolExecutor
     records, lean_cases, env_ids = [], [], {}
+    from concurrent.futures import as_completed
+    done = {}
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        for rec, lcs in pool.map(_case_task, cases):
-            env_ids[rec["id"]] = rec.pop("environment_id")
-            records.append(rec)
-            lean_cases += lcs
+        futs = {pool.submit(_case_task, c): c["id"] for c in sorted(cases, key=lambda c: -len(c["log"]))}
+        for fu in as_completed(futs):
+            rec, lcs = fu.result()
+            done[rec["id"]] = (rec, lcs)
+            print(f"case {rec['id']} done: {len(rec['steps'])} steps, {round(time.time() - started)} s", flush=True)
+    for c in cases:
+        rec, lcs = done[c["id"]]
+        env_ids[rec["id"]] = rec.pop("environment_id")
+        records.append(rec)
+        lean_cases += lcs
     doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
     lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
     for rec in records:
@@ -583,7 +594,8 @@ def main(argv=None):
         from concurrent.futures import ProcessPoolExecutor
         base = {q: a for r in records if "staged" in r for q, a in r["staged"].items()}
         order = {m: [c for c in cases if c["id"] in MUTANT_CASES.get(m, ())] +
-                 [c for c in cases if c["id"] not in MUTANT_CASES.get(m, ())] for m in T.MUTANTS}
+                 sorted([c for c in cases if c["id"] not in MUTANT_CASES.get(m, ())], key=lambda c: len(c["log"]))
+                 for m in T.MUTANTS}
         with ProcessPoolExecutor(max_workers=args.workers) as pool:
             res = {m: (ch, ran) for m, ch, ran in pool.map(_mutant_task, [(m, order[m], base) for m in T.MUTANTS])}
         for m, (desc, _) in T.MUTANTS.items():
