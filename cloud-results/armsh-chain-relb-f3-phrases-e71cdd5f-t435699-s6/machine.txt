@@ -1,0 +1,7 @@
+job=armsh-chain-relb-f3-phrases-e71cdd5f-t435699-s6 shard=6/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-23T12:10:11Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 12:10:11 up 3 min,  0 user,  load average: 1.31, 0.43, 0.15
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
