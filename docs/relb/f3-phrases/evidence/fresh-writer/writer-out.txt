@@ -1,0 +1,10 @@
+F1: The applicant and the housemate share accommodation as their mutual home in the qualifying week.
+F2: The applicant is a partner of the housemate.
+F3: The State Pension has been, or falls to be, paid to the applicant for the qualifying week.
+F4: The applicant has a first day of ordinary residence in England and Wales.
+F5: It is not the case that the housemate's ordinary residence in England and Wales has not ended; in other words, the housemate's ordinary residence in England and Wales has ended.
+F6: The housemate has become ordinarily resident in Scotland or Northern Ireland.
+F7: The applicant is detained in custody from the custody start date to the release date.
+F8: The applicant's custody is under a sentence imposed by a court.
+F9: The applicant's care stay has a last day, the care end date.
+F10: The applicant did not make a claim for the winter fuel payment on the claim date.
