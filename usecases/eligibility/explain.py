@@ -110,7 +110,7 @@ QUESTIONS = {
 # Name -> text; `_assumptions` decides which ones an answer uses.
 ASSUMPTIONS = {
     "week": "The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the third Monday in September” is not worked out; only the 6-day span of the week is checked.",
-    "ages": "Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age arithmetic itself is not checked. The hand working takes a person to reach an age at the start of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than 1 March 2026.",
+    "ages": "Whether each person has reached pensionable age, and the age of 80, by the end of the qualifying week is read from the GOV.UK guide's birth-date cut-offs: born on or before 27 June 1960 for pensionable age, born before 28 September 1946 for 80. The checker does not work out ages itself. A test checks the guide's cut-offs against the Pensions Act 1995, Schedule 4, paragraph 1 (an age is reached at the start of the birthday) for every birth date it can work out; they hold for this qualifying week only.",
     "statuses": "These legal statuses are taken as stated in the profile, not decided from other circumstances: {}.",
     "one_other": "At most one other person shares the home; “a person” in regulations 3 and 4(2)(a) is read as that one person.",
     "income": "Whether HMRC takes the payment back follows the GOV.UK guide's £35,000 test on the total income the profile gives; the legal basis of the charge and the definition of total income are not pinned down. The guide's section is read as follows:",
@@ -228,7 +228,7 @@ def _date_words(fact):
     op, (_, _, name), (_, iso) = fact["formula"]
     role, _, suffix = name.partition("_")
     what = T.ROLE_INTEGERS[suffix][1]
-    return f"the {role}'s {what} is {'no later than ' if op == 'date_no_later' else ''}{iso}"
+    return f"the {role}'s {what} is {({'date_no_later': 'no later than ', 'date_after': 'after '}).get(op, '')}{iso}"
 
 
 def _assumptions(answer, rules, facts):

@@ -243,11 +243,13 @@ Clauses used:
 Assumptions (taken as given, not checked):
   - The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the
       third Monday in September” is not worked out; only the 6-day span of the week is checked.
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14.
+  - Whether each person has reached pensionable age, and the age of 80, by the end of the qualifying
+      week is read from the GOV.UK guide's birth-date cut-offs: born on or before 27 June 1960 for
+      pensionable age, born before 28 September 1946 for 80. The checker does not work out ages
+      itself. A test checks the guide's cut-offs against the Pensions Act 1995, Schedule 4,
+      paragraph 1 (an age is reached at the start of the birthday) for every birth date it can work
+      out; they hold for this qualifying week only. Dates used here: the applicant's pensionable-age
+      date is no later than 2026-09-27.
   - These legal statuses are taken as stated in the profile, not decided from other circumstances:
       ordinarily resident in England or Wales, and from when; ordinarily resident in Scotland or
       Northern Ireland, and from when; a partner (a member of a couple); sharing a mutual home;
@@ -368,12 +370,13 @@ Clauses used: those listed above, plus:
           the amount is GBP 300.00.
 
 Assumptions: those listed above, plus:
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14; the
-      applicant's 80th birthday is 2035-03-14.
+  - Whether each person has reached pensionable age, and the age of 80, by the end of the qualifying
+      week is read from the GOV.UK guide's birth-date cut-offs: born on or before 27 June 1960 for
+      pensionable age, born before 28 September 1946 for 80. The checker does not work out ages
+      itself. A test checks the guide's cut-offs against the Pensions Act 1995, Schedule 4,
+      paragraph 1 (an age is reached at the start of the birthday) for every birth date it can work
+      out; they hold for this qualifying week only. Dates used here: the applicant's pensionable-age
+      date is no later than 2026-09-27; the applicant's 80th birthday is after 2026-09-27.
   - A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does
       not lower the amount.
   - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
