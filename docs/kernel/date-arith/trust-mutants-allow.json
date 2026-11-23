@@ -329,6 +329,36 @@
    "definition": "VE.Time.Wire.elabCalCmp",
    "operator": "and-or",
    "reason": "KILLED by a CalExamples guard in the sweep without --test WireSound (plus-days bounds: CalExamples.lean:124/128/130; cal_cmp valid-date branch: :190); with WireSound built the mutant breaks elabCal_sound or calCmp_sound first and the tool reads UNKNOWN"
+  },
+  {
+   "definition": "VE.Cardinality.Wire.decodeStatement",
+   "operator": "lit-plus",
+   "reason": "equivalent: the fuel of the refusal's calInputs (maxDepth + 1, or one more or less) reaches every array of a source sourceFits admits (nested at most 64 deep, checked on the line before)"
+  },
+  {
+   "definition": "VE.Cardinality.Wire.decodeStatement",
+   "operator": "lit-minus",
+   "reason": "equivalent: the fuel of the refusal's calInputs (maxDepth + 1, or one more or less) reaches every array of a source sourceFits admits (nested at most 64 deep, checked on the line before)"
+  },
+  {
+   "definition": "VE.Cardinality.Wire.decodeStatement",
+   "operator": "list-first",
+   "reason": "equivalent: the refusal tests only isEmpty, and take 1 or reverse.take 1 of a list is empty exactly when the list is"
+  },
+  {
+   "definition": "VE.Cardinality.Wire.decodeStatement",
+   "operator": "list-last",
+   "reason": "equivalent: the refusal tests only isEmpty, and take 1 or reverse.take 1 of a list is empty exactly when the list is"
+  },
+  {
+   "definition": "VE.Time.Civil.weekday",
+   "operator": "lit-minus",
+   "reason": "with WireSound built the mutant breaks same_week_day first and the tool reads UNKNOWN; the weekday guards in CalExamples (1970-01-01 is 3, 1970-01-05 and 2026-11-23 are 0, 2026-03-01 is 6) refute it (KILLED in the sweep without WireSound)"
+  },
+  {
+   "definition": "VE.Time.Civil.weekday",
+   "operator": "lit-plus",
+   "reason": "with WireSound built the mutant breaks same_week_day first and the tool reads UNKNOWN; the weekday guards in CalExamples (1970-01-01 is 3, 1970-01-05 and 2026-11-23 are 0, 2026-03-01 is 6) refute it (KILLED in the sweep without WireSound)"
   }
  ]
 }
