@@ -370,7 +370,9 @@ class Staged:
             out.append({"rule": r["id"], "contradicted": cert is not None})
         return out
 
-    def document(self, root_target):
+    def document(self, root_target, cut=frozenset()):
+        """The answer document rooted at a step; steps named in `cut` (other than the root) enter as asserted
+        units (a checkpoint: each has its own Lean-admitted document, and its formula is the asserted one)."""
         root = self.steps[root_target]
         by_name = self.by_name
         needed, stack = set(), [root["name"]]
@@ -379,19 +381,71 @@ class Staged:
             if name in needed:
                 continue
             needed.add(name)
-            if name in by_name:
+            if name in by_name and (name == root["name"] or name not in cut):
                 stack.extend(by_name[name]["premises"])
         leaf_names = [n for n in self.leaves if n in needed]
+        cut_names = sorted(n for n in needed if n in cut and n != root["name"])
         units, nodes = [], []
-        for i, name in enumerate(leaf_names):
+        for i, name in enumerate(leaf_names + cut_names):
             uid = "u" + str(i)
-            units.append({"id": uid, "span": [i, i + 1], "kind": "asserted", "content": T.q(self.leaves[name])})
-            nodes.append({"name": name, "quantity": T.q(self.leaves[name]), "unit": uid})
+            f = self.leaves[name] if name in self.leaves else by_name[name]["formula"]
+            units.append({"id": uid, "span": [i, i + 1], "kind": "asserted", "content": T.q(f)})
+            nodes.append({"name": name, "quantity": T.q(f), "unit": uid})
         for step in self.steps.values():
-            if step["name"] in needed:
+            if step["name"] in needed and (step["name"] == root["name"] or step["name"] not in cut):
                 nodes.append({"name": step["name"], "quantity": T.q(step["formula"]),
                               "premises": step["premises"], "certificate": step["certificate"]})
-        return {"units": units, "graph": {"root": root["name"], "nodes": nodes}}
+        return {"units": units, "graph": {"root": root["name"], "nodes": nodes}}, cut_names
+
+
+MAX_NODES = 990   # Lean's documents admit at most 1000 claim-graph nodes (VE.Cardinality.Document.maxGraphNodes)
+
+
+def _item_of(step_name):
+    """step:<pred>.<item> (an atom) or step:<base>_<item> (a constant) -> the item."""
+    body = step_name[len("step:"):]
+    if body.startswith("["):
+        return None
+    if "." in body and "_" not in body.split(".", 1)[0]:
+        return body.split(".", 1)[1]
+    return body.split("_", 1)[1] if "_" in body else None
+
+
+def documents_for(staged, ctx, roots):
+    """Lean documents for the answer roots: one document per root when it fits; otherwise checkpoint documents
+    (the step values of every G-th piece, G = 12, 8, 5, 3) each with its own document, cited by later ones.
+    -> (docs {doc id key: (root target, document, [cited step names])}, per root the doc keys it uses)."""
+    by_name = staged.by_name
+    target_of = {s["name"]: t for t, s in staged.steps.items()}
+    index = {x: i for i, x in enumerate(ctx.pieces)}
+    for g in (None, 12, 8, 5, 3, 2):
+        if g is None:
+            cut = frozenset()
+        else:
+            cut = frozenset(n for n in by_name if index.get(_item_of(n), -1) % g == g - 1)
+        docs, uses, ok = {}, {}, True
+
+        def build(name):
+            if name in docs:
+                return
+            doc, cited = staged.document(target_of[name], cut)
+            docs[name] = (target_of[name], doc, cited)
+            for c in cited:
+                build(c)
+        for r in roots:
+            build(staged.steps[r]["name"])
+        if all(len(d["graph"]["nodes"]) <= MAX_NODES for (_, d, _) in docs.values()):
+            for r in roots:
+                seen, stack = set(), [staged.steps[r]["name"]]
+                while stack:
+                    n = stack.pop()
+                    if n in seen:
+                        continue
+                    seen.add(n)
+                    stack += docs[n][2]
+                uses[r] = sorted(seen)
+            return docs, uses, g
+    return docs, {r: None for r in roots}, "too large"
 
 
 def label(f):
@@ -494,6 +548,7 @@ def run_case(case, mutant=None, prover=None):
         a, ts = answer(staged, ctx, qn)
         answers[qid] = a
         targets[qid] = ts
+    meta["ctx"] = ctx
     return answers, targets, staged, rules, facts, env_raw, meta
 
 
@@ -515,9 +570,12 @@ def _mutant_task(item):
     return mutant, changed, ran
 
 
-def _case_task(case):
-    """Staged route for one case -> (record, lean cases)."""
+def _case_task(item):
+    """Staged route for one case, then (unless no_lean) Lean's replay of its certificates and admission of its
+    documents -> record."""
+    case, no_lean = item
     answers, targets, staged, rules, facts, env_raw, meta = run_case(case)
+    ctx = meta["ctx"]
     rec = {"id": case["id"], "staged": answers, "rules": len(rules), "facts": len(facts),
            "environment_id": Environment(env_raw).environment_id,
            "constraints": staged.check_constraints(),
@@ -532,11 +590,36 @@ def _case_task(case):
         lean_cases.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
                            "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
                            "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
-    docs = sorted({t for ts in targets.values() for t in ts})
-    for i, t in enumerate(docs):
-        lean_cases.append({"id": f"{case['id']}/doc/{i}", "kind": "document", "environment": env_raw,
-                           "document": staged.document(t), "_target": t})
-    return rec, lean_cases
+    roots = sorted({t for ts in targets.values() for t in ts})
+    docs, uses, grain = documents_for(staged, ctx, roots)
+    doc_id = {}
+    for i, (name, (t, doc, cited)) in enumerate(sorted(docs.items())):
+        doc_id[name] = f"{case['id']}/doc/{i}"
+        lean_cases.append({"id": doc_id[name], "kind": "document", "environment": env_raw, "document": doc})
+    rec["documents_plan"] = {"checkpoint_every": grain, "documents": len(docs),
+                             "max_nodes": max((len(d["graph"]["nodes"]) for (_, d, _) in docs.values()), default=0),
+                             "cited_links": sum(len(c) for (_, _, c) in docs.values())}
+    if no_lean:
+        rec["answers"] = answers
+        return rec
+    results = {r["id"]: r for r in lean(lean_cases)}
+    certs = [v for kk, v in results.items() if "/cert/" in kk]
+    admitted = {name for name, i in doc_id.items()
+                if results[i].get("status") == "ok" and results[i].get("assurance") == "lean-admitted"}
+    errors = sorted({results[i].get("error", "") for name, i in doc_id.items() if name not in admitted})
+    rec["lean"] = {"certificates": len(certs),
+                   "certificates_accepted": sum(r.get("status") == "ok" and r.get("valid") is True for r in certs),
+                   "documents": len(doc_id), "documents_admitted": len(admitted), "document_errors": errors}
+    final = {}
+    for qid, a in answers.items():
+        ts = targets[qid]
+        ok = all(uses.get(t) is not None and all(n in admitted for n in uses[t]) for t in ts)
+        if a["answer"] not in ("OPEN", "REFUSED") and not ok:
+            final[qid] = {"answer": "OPEN", "lean_rejected": True}
+        else:
+            final[qid] = a
+    rec["answers"] = final
+    return rec
 
 
 def main(argv=None):
@@ -552,40 +635,20 @@ def main(argv=None):
     cases = K.CASES
     if args.cases:
         cases = [c for c in cases if c["id"] in args.cases.split(",")]
-    from concurrent.futures import ProcessPoolExecutor
-    records, lean_cases, env_ids = [], [], {}
-    from concurrent.futures import as_completed
-    done = {}
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    records, env_ids, done = [], {}, {}
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        futs = {pool.submit(_case_task, c): c["id"] for c in sorted(cases, key=lambda c: -len(c["log"]))}
+        futs = {pool.submit(_case_task, (c, args.no_lean)): c["id"]
+                for c in sorted(cases, key=lambda c: -len(c["log"]))}
         for fu in as_completed(futs):
-            rec, lcs = fu.result()
-            done[rec["id"]] = (rec, lcs)
-            print(f"case {rec['id']} done: {len(rec['steps'])} steps, {round(time.time() - started)} s", flush=True)
+            rec = fu.result()
+            done[rec["id"]] = rec
+            print(f"case {rec['id']} done: {len(rec['steps'])} steps, {rec.get('lean')}, "
+                  f"{round(time.time() - started)} s", flush=True)
     for c in cases:
-        rec, lcs = done[c["id"]]
+        rec = done[c["id"]]
         env_ids[rec["id"]] = rec.pop("environment_id")
         records.append(rec)
-        lean_cases += lcs
-    doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
-    lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
-    for rec in records:
-        cid = rec["id"]
-        mine = {kk: v for kk, v in lean_results.items() if kk.startswith(cid + "/")}
-        certs = [v for kk, v in mine.items() if "/cert/" in kk]
-        admitted = {doc_target[kk] for kk, v in mine.items() if "/doc/" in kk
-                    and v.get("status") == "ok" and v.get("assurance") == "lean-admitted"}
-        rec["lean"] = {"certificates": len(certs),
-                       "certificates_accepted": sum(r.get("status") == "ok" and r.get("valid") is True for r in certs),
-                       "documents": len([kk for kk in mine if "/doc/" in kk]), "documents_admitted": len(admitted)}
-        answers = {}
-        for qid, a in rec["staged"].items():
-            ts = rec["targets"][qid]
-            if a["answer"] not in ("OPEN", "REFUSED") and not args.no_lean and not all(t in admitted for t in ts):
-                answers[qid] = {"answer": "OPEN", "lean_rejected": True}
-            else:
-                answers[qid] = a
-        rec["answers"] = answers
     for cid, qids in K.PROBES.items():
         if not args.cases or cid in args.cases.split(","):
             records.append({"id": cid, "scope": "out", "answers": {qid: {"answer": "UNSUPPORTED"} for qid in qids}})
@@ -607,7 +670,8 @@ def main(argv=None):
     enc = hashlib.sha256((HERE / "questions-enc.jsonl").read_bytes()).hexdigest()
     out = {"format": "hos-driving-run@1", "label": "SAME-FAMILY", "commit": commit, "tree_clean": dirty == "",
            "questions_enc_sha256": enc, "translation_sha256": T.translation_sha256(), "environment_ids": env_ids,
-           "lean_cases": len(lean_cases), "records": records, "mutants": mutants,
+           "lean_cases": sum(r.get("lean", {}).get("certificates", 0) + r.get("lean", {}).get("documents", 0)
+                             for r in records), "records": records, "mutants": mutants,
            "seconds": round(time.time() - started)}
     text = json.dumps(out, indent=1, sort_keys=True) + "\n"
     if args.out:
