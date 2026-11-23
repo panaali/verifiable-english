@@ -38,16 +38,20 @@ SENTINEL = {T.GBP: ["decimal", T.GBP, "-987654.32"], T.F14: ["decimal", T.F14, "
             T.NIGHT: ["decimal", T.NIGHT, "-999"]}
 
 
+import re  # noqa: E402
+COUNT_ATOM = re.compile(r"(cq|ch|cr|crh|m)[0-9]+")
+
+
 class Prover:
     def __init__(self, env):
         self.env, self.cache, self.calls, self.searches = env, {}, 0, 0
 
-    def prove(self, premises, conclusion):
+    def prove(self, premises, conclusion, max_steps=10_000):
         self.calls += 1
-        kk = T.key([premises, conclusion])
+        kk = T.key([premises, conclusion, max_steps])
         if kk not in self.cache:
             self.searches += 1
-            self.cache[kk] = prove_quantity(self.env, [T.q(p) for p in premises], T.q(conclusion))
+            self.cache[kk] = prove_quantity(self.env, [T.q(p) for p in premises], T.q(conclusion), max_steps=max_steps)
         return self.cache[kk]
 
 
@@ -255,7 +259,20 @@ class Staged:
             cert = self.prover.prove(premises, cand)
             if cert is not None:
                 found.append((cand, cert))
-        entry = {"target": label, "premises": names, "certified": len(found)}
+        hinted = False
+        if not found and target.startswith("[") and COUNT_ATOM.fullmatch(json.loads(target)[1]):
+            # a count atom (exactly k of the case's children) neither polarity of which the first search proved:
+            # certify the one disjunct of its definition that the known literals make true, then the atom from it
+            hint = self.hint(target, label)
+            if hint is not None:
+                hinted = True
+                names = names + [hint]
+                premises = premises + [self.formula(hint)]
+                for cand in cands:
+                    cert = self.prover.prove(premises, cand)
+                    if cert is not None:
+                        found.append((cand, cert))
+        entry = {"target": label, "premises": names, "certified": len(found), "hinted": hinted}
         self.log.append(entry)
         if any(cand[0] == "eq" and cand[2] in SENTINEL.values() for cand, _ in found):
             # the sentinel is a value no consistent premise set proves: a proof of it means the premises have no
@@ -268,6 +285,46 @@ class Staged:
             return cand
         if len(found) > 1:
             entry["inconsistent"] = True
+        return None
+
+    def hint(self, target, label):
+        """Search aid for an exactly-k atom: the disjunct of its iff definition whose literals are all known true,
+        certified from those literals' facts and steps (a step of its own, replayed by Lean like every step)."""
+        for r in self.defs.get(target, []):
+            f = r["formula"]
+            if not T.is_iff(f):
+                continue
+            body, stack, disjuncts = f[1][2], [f[1][2]], []
+            while stack:
+                d = stack.pop()
+                if d[0] == "or":
+                    stack += [d[1], d[2]]
+                else:
+                    disjuncts.append(d)
+            for d in disjuncts:
+                lits, st = [], [d]
+                while st:
+                    x = st.pop()
+                    if x[0] == "and" and not T.is_iff(x):
+                        st += [x[1], x[2]]
+                    else:
+                        lits.append(x)
+                if all(self.truth(x) is True for x in lits):
+                    names = []
+                    for x in lits:
+                        a = x[1] if x[0] == "not" else x
+                        kk = T.key(a)
+                        if kk in self.steps:
+                            names.append(self.steps[kk]["name"])
+                        else:
+                            names += [f"fact:{fx['id']}" for fx in self.fact_atoms.get(kk, [])]
+                    names = list(dict.fromkeys(names))
+                    cert = self.prover.prove([self.formula(n) for n in names], d)
+                    if cert is None:
+                        return None
+                    hk = "hint:" + target
+                    self.steps[hk] = {"name": f"step:hint:{label}", "formula": d, "premises": names, "certificate": cert}
+                    return f"step:hint:{label}"
         return None
 
     def order(self):
@@ -369,6 +426,19 @@ class Staged:
                 nodes.append({"name": step["name"], "quantity": T.q(step["formula"]),
                               "premises": step["premises"], "certificate": step["certificate"]})
         return {"units": units, "graph": {"root": root["name"], "nodes": nodes}}
+
+
+def units_used(staged, targets):
+    """The translation units whose ground rules are leaves of the documents an answer reads (by actual use)."""
+    by_name, needed, stack = staged.by_name, set(), [staged.steps[t]["name"] for t in targets if t in staged.steps]
+    while stack:
+        name = stack.pop()
+        if name in needed:
+            continue
+        needed.add(name)
+        if name in by_name:
+            stack.extend(by_name[name]["premises"])
+    return sorted({n.split(":", 1)[1].split(".", 1)[0][1:] for n in needed if n.startswith("rule:")})
 
 
 def label(f):
@@ -496,7 +566,11 @@ def main(argv=None, K=None):
                "constraints": staged.check_constraints(),
                "steps": [{k: v for k, v in e.items() if k != "premises"} | {"premise_count": len(e["premises"])}
                          for e in staged.log],
-               "encoder_judgement": case.get("judgement", []), "targets": targets}
+               "encoder_judgement": case.get("judgement", []), "targets": targets,
+               "units_used": {qid: units_used(staged, ts) for qid, ts in targets.items()},
+               "atoms_true": sorted(e["formula"][1] + "." + ".".join(t[1] for t in e["formula"][2:])
+                                    for e in staged.steps.values() if e["formula"][0] in ("unary", "binary")),
+               "ints": case.get("ints", {})}
         records.append(rec)
         for step in staged.steps.values():
             lean_cases.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
