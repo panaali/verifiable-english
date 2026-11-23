@@ -309,6 +309,8 @@ def decodeStatement (w : CardEnv) (j : Json) : Except String (CAdmission w) := d
     throw "Unsupported cardinality format"
   let source ← j.getObjVal? "formula"
   unless sourceFits source do throw VE.Time.Wire.depthLimit
+  unless (VE.Time.Wire.calInputs (VE.Limits.maxDepth + 1) source).isEmpty do
+    throw "UnsupportedProfile: ground date expressions are not admitted on the cardinality route"
   let f ← elabFormula w VE.Limits.maxDepth source
   if h : f.admits w.env = true then
     pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId (canonical f)⟩

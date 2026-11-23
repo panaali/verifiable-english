@@ -9803,6 +9803,7 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.calCmp_agrees
 #print axioms VE.Time.Wire.calCmp_sound
 #print axioms VE.Time.Wire.calDay_sound
+#print axioms VE.Time.Wire.calDenotes_unique
 #print axioms VE.Time.Wire.checkW6Certificate_sound
 #print axioms VE.Time.Wire.coord_num
 #print axioms VE.Time.Wire.elabCal_sound
@@ -9810,6 +9811,7 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.except_ok_inj
 #print axioms VE.Time.Wire.extension_document_sound
 #print axioms VE.Time.Wire.integer_nat
+#print axioms VE.Time.Wire.monthsLater_unique
 #print axioms VE.Time.Wire.noLater_iff
 #print axioms VE.Time.Wire.quantity_admission_wire_sound_plain
 #print axioms VE.Time.Wire.quantity_admission_wire_sound_valued
@@ -9818,6 +9820,7 @@ import VE.WireContract.Engine
 #print axioms VE.Time.Wire.quantity_document_wire_sound
 #print axioms VE.Time.Wire.refutesB_sorted_sound
 #print axioms VE.Time.Wire.runCaseReported_ok
+#print axioms VE.Time.Wire.same_week_day
 #print axioms VE.Time.Wire.sortDomains_perm
 #print axioms VE.Time.Wire.statementIds_inputs
 #print axioms VE.Time.Wire.tdates_num

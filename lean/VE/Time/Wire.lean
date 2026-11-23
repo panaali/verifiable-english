@@ -369,8 +369,8 @@ def elabCal : Nat → Json → Except String Civil
     | [.str "plus_days", e, .str sk] => do
       let D ← elabCal fuel e
       let k ← integer sk
-      let D' := D.addDays k.toNat
-      if D.properB && 0 ≤ k && k ≤ dateMax && D'.year ≤ 9999 then pure D' else throw "DateRange(day offset)"
+      if D.properB && 0 ≤ k && k ≤ 3660 && (D.addDays k.toNat).year ≤ 9999 then pure (D.addDays k.toNat)
+      else throw "DateRange(day offset)"
     | [.str "month_first", e] => do let D ← elabCal fuel e; pure ⟨D.year, D.month, 1⟩
     | [.str "month_last", e] => do
       let D ← elabCal fuel e; pure ⟨D.year, D.month, monthLen D.year D.month⟩
@@ -410,14 +410,14 @@ def elabCalCmp (op : String) (a b : Json) : Except String QFormula := do
   pure (if x.properB && y.properB then node (.num dayTag x.num) (.num dayTag y.num)
     else if decide (CalOrder op x y) then .top else .bottom)
 
-/-- The dates a statement's ground date expressions start from (the `date` leaves under `cal`
-and `cal_cmp`, in order): bound into its meaning id and shown in a document's report. -/
-def calInputs : Nat → Bool → Json → List String
-  | fuel + 1, under, .arr xs => match xs.toList with
-    | [.str "date", .str s] => if under then [s] else []
-    | .str op :: rest => rest.flatMap (calInputs fuel (under || op == "cal" || op == "cal_cmp"))
+/-- A statement's ground date expressions (each `cal` and `cal_cmp` node, compressed, in order): bound
+into its meaning id and shown in a document's report. -/
+def calInputs : Nat → Json → List String
+  | fuel + 1, .arr xs => match xs.toList with
+    | .str op :: rest =>
+      if op == "cal" || op == "cal_cmp" then [(Json.arr xs).compress] else rest.flatMap (calInputs fuel)
     | _ => []
-  | _, _, _ => []
+  | _, _ => []
 
 def inputsField (xs : List String) : List (String × Json) :=
   if xs.isEmpty then [] else [("inputs", toJson xs)]
@@ -682,7 +682,7 @@ def decodeQuantity (w : W6Env) (p : Json) : Except String (Admission w) := do
     let core := encCore formula.erase
     -- The frozen decoder re-checks the regenerated core in the target vocabulary.
     let _ ← VE.Order.Wire.decodeFormulas w.vocab.core.environment (Json.arr #[core])
-    let inputs := calInputs 257 false source
+    let inputs := calInputs 257 source
     let (meaningId, coreId) ← statementIds w formula inputs
     pure ⟨formula, h, q, core, meaningId, coreId, inputs⟩
   else throw "TypeMismatch: statement is not admitted"

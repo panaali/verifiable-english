@@ -491,7 +491,11 @@
     "VE.Time.Wire.extension_document_sound",
     "VE.Time.Wire.elabCal_sound",
     "VE.Time.Wire.calDay_sound",
-    "VE.Time.Wire.calCmp_sound"
+    "VE.Time.Wire.calCmp_sound",
+    "VE.Time.Wire.calDenotes_unique",
+    "VE.Time.weekday_epoch",
+    "VE.Time.weekday_succ",
+    "VE.Time.parseIsoFrom_valid"
    ],
    "delegates": [],
    "nonverdict": [

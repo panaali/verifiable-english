@@ -58,7 +58,8 @@ class _Item:
         self.env, self.facts, self.roles = env, dict(facts or {}), list(roles or ["the person"])
         self.dates = dict((case or {}).get("dates", {}))
         self.years = dict((case or {}).get("years", {}))
-        self.may_lack = set(may_lack or ())
+        self.may_lack = {name.replace("the person", role) for name in may_lack or () for role in self.roles} | set(
+            may_lack or ())
         self.lets, self.work = {}, 0
         self.day_constants = {decl.verbalisation: name for name, decl in env.constants.items()
                               if decl.verbalisation and decl.sort == "$int" and decl.unit == "day"}
@@ -331,8 +332,9 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
         m = re.fullmatch(r"Let (the .+?) be (.+)", body)
         if m:
             name, value = m[1], m[2]
-            if name in item.lets or name in item.years or name in item.dates:
-                raise DateRuleError(f"DateRule: {name!r} has one value")
+            if name in item.lets or name in item.years or name in item.dates or name in item.may_lack:
+                raise DateRuleError(f"DateRule: {name!r} has one value (a case date or a date the case may lack is "
+                                    "never set by a Let sentence)")
             if re.fullmatch(r"[0-9]{4}", value):
                 item.years[name] = int(value)
                 continue
@@ -352,8 +354,19 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
                 raise DateRuleError(f"DateRule: the conditions of {sentence!r} have {len(readings)} readings")
             concluded, conclusion = _conclusion(item, m[2])
             rules.append((concluded, readings[0], conclusion, sentence))
+    check_concluded_overlap([(concluded, condition, sentence) for concluded, condition, _, sentence in rules])
+    formulas = [["implies", condition, conclusion] for _, condition, conclusion, _ in rules] + case_facts
+    return {"premises": [{"format": "ve-quantity@1", "formula": f} for f in formulas],
+            "rules": [(sentence, ["implies", c, k]) for _, c, k, sentence in rules], "case_facts": case_facts,
+            "concluded": [(concluded, condition, sentence) for concluded, condition, _, sentence in rules
+                          if concluded is not None]}
+
+
+def check_concluded_overlap(rules):
+    """C2 over (concluded date name or None, condition, sentence) rules: two rules that conclude one date name
+    must have conditions written exclusive."""
     by_name = {}
-    for concluded, condition, _, sentence in rules:
+    for concluded, condition, sentence in rules:
         if concluded is None:
             continue
         for other_condition, other in by_name.get(concluded, []):
@@ -361,15 +374,22 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
                 raise DateRuleError(f"DateRuleOverlap: {other!r} and {sentence!r} both conclude {concluded!r} and "
                                     "their conditions are not written exclusive (C2)")
         by_name.setdefault(concluded, []).append((condition, sentence))
-    formulas = [["implies", condition, conclusion] for _, condition, conclusion, _ in rules] + case_facts
-    return {"premises": [{"format": "ve-quantity@1", "formula": f} for f in formulas],
-            "rules": [(sentence, ["implies", c, k]) for _, c, k, sentence in rules], "case_facts": case_facts}
+
+
+def lower_date_items(env, texts, case=None, **options):
+    """Several items of one case, each lowered by `lower_date_item`, with C2 checked over all their rules
+    together (two items that conclude one date are compared too). Returns the per-item results."""
+    lowered = [lower_date_item(env, text, case, **options) for text in texts]
+    check_concluded_overlap([rule for item in lowered for rule in item["concluded"]])
+    return lowered
 
 
 def _conclusion(item, text):
     """(concluded date name or None, formula)."""
-    m = re.fullmatch(r"(the .+?) is (.+)", text)
-    if m and m[1] in item.day_constants and m[1] not in item.dates and m[1] not in item.may_lack:
+    m = re.fullmatch(r"(the .+?) is (?:on )?(.+)", text)
+    if m and m[1] in item.day_constants:
+        if m[1] in item.dates or m[1] in item.may_lack:
+            raise DateRuleError(f"DateRule: {m[1]!r} is a case date; a rule does not conclude it (C2)")
         value = item.date(m[2])
         if value[0] == "ground" and value[1][0] == "date" and value[1][1] < "1970":
             raise DateRuleError(f"DateRule: a concluded date lies in 1970..9999 ({text!r})")

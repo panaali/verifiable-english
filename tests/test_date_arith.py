@@ -240,3 +240,54 @@ def test_let_sentences_have_one_value_and_come_first():
     with pytest.raises(DateRuleError):
         lower_date_item(env, "If the payment date is before the start of the reference week, then the person is "
                              "exempt. Let the start of the reference week be 1 June 2026.", {}, facts=FACTS)
+
+
+# --- the Opus build review's findings (manage-agents reviews/spare/date-arith/BUILD-REVIEW-OPUS.md) -------
+
+def test_review_b1_a_conclusion_about_a_day_constant_always_meets_c2():
+    env = environment(("relevant", "the start of the relevant period"))
+    case = {"dates": {"the birth date of the person": "1955-07-01", "the date of the tenancy agreement": "2020-01-01"}}
+    two = ("If the person is a man, then the start of the relevant period is on 1 June 2026. "
+           "If the person is eligible, then the start of the relevant period is on 2 June 2026.")
+    with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*the start of the relevant period.*\(C2\)"):
+        lower_date_item(env, two, case, facts=FACTS)
+    lowered = lower_date_item(env, two.split(". ")[0] + ".", case, facts=FACTS)
+    assert lowered["concluded"][0][0] == "the start of the relevant period"
+    assert lowered["rules"][0][1][2] == ["date_on", ["const", "day", "relevant"], ["cal", ["date", "2026-06-01"]]]
+    with pytest.raises(DateRuleError, match=r"is a case date; a rule does not conclude it \(C2\)"):
+        lower_date_item(env, "If the person is a man, then the date of the tenancy agreement is on 1 June 2026.", case,
+                        facts=FACTS)
+    with pytest.raises(DateRuleError, match=r"is a case date; a rule does not conclude it \(C2\)"):
+        lower_date_item(env, "If the person is a man, then the date of the tenancy agreement is 1 June 2026.", {},
+                        may_lack=["the date of the tenancy agreement"], facts=FACTS)
+
+
+def test_review_b2_c2_compares_the_rules_of_every_item_of_a_case():
+    from ve.surface.dates import lower_date_items
+    env = environment()
+    case = {"dates": {"the birth date of the person": "1955-07-01"}}
+    first = ("If the person is a man, then the pensionable-age date of the person is the birth date of the person plus "
+             "65 years.")
+    second = ("If the birth date of the person is on or after 6 April 1950, then the pensionable-age date of the person "
+              "is the birth date of the person plus 66 years.")
+    assert len(lower_date_item(env, first, case, facts=FACTS)["rules"]) == 1
+    assert len(lower_date_item(env, second, case, facts=FACTS)["rules"]) == 1
+    with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*\(C2\)"):
+        lower_date_items(env, [first, second], case, facts=FACTS)
+    exclusive = "If not the person is a man and " + second[3:]
+    assert len(lower_date_items(env, [first, exclusive], case, facts=FACTS)) == 2
+
+
+def test_review_b9_b10_a_date_the_case_may_lack_stays_a_constant():
+    env = environment(("tenancy_partner", "the tenancy date of the partner"), ("tenancy_person", "the tenancy date of the person"))
+    with pytest.raises(DateRuleError, match="never set by a Let sentence"):
+        lower_date_item(env, "Let the date of the tenancy agreement be 1 June 2019.", {},
+                        may_lack=["the date of the tenancy agreement"])
+    text = "If the tenancy date of the person is before 1 June 2019, then the person is exempt."
+    lowered = lower_date_item(env, text, {"dates": {"the tenancy date of the partner": "2019-05-01"}},
+                              may_lack=["the tenancy date of the person"], facts=FACTS,
+                              roles=["the person", "the partner"])
+    assert [r[1][1] for r in lowered["rules"]] == [
+        ["date_before", ["const", "day", "tenancy_person"], ["cal", ["date", "2019-06-01"]]],
+        ["date_before", ["const", "day", "tenancy_partner"], ["cal", ["date", "2019-06-01"]]]]
+    assert lowered["case_facts"] == [["date_on", ["const", "day", "tenancy_partner"], ["date", "2019-05-01"]]]

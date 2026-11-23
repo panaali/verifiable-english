@@ -257,6 +257,12 @@ def ratioOf (rule x y : String) : String :=
 -- A count operand's body is typed at its own S6.
 #guard refusal r#"["percent_of", ["count", "fomc_policymaker", ["is", "curious"]], ["count", "fomc_policymaker", ["any"]],
   "1"]"# == "TypeMismatch: curious is not a unary predicate of sort fomc_policymaker"
+-- date-arith (review B3): ground date expressions are refused here (the cardinality route binds no input dates).
+#guard refusal r#"["quantity", ["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]]"# ==
+  "UnsupportedProfile: ground date expressions are not admitted on the cardinality route"
+#guard refusal r#"["quantity", ["date_on", ["const", "day", "d1"], ["cal", ["date", "2026-01-01"]]]]"# ==
+  "UnsupportedProfile: ground date expressions are not admitted on the cardinality route"
+#guard admitted r#"["quantity", ["date_on", ["const", "day", "d1"], ["date", "2026-01-01"]]]"#
 #guard refusal r#"["quantity", ["lt", ["const", "bp", "sept"], ["const", "day", "d1"]]]"# ==
   "TypeMismatch: UnitMismatch(bp,day)"
 #guard refusal r#"["percent_of", ["quantity", ["const", "fomc_policymaker", "x"]], ["quantity", ["const", "bp", "june"]], "1"]"# ==
