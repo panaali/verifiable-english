@@ -1,0 +1,373 @@
+=== si-2018-221: https://www.legislation.gov.uk/uksi/2018/221/data.xht (retrieved 2026-11-23; raw sha256 0d8f0e6a6a684ea0115e7011cdcaf676df75500286e227de81c6d1d8e2584d62)
+Statutory Instruments
+2018 No. 221
+Housing, England
+The Licensing of Houses in Multiple Occupation (Prescribed Description) (England) Order 2018
+Made
+20th February 2018
+Laid before Parliament
+23rd February 2018
+Coming into force
+1st October 2018
+The Secretary of State makes the following Order in exercise of the powers conferred by sections 55(3) and 250(2)(a) and (b) of the Housing Act 2004(1).
+Citation and CommencementE+W
+1.—(1) This Order may be cited as the Licensing of Houses in Multiple Occupation (Prescribed Description) (England) Order 2018.
+(2) This Order comes into force on 1st October 2018.
+Commencement Information
+I1Art. 1 in force at 1.10.2018, see art. 1(1)
+ApplicationE+W
+2. This Order applies in relation to an HMO in England(2).
+Commencement Information
+I2Art. 2 in force at 1.10.2018, see art. 1(1)
+InterpretationE+W
+3. In this Order “the Act” means the Housing Act 2004.
+Commencement Information
+I3Art. 3 in force at 1.10.2018, see art. 1(1)
+Description of HMOs prescribed by the Secretary of StateE+W
+4. An HMO is of a prescribed description for the purpose of section 55(2)(a) of the Act if it—
+(a)is occupied by five or more persons;
+(b)is occupied by persons living in two or more separate households; and
+(c)meets—
+(i)the standard test under section 254(2) of the Act;
+(ii)the self-contained flat test under section 254(3) of the Act but is not a purpose-built flat situated in a block comprising three or more self-contained flats; or
+(iii)the converted building test under section 254(4) of the Act.
+Commencement Information
+I4Art. 4 in force at 1.10.2018, see art. 1(1)
+Transitional ProvisionE+W
+5. A licence issued under Part 3 of the Act has effect as if issued under Part 2 of the Act in respect of an HMO that—
+(a)is licensed under Part 3 prior to 1st October 2018, and
+(b)is required to be licensed under Part 2 from that date.
+Commencement Information
+I5Art. 5 in force at 1.10.2018, see art. 1(1)
+RevocationE+W
+6. The Licensing of Houses in Multiple Occupation (Prescribed Descriptions) (England) Order 2006(3) is revoked.
+Commencement Information
+I6Art. 6 in force at 1.10.2018, see art. 1(1)
+ReviewE+W
+7.—(1) The Secretary of State must from time to time—
+(a)carry out a review of the regulatory provision contained in this Order, and
+(b)publish a report setting out the conclusions of the review.
+(2) The first report must be published before 6th April 2023.
+(3) Subsequent reports must be published at intervals not exceeding five years.
+(4) Section 30(4) of the Small Business, Enterprise and Employment Act 2015 requires that a report published under this article must, in particular—
+(a)set out the objectives intended to be achieved by the regulatory provision referred to in paragraph 1(a),
+(b)assess the extent to which those objectives are achieved,
+(c)assess whether those objectives remain appropriate, and
+(d)if those objectives remain appropriate, assess the extent to which they could be achieved in another way which involves less onerous regulatory provision.
+(5) In this article, “regulatory provision” has the same meaning as in sections 28 to 32 of the Small Business, Enterprise and Employment Act 2015(4).
+Commencement Information
+I7Art. 7 in force at 1.10.2018, see art. 1(1)
+Signed by authority of the Secretary of State for Housing, Communities and Local Government
+Heather Wheeler
+Parliamentary Under Secretary of State
+Ministry of Housing, Communities and Local Government
+20th February 2018
+EXPLANATORY NOTE
+(This note is not part of the Order)
+This Order prescribes a description of a house in multiple occupation (“HMO”) to which Part 2 of the Housing Act 2004 (“the Act”) applies. Under section 61(1) of the Act every HMO to which Part 2 of the Act applies must be licensed unless it is subject to either a temporary exemption notice under section 62 of the Act or an interim or final management order under Chapter 1 of Part 4 of the Act.
+The Order applies to HMOs in England but does not apply to converted blocks of flats, to which section 257 of the Act applies. These are buildings that have been converted into and consist of self-contained flats where the building work undertaken in connection with the conversion did not comply with the appropriate building standards and still does not comply with them, and less than two-thirds of the self-contained flats are owner-occupied.
+Article 1 makes a commencement provision.
+Article 4 prescribes a description of HMOs for the purpose of section 55(2)(a) of the Act. The standard test relates to HMOs which comprise of one or more units of living accommodation which do not consist of a self-contained flat or flats. The self-contained flat test relates to HMOs which comprise of a self-contained, purpose-built flat situated in a block comprising of no more than two self- contained flats (whether or not the block also contains non-residential premises). The converted building test relates to HMOs which are converted buildings.
+Article 5 makes a transitional provision.
+Article 6 revokes The Licensing of Houses in Multiple Occupation (Prescribed Descriptions) (England) Order 2006 which this Order replaces.
+Article 7 makes provision for the review of these Regulations at the end of the period of 5 years beginning with the date on which they come into force.
+An impact assessment has been prepared in relation to this Order. The assessment will be placed in the Library of each House of Parliament and made available on www.gov.uk. Copies may be obtained from the Ministry of Housing, Communities and Local Government, 2 Marsham Street, London, SW1P 4DF.
+(1)
+2004 c.34. For the definition of appropriate national authority see section 261(1) of the Act.
+(2)
+For the meaning of HMO see sections 77 and 254 to 259 of the Act.
+(3)
+S.I 2006/371
+(4)
+2015 c. 26. See section 32.
+=== ha2004-s254: https://www.legislation.gov.uk/ukpga/2004/34/section/254/data.xht (retrieved 2026-11-23; raw sha256 0ab3ff4f89c6bb7b6f55d8915262a6e7b64aa0d09bbcf9318c5c88ac974c552d)
+Part 7U.K.Supplementary and final provisions
+Meaning of “house in multiple occupation”E+W
+254Meaning of “house in multiple occupation”E+W
+(1)For the purposes of this Act a building or a part of a building is a “house in multiple occupation” if—
+(a)it meets the conditions in subsection (2) (“the standard test”);
+(b)it meets the conditions in subsection (3) (“the self-contained flat test”);
+(c)it meets the conditions in subsection (4) (“the converted building test”);
+(d)an HMO declaration is in force in respect of it under section 255; or
+(e)it is a converted block of flats to which section 257 applies.
+(2)A building or a part of a building meets the standard test if—
+(a)it consists of one or more units of living accommodation not consisting of a self-contained flat or flats;
+(b)the living accommodation is occupied by persons who do not form a single household (see section 258);
+(c)the living accommodation is occupied by those persons as their only or main residence or they are to be treated as so occupying it (see section 259);
+(d)their occupation of the living accommodation constitutes the only use of that accommodation;
+(e)rents are payable or other consideration is to be provided in respect of at least one of those persons' occupation of the living accommodation; and
+(f)two or more of the households who occupy the living accommodation share one or more basic amenities or the living accommodation is lacking in one or more basic amenities.
+(3)A part of a building meets the self-contained flat test if—
+(a)it consists of a self-contained flat; and
+(b)paragraphs (b) to (f) of subsection (2) apply (reading references to the living accommodation concerned as references to the flat).
+(4)A building or a part of a building meets the converted building test if—
+(a)it is a converted building;
+(b)it contains one or more units of living accommodation that do not consist of a self-contained flat or flats (whether or not it also contains any such flat or flats);
+(c)the living accommodation is occupied by persons who do not form a single household (see section 258);
+(d)the living accommodation is occupied by those persons as their only or main residence or they are to be treated as so occupying it (see section 259);
+(e)their occupation of the living accommodation constitutes the only use of that accommodation; and
+(f)rents are payable or other consideration is to be provided in respect of at least one of those persons' occupation of the living accommodation.
+(5)But for any purposes of this Act (other than those of Part 1) a building or part of a building within subsection (1) is not a house in multiple occupation if it is listed in Schedule 14.
+(6)The appropriate national authority may by regulations—
+(a)make such amendments of this section and sections 255 to 259 as the authority considers appropriate with a view to securing that any building or part of a building of a description specified in the regulations is or is not to be a house in multiple occupation for any specified purposes of this Act;
+(b)provide for such amendments to have effect also for the purposes of definitions in other enactments that operate by reference to this Act;
+(c)make such consequential amendments of any provision of this Act, or any other enactment, as the authority considers appropriate.
+(7)Regulations under subsection (6) may frame any description by reference to any matters or circumstances whatever.
+(8)In this section—
+“basic amenities” means—
+(a)
+a toilet,
+(b)
+personal washing facilities, or
+(c)
+cooking facilities;
+“converted building” means a building or part of a building consisting of living accommodation in which one or more units of such accommodation have been created since the building or part was constructed;
+“enactment” includes an enactment comprised in subordinate legislation (within the meaning of the Interpretation Act 1978 (c. 30);
+“self-contained flat” means a separate set of premises (whether or not on the same floor)—
+(a)
+which forms part of a building;
+(b)
+either the whole or a material part of which lies above or below some other part of the building; and
+(c)
+in which all three basic amenities are available for the exclusive use of its occupants.
+Commencement Information
+I1S. 254 wholly in force at 18.1.2005; s. 254 in force for certain purposes at Royal Assent and in force otherwise at 18.1.2005, see s. 270(2)(b)(3)(a)
+=== ha2004-s258: https://www.legislation.gov.uk/ukpga/2004/34/section/258/data.xht (retrieved 2026-11-23; raw sha256 362002a0b4c6a08d5c02d693632ae2869257cb7eb4c879bf25ed1c55320428d7)
+Part 7U.K.Supplementary and final provisions
+Meaning of “house in multiple occupation”E+W
+258HMOs: persons not forming a single householdE+W
+(1)This section sets out when persons are to be regarded as not forming a single household for the purposes of section 254.
+(2)Persons are to be regarded as not forming a single household unless—
+(a)they are all members of the same family, or
+(b)their circumstances are circumstances of a description specified for the purposes of this section in regulations made by the appropriate national authority.
+(3)For the purposes of subsection (2)(a) a person is a member of the same family as another person if—
+(a)those persons are married to [F1, or civil partners of, each other or live together as if they were a married couple or civil partners];
+(b)one of them is a relative of the other; or
+(c)one of them is, or is a relative of, one member of a couple and the other is a relative of the other member of the couple.
+(4)For those purposes—
+(a)a “couple” means two persons who F2... fall within subsection (3)(a);
+(b)“relative” means parent, grandparent, child, grandchild, brother, sister, uncle, aunt, nephew, niece or cousin;
+(c)a relationship of the half-blood shall be treated as a relationship of the whole blood; and
+(d)the stepchild of a person shall be treated as his child.
+(5)Regulations under subsection (2)(b) may, in particular, secure that a group of persons are to be regarded as forming a single household only where (as the regulations may require) each member of the group has a prescribed relationship, or at least one of a number of prescribed relationships, to any one or more of the others.
+(6)In subsection (5) “prescribed relationship” means any relationship of a description specified in the regulations.
+Textual Amendments
+F1Words in s. 258(3)(a) substituted (2.12.2019) by The Civil Partnership (Opposite-sex Couples) Regulations 2019 (S.I. 2019/1458), reg. 1(2), Sch. 3 para. 26(4)(a)
+F2Words in s. 258(4)(a) omitted (2.12.2019) by virtue of The Civil Partnership (Opposite-sex Couples) Regulations 2019 (S.I. 2019/1458), reg. 1(2), Sch. 3 para. 26(4)(b)
+Commencement Information
+I1S. 258 wholly in force at 18.1.2005; s. 258 in force for certain purposes at Royal Assent and in force otherwise at 18.1.2005, see s. 270(2)(b)(3)(a)
+=== ha2004-s259: https://www.legislation.gov.uk/ukpga/2004/34/section/259/data.xht (retrieved 2026-11-23; raw sha256 30242b771df5b715eb899bf2e65889cfc10791341a14b5ab79c41e6f62d4b428)
+Part 7U.K.Supplementary and final provisions
+Meaning of “house in multiple occupation”E+W
+259HMOs: persons treated as occupying premises as only or main residenceE+W
+(1)This section sets out when persons are to be treated for the purposes of section 254 as occupying a building or part of a building as their only or main residence.
+(2)A person is to be treated as so occupying a building or part of a building if it is occupied by the person—
+(a)as the person’s residence for the purpose of undertaking a full-time course of further or higher education;
+(b)as a refuge, or
+(c)in any other circumstances which are circumstances of a description specified for the purposes of this section in regulations made by the appropriate national authority.
+(3)In subsection (2)(b) “refuge” means a building or part of a building managed by a voluntary organisation and used wholly or mainly for the temporary accommodation of persons who have left their homes as a result of—
+(a)physical violence or mental abuse, or
+(b)threats of such violence or abuse,
+from persons [F1who are or were their spouses or civil partners] or with whom they are or were co-habiting.
+Textual Amendments
+F1Words in s. 259(3) substituted (2.12.2019) by The Civil Partnership (Opposite-sex Couples) Regulations 2019 (S.I. 2019/1458), reg. 1(2), Sch. 3 para. 26(5)
+Commencement Information
+I1S. 259 wholly in force at 18.1.2005; s. 259 in force for certain purposes at Royal Assent and in force otherwise at 18.1.2005, see s. 270(2)(b)(3)(a)
+=== si-2006-373-r3: https://www.legislation.gov.uk/uksi/2006/373/regulation/3/data.xht (retrieved 2026-11-23; raw sha256 0499272e1aab605a5e0c030b3daba1f0cd4c6c2915a715108ab72f01c930fbe0)
+Persons to be regarded as forming a single household for the purposes of section 254 of the Act: employeesE+W
+3.—(1) Where—
+(a)a person (“person A”) occupies living accommodation in a building or part of a building; and
+(b)another person (“person B”) and any member of person B's family living with him occupy living accommodation in the same building or part,
+those persons are only to be regarded as forming a single household for the purposes of section 254 of the Act if their circumstances are those described in paragraph (2).
+(2) The circumstances are that—
+(a)Person A carries out work or performs a service of an exclusively domestic nature for person B or such a member of person B's family;
+(b)Person A's living accommodation is supplied to him by person B or by such a member of person B's family as part of the consideration for carrying out the work or performing the service; and
+(c)person A does not pay any rent or other consideration in respect of his living accommodation (other than carrying out the work or performance of the service).
+(3) Work or a service usually carried out or performed by any of the following is to be regarded as work or service of a domestic nature for the purpose of paragraph (2)(a)—
+(a)au pair;
+(b)nanny;
+(c)nurse;
+(d)carer;
+(e)governess;
+(f)servant, including maid, butler, cook or cleaner;
+(g)chauffeur;
+(h)gardener;
+(i)secretary; or
+(j)personal assistant.
+(4) Where person A and person B are to be regarded as forming a single household under paragraph (1) any member of person A's family occupying the living accommodation with him is to be regarded as forming a single household with person A, person B and any member of person B's family living with him for the purpose of section 254 of the Act.
+=== si-2006-373-r4: https://www.legislation.gov.uk/uksi/2006/373/regulation/4/data.xht (retrieved 2026-11-23; raw sha256 d9ad4063c34bfbdf3ca6b20bc4fedf8fa42cd461798301fb54203ef855da40a0)
+Other persons to be regarded as forming a single household for the purposes of section 254 of the ActE+W
+4.—(1) Where a person receiving care and his carer occupy living accommodation in the same building or part of a building, they are to be regarded as forming a single household for the purposes of section 254 of the Act if—
+(a)the carer is an adult placement carer approved under the Adult Placement Schemes (England) Regulations 2004 M1; and
+(b)the carer provides care in that living accommodation for not more than three service users under the terms of a scheme permitted by those Regulations.
+(2) Where a person and his foster parent occupy living accommodation in the same building or part of a building, they are to be regarded as forming a single household for the purposes of section 254 of the Act if that person is placed with the foster parent under the provisions of the Fostering Services Regulations 2002 M2.
+(3) The terms “adult placement carer”M3 and “service users”M4 have the meanings given to those expressions in the regulations referred to in paragraph (1)(a).
+Marginal Citations
+M1SI 2004/2071.
+M2SI 2002/57.
+M3In regulation 2 of the Adult Placement Schemes (England) Regulations 2004 “adult placement carer” means a person who, under the terms of a carer agreement entered into with a person who carries on an adult placement scheme, provides, or intends to provide, care or support (which may include accommodation in the carer's home) for service users.
+M4In regulation 2 of the Adult Placement Schemes (England) Regulations 2004 “service user” in relation to a scheme, means an adult who may be or is placed by the scheme. A “scheme” is an adult placement scheme carried on by a person who is registered under Part 2 of the Care Standards Act 2000 (2000 c. 14) to carry on the scheme.
+=== si-2006-373-r5: https://www.legislation.gov.uk/uksi/2006/373/regulation/5/data.xht (retrieved 2026-11-23; raw sha256 f1845f05f4e44bfe116f845eb19d2b62c98a157016da875646da15d1e212d5be)
+Persons treated as occupying premises as their only or main residence for the purposes of section 254 of the ActE+W
+5.—(1) A person is to be treated as occupying a building or part of a building as his only or main residence for the purposes of section 254 of the Act if he is—
+(a)a migrant worker or a seasonal worker—
+(i)whose occupation of the building or part is made partly in consideration of his employment within the United Kingdom, whether or not other charges are payable in respect of that occupation; and
+(ii)where the building or part is provided by, or on behalf of, his employer or an agent or employee of his employer; or
+(b)an asylum seeker or a dependent of an asylum seeker who has been provided with accommodation under section 95 of the Immigration and Asylum Act 1999 M1 and which is funded partly or wholly by the National Asylum Support Service M2.
+(2) In this regulation—
+[F1(a)“a migrant worker” is—
+(i)a person who has leave to enter or remain in the United Kingdom granted by virtue of residence scheme immigration rules and who has taken up activity in the United Kingdom as an employed person;
+(ii)a person who has a permit indicating, in accordance with the immigration rules, that a person named in it is eligible, though not a British citizen, for entry into the United Kingdom for the purpose of taking employment;
+(iii)a person who is a frontier worker within the meaning of regulation 3 of the Citizens' Rights (Frontier Workers) (EU Exit) Regulations 2020;]
+[F2(ab)"residence scheme immigration rules” has the meaning given by section 17 of the European Union (Withdrawal Agreement) Act 2020;]
+F3(b). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+F3(c). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+(d)“seasonal worker” means a person who carries out for an employer or undertaking employment of a seasonal character—
+(i)the nature of which depends on the cycle of the seasons and recurs automatically each year; and
+(ii)the duration of which cannot exceed eight months;
+(e)“immigration rules” means the rules for the time being laid down as mentioned in section 3(2) of the Immigration Act 1971 M3 and
+(f)“asylum seeker” has the meaning given to that expression in section 94 of Immigration and Asylum Act 1999.
+Textual Amendments
+F1Reg. 5(2)(a) substituted (31.12.2020) by The Immigration and Social Security Co-ordination (EU Withdrawal) Act 2020 (Consequential, Saving, Transitional and Transitory Provisions) (EU Exit) Regulations 2020 (S.I. 2020/1309), regs. 1(2), 67(2)(a)
+F2Reg. 5(2)(ab) inserted (31.12.2020) by The Immigration and Social Security Co-ordination (EU Withdrawal) Act 2020 (Consequential, Saving, Transitional and Transitory Provisions) (EU Exit) Regulations 2020 (S.I. 2020/1309), regs. 1(2), 67(2)(b)
+F3Reg. 5(2)(b)(c) omitted (31.12.2020) by virtue of The Immigration and Social Security Co-ordination (EU Withdrawal) Act 2020 (Consequential, Saving, Transitional and Transitory Provisions) (EU Exit) Regulations 2020 (S.I. 2020/1309), regs. 1(2), 67(2)(c)
+Marginal Citations
+M11999 c. 33.
+M2The National Asylum Support Service is a department within the Home Office.
+M31971 c. 77.
+=== si-2006-373-r6: https://www.legislation.gov.uk/uksi/2006/373/regulation/6/data.xht (retrieved 2026-11-23; raw sha256 95b143d3192546cca922337107599a6f65e936dd159ec3c57f7cdce8fa608150)
+Buildings that are not HMOs for the purposes of the Act (excluding Part 1)E+W
+6.—(1) A building is of a description specified for the purposes of paragraph 3 of Schedule 14 to the Act (buildings regulated otherwise than under the Act which are not HMOs for purposes of the Act (excluding Part 1)) where its occupation is regulated by or under any of the enactments listed in Schedule 1.
+(2) The number of persons specified for the purposes of paragraph 6(1)(c) of Schedule 14 to the Act is two.
+=== ha2004-sch14: https://www.legislation.gov.uk/ukpga/2004/34/schedule/14/data.xht (retrieved 2026-11-23; raw sha256 a15c0687b43333460ac1c443b1e5ad92d92872468bd3b7530f0a1b832f90e919)
+SCHEDULES
+Section 254
+SCHEDULE 14E+WBuildings which are not HMOs for purposes of this Act (excluding Part 1)
+Introduction: buildings (or parts) which are not HMOs for purposes of this Act (excludingPart 1)E+W
+1(1)The following paragraphs list buildings which are not houses in multiple occupation for any purposes of this Act other than those of Part 1.E+W
+(2)In this Schedule “building” includes a part of a building.
+Buildings controlled or managed by public sector bodies etc.E+W
+2(1)A building where the person managing or having control of it is—E+W
+(a)a local housing authority,
+[F1(aa)a non-profit registered provider of social housing,]
+(b)a body which is registered as a social landlord under Part 1 of the Housing Act 1996 (c. 52),
+[F2(c)a police and crime commissioner,
+(d)the Mayor's Office for Policing and Crime,
+(e)a fire and rescue authority, or
+(f)a health service body within the meaning of [F3section 9 of the National Health Service Act 2006].
+(2) In sub-paragraph (1)(e) “ fire and rescue authority ” means a fire and rescue authority under the Fire and Rescue Services Act 2004 (c. 21).
+Textual Amendments
+F1 Sch. 14 para. 2(1)(aa) inserted (1.4.2010) by The Housing and Regeneration Act 2008 (Consequential Provisions) Order 2010 (S.I. 2010/866) , art. 1(2) , Sch. 2 para. 133(2) (with art. 6 , Sch. 3 )
+F2 Sch. 14 para. 2(1)(c)(d) substituted (16.1.2012) by Police Reform and Social Responsibility Act 2011 (c. 13) , s. 157(1) , Sch. 16 para. 335 ; S.I. 2011/3019 , art. 3 , Sch. 1 (with Sch. 2 para. 76 )
+F3Words in Sch. 14 para. 2(1)(f) substituted (1.3.2007) by virtue of National Health Service (Consequential Provisions) Act 2006, ss. 2, 8, {Sch. 1 para. 269} (with Sch. 3 Pt. 1)
+[F42A.E+WA building—
+(a)which is social housing within the meaning of Part 2 of the Housing and Regeneration Act 2008, and
+(b)where the person managing or having control of it is a profit-making registered provider of social housing.]
+Textual Amendments
+F2 Sch. 14 para. 2(1)(c)(d) substituted (16.1.2012) by Police Reform and Social Responsibility Act 2011 (c. 13) , s. 157(1) , Sch. 16 para. 335 ; S.I. 2011/3019 , art. 3 , Sch. 1 (with Sch. 2 para. 76 )
+F4 Sch. 14 para. 2A inserted (1.4.2010) by The Housing and Regeneration Act 2008 (Consequential Provisions) Order 2010 (S.I. 2010/866) , art. 1(2) , Sch. 2 para. 133(3) (with art. 6 , Sch. 3 )
+Buildings controlled or managed by a co-operative societyE+W
+[F52B(1)A building where—
+(a)the person managing or having control of it is a co-operative society whose rules are such as to secure that each of the conditions set out in sub-paragraph (2) is met, and
+(b)no person who occupies premises in the building does so by virtue of an assured tenancy, a secure tenancy or a protected tenancy.
+(2)The conditions are—
+(a)that membership of the society is restricted to persons who are occupiers or prospective occupiers of buildings managed or controlled by the society,
+(b)that all management decisions of the society are made by the members (or a specified quorum of members) at a general meeting which all members are entitled to, and invited to, attend,
+(c)that each member has equal voting rights at such a meeting, and
+(d)that, if a person occupies premises in the building and is not a member, that person is an occupier of the premises only as a result of sharing occupation of them with a member at the member's invitation.
+(3)For the purposes of sub-paragraph (1) “co-operative society” means a body that—
+(a)[F6is registered as a co-operative society under the 2014 Act or is a pre-commencement society (within the meaning of that Act) that meets the condition in section 2(2)(a)(i) of that Act, ]and
+(b)is neither—
+(i)a non-profit registered provider of social housing, nor
+(ii)registered as a social landlord under Part 1 of the Housing Act 1996.
+(4)In this paragraph—
+[F7“the 2014 Act” means the Co-operative and Community Benefit Societies Act 2014;]
+“assured tenancy” has the same meaning as in Part 1 of the Housing Act 1988;
+“protected tenancy” has the same meaning as in the Rent Act 1977;
+“secure tenancy” has the same meaning as in Part 4 of the Housing Act 1985.]
+Textual Amendments
+F2 Sch. 14 para. 2(1)(c)(d) substituted (16.1.2012) by Police Reform and Social Responsibility Act 2011 (c. 13) , s. 157(1) , Sch. 16 para. 335 ; S.I. 2011/3019 , art. 3 , Sch. 1 (with Sch. 2 para. 76 )
+F5Sch. 14 para. 2B and cross-heading inserted (1.4.2012) by Localism Act 2011 (c. 20), ss. 185(1), 240(2) (with s. 185(2)-(4)); S.I. 2012/628, art. 6(e) (with arts. 9, 11, 14, 15, 17)
+F6Sch. 14 para. 2B(3)(a), apart from the word 'and', substituted (1.8.2014) by Co-operative and Community Benefit Societies Act 2014 (c. 14), s. 154, Sch. 4 para. 91(2) (with Sch. 5)
+F7Words in Sch. 14 para. 2B(4) substituted (1.8.2014) by Co-operative and Community Benefit Societies Act 2014 (c. 14), s. 154, Sch. 4 para. 91(3) (with Sch. 5)
+Buildings regulated otherwise than under this ActE+W
+3E+WAny building whose occupation is regulated otherwise than by or under this Act and which is of a description specified for the purposes of this paragraph in regulations made by the appropriate national authority.
+[F8Buildings occupied by students: EnglandE+W
+Textual Amendments
+F8Sch. 14 para. 3A inserted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(2), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+3A(1)Any building in England—E+W
+(a)which is occupied solely or principally by persons who occupy it for the purpose of undertaking a full-time course of further or higher education at a specified educational establishment, or at an educational establishment of a specified description, and where the person managing or having control of it is the educational establishment in question, or
+(b)which is occupied solely or principally by persons who occupy it for the purpose of undertaking a full-time course of further or higher education at an educational establishment and where the person managing or having control of it is a specified person or a person of a specified description.
+(2)In—
+(a)sub-paragraph (1)(a) “specified” means specified for the purposes of that sub-paragraph in regulations made by the Secretary of State;
+(b)sub-paragraph (1)(b) “specified” means specified for the purposes of that sub-paragraph in regulations made by the Secretary of State;
+and the regulations may (in particular) provide that an educational establishment is specified, or of a specified description, for the purposes of sub-paragraph (1)(b).
+(3)Those regulations may, in particular, specify—
+(a)as a description of educational establishment for the purposes of sub-paragraph (1)(a), or
+(b)as a description of person for the purposes of sub-paragraph (1)(b),
+the members from time to time, or a description of the members from time to time, of a housing management code of practice which is specified in the regulations.
+(4)The Secretary of State may by regulations—
+(a)specify a class of building, and
+(b)provide that a building—
+(i)does not fall within this paragraph if it is of the specified class, or
+(ii)falls within this paragraph only if it is of the specified class.
+(5)The Secretary of State may by regulations—
+(a)specify a building manager or a class of building manager,
+(b)specify a class of building in relation to the specified building manager or the specified class of building manager, and
+(c)provide that a building which the specified building manager, or a building manager of the specified class, manages or has control of—
+(i)does not fall within this paragraph if the building is of the specified class, or
+(ii)falls within this paragraph only if the building is of the specified class.
+(6)Regulations under sub-paragraph (4)(a) or (5)(b) may, in particular, specify as a class of building—
+(a)the buildings, or
+(b)a class of the buildings,
+from time to time subject to a housing management code of practice which is specified for this purpose by regulations under sub-paragraph (4)(a) or (5)(b).
+(7)Regulations under sub-paragraph (5)(a) may, in particular, specify as a class of building manager—
+(a)the members, or
+(b)a class of the members,
+from time to time of a housing management code of practice which is specified for this purpose by regulations under sub-paragraph (5)(a).
+(8)For the purposes of this paragraph—
+(a)“building manager” means an educational establishment or other person managing or having control of a building;
+(b)“housing management code of practice” means a code of practice approved by the Secretary of State under section 233 (codes relating to the management of HMOs or excepted accommodation);
+(c)a building is “subject to” a housing management code of practice if it—
+(i)is a particular building subject to the code, or
+(ii)is of a class of buildings subject to the code;
+(d)a reference to—
+(i)a class of the buildings from time to time subject to a housing management code of practice, or
+(ii)a class of the members from time to time of a housing management code of practice,
+includes the buildings or members that are from time to time in a class provided for in the code of practice.]
+Buildings occupied by students [F9: Wales] E+W
+Textual Amendments
+F9Word in Sch. 14 para. 4 heading inserted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(a), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+4 (1)Any building [F10in Wales]—E+W
+(a)which is occupied solely or principally by persons who occupy it for the purpose of undertaking a full-time course of further or higher education at a specified educational establishment or at an educational establishment of a specified description, and
+(b)where the person managing or having control of it is the educational establishment in question or a specified person or a person of a specified description.
+(2) In sub-paragraph (1) “ specified ” means specified for the purposes of this paragraph in regulations made by the [F11Welsh Ministers].
+(3)Sub-paragraph (4) applies in connection with any decision by the [F12Welsh Ministers] as to whether to make, or revoke, any regulations specifying—
+(a)a particular educational establishment, or
+(b)a particular description of educational establishments.
+(4)The [F13Welsh Ministers may have regard to the extent to which, in their opinion]—
+(a)the management by or on behalf of the establishment in question of any building or buildings occupied for connected educational purposes is in conformity with any code of practice for the time being approved under section 233 which appears to the [F14Welsh Ministers] to be relevant, or
+(b)the management of such buildings by or on behalf of establishments of the description in question is in general in conformity with any such code of practice,
+as the case may be.
+(5) In sub-paragraph (4) “ occupied for connected educational purposes ”, in relation to a building managed by or on behalf of an educational establishment, means occupied solely or principally by persons who occupy it for the purpose of undertaking a full-time course of further or higher education at the establishment.
+Textual Amendments
+F10Words in Sch. 14 para. 4(1) inserted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(b), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+F11Words in Sch. 14 para. 4(2) substituted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(c), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+F12Words in Sch. 14 para. 4(3) substituted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(d), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+F13Words in Sch. 14 para. 4(4) substituted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(e)(i), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+F14Words in Sch. 14 para. 4(4)(a) substituted (1.5.2026) by Renters’ Rights Act 2025 (c. 26), ss. 62(4)(e)(ii), 145(1)(7) (with ss. 62(3), 138); S.I. 2026/421, reg. 3(e)
+Commencement Information
+I1Sch. 14 para. 4 wholly in force at 18.1.2005; Sch. 14 para. 4 in force at Royal Assent for specified purposes and otherwise at 18.1.2005 see s. 270
+Buildings occupied by religious communitiesE+W
+5(1)Any building which is occupied principally for the purposes of a religious community whose principal occupation is prayer, contemplation, education or the relief of suffering.E+W
+(2)This paragraph does not apply in the case of a converted block of flats to which section 257 applies.
+Buildings occupied by ownersE+W
+6 (1)Any building which is occupied only by persons within the following paragraphs—E+W
+(a)one or more persons who have, whether in the whole or any part of it, either the freehold estate or a leasehold interest granted for a term of more than 21 years;
+(b)any member of the household of such a person or persons;
+(c)no more than such number of other persons as is specified for the purposes of this paragraph in regulations made by the appropriate national authority.
+(2)This paragraph does not apply in the case of a converted block of flats to which section 257 applies, except for the purpose of determining the status of any flat in the block.
+Commencement Information
+I2Sch. 14 wholly in force at 18.1.2005; Sch. 14 para. 6 in force at Royal Assent for specified purposes and otherwise at 18.1.2005 and Sch. 14 in force at 18.1.2005 see s. 270
+Buildings occupied by two personsE+W
+7E+WAny building which is occupied only by two persons who form two households.]
