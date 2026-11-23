@@ -323,11 +323,33 @@ def answer_targets(staged):
     return out
 
 
+LINE_LIMIT = 16_000_000  # under the Lean service's 16,777,216-byte line limit (MAX_LINE_BYTES)
+
+
 def lean(cases):
+    """Lean replay in batches; a case over the wire's line limit is not sent: it is recorded as that ResourceLimit and the
+    answer that needs it stays OPEN (refused)."""
     from ve.backends.relay import rows
-    results = rows("quantity", cases)
-    assert [r["id"] for r in results] == [c["id"] for c in cases]
-    return results
+    out, batch, size = [], [], 0
+    def flush():
+        nonlocal batch, size
+        if batch:
+            got = rows("quantity", batch)
+            assert [r["id"] for r in got] == [c["id"] for c in batch]
+            out.extend(got)
+        batch, size = [], 0
+    for c in cases:
+        n = len(json.dumps(c))
+        if n > LINE_LIMIT:
+            flush()
+            out.append({"id": c["id"], "status": "error", "error": f"ResourceLimit: case of {n} bytes exceeds the line limit"})
+            continue
+        if size + n > 200_000_000:
+            flush()
+        batch.append(c)
+        size += n
+    flush()
+    return out
 
 
 def run_case(prover, case, mutant=None):
@@ -402,6 +424,7 @@ def main(argv=None):
         mine = {k: v for k, v in lean_results.items() if k.startswith(pid + "/")}
         certs = [v for k, v in mine.items() if "/cert/" in k]
         docs = {k.rsplit("/", 1)[1]: v for k, v in mine.items() if "/doc/" in k}
+        rec["lean_errors"] = sorted({r.get("error", "")[:80] for r in mine.values() if r.get("status") != "ok"})
         rec["lean"] = {"certificates": len(certs),
                        "certificates_accepted": sum(r.get("status") == "ok" and r.get("valid") is True for r in certs),
                        "documents": {a: r.get("status") == "ok" and r.get("assurance") == "lean-admitted"
