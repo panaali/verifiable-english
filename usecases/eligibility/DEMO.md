@@ -188,7 +188,7 @@ Clauses used:
       “(c)detained in custody under a sentence imposed by a court.”
     Read as:
       - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
-          custody under a sentence, the custody began before 2026-09-21, and the release is after
+          custody under a sentence, the sentence began before 2026-09-21, and the release is after
           2026-09-27.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
     Source text:
@@ -221,7 +221,7 @@ Clauses used:
         of State to be entitled to a winter fuel payment under regulation 2.”
     Read as:
       - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
-          claim and made no claim on or before 2027-03-31.
+          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
     Source text:
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
@@ -274,8 +274,11 @@ Assumptions (taken as given, not checked):
   - For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving
       no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20
       September 2025, because a treatment period begins the day after admission.
-  - Custody is “throughout the qualifying week” only if it began before 21 September and release is
-      after 27 September; release on 27 September does not count.
+  - Custody under a sentence is “throughout the qualifying week” only if the sentence began before
+      21 September and release is after 27 September; release on 27 September does not count, and
+      days on remand before the sentence are not under it.
+  - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
+      regulation 5(1) allows.
   - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
       couple.
   - A listed housemate shares the home on at least one day of the week; an undated shared home or

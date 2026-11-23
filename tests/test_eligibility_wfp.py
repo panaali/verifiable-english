@@ -32,11 +32,12 @@ from ve.units import _core_problem, elaborate_quantity, erased_environment  # no
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
-KEY_DIGEST = "9478ec92e92075c9526dbf1085c1bbb3fd18c2d6f4d5727438b404c286b116ef"
+KEY_DIGEST = "7cbe5e17f9f555ba6558ce18bd1632039930cec7aa560ec1ccd60eaf9b8d8d18"
 REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibility review
 RECHECK_PROFILES = {"B20", "B21", "B22", "B23", "C25", "C26", "C27"}  # added by the eligibility recheck
 FINDING_C_PROFILES = {"B24", "B25", "B26", "B27", "B28", "B29", "B30"}  # review finding C, R7 "throughout"
 R7_RECHECK_PROFILES = {"B31", "B32", "B33", "B34"}  # R7 recheck, reg. 3(3) on a common day (AR8)
+RELB_FIXES_PROFILES = {"C28", "C29", "C30", "C31", "C32", "C33"}  # relb-fixes: R12a (O3, F8), R9 (F3)
 
 
 def _digest(keys):
@@ -54,9 +55,12 @@ def recorded():
 def test_key_is_frozen():
     keys = [[c["id"], c["key"]] for c in keyed_cases()["cases"]]
     assert _digest(keys) == KEY_DIGEST
-    assert len(keys) == 80 and sum(k["entitled"] for _, k in keys) == 63
+    assert len(keys) == 86 and sum(k["entitled"] for _, k in keys) == 67
+    # relb-fixes added C28 to C33 only; the other 80 keep the R7 recheck's pin.
+    before_relb = [k for k in keys if k[0] not in RELB_FIXES_PROFILES]
+    assert _digest(before_relb) == "9478ec92e92075c9526dbf1085c1bbb3fd18c2d6f4d5727438b404c286b116ef"
     # The R7 recheck added B31 to B34 only; the other 76 keep finding C's pin.
-    before_r7 = [k for k in keys if k[0] not in R7_RECHECK_PROFILES]
+    before_r7 = [k for k in before_relb if k[0] not in R7_RECHECK_PROFILES]
     assert _digest(before_r7) == "2397c7f792e3e29364d5a4cab46a036cef694bcb8a1dddf75460dac7dec37fec"
     # Finding C added B24 to B30 only; the other 69 keep the recheck's pin. The recheck
     # added B20 to B23 and C25 to C27 only; the other 62 keep the review's pin, and the
@@ -83,7 +87,7 @@ def test_plan_table_matches_cases_json():
                     if key["entitled"] else ["NO", "—", "—", "—"])
         q1, q2, q3, q4 = rows[case["id"]]
         assert [q1, money(q2), q3, money(q4)] == expected, case["id"]
-    assert len(rows) == 80
+    assert len(rows) == 86
 
 
 def test_plan_and_readme_counts_match_cases_json():
@@ -297,7 +301,12 @@ def test_every_profile_field_reaches_a_fact():
                         changed.pop("partnership", None)  # partnership dates need a partner
                 else:
                     changed[path[0]][path[1]] = _perturbed(p[path[0]][path[1]])
-                assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
+                try:
+                    assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
+                except ValueError:
+                    # relb-fixes: a claim, custody or benefit change that makes the claim record inconsistent is refused (check_claim,
+                    # the sentence start); the refusal reads the field.
+                    assert path[0] in ("claim", "custody", "benefits"), (case["id"], role, path)
                 checked.add(path)
     assert ("care", "until") in checked and ("claim", "claimed_on") in checked and ("partner",) in checked
     assert {(name, end) for name in T.PERIODS for end in ("from", "until")} <= checked
@@ -353,12 +362,17 @@ def test_staged_answers_match_the_key_and_the_recorded_results(staged_runs):
         assert all(scored.values()), (pid, result["staged"], keys[pid])
 
 
+def _q14(answers):
+    """Q1 to Q4 of a staged answer (relb-fixes added Q3gbp, the amount taken back, beside them)."""
+    return {q: v for q, v in answers.items() if q != "Q3gbp"}
+
+
 def test_review_examples_get_the_source_answer(staged_runs):
     """Eligibility review: A, resident in Scotland from 2026-09-20 and in England from
     2026-09-22 was a certified NO; B, the shared-care profile was 200 instead of 100."""
-    assert staged_runs["B15"][0]["staged"] == {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}
-    assert staged_runs["B17"][0]["staged"] == {"Q1": "YES", "Q2": "100.00", "Q3": "NO", "Q4": "100.00"}
-    assert staged_runs["B18"][0]["staged"]["Q1"] == "NO"
+    assert _q14(staged_runs["B15"][0]["staged"]) == {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}
+    assert _q14(staged_runs["B17"][0]["staged"]) == {"Q1": "YES", "Q2": "100.00", "Q3": "NO", "Q4": "100.00"}
+    assert _q14(staged_runs["B18"][0]["staged"])["Q1"] == "NO"
     for role in T.ROLES:  # R6 conditions only its subject; R11 orders the move after an E&W day
         r6, r11 = (next(r for r in T.rules() if r["id"] == f"{rid}.{role}") for rid in ("R6", "R11"))
         assert T.key(T.U("in_residential_care", T.OTHER[role])) not in T.key(r6["formula"])
@@ -374,7 +388,7 @@ def test_recheck_examples_get_the_source_answer(staged_runs):
     expected = {"C25": answer("200.00"), "C27": answer("200.00"), "C26": answer("100.00"),
                 "B20": answer("200.00"), "B21": answer("300.00"), "B22": answer("100.00"),
                 "B23": {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     for role in T.ROLES:  # R5 bounds the stay's end by QW1, on either role
         r5 = next(r for r in T.rules() if r["id"] == f"R5b.{role}")
         assert T.key(["date_no_later", T.day(T.QW1), T.num(role, "care_until")]) in T.key(r5["formula"])
@@ -390,7 +404,7 @@ def test_finding_c_examples_get_the_source_answer(staged_runs):
     no = {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}
     expected = {"B24": answer("100.00"), "B25": answer("100.00"), "B26": answer("100.00"),
                 "B27": answer("100.00"), "B28": no, "B29": no, "B30": answer("300.00")}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     for role in T.ROLES:
         o = T.OTHER[role]
         by_id = {r["rule"]: r for r in T.rules() if r["role"] == role}
@@ -415,7 +429,7 @@ def test_r7_recheck_examples_get_the_source_answer(staged_runs):
     answer = lambda amount: {"Q1": "YES", "Q2": amount, "Q3": "NO", "Q4": amount}
     expected = {"B30": answer("300.00"), "B31": answer("200.00"), "B32": answer("200.00"),
                 "B33": answer("300.00"), "B34": answer("300.00")}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     a, h = "applicant", "housemate"
     rules = {r["id"]: r for r in T.rules()}
     r14a, r14_3 = T.key(rules["R14a"]["formula"]), T.key(rules["R14.3"]["formula"])
@@ -555,7 +569,7 @@ def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
             cases.append({"id": f"{pid}/{question}", "kind": "document", "environment": raw,
                           "document": staged.document(target)})
     got = run.lean(cases)
-    assert len(got) == 269
+    assert len(got) == 287 + 67  # Q1 to Q4, and Q3gbp on each entitled profile (relb-fixes)
     assert all(r["status"] == "ok" and r["assurance"] == "lean-admitted" for r in got), \
         [r for r in got if r.get("status") != "ok"][:3]
 
@@ -588,18 +602,18 @@ def test_single_shot_stops_at_the_tableau_depth_cap():
 def test_recorded_summary():
     results = recorded()
     s = results["summary"]
-    assert s["strict"] == 80 and s["total"] == "269/269" and s["answered"] == 269
-    assert s["per_question"] == {"Q1": "80/80", "Q2": "63/63", "Q3": "63/63", "Q4": "63/63"}
+    assert s["strict"] == 86 and s["total"] == "287/287" and s["answered"] == 287
+    assert s["per_question"] == {"Q1": "86/86", "Q2": "67/67", "Q3": "67/67", "Q4": "67/67"}
     assert s["disagreements"] == [] and s["open"] == []
-    assert s["single_shot"] == {"answered": 0, "profiles": 80}
-    assert s["mutants_killed"] == "32/32"
+    assert s["single_shot"] == {"answered": 0, "profiles": 86}
+    assert s["mutants_killed"] == "34/34"
     lean = s["lean"]
     assert lean["certificates"] == lean["certificates_accepted"] > 0
-    assert lean["documents"] == lean["documents_admitted"] == 269
+    assert lean["documents"] == lean["documents_admitted"] == 287 + 67  # with Q3gbp (relb-fixes)
     assert lean["model_premises"] == lean["model_premises_true"] > 0
     assert results["b1_certified"] is True
     assert results["environment_id"] == Environment(T.environment()).environment_id
     readme = (HERE / "README.md").read_text(encoding="utf-8")
-    assert "269/269" in readme and "80/80" in readme
+    assert "287/287" in readme and "86/86" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})

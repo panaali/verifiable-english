@@ -66,7 +66,7 @@
 > keys were written by hand from S1 before VE was run on them.
 
 This use case measures VE's **accuracy**, not only its coverage. VE checks a
-published benefit rule on 80 applicant profiles, and its answers are compared
+published benefit rule on 86 applicant profiles, and its answers are compared
 with an answer key worked out beforehand from the source. It is also the first
 real-document test of the merged W6a quantities and dates feature
 ([units-schema.md](../../docs/spec/units-schema.md),
@@ -148,19 +148,21 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 63 entitled and 17 not-entitled cases. **Scoring
+The profiles contain 67 entitled and 19 not-entitled cases. **Scoring
 definition** (used everywhere in this plan and in the results):
 
 - Q1 is scored on every profile.
 - Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
   not-entitled profile they are **not applicable**, and neither the key nor VE
   gives them an answer. VE's NO on Q1 is scored as Q1 only.
-- That gives 80 + 63 + 63 + 63 = **269 scored questions**. The same 269 are
+- That gives 86 + 67 + 67 + 67 = **287 scored questions**. The same 287 are
   the denominator for accuracy, coverage and precision. (Before the
   eligibility review added B15 to B19, it was 57 + 44 × 3 = 189; before the
   recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206; before B24 to
   B30 were added for review finding C, 69 + 54 × 3 = 231; before the R7
-  recheck added B31 to B34, 76 + 59 × 3 = 253.)
+  recheck added B31 to B34, 76 + 59 × 3 = 253; before relb-fixes added C28 to
+  C33, 80 + 63 × 3 = 269.) Q3's amount taken back (`Q3gbp`, relb-fixes) is
+  answered and Lean-admitted beside Q3 but not scored: the key has no field for it.
 
 A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
 If VE answers NO or OPEN there, it gives no amount, and those three questions
@@ -389,6 +391,12 @@ because £20,000.00 is not over £35,000.00.
 | C25 | care home 2026-06-29 to 2026-09-26, no RB | YES | £200 | NO | £200 | 84 days before QW, but the last day is before QW₁ → not throughout QW → not R5 → 3(1). Ignoring the end: £100 | SI |
 | C26 | care home 2026-06-29 to 2026-09-27, no RB | YES | £100 | NO | £100 | last day = QW₁ → throughout QW → R5 → 3(2)(b)(ii) | SI |
 | C27 | care home 2026-06-29 to 2026-09-20, no RB | YES | £200 | NO | £200 | the stay ends before QW → not R5 → 3(1). Ignoring the end: £100 | SI |
+| C28 | State Pension, no claim, no payment without a claim stated | YES | £200 | NO | £200 | S2 section 4: State Pension needs no claim → paid without a claim (encoding rule O3) → 4(6)(a) → not 4(5) → 3(1) | guide |
+| C29 | no listed benefit, not had the payment before, no claim | NO | — | — | — | S2:88-90 → must claim; no claim → 4(5) | guide |
+| C30 | paid without a claim on 2027-04-01, no claim | NO | — | — | — | reg. 5(1) only on or before 31 March 2027 → no 4(6)(a) → 4(5) | SI |
+| C31 | paid without a claim on 2027-03-31, no claim | YES | £200 | NO | £200 | reg. 5(1) on the last day → 4(6)(a) → not 4(5) → 3(1) | SI |
+| C32 | PIP only, no claim | YES | £200 | NO | £200 | S2 section 4: PIP needs no claim → paid without a claim (encoding rule O3) → not 4(5); no RB → 3(1) | guide |
+| C33 | remand from 2026-09-01, sentenced from 2026-09-22, released 2026-12-01 | YES | £200 | NO | £200 | not under a sentence throughout QW (remand on QW₀) → not 4(2)(c) → 3(1) | SI |
 | D01 | alone b. 1955, income £35,000.00 | YES | £200 | NO | £200 | not over £35,000 | guide |
 | D02 | alone b. 1955, income £35,000.01 | YES | £200 | YES | £0 | over → whole payment recovered | guide |
 | D03 | alone b. 1955, income £34,999.99 | YES | £200 | NO | £200 | not over | guide |
@@ -398,13 +406,13 @@ because £20,000.00 is not over £35,000.00.
 
 **Summary.**
 
-- **Profiles.** There are 80: 13 in group A (S2 amount-table rows), 34 in group
-  B (exclusions and combinations), 27 in group C (date boundaries, each with
+- **Profiles.** There are 86: 13 in group A (S2 amount-table rows), 34 in group
+  B (exclusions and combinations), 33 in group C (date boundaries, each with
   both sides) and 6 in group D (the income threshold with one penny either
   side).
-- **Basis.** 38 are `guide` cases, 36 are `SI` cases and 6 are `SI≠guide`
+- **Basis.** 41 are `guide` cases, 39 are `SI` cases and 6 are `SI≠guide`
   cases.
-- **Flags.** 13 profiles carry a flag in `cases.json`, so 67 are unflagged.
+- **Flags.** 13 profiles carry a flag in `cases.json`, so 73 are unflagged.
   8 are flagged `ambiguous-source` (B10, B16, B28, B29, B33, B34, C11, C24); C11 is also
   `SI≠guide`.
 - **Benefit list.** Each of the five relevant benefits decides the answer of
@@ -746,10 +754,13 @@ each.
 | M30: R14 with "throughout" read into 3(3) | B30 |
 | M31: R14 without the common day of AR8 (the reading before the R7 recheck) | B31, B32 |
 | M32: R14 with the bounds of AR8 strict | B33, B34 |
+| M33: R12 without the 31 March bound of reg. 5(1) | C30 |
+| M34: R9 with the custody start for the sentence start | C33 |
 
-Kill rate = mutants killed / 32; 32/32 is expected. (M20 to M23 were added by
+Kill rate = mutants killed / 34; 34/34 is expected. (M20 to M23 were added by
 the eligibility review, M24 and M25 by the recheck, M26 to M30 for review
-finding C, and M31 and M32 by the R7 recheck; the first run had M1 to M19.)
+finding C, M31 and M32 by the R7 recheck, and M33 and M34 by relb-fixes; the
+first run had M1 to M19.)
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:

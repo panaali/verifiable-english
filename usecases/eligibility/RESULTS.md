@@ -7,18 +7,18 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 | Measure | Result |
 |---|---|
-| Strict, every scored question of a profile correct | 80/80 |
-| Q1 | 80/80 |
-| Q2 | 63/63 |
-| Q3 | 63/63 |
-| Q4 | 63/63 |
-| Total | 269/269 |
-| Answered (certified) | 269/269 |
-| Precision (correct / answered) | 269/269 |
-| unflagged profiles: strict | 67/67 |
-| unflagged profiles: questions | 226/226 |
-| guide profiles: strict | 38/38 |
-| guide profiles: questions | 131/131 |
+| Strict, every scored question of a profile correct | 86/86 |
+| Q1 | 86/86 |
+| Q2 | 67/67 |
+| Q3 | 67/67 |
+| Q4 | 67/67 |
+| Total | 287/287 |
+| Answered (certified) | 287/287 |
+| Precision (correct / answered) | 287/287 |
+| unflagged profiles: strict | 73/73 |
+| unflagged profiles: questions | 244/244 |
+| guide profiles: strict | 41/41 |
+| guide profiles: questions | 140/140 |
 
 **Flagged profiles, one by one.**
 
@@ -44,24 +44,25 @@ account is in [README.md](README.md). Scoring follows PLAN.md section 3.
 
 ## Single shot (all rules and facts in one problem)
 
-Q1 answered on 0 of 80 profiles; Q2 to Q4 therefore OPEN everywhere.
+Q1 answered on 0 of 86 profiles; Q2 to Q4 therefore OPEN everywhere.
 Every search stopped with status `NotFound`:
 
 | Search | Status | Steps | Searches |
 |---|---|---|---|
-| bottom | NotFound | 124 | 57 |
+| bottom | NotFound | 124 | 63 |
 | bottom | NotFound | 125 to 999 | 23 |
-| entitled | NotFound | 124 | 57 |
+| entitled | NotFound | 124 | 63 |
 | entitled | NotFound | 125 to 999 | 23 |
-| not_entitled | NotFound | 125 to 999 | 80 |
+| not_entitled | NotFound | 124 | 3 |
+| not_entitled | NotFound | 125 to 999 | 83 |
 
 ## Evidence
 
-- Step certificates produced: 2352; accepted by Lean `ve_quantity`: 2352.
-- Answer documents (`documents@1`): 269; admitted by Lean: 269.
-- Non-vacuity: 7364 of 7364 premise evaluations are true in the reference fixture models (Lean evaluation).
+- Step certificates produced: 2494; accepted by Lean `ve_quantity`: 2494.
+- Answer documents (`documents@1`): 354; admitted by Lean: 354.
+- Non-vacuity: 7962 of 7962 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 522 distinct, 5910 requested.
+- Proof searches: 530 distinct, 6346 requested.
 
 ## Probes (PLAN section 8, stage 0)
 
@@ -70,11 +71,11 @@ Every search stopped with status `NotFound`:
 - **P3**, expected facts parse uniquely and round-trip; the conditional is rejected: `{"conditional": "parsed", "facts": [{"parsed": true, "rendered": "The applicant's pensionable-age date is no later than 2018-12-05.", "round_trip": true, "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."}, {"parsed": true, "rendered": "The applicant's total income equals GBP 35000.01.", "round_trip": true, "sentence": "The applicant's total income equals £35000.01."}, {"parsed": true, "rendered": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week.", "round_trip": true, "sentence": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."}]}`
 - **P4**, expected both rejected (separator outside the surface; UnitPrecision): `{"results": {"The applicant's total income equals £35,000.00.": "rejected: No W6 quantity reading", "The applicant's total income equals £35000.001.": "rejected: UnitPrecision(gbp_penny, scale=100)"}}`
 - **P5**, expected admitted: `{"elapsed_days": "admitted", "shift_days": "admitted"}`
-- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 126}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q4": true}}}`
+- **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 126}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q3gbp": "0.00", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q3gbp": true, "Q4": true}}}`
 
 ## Mutants
 
-Killed: 32/32.
+Killed: 34/34.
 
 | Mutant | Change | Must change | Changed | Killed |
 |---|---|---|---|---|
@@ -90,7 +91,7 @@ Killed: 32/32.
 | M10 | R11 'before' for 'on or before' | C20 | C20 | yes |
 | M11 | R12 'before' 31 March | C22 | C22 | yes |
 | M12 | R3 'every day' for 'any day' | C17, C19 | B15, B16, B19, C17, C19 | yes |
-| M13 | R16 counting the partner's income | D05 | 62 profiles | yes |
+| M13 | R16 counting the partner's income | D05 | 66 profiles | yes |
 | M14 | R14 without 3(3) | A08 | A08, B14, B30, B33, B34, C08 | yes |
 | M15 | R4 without income support | B11 | B11 | yes |
 | M16 | R4 without income-based JSA | B12 | B12 | yes |
@@ -110,7 +111,9 @@ Killed: 32/32.
 | M30 | R14 with 'throughout' read into 3(3) | B30 | B30, B33, B34 | yes |
 | M31 | R14 without the common day of AR8 | B31, B32 | B31, B32 | yes |
 | M32 | R14 with the bounds of AR8 strict | B33, B34 | B33, B34 | yes |
+| M33 | R12 without the 31 March bound of reg. 5(1) | C30 | C30 | yes |
+| M34 | R9 with the custody start for the sentence start | C33 | C33 | yes |
 
 ## English
 
-99 of 179 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+107 of 188 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).

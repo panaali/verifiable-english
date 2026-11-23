@@ -1487,7 +1487,7 @@
    "rule": "R9",
    "role": "applicant",
    "source": "S1 reg. 4(2)(c), reading AR1",
-   "gloss": "Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in custody under a sentence, the custody began before 2026-09-21, and the release is after 2026-09-27.",
+   "gloss": "Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in custody under a sentence, the sentence began before 2026-09-21, and the release is after 2026-09-27.",
    "formula": [
     "and",
     [
@@ -1527,7 +1527,7 @@
          [
           "const",
           "day",
-          "applicant_custody_from"
+          "applicant_sentence_from"
          ],
          [
           "date",
@@ -1579,7 +1579,7 @@
          [
           "const",
           "day",
-          "applicant_custody_from"
+          "applicant_sentence_from"
          ],
          [
           "date",
@@ -1858,7 +1858,7 @@
    "rule": "R12",
    "role": "applicant",
    "source": "S1 reg. 4(5), (6) and 5(1)",
-   "gloss": "Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a claim and made no claim on or before 2027-03-31.",
+   "gloss": "Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a claim on or before 2027-03-31 and made no claim on or before 2027-03-31.",
    "formula": [
     "and",
     [
@@ -1876,11 +1876,26 @@
       [
        "not",
        [
-        "unary",
-        "paid_without_claim",
+        "and",
         [
-         "const",
-         "applicant"
+         "unary",
+         "paid_without_claim",
+         [
+          "const",
+          "applicant"
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "applicant_unclaimed_paid"
+         ],
+         [
+          "date",
+          "2027-03-31"
+         ]
         ]
        ]
       ],
@@ -1919,11 +1934,26 @@
       [
        "not",
        [
-        "unary",
-        "paid_without_claim",
+        "and",
         [
-         "const",
-         "applicant"
+         "unary",
+         "paid_without_claim",
+         [
+          "const",
+          "applicant"
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "applicant_unclaimed_paid"
+         ],
+         [
+          "date",
+          "2027-03-31"
+         ]
         ]
        ]
       ],
@@ -3716,7 +3746,7 @@
    "rule": "R9",
    "role": "housemate",
    "source": "S1 reg. 4(2)(c), reading AR1",
-   "gloss": "Regulation 4(2)(c) applies to the housemate exactly when the housemate is detained in custody under a sentence, the custody began before 2026-09-21, and the release is after 2026-09-27.",
+   "gloss": "Regulation 4(2)(c) applies to the housemate exactly when the housemate is detained in custody under a sentence, the sentence began before 2026-09-21, and the release is after 2026-09-27.",
    "formula": [
     "and",
     [
@@ -3756,7 +3786,7 @@
          [
           "const",
           "day",
-          "housemate_custody_from"
+          "housemate_sentence_from"
          ],
          [
           "date",
@@ -3808,7 +3838,7 @@
          [
           "const",
           "day",
-          "housemate_custody_from"
+          "housemate_sentence_from"
          ],
          [
           "date",
@@ -4087,7 +4117,7 @@
    "rule": "R12",
    "role": "housemate",
    "source": "S1 reg. 4(5), (6) and 5(1)",
-   "gloss": "Regulation 4(5) applies to the housemate exactly when the housemate is not paid without a claim and made no claim on or before 2027-03-31.",
+   "gloss": "Regulation 4(5) applies to the housemate exactly when the housemate is not paid without a claim on or before 2027-03-31 and made no claim on or before 2027-03-31.",
    "formula": [
     "and",
     [
@@ -4105,11 +4135,26 @@
       [
        "not",
        [
-        "unary",
-        "paid_without_claim",
+        "and",
         [
-         "const",
-         "housemate"
+         "unary",
+         "paid_without_claim",
+         [
+          "const",
+          "housemate"
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "housemate_unclaimed_paid"
+         ],
+         [
+          "date",
+          "2027-03-31"
+         ]
         ]
        ]
       ],
@@ -4148,11 +4193,26 @@
       [
        "not",
        [
-        "unary",
-        "paid_without_claim",
+        "and",
         [
-         "const",
-         "housemate"
+         "unary",
+         "paid_without_claim",
+         [
+          "const",
+          "housemate"
+         ]
+        ],
+        [
+         "date_no_later",
+         [
+          "const",
+          "day",
+          "housemate_unclaimed_paid"
+         ],
+         [
+          "date",
+          "2027-03-31"
+         ]
         ]
        ]
       ],

@@ -112,7 +112,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person's custody is under a sentence imposed by a court."
+    "description": "The person's custody is under a sentence imposed by a court from the sentence start date to the release date."
    },
    "claimed": {
     "arguments": [
@@ -124,7 +124,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person is paid without a claim (S1 reg. 5(1))."
+    "description": "The person is paid a winter fuel payment without a claim (S1 reg. 5(1)), on the unclaimed payment date."
    },
    "affects_other_benefits": {
     "arguments": [
@@ -396,8 +396,8 @@
    "applicant_scot_ni_from": {
     "sort": "$int",
     "unit": "day",
-    "description": "The applicant's first day of ordinary residence in Scotland or Northern Ireland.",
-    "verbalisation": "the applicant's first day of ordinary residence in Scotland or Northern Ireland"
+    "description": "The applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland.",
+    "verbalisation": "the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland"
    },
    "applicant_care_from": {
     "sort": "$int",
@@ -435,6 +435,12 @@
     "description": "The applicant's custody start date.",
     "verbalisation": "the applicant's custody start date"
    },
+   "applicant_sentence_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's sentence start date.",
+    "verbalisation": "the applicant's sentence start date"
+   },
    "applicant_release": {
     "sort": "$int",
     "unit": "day",
@@ -446,6 +452,12 @@
     "unit": "day",
     "description": "The applicant's claim date.",
     "verbalisation": "the applicant's claim date"
+   },
+   "applicant_unclaimed_paid": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's unclaimed payment date.",
+    "verbalisation": "the applicant's unclaimed payment date"
    },
    "applicant_care_before_week": {
     "sort": "$int",
@@ -492,8 +504,8 @@
    "housemate_scot_ni_from": {
     "sort": "$int",
     "unit": "day",
-    "description": "The housemate's first day of ordinary residence in Scotland or Northern Ireland.",
-    "verbalisation": "the housemate's first day of ordinary residence in Scotland or Northern Ireland"
+    "description": "The housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland.",
+    "verbalisation": "the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland"
    },
    "housemate_care_from": {
     "sort": "$int",
@@ -531,6 +543,12 @@
     "description": "The housemate's custody start date.",
     "verbalisation": "the housemate's custody start date"
    },
+   "housemate_sentence_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's sentence start date.",
+    "verbalisation": "the housemate's sentence start date"
+   },
    "housemate_release": {
     "sort": "$int",
     "unit": "day",
@@ -542,6 +560,12 @@
     "unit": "day",
     "description": "The housemate's claim date.",
     "verbalisation": "the housemate's claim date"
+   },
+   "housemate_unclaimed_paid": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's unclaimed payment date.",
+    "verbalisation": "the housemate's unclaimed payment date"
    },
    "housemate_care_before_week": {
     "sort": "$int",
