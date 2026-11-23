@@ -113,7 +113,8 @@ FACTS = {  # unary facts on an item (the encoder states each true or false)
                           "(directly or by reason of reg. 28(3)) (stated)",
     "premium_excess": "is the part of a payment as respects hours of time work or output work that exceeds the lowest "
                       "rate per hour which could be payable under the contract for that work (stated as its own amount)",
-    "premium_product": "includes an excess over a lower rate per hour that is not stated as its own amount (hours x rate)",
+    "part_excluded": "is excluded by reg. 10 only in part (reg. 10(i) or (j)) and the part that counts is not stated as "
+                     "its own amount (it would need a subtraction or hours x rates)",
     "arrangement_pay": "is attributable to a particular aspect of the working arrangements or to working or personal "
                        "circumstances",
     "consolidated": "is consolidated into the worker's standard pay",
@@ -305,13 +306,15 @@ def _wdays_rules(x, ctx):
 
 
 def _rem_rules(ctx):
-    """reg. 8 restricted to the configurations that need no addition (D2b): one contributing item, or none."""
+    """reg. 8 restricted to the configurations that need no addition (D2b): one contributing item, or none. A payment
+    excluded only in part (part_excluded) blocks both: its counted part is not written (amount arithmetic)."""
     xs = ctx.money
+    whole = [Not(U("part_excluded", y)) for y in xs]
     out = []
     for x in xs:
-        out.append(Implies(And(U("contributes", x), *[Not(U("contributes", y)) for y in xs if y != x]),
+        out.append(Implies(And(U("contributes", x), *[Not(U("contributes", y)) for y in xs if y != x], *whole),
                            Eq(kc("rem"), k("contrib", x))))
-    out.append(Implies(And(*[Not(U("contributes", y)) for y in xs]), Eq(kc("rem"), gbp("0.00"))))
+    out.append(Implies(And(*[Not(U("contributes", y)) for y in xs], *whole), Eq(kc("rem"), gbp("0.00"))))
     return out
 
 
@@ -329,8 +332,9 @@ def _contrib_rules(x, ctx):
 
 UNITS = {
     # ---- Part 2: rates ----
-    1: ("RULE", lambda ctx: [_rate_rules(ctx)[1]],
-        "reg. 4: the national living wage rate £12.71 for a worker who qualifies (Act s. 1(3): a stated fact)"),
+    1: ("PART", lambda ctx: [_rate_rules(ctx)[1]], "cross-reference",
+        "reg. 4: the national living wage rate £12.71 for a worker who qualifies 'for the purposes of section 1(3) of the "
+        "Act' (not pinned: a stated fact, cross-reference)"),
     2: ("PART", lambda ctx: _rate_rules(ctx)[2:] + [
         iff_atom("band_b", "w", And(Le(yrs(18), kc("age")), Lt(kc("age"), yrs(21)))),
         iff_atom("band_c", "w", Lt(kc("age"), yrs(18)))],
@@ -418,7 +422,7 @@ UNITS = {
             U("x_hours_not_work", x), U("x_salaried_reduced", x), U("premium_excess", x),
             And(U("arrangement_pay", x), Not(U("consolidated", x)), Not(U("performance", x))),
             U("expenditure", x), U("x_tips", x), U("x_travel338", x), U("x_salary_premium", x))),
-        iff_atom("counted_pay", x, And(U("p9", x), Not(U("excl10", x)), Not(U("premium_product", x))))]),
+        iff_atom("counted_pay", x, And(U("p9", x), Not(U("excl10", x)), Not(U("part_excluded", x))))]),
          "cross-reference",
          "reg. 10(a)-(o): each limb a stated purpose; (h), (i) refer to regs. 23, 28(3), 35, 40, 48 (Part 5) and (n) to "
          "ITEPA s. 338: stated facts (cross-reference); (o) 'salary premium' a given name (reg. 2, definition by "
@@ -459,10 +463,11 @@ UNITS = {
          "reg. 14(3) 'local housing authority' = Housing Act 1985 Part 1 etc.: a stated fact (payee_lha)"),
     29: ("NOT", None, "definition by reference",
          "reg. 14(3) 'registered social landlord' = HRA 2008 Part 2, HA 1996 Part 1 etc.: a stated fact (payee_lha)"),
-    30: ("RULE", each(lambda x, ctx: [iff_atom("reg15", x, And(
+    30: ("PART", each(lambda x, ctx: [iff_atom("reg15", x, And(
         U("accommodation", x), U("acc_entitled", x), U("absent", "w"), U("c15a", x), U("c15b", x), U("c15c", x),
-        U("c15d", x)))]),
-         "reg. 15(1)(a)-(d): conditions as facts ((b)'s amount comparison a stated fact)"),
+        U("c15d", x)))]), "amount arithmetic",
+         "reg. 15(1)(a)-(d): conditions as facts; (b) 'an amount not less than' the entitlement under the Regulations is "
+         "an amount comparison (pay x hours) carried only as a stated fact (stated)"),
     31: ("NOT", None, "amount arithmetic",
          "reg. 15(2): (A x B) / C, a product and a quotient of stated quantities (PROD): not written; the item's "
          "contribution stays open (Q2 unsupported, PROD)"),

@@ -1,0 +1,38 @@
+{"age": 36, "case": "N001", "first": "2026-06-01"}
+{"age": 40, "case": "N002", "first": "2026-07-06"}
+{"age": 20, "case": "N003", "first": "2026-06-01"}
+{"age": 21, "case": "N004", "first": "2026-07-01"}
+{"age": 17, "case": "N005", "first": "2026-09-14"}
+{"age": 18, "case": "N006", "first": "2026-06-01", "within12_cur": false}
+{"age": 20, "case": "N007", "first": "2026-06-01", "within12_cur": false}
+{"age": 30, "case": "N008", "first": "2026-08-01", "within12_cur": true}
+{"age": 19, "case": "N009", "first": "2026-08-01", "within12_cur": false}
+{"age": 18, "case": "N010", "first": "2026-05-01", "within12_cur": false}
+{"age": 22, "case": "N011.1", "first": "2026-08-31", "within12_cur": true}
+{"age": 22, "case": "N011.2", "first": "2026-09-07", "within12_cur": false}
+{"age": 21, "case": "N012", "first": "2026-06-01", "within12_cur": true, "within12_prior": false}
+{"age": 23, "case": "N013", "first": "2026-06-01"}
+{"age": 45, "case": "N014.1", "first": "2026-05-01"}
+{"age": 45, "case": "N014.2", "first": "2026-06-01"}
+{"age": 50, "case": "N015", "first": "2026-06-01"}
+{"age": 43, "case": "N016", "first": "2026-06-01"}
+{"age": 37, "case": "N017", "first": "2026-06-01"}
+{"age": 38, "case": "N018", "first": "2026-06-08"}
+{"age": 27, "case": "N019", "first": "2026-06-01"}
+{"age": 29, "case": "N020", "first": "2026-06-01"}
+{"age": 34, "case": "N021", "first": "2026-07-01"}
+{"age": 25, "case": "N022", "first": "2026-06-22"}
+{"age": 19, "case": "N023", "first": "2026-06-01"}
+{"age": 17, "case": "N024", "first": "2026-06-01"}
+{"age": 20, "case": "N025", "first": "2026-06-01"}
+{"age": 42, "case": "N026", "first": "2026-06-01"}
+{"age": 46, "case": "N027", "first": "2026-06-01"}
+{"age": 29, "case": "N028", "first": "2026-07-01"}
+{"age": 32, "case": "N029.1", "first": "2026-06-01"}
+{"age": 32, "case": "N029.2", "first": "2026-07-01"}
+{"age": 39, "case": "N030", "first": "2026-06-01"}
+{"age": 34, "case": "N031", "first": "2026-07-01"}
+{"age": 56, "case": "N032", "first": "2026-08-01"}
+{"age": 44, "case": "N033", "first": "2026-06-01"}
+{"age": 31, "case": "N034", "first": "2026-06-01"}
+{"age": 28, "case": "N035", "first": "2026-06-01"}
