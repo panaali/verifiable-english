@@ -244,11 +244,33 @@ def answer_targets(case, answers):
     return out
 
 
-def lean(cases):
+def _check(group):
+    """Lean replay of one household's cases; a batch the checker fails on is split in halves (its process has a fixed
+    4 GiB address-space cap, ve/backends/lean_service.py ADDRESS_SPACE); a single case it still cannot answer is recorded
+    as {"status": "checker-unavailable"} (its answer is then OPEN)."""
     from ve.backends.relay import rows
-    results = rows("quantity", cases)
-    assert [r["id"] for r in results] == [c["id"] for c in cases]
-    return results
+    from ve.errors import CheckerUnavailable
+    try:
+        got = rows("quantity", group)
+        assert [r["id"] for r in got] == [c["id"] for c in group]
+        return got
+    except CheckerUnavailable as e:
+        print(group[0]["id"], f"checker unavailable on {len(group)} cases:", str(e)[-60:], file=sys.stderr)
+        if len(group) == 1:
+            return [{"id": group[0]["id"], "status": "checker-unavailable"}]
+        h = len(group) // 2
+        return _check(group[:h]) + _check(group[h:])
+
+
+def lean(cases, workers=4):
+    """One request per household, households in parallel (separate Lean processes)."""
+    from concurrent.futures import ProcessPoolExecutor
+    groups = {}
+    for c in cases:
+        groups.setdefault(c["id"].split("/")[0], []).append(c)
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        parts = list(pool.map(_check, list(groups.values())))
+    return [r for part in parts for r in part]
 
 
 def _mutant_task(item):
@@ -272,6 +294,7 @@ def main(argv=None):
     ap.add_argument("--no-lean", action="store_true")
     ap.add_argument("--out")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--lean-workers", type=int, default=4)
     args = ap.parse_args(argv)
     started = time.time()
     bridges = E.load_bridges(BRIDGES_SHA256)
@@ -299,7 +322,7 @@ def main(argv=None):
                 lean_cases.append({"id": f"{case['id']}/doc/{question}/{k}", "kind": "document", "environment": raw_env,
                                    "document": st.document(target)})
         print(case["id"], answers, rec["seconds"], "s", file=sys.stderr)
-    lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
+    lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases, args.lean_workers)}
     for rec in records:
         hid = rec["id"]
         mine = {k: v for k, v in lean_results.items() if k.startswith(hid + "/")}
