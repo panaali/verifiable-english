@@ -1,0 +1,118 @@
+{"case": "F001", "item": "l1", "values": {"wfrom": "2025-03-02"}}
+{"case": "F001", "item": "s1", "values": {"days": 24, "months": 13, "monthsup": 14, "weeks": 60}}
+{"case": "F002", "item": "l1", "values": {"wfrom": "2025-07-06"}}
+{"case": "F002", "item": "s1", "values": {"days": 29, "months": 5, "monthsup": 6, "weeks": 26}}
+{"case": "F002", "item": "s2", "values": {"days": 1, "months": 6, "monthsup": 7, "weeks": 26}}
+{"case": "F002", "item": "b1", "values": {"days": 7, "months": 3, "monthsup": 4, "weeks": 14}}
+{"case": "F003", "item": "l1", "values": {"wfrom": "2025-07-06"}}
+{"case": "F003", "item": "s1", "values": {"days": 29, "months": 5, "monthsup": 6, "weeks": 26}}
+{"case": "F003", "item": "s2", "values": {"days": 24, "months": 5, "monthsup": 6, "weeks": 25}}
+{"case": "F003", "item": "b1", "values": {"days": 14, "months": 3, "monthsup": 4, "weeks": 15}}
+{"case": "F004", "item": "l1", "values": {"wfrom": "2025-03-02"}}
+{"case": "F004", "item": "s1", "values": {"days": 0, "months": 8, "monthsup": 8, "weeks": 35}}
+{"case": "F004", "item": "s2", "values": {"days": 1, "months": 6, "monthsup": 7, "weeks": 26}}
+{"case": "F004", "item": "b1", "values": {"days": 30, "months": 57, "monthsup": 58, "weeks": 252}}
+{"case": "F005", "item": "l1", "values": {"wfrom": "2025-03-02"}}
+{"case": "F005", "item": "s1", "values": {"days": 24, "months": 65, "monthsup": 66, "weeks": 286}}
+{"case": "F005", "item": "s2", "values": {"days": 1, "months": 8, "monthsup": 9, "weeks": 35}}
+{"case": "F005", "item": "b1", "values": {"days": 4, "months": 96, "monthsup": 97, "weeks": 418}}
+{"case": "F006", "item": "l1", "values": {"wfrom": "2025-06-01"}}
+{"case": "F006", "item": "s1", "values": {"days": 29, "months": 43, "monthsup": 44, "weeks": 191}}
+{"case": "F006", "item": "s2", "values": {"days": 0, "months": 100, "monthsup": 100, "weeks": 435}}
+{"case": "F006", "item": "s3", "values": {"days": 30, "months": 3, "monthsup": 4, "weeks": 17}}
+{"case": "F006", "item": "b1", "values": {"days": 0, "months": 100, "monthsup": 100, "weeks": 435}}
+{"case": "F007", "item": "l1", "values": {"wfrom": "2025-06-01"}}
+{"case": "F007", "item": "s1", "values": {"days": 7, "months": 9, "monthsup": 10, "weeks": 40}}
+{"case": "F007", "item": "s2", "values": {"days": 16, "months": 3, "monthsup": 4, "weeks": 15}}
+{"case": "F007", "item": "b1", "values": {"days": 12, "months": 92, "monthsup": 93, "weeks": 402}}
+{"case": "F008", "item": "l1", "values": {"wfrom": "2025-06-01"}}
+{"case": "F008", "item": "s1", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F008", "item": "s2", "values": {"days": 19, "months": 7, "monthsup": 8, "weeks": 33}}
+{"case": "F008", "item": "b1", "values": {"days": 9, "months": 134, "monthsup": 135, "weeks": 584}}
+{"case": "F009", "item": "l1", "values": {"wfrom": "2025-08-03"}}
+{"case": "F009", "item": "s1", "values": {"days": 11, "months": 10, "monthsup": 11, "weeks": 45}}
+{"case": "F009", "item": "s2", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F009", "item": "b1", "values": {"days": 20, "months": 121, "monthsup": 122, "weeks": 529}}
+{"case": "F010", "item": "l1", "values": {"wfrom": "2025-06-01"}}
+{"case": "F010", "item": "s1", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F010", "item": "s2", "values": {"days": 15, "months": 6, "monthsup": 7, "weeks": 28}}
+{"case": "F010", "item": "b1", "values": {"days": 12, "months": 147, "monthsup": 148, "weeks": 641}}
+{"case": "F011", "item": "l1", "values": {"wfrom": "2025-05-04"}}
+{"case": "F011", "item": "s1", "values": {"days": 28, "months": 15, "monthsup": 16, "weeks": 69}}
+{"case": "F012", "item": "l1", "values": {"wfrom": "2025-05-04"}}
+{"case": "F012", "item": "s1", "values": {"days": 1, "months": 15, "monthsup": 16, "weeks": 65}}
+{"case": "F013", "item": "l1", "values": {"wfrom": "2025-09-07"}}
+{"case": "F013", "item": "s1", "values": {"days": 5, "months": 24, "monthsup": 25, "weeks": 105}}
+{"case": "F014", "item": "l1", "values": {"wfrom": "2025-08-03"}}
+{"case": "F014", "item": "s1", "values": {"days": 30, "months": 28, "monthsup": 29, "weeks": 126}}
+{"case": "F015", "item": "l1", "values": {"wfrom": "2025-02-02"}}
+{"case": "F015", "item": "l2", "values": {"wfrom": "2025-03-09"}}
+{"case": "F015", "item": "s1", "values": {"days": 30, "months": 10, "monthsup": 11, "weeks": 48}}
+{"case": "F015", "item": "s2", "values": {"days": 7, "months": 1, "monthsup": 2, "weeks": 5}}
+{"case": "F016", "item": "l1", "values": {"wfrom": "2025-07-13"}}
+{"case": "F016", "item": "s1", "values": {"days": 18, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F016", "item": "s2", "values": {"days": 19, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F016", "item": "s3", "values": {"days": 23, "months": 2, "monthsup": 3, "weeks": 12}}
+{"case": "F016", "item": "b1", "values": {"days": 6, "months": 3, "monthsup": 4, "weeks": 14}}
+{"case": "F017", "item": "l1", "values": {"wfrom": "2025-08-03"}}
+{"case": "F017", "item": "s1", "values": {"days": 27, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F017", "item": "s2", "values": {"days": 1, "months": 5, "monthsup": 6, "weeks": 22}}
+{"case": "F017", "item": "b1", "values": {"days": 1, "months": 2, "monthsup": 3, "weeks": 9}}
+{"case": "F018", "item": "l1", "values": {"wfrom": "2025-03-02"}}
+{"case": "F018", "item": "s1", "values": {"days": 11, "months": 18, "monthsup": 19, "weeks": 80}}
+{"case": "F019", "item": "l1", "values": {"wfrom": "2025-09-07"}}
+{"case": "F019", "item": "s1", "values": {"days": 6, "months": 26, "monthsup": 27, "weeks": 114}}
+{"case": "F020", "item": "l1", "values": {"wfrom": "2025-05-04"}}
+{"case": "F020", "item": "s1", "values": {"days": 27, "months": 18, "monthsup": 19, "weeks": 82}}
+{"case": "F021", "item": "l1", "values": {"wfrom": "2025-05-04"}}
+{"case": "F021", "item": "s1", "values": {"days": 2, "months": 40, "monthsup": 41, "weeks": 174}}
+{"case": "F022", "item": "l1", "values": {"wfrom": "2025-09-07"}}
+{"case": "F022", "item": "s1", "values": {"days": 5, "months": 44, "monthsup": 45, "weeks": 192}}
+{"case": "F023", "item": "l1", "values": {"wfrom": "2025-03-09"}}
+{"case": "F023", "item": "s1", "values": {"days": 8, "months": 26, "monthsup": 27, "weeks": 114}}
+{"case": "F024", "item": "l1", "values": {"wfrom": "2025-12-07"}}
+{"case": "F024", "item": "s1", "values": {"days": 5, "months": 18, "monthsup": 19, "weeks": 79}}
+{"case": "F025", "item": "l1", "values": {"wfrom": "2025-07-06"}}
+{"case": "F025", "item": "s1", "values": {"days": 3, "months": 54, "monthsup": 55, "weeks": 235}}
+{"case": "F026", "item": "l1", "values": {"wfrom": "2025-06-08"}}
+{"case": "F026", "item": "s1", "values": {"days": 26, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F026", "item": "s2", "values": {"days": 3, "months": 14, "monthsup": 15, "weeks": 61}}
+{"case": "F026", "item": "s3", "values": {"days": 9, "months": 2, "monthsup": 3, "weeks": 10}}
+{"case": "F026", "item": "b1", "values": {"days": 3, "months": 14, "monthsup": 15, "weeks": 61}}
+{"case": "F027", "item": "l1", "values": {"wfrom": "2025-09-07"}}
+{"case": "F027", "item": "s1", "values": {"days": 27, "months": 32, "monthsup": 33, "weeks": 143}}
+{"case": "F027", "item": "s2", "values": {"days": 15, "months": 88, "monthsup": 89, "weeks": 385}}
+{"case": "F027", "item": "s3", "values": {"days": 22, "months": 6, "monthsup": 7, "weeks": 29}}
+{"case": "F027", "item": "b1", "values": {"days": 15, "months": 88, "monthsup": 89, "weeks": 385}}
+{"case": "F028", "item": "l1", "values": {"wfrom": "2025-10-05"}}
+{"case": "F028", "item": "s1", "values": {"days": 18, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F028", "item": "s2", "values": {"days": 15, "months": 3, "monthsup": 4, "weeks": 15}}
+{"case": "F028", "item": "s3", "values": {"days": 4, "months": 4, "monthsup": 5, "weeks": 18}}
+{"case": "F028", "item": "b1", "values": {"days": 6, "months": 3, "monthsup": 4, "weeks": 14}}
+{"case": "F028", "item": "b2", "values": {"days": 16, "months": 2, "monthsup": 3, "weeks": 11}}
+{"case": "F029", "item": "l1", "values": {"wfrom": "2025-03-02"}}
+{"case": "F029", "item": "s1", "values": {"days": 23, "months": 17, "monthsup": 18, "weeks": 77}}
+{"case": "F029", "item": "s2", "values": {"days": 24, "months": 13, "monthsup": 14, "weeks": 60}}
+{"case": "F029", "item": "b1", "values": {"days": 10, "months": 162, "monthsup": 163, "weeks": 706}}
+{"case": "F030", "item": "l1", "values": {"wfrom": "2025-03-30"}}
+{"case": "F030", "item": "s1", "values": {"days": 7, "months": 9, "monthsup": 10, "weeks": 40}}
+{"case": "F030", "item": "s2", "values": {"days": 20, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F030", "item": "s3", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F030", "item": "b1", "values": {"days": 3, "months": 99, "monthsup": 100, "weeks": 431}}
+{"case": "F030", "item": "b2", "values": {"days": 27, "months": 26, "monthsup": 27, "weeks": 117}}
+{"case": "F031", "item": "l1", "values": {"wfrom": "2025-03-30"}}
+{"case": "F031", "item": "s1", "values": {"days": 4, "months": 9, "monthsup": 10, "weeks": 40}}
+{"case": "F031", "item": "s2", "values": {"days": 20, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F031", "item": "s3", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F031", "item": "b1", "values": {"days": 8, "months": 83, "monthsup": 84, "weeks": 362}}
+{"case": "F031", "item": "b2", "values": {"days": 27, "months": 26, "monthsup": 27, "weeks": 117}}
+{"case": "F032", "item": "l1", "values": {"wfrom": "2025-04-06"}}
+{"case": "F032", "item": "l2", "values": {"wfrom": "2025-09-07"}}
+{"case": "F032", "item": "s1", "values": {"days": 4, "months": 39, "monthsup": 40, "weeks": 170}}
+{"case": "F032", "item": "s2", "values": {"days": 5, "months": 44, "monthsup": 45, "weeks": 192}}
+{"case": "F033", "item": "l1", "values": {"wfrom": "2025-06-08"}}
+{"case": "F033", "item": "s1", "values": {"days": 6, "months": 12, "monthsup": 13, "weeks": 53}}
+{"case": "F034", "item": "l1", "values": {"wfrom": "2025-06-01"}}
+{"case": "F034", "item": "s1", "values": {"days": 30, "months": 40, "monthsup": 41, "weeks": 178}}
+{"case": "F035", "item": "l1", "values": {"wfrom": "2025-06-08"}}
+{"case": "F035", "item": "s1", "values": {"days": 7, "months": 9, "monthsup": 10, "weeks": 40}}

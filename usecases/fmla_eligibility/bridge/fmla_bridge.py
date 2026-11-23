@@ -8,8 +8,10 @@ W  the 12-month period immediately preceding a leave starting on day D runs from
 P  a period from its first day F to its last day L inclusive lasts m whole calendar months and d days, where m is the
    largest number with F + m months <= L + 1 day (F + m months: the same day number m months later, or the first day of
    the following month when that month is too short) and d = (L + 1 day) - (F + m months) in days.
+K  weeks run Monday to Sunday (every case states it): a period from F to L touches ((Monday of L's week) - (Monday of
+   F's week)) / 7 + 1 weeks (used only where a case gives a period's dates and not its number of weeks).
 Input  bridge/inputs.jsonl: {"case", "item", "kind": "window", "start"} or {"case", "item", "kind": "duration", "from", "to"}.
-Output bridge/bridges.jsonl: {"case", "item", "values": {...}} (window: wfrom; duration: months, monthsup, days).
+Output bridge/bridges.jsonl: {"case", "item", "values": {...}} (window: wfrom; duration: months, monthsup, days, weeks).
 """
 import datetime as dt
 import json
@@ -42,12 +44,18 @@ def duration(first, last):
     return m, d
 
 
+def weeks(first, last):
+    monday = lambda d: d - dt.timedelta(days=d.weekday())  # noqa: E731
+    return (monday(last) - monday(first)).days // 7 + 1
+
+
 def row(r):
     if r["kind"] == "window":
         return {"wfrom": window_start(dt.date.fromisoformat(r["start"])).isoformat()}
     if r["kind"] == "duration":
         m, d = duration(dt.date.fromisoformat(r["from"]), dt.date.fromisoformat(r["to"]))
-        return {"months": m, "days": d, "monthsup": m + (1 if d else 0)}
+        f, t = dt.date.fromisoformat(r["from"]), dt.date.fromisoformat(r["to"])
+        return {"months": m, "days": d, "monthsup": m + (1 if d else 0), "weeks": weeks(f, t)}
     raise ValueError(r["kind"])
 
 

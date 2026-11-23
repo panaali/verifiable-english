@@ -403,6 +403,24 @@ def roots_for(case):
     return [T.key(T.U(FORMS[qn["form"]], qn["item"])) for qn in case["questions"]]
 
 
+def uses(staged, targets):
+    """The fact leaves (stated or bridged facts) of the documents an answer rests on."""
+    out = set()
+    for t in targets:
+        out |= {u["name"][5:] for u in staged.document(t)["graph"]["nodes"] if u["name"].startswith("fact:")}
+    return sorted(out)
+
+
+def ctx_of(case):
+    import encode as E
+    return E.ctx_of(case)
+
+
+def bridged_ids(case, ctx):
+    import encode as E
+    return sorted(E.bridged_ints(case, ctx))
+
+
 def lean(cases):
     from ve.backends.relay import rows
     results = rows("quantity", cases)
@@ -462,7 +480,8 @@ def main(argv=None):
                "constraints": staged.check_constraints(),
                "steps": [{k: v for k, v in e.items() if k != "premises"} | {"premise_count": len(e["premises"])}
                          for e in staged.log],
-               "encoder_judgement": case.get("judgement", []), "targets": targets}
+               "encoder_judgement": case.get("judgement", []), "targets": targets,
+               "uses": {qid: uses(staged, ts) for qid, ts in targets.items()}, "bridged": bridged_ids(case, ctx_of(case))}
         records.append(rec)
         for step in staged.steps.values():
             lean_cases.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",

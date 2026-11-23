@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from fmla_bridge import duration, row, window_start  # noqa: E402
+from fmla_bridge import duration, row, weeks, window_start  # noqa: E402
 
 D = dt.date.fromisoformat
 CASES = [
@@ -22,8 +22,13 @@ CASES = [
     (duration(D("2026-01-31"), D("2026-02-28")), (1, 0)),        # 31 Jan + 1 month -> 1 Mar (P) = 28 Feb + 1 day: 1 month
     (duration(D("2026-01-31"), D("2026-02-27")), (0, 28)),
     (duration(D("2026-05-01"), D("2026-05-01")), (0, 1)),
-    (row({"kind": "duration", "from": "2025-09-29", "to": "2026-01-04"}), {"months": 3, "days": 7, "monthsup": 4}),
-    (row({"kind": "duration", "from": "2025-01-06", "to": "2026-01-05"}), {"months": 12, "days": 0, "monthsup": 12}),
+    (row({"kind": "duration", "from": "2025-09-29", "to": "2026-01-04"}), {"months": 3, "days": 7, "monthsup": 4, "weeks": 14}),
+    (row({"kind": "duration", "from": "2025-01-06", "to": "2026-01-05"}), {"months": 12, "days": 0, "monthsup": 12, "weeks": 53}),
+    (weeks(D("2025-01-27"), D("2026-03-29")), 61),               # Monday to Sunday: 427 days = 61 weeks
+    (weeks(D("2023-01-02"), D("2026-09-06")), 192),              # a stated count in the question file, checked
+    (weeks(D("2025-01-06"), D("2026-03-01")), 60),               # a stated count in the question file, checked
+    (weeks(D("2026-05-03"), D("2026-05-04")), 2),                # Sunday then Monday: two weeks touched
+    (weeks(D("2026-05-05"), D("2026-05-07")), 1),
     (row({"kind": "window", "start": "2026-07-06"}), {"wfrom": "2025-07-06"}),
 ]
 bad = [(i, got, want) for i, (got, want) in enumerate(CASES) if got != want]

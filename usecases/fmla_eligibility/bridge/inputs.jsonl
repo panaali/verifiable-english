@@ -1,0 +1,118 @@
+{"case": "F001", "item": "l1", "kind": "window", "start": "2026-03-02"}
+{"case": "F001", "from": "2025-01-06", "item": "s1", "kind": "duration", "to": "2026-03-01"}
+{"case": "F002", "item": "l1", "kind": "window", "start": "2026-07-06"}
+{"case": "F002", "from": "2025-03-31", "item": "s1", "kind": "duration", "to": "2025-09-28"}
+{"case": "F002", "from": "2026-01-05", "item": "s2", "kind": "duration", "to": "2026-07-05"}
+{"case": "F002", "from": "2025-09-29", "item": "b1", "kind": "duration", "to": "2026-01-04"}
+{"case": "F003", "item": "l1", "kind": "window", "start": "2026-07-06"}
+{"case": "F003", "from": "2025-03-31", "item": "s1", "kind": "duration", "to": "2025-09-28"}
+{"case": "F003", "from": "2026-01-12", "item": "s2", "kind": "duration", "to": "2026-07-05"}
+{"case": "F003", "from": "2025-09-29", "item": "b1", "kind": "duration", "to": "2026-01-11"}
+{"case": "F004", "item": "l1", "kind": "window", "start": "2026-03-02"}
+{"case": "F004", "from": "2020-03-02", "item": "s1", "kind": "duration", "to": "2020-11-01"}
+{"case": "F004", "from": "2025-09-01", "item": "s2", "kind": "duration", "to": "2026-03-01"}
+{"case": "F004", "from": "2020-11-02", "item": "b1", "kind": "duration", "to": "2025-08-31"}
+{"case": "F005", "item": "l1", "kind": "window", "start": "2026-03-02"}
+{"case": "F005", "from": "2012-01-02", "item": "s1", "kind": "duration", "to": "2017-06-25"}
+{"case": "F005", "from": "2025-06-30", "item": "s2", "kind": "duration", "to": "2026-03-01"}
+{"case": "F005", "from": "2017-06-26", "item": "b1", "kind": "duration", "to": "2025-06-29"}
+{"case": "F006", "item": "l1", "kind": "window", "start": "2026-06-01"}
+{"case": "F006", "from": "2014-02-03", "item": "s1", "kind": "duration", "to": "2017-10-01"}
+{"case": "F006", "from": "2017-10-02", "item": "s2", "kind": "duration", "to": "2026-02-01"}
+{"case": "F006", "from": "2026-02-02", "item": "s3", "kind": "duration", "to": "2026-05-31"}
+{"case": "F006", "from": "2017-10-02", "item": "b1", "kind": "duration", "to": "2026-02-01"}
+{"case": "F007", "item": "l1", "kind": "window", "start": "2026-06-01"}
+{"case": "F007", "from": "2017-08-28", "item": "s1", "kind": "duration", "to": "2018-06-03"}
+{"case": "F007", "from": "2026-02-16", "item": "s2", "kind": "duration", "to": "2026-05-31"}
+{"case": "F007", "from": "2018-06-04", "item": "b1", "kind": "duration", "to": "2026-02-15"}
+{"case": "F008", "item": "l1", "kind": "window", "start": "2026-06-01"}
+{"case": "F008", "from": "2014-01-06", "item": "s1", "kind": "duration", "to": "2014-08-03"}
+{"case": "F008", "from": "2025-10-13", "item": "s2", "kind": "duration", "to": "2026-05-31"}
+{"case": "F008", "from": "2014-08-04", "item": "b1", "kind": "duration", "to": "2025-10-12"}
+{"case": "F009", "item": "l1", "kind": "window", "start": "2026-08-03"}
+{"case": "F009", "from": "2015-01-05", "item": "s1", "kind": "duration", "to": "2015-11-15"}
+{"case": "F009", "from": "2026-01-05", "item": "s2", "kind": "duration", "to": "2026-08-02"}
+{"case": "F009", "from": "2015-11-16", "item": "b1", "kind": "duration", "to": "2026-01-04"}
+{"case": "F010", "item": "l1", "kind": "window", "start": "2026-06-01"}
+{"case": "F010", "from": "2013-01-07", "item": "s1", "kind": "duration", "to": "2013-08-04"}
+{"case": "F010", "from": "2025-11-17", "item": "s2", "kind": "duration", "to": "2026-05-31"}
+{"case": "F010", "from": "2013-08-05", "item": "b1", "kind": "duration", "to": "2025-11-16"}
+{"case": "F011", "item": "l1", "kind": "window", "start": "2026-05-04"}
+{"case": "F011", "from": "2025-01-06", "item": "s1", "kind": "duration", "to": "2026-05-03"}
+{"case": "F012", "item": "l1", "kind": "window", "start": "2026-05-04"}
+{"case": "F012", "from": "2025-02-03", "item": "s1", "kind": "duration", "to": "2026-05-03"}
+{"case": "F013", "item": "l1", "kind": "window", "start": "2026-09-07"}
+{"case": "F013", "from": "2024-09-02", "item": "s1", "kind": "duration", "to": "2026-09-06"}
+{"case": "F014", "item": "l1", "kind": "window", "start": "2026-08-03"}
+{"case": "F014", "from": "2024-03-04", "item": "s1", "kind": "duration", "to": "2026-08-02"}
+{"case": "F015", "item": "l1", "kind": "window", "start": "2026-02-02"}
+{"case": "F015", "item": "l2", "kind": "window", "start": "2026-03-09"}
+{"case": "F015", "from": "2025-03-03", "item": "s1", "kind": "duration", "to": "2026-02-01"}
+{"case": "F015", "from": "2026-02-02", "item": "s2", "kind": "duration", "to": "2026-03-08"}
+{"case": "F016", "item": "l1", "kind": "window", "start": "2026-07-13"}
+{"case": "F016", "from": "2025-04-07", "item": "s1", "kind": "duration", "to": "2025-08-24"}
+{"case": "F016", "from": "2025-12-01", "item": "s2", "kind": "duration", "to": "2026-04-19"}
+{"case": "F016", "from": "2026-04-20", "item": "s3", "kind": "duration", "to": "2026-07-12"}
+{"case": "F016", "from": "2025-08-25", "item": "b1", "kind": "duration", "to": "2025-11-30"}
+{"case": "F017", "item": "l1", "kind": "window", "start": "2026-08-03"}
+{"case": "F017", "from": "2025-06-02", "item": "s1", "kind": "duration", "to": "2025-12-28"}
+{"case": "F017", "from": "2026-03-02", "item": "s2", "kind": "duration", "to": "2026-08-02"}
+{"case": "F017", "from": "2025-12-29", "item": "b1", "kind": "duration", "to": "2026-03-01"}
+{"case": "F018", "item": "l1", "kind": "window", "start": "2026-03-02"}
+{"case": "F018", "from": "2024-08-19", "item": "s1", "kind": "duration", "to": "2026-03-01"}
+{"case": "F019", "item": "l1", "kind": "window", "start": "2026-09-07"}
+{"case": "F019", "from": "2024-07-01", "item": "s1", "kind": "duration", "to": "2026-09-06"}
+{"case": "F020", "item": "l1", "kind": "window", "start": "2026-05-04"}
+{"case": "F020", "from": "2024-10-07", "item": "s1", "kind": "duration", "to": "2026-05-03"}
+{"case": "F021", "item": "l1", "kind": "window", "start": "2026-05-04"}
+{"case": "F021", "from": "2023-01-02", "item": "s1", "kind": "duration", "to": "2026-05-03"}
+{"case": "F022", "item": "l1", "kind": "window", "start": "2026-09-07"}
+{"case": "F022", "from": "2023-01-02", "item": "s1", "kind": "duration", "to": "2026-09-06"}
+{"case": "F023", "item": "l1", "kind": "window", "start": "2026-03-09"}
+{"case": "F023", "from": "2024-01-01", "item": "s1", "kind": "duration", "to": "2026-03-08"}
+{"case": "F024", "item": "l1", "kind": "window", "start": "2026-12-07"}
+{"case": "F024", "from": "2025-06-02", "item": "s1", "kind": "duration", "to": "2026-12-06"}
+{"case": "F025", "item": "l1", "kind": "window", "start": "2026-07-06"}
+{"case": "F025", "from": "2022-01-03", "item": "s1", "kind": "duration", "to": "2026-07-05"}
+{"case": "F026", "item": "l1", "kind": "window", "start": "2026-06-08"}
+{"case": "F026", "from": "2024-07-01", "item": "s1", "kind": "duration", "to": "2025-01-26"}
+{"case": "F026", "from": "2025-01-27", "item": "s2", "kind": "duration", "to": "2026-03-29"}
+{"case": "F026", "from": "2026-03-30", "item": "s3", "kind": "duration", "to": "2026-06-07"}
+{"case": "F026", "from": "2025-01-27", "item": "b1", "kind": "duration", "to": "2026-03-29"}
+{"case": "F027", "item": "l1", "kind": "window", "start": "2026-09-07"}
+{"case": "F027", "from": "2016-01-04", "item": "s1", "kind": "duration", "to": "2018-09-30"}
+{"case": "F027", "from": "2018-10-01", "item": "s2", "kind": "duration", "to": "2026-02-15"}
+{"case": "F027", "from": "2026-02-16", "item": "s3", "kind": "duration", "to": "2026-09-06"}
+{"case": "F027", "from": "2018-10-01", "item": "b1", "kind": "duration", "to": "2026-02-15"}
+{"case": "F028", "item": "l1", "kind": "window", "start": "2026-10-05"}
+{"case": "F028", "from": "2025-04-07", "item": "s1", "kind": "duration", "to": "2025-08-24"}
+{"case": "F028", "from": "2025-12-01", "item": "s2", "kind": "duration", "to": "2026-03-15"}
+{"case": "F028", "from": "2026-06-01", "item": "s3", "kind": "duration", "to": "2026-10-04"}
+{"case": "F028", "from": "2025-08-25", "item": "b1", "kind": "duration", "to": "2025-11-30"}
+{"case": "F028", "from": "2026-03-16", "item": "b2", "kind": "duration", "to": "2026-05-31"}
+{"case": "F029", "item": "l1", "kind": "window", "start": "2026-03-02"}
+{"case": "F029", "from": "2010-01-04", "item": "s1", "kind": "duration", "to": "2011-06-26"}
+{"case": "F029", "from": "2025-01-06", "item": "s2", "kind": "duration", "to": "2026-03-01"}
+{"case": "F029", "from": "2011-06-27", "item": "b1", "kind": "duration", "to": "2025-01-05"}
+{"case": "F030", "item": "l1", "kind": "window", "start": "2026-03-30"}
+{"case": "F030", "from": "2014-01-06", "item": "s1", "kind": "duration", "to": "2014-10-12"}
+{"case": "F030", "from": "2023-01-16", "item": "s2", "kind": "duration", "to": "2023-06-04"}
+{"case": "F030", "from": "2025-09-01", "item": "s3", "kind": "duration", "to": "2026-03-29"}
+{"case": "F030", "from": "2014-10-13", "item": "b1", "kind": "duration", "to": "2023-01-15"}
+{"case": "F030", "from": "2023-06-05", "item": "b2", "kind": "duration", "to": "2025-08-31"}
+{"case": "F031", "item": "l1", "kind": "window", "start": "2026-03-30"}
+{"case": "F031", "from": "2015-05-04", "item": "s1", "kind": "duration", "to": "2016-02-07"}
+{"case": "F031", "from": "2023-01-16", "item": "s2", "kind": "duration", "to": "2023-06-04"}
+{"case": "F031", "from": "2025-09-01", "item": "s3", "kind": "duration", "to": "2026-03-29"}
+{"case": "F031", "from": "2016-02-08", "item": "b1", "kind": "duration", "to": "2023-01-15"}
+{"case": "F031", "from": "2023-06-05", "item": "b2", "kind": "duration", "to": "2025-08-31"}
+{"case": "F032", "item": "l1", "kind": "window", "start": "2026-04-06"}
+{"case": "F032", "item": "l2", "kind": "window", "start": "2026-09-07"}
+{"case": "F032", "from": "2023-01-02", "item": "s1", "kind": "duration", "to": "2026-04-05"}
+{"case": "F032", "from": "2023-01-02", "item": "s2", "kind": "duration", "to": "2026-09-06"}
+{"case": "F033", "item": "l1", "kind": "window", "start": "2026-06-08"}
+{"case": "F033", "from": "2025-06-02", "item": "s1", "kind": "duration", "to": "2026-06-07"}
+{"case": "F034", "item": "l1", "kind": "window", "start": "2026-06-01"}
+{"case": "F034", "from": "2023-01-02", "item": "s1", "kind": "duration", "to": "2026-05-31"}
+{"case": "F035", "item": "l1", "kind": "window", "start": "2026-06-08"}
+{"case": "F035", "from": "2025-09-01", "item": "s1", "kind": "duration", "to": "2026-06-07"}

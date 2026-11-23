@@ -9,7 +9,9 @@ C2 items: one leave item per leave start asked; one period item per stated perio
    break item per stated break in service; one block item per stated count of hours with its first and last day;
 C3 integer constants only where the question states them (weeks, hours, the employee count on the day of the notice, the
    leave's start, a block's first and last day); the first day of the 12-month period, whole months of a period and of a
-   break and a break's extra days come ONLY from bridge/bridges.jsonl (never typed by the encoder);
+   break and a break's extra days come ONLY from bridge/bridges.jsonl (never typed by the encoder), and so do the weeks of a
+   period whose number of weeks the question does not state (case field bridge_weeks; added after the questions were read:
+   USERRA absences are given by their dates only);
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder;
 C5 "employee" and "covered" are the fixed facts of the test (every employer is a covered employer): true for every leave.
 """
@@ -56,6 +58,8 @@ def bridged_ints(case, ctx, br=None):
             out[f"wfrom_{x}"] = v["wfrom"]
         elif x in ctx.periods:
             out[f"months_{x}"], out[f"monthsup_{x}"] = v["months"], v["monthsup"]
+            if x in case.get("bridge_weeks", ()):
+                out[f"weeks_{x}"] = v["weeks"]
         elif x in ctx.breaks:
             out[f"bmonths_{x}"], out[f"bdays_{x}"] = v["months"], v["days"]
     return out
@@ -89,7 +93,8 @@ def facts(case, br=None):
             f = T.B("precedes", s, b)
             out.append({"id": f"precedes.{s}.{b}", "formula": f if (s, b) in pre else ["not", f]})
     ints = dict(case.get("ints", {}))
-    typed = set(ints) & {n for n in ints if n.split("_", 1)[0] in T.BRIDGED_CONSTS}
+    typed = {n for n in ints if n.split("_", 1)[0] in T.BRIDGED_CONSTS}
+    typed |= {f"weeks_{s}" for s in case.get("bridge_weeks", ()) if f"weeks_{s}" in ints}
     if typed:
         raise ValueError(f"{case['id']}: bridged constants typed by the encoder: {sorted(typed)}")
     ints.update(bridged_ints(case, ctx, br))
