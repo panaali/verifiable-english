@@ -3,8 +3,9 @@
 Protocol (law 1's staged route, usecases/pawhp/run.py, unchanged in kind): for each case, ground rows.py over the case's
 names (translation.py) and build the encoder's facts (encode.py); each derived atom is one step, proved in both polarities
 from the rules that define it, the facts and earlier steps (one certificate -> holds; two -> inconsistent; none -> OPEN);
-Lean replays every certificate and admits one documents@1 document per answer atom; an answer counts only if Lean admitted
-its document(s). Q1 = hmo(premises), Q2 = prescribed(premises), Q3 = the s.254(1) limbs and Sch. 14 paragraphs that hold
+Lean replays every step certificate; an answer counts only if every certificate on the dependency path of each atom it needs
+was accepted by Lean (with --docs, also one admitted documents@1 document per atom: law 1's extra layer, which hits the
+1,000-node graph limit and the request time limit on these cases; RESULT.md). Q1 = hmo(premises), Q2 = prescribed(premises), Q3 = the s.254(1) limbs and Sch. 14 paragraphs that hold
 (OPEN if any of them is OPEN). --mutants: each planted error must change at least one in-scope answer.
 
 Usage (repository root): uv run python -B usecases/hmo/run.py [--cases H001,H002] [--mutants] [--no-lean] [--out FILE]
@@ -323,6 +324,7 @@ def answer_targets(staged):
     return out
 
 
+DOCS = "--docs" in sys.argv  # documents@1 admission per answer atom (law 1's extra layer): opt-in, see RESULT.md
 LINE_LIMIT = 16_000_000  # under the Lean service's 16,777,216-byte line limit (MAX_LINE_BYTES)
 LEAN_TIMEOUT = 600.0     # wall-clock seconds per request (100 certificates, or one document)
 
@@ -388,9 +390,14 @@ def _case_task(case):
         lc.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
                    "environment": raw_env, "premises": [q(staged.formula(n)) for n in step["premises"]],
                    "conclusion": q(step["formula"]), "certificate": step["certificate"]})
+    closure = {}
     for atom, target in answer_targets(staged).items():
-        lc.append({"id": f"{case['id']}/doc/{atom}", "kind": "document", "environment": raw_env,
-                   "document": staged.document(target)})
+        doc = staged.document(target)
+        closure[atom] = sorted(n["name"] for n in doc["graph"]["nodes"] if "certificate" in n)
+        if DOCS:
+            lc.append({"id": f"{case['id']}/doc/{atom}", "kind": "document", "environment": raw_env, "document": doc})
+    rec["closure_sizes"] = {a: len(v) for a, v in closure.items()}
+    rec["closure"] = closure
     return rec, lc
 
 
@@ -414,6 +421,7 @@ def main(argv=None):
     ap.add_argument("--out")
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--jobs", type=int, default=8)
+    ap.add_argument("--docs", action="store_true", help="also admit one documents@1 document per answer atom")
     args = ap.parse_args(argv)
     started = time.time()
     raw_env = T.environment()
@@ -442,11 +450,18 @@ def main(argv=None):
                        "documents": {a: r.get("status") == "ok" and r.get("assurance") == "lean-admitted"
                                      for a, r in sorted(docs.items())}}
         answers = dict(rec["staged"])
+        accepted = {k.split("/cert/", 1)[1] for k, r in mine.items()
+                    if "/cert/" in k and r.get("status") == "ok" and r.get("valid") is True}
+        closure = rec.pop("closure")
         if not args.no_lean:
             for qq, atoms in needs(answers).items():
                 if answers[qq] == "OPEN":
                     continue
-                if not all(rec["lean"]["documents"].get(a) for a in atoms):
+                # Lean-checked: every step certificate on the path of every atom the answer needs was accepted by Lean
+                ok = all(a in closure and all(n in accepted for n in closure[a]) for a in atoms)
+                if DOCS:
+                    ok = ok and all(rec["lean"]["documents"].get(a) for a in atoms)
+                if not ok:
                     answers[qq] = "OPEN"
                     rec.setdefault("lean_rejected", []).append(qq)
         rec["answers"] = answers
