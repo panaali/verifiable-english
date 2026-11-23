@@ -1,0 +1,61 @@
+{
+ "encoder": {
+  "L011": {
+   "changed": [],
+   "flip": "no s. 101(2) determination read from the written agreement"
+  },
+  "L015": {
+   "changed": [
+    "L015-1",
+    "L015-2",
+    "L015-3",
+    "L015-4",
+    "L015-5"
+   ],
+   "flip": "'replaced it with' not read as an alteration"
+  },
+  "L017": {
+   "changed": [
+    "L017-1",
+    "L017-2",
+    "L017-3",
+    "L017-4"
+   ],
+   "flip": "the action of 20 May 2027 read as not taken within the period"
+  },
+  "L018": {
+   "changed": [
+    "L018-1",
+    "L018-2",
+    "L018-3",
+    "L018-4"
+   ],
+   "flip": "the action of 30 May 2027 read as taken within the period"
+  },
+  "L024": {
+   "changed": [],
+   "flip": "the stated totals written on the second member"
+  },
+  "L025": {
+   "changed": [],
+   "flip": "the stated totals written on the second member"
+  },
+  "L026": {
+   "changed": [],
+   "flip": "the stated totals written on the second member"
+  },
+  "L035": {
+   "changed": [],
+   "flip": "the stated totals written on the second member"
+  }
+ },
+ "stated": {
+  "halfup": [
+   "L028-2",
+   "L029-2"
+  ],
+  "insufficient": [],
+  "rnd_down": [],
+  "rnd_up": []
+ }
+}

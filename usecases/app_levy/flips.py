@@ -58,6 +58,8 @@ def one(case):
         for s in (*T.STATED, "halfup"):
             kind = "group" if s in T.FACTS_GROUP else "person"
             for x in items[kind]:
+                if s == "rnd_fig" and f"rnd_{x}" not in case["ints"]:
+                    continue  # a stated figure flip needs a stated figure (none here: not a reading)
                 tag = f"{s}:{x}"
                 c = copy.deepcopy(case)
                 c["facts"] = [f for f in c["facts"] if f != tag] if tag in c["facts"] else c["facts"] + [tag]
