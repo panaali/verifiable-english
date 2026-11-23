@@ -316,17 +316,20 @@ def digitsNat : List Char → Option Nat
     pure (d * 10 ^ cs.length + rest)
 
 /-- ISO `YYYY-MM-DD`. Calendar-invalid text is `InvalidDate`, then a date
-before the epoch is `DateRange`, in Python's order. -/
-def parseIso (s : String) : Except String Civil :=
+before year `lo` is `DateRange`, in Python's order. -/
+def parseIsoFrom (lo : Nat) (s : String) : Except String Civil :=
   match s.toList with
   | [y1, y2, y3, y4, '-', m1, m2, '-', d1, d2] =>
     match digitsNat [y1, y2, y3, y4], digitsNat [m1, m2], digitsNat [d1, d2] with
     | some y, some m, some d =>
       if 1 ≤ y ∧ 1 ≤ m ∧ m ≤ 12 ∧ 1 ≤ d ∧ d ≤ monthLen y m then
-        if 1970 ≤ y then .ok ⟨y, m, d⟩ else .error s!"DateRange({s})"
+        if lo ≤ y then .ok ⟨y, m, d⟩ else .error s!"DateRange({s})"
       else .error s!"InvalidDate({s})"
     | _, _, _ => .error s!"InvalidDate({s})"
   | _ => .error s!"InvalidDate({s})"
+
+/-- ISO `YYYY-MM-DD` from the epoch: a date before 1970 is `DateRange`. -/
+def parseIso (s : String) : Except String Civil := parseIsoFrom 1970 s
 
 theorem digitsNat_bound : ∀ (cs : List Char) (n : Nat), digitsNat cs = some n → n < 10 ^ cs.length
   | [], n, h => by simp [digitsNat] at h; subst h; simp
@@ -349,9 +352,11 @@ theorem digitsNat_bound : ∀ (cs : List Char) (n : Nat), digitsNat cs = some n 
     rw [Nat.mul_comm (10 ^ cs.length) 10]
     omega
 
-/-- Every decoded date is an accepted date. -/
-theorem parseIso_valid {s : String} {D : Civil} (h : parseIso s = .ok D) : D.Valid := by
-  unfold parseIso at h
+/-- A date decoded from year `lo` has a valid month and day and a year in `lo..9999`. -/
+theorem parseIsoFrom_valid {lo : Nat} {s : String} {D : Civil} (h : parseIsoFrom lo s = .ok D) :
+    lo ≤ D.year ∧ D.year ≤ 9999 ∧ 1 ≤ D.month ∧ D.month ≤ 12 ∧ 1 ≤ D.day ∧
+      D.day ≤ monthLen D.year D.month := by
+  unfold parseIsoFrom at h
   split at h
   · rename_i y1 y2 y3 y4 m1 m2 d1 d2 _
     split at h
@@ -362,11 +367,18 @@ theorem parseIso_valid {s : String} {D : Civil} (h : parseIso s = .ok D) : D.Val
       · rename_i hc
         split at h
         · cases h
-          exact ⟨⟨by assumption, hc.2.1, hc.2.2.1, hc.2.2.2.1, hc.2.2.2.2⟩, by simp; omega⟩
+          exact ⟨by assumption, by simp; omega, hc.2.1, hc.2.2.1, hc.2.2.2.1, hc.2.2.2.2⟩
         · cases h
       · cases h
     · cases h
   · cases h
+
+theorem parseIso_eq (s : String) : parseIso s = parseIsoFrom 1970 s := rfl
+
+/-- Every decoded date is an accepted date. -/
+theorem parseIso_valid {s : String} {D : Civil} (h : parseIso s = .ok D) : D.Valid := by
+  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := parseIsoFrom_valid h
+  exact ⟨⟨h1, h3, h4, h5, h6⟩, h2⟩
 
 def pad (width : Nat) (n : Nat) : String :=
   let s := toString n
@@ -522,5 +534,175 @@ theorem civilOf_isSome_iff (n : Nat) : (civilOf n).isSome ↔ n ≤ dateMax := b
   · intro h
     rw [civilOf_complete h]
     rfl
+
+/-! ## Ground date expressions (date-arith)
+
+A ground date expression (`VE.Time.Wire.elabCal`) is worked out while a statement is
+decoded. Its dates may lie from 1900 (`minGroundYear`); only a value that becomes a day
+number must be `Valid` (1970..9999). -/
+
+/-- Earliest year a ground date expression may name. -/
+def minGroundYear : Nat := 1900
+
+/-- A date a ground date expression may name: a valid month and day, a year in 1900..9999. -/
+abbrev Civil.Ground (D : Civil) : Prop :=
+  minGroundYear ≤ D.year ∧ D.year ≤ 9999 ∧ 1 ≤ D.month ∧ D.month ≤ 12 ∧ 1 ≤ D.day ∧
+    D.day ≤ monthLen D.year D.month
+
+instance (a b : Civil) : Decidable (a.Before b) := by unfold Civil.Before; infer_instance
+
+/-- What a month offset does when the kept day is missing from the target month. -/
+inductive MonthEnd where | last | next
+
+/-- `D` plus `k` months (signed): the day is kept; if the target month lacks it, `last` gives
+that month's last day, `next` the day after it, and no reading `none` (refused). -/
+def Civil.addMonths (D : Civil) (k : Int) (r : Option MonthEnd) : Option Civil :=
+  let i : Int := (D.year : Int) * 12 + ((D.month : Int) - 1) + k
+  if i < 0 then none else
+  let y := (i / 12).toNat
+  let m := (i % 12).toNat + 1
+  if D.day ≤ monthLen y m then some ⟨y, m, D.day⟩ else
+  match r with
+  | some .last => some ⟨y, m, monthLen y m⟩
+  | some .next => some (Civil.succ ⟨y, m, monthLen y m⟩)
+  | none => none
+
+/-- `D'` is `D` plus `k` months under reading `r`: `(y, m)` is `k` months on from `D`'s month;
+`D`'s day if it has it, else its last day (`last`) or the day after that (`next`). -/
+def Civil.MonthsLater (D : Civil) (k : Int) (r : Option MonthEnd) (D' : Civil) : Prop :=
+  ∃ y m : Nat, 1 ≤ m ∧ m ≤ 12 ∧ (y : Int) * 12 + m = D.year * 12 + D.month + k ∧
+    if D.day ≤ monthLen y m then D' = ⟨y, m, D.day⟩
+    else r = some .last ∧ D' = ⟨y, m, monthLen y m⟩ ∨ r = some .next ∧ D' = Civil.succ ⟨y, m, monthLen y m⟩
+
+/-- Day of the week, 0 = Monday .. 6 = Sunday (day 0, 1970-01-01, was a Thursday). -/
+def Civil.weekday (D : Civil) : Nat := (D.num + 3) % 7
+
+/-- The `n`th weekday `w` (0 = Monday) of month `m` of year `y` (1970..9999), if it exists. -/
+def nthWeekday (n w m y : Nat) : Option Civil :=
+  let d := 1 + (w + 7 - Civil.weekday ⟨y, m, 1⟩) % 7 + 7 * (n - 1)
+  if 1970 ≤ y ∧ y ≤ 9999 ∧ 1 ≤ m ∧ m ≤ 12 ∧ 1 ≤ n ∧ w < 7 ∧ d ≤ monthLen y m
+  then some ⟨y, m, d⟩ else none
+
+/-! ### Their proofs (SIZING section 3, items 1-7 and 9) -/
+
+theorem monthLen_le {y m : Nat} : monthLen y m ≤ 31 := by
+  unfold monthLen; split <;> (try split) <;> omega
+
+/-- Items 1 and 2: a month offset computes `MonthsLater`: the kept day when the target month
+has it (item 1), else `last` or `next` (item 2); with no reading it gives nothing then. -/
+theorem addMonths_spec {D D' : Civil} {k : Int} {r : Option MonthEnd}
+    (h : D.addMonths k r = some D') : D.MonthsLater k r D' := by
+  unfold Civil.addMonths at h
+  dsimp only at h
+  split at h
+  · cases h
+  · rename_i hi
+    refine ⟨((↑D.year * 12 + (↑D.month - 1) + k) / 12).toNat,
+      ((↑D.year * 12 + (↑D.month - 1) + k) % 12).toNat + 1, by omega, by omega, by omega, ?_⟩
+    split at h
+    · rename_i hd; cases h; rw [if_pos hd]
+    · rename_i hd
+      rw [if_neg hd]
+      split at h <;> cases h
+      · exact Or.inl ⟨rfl, rfl⟩
+      · exact Or.inr ⟨rfl, rfl⟩
+
+/-- Item 2: with no reading, a missing day has no result (refused, never rolled). -/
+theorem addMonths_none_missing {D D' : Civil} {k : Int} (h : D.addMonths k none = some D') :
+    D'.day = D.day := by
+  obtain ⟨y, m, _, _, _, hs⟩ := addMonths_spec h
+  split at hs
+  · subst hs; rfl
+  · simp at hs
+
+theorem succ_monthLast (y m : Nat) : (Civil.mk y m (monthLen y m)).succ =
+    if m < 12 then ⟨y, m + 1, 1⟩ else ⟨y + 1, 1, 1⟩ := by simp [Civil.succ]
+
+/-- `MonthsLater` as three outcomes, each by its target month index and day. -/
+theorem monthsLater_cases {D D' : Civil} {k : Int} {r : Option MonthEnd} (h : D.MonthsLater k r D') :
+    ∃ y m : Nat, 1 ≤ m ∧ m ≤ 12 ∧ (y : Int) * 12 + m = D.year * 12 + D.month + k ∧
+      1 ≤ monthLen y m ∧ monthLen y m ≤ 31 ∧
+      (D.day ≤ monthLen y m ∧ D' = ⟨y, m, D.day⟩ ∨
+       monthLen y m < D.day ∧ r = some .last ∧ D' = ⟨y, m, monthLen y m⟩ ∨
+       monthLen y m < D.day ∧ r = some .next ∧ (D'.year : Int) * 12 + D'.month = y * 12 + m + 1 ∧
+         1 ≤ D'.month ∧ D'.month ≤ 12 ∧ D'.day = 1) := by
+  obtain ⟨y, m, h1, h12, hi, hs⟩ := h
+  refine ⟨y, m, h1, h12, hi, monthLen_pos h1 h12, monthLen_le, ?_⟩
+  split at hs
+  · exact Or.inl ⟨by assumption, hs⟩
+  · rcases hs with ⟨hr, rfl⟩ | ⟨hr, rfl⟩
+    · exact Or.inr (Or.inl ⟨by omega, hr, rfl⟩)
+    · refine Or.inr (Or.inr ⟨by omega, hr, ?_⟩)
+      rw [succ_monthLast]; split <;> exact ⟨by simp only; omega, by simp only; omega, by simp only; omega, rfl⟩
+
+/-- Item 3: a result in 1900..9999 has a valid month and day. -/
+theorem addMonths_ground {D D' : Civil} {k : Int} {r : Option MonthEnd} (hD : D.Ground)
+    (h : D.addMonths k r = some D') (hlo : minGroundYear ≤ D'.year) (hhi : D'.year ≤ 9999) :
+    D'.Ground := by
+  obtain ⟨y, m, h1, h12, _, hp, _, hs⟩ := monthsLater_cases (addMonths_spec h)
+  rcases hs with ⟨hd, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, _, hm1, hm12, hd1⟩
+  · exact ⟨hlo, hhi, h1, h12, hD.2.2.2.2.1, hd⟩
+  · exact ⟨hlo, hhi, h1, h12, hp, Nat.le_refl _⟩
+  · exact ⟨hlo, hhi, hm1, hm12, by omega, by rw [hd1]; exact monthLen_pos hm1 hm12⟩
+
+/-- Item 4: month offsets keep the order of ground dates (when both have a result).
+Additivity is not claimed: 31 January plus 1 month plus 1 month is not 31 January plus 2. -/
+theorem addMonths_mono {D E D' E' : Civil} {k : Int} {r : Option MonthEnd}
+    (hD : D.Ground) (hE : E.Ground) (hle : ¬ E.Before D)
+    (h1 : D.addMonths k r = some D') (h2 : E.addMonths k r = some E') : ¬ E'.Before D' := by
+  obtain ⟨y, m, m1, m12, hi, _, _, hs⟩ := monthsLater_cases (addMonths_spec h1)
+  obtain ⟨y', m', m1', m12', hi', _, _, hs'⟩ := monthsLater_cases (addMonths_spec h2)
+  obtain ⟨_, _, _, _, _, _⟩ := hD
+  obtain ⟨_, _, _, _, _, _⟩ := hE
+  unfold Civil.Before at hle ⊢
+  by_cases hyy : y = y' ∧ m = m'
+  · obtain ⟨rfl, rfl⟩ := hyy
+    rcases hs with ⟨_, rfl⟩ | ⟨_, hr, rfl⟩ | ⟨_, hr, _⟩ <;>
+    rcases hs' with ⟨_, rfl⟩ | ⟨_, hr', rfl⟩ | ⟨_, hr', _⟩ <;>
+    (try (rw [hr] at hr'; cases hr')) <;> (try simp only) <;> omega
+  · rcases hs with ⟨_, rfl⟩ | ⟨_, hr, rfl⟩ | ⟨_, hr, _⟩ <;>
+    rcases hs' with ⟨_, rfl⟩ | ⟨_, hr', rfl⟩ | ⟨_, hr', _⟩ <;>
+    (try (rw [hr] at hr'; cases hr')) <;> (try simp only) <;> omega
+
+/-- Item 5: the last day of a month is proper and its successor is the first of the next month. -/
+theorem monthLast_spec {D : Civil} (h : D.Proper) :
+    (Civil.mk D.year D.month (monthLen D.year D.month)).Proper ∧
+      (Civil.mk D.year D.month (monthLen D.year D.month)).succ =
+        if D.month < 12 then ⟨D.year, D.month + 1, 1⟩ else ⟨D.year + 1, 1, 1⟩ := by
+  obtain ⟨hy, h1, h12, _, _⟩ := h
+  exact ⟨⟨hy, h1, h12, monthLen_pos h1 h12, Nat.le_refl _⟩, by simp [Civil.succ]⟩
+
+theorem monthFirst_proper {D : Civil} (h : D.Proper) : (Civil.mk D.year D.month 1).Proper :=
+  ⟨h.1, h.2.1, h.2.2.1, Nat.le_refl 1, monthLen_pos h.2.1 h.2.2.1⟩
+
+/-- Item 6: 1970-01-01 was a Thursday, and each next day is the next weekday. -/
+theorem weekday_epoch : epoch.weekday = 3 := by unfold Civil.weekday; rw [num_epoch]
+
+theorem weekday_succ {D : Civil} (h : D.Proper) : D.succ.weekday = (D.weekday + 1) % 7 := by
+  unfold Civil.weekday; rw [num_succ h]; omega
+
+/-- Item 7: the `n`th weekday `w` of a month is a valid date of that month with weekday `w`,
+and `n - 1` whole weeks of that month lie before it (so exactly `n - 1` earlier days of the
+month share its weekday). -/
+theorem nthWeekday_spec {n w m y : Nat} {D : Civil} (h : nthWeekday n w m y = some D) :
+    D.Valid ∧ D.year = y ∧ D.month = m ∧ D.weekday = w ∧ 1 ≤ n ∧ (D.day - 1) / 7 = n - 1 := by
+  unfold nthWeekday at h
+  dsimp only at h
+  split at h
+  · rename_i hc
+    cases h
+    obtain ⟨hy, hy9, hm1, hm12, hn, hw, hd⟩ := hc
+    have hk : (w + 7 - Civil.weekday ⟨y, m, 1⟩) % 7 < 7 := Nat.mod_lt _ (by decide)
+    refine ⟨⟨⟨hy, hm1, hm12, Nat.le_trans (Nat.le_add_right 1 _) (Nat.le_add_right _ _), hd⟩, hy9⟩,
+      rfl, rfl, ?_, hn, ?_⟩
+    rotate_left
+    · dsimp only; omega
+    unfold Civil.weekday at *
+    simp only [Civil.num] at *
+    omega
+  · cases h
+
+/-- The decidable order is `Civil.Before`, for dates of any year. -/
+theorem decide_before (a b : Civil) : decide (a.Before b) = true ↔ a.Before b := decide_eq_true_iff
 
 end VE.Time

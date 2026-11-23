@@ -22,7 +22,8 @@ under the Python/Rust budget over each domain in Python/Rust order,
 `refutesB_sorted_sound`), `certificate` (a `ve-quantity-certificate@1` wrapping an order
 certificate for the regenerated problem; see `checkW6Certificate_sound`),
 `count` (the canonical counting expansion), and the conversions `day`,
-`civil`, `lower`, `render` used by the differential tests. -/
+`civil`, `lower`, `render` used by the differential tests. Ground date
+expressions (`cal`, `cal_cmp`; `elabCal`) are worked out while decoding. -/
 namespace VE.Time.Wire
 universe v
 open Lean
@@ -322,6 +323,105 @@ def QVocab.constant (v : QVocab) (c : String) : Except String QType :=
 
 def integer (s : String) : Except String Int := VE.Order.Wire.decodeInt s
 
+/-! ## Ground date expressions (date-arith)
+
+A day term `["cal", E]` and a formula `["cal_cmp", op, E1, E2]` name ground date expressions
+`E`, worked out here while the statement is decoded; the checked formula only sees their values.
+Dates inside an expression may lie from 1900; a value that becomes a day number is `Valid`. -/
+
+/-- The month-end readings a `plus_months` node names. -/
+def monthEndOf (s : String) : Option (Option MonthEnd) :=
+  if s == "last" then some (some .last) else if s == "next" then some (some .next)
+  else if s == "none" then some none else none
+
+/-- What a ground date expression denotes: the spec of `elabCal`, one case per node. -/
+inductive CalDenotes : Json → Civil → Prop
+  | date {s : String} {D : Civil} : parseIsoFrom minGroundYear s = .ok D →
+      CalDenotes (.arr #[.str "date", .str s]) D
+  | plusMonths {e : Json} {sk sr : String} {D D' : Civil} {k : Int} {r : Option MonthEnd} :
+      CalDenotes e D → integer sk = .ok k → monthEndOf sr = some r → D.MonthsLater k r D' →
+      D'.Ground → CalDenotes (.arr #[.str "plus_months", e, .str sk, .str sr]) D'
+  | plusDays {e : Json} {sk : String} {D D' : Civil} {k : Int} :
+      CalDenotes e D → integer sk = .ok k → 0 ≤ k → D.Valid → D'.Valid → (D'.num : Int) = D.num + k →
+      CalDenotes (.arr #[.str "plus_days", e, .str sk]) D'
+  | monthFirst {e : Json} {D : Civil} :
+      CalDenotes e D → CalDenotes (.arr #[.str "month_first", e]) ⟨D.year, D.month, 1⟩
+  | monthLast {e : Json} {D : Civil} : CalDenotes e D →
+      CalDenotes (.arr #[.str "month_last", e]) ⟨D.year, D.month, monthLen D.year D.month⟩
+  | nthWeekday {n w m y : Json} {n' w' : Nat} {D : Civil} :
+      n.getNat? = .ok n' → w.getNat? = .ok w' → m.getNat? = .ok D.month → y.getNat? = .ok D.year →
+      D.Valid → D.weekday = w' → 1 ≤ n' → (D.day - 1) / 7 = n' - 1 →
+      CalDenotes (.arr #[.str "nth_weekday", n, w, m, y]) D
+
+/-- A ground date expression's date (`elabCal_sound`: the date `CalDenotes` names). -/
+def elabCal : Nat → Json → Except String Civil
+  | 0, _ => throw depthLimit
+  | fuel + 1, j => do
+    let .arr xs := j | throw "Invalid date expression"
+    match xs.toList with
+    | [.str "date", .str s] => parseIsoFrom minGroundYear s
+    | [.str "plus_months", e, .str sk, .str sr] => do
+      let D ← elabCal fuel e
+      let some r := monthEndOf sr | throw "Invalid month-end reading"
+      match D.addMonths (← integer sk) r with
+      | some D' => if D'.Ground then pure D' else throw "DateRange(month offset)"
+      | none => throw s!"MissingDay(plus {sk} months)"
+    | [.str "plus_days", e, .str sk] => do
+      let D ← elabCal fuel e
+      let k ← integer sk
+      let D' := D.addDays k.toNat
+      if D.properB && 0 ≤ k && k ≤ dateMax && D'.year ≤ 9999 then pure D' else throw "DateRange(day offset)"
+    | [.str "month_first", e] => do let D ← elabCal fuel e; pure ⟨D.year, D.month, 1⟩
+    | [.str "month_last", e] => do
+      let D ← elabCal fuel e; pure ⟨D.year, D.month, monthLen D.year D.month⟩
+    | [.str "nth_weekday", n, w, m, y] => do
+      let some D := nthWeekday (← n.getNat?) (← w.getNat?) (← m.getNat?) (← y.getNat?)
+        | throw "Invalid nth weekday"
+      pure D
+    | _ => throw "Invalid date expression"
+
+/-- The date of a `["cal", E]` day term: `E`'s date, which must be valid (1970..9999). -/
+def calDay (e : Json) : Except String Civil := do
+  let D ← elabCal VE.Limits.maxDepth e
+  if D.properB then pure D else throw "DateRange(date expression before 1970)"
+
+/-- The order a `cal_cmp` operator names between two dates. -/
+def CalOrder : String → Civil → Civil → Prop
+  | "before", x, y => x.Before y
+  | "after", x, y => y.Before x
+  | "on", x, y => x = y
+  | "on_or_before", x, y => ¬ y.Before x
+  | "on_or_after", x, y => ¬ x.Before y
+  | _, _, _ => False
+
+instance (op : String) (x y : Civil) : Decidable (CalOrder op x y) := by unfold CalOrder; split <;> infer_instance
+
+/-- Today's date node for each `cal_cmp` operator. -/
+def calNode : String → Option (QTerm → QTerm → QFormula)
+  | "before" => some .dateBefore | "after" => some .dateAfter | "on" => some .dateOn
+  | "on_or_before" => some .dateNoLater | "on_or_after" => some (fun p q => .dateNoLater q p) | _ => none
+
+/-- `["cal_cmp", op, a, b]`: if both dates are valid, today's date node over their day numbers
+(showing both); else (a date before 1970) the order, decided here. -/
+def elabCalCmp (op : String) (a b : Json) : Except String QFormula := do
+  let x ← elabCal VE.Limits.maxDepth a
+  let y ← elabCal VE.Limits.maxDepth b
+  let some node := calNode op | throw s!"Invalid date comparison {op}"
+  pure (if x.properB && y.properB then node (.num dayTag x.num) (.num dayTag y.num)
+    else if decide (CalOrder op x y) then .top else .bottom)
+
+/-- The dates a statement's ground date expressions start from (the `date` leaves under `cal`
+and `cal_cmp`, in order): bound into its meaning id and shown in a document's report. -/
+def calInputs : Nat → Bool → Json → List String
+  | fuel + 1, under, .arr xs => match xs.toList with
+    | [.str "date", .str s] => if under then [s] else []
+    | .str op :: rest => rest.flatMap (calInputs fuel (under || op == "cal" || op == "cal_cmp"))
+    | rest => rest.flatMap (calInputs fuel under)
+  | _, _, _ => []
+
+def inputsField (xs : List String) : List (String × Json) :=
+  if xs.isEmpty then [] else [("inputs", toJson xs)]
+
 /-- Terms: depth is counted from each atom, separately from formula depth. -/
 def elabTerm (v : QVocab) (ctx : List String) : Nat → Json → Except String (QType × QTerm)
   | 0, _ => throw depthLimit
@@ -365,6 +465,9 @@ def elabTerm (v : QVocab) (ctx : List String) : Nat → Json → Except String (
       let t ← v.tag dayTag
       let D ← parseIso text
       pure (.qty t, .num t D.num)
+    | [.str "cal", e] => do
+      let t ← v.tag dayTag
+      pure (.qty t, .num t (← calDay e).num)
     | [.str "add", l, r] => addTerm dimensionless l r fuel
     | [.str "add", .str tag, l, r] => do addTerm (← v.tag tag) l r fuel
     | [.str "scale", .str c, u] => scaleTerm dimensionless c u fuel
@@ -462,9 +565,10 @@ def elabFormula (v : QVocab) : Nat → List String → Json → Except String QF
       let (c, wq) ← term w
       same c (.qty (← v.tag elapsedTag))
       pure (.elapsed dq tq wq)
+    | [.str "cal_cmp", .str op, a, b] => do let _ ← v.tag dayTag; elabCalCmp op a b
     | .str op :: _ =>
       if ["date_on", "date_before", "date_after", "date_no_later", "within_days", "shift_days",
-          "elapsed_days"].contains op then throw s!"Invalid {op} node"
+          "elapsed_days", "cal_cmp"].contains op then throw s!"Invalid {op} node"
       else if w6b.contains op then throw numbers2
       else if ["forall", "exists"].contains op then throw "Invalid quantity binder"
       else throw s!"Unknown quantity formula {op}"
@@ -545,12 +649,14 @@ structure Admission (w : W6Env) where
   core : Json
   meaningId : String
   coreId : String
+  inputs : List String
 
 /-- A statement's two identities in `w`: the annotated meaning id of its canonical object and its core's (the
 cardinality route's regenerated problems use them too). -/
-def statementIds (w : W6Env) (formula : QFormula) : Except String (String × String) := do
-  let canonical := Json.mkObj [("format", .str "ve-quantity@1"), ("formula", encQ formula),
-    ("traces", Json.arr #[])]
+def statementIds (w : W6Env) (formula : QFormula) (inputs : List String := []) :
+    Except String (String × String) := do
+  let canonical := Json.mkObj ([("format", .str "ve-quantity@1"), ("formula", encQ formula),
+    ("traces", Json.arr #[])] ++ inputsField inputs)
   pure (← VE.Route.Wire.meaningId w.profiles w.environmentId canonical,
     ← VE.Route.Wire.meaningId w.profiles w.targetId (encCore formula.erase))
 
@@ -576,8 +682,9 @@ def decodeQuantity (w : W6Env) (p : Json) : Except String (Admission w) := do
     let core := encCore formula.erase
     -- The frozen decoder re-checks the regenerated core in the target vocabulary.
     let _ ← VE.Order.Wire.decodeFormulas w.vocab.core.environment (Json.arr #[core])
-    let (meaningId, coreId) ← statementIds w formula
-    pure ⟨formula, h, q, core, meaningId, coreId⟩
+    let inputs := calInputs 257 false source
+    let (meaningId, coreId) ← statementIds w formula inputs
+    pure ⟨formula, h, q, core, meaningId, coreId, inputs⟩
   else throw "TypeMismatch: statement is not admitted"
 
 /-- Every admitted statement satisfies the independent admission relation, and
