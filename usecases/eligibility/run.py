@@ -301,8 +301,8 @@ def fixture_model(case_with_key, defaults):
             constants[constant] = dnum(period[field]) if period.get(field) else "0"
     for r, x in people.items():
         o, other = T.OTHER[r], others[r]
-        pa = T.PENSIONABLE_AGE[x["birth"].isoformat()]
-        values = {"pa_date": date.fromisoformat(pa[1]), "eightieth": date.fromisoformat(T.EIGHTIETH[x["birth"].isoformat()]),
+        # The reference's own dates (Sch. 4; 80 years on), the latest where a missing day gives two.
+        values = {"pa_date": max(R.pensionable_age_dates(x["birth"])), "eightieth": max(R.anniversaries(x["birth"], 80)),
                   "ew_from": x["ew_from"], "ew_last_day": x["ew_last_day"], "scot_ni_from": x["scot_ni_from"]}
         if x["care"]:
             values.update(care_from=x["care"]["from"], care_until=x["care"].get("until"))

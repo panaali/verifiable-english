@@ -1,8 +1,8 @@
 {
  "b1_certified": true,
  "english": {
-  "facts": 166,
-  "round_trip": 86,
+  "facts": 149,
+  "round_trip": 69,
   "rows": [
    {
     "fact": "applicant.shares_home",
@@ -52,12 +52,12 @@
    {
     "fact": "applicant.pa_date",
     "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is on 2021-03-14."
+    "sentence": "The applicant's pensionable-age date is no later than 2026-09-27."
    },
    {
     "fact": "applicant.eightieth",
     "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2035-03-14."
+    "sentence": "The applicant's 80th birthday is after 2026-09-27."
    },
    {
     "fact": "applicant.ever_resident_ew",
@@ -120,14 +120,9 @@
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
-    "fact": "applicant.pa_date",
-    "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."
-   },
-   {
     "fact": "applicant.eightieth",
     "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2024-05-02."
+    "sentence": "The applicant's 80th birthday is no later than 2026-09-27."
    },
    {
     "fact": "applicant.shares_home",
@@ -227,12 +222,12 @@
    {
     "fact": "housemate.pa_date",
     "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is on 2023-11-02."
+    "sentence": "The housemate's pensionable-age date is no later than 2026-09-27."
    },
    {
     "fact": "housemate.eightieth",
     "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2037-11-02."
+    "sentence": "The housemate's 80th birthday is after 2026-09-27."
    },
    {
     "fact": "housemate.ever_resident_ew",
@@ -285,29 +280,9 @@
     "sentence": "The housemate's total income equals GBP 20000.00."
    },
    {
-    "fact": "housemate.pa_date",
-    "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is no later than 2018-12-05."
-   },
-   {
     "fact": "housemate.eightieth",
     "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2024-05-02."
-   },
-   {
-    "fact": "housemate.pa_date",
-    "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is on 2021-03-14."
-   },
-   {
-    "fact": "housemate.eightieth",
-    "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2035-03-14."
-   },
-   {
-    "fact": "housemate.eightieth",
-    "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2022-01-15."
+    "sentence": "The housemate's 80th birthday is no later than 2026-09-27."
    },
    {
     "fact": "applicant.paid.pension_credit",
@@ -330,16 +305,6 @@
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
    },
    {
-    "fact": "applicant.pa_date",
-    "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is on 2023-11-02."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2037-11-02."
-   },
-   {
     "fact": "housemate.paid.pension_credit",
     "round_trip": false,
     "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
@@ -357,12 +322,7 @@
    {
     "fact": "housemate.pa_date",
     "round_trip": true,
-    "sentence": "The housemate's pensionable-age date is on 2037-08-19."
-   },
-   {
-    "fact": "housemate.eightieth",
-    "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2050-08-19."
+    "sentence": "The housemate's pensionable-age date is after 2026-09-27."
    },
    {
     "fact": "applicant.paid.attendance_allowance",
@@ -637,52 +597,7 @@
    {
     "fact": "applicant.pa_date",
     "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is on 2026-09-27."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2040-06-27."
-   },
-   {
-    "fact": "applicant.pa_date",
-    "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is on 2026-09-28."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2040-06-28."
-   },
-   {
-    "fact": "applicant.pa_date",
-    "round_trip": true,
-    "sentence": "The applicant's pensionable-age date is no later than 2026-03-01."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2040-02-29."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2026-09-27."
-   },
-   {
-    "fact": "applicant.eightieth",
-    "round_trip": true,
-    "sentence": "The applicant's 80th birthday is on 2026-09-28."
-   },
-   {
-    "fact": "housemate.eightieth",
-    "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2026-09-28."
-   },
-   {
-    "fact": "housemate.eightieth",
-    "round_trip": true,
-    "sentence": "The housemate's 80th birthday is on 2026-09-27."
+    "sentence": "The applicant's pensionable-age date is after 2026-09-27."
    },
    {
     "fact": "applicant.care_from",
@@ -1225,7 +1140,75 @@
   },
   "M5": {
    "changed": [
-    "C01"
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09",
+    "A10",
+    "A11",
+    "A12",
+    "A13",
+    "B01",
+    "B02",
+    "B03",
+    "B05",
+    "B06",
+    "B10",
+    "B12",
+    "B13",
+    "B14",
+    "B15",
+    "B16",
+    "B17",
+    "B18",
+    "B19",
+    "B20",
+    "B21",
+    "B22",
+    "B23",
+    "B24",
+    "B25",
+    "B26",
+    "B27",
+    "B28",
+    "B29",
+    "B30",
+    "B31",
+    "B32",
+    "B33",
+    "B34",
+    "C01",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11",
+    "C12",
+    "C14",
+    "C15",
+    "C17",
+    "C19",
+    "C21",
+    "C22",
+    "C24",
+    "C25",
+    "C26",
+    "C27",
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
    ],
    "description": "R2 'no later than' as 'before'",
    "killed": true,
@@ -1235,9 +1218,22 @@
   },
   "M6": {
    "changed": [
+    "A02",
+    "A05",
+    "A06",
+    "A08",
+    "A09",
+    "A11",
+    "A13",
+    "B14",
+    "B21",
+    "B30",
+    "B33",
+    "B34",
     "C04",
     "C06",
-    "C08"
+    "C08",
+    "D06"
    ],
    "description": "R15 age 80 strict",
    "killed": true,
@@ -1291,7 +1287,7 @@
    "python": "admitted"
   },
   "P3": {
-   "conditional": "rejected: The number at position 52 is not written in canonical form.",
+   "conditional": "parsed",
    "expected": "facts parse uniquely and round-trip; the conditional is rejected",
    "facts": [
     {
@@ -1332,17 +1328,17 @@
     "bottom": {
      "certified": false,
      "status": "NotFound",
-     "steps": 124
+     "steps": 128
     },
     "entitled": {
      "certified": false,
      "status": "NotFound",
-     "steps": 124
+     "steps": 128
     },
     "not_entitled": {
      "certified": false,
      "status": "NotFound",
-     "steps": 126
+     "steps": 130
     }
    },
    "staged": {
@@ -1401,17 +1397,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -1648,17 +1644,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 134
      }
     }
    },
@@ -1895,17 +1891,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -2142,17 +2138,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -2389,17 +2385,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -2636,17 +2632,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -2883,17 +2879,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -3130,17 +3126,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -3377,17 +3373,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 133
      }
     }
    },
@@ -3624,17 +3620,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 135
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 135
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 137
      }
     }
    },
@@ -3871,17 +3867,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 139
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 131
+      "steps": 139
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 133
+      "steps": 141
      }
     }
    },
@@ -4118,17 +4114,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -4365,17 +4361,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 133
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 133
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 135
      }
     }
    },
@@ -4603,17 +4599,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -4830,17 +4826,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -5077,17 +5073,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -5315,17 +5311,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 138
      }
     }
    },
@@ -5542,17 +5538,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -5789,17 +5785,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -6027,17 +6023,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -6245,17 +6241,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -6463,17 +6459,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -6690,12 +6686,12 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 127
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 127
      },
      "not_entitled": {
       "certified": false,
@@ -6928,17 +6924,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 134
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 130
+      "steps": 134
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      }
     }
    },
@@ -7146,17 +7142,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -7373,17 +7369,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -7620,17 +7616,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -7867,17 +7863,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -8114,17 +8110,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -8826,17 +8822,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -9073,17 +9069,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 138
      }
     }
    },
@@ -9320,17 +9316,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 133
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 133
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 135
      }
     }
    },
@@ -10032,17 +10028,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -10279,17 +10275,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -10526,17 +10522,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -10773,17 +10769,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -11011,17 +11007,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -11229,17 +11225,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -11456,17 +11452,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -11703,17 +11699,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -11950,17 +11946,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -12197,17 +12193,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -12444,17 +12440,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 129
      }
     }
    },
@@ -12691,17 +12687,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -13156,17 +13152,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -13403,17 +13399,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 134
      }
     }
    },
@@ -13650,17 +13646,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -13897,17 +13893,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 131
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -14144,17 +14140,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -14391,17 +14387,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -14638,17 +14634,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -14885,17 +14881,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -15132,17 +15128,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -15379,17 +15375,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 132
+      "steps": 136
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 134
+      "steps": 138
      }
     }
    },
@@ -15617,17 +15613,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 132
      }
     }
    },
@@ -15844,17 +15840,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 132
      }
     }
    },
@@ -16091,17 +16087,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 132
      }
     }
    },
@@ -16329,17 +16325,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 128
+      "steps": 132
      }
     }
    },
@@ -16556,17 +16552,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -16794,17 +16790,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -17021,17 +17017,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -17259,17 +17255,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -17486,17 +17482,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -17733,17 +17729,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -17971,17 +17967,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -18198,17 +18194,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -18445,17 +18441,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -18692,17 +18688,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -18939,17 +18935,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 125
+      "steps": 129
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 127
+      "steps": 131
      }
     }
    },
@@ -19186,17 +19182,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -19433,17 +19429,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -19680,17 +19676,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -19927,17 +19923,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -20174,17 +20170,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 128
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 130
      }
     }
    },
@@ -20421,17 +20417,17 @@
      "bottom": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 124
+      "steps": 132
      },
      "not_entitled": {
       "certified": false,
       "status": "NotFound",
-      "steps": 126
+      "steps": 134
      }
     }
    },
@@ -20632,9 +20628,9 @@
  ],
  "prover": {
   "calls": 5910,
-  "searches": 512
+  "searches": 478
  },
- "seconds": 720,
+ "seconds": 380,
  "summary": {
   "answered": 269,
   "correct_answered": 269,

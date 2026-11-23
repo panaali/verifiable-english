@@ -32,23 +32,79 @@ BENEFITS = {  # constant name: English name
 RELEVANT = ("income_support", "income_based_jsa", "pension_credit", "income_related_esa",
             "universal_credit")
 
-# Bridge B2 (PLAN 4.3): birth date -> ("on", date) or ("no_later", bound) for the
-# pensionable-age date, from Pensions Act 1995 Sch. 4 para. 1.
-PENSIONABLE_AGE = {
-    "1942-01-15": ("no_later", "2018-12-05"), "1944-05-02": ("no_later", "2018-12-05"),
-    "1946-09-26": ("no_later", "2018-12-05"), "1946-09-27": ("no_later", "2018-12-05"),
-    "1946-09-28": ("no_later", "2018-12-05"),
-    "1955-03-14": ("on", "2021-03-14"), "1957-11-02": ("on", "2023-11-02"),
-    "1960-02-29": ("no_later", "2026-03-01"), "1960-06-27": ("on", "2026-09-27"),
-    "1960-06-28": ("on", "2026-09-28"), "1970-08-19": ("on", "2037-08-19"),
+# Bridges B2 and B3 (spare-ages-cutoffs): the guide's birth-date cut-offs for this qualifying week,
+# read from the guide's own sentences by `guide_cutoffs`. A birth date cannot be a W6a term (every
+# one is before 1970-01-01; probe P1), so `age_facts` compares it with the cut-offs in Python and
+# states a bound on the person's pensionable-age date and 80th birthday against the last day of
+# the week. This replaced two hand-filled tables keyed by 10 birth dates (any other birth date
+# stopped the run); tests/test_spare_ages_cutoffs.py checks the cut-offs against Sch. 4 (reference.py).
+# Source-coverage unit -> S2 line (wfp-print.txt) of each guide sentence the reader reads: W1-W7 of
+# reviews/relb/FAULTS.md section 4 (S2:46, :55, :61, :66 and :70 are the lead-ins of the amount rows).
+GUIDE_CUTOFF_LINES = {
+    "S0372": 5, "S0391": 23, "S0411": 46, "S0412": 47, "S0413": 48, "S0416": 55, "S0417": 56, "S0418": 57,
+    "S0419": 58, "S0420": 59, "S0421": 61, "S0422": 62, "S0423": 63, "S0426": 66, "S0427": 67, "S0428": 68,
+    "S0429": 70, "S0430": 71, "S0431": 72,
 }
-# Bridge B3: birth date -> 80th birthday.
-EIGHTIETH = {
-    "1942-01-15": "2022-01-15", "1944-05-02": "2024-05-02", "1946-09-27": "2026-09-27",
-    "1946-09-28": "2026-09-28", "1955-03-14": "2035-03-14", "1957-11-02": "2037-11-02",
-    "1960-02-29": "2040-02-29", "1960-06-27": "2040-06-27", "1960-06-28": "2040-06-28",
-    "1970-08-19": "2050-08-19",
-}
+GUIDE_LEAD_INS = {46: "You’ll get either:", 55: "You’ll get a payment of:", 61: "One of you will get a payment of either:",
+                  66: "You’ll get a payment of either:", 70: "If you’re eligible you’ll get either:"}
+_MONTH_NAMES = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+                "November", "December")
+_GUIDE_DATE = rf"([1-9]|[12][0-9]|3[01]) ({'|'.join(_MONTH_NAMES)}) ([0-9]{{4}})"
+
+
+def _guide_date(match, first):
+    return date(int(match[first + 2]), _MONTH_NAMES.index(match[first + 1]) + 1, int(match[first]))
+
+
+def guide_cutoffs(lines=None):
+    """(pensionable-age cut-off, 80th-birthday cut-off), read from the guide's W1-W7 sentences.
+
+    "born on or before D" gives the first (S2:5, :23: born on or before D, pensionable age reached by
+    the end of the week); "born before E" gives the second (80 by the end of the week); "born between
+    E and D" is the span between them. Every amount row starts "£<n> if " and every other line is its
+    lead-in, word for word. Any other wording, a date left over, or two lines that disagree raise
+    ValueError: no cut-off is taken from a sentence the reader does not read whole."""
+    import re
+    if lines is None:
+        lines = (HERE / "source" / "wfp-print.txt").read_text(encoding="utf-8").split("\n")
+    pa, age80 = set(), set()
+    patterns = ((rf"born between {_GUIDE_DATE} and {_GUIDE_DATE}", (age80, pa)),
+                (rf"born on or before {_GUIDE_DATE}", (pa,)), (rf"born before {_GUIDE_DATE}", (age80,)))
+    for unit, number in GUIDE_CUTOFF_LINES.items():
+        text = lines[number - 1]
+        if number in GUIDE_LEAD_INS:
+            if text != GUIDE_LEAD_INS[number]:
+                raise ValueError(f"{unit} (S2:{number}): not the lead-in {GUIDE_LEAD_INS[number]!r}: {text!r}")
+            continue
+        if number > 23 and not re.match(r"£[0-9]+ if ", text):
+            raise ValueError(f"{unit} (S2:{number}): not an amount row: {text!r}")
+        rest, found = text, 0
+        for pattern, targets in patterns:
+            for match in re.finditer(pattern, rest):
+                for k, target in enumerate(targets):
+                    target.add(_guide_date(match, 1 + 3 * k))
+                found += 1
+            rest = re.sub(pattern, "", rest)
+        if not found or re.search(rf"{'|'.join(_MONTH_NAMES)}|born", rest):
+            raise ValueError(f"{unit} (S2:{number}): a birth-date condition the reader does not read: {text!r}")
+    if len(pa) != 1 or len(age80) != 1:
+        raise ValueError(f"the guide's cut-offs disagree: pensionable age {sorted(pa)}, age 80 {sorted(age80)}")
+    (pa_cutoff,), (age80_cutoff,) = pa, age80
+    if not age80_cutoff < pa_cutoff:
+        raise ValueError(f"the age-80 cut-off {age80_cutoff} is not before the pensionable-age cut-off {pa_cutoff}")
+    return pa_cutoff, age80_cutoff
+
+
+def age_facts(r, birth):
+    """Bridges B2 and B3 for role r: whether the pensionable-age date and the 80th birthday fall no later
+    than the last day of the week, from the birth date and the guide's cut-offs (born on or before the
+    first; born before the second). Valid for this qualifying week only (QW1, the guide's S2:38)."""
+    born = date.fromisoformat(birth)
+    pa_cutoff, age80_cutoff = guide_cutoffs()
+    pa_op = "date_no_later" if born <= pa_cutoff else "date_after"
+    age80_op = "date_no_later" if born < age80_cutoff else "date_after"
+    return [fact(f"{r}.pa_date", [pa_op, num(r, "pa_date"), day(QW1)], "bridge B2"),
+            fact(f"{r}.eightieth", [age80_op, num(r, "eightieth"), day(QW1)], "bridge B3")]
 
 # Integer constants per role: name suffix -> (unit, English words after "the <role>'s").
 ROLE_INTEGERS = {
@@ -710,10 +766,7 @@ def role_facts(r, p, other_present, housemate=None):
     check_fields(r, p)
     for b in BENEFITS:
         facts.append(fact(f"{r}.paid.{b}", lit(b in p["benefits"], B("paid_for_week", r, b))))
-    rule_pa = PENSIONABLE_AGE[p["birth"]]
-    op = "date_on" if rule_pa[0] == "on" else "date_no_later"
-    facts.append(fact(f"{r}.pa_date", [op, num(r, "pa_date"), day(rule_pa[1])], "bridge B2"))
-    facts.append(fact(f"{r}.eightieth", ["date_on", num(r, "eightieth"), day(EIGHTIETH[p["birth"]])], "bridge B3"))
+    facts += age_facts(r, p["birth"])
     facts.append(fact(f"{r}.ever_resident_ew", lit(p["ew_from"] is not None, U("ever_resident_ew", r))))
     if p["ew_from"] is not None:
         facts.append(fact(f"{r}.ew_from", ["date_on", num(r, "ew_from"), day(p["ew_from"])]))
