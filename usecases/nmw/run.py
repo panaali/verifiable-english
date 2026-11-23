@@ -470,6 +470,27 @@ def run_case(case, mutant=None, prover=None):
     return answers, targets, staged, rules, facts, env_raw
 
 
+def _case_task(case):
+    """One period record and its Lean cases (run in a worker process; everything returned is plain JSON)."""
+    answers, targets, staged, rules, facts, env_raw = run_case(case)
+    rec = {"id": case["id"], "staged": answers, "rules": len(rules), "facts": len(facts),
+           "constraints": staged.check_constraints(),
+           "steps": [{k: v for k, v in e.items() if k != "premises"} | {"premise_count": len(e["premises"])}
+                     for e in staged.log],
+           "encoder_judgement": case.get("judgement", []), "calendar": case.get("calendar", []),
+           "targets": targets}
+    lcs = []
+    for step in staged.steps.values():
+        lcs.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
+                    "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
+                    "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
+    docs = sorted({t for ts in targets.values() for t in ts})
+    for i, t in enumerate(docs):
+        lcs.append({"id": f"{case['id']}/doc/{i}", "kind": "document", "environment": env_raw,
+                    "document": staged.document(t), "_target": t})
+    return rec, lcs, Environment(env_raw).environment_id
+
+
 def _mutant_task(item):
     mutant, cases, base = item
     changed = []
@@ -486,31 +507,20 @@ def main(argv=None):
     ap.add_argument("--mutants", action="store_true")
     ap.add_argument("--no-lean", action="store_true")
     ap.add_argument("--out")
-    ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--workers", type=int, default=8)
     args = ap.parse_args(argv)
     started = time.time()
     cases = K.CASES
     if args.cases:
         cases = [c for c in cases if c["id"] in args.cases.split(",")]
     records, lean_cases, env_ids = [], [], {}
-    for case in cases:
-        answers, targets, staged, rules, facts, env_raw = run_case(case)
-        env_ids[case["id"]] = Environment(env_raw).environment_id
-        rec = {"id": case["id"], "staged": answers, "rules": len(rules), "facts": len(facts),
-               "constraints": staged.check_constraints(),
-               "steps": [{k: v for k, v in e.items() if k != "premises"} | {"premise_count": len(e["premises"])}
-                         for e in staged.log],
-               "encoder_judgement": case.get("judgement", []), "calendar": case.get("calendar", []),
-               "targets": targets}
+    from concurrent.futures import ProcessPoolExecutor
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        done = list(pool.map(_case_task, cases))
+    for rec, lcs, env_id in done:
         records.append(rec)
-        for step in staged.steps.values():
-            lean_cases.append({"id": f"{case['id']}/cert/{step['name']}", "kind": "certificate",
-                               "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
-                               "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
-        docs = sorted({t for ts in targets.values() for t in ts})
-        for i, t in enumerate(docs):
-            lean_cases.append({"id": f"{case['id']}/doc/{i}", "kind": "document", "environment": env_raw,
-                               "document": staged.document(t), "_target": t})
+        lean_cases += lcs
+        env_ids[rec["id"]] = env_id
     doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
     lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
     for rec in records:
