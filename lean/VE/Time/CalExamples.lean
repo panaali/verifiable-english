@@ -246,6 +246,11 @@ def refusal (formula : String) (e : Json := env) : String :=
 #guard calInputs 257 false (p r#"["x", ["date", "2026-01-01"]]"#) == []
 #guard calInputs 257 true (p r#"["date", "2026-01-01"]"#) == ["2026-01-01"]
 #guard calInputs 0 true (p r#"["date", "2026-01-01"]"#) == []
+#guard calInputs 1 true (p r#"["date", "2026-01-01"]"#) == ["2026-01-01"]
+#guard calInputs 2 false (p r#"["cal", ["date", "2026-01-01"]]"#) == ["2026-01-01"]
+#guard calInputs 257 true (p r#"[["date", "2026-01-01"]]"#) == []
+#guard calInputs 257 false (p r#"["cal_cmp", "on", ["date", "1960-01-01"], ["month_last", ["date", "1961-02-01"]],
+  ["date", "1962-03-01"]]"#) == ["1960-01-01", "1961-02-01", "1962-03-01"]
 #guard calInputs 257 false (p r#"["cal", ["nth_weekday", 3, 0, 9, 2026]]"#) == []
 -- the same `Q` from other case dates has another meaning id; a statement without them keeps today's object.
 #guard q r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"# ==
@@ -264,5 +269,16 @@ def refusal (formula : String) (e : Json := env) : String :=
 #guard (claim r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map
   (·.getObjValD "inputs") == some (p r#"["1960-01-01", "1960-06-27"]"#)
 #guard (claim r#"["top"]"#).map (·.getObjVal? "inputs" |>.toOption) == some none
+-- the whole claim, with and without inputs and with a label.
+#guard (claim r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map (·.compress) ==
+  (mid r#"["cal_cmp", "before", ["date", "1960-01-01"], ["date", "1960-06-27"]]"#).map fun m =>
+    (p (r#"{"name": "n", "quantity": {"format": "ve-quantity@1", "formula": ["top"], "traces": []}, "meaning_id": ""#
+      ++ m ++ r#"", "inputs": ["1960-01-01", "1960-06-27"]}"#)).compress
+#guard ((do
+    let w ← decodeEnvironment env
+    let a ← decodeQuantity w (Json.mkObj [("format", .str "ve-quantity@1"), ("formula", p r#"["top"]"#)])
+    pure ((Document.claimJson "m" a "assumed").compress, a.meaningId)) : Except String (String × String)).toOption.map
+  (fun (c, m) => c == (p (r#"{"name": "m", "quantity": {"format": "ve-quantity@1", "formula": ["top"], "traces": []},
+    "meaning_id": ""# ++ m ++ r#"", "label": "assumed"}"#)).compress) == some true
 
 end VE.Time.CalExamples
