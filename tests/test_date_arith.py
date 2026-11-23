@@ -252,7 +252,7 @@ def test_review_b1_a_conclusion_about_a_day_constant_always_meets_c2():
     with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*the start of the relevant period.*\(C2\)"):
         lower_date_item(env, two, case, facts=FACTS)
     lowered = lower_date_item(env, two.split(". ")[0] + ".", case, facts=FACTS)
-    assert lowered["concluded"][0][0] == "the start of the relevant period"
+    assert lowered["concluded"][0][0] == "relevant"
     assert lowered["rules"][0][1][2] == ["date_on", ["const", "day", "relevant"], ["cal", ["date", "2026-06-01"]]]
     with pytest.raises(DateRuleError, match=r"is a case date; a rule does not conclude it \(C2\)"):
         lower_date_item(env, "If the person is a man, then the date of the tenancy agreement is on 1 June 2026.", case,
@@ -291,3 +291,155 @@ def test_review_b9_b10_a_date_the_case_may_lack_stays_a_constant():
         ["date_before", ["const", "day", "tenancy_person"], ["cal", ["date", "2019-06-01"]]],
         ["date_before", ["const", "day", "tenancy_partner"], ["cal", ["date", "2019-06-01"]]]]
     assert lowered["case_facts"] == [["date_on", ["const", "day", "tenancy_partner"], ["date", "2019-05-01"]]]
+
+
+# --- the Codex review's findings and the Opus review's at 17775b3795 (manage-agents reviews/spare/date-arith/
+# CODEX-REVIEW.final.md, OPUS-MISROUTED-REVIEW.final.md) ------------------------------------------------------
+
+def _deadline_env():
+    return environment(("deadline", "the deadline"), ("relevant", "the start of the relevant period"),
+                       ("claim", "the day the claim is made"))
+
+
+ALWAYS = "If 1 June 2026 is on 1 June 2026, then "
+
+
+@pytest.mark.parametrize("second", [
+    "2 June 2026 is on the deadline",            # Codex W6: reversed operands, through the W6 date_on wording
+    "the deadline equals 2 June 2026",           # "equals"
+    "The deadline is on 2 June 2026",            # capitalised
+    "the deadline is before 1 June 2026",        # a comparison, not an equality
+    "the deadline is on 2 June 2026",            # the direct wording, for reference
+])
+def test_codex_h1_c2_keys_on_the_lowered_conclusion_not_its_text(second):
+    """H1: every rule whose conclusion lowers to a date node over a day constant concludes that constant, so
+    two overlapping rules about the deadline are refused whatever the second conclusion's wording."""
+    env = _deadline_env()
+    text = ALWAYS + "the deadline is 1 June 2026. " + ALWAYS + second + "."
+    with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*deadline.*\(C2\)"):
+        lower_date_item(env, text, {}, facts=FACTS)
+    from ve.surface.dates import lower_date_items
+    with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*deadline.*\(C2\)"):
+        lower_date_items(env, [ALWAYS + "the deadline is 1 June 2026.", ALWAYS + second + "."], {}, facts=FACTS)
+    lowered = lower_date_item(env, ALWAYS + second + ".", {}, facts=FACTS)
+    assert [c[0] for c in lowered["concluded"]] == ["deadline"]
+
+
+def test_codex_h1_a_name_with_is_in_it_and_reversed_case_dates():
+    env = _deadline_env()
+    two = ("If the person is a man, then the day the claim is made is 1 June 2026. "
+           "If the person is eligible, then the day the claim is made is 2 June 2026.")
+    with pytest.raises(DateRuleError, match=r"DateRuleOverlap.*claim.*\(C2\)"):
+        lower_date_item(env, two, {}, facts=FACTS)
+    one = lower_date_item(env, two.split(". ")[0] + ".", {}, facts=FACTS)
+    assert one["rules"][0][1][2] == ["date_on", ["const", "day", "claim"], ["cal", ["date", "2026-06-01"]]]
+    case = {"dates": {"the date of the tenancy agreement": "2020-01-01"}}
+    for conclusion in ("1 June 2026 is on the date of the tenancy agreement",
+                       "The date of the tenancy agreement is on 1 June 2026",
+                       "the deadline is on the date of the tenancy agreement"):
+        if not conclusion.startswith("the deadline"):  # a given case date is substituted there: a ground date
+            with pytest.raises(DateRuleError, match=r"is a case date; a rule does not conclude it \(C2\)"):
+                lower_date_item(env, f"If the person is a man, then {conclusion}.", case, facts=FACTS)
+        with pytest.raises(DateRuleError, match=r"is a case date; a rule does not conclude it \(C2\)"):
+            lower_date_item(env, f"If the person is a man, then {conclusion}.", {},
+                            may_lack=["the date of the tenancy agreement"], facts=FACTS)
+    with pytest.raises(DateRuleError, match=r"compares fixed dates only"):
+        lower_date_item(env, "If the person is a man, then 2 June 2026 is before 1 June 2026.", {}, facts=FACTS)
+
+
+def test_codex_h2_a_let_never_names_a_date_a_rule_concludes():
+    env = _deadline_env()
+    codex = ("Let the deadline be 1 June 2026. If 1 June 2026 is on 1 June 2026, then the deadline is 2 June 2026. "
+             "If the deadline is on 1 June 2026, then the person is eligible.")
+    opus = ("Let the start of the relevant period be 1 March 2026. If the person is a man, then the start of the "
+            "relevant period is 1 April 2026. If the start of the relevant period is before 15 March 2026, then the "
+            "person is eligible.")
+    for text in (codex, opus):
+        with pytest.raises(DateRuleError, match=r"DateRuleLet.*a Let sentence does not set it"):
+            lower_date_item(env, text, {}, facts=FACTS)
+    from ve.surface.dates import lower_date_items
+    with pytest.raises(DateRuleError, match=r"DateRuleLet"):
+        lower_date_items(env, ["Let the start of the relevant period be 1 March 2026. If the start of the relevant "
+                               "period is before 15 March 2026, then the person is eligible.",
+                               "If the person is a man, then the start of the relevant period is 1 April 2026."],
+                         {}, facts=FACTS)
+
+
+def test_opus_h3_a_let_is_lowered_per_role():
+    """H3: the partner (56 on the payment date) is not answered eligible from the person's (76) pension day."""
+    env = environment()
+    text = ("Let the pension day be the day the person attains the age of 66 years. If the payment date is on or after "
+            "the pension day, then the person is eligible.")
+    case = {"dates": {"the birth date of the person": "1950-01-01", "the birth date of the partner": "1970-01-01",
+                      "the payment date": "2026-06-01"}}
+    lowered = lower_date_item(env, text, case, facts=FACTS, roles=["the person", "the partner"])
+    person, partner = (elaborate_quantity(env, p)[0]["formula"][1] for p in lowered["premises"])
+    assert closed_truth(person)
+    assert not closed_truth(partner)
+    assert lowered["rules"][1][1][1][3] == ["plus_months", ["date", "1970-01-01"], "792", "none"]
+
+
+@pytest.mark.parametrize("text", [
+    # rtt2 S4 (pawhp H15 reg. 2): a fact on every day of a span
+    "If the person lived in a care home throughout the qualifying week and for the 12 weeks immediately preceding "
+    "the qualifying week, then the person is eligible.",
+    "If the person lived in a care home throughout the qualifying week, then the deadline is 1 June 2026.",
+    # rtt2 S10 (SI 2025/969 reg. 2(b)): a fact on some day of a span
+    "If in respect of any day falling within the qualifying week the person is ordinarily resident in England, then "
+    "the person is eligible.",
+    "If the person is ordinarily resident on any day in the qualifying week, then the person is eligible.",
+    "If the person is a man and the person is resident on every day of the qualifying week, then the person is "
+    "eligible.",
+])
+def test_codex_m1_span_facts_are_refused_cannot(text):
+    """M1: a fact over a span of days is refused (CANNOT), even when the caller's facts map reads it."""
+    env = _deadline_env()
+    condition = text[3:text.index(", then ")]
+    facts = dict(FACTS)
+    for part in [condition, *condition.split(" and ")]:
+        facts[part] = ["unary", "eligible", ["const", "p"]]
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(env, text, {}, facts=facts)
+
+
+# --- the Opus review's MEDIUM: one boundary test per form real items use ----------------------------------------
+
+def _payment(text, iso, **case):
+    cond, _ = condition_of(environment(), text, {"dates": {"the payment date": iso, **case}})
+    return closed_truth(cond)
+
+
+def test_opus_m2_period_x_to_y_includes_both_ends():
+    text = "If the payment date is in the period 1 April 2026 to 30 April 2026, then the person is exempt."
+    assert [_payment(text, d) for d in ("2026-03-31", "2026-04-01", "2026-04-30", "2026-05-01")] == [
+        False, True, True, False]
+
+
+def test_opus_m2_last_day_of_an_n_day_period():
+    text = ("If the payment date is on or before the last day of the period of 14 days beginning with 1 June 2026, "
+            "then the person is exempt.")
+    assert [_payment(text, d) for d in ("2026-06-14", "2026-06-15")] == [True, False]
+
+
+def test_opus_m2_nth_day_of_a_period():
+    text = "If the payment date is on the 3rd day of the period beginning with 1 June 2026, then the person is exempt."
+    assert [_payment(text, d) for d in ("2026-06-02", "2026-06-03", "2026-06-04")] == [False, True, False]
+
+
+def test_opus_m2_week_forms():
+    inside = "If the payment date is in the week beginning 1 June 2026, then the person is exempt."
+    assert [_payment(inside, d) for d in ("2026-05-31", "2026-06-01", "2026-06-07", "2026-06-08")] == [
+        False, True, True, False]
+    by = "If the payment date is in or before the week beginning 1 June 2026, then the person is exempt."
+    assert [_payment(by, d) for d in ("2026-06-07", "2026-06-08")] == [True, False]
+
+
+def test_opus_m2_birthday_and_aged_forms():
+    birthday = "If the person has reached their 18th birthday on 1 June 2026, then the person is eligible."
+    assert [_payment(birthday, "2026-06-01", **{"the birth date of the person": b})
+            for b in ("2008-06-01", "2008-06-02")] == [True, False]
+    aged = "If the person is aged at least 65 years and 6 months on 1 June 2026, then the person is eligible."
+    assert [_payment(aged, "2026-06-01", **{"the birth date of the person": b})
+            for b in ("1960-12-01", "1960-12-02")] == [True, False]
+    minus = "If the payment date is on or after 1 June 2026 minus 3 months, then the person is exempt."
+    assert [_payment(minus, d) for d in ("2026-02-28", "2026-03-01")] == [False, True]
