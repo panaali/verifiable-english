@@ -2805,6 +2805,13 @@
    "reason": "kb-4b: the metered runner split (new Lean-owned behaviour: the mode's three-way dispatch and the current runner's own validation, which refuses an acts@0 view through ActsHook.plain): K +0, S +0, V +47 (VE/Service/Standalone.lean +31: validatedOver (validated's body after the acts view, moved), regulatedBy, profileTreeBy, checkRegulatedBy, modelViewProfiles and the docstrings of the wrappers; VE/Route/MeteredRun.lean +9: prepareOf and runCaseReportedLegacy/Acts/Current; VE/Norms/Plain.lean +7: decodeRegulatedAllBy (decodeRegulatedAllIn's body, moved)); every other new declaration tied to its equality or wire theorem; ties pass in docs/kernel/kb-4b/FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), kb-4b, 2026-11-16",
    "commit": "b8abce49ef4ff27cadf803a6bae81c8f015ac1e2"
+  },
+  {
+   "class": "V",
+   "lines": 48,
+   "reason": "relb-f3-phrases: VE/EnglishGrammar/Lexicon.lean V +48 (48 idiom rows for the eligibility use case's plain wordings: 37 in idioms1, 11 in idioms2; no new trusted definition)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), relb-f3-phrases, 2026-11-23",
+   "commit": "fc84ed56a2c9678f136d6e428380b1398fc75c55"
   }
  ]
 }

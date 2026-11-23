@@ -90,9 +90,9 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | reports | candidate | 3 | 4,360 | 7 | 4,367 |
 | normDefaults | candidate | 7 | 5,717 | 657 | 6,370 |
 | risk | candidate | 8 | 5,404 | 2,504 | 7,895 |
-| readingsRoute | candidate | 8 | 9,349 | 14,974 | 24,263 |
-| discourse | candidate | 6 | 36,266 | 11 | 36,272 |
-| document | candidate | 9 | 35,349 | 900 | 36,242 |
+| readingsRoute | candidate | 8 | 9,397 | 14,974 | 24,311 |
+| discourse | candidate | 6 | 36,314 | 11 | 36,320 |
+| document | candidate | 9 | 35,397 | 900 | 36,290 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
 candidate rows moved with main's code, the kernel rows did not). kb-4a regenerated it with the acts hook: `normsActs` is the norms mode's `acts@0` cases
