@@ -1,0 +1,314 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "and-or",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "body-false",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "body-true",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "eq-le",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "eq-ne",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "le-eq",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "le-lt",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "lit-minus",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "lit-plus",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.MonthsLater",
+   "operator": "or-and",
+   "reason": "a Prop (the spec of addMonths, read by CalDenotes) no check can evaluate; each such mutant breaks addMonths_spec or monthsLater_cases in Calendar.lean (the run's detail names them), and addMonths_spec is what the listed elabCal_sound rests on"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "lit-minus",
+   "reason": "a Prop (a date a ground expression may name) no check can evaluate apart from its decidable reading; the two literal mutants break addMonths_ground (Calendar.lean) and elabCal_sound's range conjunct"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "lit-plus",
+   "reason": "a Prop (a date a ground expression may name) no check can evaluate apart from its decidable reading; the two literal mutants break addMonths_ground (Calendar.lean) and elabCal_sound's range conjunct"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "and-or",
+   "reason": "Ground is an abbrev, so every check that decides it elaborates otherwise under the mutant and the tool reads UNKNOWN; the CalExamples `decide (Civil.Ground ...)` guards (both sides of each bound, 1900-02-29, 2000-02-29) refute each of these"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "body-false",
+   "reason": "Ground is an abbrev, so every check that decides it elaborates otherwise under the mutant and the tool reads UNKNOWN; the CalExamples `decide (Civil.Ground ...)` guards (both sides of each bound, 1900-02-29, 2000-02-29) refute each of these"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "body-true",
+   "reason": "Ground is an abbrev, so every check that decides it elaborates otherwise under the mutant and the tool reads UNKNOWN; the CalExamples `decide (Civil.Ground ...)` guards (both sides of each bound, 1900-02-29, 2000-02-29) refute each of these"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "le-eq",
+   "reason": "Ground is an abbrev, so every check that decides it elaborates otherwise under the mutant and the tool reads UNKNOWN; the CalExamples `decide (Civil.Ground ...)` guards (both sides of each bound, 1900-02-29, 2000-02-29) refute each of these"
+  },
+  {
+   "definition": "VE.Time.Civil.Ground",
+   "operator": "le-lt",
+   "reason": "Ground is an abbrev, so every check that decides it elaborates otherwise under the mutant and the tool reads UNKNOWN; the CalExamples `decide (Civil.Ground ...)` guards (both sides of each bound, 1900-02-29, 2000-02-29) refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "ctor-drop",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "eq-le",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "eq-ne",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "le-eq",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "le-lt",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "lit-minus",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalDenotes",
+   "operator": "lit-plus",
+   "reason": "a Prop (the spec relation of ground date expressions, the C4 relation) no check can evaluate; the mutant breaks the listed theorem elabCal_sound (lean/VE/Time/WireSound.lean, run with --test) or makes a mutant Lean refuses (failed to synthesize)"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "arm-false",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "arm-true",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "bool-flip",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "eq-le",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "eq-ne",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.CalOrder",
+   "operator": "not-drop",
+   "reason": "CalOrder is read through its Decidable instance, which the tool sees as changed and reads UNKNOWN; the CalExamples `decide (CalOrder ...)` guards (both truth values of each operator, an unknown operator) and the cal_cmp guards refute each of these"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "arm-default",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-drop-first",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-drop-last",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-drop-middle",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-first",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "list-last",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "lit-minus",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabCal",
+   "operator": "lit-plus",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "list-drop-first",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "list-drop-last",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "list-first",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "list-last",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.elabTerm",
+   "operator": "arm-default",
+   "reason": "the `cal` branch made `throw`: the tool cannot place this mutant (it moves a later line) and reads UNKNOWN; the CalExamples statement guards on `cal` terms (`q`, `refusal`) refute it"
+  },
+  {
+   "definition": "VE.Time.Wire.calNode",
+   "operator": "arm-default",
+   "reason": "a redundant match alternative: Lean refuses the mutant, which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.calInputs",
+   "operator": "arm-default",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.calInputs",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.calInputs",
+   "operator": "lit-minus",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.Wire.inputsField",
+   "operator": "list-first",
+   "reason": "equivalent: the list holds at most one pair, so take 1 and reverse.take 1 of it, or of the inputs inside `isEmpty`, are the same value"
+  },
+  {
+   "definition": "VE.Time.Wire.inputsField",
+   "operator": "list-last",
+   "reason": "equivalent: the list holds at most one pair, so take 1 and reverse.take 1 of it, or of the inputs inside `isEmpty`, are the same value"
+  },
+  {
+   "definition": "VE.Time.Document.claimJson",
+   "operator": "list-first",
+   "reason": "equivalent where it survives (the `inputsField a.inputs` part, at most one pair); the base list's mutants are killed by the whole-claim guards in CalExamples"
+  },
+  {
+   "definition": "VE.Time.Document.claimJson",
+   "operator": "list-last",
+   "reason": "equivalent where it survives (the `inputsField a.inputs` part, at most one pair); the base list's mutants are killed by the whole-claim guards in CalExamples"
+  },
+  {
+   "definition": "VE.Time.Wire.decodeQuantity",
+   "operator": "lit-minus",
+   "reason": "equivalent: calInputs' fuel 257 (or 256, 258) exceeds the depth of any source decodeQuantity admits (formula, term and date-expression depths at most 64 each, VE.Limits.maxDepth), so no admitted statement reads the bound"
+  },
+  {
+   "definition": "VE.Time.Wire.decodeQuantity",
+   "operator": "lit-plus",
+   "reason": "equivalent: calInputs' fuel 257 (or 256, 258) exceeds the depth of any source decodeQuantity admits (formula, term and date-expression depths at most 64 each, VE.Limits.maxDepth), so no admitted statement reads the bound"
+  },
+  {
+   "definition": "VE.Time.nthWeekday",
+   "operator": "lit-minus",
+   "reason": "equivalent where it survives: day 0 of a month has the day number of day 1 (Nat subtraction in Civil.num), and month 0 or 13 has monthLen 0, so it is refused either way; the last two break nthWeekday_spec"
+  },
+  {
+   "definition": "VE.Time.nthWeekday",
+   "operator": "lit-plus",
+   "reason": "equivalent where it survives: day 0 of a month has the day number of day 1 (Nat subtraction in Civil.num), and month 0 or 13 has monthLen 0, so it is refused either way; the last two break nthWeekday_spec"
+  },
+  {
+   "definition": "VE.Time.CalExamples.claim",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.CalExamples.cmp",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.CalExamples.inputs",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.CalExamples.mid",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  },
+  {
+   "definition": "VE.Time.CalExamples.q",
+   "operator": "list-empty",
+   "reason": "the mutant does not compile (Lean refuses it: unsupported pattern in a syntax match, an unbound pattern variable, a type mismatch, missing cases or no termination proof), which the tool reads as UNKNOWN, not INVALID"
+  }
+ ]
+}

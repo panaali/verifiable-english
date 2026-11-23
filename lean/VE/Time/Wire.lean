@@ -416,7 +416,7 @@ def calInputs : Nat → Bool → Json → List String
   | fuel + 1, under, .arr xs => match xs.toList with
     | [.str "date", .str s] => if under then [s] else []
     | .str op :: rest => rest.flatMap (calInputs fuel (under || op == "cal" || op == "cal_cmp"))
-    | rest => rest.flatMap (calInputs fuel under)
+    | _ => []
   | _, _, _ => []
 
 def inputsField (xs : List String) : List (String × Json) :=
