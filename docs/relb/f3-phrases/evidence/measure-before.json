@@ -1,0 +1,17 @@
+{
+ "summary": {
+  "predicates": 49,
+  "predicates_plain": 5,
+  "rules": 56,
+  "rules_round_trip": 56,
+  "rules_plain": 8,
+  "rules_declared": 1,
+  "facts": 80,
+  "facts_round_trip": 80,
+  "facts_plain": 6,
+  "facts_declared": 0,
+  "declared": 0,
+  "declared_used": 0
+ },
+ "refused": {}
+}
