@@ -22,8 +22,8 @@ def test_codex_ar_med3_decimal_day_terms_compare_fixed_dates_only():
 
 @pytest.mark.parametrize("formula", [
     ["date_before", ["decimal", "day", "2"], ["decimal", "day", "1"]],
-    ["date_on", ["decimal", "day", "1"], ["num", "day", "2"]],
-    ["date_on", ["decimal", "day", "1.0"], ["date", "1970-01-03"]],
+    ["eq", ["decimal", "day", "1"], ["decimal", "day", "2"]],
+    ["within_days", ["decimal", "day", "1"], ["decimal", "day", "2"], "3"],
     ["not", ["date_after", ["decimal", "day", "1"], ["decimal", "day", "2"]]],
     ["and", ["unary", "eligible", ["const", "p"]], ["date_on", ["decimal", "day", "1"], ["decimal", "day", "2"]]],
 ])
