@@ -20,7 +20,10 @@ sys.path.insert(0, str(L.parents[1]))
 sys.path.insert(0, str(L))
 sys.path.insert(0, str(X))
 import cases_xfam  # noqa: E402
+import reg36_overlay  # noqa: E402
 
+# row statute-xfam-wrong-uc-award-1: the fresh seat's absent_from links (reg36_overlay.py), applied mechanically
+REG36_ADDED = reg36_overlay.apply(cases_xfam.CASES)
 sys.modules["cases"] = cases_xfam
 QUESTIONS_ENC_SHA256 = "c633faa30eb1903c03fd920f48b0db72cafa7ccef1441334efa0d516c75d843a"
 import run as RUN  # noqa: E402
@@ -40,7 +43,9 @@ def main(argv=None):
     if out["questions_enc_sha256"] != QUESTIONS_ENC_SHA256:
         raise SystemExit("xfam/questions-enc.jsonl differs from the sealed encoder file")
     out["label"] = "CROSS-FAMILY (Codex gpt-6-astra writer, Opus 5.5 encoder; frozen same-family translation)"
-    out["xfam"] = {"cases_xfam_sha256": hashlib.sha256((X / "cases_xfam.py").read_bytes()).hexdigest()}
+    out["xfam"] = {"cases_xfam_sha256": hashlib.sha256((X / "cases_xfam.py").read_bytes()).hexdigest(),
+                   "reg36_absences_sha256": reg36_overlay.sha256(),
+                   "reg36_links_added": {k: [list(l) for l in v] for k, v in sorted(REG36_ADDED.items())}}
     if out_path:
         text = json.dumps(out, indent=1, sort_keys=True) + "\n"
         Path(out_path).write_text(text, encoding="utf-8")
