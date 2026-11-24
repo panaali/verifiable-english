@@ -59,13 +59,18 @@ A housemate or partner, a care stay, hospital or custody need a profile file: th
 
 ## 5. Expected output
 
-The command prints exactly the text below. The first four lines are the answers: entitled, £200, not taken back
-by HMRC, £200 kept. Then, per question: the clauses used, among them regulation 2(a) (pensionable age),
+On main the command prints exactly the text below (the tag differs in one assumption, as noted below).
+The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. Then, per question:
+the clauses used, among them regulation 2(a) (pensionable age),
 2(b) (resident in England or Wales on a day of the week), 3(1) (the £200 amount) and 4(4) (the move to Scotland
 or Northern Ireland, which does not apply here: the applicant moved to Scotland before living in England, not
 after); for questions 3 and 4,
 the GOV.UK guide's "If your income is over £35,000" section, shown as an assumption because its legal basis is not
 pinned down; and each answer's Lean check.
+
+The block is the output on main. The tag ve-elig-b1 (whose files are those of main at 0152dcf1dc) prints the same
+text except one assumption: where the block describes the gloss and the checked English wording, the tag says
+that the rules have none, which was already false there (its results.json words all 56 rules).
 
 <!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output -->
 ```text
@@ -264,8 +269,11 @@ Assumptions (taken as given, not checked):
       that one person.
   - The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in
       England or Wales on any day of the qualifying week gets no payment under these Regulations.
-  - The rules have no checked English wording; each is shown above as a plain gloss next to its
-      source text, and the gloss is taken to state the rule.
+  - Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a
+      hand-written summary not checked against the rule, is taken to describe it. Each rule used
+      here also has a checked English wording: a sentence generated from the rule and read back by
+      the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
+      prints it under the gloss).
   - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
   - In “lives with”, the words “they are not in residential care” apply only to the person who lives
       with someone; the other person may be in residential care.
