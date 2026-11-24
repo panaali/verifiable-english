@@ -393,6 +393,8 @@ def answer(staged, question):
     "none" for lat (no written approval needed: no such deadline), OPEN for dl (R7: a member granted after the effective
     day); guard open -> OPEN."""
     x, form = question["item"], question["form"]
+    if form == "noform":   # cases.NOFORM: no rule of translation.py decides this question: refused, never forced
+        return {"answer": "OPEN", "no_form": True}, []
     if form in YESNO:
         atom = T.U(form, x)
         v = staged.truth(atom)
@@ -421,6 +423,8 @@ def roots_for(case):
     out = []
     for qn in case["questions"]:
         x, form = qn["item"], qn["form"]
+        if form == "noform":
+            continue
         if form in YESNO:
             out.append(T.key(T.U(form, x)))
         else:

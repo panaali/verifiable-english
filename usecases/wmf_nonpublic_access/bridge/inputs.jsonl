@@ -1,0 +1,27 @@
+{"case": "W001", "dob": "2008-07-10", "item": "a1", "kind": "age"}
+{"case": "W002", "dob": "2008-07-11", "item": "a1", "kind": "age"}
+{"case": "W003", "dob": "2008-07-09", "item": "a1", "kind": "age"}
+{"case": "W004", "dob": "2010-07-10", "item": "a1", "kind": "age"}
+{"case": "W005", "dob": "2010-07-11", "item": "a1", "kind": "age"}
+{"case": "W006", "dob": "2009-07-10", "item": "a1", "kind": "age"}
+{"case": "W007", "dob": "2009-07-10", "item": "a1", "kind": "age"}
+{"case": "W008", "dob": "2009-07-10", "item": "a1", "kind": "age"}
+{"case": "W009", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W010", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W011", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W012", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W013", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W014", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W015", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W016", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W018", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W019", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W020", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W021", "dob": "1990-06-12", "item": "a1", "kind": "age"}
+{"case": "W027", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d1", "kind": "b10"}
+{"case": "W027", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d2", "kind": "b10"}
+{"case": "W028", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d1", "kind": "b10"}
+{"case": "W028", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d2", "kind": "b10"}
+{"case": "W029", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d1", "kind": "b10"}
+{"case": "W029", "day": "2026-09-21", "holidays": ["2026-09-07"], "item": "d2", "kind": "b10"}
+{"case": "W030", "day": "2026-08-01", "holidays": [], "item": "d1", "kind": "b10"}
