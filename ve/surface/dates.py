@@ -39,7 +39,8 @@ from __future__ import annotations
 
 import re
 
-from ..errors import ResourceLimit, SyntaxError
+from ..ast import numeral_value
+from ..errors import ResourceLimit, SyntaxError, VEError
 
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September",
           "October", "November", "December")
@@ -55,6 +56,39 @@ _DAY_NODES = {"before": ("date_before", False), "after": ("date_after", False), 
 
 class DateRuleError(SyntaxError):
     """A written date item the lowering refuses (the message names the rule)."""
+
+
+class DateRuleBound(DateRuleError):
+    """CANNOT: a count, day or year in the item text has more than `MAX_COUNT_DIGITS` digits. Never converted,
+    never read some other way: every handler that tries another reading after a `DateRuleError` re-raises it."""
+
+
+# A count of years, months, weeks or days, an ordinal, a day of the month or a year read from the item or the
+# case: at most this many digits (date-arith full gate, test_numeral_conversion). 999999 days is past 1900..9999.
+MAX_COUNT_DIGITS = 6
+
+
+def _count(text):
+    """The value of a digit run read from a date item, or CANNOT above `MAX_COUNT_DIGITS` digits (refused, not
+    converted: `int` of a long digit string raises a bare ValueError past the interpreter's digit limit)."""
+    if not re.fullmatch(r"[0-9]+", text):
+        raise DateRuleError(f"DateRule: {text!r} is not a count in digits")
+    if len(text) > MAX_COUNT_DIGITS:
+        raise DateRuleBound(f"CANNOT (DateRuleBound): a count of {len(text)} digits; a date item reads at most "
+                            f"{MAX_COUNT_DIGITS}")
+    return numeral_value(text)
+
+
+def _case_year(name, value):
+    """A year the case fixes: an int or a digit string, at most `MAX_COUNT_DIGITS` digits (CANNOT above)."""
+    if type(value) is int:
+        if not 0 <= value < 10 ** MAX_COUNT_DIGITS:
+            raise DateRuleBound(f"CANNOT (DateRuleBound): the year {name!r} lies outside "
+                                f"0..{10 ** MAX_COUNT_DIGITS - 1}")
+        return value
+    if isinstance(value, str):
+        return _count(value)
+    raise DateRuleError(f"DateRule: the year {name!r} is not a number")
 
 
 # A count in a duration-span phrase: digits, or a written count up to "nine hundred and ninety-nine" (Codex
@@ -105,7 +139,7 @@ def _day_constants_in(f):
 
 def _ordinal(text):
     m = re.fullmatch(r"([1-9][0-9]*)(?:st|nd|rd|th)", text)
-    return int(m[1]) if m else None
+    return _count(m[1]) if m else None
 
 
 class _Item:
@@ -156,7 +190,7 @@ class _Item:
             return ("ground", e)
         m = re.fullmatch(r"([1-9]|[12][0-9]|3[01]) ([A-Z][a-z]+) ([0-9]{4})", text)
         if m and m[2] in MONTHS:
-            return ("ground", ["date", f"{m[3]}-{MONTHS.index(m[2]) + 1:02d}-{int(m[1]):02d}"])
+            return ("ground", ["date", f"{m[3]}-{MONTHS.index(m[2]) + 1:02d}-{_count(m[1]):02d}"])
         m = re.fullmatch(r"the first day of the month of (.+)", text)
         if m:
             return ("ground", ["month_first", self.ground(m[1], text)])
@@ -169,12 +203,12 @@ class _Item:
                                               str(_ordinal(m[1])), "none"]])
         m = re.fullmatch(r"the (first|second|third|fourth) ([A-Z][a-z]+) in ([A-Z][a-z]+) (?:of )?(.+)", text)
         if m and m[2] in WEEKDAYS and m[3] in MONTHS:
-            year = int(m[4]) if re.fullmatch(r"[0-9]{4}", m[4]) else self.year(m[4])
+            year = _count(m[4]) if re.fullmatch(r"[0-9]{4}", m[4]) else self.year(m[4])
             return ("ground", ["nth_weekday", ORDINALS.index(m[1]) + 1, WEEKDAYS.index(m[2]),
                                MONTHS.index(m[3]) + 1, year])
         m = re.fullmatch(r"the last day of the period of ([1-9][0-9]*) days beginning with (.+)", text)
         if m:
-            return ("ground", ["plus_days", self.ground(m[2], text), str(int(m[1]) - 1)])
+            return ("ground", ["plus_days", self.ground(m[2], text), str(_count(m[1]) - 1)])
         m = re.fullmatch(r"the (\S+) day of the period beginning with (.+)", text)
         if m and _ordinal(m[1]):
             return ("ground", ["plus_days", self.ground(m[2], text), str(_ordinal(m[1]) - 1)])
@@ -184,7 +218,7 @@ class _Item:
         m = re.fullmatch(r"the day (.+) attains the age of ([0-9]+) years?(?: and ([0-9]+) months?)?"
                          r"(?:,? \(?reading: (last|next) day\)?)?", text)
         if m:
-            months = 12 * int(m[2]) + int(m[3] or 0)
+            months = 12 * _count(m[2]) + _count(m[3] or "0")
             return ("ground", ["plus_months", self.birth(m[1]), str(months), m[4] or "none"])
         return self.named(text)
 
@@ -195,7 +229,7 @@ class _Item:
             m = re.fullmatch(r"([0-9]+) (year|month|week|day)s?", part.strip())
             if not m:
                 return None
-            n = int(m[1])
+            n = _count(m[1])
             months += {"year": 12 * n, "month": n}.get(m[2], 0)
             days += {"week": 7 * n, "day": n}.get(m[2], 0)
         return months, days
@@ -212,10 +246,10 @@ class _Item:
     def year(self, name):
         scoped = self.let_years.get(self.scope, {})
         if name in scoped:
-            return int(scoped[name])
+            return scoped[name]  # a Let year: _count of four digits
         if name not in self.years:
             raise DateRuleError(f"DateRule: the year {name!r} is not fixed by the case or a Let sentence")
-        return int(self.years[name])
+        return _case_year(name, self.years[name])
 
     def named(self, text):
         if text in self.lets:
@@ -250,16 +284,16 @@ class _Item:
         m = re.fullmatch(r"(.+?) (?:has attained the age of|is aged at least) ([0-9]+)(?: years?)?"
                          r"(?: and ([0-9]+) months?)? on (.+)", text)
         if m:
-            out.append(self.age(m[1], int(m[2]), int(m[3] or 0), m[4]))
+            out.append(self.age(m[1], _count(m[2]), _count(m[3] or "0"), m[4]))
         m = re.fullmatch(r"(.+?) has reached (?:his|her|their|its) (\S+) birthday on (.+)", text)
         if m and _ordinal(m[2]):
             out.append(self.age(m[1], _ordinal(m[2]), 0, m[3]))
         m = re.fullmatch(r"(.+?) is under the age of ([0-9]+)(?: years?)? on (.+)", text)
         if m:
-            out.append(["not", self.age(m[1], int(m[2]), 0, m[3])])
+            out.append(["not", self.age(m[1], _count(m[2]), 0, m[3])])
         m = re.fullmatch(r"(.+?) is in the period of ([1-9][0-9]*) days beginning with (.+)", text)
         if m:
-            out.append(self.window(m[1], m[3], int(m[2]) - 1))
+            out.append(self.window(m[1], m[3], _count(m[2]) - 1))
         m = re.fullmatch(r"(.+?) is in the week beginning (.+)", text)
         if m:
             out.append(self.window(m[1], m[2], 6))
@@ -279,6 +313,8 @@ class _Item:
                 self.tick()
                 try:
                     out.append(self.compare(op, self.date(text[:start]), self.date(text[start + len(connector):])))
+                except DateRuleBound:
+                    raise
                 except DateRuleError as exc:
                     errors.append(exc)
                 start = text.find(connector, start + 1)
@@ -289,7 +325,7 @@ class _Item:
                 out.append(self.fact(text))
             except ResourceLimit:
                 raise
-            except Exception as exc:  # no date reading and no fact reading: the date rule's refusal says why
+            except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
                 raise errors[0] if errors else DateRuleError(f"DateRule: no reading of the condition {text!r} "
                                                              f"({exc})") from exc
         return out
@@ -325,6 +361,8 @@ class _Item:
             for i in depth_ok:
                 try:
                     left, right = self.conditions(text[:i]), self.conditions(text[i + len(word):])
+                except DateRuleBound:
+                    raise
                 except DateRuleError:
                     continue
                 readings += [[node, a, b] for a in left for b in right]
@@ -333,6 +371,8 @@ class _Item:
         if not readings and text.startswith("not "):
             try:
                 readings += [["not", a] for a in self.conditions(text[4:])]
+            except DateRuleBound:
+                raise
             except DateRuleError:
                 pass
         if not readings:
@@ -417,7 +457,7 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
                                         f"{item.day_constants[name]!r}, which a rule may conclude); a Let sentence "
                                         "does not set it (C2)")
                 if re.fullmatch(r"[0-9]{4}", value):
-                    years[name] = int(value)
+                    years[name] = _count(value)
                     continue
                 d = item.date(value)
                 if d[0] != "ground":
@@ -480,6 +520,8 @@ def _conclusion(item, text):
         if name.startswith("the ") and name in item.day_constants:
             try:
                 value = item.date(rest)
+            except DateRuleBound:
+                raise
             except DateRuleError as exc:  # e.g. "is before ...": the W6 grammar below may read it
                 errors.append(exc)
                 continue
@@ -494,7 +536,7 @@ def _conclusion(item, text):
             formula = item.fact(text)
         except ResourceLimit:
             raise
-        except Exception as exc:  # no reading either way: the date rule's refusal says why
+        except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
             if errors:
                 raise errors[0] from exc
             raise
