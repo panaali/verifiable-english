@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-fixes-80d60960-t489484-s6",
+ "head": "1837490e618984d2f867b4c123715cc9f82fd862",
+ "argv": [
+  "armsh-cand-relb-fixes-80d60960-t489484-s6",
+  "1837490e618984d2f867b4c123715cc9f82fd862",
+  "569a6c446df9e499fa0e84a09715b304a1998b3c",
+  "-",
+  "-",
+  "4",
+  "6/6"
+ ]
+}
