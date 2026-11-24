@@ -503,10 +503,27 @@ def roots_for(sub, ctx):
     return out
 
 
-def lean(cases):
+def _lean_chunk(chunk):
     from ve.backends.relay import rows
-    results = rows("quantity", cases)
-    assert [r["id"] for r in results] == [c["id"] for c in cases]
+    out = []
+    for i in range(0, len(chunk), 40):   # small requests: one sub-case's long chain fits Lean's request deadline
+        part = chunk[i:i + 40]
+        res = rows("quantity", part, timeout=3600)
+        assert [r["id"] for r in res] == [c["id"] for c in part]
+        out += res
+    return out
+
+
+def lean(cases, workers=6):
+    """Lean's rows for every certificate and document, one worker per sub-case (ids '<case>/s<k>/...')."""
+    from concurrent.futures import ProcessPoolExecutor
+    groups = {}
+    for c in cases:
+        groups.setdefault(c["id"].split("/cert/")[0].split("/doc/")[0], []).append(c)
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        parts = list(pool.map(_lean_chunk, list(groups.values())))
+    results = [r for part in parts for r in part]
+    assert sorted(r["id"] for r in results) == sorted(c["id"] for c in cases)
     return results
 
 
@@ -643,7 +660,7 @@ def main(argv=None):
             lean_cases += r["lean_cases"]
         records.append(rec)
     doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
-    lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
+    lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases, args.workers)}
     for rec in records:
         cid = rec["id"]
         mine = {kk: v for kk, v in lean_results.items() if kk.startswith(cid + "/")}
