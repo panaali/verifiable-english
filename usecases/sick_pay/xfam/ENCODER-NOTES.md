@@ -1,0 +1,218 @@
+# ENCODER-NOTES: out/cases_xfam.py (statutory sick pay, SSCBA 1992 ss. 151-155, 157)
+
+## Counts
+
+- in-scope cases encoded: 35; sub-cases: 37 (S028 Cody + Drew, S029 Evan + Felix); questions: 112
+- unsupported: 0; probes (scope out, not encoded): 4 (S036, S037, S038, S039; 6 questions)
+- judgement lines: 78; calendar lines: 72; note lines: 43
+- check.py: OK (the INFO lines are all span bounds: 2025-11-01, and 2026-12-31 where unwritten, are the judgement range; the rest are the day before / after a stated interval, a note)
+
+## Conventions used
+
+- encode.py C1-C6 as written. Stated facts only: spans I = {dis, cannot} (disabling injury / illness with the stated judgment), DM = {deemed}, ILLCAN = {dis} (S011), N elsewhere; contract start, end, nwe and dq dates copied as stated.
+- General range: "outside the stated intervals, on all dates needed here" is read as 2025-11-01..2026-12-31 (N on the days outside the stated intervals). The first piece is then a stated non-incapacity day more than 57 days before any incapacity (R1, R7).
+- Weekly agreements copied for the whole weeks 2025-10-26..2027-01-02 (S023 and S030 split at the stated weeks). Every week the build uses holds a described date.
+- Anchor (C5/R9): no case names a day with its day of the week, so each sub-case anchors on the first day of its first stated interval. The weekday was computed with datetime (CALENDAR), and the file asserts it.
+- No rate, amount, waiting day, period, limit or answer was computed. The S033/S034 rounding convention has no fact in the vocabulary, so it is not encoded (judgement).
+
+## Calendar
+
+- S001: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S001: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S002: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S002: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S003: anchor 2026-05-08 is a Friday: not stated, computed with datetime
+- S003: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S004: anchor 2026-05-10 is a Sunday: not stated, computed with datetime
+- S004: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S005: anchor 2026-05-09 is a Saturday: not stated, computed with datetime
+- S005: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S006: anchor 2026-05-03 is a Sunday: not stated, computed with datetime
+- S006: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S007: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S007: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S008: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S008: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S009: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S009: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S010: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S010: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S011: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S011: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S012: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S012: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S013: anchor 2026-05-01 is a Friday: not stated, computed with datetime
+- S013: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S014: anchor 2026-05-01 is a Friday: not stated, computed with datetime
+- S014: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S015: anchor 2026-03-01 is a Sunday: not stated, computed with datetime
+- S015: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S016: anchor 2026-03-01 is a Sunday: not stated, computed with datetime
+- S016: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S017: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S017: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S018: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S018: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S019: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S019: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S020: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S020: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S021: anchor 2026-05-01 is a Friday: not stated, computed with datetime
+- S021: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S022: anchor 2026-01-07 is a Wednesday: not stated, computed with datetime
+- S022: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S023: anchor 2026-01-07 is a Wednesday: not stated, computed with datetime
+- S023: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S023: 2026-01-10 (Saturday ending the week beginning 4 January 2026) computed with datetime
+- S024: anchor 2026-01-05 is a Monday: not stated, computed with datetime
+- S024: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S025: anchor 2026-01-05 is a Monday: not stated, computed with datetime
+- S025: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S026: anchor 2026-01-05 is a Monday: not stated, computed with datetime
+- S026: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S027: anchor 2026-05-01 is a Friday: not stated, computed with datetime
+- S027: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S028: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S028: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S029: anchor 2026-01-05 is a Monday: not stated, computed with datetime
+- S029: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S030: anchor 2026-05-08 is a Friday: not stated, computed with datetime
+- S030: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S030: 2026-05-09 (Saturday ending the week beginning 3 May 2026) computed with datetime
+- S031: anchor 2026-05-03 is a Sunday: not stated, computed with datetime
+- S031: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S032: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S032: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S033: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S033: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S034: anchor 2026-05-04 is a Monday: not stated, computed with datetime
+- S034: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+- S035: anchor 2026-05-05 is a Tuesday: not stated, computed with datetime
+- S035: weekly range bounds 2025-10-26 (a Sunday) and 2027-01-02 (a Saturday): not stated, computed with datetime
+
+## Judgements
+
+- S001: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S001: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S002: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S002: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S003: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S003: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S004: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S004: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S005: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S005: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S006: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S006: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S007: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S007: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S008: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S008: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S009: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S009: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S010: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S010: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S011: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S011: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S011: 'mild wrist sprain' read as a bodily disablement (dis true); the stated judgment that Jane can reasonably be expected to do and can do the work: cannot false (ILLCAN)
+- S012: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S012: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S013: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S013: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S013: the deemed days 1-3 May 2026 lie before the contract first takes effect (4 May 2026): stated as deemed all the same (152(6)); R3 decides their period of entitlement
+- S014: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S014: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S014: the deemed days 1-2 May 2026 lie before the contract first takes effect (3 May 2026): stated as deemed all the same (152(6)); R3 decides
+- S015: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S015: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S016: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S016: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S017: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S017: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S018: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S018: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S019: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S019: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S020: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S020: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S020: 'Her disqualifying period, a maternity pay period, begins on 6 May 2026': dq 2026-05-06, has_dq true (153(2)(d), (12)(a))
+- S021: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S021: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S021: 'Her disqualifying period, a maternity allowance period, begins on 4 May 2026': dq 2026-05-04, has_dq true (153(2)(d), (12)(b))
+- S022: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S022: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S023: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S023: weeks 'up to and including the week beginning 4 January 2026' read from WLO (2025-10-26); 'from 11 January 2026 onward' read to WHI (2027-01-02)
+- S024: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S024: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S025: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S025: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S026: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S026: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S027: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S027: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S028: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S028: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used); for Drew the facts say 'every week' (a copy)
+- S029: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S029: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S029: Felix: the deemed days 5 January - 3 May 2026 lie before Felix's contract first takes effect (4 May 2026): stated as deemed all the same (152(6)); R3 decides
+- S030: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S030: weeks 'through the week beginning 3 May 2026' read from WLO (2025-10-26); 'from 10 May 2026 onward' read to WHI (2027-01-02)
+- S031: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S031: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S032: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S032: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S033: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S033: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S033: the stated rounding convention ('no rounding until the answer; the answer to the nearest penny, half up') has no fact in the vocabulary: not encoded; the build answers as it can
+- S034: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S034: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+- S034: the stated rounding convention ('no rounding until the answer; the answer to the nearest penny, half up') has no fact in the vocabulary: not encoded; the build answers as it can
+- S035: 'on all dates needed here' (outside the stated intervals: no disease, can work, not deemed) read as 2025-11-01..2026-12-31 (N spans), so the chain starts more than 57 days before any stated incapacity (R1, R7)
+- S035: 'every week beginning with Sunday that contains a date described here' read as every whole week 2025-10-26..2027-01-02 holding that range (only weeks with a stated incapacity day, an asked day or the anchor are used)
+
+## Notes
+
+- S001: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S002: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S003: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S004: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S005: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S006: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S007: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S008: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S009: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S010: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S011: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S012: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S013: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S014: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S015: the stated gap (3 March - 27 April 2026) is the N span between the two deemed intervals
+- S015: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S016: the stated gap (3 March - 28 April 2026) is the N span between the two deemed intervals
+- S016: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S017: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S018: 'brought to an end by mutual agreement on 5 May 2026': contract end 2026-05-05
+- S018: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S019: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S020: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S021: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S022: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S023: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S024: the stated gap (18 July - 11 September 2026) is the N span between the two deemed intervals
+- S024: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S025: the stated gap (18 July - 12 September 2026) is the N span between the two deemed intervals
+- S025: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S026: the stated gaps (12 January - 8 March, 16 March - 10 May 2026) are the N spans between the deemed intervals
+- S026: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S027: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S028: two employers, two sub-cases (C2): Cody (MWF, £120.00) and Drew (Mon-Fri, £100.00); 4 May 2026 the same back injury with the stated judgment for each contract (I)
+- S028: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S029: two employers, two sub-cases (C2): Evan (from 1 January 2026, £150.00) and Felix (from 4 May 2026, £100.00); deemed 5 January - 22 July 2026 under each contract
+- S029: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S030: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S031: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S032: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S033: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S034: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
+- S035: N span bounds next to a stated interval (the day before its first day, the day after its last) are the edges of 'outside the stated intervals' (a copy)
