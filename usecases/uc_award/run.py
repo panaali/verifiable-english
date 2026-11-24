@@ -454,6 +454,7 @@ def run_case(case, mutant=None, prover=None):
         return (*refused(case, why), staged, rules, facts, env_raw)
     roots = roots_for(case, ctx)
     roots += [T.key(T.B(p, ctx.anchor, x)) for x in ctx.partners() for p in ("tcp", "jointp")]
+    roots += [T.key(T.B("tcp", x, z)) for x, z in ctx.outer_pairs()]
     staged.run(unit_map(ctx), roots)
     why = T.partner_refusal(ctx, staged.truth, mutant)
     if why is not None:
