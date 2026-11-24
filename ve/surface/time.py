@@ -43,6 +43,16 @@ _ELAPSED = (" to ", " equals ")
 _POINTS = (" minus ", " equals ")
 # Money subtraction (relb F2): "A equals B minus C." reads eq(A, B + (-1)*C) for a money tag.
 _MINUS = (" equals ", " minus ")
+# Sums (statute-feature-sums-build; manage-agents reviews/spare/statute-corpus/feature-sums/PROPOSAL.md v2,
+# section 4): "A equals B plus C." (two terms) and "A equals the sum of B, C, ... and Z." (three or more terms)
+# read eq(A, B + (C + (... + Z))), the right-nested add chain, for a money or decimal tag. The terms after "the
+# sum of" are tiled left to right with the environment's constant phrases and literals; every complete tiling is
+# kept, so two tilings are two derivations (AmbiguousDerivation), never one picked. A chain of more than
+# MAX_SUM_TERMS terms has no wording (Lean's quantity decoder takes a term depth of 64 at most).
+_PLUS = (" equals ", " plus ")
+_SUM = " equals the sum of "
+MAX_SUM_TERMS = 60
+_SUM_KINDS = ("money", "decimal")
 # Operations with a controlled quantity wording, and the yes/no connectives the
 # splice reads around them (relb F1).
 _QUANTITY_OPS = ("eq", "lt", "le", "date_on", "date_before", "date_after", "date_no_later",
@@ -198,10 +208,64 @@ def _quantity_readings(env, text, d):
             for tag in money_tags:
                 for a, b, c in d.terms(first, second, third):
                     d.offer(["eq", a, ["add", tag, b, ["scale", tag, "-1", c]]])
+    sum_tags = [tag for tag, record in env.units.items() if record["display"]["kind"] in _SUM_KINDS]
+    if sum_tags:
+        for first, second, third in d.splits(text, _PLUS):
+            for tag in sum_tags:
+                for a, b, c in d.terms(first, second, third):
+                    d.offer(["eq", a, ["add", tag, b, c]])
+        for left, rest in d.splits(text, (_SUM,)):
+            for phrases in _sum_tilings(env, rest, d):
+                if len(phrases) > MAX_SUM_TERMS:
+                    d.rejected.append(ResourceLimit(
+                        f"CANNOT (SumBound): a sum of {len(phrases)} terms; at most MAX_SUM_TERMS={MAX_SUM_TERMS}"))
+                    continue
+                for x in _terms(env, left, True):
+                    for leaves in product(*(_terms(env, p) for p in phrases)):
+                        for tag in sum_tags:
+                            d.offer(["eq", x, _chain(tag, leaves)])
     for connectors, operation, reverse in _COMPARISONS:
         for left, right in d.splits(text, connectors):
             for lt, rt in d.terms(left, right):
                 d.offer([operation, *((rt, lt) if reverse else (lt, rt))])
+
+
+def _chain(tag, leaves):
+    """The right-nested add chain t1 + (t2 + (... + tN))."""
+    node = leaves[-1]
+    for leaf in reversed(leaves[:-1]):
+        node = ["add", tag, leaf, node]
+    return node
+
+
+def _sum_tilings(env, rest, d):
+    """Every way to write `rest` as "t1, t2, ... and tN" (N >= 3) where each ti has a term reading (a constant
+    phrase or a literal). Linear in the sentence per tiling: each phrase ends at a ", " or (the last but one) at
+    " and "; every complete tiling is yielded, and each one found is charged to d's budget."""
+    known = {}
+
+    def term(phrase):
+        if phrase not in known:
+            known[phrase] = bool(phrase) and phrase == phrase.strip() and bool(_terms(env, phrase))
+        return known[phrase]
+
+    commas = [i for i in range(len(rest)) if rest.startswith(", ", i)]
+    ands = [i for i in range(len(rest)) if rest.startswith(" and ", i)]
+
+    def tile(p, acc):
+        d.tick()
+        if len(acc) > MAX_SUM_TERMS:  # too long already: one tiling stands for the refusal, no deeper search
+            yield acc + [rest[p:]]
+            return
+        for q in ands:
+            if q > p and len(acc) >= 1 and term(rest[p:q]) and term(rest[q + 5:]):
+                d.tick()
+                yield acc + [rest[p:q], rest[q + 5:]]
+        for q in commas:
+            if q > p and term(rest[p:q]):
+                yield from tile(q + 2, acc + [rest[p:q]])
+
+    yield from tile(0, [])
 
 
 def _core_readings(env, source, grammar):
@@ -484,6 +548,20 @@ def _quantity_wording(env, formula, initial):
             formula[2][3][0] == "scale" and formula[2][3][2] == "-1" and
             formula[2][1] == formula[2][3][1] and kind(formula[2][1]) == "money"):
         return f"{term(formula[1], True)} equals {term(formula[2][2])} minus {term(formula[2][3][3])}"
+    if formula[0] == "eq" and formula[2][0] == "add" and kind(formula[2][1]) in _SUM_KINDS:
+        # A sum: only the right-nested chain of one tag has a wording (the parser reads that chain back).
+        tag, node, leaves = formula[2][1], formula[2], []
+        while node[0] == "add" and node[1] == tag and node[2][0] in ("const", "num"):
+            leaves.append(node[2])
+            node = node[3]
+        leaves.append(node)
+        if len(leaves) > MAX_SUM_TERMS:
+            raise UnsupportedProfile(f"CANNOT (SumBound): a sum of {len(leaves)} terms has no wording; at most "
+                                     f"MAX_SUM_TERMS={MAX_SUM_TERMS}")
+        words = [term(leaf) for leaf in leaves]  # a leaf that is not a constant or a literal has no wording
+        if len(words) == 2:
+            return f"{term(formula[1], True)} equals {words[0]} plus {words[1]}"
+        return f"{term(formula[1], True)} equals the sum of {', '.join(words[:-1])} and {words[-1]}"
     if formula[0] == "elapsed_days":
         prefix = _ELAPSED_PREFIX if initial else _ELAPSED_PREFIX[:1].lower() + _ELAPSED_PREFIX[1:]
         return f"{prefix}{term(formula[1])} to {term(formula[2])} equals {term(formula[3])}"
