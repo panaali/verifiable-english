@@ -109,8 +109,8 @@ QUESTIONS = {
 # Assumptions: reviews/relb/SCOPE.md section (c), in plain English (no ids, no file references).
 # Name -> text; `_assumptions` decides which ones an answer uses.
 ASSUMPTIONS = {
-    "week": "The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the third Monday in September” is not worked out; only the 6-day span of the week is checked.",
-    "ages": "Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age arithmetic itself is not checked. The hand working takes a person to reach an age at the start of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than 1 March 2026.",
+    "week": "The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week beginning on the third Monday in September” (2026 being the year of the payment); the checker checks only that its last day is 6 days after its first.",
+    "ages": "Each person's pensionable-age date is worked out in Python from the birth date by the rules and tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th birthday as 80 years on; an age is taken to be reached at the start of the birthday. The checker does not do this arithmetic (its dates start in 1970); tests check it against a separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it, or no answer is given. Where the source does not fix one day (a birthday on 29 February in a year without one, or a birth before 6 December 1953, where the rules differ for men and women), only the earliest and latest possible days are used.",
     "statuses": "These legal statuses are taken as stated in the profile, not decided from other circumstances: {}.",
     "one_other": "At most one other person shares the home; “a person” in regulations 3 and 4(2)(a) is read as that one person.",
     "income": "Whether HMRC takes the payment back follows the GOV.UK guide's £35,000 test on the total income the profile gives; the legal basis of the charge and the definition of total income are not pinned down. The guide's section is read as follows:",
@@ -123,7 +123,9 @@ ASSUMPTIONS = {
     "lives_with": "In “lives with”, the words “they are not in residential care” apply only to the person who lives with someone; the other person may be in residential care.",
     "care_stay": "Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day counts only if that day is no earlier than 27 September 2026.",
     "hospital": "For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20 September 2025, because a treatment period begins the day after admission.",
-    "custody": "Custody is “throughout the qualifying week” only if it began before 21 September and release is after 27 September; release on 27 September does not count.",
+    "custody": "Custody under a sentence is “throughout the qualifying week” only if the sentence began before 21 September and release is after 27 September; release on 27 September does not count, and days on remand before the sentence are not under it.",
+    "no_claim": "A person the profile does not say was paid without a claim is taken to be paid without one if they get a benefit on the GOV.UK guide's list of people who do not need to claim, and not if they get none and the guide says they must claim; “do not need to claim” is read as a payment under regulation 5(1). A person who gets none of them and for whom neither of the guide's reasons to claim is given gets no answer: the guide does not say they are paid without a claim.",
+    "undated_payment": "A payment without a claim with no date given is taken to be made by 31 March 2027, the last day regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or December”).",
     "excluded_not_entitled": "A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does not lower the amount.",
     "new_care_resident": "A care-home resident of under 12 weeks is not in residential care and does not “live with” other residents unless a mutual home with a named person is given.",
     "benefit_paid_to": "A relevant benefit is paid to a named person; pension credit is paid to the claimant of a couple.",
@@ -228,7 +230,7 @@ def _date_words(fact):
     op, (_, _, name), (_, iso) = fact["formula"]
     role, _, suffix = name.partition("_")
     what = T.ROLE_INTEGERS[suffix][1]
-    return f"the {role}'s {what} is {'no later than ' if op == 'date_no_later' else ''}{iso}"
+    return f"the {role}'s {what} is {({'date_no_later': 'no later than ', 'date_after': 'after '}).get(op, '')}{iso}"
 
 
 def _assumptions(answer, rules, facts):
@@ -277,6 +279,10 @@ def _assumptions(answer, rules, facts):
         used["household"] = ASSUMPTIONS["household"]
     if "R11" in ids:
         used["move_order"] = ASSUMPTIONS["move_order"]
+    if any(f.get("kind") == "assumption O3" and f["id"].endswith(".paid_without_claim") for f in facts):
+        used["no_claim"] = ASSUMPTIONS["no_claim"]
+    if any(f.get("kind") == "assumption F8" for f in facts):
+        used["undated_payment"] = ASSUMPTIONS["undated_payment"]
     if ids & {"R7a", "R7b"}:
         used["throughout"] = ASSUMPTIONS["throughout"]
     if ids & {"R14a", "R14.3"}:
