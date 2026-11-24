@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-feature-ambig-arfull-1124-0076e864-t520413-s6",
+ "head": "0cae56fd5fe9e51a0457cf4cae38b7a853b51473",
+ "argv": [
+  "armsh-chain-feature-ambig-arfull-1124-0076e864-t520413-s6",
+  "0cae56fd5fe9e51a0457cf4cae38b7a853b51473",
+  "96ec97a31147e7c3c9bca1c221581650d8b740a1",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ]
+}
