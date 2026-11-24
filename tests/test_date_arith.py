@@ -447,6 +447,39 @@ def test_codex_recheck_med1_control_a_non_span_sentence_still_lowers():
          ["date_on", ["const", "day", "deadline"], ["cal", ["date", "2026-06-01"]]]]]
 
 
+# --- the Codex re-check 2's MEDIUM (reviews/spare/date-arith/CODEX-RECHECK2.final.md) ------------------------------
+
+def _hyphen_span_item(dash, space=" "):
+    clause = f"the person lived in a care home for twenty{dash}six{space}weeks before the qualifying week"
+    return (f"If {clause}, then the deadline is 1 June 2026.", {clause: ["unary", "resident", ["const", "p"]]})
+
+
+@pytest.mark.parametrize("dash, space", [
+    ("\u2011", " "),       # the re-check's exact item and facts map: a non-breaking hyphen
+    ("\u2010", " "),       # a hyphen
+    ("\u2013", " "),       # an en dash
+    ("\u2212", " "),       # a minus sign
+    ("\u2011", "\u00a0"),  # a non-breaking hyphen and a no-break space
+])
+def test_codex_recheck2_unicode_hyphen_written_count_span_is_refused_cannot(dash, space):
+    """Re-check 2 MEDIUM: a written count with a Unicode hyphen ("for twenty\u2011six weeks before") is refused
+    CANNOT (DateRuleSpan) exactly as its ASCII form is, before the facts map is read; the control (no span) still
+    lowers with the same characters elsewhere in the item."""
+    text, facts = _hyphen_span_item(dash, space)
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(_deadline_env(), text, {}, roles=["the person"], may_lack=[], facts=facts)
+    ascii_text, ascii_facts = _hyphen_span_item("-")
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(_deadline_env(), ascii_text, {}, roles=["the person"], may_lack=[], facts=ascii_facts)
+    control = f"the person lived in a care{space}home twenty{dash}six years ago"
+    lowered = lower_date_item(_deadline_env(), f"If {control}, then the deadline is 1 June 2026.", {},
+                              roles=["the person"], may_lack=[],
+                              facts={" ".join(control.split()): ["unary", "resident", ["const", "p"]]})
+    assert [p["formula"] for p in lowered["premises"]] == [
+        ["implies", ["unary", "resident", ["const", "p"]],
+         ["date_on", ["const", "day", "deadline"], ["cal", ["date", "2026-06-01"]]]]]
+
+
 def test_codex_recheck_med2_a_raw_date_term_counts_as_a_fixed_day():
     """Re-check MEDIUM 2: a conclusion that compares raw ["date", iso] terms only (here from the facts map) is
     refused as comparing fixed dates only."""

@@ -13,8 +13,8 @@ not Lean-checked.
 
 A fact over a span of days ("throughout the qualifying week", "any day falling within the week", "for the
 week immediately preceding", "for twelve weeks before": a unit singular or plural, a count in digits or
-words) is refused (CANNOT): the written form has no reading of it, and the facts map or the W6 grammar must
-not read it as a plain fact (rtt2 S4, S10).
+words, its hyphen ASCII or Unicode) is refused (CANNOT): the written form has no reading of it, and the
+facts map or the W6 grammar must not read it as a plain fact (rtt2 S4, S10).
 Lean computes the arithmetic on the dates supplied here and binds them into the statement's meaning
 id (`calInputs`), so a wrong case date is visible in the report, not caught.
 
@@ -71,6 +71,11 @@ _SPAN = re.compile(r"\b(?:throughout|any day|every day|each day|some day|all day
                    rf"for (?:the |a |an |any |each |every )?(?:(?:continuous )?period of )?(?:{_COUNT} )?"
                    r"(?:day|week|month|year)s? (?:immediately )?"
                    r"(?:preceding|before|after|following|prior to|ending|beginning|starting))\b", re.IGNORECASE)
+# For the span check only: a Unicode hyphen or dash (U+2010..U+2015, U+2212) reads as "-" and a no-break space
+# (U+00A0, U+2007, U+202F) as " ", so "for twenty\u2011six weeks before" is refused exactly as its ASCII form is
+# (Codex re-check 2 MEDIUM). Other paths read the sentence as written.
+_SPAN_FOLD = str.maketrans({**{c: "-" for c in "\u2010\u2011\u2012\u2013\u2014\u2015\u2212"},
+                            **{c: " " for c in "\u00a0\u2007\u202f"}})
 # The nodes whose arguments are day terms (today's date nodes and ve-units@1 comparisons of days).
 _DAY_TERMS = ("num", "cal", "const")
 
@@ -389,7 +394,7 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
         if not sentence.endswith("."):
             raise DateRuleError(f"DateRule: a sentence ends with a full stop: {sentence!r}")
         body = sentence[:-1]
-        span = _SPAN.search(body)
+        span = _SPAN.search(body.translate(_SPAN_FOLD))
         if span:
             raise DateRuleError(f"CANNOT (DateRuleSpan): {span[0]!r} in {sentence!r} is a fact over a span of days; "
                                 "the written form does not read it and it is not read as a plain fact")
