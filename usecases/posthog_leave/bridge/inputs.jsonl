@@ -1,0 +1,30 @@
+{"case": "H019", "item": "l", "kind": "deadline", "start": "2027-03-31"}
+{"case": "H020", "item": "l", "kind": "deadline", "start": "2027-03-31"}
+{"case": "H021", "item": "l", "kind": "deadline", "start": "2027-06-29"}
+{"case": "H022", "item": "l", "kind": "deadline", "start": "2027-06-30"}
+{"case": "H023", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H024", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H025", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H026", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H027", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H028", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H029", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H030", "item": "l", "kind": "deadline", "start": "2027-07-01"}
+{"case": "H031", "item": "l", "kind": "deadline", "start": "2027-05-15"}
+{"case": "H031", "item": "l", "kind": "window", "start": "2027-05-15"}
+{"case": "H031", "item": "q1", "kind": "quarter", "n": 4, "year": 2026}
+{"case": "H031", "item": "q2", "kind": "quarter", "n": 1, "year": 2027}
+{"case": "H032", "item": "l", "kind": "deadline", "start": "2027-05-15"}
+{"case": "H032", "item": "l", "kind": "window", "start": "2027-05-15"}
+{"case": "H032", "item": "q1", "kind": "quarter", "n": 4, "year": 2026}
+{"case": "H032", "item": "q2", "kind": "quarter", "n": 1, "year": 2027}
+{"case": "H033", "item": "l", "kind": "deadline", "start": "2027-05-15"}
+{"case": "H033", "item": "l", "kind": "window", "start": "2027-05-15"}
+{"case": "H033", "item": "q1", "kind": "quarter", "n": 4, "year": 2026}
+{"case": "H033", "item": "q2", "kind": "quarter", "n": 1, "year": 2027}
+{"case": "H034", "item": "l", "kind": "deadline", "start": "2027-05-15"}
+{"case": "H034", "item": "l", "kind": "window", "start": "2027-05-15"}
+{"case": "H034", "item": "q1", "kind": "quarter", "n": 4, "year": 2026}
+{"case": "H034", "item": "q2", "kind": "quarter", "n": 1, "year": 2027}
+{"case": "H035", "item": "l", "kind": "deadline", "start": "2027-05-15"}
+{"case": "H035", "item": "l", "kind": "window", "start": "2027-05-15"}

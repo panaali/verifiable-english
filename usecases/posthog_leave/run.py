@@ -405,8 +405,20 @@ def _plain(v):
 
 
 def answer(staged, question):
-    """One question's answer from the established steps -> (answer dict, [targets its documents root at])."""
+    """One question's answer from the established steps -> (answer dict, [targets its documents root at]).
+    A question with "parts" [(item, yes/no form), ...] asks for all of them at once (encoder convention C5): yes when Lean
+    established every part true, no when it established one false, else OPEN; its documents are every part's."""
+    if "parts" in question:
+        got = [answer(staged, {"item": x, "form": f}) for x, f in question["parts"]]
+        ans = [a["answer"] for a, _ in got]
+        if "no" in ans:
+            return {"answer": "no"}, [t for a, ts in got if a["answer"] == "no" for t in ts][:1]
+        if all(a == "yes" for a in ans):
+            return {"answer": "yes"}, [t for _, ts in got for t in ts]
+        return {"answer": "OPEN"}, []
     x, form = question["item"], question["form"]
+    if form == "none":
+        return {"answer": "OPEN", "why": "no form of the translation carries this question"}, []
     if form in YESNO:
         atom = T.U(form, x)
         v = staged.truth(atom)
@@ -451,6 +463,9 @@ def roots_for(case):
     """The atoms / constants the asked questions read (answer())."""
     out = []
     for qn in case["questions"]:
+        if "parts" in qn:
+            out += [T.key(T.U(f, x)) for x, f in qn["parts"]]
+            continue
         x, form = qn["item"], qn["form"]
         if form in YESNO:
             out.append(T.key(T.U(form, x)))
