@@ -209,6 +209,7 @@ def _recorded_wordings():
 def test_every_rule_explain_names_has_its_checked_english_wording(runs):
     """Each rule premise an answer uses carries the wording run.py recorded for it (english.rule_rows), and
     all 56 rules have one; the explanation's clause groups pair each gloss with its rule's wording."""
+    rule_of = {r["gloss"]: r["id"] for r in X.load_rules()}
     rows = _recorded_wordings()
     assert len(rows) == 56 and all(r["round_trip"] and r["sentence"] for r in rows.values())
     assert X.load_wordings() == {rid: r["sentence"] for rid, r in rows.items()}
@@ -219,7 +220,9 @@ def test_every_rule_explain_names_has_its_checked_english_wording(runs):
                 assert wording == rows[rid]["sentence"], (pid, e["question"], rid)
                 named += 1
             for c in e["clauses"] + e["guide_clauses"]:
-                assert len(c["wordings"]) == len(c["glosses"]) and None not in c["wordings"], (pid, c["heading"])
+                assert len(c["wordings"]) == len(c["glosses"]), (pid, c["heading"])
+                for gloss, wording in zip(c["glosses"], c["wordings"]):
+                    assert wording == rows[rule_of[gloss]]["sentence"], (pid, c["heading"], gloss[:40])
         assert named, pid
 
 
@@ -229,7 +232,9 @@ def test_the_stale_no_wording_sentence_is_gone(texts):
         assert STALE not in flat(text), pid
         assert "the gloss is taken to state the rule" not in flat(text), pid
         assert " ".join(X.ASSUMPTIONS["glosses"].split()) in flat(text), pid
-    assert STALE not in (HERE / "DEMO.md").read_text(encoding="utf-8")
+    demo = (HERE / "DEMO.md").read_text(encoding="utf-8")  # its expected-output block, as test_relb_demo_cli reads it
+    block = flat(re.search(r"<!-- expected-output:[^>]*-->\n```text\n(.*?)^```$", demo, re.S | re.M).group(1))
+    assert STALE not in block and " ".join(X.ASSUMPTIONS["glosses"].split()) in block
 
 
 def test_the_wording_printout_shows_each_rules_checked_wording(runs):
