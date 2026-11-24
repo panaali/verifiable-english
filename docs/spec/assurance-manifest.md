@@ -162,7 +162,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
 | `lean/VE/Cardinality/Run.lean` | 292 | 292 | 1–292 | `e55af9708515…` |
-| `lean/VE/Cardinality/Wire.lean` | 317 | 317 | 1–317 | `a22630ef3792…` |
+| `lean/VE/Cardinality/Wire.lean` | 319 | 319 | 1–319 | `9cc241c7431f…` |
 | `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `45b337e58cd3…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
 | `lean/VE/Commands/Run.lean` | 758 | 758 | 1–758 | `b1d335aab312…` |
@@ -227,8 +227,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Source/Admission/Run.lean` | 632 | 632 | 1–632 | `776cebdcc648…` |
 | `lean/VE/SpeechActs/Source/Run.lean` | 1101 | 1101 | 1–1101 | `523ce698b760…` |
 | `lean/VE/SpeechActs/Wire.lean` | 1354 | 1354 | 1–1354 | `23ca46241b68…` |
-| `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
-| `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
+| `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `57d3739f04d8…` |
+| `lean/VE/Time/Wire.lean` | 963 | 963 | 1–963 | `26797f28e8ad…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
 | `lean/VE/RightClauses/Wire.lean` | 230 | 230 | 1–230 | `75913d7b7704…` |
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
@@ -241,7 +241,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Prepared.lean` | 300 | 300 | 1–300 | `42f7cdb2718a…` |
 | `lean/VE/Compose/SlotWire.lean` | 478 | 478 | 1–478 | `4f3c3db9b813…` |
 | `lean/VE/Acts/Hook.lean` | 49 | 49 | 1–49 | `f92669169438…` |
-| **total** | | **47,567** | | |
+| **total** | | **47,676** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
