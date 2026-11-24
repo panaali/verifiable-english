@@ -54,7 +54,7 @@ import re
 import unicodedata
 
 from ..ast import numeral_value
-from ..errors import ResourceLimit, SyntaxError, VEError
+from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError, VEError
 
 MONTHS = ("January", "February", "March", "April", "May", "June", "July", "August", "September",
           "October", "November", "December")
@@ -519,8 +519,8 @@ class _Item:
         elif not out:
             try:
                 out.append(self.fact(text))
-            except ResourceLimit:
-                raise
+            except (ResourceLimit, AmbiguousDerivation, DateRuleBound):
+                raise  # a W6 ambiguity or count bound refuses the item; no other split or facts entry answers
             except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
                 raise errors[0] if errors else DateRuleError(f"DateRule: no reading of the condition {text!r} "
                                                              f"({exc})") from exc
@@ -550,7 +550,9 @@ class _Item:
     def fact(self, text):
         from .time import parse_w6_sentence
         sentence = text[:1].upper() + text[1:] + "."
-        return parse_w6_sentence(self.env, sentence)["formula"]
+        formula = parse_w6_sentence(self.env, sentence)["formula"]
+        _w6_counts(formula, text)
+        return formula
 
     def conditions(self, text):
         """Every reading of `and`/`or`/`not`/brackets over conditions; one distinct reading is required."""
@@ -584,6 +586,21 @@ class _Item:
         if not distinct:
             raise DateRuleError(f"DateRule: no reading of the condition {text!r}")
         return list(distinct.values())
+
+
+def _w6_counts(formula, text):
+    """The day count of every `shift_days`/`within_days` node a W6 reading gives is at most `MAX_COUNT_DIGITS`
+    digits, as in the plus/minus wording (Codex AR MEDIUM 1): a longer one is CANNOT (DateRuleBound)."""
+    stack = [formula]
+    while stack:
+        x = stack.pop()
+        if not isinstance(x, list):
+            continue
+        if x[:1] in (["shift_days"], ["within_days"]) and len(x) == 4 and isinstance(x[3], str) and (
+                len(x[3]) > MAX_COUNT_DIGITS):
+            raise DateRuleBound(f"CANNOT (DateRuleBound): {text!r} counts {len(x[3])} digits of days; a date item "
+                                f"reads at most {MAX_COUNT_DIGITS}")
+        stack.extend(x[1:])
 
 
 def _unshift(d):
@@ -756,7 +773,7 @@ def _conclusion(item, text):
     elif formula is None:
         try:
             formula = item.fact(text)
-        except ResourceLimit:
+        except (ResourceLimit, AmbiguousDerivation, DateRuleBound):
             raise
         except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
             if errors:
