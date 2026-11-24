@@ -100,144 +100,140 @@ class Case:
 
 
 Z = "0.00"
-JAWARE = "HMRC aware of the returns at the assessment time: knows from 2 March 2027, before 5 April 2027 (date compared)"
-JNT = ("remedial action not taken within the notice period (ends 16 March 2027, before the assessment time; "
-       "none taken up to then)")
+J_CONN = "connected at 00:00 on 6 April 2026 read as at the beginning of the tax year (conn)"
+J_AWARE = "HMRC knowing the returns from 2 March 2027 read as aware at the assessment time (aware)"
+J_NOTTAKEN = "no action up to the 5 April 2027 assessment read as not taken within the 2-16 March 2027 period"
+J_PAID = "paid / due are the stated figures at 2 March 2027 for the tax year (no later payment)"
 
 
-def single(cid, x, kind, pays):
-    """One employer, no group; pays: [(earner, amount, liability kind)]; paid GBP 0, due GBP 0 as stated."""
+def single(cid, who, kind, pays):
+    """One employer, no group (C3, C5); pays: (earner, amount, liability kind); paid and due as stated (C6)."""
     c = Case(cid)
-    (c.co if kind == "co" else c.ind)(x)
-    for e, a, lk in pays:
-        c.pay(x, e, a, lk)
-    return c.num(**{f"paid_{x}": Z, f"due_{x}": Z}).q12(x)
+    getattr(c, kind)(who)
+    for earner, amount, lk in pays:
+        c.pay(who, earner, amount, lk)
+    return c.num(**{f"paid_{who}": Z, f"due_{who}": Z}).q12(who)
 
 
-def zero_dues(c, *xs):
-    return c.num(**{f"paid_{x}": Z for x in xs}, **{f"due_{x}": Z for x in xs}).fact("dues_stated:g")
+def zero_paid(c, *xs):
+    """Each member stated to have paid GBP 0 with GBP 0 due and payable (C6)."""
+    return c.num(**{f"{b}_{x}": Z for x in xs for b in ("paid", "due")}).fact("dues_stated:g")
 
 
 C = [
-    single("L001", "Alice", "ind", [("Ben", "2000000.00", "liab")]),
-    single("L002", "Clara", "co", [("David", "3000000.00", "liab")]),
-    single("L003", "Edith", "co", [("Felix", "3000002.00", "liab")]),
-    single("L004", "Grace", "co", [("Hugo", "0.00", "none")]),
-    single("L005", "Iris", "co", [("Jack", "1200000.00", "liab"), ("Kate", "1600000.00", "liab")]),
-    single("L006", "Leo", "ind", [("Maya", "2100000.00", "liab"), ("Noah", "1000000.00", "liab")]),
-    single("L007", "Olive", "co", [("Paul", "1000.00", "butfor")]),
-    single("L008", "Rosa", "co", [("Sam", "3000000.00", "liab"), ("Tara", "2.00", "butfor")]),
-    single("L009", "Uma", "co", [("Victor", "2800000.00", "liab"), ("Wendy", "900000.00", "none")]),
-    single("L010", "Xena", "co", [("Yuri", "3100000.00", "liab")]),
-    single("L011", "Zoe", "co", [("Adam", "2000000.00", "liab"), ("Bella", "1200000.00", "liab")]),
-    single("L012", "Chloe", "ind", [("Dylan", "2999900.00", "liab"), ("Emma", "200.00", "butfor")]),
-    single("L013", "Finn", "co", [("Gemma", "4000000.00", "none")]),
-    single("L014", "Hannah", "ind", []),
-    single("L015", "Isaac", "co", []),
-    single("L016", "Julia", "ind", [("Kevin", "2999998.00", "liab")]),
-    single("L017", "Lena", "co", [("Mark", "4000000.00", "liab")]),
-    single("L018", "Nina", "co", [("Oscar", "600000.00", "liab"), ("Pia", "700000.00", "liab"),
-                                  ("Quinn", "800000.00", "liab"), ("Ravi", "900000.00", "liab")]),
-    single("L019", "Sara", "ind", [("Theo", "800000.00", "liab"), ("Ursula", "900000.00", "liab"),
-                                   ("Vera", "1400000.00", "liab")]),
-    single("L020", "Will", "co", [("Yasmin", "4000000.00", "liab"), ("Zara", "600.00", "butfor"),
-                                  ("Abel", "200000.00", "none")]),
-    single("L021", "Beth", "ind", [("Carl", "3000200.00", "none"), ("Dora", "100.00", "butfor")]),
-    single("L022", "Evan", "co", [("Faye", "3200000.00", "liab"), ("Glen", "800.00", "butfor")]),
-    single("L023", "Hope", "co", [("Ivan", "1000000.00", "liab"), ("Jade", "1000000.00", "liab"),
-                                  ("Kian", "1000000.00", "liab"), ("Lily", "200.00", "liab")]),
-    single("L024", "Milo", "co", [("Nora", "3000004.00", "liab")]),
+    single("L001", "alice", "ind", [("ben", "2000000.00", "liab")]),
+    single("L002", "clara", "co", [("david", "3000000.00", "liab")]),
+    single("L003", "edith", "co", [("felix", "3000002.00", "liab")]),
+    single("L004", "grace", "co", [("hugo", "0.00", "none")]),
+    single("L005", "iris", "co", [("jack", "1200000.00", "liab"), ("kate", "1600000.00", "liab")]),
+    single("L006", "leo", "ind", [("maya", "2100000.00", "liab"), ("noah", "1000000.00", "liab")]),
+    single("L007", "olive", "co", [("paul", "1000.00", "butfor")]),
+    single("L008", "rosa", "co", [("sam", "3000000.00", "liab"), ("tara", "2.00", "butfor")]),
+    single("L009", "uma", "co", [("victor", "2800000.00", "liab"), ("wendy", "900000.00", "none")]),
+    single("L010", "xena", "co", [("yuri", "3100000.00", "liab")]),
+    single("L011", "zoe", "co", [("adam", "2000000.00", "liab"), ("bella", "1200000.00", "liab")]),
+    single("L012", "chloe", "ind", [("dylan", "2999900.00", "liab"), ("emma", "200.00", "butfor")]),
+    single("L013", "finn", "co", [("gemma", "4000000.00", "none")]),
+    single("L014", "hannah", "ind", []),
+    single("L015", "isaac", "co", []),
+    single("L016", "julia", "ind", [("kevin", "2999998.00", "liab")]),
+    single("L017", "lena", "co", [("mark", "4000000.00", "liab")]),
+    single("L018", "nina", "co", [("oscar", "600000.00", "liab"), ("pia", "700000.00", "liab"),
+                                  ("quinn", "800000.00", "liab"), ("ravi", "900000.00", "liab")]),
+    single("L019", "sara", "ind", [("theo", "800000.00", "liab"), ("ursula", "900000.00", "liab"),
+                                   ("vera", "1400000.00", "liab")]),
+    single("L020", "will", "co", [("yasmin", "4000000.00", "liab"), ("zara", "600.00", "butfor"),
+                                  ("abel", "200000.00", "none")]),
+    single("L021", "beth", "ind", [("carl", "3000200.00", "none"), ("dora", "100.00", "butfor")]),
+    single("L022", "evan", "co", [("faye", "3200000.00", "liab"), ("glen", "800.00", "butfor")]),
+    single("L023", "hope", "co", [("ivan", "1000000.00", "liab"), ("jade", "1000000.00", "liab"),
+                                  ("kian", "1000000.00", "liab"), ("lily", "200.00", "liab")]),
+    single("L024", "milo", "co", [("nora", "3000004.00", "liab")]),
 
-    zero_dues(Case("L025").llp("Alma").co("Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "3000000.00").pay("Bea", "Flo", "1000000.00")
-              .det(Alma="15000.00", Bea="0.00").fact("noreturns:g"), "Alma", "Bea")
-    .q12("Alma", "Bea").ask("allowance", "Bea"),
+    zero_paid(Case("L025").llp("alma").co("bea").group("alma", "bea")
+              .pay("alma", "eli", "3000000.00").pay("bea", "flo", "1000000.00")
+              .det(alma="15000.00", bea="0.00").fact("noreturns:g"), "alma", "bea")
+    .q12("alma", "bea").ask("allowance", "bea").judge(J_CONN),
 
-    zero_dues(Case("L026").co("Alma", "Bea", "Cora").group("Alma", "Bea", "Cora")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "1000000.00").pay("Cora", "Gus", "800000.00")
-              .det(Alma="7000.00", Bea="5000.00", Cora="3000.00").fact("noreturns:g"), "Alma", "Bea", "Cora")
-    .q12("Alma", "Bea", "Cora"),
+    zero_paid(Case("L026").co("alma", "bea", "cora").group("alma", "bea", "cora")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "1000000.00").pay("cora", "gus", "800000.00")
+              .det(alma="7000.00", bea="5000.00", cora="3000.00").fact("noreturns:g"), "alma", "bea", "cora")
+    .q12("alma", "bea", "cora").judge(J_CONN),
 
-    zero_dues(Case("L027").co("Alma", "Bea", "Cora", "Dana").group("Alma", "Bea", "Cora", "Dana")
-              .pay("Alma", "Eli", "200000.00").pay("Bea", "Flo", "600000.00").pay("Cora", "Gus", "1000000.00")
-              .pay("Dana", "Hana", "2000000.00")
-              .det(Alma="0.00", Bea="2500.00", Cora="5000.00", Dana="7500.00").fact("noreturns:g"),
-              "Alma", "Bea", "Cora", "Dana")
-    .q12("Alma", "Bea", "Cora", "Dana"),
+    zero_paid(Case("L027").co("alma", "bea", "cora", "dana").group("alma", "bea", "cora", "dana")
+              .pay("alma", "eli", "200000.00").pay("bea", "flo", "600000.00").pay("cora", "gus", "1000000.00")
+              .pay("dana", "hana", "2000000.00")
+              .det(alma="0.00", bea="2500.00", cora="5000.00", dana="7500.00").fact("noreturns:g"),
+              "alma", "bea", "cora", "dana")
+    .q12("alma", "bea", "cora", "dana").judge(J_CONN),
 
-    zero_dues(Case("L028").co("Alma", "Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "1200000.00")
-              .det(Alma="10000.00", Bea="5000.00").alt(Alma="8000.00", Bea="7000.00").fact("noreturns:g"),
-              "Alma", "Bea")
-    .q12("Alma", "Bea").ask("allowance", "Alma")
-    .judge("the members' 1 February 2027 agreement 'instead to assign' read as an alteration of the determination"),
+    zero_paid(Case("L028").co("alma", "bea").group("alma", "bea")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "1200000.00")
+              .det(alma="10000.00", bea="5000.00").alt(alma="8000.00", bea="7000.00").fact("noreturns:g"),
+              "alma", "bea")
+    .q12("alma", "bea").ask("allowance", "alma").judge(J_CONN)
+    .judge("the members' 1 February 2027 agreement to assign 8,000 / 7,000 'instead' read as an alteration (altmade)"),
 
-    zero_dues(Case("L029").co("Alma", "Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "1200000.00")
-              .det(Alma="7000.00", Bea="6000.00").alt(Alma="9000.00", Bea="6000.00").fact("noreturns:g"),
-              "Alma", "Bea")
-    .q12("Alma", "Bea").ask("allowance", "Alma"),
+    zero_paid(Case("L029").co("alma", "bea").group("alma", "bea")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "1200000.00")
+              .det(alma="7000.00", bea="6000.00").alt(alma="9000.00", bea="6000.00").fact("noreturns:g"),
+              "alma", "bea")
+    .q12("alma", "bea").ask("allowance", "alma").judge(J_CONN),
 
-    zero_dues(Case("L030").co("Alma", "Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "2000000.00")
-              .det(Alma="9000.00", Bea="6000.00").ret(Alma="12000.00", Bea="10000.00"), "Alma", "Bea")
-    .q12("Alma", "Bea").judge(JAWARE),
+    zero_paid(Case("L030").co("alma", "bea").group("alma", "bea")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "2000000.00")
+              .det(alma="9000.00", bea="6000.00").ret(alma="12000.00", bea="10000.00"), "alma", "bea")
+    .q12("alma", "bea").judge(J_CONN).judge(J_AWARE),
 
-    zero_dues(Case("L031").co("Alma", "Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "2000000.00")
-              .det(Alma="7500.00", Bea="7500.00").ret(Alma="12000.00", Bea="10000.00")
-              .fact("notified8:Alma", "notified8:Bea"), "Alma", "Bea")
-    .q12("Alma", "Bea").judge(JAWARE)
-    .judge("remedial action taken on 10 March 2027, within the period 2-16 March 2027 (date compared): not_taken8 "
-           "absent; the corrections are not returns, so the returns' amounts stand"),
+    zero_paid(Case("L031").co("alma", "bea").group("alma", "bea")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "2000000.00")
+              .det(alma="7500.00", bea="7500.00").ret(alma="12000.00", bea="10000.00")
+              .fact("notified8:alma", "notified8:bea"), "alma", "bea")
+    .q12("alma", "bea").judge(J_CONN).judge(J_AWARE)
+    .judge("action taken on 10 March 2027 read as within the 2-16 March 2027 period (not_taken8 absent)"),
 
-    zero_dues(Case("L032").co("Alma", "Bea", "Cora", "Dana").group("Alma", "Bea", "Cora", "Dana")
-              .pay("Alma", "Eli", "2000000.00").pay("Bea", "Flo", "2000000.00").pay("Cora", "Gus", "2000000.00")
-              .pay("Dana", "Hana", "2000000.00")
-              .det(Alma="8000.00", Bea="4000.00", Cora="3000.00", Dana="0.00")
-              .ret(Alma="12000.00", Bea="8000.00", Cora="0.00")
-              .fact("notified8:Alma", "notified8:Bea", "notified8:Cora", "not_taken8:g"),
-              "Alma", "Bea", "Cora", "Dana")
-    .q12("Alma", "Bea", "Cora", "Dana").ask("allowance", "Dana").judge(JAWARE).judge(JNT),
+    zero_paid(Case("L032").co("alma", "bea", "cora", "dana").group("alma", "bea", "cora", "dana")
+              .pay("alma", "eli", "2000000.00").pay("bea", "flo", "2000000.00").pay("cora", "gus", "2000000.00")
+              .pay("dana", "hana", "2000000.00")
+              .det(alma="8000.00", bea="4000.00", cora="3000.00", dana="0.00")
+              .ret(alma="12000.00", bea="8000.00", cora="0.00")
+              .fact("notified8:alma", "notified8:bea", "notified8:cora", "not_taken8:g"),
+              "alma", "bea", "cora", "dana")
+    .q12("alma", "bea", "cora", "dana").ask("allowance", "dana").judge(J_CONN).judge(J_AWARE).judge(J_NOTTAKEN),
 
-    zero_dues(Case("L033").co("Alma", "Bea").group("Alma", "Bea")
-              .pay("Alma", "Eli", "428572.00").pay("Bea", "Flo", "4000000.00")
-              .det(Alma="7500.00", Bea="7500.00").ret(Alma="3000.00", Bea="18000.00")
-              .fact("notified8:Alma", "notified8:Bea", "not_taken8:g"), "Alma", "Bea")
-    .q12("Alma", "Bea").ask("allowance", "Alma").judge(JAWARE).judge(JNT)
-    .judge("HMRC's stated s. 101(7) roundings (Alma up to 2,142.86, Bea down to 12,857.14) not encoded: the "
-           "vocabulary's rnd_* facts are for s. 101(12) shares only"),
+    zero_paid(Case("L033").co("alma", "bea").group("alma", "bea")
+              .pay("alma", "eli", "428572.00").pay("bea", "flo", "4000000.00")
+              .det(alma="7500.00", bea="7500.00").ret(alma="3000.00", bea="18000.00")
+              .fact("notified8:alma", "notified8:bea", "not_taken8:g"), "alma", "bea")
+    .q12("alma", "bea").ask("allowance", "alma").judge(J_CONN).judge(J_AWARE).judge(J_NOTTAKEN)
+    .judge("HMRC's stated s. 101(7) roundings (2,142.86 up, 12,857.14 down) not encoded: rnd_* state s. 101(12) only"),
 
-    Case("L034").co("Alma", "Bea").group("Alma", "Bea")
-    .pay("Alma", "Eli", "4000000.00").pay("Bea", "Flo", "4000000.00")
-    .det(Alma="9000.00", Bea="6000.00").fact("noreturns:g", "dues_stated:g")
-    .num(paid_Alma="5000.00", due_Alma="11000.00", paid_Bea="10000.00", due_Bea="14000.00")
-    .fact("notified13:Alma", "notified13:Bea", "not_taken13:g")
-    .q12("Alma", "Bea")
-    .judge("the amounts paid and due and payable at 2 March 2027 (stated as used in the notice decision) taken as "
-           "s. 101(13)(a)'s amounts").judge(JNT),
+    Case("L034").co("alma", "bea").group("alma", "bea")
+    .pay("alma", "eli", "4000000.00").pay("bea", "flo", "4000000.00")
+    .det(alma="9000.00", bea="6000.00").fact("noreturns:g")
+    .num(paid_alma="5000.00", due_alma="11000.00", paid_bea="10000.00", due_bea="14000.00").fact("dues_stated:g")
+    .fact("notified13:alma", "notified13:bea", "not_taken13:g")
+    .q12("alma", "bea").judge(J_CONN).judge(J_NOTTAKEN).judge(J_PAID),
 
-    Case("L035").co("Alma", "Bea", "Cora").group("Alma", "Bea", "Cora")
-    .pay("Alma", "Eli", "4000000.00").pay("Bea", "Flo", "4000000.00").pay("Cora", "Gus", "4000000.00")
-    .det(Alma="9000.00", Bea="6000.00", Cora="0.00").ret(Alma="0.00").fact("dues_stated:g")
-    .num(paid_Alma="5000.00", due_Alma="11000.00", paid_Bea="10000.00", due_Bea="14000.00",
-         paid_Cora="20000.00", due_Cora="20000.00")
-    .fact("notified13:Alma", "notified13:Bea", "notified13:Cora", "not_taken13:g", "insufficient:g")
-    .q12("Alma", "Bea", "Cora").ask("allowance", "Bea")
-    .judge("insufficient: Alma's sole return (GBP 0, silent on Bea and Cora), the determination not communicated, read "
-           "as returns not enabling HMRC to determine how the whole GBP 15,000 is used (s. 101(13)(b))")
-    .judge("the amounts paid and due and payable at 2 March 2027 (stated as used in the notice decision) taken as "
-           "s. 101(13)(a)'s amounts").judge("HMRC aware of Alma's return: knows the return facts on 2 March 2027")
-    .judge(JNT),
+    Case("L035").co("alma", "bea", "cora").group("alma", "bea", "cora")
+    .pay("alma", "eli", "4000000.00").pay("bea", "flo", "4000000.00").pay("cora", "gus", "4000000.00")
+    .det(alma="9000.00", bea="6000.00", cora="0.00").ret(alma="0.00")
+    .num(paid_alma="5000.00", due_alma="11000.00", paid_bea="10000.00", due_bea="14000.00",
+         paid_cora="20000.00", due_cora="20000.00").fact("dues_stated:g")
+    .fact("insufficient:g", "notified13:alma", "notified13:bea", "notified13:cora", "not_taken13:g")
+    .q12("alma", "bea", "cora").ask("allowance", "bea").judge(J_CONN).judge(J_NOTTAKEN).judge(J_PAID)
+    .judge("HMRC knowing the return on 2 March 2027 read as aware at the assessment time (aware)")
+    .judge("Alma's return silent on Bea, Cora and their allowance, determination not communicated: read as "
+           "insufficient (s. 101(13)(b))"),
 ]
 
 CASES = [c.record() for c in C]
 
 PROBES = {
-    "L036": "Alma is a charity (s. 102; fixed fact of the build: no charity)",
-    "L037": "s. 103 applies to Alma (fixed fact of the build: s. 103 does not apply)",
-    "L038": "s. 100(4) regulations for continental shelf certificates (content not given; not in the vocabulary)",
-    "L039": "a one-month levy period, not a tax year (one context = one tax year)",
+    "L036": "Alma is a charity (s. 102; charity out of scope)",
+    "L037": "s. 103 applies to Alma (out of scope)",
+    "L038": "s. 100(4) continental-shelf certificate and regulations (content not given; out of scope)",
+    "L039": "the question is about a one-month period, not a tax year (out of scope)",
 }
 PROBE_QIDS = {
     "L036": ["L036-1", "L036-2", "L036-3"],
