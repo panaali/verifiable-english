@@ -163,6 +163,20 @@ def written(case, b):
     return out
 
 
+# Reverted after the review seat (manage-agents reviews/spare/date-arith/remeasure/faa-review-out.txt): a rewritten sentence
+# that says more or less than the source text goes back to its bridge and is counted as not moved.
+REVERTED = {"after_2006": "W4 LESS: (c)(3)(i)(B) 'at any point after July 14, 2006, have held' read as 'examined after'",
+            "later": "W7 LESS: 'most recently issued' ordered by examination date, strict (ties)",
+            "app_later": "W8 MORE: 'most recent application' over every named application, no 'on or before D' bound"}
+
+
+def reverted(fid):
+    for k, why in REVERTED.items():
+        if fid.endswith("." + k) or f".{k}." in fid:
+            return why
+    return None
+
+
 _ORIG_FACTS, _ORIG_CAND = E.facts, E.candidate_days
 _STILL = {}  # case id -> [(fact id, reason)] bridged facts left as they were
 
@@ -173,7 +187,7 @@ def facts_after(case):
     w = written(case, b)
     new, replaced = [], set()
     for f in out:
-        if f["id"] in w:
+        if f["id"] in w and not reverted(f["id"]):
             new.append({"id": f["id"], "formula": w[f["id"]][1]})
             replaced.add(f["id"])
         else:
@@ -181,7 +195,7 @@ def facts_after(case):
     bridged = {f["id"] for f in out if f["id"].endswith((".under40_exam", ".after_2006")) or ".later." in f["id"]
                or ".app_later." in f["id"] or f["id"] in ("sixtieth", "course_end24", "basic_exam_end48")
                or any(f["id"].endswith(f".end{n}") for n in (6, 12, 24, 60))}
-    _STILL[case["id"]] = sorted(bridged - replaced)
+    _STILL[case["id"]] = {fid: reverted(fid) or "not written" for fid in sorted(bridged - replaced)}
     return new, unknown
 
 
