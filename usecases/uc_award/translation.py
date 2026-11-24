@@ -96,6 +96,8 @@ BINARY = {
     "poly_law": "the marriage of the two persons took place under the laws of a country which permits polygamy",
     "earlier": "the first person is a party to a marriage to the second that is earlier than the first person's other "
                "marriage and still subsists",
+    "absent_from": "the first person is temporarily absent from the household of the second (stated; reg. 3(6) reads it "
+                   "where the absent person is a member of more than one couple)",
 }
 DERIVED = {  # unary on a person
     "young": "is a child or qualifying young person",
@@ -312,11 +314,63 @@ def _u8(ctx):
     return out
 
 
+def absent6(m, o, ctx):
+    """reg. 3(6) for the member m of the pair (m, o): m is temporarily absent from o's household, and that absence is
+    expected to exceed, or does exceed, 6 months. The stated temp_absent / abs_over6 say THAT m is absent and for how
+    long; FROM WHOSE household is the pair's own fact: absent_from(m, o) where stated; where the facts state no
+    absent_from for m and m is a member of no other couple, m's absence is from the household m shares with o (the
+    only couple household m has). A member of two couples with no absent_from is refused (refusal(), not answered)."""
+    others = [z for z in ctx.persons if z not in (m, o)]
+    scope = Or(B("absent_from", m, o),
+               And(*[Not(B("absent_from", m, z)) for z in others], *[Not(sym("couple", m, z)) for z in others]))
+    return And(U("temp_absent", m), U("abs_over6", m), scope)
+
+
+def pair_tcp(x, y, ctx):
+    """The pair (x, y) is treated as a couple: a stated couple, not ended by reg. 3(6) and not disregarded by reg. 3(4).
+    reg. 3(6) is read from BOTH sides: the couple ceases when EITHER member is the one temporarily absent over 6 months
+    from the other's household, whichever of them anchors the award, so the pair has one status in every award
+    (DRI decide wake 20261124T0212Z; row statute-xfam-wrong-uc-award-1)."""
+    return And(sym("couple", x, y), Not(absent6(x, y, ctx)), Not(absent6(y, x, ctx)), Not(B("poly_dis", x, y)))
+
+
 def _u9(ctx):
     a = ctx.anchor
-    return [iff_bin("tcp", a, p, And(sym("couple", a, p), Not(And(U("temp_absent", p), U("abs_over6", p))),
-                                     Not(B("poly_dis", a, p))))
-            for p in ctx.partners()]
+    return [iff_bin("tcp", a, p, pair_tcp(a, p, ctx)) for p in ctx.partners()]
+
+
+def refusal(case, mutant=None):
+    """Before the rules run: the reason the award is refused (not answered), or None. reg. 3(6) needs the household an
+    absence is from; a member of an anchor's pair who is temporarily absent over 6 months while a member of two or more
+    couples, with no absent_from stated, leaves the pair's status open, so VE refuses rather than guess."""
+    if mutant in NO_PARTNER_CHECK:
+        return None
+    ctx = Ctx(case["id"].lower(), case["persons"], case["anchor"], case.get("links", ()))
+    facts = case.get("facts", {})
+    for p in ctx.partners():
+        for m in (ctx.anchor, p):
+            mine = set(facts.get(m, ()))
+            if {"temp_absent", "abs_over6"} <= mine and len(ctx.linked("couple", m)) >= 2 \
+                    and not ctx.linked("absent_from", m):
+                return (f"reg. 3(6): {m} is temporarily absent over 6 months and a member of "
+                        f"{len(ctx.linked('couple', m))} couples, and the facts do not say from whose household")
+    return None
+
+
+def partner_refusal(ctx, truth, mutant=None):
+    """After the rules run: a claimant holds at most one partner. When the rules (reg. 3(4)-(6)) leave the anchor treated
+    as a couple with two or more persons (two tcp, or two jointp proved), the award is refused (not answered): VE never
+    answers on two joint partners for one person. truth(atom) -> True / False / None (the staged steps)."""
+    if mutant in NO_PARTNER_CHECK:
+        return None
+    a = ctx.anchor
+    tcp = [p for p in ctx.partners() if truth(B("tcp", a, p)) is True]
+    joint = [p for p in ctx.partners() if truth(B("jointp", a, p)) is True]
+    if len(tcp) >= 2 or len(joint) >= 2:
+        return (f"{a} would be treated as a couple with {', '.join(tcp)}"
+                + (f" (joint claimants with {', '.join(joint)})" if joint else "")
+                + ": a claimant holds at most one partner, and reg. 3(4)-(6) on these facts do not decide which")
+    return None
 
 
 def _young(ctx):
@@ -494,8 +548,9 @@ UNITS = {
         "reg. 3(5): 'a party to it is married to more than one person' written over the case's marriage links; 'under "
         "the laws of a country which permits polygamy' a stated fact about another country's law"),
     9: ("PART", _u9, "other:judgment standard",
-        "reg. 3(6): 'cease to be treated as a couple' written (tcp false); 'temporarily absent' and 'expected to "
-        "exceed, or does exceed, 6 months' stated facts (stated)"),
+        "reg. 3(6): 'cease to be treated as a couple' written (tcp false), read from both sides of the pair (either "
+        "member absent from the other's household); 'temporarily absent', 'from the claimant's household' (absent_from, "
+        "for a member of two couples) and 'expected to exceed, or does exceed, 6 months' stated facts (stated)"),
     # ---- reg. 4 ----
     10: ("RULE", _young, "reg. 4(1): 'a child or qualifying young person' (young = child or qyp, stated statuses); "
                          "'is determined as follows' = units 11-16"),
@@ -767,6 +822,21 @@ def _drop_absent6(t):
     return t
 
 
+def _one_sided36(t):
+    """reg. 3(6) read from the anchor's side only (the 9517f4dcd2 rule): the couple ends only when the anchor's PARTNER
+    is the absent member, from any household."""
+    t = dict(t)
+    e = t[9]
+
+    def b(ctx):
+        a = ctx.anchor
+        return [iff_bin("tcp", a, p, And(sym("couple", a, p), Not(And(U("temp_absent", p), U("abs_over6", p))),
+                                         Not(B("poly_dis", a, p))))
+                for p in ctx.partners()]
+    t[9] = (e[0], b, *e[2:])
+    return t
+
+
 def _m6(t):
     """s. 8(3)(b) dropped: the unearned income is not deducted."""
     t = dict(t)
@@ -788,7 +858,12 @@ MUTANTS = {
                '["scale","gbp_penny","11",["add"', '["scale","gbp_penny","10",["add"'
            ).replace('["scale", "gbp_penny", "11", ["add"', '["scale", "gbp_penny", "10", ["add"'))))),
     "M6": ("arithmetic step changed: unearned income dropped from the deduction (s. 8(3)(b))", _m6),
+    "M7": ("deeming line read one-sided: reg. 3(6) ends the couple only when the anchor's partner is the absent member "
+           "(the at-most-one-partner refusal kept)", _one_sided36),
+    "M8": ("the 9517f4dcd2 reading restored: reg. 3(6) one-sided AND no at-most-one-partner refusal (a claimant may "
+           "hold two joint partners)", _one_sided36),
 }
+NO_PARTNER_CHECK = {"M8"}  # mutants that also drop partner_refusal (run.py asks partner_refusal(..., mutant))
 
 
 def translation_sha256():

@@ -10,6 +10,9 @@ C3 integer constants are stated only from the question's facts: each adult's age
    (0.00 where the award contains none). No amount is computed by the encoder (criterion 10);
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder;
 C5 the anchor is the first person the question names; a case with two awards gives two records.
+C6 absent_from(x, y) (x temporarily absent from y's household) is stated where the absent person is a member of
+   more than one couple; for a member of one couple the unary temp_absent already means absent from that couple's
+   household (translation.absent6). A member of two couples absent over 6 months with no absent_from is refused.
 """
 from __future__ import annotations
 

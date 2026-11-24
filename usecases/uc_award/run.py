@@ -432,7 +432,16 @@ def make_ctx(case):
     return T.Ctx(case["id"].lower(), case["persons"], case["anchor"], case.get("links", ()))
 
 
+def refused(case, why):
+    """Every question of the award refused (not answered): no answer target, so no document is staged for it."""
+    return ({qn["qid"]: {"answer": "UNSUPPORTED", "refused": why} for qn in case["questions"]},
+            {qn["qid"]: [] for qn in case["questions"]})
+
+
 def run_case(case, mutant=None, prover=None):
+    """One award -> (answers, targets, staged, rules, facts, env_raw). Refused (UNSUPPORTED with the reason) when
+    translation.refusal finds the facts leave a pair's reg. 3(6) status open, or translation.partner_refusal finds the
+    rules leave the anchor treated as a couple with two persons (a claimant holds at most one partner)."""
     import encode as E
     ctx = make_ctx(case)
     env_raw = T.environment(ctx)
@@ -440,7 +449,15 @@ def run_case(case, mutant=None, prover=None):
     rules = T.rules(ctx, mutant)
     facts = E.facts(case)
     staged = Staged(prover, rules, facts)
-    staged.run(unit_map(ctx), roots_for(case, ctx))
+    why = T.refusal(case, mutant)
+    if why is not None:
+        return (*refused(case, why), staged, rules, facts, env_raw)
+    roots = roots_for(case, ctx)
+    roots += [T.key(T.B(p, ctx.anchor, x)) for x in ctx.partners() for p in ("tcp", "jointp")]
+    staged.run(unit_map(ctx), roots)
+    why = T.partner_refusal(ctx, staged.truth, mutant)
+    if why is not None:
+        return (*refused(case, why), staged, rules, facts, env_raw)
     answers = {}
     targets = {}
     for qn in case["questions"]:
