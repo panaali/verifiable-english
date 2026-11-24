@@ -1,0 +1,7 @@
+job=armsh-chain-feature-ambig-arfull-1124-0076e864-t520413-s2 shard=2/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-24T11:42:49Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 11:42:49 up 5 min,  0 user,  load average: 1.65, 0.60, 0.23
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
