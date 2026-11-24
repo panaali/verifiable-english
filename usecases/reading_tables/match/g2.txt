@@ -1,0 +1,18 @@
+# match grader 2 on the final tables: fresh Opus 5.5 seat, account claude-saeedi-danial, no tools, 2026-11-24T00:20Z; prompt build/match-final-prompt.txt (manage-agents feature-ambig/)
+# table pawhp ea2b155a125dc4d9f208634a3cac7b4bebc90bd243304f4212316d4ad6eb4e96
+# table tenant-fees a55093fd1e3fcc71b36d03b7409b2068c796653146d123409390452597b9af7b
+# table faa-medical 555b5fd4f8738d176ce5ecbc867ded7c4d43f756160147fa8d9512bc26a3ee28
+# table uc-award b0781531d1e84a93a59c46d78dcfd0cddf6f071cfc47ae2071351193e62cdfc7
+pawhp:P004:B1: A=a B=b | VE A treats the 31 March limit as adding no condition to entitlement, as reading_a does, and VE B makes a timely application a condition of entitlement, as reading_b does.
+pawhp:P007:B2: A=a B=b | VE A counts her as 80 or over if her birthday falls by the week's last day, so paragraph (6) applies as in reading_a, and VE B counts her as under 80 because she is under 80 on the first days, so paragraph (5) applies as in reading_b.
+pawhp:P020:B3: A=a B=b | VE A puts a household with entitled people both under and over 80 under (c)(i), as reading_a does, and VE B puts it under (b), as reading_b does.
+tenant-fees:T013-1:B1: A=a B=b | VE A counts a requirement prohibited only as to its excess as "prohibited", as reading_a does, and VE B counts only a requirement that is not a permitted payment at all, matching reading_b's "wholly prohibited" view.
+tenant-fees:T013-2:B1: A=a B=b | This is the same split as T013-1: VE A counts a partly prohibited requirement as prohibited (reading_a), and VE B does not (reading_b).
+tenant-fees:T020-3:B2: A=a B=b | VE A limits damages to compensation for loss, so the fixed fee is not damages as in reading_a, and VE B includes sums the agreement fixes for a default, the agreed damages of reading_b.
+tenant-fees:T020-4:B2: A=a B=b | This is the same split as T020-3: VE A excludes the fixed fee from damages (reading_a), and VE B treats it as agreed damages (reading_b).
+faa-medical:F028:B1: NO MATCH | Reading_b has (c)(2) alone governing, with (c)(3) not binding sport pilots, but VE B has (c)(3) governing instead of (c)(2), which is the opposite of reading_b and also differs from reading_a.
+uc-award:U019-3:B1: A=a B=b | VE A applies the joint claimants' row to a member of a couple claiming as a single person, as reading_a does, and VE B applies the single claimant's row, as reading_b does.
+uc-award:U021-2:B1: A=a B=b | VE A uses the joint claimants' row, which gives the higher work allowance of reading_a, and VE B uses the single claimant's row, which gives reading_b's result of no work allowance.
+uc-award:U021-3:B1: A=a B=b | VE A uses the joint claimants' row, giving HIGHER JOINT as in reading_a, and VE B uses the single claimant's row, giving NONE as in reading_b.
+uc-award:U022-3:B1: A=a B=b | VE A uses the joint claimants' row, as reading_a does, and VE B uses the single claimant's row, as reading_b does.
+uc-award:U023-5:B2: A=a B=b | VE A applies the disregard for all purposes so the two are not a couple, as in reading_a, and VE B keeps her a member of a couple claiming as a single person so reg. 22(3) applies, as in reading_b.
