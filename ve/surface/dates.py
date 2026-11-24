@@ -519,7 +519,7 @@ class _Item:
         elif not out:
             try:
                 out.append(self.fact(text))
-            except (ResourceLimit, AmbiguousDerivation, DateRuleBound):
+            except (ResourceLimit, AmbiguousDerivation, *_SURFACE):
                 raise  # a W6 ambiguity or count bound refuses the item; no other split or facts entry answers
             except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
                 raise errors[0] if errors else DateRuleError(f"DateRule: no reading of the condition {text!r} "
@@ -564,13 +564,19 @@ class _Item:
         for word, node in ((" or ", "or"), (" and ", "and")):
             depth_ok = [i for i in _top_level(text, word)]
             for i in depth_ok:
-                try:
-                    left, right = self.conditions(text[:i]), self.conditions(text[i + len(word):])
-                except _SURFACE:
-                    raise
-                except DateRuleError:
+                # Both sides are read even when one has no reading, so a refusal on either side (a W6 ambiguity, a
+                # count bound) is the item's, never skipped before a facts entry for the whole text answers.
+                sides = []
+                for part in (text[:i], text[i + len(word):]):
+                    try:
+                        sides.append(self.conditions(part))
+                    except _SURFACE:
+                        raise
+                    except DateRuleError:
+                        sides.append(None)
+                if None in sides:
                     continue
-                readings += [[node, a, b] for a in left for b in right]
+                readings += [[node, a, b] for a in sides[0] for b in sides[1]]
             if readings:
                 break  # `or` binds looser than `and`: an `or` reading is the whole sentence's
         if not readings and text.startswith("not "):
@@ -773,7 +779,7 @@ def _conclusion(item, text):
     elif formula is None:
         try:
             formula = item.fact(text)
-        except (ResourceLimit, AmbiguousDerivation, DateRuleBound):
+        except (ResourceLimit, AmbiguousDerivation, *_SURFACE):
             raise
         except VEError as exc:  # an input diagnostic only: CheckerUnavailable and any other error propagate
             if errors:
