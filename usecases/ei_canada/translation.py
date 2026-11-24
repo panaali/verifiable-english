@@ -152,7 +152,7 @@ def unit_of(name):
     if name in CASE_INTS:
         return CASE_INTS[name][0]
     base = name.split("_", 1)[0]
-    if base in ("ab", "gfirst", "glast", "gsize", "gabove", "weeknum"):
+    if base in ("ab", "gfirst", "glast", "gsize", "gabove", "weeknum", "gord"):
         return WEEK
     for table in (WEEK_INTS, SEP_INTS):
         if base in table:
@@ -172,11 +172,15 @@ def rate_band(lo, hi):
 # --- the case context -------------------------------------------------------------------------------------------
 
 class Ctx:
-    """weeks w01..; seps s1..; runs = the question's stated runs of weeks with one amount ("weeks a to b: $X each" or
-    "week a: $X"), in the order stated: [(run id, [week ids])] (encoding E2)."""
-    def __init__(self, weeks, seps, runs=None):
+    """weeks w01..; seps s1..; runs = the question's stated items of weeks with one amount, in the order stated:
+    [(item id, [week ids in week order])]: a run ("weeks a to b: $X each" or "week a: $X", encoding E2) or, for the ids
+    in `sets`, a week set ("weeks a, b, ..., z: $X each", consecutive or not, encoding E3)."""
+    def __init__(self, weeks, seps, runs=None, sets=()):
         self.weeks, self.seps = list(weeks), list(seps)
         self.runs = list(runs) if runs is not None else [(f"g{i:02d}", [w]) for i, w in enumerate(self.weeks, 1)]
+        self.sets = set(sets)
+        if not self.sets <= {g for g, _ in self.runs}:
+            raise ValueError(f"week sets {sorted(self.sets)} name no stated item")
         self.run_of = {w: g for g, ws in self.runs for w in ws}
         self.items = ["c"] + self.weeks + self.seps
 
@@ -219,11 +223,21 @@ def _rank_rules(ctx, strict=True):
     earlier place (tie-break E1: the total is the same for any choice among equal weeks); calc(w) iff rank_w < N.
     Grounded over the stated runs (E2: a run is "weeks a to b: $X each"; all its weeks have the run's amount, so a run is
     ranked by the earnings of its first week): gsize_g = glast_g - gfirst_g + 1; gabove_g = the total size of the runs
-    ranked above run g (running count ab_g_0..); rank_w = gabove_g + (weeknum_w - gfirst_g)."""
+    ranked above run g (running count ab_g_0..); rank_w = gabove_g + (weeknum_w - gfirst_g).
+    A week set (E3: "weeks a, b, ..., z: $X each", one item whatever its weeks) is ranked the same way as one item; the
+    place of week w within it is a running count over its weeks in week order (gord = 0, 1, ...), gsize_g = the last
+    week's gord + 1 and rank_w = gabove_g + gord_w. Items rank by earnings, then stated order, then week order inside an
+    item: a strict total order, so the ranks are 0..M-1 once each, as with runs. Rules grow with the weeks and the
+    square of the number of ITEMS (not of weeks): a two-amount interleaved year is two items."""
     out = []
     R = ctx.runs
     head = {g: ws[0] for g, ws in R}
     for g, ws in R:
+        if g in ctx.sets:
+            for j, w in enumerate(ws):
+                out.append(Eq(k(f"gord_{w}"), lit(WEEK, 0) if j == 0 else add(WEEK, k(f"gord_{ws[j - 1]}"), lit(WEEK, 1))))
+            out.append(Eq(k(f"gsize_{g}"), add(WEEK, k(f"gord_{ws[-1]}"), lit(WEEK, 1))))
+            continue
         out.append(Eq(k(f"gsize_{g}"), add(WEEK, add(WEEK, k(f"glast_{g}"), scale(WEEK, -1, k(f"gfirst_{g}"))), lit(WEEK, 1))))
     for i, (g, ws) in enumerate(R):
         others = [h for h, _ in R if h != g]
@@ -237,8 +251,8 @@ def _rank_rules(ctx, strict=True):
             out.append(Implies(Not(above), Eq(cur, prev)))
         out.append(Eq(k(f"gabove_{g}"), k(f"ab_{g}_{len(others)}")))
         for w in ws:
-            out.append(Eq(k(f"rank_{w}"), add(WEEK, k(f"gabove_{g}"),
-                                               add(WEEK, k(f"weeknum_{w}"), scale(WEEK, -1, k(f"gfirst_{g}"))))))
+            out.append(Eq(k(f"rank_{w}"), add(WEEK, k(f"gabove_{g}"), k(f"gord_{w}")) if g in ctx.sets else
+                          add(WEEK, k(f"gabove_{g}"), add(WEEK, k(f"weeknum_{w}"), scale(WEEK, -1, k(f"gfirst_{g}"))))))
             out.append(Iff(U("calc", w), Lt(k(f"rank_{w}"), k("nweeks")) if strict else Le(k(f"rank_{w}"), k("nweeks"))))
     return out
 
@@ -313,7 +327,7 @@ UNITS = {
     27: ("RULE", _rank_rules,
          "s. 14(4): the N weeks (N from the s. 14(2) table), consecutive or not, with the highest insurable earnings: a "
          "week is in iff fewer than N weeks rank above it (ties broken by place, E1: the total is the same for any "
-         "choice among equal weeks); grounded over the stated runs of weeks (E2)"),
+         "choice among equal weeks); grounded over the stated runs of weeks (E2) and week sets (E3)"),
     **{n: ("RULE", _sch1_row(n, lo, hi, cells), f"Schedule I row {lo}-{hi or ''}: {sum(v is not None for v in cells)} "
                                                     f"cells (blank cells: no rule)")
        for n, (lo, hi, cells) in SCH1.items()},
@@ -423,9 +437,14 @@ def int_constants(ctx):
             out[f"{base}_{w}"] = (u, f"{words} ({w})")
         out[f"weeknum_{w}"] = (WEEK, f"the number of week {w} in the qualifying period")
     for g, ws in ctx.runs:
-        for base, words in (("gfirst", "the first week number of run"), ("glast", "the last week number of run"),
-                            ("gsize", "the number of weeks of run"), ("gabove", "the number of weeks ranked above run")):
+        bases = (("gsize", "the number of weeks of run"), ("gabove", "the number of weeks ranked above run"))
+        if g not in ctx.sets:
+            bases = (("gfirst", "the first week number of run"), ("glast", "the last week number of run")) + bases
+        for base, words in bases:
             out[f"{base}_{g}"] = (WEEK, f"{words} {g}")
+        if g in ctx.sets:
+            for w in ws:
+                out[f"gord_{w}"] = (WEEK, f"the number of weeks of week set {g} before week {w}")
         for j in range(len(ctx.runs)):
             out[f"ab_{g}_{j}"] = (WEEK, f"weeks of the first {j} other runs ranked above run {g}")
     for s in ctx.seps:
