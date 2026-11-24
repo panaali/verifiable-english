@@ -13,7 +13,7 @@ import pytest
 
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.surface.dates import DateRuleBound, DateRuleError, lower_date_item, written_exclusive
+from ve.surface.dates import DateRuleBound, DateRuleError, DateRuleScope, lower_date_item, written_exclusive
 from ve.units import elaborate_quantity, quantity_meaning_id
 
 EPOCH = date(1970, 1, 1)
@@ -978,3 +978,105 @@ def test_dayafter_fix_week_base_a_shifted_concluded_date_is_refused(base):
         lower_date_item(environment(("claim", "the date of claim")),
                         f"If the date of claim is in the week beginning {base}, then the person is eligible.",
                         {"dates": {"the date of claim": "2020-01-02"}}, facts=FACTS)
+
+
+# --- date-arith-prefix-offset-scope and date-arith-name-vs-wording (manage-agents rows; the Opus review of
+# date-arith-dayafter-fix, B1 and C1 out of scope): a month wording around an offset, and a name that is a wording ----
+
+MID_FEB = {"the date of entry": "2021-02-15"}
+
+
+@pytest.mark.parametrize("form", [
+    "the last day of the month of the date of entry plus 1 month",  # as found: 28 March against 31 March
+    "the last day of the month of the date of entry plus 1 month, reading: last day",
+    "the last day of the month of the date of entry plus 1 day",  # 1 March against 28 February
+    "the first day of the month of the date of entry plus 20 days",  # 21 February against 1 March
+    "the first day of the month of the date of entry plus 1 month",  # one day here; 31 January has no 31 February
+    "the last day of the 1st month after the month of the date of entry plus 1 year",
+    "the last day of the week beginning the date of entry plus 1 month",  # a day wording with a month offset
+    "the last day of the period of 10 days beginning with the date of entry plus 1 year",
+    "the 3rd day of the period beginning with the date of entry plus 2 months",
+    "the day after the last day of the month of the date of entry plus 1 day",  # the month wording one level in
+    "the last day of the week beginning the last day of the month of the date of entry plus 1 week"])
+def test_scope_name_a_month_wording_around_an_offset_is_two_readings(form):
+    """"the last day of the month of D plus 1 month" (D 15 February 2021) is (the last day of February) plus 1 month,
+    28 March, or the last day of the month of (D plus 1 month), 31 March. The scope is not written: refused (CANNOT,
+    DateRuleScope), never picked, also when the month wording is inside a wording that commutes with the offset."""
+    with pytest.raises(DateRuleScope, match="CANNOT \\(DateRuleScope\\)"):
+        lower_date_item(environment(ENTRY), f"If {form} is on 28 March 2021, then the person is eligible.",
+                        {"dates": MID_FEB}, facts=FACTS)
+
+
+def test_scope_name_day_wordings_with_a_day_offset_give_one_day_and_still_lower():
+    """A wording that adds days (week, period, the day after) commutes with a day or week offset: one day, accepted."""
+    # the last day of the week beginning 15 February = 21 February; plus 1 week = 28 February either way
+    assert _decide("If the last day of the week beginning the date of entry plus 1 week is on 28 February 2021, then "
+                   "the person is eligible.", MID_FEB) is True
+    # 15 February + 9 days + 3 days = 27 February either way
+    assert _decide("If the last day of the period of 10 days beginning with the date of entry plus 3 days is on "
+                   "27 February 2021, then the person is eligible.", MID_FEB) is True
+    assert _decide("If the 2nd day of the period beginning with the day after the date of entry plus 2 days is on "
+                   "19 February 2021, then the person is eligible.", MID_FEB) is True
+    # a month wording without an offset, and an offset without a wording, are as before
+    assert _decide("If the last day of the month of the date of entry is on 28 February 2021, then the person is "
+                   "eligible.", MID_FEB) is True
+    assert _decide("If the date of entry plus 1 month is on 15 March 2021, then the person is eligible.", MID_FEB) is True
+
+
+def test_scope_name_a_month_wording_of_a_name_with_an_offset_is_two_readings():
+    """A name that is a month wording, then an offset: the name plus 1 month, or the wording of (X plus 1 month)."""
+    name = "the last day of the month of the hearing"
+    env = environment(("named", name), ("hearing", HEARING))
+    with pytest.raises(DateRuleScope):
+        lower_date_item(env, f"If {name} plus 1 day is before 1 June 2020, then the person is eligible.",
+                        {"dates": {HEARING: "2020-05-01", name: "2020-06-10"}}, facts=FACTS)
+    week = "the last day of the week beginning the hearing"  # a day wording, but its name need not be its value
+    with pytest.raises(DateRuleScope):
+        lower_date_item(environment(("named", week), ("hearing", HEARING)),
+                        f"If {week} plus 1 day is before 1 June 2020, then the person is eligible.",
+                        {"dates": {HEARING: "2020-05-01", week: "2020-06-10"}}, facts=FACTS)
+
+
+def test_scope_name_a_scope_cannot_is_its_own_class_and_no_other_reading_takes_it():
+    """CANNOT (DateRuleScope) surfaces through the connector, and/or and conclusion loops like DateRuleBound: a facts
+    map reading of the same sentence does not replace it."""
+    assert issubclass(DateRuleScope, DateRuleError) and not issubclass(DateRuleScope, DateRuleBound)
+    cond = "the last day of the month of the date of entry plus 1 month is on 28 March 2021"
+    facts = dict(FACTS, **{cond: ["unary", "exempt", ["const", "p"]]})
+    with pytest.raises(DateRuleScope):
+        lower_date_item(environment(ENTRY), f"If {cond}, then the person is eligible.", {"dates": MID_FEB}, facts=facts)
+    with pytest.raises(DateRuleScope):  # the day-after scope rule of date-arith-dayafter-fix, same class
+        lower_date_item(environment(ENTRY), "If the day after the date of entry plus 1 month is on 1 April 2021 or the "
+                        "person is a man, then the person is eligible.", {"dates": MID_FEB}, facts=FACTS)
+
+
+@pytest.mark.parametrize("name", [
+    "the last day of the month of the hearing",  # as found
+    "the first day of the month of the hearing",
+    "the last day of the 1st month after the month of the hearing",
+    "the last day of the week beginning the hearing",
+    "the 3rd day of the period beginning with the hearing",
+    "the last day of the period of 10 days beginning with the hearing",
+    "the first Monday in May of 2020",
+    "the day the person attains the age of 60 years"])
+def test_name_vs_wording_a_name_that_is_a_wording_is_read_as_the_name(name):
+    """A case date or day constant whose name is a date wording is the writer's date for every wording (not only plus,
+    minus and the day after): its own value (10 June: not before 1 June), not the wording's (a May day: before)."""
+    env = environment(("named", name), ("hearing", HEARING))
+    dates = {HEARING: "2020-05-01", name: "2020-06-10", "the birth date of the person": "1960-05-01"}
+    text = f"If {name} is before 1 June 2020, then the person is eligible."
+    lowered = lower_date_item(env, text, {"dates": dates}, facts=FACTS)
+    assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["date", "2020-06-10"], ["date", "2020-06-01"]]
+    assert _decide(text, dates, (), env) is False
+    # a concluded date (no case value) with that name is its day constant
+    del dates[name]
+    lowered = lower_date_item(env, text, {"dates": dates}, facts=FACTS)
+    assert lowered["rules"][0][1][1] == ["date_before", ["const", "day", "named"], ["cal", ["date", "2020-06-01"]]]
+
+
+def test_name_vs_wording_a_let_named_as_a_wording_is_its_value():
+    lowered = lower_date_item(environment(("hearing", HEARING)),
+                              "Let the last day of the month of the hearing be 10 June 2020. If the last day of the month "
+                              "of the hearing is before 1 June 2020, then the person is eligible.",
+                              {"dates": {HEARING: "2020-05-01"}}, facts=FACTS)
+    assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["date", "2020-06-10"], ["date", "2020-06-01"]]
