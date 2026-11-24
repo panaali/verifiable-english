@@ -562,6 +562,44 @@ def run_case(case, mutant=None):
     return out
 
 
+def _stage_task(job):
+    """One sub-case's staged route in a worker -> its answers, targets, record and Lean cases."""
+    import importlib
+    sys.setrecursionlimit(200000)
+    module, cid, si = job
+    K = importlib.import_module(module)
+    case = [c for c in K.CASES if c["id"] == cid][0]
+    sub = case["subs"][si]
+    answers, targets, staged, rules, facts, env_raw, checks, ctx = run_sub(sub)
+    tag = f"{cid}/s{si}"
+    lean_cases = []
+    for step in staged.steps.values():
+        lean_cases.append({"id": f"{tag}/cert/{step['name']}", "kind": "certificate",
+                           "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
+                           "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
+    docs = sorted({t for ts in targets.values() for t in ts})
+    for i, t in enumerate(docs):
+        lean_cases.append({"id": f"{tag}/doc/{i}", "kind": "document", "environment": env_raw,
+                           "document": staged.document(t), "_target": f"s{si}:{t}"})
+    info = {"employer": sub.get("employer"), "rules": len(rules), "facts": len(facts), "pieces": len(ctx.pieces),
+            "weeks": len(ctx.weeks), "checks": checks,
+            "constraints_contradicted": sum(c["contradicted"] for c in checks),
+            "steps": [{kk: v for kk, v in e.items() if kk != "premises"} | {"premise_count": len(e["premises"])}
+                      for e in staged.log]}
+    return {"tag": tag, "environment_id": Environment(env_raw).environment_id, "answers": answers, "targets": targets,
+            "sub": info, "lean_cases": lean_cases}
+
+
+def _mutant_sub_task(item):
+    import importlib
+    sys.setrecursionlimit(200000)
+    mutant, module, cid, si, base = item
+    K = importlib.import_module(module)
+    case = [c for c in K.CASES if c["id"] == cid][0]
+    got = run_sub(case["subs"][si], mutant)[0]
+    return mutant, [q for q in got if got[q] != base[q]]
+
+
 def _mutant_task(item):
     mutant, cases, base = item
     sys.setrecursionlimit(200000)
@@ -589,28 +627,20 @@ def main(argv=None):
     if args.cases:
         cases = [c for c in cases if c["id"] in args.cases.split(",")]
     records, lean_cases, env_ids = [], [], {}
+    from concurrent.futures import ProcessPoolExecutor
+    jobs = [(args.cases_module, case["id"], si) for case in cases for si in range(len(case["subs"]))]
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        staged_out = dict(zip(jobs, pool.map(_stage_task, jobs)))
     for case in cases:
         rec = {"id": case["id"], "staged": {}, "targets": {}, "subs": [],
                "encoder_judgement": case.get("judgement", [])}
-        for si, sub in enumerate(case["subs"]):
-            answers, targets, staged, rules, facts, env_raw, checks, ctx = run_sub(sub)
-            tag = f"{case['id']}/s{si}"
-            env_ids[tag] = Environment(env_raw).environment_id
-            rec["staged"].update(answers)
-            rec["targets"].update({qid: [f"s{si}:{t}" for t in ts] for qid, ts in targets.items()})
-            rec["subs"].append({"employer": sub.get("employer"), "rules": len(rules), "facts": len(facts),
-                                "pieces": len(ctx.pieces), "weeks": len(ctx.weeks), "checks": checks,
-                                "constraints_contradicted": sum(c["contradicted"] for c in checks),
-                                "steps": [{kk: v for kk, v in e.items() if kk != "premises"}
-                                          | {"premise_count": len(e["premises"])} for e in staged.log]})
-            for step in staged.steps.values():
-                lean_cases.append({"id": f"{tag}/cert/{step['name']}", "kind": "certificate",
-                                   "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
-                                   "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
-            docs = sorted({t for ts in targets.values() for t in ts})
-            for i, t in enumerate(docs):
-                lean_cases.append({"id": f"{tag}/doc/{i}", "kind": "document", "environment": env_raw,
-                                   "document": staged.document(t), "_target": f"s{si}:{t}"})
+        for si in range(len(case["subs"])):
+            r = staged_out[(args.cases_module, case["id"], si)]
+            env_ids[r["tag"]] = r["environment_id"]
+            rec["staged"].update(r["answers"])
+            rec["targets"].update({qid: [f"s{si}:{t}" for t in ts] for qid, ts in r["targets"].items()})
+            rec["subs"].append(r["sub"])
+            lean_cases += r["lean_cases"]
         records.append(rec)
     doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
     lean_results = {} if args.no_lean else {r["id"]: r for r in lean(lean_cases)}
@@ -644,7 +674,12 @@ def main(argv=None):
         from concurrent.futures import ProcessPoolExecutor
         base = {q: a for r in records if "staged" in r for q, a in r["staged"].items()}
         with ProcessPoolExecutor(max_workers=args.workers) as pool:
-            changed = dict(pool.map(_mutant_task, [(m, cases, base) for m in (args.only_mutants.split(",") if args.only_mutants else T.MUTANTS)]))
+            ms = args.only_mutants.split(",") if args.only_mutants else list(T.MUTANTS)
+            mjobs = [(m, args.cases_module, case["id"], si, base) for m in ms for case in cases
+                     for si in range(len(case["subs"]))]
+            changed = {m: [] for m in ms}
+            for m, ch in pool.map(_mutant_sub_task, mjobs):
+                changed[m] += ch
         for m, (desc, _) in T.MUTANTS.items():
             if m not in changed:
                 continue
