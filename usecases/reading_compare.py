@@ -21,7 +21,8 @@ Directory (usecases/reading_tables/): <law>.tsv (reading tables), runs/<law>.jso
 match/<grader>.txt (`# table <law> <sha256>` lines, then `<law>:<record>:<block>: A=a B=b | A=b B=a | NO MATCH` lines),
 SEALED.tsv (question, law, sealed_a, sealed_b: JSON or `blocked`; every value may be stored as "sha256:<hex>", see
 seal()), READINGS.tsv (law, block, reading, name_sha256, status LIVE|STOPPED, since, note), CHECKS.tsv (law, check,
-table_sha256, utc, verdict, file).
+table_sha256, utc, verdict, file), FINDINGS.tsv (HIGH findings of a check that move no listed answer, with their
+disposition).
 
 Usage: python -B usecases/reading_compare.py [--dir usecases/reading_tables] [--json out.json]   (rc 1 on any failure)
        python -B usecases/reading_compare.py --seal <plain key tsv> <out tsv>
@@ -38,6 +39,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent / "reading_tables"
 CHECKS_NEEDED = ("source-check",)  # the table checklist and the answers against the SOURCE, by an uninvolved session
 CHECK_OK = {"source-check": {"SOUND"}}
+# A source check may also pass with HIGH findings that move no listed answer, each recorded with its disposition in
+# FINDINGS.tsv (law, table_sha256, check, severity, moves_listed_answer, finding, disposition) for that table version.
+HIGH_NO_MOVE = re.compile(r"0 WRONG, (\d+) HIGH \(no listed answer moves\)")
 UNDECIDED = {"OPEN", "UNSUPPORTED", "REFUSED", "UNKNOWN", "INCONSISTENT", "CANNOT", "ERROR", "N/A", ""}
 MATCHES = ("A=a B=b", "A=b B=a", "NO MATCH")
 
@@ -132,6 +136,7 @@ def check(d=HERE):
     checks = {}
     for r in _tsv(d / "CHECKS.tsv"):
         checks.setdefault((r["law"], r["check"]), []).append(r)
+    findings = _tsv(d / "FINDINGS.tsv") if (d / "FINDINGS.tsv").exists() else []
     graders = sorted((d / "match").glob("*.txt"))
     matches = [load_matches(p) for p in graders]
     fails, laws, questions = [], {}, []
@@ -165,7 +170,12 @@ def check(d=HERE):
             if not rs:
                 fails.append(f"STALE {law}: no {c} on table {tsha[:12]} (every check runs again on the final table)")
             elif rs[-1]["verdict"] not in CHECK_OK[c]:
-                fails.append(f"{c.upper()} {law}: verdict {rs[-1]['verdict']!r} on table {tsha[:12]}")
+                m = HIGH_NO_MOVE.fullmatch(rs[-1]["verdict"])
+                rec = [f for f in findings if (f["law"], f["table_sha256"], f["check"], f["severity"]) == (law, tsha, c, "HIGH")
+                       and f["moves_listed_answer"] == "no" and f["disposition"].strip()]
+                if not m or int(m.group(1)) != len(rec):
+                    fails.append(f"{c.upper()} {law}: verdict {rs[-1]['verdict']!r} on table {tsha[:12]} ({len(rec)} HIGH "
+                                 "findings recorded with a disposition in FINDINGS.tsv)")
         for i, (seen, _) in enumerate(matches):
             if live and seen.get(law) != tsha:
                 fails.append(f"STALE {law}: match grader {graders[i].name} saw table {str(seen.get(law))[:12]}, the "

@@ -1,0 +1,18 @@
+# match grader 1 on the final tables: fresh Opus 5.5 seat, account claude-saeedi-danial, no tools, 2026-11-24T00:20Z; prompt build/match-final-prompt.txt (manage-agents feature-ambig/)
+# table pawhp ea2b155a125dc4d9f208634a3cac7b4bebc90bd243304f4212316d4ad6eb4e96
+# table tenant-fees a55093fd1e3fcc71b36d03b7409b2068c796653146d123409390452597b9af7b
+# table faa-medical 555b5fd4f8738d176ce5ecbc867ded7c4d43f756160147fa8d9512bc26a3ee28
+# table uc-award b0781531d1e84a93a59c46d78dcfd0cddf6f071cfc47ae2071351193e62cdfc7
+pawhp:P004:B1: A=a B=b | VE A, like reading_a, treats the 31 March deadline as adding no entitlement condition, while VE B, like reading_b, makes a timely application a condition of entitlement.
+pawhp:P007:B2: A=a B=b | VE A counts her as aged 80 or over if she turns 80 by the week's last day, as reading_a does; VE B treats any day under 80 as under 80, as reading_b does.
+pawhp:P020:B3: A=a B=b | VE A puts a mixed household under (c)(i) at £158.35, as reading_a does, and VE B puts it under (b) at £211.15, as reading_b does.
+tenant-fees:T013-1:B1: A=a B=b | VE A treats a deposit prohibited only as to its excess as "prohibited", as reading_a does, while VE B, like reading_b, counts only a requirement that is not a permitted payment at all.
+tenant-fees:T013-2:B1: A=a B=b | Same split as T013-1: VE A counts a partly prohibited requirement as prohibited (reading_a), and VE B does not (reading_b).
+tenant-fees:T020-3:B2: A=a B=b | VE A limits para. 5 to compensation for loss, so a fixed fee is not damages (reading_a), while VE B covers a sum the agreement fixes for a default (reading_b).
+tenant-fees:T020-4:B2: A=a B=b | Same split as T020-3: VE A excludes a fixed fee (reading_a), and VE B treats it as agreed damages (reading_b).
+faa-medical:F028:B1: NO MATCH | Reading_a has (c)(2) and (c)(3) both bind and reading_b has only (c)(2) bind, but VE B has (c)(3) bind instead of (c)(2), which neither writer reading says.
+uc-award:U019-3:B1: A=a B=b | VE A applies the joint claimants' row to a member of a couple claiming as single, as reading_a does, and VE B applies the single row, as reading_b does.
+uc-award:U021-2:B1: A=a B=b | VE A's joint row gives the higher allowance through Bob, as reading_a does, while VE B's single row, as for the claim as made, matches reading_b.
+uc-award:U021-3:B1: A=a B=b | VE A uses the joint row (HIGHER JOINT, reading_a), and VE B uses Ann's own single position (NONE, reading_b).
+uc-award:U022-3:B1: A=a B=b | VE A uses the joint claimants' row (reading_a), and VE B uses the single claimant's row (reading_b).
+uc-award:U023-5:B2: A=a B=b | VE A disregards the marriage for all purposes, so they are not a couple (reading_a), while VE B keeps Zara a member of a couple claiming as single, so reg. 22(3) applies (reading_b).

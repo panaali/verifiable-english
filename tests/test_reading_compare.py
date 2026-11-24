@@ -156,3 +156,22 @@ def test_the_reading_tables_pass_the_sealed_gate():
 def test_fixture_is_a_copy_not_the_live_dir(tmp_path):
     shutil.copytree(FIX, tmp_path / "f")
     assert rc.check(tmp_path / "f")["failures"] == rc.check(FIX)["failures"]
+
+
+def _verdict(d, verdict, findings=()):
+    tsha = _sha((d / "toy.tsv").read_text())
+    (d / "CHECKS.tsv").write_text(f"law\tcheck\ttable_sha256\tutc\tverdict\tfile\ntoy\tsource-check\t{tsha}\tt\t{verdict}\tx\n")
+    rows = ["law\ttable_sha256\tcheck\tseverity\tmoves_listed_answer\tfinding\tdisposition"]
+    rows += [f"toy\t{tsha}\tsource-check\tHIGH\t{m}\tgap\t{disp}" for m, disp in findings]
+    (d / "FINDINGS.tsv").write_text("\n".join(rows) + "\n")
+    return [f.split(" ", 1)[0] for f in rc.check(d)["failures"]]
+
+
+def test_a_source_check_with_findings_fails_unless_each_high_is_recorded(tmp_path):
+    d = _mini(tmp_path / "g")
+    assert _verdict(d, "FINDINGS (1 WRONG, 0 HIGH)") == ["SOURCE-CHECK"]
+    assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)") == ["SOURCE-CHECK"]
+    assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)", [("yes", "kept")]) == ["SOURCE-CHECK"]
+    assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)", [("no", " ")]) == ["SOURCE-CHECK"]
+    assert _verdict(d, "0 WRONG, 2 HIGH (no listed answer moves)", [("no", "filed")]) == ["SOURCE-CHECK"]
+    assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)", [("no", "filed as row x")]) == []
