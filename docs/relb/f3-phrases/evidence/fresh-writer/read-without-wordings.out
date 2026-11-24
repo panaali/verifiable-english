@@ -1,0 +1,11 @@
+F1   REFUSED    The applicant and the housemate share accommodation as their mutual home in the qualifying :: SyntaxError: No W6 reading in any grammar
+F2   REFUSED    The applicant is a partner of the housemate. :: SyntaxError: No W6 reading in any grammar
+F3   REFUSED    The State Pension has been, or falls to be, paid to the applicant for the qualifying week. :: SyntaxError: No W6 reading in any grammar
+F4   REFUSED    The applicant has a first day of ordinary residence in England and Wales. :: SyntaxError: No W6 reading in any grammar
+F5   REFUSED    It is not the case that the housemate's ordinary residence in England and Wales has not en :: SyntaxError: No W6 reading in any grammar
+F6   REFUSED    The housemate has become ordinarily resident in Scotland or Northern Ireland. :: SyntaxError: No W6 reading in any grammar
+F7   REFUSED    The applicant is detained in custody from the custody start date to the release date. :: SyntaxError: No W6 reading in any grammar
+F8   REFUSED    The applicant's custody is under a sentence imposed by a court. :: SyntaxError: No W6 reading in any grammar
+F9   REFUSED    The applicant's care stay has a last day, the care end date. :: SyntaxError: No W6 reading in any grammar
+F10  REFUSED    The applicant did not make a claim for the winter fuel payment on the claim date. :: SyntaxError: No W6 reading in any grammar
+{"READ-EQUAL": 0, "READ-OTHER": 0, "REFUSED": 10}

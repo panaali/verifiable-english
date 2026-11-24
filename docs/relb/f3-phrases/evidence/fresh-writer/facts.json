@@ -1,0 +1,130 @@
+[
+ {
+  "id": "F1",
+  "formula": [
+   "binary",
+   "shares_home",
+   [
+    "const",
+    "applicant"
+   ],
+   [
+    "const",
+    "housemate"
+   ]
+  ]
+ },
+ {
+  "id": "F2",
+  "formula": [
+   "binary",
+   "partner_of",
+   [
+    "const",
+    "applicant"
+   ],
+   [
+    "const",
+    "housemate"
+   ]
+  ]
+ },
+ {
+  "id": "F3",
+  "formula": [
+   "binary",
+   "paid_for_week",
+   [
+    "const",
+    "applicant"
+   ],
+   [
+    "const",
+    "state_pension"
+   ]
+  ]
+ },
+ {
+  "id": "F4",
+  "formula": [
+   "unary",
+   "ever_resident_ew",
+   [
+    "const",
+    "applicant"
+   ]
+  ]
+ },
+ {
+  "id": "F5",
+  "formula": [
+   "not",
+   [
+    "unary",
+    "remains_resident_ew",
+    [
+     "const",
+     "housemate"
+    ]
+   ]
+  ]
+ },
+ {
+  "id": "F6",
+  "formula": [
+   "unary",
+   "moved_to_scotland_or_ni",
+   [
+    "const",
+    "housemate"
+   ]
+  ]
+ },
+ {
+  "id": "F7",
+  "formula": [
+   "unary",
+   "detained_in_custody",
+   [
+    "const",
+    "applicant"
+   ]
+  ]
+ },
+ {
+  "id": "F8",
+  "formula": [
+   "unary",
+   "under_sentence",
+   [
+    "const",
+    "applicant"
+   ]
+  ]
+ },
+ {
+  "id": "F9",
+  "formula": [
+   "unary",
+   "care_ended",
+   [
+    "const",
+    "applicant"
+   ]
+  ]
+ },
+ {
+  "id": "F10",
+  "formula": [
+   "not",
+   [
+    "unary",
+    "claimed",
+    [
+     "const",
+     "applicant"
+    ]
+   ]
+  ]
+ }
+]
