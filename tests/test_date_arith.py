@@ -889,7 +889,7 @@ def test_dayafter_fix_month_scope_the_day_after_d_plus_months_or_years_is_refuse
     """Codex MEDIUM 2: with entry 28 February 2021, "(the day after entry) plus 1 month" is 1 April and "the day after
     (entry plus 1 month)" is 29 March. The scope is not written, so the wording is refused, never picked."""
     text = f"If {form} is on 1 April 2021, then the person is eligible."
-    with pytest.raises(DateRuleError, match="CANNOT \\(DateRuleScope\\)" if not lack else "CANNOT \\(DateRuleScope\\)|C3"):
+    with pytest.raises(DateRuleError, match="CANNOT \\(DateRuleScope\\)"):
         lower_date_item(environment(ENTRY), text, {"dates": {"the date of entry": "2021-02-28"}},
                         may_lack=list(lack), facts=FACTS)
 
@@ -908,7 +908,7 @@ def test_dayafter_fix_week_base_a_shifted_date_the_case_may_lack_is_refused(base
     """Codex MEDIUM 3: C3 refuses c + k as the base of a week-beginning wording (only the period of N days beginning
     with c + k is read), for a date the case may lack and for a concluded date."""
     text = f"If the date of claim is in the week beginning {base}, then the person is eligible."
-    with pytest.raises(DateRuleError, match="C3"):
+    with pytest.raises(DateRuleError, match="the week beginning .* is not read.*C3"):
         lower_date_item(environment(ENTRY, ("claim", "the date of claim")), text,
                         {"dates": {"the date of entry": "2020-01-01", "the date of claim": "2020-01-02"}},
                         may_lack=["the date of entry"], facts=FACTS)
@@ -923,3 +923,58 @@ def test_dayafter_fix_week_base_controls_still_lower():
                        "is eligible.", dates) is (1 <= gap <= 7), gap
         assert _decide("If the date of claim is in the week beginning the date of entry, then the person is eligible.",
                        dates, ("the date of entry",)) is (0 <= gap <= 6), gap
+
+
+@pytest.mark.parametrize("name,wording", [
+    ("the day after the hearing plus 1 day", "the last day of the week beginning {}"),  # Opus review A1, as found
+    ("the day after the hearing plus 1 day", "the last day of the month of {}"),
+    ("the day after the hearing plus 1 day", "the 3rd day of the period beginning with {}"),
+    ("the day after the hearing plus 1 day", "the last day of the period of 10 days beginning with {}"),
+    ("the hearing plus 1 day", "the last day of the week beginning {}"),  # a name with "plus", older than day-after
+    ("the hearing plus 1 day", "the day after {}"),
+    ("the hearing plus 1 month", "the first day of the month of {}")])
+def test_dayafter_fix_review_a1_a_name_with_plus_inside_another_wording_is_two_readings(name, wording):
+    """The offset parser splits at the first "plus", so a name with "plus" in it inside another wording was read as
+    (wording of a shorter phrase) plus N (9 May, eligible) where the wording of the name gives 16 June. Refused."""
+    env = environment(("h", name), ("hearing", HEARING))
+    with pytest.raises(DateRuleError, match="CANNOT \\(DateRuleScope\\)"):
+        lower_date_item(env, f"If {wording.format(name)} is before 1 June 2020, then the person is eligible.",
+                        {"dates": {HEARING: "2020-05-01", name: "2020-06-10"}}, facts=FACTS)
+
+
+@pytest.mark.parametrize("form", ["the last day of the month of the day after the date of entry plus 1 month",
+                                  "the first day of the month of the day after the date of entry plus 1 year",
+                                  "the last day of the week beginning the day after the date of entry plus 1 month",
+                                  "the last day of the month of the day after the date of entry plus 1 month, "
+                                  "reading: last day"])
+def test_dayafter_fix_review_b1_the_day_after_inside_a_wording_with_a_month_offset_is_refused(form):
+    """Opus review B1: "the last day of the month of the day after D plus 1 month" (D 28 February 2021) read the last
+    day of March plus 1 month; the day after (D plus 1 month) gives a March day. Refused as at the start."""
+    with pytest.raises(DateRuleError, match="CANNOT \\(DateRuleScope\\)"):
+        lower_date_item(environment(ENTRY), f"If {form} is on 30 April 2021, then the person is eligible.",
+                        {"dates": {"the date of entry": "2021-02-28"}}, facts=FACTS)
+
+
+def test_dayafter_fix_review_a1_b1_controls_still_lower():
+    """Without a name in the way, the day after inside another wording with a day offset still lowers (the day and
+    the offset give one day), and a name without "plus" inside a wording keeps its reading."""
+    dates = {"the date of entry": "2021-02-20"}
+    # the last day of the week beginning (the day after 20 Feb) = 27 Feb; plus 1 day = 28 Feb
+    assert _decide("If the last day of the week beginning the day after the date of entry plus 1 day is on "
+                   "28 February 2021, then the person is eligible.", dates) is True
+    env = environment(("h", "the day after the hearing"), ("hearing", HEARING))
+    lowered = lower_date_item(env, "If the last day of the week beginning the day after the hearing is before "
+                              "1 June 2020, then the person is eligible.",
+                              {"dates": {HEARING: "2020-05-01", "the day after the hearing": "2020-05-30"}},
+                              facts=FACTS)
+    assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["plus_days", ["date", "2020-05-30"], "6"],
+                                         ["date", "2020-06-01"]]
+
+
+@pytest.mark.parametrize("base", ["the day after the payment date", "the payment date plus 2 weeks"])
+def test_dayafter_fix_week_base_a_shifted_concluded_date_is_refused(base):
+    """A concluded date (a day constant the case does not give) plus k days is not a week base either (C3)."""
+    with pytest.raises(DateRuleError, match="the week beginning .* is not read.*C3"):
+        lower_date_item(environment(("claim", "the date of claim")),
+                        f"If the date of claim is in the week beginning {base}, then the person is eligible.",
+                        {"dates": {"the date of claim": "2020-01-02"}}, facts=FACTS)
