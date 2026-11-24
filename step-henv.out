@@ -1,0 +1,21 @@
+Tue Nov 24 16:16:00 UTC 2026
+Linux fb940e206922 7.0.0-1014-aws #14~24.04.1-Ubuntu SMP PREEMPT Fri Sep 18 21:24:59 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+nproc=4
+               total        used        free      shared  buff/cache   available
+Mem:           15701         998       13707          44        1325       14702
+overlay         145G   35G  110G  25% /
+uid=1001(demo) gid=1001(demo) groups=1001(demo)
+git: -
+curl: -
+cc: -
+uv: -
+elan: -
+lake: -
+rustup: -
+cargo: -
+python3: -
+sudo: /usr/bin/sudo
