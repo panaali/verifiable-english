@@ -20,7 +20,7 @@ theorem runDocument_fits (w : W6Env) (id : String) (j : Json) (hK : req.getObjVa
     OkFits req Skeletons.quantity (Document.runDocument w id j) := by
   unfold Document.runDocument
   okfits
-  all_goals (try simp only [ok, Document.claimJson])
+  all_goals (try simp only [ok, Document.claimJson, inputsField])
   all_goals fits using Common.renderKind_fits
 
 /-- The kind `Time.Wire.runCase` reads: the case's `kind` string, else `admission`. -/
