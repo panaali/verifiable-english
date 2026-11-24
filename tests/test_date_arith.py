@@ -13,7 +13,7 @@ import pytest
 
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.surface.dates import DateRuleError, lower_date_item, written_exclusive
+from ve.surface.dates import DateRuleBound, DateRuleError, lower_date_item, written_exclusive
 from ve.units import elaborate_quantity, quantity_meaning_id
 
 EPOCH = date(1970, 1, 1)
@@ -530,3 +530,72 @@ def test_opus_m2_birthday_and_aged_forms():
             for b in ("1960-12-01", "1960-12-02")] == [True, False]
     minus = "If the payment date is on or after 1 June 2026 minus 3 months, then the person is exempt."
     assert [_payment(minus, d) for d in ("2026-02-28", "2026-03-01")] == [False, True]
+
+
+# --- full-gate fix round (manage-agents reviews/dri-decisions-20261124-date-arith-fullgate-fix.md item 1) ---------
+
+@pytest.mark.parametrize("text", [
+    "If the licence is valid, then the person is exempt.",  # the condition reaches the W6 grammar
+    "If the person is exempt, then the payment date is before 1 June 2026.",  # the conclusion reaches it
+])
+def test_fullgate_checker_unavailable_in_the_w6_reading_reaches_the_caller(text, monkeypatch):
+    """A CheckerUnavailable raised while reading a condition or conclusion propagates: no handler in the
+    lowering turns it into a refusal or a reading (test_broad_exception_handlers_are_reviewed)."""
+    from ve.errors import CheckerUnavailable
+    from ve.surface import time
+
+    def unavailable(*_a, **_k):
+        raise CheckerUnavailable("backend down", operation="english.admission")
+
+    monkeypatch.setattr(time, "parse_w6_sentence", unavailable)
+    facts = {"the person is exempt": FACTS["the person is exempt"]}
+    with pytest.raises(CheckerUnavailable, match="backend down"):
+        lower_date_item(environment(), text, {}, facts=facts)
+
+
+BOUND_FORMS = (
+    "If the payment date is on or before 1 June 2026 plus {n} days, then the person is exempt.",
+    "If the payment date is on or before 1 June 2026 plus 1 year and {n} months, then the person is exempt.",
+    "If the person has attained the age of {n} on 1 June 2026, then the person is eligible.",
+    "If the person is aged at least 65 years and {n} months on 1 June 2026, then the person is eligible.",
+    "If the person is under the age of {n} on 1 June 2026, then the person is eligible.",
+    "If the person has reached their {n}th birthday on 1 June 2026, then the person is eligible.",
+    "If the payment date is in the period of {n} days beginning with 1 June 2026, then the person is exempt.",
+    "If the payment date is on the {n}th day of the period beginning with 1 June 2026, then the person is exempt.",
+    "If the payment date is on the last day of the period of {n} days beginning with 1 June 2026, "
+    "then the person is exempt.",
+    "If the payment date is on or before the last day of the {n}th month after the month of 1 June 2026, "
+    "then the person is exempt.",
+    "If the person is exempt, then the payment date is 1 June 2026 plus {n} days.",
+)
+
+
+@pytest.mark.parametrize("digits", (7, 41, 641, 4301))
+@pytest.mark.parametrize("form", BOUND_FORMS)
+def test_fullgate_a_huge_count_in_a_date_rule_is_refused_not_converted(form, digits):
+    """Every count, ordinal and year a date rule reads is at most 6 digits; a longer one is CANNOT, never
+    converted (test_every_int_conversion_in_ve_is_bounded_or_reviewed), at Python's lowest digit limit too."""
+    import sys
+    case = {"dates": {"the birth date of the person": "1960-06-27"}}
+    before = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(640)
+    try:
+        with pytest.raises(DateRuleBound, match=r"CANNOT \(DateRuleBound\)"):
+            lower_date_item(environment(), form.format(n="9" * digits), case, facts=FACTS)
+    finally:
+        sys.set_int_max_str_digits(before)
+    # Control: at the bound (6 digits) the same form lowers or refuses for another reason, never DateRuleBound.
+    try:
+        lower_date_item(environment(), form.format(n="9" * 6), case, facts=FACTS)
+    except DateRuleBound:
+        raise AssertionError("6 digits is within the bound")
+    except DateRuleError:
+        pass
+
+
+@pytest.mark.parametrize("year", ("9" * 41, "9" * 4301, 10 ** 50, -1), ids=("41-digits", "4301-digits", "10e50", "minus-1"))
+def test_fullgate_a_huge_case_year_is_refused_not_converted(year):
+    text = "If the payment date is on the first Monday in June of the scheme year, then the person is exempt."
+    with pytest.raises(DateRuleBound, match=r"CANNOT \(DateRuleBound\)"):
+        lower_date_item(environment(), text, {"years": {"the scheme year": year}}, facts=FACTS)
+    assert lower_date_item(environment(), text, {"years": {"the scheme year": "2026"}}, facts=FACTS)["rules"]
