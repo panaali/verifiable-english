@@ -4,7 +4,8 @@ The fix reads a field the frozen encoders never stated: absent_from(x, y), the h
 (translation.absent6). A fresh Opus 5.5 encoder seat (reg36-enc/README.md) wrote reg36-enc/absences.jsonl from the Codex
 set's questions-enc.jsonl and the law only. This module applies it MECHANICALLY to the frozen records (cases_xfam.py is
 unchanged): for each absence line, in every award record of that case where the absent person is a member of a stated
-couple, add ("absent_from", person, y) for each named household member y who is a person of the record. Lines for
+couple, add ("absent_from", person, y) for each named household member y (a household outside the record is an error,
+not skipped: the default would misread it). Lines for
 persons in no couple (children: reg. 4(7) reads only the unary facts) are not applied; no other field changes.
 """
 from __future__ import annotations
@@ -35,7 +36,10 @@ def apply(cases, path=FILE):
             for name in ln["absent_from"]:
                 y = name.lower()
                 link = ["absent_from", x, y]
-                if y in rec["persons"] and y != x and link not in rec["links"]:
+                if y not in rec["persons"]:
+                    raise ValueError(f"{rec['id']}: {x}'s absence is from {y}'s household, not a person of the record "
+                                     "(the absent6 default would read it as the record's own couple)")
+                if y != x and link not in rec["links"]:
                     rec["links"].append(link)
                     added.setdefault(rec["id"], []).append(tuple(link))
     return added

@@ -91,27 +91,64 @@ def test_reg36_absent_from_decides_which_of_two_couples_ends(uc):
     assert ann["T37-3"] == {"answer": "SINGLE", "row": "HIGHER SINGLE"}
 
 
-def test_unscoped_absence_of_a_member_of_two_couples_is_refused(uc):
-    """The 9517f4dcd2 facts shape (absence on Bob, two couple links, no household named): refused in both awards
-    (old code: answered, Bob's award on two joint partners)."""
-    for anchor in ("ann", "bob"):
-        answers, _ = go(uc, poly(uc, anchor, scoped=False))
-        assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
-        assert all("reg. 3(6)" in a["refused"] for a in answers.values())
+@pytest.mark.parametrize("anchor", ["ann", "bob"])
+def test_unscoped_absence_of_a_member_of_two_couples_is_refused(uc, anchor):
+    """The 9517f4dcd2 facts shape (absence on Bob, two couple links, no household named): refused in each award (old
+    code: Ann's award answered single, Bob's award answered on two joint partners)."""
+    answers, _ = go(uc, poly(uc, anchor, scoped=False))
+    assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
+    assert all("reg. 3(6)" in a["refused"] for a in answers.values())
+
+
+def test_reg36_the_other_couple_of_the_absent_member_stands_from_both_sides(uc):
+    """U035 shape, Cara's award: Bob's absence is from Ann's household, so Bob and Cara stay a couple (joint), as in
+    Bob's own award; Bob-Ann (ended) gives Bob no second partner."""
+    case = poly(uc, "cara")
+    answers, staged = go(uc, case)
+    assert truth(uc, staged, "tcp", "cara", "bob") is True
+    assert truth(uc, staged, "tcp", "bob", "ann") is False
+    assert answers["T37-3"] == {"answer": "JOINT", "row": "NONE"}
+
+
+def two_couples(uc, anchor, facts=None):
+    """Bob a stated couple with Ann and with Cara, nothing in reg. 3(4)-(6) ending either."""
+    K = uc[0]
+    return K.award(f"T38{anchor}", "T38", anchor, {"ann": ("35", "100.00", "0.00"), "bob": ("40", "400.00", "0.00"),
+                                                   "cara": ("28", "0.00", "0.00")},
+                   facts=facts, links=[("couple", "ann", "bob"), ("couple", "bob", "cara")])
 
 
 def test_two_couple_links_at_most_one_joint_partner_two_jointp_refused(uc):
-    """Bob a stated couple with Ann and with Cara, nothing in reg. 3(4)-(6) ending either: the rules prove jointp for
-    both, and VE refuses instead of answering on two joint partners (old code: answered JOINT)."""
-    K = uc[0]
-    case = K.award("T38", "T38", "bob", {"ann": ("35", "100.00", "0.00"), "bob": ("40", "400.00", "0.00"),
-                                         "cara": ("28", "0.00", "0.00")},
-                   links=[("couple", "ann", "bob"), ("couple", "bob", "cara")])
-    answers, staged = go(uc, case)
+    """Bob's award: the rules prove jointp for both partners, and VE refuses instead of answering on two joint
+    partners (old code: answered JOINT)."""
+    answers, staged = go(uc, two_couples(uc, "bob"))
     assert truth(uc, staged, "jointp", "bob", "ann") is True
     assert truth(uc, staged, "jointp", "bob", "cara") is True
     assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
     assert all("at most one partner" in a["refused"] for a in answers.values())
+
+
+@pytest.mark.parametrize("anchor", ["ann", "cara"])
+def test_partner_with_a_second_standing_couple_is_refused_in_the_other_awards(uc, anchor):
+    """The same facts, Ann's or Cara's award: her partner Bob stays treated as a couple with the other woman, so the
+    pair has no single status and VE refuses (it never makes Bob a joint claimant with Ann in one award and with Cara
+    in another; old code: answered JOINT)."""
+    answers, staged = go(uc, two_couples(uc, anchor))
+    other = "cara" if anchor == "ann" else "ann"
+    assert truth(uc, staged, "tcp", anchor, "bob") is True
+    assert truth(uc, staged, "tcp", "bob", other) is True
+    assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
+    assert all("at most one partner" in a["refused"] for a in answers.values())
+
+
+def test_two_treated_couples_with_one_joint_partner_still_refused(uc):
+    """Cara a prisoner (reg. 3(3)(c)): Bob and Cara are a couple but not joint claimants; with Ann also his couple, Bob
+    has two treated partners and one jointp, and the award is still refused (two tcp)."""
+    answers, staged = go(uc, two_couples(uc, "bob", facts={"cara": ["prisoner"]}))
+    assert truth(uc, staged, "jointp", "bob", "ann") is True
+    assert truth(uc, staged, "jointp", "bob", "cara") is False
+    assert truth(uc, staged, "tcp", "bob", "cara") is True
+    assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
 
 
 def test_reg34_polygamy_leaving_one_partner_is_still_answered(uc):
@@ -157,7 +194,27 @@ def test_mutants_m7_m8_restore_the_one_sided_reading(uc):
     assert m7["T36-3"]["answer"] == "JOINT"
     m7p, _ = go(uc, poly(uc, "bob"), "M7")
     assert {a["answer"] for a in m7p.values()} == {"UNSUPPORTED"}
+    assert all("at most one partner" in a["refused"] for a in m7p.values())
     m8, s8 = go(uc, poly(uc, "bob"), "M8")
     assert truth(uc, s8, "jointp", "bob", "ann") is True and truth(uc, s8, "jointp", "bob", "cara") is True
     assert m8["T37-6"] == {"answer": "JOINT", "row": "HIGHER JOINT"}
     assert m8["T37-5"] == {"answer": "AMOUNT", "gbp": "342.47"}  # 666.97 - 55% x (1300.00 - 710.00)
+
+
+def test_overlay_refuses_a_household_outside_the_record():
+    """reg36_overlay: an absence from the household of someone the award record does not name is an error, never
+    skipped (the absent6 default would read it as the record's own couple)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("reg36_overlay_t", UC / "xfam" / "reg36_overlay.py")
+    ov = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ov)
+    import json
+    import tempfile
+    rec = {"id": "Xc", "case": "X", "persons": ["bob", "cara"], "links": [["couple", "bob", "cara"]]}
+    with tempfile.TemporaryDirectory() as d:
+        f = Path(d) / "a.jsonl"
+        f.write_text(json.dumps({"id": "X", "person": "Bob", "absent_from": ["Ann"]}) + "\n", encoding="utf-8")
+        with pytest.raises(ValueError, match="not a person of the record"):
+            ov.apply([rec], f)
+        f.write_text(json.dumps({"id": "X", "person": "Bob", "absent_from": ["Cara"]}) + "\n", encoding="utf-8")
+        assert ov.apply([rec], f) == {"Xc": [("absent_from", "bob", "cara")]}
